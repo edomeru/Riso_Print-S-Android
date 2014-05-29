@@ -1721,7 +1721,7 @@
                                                             <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_LOGIN_ID"/>
                                                         </userDefinedRuntimeAttributes>
                                                     </label>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Log-in ID" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sIG-C9-aXG">
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Log-in ID" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="sIG-C9-aXG">
                                                         <rect key="frame" x="111" y="8" width="189" height="30"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1776,9 +1776,9 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="cardId" destination="sIG-C9-aXG" id="ETN-gb-QPQ"/>
                         <outlet property="contentView" destination="dM2-UF-FWF" id="r3f-Cv-Hlh"/>
                         <outlet property="contentViewWidthConstraint" destination="UhH-pp-kS6" id="m4y-C4-hOa"/>
+                        <outlet property="loginId" destination="sIG-C9-aXG" id="uAB-1O-yKi"/>
                         <outlet property="mainMenuButton" destination="LbK-qq-C3s" id="FoR-vr-V20"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="Settings-Home" customClass="SlideSegue" id="4Gn-3V-oTg"/>
                     </connections>
@@ -4019,10 +4019,10 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Ysc-8g-iB4"/>
         <segue reference="CWW-vD-UgO"/>
+        <segue reference="4Gn-3V-oTg"/>
+        <segue reference="ax2-Mn-NH0"/>
         <segue reference="4qT-Co-wxF"/>
         <segue reference="SPc-R3-6UV"/>
-        <segue reference="ax2-Mn-NH0"/>
     </inferredMetricsTieBreakers>
 </document>

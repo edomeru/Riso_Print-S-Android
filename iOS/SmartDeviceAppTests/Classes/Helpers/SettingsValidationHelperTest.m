@@ -21,7 +21,7 @@
 - (void)test001_validateCardIDInput_ValidChars
 {
     NSMutableString *testString = [NSMutableString stringWithString:TEST_DATA_ALL_ENGLISH_ALPHANUMERIC];
-    kSettingsInputError result = [SettingsValidationHelper validateCardIDInput:testString];
+    kSettingsInputError result = [SettingsValidationHelper validateLoginIDInput:testString];
     GHAssertTrue((result == kSettingsInputErrorNone) , nil);
 }
 
@@ -32,8 +32,8 @@
     {
         unichar invalidChar = [invalidChars characterAtIndex:i];
         NSMutableString *testString = [NSMutableString stringWithFormat:@"%@%c", TEST_DATA_ALL_ENGLISH_ALPHANUMERIC, invalidChar];
-        kSettingsInputError result = [SettingsValidationHelper validateCardIDInput:testString];
-        GHAssertTrue((result == kSettingsInputErrorInvalidCardID) , [NSString stringWithFormat:@"Input with invalid char:%c", invalidChar]);
+        kSettingsInputError result = [SettingsValidationHelper validateLoginIDInput:testString];
+        GHAssertTrue((result == kSettingsInputErrorInvalidLoginID) , [NSString stringWithFormat:@"Input with invalid char:%c", invalidChar]);
     }
 }
 

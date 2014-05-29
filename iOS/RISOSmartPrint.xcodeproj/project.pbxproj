@@ -305,6 +305,7 @@
 		2800D042193567BD002FA1D4 /* SearchingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchingIndicator.m; sourceTree = "<group>"; };
 		2801620F18EAB0AA00DFFE5E /* PrintJobHistoryLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryLayout.h; sourceTree = "<group>"; };
 		2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryLayout.m; sourceTree = "<group>"; };
+		2803B5C41936E3600020820F /* AppSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppSettings.h; sourceTree = "<group>"; };
 		28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
 		280C0968192048DD00347991 /* PrintJobItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobItemCell.h; sourceTree = "<group>"; };
 		280C0969192048DD00347991 /* PrintJobItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobItemCell.m; sourceTree = "<group>"; };
@@ -590,7 +591,6 @@
 		2DA1AF3A18E2EFA400085F27 /* AppDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDebug.h; sourceTree = "<group>"; };
 		2DA1AF3B18E2EFA400085F27 /* AppStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStrings.h; sourceTree = "<group>"; };
 		2DA1AF3C18E2EFA400085F27 /* NotificationNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationNames.h; sourceTree = "<group>"; };
-		2DA1AF3D18E2EFA400085F27 /* PrintSettingNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingNames.h; sourceTree = "<group>"; };
 		2DA1AF4F18E2EFCB00085F27 /* Printer+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Printer+Log.h"; sourceTree = "<group>"; };
 		2DA1AF5018E2EFCB00085F27 /* Printer+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Printer+Log.m"; sourceTree = "<group>"; };
 		2DA1AF5118E2EFCB00085F27 /* PrintSetting+Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PrintSetting+Log.h"; sourceTree = "<group>"; };
@@ -1579,9 +1579,9 @@
 			isa = PBXGroup;
 			children = (
 				2DA1AF3A18E2EFA400085F27 /* AppDebug.h */,
+				2803B5C41936E3600020820F /* AppSettings.h */,
 				2DA1AF3B18E2EFA400085F27 /* AppStrings.h */,
 				2DA1AF3C18E2EFA400085F27 /* NotificationNames.h */,
-				2DA1AF3D18E2EFA400085F27 /* PrintSettingNames.h */,
 			);
 			path = Constants;
 			sourceTree = "<group>";

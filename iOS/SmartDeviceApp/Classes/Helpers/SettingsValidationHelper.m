@@ -8,37 +8,19 @@
 
 #import "SettingsValidationHelper.h"
 
-
-
 @implementation SettingsValidationHelper
 
-+ (kSettingsInputError)validateCardIDInput:(NSString *)inputString
++ (kSettingsInputError)validateLoginIDInput:(NSString *)inputString
 {
     NSString *validCharacters = @"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     NSCharacterSet* validSet = [NSCharacterSet characterSetWithCharactersInString:validCharacters];
     
     if([[inputString stringByTrimmingCharactersInSet:validSet] length] > 0)
     {
-        return kSettingsInputErrorInvalidCardID;
+        return kSettingsInputErrorInvalidLoginID;
     }
     
     return kSettingsInputErrorNone;
-}
-
-+ (NSString *)errorMessageForSettingsInputError:(kSettingsInputError) error
-{
-    NSString *message = @"Invalid Input";
-    switch(error)
-    {
-        case kSettingsInputErrorInvalidCardID:
-            message = @"Card ID should be alphanumeric only";
-            break;
-        case kSettingsInputErrorNone:
-            message = @"";
-        default:
-            break;
-    }
-    return message;
 }
 
 @end

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
-#ifndef SmartDeviceApp_AppDebug_h
-#define SmartDeviceApp_AppDebug_h
+#ifndef _APPDEBUG_H_
+#define _APPDEBUG_H_
 
 #pragma mark - Debug Log Switches
 
