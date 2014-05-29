@@ -41,7 +41,7 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.AreEqual(screenMode, viewControlViewModel.ScreenMode);
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_ToggleMainMenuPane()
         {
             viewControlViewModel.ViewMode = ViewMode.MainMenuPaneVisible;
@@ -59,7 +59,7 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(viewControlViewModel.ToggleMainMenuPane);
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_TogglePane1()
         {
             viewControlViewModel.ViewMode = ViewMode.MainMenuPaneVisible;
@@ -97,7 +97,7 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(viewControlViewModel.TogglePane1);
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_TogglePane2()
         {
             viewControlViewModel.ViewMode = ViewMode.MainMenuPaneVisible;
