@@ -14,7 +14,7 @@ namespace SmartDeviceApp.Common.Utilities
 
         public static void LogMessage()
         {
-
+            // TODO
         }
 
         public static void LogError(Exception ex)

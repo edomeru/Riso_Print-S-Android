@@ -106,9 +106,6 @@ namespace SmartDeviceApp.Common.Constants
                         break;
                 }
             }
-            else 
-            {
-            }
             return width;
         }
 
