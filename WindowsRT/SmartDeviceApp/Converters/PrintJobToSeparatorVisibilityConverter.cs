@@ -26,6 +26,7 @@ namespace SmartDeviceApp.Converters
                 {
                     index = group.Jobs.IndexOf(printJob);
                     isLastItem = (index == group.Jobs.Count - 1);
+                    break;
                 }
             }
             return (isLastItem ? Visibility.Collapsed : Visibility.Visible);

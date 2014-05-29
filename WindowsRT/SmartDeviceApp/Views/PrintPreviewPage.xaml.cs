@@ -75,10 +75,9 @@ namespace SmartDeviceApp.Views
             var twoPageControl = (TwoPageControl)sender;
             var pageAreaGrid = twoPageControl.PageAreaGrid;
             ViewModel.SetPageAreaGrid(pageAreaGrid);
-            PrintPreviewController.PageAreaGridLoadedEventHandler handler = PageAreaGridLoaded;
-            if (handler != null)
+            if (PageAreaGridLoaded != null)
             {
-                handler();
+                PageAreaGridLoaded();
             }
         }
     }

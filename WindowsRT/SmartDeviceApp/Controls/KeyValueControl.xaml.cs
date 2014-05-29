@@ -62,6 +62,10 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(KeyValueControl), null);
 
+        public static readonly DependencyProperty KeyPressedColorProperty =
+            DependencyProperty.Register("KeyPressedColor", typeof(SolidColorBrush), typeof(KeyValueControl), 
+            new PropertyMetadata((SolidColorBrush)Application.Current.Resources["BRUSH_Gray4"]));
+
         public static readonly DependencyProperty SubTextProperty =
             DependencyProperty.Register("SubText", typeof(string), typeof(KeyValueControl), null);
 
@@ -169,6 +173,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
+        }
+
+        public SolidColorBrush KeyPressedColor
+        {
+            get { return (SolidColorBrush)GetValue(KeyPressedColorProperty); }
+            set { SetValue(KeyPressedColorProperty, value); }
         }
 
         public string SubText

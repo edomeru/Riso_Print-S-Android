@@ -182,13 +182,14 @@
 
                             
                             <controls:KeyToggleSwitchControl x:Name="defaultPrinterSwitch"  
-                                                                 Text="{Binding Source=IDS_LBL_SET_DEFAULT_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
+                                                             Text="{Binding Source=IDS_LBL_SET_DEFAULT_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                                                              IconVisibility="Collapsed"
-                                                                 RightButtonVisibility="Collapsed"
-                                                                 IsOn="{Binding IsDefault, Mode=TwoWay}"
+                                                             RightButtonVisibility="Collapsed"
+                                                             IsOn="{Binding IsDefault, Mode=TwoWay}"
                                                              SeparatorVisibility="Visible"
                                                              Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                             PressedColor="{StaticResource BRUSH_Purple2}"/>
+                                                             PressedColor="{StaticResource BRUSH_Purple2}"
+                                                             KeyPressedColor="{StaticResource BRUSH_White}"/>
                             <controls:DefaultPrintSettingsControl x:Name="settings" 
                                                                   IconVisibility="Collapsed"
                                                           Text="{Binding Source=IDS_LBL_DEFAULT_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}"

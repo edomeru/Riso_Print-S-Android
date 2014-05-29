@@ -184,11 +184,6 @@ namespace SmartDeviceApp.ViewModels
                     }));
         }
 
-        private void DeleteAllJobsCallback(bool isDelete, int printerId)
-        {
-            
-        }
-
         private void DeleteJobExecute(PrintJob printJob)
         {
             if (RemoveJobEventHandler != null)

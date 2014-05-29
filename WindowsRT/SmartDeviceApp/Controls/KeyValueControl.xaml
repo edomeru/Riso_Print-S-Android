@@ -33,6 +33,9 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="keyValueControlGrid">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PressedColor, ElementName=keyValueControl}"/>
                                 </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="key">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding KeyPressedColor, ElementName=keyValueControl}"/>
+                                </ObjectAnimationUsingKeyFrames>
                             </Storyboard>
                         </VisualState>
                         <VisualState x:Name="Disabled">

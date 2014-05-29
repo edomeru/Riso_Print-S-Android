@@ -44,7 +44,9 @@
                                         IconVisibility="Collapsed"
                                         SeparatorVisibility="Collapsed"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
-                                        TextBoxAlignment="Left"/>
+                                        TextBoxAlignment="Left"
+                                        PressedColor="{StaticResource BRUSH_Purple2}"
+                                        KeyPressedColor="{StaticResource BRUSH_White}"/>
         </StackPanel>
     </controls:ViewControl>
 </base:PageBase>

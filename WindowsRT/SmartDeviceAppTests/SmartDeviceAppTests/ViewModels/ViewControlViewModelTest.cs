@@ -10,6 +10,7 @@ using SmartDeviceApp.Models;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using SmartDeviceApp.Controllers;
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
 namespace SmartDeviceAppTests.ViewModels
 {
@@ -40,7 +41,7 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.AreEqual(screenMode, viewControlViewModel.ScreenMode);
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_ToggleMainMenuPane()
         {
             viewControlViewModel.ViewMode = ViewMode.MainMenuPaneVisible;
@@ -58,7 +59,7 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(viewControlViewModel.ToggleMainMenuPane);
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_TogglePane1()
         {
             viewControlViewModel.ViewMode = ViewMode.MainMenuPaneVisible;
@@ -96,7 +97,7 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(viewControlViewModel.TogglePane1);
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_TogglePane2()
         {
             viewControlViewModel.ViewMode = ViewMode.MainMenuPaneVisible;
@@ -192,7 +193,7 @@ namespace SmartDeviceAppTests.ViewModels
             Test_Command.Execute(null);
         }
         
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_GoToHomePage()
         {
             // Note: Cannot change value of DocumentController.Instance.IsFileLoaded

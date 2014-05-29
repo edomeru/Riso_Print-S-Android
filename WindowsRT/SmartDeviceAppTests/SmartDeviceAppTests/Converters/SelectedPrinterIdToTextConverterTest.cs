@@ -25,7 +25,7 @@ namespace SmartDeviceAppTests.Converters
             // Test no printer name
             new ViewModelLocator().PrintSettingsViewModel.PrinterName = String.Empty;
             result = selectedPrinterIdToTextConverter.Convert(0, null, null, null);
-            Assert.AreEqual("No name", result);
+            Assert.AreEqual("No Name", result);
 
             new ViewModelLocator().PrintSettingsViewModel.PrinterName = "PRINTER_NAME";
             result = selectedPrinterIdToTextConverter.Convert(1, null, null, null);
