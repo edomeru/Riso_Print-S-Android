@@ -36,20 +36,4 @@
         GHAssertTrue((result == kSettingsInputErrorInvalidLoginID) , [NSString stringWithFormat:@"Input with invalid char:%c", invalidChar]);
     }
 }
-
-- (void)test003_errorMessages
-{
-    NSArray *errorMessages = [NSArray arrayWithObjects: @"",
-                                                        @"Card ID should be alphanumeric only",
-                                                        nil];
-    
-    for(int i = 0; i < errorMessages.count; i++)
-    {
-    
-        NSString *expectedMsg = (NSString *)[errorMessages objectAtIndex:i];
-        NSString *actualMsg = [SettingsValidationHelper errorMessageForSettingsInputError:i];
-        NSString *desc = [NSString stringWithFormat:@"Error message for kSettingsInputError[%d] = %@\n Expected:%@", i, actualMsg, expectedMsg];
-        GHAssertTrue([expectedMsg isEqualToString:actualMsg], desc);
-    }
-}
 @end
