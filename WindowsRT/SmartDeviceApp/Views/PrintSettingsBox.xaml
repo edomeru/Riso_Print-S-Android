@@ -129,7 +129,7 @@
             Template="{StaticResource TEMPLATE_PrintButton}"
             Width="{Binding Width, ElementName=printSettingsBox}"
             Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-    <controls:KeyValueControl x:Name="printerButton"
+    <controls:KeyValueControl x:Name="selectPrinterButton"
                               Grid.Row="1"
                               Text="{Binding Source=IDS_LBL_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                               Command="{Binding DataContext.ListPrintersCommand, ElementName=printSettingsBox}"
@@ -137,11 +137,23 @@
                               ValueSubText="{Binding PrinterIpAddress}"
                               ValueSubTextVisibility="{Binding PrinterIpAddress, Converter={StaticResource StringToVisibilityConverter}}"
                               IconVisibility="Collapsed"
-                              RightButtonVisibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
                               RightImage="ms-appx:///Resources/Images/img_btn_submenu.png"
+                              RightButtonVisibility="Visible"
                               SeparatorVisibility="Visible"
                               Width="{Binding Width, ElementName=printSettingsBox}"
+                              Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
                               PressedColor="{StaticResource BRUSH_Purple1}"/>
+    <controls:KeyValueControl x:Name="printerButton"
+                              Grid.Row="1"
+                              Text="{Binding Source=IDS_LBL_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
+                              ValueText="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}}"
+                              ValueSubText="{Binding PrinterIpAddress}"
+                              ValueSubTextVisibility="{Binding PrinterIpAddress, Converter={StaticResource StringToVisibilityConverter}}"
+                              IconVisibility="Collapsed"
+                              RightButtonVisibility="Collapsed"
+                              SeparatorVisibility="Visible"
+                              Width="{Binding Width, ElementName=printSettingsBox}"
+                              Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
     <ListView Grid.Row="2"
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
         <ListView ItemsSource="{Binding Path=PrintSettingsList}"
