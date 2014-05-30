@@ -84,7 +84,7 @@
     pd1.name = @"Not A Test Printer";
     pd1.ip = @"127.0.0.1";
     GHAssertTrue([[PrinterManager sharedPrinterManager] registerPrinter:pd1], @"");
-    // add a test printer (for coverage)
+    // add a test printer with no jobs (for coverage)
     PrinterDetails* pd2 = [[PrinterDetails alloc] init];
     pd2.name = [NSString stringWithFormat:@"%@ 3", TEST_PRINTER_NAME];
     pd2.ip = [NSString stringWithFormat:@"%@.3", TEST_PRINTER_IP];
@@ -238,12 +238,6 @@
     NSMutableArray* listPrintJobHistoryGroups = [PrintJobHistoryHelper preparePrintJobHistoryGroups];
     GHAssertNotNil(listPrintJobHistoryGroups, @"");
     
-    // check list of print jobs
-    GHTestLog(@"-- checking number of groups");
-    NSUInteger countPrintJobHistoryGroups = [listPrintJobHistoryGroups count];
-    GHTestLog(@"-- #groups = %lu", (unsigned long)countPrintJobHistoryGroups);
-    GHAssertTrue(countPrintJobHistoryGroups == 3, @"there should be three groups");
-    
     // check groups
     for (NSUInteger i = 0; i < 3; i++)
     {
@@ -258,6 +252,42 @@
                          @"invalid printer should be either nil or @\"\" name to be properly handled");
         }
     }
+}
+
+- (void)test003_MaxPrintJobs
+{
+    GHTestLog(@"# CHECK: PJHHelper can handle max jobs. #");
+    
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    GHAssertNotNil(pm, @"check functionality of PrinterManager");
+    GHAssertTrue(pm.countSavedPrinters == 0, @"");
+    
+    GHTestLog(@"-- creating the printer");
+    PrinterDetails* pd = [[PrinterDetails alloc] init];
+    pd.name = @"RISO Printer";
+    pd.ip = @"192.168.1.199";
+    GHAssertTrue([pm registerPrinter:pd], @"check functionality of PrinterManager");
+    Printer* printer = [pm getPrinterAtIndex:0];
+    GHAssertNotNil(printer, @"check functionality of PrinterManager");
+    
+    GHTestLog(@"-- maxing-out the jobs");
+    NSUInteger maxJobCount = [PListHelper readUint:kPlistUintValMaxPrintJobsPerPrinter];
+    for (NSUInteger count = 0; count < maxJobCount; count++)
+    {
+        PrintJob* job = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
+        job.name = @"test";
+        job.printer = printer;
+    }
+
+    GHTestLog(@"-- creating the document [%@]", @"test1234.pdf");
+    PrintDocument* doc = [[PrintDocument alloc] initWithURL:[NSURL URLWithString:@"/temp"]
+                                                       name:@"test1234.pdf"];
+    GHAssertNotNil(doc, @"check functionality of PrintDocument");
+    doc.printer = printer;
+    GHAssertTrue([PrintJobHistoryHelper createPrintJobFromDocument:doc withResult:100], @"");
+    
+    NSArray* jobs = [DatabaseManager getObjects:E_PRINTJOB];
+    GHAssertTrue([jobs count] == maxJobCount, @"there should still be max jobs");
 }
 
 @end

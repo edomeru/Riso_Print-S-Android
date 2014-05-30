@@ -46,8 +46,7 @@
     NSMutableArray* listPrintJobHistoryGroups = [NSMutableArray array];
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
-    if ((pm.countSavedPrinters == 0)
-        && [PListHelper readBool:kPlistBoolValUsePrintJobTestData])
+    if ([PListHelper readBool:kPlistBoolValUsePrintJobTestData])
     {
         [self populateWithTestData];
     }
