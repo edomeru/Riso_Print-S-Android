@@ -58,12 +58,12 @@
         // get the printer
         Printer* printer = [pm getPrinterAtIndex:idx];
         
-        // retrieve the jobs
+        // retrieve the printer's jobs
         NSString* filter = [NSString stringWithFormat:@"printer.ip_address = '%@'", printer.ip_address];
         NSArray* jobs = [DatabaseManager getObjects:E_PRINTJOB usingFilter:filter];
         if ((jobs == nil) || ([jobs count] == 0))
         {
-            continue;
+            continue; //no need to display this printer
         }
         
         // create the group
