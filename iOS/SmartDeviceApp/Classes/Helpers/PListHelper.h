@@ -11,6 +11,7 @@
 typedef enum
 {
     kPlistUintValMaxPrinters,
+    kPlistUintValMaxPrintJobsPerPrinter, // print jobs per printer
     
 } kPlistUintVal;
 

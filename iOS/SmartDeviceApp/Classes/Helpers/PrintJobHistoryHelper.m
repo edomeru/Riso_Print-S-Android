@@ -21,9 +21,8 @@
 
 /**
  Fills the database with PrintJob objects.
- It deletes all existing Printers from the database, then
- adds some pre-defined number of PrintJob objects, assigns
- them each to a printer, then saves the database.
+ It creates default-capability Printers, adds some pre-defined 
+ number of PrintJob objects per printer, then saves the database.
  This is to be used only for debugging.
  */
 + (void)populateWithTestData;
@@ -36,79 +35,44 @@
 {
     NSMutableArray* listPrintJobHistoryGroups = [NSMutableArray array];
     
-    // retrieve from DB
-    NSArray* listPrintJobs = [DatabaseManager getObjects:E_PRINTJOB];
-    if (listPrintJobs != nil) // DB access did not fail
+    PrinterManager* pm = [PrinterManager sharedPrinterManager];
+    if ((pm.countSavedPrinters == 0)
+        && [PListHelper readBool:kPlistBoolValUsePrintJobTestData])
     {
-        NSUInteger countPrintJobs = [listPrintJobs count];
-        if (countPrintJobs == 0)
-        {
-            // DB has no data
-
-            // check if will use test data
-            BOOL usePrintJobTestData = [PListHelper readBool:kPlistBoolValUsePrintJobTestData];
-#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
-            NSLog(@"[INFO][PrintJobHelper] usePrintJobTestData=%@", (usePrintJobTestData ? @"YES" : @"NO"));
-#endif
-            if (usePrintJobTestData)
-            {
-                // populate the DB
-                [self populateWithTestData];
-                
-                // retrieve from DB again
-                listPrintJobs = [DatabaseManager getObjects:E_PRINTJOB];
-            }
-        }
-        
-#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
-        NSLog(@"[INFO][PrintJobHelper] listPrintJobs=%lu", (unsigned long)[listPrintJobs count]);
-#endif
-     
-        // group the print jobs according to printer
-        NSMutableDictionary* dictPrintJobHistoryGroups = [NSMutableDictionary dictionary];
-        NSInteger groupTag = 0;
-        for (PrintJob* job in listPrintJobs)
-        {
-            // attempt to get the group for this printer
-            NSString* printerIP = job.printer.ip_address;
-            PrintJobHistoryGroup* group = [dictPrintJobHistoryGroups objectForKey:printerIP];
-            if (group == nil)
-            {
-                // group does not exist yet
-                
-                // create a group for this printer
-                NSString* printerName = job.printer.name;
-                PrintJobHistoryGroup* newGroup = [PrintJobHistoryGroup initWithGroupName:printerName
-                                                                             withGroupIP:printerIP
-                                                                            withGroupTag:groupTag++];
-                [newGroup collapse:NO];
-                
-                // add the current job as this group's first job
-                [newGroup addPrintJob:job];
-                
-                // add the group to the dictionary
-                [dictPrintJobHistoryGroups setObject:newGroup forKey:printerIP];
-            }
-            else
-            {
-                // group already exists
-                
-                // add the current job to the group
-                [group addPrintJob:job];
-            }
-        }
-        
-        // sort each group by timestamp
-        // add each group to the result list
-        [dictPrintJobHistoryGroups enumerateKeysAndObjectsUsingBlock:^(NSString* printerName,
-                                                                       PrintJobHistoryGroup* group,
-                                                                       BOOL* stop)
-        {
-            [group sortPrintJobs];
-            [listPrintJobHistoryGroups addObject:group];
-        }];
+        [self populateWithTestData];
     }
     
+    NSInteger groupTag = 0; //unique,immutable group identifier
+    for (NSUInteger idx = 0; idx < pm.countSavedPrinters; idx++)
+    {
+        // get the printer
+        Printer* printer = [pm getPrinterAtIndex:idx];
+        
+        // create the group
+        PrintJobHistoryGroup* group = [PrintJobHistoryGroup initWithGroupName:printer.name
+                                                                  withGroupIP:printer.ip_address
+                                                                 withGroupTag:groupTag++];
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+        NSLog(@"name=[%@], ip=[%@]", group.groupName, group.groupIP);
+#endif
+        
+        // retrieve the jobs
+        NSString* filter = [NSString stringWithFormat:@"printer.ip_address = '%@'", printer.ip_address];
+        NSArray* jobs = [DatabaseManager getObjects:E_PRINTJOB usingFilter:filter];
+        for (PrintJob* job in jobs)
+        {
+#if DEBUG_LOG_PRINT_JOB_HISTORY_HELPER
+            NSLog(@"  job=[%@]", job.name);
+#endif
+            [group addPrintJob:job];
+        }
+        
+        [group sortPrintJobs];
+        [group collapse:NO];
+        
+        [listPrintJobHistoryGroups addObject:group];
+    }
+                  
     return listPrintJobHistoryGroups;
 }
 
