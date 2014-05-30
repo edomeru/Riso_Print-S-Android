@@ -13,7 +13,7 @@
 @synthesize name;
 @synthesize ip;
 @synthesize port;
-@synthesize enBooklet;
+@synthesize enBookletFinishing;
 @synthesize enFinisher23Holes;
 @synthesize enFinisher24Holes;
 @synthesize enLpr;

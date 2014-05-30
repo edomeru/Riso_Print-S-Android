@@ -27,7 +27,7 @@
 @property (strong, nonatomic) NSString* name;
 @property (strong, nonatomic) NSString* ip;
 @property (strong, nonatomic) NSNumber* port;
-@property (assign, nonatomic) BOOL enBooklet;
+@property (assign, nonatomic) BOOL enBookletFinishing;
 @property (assign, nonatomic) BOOL enFinisher23Holes;
 @property (assign, nonatomic) BOOL enFinisher24Holes;
 @property (assign, nonatomic) BOOL enLpr;

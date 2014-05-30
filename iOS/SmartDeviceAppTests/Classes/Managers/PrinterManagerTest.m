@@ -63,7 +63,7 @@
     self.testPrinterDetails.name = @"Default Printer Name";
     self.testPrinterDetails.ip = @"192.168.1.1";
     self.testPrinterDetails.port = [NSNumber numberWithInt:0];
-    self.testPrinterDetails.enBooklet = YES;
+    self.testPrinterDetails.enBookletFinishing = YES;
     self.testPrinterDetails.enFinisher23Holes = YES;
     self.testPrinterDetails.enFinisher24Holes = NO;
     self.testPrinterDetails.enLpr = YES;

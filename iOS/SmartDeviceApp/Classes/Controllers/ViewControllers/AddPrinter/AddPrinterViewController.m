@@ -180,7 +180,7 @@
     PrinterDetails *pd = [[PrinterDetails alloc] init];
     pd.ip = ipAddress;
     pd.port = [NSNumber numberWithInt:0];
-    pd.enBooklet = YES;
+    pd.enBookletFinishing = YES;
     pd.enStaple = YES;
     pd.enFinisher23Holes = NO;
     pd.enFinisher24Holes = YES;

@@ -13,7 +13,7 @@
 
 @implementation Printer
 
-@dynamic enabled_booklet;
+@dynamic enabled_booklet_finishing;
 @dynamic enabled_finisher_2_3_holes;
 @dynamic enabled_finisher_2_4_holes;
 @dynamic enabled_lpr;
