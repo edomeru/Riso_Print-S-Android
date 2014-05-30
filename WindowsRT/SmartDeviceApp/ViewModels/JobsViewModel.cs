@@ -38,6 +38,8 @@ namespace SmartDeviceApp.ViewModels
         private JobGestureController _gestureController;
         private ViewControlViewModel _viewControlViewModel;
 
+        private bool _isPrintJobsListEmpty;
+
         public JobsViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -85,7 +87,20 @@ namespace SmartDeviceApp.ViewModels
                 if (_printJobsList != value)
                 {
                     _printJobsList = value;
-                    RaisePropertyChanged("PrintJobsList");                    
+                    RaisePropertyChanged("PrintJobsList");
+                }
+            }
+        }
+
+        public bool IsPrintJobsListEmpty
+        {
+            get { return _isPrintJobsListEmpty; }
+            set
+            {
+                if (_isPrintJobsListEmpty != value)
+                {
+                    _isPrintJobsListEmpty = value;
+                    RaisePropertyChanged("IsPrintJobsListEmpty");
                 }
             }
         }
@@ -184,16 +199,33 @@ namespace SmartDeviceApp.ViewModels
                     }));
         }
 
-        private void DeleteJobExecute(PrintJob printJob)
+        private async void DeleteJobExecute(PrintJob printJob)
         {
-            if (RemoveJobEventHandler != null)
-            {
-                RemoveJobEventHandler(printJob);
-            }
+            await DialogService.Instance.ShowMessage(
+                "IDS_INFO_MSG_DELETE_JOBS",
+                "IDS_INFO_MSG_DELETE_JOBS_TITLE",
+                "IDS_LBL_OK", "IDS_LBL_CANCEL",
+                new Action<bool>(isDelete =>
+                {
+                    if (isDelete && RemoveJobEventHandler != null)
+                    {
+                        RemoveJobEventHandler(printJob);
+                    }
+                }));
         }
 
         public void SortPrintJobsListToColumns()
         {
+            if (PrintJobsList.Count == 0)
+            {
+                IsPrintJobsListEmpty = true;
+                return;
+            }
+            else 
+            {
+                IsPrintJobsListEmpty = false;
+            }
+
             var column1 = new PrintJobList();
             var column2 = new PrintJobList();
             var column3 = new PrintJobList();
@@ -227,6 +259,7 @@ namespace SmartDeviceApp.ViewModels
             PrintJobsColumn3 = column3;
         }
 
+        #region For testing
         //// TODO: REMOVE AFTER TESTING
         //private void Initialize()
         //{
@@ -321,5 +354,37 @@ namespace SmartDeviceApp.ViewModels
         //    PrintJobsList = printJobsList;
         //    SortPrintJobsListToColumns();
         //}
+        #endregion
+
+        public void RemovePrintJobGroup(PrintJobGroup deletedGroup)
+        {
+            if (PrintJobsColumn1.Contains(deletedGroup))
+            {
+                PrintJobsColumn1.Remove(deletedGroup);
+                if (PrintJobsColumn1.Count == 0)
+                {
+                    SortPrintJobsListToColumns();
+                }
+                return;
+            }
+            if (PrintJobsColumn2.Contains(deletedGroup))
+            {
+                PrintJobsColumn2.Remove(deletedGroup);
+                if (PrintJobsColumn2.Count == 0)
+                {
+                    SortPrintJobsListToColumns();
+                }
+                return;
+            }
+            if (PrintJobsColumn3.Contains(deletedGroup))
+            {
+                PrintJobsColumn3.Remove(deletedGroup);
+                if (PrintJobsColumn3.Count == 0)
+                {
+                    SortPrintJobsListToColumns();
+                }
+                return;
+            }
+        }
     }
 }

@@ -176,6 +176,7 @@ namespace SmartDeviceApp.Controllers
                 if (printJobGroup.Jobs.Count == 0)
                 {
                     _jobsViewModel.PrintJobsList.Remove(printJobGroup);
+                    _jobsViewModel.RemovePrintJobGroup(printJobGroup); // Update sorting of groups into columns
                 }
             }
         }
