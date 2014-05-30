@@ -34,7 +34,8 @@
         E_PRINTER, E_PRINTSETTING,
         E_PRINTJOB, E_DEFAULTPRINTER
  @param filter
-        string of the format "attribute = value"
+        string of the format "attribute = 'value'"
+ @see "Predicate Format String Syntax"
  @return NSArray* of the matching results, nil otherwise.
  */
 + (NSArray*)getObjects:(NSString*)entityName usingFilter:(NSString*)filter;
