@@ -11,8 +11,9 @@
 #import "UIViewController+Segue.h"
 #import "DefaultView.h"
 #import "PListHelper.h"
-#import "SettingsValidationHelper.h"
 #import "AppSettings.h"
+
+#define LOGIN_ID_MAX_INPUT 20
 
 @interface SettingsViewController ()
 
@@ -117,19 +118,12 @@
     
     NSMutableString *newString = [NSMutableString stringWithString:textField.text];
     BOOL shouldAccept = YES;
-    if([SettingsValidationHelper validateLoginIDInput:string] == kSettingsInputErrorNone)
+    [newString deleteCharactersInRange:range];
+    if(newString.length + string.length > LOGIN_ID_MAX_INPUT)
     {
-        [newString deleteCharactersInRange:range];
-        if(newString.length + string.length > LOGIN_ID_MAX_INPUT)
-        {
-            [newString insertString:[string substringToIndex:LOGIN_ID_MAX_INPUT - newString.length]
-                            atIndex:range.location];
-            textField.text = newString;
-            shouldAccept = NO;
-        }
-    }
-    else
-    {
+        [newString insertString:[string substringToIndex:LOGIN_ID_MAX_INPUT - newString.length]
+                        atIndex:range.location];
+        textField.text = newString;
         shouldAccept = NO;
     }
     return shouldAccept;

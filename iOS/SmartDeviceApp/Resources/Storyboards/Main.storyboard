@@ -1729,7 +1729,7 @@
                                                             <constraint firstAttribute="height" constant="30" id="8O3-Ks-P4n"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                        <textInputTraits key="textInputTraits" keyboardType="namePhonePad" returnKeyType="done"/>
+                                                        <textInputTraits key="textInputTraits" returnKeyType="done"/>
                                                         <userDefinedRuntimeAttributes>
                                                             <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_CARD_ID"/>
                                                         </userDefinedRuntimeAttributes>
