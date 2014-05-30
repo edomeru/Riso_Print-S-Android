@@ -12,24 +12,6 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="ToggleButton" >
-            <Grid Background="{Binding WillBeDeleted, ElementName=printerNameControl, Converter={StaticResource BooleanToColor}, Mode=TwoWay}" 
-                  Width="{StaticResource SIZE_DeleteButtonWidth_Long}" 
-                  Height="{StaticResource SIZE_DeleteButtonHeight_Long}">
-                
-                <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}">
-                    <Interactivity:Interaction.Behaviors>
-                    <Core:DataTriggerBehavior Binding="{Binding WillBeDeleted, ElementName=printerNameControl}" Value="True">
-                        <Core:ChangePropertyAction PropertyName="Foreground" Value="{StaticResource BRUSH_White}"/>
-                    </Core:DataTriggerBehavior>
-                    <Core:DataTriggerBehavior Binding="{Binding WillBeDeleted, ElementName=printerNameControl}" Value="False">
-                        <Core:ChangePropertyAction PropertyName="Foreground" Value="{StaticResource BRUSH_Black}"/>
-                    </Core:DataTriggerBehavior>
-
-                </Interactivity:Interaction.Behaviors>
-                </TextBlock>
-            </Grid>
-        </ControlTemplate>
         <Style x:Key="STYLE_ListItemGrid" TargetType="Grid">
             <Setter Property="Background" Value="{StaticResource BRUSH_Gray2}"/>
             <Setter Property="MinWidth" Value="{StaticResource SIZE_SidePaneWidth}"/>
@@ -153,7 +135,7 @@
                                     <VisualState x:Name="PointerFocused"/>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            
+
                             <Rectangle x:Name="FocusVisualWhite" IsHitTestVisible="False" Opacity="0" StrokeDashOffset="1.5" StrokeEndLineCap="Square" Stroke="#5207B6" StrokeDashArray="1,1" Fill="Black"/>
                             <Rectangle x:Name="FocusVisualBlack" IsHitTestVisible="False" Opacity="0" StrokeDashOffset="0.5" StrokeEndLineCap="Square" Stroke="{StaticResource BRUSH_Purple2}" StrokeDashArray="1,1" Fill="#FF5707B6"/>
                         </Grid>
@@ -162,8 +144,28 @@
             </Setter>
             <Setter Property="Content" Value=""/>
         </Style>
+        <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="ToggleButton" >
+            <Grid Background="{Binding WillBeDeleted, ElementName=printerNameControl, Converter={StaticResource BooleanToColor}, Mode=TwoWay}" 
+                  Width="{StaticResource SIZE_DeleteButtonWidth_Long}" 
+                  Height="{StaticResource SIZE_DeleteButtonHeight_Long}" Style="{StaticResource STYLE_ListItemGrid}">
+                
+                <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}">
+                    <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior Binding="{Binding WillBeDeleted, ElementName=printerNameControl}" Value="True">
+                        <Core:ChangePropertyAction PropertyName="Foreground" Value="{StaticResource BRUSH_White}"/>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding WillBeDeleted, ElementName=printerNameControl}" Value="False">
+                        <Core:ChangePropertyAction PropertyName="Foreground" Value="{StaticResource BRUSH_Black}"/>
+                    </Core:DataTriggerBehavior>
+
+                </Interactivity:Interaction.Behaviors>
+                </TextBlock>
+            </Grid>
+        </ControlTemplate>
+        
     </UserControl.Resources>
-    <Grid x:Name="button" Style="{StaticResource STYLE_ListItemGrid}" Background="#FF919191" Loaded="button_Loaded">
+    
+    <Grid x:Name="button"  Background="#FF919191" Loaded="button_Loaded">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonStates">
                 <VisualState x:Name="DefaultPrinterState">
