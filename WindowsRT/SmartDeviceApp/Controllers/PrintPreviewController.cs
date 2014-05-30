@@ -261,10 +261,13 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Event handler for selected printer
         /// </summary>
-        /// <param name="printerId"></param>
+        /// <param name="printerId">printer ID</param>
         public async void SelectedPrinterChanged(int printerId)
         {
-            await SetSelectedPrinterAndPrintSettings(printerId);
+            if (_selectedPrinter.Id != printerId)
+            {
+                await SetSelectedPrinterAndPrintSettings(printerId);
+            }
         }
 
         /// <summary>
