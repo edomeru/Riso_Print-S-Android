@@ -369,6 +369,24 @@ public class PrinterManager implements SNMPManagerCallback {
         mDatabaseManager.close();
         return mDefaultPrintId;
     }
+        
+    /**
+     * Update the value of port settings
+     * 
+     * @param printerId
+     *            Printer ID
+     * @param portSettings
+     *            Port Settings
+     * @return true if successful
+     */
+    public boolean updatePortSettings(int printerId, int portSettings) {
+        boolean ret = false;
+        ContentValues cv = new ContentValues();
+        cv.put(KeyConstants.KEY_SQL_PRINTER_PORT, portSettings);
+        ret = mDatabaseManager.update(KeyConstants.KEY_SQL_PRINTER_TABLE, cv, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printerId));
+        mDatabaseManager.close();
+        return ret;
+    }
     
     /**
      * Search for Printer Device

@@ -43,6 +43,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private DirectPrintManager mDirectPrintManager = null;
     
     private static final int MSG_PRINT = 0;
+    private static final int LPR_PRINT = 0;
     
     private boolean mFragmentForPrinting = false;
     
@@ -240,7 +241,11 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mDirectPrintManager.setCallback(this);
         
         String userName = getActivity().getString(R.string.ids_app_name);
-        mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+        if (printer.getPortSetting() == LPR_PRINT) {
+            mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+        } else {
+            mDirectPrintManager.executeRAWPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+        }
     }
     
     // ================================================================================

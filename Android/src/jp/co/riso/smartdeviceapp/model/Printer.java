@@ -213,6 +213,8 @@ public class Printer implements Parcelable {
          * Create a config instance.
          */
         public Config() {
+            mLprAvailable = true;
+            mRawAvailable = true;
             mBookletAvailable = true;
             mStaplerAvailable = true;
             mPunch3Available = false;

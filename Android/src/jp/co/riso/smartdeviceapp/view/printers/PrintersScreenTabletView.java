@@ -455,10 +455,13 @@ OnItemSelectedListener {
         viewHolder.mPort = (Spinner) pView.findViewById(R.id.input_port);
         
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getContext(), R.layout.printerinfo_port_item);
-        portAdapter.add(getContext().getString(R.string.ids_lbl_port_raw));
         portAdapter.add(getContext().getString(R.string.ids_lbl_port_lpr));
+        if (printer.getConfig().isRawAvailable()) {
+            portAdapter.add(getContext().getString(R.string.ids_lbl_port_raw));
+        }
         portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         viewHolder.mPort.setAdapter(portAdapter);
+        viewHolder.mPort.setSelection(printer.getPortSetting());
         
         viewHolder.mPrinterName.setText(printerName);
         viewHolder.mIpAddress.setText(printer.getIpAddress());
@@ -600,6 +603,7 @@ OnItemSelectedListener {
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         Printer printer = (Printer) parentView.getTag();
         printer.setPortSetting(position);
+        mPrinterManager.updatePortSettings(printer.getId(), position);
     }
     
     /** {@inheritDoc} */

@@ -62,6 +62,23 @@ public class DirectPrintManager {
         lprPrint();
     }
     
+    /**
+     * Executes an RAW Print
+     * 
+     * @param userName
+     * @param jobName
+     * @param fileName
+     * @param printSetting
+     * @param ipAddress
+     */
+    public void executeRAWPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress) {
+        // TODO: Support raw print
+        // Notify error
+        if (mCallbackRef != null && mCallbackRef.get() != null) {
+            mCallbackRef.get().onNotifyProgress(this, PRINT_STATUS_ERROR, 0);
+        }
+    }
+    
     public boolean isPrinting() {
         return (mJob != 0);
     }

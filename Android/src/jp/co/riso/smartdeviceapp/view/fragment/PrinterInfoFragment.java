@@ -81,10 +81,13 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mPort.setOnItemSelectedListener(this);
         
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getActivity(), R.layout.printerinfo_port_item);
-        portAdapter.add(getString(R.string.ids_lbl_port_raw));
         portAdapter.add(getString(R.string.ids_lbl_port_lpr));
+        if (mPrinter.getConfig().isRawAvailable()) {
+            portAdapter.add(getString(R.string.ids_lbl_port_raw));
+        }
         portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         mPort.setAdapter(portAdapter);
+        mPort.setSelection(mPrinter.getPortSetting());
     }
     
     /** {@inheritDoc} */
@@ -264,6 +267,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         mPrinter.setPortSetting(position);
+        mPrinterManager.updatePortSettings(mPrinter.getId(), position);
     }
     
     /** {@inheritDoc} */
