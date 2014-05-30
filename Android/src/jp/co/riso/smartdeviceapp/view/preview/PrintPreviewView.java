@@ -23,6 +23,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -36,6 +37,7 @@ import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.LruCache;
@@ -154,10 +156,14 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * Initialize PrintPreviewView
      */
+    @SuppressLint("NewApi") // Prevent quick scale on kitkat devices
     public void init() {
         if (!isInEditMode()) {
             mPrintSettings = new PrintSettings(); // Should not be null
             mScaleDetector = new ScaleGestureDetector(getContext(), this);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mScaleDetector.setQuickScaleEnabled(false);
+            }
             mDoubleTapDetector = new GestureDetector(getContext(), this);
             mDoubleTapDetector.setOnDoubleTapListener(this);
             
