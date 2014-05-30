@@ -138,6 +138,37 @@ namespace SmartDeviceApp.Models
             IpAddress = ipAddress;
             Jobs = jobs;
         }
+
+        public override bool Equals(System.Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            PrintJobGroup otherOption = obj as PrintJobGroup;
+            if ((System.Object)otherOption == null)
+            {
+                return false;
+            }
+            return (PrinterName == otherOption.PrinterName && 
+                IpAddress == otherOption.IpAddress);
+        }
+
+        public bool Equals(PrintJobGroup otherOption)
+        {
+            if ((object)otherOption == null)
+            {
+                return false;
+            }
+            return (PrinterName == otherOption.PrinterName && 
+                IpAddress == otherOption.IpAddress);
+        }
+
+        public override int GetHashCode()
+        {
+            return IpAddress.GetHashCode();
+        }
     }
 
     public class PrintJobList : ObservableCollection<PrintJobGroup>

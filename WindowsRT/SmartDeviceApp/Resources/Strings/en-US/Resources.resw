@@ -531,8 +531,18 @@
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>No network available.</value>
   </data>
+  <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
+    <value>No Printers</value>
+  </data>
+  <data name="IDS_LBL_PRINTJOBHISTORY_EMPTY" xml:space="preserve">
+    <value>No Print Job History</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_SEARCH_EMPTY" xml:space="preserve">
+    <value>No Printers Found</value>
+  </data>
   <!-- Not in wording list -->
   <data name="IDS_LBL_PAGE_NUMBER" xml:space="preserve">
     <value>Page {0} / {1}</value>
   </data>
+
 </root>
