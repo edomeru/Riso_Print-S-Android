@@ -54,7 +54,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _printCommand;
         private ICommand _listPrintersCommand;
 
-        private PrintSettingList _printSettingsList = new PrintSettingList();
+        private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
         private PrintSetting _selectedPrintSetting;
 
