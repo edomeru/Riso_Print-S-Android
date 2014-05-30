@@ -12,7 +12,7 @@
 
 @interface Printer : NSManagedObject
 
-@property (nonatomic, retain) NSNumber* enabled_booklet;
+@property (nonatomic, retain) NSNumber* enabled_booklet_finishing;
 @property (nonatomic, retain) NSNumber* enabled_finisher_2_3_holes;
 @property (nonatomic, retain) NSNumber* enabled_finisher_2_4_holes;
 @property (nonatomic, retain) NSNumber* enabled_lpr;

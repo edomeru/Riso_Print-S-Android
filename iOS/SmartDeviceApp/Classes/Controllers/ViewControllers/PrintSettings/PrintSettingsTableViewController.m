@@ -994,11 +994,9 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         return YES;
     }
 
-    if([settingKey isEqualToString:KEY_BOOKLET] ||
-       [settingKey isEqualToString:KEY_BOOKLET_LAYOUT] ||
-       [settingKey isEqualToString:KEY_BOOKLET_FINISH])
+    if([settingKey isEqualToString:KEY_BOOKLET_FINISH])
     {
-        return [self.printer.enabled_booklet boolValue];
+        return [self.printer.enabled_booklet_finishing boolValue];
     }
     
     if([settingKey isEqualToString:KEY_PUNCH])
