@@ -38,7 +38,6 @@ import android.widget.TextView.OnEditorActionListener;
 
 public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnEditorActionListener, ConfirmDialogListener, PauseableHandlerCallback {
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
-    private static final int ID_MENU_SAVE_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     private static final int ERR_INVALID_IP_ADDRESS = -1;
     private static final int ERR_CAN_NOT_ADD_PRINTER = -2;
@@ -75,11 +74,13 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mAddPrinterView.mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
-        mAddPrinterView.mIpAddressLabel = (TextView) view.findViewById(R.id.ipAddressLabel);
+        mAddPrinterView.mSaveButton = view.findViewById(R.id.img_save_button);
+        mAddPrinterView.mProgressBar = view.findViewById(R.id.actionbar_progressbar);
         
         mAddPrinterView.mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
         mAddPrinterView.mIpAddress.setOnEditorActionListener(this);
-        
+        mAddPrinterView.mSaveButton.setOnClickListener(this);
+
         if (mPrinterManager.isSearching()) {
             setViewToDisable(mAddPrinterView);
         }
@@ -97,9 +98,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         } else {
             addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
         }
-        addMenuButton(view, R.id.rightActionLayout, ID_MENU_SAVE_BUTTON, R.drawable.selector_addprinter_save, this);
-        mAddPrinterView.mSaveButton = view.findViewById(ID_MENU_SAVE_BUTTON);
-        mAddPrinterView.mProgressBar = view.findViewById(R.id.actionbar_progressbar);
     }
     
     /** {@inheritDoc} */
@@ -239,7 +237,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
         viewHolder.mSaveButton.setVisibility(View.GONE);
         viewHolder.mProgressBar.setVisibility(View.VISIBLE);
-        viewHolder.mIpAddressLabel.setTextColor(getResources().getColor(R.color.theme_light_4));
         viewHolder.mIpAddress.setTextColor(getResources().getColor(R.color.theme_light_4));
         viewHolder.mIpAddress.setFocusable(false);
         
@@ -258,7 +255,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
         viewHolder.mSaveButton.setVisibility(View.VISIBLE);
         viewHolder.mProgressBar.setVisibility(View.GONE);
-        viewHolder.mIpAddressLabel.setTextColor(getResources().getColor(R.color.theme_dark_1));
         viewHolder.mIpAddress.setTextColor(getResources().getColor(R.color.theme_dark_1));
         viewHolder.mIpAddress.setFocusableInTouchMode(true);
     }
@@ -301,7 +297,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             case ID_MENU_BACK_BUTTON:
                 closeScreen();
                 break;
-            case ID_MENU_SAVE_BUTTON:
+            case R.id.img_save_button:
                 startManualSearch();
                 break;
         }
@@ -395,7 +391,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      * Add Printer Screen view holder
      */
     public class ViewHolder {
-        private TextView mIpAddressLabel;
         private EditText mIpAddress;
         private View mProgressBar;
         private View mSaveButton;

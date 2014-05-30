@@ -80,9 +80,6 @@
     <dimen name="printers_row_left_padding">10dp</dimen>
     <dimen name="printers_left_editbox_padding">10dp</dimen>
 
-    <dimen name="printers_edit_box_width">60dp</dimen>
-    <dimen name="addprinter_edit_box_width">200dp</dimen>
-
     <dimen name="printers_row_height">56dp</dimen>
     <dimen name="printers_edit_box_height">38dp</dimen>
     <dimen name="printers_row_riso_icon_margin">40dp</dimen>
