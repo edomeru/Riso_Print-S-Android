@@ -16,7 +16,7 @@ import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
-import jp.co.riso.smartprint.R;
+import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback;
@@ -25,12 +25,10 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface;
+import jp.co.riso.smartprint.R;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -53,6 +51,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private PrinterSearchAdapter mPrinterSearchAdapter = null;
     private PrinterManager mPrinterManager = null;
     private PauseableHandler mPauseableHandler = null;
+    private TextView mEmptySearchText;
     
     /** {@inheritDoc} */
     @Override
@@ -84,6 +83,8 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         mListView.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
         mListView.setAdapter(mPrinterSearchAdapter);
         mListView.setOnRefreshListener(this);
+        
+        mEmptySearchText = (TextView) view.findViewById(R.id.emptySearchText);
         
         RelativeLayout.LayoutParams progressLayoutParams = (RelativeLayout.LayoutParams) mListView.findViewById(R.id.ptr_id_spinner).getLayoutParams();
         progressLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
@@ -156,22 +157,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         mPauseableHandler.sendMessage(newMessage);
     }
     
-    
-    /**
-     * Determines network connectivity
-     * 
-     * @return true if connected to network
-     */
-    private boolean isConnectedToNetwork() {
-        Context context = getActivity();
-        if (context == null) {
-            return false;
-        }        
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
-    }
-    
     /**
      * Dialog which is displayed during error
      */
@@ -209,11 +194,12 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void onRefresh() {
         mPrinter.clear();
-        if (!isConnectedToNetwork()) {
+        if (!NetUtils.isNetworkAvailable(getActivity())) {
             dialogErrCb();
             updateRefreshBar();
             return;
         }
+        mEmptySearchText.setVisibility(View.GONE);
         mPrinterManager.startPrinterSearch();
     }
     
@@ -325,6 +311,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                     mListView.setRefreshing();
                 } else {
                     mListView.onRefreshComplete();
+                    if (mPrinter.isEmpty()) {
+                        mEmptySearchText.setVisibility(View.VISIBLE);
+                    }
                 }
         }
     }

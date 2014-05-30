@@ -19,6 +19,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null" />
+
+        <TextView
+            android:id="@+id/emptySearchText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/ids_lbl_printer_search_empty"
+            android:textColor="@color/theme_dark_1"
+            android:textSize="@dimen/font_size_large"
+            android:visibility="gone" />
     </FrameLayout>
 
 </jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>
