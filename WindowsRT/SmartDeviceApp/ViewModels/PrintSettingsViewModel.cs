@@ -54,7 +54,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _printCommand;
         private ICommand _listPrintersCommand;
 
-        private PrintSettingList _printSettingsList;
+        private PrintSettingList _printSettingsList = new PrintSettingList();
         private ICommand _selectPrintSetting;
         private PrintSetting _selectedPrintSetting;
 
@@ -182,7 +182,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _selectPrintSetting = new RelayCommand<PrintSetting>(
                         (printSetting) => SelectPrintSettingExecute(printSetting),
-                        (printSetting) => true
+                        (printSetting) => printSetting != null
                     );
                 }
                 return _selectPrintSetting;

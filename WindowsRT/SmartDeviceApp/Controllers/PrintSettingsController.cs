@@ -274,6 +274,7 @@ namespace SmartDeviceApp.Controllers
         {
             if (string.Equals(_activeScreen, screenName))
             {
+                _printSettingsViewModel.PrintSettingsList.Clear();
                 PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
                 _activeScreen = null;
             }
@@ -354,7 +355,6 @@ namespace SmartDeviceApp.Controllers
                                     };
 
             // Construct the PrintSettingList
-            _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
             var tempList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
             foreach (PrintSettingGroup group in tempList)
             {
