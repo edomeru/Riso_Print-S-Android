@@ -16,6 +16,11 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="SmartDeviceApp.App">
       <m2:VisualElements DisplayName="ms-resource:IDS_APP_NAME" Square150x150Logo="Resources\Images\Logo.png" Square30x30Logo="Resources\Images\SmallLogo.png" Description="SmartDeviceApp" ForegroundText="light" BackgroundColor="#464646">
+        <m2:DefaultTile>
+          <m2:ShowNameOnTiles>
+            <m2:ShowOn Tile="square150x150Logo" />
+          </m2:ShowNameOnTiles>
+        </m2:DefaultTile>
         <m2:SplashScreen Image="Resources\Images\img_splash.png" BackgroundColor="#CDCDCD" />
         <m2:ApplicationView MinWidth="width500" />
         <m2:InitialRotationPreference>
