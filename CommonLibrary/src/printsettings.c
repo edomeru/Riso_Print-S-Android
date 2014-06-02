@@ -37,6 +37,8 @@ typedef enum
     kPrintSettingsStaple,
     kPrintSettingsPunch,
     kPrintSettingsOutputTray,
+    kPrintSettingsLoginId,
+    kPrintSettingsPinCode,
     kPrintSettingsCount
 } kPrintSettings;
 
@@ -63,6 +65,9 @@ typedef enum
     kPjlCommandStaple,
     kPjlCommandPunch,
     kPjlCommandOutputTray,
+    kPjlCommandOwner,
+    kPjlCommandPrivatePrinting,
+    kPjlCommandPrivatePrintingBoxNumber,
     kPjlCommandCount
 } kPjlCommand;
 
@@ -85,7 +90,9 @@ const char *printsetting_names[kPrintSettingsCount] =
     "finishingSide",
     "staple",
     "punch",
-    "outputTray"
+    "outputTray",
+    "loginId",
+    "pinCode"
 };
 
 const char *color_mode[] =
@@ -240,6 +247,9 @@ const char **pjl_values[kPjlCommandCount] =
     staple,
     punch,
     output_tray,
+    0,
+    false_true,
+    0
 };
 
 
@@ -266,6 +276,9 @@ const char *pjl_commands[kPjlCommandCount] =
     "RKSTAPLEMODE",
     "RKPUNCHMODE",
     "OUTBIN",
+    "RKOWNERNAME",
+    "RKPRIVATEPRINTING",
+    "RKPRIVATEPRINTINGBOXNUMBER"
 };
 
 typedef struct
@@ -282,10 +295,16 @@ void add_pjl(char *pjl, setting_value values[], int command);
 
 void create_pjl(char *pjl, char *settings)
 {
+    if (strlen(settings) == 0)
+    {
+        return;
+    }
+    
     setting_value values[kPrintSettingsCount];
     for (int i = 0; i < kPrintSettingsCount; i++)
     {
         values[i].set = 0;
+        values[i].str_value = 0;
     }
     
     parse(settings, values);
@@ -293,6 +312,14 @@ void create_pjl(char *pjl, char *settings)
     for (int i = 0; i < kPjlCommandCount; i++)
     {
         add_pjl(pjl, values, i);
+    }
+    
+    for (int i = 0; i < kPrintSettingsCount; i++)
+    {
+        if (values[i].str_value != 0)
+        {
+            free(values[i].str_value);
+        }
     }
 }
 
@@ -313,10 +340,17 @@ void parse(char *settings, setting_value values[])
         int setting_index = get_setting_index(name);
         if (setting_index != -1)
         {
-            int value_index;
-            sscanf(value, "%d", &value_index);
             values[setting_index].set = 1;
-            values[setting_index].int_value = value_index;
+            if (setting_index == kPrintSettingsLoginId || setting_index == kPrintSettingsPinCode)
+            {
+                values[setting_index].str_value = strdup(value);
+            }
+            else
+            {
+                int value_index;
+                sscanf(value, "%d", &value_index);
+                values[setting_index].int_value = value_index;
+            }
         }
         
         free(line);
@@ -343,7 +377,6 @@ void parse_line(char *line, char *name, char *value)
     memset(value, 0, 1024);
     strncpy(value, eq + 1, value_length - 1);
     value[value_length] = 0;
-    
 }
 
 int get_setting_index(const char *name)
@@ -654,11 +687,56 @@ void add_pjl(char *pjl, setting_value values[], int command)
         case kPjlCommandStaple:
         {
             setting_value staple = values[kPrintSettingsStaple];
-            if (staple.set == 0)
+            setting_value finishing_side = values[kPrintSettingsFinishingSide];
+            if (finishing_side.set == 0 || staple.set == 0)
             {
                 return;
             }
-            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][staple.int_value]);
+            
+            if (staple.int_value == 0)
+            {
+                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][0]);
+            }
+            else
+            {
+                if (finishing_side.int_value == 0)
+                {
+                    if (staple.int_value == 3)
+                    {
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
+                    }
+                    else if (staple.int_value == 4)
+                    {
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
+                    }
+                }
+                else if (finishing_side.int_value == 2)
+                {
+                    if (staple.int_value == 3)
+                    {
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]);
+                    }
+                    else if (staple.int_value == 4)
+                    {
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
+                    }
+                }
+                else if (finishing_side.int_value == 1)
+                {
+                    if (staple.int_value == 1)
+                    {
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
+                    }
+                    else if (staple.int_value == 2)
+                    {
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]);
+                    }
+                    else if (staple.int_value == 4)
+                    {
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
+                    }
+                }
+            }
             strcat(pjl, pjl_line);
             break;
         }
@@ -682,6 +760,45 @@ void add_pjl(char *pjl, setting_value values[], int command)
             }
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][outputTray.int_value]);
             strcat(pjl, pjl_line);
+            break;
+        }
+        case kPjlCommandOwner:
+        {
+            setting_value loginId = values[kPrintSettingsLoginId];
+            if (loginId.set == 0)
+            {
+                return;
+            }
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], loginId.str_value);
+            strcat(pjl, pjl_line);
+            break;
+        }
+        case kPjlCommandPrivatePrinting:
+        {
+            setting_value loginId = values[kPrintSettingsLoginId];
+            setting_value pinCode = values[kPrintSettingsPinCode];
+            if (loginId.set == 0 || pinCode.set == 0)
+            {
+                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][0]);
+            }
+            else
+            {
+                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
+            }
+            strcat(pjl, pjl_line);
+            break;
+        }
+        case kPjlCommandPrivatePrintingBoxNumber:
+        {
+            setting_value loginId = values[kPrintSettingsLoginId];
+            setting_value pinCode = values[kPrintSettingsPinCode];
+            if (loginId.set == 0 || pinCode.set == 0)
+            {
+                return;
+            }
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pinCode.str_value);
+            strcat(pjl, pjl_line);
+            break;
         }
     }
 }
