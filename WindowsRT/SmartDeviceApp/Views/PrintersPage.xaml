@@ -96,6 +96,13 @@
                           RightPaneContent="{Binding DataContext.RightPaneMode, ElementName=printersPage}"
                           RightPaneContentTemplateSelector="{StaticResource PrintersRightPaneTemplateSelector}" Grid.Row="0" Tag="{Binding}">
         <Grid Tag="{Binding}">
+            <Grid x:Name="noPrintersGrid"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Visibility="{Binding IsPrinterListEmpty, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="{Binding Source=IDS_LBL_PRINTERS_EMPTY, Converter={StaticResource ResourceStringToTextConverter}}"
+                           Style="{StaticResource STYLE_TextBody}"/>
+            </Grid>
             <local:AdaptableGridView x:Name="printerInfoView" ItemWidth="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
 						ScrollViewer.VerticalScrollMode="Enabled"
 						ScrollViewer.VerticalScrollBarVisibility="Visible"

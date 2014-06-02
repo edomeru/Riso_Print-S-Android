@@ -38,6 +38,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _openDefaultPrinterSettings;
 
         private ObservableCollection<Printer> _printerList;
+        private bool _isPrinterListEmpty;
 
         /**
          * 
@@ -73,6 +74,32 @@ namespace SmartDeviceApp.ViewModels
             {
                 _printerList = value;
                 OnPropertyChanged("PrinterList");
+                CheckPrinterListEmpty();
+            }
+        }
+
+        public bool IsPrinterListEmpty
+        {
+            get { return _isPrinterListEmpty; }
+            set
+            {
+                if (_isPrinterListEmpty != value)
+                {
+                    _isPrinterListEmpty = value;
+                    RaisePropertyChanged("IsPrinterListEmpty");
+                }
+            }
+        }
+
+        private void CheckPrinterListEmpty()
+        {
+            if (PrinterList.Count == 0)
+            {
+                IsPrinterListEmpty = true;
+            }
+            else
+            {
+                IsPrinterListEmpty = false;
             }
         }
 
@@ -217,7 +244,8 @@ namespace SmartDeviceApp.ViewModels
             else
             {
                 Printer printer = PrinterList.FirstOrDefault(x => x.IpAddress == _printerToBeDeleted);
-                printer.WillBeDeleted = false;
+                if (printer != null)
+                    printer.WillBeDeleted = false;
             }
             
         }

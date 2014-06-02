@@ -68,7 +68,12 @@ namespace SmartDeviceApp.ViewModels
                 if (_selectPrinter == null)
                 {
                     _selectPrinter = new RelayCommand<Printer>(
-                        (prn) => SelectPrinterExecute(prn.Id),
+                        (prn) => {
+                            if (prn != null)
+                            {
+                                SelectPrinterExecute(prn.Id); 
+                            }
+                        },
                         (prn) => true
                     );
                 }

@@ -65,6 +65,13 @@
                       ZoomMode="Disabled" 
                       Loaded="OnJobsScrollViewerLoaded">
             <Grid>
+                <Grid x:Name="noJobsGrid"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Visibility="{Binding IsPrintJobsListEmpty, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="{Binding Source=IDS_LBL_PRINTJOBHISTORY_EMPTY, Converter={StaticResource ResourceStringToTextConverter}}"
+                               Style="{StaticResource STYLE_TextBody}"/>
+                </Grid>
                 <Grid x:Name="jobsGrid" Loaded="OnJobsGridLoaded" Grid.Row="0"
                       Width="Auto"
                       Height="Auto"

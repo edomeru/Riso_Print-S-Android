@@ -363,21 +363,16 @@ namespace SmartDeviceApp.Controllers
 
 
             //check if already in _printerList
-            Printer printer = null;
-            try {
-                printer = _printerList.FirstOrDefault(x => x.IpAddress == ip);
-                }
-            catch {
+            Printer printer = _printerList.FirstOrDefault(x => x.IpAddress == ip);
+            if (printer == null)
+            {
                 //check if online
                 //get MIB
                 SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
                 SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
                 SNMPController.Instance.getDevice(ip);
-
-                
             }
-
-            if (printer != null)
+            else
             {
                 //cannot add, printer already in list
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
@@ -430,18 +425,13 @@ namespace SmartDeviceApp.Controllers
             
             if (PrinterList.Count > 0)
             {
-                try
-                { 
-                    Printer inList = PrinterList.FirstOrDefault(x => x.IpAddress == ip);
-                    if (inList != null)
-                    {
-                        return;
-                    }
-                }
-                catch(Exception e)
+                
+                Printer inList = PrinterList.FirstOrDefault(x => x.IpAddress == ip);
+                if (inList != null)
                 {
-                   
+                    return;
                 }
+                
             }
                 //add to printerList
                 Printer printer = new Printer() { IpAddress = ip, Name = name };
@@ -662,21 +652,15 @@ namespace SmartDeviceApp.Controllers
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
                     _printerSearchList.Add(printer);
-                    try
+                    
+                    printerInList = _printerList.FirstOrDefault(x => x.IpAddress == printer.Ip_address);
+                    if (printerInList == null)
                     {
-                        printerInList = _printerList.FirstOrDefault(x => x.IpAddress == printer.Ip_address);
-                    }
-                    catch
-                    {
-                        //not in the list
                         printer.IsInPrinterList = false;
-
                     }
-                    finally
+                    else
                     {
-                        if (printerInList != null) { 
-                            printer.IsInPrinterList = true;
-                        }
+                        printer.IsInPrinterList = true;
                     }
                 });
 
@@ -739,12 +723,15 @@ namespace SmartDeviceApp.Controllers
                 if (PrinterSearchList.Count > 0) {
                     
                     PrinterSearchItem searchItem = PrinterSearchList.FirstOrDefault(x => x.Ip_address == ip);
-                   
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                    Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                    {
-                        searchItem.IsInPrinterList = true;
-                    });
+
+                    if (searchItem != null)
+                    { 
+                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                        Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                        {
+                            searchItem.IsInPrinterList = true;
+                        });
+                    }
                 }
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
@@ -769,6 +756,12 @@ namespace SmartDeviceApp.Controllers
         public async Task<bool> deletePrinter(string ipAddress)
         {
             Printer printer =  _printerList.FirstOrDefault(x => x.IpAddress == ipAddress);
+
+            if (printer == null)
+            {
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_DELETE_FAILED", "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                return false;
+            }
 
             int result = await DatabaseController.Instance.DeletePrinter(printer);
 
