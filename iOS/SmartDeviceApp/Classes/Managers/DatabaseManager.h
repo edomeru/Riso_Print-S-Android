@@ -26,6 +26,21 @@
 + (NSArray*)getObjects:(NSString*)entityName;
 
 /**
+ Retrieves objects of the specified entity from the database.
+ Compared to the getObjects: method, a filter can be specified for
+ fetching specific entries for the given entity.
+ @param entityName
+        one of the following entities:
+        E_PRINTER, E_PRINTSETTING,
+        E_PRINTJOB, E_DEFAULTPRINTER
+ @param filter
+        string of the format "attribute = 'value'"
+ @see "Predicate Format String Syntax"
+ @return NSArray* of the matching results, nil otherwise.
+ */
++ (NSArray*)getObjects:(NSString*)entityName usingFilter:(NSString*)filter;
+
+/**
  Inserts a new object of the specified entity into the database.
  This method does not save the NSManagedObjectContext as this new
  object may only be temporarily needed. A succeeding call to 
