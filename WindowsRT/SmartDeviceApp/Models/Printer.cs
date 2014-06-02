@@ -102,7 +102,7 @@ namespace SmartDeviceApp.Models
         public bool EnabledRaw { get; set; }
 
         /// <summary>
-        /// Printer support for booklet-finishing, used by Printer table
+        /// Printer support for booklet, used by Printer table
         /// </summary>
         [SQLite.Column("prn_enabled_booklet"), SQLite.NotNull]
         public bool EnabledBooklet { get; set; }
