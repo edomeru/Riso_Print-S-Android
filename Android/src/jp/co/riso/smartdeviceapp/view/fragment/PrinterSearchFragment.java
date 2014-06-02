@@ -194,15 +194,24 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void onRefresh() {
         mPrinter.clear();
+        mEmptySearchText.setVisibility(View.GONE);
         if (!NetUtils.isNetworkAvailable(getActivity())) {
             dialogErrCb();
             updateRefreshBar();
             return;
         }
-        mEmptySearchText.setVisibility(View.GONE);
+
         mPrinterManager.startPrinterSearch();
     }
     
+    /** {@inheritDoc} */
+    @Override
+    public void onHeaderAdjusted(int padding) {
+        if (mEmptySearchText != null) {
+            mEmptySearchText.setPadding(0, padding, 0, 0);
+        }
+    }
+
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================

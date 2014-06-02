@@ -58,6 +58,12 @@ public class PullToRefreshListView extends ListView{
          * Method to be called when a refresh is requested
          */
         public void onRefresh();
+        
+        /**
+         * Method to be called when the header padding is adjusted
+         */
+        public void onHeaderAdjusted(int padding);
+        
     }
 
     private static int measuredHeaderHeight;
@@ -267,6 +273,8 @@ public class PullToRefreshListView extends ListView{
         MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) header.getLayoutParams();
         mlp.setMargins(0, Math.round(padding), 0, 0);
         header.setLayoutParams(mlp);
+        
+        onRefreshListener.onHeaderAdjusted(Math.max(padding, 0));
     }
 
     @Override
