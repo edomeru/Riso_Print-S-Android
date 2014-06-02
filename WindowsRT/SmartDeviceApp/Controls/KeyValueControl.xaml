@@ -92,25 +92,28 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
-                    <ContentPresenter Content="{Binding ValueContent, ElementName=keyValueControl}" 
-                                      Width="Auto"
-                                      Style="{StaticResource STYLE_AlignRight}"/>
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                        <TextBlock x:Name="value" 
-                                   Text="{Binding ValueText, ElementName=keyValueControl}"
-                                   Visibility="{Binding ValueVisibility, ElementName=keyValueControl}"
-                                   Width="{Binding ValueTextWidth, ElementName=keyValueControl}"
-                                   Style="{Binding ValueTextStyle, ElementName=keyValueControl}" />
-                        <TextBlock x:Name="valueSubText"
-                                   Text="{Binding ValueSubText, ElementName=keyValueControl}"
-                                   Width="{Binding ValueTextWidth, ElementName=keyValueControl}"
-                                   Visibility="{Binding ValueSubTextVisibility, ElementName=keyValueControl}"
-                                   Style="{StaticResource STYLE_TextValueSubText}">
-                            <TextBlock.Margin>
-                                <Thickness Top="{StaticResource MARGIN_Medium}"></Thickness>
-                            </TextBlock.Margin>
-                        </TextBlock>
-                    </StackPanel>
+                    <Grid>           
+                        <ContentPresenter Content="{Binding ValueContent, ElementName=keyValueControl}" 
+                                          Width="Auto"
+                                          Style="{StaticResource STYLE_AlignRight}"/>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                            <TextBlock x:Name="value" 
+                                       Text="{Binding ValueText, ElementName=keyValueControl}"
+                                       Visibility="{Binding ValueVisibility, ElementName=keyValueControl}"
+                                       Width="{Binding ValueTextWidth, ElementName=keyValueControl}"
+                                       Style="{Binding ValueTextStyle, ElementName=keyValueControl}" />
+                            <TextBlock x:Name="valueSubText"
+                                       Text="{Binding ValueSubText, ElementName=keyValueControl}"
+                                       Width="{Binding ValueTextWidth, ElementName=keyValueControl}"
+                                       Visibility="{Binding ValueSubTextVisibility, ElementName=keyValueControl}"
+                                       Style="{StaticResource STYLE_TextValueSubText}">
+                                <TextBlock.Margin>
+                                    <Thickness Top="{StaticResource MARGIN_Medium}"></Thickness>
+                                </TextBlock.Margin>
+                            </TextBlock>
+                        </StackPanel>
+                       
+                    </Grid>
                     <Image x:Name="rightButton" 
 	                       Source="{Binding RightImage, ElementName=keyValueControl}"
                            Visibility="{Binding RightButtonVisibility, ElementName=keyValueControl}" 

@@ -146,6 +146,11 @@
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
         <ListView ItemsSource="{Binding Path=PrintSettingsList}"
                   ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                </TransitionCollection>                
+            </ListView.ItemContainerTransitions>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <controls:GroupListControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
