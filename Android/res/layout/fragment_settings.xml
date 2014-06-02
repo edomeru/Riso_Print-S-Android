@@ -9,7 +9,7 @@
 
     <ScrollView
         android:id="@+id/rootView"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/settings_width"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:background="@color/theme_light_3" >

@@ -15,6 +15,7 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartprint.R;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -58,17 +59,7 @@ public class SettingsFragment extends BaseFragment {
         };
         editText.setFilters(filterArray);
         
-        if (!isTablet()) {
-            Point screenSize = AppUtils.getScreenDimensions(getActivity());
-            View rootView = view.findViewById(R.id.rootView);
-            if (rootView == null) {
-                return;
-            }
-            ViewGroup.LayoutParams params = rootView.getLayoutParams();
-            if (screenSize.x > screenSize.y) {
-                params.width = screenSize.y;
-            }
-        }
+        resizeView(view);
     }
     
     /** {@inheritDoc} */
@@ -89,6 +80,36 @@ public class SettingsFragment extends BaseFragment {
             case ID_MENU_ACTION_BUTTON:
                 AppUtils.hideSoftKeyboard(getActivity());
                 break;
+        }
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        resizeView(getView());
+    }
+    
+    // ================================================================================
+    // Private Methods
+    // ================================================================================
+    
+    /**
+     * Updates the view width
+     * 
+     * @param view
+     *            Container of the view to be updated
+     */
+    private void resizeView(View view) {
+        if (!isTablet()) {
+            Point screenSize = AppUtils.getScreenDimensions(getActivity());
+            View rootView = view.findViewById(R.id.rootView);
+            if (rootView == null) {
+                return;
+            }
+            ViewGroup.LayoutParams params = rootView.getLayoutParams();
+            if (screenSize.x > screenSize.y) {
+                params.width = screenSize.y;
+            }
         }
     }
     
