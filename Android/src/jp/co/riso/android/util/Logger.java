@@ -44,10 +44,6 @@ public class Logger {
     private static HashMap<String, Long> sTimeLog = new HashMap<String, Long>();
     private static HashMap<String, Float> sMemoryLog = new HashMap<String, Float>();
     
-    {
-        initialize(LOGLEVEL_NONE, false, false);
-    }
-    
     public static void initialize(int logLevel, boolean perfLogs, boolean perfLogsToFile) {
         sLogLevel = logLevel;
         sPerfLogs = perfLogs;
@@ -427,5 +423,9 @@ public class Logger {
             Log.d(DeleteTask.class.getSimpleName(), "Duration: " + (System.currentTimeMillis() - time));
             Log.d(DeleteTask.class.getSimpleName(), "Count: " + count);
         }
+    }
+    
+    static {
+        initialize(LOGLEVEL_NONE, false, false);
     }
 }
