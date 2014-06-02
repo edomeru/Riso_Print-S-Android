@@ -603,6 +603,7 @@ public class PrinterManager implements SNMPManagerCallback {
     private static void setupPrinterConfig(Printer printer, boolean[] capabilities) {
         printer.getConfig().setBookletAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_BOOKLET]);
         printer.getConfig().setStaplerAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_STAPLER]);
+        printer.getConfig().setPunch3Available(capabilities[SNMPManager.SNMP_CAPABILITY_FINISH_2_3]);
         printer.getConfig().setPunch4Available(capabilities[SNMPManager.SNMP_CAPABILITY_FINISH_2_4]);
         printer.getConfig().setTrayFaceDownAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_TRAY_FACE_DOWN]);
         printer.getConfig().setTrayTopAvailable(capabilities[SNMPManager.SNMP_CAPABILITY_TRAY_TOP]);
