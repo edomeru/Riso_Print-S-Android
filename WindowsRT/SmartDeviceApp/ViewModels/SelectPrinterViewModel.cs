@@ -39,6 +39,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _backToPrintSettings;
 
         private ObservableCollection<Printer> _printerList;
+        private bool _isPrinterListEmpty;
 
         public SelectPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -57,6 +58,20 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _printerList = value;
                     RaisePropertyChanged("PrinterList");
+                    CheckPrinterListEmpty();
+                }
+            }
+        }
+
+        public bool IsPrinterListEmpty
+        {
+            get { return _isPrinterListEmpty; }
+            set
+            {
+                if (_isPrinterListEmpty != value)
+                {
+                    _isPrinterListEmpty = value;
+                    RaisePropertyChanged("IsPrinterListEmpty");
                 }
             }
         }
@@ -93,6 +108,18 @@ namespace SmartDeviceApp.ViewModels
                     );
                 }
                 return _backToPrintSettings;
+            }
+        }
+
+        private void CheckPrinterListEmpty()
+        {
+            if (_printerList != null && _printerList.Count == 0)
+            {
+                IsPrinterListEmpty = true;
+            }
+            else
+            {
+                IsPrinterListEmpty = false;
             }
         }
 

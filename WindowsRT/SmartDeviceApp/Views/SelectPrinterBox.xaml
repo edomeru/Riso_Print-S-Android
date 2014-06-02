@@ -56,6 +56,13 @@
             Command="{Binding BackToPrintSettings}"
             Template="{StaticResource TEMPLATE_HeaderButton}"
             Width="{Binding Width, ElementName=selectPrinterBox}"/>
+    <Grid x:Name="noPrintersGrid" Grid.Row="1"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          Visibility="{Binding IsPrinterListEmpty, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <TextBlock Text="{Binding Source=IDS_LBL_PRINTERS_EMPTY, Converter={StaticResource ResourceStringToTextConverter}}"
+                           Style="{StaticResource STYLE_TextBody}"/>
+    </Grid>
     <ListView x:Name="printersListView" Grid.Row="1"
               ItemsSource="{Binding PrinterList}"
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
