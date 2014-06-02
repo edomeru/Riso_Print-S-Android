@@ -9,7 +9,7 @@
 
     <ScrollView
         android:id="@+id/rootView"
-        android:layout_width="@dimen/settings_width"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:background="@color/theme_light_3" >
@@ -40,24 +40,21 @@
                 android:paddingRight="@dimen/printsettings_menu_padding" >
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
                     android:duplicateParentState="true"
                     android:paddingRight="@dimen/printsettings_menu_padding"
-                    android:maxLines="2"
                     android:text="@string/ids_lbl_login_id"
                     android:textColor="@color/theme_dark_1" />
 
                 <EditText
                     style="@style/BorderedEditText"
                     android:id="@+id/loginIdEditText"
-                    android:layout_width="@dimen/settings_login_id_input_width"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:gravity="left"
-                    android:layout_weight="0"
                     android:singleLine="true" >
                 </EditText>
             </LinearLayout>
