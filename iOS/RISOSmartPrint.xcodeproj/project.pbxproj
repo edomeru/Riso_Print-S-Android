@@ -15,7 +15,6 @@
 		28052CE81911C651007982DF /* SNMPManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC55418F61C1700DBD2BD /* SNMPManagerTest.m */; };
 		28052CE91911C651007982DF /* InputHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54E18F61C1700DBD2BD /* InputHelperTest.m */; };
 		28052CEA1911C651007982DF /* PListHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC54F18F61C1700DBD2BD /* PListHelperTest.m */; };
-		28052CED1911D06F007982DF /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */; };
 		28052CEE1911D16F007982DF /* PrintJobHistoryGroupTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56718F6351600DBD2BD /* PrintJobHistoryGroupTest.m */; };
 		28052CF01911D16F007982DF /* PrintJobHistoryHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CFC56418F61FDA00DBD2BD /* PrintJobHistoryHelperTest.m */; };
 		280C096A192048DD00347991 /* PrintJobItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C0969192048DD00347991 /* PrintJobItemCell.m */; };
@@ -36,6 +35,7 @@
 		28D3349E19299C4000F99B23 /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D3349D19299C4000F99B23 /* PaddedLabel.m */; };
 		28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7B31518EE48D300FE15BA /* NSDate+Format.m */; };
 		28ED46DE19261DFD00B8D4A0 /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C096F19206DF000347991 /* DeleteButton.m */; };
+		28FBAF1A193C53420042ED4C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 		28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
@@ -305,7 +305,6 @@
 		2800D042193567BD002FA1D4 /* SearchingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchingIndicator.m; sourceTree = "<group>"; };
 		2801620F18EAB0AA00DFFE5E /* PrintJobHistoryLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobHistoryLayout.h; sourceTree = "<group>"; };
 		2801621018EAB0AA00DFFE5E /* PrintJobHistoryLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryLayout.m; sourceTree = "<group>"; };
-		28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SmartDeviceApp-Settings.plist"; sourceTree = "<group>"; };
 		280C0968192048DD00347991 /* PrintJobItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintJobItemCell.h; sourceTree = "<group>"; };
 		280C0969192048DD00347991 /* PrintJobItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobItemCell.m; sourceTree = "<group>"; };
 		280C096E19206DF000347991 /* DeleteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteButton.h; sourceTree = "<group>"; };
@@ -690,14 +689,6 @@
 			path = Layouts;
 			sourceTree = "<group>";
 		};
-		28052CEB1911D06F007982DF /* PropertyList */ = {
-			isa = PBXGroup;
-			children = (
-				28052CEC1911D06F007982DF /* SmartDeviceApp-Settings.plist */,
-			);
-			path = PropertyList;
-			sourceTree = "<group>";
-		};
 		2828312F18C70699008B127C /* Database */ = {
 			isa = PBXGroup;
 			children = (
@@ -1004,7 +995,6 @@
 			isa = PBXGroup;
 			children = (
 				2D0AEC85185FE50000810455 /* Locales */,
-				28052CEB1911D06F007982DF /* PropertyList */,
 				3195C0641911126100197397 /* TestData */,
 			);
 			path = Resources;
@@ -1765,11 +1755,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28FBAF1A193C53420042ED4C /* SmartDeviceApp-Settings.plist in Resources */,
 				3195C08D1911149B00197397 /* Main.storyboard in Resources */,
 				3195C08E1911149B00197397 /* printsettings.xml in Resources */,
 				3195C08B1911148C00197397 /* Images.xcassets in Resources */,
 				2821CAB0190E50C000CE3D51 /* Localizable.strings in Resources */,
-				28052CED1911D06F007982DF /* SmartDeviceApp-Settings.plist in Resources */,
 				2D1F23CB190104D900301D1E /* help.html in Resources */,
 				2D1F23CD190104D900301D1E /* legal.html in Resources */,
 				3195C06B1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingNotAllowed.pdf in Resources */,

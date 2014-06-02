@@ -19,6 +19,7 @@
 
 @interface PrintJobHistoryHelper ()
 
+#if DEBUG_PRINT_JOB_USE_TEST_DATA
 /**
  Fills the database with PrintJob objects.
  It creates default-capability Printers, adds some pre-defined 
@@ -26,6 +27,7 @@
  This is to be used only for debugging.
  */
 + (void)populateWithTestData;
+#endif
 
 /**
  Checks if a printer already has the maximum number of print jobs.
@@ -46,10 +48,9 @@
     NSMutableArray* listPrintJobHistoryGroups = [NSMutableArray array];
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
-    if ([PListHelper readBool:kPlistBoolValUsePrintJobTestData])
-    {
-        [self populateWithTestData];
-    }
+#if DEBUG_PRINT_JOB_USE_TEST_DATA
+    [self populateWithTestData];
+#endif
     
     NSInteger groupTag = 0; //unique,immutable group identifier
     for (NSUInteger idx = 0; idx < pm.countSavedPrinters; idx++)
@@ -173,6 +174,7 @@
     }
 }
 
+#if DEBUG_PRINT_JOB_USE_TEST_DATA
 + (void)populateWithTestData
 {
     // TEST DATA CONSTANTS
@@ -261,5 +263,6 @@
 #endif
     }
 }
+#endif
 
 @end

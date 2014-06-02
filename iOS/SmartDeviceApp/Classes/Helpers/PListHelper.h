@@ -15,12 +15,6 @@ typedef enum
     
 } kPlistUintVal;
 
-typedef enum
-{
-    kPlistBoolValUsePrintJobTestData,
-    
-} kPlistBoolVal;
-
 @interface PListHelper : NSObject
 
 /**
@@ -29,12 +23,5 @@ typedef enum
  @return value for the specified key
  */
 + (NSUInteger)readUint:(kPlistUintVal)type;
-
-/**
- Wrapper for reading a boolean value from the property list.
- @param kPlistBoolVal key
- @return value for the specified key
- */
-+ (BOOL)readBool:(kPlistBoolVal)type;
 
 @end

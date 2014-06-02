@@ -67,19 +67,4 @@ static NSDictionary* sharedSettingsDict = nil;
     }
 }
 
-+ (BOOL)readBool:(kPlistBoolVal)type;
-{
-    if (sharedSettingsDict == nil)
-        [self setSharedSettingsDict];
-    
-    switch (type)
-    {
-        case kPlistBoolValUsePrintJobTestData:
-            return [[sharedSettingsDict objectForKey:@"Use_PrintJobHistoryTestData"] boolValue];
-            
-        default:
-            return NO;
-    }
-}
-
 @end

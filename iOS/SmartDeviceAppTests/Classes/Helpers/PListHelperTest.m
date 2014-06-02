@@ -49,10 +49,9 @@
 /* TEST CASES ARE EXECUTED IN ALPHABETICAL ORDER */
 /* use a naming scheme for defining the execution order of your test cases */
 
-- (void)test001_ReadUInt
+- (void)testReadUint
 {
     GHTestLog(@"# CHECK: The UINT settings are correct. #");
-    // reads the UINT settings from SmartDeviceAppTests/PropertyList/SmartDeviceApp-Settings.plist
     
     GHTestLog(@"-- reading invalid");
     NSUInteger defaultValue = [PListHelper readUint:99];
@@ -64,20 +63,7 @@
     
     GHTestLog(@"-- reading [Max Print Job Per Printer Count]");
     NSUInteger actualMaxPrintJobCount = [PListHelper readUint:kPlistUintValMaxPrintJobsPerPrinter];
-    GHAssertTrue(actualMaxPrintJobCount == 10, @"");
-}
-
-- (void)test002_ReadBool
-{
-    GHTestLog(@"# CHECK: The BOOL settings are correct. #");
-    // reads the BOOL settings from SmartDeviceAppTests/PropertyList/SmartDeviceApp-Settings.plist
-    
-    GHTestLog(@"-- reading invalid");
-    NSUInteger defaultValue = [PListHelper readBool:99];
-    GHAssertFalse(defaultValue, @"");
-    
-    GHTestLog(@"-- reading [Use Print Job History Test Data]");
-    GHAssertTrue([PListHelper readBool:kPlistBoolValUsePrintJobTestData], @"");
+    GHAssertTrue(actualMaxPrintJobCount == 100, @"");
 }
 
 @end
