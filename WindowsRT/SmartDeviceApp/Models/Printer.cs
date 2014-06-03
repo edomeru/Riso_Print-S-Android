@@ -167,8 +167,11 @@ namespace SmartDeviceApp.Models
             get { return this._isOnline; }
             set
             {
-                _isOnline = value;
-                OnPropertyChanged("IsOnline");
+                if (_isOnline != value)
+                {
+                    _isOnline = value;
+                    OnPropertyChanged("IsOnline");
+                }
             }
         }
 

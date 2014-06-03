@@ -1,5 +1,5 @@
 INSERT INTO Printer VALUES(1, 1, '192.168.0.1', 'Printer1 Full Default', 0, 1, 1, 1, 1, 0, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(2, 2, '192.168.0.2', 'Printer2 Booklet Hide', 0, 1, 1, 0, 1, 0, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(2, 2, '192.168.0.2', 'Printer2 Booklet-Finishing Hide', 0, 1, 1, 0, 1, 0, 1, 1, 1, 1);
 INSERT INTO Printer VALUES(3, 3, '192.168.0.3', 'Printer3 Stapler Hide', 0, 1, 1, 1, 0, 0, 1, 1, 1, 1);
 INSERT INTO Printer VALUES(4, 4, '192.168.0.4', 'Printer4 Punch3 Show', 0, 1, 1, 1, 1, 1, 0, 1, 1, 1);
 INSERT INTO Printer VALUES(5, 5, '192.168.0.5', 'Printer5 Punch Hide', 0, 1, 1, 1, 1, 0, 0, 1, 1, 1);
