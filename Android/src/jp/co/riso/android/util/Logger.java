@@ -300,7 +300,7 @@ public class Logger {
             return;
         }
         
-        File path = new File(getFolderString(context), sStringFolder + ".txt");
+        File path = new File(getFolderString(context), CONST_TXT_FILENAME);
 
         Log.e(Logger.class.getSimpleName(), path.toString());
         try {
