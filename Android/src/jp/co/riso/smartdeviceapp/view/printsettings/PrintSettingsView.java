@@ -683,10 +683,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         boolean isPunchAvailable = printer == null || printer.getConfig().isPunchAvailable();
         setViewVisible(PrintSettings.TAG_PUNCH, isPunchAvailable);
         
-        boolean isBookletAvailable = printer == null || printer.getConfig().isBookletAvailable();
-        setViewVisible(PrintSettings.TAG_BOOKLET, isBookletAvailable);
-        setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletAvailable);
-        setViewVisible(PrintSettings.TAG_BOOKLET_LAYOUT, isBookletAvailable);
+        boolean isBookletFinishingAvailable = printer == null || printer.getConfig().isBookletFinishingAvailable();
+        setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable);
         
     }
     
