@@ -50,7 +50,7 @@
             android:layout_weight="0"
             android:contentDescription="@string/default_content_description"
             android:gravity="right"
-            android:src="@drawable/img_btn_add_printer_pressed" />
+            android:src="@drawable/selector_addprinter_save" />
     </LinearLayout>
 
 </jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>

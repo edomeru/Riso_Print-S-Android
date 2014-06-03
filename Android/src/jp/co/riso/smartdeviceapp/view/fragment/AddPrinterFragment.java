@@ -26,11 +26,13 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -83,6 +85,19 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
 
         if (mPrinterManager.isSearching()) {
             setViewToDisable(mAddPrinterView);
+        }
+        if (!isTablet()) {
+            Point screenSize = AppUtils.getScreenDimensions(getActivity());
+            View rootView = view.findViewById(R.id.rootView);
+            if (rootView == null) {
+                return;
+            }
+            ViewGroup.LayoutParams params = rootView.getLayoutParams();
+            if (screenSize.x > screenSize.y) {
+                params.width = screenSize.y;
+            } else {
+                params.width = screenSize.x;
+            }
         }
     }
     
