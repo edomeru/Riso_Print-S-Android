@@ -110,6 +110,14 @@ namespace SmartDeviceAppTests.Converters
             result = printSettingToValueConverter.Convert(value1, null, parameter, null);
             Assert.AreEqual(intValue, result);
 
+            parameter = "securePrint";
+            result = printSettingToValueConverter.Convert(value2, null, parameter, null);
+            Assert.AreEqual(boolValue, result);
+
+            parameter = "pinCode";
+            result = printSettingToValueConverter.Convert(value1, null, parameter, null);
+            Assert.AreEqual(value1, result);
+
             // Test wrong parameter
             parameter = "TEST";
             result = printSettingToValueConverter.Convert(value1, null, parameter, null);

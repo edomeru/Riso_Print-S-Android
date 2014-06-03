@@ -507,7 +507,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Imposition);
 
            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -533,17 +534,18 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.ColorMode);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
-        public async Task Test_PrintSettingValueChanged_Int_Orientation()
+        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromPortraitPunchFour()
         {
             await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
 
             _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(1);
@@ -558,7 +560,197 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Orientation);
+            Assert.AreEqual((int)Punch.Off, printSettings.Punch);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromLandscapePunchFour()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
+
+            _screenName = ScreenMode.Printers.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(2);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
+                Type = PrintSettingType.numeric,
+                Value = 1,
+                Default = 0
+            };
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Orientation);
+            Assert.AreEqual((int)Punch.FourHoles, printSettings.Punch);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromPortraitPunchOther()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
+
+            _screenName = ScreenMode.Printers.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(3);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
+                Type = PrintSettingType.numeric,
+                Value = 1,
+                Default = 0
+            };
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Orientation);
+            Assert.AreEqual((int)Punch.TwoHoles, printSettings.Punch);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromLandscapePunchOther()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
+
+            _screenName = ScreenMode.Printers.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(4);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
+                Type = PrintSettingType.numeric,
+                Value = 1,
+                Default = 0
+            };
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Orientation);
+            Assert.AreEqual((int)Punch.TwoHoles, printSettings.Punch);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromPortraitBookletLayoutLR()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
+
+            _screenName = ScreenMode.Printers.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(5);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
+                Type = PrintSettingType.numeric,
+                Value = 1,
+                Default = 0
+            };
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Orientation);
+            Assert.AreEqual((int)BookletLayout.TopToBottom, printSettings.BookletLayout);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromLandscapeBookletLayoutLR()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
+
+            _screenName = ScreenMode.Printers.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(6);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
+                Type = PrintSettingType.numeric,
+                Value = 1,
+                Default = 0
+            };
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Orientation);
+            Assert.AreEqual((int)BookletLayout.LeftToRight, printSettings.BookletLayout);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromPortraitBookletLayoutTB()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
+
+            _screenName = ScreenMode.Printers.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(7);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
+                Type = PrintSettingType.numeric,
+                Value = 1,
+                Default = 0
+            };
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Orientation);
+            Assert.AreEqual((int)BookletLayout.TopToBottom, printSettings.BookletLayout);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromLandscapeBookletLayoutTB()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
+
+            _screenName = ScreenMode.Printers.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(8);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
+                Type = PrintSettingType.numeric,
+                Value = 1,
+                Default = 0
+            };
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Orientation);
+            Assert.AreEqual((int)BookletLayout.TopToBottom, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -583,7 +775,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 100);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(100, printSettings.Copies);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -608,7 +801,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Duplex);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -633,13 +827,14 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 5);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(5, printSettings.PaperSize);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
-        public async Task Test_PrintSettingValueChanged_Int_ScaleToFit()
+        public async Task Test_PrintSettingValueChanged_Bool_ScaleToFit_FromTrue()
         {
             await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
@@ -658,7 +853,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, false);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsFalse(printSettings.ScaleToFit);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -683,7 +879,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.PaperType);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -708,7 +905,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.InputTray);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -733,7 +931,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.TwoUpLeftToRight, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -758,7 +958,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.FourUpUpperLeftToRight, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -783,7 +985,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.FourUpUpperLeftToRight, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -808,7 +1012,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.FourUpUpperRightToLeft, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -834,7 +1040,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.TwoUpLeftToRight, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -859,7 +1067,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.TwoUpLeftToRight, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -884,7 +1094,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.TwoUpRightToLeft, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -909,7 +1121,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.TwoUpLeftToRight, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -934,7 +1148,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.TwoUpRightToLeft, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -959,7 +1175,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.TwoUpLeftToRight, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -984,7 +1202,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.ImpositionOrder);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1009,7 +1228,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Sort);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1034,7 +1254,16 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, true);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsTrue(printSettings.Booklet);
+            Assert.AreEqual((int)Duplex.ShortEdge, printSettings.Duplex);
+            Assert.AreEqual((int)Imposition.Off, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.TwoUpLeftToRight, printSettings.ImpositionOrder);
+            Assert.AreEqual((int)FinishingSide.Left, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.Off, printSettings.Staple);
+            Assert.AreEqual((int)Punch.Off, printSettings.Punch);
+            Assert.AreEqual((int)OutputTray.Auto, printSettings.OutputTray);
+            Assert.AreEqual((int)BookletLayout.LeftToRight, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1059,7 +1288,16 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, false);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsFalse(printSettings.Booklet);
+            Assert.AreEqual((int)Duplex.Off, printSettings.Duplex);
+            Assert.AreEqual((int)Imposition.Off, printSettings.Imposition);
+            Assert.AreEqual((int)ImpositionOrder.TwoUpLeftToRight, printSettings.ImpositionOrder);
+            Assert.AreEqual((int)FinishingSide.Left, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.Off, printSettings.Staple);
+            Assert.AreEqual((int)Punch.Off, printSettings.Punch);
+            Assert.AreEqual((int)OutputTray.Auto, printSettings.OutputTray);
+            Assert.AreEqual((int)BookletLayout.LeftToRight, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1084,7 +1322,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.BookletFinishing);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1109,7 +1348,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1134,7 +1374,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.OneUpperLeft, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1159,7 +1401,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.OneUpperLeft, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1184,7 +1428,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.Off, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1209,7 +1455,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.One, printSettings.Staple);
 
            Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1234,7 +1482,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.One, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1259,7 +1509,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.One, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1284,7 +1536,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.One, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1309,7 +1563,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.Two, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1334,7 +1590,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.Two, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1359,7 +1617,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.Off, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1384,7 +1644,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.One, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1409,7 +1671,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 2);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(2, printSettings.FinishingSide);
+            Assert.AreEqual((int)Staple.One, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1434,7 +1698,8 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1459,7 +1724,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Punch);
+            Assert.AreEqual((int)OutputTray.Auto, printSettings.OutputTray);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1484,7 +1751,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.Punch);
+            Assert.AreNotEqual((int)OutputTray.Auto, printSettings.OutputTray);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1509,7 +1778,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Punch);
+            Assert.AreEqual((int)OutputTray.Auto, printSettings.OutputTray);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1534,7 +1805,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Punch);
+            Assert.AreNotEqual((int)OutputTray.Auto, printSettings.OutputTray);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1559,7 +1832,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Punch);
+            Assert.AreEqual((int)OutputTray.Auto, printSettings.OutputTray);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1584,7 +1859,9 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(0, printSettings.Punch);
+            Assert.AreNotEqual((int)OutputTray.Auto, printSettings.OutputTray);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1609,7 +1886,164 @@ namespace SmartDeviceAppTests.Controllers
             };
 
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            // Note: no public properties or return value to assert
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual(1, printSettings.OutputTray);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Bool_SecurePrint_FromFalse_WithoutPinCode()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
+
+            _screenName = ScreenMode.PrintPreview.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(1);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_SECURE_PRINT,
+                Type = PrintSettingType.boolean,
+                Value = true,
+                Default = false
+            };
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, true);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsTrue(printSettings.EnabledSecurePrint);
+            Assert.IsNull(printSettings.PinCode);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Bool_SecurePrint_FromTrue_WithoutPinCode()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
+
+            _screenName = ScreenMode.PrintPreview.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(1);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_SECURE_PRINT,
+                Type = PrintSettingType.boolean,
+                Value = true,
+                Default = false
+            };
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, true);
+            printSetting.Value = false;
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, false);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsFalse(printSettings.EnabledSecurePrint);
+            Assert.IsNull(printSettings.PinCode);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Bool_SecurePrint_FromFalse_WithPinCode()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
+
+            _screenName = ScreenMode.PrintPreview.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(1);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_SECURE_PRINT,
+                Type = PrintSettingType.boolean,
+                Value = true,
+                Default = false
+            };
+            PrintSetting pinCodePrintSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_PIN_CODE,
+                Type = PrintSettingType.password,
+                Value = "",
+                Default = ""
+            };
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, true);
+            PrintSettingsController.Instance.PrintSettingValueChanged(pinCodePrintSetting, "1234");
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, false);
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, true);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsTrue(printSettings.EnabledSecurePrint);
+            Assert.AreEqual("1234", printSettings.PinCode);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_Bool_SecurePrint_FromTrue_WithPinCode()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
+
+            _screenName = ScreenMode.PrintPreview.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(1);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_SECURE_PRINT,
+                Type = PrintSettingType.boolean,
+                Value = true,
+                Default = false
+            };
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, true);
+            PrintSetting pinCodePrintSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_PIN_CODE,
+                Type = PrintSettingType.password,
+                Value = "",
+                Default = ""
+            };
+            PrintSettingsController.Instance.PrintSettingValueChanged(pinCodePrintSetting, "1234");
+            printSetting.Value = false;
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, false);
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.IsFalse(printSettings.EnabledSecurePrint);
+            Assert.IsNull(printSettings.PinCode);
+
+            Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        }
+
+        [TestMethod]
+        public async Task Test_PrintSettingValueChanged_String_PinCode()
+        {
+            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+
+            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
+
+            _screenName = ScreenMode.PrintPreview.ToString();
+            Printer printer = await _dbConnection.GetAsync<Printer>(1);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+
+            PrintSetting printSetting = new PrintSetting()
+            {
+                Name = PrintSettingConstant.NAME_VALUE_PIN_CODE,
+                Type = PrintSettingType.password,
+                Value = "",
+                Default = ""
+            };
+
+            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, "1234");
+            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+            Assert.AreEqual("1234", printSettings.PinCode);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1670,78 +2104,6 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(0, printSettings.OutputTray);
             Assert.IsNull(printSettings.LoginId);
             Assert.IsNull(printSettings.PinCode);
-
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
-
-        [TestMethod]
-        public void Test_SetPinCode_NullScreenName()
-        {
-            PrintSettingsController.Instance.SetPinCode(null, "pincode");
-            // Note: no public properties or return value to assert
-        }
-
-        [TestMethod]
-        public void Test_GetPagesPerSheet_EmptyScreenName()
-        {
-            PrintSettingsController.Instance.SetPinCode(string.Empty, "pincode");
-            // Note: no public properties or return value to assert
-        }
-
-        [TestMethod]
-        public void Test_GetPagesPerSheet_NotExistsScreenName()
-        {
-            PrintSettingsController.Instance.SetPinCode("sample", "pincode");
-            // Note: no public properties or return value to assert
-        }
-
-        [TestMethod]
-        public async Task Test_GetPagesPerSheet_ExistsScreenName_NullPinCode()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
-
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
-
-            _screenName = ScreenMode.PrintPreview.ToString();
-            Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            await PrintSettingsController.Instance.Initialize(_screenName, printer);
-
-            PrintSettingsController.Instance.SetPinCode(_screenName, null);
-            // Note: no public properties or return value to assert
-
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
-
-        [TestMethod]
-        public async Task Test_GetPagesPerSheet_ExistsScreenName_EmptyPinCode()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
-
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
-
-            _screenName = ScreenMode.PrintPreview.ToString();
-            Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            await PrintSettingsController.Instance.Initialize(_screenName, printer);
-
-            PrintSettingsController.Instance.SetPinCode(_screenName, string.Empty);
-            // Note: no public properties or return value to assert
-
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
-
-        [TestMethod]
-        public async Task Test_GetPagesPerSheet_ExistsScreenName_ValidPinCode()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
-
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printer_single.sql", _dbConnection);
-
-            _screenName = ScreenMode.PrintPreview.ToString();
-            Printer printer = await _dbConnection.GetAsync<Printer>(1);
-            await PrintSettingsController.Instance.Initialize(_screenName, printer);
-
-            PrintSettingsController.Instance.SetPinCode(_screenName, "pincode");
-            // Note: no public properties or return value to assert
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }

@@ -256,24 +256,6 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_PinCodeValueChanged()
-        {
-            { // UI.UITestMethod
-                //await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
-                //StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
-                //await DocumentController.Instance.Load(file);
-                //await PrintPreviewController.Instance.Initialize();
-
-                //PrintPreviewController.Instance.PinCodeValueChanged("sample");
-                //PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(ScreenMode.PrintPreview.ToString());
-                //Assert.AreEqual("sample", printSettings.PinCode);
-            }
-
-            PrintPreviewController.Instance.PinCodeValueChanged("sample");
-            // Note: no public property or return value to assert
-        }
-
-        [TestMethod]
         public void Test_UpdatePreview_Null()
         {
             PrintPreviewController.Instance.UpdatePreview(null);

@@ -28,6 +28,10 @@ namespace SmartDeviceAppTests.Selectors
             result = printSettingsListTemplateSelector.SelectTemplate(printSetting, null);
             Assert.AreEqual(printSettingsListTemplateSelector.ListViewItemTextBoxTemplate, result);
 
+            printSetting.Type = PrintSettingType.password;
+            result = printSettingsListTemplateSelector.SelectTemplate(printSetting, null);
+            Assert.AreEqual(printSettingsListTemplateSelector.ListViewItemPasswordBoxTemplate, result);
+
             printSetting.Type = PrintSettingType.list;
             result = printSettingsListTemplateSelector.SelectTemplate(printSetting, null);
             Assert.AreEqual(printSettingsListTemplateSelector.ListViewItemListTemplate, result);

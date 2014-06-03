@@ -125,19 +125,5 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(printSettingsViewModel.SelectPrintSetting);
         }
 
-        private void Test_PinCodeValueChangedEventHandler(string pin)
-        {
-        }
-        
-        [TestMethod]
-        public void Test_AuthenticationLoginPinCode()
-        {
-            PrintPreviewController.PinCodeValueChangedEventHandler eventHandler = new PrintPreviewController.PinCodeValueChangedEventHandler(Test_PinCodeValueChangedEventHandler);
-            printSettingsViewModel.PinCodeValueChangedEventHandler += eventHandler;
-
-            var pinCode = "AUTHENTICATION_PIN_CODE";
-            printSettingsViewModel.AuthenticationLoginPinCode = pinCode;
-            Assert.AreEqual(pinCode, printSettingsViewModel.AuthenticationLoginPinCode);
-        }
     }
 }

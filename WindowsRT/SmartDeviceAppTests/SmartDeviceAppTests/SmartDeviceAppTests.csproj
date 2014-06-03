@@ -196,6 +196,7 @@
     <Content Include="TestData\SqlScript\insert_printjob_extra.sql" />
     <Content Include="TestData\SqlScript\insert_printjob_single.sql" />
     <Content Include="TestData\SqlScript\insert_printer_single.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_orientation.sql" />
     <Content Include="TestData\SqlScript\insert_printsettings_punch.sql" />
     <Content Include="TestData\SqlScript\insert_printsettings_imposition.sql" />
     <Content Include="TestData\SqlScript\insert_printsettings_finishingside.sql" />
