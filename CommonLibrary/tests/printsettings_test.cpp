@@ -682,6 +682,132 @@ TEST(PrintSettingsTest, BookletStapleOffPunchOn)
     EXPECT_TRUE(strstr(output, "@PJL SET RKFINISHSIDE=LEFT\x0d\x0a") != 0);
 }
 
+TEST(PrintSettingsTest, StapleLeft1)
+{
+    char input[1024];
+    char output[1024];
+
+    // initialize input and output
+    strcpy(output, "");
+    strcpy(input, "booklet=0\n");
+    strcat(input, "finishingSide=0\n");
+    strcat(input, "staple=3\n");
+    strcat(input, "punch=0\n");
+
+    create_pjl(output, input);
+
+    EXPECT_TRUE(strstr(output, "@PJL SET RKFINISHSIDE=LEFT\x0d\x0a") != 0);
+    EXPECT_TRUE(strstr(output, "@PJL SET RKSTAPLEMODE=1STAPLELEFT\x0d\x0a") != 0);
+}
+
+TEST(PrintSettingsTest, StapleLeft2)
+{
+    char input[1024];
+    char output[1024];
+
+    // initialize input and output
+    strcpy(output, "");
+    strcpy(input, "booklet=0\n");
+    strcat(input, "finishingSide=0\n");
+    strcat(input, "staple=4\n");
+    strcat(input, "punch=0\n");
+
+    create_pjl(output, input);
+
+    EXPECT_TRUE(strstr(output, "@PJL SET RKFINISHSIDE=LEFT\x0d\x0a") != 0);
+    EXPECT_TRUE(strstr(output, "@PJL SET RKSTAPLEMODE=2STAPLES\x0d\x0a") != 0);
+}
+
+TEST(PrintSettingsTest, StapleTop1Left)
+{
+    char input[1024];
+    char output[1024];
+
+    // initialize input and output
+    strcpy(output, "");
+    strcpy(input, "booklet=0\n");
+    strcat(input, "finishingSide=1\n");
+    strcat(input, "staple=1\n");
+    strcat(input, "punch=0\n");
+
+    create_pjl(output, input);
+
+    EXPECT_TRUE(strstr(output, "@PJL SET RKFINISHSIDE=TOP\x0d\x0a") != 0);
+    EXPECT_TRUE(strstr(output, "@PJL SET RKSTAPLEMODE=1STAPLELEFT\x0d\x0a") != 0);
+}
+
+TEST(PrintSettingsTest, StapleTop1Right)
+{
+    char input[1024];
+    char output[1024];
+
+    // initialize input and output
+    strcpy(output, "");
+    strcpy(input, "booklet=0\n");
+    strcat(input, "finishingSide=1\n");
+    strcat(input, "staple=2\n");
+    strcat(input, "punch=0\n");
+
+    create_pjl(output, input);
+
+    EXPECT_TRUE(strstr(output, "@PJL SET RKFINISHSIDE=TOP\x0d\x0a") != 0);
+    EXPECT_TRUE(strstr(output, "@PJL SET RKSTAPLEMODE=1STAPLERIGHT\x0d\x0a") != 0);
+}
+
+TEST(PrintSettingsTest, StapleTop2)
+{
+    char input[1024];
+    char output[1024];
+
+    // initialize input and output
+    strcpy(output, "");
+    strcpy(input, "booklet=0\n");
+    strcat(input, "finishingSide=1\n");
+    strcat(input, "staple=4\n");
+    strcat(input, "punch=0\n");
+
+    create_pjl(output, input);
+
+    EXPECT_TRUE(strstr(output, "@PJL SET RKFINISHSIDE=TOP\x0d\x0a") != 0);
+    EXPECT_TRUE(strstr(output, "@PJL SET RKSTAPLEMODE=2STAPLES\x0d\x0a") != 0);
+}
+
+TEST(PrintSettingsTest, StapleRight1)
+{
+    char input[1024];
+    char output[1024];
+
+    // initialize input and output
+    strcpy(output, "");
+    strcpy(input, "booklet=0\n");
+    strcat(input, "finishingSide=2\n");
+    strcat(input, "staple=3\n");
+    strcat(input, "punch=0\n");
+
+    create_pjl(output, input);
+
+    EXPECT_TRUE(strstr(output, "@PJL SET RKFINISHSIDE=RIGHT\x0d\x0a") != 0);
+    EXPECT_TRUE(strstr(output, "@PJL SET RKSTAPLEMODE=1STAPLERIGHT\x0d\x0a") != 0);
+}
+
+TEST(PrintSettingsTest, StapleRight2)
+{
+    char input[1024];
+    char output[1024];
+
+    // initialize input and output
+    strcpy(output, "");
+    strcpy(input, "booklet=0\n");
+    strcat(input, "finishingSide=2\n");
+    strcat(input, "staple=4\n");
+    strcat(input, "punch=0\n");
+
+    create_pjl(output, input);
+
+    EXPECT_TRUE(strstr(output, "@PJL SET RKFINISHSIDE=RIGHT\x0d\x0a") != 0);
+    EXPECT_TRUE(strstr(output, "@PJL SET RKSTAPLEMODE=2STAPLES\x0d\x0a") != 0);
+}
+
 // Authentication
 
 TEST(PrintSettingsTest, OwnerOK_PinEmpty)
