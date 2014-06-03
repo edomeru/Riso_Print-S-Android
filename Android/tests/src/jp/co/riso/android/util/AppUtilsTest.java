@@ -667,7 +667,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
     
     //================================================================================
-    // Test getAuthenticationString
+    // Test getOwnerName
     //================================================================================
 
     public void testGetOwnerName_Valid() {
