@@ -304,7 +304,7 @@ public class PullToRefreshListView extends ListView{
                         case RELEASE_TO_REFRESH:
                             setState(State.REFRESHING);
                             bounceBackHeader();
-
+                            onRefreshListener.onHeaderAdjusted(0);
                             break;
 
                         case PULL_TO_REFRESH:
