@@ -61,6 +61,7 @@ namespace SmartDeviceApp.Controls
             this.InitializeComponent();
             Children = contentGrid.Children;
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
+            Window.Current.SizeChanged += WindowSizeChanged;
         }
 
         public ViewControlViewModel ViewModel
@@ -197,6 +198,19 @@ namespace SmartDeviceApp.Controls
         private void OnButton2Tapped(object sender, TappedRoutedEventArgs e)
         {
             e.Handled = true;
+        }
+
+        /// <summary>
+        /// Triggered when the window is snapped, reduced to a partial screen view by another app,
+        /// or changed to full screen from a partial screen view
+        /// </summary>
+        private void WindowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
+        {
+            // Workaround to reset the view mode to force recalculation 
+            // of the view root width in ResizedViewWidthConverter
+            var prevViewMode = ViewModel.ViewMode;
+            ViewModel.ViewMode = ViewMode.Unknown;
+            ViewModel.ViewMode = prevViewMode;
         }
     }
 }
