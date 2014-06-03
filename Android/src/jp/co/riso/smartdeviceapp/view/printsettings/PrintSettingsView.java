@@ -389,12 +389,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         int defaultValue = PrintSettings.sSettingMap.get(tag).getDefaultValue();
         
-        if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
-            if (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal()) {
-                defaultValue = FinishingSide.TOP.ordinal();
-            }
-        }
-        
         if (tag.equals(PrintSettings.TAG_BOOKLET_LAYOUT)) {
             if (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal()) {
                 defaultValue = BookletLayout.T_B.ordinal();
