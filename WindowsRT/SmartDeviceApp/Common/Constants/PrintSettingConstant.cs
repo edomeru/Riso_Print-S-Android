@@ -47,6 +47,10 @@ namespace SmartDeviceApp.Common.Constants
         public const string NAME_VALUE_PUNCH             = "punch";
         public const string NAME_VALUE_OUTPUT_TRAY       = "outputTray";
 
+        // printsettings_authentication.xml Name values
+        public const string NAME_VALUE_SECURE_PRINT      = "securePrint";
+        public const string NAME_VALUE_PIN_CODE          = "pinCode";
+
         // Paper sizes in portrait mode; in millimeters
         public static Size PAPER_SIZE_A3         = new Size(297.0, 420.0);
         public static Size PAPER_SIZE_A3W        = new Size(316.0, 460.0);

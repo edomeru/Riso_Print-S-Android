@@ -37,6 +37,19 @@
                                         IsEnabled="{Binding Path=IsEnabled}"
                                         PressedColor="{StaticResource BRUSH_Purple1}"/>
         </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_ListViewItemPasswordBox">
+            <controls:KeyPasswordBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
+                                            ValueText="{Binding Path=Value, Mode=TwoWay}"
+                                            utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
+                                            IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                            SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
+                                            PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Medium}"
+                                            PasswordMaxLength="{StaticResource MAXLENGTH_SecurePrintPinCode}"
+                                            PasswordBoxBehavior="Numeric"
+                                            Width="{Binding Width, ElementName=printSettingsBox}"
+                                            IsEnabled="{Binding Path=IsEnabled}"
+                                            PressedColor="{StaticResource BRUSH_Purple1}"/>
+        </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemList">
             <controls:KeyValueControl x:Name="listViewItemList"
                                       Command="{Binding DataContext.SelectPrintSetting, ElementName=printSettingsBox}"
@@ -57,6 +70,7 @@
         <sel:PrintSettingsListTemplateSelector x:Key="PrintSettingsListTemplateSelector"
                                                ListViewItemToggleSwitchTemplate="{StaticResource TEMPLATE_ListViewItemToggleSwitch}"
                                                ListViewItemTextBoxTemplate="{StaticResource TEMPLATE_ListViewItemTextBox}"
+                                               ListViewItemPasswordBoxTemplate="{StaticResource TEMPLATE_ListViewItemPasswordBox}"
                                                ListViewItemListTemplate="{StaticResource TEMPLATE_ListViewItemList}"/>
         <ControlTemplate x:Key="TEMPLATE_PrintButton" TargetType="Button">
             <Grid x:Name="buttonGrid" 
@@ -111,7 +125,7 @@
                     <TextBlock x:Name="key" 
                                Text="{Binding Path=Content, ElementName=printButton}" 
                                Style="{StaticResource STYLE_TextKey}"/>
-                </StackPanel>                
+                </StackPanel>
             </Grid>
         </ControlTemplate>
     </Grid.Resources>
@@ -182,22 +196,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <controls:GroupListControl Text="{Binding Source=IDS_LBL_SECURE_PRINT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
-                                   Width="{Binding Width, ElementName=printSettingsBox}"
-                                   DeleteButtonVisibility="Collapsed"
-                                   Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                   PressedHeaderColor="{StaticResource BRUSH_Purple1}">
-            <controls:GroupListControl.Content>
-                <controls:KeyPasswordBoxControl Text="{Binding Source=IDS_LBL_PIN_CODE, Converter={StaticResource ResourceStringToTextConverter}}"
-                                                ValueText="{Binding AuthenticationLoginPinCode, Mode=TwoWay}"
-                                                IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
-                                                PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Medium}"
-                                                PasswordMaxLength="{StaticResource MAXLENGTH_SecurePrintPinCode}"
-                                                PasswordBoxBehavior="Numeric"
-                                                Width="{Binding Width, ElementName=printSettingsBox}"
-                                                IsEnabled="True"
-                                                PressedColor="{StaticResource BRUSH_Purple1}"/>
-            </controls:GroupListControl.Content>
-        </controls:GroupListControl>
     </ListView>
 </Grid>

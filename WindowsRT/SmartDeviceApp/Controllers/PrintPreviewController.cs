@@ -55,10 +55,6 @@ namespace SmartDeviceApp.Controllers
         public delegate void SelectedPrinterChangedEventHandler(int printerId);
         private SelectedPrinterChangedEventHandler _selectedPrinterChangedEventHandler;
 
-        // Authentication PIN Code
-        public delegate void PinCodeValueChangedEventHandler(string pinCode);
-        private PinCodeValueChangedEventHandler _pinCodeValueChangedEventHandler;
-
         // Print button
         public delegate void PrintEventHandler();
         private PrintEventHandler _printEventHandler;
@@ -121,7 +117,6 @@ namespace SmartDeviceApp.Controllers
             _updatePreviewEventHandler = new UpdatePreviewEventHandler(UpdatePreview);
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
-            _pinCodeValueChangedEventHandler = new PinCodeValueChangedEventHandler(PinCodeValueChanged);
             _printEventHandler = new PrintEventHandler(Print);
             _cancelPrintEventHandler = new CancelPrintEventHandler(CancelPrint);
             _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
@@ -160,7 +155,6 @@ namespace SmartDeviceApp.Controllers
 
                 _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
 
-                _printSettingsViewModel.PinCodeValueChangedEventHandler += _pinCodeValueChangedEventHandler;
                 _printSettingsViewModel.ExecutePrintEventHandler += _printEventHandler;
 
                 _printPreviewViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
@@ -189,7 +183,6 @@ namespace SmartDeviceApp.Controllers
             _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
             PrintSettingsController.Instance.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
-            _printSettingsViewModel.PinCodeValueChangedEventHandler -= _pinCodeValueChangedEventHandler;
             _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
             PrinterController.Instance.DeletePrinterItemsEventHandler -= PrinterDeleted;
 
@@ -272,15 +265,6 @@ namespace SmartDeviceApp.Controllers
             {
                 await SetSelectedPrinterAndPrintSettings(printerId);
             }
-        }
-
-        /// <summary>
-        /// Event handler for PIN code text
-        /// </summary>
-        /// <param name="pinCode"></param>
-        public void PinCodeValueChanged(string pinCode)
-        {
-            PrintSettingsController.Instance.SetPinCode(_screenName, pinCode);
         }
 
         /// <summary>

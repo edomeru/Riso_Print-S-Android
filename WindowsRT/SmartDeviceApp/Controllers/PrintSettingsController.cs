@@ -39,9 +39,11 @@ namespace SmartDeviceApp.Controllers
 
         // Constants
         private const string FILE_PATH_ASSET_PRINT_SETTINGS_XML = "Assets/printsettings.xml";
+        private const string FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML = "Assets/printsettings_authentication.xml";
 
         private PrintSettingsViewModel _printSettingsViewModel;
         private string _activeScreen;
+        private string _prevPinCode;
 
         // Maps (Managed values)
         private Dictionary<string, Printer> _printerMap;
@@ -97,6 +99,11 @@ namespace SmartDeviceApp.Controllers
             _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
 
             currPrintSettings = await GetPrintSettings(printer.PrintSettingId);
+
+            if (screenName.Equals(ScreenMode.PrintPreview.ToString()))
+            {
+                _prevPinCode = null;
+            }
 
             RegisterPrintSettingValueChanged(screenName);
 
@@ -255,12 +262,6 @@ namespace SmartDeviceApp.Controllers
                 {
                     _printSettingsViewModel.PrintSettingsList = printSettingList;
                 }
-                PrintSettings printSettings = null;
-                if (_printSettingsMap.TryGetValue(screenName, out printSettings))
-                {
-                    string pinCode = (string.IsNullOrEmpty(printSettings.PinCode)) ? string.Empty : printSettings.PinCode;
-                    _printSettingsViewModel.AuthenticationLoginPinCode = pinCode;
-                }
 
                 PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
             }
@@ -312,10 +313,29 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void LoadPrintSettingsOptions()
         {
-            PrintSettingToValueConverter valueConverter = new PrintSettingToValueConverter();
+            // Construct the PrintSettingList
+            _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
+            var tempList = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+            // Append Authentication group for Print Preview screen
+            if (_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
+            {
+                tempList.AddRange(ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML).AsEnumerable());
+            }
+            foreach (PrintSettingGroup group in tempList)
+            {
+                _printSettingsViewModel.PrintSettingsList.Add(group);
+            }
+        }
 
-            string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path,
-                FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+        /// <summary>
+        /// Reads an XML file and creates PrintSettingGroup
+        /// </summary>
+        /// <param name="path">XML file relative path from install location</param>
+        /// <returns>list of print setting groups</returns>
+        private List<PrintSettingGroup> ParseXmlFile(string path)
+        {
+            PrintSettingToValueConverter valueConverter = new PrintSettingToValueConverter();
+            string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path, path);
             XDocument data = XDocument.Load(xmlPath);
 
             var printSettingsData = from groupData in data.Descendants(PrintSettingConstant.KEY_GROUP)
@@ -352,14 +372,7 @@ namespace SmartDeviceApp.Controllers
                                                 IsValueDisplayed = true  // To be updated later upon apply constraints
                                             }).ToList<PrintSetting>()
                                     };
-
-            // Construct the PrintSettingList
-            _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
-            var tempList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
-            foreach (PrintSettingGroup group in tempList)
-            {
-                _printSettingsViewModel.PrintSettingsList.Add(group);
-            }
+            return printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
         }
 
         /// <summary>
@@ -601,6 +614,12 @@ namespace SmartDeviceApp.Controllers
                             case PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY:
                                 printSetting.Value = printSettings.OutputTray;
                                 break;
+                            case PrintSettingConstant.NAME_VALUE_SECURE_PRINT:
+                                printSetting.Value = printSettings.EnabledSecurePrint;
+                                break;
+                            case PrintSettingConstant.NAME_VALUE_PIN_CODE:
+                                printSetting.Value = printSettings.PinCode;
+                                break;
                             default:
                                 // Do nothing
                                 break;
@@ -624,6 +643,7 @@ namespace SmartDeviceApp.Controllers
                 UpdateConstraintsBasedOnImposition(printSettings.Imposition, false);
                 UpdateConstraintsBasedOnFinishingSide(printSettings.FinishingSide, false);
                 UpdateConstraintsBasedOnPunch(printSettings.Punch, false);
+                UpdateConstraintsBasedOnSecurePrint(printSettings.EnabledSecurePrint);
             }
         }
 
@@ -1414,6 +1434,45 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
+        /// Updates print settings dependent on secure print constraints
+        /// </summary>
+        /// <param name="value">new scure print value</param>
+        private void UpdateConstraintsBasedOnSecurePrint(bool value)
+        {
+            PrintSettings printSettings = null;
+            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            if (printSettings == null)
+            {
+                return;
+            }
+
+            PrintSetting pinCodePrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_PIN_CODE);
+
+            if (value)
+            {
+                if (pinCodePrintSetting != null)
+                {
+                    pinCodePrintSetting.IsEnabled = true;
+                    printSettings.PinCode = _prevPinCode;
+                    pinCodePrintSetting.Value = _prevPinCode;
+                }
+            }
+            else
+            {
+                if (pinCodePrintSetting != null)
+                {
+                    pinCodePrintSetting.IsEnabled = false;
+                    _prevPinCode = printSettings.PinCode;
+                    printSettings.PinCode = null;
+                    pinCodePrintSetting.Value = string.Empty;
+                }
+            }
+
+            _printSettingsMap[_activeScreen] = printSettings;
+        }
+
+        /// <summary>
         /// Queries the print setting option based on print setting and the option index.
         /// Option index is fixed (should be mapped with Common\Enum\PrintSettingsOptions class)
         /// </summary>
@@ -1446,6 +1505,9 @@ namespace SmartDeviceApp.Controllers
                 case PrintSettingType.list:
                 case PrintSettingType.numeric:
                     isPreviewAffected = await UpdatePrintSettings(printSetting, (int)value);
+                    break;
+                case PrintSettingType.password:
+                    UpdatePrintSettings(printSetting, value.ToString());
                     break;
                 case PrintSettingType.unknown:
                 default:
@@ -1669,6 +1731,14 @@ namespace SmartDeviceApp.Controllers
                     printSettings.Booklet = state;
                 }
             }
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_SECURE_PRINT))
+            {
+                if (printSettings.EnabledSecurePrint != state)
+                {
+                    UpdateConstraintsBasedOnSecurePrint(state);
+                    printSettings.EnabledSecurePrint = state;
+                }
+            }
 
             if (!_printSettingsViewModel.IsPrintPreview)
             {
@@ -1681,6 +1751,45 @@ namespace SmartDeviceApp.Controllers
             }
 
             return isPreviewAffected;
+        }
+
+        /// <summary>
+        /// Updates the print settings list (PrintSettingList) and cache (PrintSettings),
+        /// updates value and enabled options based on constraints.
+        /// </summary>
+        /// <param name="printSetting">source print setting</param>
+        /// <param name="value">updated value</param>
+        private void UpdatePrintSettings(PrintSetting printSetting, string value)
+        {
+            //bool isPreviewAffected = false;
+
+            PrintSettings printSettings = null;
+            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            if (printSettings == null)
+            {
+                //return isPreviewAffected;
+                return;
+            }
+
+            string name = printSetting.Name;
+
+            if (name.Equals(PrintSettingConstant.NAME_VALUE_PIN_CODE))
+            {
+                printSettings.PinCode = (string)value;
+            }
+
+            // Note: Enable when needed
+            //if (!_printSettingsViewModel.IsPrintPreview)
+            //{
+            //    await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+            //}
+
+            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            {
+                _printSettingsMap[_activeScreen] = printSettings;
+            }
+
+            //return isPreviewAffected;
         }
 
         #endregion PrintSettingList Operations
@@ -1719,23 +1828,6 @@ namespace SmartDeviceApp.Controllers
         }
 
         #endregion Get PrintSettings Properties
-
-        #region Set PrintSettings Properties
-
-        /// <summary>
-        /// Set PIN code
-        /// </summary>
-        /// <param name="screenName">name of active screen</param>
-        /// <param name="pinCode">PIN code</param>
-        public void SetPinCode(string screenName, string pinCode)
-        {
-            if (!string.IsNullOrEmpty(screenName) && _printSettingsMap.ContainsKey(screenName))
-            {
-                _printSettingsMap[screenName].PinCode = string.IsNullOrEmpty(pinCode) ? null : pinCode;
-            }
-        }
-
-        #endregion Set PrintSettings Properties
 
         #region Utilities
 

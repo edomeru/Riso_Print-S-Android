@@ -334,6 +334,7 @@
     <Content Include="Assets\en-US\legal.html" />
     <Content Include="Assets\ja-JP\help.html" />
     <Content Include="Assets\ja-JP\legal.html" />
+    <Content Include="Assets\printsettings_authentication.xml" />
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Common\ReadMe.txt" />
     <None Include="Resources\Dummy\RZ1070.pdf" />

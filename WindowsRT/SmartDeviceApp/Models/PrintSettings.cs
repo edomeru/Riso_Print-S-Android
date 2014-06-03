@@ -292,6 +292,12 @@ namespace SmartDeviceApp.Models
         public int OutputTray { get; set; }
 
         /// <summary>
+        /// Secure Print option
+        /// </summary>
+        [SQLite.Ignore]
+        public bool EnabledSecurePrint { get; set; }
+
+        /// <summary>
         /// Log-in ID for Authentication; used only on a single print session
         /// </summary>
         [SQLite.Ignore]
@@ -330,6 +336,7 @@ namespace SmartDeviceApp.Models
             Staple = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_STAPLE, ListValueType.Int);
             Punch = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_PUNCH, ListValueType.Int);
             OutputTray = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_OUTPUT_TRAY, ListValueType.Int);
+            EnabledSecurePrint = false;
             LoginId = null;
             PinCode = null;
         }
