@@ -8,7 +8,6 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import jp.co.riso.android.text.InvalidCharacterFilter;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -54,8 +53,7 @@ public class SettingsFragment extends BaseFragment {
         editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_LOGIN_ID));
 
         filterArray = new InputFilter[] {
-                new InputFilter.LengthFilter(AppConstants.CONST_LOGIN_ID_LIMIT),
-                new InvalidCharacterFilter(" ")
+                new InputFilter.LengthFilter(AppConstants.CONST_LOGIN_ID_LIMIT)
         };
         editText.setFilters(filterArray);
         
