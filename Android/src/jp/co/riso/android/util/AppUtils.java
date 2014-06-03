@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartprint.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -453,5 +454,19 @@ public final class AppUtils {
             }
         }
         return strBuf.toString();
+    }
+    
+    /**
+     * Get the owner name based on the Log-in ID from Settings screen
+     * 
+     * @return Owner name
+     */
+    public static String getOwnerName() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        String ownerName = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
+        if (ownerName.isEmpty()) {
+            ownerName = SmartDeviceApp.getAppContext().getString(R.string.ids_app_name);
+        }
+        return ownerName;
     }
 }

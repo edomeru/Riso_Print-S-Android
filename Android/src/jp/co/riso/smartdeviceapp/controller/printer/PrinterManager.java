@@ -17,7 +17,6 @@ import java.util.TimerTask;
 
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
@@ -26,10 +25,8 @@ import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -93,20 +90,6 @@ public class PrinterManager implements SNMPManagerCallback {
             sSharedMngr = new PrinterManager(context);
         }
         return sSharedMngr;
-    }
-      
-    /**
-     * Get the user name based on the Log-in ID from Settings screen
-     * 
-     * @return User name
-     */
-    public static String getUserName() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-        String userName = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
-        if (userName.isEmpty()) {
-            userName = SmartDeviceApp.getAppContext().getString(R.string.ids_app_name);
-        }
-        return userName;
     }
     
     // ================================================================================
