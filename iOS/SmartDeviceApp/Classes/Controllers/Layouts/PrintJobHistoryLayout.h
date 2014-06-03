@@ -35,4 +35,6 @@
  */
 - (void)setupForOrientation:(UIInterfaceOrientation)orientation forDevice:(UIUserInterfaceIdiom)idiom;
 
+- (void)invalidateColumAssignments;
+
 @end

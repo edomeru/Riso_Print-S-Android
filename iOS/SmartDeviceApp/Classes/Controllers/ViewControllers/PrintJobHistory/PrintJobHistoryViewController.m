@@ -84,6 +84,7 @@
     self.listPrintJobHistoryGroups = [PrintJobHistoryHelper preparePrintJobHistoryGroups];
     
     self.groupsViewLayout.delegate = self;
+    [self.groupsViewLayout invalidateColumAssignments];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         [self.groupsViewLayout setupForOrientation:self.interfaceOrientation
@@ -157,7 +158,6 @@
     // put the model contents into the view
     [groupCell initWithTag:group.tag]; // use a tag that is independent of the list or view position
                                        // (to support deleting groups later without need for reloading)
-    
     [groupCell putGroupName:group.groupName];
     [groupCell putGroupIP:group.groupIP];
     [groupCell putIndicator:group.isCollapsed];
@@ -193,8 +193,9 @@
 {
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.item];
     
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] group=%ld printjobs=%lu", (long)group.tag, (unsigned long)group.countPrintJobs);
+#if 1
+    NSLog(@"[INFO][PrintJobCtrl] item=%ld group=[%@] printjobs=%lu",
+          (long)indexPath.item, group.groupName, (unsigned long)group.countPrintJobs);
 #endif
     
     if (group.isCollapsed)

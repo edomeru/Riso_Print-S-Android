@@ -46,6 +46,10 @@
  */
 @property (strong, nonatomic) NSMutableArray* columnHeights;
 
+@property (strong, nonatomic) NSMutableDictionary* columnAssignmentsPort;
+@property (strong, nonatomic) NSMutableDictionary* columnAssignmentsLand;
+@property (strong, nonatomic) NSMutableDictionary* columnAssignments;
+
 #pragma mark - Methods
 
 /**
@@ -66,6 +70,7 @@
     self = [super init];
     if (self)
     {
+        [self invalidateColumAssignments];
         [self setupForOrientation:UIInterfaceOrientationPortrait
                         forDevice:UIUserInterfaceIdiomPhone];
     }
@@ -77,6 +82,7 @@
     self = [super init];
     if (self)
     {
+        [self invalidateColumAssignments];
         [self setupForOrientation:UIInterfaceOrientationPortrait
                         forDevice:UIUserInterfaceIdiomPhone];
     }
@@ -117,7 +123,6 @@
     {
         //iPhone
 
-        
         if (UIInterfaceOrientationIsLandscape(orientation))
         {
             CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -127,9 +132,9 @@
             self.interGroupSpacingX = 0.0f;
             self.numberOfColumns = 1;
             self.groupInsets = UIEdgeInsetsMake(0.0f,  //T
-                                                0.0f, //L
+                                                0.0f,  //L
                                                 0.0f,  //B
-                                                0.0f);//R
+                                                0.0f); //R
         }
         else
         {
@@ -152,6 +157,11 @@
         [self.columnHeights insertObject:[NSNumber numberWithFloat:0.0f]
                                  atIndex:col];
     }
+    
+    if (UIInterfaceOrientationIsLandscape(orientation))
+        self.columnAssignments = self.columnAssignmentsLand;
+    else
+        self.columnAssignments = self.columnAssignmentsPort;
     
     [self invalidateLayout];
 }
@@ -192,7 +202,21 @@
     NSUInteger row = indexPath.item / self.numberOfColumns;
 
     // determine the correct column
-    NSUInteger col = indexPath.item % self.numberOfColumns;
+    //NSUInteger col = indexPath.item % self.numberOfColumns;
+    NSUInteger col;
+    NSNumber* pos = [self.columnAssignments valueForKey:[NSString stringWithFormat:@"%ld", (long)indexPath.item]];
+    if (pos == nil)
+    {
+        NSNumber* minColumnHeight = [self.columnHeights valueForKeyPath:@"@min.self"];
+        col = [self.columnHeights indexOfObject:minColumnHeight];
+        [self.columnAssignments setValue:[NSNumber numberWithUnsignedInteger:col]
+                                  forKey:[NSString stringWithFormat:@"%ld", (long)indexPath.item]];
+    }
+    else
+    {
+        col = [pos unsignedIntegerValue];
+        NSLog(@"col=%lu", (unsigned long)col);
+    }
     
 #if DEBUG_LOG_PRINT_JOB_LAYOUT
     NSLog(@"[INFO][PrintJobLayout] row=%lu, col=%lu", (unsigned long)row, (unsigned long)col);
@@ -278,6 +302,19 @@
     CGFloat width = self.collectionView.bounds.size.width;
     
     return CGSizeMake(width, height);
+}
+
+#pragma mark - Controls
+
+- (void)invalidateColumAssignments
+{
+    self.columnAssignments = nil;
+    
+    [self.columnAssignmentsPort removeAllObjects];
+    self.columnAssignmentsPort = [NSMutableDictionary dictionary];
+    
+    [self.columnAssignmentsLand removeAllObjects];
+    self.columnAssignmentsLand = [NSMutableDictionary dictionary];
 }
 
 @end
