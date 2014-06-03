@@ -1376,7 +1376,7 @@ namespace SmartDeviceAppTests.Controllers
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             Assert.AreEqual(1, printSettings.FinishingSide);
-            Assert.AreEqual((int)Staple.OneUpperLeft, printSettings.Staple);
+            Assert.AreEqual((int)Staple.Off, printSettings.Staple);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
