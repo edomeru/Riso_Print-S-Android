@@ -193,7 +193,7 @@
 {
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.item];
     
-#if 1
+#if DEBUG_LOG_PRINT_JOB_LAYOUT
     NSLog(@"[INFO][PrintJobCtrl] item=%ld group=[%@] printjobs=%lu",
           (long)indexPath.item, group.groupName, (unsigned long)group.countPrintJobs);
 #endif
@@ -314,6 +314,7 @@
                 
                 // remove the cell from the view
                 NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
+                [weakSelf.groupsViewLayout prepareForDelete:groupIndexPath];
                 [weakSelf.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
             }
             else

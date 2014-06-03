@@ -36,5 +36,6 @@
 - (void)setupForOrientation:(UIInterfaceOrientation)orientation forDevice:(UIUserInterfaceIdiom)idiom;
 
 - (void)invalidateColumAssignments;
+- (void)prepareForDelete:(NSIndexPath*)itemToDelete;
 
 @end

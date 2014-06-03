@@ -40,6 +40,7 @@
  The group's index path is used as the key.
  */
 @property (strong, nonatomic) NSDictionary* groupLayoutInfo;
+@property (strong, nonatomic) NSMutableDictionary* groupFrames;
 
 /**
  Stores the current height of each column.
@@ -50,6 +51,11 @@
 @property (strong, nonatomic) NSMutableDictionary* columnAssignmentsLand;
 @property (strong, nonatomic) NSMutableDictionary* columnAssignments;
 
+@property (assign, nonatomic) BOOL relayoutForDelete;
+@property (strong, nonatomic) NSIndexPath* deletedItem;
+@property (assign, nonatomic) CGFloat deletedItemHeight;
+@property (assign, nonatomic) NSInteger affectedColumn;
+
 #pragma mark - Methods
 
 /**
@@ -57,7 +63,8 @@
  a group at the specified index path.
  @param indexPath
  */
-- (CGRect)frameForGroupAtIndexPath:(NSIndexPath*)indexPath;
+- (CGRect)newFrameForGroupAtIndexPath:(NSIndexPath*)indexPath;
+- (CGRect)shiftedFrameForGroupAtIndexPath:(NSIndexPath*)indexPath;
 
 @end
 
@@ -163,6 +170,9 @@
     else
         self.columnAssignments = self.columnAssignmentsPort;
     
+    self.relayoutForDelete = NO;
+    self.deletedItem = nil;
+    
     [self invalidateLayout];
 }
 
@@ -175,28 +185,39 @@
     NSInteger section = 0; //expecting only one section for all the groups
     NSInteger groupCount = [self.collectionView numberOfItemsInSection:section];
 #if DEBUG_LOG_PRINT_JOB_LAYOUT
-    NSLog(@"[INFO][PrintJobLayout] sectionCount=%ld, groupCount=%ld", (long)section+1, (long)groupCount);
+    NSLog(@"[INFO][PrintJobLayout] sectionCount=%ld, groupCount=%ld", (long)section, (long)groupCount);
 #endif
     
     // for each group in the section
     for (NSInteger group = 0; group < groupCount; group++)
     {
         // create UICollectionViewLayoutAttributes for the group
-        NSIndexPath*  groupIndexPath = [NSIndexPath indexPathForItem:group inSection:section];
+        NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:group inSection:section];
         UICollectionViewLayoutAttributes* groupAttributes =
             [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:groupIndexPath];
         
-        // set the frame (origin and position) for the group
-        groupAttributes.frame = [self frameForGroupAtIndexPath:groupIndexPath];
+        if (self.relayoutForDelete)
+        {
+            // shift frames below the deleted group
+            groupAttributes.frame = [self shiftedFrameForGroupAtIndexPath:groupIndexPath];
+        }
+        else
+        {
+            // generate a new frame
+            groupAttributes.frame = [self newFrameForGroupAtIndexPath:groupIndexPath];
+        }
         
         // add this group's attributes to the dictionary
         groupLayoutInfo[groupIndexPath] = groupAttributes;
     }
     
+    self.relayoutForDelete = NO;
+    self.deletedItem = nil;
+    
     self.groupLayoutInfo = groupLayoutInfo;
 }
 
-- (CGRect)frameForGroupAtIndexPath:(NSIndexPath*)indexPath
+- (CGRect)newFrameForGroupAtIndexPath:(NSIndexPath*)indexPath
 {
     // determine the correct row
     NSUInteger row = indexPath.item / self.numberOfColumns;
@@ -215,7 +236,6 @@
     else
     {
         col = [pos unsignedIntegerValue];
-        NSLog(@"col=%lu", (unsigned long)col);
     }
     
 #if DEBUG_LOG_PRINT_JOB_LAYOUT
@@ -268,6 +288,45 @@
     return CGRectMake(originX, originY, groupSize.width, groupSize.height);
 }
 
+- (CGRect)shiftedFrameForGroupAtIndexPath:(NSIndexPath*)indexPath
+{
+    NSInteger currentItem = indexPath.item;
+    NSInteger deletedItem = self.deletedItem.item;
+    NSInteger currentCol = [[self.columnAssignments
+                           valueForKey:[NSString stringWithFormat:@"%d", currentItem]] integerValue];
+    
+    if ((currentCol == self.affectedColumn) && (currentItem >= deletedItem))
+    {
+        // shift the old frame
+        NSArray* oldFrameProps = [self.groupFrames objectForKey:[NSString stringWithFormat:@"%d", currentItem+1]];
+        CGRect newFrame = CGRectMake([oldFrameProps[0] floatValue],
+                                     [oldFrameProps[1] floatValue] - self.deletedItemHeight - self.interGroupSpacingY,
+                                     [oldFrameProps[2] floatValue],
+                                     [oldFrameProps[3] floatValue]);
+        return newFrame;
+    }
+    else
+    {
+        NSInteger oldItemIndex;
+        if (currentItem >= deletedItem)
+        {
+            oldItemIndex = currentItem+1;
+        }
+        else
+        {
+            oldItemIndex = currentItem;
+        }
+        
+        // reuse the old frame
+        NSArray* oldFrameProps = [self.groupFrames objectForKey:[NSString stringWithFormat:@"%d", oldItemIndex]];
+        CGRect newFrame = CGRectMake([oldFrameProps[0] floatValue],
+                                     [oldFrameProps[1] floatValue],
+                                     [oldFrameProps[2] floatValue],
+                                     [oldFrameProps[3] floatValue]);
+        return newFrame;
+    }
+}
+
 #pragma mark - UICollectionViewLayout Required Methods
 
 - (NSArray*)layoutAttributesForElementsInRect:(CGRect)rect
@@ -315,6 +374,90 @@
     
     [self.columnAssignmentsLand removeAllObjects];
     self.columnAssignmentsLand = [NSMutableDictionary dictionary];
+}
+
+- (void)prepareForDelete:(NSIndexPath*)itemToDelete
+{
+    self.relayoutForDelete = YES;
+    self.deletedItem = itemToDelete;
+    self.affectedColumn = [[self.columnAssignments
+                              valueForKey:[NSString stringWithFormat:@"%d", itemToDelete.item]] integerValue];
+    
+    [self backupFrames];
+    [self updateColumnAssignmentsForDeletedItem];
+    
+    NSArray* deletedItemFrame = [self.groupFrames objectForKey:[NSString stringWithFormat:@"%d", itemToDelete.item]];
+    self.deletedItemHeight = [deletedItemFrame[3] floatValue];
+}
+
+#pragma mark - Utilities
+
+- (void)backupFrames
+{
+    // backup current frames
+    self.groupFrames = [NSMutableDictionary dictionary];
+    [self.groupLayoutInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath* key, id obj, BOOL *stop) {
+        
+        UICollectionViewLayoutAttributes* attr = (UICollectionViewLayoutAttributes*)obj;
+        CGRect oldFrame = attr.frame;
+        NSArray* props = @[[NSNumber numberWithFloat:oldFrame.origin.x],
+                           [NSNumber numberWithFloat:oldFrame.origin.y],
+                           [NSNumber numberWithFloat:oldFrame.size.width],
+                           [NSNumber numberWithFloat:oldFrame.size.height]];
+        
+        NSString* keyStr = [NSString stringWithFormat:@"%d", key.item];
+        [self.groupFrames setObject:props forKey:keyStr];
+    }];
+}
+
+- (void)updateColumnAssignmentsForDeletedItem
+{
+    __block NSMutableDictionary* updatedAssignments;
+    
+    // update column assignments
+    updatedAssignments = [NSMutableDictionary dictionary];
+    [self.columnAssignments removeObjectForKey:[NSString stringWithFormat:@"%d", self.deletedItem.item]];
+    [self.columnAssignments enumerateKeysAndObjectsUsingBlock:^(NSString* item, NSNumber* col, BOOL *stop) {
+        if ([item intValue] > self.deletedItem.item)
+        {
+            [updatedAssignments setObject:col forKey:[NSString stringWithFormat:@"%d", [item intValue]-1]];
+        }
+        else
+        {
+            [updatedAssignments setObject:col forKey:item];
+        }
+    }];
+    self.columnAssignments = updatedAssignments;
+    
+    // update column assignments (Port)
+    updatedAssignments = [NSMutableDictionary dictionary];
+    [self.columnAssignmentsPort removeObjectForKey:[NSString stringWithFormat:@"%d", self.deletedItem.item]];
+    [self.columnAssignmentsPort enumerateKeysAndObjectsUsingBlock:^(NSString* item, NSNumber* col, BOOL *stop) {
+        if ([item intValue] > self.deletedItem.item)
+        {
+            [updatedAssignments setObject:col forKey:[NSString stringWithFormat:@"%d", [item intValue]-1]];
+        }
+        else
+        {
+            [updatedAssignments setObject:col forKey:item];
+        }
+    }];
+    self.columnAssignmentsPort = updatedAssignments;
+    
+    // update column assignments (Land)
+    updatedAssignments = [NSMutableDictionary dictionary];
+    [self.columnAssignmentsLand removeObjectForKey:[NSString stringWithFormat:@"%d", self.deletedItem.item]];
+    [self.columnAssignmentsLand enumerateKeysAndObjectsUsingBlock:^(NSString* item, NSNumber* col, BOOL *stop) {
+        if ([item intValue] > self.deletedItem.item)
+        {
+            [updatedAssignments setObject:col forKey:[NSString stringWithFormat:@"%d", [item intValue]-1]];
+        }
+        else
+        {
+            [updatedAssignments setObject:col forKey:item];
+        }
+    }];
+    self.columnAssignmentsLand = updatedAssignments;
 }
 
 @end
