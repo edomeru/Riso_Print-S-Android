@@ -94,4 +94,10 @@ const char *snmp_device_get_ip_address(snmp_device *device);
 const char *snmp_device_get_name(snmp_device *device);
 int snmp_device_get_capability_status(snmp_device *device, int capability);
 
+/**
+ Util
+ */
+
+int util_validate_ip(const char *input_ip, char *formatted_ip, size_t max_len);
+
 #endif
