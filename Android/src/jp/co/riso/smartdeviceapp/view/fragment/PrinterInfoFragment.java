@@ -15,6 +15,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -81,13 +82,14 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         mPort.setOnItemSelectedListener(this);
         
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getActivity(), R.layout.printerinfo_port_item);
+        // Assumption is that LPR is always available
         portAdapter.add(getString(R.string.ids_lbl_port_lpr));
         if (mPrinter.getConfig().isRawAvailable()) {
             portAdapter.add(getString(R.string.ids_lbl_port_raw));
         }
         portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         mPort.setAdapter(portAdapter);
-        mPort.setSelection(mPrinter.getPortSetting());
+        mPort.setSelection(mPrinter.getPortSetting().ordinal());
     }
     
     /** {@inheritDoc} */
@@ -125,7 +127,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
             mDefaultPrinter.setVisibility(View.GONE);
             mDefaultView.setVisibility(View.VISIBLE);
         }
-        mPort.setSelection(mPrinter.getPortSetting());
+        mPort.setSelection(mPrinter.getPortSetting().ordinal());
     }
     
     /** {@inheritDoc} */
@@ -266,8 +268,16 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     /** {@inheritDoc} */
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-        mPrinter.setPortSetting(position);
-        mPrinterManager.updatePortSettings(mPrinter.getId(), position);
+        PortSetting port = PortSetting.LPR;
+        switch (position) {
+            case 1:
+                port = PortSetting.RAW;
+                break;
+            default:
+                break;
+        }
+        mPrinter.setPortSetting(port);
+        mPrinterManager.updatePortSettings(mPrinter.getId(), port);
     }
     
     /** {@inheritDoc} */

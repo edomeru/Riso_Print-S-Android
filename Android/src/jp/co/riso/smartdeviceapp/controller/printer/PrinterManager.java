@@ -17,12 +17,13 @@ import java.util.TimerTask;
 
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
+import jp.co.riso.smartprint.R;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -231,7 +232,14 @@ public class PrinterManager implements SNMPManagerCallback {
                 Printer printer = new Printer(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_NAME),
                         DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP));
                 printer.setId(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID));
-                printer.setPortSetting(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PORT));
+                switch (DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PORT)) {
+                    case 1:
+                        printer.setPortSetting(PortSetting.RAW);
+                        break;
+                    default:
+                        printer.setPortSetting(PortSetting.LPR);
+                        break;
+                }                
                 
                 boolean lprAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_LPR);
                 boolean rawAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_RAW);
@@ -379,10 +387,10 @@ public class PrinterManager implements SNMPManagerCallback {
      *            Port Settings
      * @return true if successful
      */
-    public boolean updatePortSettings(int printerId, int portSettings) {
+    public boolean updatePortSettings(int printerId, PortSetting portSettings) {
         boolean ret = false;
         ContentValues cv = new ContentValues();
-        cv.put(KeyConstants.KEY_SQL_PRINTER_PORT, portSettings);
+        cv.put(KeyConstants.KEY_SQL_PRINTER_PORT, portSettings.ordinal());
         ret = mDatabaseManager.update(KeyConstants.KEY_SQL_PRINTER_TABLE, cv, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printerId));
         mDatabaseManager.close();
         return ret;
@@ -590,7 +598,7 @@ public class PrinterManager implements SNMPManagerCallback {
         
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_IP, printer.getIpAddress());
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_NAME, printer.getName());
-        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.getPortSetting());
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.getPortSetting().ordinal());
         
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_LPR, (printer.getConfig().isLprAvailable() ? 1 : 0));
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_RAW, (printer.getConfig().isRawAvailable() ? 1 : 0));

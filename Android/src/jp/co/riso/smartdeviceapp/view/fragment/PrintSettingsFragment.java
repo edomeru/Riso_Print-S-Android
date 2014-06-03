@@ -27,6 +27,7 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
@@ -43,7 +44,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private DirectPrintManager mDirectPrintManager = null;
     
     private static final int MSG_PRINT = 0;
-    private static final int LPR_PRINT = 0;
     
     private boolean mFragmentForPrinting = false;
     
@@ -241,7 +241,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mDirectPrintManager.setCallback(this);
         
         String userName = getActivity().getString(R.string.ids_app_name);
-        if (printer.getPortSetting() == LPR_PRINT) {
+        if (printer.getPortSetting() == PortSetting.LPR) {
             mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
         } else {
             mDirectPrintManager.executeRAWPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());

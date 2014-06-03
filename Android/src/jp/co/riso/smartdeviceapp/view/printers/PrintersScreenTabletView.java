@@ -17,6 +17,7 @@ import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
@@ -455,17 +456,17 @@ OnItemSelectedListener {
         viewHolder.mPort = (Spinner) pView.findViewById(R.id.input_port);
         
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getContext(), R.layout.printerinfo_port_item);
+        // Assumption is that LPR is always available
         portAdapter.add(getContext().getString(R.string.ids_lbl_port_lpr));
         if (printer.getConfig().isRawAvailable()) {
             portAdapter.add(getContext().getString(R.string.ids_lbl_port_raw));
         }
         portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         viewHolder.mPort.setAdapter(portAdapter);
-        viewHolder.mPort.setSelection(printer.getPortSetting());
+        viewHolder.mPort.setSelection(printer.getPortSetting().ordinal());
         
         viewHolder.mPrinterName.setText(printerName);
         viewHolder.mIpAddress.setText(printer.getIpAddress());
-        viewHolder.mPort.setSelection(printer.getPortSetting());
         
         viewHolder.mDeleteButton.setOnClickListener(this);
         viewHolder.mPrintSettings.setOnClickListener(this);
@@ -602,8 +603,16 @@ OnItemSelectedListener {
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         Printer printer = (Printer) parentView.getTag();
-        printer.setPortSetting(position);
-        mPrinterManager.updatePortSettings(printer.getId(), position);
+        PortSetting port = PortSetting.LPR;
+        switch (position) {
+            case 1:
+                port = PortSetting.RAW;
+                break;
+            default:
+                break;
+        }
+        printer.setPortSetting(port);
+        mPrinterManager.updatePortSettings(printer.getId(), port);
     }
     
     /** {@inheritDoc} */

@@ -20,9 +20,13 @@ public class Printer implements Parcelable {
     private String mName = null;
     private String mIpAddress = null;
     private int mId = PrinterManager.EMPTY_ID;
-    private int mPortSetting = 0;
+    private PortSetting mPortSetting = PortSetting.LPR;
     
     private Config mConfig = null;
+    
+    public enum PortSetting {
+        LPR, RAW;
+    }
     
     /**
      * Printer Constructor
@@ -37,7 +41,7 @@ public class Printer implements Parcelable {
     public Printer(String name, String ipAddress) {
         mName = name;
         mIpAddress = ipAddress;
-        mPortSetting = 0;
+        mPortSetting = PortSetting.LPR;
         
         mConfig = new Config();
     }
@@ -71,7 +75,14 @@ public class Printer implements Parcelable {
         mName = in.readString();
         mIpAddress = in.readString();
         mId = in.readInt();
-        mPortSetting = in.readInt();
+        switch(in.readInt()) {
+            case 1:
+                mPortSetting = PortSetting.RAW;
+                break;
+            default:
+                mPortSetting = PortSetting.LPR;
+                break;
+        }
         mConfig.readFromParcel(in);
     }
     
@@ -91,7 +102,7 @@ public class Printer implements Parcelable {
         out.writeString(mName);
         out.writeString(mIpAddress);
         out.writeInt(mId);
-        out.writeInt(mPortSetting);
+        out.writeInt(mPortSetting.ordinal());
         mConfig.writeToParcel(out);
     }
     
@@ -150,7 +161,7 @@ public class Printer implements Parcelable {
     /**
      * @return the port setting (mPortSetting)
      */
-    public int getPortSetting() {
+    public PortSetting getPortSetting() {
         return mPortSetting;
     }
     
@@ -159,7 +170,7 @@ public class Printer implements Parcelable {
      * 
      * @param portSetting
      */
-    public void setPortSetting(int portSetting) {
+    public void setPortSetting(PortSetting portSetting) {
         this.mPortSetting = portSetting;
     }
     
