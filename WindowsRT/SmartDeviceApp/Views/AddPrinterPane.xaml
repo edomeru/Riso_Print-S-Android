@@ -193,7 +193,7 @@
                                Margin="26,13,273,15" FontSize="20" Foreground="Black" VerticalAlignment="Center"/>
             <TextBox x:Name="ipTextBox" Margin="165,10,10,15" Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" IsTabStop="{Binding IsButtonVisible}"
                                PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" FontSize="20" TextAlignment="Center" Style="{StaticResource IPAddressTextBoxStyle1}"
-                     Loaded="ipTextBox_Loaded"/>
+                     Loaded="ipTextBox_Loaded" IsReadOnly="{Binding IsProgressRingVisible}"/>
         </Grid>
     </Grid>
 </UserControl>

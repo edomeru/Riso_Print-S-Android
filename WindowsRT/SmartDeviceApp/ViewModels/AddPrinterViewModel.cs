@@ -29,10 +29,13 @@ namespace SmartDeviceApp.ViewModels
 
         private bool _isProgressRingVisible;
         private bool _isButtonVisible;
+        
 
         public event SmartDeviceApp.Controllers.PrinterController.AddPrinterHandler AddPrinterHandler;
+        public event SmartDeviceApp.Controllers.PrinterController.ClearIpAddressToAddHandler ClearIpAddressToAddHandler;
 
         private ObservableCollection<PrinterSearchItem> _printerSearchList;
+        private ObservableCollection<Printer> _printerList;
 
         private ViewControlViewModel _viewControlViewModel;
         public AddPrinterViewModel(IDataService dataService, INavigationService navigationService)
@@ -44,7 +47,8 @@ namespace SmartDeviceApp.ViewModels
             IpAddress = "";
             IsProgressRingVisible = false;
             IsButtonVisible = true;
-            Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
+            Messenger.Default.Register<VisibleRightPane>(this, (rightPaneMode) => SetRightPaneMode(rightPaneMode));
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<MessageType>(this, (strMsg) => HandleStringMessage(strMsg));
         }
 
@@ -80,6 +84,17 @@ namespace SmartDeviceApp.ViewModels
             {
                 _printerSearchList = value;
                 OnPropertyChanged("PrinterSearchList");
+            }
+        }
+
+        public ObservableCollection<Printer> PrinterList
+        {
+            get { return this._printerList; }
+            set
+            {
+                _printerList = value;
+                OnPropertyChanged("PrinterList");
+
             }
         }
 
@@ -172,8 +187,7 @@ namespace SmartDeviceApp.ViewModels
             }
             caption = loader.GetString("IDS_LBL_ADD_PRINTER");
             buttonText = loader.GetString("IDS_LBL_OK");
-            //clear data
-            IpAddress = "";
+            
 
             setVisibilities();
             DisplayMessage(caption, content, buttonText);
@@ -187,25 +201,43 @@ namespace SmartDeviceApp.ViewModels
 
         public void DisplayMessage(string caption, string content, string buttonText)
         {
-            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, new Action(CloseAddPane));
+            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, new Action(ClosePane));
         }
 
-        private void CloseAddPane()
+        private void ClosePane()
         {
             _viewControlViewModel.ViewMode = ViewMode.FullScreen;
         }
 
-        private void SetViewMode(VisibleRightPane viewMode)
+        private async void SetRightPaneMode(VisibleRightPane rightPaneMode)
         {
             if (_viewControlViewModel.ScreenMode == ScreenMode.Printers)
             {
-                if (viewMode == VisibleRightPane.Pane2)
+                if (rightPaneMode == VisibleRightPane.Pane2)
                 {
-                    //clear data
-                    IpAddress = "";
+                    if (PrinterList.Count >= 10)
+                    {
+                        ClosePane();
+                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                        Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                        {
+                            await DialogService.Instance.ShowError("IDS_ERR_MSG_MAX_PRINTER_COUNT", "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                        });
+                        return;
+                    }
                 }
+                
             }
+        }
 
+        private void SetViewMode(ViewMode viewMode)
+        {
+            if (viewMode == ViewMode.FullScreen)
+            {
+                IpAddress = "";
+                setVisibilities();
+                ClearIpAddressToAddHandler();
+            }
         }
     }
 }

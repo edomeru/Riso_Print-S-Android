@@ -9,7 +9,9 @@
     x:Class="SmartDeviceApp.Controls.PrinterNameControl"
     mc:Ignorable="d"
     d:DesignHeight="60"
-    d:DesignWidth="400">
+    d:DesignWidth="400" IsHoldingEnabled="False" IsTapEnabled="False" IsDoubleTapEnabled="False" IsRightTapEnabled="False"
+    Loaded="button_Loaded">
+    
 
     <UserControl.Resources>
         <Style x:Key="STYLE_ListItemGrid" TargetType="Grid">
@@ -31,9 +33,7 @@
             <Setter Property="Padding" Value="0" />
         </Style>
         <Style x:Key="ToggleDeleteStyle" TargetType="ToggleButton">
-            <Setter Property="Background" Value="{Binding WillBeDeleted, ElementName=printerNameControl, Converter={StaticResource BooleanToColor}, Mode=TwoWay}"/>
-            <Setter Property="Width" Value="{StaticResource SIZE_DeleteButtonWidth_Long}"/>
-            <Setter Property="Height" Value="{StaticResource SIZE_DeleteButtonHeight_Long}"/>
+            
             <Setter Property="Foreground" Value="{ThemeResource ToggleButtonForegroundThemeBrush}"/>
             <Setter Property="BorderBrush" Value="{ThemeResource ToggleButtonBorderThemeBrush}"/>
             <Setter Property="BorderThickness" Value="{ThemeResource ToggleButtonBorderThemeThickness}"/>
@@ -147,7 +147,7 @@
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="ToggleButton" >
             <Grid Background="{Binding WillBeDeleted, ElementName=printerNameControl, Converter={StaticResource BooleanToColor}, Mode=TwoWay}" 
                   Width="{StaticResource SIZE_DeleteButtonWidth_Long}" 
-                  Height="{StaticResource SIZE_DeleteButtonHeight_Long}" Style="{StaticResource STYLE_ListItemGrid}">
+                  Height="{StaticResource SIZE_DeleteButtonHeight_Long}" >
                 
                 <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}">
                     <Interactivity:Interaction.Behaviors>
@@ -164,8 +164,8 @@
         </ControlTemplate>
         
     </UserControl.Resources>
-    
-    <Grid x:Name="button"  Background="#FF919191" Loaded="button_Loaded">
+
+    <Grid x:Name="button"  Background="#FF919191"  Style="{StaticResource STYLE_ListItemGrid}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonStates">
                 <VisualState x:Name="DefaultPrinterState">
@@ -215,14 +215,14 @@
 				Style="{StaticResource STYLE_TextKey}"
 				Width="{Binding TextWidth, ElementName=printerNameControl}"/>
         </StackPanel>
-        <StackPanel x:Name="stackPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}" Margin="0,0,0,0" Width="149" Grid.RowSpan="2">
+        <StackPanel x:Name="stackPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}" Margin="0,0,0,0" Width="150" Grid.RowSpan="2">
             <ToggleButton x:Name="deleteButton" 
                           Template="{StaticResource TEMPLATE_DeleteButton}"
         		IsChecked="{Binding WillBeDeleted, ElementName=printerNameControl, Mode=TwoWay}"
         		Visibility="Visible"
         		Command="{Binding DeleteCommand, ElementName=printerNameControl}"
                 CommandParameter="{Binding PrinterIp, ElementName=printerNameControl}"
-                Loaded="deleteButton_Loaded" Style="{StaticResource ToggleDeleteStyle}" BorderThickness="0"/>
+                Loaded="deleteButton_Loaded"  BorderThickness="0" />
         </StackPanel>
     </Grid>
 </UserControl>

@@ -51,6 +51,9 @@ namespace SmartDeviceApp.Controllers
         public delegate void DeletePrinterItemsHandler(Printer printer);
         public event DeletePrinterItemsHandler DeletePrinterItemsEventHandler;
 
+        public delegate void ClearIpAddressToAddHandler();
+        private ClearIpAddressToAddHandler _clearIpAddressToAddHandler;
+        
         ThreadPoolTimer periodicTimer;
 
         private ObservableCollection<Printer> _printerList = new ObservableCollection<Printer>();
@@ -109,6 +112,8 @@ namespace SmartDeviceApp.Controllers
             _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
             _onNavigateFromEventHandler = new OnNavigateFromEventHandler(UnregisterPrintSettingValueChange);
 
+            _clearIpAddressToAddHandler = new ClearIpAddressToAddHandler(clearIpAddressToAdd);
+
             _printersViewModel.DeletePrinterHandler += _deletePrinterHandler;
             populatePrintersScreen();
             _printersViewModel.PrinterList = PrinterList;
@@ -120,9 +125,12 @@ namespace SmartDeviceApp.Controllers
             _searchPrinterViewModel.AddPrinterFromSearchHandler += _addPrinterFromSearchHandler;
             _searchPrinterViewModel.SearchPrinterHandler += _searchPrinterHandler;
             _searchPrinterViewModel.PrinterSearchList = PrinterSearchList;
+            _searchPrinterViewModel.PrinterList = PrinterList;
 
             _addPrinterViewModel.AddPrinterHandler += _addPrinterHandler;
             _addPrinterViewModel.PrinterSearchList = PrinterSearchList;
+            _addPrinterViewModel.PrinterList = PrinterList;
+            _addPrinterViewModel.ClearIpAddressToAddHandler += _clearIpAddressToAddHandler;
 
             _selectPrinterViewModel.PollingHandler += _pollingHandler;
             SNMPController.Instance.Initialize();
@@ -219,6 +227,12 @@ namespace SmartDeviceApp.Controllers
                 //sortPrinterList(indexOfDefaultPrinter);
                 _printerListTemp = _printerList;
             }
+
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                CheckPrinterListEmpty();
+            });
         }
 
         public Printer GetDefaultPrinter()
@@ -336,7 +350,7 @@ namespace SmartDeviceApp.Controllers
 
         public async Task<bool> addPrinter(string ip)
         {
-            _manualAddIP = ip;
+            
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             //check if valid ip address
             if (!isValidIpAddress(ip))
@@ -361,16 +375,23 @@ namespace SmartDeviceApp.Controllers
                 return false;
             }
 
-
+            _manualAddIP = ip;
             //check if already in _printerList
             Printer printer = _printerList.FirstOrDefault(x => x.IpAddress == ip);
             if (printer == null)
             {
                 //check if online
                 //get MIB
-                SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
-                SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
-                SNMPController.Instance.getDevice(ip);
+                if (NetworkController.IsConnectedToNetwork)
+                {
+                    SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
+                    SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
+                    SNMPController.Instance.getDevice(ip);
+                }
+                else
+                {
+                    handleAddTimeout(ip, "", new List<string>() { });
+                }
             }
             else
             {
@@ -426,10 +447,9 @@ namespace SmartDeviceApp.Controllers
                 if (viewControl.ViewMode == Common.Enum.ViewMode.RightPaneVisible)
                 {
 
-                
                     if (!string.IsNullOrEmpty(_manualAddIP))
                     {
-                        _manualAddIP = "";
+                        clearIpAddressToAdd();
             
             
                     if (PrinterList.Count > 0)
@@ -442,6 +462,7 @@ namespace SmartDeviceApp.Controllers
                         }
                 
                     }
+
                     //add to printerList
                     Printer printer = new Printer() { IpAddress = ip, Name = name };
                 
@@ -477,6 +498,12 @@ namespace SmartDeviceApp.Controllers
                     printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
                     await DatabaseController.Instance.UpdatePrinter(printer);
                     printer.IsOnline = true;
+
+                    if (PrinterList.Count == 0)
+                    {
+                        printer.IsDefault = true;
+                        await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                    }
                                 
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                     Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
@@ -509,6 +536,11 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                CheckPrinterListEmpty();
+            });
         }
 
         private async void handleAddTimeout(string ip, string name, List<string> capabilities)
@@ -521,60 +553,75 @@ namespace SmartDeviceApp.Controllers
             {
                 if (viewControl.ViewMode == Common.Enum.ViewMode.RightPaneVisible)
                 {
-                    Printer printer = new Printer() { IpAddress = ip, Name = name };
-
-                    printer.EnabledBooklet = true;
-                    printer.EnabledStapler = true;
-                    printer.EnabledPunchThree = true;
-                    printer.EnabledPunchFour = true;
-                    printer.EnabledTrayFacedown = true;
-                    printer.EnabledTrayTop = true;
-                    printer.EnabledTrayStack = true;
-
-                    //insert to database
-                    int i = await DatabaseController.Instance.InsertPrinter(printer);
-                    if (i == 0)
+                    if (!string.IsNullOrEmpty(_manualAddIP))
                     {
-                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-                        return;
-                    }
-                    printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
-                    await DatabaseController.Instance.UpdatePrinter(printer);
+                        clearIpAddressToAdd();
+                        Printer printer = new Printer() { IpAddress = ip, Name = name };
 
-                    printer.IsOnline = false;
-                    //printer.IsDefault = true; //for testing
+                        printer.EnabledBooklet = true;
+                        printer.EnabledStapler = true;
+                        printer.EnabledPunchThree = true;
+                        printer.EnabledPunchFour = true;
+                        printer.EnabledTrayFacedown = true;
+                        printer.EnabledTrayTop = true;
+                        printer.EnabledTrayStack = true;
 
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                    Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                    {
-                        printer.PropertyChanged += handlePropertyChanged;
-                        _printerList.Add(printer);
-
-                        _printerListTemp = _printerList;
-
-
-                        _addPrinterViewModel.handleAddIsSuccessful(false);
-
-
-                    });
-
-                    //if added from printer search
-                    if (PrinterSearchList.Count > 0)
-                    {
-                        PrinterSearchItem searchItem = PrinterSearchList.FirstOrDefault(x => x.Ip_address == ip);
-                        if (searchItem == null)
+                        //insert to database
+                        int i = await DatabaseController.Instance.InsertPrinter(printer);
+                        if (i == 0)
                         {
-                            //error in adding;
-                            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
                             await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                            return;
                         }
-                        else
+                        printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
+                        await DatabaseController.Instance.UpdatePrinter(printer);
+
+                        printer.IsOnline = false;
+                        //printer.IsDefault = true; //for testing
+
+                        if (PrinterList.Count == 0)
                         {
-                            searchItem.IsInPrinterList = true;
+                            printer.IsDefault = true;
+                            await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                        }
+
+                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                        Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                        {
+                            printer.PropertyChanged += handlePropertyChanged;
+                            _printerList.Add(printer);
+
+                            _printerListTemp = _printerList;
+
+
+                            _addPrinterViewModel.handleAddIsSuccessful(false);
+
+
+                        });
+
+                        //if added from printer search
+                        if (PrinterSearchList.Count > 0)
+                        {
+                            PrinterSearchItem searchItem = PrinterSearchList.FirstOrDefault(x => x.Ip_address == ip);
+                            if (searchItem == null)
+                            {
+                                //error in adding;
+                                var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+                                await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                            }
+                            else
+                            {
+                                searchItem.IsInPrinterList = true;
+                            }
                         }
                     }
                 }
             }
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                CheckPrinterListEmpty();
+            });
         }
 
 
@@ -647,7 +694,7 @@ namespace SmartDeviceApp.Controllers
          * */
         public void searchPrinters()
         {
-            _searchPrinterViewModel.SetStateRefreshState();
+            //_searchPrinterViewModel.SetStateRefreshState();
             _printerSearchList.Clear();
 
             //for testing
@@ -730,8 +777,12 @@ namespace SmartDeviceApp.Controllers
                     DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                     return false;
                 }
-                
 
+                if (PrinterList.Count == 0)
+                {
+                    printer.IsDefault = true;
+                    await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                }
                 printer.PropertyChanged += handlePropertyChanged;
                 _printerList.Add(printer);
 
@@ -752,15 +803,14 @@ namespace SmartDeviceApp.Controllers
                         });
                     }
                 }
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                {
-                    await DialogService.Instance.ShowMessage("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-                });
+                
+
+                CheckPrinterListEmpty();
                 return true;
             }
             else
             {
+                CheckPrinterListEmpty();
                 return false;
             }
         }
@@ -791,6 +841,31 @@ namespace SmartDeviceApp.Controllers
             }
             int index = _printerList.IndexOf(printer);
 
+            if (printer.IsDefault)
+            {
+                if (PrinterList.Count > 1)
+                {
+                    int indexOfNextDefault = index + 1;
+                    Printer nextDefault = null;
+                    if (index > 0)
+                    {
+                    
+                        nextDefault = _printerList.ElementAt(0);
+                        nextDefault.IsDefault = true;
+                    }
+                    else
+                    {
+                        nextDefault = _printerList.ElementAt(indexOfNextDefault);
+                        nextDefault.IsDefault = true;
+                    }
+                    if (nextDefault != null)
+                    {
+                        //save to db
+                        await DatabaseController.Instance.SetDefaultPrinter(nextDefault.Id);
+                    }
+                 }
+            }
+
             _printerList.RemoveAt(index);
 
             _printerListTemp = _printerList;
@@ -800,10 +875,33 @@ namespace SmartDeviceApp.Controllers
                 DeletePrinterItemsEventHandler(printer);
             }
 
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                CheckPrinterListEmpty();
+            });
+
             if (PrinterList.Count == 0 && isPolling)
                 endPolling();
 
             return true;
+        }
+
+        public void CheckPrinterListEmpty()
+        {
+            if (PrinterList.Count == 0)
+            {
+                _printersViewModel.IsPrinterListEmpty = true;
+            }
+            else
+            {
+                _printersViewModel.IsPrinterListEmpty = false;
+            }
+        }
+
+        private void clearIpAddressToAdd()
+        {
+            _manualAddIP = "";
         }
 
 

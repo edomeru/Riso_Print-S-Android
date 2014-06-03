@@ -148,6 +148,9 @@
     <Compile Include="Controls\DefaultPrintSettingsControl.xaml.cs">
       <DependentUpon>DefaultPrintSettingsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\KeyToggleCheckControl.xaml.cs">
+      <DependentUpon>KeyToggleCheckControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MessageProgressBarControl.xaml.cs">
       <DependentUpon>MessageProgressBarControl.xaml</DependentUpon>
     </Compile>
@@ -298,6 +301,7 @@
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PropertyMetaData.cs" />
     <Compile Include="Views\PullToRefreshListView.cs" />
     <!--<Compile Include="Views\RightPane.xaml.cs">
     <Compile Include="Views\PrintSettingsPane.xaml.cs">
@@ -465,6 +469,10 @@
     <Page Include="Controls\DefaultPrintSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyToggleCheckControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\MessageProgressBarControl.xaml">
       <SubType>Designer</SubType>

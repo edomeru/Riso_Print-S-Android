@@ -146,8 +146,8 @@
                                              
                                              IsItemClickEnabled="True" SelectionMode="None" Tag="{Binding}"
                                              Height="719" ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
-                    <TextBlock Text=" " Style="{StaticResource STYLE_TextHeader}" Foreground="{StaticResource BRUSH_Black}"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="No Printers Found" Style="{StaticResource STYLE_TextHeader}" Foreground="{StaticResource BRUSH_Black}"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Grid Height="340"/>
+                    <TextBlock Text="No Printers Found" Style="{StaticResource STYLE_TextBody}" Foreground="{StaticResource BRUSH_Black}"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </local:PullToRefreshListView>
                 <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="printerSearchListView"
 				                    	     ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
