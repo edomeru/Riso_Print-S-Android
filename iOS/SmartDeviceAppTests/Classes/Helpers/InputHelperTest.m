@@ -93,22 +93,7 @@
 /* TEST CASES ARE EXECUTED IN ALPHABETICAL ORDER */
 /* use a naming scheme for defining the execution order of your test cases */
 
-- (void)test001_TrimIP
-{
-    GHTestLog(@"# CHECK: InputHelper can trim leading zeroes. #");
-    
-    NSString* actualTrimmedIP;
-    NSString* untrimmedIP;
-    for (NSUInteger i = 0; i < [listUntrimmedIP count]; i++)
-    {
-        untrimmedIP = [listUntrimmedIP objectAtIndex:i];
-        GHTestLog(@"-- trimming [%@]..", untrimmedIP);
-        actualTrimmedIP = [InputHelper trimIP:untrimmedIP];
-        GHAssertEqualStrings(actualTrimmedIP, expectedTrimmedIP, @"trimmed IP should be @%@", expectedTrimmedIP);
-    }
-}
-
-- (void)test002_ValidateIP
+- (void)test001_ValidateIP
 {
     GHTestLog(@"# CHECK: InputHelper can check if an IP is valid. #");
     
@@ -118,7 +103,7 @@
     {
         invalidIP = [listInvalidIP objectAtIndex:i];
         GHTestLog(@"-- validating [%@]..", invalidIP);
-        GHAssertFalse([InputHelper isIPValid:invalidIP], @"IP=%@ should be invalid", invalidIP);
+        GHAssertFalse([InputHelper isIPValid:&invalidIP], @"IP=%@ should be invalid", invalidIP);
     }
 
     GHTestLog(@"-- VALID IPs");
@@ -127,7 +112,7 @@
     {
         validIP = [listValidIP objectAtIndex:i];
         GHTestLog(@"-- validating [%@]..", validIP);
-        GHAssertTrue([InputHelper isIPValid:validIP], @"IP=%@ should be valid", validIP);
+        GHAssertTrue([InputHelper isIPValid:&validIP], @"IP=%@ should be valid", validIP);
     }
 }
 
