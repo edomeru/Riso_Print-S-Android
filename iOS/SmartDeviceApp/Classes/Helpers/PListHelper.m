@@ -59,23 +59,11 @@ static NSDictionary* sharedSettingsDict = nil;
         case kPlistUintValMaxPrinters:
             return [[sharedSettingsDict objectForKey:@"Printer_MaxCount"] unsignedIntegerValue];
             
-        default:
-            return 0;
-    }
-}
-
-+ (BOOL)readBool:(kPlistBoolVal)type;
-{
-    if (sharedSettingsDict == nil)
-        [self setSharedSettingsDict];
-    
-    switch (type)
-    {
-        case kPlistBoolValUsePrintJobTestData:
-            return [[sharedSettingsDict objectForKey:@"Use_PrintJobHistoryTestData"] boolValue];
+        case kPlistUintValMaxPrintJobsPerPrinter:
+            return [[sharedSettingsDict objectForKey:@"PrintJob_MaxCountPerPrinter"] unsignedIntegerValue];
             
         default:
-            return NO;
+            return 0;
     }
 }
 

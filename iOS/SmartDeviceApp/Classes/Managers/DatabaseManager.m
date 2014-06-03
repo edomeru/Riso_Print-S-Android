@@ -22,14 +22,25 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
 
 + (NSArray*)getObjects:(NSString*)entityName;
 {
+    return [self getObjects:entityName usingFilter:nil];
+}
+
++ (NSArray*)getObjects:(NSString*)entityName usingFilter:(NSString*)filter
+{
     if (sharedManagedObjectContext == nil)
         sharedManagedObjectContext = [self managedObjectContext];
     
     NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] initWithEntityName:entityName];
-    NSError *error;
+    NSPredicate* predicate = nil;
+    if (filter != nil)
+    {
+        predicate = [NSPredicate predicateWithFormat:filter];
+        [fetchRequest setPredicate:predicate];
+    }
     
+    NSError *error;
     NSArray* results = [sharedManagedObjectContext executeFetchRequest:fetchRequest error:&error];
-
+    
 #if DEBUG_LOG_DATABASE_MANAGER
     if (results == nil)
     {
