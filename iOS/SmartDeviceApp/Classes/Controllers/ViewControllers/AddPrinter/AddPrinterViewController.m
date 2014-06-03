@@ -198,15 +198,6 @@
 {
     [self dismissKeypad];
     
-    // is it still possible to add a printer
-    if ([self.printerManager isAtMaximumPrinters])
-    {
-        [AlertHelper displayResult:kAlertResultErrMaxPrinters
-                         withTitle:kAlertTitlePrintersAdd
-                       withDetails:nil];
-        return;
-    }
-    
     // properly format/trim the input IP
     NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
 #if DEBUG_LOG_ADD_PRINTER_SCREEN

@@ -13,6 +13,7 @@
 #import "PrintSettingsViewController.h"
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
+#import "AlertHelper.h"
 
 @interface PrintersViewController ()
 
@@ -65,13 +66,39 @@
 - (IBAction)addPrinterAction:(id)sender
 {
     [self.addPrinterButton setEnabled:NO];
-    [self performSegueTo:[AddPrinterViewController class]];
+    if ([self.printerManager isAtMaximumPrinters])
+    {
+        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+                         withTitle:kAlertTitlePrinters
+                       withDetails:nil
+                withDismissHandler:^(CXAlertView *alertView) {
+                    [self.addPrinterButton setEnabled:YES];
+                }];
+    }
+    else
+    {
+
+        [self performSegueTo:[AddPrinterViewController class]];
+    }
 }
 
 - (IBAction)printerSearchAction:(id)sender
 {
     [self.printerSearchButton setEnabled:NO];
-    [self performSegueTo:[PrinterSearchViewController class]];
+    if ([self.printerManager isAtMaximumPrinters])
+    {
+        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+                         withTitle:kAlertTitlePrinters
+                       withDetails:nil
+                withDismissHandler:^(CXAlertView *alertView) {
+                    [self.printerSearchButton setEnabled:YES];
+                }];
+    }
+    else
+    {
+
+        [self performSegueTo:[PrinterSearchViewController class]];
+    }
 }
 
 #pragma mark - Segue
