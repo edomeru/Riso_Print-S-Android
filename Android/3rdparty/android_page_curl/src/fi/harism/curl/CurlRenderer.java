@@ -318,6 +318,27 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		mPanX = tempPanX;
 		mPanY = tempPanY;
 	}
+	
+	public void setPans(float panX, float panY) {
+		mPanX = panX;
+		mPanY = panY;
+		
+		tryAdjustPan(0, 0);
+	}
+
+	/**
+	 * Gets the current x pan value.
+	 */
+	public float getPanX() {
+		return mPanX;
+	}
+
+	/**
+	 * Gets the current y pan value.
+	 */
+	public float getPanY() {
+		return mPanY;
+	}
 
 	public void setZoomLevel(float zoomLevel) {
 		mPanX = (mPanX * mZoomLevel) / zoomLevel;

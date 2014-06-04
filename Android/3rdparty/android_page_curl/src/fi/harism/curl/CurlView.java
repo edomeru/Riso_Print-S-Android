@@ -94,6 +94,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	private int mBindPosition = BIND_LEFT;
 
 	private float mZoomLevel = 1.0f;
+	private float mPanX = 0.0f;
+	private float mPanY = 0.0f;
 
 	/**
 	 * Default constructor.
@@ -210,6 +212,8 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	public void onPageSizeChanged(int width, int height) {
 		mPageBitmapWidth = width;
 		mPageBitmapHeight = height;
+		setZoomLevel(mZoomLevel);
+		setPans(mPanX, mPanY);
 		updatePages();
 		requestRender();
 	}
@@ -874,6 +878,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 
 	public void adjustPan(float x, float y) {
 		mRenderer.tryAdjustPan(x / (float) getWidth(), y / (float) getHeight());
+		
+		mPanX = mRenderer.getPanX();
+		mPanY = mRenderer.getPanY();
 	}
 
 	public synchronized void setZoomLevel(float zoomLevel) {
@@ -883,6 +890,27 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 
 	public void setDropShadowSize(float dropShadowSize) {
 		mRenderer.setDropShadowSize(dropShadowSize);
+	}
+
+	public synchronized void setPans(float panX, float panY) {
+		mPanX = panX;
+		mPanY = panY;
+		
+		mRenderer.setPans(panX, panY);
+	}
+
+	/**
+	 * Gets the current x pan value.
+	 */
+	public float getPanX() {
+		return mPanX;
+	}
+
+	/**
+	 * Gets the current y pan value.
+	 */
+	public float getPanY() {
+		return mPanY;
 	}
 
 	/**
