@@ -34,6 +34,7 @@
 @property (assign, nonatomic) BOOL isDefaultSettingsMode;
 @property (weak, nonatomic) Printer* printer;
 @property (weak, nonatomic) IBOutlet UITableView *printerTableView;
+@property (weak, nonatomic) PrintSettingsTableViewController* settingsController;
 - (void)executePrint;
 - (void)loadPrinterList;
 
@@ -70,6 +71,12 @@
         
         self.printer = nil;
     }
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -93,6 +100,15 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)dealloc
+{
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+    {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
+    }
 }
 
 /*
@@ -206,6 +222,9 @@
     {
         if (indexPath.row == 0)
         {
+            //to force close keypads and save the textfield contents (i.e. copies, pin code)
+            [self.settingsController endEditing];
+            
             [self executePrint];
         }
         else
@@ -221,6 +240,7 @@
     {
         PrintSettingsTableViewController *viewController = (PrintSettingsTableViewController *)segue.destinationViewController;
         viewController.printerIndex = self.printerIndex;
+        self.settingsController = viewController;
     }
 }
 
@@ -271,5 +291,29 @@
     [self performSegueWithIdentifier:@"PrintSettings-PrinterList" sender:self];
 }
 
+
+#pragma mark - NotificationCenter
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+    if (self.printerIndex == nil)
+    {
+        self.tableViewHeight.constant = ROW_HEIGHT_SINGLE;
+        [UIView animateWithDuration:0.1 animations:^{
+            [self.view layoutIfNeeded];
+        }];
+    }
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+    if (self.printerIndex == nil)
+    {
+        self.tableViewHeight.constant = ROW_HEIGHT_SINGLE + ROW_HEIGHT_DOUBLE;
+        [UIView animateWithDuration:0.1 animations:^{
+            [self.view layoutIfNeeded];
+        }];
+    }
+}
 
 @end

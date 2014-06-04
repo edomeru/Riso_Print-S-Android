@@ -10,6 +10,7 @@
 #import "OCMock.h"
 #import "PreviewSetting.h"
 #import "PrintSettingsHelper.h"
+#import "AppSettings.h"
 
 @interface PreviewSettingTest : GHTestCase
 
@@ -48,6 +49,7 @@
     // SUT + Verification
     PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
     NSMutableArray *keys = [NSMutableArray arrayWithArray:self.keys];
+    [keys addObject:@"securePrint"];
     [keys addObject:@"pinCode"];
     for (NSString *key in keys)
     {
@@ -75,6 +77,50 @@
         NSRange range = [formattedString rangeOfString:field];
         GHAssertTrue(range.location != NSNotFound, @"Formatted string should have %@.", field);
     }
+}
+
+- (void)testFormattedString_SecurePrint_NotEmpty
+{
+    // Mock
+    id mockNSUserDefaults = [OCMockObject partialMockForObject:[NSUserDefaults standardUserDefaults]];
+    [[[mockNSUserDefaults stub] andReturn:@"user"] valueForKey:KEY_APPSETTINGS_LOGIN_ID];
+    
+    // SUT
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    previewSetting.securePrint = YES;
+    previewSetting.pinCode = @"1234";
+    NSString *formattedString = [previewSetting formattedString];
+    
+    // Verification
+    GHAssertNotNil(formattedString, @"formattedString must not be nil.");
+    NSString *loginIdField = @"loginId=user\n";
+    NSString *pinCodeField = @"pinCode=1234\n";
+    NSRange rangeLogin = [formattedString rangeOfString:loginIdField];
+    GHAssertTrue(rangeLogin.location != NSNotFound, @"Formatted string should have login ID.");
+    NSRange rangePinCode = [formattedString rangeOfString:pinCodeField];
+    GHAssertTrue(rangePinCode.location != NSNotFound, @"Formatted string should have pin code.");
+}
+
+- (void)testFormattedString_SecurePrint_Empty
+{
+    // Mock
+    id mockNSUserDefaults = [OCMockObject partialMockForObject:[NSUserDefaults standardUserDefaults]];
+    [[[mockNSUserDefaults stub] andReturn:nil] valueForKey:KEY_APPSETTINGS_LOGIN_ID];
+    
+    // SUT
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    previewSetting.securePrint = YES;
+    previewSetting.pinCode = nil;
+    NSString *formattedString = [previewSetting formattedString];
+    
+    // Verification
+    GHAssertNotNil(formattedString, @"formattedString must not be nil.");
+    NSString *loginIdField = @"loginId=\n";
+    NSString *pinCodeField = @"pinCode=\n";
+    NSRange rangeLogin = [formattedString rangeOfString:loginIdField];
+    GHAssertTrue(rangeLogin.location != NSNotFound, @"Formatted string should have login ID.");
+    NSRange rangePinCode = [formattedString rangeOfString:pinCodeField];
+    GHAssertTrue(rangePinCode.location != NSNotFound, @"Formatted string should have pin code.");
 }
 
 - (void)testFormattedString_PrinterSettingsNil

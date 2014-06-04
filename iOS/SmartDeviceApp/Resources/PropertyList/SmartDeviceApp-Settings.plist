@@ -2,9 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Use_PrintJobHistoryTestData</key>
-	<false/>
 	<key>Printer_MaxCount</key>
 	<integer>10</integer>
+	<key>PrintJob_MaxCountPerPrinter</key>
+	<integer>100</integer>
 </dict>
 </plist>

@@ -19,6 +19,40 @@
 #include "common.h"
 #include "printsettings.h"
 
+#define ENABLE_JOB_DUMP 1
+#if ENABLE_JOB_DUMP
+
+#define DUMP_DIR_NAME "_DUMP_"
+#define DUMP_EXT ""
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <libgen.h>
+
+#endif // ENABLE_JOB_DUMP
+
+#ifdef IS_IN_UT
+
+int FD_ISSET_MOCK(int socket, const fd_set * fd);
+#define DP_FD_ISSET FD_ISSET_MOCK
+
+int fseek_mock(FILE *, long, int);
+#define dp_fseek fseek_mock
+
+long ftell_mock(FILE *);
+#define dp_ftell ftell_mock
+
+size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
+#define dp_fread fread_mock
+
+#else
+#define DP_FD_ISSET FD_ISSET
+#define dp_fseek fseek
+#define dp_ftell ftell
+#define dp_fread fread
+
+#endif
+
 /**
  Constants
  */
@@ -33,7 +67,7 @@
 #define QUEUE_NAME "normal"
 #define HOST_NAME "SmartDeviceApp"
 
-#define PJL_ESCAPE "\x1B-12345X"
+#define PJL_ESCAPE "\x1B%-12345X"
 #define PJL_LANGUAGE "@PJL ENTER LANGUAGE = PDF\x0d\x0a"
 #define PJL_EOJ "@PJL EOJ\x0d\x0a"
 
@@ -80,6 +114,14 @@ int is_cancelled(directprint_job *print_job);
 // Thread functions
 void *do_lpr_print(void *parameter);
 void *do_raw_print(void *parameter);
+
+#if ENABLE_JOB_DUMP
+
+// Dump functions
+FILE *job_dump_create_file(directprint_job *print_job);
+void job_dump_write(FILE *file, void *buffer, size_t buffer_len);
+
+#endif
 
 /**
  Public Methods
@@ -130,7 +172,6 @@ void directprint_job_free(directprint_job *print_job)
     free(print_job->print_settings);
     free(print_job->ip_address);
     free(print_job);
-    print_job = 0;
 }
 
 void *directprint_job_get_caller_data(directprint_job *print_job)
@@ -184,6 +225,10 @@ int can_start_print(directprint_job *print_job)
     {
         return 0;
     }
+    if (print_job->user_name == 0 || strlen(print_job->user_name) <= 0)
+    {
+        return 0;
+    }
     if (print_job->job_name == 0 || strlen(print_job->job_name) <= 0)
     {
         return 0;
@@ -218,7 +263,7 @@ int connect_to_port(const char *ip_address, const char *port)
     if (getaddrinfo(ip_address, port, &hints, &server_info) != 0)
     {
         // Unable to get address info
-        return 0;
+        return -1;
     }
     
     struct addrinfo *current_address;
@@ -256,7 +301,7 @@ int connect_to_port(const char *ip_address, const char *port)
             timeout.tv_usec = 0;
             select(sock_fd + 1, 0, &write_fds, 0, &timeout);
             
-            if (!FD_ISSET(sock_fd, &write_fds))
+            if (!DP_FD_ISSET(sock_fd, &write_fds))
             {
                 // Timout
                 close(sock_fd);
@@ -278,6 +323,12 @@ int connect_to_port(const char *ip_address, const char *port)
             flags &= ~O_NONBLOCK;
             fcntl(sock_fd, F_SETFL, flags);
             break;
+        }
+        else
+        {
+            close(sock_fd);
+            sock_fd = -1;
+            continue;
         }
     }
     freeaddrinfo(server_info);
@@ -338,6 +389,9 @@ void *do_lpr_print(void *parameter)
     FILE *fd = 0;
     unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE);
     
+#if ENABLE_JOB_DUMP
+    FILE *dump_fd = job_dump_create_file(print_job);
+#endif
     
     do
     {
@@ -473,6 +527,7 @@ void *do_lpr_print(void *parameter)
         if (send_size != pos)
         {
             notify_callback(print_job, kJobStatusErrorSending);
+            break;
         }
         
         notify_callback(print_job, kJobStatusSending);
@@ -487,9 +542,9 @@ void *do_lpr_print(void *parameter)
         }
 
         // Get file size
-        fseek(fd, 0L, SEEK_END);
-        long file_size = ftell(fd);
-        fseek(fd, 0L, SEEK_SET);
+        dp_fseek(fd, 0L, SEEK_END);
+        long file_size = dp_ftell(fd);
+        dp_fseek(fd, 0L, SEEK_SET);
         
         // DATA FILE INFO : Prepare
         size_t total_data_size = file_size + pjl_header_size + pjl_footer_size;
@@ -520,6 +575,7 @@ void *do_lpr_print(void *parameter)
         if (send_size != pos)
         {
             notify_callback(print_job, kJobStatusErrorSending);
+            break;
         }
         
         notify_callback(print_job, kJobStatusSending);
@@ -536,15 +592,18 @@ void *do_lpr_print(void *parameter)
             break;
         }
         
-        
         // Calculate progress step
-        float data_step = (99.0f / ((float)file_size / BUFFER_SIZE));
+        int step_count = file_size / BUFFER_SIZE + 1;
+        float data_step = (99.0f / (float)step_count);
     
         // DATA FILE : Send
         size_t read = 0;
         send(sock_fd, pjl_header, strlen(pjl_header), 0);
+#if ENABLE_JOB_DUMP
+        job_dump_write(dump_fd, pjl_header, strlen(pjl_header));
+#endif
         notify_callback(print_job, kJobStatusSending);
-        while(0 < (read = fread(buffer, 1, BUFFER_SIZE, fd)))
+        while(0 < (read = dp_fread(buffer, 1, BUFFER_SIZE, fd)))
         {
             if (is_cancelled(print_job) == 1)
             {
@@ -552,6 +611,9 @@ void *do_lpr_print(void *parameter)
             }
     
             send(sock_fd, buffer, read, 0);
+#if ENABLE_JOB_DUMP
+            job_dump_write(dump_fd, buffer, read);
+#endif
             print_job->progress += data_step;
             notify_callback(print_job, kJobStatusSending);
         }
@@ -562,6 +624,9 @@ void *do_lpr_print(void *parameter)
         }
         
         send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
+#if ENABLE_JOB_DUMP
+        job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
+#endif
         notify_callback(print_job, kJobStatusSending);
         
         pos = 0;
@@ -580,6 +645,13 @@ void *do_lpr_print(void *parameter)
         print_job->progress = 100.0f;
         notify_callback(print_job, kJobStatusSent);
     } while (0);
+    
+#if ENABLE_JOB_DUMP
+    if (dump_fd != 0)
+    {
+        fclose(dump_fd);
+    }
+#endif
     
     if (fd != 0)
     {
@@ -617,6 +689,10 @@ void *do_raw_print(void *parameter)
     FILE *fd = 0;
     unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE);
     
+#if ENABLE_JOB_DUMP
+    FILE *dump_fd = job_dump_create_file(print_job);
+#endif
+    
     do
     {
         notify_callback(print_job, kJobStatusConnecting);
@@ -648,23 +724,26 @@ void *do_raw_print(void *parameter)
         }
         
         // Get file size
-        fseek(fd, 0L, SEEK_END);
-        long file_size = ftell(fd);
-        fseek(fd, 0L, SEEK_SET);
+        dp_fseek(fd, 0L, SEEK_END);
+        long file_size = dp_ftell(fd);
+        dp_fseek(fd, 0L, SEEK_SET);
         
         // Calculate progress step
-        float data_step = (80.0f / ((float)file_size / BUFFER_SIZE));
+        int step_count = file_size / BUFFER_SIZE + 1;
+        float data_step = (99.0f / (float)step_count);
         
         // Send header
         send(sock_fd, pjl_header, strlen(pjl_header), 0);
-        print_job->progress = 10.0f;
+#if ENABLE_JOB_DUMP
+        job_dump_write(dump_fd, pjl_header, strlen(pjl_header));
+#endif
         notify_callback(print_job, kJobStatusSending);
         
         // Send file
         size_t read;
         size_t sent;
         int has_error = 0;
-        while(0 < (read = fread(buffer, 1, BUFFER_SIZE, fd)))
+        while(0 < (read = dp_fread(buffer, 1, BUFFER_SIZE, fd)))
         {
             if (is_cancelled(print_job) == 1)
             {
@@ -678,6 +757,9 @@ void *do_raw_print(void *parameter)
                 has_error = 1;
                 break;
             }
+#if ENABLE_JOB_DUMP
+            job_dump_write(dump_fd, buffer, read);
+#endif
             
             print_job->progress += data_step;
             notify_callback(print_job, kJobStatusSending);
@@ -689,16 +771,68 @@ void *do_raw_print(void *parameter)
         }
         
         send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
+#if ENABLE_JOB_DUMP
+        job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
+#endif
         print_job->progress = 100.0f;
         notify_callback(print_job, kJobStatusSent);
         
     } while (0);
     
+#if ENABLE_JOB_DUMP
+    if (dump_fd != 0)
+    {
+        fclose(dump_fd);
+    }
+#endif
+    
     if (fd != 0)
     {
         fclose(fd);
     }
+    
     close(sock_fd);
     free(buffer);
     return 0;
 }
+
+#if ENABLE_JOB_DUMP
+
+// Dump functions
+FILE *job_dump_create_file(directprint_job *print_job)
+{
+    // Prepare directory
+    char *base_dir = dirname(print_job->filename);
+    char *dump_dir = (char *)calloc(1, strlen(base_dir) + strlen(DUMP_DIR_NAME) + 2);
+    sprintf(dump_dir, "%s/%s", base_dir, DUMP_DIR_NAME);
+    int result = mkdir(dump_dir, S_IRWXU | S_IRWXG | S_IRWXO);
+    if (result == -1 && errno != EEXIST)
+    {
+        return 0;
+    }
+    
+    // Prepare file name
+    time_t raw_time;
+    time(&raw_time);
+    struct tm *time_info = localtime(&raw_time);
+    char *dump_file_name = (char *)calloc(1, strlen(dump_dir) + strlen(print_job->job_name) + strlen(DUMP_EXT) + 18);
+    sprintf(dump_file_name, "%s/%04d%02d%02d-%02d%02d%02d_%s%s", dump_dir, time_info->tm_year + 1900, time_info->tm_mon + 1, time_info->tm_mday, time_info->tm_hour, time_info->tm_min, time_info->tm_sec, print_job->job_name, DUMP_EXT);
+    
+    FILE *file = fopen(dump_file_name, "wb");
+    
+    free(dump_file_name);
+    free(dump_dir);
+    return file;
+}
+
+void job_dump_write(FILE *file, void *buffer, size_t buffer_len)
+{
+    if (file == 0)
+    {
+        return;
+    }
+    
+    fwrite(buffer, buffer_len, 1, file);
+}
+
+#endif // ENABLE_JOB_DUMP

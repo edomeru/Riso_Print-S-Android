@@ -28,4 +28,15 @@
     self.contentView.backgroundColor = [UIColor gray2ThemeColor];
 }
 
+- (void)setEnabled:(BOOL)enabled
+{
+    self.settingLabel.enabled = enabled;
+    self.valueTextField.enabled = enabled;
+    
+    if (enabled)
+        self.valueTextField.textColor = [UIColor blackColor];
+    else
+        self.valueTextField.textColor = self.valueTextField.backgroundColor;
+}
+
 @end

@@ -26,7 +26,7 @@
     switch (title)
     {
         case kAlertTitlePrinters:
-            alertTitle = NSLocalizedString(IDS_LBL_PRINTER, @"");
+            alertTitle = NSLocalizedString(IDS_LBL_PRINTERS, @"");
             break;
         
         case kAlertTitlePrintersAdd:
@@ -39,6 +39,10 @@
             
         case kAlertTitlePrintJobHistory:
             alertTitle = NSLocalizedString(IDS_LBL_PRINT_JOB_HISTORY, @"");
+            break;
+            
+        case kAlertTitlePrintPreview:
+            alertTitle = NSLocalizedString(IDS_LBL_PRINT_PREVIEW, @"");
             break;
         
         case kAlertTitleDefault:

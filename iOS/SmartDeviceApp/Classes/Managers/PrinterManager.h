@@ -101,13 +101,6 @@
 - (Printer*)getPrinterAtIndex:(NSUInteger)index;
 
 /**
- Removes the defaultprinter record
- 
- @return YES if successful, NO otherwise.
- */
-- (BOOL) deleteDefaultPrinter;
-
-/**
  Removes a Printer object from the DB. If this Printer object
  is set as the default printer, the DefaultPrinter object is 
  first removed. The PrinterManager's reference to both the
@@ -137,14 +130,14 @@
  
  @return Printer object
  */
--(Printer*) getDefaultPrinter;
+- (Printer*)getDefaultPrinter;
 
 /**
  Call to save the changes done to printer objects to database.
  
  @return YES if successful; NO otherwise
  */
--(BOOL) savePrinterChanges;
+- (BOOL)savePrinterChanges;
 
 #pragma mark - Printers in Network (SNMP)
 

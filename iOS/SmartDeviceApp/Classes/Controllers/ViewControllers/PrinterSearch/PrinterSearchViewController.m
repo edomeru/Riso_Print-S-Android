@@ -12,6 +12,7 @@
 #import "NetworkManager.h"
 #import "AlertHelper.h"
 #import "UIColor+Theme.h"
+#import "SearchingIndicator.h"
 
 #define SEGUE_IPHONE_TO_SEARCH_TABLE    @"PrinterSearchIphone-PrinterSearchTable"
 #define SEGUE_IPAD_TO_SEARCH_TABLE      @"PrinterSearchIpad-PrinterSearchTable"
@@ -79,10 +80,10 @@
 #pragma mark - UI Properties
 
 /** Implements the pull-to-refresh gesture. */
-@property (strong, nonatomic) UIRefreshControl* refreshControl;
+@property (weak, nonatomic) SearchingIndicator* refreshControl;
 
 /** UITableView for the printer search results */
-@property (strong, nonatomic) UITableView* searchResultsTable;
+@property (weak, nonatomic) UITableView* searchResultsTable;
 
 /** Internal flag, YES if currently searching for printers. */
 @property (assign, nonatomic) BOOL isSearching;
@@ -193,20 +194,10 @@
         //embed
         
         UITableViewController* destController = (UITableViewController*)segue.destinationViewController;
-        
+        self.refreshControl = (SearchingIndicator*)destController.refreshControl;
         self.searchResultsTable = destController.tableView;
         self.searchResultsTable.delegate = self;
         self.searchResultsTable.dataSource = self;
-        
-        self.refreshControl = [[UIRefreshControl alloc] init];
-        [self.refreshControl addTarget:self
-                                action:@selector(refreshScreen)
-                      forControlEvents:UIControlEventValueChanged];
-        [destController.refreshControl setEnabled:YES];
-        destController.refreshControl = self.refreshControl;
-        
-        // fix for the tint color API bug in iOS7
-        [self.searchResultsTable setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height)];
     }
     else
     {
@@ -253,6 +244,13 @@
         self.isIpad = YES;
     else
         self.isIpad = NO;
+    
+    [self.refreshControl addTarget:self
+                            action:@selector(refreshScreen)
+                  forControlEvents:UIControlEventValueChanged];
+    
+    // fix for initial tint color of the searching indicator in iOS7
+    [self.searchResultsTable setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height)];
 }
 
 - (void)refreshScreen
@@ -269,6 +267,8 @@
 #endif
     [self.searchResultsTable reloadData];
     
+    [self startSearchingAnimation];
+    
     // check for network connection
     if (![NetworkManager isConnectedToLocalWifi])
     {
@@ -277,7 +277,9 @@
                        withDetails:nil];
         
         if ([self.refreshControl isRefreshing])
+        {
             [self stopSearchingAnimation];
+        }
         
         return;
     }
@@ -288,10 +290,6 @@
 #endif
     [self.printerManager searchForAllPrinters];
     self.isSearching = YES;
-    
-    // callbacks for the search will be handled in delegate methods
-    // if UI needs to do other things, do it here
-    [self startSearchingAnimation];
 }
 
 - (void)dismissScreen
@@ -306,10 +304,45 @@
 
 - (void)addPrinter:(NSUInteger)row
 {
-    // check if adding printers is allowed
-    if ([self.printerManager isAtMaximumPrinters])
+#if SORT_SEARCH_RESULTS
+    NSString* printerIP = [self.listNewPrinterIP objectAtIndex:row];
+    PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
+#else
+    NSString* printerIP = [self.listPrinterIP objectAtIndex:row];
+    PrinterDetails* printerDetails = [self.listPrinterDetails valueForKey:printerIP];
+#endif
+    if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+        self.hasAddedPrinters = YES;
+        [AlertHelper displayResult:kAlertResultInfoPrinterAdded
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil
+                withDismissHandler:^(CXAlertView *alertView) {
+                    [self dismissScreen];
+                }];
+        
+        // change the '+' button to a checkmark
+#if SORT_SEARCH_RESULTS
+        [self.listOldPrinterNames addObject:printerDetails.name];
+        [self.listNewPrinterNames removeObjectAtIndex:row];
+        [self.listNewPrinterDetails removeObjectForKey:printerIP];
+        [self.listNewPrinterIP removeObjectAtIndex:row];
+        [self.tableView reloadData];
+#else
+        if (printerDetails.name == nil)
+            [self.listPrinterDetails setValue:@"" forKey:printerIP];
+        else
+            [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
+        [self.searchResultsTable reloadData];
+#endif
+        
+        // if this is an iPad, reload the center panel
+        if (self.isIpad)
+            [self.printersViewController reloadData];
+    }
+    else
+    {
+        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
                          withTitle:kAlertTitlePrintersSearch
                        withDetails:nil
                 withDismissHandler:^(CXAlertView *alertView) {
@@ -318,58 +351,6 @@
                     [self.searchResultsTable reloadRowsAtIndexPaths:@[rowIndexPath]
                                                    withRowAnimation:UITableViewRowAnimationNone];
                 }];
-    }
-    else
-    {
-        // add the printer
-#if SORT_SEARCH_RESULTS
-        NSString* printerIP = [self.listNewPrinterIP objectAtIndex:row];
-        PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
-#else
-        NSString* printerIP = [self.listPrinterIP objectAtIndex:row];
-        PrinterDetails* printerDetails = [self.listPrinterDetails valueForKey:printerIP];
-#endif
-        if ([self.printerManager registerPrinter:printerDetails])
-        {
-            self.hasAddedPrinters = YES;
-            [AlertHelper displayResult:kAlertResultInfoPrinterAdded
-                             withTitle:kAlertTitlePrintersSearch
-                           withDetails:nil
-                    withDismissHandler:^(CXAlertView *alertView) {
-                        [self dismissScreen];
-                    }];
-            
-            // change the '+' button to a checkmark
-#if SORT_SEARCH_RESULTS
-            [self.listOldPrinterNames addObject:printerDetails.name];
-            [self.listNewPrinterNames removeObjectAtIndex:row];
-            [self.listNewPrinterDetails removeObjectForKey:printerIP];
-            [self.listNewPrinterIP removeObjectAtIndex:row];
-            [self.tableView reloadData];
-#else
-            if (printerDetails.name == nil)
-                [self.listPrinterDetails setValue:@"" forKey:printerIP];
-            else
-                [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
-            [self.searchResultsTable reloadData];
-#endif
-            
-            // if this is an iPad, reload the center panel
-            if (self.isIpad)
-                [self.printersViewController reloadData];
-        }
-        else
-        {
-            [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
-                             withTitle:kAlertTitlePrintersSearch
-                           withDetails:nil
-                    withDismissHandler:^(CXAlertView *alertView) {
-                        // cancel the cell highlight
-                        NSIndexPath* rowIndexPath = [NSIndexPath indexPathForRow:row inSection:0];
-                        [self.searchResultsTable reloadRowsAtIndexPaths:@[rowIndexPath]
-                                                       withRowAnimation:UITableViewRowAnimationNone];
-                    }];
-        }
     }
 }
 
@@ -543,19 +524,23 @@
 
 - (void)startSearchingAnimation
 {
-    [self.refreshControl setBackgroundColor:[UIColor gray4ThemeColor]];
-    [self.refreshControl setTintColor:[UIColor whiteColor]];
     [self.refreshControl beginRefreshing];
+    
+    // fix for the table view not moving to its proper place after the refresh indicator appears
     [self.searchResultsTable setContentOffset:CGPointMake(0, self.refreshControl.frame.size.height)];
+    
+    // prevent repeated pull-to-refresh
     [self.searchResultsTable setBounces:NO];
 }
 
 - (void)stopSearchingAnimation
 {
     [self.refreshControl endRefreshing];
-    [self.refreshControl setBackgroundColor:[UIColor gray2ThemeColor]];
-    [self.refreshControl setTintColor:[UIColor gray2ThemeColor]];
+    
+    // fix for the table view not moving to its proper place after the refresh indicator disappears
     [self.searchResultsTable setContentOffset:CGPointMake(0, 0) animated:YES];
+    
+    // allow pull-to-refresh
     [self.searchResultsTable setBounces:YES];
 }
 

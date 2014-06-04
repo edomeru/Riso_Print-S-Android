@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view;
 
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -19,6 +20,7 @@ import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,6 +57,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     /** {@inheritDoc} */
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
+        if (getIntent() != null && getIntent().getData() != null) {
+            Logger.logStartTime(this, this.getClass(), "Open-in");
+        } else {
+            Logger.logStartTime(this, this.getClass(), "AppLaunch");
+        }
+        
         Global.Init(this);
 
         mHandler = new PauseableHandler(this);
@@ -114,6 +122,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
+
+        if (getIntent() != null && getIntent().getData() != null) {
+            Logger.logStopTime(this, this.getClass(), "Open-in");
+        } else {
+            Logger.logStopTime(this, this.getClass(), "AppLaunch");
+        }
     }
     
     /** {@inheritDoc} */
@@ -149,6 +163,19 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         mHandler.resume();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
+        mDrawerToggle.onConfigurationChanged(newConfig);
+        
+        BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
+        if (!mDrawerLayout.isDrawerOpen(Gravity.RIGHT) && !mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            fragment.clearIconStates();
+        }
+    }
     
     // ================================================================================
     // Public Functions
@@ -169,13 +196,16 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
      * 
      * @param gravity
      *            Drawer gravity
-     * @param preventIntercept
+     * @param resizeView
      *            Prevent layout from touches
      */
-    public void openDrawer(int gravity, boolean preventIntercept) {
+    public void openDrawer(int gravity, boolean resizeView) {
         Message msg = Message.obtain(mHandler, MSG_OPEN_DRAWER);
         msg.arg1 = gravity;
-        msg.arg2 = preventIntercept ? 1 : 0;
+        msg.arg2 = 0;
+        if (gravity == Gravity.RIGHT) {
+            msg.arg2 = resizeView ? 1 : 0;
+        }
         mHandler.sendMessage(msg);
     }
     
@@ -218,22 +248,17 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         switch (msg.what){
             case MSG_OPEN_DRAWER:
-                mDrawerLayout.setPreventInterceptTouches(false);
                 mDrawerLayout.closeDrawers();
                 
                 if (fragment != null) {
                     fragment.setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, gravityLeft);
                 }
-                
-                mDrawerLayout.setPreventInterceptTouches((msg.arg2 == 1));
-                if (msg.arg1 == Gravity.RIGHT) {
-                    mResizeView = (msg.arg2 == 1);
-                }
+
+                mResizeView = (msg.arg2 == 1);
                 
                 mDrawerLayout.openDrawer(msg.arg1);
                 break;
             case MSG_CLOSE_DRAWER:
-                mDrawerLayout.setPreventInterceptTouches(false);
                 mDrawerLayout.closeDrawers();
                 break;
             case MSG_CLEAR_ICON_STATES:
@@ -306,17 +331,25 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             
             super.onDrawerStateChanged(newState);
             
-            if (newState == DrawerLayout.STATE_IDLE) {
-                if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.START);
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-                } else if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.START);
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END);
-                } else {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            final int layoutState = newState;
+            
+            // https://code.google.com/p/android/issues/detail?id=60671
+            mDrawerLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (layoutState == DrawerLayout.STATE_IDLE) {
+                        if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.START);
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
+                        } else if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.START);
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END);
+                        } else {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                        }
+                    }
                 }
-            }
+            });
             
         }
         

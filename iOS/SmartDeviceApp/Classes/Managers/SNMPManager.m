@@ -18,6 +18,7 @@ static snmp_context* snmpContext;
 static void snmpDiscoveryEndedCallback(snmp_context* context, int result);
 static void snmpPrinterAddedCallback(snmp_context* context, snmp_device* device);
 
+static NSLock *lock = nil;
 static SNMPManager* sharedSNMPManager = nil;
 
 @interface SNMPManager ()
@@ -74,6 +75,18 @@ static SNMPManager* sharedSNMPManager = nil;
             sharedSNMPManager = [[self alloc] init];
     }
     return sharedSNMPManager;
+}
+
+#pragma mark - State
+
++ (BOOL)idle
+{
+    BOOL result = YES;
+    [lock lock];
+    result = (snmpContext == nil);
+    [lock unlock];
+    
+    return result;
 }
 
 #pragma mark - Printer Search (Manual Search)
@@ -167,7 +180,7 @@ static SNMPManager* sharedSNMPManager = nil;
     pd.name = [NSString stringWithFormat:@"%s", snmp_device_get_name(device)];
     pd.ip = [NSString stringWithFormat:@"%s", snmp_device_get_ip_address(device)];
     pd.port = [NSNumber numberWithInt:0]; //TODO: get proper port (LPR or RAW)
-    pd.enBooklet = (snmp_device_get_capability_status(device, kSnmpCapabilityBooklet) > 0 ? YES : NO);
+    pd.enBookletFinishing = (snmp_device_get_capability_status(device, kSnmpCapabilityBooklet) > 0 ? YES : NO);
     pd.enFinisher23Holes = (snmp_device_get_capability_status(device, kSnmpCapabilityFin23Holes) > 0 ? YES : NO);
     pd.enFinisher24Holes = (snmp_device_get_capability_status(device, kSnmpCapabilityFin24Holes) > 0 ? YES : NO);
     pd.enLpr = YES;
@@ -182,7 +195,7 @@ static SNMPManager* sharedSNMPManager = nil;
     NSLog(@"[INFO][SNMPM] name=%@", pd.name);
     NSLog(@"[INFO][SNMPM] ip=%@", pd.ip);
     NSLog(@"[INFO][SNMPM] port=%d", [pd.port intValue]);
-    NSLog(@"[INFO][SNMPM] enBooklet=%@", pd.enBooklet ? @"YES" : @"NO");
+    NSLog(@"[INFO][SNMPM] enBookletFinishing=%@", pd.enBookletFinishing ? @"YES" : @"NO");
     NSLog(@"[INFO][SNMPM] enFinisher23Holes=%@", pd.enFinisher23Holes ? @"YES" : @"NO");
     NSLog(@"[INFO][SNMPM] enFinisher24Holes=%@", pd.enFinisher24Holes ? @"YES" : @"NO");
     NSLog(@"[INFO][SNMPM] enLpr=%@", pd.enLpr ? @"YES" : @"NO");
@@ -215,7 +228,7 @@ static SNMPManager* sharedSNMPManager = nil;
     pd.ip = fakeIP;
     pd.name = [NSString stringWithFormat:@"RISO Printer %@", pd.ip];
     pd.port = [NSNumber numberWithInt:0]; //TODO: use proper port (LPR or RAW)
-    pd.enBooklet = YES;
+    pd.enBookletFinishing = YES;
     pd.enFinisher23Holes = NO;
     pd.enFinisher24Holes = YES;
     pd.enLpr = YES;

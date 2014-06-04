@@ -187,6 +187,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        
+        if (mPauseableHandler != null) {
+            mPauseableHandler.resume();
+        }
 
         if (isTablet() && mPrinterTabletView != null) {
             mPrinterTabletView.requestLayout();

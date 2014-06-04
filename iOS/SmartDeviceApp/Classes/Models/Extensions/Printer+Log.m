@@ -17,7 +17,7 @@
     [msg appendFormat:@"\n   Name=%@", self.name];
     [msg appendFormat:@"\n   IP=%@", self.ip_address];
     [msg appendFormat:@"\n   Port=%ld", (long)[self.port integerValue]];
-    [msg appendFormat:@"\n   enabled_booklet=%ld", (long)[self.enabled_booklet integerValue]];
+    [msg appendFormat:@"\n   enabled_booklet_finishing=%ld", (long)[self.enabled_booklet_finishing integerValue]];
     [msg appendFormat:@"\n   enabled_finisher_2_3_holes=%ld", (long)[self.enabled_finisher_2_3_holes integerValue]];
     [msg appendFormat:@"\n   enabled_finisher_2_4_holes=%ld", (long)[self.enabled_finisher_2_4_holes integerValue]];
     [msg appendFormat:@"\n   enabled_lpr=%ld", (long)[self.enabled_lpr integerValue]];

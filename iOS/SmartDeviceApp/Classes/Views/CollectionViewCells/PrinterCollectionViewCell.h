@@ -13,17 +13,18 @@
 
 @interface PrinterCollectionViewCell : UICollectionViewCell
 
-@property (nonatomic, weak) IBOutlet UILabel *nameLabel;
-@property (nonatomic, weak) IBOutlet UILabel *ipAddressLabel;
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *ipAddressLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *portSelection;
-@property (nonatomic, weak) IBOutlet UISwitch *defaultSwitch;
-@property (nonatomic, weak) IBOutlet PrinterStatusView *statusView;
+@property (weak, nonatomic) IBOutlet UISwitch *defaultSwitch;
+@property (weak, nonatomic) IBOutlet UIImageView *defaultSetIcon;
+@property (weak, nonatomic) IBOutlet PrinterStatusView *statusView;
 @property (weak, nonatomic) IBOutlet UIView *cellHeader;
 @property (weak, nonatomic) IBOutlet UIButton *defaultSettingsButton;
 @property (weak, nonatomic) IBOutlet DeleteButton *deleteButton;
 @property (weak, nonatomic) IBOutlet UIView *defaultSettingsRow;
 
--(void) setAsDefaultPrinterCell:(BOOL) isDefaultPrinterCell;
--(void) setCellToBeDeletedState:(BOOL) isCellForDelete;
-- (void) setDefaultSettingsRowToSelected:(BOOL) isSelected;
+- (void)setAsDefaultPrinterCell:(BOOL)isDefaultPrinterCell;
+- (void)setCellToBeDeletedState:(BOOL)isCellForDelete;
+- (void)setDefaultSettingsRowToSelected:(BOOL)isSelected;
 @end

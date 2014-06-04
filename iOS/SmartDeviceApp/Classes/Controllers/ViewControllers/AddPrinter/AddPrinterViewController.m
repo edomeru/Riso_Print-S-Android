@@ -180,7 +180,7 @@
     PrinterDetails *pd = [[PrinterDetails alloc] init];
     pd.ip = ipAddress;
     pd.port = [NSNumber numberWithInt:0];
-    pd.enBooklet = YES;
+    pd.enBookletFinishing = YES;
     pd.enStaple = YES;
     pd.enFinisher23Holes = NO;
     pd.enFinisher24Holes = YES;
@@ -197,15 +197,6 @@
 - (void)savePrinter
 {
     [self dismissKeypad];
-    
-    // is it still possible to add a printer
-    if ([self.printerManager isAtMaximumPrinters])
-    {
-        [AlertHelper displayResult:kAlertResultErrMaxPrinters
-                         withTitle:kAlertTitlePrintersAdd
-                       withDetails:nil];
-        return;
-    }
     
     // properly format/trim the input IP
     NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];

@@ -7,6 +7,7 @@
 //
 
 #import <GHUnitIOS/GHUnit.h>
+#import "OCMock.h"
 #import "PrintJobHistoryGroup.h"
 #import "DatabaseManager.h"
 #import "PrinterManager.h"
@@ -15,13 +16,15 @@
 #import "PrintJob.h"
 
 @interface PrintJobHistoryGroupTest : GHTestCase
-{
-    Printer* testPrinter;
-    PrinterManager* pm;
-    PrintJobHistoryGroup* testGroup;
-    NSArray* jobList;
-    NSArray* sortedJobList;
-}
+
+@property (strong, nonatomic) Printer* testPrinter;
+@property (strong, nonatomic) PrintJob* testJob1;
+@property (strong, nonatomic) PrintJob* testJob2;
+@property (strong, nonatomic) PrintJob* testJob3;
+@property (strong, nonatomic) PrintJob* testJob4;
+@property (strong, nonatomic) PrintJob* testJob5;
+@property (strong, nonatomic) NSArray* jobList;
+@property (strong, nonatomic) NSArray* sortedJobList;
 
 @end
 
@@ -37,71 +40,60 @@
 // Run at start of all tests in the class
 - (void)setUpClass
 {
-    // clear all existing test printers
-    pm = [PrinterManager sharedPrinterManager];
-    while (pm.countSavedPrinters != 0)
-        GHAssertTrue([pm deletePrinterAtIndex:0], @"check functionality of PrinterManager");
+    [MagicalRecord setDefaultModelFromClass:[self class]];
+    [MagicalRecord setupCoreDataStackWithInMemoryStore];
     
-    // create the test printer
-    PrinterDetails* pd = [[PrinterDetails alloc] init];
-    pd.name = @"Printer 1";
-    pd.ip = @"192.168.1.1";
-    GHAssertTrue([pm registerPrinter:pd], @"check functionality of PrinterManager");
-    testPrinter = [pm getPrinterAtIndex:0];
-    GHAssertNotNil(testPrinter, @"check functionality of PrinterManager");
+    self.testPrinter = [Printer MR_createEntity];
+    self.testPrinter.name = @"Printer 1";
+    self.testPrinter.ip_address = @"192.168.1.1";
     
-    // add the test print jobs
-
-    PrintJob* job1 = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
-    GHAssertNotNil(job1, @"check functionality of DatabaseManager");
-    job1.name = @"Job 1";
-    job1.result = [NSNumber numberWithBool:YES];
-    job1.date = [NSDate dateWithTimeIntervalSinceNow:50000];
-    job1.printer = testPrinter;
+    self.testJob1 = [PrintJob MR_createEntity];
+    self.testJob1.name = @"Job 1";
+    self.testJob1.result = [NSNumber numberWithBool:YES];
+    self.testJob1.date = [NSDate dateWithTimeIntervalSinceNow:50000];
+    self.testJob1.printer = self.testPrinter;
     
-    PrintJob* job2 = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
-    GHAssertNotNil(job2, @"check functionality of DatabaseManager");
-    job2.name = @"Job 2";
-    job2.result = [NSNumber numberWithBool:NO];
-    job2.date = [NSDate dateWithTimeIntervalSinceNow:80000];
-    job2.printer = testPrinter;
+    self.testJob2 = [PrintJob MR_createEntity];
+    self.testJob2.name = @"Job 2";
+    self.testJob2.result = [NSNumber numberWithBool:NO];
+    self.testJob2.date = [NSDate dateWithTimeIntervalSinceNow:80000];
+    self.testJob2.printer = self.testPrinter;
     
-    PrintJob* job3 = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
-    GHAssertNotNil(job3, @"check functionality of DatabaseManager");
-    job3.name = @"Job 3";
-    job3.result = [NSNumber numberWithBool:YES];
-    job3.date = [NSDate dateWithTimeIntervalSinceNow:10000];
-    job3.printer = testPrinter;
+    self.testJob3 = [PrintJob MR_createEntity];
+    self.testJob3.name = @"Job 3";
+    self.testJob3.result = [NSNumber numberWithBool:YES];
+    self.testJob3.date = [NSDate dateWithTimeIntervalSinceNow:10000];
+    self.testJob3.printer = self.testPrinter;
     
-    PrintJob* job4 = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
-    GHAssertNotNil(job4, @"check functionality of DatabaseManager");
-    job4.name = @"Job 4";
-    job4.result = [NSNumber numberWithBool:NO];
-    job4.date = job1.date;
-    job4.printer = testPrinter;
+    self.testJob4 = [PrintJob MR_createEntity];
+    self.testJob4.name = @"Job 4";
+    self.testJob4.result = [NSNumber numberWithBool:NO];
+    self.testJob4.date = self.testJob1.date;
+    self.testJob4.printer = self.testPrinter;
     
-    PrintJob* job5 = (PrintJob*)[DatabaseManager addObject:E_PRINTJOB];
-    GHAssertNotNil(job5, @"check functionality of DatabaseManager");
-    job5.name = @"Job 5";
-    job5.result = [NSNumber numberWithBool:NO];
-    job5.date = [NSDate dateWithTimeIntervalSinceNow:30000];
-    job5.printer = testPrinter;
+    self.testJob5 = [PrintJob MR_createEntity];
+    self.testJob5.name = @"Job 5";
+    self.testJob5.result = [NSNumber numberWithBool:NO];
+    self.testJob5.date = [NSDate dateWithTimeIntervalSinceNow:30000];
+    self.testJob5.printer = self.testPrinter;
     
-    GHAssertTrue(pm.countSavedPrinters == 1, @"");
-    GHAssertTrue([DatabaseManager saveChanges], @"check functionality of DatabaseManager");
-    
-    jobList = [NSArray arrayWithObjects:job1, job2, job3, job4, job5, nil];
-    sortedJobList = [NSArray arrayWithObjects:job2, job1, job4, job5, job3, nil];
+    self.jobList = @[self.testJob1, self.testJob2, self.testJob3, self.testJob4, self.testJob5];
+    self.sortedJobList = @[self.testJob2, self.testJob1, self.testJob4, self.testJob5, self.testJob3];
 }
 
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
-    // remove all test data
-    [DatabaseManager discardChanges];
-    pm = [PrinterManager sharedPrinterManager];
-    while (pm.countSavedPrinters != 0)
-        GHAssertTrue([pm deletePrinterAtIndex:0], @"check functionality of PrinterManager");
+    [self.testPrinter MR_deleteEntity];
+    [self.testJob1 MR_deleteEntity];
+    [self.testJob2 MR_deleteEntity];
+    [self.testJob3 MR_deleteEntity];
+    [self.testJob4 MR_deleteEntity];
+    [self.testJob5 MR_deleteEntity];
+    self.jobList = nil;
+    self.sortedJobList = nil;
+    
+    [MagicalRecord cleanUp];
 }
 
 // Run before each test method
@@ -119,15 +111,19 @@
 /* TEST CASES ARE EXECUTED IN ALPHABETICAL ORDER */
 /* use a naming scheme for defining the execution order of your test cases */
 
-- (void)test001_Initialization
+- (void)testInitialization
 {
     GHTestLog(@"# CHECK: Create a PJHGroup. #");
     
+    // SUT
     NSInteger groupTag = arc4random() % 10; //0-9
-    NSString* groupName = testPrinter.name;
-    NSString* groupIP = testPrinter.ip_address;
+    NSString* groupName = self.testPrinter.name;
+    NSString* groupIP = self.testPrinter.ip_address;
+    PrintJobHistoryGroup* testGroup = [PrintJobHistoryGroup initWithGroupName:groupName
+                                                                  withGroupIP:groupIP
+                                                                 withGroupTag:groupTag];
     
-    testGroup = [PrintJobHistoryGroup initWithGroupName:groupName withGroupIP:groupIP withGroupTag:groupTag];
+    // Verification
     GHAssertNotNil(testGroup, @"could not initialize a PrintJobHistoryGroup");
     GHAssertTrue(testGroup.tag == groupTag, @"group tag was not properly initialized");
     GHAssertEqualStrings(testGroup.groupName, groupName, @"groupName should be %@", groupName);
@@ -136,15 +132,22 @@
     GHAssertFalse(testGroup.isCollapsed, @"group initially should not be collapsed");
 }
 
-- (void)test002_AddJobs
+- (void)testAddJobs
 {
     GHTestLog(@"# CHECK: Add Jobs to a PJHGroup. #");
     
-    PrintJob* job;
+    NSInteger groupTag = arc4random() % 10; //0-9
+    NSString* groupName = self.testPrinter.name;
+    NSString* groupIP = self.testPrinter.ip_address;
+    PrintJobHistoryGroup* testGroup = [PrintJobHistoryGroup initWithGroupName:groupName
+                                                                  withGroupIP:groupIP
+                                                                 withGroupTag:groupTag];
     
-    for (NSUInteger i = 0; i < [jobList count]; i++)
+    // SUT + Verification
+    PrintJob* job;
+    for (NSUInteger i = 0; i < [self.jobList count]; i++)
     {
-        job = [jobList objectAtIndex:i];
+        job = [self.jobList objectAtIndex:i];
         GHTestLog(@"-- add %@", job.name);
         
         [testGroup addPrintJob:job];
@@ -152,16 +155,27 @@
     }
 }
 
-- (void)test003_GetJobs
+- (void)testGetJobs
 {
     GHTestLog(@"# CHECK: Get Jobs from a PJHGroup. #");
     
+    NSInteger groupTag = arc4random() % 10; //0-9
+    NSString* groupName = self.testPrinter.name;
+    NSString* groupIP = self.testPrinter.ip_address;
+    PrintJobHistoryGroup* testGroup = [PrintJobHistoryGroup initWithGroupName:groupName
+                                                                  withGroupIP:groupIP
+                                                                 withGroupTag:groupTag];
+    for (NSUInteger i = 0; i < [self.jobList count]; i++)
+    {
+        [testGroup addPrintJob:[self.jobList objectAtIndex:i]];
+    }
+    
+    // SUT + Verification
     PrintJob* getJob;
     PrintJob* refJob;
-
-    for (NSUInteger i = 0; i < [jobList count]; i++)
+    for (NSUInteger i = 0; i < [self.jobList count]; i++)
     {
-        refJob = [jobList objectAtIndex:i];
+        refJob = [self.jobList objectAtIndex:i];
         GHTestLog(@"-- get %@", refJob.name);
         
         getJob = [testGroup getPrintJobAtIndex:i];
@@ -172,44 +186,68 @@
         GHAssertTrue([getJob.date compare:refJob.date] == NSOrderedSame,
                        @"getJob date should be same as %@", refJob.name);
     }
-    
     GHTestLog(@"-- getting an invalid index");
-    GHAssertNil([testGroup getPrintJobAtIndex:[jobList count]+5], @"");
+    GHAssertNil([testGroup getPrintJobAtIndex:[self.jobList count]+5], @"");
 }
 
-- (void)test004_SortJobs
+- (void)testSortJobs
 {
     GHTestLog(@"# CHECK: Sort Jobs in a PJHGroup. #");
     
+    // SUT
+    NSInteger groupTag = arc4random() % 10; //0-9
+    NSString* groupName = self.testPrinter.name;
+    NSString* groupIP = self.testPrinter.ip_address;
+    PrintJobHistoryGroup* testGroup = [PrintJobHistoryGroup initWithGroupName:groupName
+                                                                  withGroupIP:groupIP
+                                                                 withGroupTag:groupTag];
+    for (NSUInteger i = 0; i < [self.jobList count]; i++)
+    {
+        [testGroup addPrintJob:[self.jobList objectAtIndex:i]];
+    }
     [testGroup sortPrintJobs];
-    GHAssertTrue([testGroup countPrintJobs] == [jobList count], @"should have no change in count");
     
+    // Verification
+    GHAssertTrue([testGroup countPrintJobs] == [self.jobList count], @"should have no change in count");
     PrintJob* getJob;
     PrintJob* refJob;
     BOOL sorted = YES;
-    
     GHTestLog(@"-- compare to expected sorted list");
-    for (NSUInteger i = 0; i < [sortedJobList count]; i++)
+    for (NSUInteger i = 0; i < [self.sortedJobList count]; i++)
     {
         getJob = [testGroup getPrintJobAtIndex:i];
-        refJob = [sortedJobList objectAtIndex:i];
+        refJob = [self.sortedJobList objectAtIndex:i];
         GHTestLog(@"-- @%lu: get=%@, ref=%@", (unsigned long)i, getJob.name, refJob.name);
 
         if (![getJob.name isEqualToString:refJob.name])
             sorted = NO;
     }
-    
     if (!sorted)
         GHFail(@"group is not sorted properly");
 }
 
-- (void)test005_RemoveJobs
+- (void)testRemoveJobs
 {
     GHTestLog(@"# CHECK: Remove Jobs in a PJHGroup. #");
     
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    
+    NSInteger groupTag = arc4random() % 10; //0-9
+    NSString* groupName = self.testPrinter.name;
+    NSString* groupIP = self.testPrinter.ip_address;
+    PrintJobHistoryGroup* testGroup = [PrintJobHistoryGroup initWithGroupName:groupName
+                                                                  withGroupIP:groupIP
+                                                                 withGroupTag:groupTag];
+    for (NSUInteger i = 0; i < [self.jobList count]; i++)
+    {
+        [testGroup addPrintJob:[self.jobList objectAtIndex:i]];
+    }
+    
+    // SUT + Verification
     PrintJob* job;
     NSUInteger totalJobs = testGroup.countPrintJobs;
-    
     while (testGroup.countPrintJobs > 0)
     {
         job = [testGroup getPrintJobAtIndex:0];
@@ -218,17 +256,51 @@
         GHAssertTrue([testGroup removePrintJobAtIndex:0], @"remove print job should be successful");
         GHAssertTrue(testGroup.countPrintJobs == --totalJobs, @"group count should auto-decrement on remove");
     }
-    
     GHAssertTrue(testGroup.countPrintJobs == 0, @"there should be no more print jobs");
-    
     GHTestLog(@"-- removing an invalid index");
     GHAssertFalse([testGroup removePrintJobAtIndex:2], @"");
 }
 
-- (void)test006_CollapseGroup
+- (void)testRemoveJobFailed
+{
+    GHTestLog(@"# CHECK: Remove Jobs in a PJHGroup. #");
+    
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] deleteObject:OCMOCK_ANY];
+    
+    NSInteger groupTag = arc4random() % 10; //0-9
+    NSString* groupName = self.testPrinter.name;
+    NSString* groupIP = self.testPrinter.ip_address;
+    PrintJobHistoryGroup* testGroup = [PrintJobHistoryGroup initWithGroupName:groupName
+                                                                  withGroupIP:groupIP
+                                                                 withGroupTag:groupTag];
+    for (NSUInteger i = 0; i < [self.jobList count]; i++)
+    {
+        [testGroup addPrintJob:[self.jobList objectAtIndex:i]];
+    }
+    
+    // SUT + Verification
+    GHAssertFalse([testGroup removePrintJobAtIndex:0], @"remove print job should be successful");
+    GHAssertTrue(testGroup.countPrintJobs == [self.jobList count], @"job count should remain the same");
+}
+
+- (void)testCollapseGroup
 {
     GHTestLog(@"# CHECK: Toggle Collapse/Expand. #");
     
+    NSInteger groupTag = arc4random() % 10; //0-9
+    NSString* groupName = self.testPrinter.name;
+    NSString* groupIP = self.testPrinter.ip_address;
+    PrintJobHistoryGroup* testGroup = [PrintJobHistoryGroup initWithGroupName:groupName
+                                                                  withGroupIP:groupIP
+                                                                 withGroupTag:groupTag];
+    for (NSUInteger i = 0; i < [self.jobList count]; i++)
+    {
+        [testGroup addPrintJob:[self.jobList objectAtIndex:i]];
+    }
+    
+    // SUT + Verification
     GHAssertFalse(testGroup.isCollapsed, @"group initially should not be collapsed");
     [testGroup collapse:YES];
     GHAssertTrue(testGroup.isCollapsed, @"group should now be collapsed");

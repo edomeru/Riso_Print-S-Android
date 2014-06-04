@@ -4,7 +4,7 @@
         <relationship name="printer" maxCount="1" deletionRule="Nullify" destinationEntity="Printer" inverseName="defaultprinter" inverseEntity="Printer" syncable="YES"/>
     </entity>
     <entity name="Printer" representedClassName="Printer" syncable="YES">
-        <attribute name="enabled_booklet" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="enabled_booklet_finishing" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_finisher_2_3_holes" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_finisher_2_4_holes" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_lpr" optional="YES" attributeType="Boolean" syncable="YES"/>

@@ -16,6 +16,7 @@
 #import "PrintSettingsHelper.h"
 #import "PrintPreviewHelper.h"
 #import "AlertHelper.h"
+#import "PrinterManager.h"
 
 #define PREVIEW_MARGIN 10.0f
 
@@ -213,6 +214,12 @@
     else if([[PDFFileManager sharedManager] fileAvailableForPreview])
     {
         [self setupPreview];
+        
+        // Printer check
+        if (self.printDocument.printer == nil)
+        {
+            self.printDocument.printer = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
+        }
     }
 }
 
@@ -238,6 +245,7 @@
             self.pageLabelTopConstraint.constant = 10;
         }
     }
+    [self.view layoutIfNeeded];
 }
 
 - (void)dealloc
@@ -840,8 +848,17 @@
 
 - (IBAction)printSettingsAction:(id)sender
 {
-    [self.printSettingsButton setEnabled:NO];
-    [self performSegueTo:[PrintSettingsViewController class]];
+    if ([[PrinterManager sharedPrinterManager] countSavedPrinters] == 0)
+    {
+        [AlertHelper displayResult:kAlertResultErrNoPrinterSelected
+                         withTitle:kAlertTitlePrintPreview
+                       withDetails:nil];
+    }
+    else
+    {
+        [self.printSettingsButton setEnabled:NO];
+        [self performSegueTo:[PrintSettingsViewController class]];
+    }
 }
 
 - (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event

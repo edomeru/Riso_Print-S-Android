@@ -13,6 +13,7 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment;
 
 public class LegalFragment extends BaseWebFragment {
@@ -50,18 +52,28 @@ public class LegalFragment extends BaseWebFragment {
         webView.setWebViewClient(new WebViewClient() {
             
             @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                
+                Logger.logStartTime(getActivity(), LegalFragment.class, "Legal Screen load");
+            }
+
+            @Override
             public void onPageFinished(WebView view, String url) {
+                Logger.logStopTime(getActivity(), LegalFragment.class, "Legal Screen load");
 
                 try {
-                    PackageManager packageManager = getActivity().getPackageManager();
-                    String versionName = packageManager.getPackageInfo(getActivity().getPackageName(), 0).versionName;
-                    
-                    String javascript = String.format(Locale.getDefault(), JS_REPLACE_FORMAT, VERSION_HTML_ID, versionName); 
-                    
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        view.evaluateJavascript(javascript, null);
-                    } else {
-                        view.loadUrl(javascript);
+                    if (getActivity() != null && getActivity() instanceof MainActivity) {
+                        PackageManager packageManager = getActivity().getPackageManager();
+                        String versionName = packageManager.getPackageInfo(getActivity().getPackageName(), 0).versionName;
+                        
+                        String javascript = String.format(Locale.getDefault(), JS_REPLACE_FORMAT, VERSION_HTML_ID, versionName);
+                        
+                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            view.evaluateJavascript(javascript, null);
+                        } else {
+                            view.loadUrl(javascript);
+                        }
                     }
                 } catch (NameNotFoundException e) {
                     Logger.logWarn(LegalFragment.class, "No version name found");

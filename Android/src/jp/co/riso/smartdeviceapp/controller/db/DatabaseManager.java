@@ -8,9 +8,12 @@
 
 package jp.co.riso.smartdeviceapp.controller.db;
 
+import java.util.Locale;
+
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -64,6 +67,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
             
             for (int i = 0; i < separated.length; i++) {
                 db.execSQL(separated[i]);
+            }
+            
+            if (AppConstants.FOR_PERF_LOGS) {
+                
+                for (int i = 1; i <= 10; i++) {
+                    for (int j = 1; j <= 100; j++) {
+                        String sql = String.format(Locale.getDefault(), "INSERT INTO PrintJob" +
+                        		"(prn_id, pjb_name, pjb_date, pjb_result) VALUES ('%d', '%s', '%s', '%d')",
+                        		i, "Print Job " + j, PrintJobManager.convertDateToString(null), j % 2);
+                        db.execSQL(sql);
+                    }
+                }
             }
         }
         /* end of for testing only */

@@ -11,6 +11,7 @@ package jp.co.riso.smartdeviceapp;
 public class AppConstants {
     public static final boolean DEBUG = false;
     public static final boolean INITIAL_DB = false;
+    public static final boolean FOR_PERF_LOGS = false;
     
     public static final boolean APP_SHOW_SPLASH = true;
     public static final long APP_SPLASH_DURATION = 2000;
@@ -24,7 +25,7 @@ public class AppConstants {
     // Size = TOTAL MEMORY >> APP_BMP_CACHE_PART
     public static final int APP_BMP_CACHE_PART = 4;
 
-    public static final int CONST_LOGIN_ID_LIMIT = 31;
+    public static final int CONST_LOGIN_ID_LIMIT = 20;
     public static final int CONST_PIN_CODE_LIMIT = 8;
     public static final int CONST_COPIES_LIMIT = 4;
     

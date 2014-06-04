@@ -14,4 +14,6 @@
 @property (nonatomic, weak) IBOutlet UITextField *valueTextField;
 @property (nonatomic, weak) IBOutlet UIView *separator;
 
+- (void)setEnabled:(BOOL)enabled;
+
 @end
