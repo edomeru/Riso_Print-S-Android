@@ -410,6 +410,7 @@
                 // no more jobs for this group
                 // remove the group from data source and the view
                 [weakSelf.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
+                [weakSelf.groupsViewLayout prepareForDelete:groupIndexPath];
                 [weakSelf.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
             }
             else

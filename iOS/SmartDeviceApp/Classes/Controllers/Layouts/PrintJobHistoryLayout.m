@@ -40,7 +40,6 @@
  The group's index path is used as the key.
  */
 @property (strong, nonatomic) NSDictionary* groupLayoutInfo;
-@property (strong, nonatomic) NSMutableDictionary* groupFrames;
 
 /**
  Stores the current height of each column.
@@ -50,11 +49,15 @@
 @property (strong, nonatomic) NSMutableDictionary* columnAssignmentsPort;
 @property (strong, nonatomic) NSMutableDictionary* columnAssignmentsLand;
 @property (strong, nonatomic) NSMutableDictionary* columnAssignments;
+@property (assign, nonatomic) BOOL columnWillBeEmptyInLand;
+@property (assign, nonatomic) BOOL columnWillBeEmptyInPort;
 
 @property (assign, nonatomic) BOOL relayoutForDelete;
 @property (strong, nonatomic) NSIndexPath* deletedItem;
 @property (assign, nonatomic) CGFloat deletedItemHeight;
 @property (assign, nonatomic) NSInteger affectedColumn;
+
+@property (assign, nonatomic) UIInterfaceOrientation orientation;
 
 #pragma mark - Methods
 
@@ -157,8 +160,26 @@
         }
     }
     
+    self.orientation = orientation;
+    
+    if ((UIInterfaceOrientationIsLandscape(orientation) && self.columnWillBeEmptyInLand)
+        || (UIInterfaceOrientationIsPortrait(orientation) && self.columnWillBeEmptyInPort))
+    {
+        // screen has been loaded before
+        // groups are already assigned to columns
+        // a group was deleted in the previous orientation
+        // need to relayout
+        
+        [self invalidateColumnAssignments];
+    }
+    else
+    {
+        // reuse existing column assignments
+        
+        [self assignColumnAssignmentsForOrientation];
+    }
+    
     [self invalidateColumnHeights];
-    [self assignColumnAssignmentsForOrientation:orientation];
     [self setNotLayoutForDelete];
     
     [self invalidateLayout];
@@ -167,12 +188,16 @@
 - (void)invalidateColumnAssignments
 {
     self.columnAssignments = nil;
+    self.columnWillBeEmptyInPort = NO;
+    self.columnWillBeEmptyInLand = NO;
     
     [self.columnAssignmentsPort removeAllObjects];
     self.columnAssignmentsPort = [NSMutableDictionary dictionary];
     
     [self.columnAssignmentsLand removeAllObjects];
     self.columnAssignmentsLand = [NSMutableDictionary dictionary];
+    
+    [self assignColumnAssignmentsForOrientation];
 }
 
 - (void)prepareForDelete:(NSIndexPath*)itemToDelete
@@ -180,19 +205,29 @@
     self.relayoutForDelete = YES;
     self.deletedItem = itemToDelete;
     self.affectedColumn = [[self.columnAssignments
-                            valueForKey:[NSString stringWithFormat:@"%d", itemToDelete.item]] integerValue];
-    
-    [self backupFrames];
-    [self updateColumnAssignmentsForDeletedItem];
+                            valueForKey:[NSString stringWithFormat:@"%d", (int)itemToDelete.item]] integerValue];
     
     // get the height of the deleted item
-    NSArray* deletedItemFrame = [self.groupFrames objectForKey:[NSString stringWithFormat:@"%d", itemToDelete.item]];
-    self.deletedItemHeight = [deletedItemFrame[3] floatValue];
+    CGRect oldFrame = [(UICollectionViewLayoutAttributes*)self.groupLayoutInfo[itemToDelete] frame];
+    self.deletedItemHeight = oldFrame.size.height;
     
     // update the tracker for column heights
     CGFloat currentColumnHeight = [[self.columnHeights objectAtIndex:self.affectedColumn] floatValue];
-    NSNumber* newColumnHeight = [NSNumber numberWithFloat:(currentColumnHeight-self.deletedItemHeight)];
-    [self.columnHeights replaceObjectAtIndex:self.affectedColumn withObject:newColumnHeight];
+    CGFloat newColumnHeight = currentColumnHeight - self.deletedItemHeight - self.interGroupSpacingY;
+    if (newColumnHeight <= self.groupInsets.top)
+    {
+        // column will be empty
+        // need to relayout everything after delete
+        
+        [self setNotLayoutForDelete];
+        [self invalidateColumnAssignments];
+    }
+    else
+    {
+        [self updateColumnAssignmentsForDeletedItem];
+        [self.columnHeights replaceObjectAtIndex:self.affectedColumn
+                                      withObject:[NSNumber numberWithFloat:newColumnHeight]];
+    }
 }
 
 #pragma mark - UICollectionViewLayout Layout Calculation
@@ -204,6 +239,7 @@
         [self invalidateColumnHeights];
     }
     
+    // initialize the container for the NEW group frames
     NSMutableDictionary* groupLayoutInfo = [NSMutableDictionary dictionary];
     
     NSInteger section = 0; //expecting only one section for all the groups
@@ -238,6 +274,7 @@
     
     [self setNotLayoutForDelete];
     
+    // replace the container for the group frames
     self.groupLayoutInfo = groupLayoutInfo;
 }
 
@@ -245,13 +282,13 @@
 {
     // determine the correct column
     NSUInteger col;
-    NSNumber* pos = [self.columnAssignments valueForKey:[NSString stringWithFormat:@"%ld", (long)indexPath.item]];
+    NSNumber* pos = [self.columnAssignments valueForKey:[NSString stringWithFormat:@"%d", (int)indexPath.item]];
     if (pos == nil)
     {
         NSNumber* minColumnHeight = [self.columnHeights valueForKeyPath:@"@min.self"];
         col = [self.columnHeights indexOfObject:minColumnHeight];
         [self.columnAssignments setValue:[NSNumber numberWithUnsignedInteger:col]
-                                  forKey:[NSString stringWithFormat:@"%ld", (long)indexPath.item]];
+                                  forKey:[NSString stringWithFormat:@"%d", (int)indexPath.item]];
     }
     else
     {
@@ -313,16 +350,17 @@
     NSInteger currentItem = indexPath.item;
     NSInteger deletedItem = self.deletedItem.item;
     NSInteger currentCol = [[self.columnAssignments
-                           valueForKey:[NSString stringWithFormat:@"%d", currentItem]] integerValue];
+                           valueForKey:[NSString stringWithFormat:@"%d", (int)currentItem]] integerValue];
     
     if ((currentCol == self.affectedColumn) && (currentItem >= deletedItem))
     {
         // shift the old frame
-        NSArray* oldFrameProps = [self.groupFrames objectForKey:[NSString stringWithFormat:@"%d", currentItem+1]];
-        CGRect newFrame = CGRectMake([oldFrameProps[0] floatValue],
-                                     [oldFrameProps[1] floatValue] - self.deletedItemHeight - self.interGroupSpacingY,
-                                     [oldFrameProps[2] floatValue],
-                                     [oldFrameProps[3] floatValue]);
+        NSIndexPath* oldIndexPath = [NSIndexPath indexPathForItem:currentItem+1 inSection:0];
+        CGRect oldFrame = [(UICollectionViewLayoutAttributes*)self.groupLayoutInfo[oldIndexPath] frame];
+        CGRect newFrame = CGRectMake(oldFrame.origin.x,
+                                     oldFrame.origin.y - self.deletedItemHeight - self.interGroupSpacingY,
+                                     oldFrame.size.width,
+                                     oldFrame.size.height);
         return newFrame;
     }
     else
@@ -338,12 +376,9 @@
         }
         
         // reuse the old frame
-        NSArray* oldFrameProps = [self.groupFrames objectForKey:[NSString stringWithFormat:@"%d", oldItemIndex]];
-        CGRect newFrame = CGRectMake([oldFrameProps[0] floatValue],
-                                     [oldFrameProps[1] floatValue],
-                                     [oldFrameProps[2] floatValue],
-                                     [oldFrameProps[3] floatValue]);
-        return newFrame;
+        NSIndexPath* oldIndexPath = [NSIndexPath indexPathForItem:oldItemIndex inSection:0];
+        CGRect oldFrame = [(UICollectionViewLayoutAttributes*)self.groupLayoutInfo[oldIndexPath] frame];
+        return oldFrame;
     }
 }
 
@@ -385,72 +420,59 @@
 
 #pragma mark - Utilities
 
-- (void)backupFrames
-{
-    // backup current frames
-    self.groupFrames = [NSMutableDictionary dictionary];
-    [self.groupLayoutInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath* key, id obj, BOOL *stop) {
-        
-        UICollectionViewLayoutAttributes* attr = (UICollectionViewLayoutAttributes*)obj;
-        CGRect oldFrame = attr.frame;
-        NSArray* props = @[[NSNumber numberWithFloat:oldFrame.origin.x],
-                           [NSNumber numberWithFloat:oldFrame.origin.y],
-                           [NSNumber numberWithFloat:oldFrame.size.width],
-                           [NSNumber numberWithFloat:oldFrame.size.height]];
-        
-        NSString* keyStr = [NSString stringWithFormat:@"%d", key.item];
-        [self.groupFrames setObject:props forKey:keyStr];
-    }];
-}
-
 - (void)updateColumnAssignmentsForDeletedItem
 {
     __block NSMutableDictionary* updatedAssignments;
     
-    // update column assignments
-    updatedAssignments = [NSMutableDictionary dictionary];
-    [self.columnAssignments removeObjectForKey:[NSString stringWithFormat:@"%d", self.deletedItem.item]];
-    [self.columnAssignments enumerateKeysAndObjectsUsingBlock:^(NSString* item, NSNumber* col, BOOL *stop) {
-        if ([item intValue] > self.deletedItem.item)
-        {
-            [updatedAssignments setObject:col forKey:[NSString stringWithFormat:@"%d", [item intValue]-1]];
-        }
-        else
-        {
-            [updatedAssignments setObject:col forKey:item];
-        }
-    }];
-    self.columnAssignments = updatedAssignments;
-    
     // update column assignments (Port)
-    updatedAssignments = [NSMutableDictionary dictionary];
-    [self.columnAssignmentsPort removeObjectForKey:[NSString stringWithFormat:@"%d", self.deletedItem.item]];
-    [self.columnAssignmentsPort enumerateKeysAndObjectsUsingBlock:^(NSString* item, NSNumber* col, BOOL *stop) {
-        if ([item intValue] > self.deletedItem.item)
+    if ([self.columnAssignmentsPort count] != 0)
+    {
+        updatedAssignments = [NSMutableDictionary dictionary];
+        __block NSMutableIndexSet* columnsPort = [NSMutableIndexSet indexSet];
+        [self.columnAssignmentsPort removeObjectForKey:[NSString stringWithFormat:@"%d", (int)self.deletedItem.item]];
+        [self.columnAssignmentsPort enumerateKeysAndObjectsUsingBlock:^(NSString* item, NSNumber* col, BOOL *stop) {
+            if ([item intValue] > self.deletedItem.item)
+            {
+                [updatedAssignments setObject:col forKey:[NSString stringWithFormat:@"%d", (int)[item intValue]-1]];
+            }
+            else
+            {
+                [updatedAssignments setObject:col forKey:item];
+            }
+            [columnsPort addIndex:[col unsignedIntegerValue]];
+        }];
+        self.columnAssignmentsPort = updatedAssignments;
+        if ([columnsPort count] != 2) // expecting 2 columns for portrait
         {
-            [updatedAssignments setObject:col forKey:[NSString stringWithFormat:@"%d", [item intValue]-1]];
+            self.columnWillBeEmptyInPort = YES;
         }
-        else
-        {
-            [updatedAssignments setObject:col forKey:item];
-        }
-    }];
-    self.columnAssignmentsPort = updatedAssignments;
+    }
     
     // update column assignments (Land)
-    updatedAssignments = [NSMutableDictionary dictionary];
-    [self.columnAssignmentsLand removeObjectForKey:[NSString stringWithFormat:@"%d", self.deletedItem.item]];
-    [self.columnAssignmentsLand enumerateKeysAndObjectsUsingBlock:^(NSString* item, NSNumber* col, BOOL *stop) {
-        if ([item intValue] > self.deletedItem.item)
+    if ([self.columnAssignmentsLand count] != 0)
+    {
+        updatedAssignments = [NSMutableDictionary dictionary];
+        __block NSMutableIndexSet* columnsLand = [NSMutableIndexSet indexSet];
+        [self.columnAssignmentsLand removeObjectForKey:[NSString stringWithFormat:@"%d", (int)self.deletedItem.item]];
+        [self.columnAssignmentsLand enumerateKeysAndObjectsUsingBlock:^(NSString* item, NSNumber* col, BOOL *stop) {
+            if ([item intValue] > self.deletedItem.item)
+            {
+                [updatedAssignments setObject:col forKey:[NSString stringWithFormat:@"%d", (int)[item intValue]-1]];
+            }
+            else
+            {
+                [updatedAssignments setObject:col forKey:item];
+            }
+            [columnsLand addIndex:[col unsignedIntegerValue]];
+        }];
+        self.columnAssignmentsLand = updatedAssignments;
+        if ([columnsLand count] != 3) // expecting 3 columns for landscape
         {
-            [updatedAssignments setObject:col forKey:[NSString stringWithFormat:@"%d", [item intValue]-1]];
+            self.columnWillBeEmptyInLand = YES;
         }
-        else
-        {
-            [updatedAssignments setObject:col forKey:item];
-        }
-    }];
-    self.columnAssignmentsLand = updatedAssignments;
+    }
+    
+    [self assignColumnAssignmentsForOrientation];
 }
 
 - (void)invalidateColumnHeights
@@ -470,9 +492,9 @@
     self.affectedColumn = -1;
 }
 
-- (void)assignColumnAssignmentsForOrientation:(UIInterfaceOrientation)orientation
+- (void)assignColumnAssignmentsForOrientation
 {
-    if (UIInterfaceOrientationIsLandscape(orientation))
+    if (UIInterfaceOrientationIsLandscape(self.orientation))
     {
         self.columnAssignments = self.columnAssignmentsLand;
     }
