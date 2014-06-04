@@ -66,7 +66,7 @@ namespace SmartDeviceApp.Controllers
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
 
-            PrinterController.Instance.DeletePrinterItemsEventHandler += RemovePrintSettings;
+            //PrinterController.Instance.DeletePrinterItemsEventHandler += RemovePrintSettings;
         }
 
         /// <summary>
@@ -98,7 +98,12 @@ namespace SmartDeviceApp.Controllers
             _printSettingsViewModel.PrinterId = printer.Id;
             _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
 
-            currPrintSettings = await GetPrintSettings(printer.PrintSettingId);
+            int printSettingId = -1;
+            if (printer.PrintSettingId != null)
+            {
+                printSettingId = printer.PrintSettingId.Value;
+            }
+            currPrintSettings = await GetPrintSettings(printSettingId);
 
             if (screenName.Equals(ScreenMode.PrintPreview.ToString()))
             {
@@ -172,7 +177,11 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task; print settings</returns>
         private async Task<PrintSettings> GetPrintSettings(int id)
         {
-            PrintSettings currPrintSettings = await DatabaseController.Instance.GetPrintSettings(id);
+            PrintSettings currPrintSettings = null;
+            if (id > -1)
+            {
+                currPrintSettings = await DatabaseController.Instance.GetPrintSettings(id);
+            }
             if (currPrintSettings == null)
             {
                 currPrintSettings = DefaultsUtility.GetDefaultPrintSettings(
@@ -182,29 +191,29 @@ namespace SmartDeviceApp.Controllers
             return currPrintSettings;
         }
 
-        /// <summary>
-        /// Deletes print settings
-        /// </summary>
-        /// <param name="printer">printer</param>
-        public async void RemovePrintSettings(Printer printer)
-        {
-            if (printer != null)
-            {
-                PrintSettings printSettings = await DatabaseController.Instance
-                    .GetPrintSettings(printer.PrintSettingId);
+        ///// <summary>
+        ///// Deletes print settings
+        ///// </summary>
+        ///// <param name="printer">printer</param>
+        //public async void RemovePrintSettings(Printer printer)
+        //{
+        //    if (printer != null)
+        //    {
+        //        PrintSettings printSettings = await DatabaseController.Instance
+        //            .GetPrintSettings(printer.PrintSettingId.Value);
 
-                int deleted = 0;
-                if (printSettings != null)
-                {
-                    deleted = await DatabaseController.Instance.DeletePrintSettings(printSettings);
-                }
+        //        int deleted = 0;
+        //        if (printSettings != null)
+        //        {
+        //            deleted = await DatabaseController.Instance.DeletePrintSettings(printSettings);
+        //        }
 
-                if (deleted == 0)
-                {
-                    // TODO: Display error?
-                }
-            }
-        }
+        //        if (deleted == 0)
+        //        {
+        //            // TODO: Display error?
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Create default print settings for the printer.

@@ -44,7 +44,7 @@ namespace SmartDeviceApp.Models
         /// Print setting ID, used by Printer table
         /// </summary>
         [SQLite.Column("pst_id")]
-        public int PrintSettingId { get; set; }
+        public int? PrintSettingId { get; set; }
 
         /// <summary>
         /// Printer IP address, used by Printer table and allowed only upto 20 characters
@@ -215,7 +215,7 @@ namespace SmartDeviceApp.Models
         public Printer()
         {
             Id = -1;
-            PrintSettingId = -1;
+            PrintSettingId = null;
             IpAddress = null;
             Name = null;
             PortSetting = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_PORT_SETTING, ListValueType.Int);

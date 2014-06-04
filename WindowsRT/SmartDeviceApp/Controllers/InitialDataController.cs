@@ -57,9 +57,9 @@ namespace SmartDeviceApp.Controllers
 
             if (!isPreviouslyLoaded)
             {
-                //await _dbConnection.ExecuteAsync(string.Format(FORMAT_PRAGMA_FOREIGN_KEYS, OFF)); // Disable foreign keys
+                await DatabaseController.Instance.EnablePragmaForeignKeys(false); // Disable foreign keys temporarily
                 await DatabaseController.Instance.ExecuteScript(DB_SAMPLE_DATA_FILE_PATH);
-                //await _dbConnection.ExecuteAsync(string.Format(FORMAT_PRAGMA_FOREIGN_KEYS, ON)); // Re-enable foreign keys
+                await DatabaseController.Instance.EnablePragmaForeignKeys(true); // Re-enable foreign keys
             }
         }
 

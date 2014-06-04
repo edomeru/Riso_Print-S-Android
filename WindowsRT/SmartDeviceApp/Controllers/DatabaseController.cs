@@ -27,9 +27,9 @@ namespace SmartDeviceApp.Controllers
 
         private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
         private const string FILE_PATH_DATABASE_SCRIPT = "Assets/SmartDeviceAppDB.sql";
-        //private const string FORMAT_PRAGMA_FOREIGN_KEYS = "PRAGMA foreign_keys = {0}";
-        //private const string ON = "ON";
-        //private const string OFF = "OFF";
+        private const string FORMAT_PRAGMA_FOREIGN_KEYS = "PRAGMA foreign_keys = {0}";
+        private const string ON = "ON";
+        private const string OFF = "OFF";
 
         private string _databasePath;
         private SQLiteAsyncConnection _dbConnection;
@@ -56,7 +56,13 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Initialize()
         {
-            await CreateDatabase();
+            // Check if database file exists. Otherwise, create database.
+            if ((await StorageFileUtility.GetExistingFile(FILE_NAME_DATABASE,
+                                                    ApplicationData.Current.LocalFolder)) == null)
+            {
+                await CreateDatabase();
+            }
+            await EnablePragmaForeignKeys(true); // Enable foreign keys
             await DefaultsUtility.LoadDefaultsFromSqlScript(FILE_PATH_DATABASE_SCRIPT);
         }
 
@@ -69,17 +75,23 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
+        /// Enables/disables foreign key constraints
+        /// </summary>
+        /// <param name="state">true when on, false otherwise</param>
+        /// <returns>task</returns>
+        public async Task EnablePragmaForeignKeys(bool state)
+        {
+            await _dbConnection.ExecuteAsync(string.Format(FORMAT_PRAGMA_FOREIGN_KEYS,
+                                                           (state) ? ON : OFF));
+        }
+
+        /// <summary>
         /// Create database and tables
         /// </summary>
         /// <returns>task</returns>
         private async Task CreateDatabase()
         {
             await ExecuteScript(FILE_PATH_DATABASE_SCRIPT);
-
-            // TODO: Enable this pragma then debug
-            // Note: When pragma foreign_keys is enabled, SQLiteException ("Constraints")
-            // is encountered when deleting a printer even if the referenced ids are valid
-            //await _dbConnection.ExecuteAsync(string.Format(FORMAT_PRAGMA_FOREIGN_KEYS, ON)); // Enable foreign keys
         }
 
         /// <summary>
@@ -122,9 +134,7 @@ namespace SmartDeviceApp.Controllers
                     }
                     catch (SQLiteException)
                     {
-                        // Error handling
-                        // Possible cause:
-                        // * table/item already exists
+                        // Just ignore the error since table/row already exists
                     }
                 }
             }
@@ -393,29 +403,29 @@ namespace SmartDeviceApp.Controllers
             return 0;
         }
 
-        /// <summary>
-        /// Deletes a print setting in the database
-        /// </summary>
-        /// <param name="printSettings">print settings</param>
-        /// <returns>task; number of deleted rows</returns>
-        public async Task<int> DeletePrintSettings(PrintSettings printSettings)
-        {
-            if (printSettings == null)
-            {
-                return 0;
-            }
+        ///// <summary>
+        ///// Deletes a print setting in the database
+        ///// </summary>
+        ///// <param name="printSettings">print settings</param>
+        ///// <returns>task; number of deleted rows</returns>
+        //public async Task<int> DeletePrintSettings(PrintSettings printSettings)
+        //{
+        //    if (printSettings == null)
+        //    {
+        //        return 0;
+        //    }
 
-            try
-            {
-                return await _dbConnection.DeleteAsync(printSettings);
-            }
-            catch
-            {
-                // Error handling
-            }
+        //    try
+        //    {
+        //        return await _dbConnection.DeleteAsync(printSettings);
+        //    }
+        //    catch
+        //    {
+        //        // Error handling
+        //    }
 
-            return 0;
-        }
+        //    return 0;
+        //}
 
         #endregion PrintSetting Table Operations
 

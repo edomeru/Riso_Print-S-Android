@@ -161,11 +161,11 @@ namespace SmartDeviceApp.Controllers
             if (printJob != null)
             {
                 int deleted = await DatabaseController.Instance.DeletePrintJob(printJob);
-                if (deleted == 0)
-                {
-                    // TODO: Notify view model to display error message
-                    return;
-                }
+                //if (deleted == 0)
+                //{
+                //    // TODO: Notify view model to display error message
+                //    return;
+                //}
 
                 PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList
                     .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);
