@@ -24,7 +24,7 @@ public class AppConstants {
     // Size = TOTAL MEMORY >> APP_BMP_CACHE_PART
     public static final int APP_BMP_CACHE_PART = 4;
 
-    public static final int CONST_LOGIN_ID_LIMIT = 31;
+    public static final int CONST_LOGIN_ID_LIMIT = 20;
     public static final int CONST_PIN_CODE_LIMIT = 8;
     public static final int CONST_COPIES_LIMIT = 4;
     

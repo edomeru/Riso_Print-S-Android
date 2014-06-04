@@ -23,7 +23,6 @@
     <integer name="match_parent_value">-1</integer>  
     <dimen name="settings_width">@integer/match_parent_value</dimen>
     
-    <dimen name="settings_login_id_input_width">200dp</dimen>
     <dimen name="settings_pin_code_input_width">120dp</dimen>
     
     <dimen name="settings_separator_padding">24dp</dimen>
