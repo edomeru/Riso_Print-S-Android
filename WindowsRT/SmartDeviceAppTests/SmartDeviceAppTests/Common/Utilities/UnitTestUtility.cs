@@ -11,6 +11,7 @@
 //
 
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Models;
 using SQLite;
 using System;
@@ -48,6 +49,8 @@ namespace SmartDeviceAppTests.Common.Utilities
 
             if (!string.IsNullOrEmpty(scriptText))
             {
+                await DatabaseController.Instance.EnablePragmaForeignKeys(false);
+
                 // Loop each commands
                 string[] lines = scriptText.Split(new char[] { ';' },
                                                   StringSplitOptions.RemoveEmptyEntries);
@@ -69,6 +72,28 @@ namespace SmartDeviceAppTests.Common.Utilities
                         // Error handling
                     }
                 }
+
+                await DatabaseController.Instance.EnablePragmaForeignKeys(true);
+            }
+        }
+
+        /// <summary>
+        /// Creates all (known) tables in the database
+        /// </summary>
+        /// <param name="dbConnection"></param>
+        /// <returns></returns>
+        public static async Task CreateAllTables(SQLiteAsyncConnection dbConnection)
+        {
+            try
+            {
+                await dbConnection.CreateTableAsync<Printer>();
+                await dbConnection.CreateTableAsync<DefaultPrinter>();
+                await dbConnection.CreateTableAsync<PrintSettings>();
+                await dbConnection.CreateTableAsync<PrintJob>();
+            }
+            catch
+            {
+                // Error handling
             }
         }
 

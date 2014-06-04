@@ -117,6 +117,7 @@
     <Compile Include="Common\Utilities\DefaultsUtilityTest.cs" />
     <Compile Include="Common\Utilities\UnitTestUtility.cs" />
     <Compile Include="Controllers\DocumentControllerTest.cs" />
+    <Compile Include="Controllers\InitialDataControllerTest.cs" />
     <Compile Include="Controllers\NetworkControllerTest.cs" />
     <Compile Include="Controllers\PrinterControllerTest.cs" />
     <Compile Include="Controllers\DatabaseControllerTest.cs" />

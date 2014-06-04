@@ -19,9 +19,7 @@ namespace SmartDeviceAppTests.Controllers
     {
 
         private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
-        private const string KEY_ISSAMPLEDATAALREADYLOADED = "IsSampleDataAlreadyLoaded";
-
-        private SQLiteAsyncConnection _dbConnection;
+        private SQLiteAsyncConnection _dbConnection = new SQLite.SQLiteAsyncConnection(FILE_NAME_DATABASE);
         private JobsViewModel _jobsViewModel;
 
         // Cover Unit Tests using dotCover does not call TestInitialize
@@ -31,15 +29,9 @@ namespace SmartDeviceAppTests.Controllers
         {
             _jobsViewModel = new ViewModelLocator().JobsViewModel;
 
-            string databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-            _dbConnection = new SQLite.SQLiteAsyncConnection(databasePath);
-
-            await UnitTestUtility.DropAllTables(_dbConnection);
-
-            // Initilize database
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
             await DatabaseController.Instance.Initialize();
+            await UnitTestUtility.DropAllTables(_dbConnection);
+            await UnitTestUtility.CreateAllTables(_dbConnection);
         }
 
         // Cover Unit Tests using dotCover does not call TestCleanup

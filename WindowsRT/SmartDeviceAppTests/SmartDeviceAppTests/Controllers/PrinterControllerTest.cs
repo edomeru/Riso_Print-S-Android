@@ -11,30 +11,29 @@ using System.Collections.ObjectModel;
 using Windows.Storage;
 using SNMP;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceAppTests.Common.Utilities;
+using SQLite;
 
 namespace SmartDeviceAppTests.Controllers
 {
     [TestClass]
     public class PrinterControllerTest
     {
-        private const string KEY_ISSAMPLEDATAALREADYLOADED = "IsSampleDataAlreadyLoaded";
+        private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
+        private SQLiteAsyncConnection _dbConnection = new SQLite.SQLiteAsyncConnection(FILE_NAME_DATABASE);
 
         [TestInitialize]
         public async Task Initialize()
         {
             // Initilize database
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
             await DatabaseController.Instance.Initialize();
+            await UnitTestUtility.DropAllTables(_dbConnection);
+            await UnitTestUtility.CreateAllTables(_dbConnection);
         }
 
         [TestMethod]
         public async Task Test_PrinterController_Initialize()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
-            await DatabaseController.Instance.Initialize();
-
             Printer printer = new Printer();
             printer.IpAddress = "192.168.0.1";
             await DatabaseController.Instance.InsertPrinter(printer);
@@ -45,7 +44,6 @@ namespace SmartDeviceAppTests.Controllers
 
             await DatabaseController.Instance.SetDefaultPrinter(printer2.Id);
             await PrinterController.Instance.Initialize();
-            
 
             Assert.IsNotNull(PrinterController.Instance.PrinterList);
         }
@@ -66,33 +64,28 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrinterController_AddPrinter()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
-            await DatabaseController.Instance.Initialize();
             await PrinterController.Instance.Initialize();
             string ip = "192.168.0.198";
             int firstCount = PrinterController.Instance.PrinterList.Count;
             await PrinterController.Instance.addPrinter(ip);
-
         }
 
         [TestMethod]
-        public void Test_PrinterController_AddPrinterPrinterAlreadyInList()
+        public async Task Test_PrinterController_AddPrinterPrinterAlreadyInList()
         {
-            PrinterController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
             string ip = "192.168.0.198";
             Printer printer = new Printer();
             printer.IpAddress = ip;
             PrinterController.Instance.PrinterList.Add(printer);
             int firstCount = PrinterController.Instance.PrinterList.Count;
-            PrinterController.Instance.addPrinter(ip);
-
+            await PrinterController.Instance.addPrinter(ip);
         }
 
         [TestMethod]
-        public void Test_PrinterController_AddPrinterPrinterMax()
+        public async Task Test_PrinterController_AddPrinterPrinterMax()
         {
-            PrinterController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
             string[] ips = { "192.168.0.1", "192.168.0.2", "192.168.0.3", "192.168.0.4", "192.168.0.5",
                            "192.168.0.6", "192.168.0.7", "192.168.0.8", "192.168.0.9", "192.168.0.10"};
             
@@ -103,22 +96,22 @@ namespace SmartDeviceAppTests.Controllers
                 PrinterController.Instance.PrinterList.Add(printer);
             }
 
-            PrinterController.Instance.addPrinter("192.168.0.11");
+            await PrinterController.Instance.addPrinter("192.168.0.11");
         }
 
 
         [TestMethod]
-        public void Test_PrinterController_AddPrinterInvalidIP()
+        public async Task Test_PrinterController_AddPrinterInvalidIP()
         {
-            PrinterController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
             
-            PrinterController.Instance.addPrinter("192.168.0.1111");
+            await PrinterController.Instance.addPrinter("192.168.0.1111");
         }
 
         [TestMethod]
-        public void Test_PrinterController_SetPolling()
+        public async Task Test_PrinterController_SetPolling()
         {
-            PrinterController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
             PrinterController.Instance.PrinterList.Add(
                 new Printer() { IpAddress = "192.168.0.1" });
             PrinterController.Instance.setPolling(true);
@@ -126,17 +119,17 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_PrinterController_GetPrinterList()
+        public async Task Test_PrinterController_GetPrinterList()
         {
-            PrinterController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
 
             Assert.IsNotNull(PrinterController.Instance.PrinterList);
         }
 
         [TestMethod]
-        public void Test_PrinterController_GetPrinterSearchList()
+        public async Task Test_PrinterController_GetPrinterSearchList()
         {
-            PrinterController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
 
             Assert.IsNotNull(PrinterController.Instance.PrinterSearchList);
         }
@@ -152,10 +145,6 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrinterController_DeletePrinter()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
-            await DatabaseController.Instance.Initialize();
-
             Printer printer = new Printer();
             printer.IpAddress = "192.168.0.1";
 
@@ -177,10 +166,6 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrinterController_DeletePrinterWithDeletePrinterItemsEventHandler()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
-            await DatabaseController.Instance.Initialize();
-
             Printer printer = new Printer();
             printer.IpAddress = "192.168.0.1";
 
@@ -222,9 +207,9 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_PrinterController_AddFromPrinterSearchSame()
+        public async Task Test_PrinterController_AddFromPrinterSearchSame()
         {
-            PrinterController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
             string[] ips = { "192.168.0.1", "192.168.0.2", "192.168.0.3", "192.168.0.4", "192.168.0.5",
                            "192.168.0.6", "192.168.0.7", "192.168.0.8", "192.168.0.9"};
             int firstCount = PrinterController.Instance.PrinterList.Count;
@@ -235,16 +220,12 @@ namespace SmartDeviceAppTests.Controllers
                 PrinterController.Instance.PrinterList.Add(printer);
             }
 
-            PrinterController.Instance.addPrinterFromSearch("192.168.0.9");
+            await PrinterController.Instance.addPrinterFromSearch("192.168.0.9");
         }
 
         [TestMethod]
         public async Task Test_PrinterController_AddFromPrinterSearch()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
-            await DatabaseController.Instance.Initialize();
-
             await PrinterController.Instance.Initialize();
             string ip = "192.168.0.2";
             
@@ -260,10 +241,6 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrinterController_AddFromPrinterSearchInPrinterSearchList()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
-            await DatabaseController.Instance.Initialize();
-
             await PrinterController.Instance.Initialize();
             string ip = "192.168.0.2";
 
@@ -281,8 +258,8 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrinterController_AddFromPrinterSearchNull()
         {
-            PrinterController.Instance.Initialize();
-            string ip = "192.168.0.1";
+            await PrinterController.Instance.Initialize();
+            //string ip = "192.168.0.1";
             SNMPController.Instance.Initialize();
             await PrinterController.Instance.addPrinterFromSearch("192.168.0.1");
         }
@@ -302,19 +279,15 @@ namespace SmartDeviceAppTests.Controllers
         }
 
         [TestMethod]
-        public void Test_PrinterController_SearchPrinters()
+        public async Task Test_PrinterController_SearchPrinters()
         {
-            PrinterController.Instance.Initialize();
+            await PrinterController.Instance.Initialize();
             PrinterController.Instance.searchPrinters();
         }
 
         [TestMethod]
         public async Task Test_PrinterController_PropertyChanged()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
-            await DatabaseController.Instance.Initialize();
-
             Printer printer = new Printer();
             printer.IpAddress = "192.168.0.1";
             await DatabaseController.Instance.InsertPrinter(printer);
@@ -327,8 +300,6 @@ namespace SmartDeviceAppTests.Controllers
 
             PrinterController.Instance.PrinterList.ElementAt(0).WillBeDeleted = true;
             PrinterController.Instance.PrinterList.ElementAt(0).IsDefault = true;
-            
-
         }
     }
 }

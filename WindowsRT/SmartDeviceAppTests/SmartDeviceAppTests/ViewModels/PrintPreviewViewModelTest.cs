@@ -19,7 +19,6 @@ namespace SmartDeviceAppTests.ViewModels
     [TestClass]
     public class PrintPreviewViewModelTest
     {
-        [UI.UITestMethod]
         public PrintPreviewViewModel GetPrintPreviewViewModel()
         {
             return new ViewModelLocator().PrintPreviewViewModel;

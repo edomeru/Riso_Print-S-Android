@@ -21,9 +21,8 @@ namespace SmartDeviceAppTests.Controllers
     {
 
         private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
-        private const string KEY_ISSAMPLEDATAALREADYLOADED = "IsSampleDataAlreadyLoaded";
 
-        private SQLiteAsyncConnection _dbConnection;
+        private SQLiteAsyncConnection _dbConnection = new SQLite.SQLiteAsyncConnection(FILE_NAME_DATABASE);
         private PrintSettingsViewModel _jobsViewModel;
         private string _screenName;
 
@@ -34,15 +33,9 @@ namespace SmartDeviceAppTests.Controllers
         {
             _jobsViewModel = new ViewModelLocator().PrintSettingsViewModel;
 
-            string databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-            _dbConnection = new SQLite.SQLiteAsyncConnection(databasePath);
-
-            await UnitTestUtility.DropAllTables(_dbConnection);
-
-            // Initilize database
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
             await DatabaseController.Instance.Initialize();
+            await UnitTestUtility.DropAllTables(_dbConnection);
+            await UnitTestUtility.CreateAllTables(_dbConnection);
         }
 
         // Cover Unit Tests using dotCover does not call TestCleanup
@@ -282,43 +275,43 @@ namespace SmartDeviceAppTests.Controllers
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
-        [TestMethod]
-        public async Task Test_RemovePrintSettings_Null()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+        //[TestMethod]
+        //public async Task Test_RemovePrintSettings_Null()
+        //{
+        //    await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
+        //    await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
-            PrintSettingsController.Instance.RemovePrintSettings(null);
+        //    PrintSettingsController.Instance.RemovePrintSettings(null);
 
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
+        //    Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        //}
 
-        [TestMethod]
-        public async Task Test_RemovePrintSettings_Valid()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+        //[TestMethod]
+        //public async Task Test_RemovePrintSettings_Valid()
+        //{
+        //    await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
+        //    await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
-            Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            PrintSettingsController.Instance.RemovePrintSettings(printer);
+        //    Printer printer = await _dbConnection.GetAsync<Printer>(2);
+        //    PrintSettingsController.Instance.RemovePrintSettings(printer);
 
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
+        //    Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        //}
 
-        [TestMethod]
-        public async Task Test_RemovePrintSettings_Invalid()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+        //[TestMethod]
+        //public async Task Test_RemovePrintSettings_Invalid()
+        //{
+        //    await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
+        //    await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
-            Printer printer = await _dbConnection.GetAsync<Printer>(10);
-            PrintSettingsController.Instance.RemovePrintSettings(printer);
+        //    Printer printer = await _dbConnection.GetAsync<Printer>(10);
+        //    PrintSettingsController.Instance.RemovePrintSettings(printer);
 
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
+        //    Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        //}
 
         [TestMethod]
         public async Task Test_CreatePrintSettings_Null()

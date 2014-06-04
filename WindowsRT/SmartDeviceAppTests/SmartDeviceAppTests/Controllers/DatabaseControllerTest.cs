@@ -20,15 +20,15 @@ namespace SmartDeviceAppTests.Controllers
     {
 
         private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
-        private const string KEY_ISSAMPLEDATAALREADYLOADED = "IsSampleDataAlreadyLoaded";
+
+        private SQLiteAsyncConnection _dbConnection = new SQLite.SQLiteAsyncConnection(Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE));
 
         // Cover Unit Tests using dotCover does not call TestInitialize
         //[TestInitialize]
         //public async Task Initialize()
         private async Task Initialize()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = true; // avoid loading of sample data
+            await UnitTestUtility.CreateAllTables(_dbConnection);
             await DatabaseController.Instance.Initialize();
         }
 
@@ -37,28 +37,27 @@ namespace SmartDeviceAppTests.Controllers
         //public async Task Cleanup()
         private async Task Cleanup()
         {
-            string _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, FILE_NAME_DATABASE);
-            SQLiteAsyncConnection _dbConnection = new SQLite.SQLiteAsyncConnection(_databasePath);
             await UnitTestUtility.DropAllTables(_dbConnection);
             DatabaseController.Instance.Cleanup();
         }
 
         [TestMethod]
-        public async Task Test_InsertSampleData_ExistingKey()
+        public async Task Test_Initialize()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[KEY_ISSAMPLEDATAALREADYLOADED] = false;
             await DatabaseController.Instance.Initialize();
             // Note: no public property to assert
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
-        public async Task Test_InsertSampleData_KeyNotFound()
+        public async Task Test_Initialize_AlreadyExists()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values.Remove(KEY_ISSAMPLEDATAALREADYLOADED);
+            await DatabaseController.Instance.Initialize();
             await DatabaseController.Instance.Initialize();
             // Note: no public property to assert
+
+            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
         [TestMethod]
@@ -360,35 +359,35 @@ namespace SmartDeviceAppTests.Controllers
             await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
-        [TestMethod]
-        public async Task Test_DeletePrintSettings_Null()
-        {
-            int result = await DatabaseController.Instance.DeletePrintSettings(null);
-            Assert.AreEqual(0, result);
-        }
+        //[TestMethod]
+        //public async Task Test_DeletePrintSettings_Null()
+        //{
+        //    int result = await DatabaseController.Instance.DeletePrintSettings(null);
+        //    Assert.AreEqual(0, result);
+        //}
 
-        [TestMethod]
-        public async Task Test_DeletePrintSettings_Invalid()
-        {
-            PrintSettings printSettings = new PrintSettings();
-            await DatabaseController.Instance.InsertPrintSettings(printSettings);
-            await DatabaseController.Instance.DeletePrintSettings(printSettings);
-            int result = await DatabaseController.Instance.DeletePrintSettings(printSettings); // Delete twice
-            Assert.AreEqual(0, result);
-        }
+        //[TestMethod]
+        //public async Task Test_DeletePrintSettings_Invalid()
+        //{
+        //    PrintSettings printSettings = new PrintSettings();
+        //    await DatabaseController.Instance.InsertPrintSettings(printSettings);
+        //    await DatabaseController.Instance.DeletePrintSettings(printSettings);
+        //    int result = await DatabaseController.Instance.DeletePrintSettings(printSettings); // Delete twice
+        //    Assert.AreEqual(0, result);
+        //}
 
-        [TestMethod]
-        public async Task Test_DeletePrintSettings_Valid()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+        //[TestMethod]
+        //public async Task Test_DeletePrintSettings_Valid()
+        //{
+        //    await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
-            PrintSettings printSettings = new PrintSettings();
-            await DatabaseController.Instance.InsertPrintSettings(printSettings);
-            int result = await DatabaseController.Instance.DeletePrintSettings(printSettings);
-            Assert.AreEqual(1, result);
+        //    PrintSettings printSettings = new PrintSettings();
+        //    await DatabaseController.Instance.InsertPrintSettings(printSettings);
+        //    int result = await DatabaseController.Instance.DeletePrintSettings(printSettings);
+        //    Assert.AreEqual(1, result);
 
-            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
+        //    await Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        //}
 
         [TestMethod]
         public async Task Test_GetPrintJobs()
