@@ -84,7 +84,7 @@
     self.listPrintJobHistoryGroups = [PrintJobHistoryHelper preparePrintJobHistoryGroups];
     
     self.groupsViewLayout.delegate = self;
-    [self.groupsViewLayout invalidateColumAssignments];
+    [self.groupsViewLayout invalidateColumnAssignments];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         [self.groupsViewLayout setupForOrientation:self.interfaceOrientation

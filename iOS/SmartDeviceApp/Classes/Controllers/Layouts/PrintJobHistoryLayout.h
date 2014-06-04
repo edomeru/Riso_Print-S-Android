@@ -35,7 +35,7 @@
  */
 - (void)setupForOrientation:(UIInterfaceOrientation)orientation forDevice:(UIUserInterfaceIdiom)idiom;
 
-- (void)invalidateColumAssignments;
+- (void)invalidateColumnAssignments;
 - (void)prepareForDelete:(NSIndexPath*)itemToDelete;
 
 @end
