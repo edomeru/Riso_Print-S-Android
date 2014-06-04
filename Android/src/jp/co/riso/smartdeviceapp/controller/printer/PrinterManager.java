@@ -232,15 +232,11 @@ public class PrinterManager implements SNMPManagerCallback {
                 Printer printer = new Printer(DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_NAME),
                         DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP));
                 printer.setId(DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID));
-                switch (DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PORT)) {
-                    case 1:
-                        printer.setPortSetting(PortSetting.RAW);
-                        break;
-                    default:
-                        printer.setPortSetting(PortSetting.LPR);
-                        break;
-                }                
-                
+                try {
+                    printer.setPortSetting(PortSetting.values()[DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PORT)]);
+                } catch (IndexOutOfBoundsException e) {
+                    printer.setPortSetting(PortSetting.LPR);
+                }
                 boolean lprAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_LPR);
                 boolean rawAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_RAW);
                 boolean bookletAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_BOOKLET);
@@ -388,6 +384,9 @@ public class PrinterManager implements SNMPManagerCallback {
      * @return true if successful
      */
     public boolean updatePortSettings(int printerId, PortSetting portSettings) {
+        if (portSettings == null) {
+            return false;
+        }
         boolean ret = false;
         ContentValues cv = new ContentValues();
         cv.put(KeyConstants.KEY_SQL_PRINTER_PORT, portSettings.ordinal());
