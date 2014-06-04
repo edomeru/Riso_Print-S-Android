@@ -14,10 +14,12 @@ import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.text.IpAddressFilter;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.JniUtils;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -28,6 +30,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.InputFilter;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -79,7 +82,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
         mAddPrinterView.mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
         mAddPrinterView.mIpAddress.setOnEditorActionListener(this);
-        
+        mAddPrinterView.mIpAddress.setFilters(new InputFilter[] { new IpAddressFilter() });
         if (mPrinterManager.isSearching()) {
             setViewToDisable(mAddPrinterView);
         }
@@ -270,14 +273,21 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     private void startManualSearch() {       
         String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
         
-        if (NetUtils.isIPv4MulticastAddress(ipAddress)) {
+        if (ipAddress.isEmpty()) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
             return;
         }
-        if (!NetUtils.isIPv4Address(ipAddress) && !NetUtils.isIPv6Address(ipAddress)) {
+        
+        if (NetUtils.isIPv4Address(ipAddress) || NetUtils.isIPv6Address(ipAddress)) {
+            ipAddress = NetUtils.trimZeroes(ipAddress);
+        } else {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
             return;
+        }        
+        if (NetUtils.isIPv6Address(ipAddress)) {
+            ipAddress = JniUtils.validateIp(ipAddress, ipAddress.length() > NetUtils.IPV6_MIN_BUFFER_SIZE ? ipAddress.length() : NetUtils.IPV6_MIN_BUFFER_SIZE);
         }
+        mAddPrinterView.mIpAddress.setText(ipAddress);
         if (mPrinterManager.isExists(ipAddress)) {
             dialogErrCb(ERR_CAN_NOT_ADD_PRINTER);
             return;
