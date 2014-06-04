@@ -134,6 +134,7 @@
 		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D6C912618F4FC2C002A7F48 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
 		2D6C913D18F53EA2002A7F48 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */; };
+		2DA07759193D7D4400FB21A0 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA07758193D7D4400FB21A0 /* util.c */; };
 		2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB718E2EF7D00085F27 /* DefaultPrinter.m */; };
 		2DA1AEC318E2EF7D00085F27 /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB918E2EF7D00085F27 /* PreviewSetting.m */; };
 		2DA1AEC418E2EF7D00085F27 /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBB18E2EF7D00085F27 /* Printer.m */; };
@@ -513,6 +514,7 @@
 		2D6C913A18F53B0E002A7F48 /* snmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = snmp.c; sourceTree = "<group>"; };
 		2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetsnmp.a; path = "../CommonLibrary/3rdParty/net-snmp/lib/ios/libnetsnmp.a"; sourceTree = "<group>"; };
 		2D91C7A8193D559E00351E3B /* AppSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppSettings.h; sourceTree = "<group>"; };
+		2DA07758193D7D4400FB21A0 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
 		2DA1AEB618E2EF7D00085F27 /* DefaultPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPrinter.h; sourceTree = "<group>"; };
 		2DA1AEB718E2EF7D00085F27 /* DefaultPrinter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultPrinter.m; sourceTree = "<group>"; };
 		2DA1AEB818E2EF7D00085F27 /* PreviewSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewSetting.h; sourceTree = "<group>"; };
@@ -1236,6 +1238,7 @@
 				2D1B3E4718FBC701000080E1 /* printsettings.h */,
 				2D1B3E4818FC01E7000080E1 /* printsettings.c */,
 				2D6C913A18F53B0E002A7F48 /* snmp.c */,
+				2DA07758193D7D4400FB21A0 /* util.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -2028,6 +2031,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D22D8C9192B4BDC00BD0489 /* snmp.c in Sources */,
+				2DA07759193D7D4400FB21A0 /* util.c in Sources */,
 				2D22D8C8192B4BD700BD0489 /* directprint.c in Sources */,
 				2D1B3E4918FC01E7000080E1 /* printsettings.c in Sources */,
 			);

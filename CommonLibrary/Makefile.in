@@ -86,7 +86,7 @@ subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(srcdir)/config.h.in $(top_srcdir)/build-aux/depcomp \
-	$(include_HEADERS) $(top_srcdir)/build-aux/test-driver \
+	$(include_HEADERS) $(top_srcdir)/build-aux/test-driver README \
 	build-aux/ar-lib build-aux/compile build-aux/config.guess \
 	build-aux/config.sub build-aux/depcomp build-aux/install-sh \
 	build-aux/missing build-aux/ltmain.sh \
@@ -157,9 +157,10 @@ am_tests_app_OBJECTS = tests/tests_app-main.$(OBJEXT) \
 	tests/tests_app-printsettings_test.$(OBJEXT) \
 	tests/tests_app-directprint_test.$(OBJEXT) \
 	tests/tests_app-snmp_test.$(OBJEXT) \
+	tests/tests_app-util_test.$(OBJEXT) \
 	src/tests_app-printsettings.$(OBJEXT) \
 	src/tests_app-directprint.$(OBJEXT) \
-	src/tests_app-snmp.$(OBJEXT)
+	src/tests_app-snmp.$(OBJEXT) src/tests_app-util.$(OBJEXT)
 tests_app_OBJECTS = $(am_tests_app_OBJECTS)
 tests_app_DEPENDENCIES = libgtest.la \
 	3rdParty/net-snmp/lib/@SUPPORTED_HOST@/libnetsnmp.a
@@ -575,7 +576,8 @@ check_LTLIBRARIES = libgtest.la
 libgtest_la_SOURCES = gtest/gtest-all.cc gtest/gtest.h
 tests_app_SOURCES = tests/main.cpp tests/printsettings_test.cpp \
 	tests/directprint_test.cpp tests/snmp_test.cpp \
-	src/printsettings.c src/directprint.c src/snmp.c
+	tests/util_test.cpp src/printsettings.c src/directprint.c \
+	src/snmp.c src/util.c
 tests_app_CFLAGS = -I3rdParty/net-snmp/include/@SUPPORTED_HOST@ -Iinclude -Isrc -fprofile-arcs -ftest-coverage -DIS_IN_UT
 tests_app_CXXFLAGS = -I3rdParty/net-snmp/include/@SUPPORTED_HOST@ -I. -Iinclude -Isrc -fprofile-arcs -ftest-coverage -DIS_IN_UT
 tests_app_LDFLAGS = -frprofile-arcs -fno-inline -lpthread
@@ -730,11 +732,15 @@ tests/tests_app-directprint_test.$(OBJEXT): tests/$(am__dirstamp) \
 	tests/$(DEPDIR)/$(am__dirstamp)
 tests/tests_app-snmp_test.$(OBJEXT): tests/$(am__dirstamp) \
 	tests/$(DEPDIR)/$(am__dirstamp)
+tests/tests_app-util_test.$(OBJEXT): tests/$(am__dirstamp) \
+	tests/$(DEPDIR)/$(am__dirstamp)
 src/tests_app-printsettings.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/tests_app-directprint.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/tests_app-snmp.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/tests_app-util.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 
 tests_app$(EXEEXT): $(tests_app_OBJECTS) $(tests_app_DEPENDENCIES) $(EXTRA_tests_app_DEPENDENCIES) 
@@ -759,10 +765,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-directprint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-printsettings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-snmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/tests_app-directprint_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/tests_app-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/tests_app-printsettings_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/tests_app-snmp_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/tests_app-util_test.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -851,6 +859,20 @@ src/tests_app-snmp.obj: src/snmp.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -c -o src/tests_app-snmp.obj `if test -f 'src/snmp.c'; then $(CYGPATH_W) 'src/snmp.c'; else $(CYGPATH_W) '$(srcdir)/src/snmp.c'; fi`
 
+src/tests_app-util.o: src/util.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -MT src/tests_app-util.o -MD -MP -MF src/$(DEPDIR)/tests_app-util.Tpo -c -o src/tests_app-util.o `test -f 'src/util.c' || echo '$(srcdir)/'`src/util.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests_app-util.Tpo src/$(DEPDIR)/tests_app-util.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/util.c' object='src/tests_app-util.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -c -o src/tests_app-util.o `test -f 'src/util.c' || echo '$(srcdir)/'`src/util.c
+
+src/tests_app-util.obj: src/util.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -MT src/tests_app-util.obj -MD -MP -MF src/$(DEPDIR)/tests_app-util.Tpo -c -o src/tests_app-util.obj `if test -f 'src/util.c'; then $(CYGPATH_W) 'src/util.c'; else $(CYGPATH_W) '$(srcdir)/src/util.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests_app-util.Tpo src/$(DEPDIR)/tests_app-util.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/util.c' object='src/tests_app-util.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -c -o src/tests_app-util.obj `if test -f 'src/util.c'; then $(CYGPATH_W) 'src/util.c'; else $(CYGPATH_W) '$(srcdir)/src/util.c'; fi`
+
 .cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
@@ -930,6 +952,20 @@ tests/tests_app-snmp_test.obj: tests/snmp_test.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tests/snmp_test.cpp' object='tests/tests_app-snmp_test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CXXFLAGS) $(CXXFLAGS) -c -o tests/tests_app-snmp_test.obj `if test -f 'tests/snmp_test.cpp'; then $(CYGPATH_W) 'tests/snmp_test.cpp'; else $(CYGPATH_W) '$(srcdir)/tests/snmp_test.cpp'; fi`
+
+tests/tests_app-util_test.o: tests/util_test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CXXFLAGS) $(CXXFLAGS) -MT tests/tests_app-util_test.o -MD -MP -MF tests/$(DEPDIR)/tests_app-util_test.Tpo -c -o tests/tests_app-util_test.o `test -f 'tests/util_test.cpp' || echo '$(srcdir)/'`tests/util_test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) tests/$(DEPDIR)/tests_app-util_test.Tpo tests/$(DEPDIR)/tests_app-util_test.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tests/util_test.cpp' object='tests/tests_app-util_test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CXXFLAGS) $(CXXFLAGS) -c -o tests/tests_app-util_test.o `test -f 'tests/util_test.cpp' || echo '$(srcdir)/'`tests/util_test.cpp
+
+tests/tests_app-util_test.obj: tests/util_test.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CXXFLAGS) $(CXXFLAGS) -MT tests/tests_app-util_test.obj -MD -MP -MF tests/$(DEPDIR)/tests_app-util_test.Tpo -c -o tests/tests_app-util_test.obj `if test -f 'tests/util_test.cpp'; then $(CYGPATH_W) 'tests/util_test.cpp'; else $(CYGPATH_W) '$(srcdir)/tests/util_test.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) tests/$(DEPDIR)/tests_app-util_test.Tpo tests/$(DEPDIR)/tests_app-util_test.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tests/util_test.cpp' object='tests/tests_app-util_test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CXXFLAGS) $(CXXFLAGS) -c -o tests/tests_app-util_test.obj `if test -f 'tests/util_test.cpp'; then $(CYGPATH_W) 'tests/util_test.cpp'; else $(CYGPATH_W) '$(srcdir)/tests/util_test.cpp'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
