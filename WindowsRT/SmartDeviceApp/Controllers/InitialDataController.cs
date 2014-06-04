@@ -32,22 +32,9 @@ namespace SmartDeviceApp.Controllers
             await DocumentController.Instance.Unload();
             await PrintPreviewController.Instance.Cleanup();
 
-            StorageFile samplePdf = await GetSamplePdf();
+            StorageFile samplePdf = await StorageFileUtility.GetFileFromAppResource(PDF_FILE_PATH);
             await DocumentController.Instance.Load(samplePdf);
             await PrintPreviewController.Instance.Initialize();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        private static async Task<StorageFile> GetSamplePdf()
-        {
-            Windows.ApplicationModel.Package package = Windows.ApplicationModel.Package.Current;
-            Windows.Storage.StorageFolder installedLocation = package.InstalledLocation;
-
-            StorageFile samplePdf = await StorageFileUtility.GetFileFromAppResource(PDF_FILE_PATH);
-            return samplePdf;
         }
 
         /// <summary>
