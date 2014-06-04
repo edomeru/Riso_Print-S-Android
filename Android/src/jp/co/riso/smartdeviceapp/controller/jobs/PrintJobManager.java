@@ -209,7 +209,7 @@ public class PrintJobManager {
      *            the date to be converted to String
      * @return converted string
      */
-    private String convertDateToString(Date date) {
+    public static String convertDateToString(Date date) {
         if (date == null) {
             date = new Date(0);
         }
@@ -226,7 +226,7 @@ public class PrintJobManager {
      *            the string to be converted to Date
      * @return converted date
      */
-    private Date convertStringToDate(String strDate) {
+    private static Date convertStringToDate(String strDate) {
         SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone(C_TIMEZONE));
         Date date = null;

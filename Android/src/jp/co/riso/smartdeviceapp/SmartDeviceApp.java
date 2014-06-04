@@ -33,7 +33,7 @@ public class SmartDeviceApp extends Application {
         initializeSharedPrefs();
         
         if (AppConstants.DEBUG) {
-            Logger.initialize(Logger.LOGLEVEL_VERBOSE, true, true);
+            Logger.initialize(Logger.LOGLEVEL_VERBOSE, AppConstants.FOR_PERF_LOGS, AppConstants.FOR_PERF_LOGS);
             Logger.runDeleteTask(getApplicationContext());
         }
     }
