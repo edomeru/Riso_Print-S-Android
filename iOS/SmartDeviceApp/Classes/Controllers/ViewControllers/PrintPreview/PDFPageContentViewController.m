@@ -7,13 +7,14 @@
 //
 
 #import "PDFPageContentViewController.h"
+#import "PreviewPageView.h"
 
 @interface PDFPageContentViewController ()
 
 /**
  Outlet for the Image View of the View
  */
-@property (nonatomic, weak) IBOutlet UIImageView *imageView;
+@property (nonatomic, weak) IBOutlet PreviewPageView *previewPageView;
 
 /**
  Outlet for the Activity Indicator of the View
@@ -43,14 +44,14 @@
     }
     else
     {
-        self.imageView.image = self.image;
+        self.previewPageView.image = self.image;
     }
     
     //The bookend page is not part of the actual pages of the pdf.
     //It is a transparent page (invisible) that is used as the other half of the first page/last page in a 2 page view
     if(self.isBookendPage == YES)
     {
-        self.imageView.hidden = YES;
+        self.previewPageView.hidden = YES;
         [self.view setBackgroundColor:[UIColor clearColor]];
     }
 }
@@ -62,7 +63,7 @@
     // Hide Activity indicator when image is available
     [self.activityIndicatorView stopAnimating];
     _image = image;
-    self.imageView.image = image;
+    self.previewPageView.image = image;
 }
 
 @end
