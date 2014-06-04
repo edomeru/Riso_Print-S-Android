@@ -16,12 +16,16 @@
 
 + (BOOL)isIPValid:(NSString**)inputIP;
 {
-    char formattedIP[32];
-    bool isValid = util_validate_ip([*inputIP UTF8String], formattedIP, 32);
+    //create a buffer that can hold IPv4 and IPv6
+    char formattedIP[64];
+    bool isValid = util_validate_ip([*inputIP UTF8String], formattedIP, 64);
     
-    *inputIP = [*inputIP initWithUTF8String:formattedIP];
+    if(isValid)
+    {
+        *inputIP = [*inputIP initWithUTF8String:formattedIP];
+    }
     
-    return isValid;
+    return (isValid == 1);
 }
 
 @end
