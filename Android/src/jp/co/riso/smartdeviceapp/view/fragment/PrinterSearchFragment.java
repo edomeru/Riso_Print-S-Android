@@ -26,12 +26,14 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface;
 import jp.co.riso.smartprint.R;
+import android.animation.ValueAnimator;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
@@ -206,10 +208,29 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     /** {@inheritDoc} */
     @Override
-    public void onHeaderAdjusted(int padding) {
+    public void onHeaderAdjusted(int margin) {
         if (mEmptySearchText != null) {
-            mEmptySearchText.setPadding(0, padding, 0, 0);
+            final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mEmptySearchText.getLayoutParams();
+            params.topMargin = margin;
+            mEmptySearchText.setLayoutParams(params);
         }
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void onBounceBackHeader(int duration) {
+        // http://stackoverflow.com/questions/13881419/android-change-left-margin-using-animation
+        final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mEmptySearchText.getLayoutParams();
+        ValueAnimator animation = ValueAnimator.ofInt(params.topMargin, 0);
+        animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                params.topMargin = (Integer) valueAnimator.getAnimatedValue();
+                mEmptySearchText.requestLayout();
+            }
+        });
+        animation.setDuration(duration);
+        animation.start();
     }
 
     // ================================================================================
