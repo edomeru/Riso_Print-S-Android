@@ -221,6 +221,13 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [UI.UITestMethod]
+        public void Test_PageNumberSliderPointerCaptureLost()
+        {
+            GetPrintPreviewViewModel().PageNumberSliderPointerCaptureLost.Execute(null);
+            Assert.IsNotNull(GetPrintPreviewViewModel().PageNumberSliderPointerCaptureLost);
+        }
+
+        [UI.UITestMethod]
         public void Test_PageTotal()
         {
             uint pageTotal = 10;
