@@ -765,7 +765,8 @@ void add_pjl(char *pjl, setting_value values[], int command)
         case kPjlCommandOwner:
         {
             setting_value loginId = values[kPrintSettingsLoginId];
-            if (loginId.set == 0)
+            setting_value pinCode = values[kPrintSettingsPinCode];
+            if (loginId.set == 0 || pinCode.set == 0)
             {
                 return;
             }
