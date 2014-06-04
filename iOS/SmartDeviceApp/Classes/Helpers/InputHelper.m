@@ -8,44 +8,24 @@
 
 #import "InputHelper.h"
 #include <arpa/inet.h>
+#import "common.h"
 
 @implementation InputHelper
 
 #pragma mark - IP Address
 
-+ (NSString*)trimIP:(NSString*)inputIP
++ (BOOL)isIPValid:(NSString**)inputIP;
 {
-    //leading zeroes are disregarded
-    NSString* pattern = @"^0+";
+    //create a buffer that can hold IPv4 and IPv6
+    char formattedIP[64];
+    bool isValid = util_validate_ip([*inputIP UTF8String], formattedIP, 64);
     
-    NSError* error = nil;
-    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:pattern
-                                                                           options:0
-                                                                             error:&error];
-    NSMutableString* trimmedIP = [NSMutableString stringWithString:inputIP];
-    [regex replaceMatchesInString:trimmedIP
-                          options:0
-                            range:NSMakeRange(0, [inputIP length])
-                     withTemplate:@""];
-    
-    return trimmedIP;
-}
-
-+ (BOOL)isIPValid:(NSString*)inputIP;
-{
-    const char *cString = [inputIP UTF8String];
-    struct in_addr ipv4;
-    
-    // Check if valid IPv4 address
-    int result = inet_pton(AF_INET, cString, &ipv4);
-    if (result != 1)
+    if(isValid)
     {
-        // Check if valid IPv6 address
-        struct in6_addr ipv6;
-        result = inet_pton(AF_INET6, cString, &ipv6);
+        *inputIP = [*inputIP initWithUTF8String:formattedIP];
     }
     
-    return (result == 1);
+    return (isValid == 1);
 }
 
 @end

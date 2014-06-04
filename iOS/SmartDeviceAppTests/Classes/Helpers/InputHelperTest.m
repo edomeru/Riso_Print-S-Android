@@ -49,6 +49,10 @@
                     @"26.10.2.10",
                     @"1.1.1.1",
                     @"255.255.255.255",
+                    @"a9:10:b0:12:aa:ab:90:bc",
+                    @"aaaa:ab12:34cd:a9b2:c2cd:90ca:e3b1:f90a",
+                    @"10:20:30:aa:bb:cc:ad:ef",
+                    @"10a:12b:ab9:ed7:ecc:ba9:12d:ab",
                     ];
     
     listInvalidIP = @[
@@ -66,6 +70,10 @@
                       @"2222.168.1.1",
                       @"192.1688.1.1",
                       @"192.168.1234.1",
+                      @"a102:9999:ac90",
+                      @"xq23:cs23:0919:cd:90:ab34:1234:ad09",
+                      @"ab:0k:34:rt:0a:90:10:aa",
+                      @"abc:193:fed:59c:89c:120:23f:09z",
                       ];
 }
 
@@ -93,22 +101,7 @@
 /* TEST CASES ARE EXECUTED IN ALPHABETICAL ORDER */
 /* use a naming scheme for defining the execution order of your test cases */
 
-- (void)test001_TrimIP
-{
-    GHTestLog(@"# CHECK: InputHelper can trim leading zeroes. #");
-    
-    NSString* actualTrimmedIP;
-    NSString* untrimmedIP;
-    for (NSUInteger i = 0; i < [listUntrimmedIP count]; i++)
-    {
-        untrimmedIP = [listUntrimmedIP objectAtIndex:i];
-        GHTestLog(@"-- trimming [%@]..", untrimmedIP);
-        actualTrimmedIP = [InputHelper trimIP:untrimmedIP];
-        GHAssertEqualStrings(actualTrimmedIP, expectedTrimmedIP, @"trimmed IP should be @%@", expectedTrimmedIP);
-    }
-}
-
-- (void)test002_ValidateIP
+- (void)test001_ValidateIP
 {
     GHTestLog(@"# CHECK: InputHelper can check if an IP is valid. #");
     
@@ -118,7 +111,7 @@
     {
         invalidIP = [listInvalidIP objectAtIndex:i];
         GHTestLog(@"-- validating [%@]..", invalidIP);
-        GHAssertFalse([InputHelper isIPValid:invalidIP], @"IP=%@ should be invalid", invalidIP);
+        GHAssertFalse([InputHelper isIPValid:&invalidIP], @"IP=%@ should be invalid", invalidIP);
     }
 
     GHTestLog(@"-- VALID IPs");
@@ -127,7 +120,7 @@
     {
         validIP = [listValidIP objectAtIndex:i];
         GHTestLog(@"-- validating [%@]..", validIP);
-        GHAssertTrue([InputHelper isIPValid:validIP], @"IP=%@ should be valid", validIP);
+        GHAssertTrue([InputHelper isIPValid:&validIP], @"IP=%@ should be valid", validIP);
     }
 }
 

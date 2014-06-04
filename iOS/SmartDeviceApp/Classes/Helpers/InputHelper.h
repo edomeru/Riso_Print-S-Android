@@ -13,17 +13,9 @@
 #pragma mark - IP Address
 
 /**
- Removes leading zeroes.
- @param inputIP
-        the UITextField contents
- @return the trimmed IP string
- */
-+ (NSString*)trimIP:(NSString*)inputIP;
-
-/**
  Checks if the input IP is a valid IP address.
  @return YES if valid, NO otherwise.
  */
-+ (BOOL)isIPValid:(NSString*)inputIP;
++ (BOOL)isIPValid:(NSString**)inputIP;
 
 @end

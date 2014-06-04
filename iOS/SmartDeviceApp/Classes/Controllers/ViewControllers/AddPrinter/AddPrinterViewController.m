@@ -198,15 +198,14 @@
 {
     [self dismissKeypad];
     
-    // properly format/trim the input IP
-    NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
-#if DEBUG_LOG_ADD_PRINTER_SCREEN
-    NSLog(@"[INFO][AddPrinter] trimmedIP=%@", trimmedIP);
-#endif
-    self.textIP.text = trimmedIP;
+    NSString *formattedIP = self.textIP.text;
+
+    //this will also format the input IP
+    bool isValid = [InputHelper isIPValid:&formattedIP];
+
+    self.textIP.text = formattedIP;
     
-    // is the IP a valid IP address?
-    if (![InputHelper isIPValid:trimmedIP])
+    if (!isValid)
     {
         [AlertHelper displayResult:kAlertResultErrInvalidIP
                          withTitle:kAlertTitlePrintersAdd
@@ -215,7 +214,7 @@
     }
     
     // was this printer already added before?
-    if ([self.printerManager isIPAlreadyRegistered:trimmedIP])
+    if ([self.printerManager isIPAlreadyRegistered:formattedIP])
     {
         [AlertHelper displayResult:kAlertResultErrPrinterDuplicate
                          withTitle:kAlertTitlePrintersAdd
@@ -226,7 +225,7 @@
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [self addFullCapabilityPrinter:trimmedIP];
+        [self addFullCapabilityPrinter:formattedIP];
         self.hasAddedPrinters = YES;
         if (self.isIpad)
             [self.printersViewController reloadData];
@@ -244,7 +243,7 @@
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] initiating search");
 #endif
-    [self.printerManager searchForPrinter:trimmedIP];
+    [self.printerManager searchForPrinter:formattedIP];
     // callbacks for the search will be handled in delegate methods
     
     // if UI needs to do other things, do it here
@@ -264,7 +263,7 @@
 
     if (!printerFound)
     {
-        NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
+        NSString* trimmedIP = self.textIP.text;
         [self addFullCapabilityPrinter:trimmedIP];
         self.hasAddedPrinters = YES;
         if (self.isIpad)
@@ -341,8 +340,9 @@
 {
     if (textField.tag == TAG_TEXT_IP)
     {
-        // ignore whitespace (for iPad keyboard)
-        if ([string isEqualToString:@" "])
+        NSCharacterSet *validCharacters = [NSCharacterSet characterSetWithCharactersInString:@"0123456789abcdefABCDEF.:"];
+        // ignore not valid characters
+        if([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
         {
             return NO;
         }
