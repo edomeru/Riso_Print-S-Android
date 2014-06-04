@@ -293,11 +293,17 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	public void setBackgroundColor(int color) {
 		mBackgroundColor = color;
 	}
-	
+
+	/**
+	 * Sets the bind position
+	 */
 	public void setBindPosition(int bindPosition) {
 		mBindPosition = bindPosition;
 	}
-
+	
+	/**
+	 * Try to adjust the pan, set to limits if cannot adjust
+	 */
 	public void tryAdjustPan(float deltaX, float deltaY) {
 		float tempPanX = mPanX - (deltaX);
 		float tempPanY = mPanY - (deltaY);
@@ -319,6 +325,9 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		mPanY = tempPanY;
 	}
 	
+	/**
+	 * Sets the current pan of the view
+	 */
 	public void setPans(float panX, float panY) {
 		mPanX = panX;
 		mPanY = panY;
@@ -327,19 +336,22 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	}
 
 	/**
-	 * Gets the current x pan value.
+	 * Gets the current horizontal pan value.
 	 */
 	public float getPanX() {
 		return mPanX;
 	}
 
 	/**
-	 * Gets the current y pan value.
+	 * Gets the current vertical pan value.
 	 */
 	public float getPanY() {
 		return mPanY;
 	}
 
+	/**
+	 * Sets the zoom level of the view
+	 */
 	public void setZoomLevel(float zoomLevel) {
 		mPanX = (mPanX * mZoomLevel) / zoomLevel;
 		mPanY = (mPanY * mZoomLevel) / zoomLevel;

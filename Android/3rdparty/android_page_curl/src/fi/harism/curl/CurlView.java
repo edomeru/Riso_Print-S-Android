@@ -839,7 +839,10 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	public void setSizeChangedObserver(SizeChangedObserver observer) {
 		mSizeChangedObserver = observer;
 	}
-	
+
+	/**
+	 * Gets the current view mode
+	 */
 	public int getViewMode() {
 		return mViewMode;
 	}
@@ -864,10 +867,16 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		}
 	}
 
+	/**
+	 * Gets the bind position
+	 */
 	public int getBindPosition() {
 		return mBindPosition;
 	}
 
+	/**
+	 * Sets the bind position
+	 */
 	public void setBindPosition(int bindPosition) {
 		mBindPosition = bindPosition;
 		mRenderer.setBindPosition(bindPosition);
@@ -876,6 +885,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPageCurl.setBindPosition(bindPosition);
 	}
 
+	/**
+	 * Adjusts the current pan
+	 */
 	public void adjustPan(float x, float y) {
 		mRenderer.tryAdjustPan(x / (float) getWidth(), y / (float) getHeight());
 		
@@ -883,15 +895,24 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		mPanY = mRenderer.getPanY();
 	}
 
+	/**
+	 * Sets the zoom level of the view
+	 */
 	public synchronized void setZoomLevel(float zoomLevel) {
 		mZoomLevel = zoomLevel;
 		mRenderer.setZoomLevel(zoomLevel);
 	}
 
+	/**
+	 * Sets the drop shadow size if shadow is enabled
+	 */
 	public void setDropShadowSize(float dropShadowSize) {
 		mRenderer.setDropShadowSize(dropShadowSize);
 	}
 
+	/**
+	 * Sets the current pan of the view
+	 */
 	public synchronized void setPans(float panX, float panY) {
 		mPanX = panX;
 		mPanY = panY;
@@ -900,14 +921,14 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	}
 
 	/**
-	 * Gets the current x pan value.
+	 * Gets the current horizontal pan value.
 	 */
 	public float getPanX() {
 		return mPanX;
 	}
 
 	/**
-	 * Gets the current y pan value.
+	 * Gets the current vertical pan value.
 	 */
 	public float getPanY() {
 		return mPanY;
