@@ -431,6 +431,10 @@
                         <Core:InvokeCommandAction Command="{Binding PageNumberSliderValueChange}" 
                                                   CommandParameter="{Binding Value, ElementName=pageNumberSlider}"/>
                     </Core:EventTriggerBehavior>
+                    <Core:EventTriggerBehavior EventName="PointerCaptureLost">
+                        <Core:InvokeCommandAction Command="{Binding PageNumberSliderPointerCaptureLost}" 
+                                                  CommandParameter="{Binding}"/>
+                    </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Slider>
             <TextBlock x:Name="pageNumberText" Grid.Row="2" 

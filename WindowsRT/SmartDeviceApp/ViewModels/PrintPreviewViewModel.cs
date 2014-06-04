@@ -52,10 +52,10 @@ namespace SmartDeviceApp.ViewModels
         private bool _isPageAreaGridLoaded;
         public PreviewGestureController _gestureController; // TODO: Set to private after removing easter egg!!
         private bool _isPageNumberSliderEnabled;
-        private ICommand _goToPage;
         private ICommand _goToPreviousPage;
         private ICommand _goToNextPage;
         private ICommand _pageNumberSliderValueChange;
+        private ICommand _pageNumberSliderPointerCaptureLost;
         private uint _pageTotal;
         private uint _currentPageIndex;
         private uint _pageIndex;
@@ -71,7 +71,7 @@ namespace SmartDeviceApp.ViewModels
         private Size _rightPageActualSize;
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
-        private PageViewMode _previousPageViewMode;        
+        private PageViewMode _previousPageViewMode;
 
         private ViewControlViewModel _viewControlViewModel;
 
@@ -436,14 +436,12 @@ namespace SmartDeviceApp.ViewModels
             SetPageIndexes();
         }
 
-        // TODO: Two-page view
         public void GoToPage(uint index)
         {
             if (GoToPageEventHandler != null)
             {
                 GoToPageEventHandler((int)index);
             }
-            UpdatePageIndexes(index);
         }
 
         public void UpdatePageIndexes(uint index)
@@ -452,11 +450,11 @@ namespace SmartDeviceApp.ViewModels
             SetPageIndexes();
         }
 
-        // TODO: Two-page view
         private void GoToPreviousPageExecute()
         {
-            --_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
+            --_pageIndex;
             SetPageIndexes();
+            GoToPage(_pageIndex);
         }
 
         private bool CanGoToPreviousPage()
@@ -468,8 +466,9 @@ namespace SmartDeviceApp.ViewModels
 
         private void GoToNextPageExecute()
         {
-            ++_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
+            ++_pageIndex;
             SetPageIndexes();
+            GoToPage(_pageIndex);
         }
 
         private bool CanGoToNextPage()
@@ -501,6 +500,21 @@ namespace SmartDeviceApp.ViewModels
                     );
                 }
                 return _pageNumberSliderValueChange;
+            }
+        }
+
+        public ICommand PageNumberSliderPointerCaptureLost
+        {
+            get
+            {
+                if (_pageNumberSliderPointerCaptureLost == null)
+                {
+                    _pageNumberSliderPointerCaptureLost = new RelayCommand(
+                        () => PageNumberSliderPointerCaptureLostExecute(),
+                        () => true
+                    );
+                }
+                return _pageNumberSliderPointerCaptureLost;
             }
         }
 
@@ -549,9 +563,13 @@ namespace SmartDeviceApp.ViewModels
 
         private void PageNumberSliderValueChangeExecute()
         {
-            // TODO: Consider handling the event only when drag is released 
-            var newValue = CurrentPageIndex; // verify 0-based
-            GoToPage(newValue);
+            var newValue = CurrentPageIndex;
+            UpdatePageIndexes(newValue);
+        }
+
+        private void PageNumberSliderPointerCaptureLostExecute()
+        {
+            GoToPage(_pageIndex);
         }
 
         #endregion
