@@ -35,7 +35,18 @@
  */
 - (void)setupForOrientation:(UIInterfaceOrientation)orientation forDevice:(UIUserInterfaceIdiom)idiom;
 
+/**
+ Notifies the layout to update the arrangement of the groups in their
+ respective columns during the next update.
+ */
 - (void)invalidateColumnAssignments;
+
+/**
+ Notifies the layout that the specified item will be deleted.
+ This allows the layout to take note of the deleted group's
+ frame, which is necessary to recalculate the other groups' 
+ positions after the delete operation.
+ */
 - (void)prepareForDelete:(NSIndexPath*)itemToDelete;
 
 @end

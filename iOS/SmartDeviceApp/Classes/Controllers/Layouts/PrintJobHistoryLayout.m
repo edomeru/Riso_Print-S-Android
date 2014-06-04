@@ -41,33 +41,82 @@
  */
 @property (strong, nonatomic) NSDictionary* groupLayoutInfo;
 
-/**
- Stores the current height of each column.
- */
+/** Stores the current height of each column. */
 @property (strong, nonatomic) NSMutableArray* columnHeights;
 
+/** Stores the column positions of each group in the portrait orientation. */
 @property (strong, nonatomic) NSMutableDictionary* columnAssignmentsPort;
+
+/** Stores the column positions of each group in the landscape orientation. */
 @property (strong, nonatomic) NSMutableDictionary* columnAssignmentsLand;
+
+/** Reference to the column positions for either the portrait or landscape orientation */
 @property (strong, nonatomic) NSMutableDictionary* columnAssignments;
+
+/** 
+ Flag that a column will be empty when the layout operation finishes.
+ This flag is updated when a group is deleted while in landscape orientation.
+ This is used when rotating from landscape to portrait.
+ */
 @property (assign, nonatomic) BOOL columnWillBeEmptyInLand;
+
+/**
+ Flag that a column will be empty when the layout operation finishes.
+ This flag is updated when a group is deleted while in portrait orientation.
+ This is used when rotating from portrait to landscape.
+ */
 @property (assign, nonatomic) BOOL columnWillBeEmptyInPort;
 
+/** Flag that indicates that the layout was invalidated because a group was deleted. */
 @property (assign, nonatomic) BOOL relayoutForDelete;
+
+/** Reference to the deleted group. */
 @property (strong, nonatomic) NSIndexPath* deletedItem;
+
+/** Reference to the frame height of the deleted group. */
 @property (assign, nonatomic) CGFloat deletedItemHeight;
+
+/** Reference to the column where the deleted group was originally assigned. */
 @property (assign, nonatomic) NSInteger affectedColumn;
 
+/** Stores the current device orientation. */
 @property (assign, nonatomic) UIInterfaceOrientation orientation;
 
 #pragma mark - Methods
 
 /**
  Calculates the (x,y) origin and the (height,width) size of
- a group at the specified index path.
+ a group at the specified index path based on the number of
+ jobs and the current height of each column.
  @param indexPath
  */
 - (CGRect)newFrameForGroupAtIndexPath:(NSIndexPath*)indexPath;
+
+/**
+ Adjusts the frames of groups below a deleted group in a column.
+ For the other groups, returns their current frame.
+ @param indexPath
+ */
 - (CGRect)shiftedFrameForGroupAtIndexPath:(NSIndexPath*)indexPath;
+
+/**
+ Removes the deleted group from the column positions tracker (for
+ both landscape and portrait). The group indices are also shifted
+ to the left to fill the vacated position.
+ */
+- (void)updateColumnAssignmentsForDeletedItem;
+
+/** Clears the tracker for the column heights. */
+- (void)invalidateColumnHeights;
+
+/** Cancels the relayoutForDelete flag and clears any reference to the deleted group. */
+- (void)setNotLayoutForDelete;
+
+/** 
+ Assigns the correct tracker for the column positions
+ based on the current device orientation.
+ */
+- (void)assignColumnAssignmentsForOrientation;
 
 @end
 
@@ -251,6 +300,10 @@
     // for each group in the section
     for (NSInteger group = 0; group < groupCount; group++)
     {
+#if DEBUG_LOG_PRINT_JOB_LAYOUT
+        NSLog(@"[INFO][PrintJobLayout] group=%ld", (long)group);
+#endif
+        
         // create UICollectionViewLayoutAttributes for the group
         NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:group inSection:section];
         UICollectionViewLayoutAttributes* groupAttributes =
@@ -282,8 +335,8 @@
 {
     // determine the correct column
     NSUInteger col;
-    NSNumber* pos = [self.columnAssignments valueForKey:[NSString stringWithFormat:@"%d", (int)indexPath.item]];
-    if (pos == nil)
+    NSNumber* prevCol = [self.columnAssignments valueForKey:[NSString stringWithFormat:@"%d", (int)indexPath.item]];
+    if (prevCol == nil)
     {
         NSNumber* minColumnHeight = [self.columnHeights valueForKeyPath:@"@min.self"];
         col = [self.columnHeights indexOfObject:minColumnHeight];
@@ -292,12 +345,8 @@
     }
     else
     {
-        col = [pos unsignedIntegerValue];
+        col = [prevCol unsignedIntegerValue];
     }
-    
-#if DEBUG_LOG_PRINT_JOB_LAYOUT
-    NSLog(@"[INFO][PrintJobLayout] row=%lu, col=%lu", (unsigned long)row, (unsigned long)col);
-#endif
     
     // determine the group size
     // group height = header height + (number of jobs * height per job)
@@ -307,16 +356,12 @@
     CGSize groupSize = CGSizeMake(groupWidth, groupHeight);
     
 #if DEBUG_LOG_PRINT_JOB_LAYOUT
-    NSLog(@"[INFO][PrintJobCtrl] h=%f,w=%f", groupHeight, groupWidth);
+    NSLog(@"[INFO][PrintJobLayout] h=%f,w=%f", groupSize.height, groupSize.width);
 #endif
     
+    // determine the group origin
     // set the x-origin pt.
     CGFloat originX = floorf(self.groupInsets.left + (groupSize.width + self.interGroupSpacingX) * col);
-    
-#if DEBUG_LOG_PRINT_JOB_LAYOUT
-    NSLog(@"[INFO][PrintJobLayout] originX=%f", originX);
-#endif
-    
     // set the y-origin pt.
     CGFloat originY = 0.0f;
     CGFloat currentColumnHeight = [[self.columnHeights objectAtIndex:col] floatValue];
@@ -332,9 +377,10 @@
         // Y-position will depend on the existing column height + spacing
         originY = floorf(currentColumnHeight + self.interGroupSpacingY);
     }
-    
+    CGPoint groupOrigin = CGPointMake(originX, originY);
+
 #if DEBUG_LOG_PRINT_JOB_LAYOUT
-    NSLog(@"[INFO][PrintJobLayout] originY=%f", originY);
+    NSLog(@"[INFO][PrintJobLayout] x=%f,y=%f", groupOrigin.x, groupOrigin.y);
 #endif
 
     // save the new column height
@@ -342,7 +388,7 @@
     [self.columnHeights replaceObjectAtIndex:col withObject:[NSNumber numberWithFloat:currentColumnHeight]];
     
     // return the (x-origin, y-origin, width, height) for the group
-    return CGRectMake(originX, originY, groupSize.width, groupSize.height);
+    return CGRectMake(groupOrigin.x, groupOrigin.y, groupSize.width, groupSize.height);
 }
 
 - (CGRect)shiftedFrameForGroupAtIndexPath:(NSIndexPath*)indexPath
