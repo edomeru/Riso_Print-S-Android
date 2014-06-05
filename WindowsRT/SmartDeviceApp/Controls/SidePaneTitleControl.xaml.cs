@@ -26,46 +26,11 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof(string), typeof(SidePaneTitleControl), null);
 
-        public static readonly DependencyProperty ButtonImageProperty =
-            DependencyProperty.Register("ButtonImage", typeof(ImageSource), typeof(SidePaneTitleControl), null);
-
-        public static readonly DependencyProperty ButtonVisibilityProperty =
-            DependencyProperty.Register("ButtonVisibility", typeof(Visibility), typeof(SidePaneTitleControl), null);
-
-        public static readonly DependencyProperty ButtonCommandProperty =
-            DependencyProperty.Register("ButtonCommand", typeof(ICommand), typeof(SidePaneTitleControl), null);
-
-        public static readonly DependencyProperty ProgressRingVisibilityProperty =
-            DependencyProperty.Register("ProgressRingVisibility", typeof(Visibility), typeof(SidePaneTitleControl), null);
-
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
         }
 
-        public ImageSource ButtonImage
-        {
-            get { return (ImageSource)GetValue(ButtonImageProperty); }
-            set { SetValue(ButtonImageProperty, value); }
-        }
-
-        public Visibility ButtonVisibility
-        {
-            get { return (Visibility)GetValue(ButtonVisibilityProperty); }
-            set { SetValue(ButtonVisibilityProperty, value); }
-        }
-
-        public string ButtonCommand
-        {
-            get { return (string)GetValue(ButtonCommandProperty); }
-            set { SetValue(ButtonCommandProperty, value); }
-        }
-
-        public Visibility ProgressRingVisibility
-        {
-            get { return (Visibility)GetValue(ProgressRingVisibilityProperty); }
-            set { SetValue(ProgressRingVisibilityProperty, value); }
-        }
     }
 }

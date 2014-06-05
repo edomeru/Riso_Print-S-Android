@@ -120,7 +120,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:SidePaneTitleControl Title="{Binding Source=IDS_LBL_SEARCH_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 
-                                       ButtonVisibility="Collapsed" Loaded="OnLoaded" ProgressRingVisibility="Collapsed"/>
+                                       Loaded="OnLoaded"/>
         <Grid Margin="0,0,0,0" Grid.Row="1" Background="#FF262626">
             
 

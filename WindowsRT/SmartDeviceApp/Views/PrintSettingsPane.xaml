@@ -115,8 +115,7 @@
             </Path.Data>
         </Path>
         <controls:SidePaneTitleControl Grid.Row="0" Grid.Column="1"
-                                       Title="{Binding Source=IDS_LBL_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}" 
-                                       ButtonVisibility="Collapsed" ProgressRingVisibility="Collapsed"/>
+                                       Title="{Binding Source=IDS_LBL_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}" />
         <Grid x:Name="printSettingsRootGrid" Grid.Row="1" Grid.Column="1">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>

@@ -302,7 +302,6 @@
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PropertyMetaData.cs" />
     <Compile Include="Views\PullToRefreshListView.cs" />
     <!--<Compile Include="Views\RightPane.xaml.cs">
     <Compile Include="Views\PrintSettingsPane.xaml.cs">
