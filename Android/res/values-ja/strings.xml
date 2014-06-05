@@ -126,6 +126,9 @@
     <string name="ids_lbl_on">On</string>
     <string name="ids_lbl_help">ヘルプ</string>
     <string name="ids_lbl_legal">リーガル情報</string>
+    <string name="ids_lbl_printers_empty">No Printers</string>
+    <string name="ids_lbl_printjobhistory_empty">No Print Job History</string>
+    <string name="ids_lbl_printer_search_empty">No Printers Found</string>
     <string name="ids_info_msg_printer_add_successful">追加に成功しました</string>
     <string name="ids_info_msg_warning_cannot_find_printer">Warning, Cannot find Printer.</string>
     <string name="ids_info_msg_printing">印刷中&#8230;</string>

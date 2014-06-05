@@ -34,8 +34,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private static final int MIN_COLUMNS = 2;
     
     private WeakReference<PrintJobsViewListener> mListenerRef;
-    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();;
-    private List<Printer> mPrinters = new ArrayList<Printer>();;
+    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
+    private List<Printer> mPrinters = new ArrayList<Printer>();
     private List<Printer> mCollapsedPrinters = new ArrayList<Printer>();
     private List<LinearLayout> mColumns = new ArrayList<LinearLayout>();
     private List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<PrintJobsGroupView>();

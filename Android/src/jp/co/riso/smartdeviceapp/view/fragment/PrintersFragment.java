@@ -17,7 +17,6 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
@@ -29,6 +28,7 @@ import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter.PrinterArrayA
 import jp.co.riso.smartdeviceapp.view.printers.PrintersListView;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView.PrintersViewCallback;
+import jp.co.riso.smartprint.R;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
@@ -72,6 +72,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private Parcelable mScrollState = null;
     private int mSettingItem = PrinterManager.EMPTY_ID;;
     private Runnable mUpdateOnlineStatus = null;
+    private TextView mEmptyPrintersText;
     
     /** {@inheritDoc} */
     @Override
@@ -113,6 +114,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         if (mPrinter == null) {
             mPrinter = (ArrayList<Printer>) mPrinterManager.getSavedPrintersList();
         }
+        
+        mEmptyPrintersText = (TextView) view.findViewById(R.id.emptyPrintersText);
+        
         if (isTablet()) {
             mPrinterTabletView = (PrintersScreenTabletView) view.findViewById(R.id.printerParentView);
             mPrinterTabletView.setPrintersViewCallback(this);
@@ -122,7 +126,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         mPrinterManager.setPrintersCallback(this);
         
         mPauseableHandler.sendMessage(newMessage);
-        mPauseableHandler.post(mUpdateOnlineStatus);
         
         if (isTablet()) {
             mSettingItem = PrinterManager.EMPTY_ID;
@@ -170,7 +173,11 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
         
         if (mUpdateOnlineStatus != null && mPauseableHandler != null) {
-            mPauseableHandler.post(mUpdateOnlineStatus);
+            if (mPrinterManager.getSavedPrintersList().isEmpty()) {
+                showEmptyText();
+            } else {
+                showPrintersView();
+            }
             mPauseableHandler.resume();
         }
         
@@ -352,6 +359,34 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
+    /**
+     * Displays empty message, hides printers view and stops updates of online status
+     */
+    private void showEmptyText() {
+        mPauseableHandler.removeCallbacks(mUpdateOnlineStatus);
+        mEmptyPrintersText.setVisibility(View.VISIBLE);
+        
+        if (isTablet()) {
+            mPrinterTabletView.setVisibility(View.GONE);
+        } else {
+            mListView.setVisibility(View.GONE);
+        }
+    }
+    
+    /**
+     * Displays printers view, hides empty message and starts updates of online status
+     */
+    private void showPrintersView() {
+        mPauseableHandler.post(mUpdateOnlineStatus);
+        mEmptyPrintersText.setVisibility(View.GONE);
+        
+        if (isTablet()) {
+            mPrinterTabletView.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+        }
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -455,6 +490,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 mPrinterAdapter.notifyDataSetChanged();
             }
             ((PrintersListView) mListView).resetDeleteView(false);
+        }
+        
+        if (mPrinterManager.getSavedPrintersList().isEmpty()) {
+            showEmptyText();
         }
     }
     

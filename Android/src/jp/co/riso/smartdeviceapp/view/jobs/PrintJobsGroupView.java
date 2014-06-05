@@ -168,7 +168,6 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         boolean isSuccess = pm.deleteWithPrinterId(mPrinter.getId());
         if (isSuccess) {
             animateDeleteGroup();
-            mPrintJobViews.clear();
         } else {
             mPrintJobGroupLayout.findViewById(R.id.printJobGroupDelete).setSelected(false);
             // show dialog
@@ -643,8 +642,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      * delete print job group view
      */
     private void deletePrintJobGroupView() {
-        for (int i = 0; i < mPrintJobViews.size(); i++) {
-            mGroupListener.deleteJobFromList((PrintJob) mPrintJobViews.get(i).getTag());
+        for (int i = 0; i < mPrintJobs.size(); i++) {
+            mGroupListener.deleteJobFromList(mPrintJobs.get(i));
         }
         mGroupListener.deletePrinterFromList(mPrinter);
         mLayoutListener.deletePrintJobsGroup(this);
