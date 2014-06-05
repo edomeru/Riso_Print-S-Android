@@ -6,6 +6,8 @@ CREATE TABLE Printer (
   prn_port_setting INTEGER UNSIGNED NOT NULL DEFAULT 0,
   prn_enabled_lpr BOOL NOT NULL DEFAULT 1,
   prn_enabled_raw BOOL NOT NULL DEFAULT 1,
+  prn_enabled_paper_lw BOOL NOT NULL DEFAULT 1,
+  prn_enabled_feed_tray BOOL NOT NULL DEFAULT 1,
   prn_enabled_booklet_finishing BOOL NOT NULL DEFAULT 1,
   prn_enabled_stapler BOOL NOT NULL DEFAULT 1,
   prn_enabled_punch3 BOOL NOT NULL DEFAULT 0,
