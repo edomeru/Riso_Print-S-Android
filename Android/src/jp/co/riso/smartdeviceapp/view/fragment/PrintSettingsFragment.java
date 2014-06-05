@@ -223,7 +223,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             return;
         }
         
-        if (!NetUtils.isNetworkAvailable(getActivity())) {
+        if (!NetUtils.isWifiAvailable(getActivity())) {
             String strMsg = getString(R.string.ids_err_msg_network_error);
             String btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
@@ -302,7 +302,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     /** {@inheritDoc} */
     @Override
     public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
-        if (NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext())) {
+        if (NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
             switch (status) {
                 case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
                 case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:
