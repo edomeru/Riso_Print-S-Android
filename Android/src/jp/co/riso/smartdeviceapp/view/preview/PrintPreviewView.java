@@ -215,6 +215,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         mCurlView.adjustPan(ev.getX() - mPtrLastPos.x, ev.getY() - mPtrLastPos.y);
                         mCurlView.requestRender();
                         
+                        setPans(mCurlView.getPanX(), mCurlView.getPanY());
+                        
                         mPtrLastPos.set(ev.getX(), ev.getY());
                         return true;
                     }
@@ -844,9 +846,22 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     }
     
     /**
+     * @param panX
+     * @param panY
+     */
+    public void setPans(float panX, float panY) {
+        if (mListener != null) {
+            mListener.panChanged(panX, panY);
+        }
+        
+        mCurlView.setPans(panX, panY);
+        mCurlView.requestRender();
+    }
+    
+    /**
      * @param zoomLevel
      */
-    private void setZoomLevel(float zoomLevel) {
+    public void setZoomLevel(float zoomLevel) {
         mZoomLevel  = zoomLevel;
         if (mZoomLevel <= BASE_ZOOM_LEVEL) {
             mZoomLevel = BASE_ZOOM_LEVEL;

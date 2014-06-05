@@ -67,6 +67,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     private View mOpenInView = null;
     
     private int mCurrentPage = 0;
+    private float mZoomLevel = 1.0f;
+    private float mPanX = 0.0f;
+    private float mPanY = 0.0f;
     
     private LruCache<String, Bitmap> mBmpCache;
     
@@ -154,6 +157,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mPrintPreviewView.setPrintSettings(mPrintSettings);
         mPrintPreviewView.setBmpCache(mBmpCache);
         mPrintPreviewView.setListener(this);
+        mPrintPreviewView.setPans(mPanX, mPanY);
+        mPrintPreviewView.setZoomLevel(mZoomLevel);
         mPrintPreviewView.setVisibility(View.GONE);
         
         mPageControls = view.findViewById(R.id.previewControls);
@@ -246,6 +251,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         if (mPauseableHandler != null) {
             mPauseableHandler.resume();
         }
+        
+        // Recreate view via reattaching
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(this).commit();
     }
     
     // ================================================================================
@@ -503,10 +512,18 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public int getControlsHeight() {
         return 0;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void panChanged(float panX, float panY) {
+        mPanX = panX;
+        mPanY = panY;
+    }
     
     /** {@inheritDoc} */
     @Override
     public void zoomLevelChanged(float zoomLevel) {
+        mZoomLevel = zoomLevel;
     }
     
     /** {@inheritDoc} */
