@@ -249,7 +249,7 @@
         <Grid x:Name="viewRoot" Grid.Row="0"
               Style="{StaticResource STYLE_ViewGrid}"
               Width="{Binding ViewMode, Converter={StaticResource ResizedViewWidthConverter}}"
-              Height="{Binding Converter={StaticResource HeightConverter}}"
+              Height="{Binding ViewOrientation, Converter={StaticResource HeightConverter}}"
               Tapped="OnViewRootTapped">
             <Grid.Projection>
                 <PlaneProjection/>

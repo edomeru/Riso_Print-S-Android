@@ -115,6 +115,7 @@
     <Compile Include="Common\Enum\MessageType.cs" />
     <Compile Include="Common\Enum\PrintJobResult.cs" />
     <Compile Include="Common\Enum\TextBoxBehavior.cs" />
+    <Compile Include="Common\Enum\ViewOrientation.cs" />
     <Compile Include="Common\Enum\VisibleRightPane.cs" />
     <Compile Include="Common\Enum\ScreenMode.cs" />
     <Compile Include="Common\Enum\LoadDocumentResult.cs" />

@@ -24,7 +24,10 @@
         <m2:SplashScreen Image="Resources\Images\img_splash.png" BackgroundColor="#CDCDCD" />
         <m2:ApplicationView MinWidth="width500" />
         <m2:InitialRotationPreference>
+          <m2:Rotation Preference="portrait" />
           <m2:Rotation Preference="landscape" />
+          <m2:Rotation Preference="portraitFlipped" />
+          <m2:Rotation Preference="landscapeFlipped" />
         </m2:InitialRotationPreference>
       </m2:VisualElements>
       <Extensions>

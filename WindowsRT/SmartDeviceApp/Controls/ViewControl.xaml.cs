@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Devices.Sensors;
+using Windows.UI.Core;
 using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Common.Enum;
@@ -55,6 +57,8 @@ namespace SmartDeviceApp.Controls
         
         public static readonly DependencyProperty Button2VisibilityProperty =
            DependencyProperty.Register("Button2Visibility", typeof(Visibility), typeof(ViewControl), null);
+
+        private SimpleOrientationSensor _orientationSensor;
         
         public ViewControl()
         {
@@ -62,6 +66,11 @@ namespace SmartDeviceApp.Controls
             Children = contentGrid.Children;
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Window.Current.SizeChanged += WindowSizeChanged;
+            _orientationSensor = SimpleOrientationSensor.GetDefault();
+            _orientationSensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
+            // Get initial orientation
+            ViewModel.ViewOrientation = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
+                ViewOrientation.Landscape : ViewOrientation.Portrait;
         }
 
         public ViewControlViewModel ViewModel
@@ -211,6 +220,33 @@ namespace SmartDeviceApp.Controls
             var prevViewMode = ViewModel.ViewMode;
             ViewModel.ViewMode = ViewMode.Unknown;
             ViewModel.ViewMode = prevViewMode;
+        }
+
+        async private void OrientationChanged(object sender, SimpleOrientationSensorOrientationChangedEventArgs e)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                DisplayOrientation(e.Orientation);
+            });
+        }
+
+        private void DisplayOrientation(SimpleOrientation orientation)
+        {        
+            var viewOrientation = ViewModel.ViewOrientation; // Initialize to previous value
+            switch (orientation)
+            {
+                case SimpleOrientation.NotRotated:
+                case SimpleOrientation.Rotated180DegreesCounterclockwise:
+                    viewOrientation = ViewOrientation.Landscape;
+                    break;
+                case SimpleOrientation.Rotated90DegreesCounterclockwise:
+                case SimpleOrientation.Rotated270DegreesCounterclockwise:
+                    viewOrientation = ViewOrientation.Portrait;
+                    break;
+                default:
+                    break;
+            }
+            ViewModel.ViewOrientation = viewOrientation;
         }
     }
 }

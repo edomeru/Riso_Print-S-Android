@@ -47,7 +47,7 @@ namespace SmartDeviceApp.ViewModels
 
         private Grid _pageAreaGrid;
         private UIElement _controlReference;
-        private double _pageAreaGridOriginalHeight;
+        private double _pageAreaGridMaxHeight;
         private double _pageAreaGridMaxWidth;
         private bool _isPageAreaGridLoaded;
         public PreviewGestureController _gestureController; // TODO: Set to private after removing easter egg!!
@@ -85,6 +85,7 @@ namespace SmartDeviceApp.ViewModels
 
             SetViewMode(_viewControlViewModel.ViewMode); 
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));            
         }
 
         public void OnNavigatedTo()
@@ -108,10 +109,23 @@ namespace SmartDeviceApp.ViewModels
             if (!_isPageAreaGridLoaded)
             {   
                 _pageAreaGrid = pageAreaGrid;
-                _pageAreaGridOriginalHeight = _pageAreaGrid.ActualHeight;
+                _pageAreaGridMaxHeight = _pageAreaGrid.ActualHeight;
                 _controlReference = (UIElement)_pageAreaGrid.Parent;
                 _isPageAreaGridLoaded = true;
             }
+        }
+
+        // Should be reset everytime the view orientation is changed
+        private void ResetPageAreaGrid(ViewOrientation viewOrientation)
+        {
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(_viewControlViewModel.ViewMode, null, viewOrientation, null)) - defaultMargin * 2;
+            ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
+            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+            var sliderHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberSliderHeight"]).Value;
+            var sliderTextHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberTextHeight"]).Value;
+            _pageAreaGridMaxHeight = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null))
+                - defaultMargin * 2 - titleHeight - sliderHeight - sliderTextHeight;
         }
 
         public void InitializeGestures()
@@ -124,19 +138,19 @@ namespace SmartDeviceApp.ViewModels
                 switch (PageViewMode)
                 {
                     case PageViewMode.SinglePageView:
-                        scalingFactor = Math.Min(_pageAreaGridOriginalHeight / RightPageActualSize.Height,
+                        scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
                             _pageAreaGridMaxWidth / RightPageActualSize.Width);
                         targetSize = RightPageActualSize;
                         break;
 
                     case PageViewMode.TwoPageViewHorizontal:
-                        scalingFactor = Math.Min(_pageAreaGridOriginalHeight / RightPageActualSize.Height,
+                        scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
                             _pageAreaGridMaxWidth / (LeftPageActualSize.Width + RightPageActualSize.Width));
                         targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);  
                         break;
 
                     case PageViewMode.TwoPageViewVertical:
-                        scalingFactor = Math.Min(_pageAreaGridOriginalHeight / (RightPageActualSize.Height + LeftPageActualSize.Height),
+                        scalingFactor = Math.Min(_pageAreaGridMaxHeight / (RightPageActualSize.Height + LeftPageActualSize.Height),
                             _pageAreaGridMaxWidth / RightPageActualSize.Width);
                         targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);  
                         break;
@@ -260,8 +274,9 @@ namespace SmartDeviceApp.ViewModels
         {
             if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview &&
                 _viewControlViewModel.ScreenMode != ScreenMode.Home) return;
-            var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
             _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(viewMode, null, null, null)) - defaultMargin * 2;
+            if (_controlReference != null) ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
             InitializeGestures();
             switch (viewMode)
             {

@@ -27,7 +27,8 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _togglePane1;
         private ICommand _togglePane2;
         private ViewMode _viewMode;
-        private ScreenMode _screenMode;
+        private ViewOrientation _viewOrientation;
+        private ScreenMode _screenMode;        
         private bool _isPane1Visible = false;
         private bool _isPane2Visible = false;
         private bool _tapHandled = false;
@@ -51,6 +52,20 @@ namespace SmartDeviceApp.ViewModels
                     _viewMode = value;
                     RaisePropertyChanged("ViewMode");
                     Messenger.Default.Send<ViewMode>(_viewMode); // Broadcast to all viewmodels that need to be updated
+                }
+            }
+        }
+
+        public ViewOrientation ViewOrientation
+        {
+            get { return _viewOrientation; }
+            set
+            {
+                if (_viewOrientation != value)
+                {
+                    _viewOrientation = value;
+                    RaisePropertyChanged("ViewOrientation");
+                    Messenger.Default.Send<ViewOrientation>(_viewOrientation); // Broadcast to all viewmodels that need to be updated
                 }
             }
         }

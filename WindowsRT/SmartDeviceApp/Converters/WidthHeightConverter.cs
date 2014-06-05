@@ -26,7 +26,28 @@ namespace SmartDeviceApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            double width = Window.Current.Bounds.Width;
+            double width = 0.0;
+            if (parameter != null && parameter is ViewOrientation)
+            {
+                // Need this workaround because OrientationChange event is fired before 
+                // window bounds are updated
+                var viewOrientation = (ViewOrientation)parameter;
+                if (viewOrientation == ViewOrientation.Landscape)
+                {
+                    width = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
+                        Window.Current.Bounds.Width : Window.Current.Bounds.Height;
+                }
+                else if (viewOrientation == ViewOrientation.Portrait)
+                {
+                    width = (Window.Current.Bounds.Width <= Window.Current.Bounds.Height) ?
+                        Window.Current.Bounds.Width : Window.Current.Bounds.Height;
+                }
+            }
+            else 
+            {
+                width = Window.Current.Bounds.Width;
+            }
+            
             if (value != null)
             {
                 ViewMode viewMode;
@@ -35,7 +56,7 @@ namespace SmartDeviceApp.Converters
                 {
                     if (viewMode == ViewMode.RightPaneVisible_ResizedWidth)
                     {
-                        width = Window.Current.Bounds.Width - (double)Application.Current.Resources["SIZE_SidePaneWidth"];
+                        width -= (double)Application.Current.Resources["SIZE_SidePaneWidth"];
                     }
                 }
             }
@@ -68,7 +89,18 @@ namespace SmartDeviceApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return Window.Current.Bounds.Height;
+            if (value == null || !(value is ViewOrientation)) return null;
+            // Need this workaround because OrientationChange event is fired before 
+            // window bounds are updated
+            var viewOrientation = (ViewOrientation)value;
+            if (viewOrientation == ViewOrientation.Landscape)
+            {
+                return (Window.Current.Bounds.Height <= Window.Current.Bounds.Width) ?
+                    Window.Current.Bounds.Height : Window.Current.Bounds.Width;
+            }
+            // Portrait
+            return (Window.Current.Bounds.Height >= Window.Current.Bounds.Width) ?
+                Window.Current.Bounds.Height : Window.Current.Bounds.Width;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
