@@ -17,10 +17,20 @@ namespace SmartDeviceApp.Views
         public double ItemWidth
         {
             get { return (double)GetValue(ItemWidthProperty); }
-            set { SetValue(ItemWidthProperty, value); }
+            set { SetValue(ItemWidthProperty, value);
+            ItemWidthWithMargin = ItemWidth + 20;
+            }
+        }
+        public double ItemWidthWithMargin
+        {
+            get { return (double)GetValue(ItemWidthWithMarginProperty); }
+            set { SetValue(ItemWidthWithMarginProperty, value); }
         }
         public static readonly DependencyProperty ItemWidthProperty =
             DependencyProperty.Register("ItemWidth", typeof(double), typeof(AdaptableGridView), null); //new PropertyMetadata(itemWidth)
+
+        public static readonly DependencyProperty ItemWidthWithMarginProperty =
+            DependencyProperty.Register("ItemWidthWithMargin", typeof(double), typeof(AdaptableGridView), null); //new PropertyMetadata(itemWidth)
 
         // default max number of rows or columns
         private const int maxRowsOrColumns = 3;

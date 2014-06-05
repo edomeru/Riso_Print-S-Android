@@ -37,7 +37,7 @@ namespace SmartDeviceApp.Controllers
            {
                 tcpClient = new StreamSocket();
 
-                string port = "8080";
+                string port = "80";
                
                 await tcpClient.ConnectAsync(new Windows.Networking.HostName(ip), port, SocketProtectionLevel.PlainSocket);
                    

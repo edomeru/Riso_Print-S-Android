@@ -144,34 +144,37 @@ namespace SmartDeviceApp.Controls
         {
             if (e.NewValue == null || !(e.NewValue is string)) return;
             var state = e.NewValue.ToString();
-            var button = (DefaultPrintSettingsControl)obj;
+            var button = ((DefaultPrintSettingsControl)obj).defaultButton;
             switch (state)
             {
                 case "Normal":
                     VisualStateManager.GoToState(button, "Normal", true);
+                    ((DefaultPrintSettingsControl)obj).IsPressed = false;
                     break;
                 case "Pressed":
                     VisualStateManager.GoToState(button, "Pressed", true);
+                    ((DefaultPrintSettingsControl)obj).IsPressed = true;
                     break;
                 default:
                     VisualStateManager.GoToState(button, "Normal", true);
+                    ((DefaultPrintSettingsControl)obj).IsPressed = false;
                     break;
             }
         }
 
         private void defaultPrintSettingsControlGrid_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            ((Grid)sender).CapturePointer(e.Pointer);
-            this.VisualState = "Pressed";
-            IsPressed = true;
+            //((Grid)sender).CapturePointer(e.Pointer);
+            
+            //IsPressed = true;
         }
 
         private void defaultPrintSettingsControlGrid_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            ((Grid)sender).ReleasePointerCapture(e.Pointer);
-            IsPressed = false;
+            //((Grid)sender).ReleasePointerCapture(e.Pointer);
+            //IsPressed = false;
 
-            Command.Execute(CommandParameter);
+            //Command.Execute(CommandParameter);
         }
     }
 }

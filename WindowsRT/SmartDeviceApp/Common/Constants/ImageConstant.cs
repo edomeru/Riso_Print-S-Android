@@ -91,7 +91,8 @@ namespace SmartDeviceApp.Common.Constants
                 type == typeof(KeyValueControl) ||
                 type == typeof(KeyRadioButtonControl) ||
                 type == typeof(KeyTextBoxControl) ||
-                type == typeof(KeyToggleSwitchControl))
+                type == typeof(KeyToggleSwitchControl) ||
+                type == typeof(PrinterNameControl))
             {
                 switch (resolution)
                 {

@@ -132,5 +132,10 @@ namespace SmartDeviceApp.Views
 
         }
 
+        private void printerName_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }

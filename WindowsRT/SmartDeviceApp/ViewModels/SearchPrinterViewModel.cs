@@ -22,6 +22,7 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private ObservableCollection<PrinterSearchItem> _printerSearchList;
+        private ObservableCollection<Printer> _printerList;
 
         private bool _willRefresh;
 
@@ -32,6 +33,8 @@ namespace SmartDeviceApp.ViewModels
 
         private ICommand _printerSearchRefreshed;
 
+        private bool _noPrintersFound;
+
         private ViewControlViewModel _viewControlViewModel;
         public SearchPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -39,25 +42,37 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
 
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            //NoPrintersFound = true;
 
             //Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
 
         }
 
-        private void SetViewMode(VisibleRightPane viewMode)
+        private async void SetViewMode(VisibleRightPane viewMode)
         {
             if (_viewControlViewModel.ScreenMode == ScreenMode.Printers)
             {
                 if (viewMode == VisibleRightPane.Pane1)
                 {
+                    if (PrinterList.Count >= 10)
+                    {
+                        ClosePane();
+                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                        Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                        {
+                            await DialogService.Instance.ShowError("IDS_ERR_MSG_MAX_PRINTER_COUNT", "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                        });
+                        return;
+                    }
+
                     if (NetworkController.IsConnectedToNetwork)
                     {
                         SetStateRefreshState();
                     }
                     else
                     {
-                        DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
                     }
                 }
             }
@@ -81,6 +96,17 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public ObservableCollection<Printer> PrinterList
+        {
+            get { return this._printerList; }
+            set
+            {
+                _printerList = value;
+                OnPropertyChanged("PrinterList");
+
+            }
+        }
+
         public bool WillRefresh
         {
             get { return this._willRefresh; }
@@ -88,6 +114,16 @@ namespace SmartDeviceApp.ViewModels
             {
                 _willRefresh = value;
                 OnPropertyChanged("WillRefresh");
+            }
+        }
+
+        public bool NoPrintersFound
+        {
+            get { return this._noPrintersFound; }
+            set
+            {
+                _noPrintersFound = value;
+                OnPropertyChanged("NoPrintersFound");
             }
         }
 
@@ -121,8 +157,11 @@ namespace SmartDeviceApp.ViewModels
                     return;
                 }
 
-                //item.IsInPrinterList = true;
-
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                {
+                    await DialogService.Instance.ShowMessage("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", ClosePane);
+                });
             }
         }
 
@@ -145,7 +184,9 @@ namespace SmartDeviceApp.ViewModels
         {
             if (NetworkController.IsConnectedToNetwork)
             {
+                NoPrintersFound = false;
                 SearchPrinterHandler();
+
             }
             else
             {
@@ -156,13 +197,24 @@ namespace SmartDeviceApp.ViewModels
         public void SearchTimeout()
         {
             WillRefresh = false;
+            if (PrinterSearchList.Count > 0)
+                NoPrintersFound = false;
+            else
+                NoPrintersFound = true;
+
             Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
         }
 
         public void SetStateRefreshState()
         {
+            NoPrintersFound = false;
             WillRefresh = true;
             Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.RefreshingState);
+        }
+
+        private void ClosePane()
+        {
+            _viewControlViewModel.ViewMode = ViewMode.FullScreen;
         }
     }
 

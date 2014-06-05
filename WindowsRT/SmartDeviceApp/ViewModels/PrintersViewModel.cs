@@ -74,7 +74,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 _printerList = value;
                 OnPropertyChanged("PrinterList");
-                CheckPrinterListEmpty();
+                
             }
         }
 
@@ -86,22 +86,12 @@ namespace SmartDeviceApp.ViewModels
                 if (_isPrinterListEmpty != value)
                 {
                     _isPrinterListEmpty = value;
-                    RaisePropertyChanged("IsPrinterListEmpty");
+                    OnPropertyChanged("IsPrinterListEmpty");
                 }
             }
         }
 
-        private void CheckPrinterListEmpty()
-        {
-            if (PrinterList.Count == 0)
-            {
-                IsPrinterListEmpty = true;
-            }
-            else
-            {
-                IsPrinterListEmpty = false;
-            }
-        }
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(String propertyName)
@@ -272,7 +262,7 @@ namespace SmartDeviceApp.ViewModels
             //use visual state.
             //get default printer settings using ip
             System.Diagnostics.Debug.WriteLine("OpenDefaultPrinterSettingsExecute");
-
+            printer.VisualState = "Pressed";
             var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
             
             _viewControlViewModel.ViewMode = Common.Enum.ViewMode.RightPaneVisible;

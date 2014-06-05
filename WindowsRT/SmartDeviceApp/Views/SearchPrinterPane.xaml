@@ -134,8 +134,21 @@
                             </Core:DataTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                     </ProgressRing>
+                    
                 </Grid>
-                
+
+                <!--<Grid Background="{StaticResource BRUSH_Gray2}" Height="719" Visibility="{Binding DataContext.NoPrintersFound, ElementName=SearchPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    
+                </Grid>-->
+                <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="NoPrintersFoundView"
+                                             Visibility="{Binding DataContext.NoPrintersFound, ElementName=SearchPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}"
+				                    	     ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
+                                             
+                                             IsItemClickEnabled="True" SelectionMode="None" Tag="{Binding}"
+                                             Height="719" ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
+                    <Grid Height="340"/>
+                    <TextBlock Text="No Printers Found" Style="{StaticResource STYLE_TextBody}" Foreground="{StaticResource BRUSH_Black}"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </local:PullToRefreshListView>
                 <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="printerSearchListView"
 				                    	     ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
                                              ItemsSource="{Binding DataContext.PrinterSearchList, ElementName=SearchPrinterPaneControl}" 
@@ -166,8 +179,11 @@
                                                               />
                             </Grid>
                         </DataTemplate>
+                        
                     </local:PullToRefreshListView.ItemTemplate>
+                    
                 </local:PullToRefreshListView>
+                
             </StackPanel>
         </Grid>
     </Grid>

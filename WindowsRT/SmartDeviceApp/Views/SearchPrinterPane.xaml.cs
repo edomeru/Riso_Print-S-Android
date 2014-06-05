@@ -55,8 +55,10 @@ namespace SmartDeviceApp.Views
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var vBar = ((FrameworkElement)VisualTreeHelper.GetChild(printerSearchListView.ElementScrollViewer, 0)).FindName("VerticalScrollBar") as ScrollBar;
+            var vBar2 = ((FrameworkElement)VisualTreeHelper.GetChild(NoPrintersFoundView.ElementScrollViewer, 0)).FindName("VerticalScrollBar") as ScrollBar;
             
             this.printerSearchListView.SetVBar(vBar);
+            this.NoPrintersFoundView.SetVBar(vBar2);
         }
 
     }

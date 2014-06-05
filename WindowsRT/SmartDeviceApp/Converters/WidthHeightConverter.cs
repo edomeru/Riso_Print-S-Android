@@ -85,6 +85,22 @@ namespace SmartDeviceApp.Converters
         }
     }
 
+    public class PrintersListWidthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var columns = 3;
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            var columnWidth = (Window.Current.Bounds.Width - (defaultMargin * 2) - (defaultMargin * (columns - 1))) / 3;
+            return columnWidth + 20;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class HeightConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
