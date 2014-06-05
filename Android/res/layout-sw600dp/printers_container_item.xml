@@ -37,17 +37,15 @@
                     android:duplicateParentState="true" />
 
                 <TextView
+                    style="@style/EllipsizeText"
                     android:id="@+id/txt_printerName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:duplicateParentState="true"
-                    android:ellipsize="middle"
                     android:gravity="center_vertical"
-                    android:maxLines="1"
                     android:paddingLeft="@dimen/printers_row_left_padding"
-                    android:singleLine="true"
                     android:textColor="@color/selector_printers_text" />
 
                 <Button
@@ -87,16 +85,14 @@
                     android:textColor="@color/theme_dark_1" />
 
                 <TextView
+                    style="@style/EllipsizeText"
                     android:id="@+id/inputIpAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/printers_row_left_padding"
-                    android:ellipsize="middle"
                     android:gravity="right|center_vertical"
-                    android:maxLines="1"
                     android:padding="@dimen/printers_row_right_padding"
-                    android:singleLine="true"
                     android:textColor="@color/theme_light_1" />
             </LinearLayout>
 

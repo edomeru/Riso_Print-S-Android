@@ -104,4 +104,5 @@
     
     <dimen name="printers_subview_margin">1.5dp</dimen>
     <dimen name="printers_sub_separator_padding">20dp</dimen>
+    <dimen name="printers_name_space">4dp</dimen>
 </resources>
