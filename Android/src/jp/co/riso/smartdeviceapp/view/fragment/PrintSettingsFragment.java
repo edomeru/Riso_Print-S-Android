@@ -17,6 +17,7 @@ import jp.co.riso.android.dialog.WaitingDialogFragment;
 import jp.co.riso.android.dialog.WaitingDialogFragment.WaitingDialogListener;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -239,7 +240,9 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mDirectPrintManager = new DirectPrintManager();
         mDirectPrintManager.setCallback(this);
         
-        String userName = getActivity().getString(R.string.ids_app_name);
+        
+        String userName = AppUtils.getOwnerName();
+
         mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
     }
     

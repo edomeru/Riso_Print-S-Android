@@ -91,7 +91,7 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         return sSharedMngr;
     }
-      
+    
     // ================================================================================
     // Public Methods
     // ================================================================================

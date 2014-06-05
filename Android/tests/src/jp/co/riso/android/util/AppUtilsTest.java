@@ -667,6 +667,33 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
     
     //================================================================================
+    // Test getOwnerName
+    //================================================================================
+
+    public void testGetOwnerName_Valid() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        String expected = "testLogin";
+        editor.clear();
+        editor.apply();
+        String ownerName = AppUtils.getOwnerName();
+
+        assertNotNull(ownerName);
+        assertFalse(ownerName.isEmpty());
+        assertEquals(getActivity().getString(jp.co.riso.smartprint.R.string.ids_app_name),
+                ownerName);
+
+        editor.putString(AppConstants.PREF_KEY_LOGIN_ID, expected);
+
+        editor.apply();
+        ownerName = AppUtils.getOwnerName();
+
+        assertNotNull(ownerName);
+        assertFalse(ownerName.isEmpty());
+        assertEquals(expected, ownerName);
+    }
+    
+    //================================================================================
     // Mock Classes
     //================================================================================
     
