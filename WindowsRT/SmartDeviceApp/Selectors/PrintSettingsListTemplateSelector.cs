@@ -14,6 +14,7 @@ namespace SmartDeviceApp.Selectors
     {
         public DataTemplate ListViewItemToggleSwitchTemplate { get; set; }
         public DataTemplate ListViewItemTextBoxTemplate { get; set; }
+        public DataTemplate ListViewItemPasswordBoxTemplate { get; set; }
         public DataTemplate ListViewItemListTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore (object item, DependencyObject container)
@@ -29,6 +30,9 @@ namespace SmartDeviceApp.Selectors
                         break;
                     case PrintSettingType.numeric:
                         template = ListViewItemTextBoxTemplate;
+                        break;
+                    case PrintSettingType.password:
+                        template = ListViewItemPasswordBoxTemplate;
                         break;
                     case PrintSettingType.list:
                         template = ListViewItemListTemplate;

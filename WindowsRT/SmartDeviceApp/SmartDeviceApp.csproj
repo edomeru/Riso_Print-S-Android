@@ -331,6 +331,8 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Resources\Images\StoreLogo.scale-140.png" />
+    <Content Include="Resources\Images\StoreLogo.scale-180.png" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -338,6 +340,7 @@
     <Content Include="Assets\en-US\legal.html" />
     <Content Include="Assets\ja-JP\help.html" />
     <Content Include="Assets\ja-JP\legal.html" />
+    <Content Include="Assets\printsettings_authentication.xml" />
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Common\ReadMe.txt" />
     <None Include="Resources\Dummy\RZ1070.pdf" />
@@ -459,6 +462,8 @@
     <Content Include="Resources\Images\img_staple.png" />
     <Content Include="Resources\Images\Logo.scale-100.png" />
     <Content Include="Resources\Images\SmallLogo.scale-100.png" />
+    <Content Include="Resources\Images\SmallLogo.scale-140.png" />
+    <Content Include="Resources\Images\SmallLogo.scale-180.png" />
     <Content Include="Resources\Images\StoreLogo.scale-100.png" />
   </ItemGroup>
   <ItemGroup>

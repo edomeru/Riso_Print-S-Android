@@ -52,7 +52,7 @@ namespace DirectPrint
         private const string QUEUE_NAME = "normal";
         private const string HOST_NAME = "SmartDeviceApp";
 
-        private const string PJL_ESCAPE = "\x1B-12345X";
+        private const string PJL_ESCAPE = "\x1B%-12345X";
         private const string PJL_LANGUAGE = "@PJL ENTER LANGUAGE = PDF\x0d\x0a";
         private const string PJL_EOJ = "@PJL EOJ\x0d\x0a";
 
@@ -105,6 +105,7 @@ namespace DirectPrint
             if (parameter == null)
             {
                 triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
 
@@ -126,6 +127,7 @@ namespace DirectPrint
                     if (connectretries++ >= maxretries)
                     {
                         triggerCallback(PRINT_STATUS_ERROR);
+                        if (socket != null) socket.disconnect();
                         return;
                     }
                 }
@@ -181,6 +183,7 @@ namespace DirectPrint
             catch (Exception e)
             {
                 triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
             /////////////////////////////////////////////////////////
@@ -188,6 +191,7 @@ namespace DirectPrint
             if (waitForAck() != 0)
             {
                 triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
             print_job.progress += LPR_PREP_PROGRESS_STEP;
@@ -235,7 +239,6 @@ namespace DirectPrint
 
             //***write buffer to socket
             await socket.write(buffer, 0, pos);
-            string test000 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
 
             /////////////////////////////////////////////////////////
             /// READ ACK
@@ -268,6 +271,7 @@ namespace DirectPrint
                 if (socket != null) socket.disconnect();
                 return;
             }
+
             if (print_job.cancel_print == 1)
             {
                 triggerCallback(PRINT_STATUS_ERROR);
@@ -334,6 +338,7 @@ namespace DirectPrint
             if (waitForAck() != 0)
             {
                 triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
 
@@ -364,6 +369,8 @@ namespace DirectPrint
 
             if (total_data_size != totalbytes)
             {
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
 
@@ -376,18 +383,19 @@ namespace DirectPrint
 
             /////////////////////////////////////////////////////////
             /// READ ACK
-            int retval = 0;
-            if ((retval = waitForAck()) != 0)
+            if (waitForAck() != 0)
             {
                 triggerCallback(PRINT_STATUS_ERROR);
                 if (socket != null) socket.disconnect();
                 return;
             }
-            socket.disconnect();
+            
 
-            print_job.progress = 100.0f;
+            print_job.progress = END_PROGRESS;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
             triggerCallback(PRINT_STATUS_OK);
+            if (socket != null) socket.disconnect();
+
             return;
             //end!
         }

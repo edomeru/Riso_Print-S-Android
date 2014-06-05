@@ -61,14 +61,20 @@ namespace SmartDeviceApp.Controls
             var valueText = control.ValueText;
             if ((Visibility)e.NewValue == Visibility.Collapsed)
             {
-                deleteButton.Visibility = Visibility.Collapsed;
-                control.SetValue(ValueVisibilityProperty, Visibility.Visible);
+                VisualStateManager.GoToState(deleteButton, "Collapsed", true);
+                control.SetValue(ValueVisibilityProperty, Visibility.Visible);                
             }
             else
             {
-                deleteButton.Visibility = Visibility.Visible;
                 control.SetValue(ValueVisibilityProperty, Visibility.Collapsed);
+                VisualStateManager.GoToState(deleteButton, "Visible", true);                
             }            
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            // Need to calculate widths for text lengths first before adding delete button
+            deleteButton.Visibility = Visibility.Visible;
         }
     }
 }

@@ -41,7 +41,9 @@ namespace SmartDeviceApp.Converters
             {PrintSettingConstant.NAME_VALUE_FINISHING_SIDE, typeof(FinishingSide)},
             {PrintSettingConstant.NAME_VALUE_STAPLE, typeof(Staple)},
             {PrintSettingConstant.NAME_VALUE_PUNCH, typeof(Punch)},
-            {PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY, typeof(OutputTray)}
+            {PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY, typeof(OutputTray)},
+            {PrintSettingConstant.NAME_VALUE_SECURE_PRINT, typeof(bool)},
+            {PrintSettingConstant.NAME_VALUE_PIN_CODE, typeof(string)}
         };
 
         public object Convert(object value, Type targetType, object parameter, string language)
@@ -65,9 +67,14 @@ namespace SmartDeviceApp.Converters
                 return intValue;
             }
             else if (printSettingName.Equals(PrintSettingConstant.NAME_VALUE_SCALE_TO_FIT) ||
-                printSettingName.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
+                printSettingName.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET) ||
+                printSettingName.Equals(PrintSettingConstant.NAME_VALUE_SECURE_PRINT))
             {
                 return boolValue;
+            }
+            else if (printSettingName.Equals(PrintSettingConstant.NAME_VALUE_PIN_CODE))
+            {
+                return value.ToString();
             }
 
             // Convert to enum values
