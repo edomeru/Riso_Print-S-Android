@@ -466,29 +466,19 @@ namespace SmartDeviceApp.Controllers
                     //add to printerList
                     Printer printer = new Printer() { IpAddress = ip, Name = name };
                 
-                //get capabilities
-                if (capabilitesList.Count > 0)
-                {
-                    printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true")? true : false;
-                    printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true")? true : false;
-                    printer.EnabledPunchThree = true; // TODO: Update value here
-                    printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true")? true : false;
-                    printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true")? true : false;
-                    //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
-                    printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true")? true : false;
-                    printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true") ? true : false;
-                }
-                else
-                {
-                    printer.EnabledBookletFinishing = true;
-                    printer.EnabledStapler = true;
-                    printer.EnabledPunchThree = true;
-                    printer.EnabledPunchFour = true;
-                    printer.EnabledTrayFacedown = true;
-                    printer.EnabledTrayTop = true;
-                    printer.EnabledTrayStack = true;
-                }
-
+                    //get capabilities
+                    if (capabilitesList.Count > 0)
+                    {
+                        printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true")? true : false;
+                        printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true")? true : false;
+                        printer.EnabledPunchThree = true; // TODO: Update value here
+                        printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true")? true : false;
+                        printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true")? true : false;
+                        //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
+                        printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true")? true : false;
+                        printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true") ? true : false;
+                    }
+                
 
                     int i = await DatabaseController.Instance.InsertPrinter(printer);
                     if (i == 0)
@@ -557,14 +547,6 @@ namespace SmartDeviceApp.Controllers
                     {
                         clearIpAddressToAdd();
                         Printer printer = new Printer() { IpAddress = ip, Name = name };
-
-            printer.EnabledBookletFinishing = true;
-            printer.EnabledStapler = true;
-            printer.EnabledPunchThree = true;
-            printer.EnabledPunchFour = true;
-            printer.EnabledTrayFacedown = true;
-            printer.EnabledTrayTop = true;
-            printer.EnabledTrayStack = true;
 
                         //insert to database
                         int i = await DatabaseController.Instance.InsertPrinter(printer);
