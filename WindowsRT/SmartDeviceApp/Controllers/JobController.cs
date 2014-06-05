@@ -23,6 +23,8 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly JobController _instance = new JobController();
 
+        private const int MAX_JOBS_PER_GROUP = 100;
+
         public delegate void RemoveJobEventHandler(PrintJob printJob);
         public delegate void RemoveGroupedJobsEventHandler(int printJobId);
         private RemoveJobEventHandler _removeJobEventHandler;
@@ -134,6 +136,10 @@ namespace SmartDeviceApp.Controllers
                     .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);
                 if (printJobGroup != null) // Group already exists
                 {
+                    if (printJobGroup.Jobs.Count == MAX_JOBS_PER_GROUP) // Remove last item if needed
+                    {
+                        RemoveJob(printJobGroup.Jobs[MAX_JOBS_PER_GROUP - 1]);
+                    }
                     printJobGroup.Jobs.Insert(0, printJob); // Insert at top of the list
                 }
                 else // Create new group
