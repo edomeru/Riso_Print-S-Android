@@ -13,10 +13,6 @@
 #import "AlertHelper.h"
 #import "InputHelper.h"
 
-#define TAG_TEXT_IP         0
-#define TAG_TEXT_USERNAME   1
-#define TAG_TEXT_PASSWORD   2
-
 @interface AddPrinterViewController ()
 
 #pragma mark - Data Properties
@@ -333,14 +329,11 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if (textField.tag == TAG_TEXT_IP)
+    NSCharacterSet *validCharacters = [NSCharacterSet characterSetWithCharactersInString:@"0123456789abcdefABCDEF.:"];
+    // ignore not valid characters
+    if([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
     {
-        NSCharacterSet *validCharacters = [NSCharacterSet characterSetWithCharactersInString:@"0123456789abcdefABCDEF.:"];
-        // ignore not valid characters
-        if([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
-        {
-            return NO;
-        }
+        return NO;
     }
     
     return YES;
