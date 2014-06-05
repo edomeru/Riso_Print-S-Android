@@ -102,10 +102,10 @@ namespace SmartDeviceApp.Models
         public bool EnabledRaw { get; set; }
 
         /// <summary>
-        /// Printer support for booklet, used by Printer table
+        /// Printer support for booklet finishing, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_booklet"), SQLite.NotNull]
-        public bool EnabledBooklet { get; set; }
+        [SQLite.Column("prn_enabled_booklet_finishing"), SQLite.NotNull]
+        public bool EnabledBookletFinishing { get; set; }
 
         /// <summary>
         /// Printer support for stapler, used by Printer table
@@ -221,7 +221,7 @@ namespace SmartDeviceApp.Models
             PortSetting = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_PORT_SETTING, ListValueType.Int);
             EnabledLpr = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_LPR, ListValueType.Boolean);
             EnabledRaw = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_RAW, ListValueType.Boolean);
-            EnabledBooklet = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_BOOKLET, ListValueType.Boolean);
+            EnabledBookletFinishing = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_BOOKLET, ListValueType.Boolean);
             EnabledStapler = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_STAPLER, ListValueType.Boolean);
             EnabledPunchThree = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_PUNCH3, ListValueType.Boolean);
             EnabledPunchFour = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_PUNCH4, ListValueType.Boolean);

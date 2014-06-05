@@ -400,22 +400,9 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            // prn_enabled_booklet
-            if (!printer.EnabledBooklet)
+            // prn_enabled_booklet_finishing
+            if (!printer.EnabledBookletFinishing)
             {
-                // Disable only Booklet-Finishing not entire Booklet
-                //PrintSetting bookletPrintSetting =
-                //    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET);
-                //if (bookletPrintSetting != null)
-                //{
-                //    RemovePrintSetting(bookletPrintSetting);
-                //}
-                //PrintSetting bookletLayoutPrintSetting =
-                //    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
-                //if (bookletLayoutPrintSetting != null)
-                //{
-                //    RemovePrintSetting(bookletLayoutPrintSetting);
-                //}
                 PrintSetting bookletFinishPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
                 if (bookletFinishPrintSetting != null)

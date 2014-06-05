@@ -106,7 +106,7 @@ namespace SmartDeviceApp.Controllers
                 if (device.CapabilitiesList.Count > 0)
                 {
                     List<string> capabilitesList = device.CapabilitiesList;
-                    printer.EnabledBooklet = (capabilitesList.ElementAt(0) == "true") ? true : false;
+                    printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true") ? true : false;
                     printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") ? true : false;
                     printer.EnabledPunchThree = true; // TODO: Update value here
                     printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true") ? true : false;
@@ -117,7 +117,7 @@ namespace SmartDeviceApp.Controllers
                 }
                 else
                 {
-                    printer.EnabledBooklet = true;
+                    printer.EnabledBookletFinishing = true;
                     printer.EnabledStapler = true;
                     printer.EnabledPunchThree = true;
                     printer.EnabledPunchFour = true;
