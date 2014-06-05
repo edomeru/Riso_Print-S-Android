@@ -189,19 +189,12 @@
 
 #pragma mark - PrintJobHistoryLayoutDelegate
 
-- (NSUInteger)numberOfJobsForGroupAtIndexPath:(NSIndexPath*)indexPath
+- (void)getNumJobs:(NSUInteger*)numJobs getCollapsed:(BOOL*)collapsed forGroupAtIndexPath:(NSIndexPath*)indexPath
 {
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.item];
     
-#if DEBUG_LOG_PRINT_JOB_LAYOUT
-    NSLog(@"[INFO][PrintJobCtrl] item=%ld group=[%@] printjobs=%lu",
-          (long)indexPath.item, group.groupName, (unsigned long)group.countPrintJobs);
-#endif
-    
-    if (group.isCollapsed)
-        return 0; //no need to display any jobs
-    else
-        return group.countPrintJobs;
+    *numJobs = group.countPrintJobs;
+    *collapsed = group.isCollapsed;
 }
 
 #pragma mark - PrintJobHistoryGroupCellDelegate

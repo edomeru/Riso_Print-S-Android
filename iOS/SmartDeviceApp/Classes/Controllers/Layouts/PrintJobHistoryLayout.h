@@ -13,10 +13,16 @@
 /** 
  Requests the data source for the number of print jobs
  to be displayed for the current group (a fixed size
- for all groups cannot be used).
+ for all groups cannot be used) and whether the group
+ should be displayed as collapsed or expanded.
+ @param numJobs
+        number of print jobs
+ @param collapsed
+        YES if group is collapsed, NO if expanded
  @param indexPath
+        the group's index path
  */
-- (NSUInteger)numberOfJobsForGroupAtIndexPath:(NSIndexPath*)indexPath;
+- (void)getNumJobs:(NSUInteger*)numJobs getCollapsed:(BOOL*)collapsed forGroupAtIndexPath:(NSIndexPath*)indexPath;
 
 @end
 

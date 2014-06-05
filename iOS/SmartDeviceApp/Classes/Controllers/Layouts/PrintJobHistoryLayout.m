@@ -41,16 +41,34 @@
  */
 @property (strong, nonatomic) NSDictionary* groupLayoutInfo;
 
-/** Stores the current height of each column. */
-@property (strong, nonatomic) NSMutableArray* columnHeights;
+/** 
+ Stores the current height of each column taking into account
+ whether a group is collapsed or expanded.
+ This is used for determining the group's position (origin.y)
+ */
+@property (strong, nonatomic) NSMutableArray* columnCurrentHeights;
 
-/** Stores the column positions of each group in the portrait orientation. */
+/**
+ Stores the true height of each column ignoring whether the group
+ is collapsed or expanded.
+ This is used for determining the shortest column and for
+ assigning groups to columns.
+ */
+@property (strong, nonatomic) NSMutableArray* columnTrueHeights;
+
+/** 
+ Stores the column positions of each group in the portrait orientation.
+ This is used for retaining group position during rotation.
+ */
 @property (strong, nonatomic) NSMutableDictionary* columnAssignmentsPort;
 
-/** Stores the column positions of each group in the landscape orientation. */
+/**
+ Stores the column positions of each group in the landscape orientation.
+ This is used for retaining group position during rotation.
+ */
 @property (strong, nonatomic) NSMutableDictionary* columnAssignmentsLand;
 
-/** Reference to the column positions for either the portrait or landscape orientation */
+/** Reference to the column positions for either the portrait or landscape orientation. */
 @property (strong, nonatomic) NSMutableDictionary* columnAssignments;
 
 /** 
@@ -67,7 +85,7 @@
  */
 @property (assign, nonatomic) BOOL columnWillBeEmptyInPort;
 
-/** Flag that indicates that the layout was invalidated because a group was deleted. */
+/** Flag that indicates that the layout should be updated because a group was deleted. */
 @property (assign, nonatomic) BOOL relayoutForDelete;
 
 /** Reference to the deleted group. */
@@ -106,17 +124,23 @@
  */
 - (void)updateColumnAssignmentsForDeletedItem;
 
-/** Clears the tracker for the column heights. */
-- (void)invalidateColumnHeights;
-
-/** Cancels the relayoutForDelete flag and clears any reference to the deleted group. */
-- (void)setNotLayoutForDelete;
-
-/** 
+/**
  Assigns the correct tracker for the column positions
  based on the current device orientation.
  */
 - (void)assignColumnAssignmentsForOrientation;
+
+/** Clears the tracker for the column heights. */
+- (void)invalidateColumnHeights;
+
+/** 
+ Checks the tracker for the column heights and determines
+ which column is the shortest. 
+ */
+- (NSUInteger)indexOfShortestColumn;
+
+/** Cancels the relayoutForDelete flag and clears any reference to the deleted group. */
+- (void)setNotLayoutForDelete;
 
 @end
 
@@ -260,10 +284,10 @@
     CGRect oldFrame = [(UICollectionViewLayoutAttributes*)self.groupLayoutInfo[itemToDelete] frame];
     self.deletedItemHeight = oldFrame.size.height;
     
-    // update the tracker for column heights
-    CGFloat currentColumnHeight = [[self.columnHeights objectAtIndex:self.affectedColumn] floatValue];
-    CGFloat newColumnHeight = currentColumnHeight - self.deletedItemHeight - self.interGroupSpacingY;
-    if (newColumnHeight <= self.groupInsets.top)
+    // update the tracker for the current column heights
+    CGFloat currentColumnHeight = [[self.columnCurrentHeights objectAtIndex:self.affectedColumn] floatValue];
+    CGFloat newCurrColumnHeight = currentColumnHeight - self.deletedItemHeight - self.interGroupSpacingY;
+    if (newCurrColumnHeight <= self.groupInsets.top)
     {
         // column will be empty
         // need to relayout everything after delete
@@ -274,8 +298,15 @@
     else
     {
         [self updateColumnAssignmentsForDeletedItem];
-        [self.columnHeights replaceObjectAtIndex:self.affectedColumn
-                                      withObject:[NSNumber numberWithFloat:newColumnHeight]];
+        
+        [self.columnCurrentHeights replaceObjectAtIndex:self.affectedColumn
+                                      withObject:[NSNumber numberWithFloat:newCurrColumnHeight]];
+        
+        // also update the tracker for the true column heights
+        CGFloat trueColumnHeight = [[self.columnTrueHeights objectAtIndex:self.affectedColumn] floatValue];
+        CGFloat newTrueColumnHeight = trueColumnHeight - self.deletedItemHeight - self.interGroupSpacingY;
+        [self.columnTrueHeights replaceObjectAtIndex:self.affectedColumn
+                                          withObject:[NSNumber numberWithFloat:newTrueColumnHeight]];
     }
 }
 
@@ -338,8 +369,7 @@
     NSNumber* prevCol = [self.columnAssignments valueForKey:[NSString stringWithFormat:@"%d", (int)indexPath.item]];
     if (prevCol == nil)
     {
-        NSNumber* minColumnHeight = [self.columnHeights valueForKeyPath:@"@min.self"];
-        col = [self.columnHeights indexOfObject:minColumnHeight];
+        col = [self indexOfShortestColumn];
         [self.columnAssignments setValue:[NSNumber numberWithUnsignedInteger:col]
                                   forKey:[NSString stringWithFormat:@"%d", (int)indexPath.item]];
     }
@@ -348,13 +378,15 @@
         col = [prevCol unsignedIntegerValue];
     }
     
-    // determine the group size
-    // group height = header height + (number of jobs * height per job)
-    CGFloat groupHeight = 45.0f + ([self.delegate numberOfJobsForGroupAtIndexPath:indexPath] * 45.0f);
-    // group width = fixed frame width
-    CGFloat groupWidth = self.groupWidth;
-    CGSize groupSize = CGSizeMake(groupWidth, groupHeight);
+    // get the group height
+    NSUInteger numJobs;
+    BOOL collapsed;
+    [self.delegate getNumJobs:&numJobs getCollapsed:&collapsed forGroupAtIndexPath:indexPath];
+    CGFloat groupCurrentHeight = 45.0f + (numJobs * (collapsed ? 0 : 1) * 45.0f);
+    CGFloat groupTrueHeight = 45.0f + (numJobs * 45.0f);
     
+    // determine the group size
+    CGSize groupSize = CGSizeMake(self.groupWidth, groupCurrentHeight);
 #if DEBUG_LOG_PRINT_JOB_LAYOUT
     NSLog(@"[INFO][PrintJobLayout] h=%f,w=%f", groupSize.height, groupSize.width);
 #endif
@@ -364,7 +396,7 @@
     CGFloat originX = floorf(self.groupInsets.left + (groupSize.width + self.interGroupSpacingX) * col);
     // set the y-origin pt.
     CGFloat originY = 0.0f;
-    CGFloat currentColumnHeight = [[self.columnHeights objectAtIndex:col] floatValue];
+    CGFloat currentColumnHeight = [[self.columnCurrentHeights objectAtIndex:col] floatValue];
     if (currentColumnHeight == 0.0f)
     {
         // first item in a column
@@ -378,14 +410,18 @@
         originY = floorf(currentColumnHeight + self.interGroupSpacingY);
     }
     CGPoint groupOrigin = CGPointMake(originX, originY);
-
 #if DEBUG_LOG_PRINT_JOB_LAYOUT
     NSLog(@"[INFO][PrintJobLayout] x=%f,y=%f", groupOrigin.x, groupOrigin.y);
 #endif
 
-    // save the new column height
+    // update the tracker for the current column heights
     currentColumnHeight = originY + groupSize.height;
-    [self.columnHeights replaceObjectAtIndex:col withObject:[NSNumber numberWithFloat:currentColumnHeight]];
+    [self.columnCurrentHeights replaceObjectAtIndex:col withObject:[NSNumber numberWithFloat:currentColumnHeight]];
+    
+    // update the tracker for the true column heights
+    CGFloat trueColumnHeight = [[self.columnTrueHeights objectAtIndex:col] floatValue];
+    trueColumnHeight += (groupTrueHeight + self.interGroupSpacingY);
+    [self.columnTrueHeights replaceObjectAtIndex:col withObject:[NSNumber numberWithFloat:trueColumnHeight]];
     
     // return the (x-origin, y-origin, width, height) for the group
     return CGRectMake(groupOrigin.x, groupOrigin.y, groupSize.width, groupSize.height);
@@ -455,7 +491,7 @@
 - (CGSize)collectionViewContentSize
 {
     // height is based on the tallest column
-    NSNumber* maxColumnHeight = [self.columnHeights valueForKeyPath:@"@max.self"]; //KVO-style
+    NSNumber* maxColumnHeight = [self.columnCurrentHeights valueForKeyPath:@"@max.self"]; //KVO-style
     CGFloat height = [maxColumnHeight floatValue] + 25.0f; //bottom space border
     
     // width is simply the width of the collection view itself
@@ -521,23 +557,6 @@
     [self assignColumnAssignmentsForOrientation];
 }
 
-- (void)invalidateColumnHeights
-{
-    self.columnHeights = [NSMutableArray arrayWithCapacity:self.numberOfColumns];
-    for (int col = 0; col < self.numberOfColumns; col++)
-    {
-        [self.columnHeights insertObject:[NSNumber numberWithFloat:0.0f] atIndex:col];
-    }
-}
-
-- (void)setNotLayoutForDelete
-{
-    self.relayoutForDelete = NO;
-    self.deletedItem = nil;
-    self.deletedItemHeight = -1;
-    self.affectedColumn = -1;
-}
-
 - (void)assignColumnAssignmentsForOrientation
 {
     if (UIInterfaceOrientationIsLandscape(self.orientation))
@@ -548,6 +567,46 @@
     {
         self.columnAssignments = self.columnAssignmentsPort;
     }
+}
+
+- (void)invalidateColumnHeights
+{
+    self.columnCurrentHeights = [NSMutableArray arrayWithCapacity:self.numberOfColumns];
+    self.columnTrueHeights = [NSMutableArray arrayWithCapacity:self.numberOfColumns];
+    
+    for (int col = 0; col < self.numberOfColumns; col++)
+    {
+        [self.columnCurrentHeights insertObject:[NSNumber numberWithFloat:0.0f] atIndex:col];
+        [self.columnTrueHeights insertObject:[NSNumber numberWithFloat:0.0f] atIndex:col];
+    }
+}
+
+- (NSUInteger)indexOfShortestColumn
+{
+    NSUInteger resultIndex = 0;
+    NSUInteger currIndex = 0;
+    CGFloat minValue = MAXFLOAT;
+    
+    for (NSNumber* height in self.columnTrueHeights)
+    {
+        CGFloat heightValue = [height floatValue];
+        if (heightValue < minValue)
+        {
+            minValue = heightValue;
+            resultIndex = currIndex;
+        }
+        currIndex++;
+    }
+    
+    return resultIndex;
+}
+
+- (void)setNotLayoutForDelete
+{
+    self.relayoutForDelete = NO;
+    self.deletedItem = nil;
+    self.deletedItemHeight = -1;
+    self.affectedColumn = -1;
 }
 
 @end
