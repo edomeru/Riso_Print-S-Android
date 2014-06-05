@@ -96,7 +96,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             
-            ft.add(R.id.mainLayout, new PrintPreviewFragment());
+            ft.add(R.id.mainLayout, new PrintPreviewFragment(), HomeFragment.FRAGMENT_TAGS[HomeFragment.STATE_PRINTPREVIEW]);
             ft.add(R.id.leftLayout, new HomeFragment());
             
             ft.commit();
