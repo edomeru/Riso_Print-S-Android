@@ -19,6 +19,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearch
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -1069,6 +1070,73 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             
             mPrinterManager.getIdFromCursor(cursor, printer);
             
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
+    // ================================================================================
+    // Tests - updatePortSettings
+    // ================================================================================
+
+    public void testUpdatePortSettings() {
+
+        try {
+            Printer printer = null;
+            boolean ret = false;
+            
+            if (mPrintersList != null && !mPrintersList.isEmpty()) {
+                printer = mPrintersList.get(0);
+            }
+            if (printer == null) {
+                printer = new Printer("testUpdatePortSettings", IPV4_OFFLINE_PRINTER_ADDRESS);
+                mPrinterManager.savePrinterToDB(printer, true);
+            }
+            
+            DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.getAppContext());
+            Cursor cursor = null;
+            
+            ret = mPrinterManager.updatePortSettings(printer.getId(), PortSetting.LPR);
+            assertTrue(ret);
+            
+            cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, new String[] {KeyConstants.KEY_SQL_PRINTER_PORT},
+                    KeyConstants.KEY_SQL_PRINTER_ID + "=?", new String[] {"" + printer.getId()}, 
+                    null, null, null);
+            if (cursor != null && cursor.moveToFirst() && printer != null) {
+                assertEquals(0, cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_PORT)));
+                cursor.close();
+            }
+            
+            ret = mPrinterManager.updatePortSettings(printer.getId(), PortSetting.RAW);
+            assertTrue(ret);
+            
+            cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, new String[] {KeyConstants.KEY_SQL_PRINTER_PORT},
+                    KeyConstants.KEY_SQL_PRINTER_ID + "=?", new String[] {"" + printer.getId()}, 
+                    null, null, null);
+            if (cursor != null && cursor.moveToFirst() && printer != null) {
+                assertEquals(1, cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_PORT)));
+                cursor.close();
+            }
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+    
+    public void testUpdatePortSettings_NullPortSetting() {
+
+        try {
+            Printer printer = null;
+
+            if (mPrintersList != null && !mPrintersList.isEmpty()) {
+                printer = mPrintersList.get(0);
+            }
+            if (printer == null) {
+                printer = new Printer("testUpdatePortSettings", IPV4_OFFLINE_PRINTER_ADDRESS);
+                mPrinterManager.savePrinterToDB(printer, true);
+            }
+
+            boolean ret = mPrinterManager.updatePortSettings(printer.getId(), null);
+            assertFalse(ret);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }

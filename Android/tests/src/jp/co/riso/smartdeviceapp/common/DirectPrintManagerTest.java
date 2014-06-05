@@ -27,6 +27,10 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
         super.tearDown();
     }
     
+    // ================================================================================
+    // Tests - executeLPRPrint
+    // ================================================================================
+    
     public void testDirectPrint_ValidCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
@@ -131,6 +135,119 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
 
         assertFalse(callback.mCalled);
     }
+    
+    // ================================================================================
+    // Tests - executeRAWPrint
+    // ================================================================================
+    
+    public void testRawPrint_ValidCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.executeRAWPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
+        
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertTrue(callback.mCalled);
+    }
+    
+    public void testRawPrint_NullParameterValidCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.executeRAWPrint(null, null, null, null, null);
+        
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertFalse(callback.mCalled);
+    }
+    
+    public void testRawPrint_EmptyParametersValidCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.executeRAWPrint("", "", "", "", "");
+        
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertFalse(callback.mCalled);
+    }
+    
+    public void testRawPrint_NullCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(null);
+        mgr.executeRAWPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
+
+        //wait for response
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertFalse(callback.mCalled);
+    }
+    
+    public void testRawPrint_NullParameterNullCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(null);
+        mgr.executeRAWPrint(null, null, null, null, null);
+
+        // wait for response
+        while (mgr.isPrinting()) {
+            // wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertFalse(callback.mCalled);
+    }
+    
+    public void testRawPrint_EmptyParametersNullCallback() {
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(null);
+        mgr.executeRAWPrint("", "", "", "", "");
+
+        // wait for response
+        while (mgr.isPrinting()) {
+            // wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        assertFalse(callback.mCalled);
+    }
+    
+    // ================================================================================
+    // Tests - sendCancelCommand
+    // ================================================================================
     
     public void testSendCancelCommand() {
         MockCallback callback = new MockCallback();

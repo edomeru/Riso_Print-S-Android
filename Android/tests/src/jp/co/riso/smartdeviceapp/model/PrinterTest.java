@@ -4,6 +4,7 @@ package jp.co.riso.smartdeviceapp.model;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer.Config;
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import junit.framework.TestCase;
 import android.os.Bundle;
@@ -190,12 +191,14 @@ public class PrinterTest extends TestCase {
             Printer printer = new Printer("", "");
             int portSetting = 1;
 
-            printer.setPortSetting(portSetting);
-            assertEquals(portSetting, printer.getPortSetting());
+            printer.setPortSetting(PortSetting.RAW);
+            assertTrue(PortSetting.RAW.equals(printer.getPortSetting()));
+            assertEquals(PortSetting.RAW.ordinal(), portSetting);
 
             portSetting = 0;
-            printer.setPortSetting(portSetting);
-            assertEquals(portSetting, printer.getPortSetting());
+            printer.setPortSetting(PortSetting.LPR);
+            assertTrue(PortSetting.LPR.equals(printer.getPortSetting()));
+            assertEquals(PortSetting.LPR.ordinal(), portSetting);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }

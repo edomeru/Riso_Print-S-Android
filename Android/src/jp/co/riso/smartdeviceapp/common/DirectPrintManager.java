@@ -29,6 +29,7 @@ public class DirectPrintManager {
     private native void initializeDirectPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress);
     private native void finalizeDirectPrint();
     private native void lprPrint();
+    private native void rawPrint();
     private native void cancel();
     
     
@@ -62,6 +63,29 @@ public class DirectPrintManager {
         lprPrint();
     }
     
+    /**
+     * Executes an RAW Print
+     * 
+     * @param userName
+     * @param jobName
+     * @param fileName
+     * @param printSetting
+     * @param ipAddress
+     */
+    public void executeRAWPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress) {
+        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || userName.isEmpty() || jobName.isEmpty()
+                || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
+            return;
+        }
+        initializeDirectPrint(userName, jobName, fileName, printSetting, ipAddress);
+        rawPrint();
+    }
+    
+    /**
+     * Check if print is ongoing
+     * 
+     * @return true if print is ongoing
+     */
     public boolean isPrinting() {
         return (mJob != 0);
     }
