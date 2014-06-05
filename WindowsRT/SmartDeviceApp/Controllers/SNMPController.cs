@@ -106,6 +106,8 @@ namespace SmartDeviceApp.Controllers
                 if (device.CapabilitiesList.Count > 0)
                 {
                     List<string> capabilitesList = device.CapabilitiesList;
+                    printer.EnabledPaperLW = true; // TODO: Update value here
+                    printer.EnabledFeedTray = true; // TODO: Update value here
                     printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true") ? true : false;
                     printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") ? true : false;
                     printer.EnabledPunchThree = true; // TODO: Update value here
@@ -117,6 +119,7 @@ namespace SmartDeviceApp.Controllers
                 }
                 else
                 {
+                    // TODO: This else-block is safe to remove
                     printer.EnabledBookletFinishing = true;
                     printer.EnabledStapler = true;
                     printer.EnabledPunchThree = true;
