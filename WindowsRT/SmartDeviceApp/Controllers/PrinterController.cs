@@ -469,6 +469,8 @@ namespace SmartDeviceApp.Controllers
                     //get capabilities
                     if (capabilitesList.Count > 0)
                     {
+                        printer.EnabledPaperLW = true; // TODO: Update value here
+                        printer.EnabledFeedTray = true; // TODO: Update value here
                         printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true")? true : false;
                         printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true")? true : false;
                         printer.EnabledPunchThree = true; // TODO: Update value here
