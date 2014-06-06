@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Converters
 {
@@ -73,9 +74,23 @@ namespace SmartDeviceApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var columns = 3;
+            var columns = new ViewModelLocator().JobsViewModel.MaxColumns;
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-            var columnWidth = (Window.Current.Bounds.Width - (defaultMargin * 2) - (defaultMargin * (columns - 1))) / 3;
+            // Need this workaround because OrientationChange event is fired before 
+            // window bounds are updated
+            var width = 0.0;
+            var viewOrientation = new ViewModelLocator().ViewControlViewModel.ViewOrientation;
+            if (viewOrientation == ViewOrientation.Landscape)
+            {
+                width = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
+                    Window.Current.Bounds.Width : Window.Current.Bounds.Height;
+            }
+            else if (viewOrientation == ViewOrientation.Portrait)
+            {
+                width = (Window.Current.Bounds.Width <= Window.Current.Bounds.Height) ?
+                    Window.Current.Bounds.Width : Window.Current.Bounds.Height;
+            }
+            var columnWidth = (width - (defaultMargin * 2) - (defaultMargin * (columns - 1))) / columns;
             return columnWidth;
         }
 
