@@ -21,12 +21,12 @@
             android:layout_weight="0"
             android:text="@string/ids_lbl_printer_name"
             android:textColor="@color/theme_dark_1" />
-        
-	 	<Space
-	 	    android:layout_width="@dimen/printers_name_space"
+
+        <Space
+            android:layout_width="@dimen/printers_name_space"
             android:layout_height="match_parent"
             android:layout_weight="0" />
-	 	
+
         <TextView
             style="@style/EllipsizeText"
             android:id="@+id/inputPrinterName"
@@ -36,7 +36,6 @@
             android:layout_weight="1"
             android:gravity="right"
             android:textColor="@color/theme_light_1" />
-
     </LinearLayout>
 
     <View
