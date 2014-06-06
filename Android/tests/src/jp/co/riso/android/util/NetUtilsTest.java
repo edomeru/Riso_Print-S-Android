@@ -294,12 +294,27 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         // wifi is OFF
         assertEquals(false, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
     }
-*/    
+*/
     public void testIsNetworkAvailable_WithConnection() {
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
         turnWifiOn();
         // wifi is ON
         assertEquals(true, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
+    }
+    
+    // ================================================================================
+    // Tests - isWifiAvailable
+    // ================================================================================
+    
+    public void testIsWifiAvailable_Null() {
+        assertEquals(false, NetUtils.isWifiAvailable(null));
+    }
+    
+    public void testIsWifiAvailable_WithConnection() {
+        // permission CHANGE_WIFI_STATE in app's manifest file must be present
+        turnWifiOn();
+        // wifi is ON
+        assertEquals(true, NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext()));
     }
 
     // ================================================================================

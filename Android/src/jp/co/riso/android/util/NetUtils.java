@@ -132,14 +132,31 @@ public class NetUtils {
      *
      * @return true if is connected to network
      */
-    public static boolean isNetworkAvailable(Context context) {
+    protected static boolean isNetworkAvailable(Context context) {
         if (context == null) {
             return false;
         }
         
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
+        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+    }
+    
+    /**
+     * Determines wi-fi connectivity
+     * 
+     * @param context
+     *
+     * @return true if is connected to the network using wi-fi
+     */
+    public static boolean isWifiAvailable(Context context) {
+        if (context == null) {
+            return false;
+        }
+        
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return (wifi != null && wifi.isConnected());
     }
     
     // ================================================================================
