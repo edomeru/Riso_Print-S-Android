@@ -351,7 +351,6 @@
                         <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToHelp" unwindAction="unwindToHelp:" id="JC1-fU-iYo"/>
                         <segue destination="CcX-hU-zgH" kind="custom" identifier="Home-Legal" customClass="ReplaceSegue" id="dLV-ea-A15"/>
                         <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToLegal" unwindAction="unwindToLegal:" id="ku2-2L-0b3"/>
-                        <segue destination="FqZ-P9-QXX" kind="custom" identifier="Home-PrintJobHistory" customClass="ReplaceSegue" id="a4U-VG-JlJ"/>
                         <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintJobHistory" unwindAction="unwindToPrintJobHistory:" id="rJZ-Mq-ywi"/>
                         <segue destination="k93-fC-OMI" kind="custom" identifier="Home-PrintJobHistory" customClass="ReplaceSegue" id="gRW-en-vNy"/>
                         <segue destination="aXK-h5-CS8" kind="custom" identifier="Home-Settings" customClass="ReplaceSegue" id="4KJ-8J-Ozx"/>
@@ -3167,294 +3166,6 @@
             <point key="canvasLocation" x="2661" y="125"/>
         </scene>
         <!--Print Job History View Controller-->
-        <scene sceneID="qwz-Ol-TAm">
-            <objects>
-                <viewController storyboardIdentifier="PrintJobHistoryIphoneViewController" id="FqZ-P9-QXX" customClass="PrintJobHistoryViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="HC2-7x-yGV"/>
-                        <viewControllerLayoutGuide type="bottom" id="FG3-Gk-gAO"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="kyz-VC-K7h" customClass="DefaultView">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="548"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ULk-KZ-RRS" userLabel="Header">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jo5-zX-Mip" userLabel="iPhone - MainMenu">
-                                        <rect key="frame" x="8" y="8" width="32" height="32"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="32" id="pEr-ET-ea2"/>
-                                            <constraint firstAttribute="height" constant="32" id="v6F-pF-SEX"/>
-                                        </constraints>
-                                        <state key="normal" image="img_btn_main_menu_normal">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <state key="disabled" image="img_btn_main_menu_pressed"/>
-                                        <state key="highlighted" image="img_btn_main_menu_pressed"/>
-                                        <connections>
-                                            <action selector="mainMenuAction:" destination="FqZ-P9-QXX" eventType="touchUpInside" id="nTm-RD-gKO"/>
-                                        </connections>
-                                    </button>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Print Job History" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C3K-55-hNX" userLabel="iPhone - Title">
-                                        <rect key="frame" x="48" y="0.0" width="256" height="48"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="48" id="ahq-va-hah"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINT_JOB_HISTORY"/>
-                                        </userDefinedRuntimeAttributes>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="G8y-Lt-wiy"/>
-                                    <constraint firstItem="jo5-zX-Mip" firstAttribute="leading" secondItem="ULk-KZ-RRS" secondAttribute="leading" constant="8" id="GKt-Va-Fci"/>
-                                    <constraint firstAttribute="centerY" secondItem="C3K-55-hNX" secondAttribute="centerY" id="fDO-hK-vFN"/>
-                                    <constraint firstItem="C3K-55-hNX" firstAttribute="leading" secondItem="jo5-zX-Mip" secondAttribute="trailing" constant="8" id="hHy-hu-fGa"/>
-                                    <constraint firstAttribute="centerY" secondItem="jo5-zX-Mip" secondAttribute="centerY" id="mcT-HH-7s3"/>
-                                    <constraint firstAttribute="trailing" secondItem="C3K-55-hNX" secondAttribute="trailing" constant="16" id="q5T-uL-Mbr"/>
-                                </constraints>
-                            </view>
-                            <collectionView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Rfc-0d-bR1" userLabel="iPhone - CollectionView">
-                                <rect key="frame" x="0.0" y="48" width="320" height="500"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" red="0.80392156862745101" green="0.80392156862745101" blue="0.80392156862745101" alpha="1" colorSpace="calibratedRGB"/>
-                                <collectionViewLayout key="collectionViewLayout" id="XZQ-To-wdd" userLabel="Layout-iPhone" customClass="PrintJobHistoryLayout"/>
-                                <cells>
-                                    <collectionViewCell clipsSubviews="YES" contentMode="center" reuseIdentifier="PrintJobHistoryGroup" id="KTT-2M-GyJ" userLabel="PrintJobHistoryGroup" customClass="PrintJobHistoryGroupCell">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="500"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <tableView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="45" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="dPu-Ft-Q41" userLabel="iPhone - TableView">
-                                                    <rect key="frame" x="0.0" y="45" width="320" height="455"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <prototypes>
-                                                        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PrintJobItem" rowHeight="45" id="cnq-2K-jWB" userLabel="PrintJobItem" customClass="PrintJobItemCell">
-                                                            <rect key="frame" x="0.0" y="22" width="320" height="45"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" tableViewCell="cnq-2K-jWB" id="vvl-VO-Pci">
-                                                                <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
-                                                                <autoresizingMask key="autoresizingMask"/>
-                                                                <subviews>
-                                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="67X-EH-WaZ" userLabel="Separator">
-                                                                        <rect key="frame" x="55" y="44" width="265" height="1"/>
-                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                                                                    </view>
-                                                                    <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_btn_job_status_ok" translatesAutoresizingMaskIntoConstraints="NO" id="Ot3-gE-1qz" userLabel="Result">
-                                                                        <rect key="frame" x="5" y="0.0" width="45" height="45"/>
-                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="45" id="itl-sW-Uh2"/>
-                                                                            <constraint firstAttribute="height" constant="45" id="nsD-on-qta"/>
-                                                                        </constraints>
-                                                                    </imageView>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" verticalHuggingPriority="251" text="Print Job A" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qa7-a5-2Af" userLabel="Name">
-                                                                        <rect key="frame" x="55" y="15" width="115" height="16"/>
-                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
-                                                                        <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                                    </label>
-                                                                    <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="2014/04/01 08:30 AM" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iEn-yQ-oZe" userLabel="Timestamp">
-                                                                        <rect key="frame" x="170" y="15" width="140" height="16"/>
-                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="140" id="ZsJ-vQ-fAY"/>
-                                                                        </constraints>
-                                                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
-                                                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                        <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                                    </label>
-                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qua-l2-VH5" userLabel="Delete" customClass="DeleteButton">
-                                                                        <rect key="frame" x="320" y="5" width="85" height="35"/>
-                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="85" id="Ea9-az-57y"/>
-                                                                        </constraints>
-                                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                                        <state key="normal" title="DELETE">
-                                                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                                        </state>
-                                                                        <connections>
-                                                                            <action selector="tappedDeleteJob:" destination="KTT-2M-GyJ" eventType="touchUpInside" id="vVv-py-Nlp"/>
-                                                                        </connections>
-                                                                    </button>
-                                                                </subviews>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="centerY" secondItem="Ot3-gE-1qz" secondAttribute="centerY" id="4Cg-Au-aFy"/>
-                                                                    <constraint firstItem="iEn-yQ-oZe" firstAttribute="leading" secondItem="Qa7-a5-2Af" secondAttribute="trailing" id="8gS-rI-itG"/>
-                                                                    <constraint firstAttribute="trailing" secondItem="67X-EH-WaZ" secondAttribute="trailing" id="9Ca-EK-7rQ"/>
-                                                                    <constraint firstAttribute="trailing" secondItem="Qua-l2-VH5" secondAttribute="trailing" constant="-85" id="BfG-8f-UKc"/>
-                                                                    <constraint firstItem="Qa7-a5-2Af" firstAttribute="leading" secondItem="Ot3-gE-1qz" secondAttribute="trailing" constant="5" id="CMM-d2-ZtH"/>
-                                                                    <constraint firstItem="67X-EH-WaZ" firstAttribute="top" secondItem="vvl-VO-Pci" secondAttribute="top" constant="44" id="FqR-KQ-k5v"/>
-                                                                    <constraint firstItem="67X-EH-WaZ" firstAttribute="leading" secondItem="Qa7-a5-2Af" secondAttribute="leading" id="KZF-MQ-B4g"/>
-                                                                    <constraint firstAttribute="trailing" secondItem="iEn-yQ-oZe" secondAttribute="trailing" constant="10" id="Os8-mv-XJ0"/>
-                                                                    <constraint firstAttribute="centerY" secondItem="Qa7-a5-2Af" secondAttribute="centerY" id="aI8-Vv-ShF"/>
-                                                                    <constraint firstAttribute="bottom" secondItem="67X-EH-WaZ" secondAttribute="bottom" id="dB4-5u-OnQ"/>
-                                                                    <constraint firstItem="Qua-l2-VH5" firstAttribute="top" secondItem="vvl-VO-Pci" secondAttribute="top" constant="5" id="hYg-co-WHa"/>
-                                                                    <constraint firstAttribute="centerY" secondItem="iEn-yQ-oZe" secondAttribute="centerY" id="kua-Mu-B7i"/>
-                                                                    <constraint firstAttribute="bottom" secondItem="Qua-l2-VH5" secondAttribute="bottom" constant="5" id="q9Y-D6-1F8"/>
-                                                                    <constraint firstItem="67X-EH-WaZ" firstAttribute="leading" secondItem="Ot3-gE-1qz" secondAttribute="trailing" constant="5" id="quX-af-Et1"/>
-                                                                    <constraint firstItem="Ot3-gE-1qz" firstAttribute="leading" secondItem="vvl-VO-Pci" secondAttribute="leading" constant="5" id="wg6-2A-7XP"/>
-                                                                </constraints>
-                                                            </tableViewCellContentView>
-                                                            <connections>
-                                                                <outlet property="deleteButton" destination="Qua-l2-VH5" id="b8k-Db-GJ3"/>
-                                                                <outlet property="name" destination="Qa7-a5-2Af" id="LL9-gf-itM"/>
-                                                                <outlet property="result" destination="Ot3-gE-1qz" id="be9-Ox-p2h"/>
-                                                                <outlet property="separator" destination="67X-EH-WaZ" id="rIF-TF-dOq"/>
-                                                                <outlet property="spaceDeleteButtonToSuperView" destination="BfG-8f-UKc" id="bLq-Bt-UGX"/>
-                                                                <outlet property="timestamp" destination="iEn-yQ-oZe" id="CH5-g6-79d"/>
-                                                            </connections>
-                                                        </tableViewCell>
-                                                    </prototypes>
-                                                    <connections>
-                                                        <outlet property="dataSource" destination="KTT-2M-GyJ" id="AL6-8S-yEC"/>
-                                                        <outlet property="delegate" destination="KTT-2M-GyJ" id="3It-ct-XS2"/>
-                                                    </connections>
-                                                </tableView>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uJ1-uS-srn" userLabel="iPhone - Delete All" customClass="DeleteButton">
-                                                    <rect key="frame" x="220" y="0.0" width="100" height="45"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="45" id="GYg-E5-pSg"/>
-                                                        <constraint firstAttribute="width" constant="100" id="MeG-lH-tG4"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <state key="normal" title="DELETE ALL">
-                                                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="uppercaseLocalizationId" value="IDS_LBL_DELETE_ALL"/>
-                                                    </userDefinedRuntimeAttributes>
-                                                </button>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IjS-vQ-2Db" userLabel="iPhone - -">
-                                                    <rect key="frame" x="0.0" y="0.0" width="40" height="45"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="40" id="2Bk-Kn-kKb"/>
-                                                        <constraint firstAttribute="height" constant="45" id="Kij-Xm-n4k"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RISO Printer 1" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t61-sQ-iOj" userLabel="iPhone - Name" customClass="PaddedLabel">
-                                                    <rect key="frame" x="40" y="-3" width="180" height="32"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="32" id="Cfd-SW-8aU"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="192.168.0.1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KmG-ZI-cIv" userLabel="iPhone - IP">
-                                                    <rect key="frame" x="40" y="21" width="180" height="24"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="24" id="Fqj-e7-W5V"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7BL-O9-D6b" userLabel="iPhone - Header">
-                                                    <rect key="frame" x="0.0" y="0.0" width="220" height="45"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="45" id="9lY-PT-ftP"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                                    <state key="normal">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                </button>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                        <constraints>
-                                            <constraint firstItem="7BL-O9-D6b" firstAttribute="bottom" secondItem="IjS-vQ-2Db" secondAttribute="bottom" id="6Hl-WZ-dcv"/>
-                                            <constraint firstItem="IjS-vQ-2Db" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="9eO-de-1mC"/>
-                                            <constraint firstItem="IjS-vQ-2Db" firstAttribute="centerY" secondItem="uJ1-uS-srn" secondAttribute="centerY" id="AX9-3v-sNj"/>
-                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="leading" secondItem="KTT-2M-GyJ" secondAttribute="leading" id="BOA-jT-Nhn"/>
-                                            <constraint firstItem="dPu-Ft-Q41" firstAttribute="top" secondItem="uJ1-uS-srn" secondAttribute="bottom" id="E1k-MR-srk"/>
-                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="t61-sQ-iOj" secondAttribute="trailing" id="Hxv-bY-0d4"/>
-                                            <constraint firstItem="IjS-vQ-2Db" firstAttribute="leading" secondItem="KTT-2M-GyJ" secondAttribute="leading" id="I7v-i4-d3e"/>
-                                            <constraint firstItem="KmG-ZI-cIv" firstAttribute="top" secondItem="t61-sQ-iOj" secondAttribute="bottom" constant="-8" id="RGu-zS-xCg"/>
-                                            <constraint firstAttribute="bottom" secondItem="dPu-Ft-Q41" secondAttribute="bottom" id="S25-v6-cHP"/>
-                                            <constraint firstAttribute="trailing" secondItem="uJ1-uS-srn" secondAttribute="trailing" id="Wo3-V1-HRl"/>
-                                            <constraint firstItem="7BL-O9-D6b" firstAttribute="leading" secondItem="KTT-2M-GyJ" secondAttribute="leading" id="amA-gw-fgb"/>
-                                            <constraint firstAttribute="trailing" secondItem="dPu-Ft-Q41" secondAttribute="trailing" id="fFZ-7q-fyY"/>
-                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="7BL-O9-D6b" secondAttribute="trailing" id="g75-xt-9Vb"/>
-                                            <constraint firstItem="uJ1-uS-srn" firstAttribute="leading" secondItem="KmG-ZI-cIv" secondAttribute="trailing" id="kSm-OA-Wq4"/>
-                                            <constraint firstItem="t61-sQ-iOj" firstAttribute="leading" secondItem="IjS-vQ-2Db" secondAttribute="trailing" id="oGP-Tb-UW2"/>
-                                            <constraint firstItem="t61-sQ-iOj" firstAttribute="top" secondItem="uJ1-uS-srn" secondAttribute="top" constant="-3" id="qek-NZ-wQ2"/>
-                                            <constraint firstItem="7BL-O9-D6b" firstAttribute="top" secondItem="KTT-2M-GyJ" secondAttribute="top" id="ueN-PR-5TL"/>
-                                            <constraint firstItem="KmG-ZI-cIv" firstAttribute="leading" secondItem="IjS-vQ-2Db" secondAttribute="trailing" id="x9K-fa-N1f"/>
-                                        </constraints>
-                                        <size key="customSize" width="320" height="500"/>
-                                        <connections>
-                                            <outlet property="deleteAllButton" destination="uJ1-uS-srn" id="zGN-SC-AcD"/>
-                                            <outlet property="groupIP" destination="KmG-ZI-cIv" id="Lhg-9A-SIg"/>
-                                            <outlet property="groupIndicator" destination="IjS-vQ-2Db" id="Qmk-ld-LF5"/>
-                                            <outlet property="groupName" destination="t61-sQ-iOj" id="Lr8-Vc-SAR"/>
-                                            <outlet property="header" destination="7BL-O9-D6b" id="aAL-b1-UHB"/>
-                                            <outlet property="printJobsView" destination="dPu-Ft-Q41" id="fTy-bE-aeH"/>
-                                        </connections>
-                                    </collectionViewCell>
-                                </cells>
-                                <connections>
-                                    <outlet property="dataSource" destination="FqZ-P9-QXX" id="7D2-Up-Dd3"/>
-                                    <outlet property="delegate" destination="FqZ-P9-QXX" id="cX3-bo-hA3"/>
-                                </connections>
-                            </collectionView>
-                        </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="ULk-KZ-RRS" firstAttribute="top" secondItem="kyz-VC-K7h" secondAttribute="top" id="5qH-4B-DwM"/>
-                            <constraint firstItem="FG3-Gk-gAO" firstAttribute="top" secondItem="Rfc-0d-bR1" secondAttribute="bottom" id="QJY-84-I3I"/>
-                            <constraint firstItem="Rfc-0d-bR1" firstAttribute="top" secondItem="ULk-KZ-RRS" secondAttribute="bottom" id="Zbr-p9-fzf"/>
-                            <constraint firstAttribute="trailing" secondItem="ULk-KZ-RRS" secondAttribute="trailing" id="exr-CE-aGm"/>
-                            <constraint firstItem="Rfc-0d-bR1" firstAttribute="leading" secondItem="kyz-VC-K7h" secondAttribute="leading" id="jMx-ej-Tkn"/>
-                            <constraint firstAttribute="trailing" secondItem="Rfc-0d-bR1" secondAttribute="trailing" id="uOR-3N-zft"/>
-                            <constraint firstItem="ULk-KZ-RRS" firstAttribute="leading" secondItem="kyz-VC-K7h" secondAttribute="leading" id="vBe-hG-Lso"/>
-                        </constraints>
-                    </view>
-                    <nil key="simulatedStatusBarMetrics"/>
-                    <nil key="simulatedTopBarMetrics"/>
-                    <nil key="simulatedBottomBarMetrics"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <connections>
-                        <outlet property="groupsView" destination="Rfc-0d-bR1" id="qW8-0i-7IZ"/>
-                        <outlet property="groupsViewLayout" destination="XZQ-To-wdd" id="400-cs-uvE"/>
-                        <outlet property="mainMenuButton" destination="jo5-zX-Mip" id="0y3-Qz-ovy"/>
-                        <segue destination="v0J-sN-35H" kind="custom" identifier="PrintJobHistory-Home" customClass="SlideSegue" id="9FD-bf-FdK"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="DBO-Vs-YFS" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="651" y="3201"/>
-        </scene>
-        <!--Print Job History View Controller-->
         <scene sceneID="Ghh-Yl-J0s">
             <objects>
                 <viewController storyboardIdentifier="PrintJobHistoryIpadViewController" id="k93-fC-OMI" customClass="PrintJobHistoryViewController" sceneMemberID="viewController">
@@ -3976,7 +3687,7 @@
                         <segue destination="CaE-Ob-2MQ" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="Aiq-ml-NWv"/>
                         <segue destination="CaE-Ob-2MQ" kind="unwind" identifier="UnwindToPrintersIphone" unwindAction="unwindToPrinters:" id="cW1-ea-7P6"/>
                         <segue destination="Wn7-PG-C0p" kind="push" identifier="PrintSettings-PrinterList" id="qiz-8l-D6m"/>
-                        <segue destination="FqZ-P9-QXX" kind="custom" identifier="PrintSettingsPrinter-PrintJobHistory" customClass="ReplaceSegue" id="SPc-R3-6UV"/>
+                        <segue destination="k93-fC-OMI" kind="custom" identifier="PrintSettingsPrinter-PrintJobHistory" customClass="ReplaceSegue" id="scK-T0-ew0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="27R-Ke-rdN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -4019,10 +3730,10 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="oE4-lZ-OOf"/>
+        <segue reference="scK-T0-ew0"/>
         <segue reference="CWW-vD-UgO"/>
-        <segue reference="4Gn-3V-oTg"/>
         <segue reference="ax2-Mn-NH0"/>
         <segue reference="4qT-Co-wxF"/>
-        <segue reference="SPc-R3-6UV"/>
     </inferredMetricsTieBreakers>
 </document>
