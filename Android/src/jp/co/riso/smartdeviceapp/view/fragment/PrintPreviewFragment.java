@@ -39,6 +39,7 @@ import android.os.Message;
 import android.util.LruCache;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -252,9 +253,26 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mPauseableHandler.resume();
         }
         
-        // Recreate view via reattaching
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this).attach(this).commit();
+        if (mPageControls != null) {
+            LinearLayout mainView = (LinearLayout) getView().findViewById(R.id.previewView);
+            mainView.removeView(mPageControls);
+            
+            View newView = View.inflate(getActivity(), R.layout.preview_controls, null);
+            newView.setLayoutParams(mPageControls.getLayoutParams());
+            newView.setVisibility(mPageControls.getVisibility());
+
+            mainView.addView(newView);
+            mPageControls = newView;
+            
+            mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
+            mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
+            mSeekBar.setOnSeekBarChangeListener(this);
+
+            if (mPageControls.getVisibility() == View.VISIBLE) {
+                updateSeekBar();
+                updatePageLabel();
+            }
+        }
     }
     
     // ================================================================================

@@ -28,7 +28,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
     public static final String KEY_STATE = "HomeFragment_State";
     
-    private static int MENU_ITEMS[] = {
+    public static int MENU_ITEMS[] = {
         R.id.printPreviewButton,
         R.id.printersButton,
         R.id.printJobsButton,
@@ -37,7 +37,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         R.id.legalButton
     };
     
-    private static String FRAGMENT_TAGS[] = {
+    public static String FRAGMENT_TAGS[] = {
         "fragment_printpreview",
         "fragment_printers",
         "fragment_printjobs",
