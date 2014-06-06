@@ -40,15 +40,15 @@
                              [NSNumber numberWithInt:100]: NSLocalizedString(IDS_APP_NAME, @"")
                              };
     
-    self.resultDictionary = @{[NSNumber numberWithInt:kAlertResultErrDefault]: @"The operation could not be completed.",
+    self.resultDictionary = @{[NSNumber numberWithInt:kAlertResultErrDefault]: NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @""),
                               [NSNumber numberWithInt:kAlertResultInfoPrinterAdded]: NSLocalizedString(IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL, @""),
                               [NSNumber numberWithInt:kAlertResultErrNoNetwork]: NSLocalizedString(IDS_ERR_MSG_NETWORK_ERROR, @""),
                               [NSNumber numberWithInt:kAlertResultErrInvalidIP]: NSLocalizedString(IDS_ERR_MSG_INVALID_IP_ADDRESS, @""),
                               [NSNumber numberWithInt:kAlertResultErrMaxPrinters]: NSLocalizedString(IDS_ERR_MSG_MAX_PRINTER_COUNT, @""),
                               [NSNumber numberWithInt:kAlertResultErrPrinterNotFound]: NSLocalizedString(IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER, @""),
                               [NSNumber numberWithInt:kAlertResultErrPrinterDuplicate]: NSLocalizedString(IDS_ERR_MSG_CANNOT_ADD_PRINTER, @""),
-                              [NSNumber numberWithInt:kAlertResultErrPrinterCannotBeAdded]: @"The printer could not be added.",
-                              [NSNumber numberWithInt:kAlertResultErrDelete]: NSLocalizedString(IDS_ERR_MSG_DELETE_FAILED, @""),
+                              [NSNumber numberWithInt:kAlertResultErrDB]: NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @""),
+                              [NSNumber numberWithInt:kAlertResultErrDB]: NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @""),
                               [NSNumber numberWithInt:kAlertResultFileCannotBeOpened]: NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @""),
                               [NSNumber numberWithInt:kAlertResultPrintSuccessful]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL, @""),
                               [NSNumber numberWithInt:kAlertResultPrintFailed]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @""),

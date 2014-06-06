@@ -36,11 +36,7 @@ typedef enum
     kAlertResultErrMaxPrinters,
     kAlertResultErrPrinterNotFound,
     kAlertResultErrPrinterDuplicate,
-    kAlertResultErrPrinterCannotBeAdded,
-    
-    // error when deleting
-    kAlertResultErrDelete,
-    
+        
     // error when opening invalid file
     kAlertResultFileCannotBeOpened,
     
@@ -48,6 +44,9 @@ typedef enum
     kAlertResultErrNoPrinterSelected,
     kAlertResultPrintFailed,
     kAlertResultPrintSuccessful,
+    
+    // db-related errors
+    kAlertResultErrDB,
     
     // default error message
     kAlertResultErrDefault

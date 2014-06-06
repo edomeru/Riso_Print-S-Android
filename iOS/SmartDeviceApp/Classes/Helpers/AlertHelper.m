@@ -78,16 +78,7 @@
         case kAlertResultErrPrinterDuplicate:
             alertMsg = NSLocalizedString(IDS_ERR_MSG_CANNOT_ADD_PRINTER, @"");
             break;
-            
-        case kAlertResultErrPrinterCannotBeAdded:
-            alertMsg = @"The printer could not be added.";
-            break;
-            //TODO: only cause is DB error (registerPrinter: failed)
-            
-        case kAlertResultErrDelete:
-            alertMsg = NSLocalizedString(IDS_ERR_MSG_DELETE_FAILED, @"");
-            break;
-            
+                        
         case kAlertResultFileCannotBeOpened:
             alertMsg = NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @"");
             break;
@@ -104,11 +95,12 @@
             alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @"");
             break;
             
+        //use the same localization for default error and db-related error.
+        case kAlertResultErrDB:
         case kAlertResultErrDefault:
         default:
-            alertMsg = @"The operation could not be completed.";
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @"");
             break;
-            //TODO: replace with localized string or remove if will not be used
     }
     
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:alertTitle

@@ -300,7 +300,7 @@
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
+        [AlertHelper displayResult:kAlertResultErrDB
                          withTitle:kAlertTitlePrintersAdd
                        withDetails:nil];
     }

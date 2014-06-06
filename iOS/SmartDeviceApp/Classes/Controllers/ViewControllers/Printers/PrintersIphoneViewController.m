@@ -505,7 +505,7 @@
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrDelete
+        [AlertHelper displayResult:kAlertResultErrDB
                          withTitle:kAlertTitlePrinters
                        withDetails:nil];
     }

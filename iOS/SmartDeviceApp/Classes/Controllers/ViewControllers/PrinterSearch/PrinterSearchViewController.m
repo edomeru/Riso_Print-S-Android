@@ -342,7 +342,7 @@
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
+        [AlertHelper displayResult:kAlertResultErrDB
                          withTitle:kAlertTitlePrintersSearch
                        withDetails:nil
                 withDismissHandler:^(CXAlertView *alertView) {

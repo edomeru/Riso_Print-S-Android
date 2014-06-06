@@ -317,7 +317,7 @@
             }
             else
             {
-                [AlertHelper displayResult:kAlertResultErrDelete
+                [AlertHelper displayResult:kAlertResultErrDB
                                  withTitle:kAlertTitlePrintJobHistory
                                withDetails:nil];
             }
@@ -421,7 +421,7 @@
         }
         else
         {
-            [AlertHelper displayResult:kAlertResultErrDelete
+            [AlertHelper displayResult:kAlertResultErrDB
                              withTitle:kAlertTitlePrintJobHistory
                            withDetails:nil];
             
