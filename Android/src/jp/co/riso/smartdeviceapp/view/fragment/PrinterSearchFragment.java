@@ -197,7 +197,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void onRefresh() {
         mPrinter.clear();
         mEmptySearchText.setVisibility(View.GONE);
-        if (!NetUtils.isWifiAvailable(getActivity())) {
+        if (!NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
             dialogErrCb();
             updateRefreshBar();
             return;

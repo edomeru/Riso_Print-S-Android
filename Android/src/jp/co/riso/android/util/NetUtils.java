@@ -139,7 +139,7 @@ public class NetUtils {
         
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
+        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
     }
     
     /**

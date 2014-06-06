@@ -307,17 +307,11 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
     
     public void testIsWifiAvailable_Null() {
-        assertEquals(false, NetUtils.isNetworkAvailable(null));
+        assertEquals(false, NetUtils.isWifiAvailable(null));
     }
     
     public void testIsWifiAvailable_WithConnection() {
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
-        turnWifi(false);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            // ignored
-        }  
         turnWifiOn();
         // wifi is ON
         assertEquals(true, NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext()));
