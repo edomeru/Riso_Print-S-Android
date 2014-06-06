@@ -15,15 +15,13 @@
     </LinearLayout>
 
     <TextView
+        style="@style/EllipsizeText"
         android:id="@+id/actionBarTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:ellipsize="middle"
         android:gravity="left"
-        android:maxLines="1"
-        android:singleLine="true"
         android:text="@string/default_textview"
         android:textColor="@color/theme_light_1"
         android:textSize="@dimen/font_size_large" />

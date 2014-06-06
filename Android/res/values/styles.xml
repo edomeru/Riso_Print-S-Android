@@ -51,5 +51,11 @@
         <item name="android:indeterminateDrawable">@drawable/widgettheme_scrubber_progress_horizontal_holo_light</item>
         <item name="android:thumb">@drawable/widgettheme_scrubber_control_selector_holo_light</item>
     </style>
+    
+	<style name="EllipsizeText" parent="android:Widget.TextView">
+	    <item name="android:ellipsize">middle</item>
+	    <item name="android:maxLines">1</item>
+	    <item name="android:singleLine">true</item>
+	</style>
 
 </resources>
