@@ -409,9 +409,9 @@
 
 #pragma mark - Reload
 
-- (void)reloadData
+- (void)reloadPrinters
 {
-    [super reloadData];
+    [super reloadPrinters];
     [self.tableView reloadData];
 }
 
@@ -502,6 +502,8 @@
         }
         
         self.toDeleteIndexPath = nil;
+        
+        self.emptyLabel.hidden = (self.printerManager.countSavedPrinters == 0 ? NO : YES);
     }
     else
     {

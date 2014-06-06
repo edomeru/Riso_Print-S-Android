@@ -21,11 +21,14 @@
 @property (strong, nonatomic) NSIndexPath *defaultPrinterIndexPath;
 @property (strong, nonatomic) NSIndexPath *toDeleteIndexPath;
 
+/** Displays "No Printers" label if there are no printers. */
+@property (weak, nonatomic) IBOutlet UILabel* emptyLabel;
+
 - (IBAction)mainMenuAction:(id)sender;
 - (IBAction)addPrinterAction:(id)sender;
 - (IBAction)printerSearchAction:(id)sender;
 
 /** Reloads the displayed list of Printers */
-- (void)reloadData;
+- (void)reloadPrinters;
 
 @end

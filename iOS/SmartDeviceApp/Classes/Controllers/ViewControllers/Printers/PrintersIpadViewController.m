@@ -340,6 +340,8 @@
         [self refreshControlTagsOfCellsAtIndexPaths:indexPathsToReload];
         
         self.toDeleteIndexPath = nil;
+        
+        self.emptyLabel.hidden = (self.printerManager.countSavedPrinters == 0 ? NO : YES);
     }
     else
     {
@@ -388,9 +390,9 @@
 
 #pragma mark - Reload
 
-- (void)reloadData
+- (void)reloadPrinters
 {
-    [super reloadData];
+    [super reloadPrinters];
     if(self.selectedPrinterIndex != nil)
     {
         NSIndexPath* selectedIndexPath = [NSIndexPath indexPathForItem:[self.selectedPrinterIndex integerValue]
