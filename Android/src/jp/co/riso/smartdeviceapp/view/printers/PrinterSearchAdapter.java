@@ -72,6 +72,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
             viewHolder.mPrinterName.setText(printer.getName());
+            viewHolder.mIpAddress.setText(printer.getIpAddress());
             viewHolder.mAddedIndicator.setTag(position);
         }
         
