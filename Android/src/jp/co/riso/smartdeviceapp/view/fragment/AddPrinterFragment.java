@@ -285,7 +285,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             return;
         }        
         if (NetUtils.isIPv6Address(ipAddress)) {
-            ipAddress = JniUtils.validateIp(ipAddress, ipAddress.length() > NetUtils.IPV6_MIN_BUFFER_SIZE ? ipAddress.length() : NetUtils.IPV6_MIN_BUFFER_SIZE);
+            ipAddress = JniUtils.validateIp(ipAddress);
         }
         mAddPrinterView.mIpAddress.setText(ipAddress);
         if (mPrinterManager.isExists(ipAddress)) {

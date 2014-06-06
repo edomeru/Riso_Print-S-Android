@@ -325,7 +325,7 @@ public class NetUtils {
         String ipV4Segment = "0*(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.0*(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
         String ipV6Segment = "0*[0-9a-fA-F]{0,4}";
         
-        return Pattern.compile("(::(ffff(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
+        return Pattern.compile("(::0*(ffff(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
                 "|" + "(" + ipV6Segment + ":){1,4}:" + ipV4Segment + ")"); // Pattern # 12
     }
     

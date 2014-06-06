@@ -9,7 +9,7 @@
 package jp.co.riso.smartdeviceapp.common;
 
 public class JniUtils {
-    public static native String validateIp(String ipAddress, int len);
+    public static native String validateIp(String ipAddress);
 
     static {
         System.loadLibrary("common");
