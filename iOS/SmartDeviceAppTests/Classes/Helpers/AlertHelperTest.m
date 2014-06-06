@@ -52,7 +52,7 @@
                               [NSNumber numberWithInt:kAlertResultFileCannotBeOpened]: NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @""),
                               [NSNumber numberWithInt:kAlertResultPrintSuccessful]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL, @""),
                               [NSNumber numberWithInt:kAlertResultPrintFailed]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @""),
-                              [NSNumber numberWithInt:100]: @"The operation could not be completed."
+                              [NSNumber numberWithInt:100]: NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @"")
                               };
     
     self.confirmTitleDictionary = @{[NSNumber numberWithInt:kAlertConfirmationDeleteAllJobs]: NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS_TITLE, @""),
