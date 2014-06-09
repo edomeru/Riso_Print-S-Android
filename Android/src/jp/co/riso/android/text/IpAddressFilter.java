@@ -15,16 +15,13 @@ import android.text.InputFilter;
 import android.text.Spanned;
 
 /**
- * EditText filter for Invalid characters characters
+ * EditText filter for IP Address characters
  */
 public class IpAddressFilter implements InputFilter {
     private Set<Character> mCharSet;
     
     /**
      * Constructor
-     * 
-     * @param invalidChars
-     *            invalid characters in string format
      */
     public IpAddressFilter() {
         String validChars = "1234567890abcdefABCDEF.:";
