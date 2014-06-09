@@ -8,6 +8,8 @@
 
 #import "NSDate+Format.h"
 
+static NSDateFormatter* dateFormatter = nil;
+
 @implementation NSDate (Format)
 
 - (NSString*)formattedString
@@ -20,9 +22,15 @@
 //    return [formattedDate stringFromDate:self];
     
 //format is dependent on current locale
-    return [NSDateFormatter localizedStringFromDate:self
-                                          dateStyle:NSDateFormatterShortStyle
-                                          timeStyle:NSDateFormatterShortStyle];
+    if (dateFormatter == nil)
+    {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+        [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+    }
+    
+    [dateFormatter setLocale:[NSLocale currentLocale]];    
+    return [dateFormatter stringFromDate:self];
 }
 
 @end
