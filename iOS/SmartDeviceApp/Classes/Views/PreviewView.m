@@ -342,7 +342,13 @@
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    return NO;
+    // Disable simultaneous gesture only for preview view's gesture recognizer
+    if (([otherGestureRecognizer isEqual:self.pincher] || [otherGestureRecognizer isEqual:self.panner] || [otherGestureRecognizer isEqual:self.tapper]) &&
+        ([gestureRecognizer isEqual:self.pincher] || [gestureRecognizer isEqual:self.panner] || [gestureRecognizer isEqual:self.tapper]))
+    {
+        return NO;
+    }
+    return YES;
 }
 
 #pragma - IBACtion Methods
