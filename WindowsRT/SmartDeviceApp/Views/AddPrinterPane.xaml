@@ -23,14 +23,6 @@
             </Style.Setters>
         </Style>
 
-        <Style x:Key="STYLE_List_Separator" TargetType="Line">
-            <Style.Setters>
-                <Setter Property="X1" Value="{StaticResource MARGIN_List}"/>
-                <Setter Property="X2" Value="{StaticResource SIZE_SidePaneWidth}"/>
-                <Setter Property="Stroke" Value="{StaticResource BRUSH_Gray1}"/>
-                <Setter Property="StrokeThickness" Value="2"/>
-            </Style.Setters>
-        </Style>
         <Style x:Key="IPAddressTextBoxStyle1" TargetType="TextBox">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}"/>
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}"/>
@@ -180,15 +172,26 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:SidePaneTitleControl x:Name="AddSidePane" Grid.Row="0" Loaded="AddSidePane_Loaded"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Path Grid.RowSpan="2" Grid.Column="0" 
+              Style="{StaticResource STYLE_List_Separator}">
+            <Path.Data>
+                <LineGeometry StartPoint="{Binding Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
+                              EndPoint="{Binding Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
+            </Path.Data>
+        </Path>
+        <controls:SidePaneTitleControl x:Name="AddSidePane" Grid.Row="0" Grid.Column="1"  Loaded="AddSidePane_Loaded"
                                        Title="{Binding Source=IDS_LBL_ADD_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"/>
         
         <!--<Grid Margin="0,0,0,10" >-->
         <!--CONTENTS HERE-->
         <!--<Grid Margin="0,0,0,0">-->
-        <Grid  Width="400" Grid.Row="1" Height="{Binding DataContext.Height, ElementName=AddPrinterPaneControl}">
+        <Grid  Width="400" Grid.Row="1" Grid.Column="1" Height="{Binding DataContext.Height, ElementName=AddPrinterPaneControl}" VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" />
             </Grid.RowDefinitions>
@@ -199,8 +202,8 @@
                 <StackPanel Style="{StaticResource STYLE_StackRight}" Orientation="Horizontal">
                     <ProgressRing x:Name="progressRing" Foreground="White" IsActive="True" Visibility="{Binding DataContext.IsProgressRingVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}" Width="34" Height="34"/>
                     <Button x:Name="button" Visibility="{Binding DataContext.IsButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}"
-            		    Template="{StaticResource TEMPLATE_Button}" Command="{Binding DataContext.AddPrinter, ElementName=AddPrinterPaneControl}" />
-                
+                		Template="{StaticResource TEMPLATE_Button}" Command="{Binding DataContext.AddPrinter, ElementName=AddPrinterPaneControl}" />
+
                 </StackPanel>
             </StackPanel>
         </Grid>

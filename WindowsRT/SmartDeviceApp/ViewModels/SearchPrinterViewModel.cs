@@ -47,10 +47,12 @@ namespace SmartDeviceApp.ViewModels
 
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
             //NoPrintersFound = true;
-
+            WillRefresh = false;
+            NoPrintersFound = true;
             //Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetSearchPane(viewOrientation));
+            
             
         }
 
@@ -78,6 +80,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 if (viewMode == VisibleRightPane.Pane1)
                 {
+                    
                     if (PrinterList.Count >= 10)
                     {
                         ClosePane();
@@ -95,7 +98,12 @@ namespace SmartDeviceApp.ViewModels
                     }
                     else
                     {
-                        await DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
+                        System.Diagnostics.Debug.WriteLine("No network");
+                        NoPrintersFound = true;
+                        System.Diagnostics.Debug.WriteLine("No printers found = true");
+                        Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
+                        System.Diagnostics.Debug.WriteLine("Notrefreshing state");
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", ClosePane);
                     }
                 }
             }
@@ -213,7 +221,9 @@ namespace SmartDeviceApp.ViewModels
             }
             else
             {
-                DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
+                NoPrintersFound = true;
+                Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
+                DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", ClosePane);
             }
         }
 
