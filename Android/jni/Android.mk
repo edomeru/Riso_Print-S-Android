@@ -35,7 +35,7 @@ LOCAL_MODULE := libcommon
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../CommonLibrary/include $(LOCAL_PATH)/common-interface
 LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
 LOCAL_STATIC_LIBRARIES := libcommon-static
-LOCAL_SRC_FILES := common-interface/directprint_manager.c common-interface/snmp_manager.c common-interface/common_manager.c
+LOCAL_SRC_FILES := common-interface/directprint_manager.c common-interface/snmp_manager.c common-interface/common_manager.c common-interface/jni_utils.c
 include $(BUILD_SHARED_LIBRARY)
 
 #include $(CLEAR_VARS)

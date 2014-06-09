@@ -14,10 +14,11 @@ import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.text.IpAddressFilter;
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.JniUtils;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -29,6 +30,7 @@ import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.InputFilter;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -83,6 +85,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mAddPrinterView.mIpAddress.setOnEditorActionListener(this);
         mAddPrinterView.mSaveButton.setOnClickListener(this);
 
+        mAddPrinterView.mIpAddress.setFilters(new InputFilter[] { new IpAddressFilter() });
         if (mPrinterManager.isSearching()) {
             setViewToDisable(mAddPrinterView);
         }
@@ -281,14 +284,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     private void startManualSearch() {       
         String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
         
-        if (NetUtils.isIPv4MulticastAddress(ipAddress)) {
+        ipAddress = JniUtils.validateIpAddress(ipAddress);
+        if (ipAddress == null) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
             return;
         }
-        if (!NetUtils.isIPv4Address(ipAddress) && !NetUtils.isIPv6Address(ipAddress)) {
-            dialogErrCb(ERR_INVALID_IP_ADDRESS);
-            return;
-        }
+        mAddPrinterView.mIpAddress.setText(ipAddress);
         if (mPrinterManager.isExists(ipAddress)) {
             dialogErrCb(ERR_CAN_NOT_ADD_PRINTER);
             return;
