@@ -174,12 +174,10 @@ public class PreviewTest extends AndroidTestCase {
     }
 
     public void testBookletLayout() {
-        assertEquals(0, BookletLayout.L_R.ordinal());
-        assertEquals(1, BookletLayout.R_L.ordinal());
-        assertEquals(2, BookletLayout.T_B.ordinal());
-        assertEquals(BookletLayout.L_R, BookletLayout.valueOf("L_R"));
-        assertEquals(BookletLayout.R_L, BookletLayout.valueOf("R_L"));
-        assertEquals(BookletLayout.T_B, BookletLayout.valueOf("T_B"));
+        assertEquals(0, BookletLayout.FORWARD.ordinal());
+        assertEquals(1, BookletLayout.REVERSE.ordinal());
+        assertEquals(BookletLayout.FORWARD, BookletLayout.valueOf("FORWARD"));
+        assertEquals(BookletLayout.REVERSE, BookletLayout.valueOf("REVERSE"));
     }
 
     public void testFinishingSide() {

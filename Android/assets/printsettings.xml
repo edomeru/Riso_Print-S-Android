@@ -69,7 +69,7 @@
             text="ids_lbl_scaletofit"
             icon="temp_img_printsettings_null"
             type="boolean"
-            default="false" />
+            default="true" />
         <setting
             name="paperType"
             dbkey="pst_paper_type"

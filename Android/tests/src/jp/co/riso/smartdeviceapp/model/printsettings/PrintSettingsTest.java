@@ -75,6 +75,25 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     private static final String KEY_STAPLE = "staple";
     private static final String KEY_PUNCH = "punch";
     private static final String KEY_OUTPUT_TRAY = "outputTray";
+    
+    private static final int DEFAULT_KEY_COLOR = 0;
+    private static final int DEFAULT_KEY_ORIENTATION = 0;
+    private static final int DEFAULT_KEY_COPIES = 1;
+    private static final int DEFAULT_KEY_DUPLEX = 0;
+    private static final int DEFAULT_KEY_PAPER_SIZE = 2;
+    private static final int DEFAULT_KEY_SCALE_TO_FIT = 1;
+    private static final int DEFAULT_KEY_PAPER_TRAY = 0;
+    private static final int DEFAULT_KEY_INPUT_TRAY = 0;
+    private static final int DEFAULT_KEY_IMPOSITION = 0;
+    private static final int DEFAULT_KEY_IMPOSITION_ORDER = 0;
+    private static final int DEFAULT_KEY_SORT = 0;
+    private static final int DEFAULT_KEY_BOOKLET = 0;
+    private static final int DEFAULT_KEY_BOOKLET_FINISH = 0;
+    private static final int DEFAULT_KEY_BOOKLET_LAYOUT = 0;
+    private static final int DEFAULT_KEY_FINISHING_SIDE = 0;
+    private static final int DEFAULT_KEY_STAPLE = 0;
+    private static final int DEFAULT_KEY_PUNCH = 0;
+    private static final int DEFAULT_KEY_OUTPUT_TRAY = 0;
 
     private PrintSettings mPrintSettings;
 
@@ -100,56 +119,56 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
 
-        assertEquals(0, (int) settingValues.get(KEY_COLOR));
-        assertEquals(0, (int) settingValues.get(KEY_ORIENTATION));
-        assertEquals(1, (int) settingValues.get(KEY_COPIES));
-        assertEquals(0, (int) settingValues.get(KEY_DUPLEX));
-        assertEquals(2, (int) settingValues.get(KEY_PAPER_SIZE));
-        assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT));
-        assertEquals(0, (int) settingValues.get(KEY_PAPER_TRAY));
-        assertEquals(0, (int) settingValues.get(KEY_INPUT_TRAY));
-        assertEquals(0, (int) settingValues.get(KEY_IMPOSITION));
-        assertEquals(0, (int) settingValues.get(KEY_IMPOSITION_ORDER));
-        assertEquals(0, (int) settingValues.get(KEY_SORT));
-        assertEquals(0, (int) settingValues.get(KEY_BOOKLET));
-        assertEquals(0, (int) settingValues.get(KEY_BOOKLET_FINISH));
-        assertEquals(0, (int) settingValues.get(KEY_BOOKLET_LAYOUT));
-        assertEquals(0, (int) settingValues.get(KEY_FINISHING_SIDE));
-        assertEquals(0, (int) settingValues.get(KEY_STAPLE));
-        assertEquals(0, (int) settingValues.get(KEY_PUNCH));
-        assertEquals(0, (int) settingValues.get(KEY_OUTPUT_TRAY));
+        assertEquals(DEFAULT_KEY_COLOR, (int) settingValues.get(KEY_COLOR));
+        assertEquals(DEFAULT_KEY_ORIENTATION, (int) settingValues.get(KEY_ORIENTATION));
+        assertEquals(DEFAULT_KEY_COPIES, (int) settingValues.get(KEY_COPIES));
+        assertEquals(DEFAULT_KEY_DUPLEX, (int) settingValues.get(KEY_DUPLEX));
+        assertEquals(DEFAULT_KEY_PAPER_SIZE, (int) settingValues.get(KEY_PAPER_SIZE));
+        assertEquals(DEFAULT_KEY_SCALE_TO_FIT, (int) settingValues.get(KEY_SCALE_TO_FIT));
+        assertEquals(DEFAULT_KEY_PAPER_TRAY, (int) settingValues.get(KEY_PAPER_TRAY));
+        assertEquals(DEFAULT_KEY_INPUT_TRAY, (int) settingValues.get(KEY_INPUT_TRAY));
+        assertEquals(DEFAULT_KEY_IMPOSITION, (int) settingValues.get(KEY_IMPOSITION));
+        assertEquals(DEFAULT_KEY_IMPOSITION_ORDER, (int) settingValues.get(KEY_IMPOSITION_ORDER));
+        assertEquals(DEFAULT_KEY_SORT, (int) settingValues.get(KEY_SORT));
+        assertEquals(DEFAULT_KEY_BOOKLET, (int) settingValues.get(KEY_BOOKLET));
+        assertEquals(DEFAULT_KEY_BOOKLET_FINISH, (int) settingValues.get(KEY_BOOKLET_FINISH));
+        assertEquals(DEFAULT_KEY_BOOKLET_LAYOUT, (int) settingValues.get(KEY_BOOKLET_LAYOUT));
+        assertEquals(DEFAULT_KEY_FINISHING_SIDE, (int) settingValues.get(KEY_FINISHING_SIDE));
+        assertEquals(DEFAULT_KEY_STAPLE, (int) settingValues.get(KEY_STAPLE));
+        assertEquals(DEFAULT_KEY_PUNCH, (int) settingValues.get(KEY_PUNCH));
+        assertEquals(DEFAULT_KEY_OUTPUT_TRAY, (int) settingValues.get(KEY_OUTPUT_TRAY));
     }
 
     public void testConstructor_PrintSettings() {
 
         mPrintSettings.setValue(KEY_COLOR, 2);
         mPrintSettings.setValue(KEY_COPIES, 10);
-        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 1);
+        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 0);
 
         PrintSettings settings = new PrintSettings(mPrintSettings);
         assertNotNull(settings);
 
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
-
+        
         assertEquals(2, (int) settingValues.get(KEY_COLOR)); // from 0 to 2
-        assertEquals(0, (int) settingValues.get(KEY_ORIENTATION));
+        assertEquals(DEFAULT_KEY_ORIENTATION, (int) settingValues.get(KEY_ORIENTATION));
         assertEquals(10, (int) settingValues.get(KEY_COPIES)); // from 1 to 10
-        assertEquals(0, (int) settingValues.get(KEY_DUPLEX));
-        assertEquals(2, (int) settingValues.get(KEY_PAPER_SIZE));
-        assertEquals(1, (int) settingValues.get(KEY_SCALE_TO_FIT)); // from 0 to 1
-        assertEquals(0, (int) settingValues.get(KEY_PAPER_TRAY));
-        assertEquals(0, (int) settingValues.get(KEY_INPUT_TRAY));
-        assertEquals(0, (int) settingValues.get(KEY_IMPOSITION));
-        assertEquals(0, (int) settingValues.get(KEY_IMPOSITION_ORDER));
-        assertEquals(0, (int) settingValues.get(KEY_SORT));
-        assertEquals(0, (int) settingValues.get(KEY_BOOKLET));
-        assertEquals(0, (int) settingValues.get(KEY_BOOKLET_FINISH));
-        assertEquals(0, (int) settingValues.get(KEY_BOOKLET_LAYOUT));
-        assertEquals(0, (int) settingValues.get(KEY_FINISHING_SIDE));
-        assertEquals(0, (int) settingValues.get(KEY_STAPLE));
-        assertEquals(0, (int) settingValues.get(KEY_PUNCH));
-        assertEquals(0, (int) settingValues.get(KEY_OUTPUT_TRAY));
+        assertEquals(DEFAULT_KEY_DUPLEX, (int) settingValues.get(KEY_DUPLEX));
+        assertEquals(DEFAULT_KEY_PAPER_SIZE, (int) settingValues.get(KEY_PAPER_SIZE));
+        assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT)); // from 1 to 0
+        assertEquals(DEFAULT_KEY_PAPER_TRAY, (int) settingValues.get(KEY_PAPER_TRAY));
+        assertEquals(DEFAULT_KEY_INPUT_TRAY, (int) settingValues.get(KEY_INPUT_TRAY));
+        assertEquals(DEFAULT_KEY_IMPOSITION, (int) settingValues.get(KEY_IMPOSITION));
+        assertEquals(DEFAULT_KEY_IMPOSITION_ORDER, (int) settingValues.get(KEY_IMPOSITION_ORDER));
+        assertEquals(DEFAULT_KEY_SORT, (int) settingValues.get(KEY_SORT));
+        assertEquals(DEFAULT_KEY_BOOKLET, (int) settingValues.get(KEY_BOOKLET));
+        assertEquals(DEFAULT_KEY_BOOKLET_FINISH, (int) settingValues.get(KEY_BOOKLET_FINISH));
+        assertEquals(DEFAULT_KEY_BOOKLET_LAYOUT, (int) settingValues.get(KEY_BOOKLET_LAYOUT));
+        assertEquals(DEFAULT_KEY_FINISHING_SIDE, (int) settingValues.get(KEY_FINISHING_SIDE));
+        assertEquals(DEFAULT_KEY_STAPLE, (int) settingValues.get(KEY_STAPLE));
+        assertEquals(DEFAULT_KEY_PUNCH, (int) settingValues.get(KEY_PUNCH));
+        assertEquals(DEFAULT_KEY_OUTPUT_TRAY, (int) settingValues.get(KEY_OUTPUT_TRAY));
     }
 
     // must have default values
@@ -159,24 +178,24 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
 
-        assertEquals(0, (int) settingValues.get(KEY_COLOR));
-        assertEquals(0, (int) settingValues.get(KEY_ORIENTATION));
-        assertEquals(1, (int) settingValues.get(KEY_COPIES));
-        assertEquals(0, (int) settingValues.get(KEY_DUPLEX));
-        assertEquals(2, (int) settingValues.get(KEY_PAPER_SIZE));
-        assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT));
-        assertEquals(0, (int) settingValues.get(KEY_PAPER_TRAY));
-        assertEquals(0, (int) settingValues.get(KEY_INPUT_TRAY));
-        assertEquals(0, (int) settingValues.get(KEY_IMPOSITION));
-        assertEquals(0, (int) settingValues.get(KEY_IMPOSITION_ORDER));
-        assertEquals(0, (int) settingValues.get(KEY_SORT));
-        assertEquals(0, (int) settingValues.get(KEY_BOOKLET));
-        assertEquals(0, (int) settingValues.get(KEY_BOOKLET_FINISH));
-        assertEquals(0, (int) settingValues.get(KEY_BOOKLET_LAYOUT));
-        assertEquals(0, (int) settingValues.get(KEY_FINISHING_SIDE));
-        assertEquals(0, (int) settingValues.get(KEY_STAPLE));
-        assertEquals(0, (int) settingValues.get(KEY_PUNCH));
-        assertEquals(0, (int) settingValues.get(KEY_OUTPUT_TRAY));
+        assertEquals(DEFAULT_KEY_COLOR, (int) settingValues.get(KEY_COLOR));
+        assertEquals(DEFAULT_KEY_ORIENTATION, (int) settingValues.get(KEY_ORIENTATION));
+        assertEquals(DEFAULT_KEY_COPIES, (int) settingValues.get(KEY_COPIES));
+        assertEquals(DEFAULT_KEY_DUPLEX, (int) settingValues.get(KEY_DUPLEX));
+        assertEquals(DEFAULT_KEY_PAPER_SIZE, (int) settingValues.get(KEY_PAPER_SIZE));
+        assertEquals(DEFAULT_KEY_SCALE_TO_FIT, (int) settingValues.get(KEY_SCALE_TO_FIT));
+        assertEquals(DEFAULT_KEY_PAPER_TRAY, (int) settingValues.get(KEY_PAPER_TRAY));
+        assertEquals(DEFAULT_KEY_INPUT_TRAY, (int) settingValues.get(KEY_INPUT_TRAY));
+        assertEquals(DEFAULT_KEY_IMPOSITION, (int) settingValues.get(KEY_IMPOSITION));
+        assertEquals(DEFAULT_KEY_IMPOSITION_ORDER, (int) settingValues.get(KEY_IMPOSITION_ORDER));
+        assertEquals(DEFAULT_KEY_SORT, (int) settingValues.get(KEY_SORT));
+        assertEquals(DEFAULT_KEY_BOOKLET, (int) settingValues.get(KEY_BOOKLET));
+        assertEquals(DEFAULT_KEY_BOOKLET_FINISH, (int) settingValues.get(KEY_BOOKLET_FINISH));
+        assertEquals(DEFAULT_KEY_BOOKLET_LAYOUT, (int) settingValues.get(KEY_BOOKLET_LAYOUT));
+        assertEquals(DEFAULT_KEY_FINISHING_SIDE, (int) settingValues.get(KEY_FINISHING_SIDE));
+        assertEquals(DEFAULT_KEY_STAPLE, (int) settingValues.get(KEY_STAPLE));
+        assertEquals(DEFAULT_KEY_PUNCH, (int) settingValues.get(KEY_PUNCH));
+        assertEquals(DEFAULT_KEY_OUTPUT_TRAY, (int) settingValues.get(KEY_OUTPUT_TRAY));
     }
 
     // must have default values
@@ -243,24 +262,24 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
             HashMap<String, Integer> settingValues = settings.getSettingValues();
             assertNotNull(settingValues);
 
-            assertEquals(0, (int) settingValues.get(KEY_COLOR));
-            assertEquals(0, (int) settingValues.get(KEY_ORIENTATION));
-            assertEquals(1, (int) settingValues.get(KEY_COPIES));
-            assertEquals(0, (int) settingValues.get(KEY_DUPLEX));
-            assertEquals(2, (int) settingValues.get(KEY_PAPER_SIZE));
-            assertEquals(0, (int) settingValues.get(KEY_SCALE_TO_FIT));
-            assertEquals(0, (int) settingValues.get(KEY_PAPER_TRAY));
-            assertEquals(0, (int) settingValues.get(KEY_INPUT_TRAY));
-            assertEquals(0, (int) settingValues.get(KEY_IMPOSITION));
-            assertEquals(0, (int) settingValues.get(KEY_IMPOSITION_ORDER));
-            assertEquals(0, (int) settingValues.get(KEY_SORT));
-            assertEquals(0, (int) settingValues.get(KEY_BOOKLET));
-            assertEquals(0, (int) settingValues.get(KEY_BOOKLET_FINISH));
-            assertEquals(0, (int) settingValues.get(KEY_BOOKLET_LAYOUT));
-            assertEquals(0, (int) settingValues.get(KEY_FINISHING_SIDE));
-            assertEquals(0, (int) settingValues.get(KEY_STAPLE));
-            assertEquals(0, (int) settingValues.get(KEY_PUNCH));
-            assertEquals(0, (int) settingValues.get(KEY_OUTPUT_TRAY));
+            assertEquals(DEFAULT_KEY_COLOR, (int) settingValues.get(KEY_COLOR));
+            assertEquals(DEFAULT_KEY_ORIENTATION, (int) settingValues.get(KEY_ORIENTATION));
+            assertEquals(DEFAULT_KEY_COPIES, (int) settingValues.get(KEY_COPIES));
+            assertEquals(DEFAULT_KEY_DUPLEX, (int) settingValues.get(KEY_DUPLEX));
+            assertEquals(DEFAULT_KEY_PAPER_SIZE, (int) settingValues.get(KEY_PAPER_SIZE));
+            assertEquals(DEFAULT_KEY_SCALE_TO_FIT, (int) settingValues.get(KEY_SCALE_TO_FIT));
+            assertEquals(DEFAULT_KEY_PAPER_TRAY, (int) settingValues.get(KEY_PAPER_TRAY));
+            assertEquals(DEFAULT_KEY_INPUT_TRAY, (int) settingValues.get(KEY_INPUT_TRAY));
+            assertEquals(DEFAULT_KEY_IMPOSITION, (int) settingValues.get(KEY_IMPOSITION));
+            assertEquals(DEFAULT_KEY_IMPOSITION_ORDER, (int) settingValues.get(KEY_IMPOSITION_ORDER));
+            assertEquals(DEFAULT_KEY_SORT, (int) settingValues.get(KEY_SORT));
+            assertEquals(DEFAULT_KEY_BOOKLET, (int) settingValues.get(KEY_BOOKLET));
+            assertEquals(DEFAULT_KEY_BOOKLET_FINISH, (int) settingValues.get(KEY_BOOKLET_FINISH));
+            assertEquals(DEFAULT_KEY_BOOKLET_LAYOUT, (int) settingValues.get(KEY_BOOKLET_LAYOUT));
+            assertEquals(DEFAULT_KEY_FINISHING_SIDE, (int) settingValues.get(KEY_FINISHING_SIDE));
+            assertEquals(DEFAULT_KEY_STAPLE, (int) settingValues.get(KEY_STAPLE));
+            assertEquals(DEFAULT_KEY_PUNCH, (int) settingValues.get(KEY_PUNCH));
+            assertEquals(DEFAULT_KEY_OUTPUT_TRAY, (int) settingValues.get(KEY_OUTPUT_TRAY));
         }
         db.close();
     }
@@ -353,7 +372,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testGetBookletLayout() {
-        assertEquals(Preview.BookletLayout.L_R, mPrintSettings.getBookletLayout());
+        assertEquals(Preview.BookletLayout.FORWARD, mPrintSettings.getBookletLayout());
     }
 
     public void testGetFinishingSide() {
