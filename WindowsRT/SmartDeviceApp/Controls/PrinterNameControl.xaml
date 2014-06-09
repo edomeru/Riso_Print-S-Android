@@ -10,14 +10,12 @@
     mc:Ignorable="d"
     d:DesignHeight="60"
     d:DesignWidth="400" IsHoldingEnabled="False" IsTapEnabled="False" IsDoubleTapEnabled="False" IsRightTapEnabled="False"
-    Loaded="button_Loaded">
+    Loaded="button_Loaded" LayoutUpdated="printerNameControl_LayoutUpdated">
     
 
     <UserControl.Resources>
         <Style x:Key="STYLE_ListItemGrid" TargetType="Grid">
             <Setter Property="Background" Value="{StaticResource BRUSH_Gray2}"/>
-            <Setter Property="MinWidth" Value="{StaticResource SIZE_SidePaneWidth}"/>
-            <Setter Property="Height" Value="{StaticResource SIZE_ListItemHeight}"/>
         </Style>
         <Style x:Key="STYLE_List_Separator" TargetType="Line">
             <Setter Property="X1" Value="{StaticResource MARGIN_List}"/>
@@ -215,15 +213,14 @@
 				Style="{StaticResource STYLE_TextKey}"
 				Width="{Binding TextWidth, ElementName=printerNameControl}"/>
         </StackPanel>
-        <StackPanel x:Name="stackPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}" Margin="0,0,0,0" Width="150" Grid.RowSpan="2">
+        <StackPanel x:Name="stackPanel"  Style="{StaticResource STYLE_StackRight}" Margin="0,0,0,0" >
             <ToggleButton x:Name="deleteButton" 
                           Template="{StaticResource TEMPLATE_DeleteButton}"
         		IsChecked="{Binding WillBeDeleted, ElementName=printerNameControl, Mode=TwoWay}"
         		Visibility="Visible"
         		Command="{Binding DeleteCommand, ElementName=printerNameControl}"
                 CommandParameter="{Binding PrinterIp, ElementName=printerNameControl}"
-                Loaded="deleteButton_Loaded"  BorderThickness="0" />
+                Loaded="deleteButton_Loaded"  BorderThickness="0" Padding="0" />
         </StackPanel>
     </Grid>
 </UserControl>
-<!--Template="{StaticResource TEMPLATE_DeleteButton}"-->

@@ -90,6 +90,7 @@
     <conv:PrinterSearchItemToSeparatorVisibility x:Key="PrinterSearchItemToSeparatorVisibility"/>
     <conv:BooleanToColor x:Key="BooleanToColor"/>
     <conv:PrintersListWidthConverter x:Key="PrintersListWidthConverter"/>
+    <conv:SidePanesHeightConverter x:Key="SidePanesHeightConverter"/>
     <!-- APP CONVERTERS END -->
 
 </ResourceDictionary>

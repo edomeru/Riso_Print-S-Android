@@ -22,6 +22,8 @@ using GalaSoft.MvvmLight;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Views;
+using SmartDeviceApp.Converters;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -109,6 +111,19 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<VisibleRightPane>(this, (visibleRightPane) => SetRightPaneMode(visibleRightPane));
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
             Messenger.Default.Register<ScreenMode>(this, (screenMode) => ScreenModeChanged(screenMode));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPrinterInfoGrid(viewOrientation));            
+        }
+
+        private void ResetPrinterInfoGrid(ViewOrientation viewOrientation)
+        {
+            if (GestureController != null)
+            {
+                var columns = (viewOrientation == Common.Enum.ViewOrientation.Landscape) ? 3 : 2;
+                var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+                var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+                ((AdaptableGridView)GestureController.TargetControl).ItemWidth = (double)((new PrintersListWidthConverter()).Convert(_viewControlViewModel.ViewMode, null,
+                    new ViewItemParameters() { columns = columns, viewOrientation = viewOrientation }, null));
+            }
         }
 
         private void ScreenModeChanged(Common.Enum.ScreenMode screenMode)
@@ -152,21 +167,6 @@ namespace SmartDeviceApp.ViewModels
             }
             
         }
-
-        private void GridTapped(string tapped)
-        {
-            //if (tapped == "ClearDelete")
-            //{
-            //    int i = 0;
-            //    while (i < PrinterList.Count)
-            //    {
-            //        Printer printer = PrinterList.ElementAt(i);
-            //        printer.WillBeDeleted = false;
-            //        i++;
-            //    } 
-            //}
-        }
-
 
         public PrintersRightPaneMode RightPaneMode
         {

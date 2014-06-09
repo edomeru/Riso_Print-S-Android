@@ -12,9 +12,9 @@
     mc:Ignorable="d"
     d:DesignWidth="400"
     x:Name="SearchPrinterPaneControl"
-    Height="{Binding Converter={StaticResource HeightConverter}}"
-    DataContext="{Binding SearchPrinterViewModel, Source={StaticResource Locator}}">
-
+    DataContext="{Binding SearchPrinterViewModel, Source={StaticResource Locator}}"
+    Height="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}">
+    
     <UserControl.Resources>
         <Style x:Key="STYLE_RootGrid" TargetType="Grid">
             <Style.Setters>
@@ -74,6 +74,15 @@
     </UserControl.Resources>
 
     <Grid Style="{StaticResource STYLE_RootGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="1"/>
+        </Grid.ColumnDefinitions>
+        
         <VisualStateManager.VisualStateGroups>
         <VisualStateGroup x:Name="PrinterSearchRefreshStateGroup">
             <VisualState x:Name="RefreshingState">
@@ -115,17 +124,17 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
+        <!--<Grid.RowDefinitions>
+            <RowDefinition Height ="{Binding Height, ElementName=SearchPrinterPaneControl}"/>
             <RowDefinition />
-        </Grid.RowDefinitions>
+        </Grid.RowDefinitions>-->
         <controls:SidePaneTitleControl Title="{Binding Source=IDS_LBL_SEARCH_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 
-                                       Loaded="OnLoaded"/>
-        <Grid Margin="0,0,0,0" Grid.Row="1" Background="#FF262626">
+                                       Loaded="OnLoaded" Grid.Row ="0"/>
+        <Grid Margin="0,0,0,0" Grid.Row="1" Background="#FF262626" >
             
 
             <!--CONTENTS HERE-->
-            <StackPanel >
+            <StackPanel>
                 <Grid x:Name="ProgressGrid" Height="60" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="40" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="#FF262626">
                         <Interactivity:Interaction.Behaviors>
@@ -143,18 +152,19 @@
                 <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="NoPrintersFoundView"
                                              Visibility="{Binding DataContext.NoPrintersFound, ElementName=SearchPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}"
 				                    	     ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
-                                             
+                                             Height ="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}"
                                              IsItemClickEnabled="True" SelectionMode="None" Tag="{Binding}"
-                                             Height="719" ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
-                    <Grid Height="340"/>
+                                              ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
+                    <Grid Height ="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}">
                     <TextBlock Text="No Printers Found" Style="{StaticResource STYLE_TextBody}" Foreground="{StaticResource BRUSH_Black}"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
                 </local:PullToRefreshListView>
                 <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="printerSearchListView"
 				                    	     ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
                                              ItemsSource="{Binding DataContext.PrinterSearchList, ElementName=SearchPrinterPaneControl}" 
                                              IsItemClickEnabled="True" SelectionMode="None" Tag="{Binding}"
-                                             Height="719" ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
-
+                                             Height ="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}" ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
+                    
                     <local:PullToRefreshListView.ItemTemplate>
                         <DataTemplate>
                             <Grid HorizontalAlignment="Stretch" Margin="0" Tag="{Binding}">

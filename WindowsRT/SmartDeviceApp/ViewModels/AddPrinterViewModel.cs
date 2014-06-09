@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Converters;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -29,7 +31,8 @@ namespace SmartDeviceApp.ViewModels
 
         private bool _isProgressRingVisible;
         private bool _isButtonVisible;
-        
+
+        private double _height;
 
         public event SmartDeviceApp.Controllers.PrinterController.AddPrinterHandler AddPrinterHandler;
         public event SmartDeviceApp.Controllers.PrinterController.ClearIpAddressToAddHandler ClearIpAddressToAddHandler;
@@ -50,6 +53,25 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<VisibleRightPane>(this, (rightPaneMode) => SetRightPaneMode(rightPaneMode));
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<MessageType>(this, (strMsg) => HandleStringMessage(strMsg));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetAddPane(viewOrientation));
+            
+        }
+
+        private void ResetAddPane(ViewOrientation viewOrientation)
+        {
+            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+            Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
+        }
+
+        public double Height
+        {
+            get { return this._height; }
+            set
+            {
+                _height = value;
+                OnPropertyChanged("Height");
+
+            }
         }
 
         private async Task HandleStringMessage(MessageType strMsg)

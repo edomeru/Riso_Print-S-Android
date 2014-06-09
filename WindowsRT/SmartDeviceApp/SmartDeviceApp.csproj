@@ -209,6 +209,7 @@
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
+    <Compile Include="Models\ViewItemParameters.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
     <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />

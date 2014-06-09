@@ -124,7 +124,7 @@
 						SelectionMode="None"
 						IsItemClickEnabled="False"  
                         ItemsSource="{Binding PrinterList}"  ScrollViewer.HorizontalScrollMode="Disabled"
-                              Loaded="printerInfoView_Loaded"       Style="{StaticResource AdaptableGridViewStyle1}" IsSwipeEnabled="False" IsHoldingEnabled="False" IsTapEnabled="False" ItemContainerStyle="{StaticResource GridViewItemStyle1}">
+                              Loaded="printerInfoView_Loaded"   LayoutUpdated="printerInfoView_LayoutUpdated"    Style="{StaticResource AdaptableGridViewStyle1}" IsSwipeEnabled="False" IsHoldingEnabled="False" IsTapEnabled="False" ItemContainerStyle="{StaticResource GridViewItemStyle1}">
                 <!--<local:AdaptableGridView.Margin>
                     <Thickness Top="{StaticResource MARGIN_Default}"
                                    Bottom="{StaticResource MARGIN_Default}"

@@ -10,8 +10,9 @@
     mc:Ignorable="d"
     d:DesignWidth="400"
     x:Name="AddPrinterPaneControl"
-    Height="{Binding Converter={StaticResource HeightConverter}}"
-    DataContext="{Binding AddPrinterViewModel, Source={StaticResource Locator}}">
+    
+    DataContext="{Binding AddPrinterViewModel, Source={StaticResource Locator}}"
+    >
 
     <!--TODO: Localize title!!-->
 
@@ -175,34 +176,33 @@
         </ControlTemplate>
     </UserControl.Resources>
 
-    <Grid Style="{StaticResource STYLE_RootGrid}">
+    <Grid Style="{StaticResource STYLE_RootGrid}" >
 
         <Grid.RowDefinitions>
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <controls:SidePaneTitleControl x:Name="AddSidePane"
+        <controls:SidePaneTitleControl x:Name="AddSidePane" Grid.Row="0" Loaded="AddSidePane_Loaded"
                                        Title="{Binding Source=IDS_LBL_ADD_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"/>
         
         <!--<Grid Margin="0,0,0,10" >-->
         <!--CONTENTS HERE-->
         <!--<Grid Margin="0,0,0,0">-->
-        <Grid Margin="0,10,0,628" Width="400" Grid.Row="1">
+        <Grid  Width="400" Grid.Row="1" Height="{Binding DataContext.Height, ElementName=AddPrinterPaneControl}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="8*"/>
-                <RowDefinition/>
+                <RowDefinition Height="80" />
             </Grid.RowDefinitions>
-
-            <TextBox x:Name="ipTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" IsTabStop="{Binding IsButtonVisible}"
-                               PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" FontSize="20" Style="{StaticResource IPAddressTextBoxStyle1}"
-                     Loaded="ipTextBox_Loaded" IsReadOnly="{Binding IsProgressRingVisible}" Margin="30,10,79,10"/>
-            <StackPanel Style="{StaticResource STYLE_StackRight}" Margin="0,10,25,10">
-                <ProgressRing x:Name="progressRing" Foreground="White" IsActive="True" Visibility="{Binding DataContext.IsProgressRingVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}" Width="34" Height="34"/>
-                <Button x:Name="button" Visibility="{Binding DataContext.IsButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}"
-            		Template="{StaticResource TEMPLATE_Button}" Command="{Binding DataContext.AddPrinter, ElementName=AddPrinterPaneControl}" />
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <TextBox x:Name="ipTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" IsTabStop="{Binding IsButtonVisible}"
+                                   PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" FontSize="20" Style="{StaticResource IPAddressTextBoxStyle1}"
+                         Loaded="ipTextBox_Loaded" IsReadOnly="{Binding IsProgressRingVisible}" Margin="30,20,10,10" Width="300"/>
+                <StackPanel Style="{StaticResource STYLE_StackRight}" Orientation="Horizontal">
+                    <ProgressRing x:Name="progressRing" Foreground="White" IsActive="True" Visibility="{Binding DataContext.IsProgressRingVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}" Width="34" Height="34"/>
+                    <Button x:Name="button" Visibility="{Binding DataContext.IsButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}"
+            		    Template="{StaticResource TEMPLATE_Button}" Command="{Binding DataContext.AddPrinter, ElementName=AddPrinterPaneControl}" />
                 
+                </StackPanel>
             </StackPanel>
-
         </Grid>
     </Grid>
 </UserControl>

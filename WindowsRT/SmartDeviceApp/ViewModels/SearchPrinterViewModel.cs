@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Converters;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.Xaml;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -35,6 +37,8 @@ namespace SmartDeviceApp.ViewModels
 
         private bool _noPrintersFound;
 
+        private double _height;
+
         private ViewControlViewModel _viewControlViewModel;
         public SearchPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -46,7 +50,26 @@ namespace SmartDeviceApp.ViewModels
 
             //Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetSearchPane(viewOrientation));
+            
+        }
 
+        private void ResetSearchPane(ViewOrientation viewOrientation)
+        {
+            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+            Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
+        }
+
+
+        public double Height
+        {
+            get { return this._height; }
+            set
+            {
+                _height = value;
+                OnPropertyChanged("Height");
+
+            }
         }
 
         private async void SetViewMode(VisibleRightPane viewMode)

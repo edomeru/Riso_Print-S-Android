@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using System;
 using System.Collections.Generic;
@@ -199,6 +200,11 @@ namespace SmartDeviceApp.Controls
 
         private void button_Loaded(object sender, RoutedEventArgs e)
         {
+            resizeTextWidth();
+        }
+
+        private void resizeTextWidth()
+        {
             //compute for text width
             try
             {
@@ -232,7 +238,7 @@ namespace SmartDeviceApp.Controls
                 
 
                 // Image
-                maxTextWidth -= ImageConstant.GetIconImageWidth(sender);
+                maxTextWidth -= ImageConstant.GetIconImageWidth(this);
                 maxTextWidth -= defaultMargin;
                 if (maxTextWidth <= 0)
                 {
@@ -247,6 +253,11 @@ namespace SmartDeviceApp.Controls
             {
                 LogUtility.LogError(ex);
             }
+        }
+
+        private void printerNameControl_LayoutUpdated(object sender, object e)
+        {
+            resizeTextWidth();
         }
 
     }
