@@ -13,10 +13,6 @@
 #import "AlertHelper.h"
 #import "InputHelper.h"
 
-#define TAG_TEXT_IP         0
-#define TAG_TEXT_USERNAME   1
-#define TAG_TEXT_PASSWORD   2
-
 @interface AddPrinterViewController ()
 
 #pragma mark - Data Properties
@@ -132,7 +128,6 @@
     
     [self.progressIndicator setHidden:YES];
     [self.saveButton setHidden:NO];
-    [self.saveButton setEnabled:NO];
     [self.textIP setEnabled:YES];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -198,13 +193,16 @@
 {
     [self dismissKeypad];
     
-    NSString *formattedIP = self.textIP.text;
-
-    //this will also format the input IP
-    bool isValid = [InputHelper isIPValid:&formattedIP];
-
-    self.textIP.text = formattedIP;
+    if ([self.textIP.text isEqualToString:@""])
+    {
+        [AlertHelper displayResult:kAlertResultErrInvalidIP
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
+        return;
+    }
     
+    NSString *formattedIP = self.textIP.text;
+    bool isValid = [InputHelper isIPValid:&formattedIP];
     if (!isValid)
     {
         [AlertHelper displayResult:kAlertResultErrInvalidIP
@@ -212,6 +210,8 @@
                        withDetails:nil];
         return;
     }
+
+    self.textIP.text = formattedIP;
     
     // was this printer already added before?
     if ([self.printerManager isIPAlreadyRegistered:formattedIP])
@@ -327,35 +327,13 @@
     return YES;
 }
 
-- (BOOL)textFieldShouldClear:(UITextField *)textField
-{
-    // disable the Save button if the IP Address text is cleared
-    if (textField.tag == TAG_TEXT_IP)
-        [self.saveButton setEnabled:NO];
-         
-    return YES;
-}
-
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if (textField.tag == TAG_TEXT_IP)
+    NSCharacterSet *validCharacters = [NSCharacterSet characterSetWithCharactersInString:@"0123456789abcdefABCDEF.:"];
+    // ignore not valid characters
+    if([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
     {
-        NSCharacterSet *validCharacters = [NSCharacterSet characterSetWithCharactersInString:@"0123456789abcdefABCDEF.:"];
-        // ignore not valid characters
-        if([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
-        {
-            return NO;
-        }
-
-        // disable the Save button if backspace will clear the IP Address text
-        if ((range.length == 1) && (range.location == 0) && ([string isEqualToString:@""]))
-        {
-            [self.saveButton setEnabled:NO];
-        }
-        else
-        {
-            [self.saveButton setEnabled:YES];
-        }
+        return NO;
     }
     
     return YES;
