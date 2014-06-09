@@ -16,7 +16,6 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.text.IpAddressFilter;
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.JniUtils;
@@ -273,19 +272,10 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     private void startManualSearch() {       
         String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
         
-        if (ipAddress.isEmpty()) {
+        ipAddress = JniUtils.validateIpAddress(ipAddress);
+        if (ipAddress == null) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
             return;
-        }
-        
-        if (NetUtils.isIPv4Address(ipAddress) || NetUtils.isIPv6Address(ipAddress)) {
-            ipAddress = NetUtils.trimZeroes(ipAddress);
-        } else {
-            dialogErrCb(ERR_INVALID_IP_ADDRESS);
-            return;
-        }        
-        if (NetUtils.isIPv6Address(ipAddress)) {
-            ipAddress = JniUtils.validateIp(ipAddress);
         }
         mAddPrinterView.mIpAddress.setText(ipAddress);
         if (mPrinterManager.isExists(ipAddress)) {

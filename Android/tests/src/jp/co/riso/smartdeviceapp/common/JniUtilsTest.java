@@ -119,7 +119,7 @@ public class JniUtilsTest extends TestCase {
         
         for (int i = 0; i < IPv4_VALID_ADDRESS.length; i++) {
             ipAddress = JniUtils.validateIp(null);
-            assertNotSame("", ipAddress);
+            assertNull(ipAddress);
         }
     }
     
@@ -127,7 +127,7 @@ public class JniUtilsTest extends TestCase {
         String ipAddress = null;
         for (int i = 0; i < IP_INVALID_ADDRESS.length; i++) {
             ipAddress = JniUtils.validateIp(null);
-            assertSame("", ipAddress);
+            assertNull(ipAddress);
         }
     }
 }

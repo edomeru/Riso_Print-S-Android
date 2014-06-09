@@ -25,8 +25,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class NetUtils {
-    public static final int IPV6_MIN_BUFFER_SIZE = 48;
-    public static final int IPV4_MIN_BUFFER_SIZE = 16;
     private static final Pattern IPV4_PATTERN;
     private static final Pattern IPV4_MULTICAST_PATTERN;
     private static final Pattern IPV6_STD_PATTERN;
@@ -129,6 +127,22 @@ public class NetUtils {
     }
     
     /**
+     * Validates an IP Address
+     * 
+     * @param ipAddress
+     *            IP Address to be validated
+     * @return Valid IP address. Null is returned for invalid IP Address.
+     */
+    public static String validateIpAddress(String ipAddress) {
+        String validatedIp = null;
+        
+        if (NetUtils.isIPv4Address(ipAddress) || NetUtils.isIPv6Address(ipAddress)) {
+            validatedIp = NetUtils.trimZeroes(ipAddress);
+        }
+        return validatedIp;
+    }
+    
+    /**
      * Determines network connectivity
      * 
      * @param context
@@ -150,7 +164,7 @@ public class NetUtils {
      * 
      * @param ipAddress
      *            Input IP Address
-     * @return
+     * @return IP Address with leading zeroes trimmed
      */
     public static String trimZeroes(String ipAddress) {
         if (ipAddress == null) {
@@ -162,11 +176,11 @@ public class NetUtils {
         String newIpAddress = null;
         
         if (isIPv4Address(ipAddress)) {
-            ipAddrBuilder = new StringBuilder(IPV4_MIN_BUFFER_SIZE);
+            ipAddrBuilder = new StringBuilder();
             ipv4Addr = ipAddress;
         }
         if (isIPv6Address(ipAddress)) {
-            ipAddrBuilder = new StringBuilder(IPV6_MIN_BUFFER_SIZE);
+            ipAddrBuilder = new StringBuilder();
             ipv6part = new ArrayList<String>(Arrays.asList(ipAddress.split("\\:")));
             if (isIPv6Ipv4DerivedAddress(ipAddress)) {
                 ipv4Addr = ipv6part.get(ipv6part.size() - 1);
@@ -174,7 +188,7 @@ public class NetUtils {
             }
             for (int i = 0; i < ipv6part.size(); i++) {
                 try {
-                    ipAddrBuilder.append(Integer.toHexString(Integer.parseInt(ipv6part.get(i), IPV4_MIN_BUFFER_SIZE)));
+                    ipAddrBuilder.append(Integer.toHexString(Integer.parseInt(ipv6part.get(i), 16)));
                     if (i < ipv6part.size() - 1 || ipv4Addr != null) {
                         ipAddrBuilder.append(':');
                     }

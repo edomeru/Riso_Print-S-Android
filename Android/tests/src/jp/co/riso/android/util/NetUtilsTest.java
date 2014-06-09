@@ -540,6 +540,38 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     // ================================================================================
+    // Tests - validateIpAddress
+    // ================================================================================
+
+    public void testValidateIpAddress_ipV6() {
+        String ipV6Addr = null;
+        for (int i = 0; i < IPv6_TRIMMED_VALID_ADDRESS.length; i++) {
+            ipV6Addr = IPv6_TRIMMED_VALID_ADDRESS[i];
+
+            assertEquals(ipV6Addr, NetUtils.validateIpAddress(IPv6_VALID_ADDRESS[i]));
+        }
+    }
+
+    public void testValidateIpAddress_ipV4() {
+        String ipV4Addr = null;
+        for (int i = 0; i < IPv4_TRIMMED_VALID_ADDRESS.length; i++) {
+            ipV4Addr = IPv4_TRIMMED_VALID_ADDRESS[i];
+
+            assertEquals(ipV4Addr, NetUtils.validateIpAddress(IPv4_VALID_ADDRESS[i]));
+        }
+    }
+
+    public void testValidateIpAddress_nullIpAddress() {
+        assertNull(NetUtils.validateIpAddress(null));
+    }
+
+    public void testValidateIpAddress_invalid() {
+        for (int i = 0; i < IPv6_INVALID_ADDRESS.length; i++) {
+            assertNull(NetUtils.validateIpAddress(IPv6_INVALID_ADDRESS[i]));
+        }
+    }
+    
+    // ================================================================================
     // Private
     // ================================================================================
 
