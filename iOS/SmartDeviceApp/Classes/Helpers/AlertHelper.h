@@ -46,10 +46,7 @@ typedef enum
     kAlertResultPrintSuccessful,
     
     // db-related errors
-    kAlertResultErrDB,
-    
-    // default error message
-    kAlertResultErrDefault
+    kAlertResultErrDB
     
 } kAlertResult;
 

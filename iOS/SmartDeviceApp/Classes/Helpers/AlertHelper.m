@@ -97,7 +97,6 @@
             
         //use the same localization for default error and db-related error.
         case kAlertResultErrDB:
-        case kAlertResultErrDefault:
         default:
             alertMsg = NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @"");
             break;

@@ -128,7 +128,6 @@
 "IDS_ERR_MSG_CANNOT_ADD_PRINTER" = "このプリンターはすでに登録されています。";
 "IDS_ERR_MSG_INVALID_IP_ADDRESS" = "IP Addressを確認してください。";
 "IDS_ERR_MSG_MAX_PRINTER_COUNT" = "Saved Printer reached maximum count.";
-"IDS_ERR_MSG_DELETE_FAILED" = "削除に失敗しました。";
 "IDS_ERR_MSG_NO_SELECTED_PRINTER" = "プリンターを登録してください。";
 "IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "パスワードが正しくありません。確認してください。";
 "IDS_ERR_MSG_OPEN_FAILED" = "ファイルが開けません。";
