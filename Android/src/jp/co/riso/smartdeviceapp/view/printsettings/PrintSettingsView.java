@@ -21,7 +21,6 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusC
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
@@ -349,17 +348,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         
-        if (tag.equals(PrintSettings.TAG_BOOKLET_LAYOUT)) {
-            boolean isLandscape = (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal());
-            switch (BookletLayout.values()[value]) {
-                case L_R:
-                case R_L:
-                    return !isLandscape;
-                case T_B:
-                    return isLandscape;
-            }
-        }
-        
         if (tag.equals(PrintSettings.TAG_OUTPUT_TRAY)) {
             boolean isPunch = mPrintSettings.getPunch() != Punch.OFF;
             switch (OutputTray.values()[value]) {
@@ -392,12 +380,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
             if (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal()) {
                 defaultValue = FinishingSide.TOP.ordinal();
-            }
-        }
-        
-        if (tag.equals(PrintSettings.TAG_BOOKLET_LAYOUT)) {
-            if (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal()) {
-                defaultValue = BookletLayout.T_B.ordinal();
             }
         }
         
@@ -595,21 +577,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     }
                 } else {
                     updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.TL_R.ordinal());
-                }
-            }
-        }
-        
-        // Constraint #6 Orientation
-        if (tag.equals(PrintSettings.TAG_ORIENTATION)) {
-            int layoutValue = mPrintSettings.getBookletLayout().ordinal();
-            
-            if (value == Orientation.PORTRAIT.ordinal()) {
-                if (layoutValue == BookletLayout.T_B.ordinal()) {
-                    updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
-                }
-            } else {
-                if (layoutValue == BookletLayout.L_R.ordinal() || layoutValue == BookletLayout.R_L.ordinal()) {
-                    updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
                 }
             }
         }

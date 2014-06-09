@@ -404,6 +404,8 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 				mPageRectLeft.offset(mPageRectRight.width(), 0);
 			} else if (mBindPosition == CurlView.BIND_TOP) {
 				mPageRectLeft.offset(0, -mPageRectRight.height());
+			} else if (mBindPosition == CurlView.BIND_BOTTOM) {
+				mPageRectLeft.offset(0, mPageRectRight.height());
 			}
 
 			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
@@ -428,6 +430,9 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 			} else if (mBindPosition == CurlView.BIND_TOP) {
 				mPageRectLeft.bottom = (mPageRectLeft.bottom + mPageRectLeft.top) / 2;
 				mPageRectRight.top = mPageRectLeft.bottom;
+			} else if (mBindPosition == CurlView.BIND_BOTTOM) {
+				mPageRectLeft.top = (mPageRectLeft.bottom + mPageRectLeft.top) / 2;
+				mPageRectRight.bottom = mPageRectLeft.top;
 			}
 
 			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect

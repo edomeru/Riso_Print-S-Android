@@ -162,7 +162,7 @@ public class Preview {
     }
     
     public enum BookletLayout {
-        L_R, R_L, T_B;
+        FORWARD, REVERSE;
     }
     
     public enum FinishingSide {

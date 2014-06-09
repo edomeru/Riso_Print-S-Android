@@ -90,6 +90,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	public static final int BIND_LEFT = 0;
 	public static final int BIND_RIGHT = 1;
 	public static final int BIND_TOP = 2;
+	public static final int BIND_BOTTOM = 3;
 
 	private int mBindPosition = BIND_LEFT;
 
@@ -261,6 +262,9 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				case BIND_TOP:
 					rect.top = lRect.top;
 					break;
+				case BIND_BOTTOM:
+					rect.bottom = lRect.bottom;
+					break;
 			}
 		}
 
@@ -429,6 +433,24 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 					
 				}
 
+				if (mBindPosition == BIND_BOTTOM) {
+					if (mDragStartPos.y < rightRect.bottom && mCurrentIndex > 0) {
+						mDragStartPos.y = leftRect.bottom;
+						startCurl(CURL_LEFT);
+					}
+					// Otherwise check pointer is on right page's side.
+					else if (mDragStartPos.y >= rightRect.bottom
+							&& mCurrentIndex < mPageProvider.getPageCount()) {
+						mDragStartPos.y = rightRect.top;
+						if (!mAllowLastPageCurl
+								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
+							return true;
+						}
+						startCurl(CURL_RIGHT);
+					}
+					
+				}
+
 			} else if (mViewMode == SHOW_ONE_PAGE) {
 				if (mBindPosition == BIND_LEFT) {
 					float halfX = (rightRect.right + rightRect.left) / 2;
@@ -470,6 +492,22 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 					} else if (mDragStartPos.y <= halfY
 							&& mCurrentIndex < mPageProvider.getPageCount()) {
 						mDragStartPos.y = rightRect.bottom;
+						if (!mAllowLastPageCurl
+								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
+							return true;
+						}
+						startCurl(CURL_RIGHT);
+					}
+				}
+
+				if (mBindPosition == BIND_BOTTOM) {
+					float halfY = (rightRect.top + rightRect.bottom) / 2;
+					if (mDragStartPos.y < halfY && mCurrentIndex > 0) {
+						mDragStartPos.y = rightRect.bottom;
+						startCurl(CURL_LEFT);
+					} else if (mDragStartPos.y >= halfY
+							&& mCurrentIndex < mPageProvider.getPageCount()) {
+						mDragStartPos.y = rightRect.top;
 						if (!mAllowLastPageCurl
 								&& mCurrentIndex >= mPageProvider.getPageCount() - 1) {
 							return true;
@@ -565,6 +603,27 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 							mAnimationTarget.y = leftRect.top;
 						} else {
 							mAnimationTarget.y = rightRect.top;
+						}
+						mAnimationTargetEvent = SET_CURL_TO_LEFT;
+					}
+				}
+
+				if (mBindPosition == BIND_BOTTOM) {
+					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y > (rightRect.top + rightRect.bottom) / 2)
+							|| mViewMode == SHOW_TWO_PAGES
+							&& mPointerPos.mPos.y > rightRect.bottom)) {
+						// On right side target is always right page's right border.
+						mAnimationTarget.set(mDragStartPos);
+						mAnimationTarget.y = mRenderer
+								.getPageRect(CurlRenderer.PAGE_RIGHT).top;
+						mAnimationTargetEvent = SET_CURL_TO_RIGHT;
+					} else {
+						// On left side target depends on visible pages.
+						mAnimationTarget.set(mDragStartPos);
+						if (mCurlState == CURL_RIGHT || mViewMode == SHOW_TWO_PAGES) {
+							mAnimationTarget.y = leftRect.bottom;
+						} else {
+							mAnimationTarget.y = rightRect.bottom;
 						}
 						mAnimationTargetEvent = SET_CURL_TO_LEFT;
 					}
@@ -682,6 +741,29 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 					}
 				}
 			}
+
+			if (mBindPosition == BIND_BOTTOM) {
+				RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT);
+				if (curlPos.y >= pageRect.top) {
+					mPageCurl.reset();
+					requestRender();
+					return;
+				}
+				if (curlPos.y < pageRect.bottom) {
+					curlPos.y = pageRect.bottom;
+				}
+				if (curlDir.x != 0) {
+					float diffY = curlPos.y - pageRect.bottom;
+					float topX = curlPos.x + (diffY * curlDir.y / curlDir.x);
+					if (curlDir.x > 0 && topX > pageRect.left) {
+						curlDir.y = pageRect.left - curlPos.x;
+						curlDir.x = curlPos.y - pageRect.bottom;
+					} else if (curlDir.x < 0 && topX < pageRect.right) {
+						curlDir.y = curlPos.x - pageRect.right;
+						curlDir.x = pageRect.bottom - curlPos.y;
+					}
+				}
+			}
 		} else if (mCurlState == CURL_LEFT) {
 			if (mBindPosition == BIND_LEFT) {
 				RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
@@ -748,6 +830,29 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 					} else if (curlDir.x < 0 && bottomX < pageRect.right) {
 						curlDir.y = curlPos.x - pageRect.right;
 						curlDir.x = pageRect.bottom - curlPos.y;
+					}
+				}
+			}
+
+			if (mBindPosition == BIND_BOTTOM) {
+				RectF pageRect = mRenderer.getPageRect(CurlRenderer.PAGE_LEFT);
+				if (curlPos.y <= pageRect.bottom) {
+					mPageCurl.reset();
+					requestRender();
+					return;
+				}
+				if (curlPos.y > pageRect.top) {
+					curlPos.y = pageRect.top;
+				}
+				if (curlDir.x != 0) {
+					float diffY = curlPos.y - pageRect.top;
+					float bottomX = curlPos.x + (diffY * curlDir.y / curlDir.x);
+					if (curlDir.x > 0 && bottomX > pageRect.left) {
+						curlDir.y = curlPos.x - pageRect.left;
+						curlDir.x = pageRect.top - curlPos.y;
+					} else if (curlDir.x < 0 && bottomX < pageRect.right) {
+						curlDir.y = pageRect.right - curlPos.x;
+						curlDir.x = curlPos.y - pageRect.top;
 					}
 				}
 			}
@@ -996,7 +1101,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 
 		// Default curl radius.
 		double radius = mRenderer.getPageRect(CURL_RIGHT).width() / 3;
-		if (mBindPosition == BIND_TOP) {
+		if (mBindPosition == BIND_TOP || mBindPosition == BIND_BOTTOM) {
 			radius = -mRenderer.getPageRect(CURL_RIGHT).height() / 3;
 		}
 		// TODO: This is not an optimal solution. Based on feedback received so
@@ -1052,7 +1157,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 					mCurlPos.y += mCurlDir.y * translate / dist;
 				}
 			}
-			if (mBindPosition == BIND_TOP) {
+			if (mBindPosition == BIND_TOP || mBindPosition == BIND_BOTTOM) {
 				// Adjust curl radius so that if page is dragged far enough on
 				// opposite side, radius gets closer to zero.
 				float pageHeight = -mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT)
@@ -1097,7 +1202,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				mCurlDir.y = mCurlPos.y - mDragStartPos.y;
 			}
 
-			if (mBindPosition == BIND_TOP) {
+			if (mBindPosition == BIND_TOP || mBindPosition == BIND_BOTTOM) {
 				// Adjust radius regarding how close to page edge we are.
 				float pageTopY = mRenderer.getPageRect(CurlRenderer.PAGE_RIGHT).top;
 				radius = Math.max(Math.min(pageTopY - mCurlPos.y , radius), 0f);

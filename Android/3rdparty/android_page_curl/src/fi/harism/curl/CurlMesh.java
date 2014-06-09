@@ -813,7 +813,7 @@ public class CurlMesh {
 	public synchronized void setFlipTexture(boolean flipTexture) {
 		mFlipTexture = flipTexture;
 		if (flipTexture) {
-			if (mBindPosition == CurlView.BIND_TOP) {
+			if (mBindPosition == CurlView.BIND_TOP || mBindPosition == CurlView.BIND_BOTTOM) {
 	 			setTexCoords(0f, 1f, 1f, 0f);
 			} else {
 				setTexCoords(1f, 0f, 0f, 1f);
