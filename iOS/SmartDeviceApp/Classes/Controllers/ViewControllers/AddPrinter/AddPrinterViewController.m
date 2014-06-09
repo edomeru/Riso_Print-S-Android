@@ -129,6 +129,7 @@
     [self.progressIndicator setHidden:YES];
     [self.saveButton setHidden:NO];
     [self.textIP setEnabled:YES];
+    [self.textIP setPlaceholder:NSLocalizedString(IDS_LBL_IP_ADDRESS, @"")];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         self.isIpad = YES;
