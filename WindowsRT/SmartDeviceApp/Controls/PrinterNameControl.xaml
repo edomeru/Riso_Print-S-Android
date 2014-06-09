@@ -163,7 +163,7 @@
         
     </UserControl.Resources>
 
-    <Grid x:Name="button"  Background="#FF919191"  Style="{StaticResource STYLE_ListItemGrid}">
+    <Grid x:Name="button"  Background="#FF919191"  Style="{StaticResource STYLE_ListItemGrid}" Height="60">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonStates">
                 <VisualState x:Name="DefaultPrinterState">
@@ -178,11 +178,10 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="1" />
+            <RowDefinition Height="60" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Interactivity:Interaction.Behaviors>
@@ -213,14 +212,14 @@
 				Style="{StaticResource STYLE_TextKey}"
 				Width="{Binding TextWidth, ElementName=printerNameControl}"/>
         </StackPanel>
-        <StackPanel x:Name="stackPanel"  Style="{StaticResource STYLE_StackRight}" Margin="0,0,0,0" >
+        <StackPanel x:Name="stackPanel" Grid.Row="0" Grid.Column="1"  Grid.ColumnSpan="2" Style="{StaticResource STYLE_StackRight}" Margin="15,0,0,0" >
             <ToggleButton x:Name="deleteButton" 
-                          Template="{StaticResource TEMPLATE_DeleteButton}"
+        		Template="{StaticResource TEMPLATE_DeleteButton}"
         		IsChecked="{Binding WillBeDeleted, ElementName=printerNameControl, Mode=TwoWay}"
         		Visibility="Visible"
         		Command="{Binding DeleteCommand, ElementName=printerNameControl}"
-                CommandParameter="{Binding PrinterIp, ElementName=printerNameControl}"
-                Loaded="deleteButton_Loaded"  BorderThickness="0" Padding="0" />
+        		CommandParameter="{Binding PrinterIp, ElementName=printerNameControl}"
+        		Loaded="deleteButton_Loaded"  BorderThickness="0" Padding="0" />
         </StackPanel>
     </Grid>
 </UserControl>
