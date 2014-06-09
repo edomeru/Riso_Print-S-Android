@@ -229,7 +229,7 @@
         [self addFullCapabilityPrinter:formattedIP];
         self.hasAddedPrinters = YES;
         if (self.isIpad)
-            [self.printersViewController reloadData];
+            [self.printersViewController reloadPrinters];
         
         [AlertHelper displayResult:kAlertResultErrPrinterNotFound
                          withTitle:kAlertTitlePrintersAdd
@@ -268,7 +268,7 @@
         [self addFullCapabilityPrinter:trimmedIP];
         self.hasAddedPrinters = YES;
         if (self.isIpad)
-            [self.printersViewController reloadData];
+            [self.printersViewController reloadPrinters];
         
         [AlertHelper displayResult:kAlertResultErrPrinterNotFound
                          withTitle:kAlertTitlePrintersAdd
@@ -290,7 +290,7 @@
     {
         self.hasAddedPrinters = YES;
         if (self.isIpad)
-            [self.printersViewController reloadData];
+            [self.printersViewController reloadPrinters];
         
         [AlertHelper displayResult:kAlertResultInfoPrinterAdded
                          withTitle:kAlertTitlePrintersAdd

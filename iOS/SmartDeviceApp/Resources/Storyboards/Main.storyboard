@@ -975,16 +975,27 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Printers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dF1-M7-1Ty" userLabel="EmptyLabel">
+                                <rect key="frame" x="238" y="401" width="124" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTERS_EMPTY"/>
+                                </userDefinedRuntimeAttributes>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="wgF-aL-OIc" firstAttribute="top" secondItem="Z56-E4-xom" secondAttribute="bottom" id="0ej-Aw-KXs"/>
                             <constraint firstItem="Z56-E4-xom" firstAttribute="top" secondItem="pRX-MI-yIx" secondAttribute="top" id="8HS-iN-F5t"/>
                             <constraint firstAttribute="bottom" secondItem="wgF-aL-OIc" secondAttribute="bottom" id="aeq-y1-Cmd"/>
+                            <constraint firstItem="dF1-M7-1Ty" firstAttribute="centerX" secondItem="wgF-aL-OIc" secondAttribute="centerX" id="ews-Ch-lRO"/>
                             <constraint firstItem="Z56-E4-xom" firstAttribute="leading" secondItem="pRX-MI-yIx" secondAttribute="leading" id="jfu-58-MPI"/>
                             <constraint firstItem="wgF-aL-OIc" firstAttribute="leading" secondItem="pRX-MI-yIx" secondAttribute="leading" id="ngh-pX-qu4"/>
                             <constraint firstAttribute="trailing" secondItem="wgF-aL-OIc" secondAttribute="trailing" id="pkZ-Sx-E8H"/>
                             <constraint firstAttribute="trailing" secondItem="Z56-E4-xom" secondAttribute="trailing" id="vNx-jw-SeA"/>
+                            <constraint firstItem="dF1-M7-1Ty" firstAttribute="centerY" secondItem="wgF-aL-OIc" secondAttribute="centerY" id="x8P-4M-hpw"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
@@ -994,6 +1005,7 @@
                     <connections>
                         <outlet property="addPrinterButton" destination="A02-B0-54s" id="AVy-O4-DD4"/>
                         <outlet property="collectionView" destination="wgF-aL-OIc" id="8OG-GL-x70"/>
+                        <outlet property="emptyLabel" destination="dF1-M7-1Ty" id="hN6-jB-bHc"/>
                         <outlet property="mainMenuButton" destination="b1T-z4-dco" id="U8O-rG-yKD"/>
                         <outlet property="printerSearchButton" destination="yVZ-uL-cVj" id="rCV-HV-ZSZ"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintersIpad-Home" customClass="SlideSegue" id="Ysc-8g-iB4"/>
@@ -1454,12 +1466,23 @@
                                             <segue destination="zSB-tU-rcH" kind="embed" identifier="PrinterSearchIpad-PrinterSearchTable" id="4qT-Co-wxF"/>
                                         </connections>
                                     </containerView>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Printers Found" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YzF-oR-uCS" userLabel="EmptyLabel">
+                                        <rect key="frame" x="43" y="354" width="185" height="28"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTER_SEARCH_EMPTY"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstItem="fl9-6K-hwq" firstAttribute="top" secondItem="W5l-2l-HOe" secondAttribute="top" id="3nd-0i-9vb"/>
+                                    <constraint firstAttribute="centerY" secondItem="YzF-oR-uCS" secondAttribute="centerY" id="V2U-hC-9SW"/>
                                     <constraint firstAttribute="bottom" secondItem="fl9-6K-hwq" secondAttribute="bottom" id="XLL-T8-Kab"/>
                                     <constraint firstAttribute="trailing" secondItem="fl9-6K-hwq" secondAttribute="trailing" id="d9o-LI-SnD"/>
+                                    <constraint firstAttribute="centerX" secondItem="YzF-oR-uCS" secondAttribute="centerX" id="fkn-nt-Wvp"/>
                                     <constraint firstItem="fl9-6K-hwq" firstAttribute="leading" secondItem="W5l-2l-HOe" secondAttribute="leading" id="nvJ-yz-gbt"/>
                                 </constraints>
                             </view>
@@ -1480,6 +1503,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="emptyLabel" destination="YzF-oR-uCS" id="lEb-f7-IAg"/>
                         <segue destination="lDn-gr-Ojb" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="Cfi-aZ-cpN"/>
                     </connections>
                 </viewController>
@@ -2815,12 +2839,23 @@
                                             <outlet property="delegate" destination="jTA-Cg-WoR" id="gqw-Gc-ysw"/>
                                         </connections>
                                     </tableView>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Printers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dOk-xR-7Ro" userLabel="EmptyLabel">
+                                        <rect key="frame" x="111" y="238" width="99" height="24"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTERS_EMPTY"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="3lb-qN-g3W" firstAttribute="leading" secondItem="KGg-D7-xhu" secondAttribute="leading" id="QXN-c8-5zk"/>
                                     <constraint firstAttribute="trailing" secondItem="3lb-qN-g3W" secondAttribute="trailing" id="Vcz-Il-3P0"/>
                                     <constraint firstAttribute="bottom" secondItem="3lb-qN-g3W" secondAttribute="bottom" id="bPI-aF-zzX"/>
+                                    <constraint firstAttribute="centerX" secondItem="dOk-xR-7Ro" secondAttribute="centerX" id="gyL-7q-GDI"/>
+                                    <constraint firstAttribute="centerY" secondItem="dOk-xR-7Ro" secondAttribute="centerY" id="mDe-h7-111"/>
                                     <constraint firstItem="3lb-qN-g3W" firstAttribute="top" secondItem="KGg-D7-xhu" secondAttribute="top" id="vn9-hs-EDK"/>
                                 </constraints>
                             </view>
@@ -2842,6 +2877,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="addPrinterButton" destination="vao-bW-C6W" id="Mae-lQ-Gd2"/>
+                        <outlet property="emptyLabel" destination="dOk-xR-7Ro" id="KJp-ar-g7e"/>
                         <outlet property="mainMenuButton" destination="YCg-wj-kPh" id="5je-mE-eIN"/>
                         <outlet property="printerSearchButton" destination="6QJ-AC-XQW" id="zzR-e2-EQL"/>
                         <outlet property="tableView" destination="3lb-qN-g3W" id="h2x-FI-wZe"/>
@@ -2927,13 +2963,24 @@
                                             <segue destination="zSB-tU-rcH" kind="embed" identifier="PrinterSearchIphone-PrinterSearchTable" id="h8r-TR-IcV"/>
                                         </connections>
                                     </containerView>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Printers Found" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="95f-Zp-9Cm" userLabel="EmptyLabel">
+                                        <rect key="frame" x="55" y="238" width="161" height="24"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTER_SEARCH_EMPTY"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstItem="7qQ-47-451" firstAttribute="leading" secondItem="hJg-Li-w9G" secondAttribute="leading" id="HzM-SX-BVF"/>
+                                    <constraint firstAttribute="centerX" secondItem="95f-Zp-9Cm" secondAttribute="centerX" id="KuE-ye-aW9"/>
                                     <constraint firstAttribute="trailing" secondItem="7qQ-47-451" secondAttribute="trailing" id="VXe-YH-Cnm"/>
                                     <constraint firstAttribute="bottom" secondItem="7qQ-47-451" secondAttribute="bottom" id="flo-zF-u1z"/>
                                     <constraint firstItem="7qQ-47-451" firstAttribute="top" secondItem="hJg-Li-w9G" secondAttribute="top" id="lw5-IX-MXn"/>
+                                    <constraint firstAttribute="centerY" secondItem="95f-Zp-9Cm" secondAttribute="centerY" id="pFF-P9-Sez"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -2953,6 +3000,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="emptyLabel" destination="95f-Zp-9Cm" id="cla-Ar-KI3"/>
                         <segue destination="5BY-kL-11l" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindToPrinters:" id="Lua-LL-PLr"/>
                     </connections>
                 </viewController>
@@ -3407,10 +3455,21 @@
                                     <outlet property="delegate" destination="FqZ-P9-QXX" id="cX3-bo-hA3"/>
                                 </connections>
                             </collectionView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Print Job History" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nPN-MG-4ET" userLabel="EmptyLabel">
+                                <rect key="frame" x="71" y="286" width="178" height="24"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTJOBHISTORY_EMPTY"/>
+                                </userDefinedRuntimeAttributes>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="Rfc-0d-bR1" firstAttribute="centerY" secondItem="nPN-MG-4ET" secondAttribute="centerY" id="0bi-ic-qAN"/>
                             <constraint firstItem="ULk-KZ-RRS" firstAttribute="top" secondItem="kyz-VC-K7h" secondAttribute="top" id="5qH-4B-DwM"/>
+                            <constraint firstItem="Rfc-0d-bR1" firstAttribute="centerX" secondItem="nPN-MG-4ET" secondAttribute="centerX" id="KJd-Ik-m04"/>
                             <constraint firstItem="FG3-Gk-gAO" firstAttribute="top" secondItem="Rfc-0d-bR1" secondAttribute="bottom" id="QJY-84-I3I"/>
                             <constraint firstItem="Rfc-0d-bR1" firstAttribute="top" secondItem="ULk-KZ-RRS" secondAttribute="bottom" id="Zbr-p9-fzf"/>
                             <constraint firstAttribute="trailing" secondItem="ULk-KZ-RRS" secondAttribute="trailing" id="exr-CE-aGm"/>
@@ -3424,6 +3483,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="emptyLabel" destination="nPN-MG-4ET" id="Nua-Sw-S5G"/>
                         <outlet property="groupsView" destination="Rfc-0d-bR1" id="qW8-0i-7IZ"/>
                         <outlet property="groupsViewLayout" destination="XZQ-To-wdd" id="400-cs-uvE"/>
                         <outlet property="mainMenuButton" destination="jo5-zX-Mip" id="0y3-Qz-ovy"/>
@@ -3694,15 +3754,26 @@
                                     <outlet property="delegate" destination="k93-fC-OMI" id="XtS-nA-O9A"/>
                                 </connections>
                             </collectionView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Print Job History" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xwM-rE-jVT" userLabel="EmptyLabel">
+                                <rect key="frame" x="189" y="401" width="223" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTJOBHISTORY_EMPTY"/>
+                                </userDefinedRuntimeAttributes>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="w41-RR-Vc5" firstAttribute="leading" secondItem="VGI-SO-LuS" secondAttribute="leading" id="4ru-am-ACY"/>
                             <constraint firstAttribute="trailing" secondItem="w41-RR-Vc5" secondAttribute="trailing" id="5Y1-or-gcK"/>
                             <constraint firstItem="rMa-FV-gDr" firstAttribute="leading" secondItem="VGI-SO-LuS" secondAttribute="leading" id="ISM-fC-hgM"/>
+                            <constraint firstItem="rMa-FV-gDr" firstAttribute="centerX" secondItem="xwM-rE-jVT" secondAttribute="centerX" constant="-0.5" id="JLR-fN-BW6"/>
                             <constraint firstItem="w41-RR-Vc5" firstAttribute="top" secondItem="VGI-SO-LuS" secondAttribute="top" id="K52-Jl-Vcg"/>
                             <constraint firstItem="rMa-FV-gDr" firstAttribute="top" secondItem="w41-RR-Vc5" secondAttribute="bottom" id="ZvX-Uz-aI9"/>
                             <constraint firstAttribute="trailing" secondItem="rMa-FV-gDr" secondAttribute="trailing" id="dP5-b5-Ykl"/>
+                            <constraint firstItem="rMa-FV-gDr" firstAttribute="centerY" secondItem="xwM-rE-jVT" secondAttribute="centerY" id="rxF-hx-ErK"/>
                             <constraint firstItem="z4R-X2-0V5" firstAttribute="top" secondItem="rMa-FV-gDr" secondAttribute="bottom" id="ygk-1C-L9k"/>
                         </constraints>
                     </view>
@@ -3711,6 +3782,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="emptyLabel" destination="xwM-rE-jVT" id="BDY-1l-gwo"/>
                         <outlet property="groupsView" destination="rMa-FV-gDr" id="GAe-vx-3Oe"/>
                         <outlet property="groupsViewLayout" destination="Ko6-qP-yYm" id="ELH-1w-Oqz"/>
                         <outlet property="mainMenuButton" destination="NQw-8G-f7I" id="hHp-CO-rUD"/>
@@ -3999,10 +4071,10 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="4Gn-3V-oTg"/>
         <segue reference="CWW-vD-UgO"/>
-        <segue reference="4qT-Co-wxF"/>
+        <segue reference="oE4-lZ-OOf"/>
+        <segue reference="ax2-Mn-NH0"/>
+        <segue reference="h8r-TR-IcV"/>
         <segue reference="SPc-R3-6UV"/>
-        <segue reference="uoe-Al-ug4"/>
     </inferredMetricsTieBreakers>
 </document>

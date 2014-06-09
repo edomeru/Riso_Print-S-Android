@@ -31,6 +31,9 @@
 /** Reference to the Delete All button. */
 @property (weak, nonatomic) DeleteButton* tappedDeleteButton;
 
+/** Displays "No Print Job History" label if there are no jobs. */
+@property (weak, nonatomic) IBOutlet UILabel *emptyLabel;
+
 #pragma mark - Data Properties
 
 /** The data source for the list PrintJobHistoryGroup objects. */
@@ -82,17 +85,20 @@
     [super viewDidLoad];
     
     self.listPrintJobHistoryGroups = [PrintJobHistoryHelper preparePrintJobHistoryGroups];
+    self.emptyLabel.hidden = ([self.listPrintJobHistoryGroups count] == 0 ? NO : YES);
     
     self.groupsViewLayout.delegate = self;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         [self.groupsViewLayout setupForOrientation:self.interfaceOrientation
                                          forDevice:UIUserInterfaceIdiomPad];
+        [self.emptyLabel setFont:[UIFont systemFontOfSize:25.0]];
     }
     else
     {
         [self.groupsViewLayout setupForOrientation:self.interfaceOrientation
                                          forDevice:UIUserInterfaceIdiomPhone];
+        [self.emptyLabel setFont:[UIFont systemFontOfSize:20.0]];
     }
     
     self.groupsView.bounces = NO; //switch in storyboard does not disable the bounce
@@ -314,6 +320,8 @@
                 // remove the cell from the view
                 NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
                 [weakSelf.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
+                
+                weakSelf.emptyLabel.hidden = ([weakSelf.listPrintJobHistoryGroups count] == 0 ? NO : YES);
             }
             else
             {
@@ -321,7 +329,6 @@
                                  withTitle:kAlertTitlePrintJobHistory
                                withDetails:nil];
             }
-            
 
             weakSelf.groupToDeleteIndex = -1;
         };
@@ -409,6 +416,8 @@
                 // remove the group from data source and the view
                 [weakSelf.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
                 [weakSelf.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
+                
+                weakSelf.emptyLabel.hidden = ([weakSelf.listPrintJobHistoryGroups count] == 0 ? NO : YES);
             }
             else
             {

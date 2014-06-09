@@ -118,6 +118,9 @@
 "IDS_LBL_ON" = "On";
 "IDS_LBL_HELP" = "Help";
 "IDS_LBL_LEGAL" = "Legal";
+"IDS_LBL_PRINTERS_EMPTY" = "No Printers";
+"IDS_LBL_PRINTJOBHISTORY_EMPTY" = "No Print Job History";
+"IDS_LBL_PRINTER_SEARCH_EMPTY" = "No Printers Found";
 "IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" = "Added Successfully";
 "IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" = "Warning, Cannot find Printer.";
 "IDS_INFO_MSG_PRINTING" = "Printing…";
