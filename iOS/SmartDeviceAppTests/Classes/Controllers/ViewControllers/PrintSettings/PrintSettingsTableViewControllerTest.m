@@ -102,7 +102,6 @@
         pd.enFinisher23Holes = NO;
         pd.enFinisher24Holes = YES;
         pd.enStaple = YES;
-        pd.enTrayAutoStacking = YES;
         pd.enTrayStacking = YES;
         pd.enTrayFaceDown = YES;
         pd.enTrayTop = YES;

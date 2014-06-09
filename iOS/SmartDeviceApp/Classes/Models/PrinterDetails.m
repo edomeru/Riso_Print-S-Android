@@ -19,7 +19,6 @@
 @synthesize enLpr;
 @synthesize enRaw;
 @synthesize enStaple;
-@synthesize enTrayAutoStacking;
 @synthesize enTrayFaceDown;
 @synthesize enTrayStacking;
 @synthesize enTrayTop;

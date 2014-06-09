@@ -119,6 +119,7 @@
     [cell.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_LPR, @"LPR") forSegmentAtIndex:0];
     [cell.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_RAW, @"RAW") forSegmentAtIndex:1];
     [cell.portSelection setSelectedSegmentIndex:[printer.port integerValue]];
+    [cell.portSelection setEnabled:[printer.enabled_raw boolValue] forSegmentAtIndex:1];
     
     cell.portSelection.tag = indexPath.row;
     cell.deleteButton.tag = indexPath.row;

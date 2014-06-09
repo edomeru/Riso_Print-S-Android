@@ -61,6 +61,7 @@
         self.ipAddress.text = self.printer.ip_address;
         
         [self.portSelection setSelectedSegmentIndex:[self.printer.port integerValue]];
+        [self.portSelection setEnabled:[self.printer.enabled_raw boolValue] forSegmentAtIndex:1];
         
         if(self.isDefaultPrinter == YES)
         {

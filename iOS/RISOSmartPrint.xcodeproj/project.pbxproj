@@ -178,6 +178,7 @@
 		2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
 		2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
+		2DC61E5E1945C07D006E9A38 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA07758193D7D4400FB21A0 /* util.c */; };
 		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
 		3195C0691911126100197397 /* TestPDF_3Pages_NoPass.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0651911126100197397 /* TestPDF_3Pages_NoPass.pdf */; };
 		3195C06A1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0661911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf */; };
@@ -1981,6 +1982,7 @@
 				3195C18B191117F700197397 /* LegalViewController.m in Sources */,
 				2D6C70091925EEBA00E33789 /* NSManagedObject+MagicalDataImport.m in Sources */,
 				3195C18D191117F700197397 /* PrinterInfoViewController.m in Sources */,
+				2DC61E5E1945C07D006E9A38 /* util.c in Sources */,
 				3195C18F191117F700197397 /* PrintersIpadViewController.m in Sources */,
 				2D6C700B1925EEBA00E33789 /* NSManagedObject+MagicalRecord.m in Sources */,
 				3195C191191117F700197397 /* PrintersIphoneViewController.m in Sources */,

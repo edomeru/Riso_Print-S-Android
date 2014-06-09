@@ -23,7 +23,6 @@
     [msg appendFormat:@"\n   enabled_lpr=%ld", (long)[self.enabled_lpr integerValue]];
     [msg appendFormat:@"\n   enabled_raw=%ld", (long)[self.enabled_raw integerValue]];
     [msg appendFormat:@"\n   enabled_staple=%ld", (long)[self.enabled_staple integerValue]];
-    [msg appendFormat:@"\n   enabled_tray_auto_stacking=%ld", (long)[self.enabled_tray_auto_stacking integerValue]];
     [msg appendFormat:@"\n   enabled_tray_face_down=%ld", (long)[self.enabled_tray_face_down integerValue]];
     [msg appendFormat:@"\n   enabled_tray_stacking=%ld", (long)[self.enabled_tray_stacking integerValue]];
     [msg appendFormat:@"\n   enabled_tray_top=%ld", (long)[self.enabled_tray_top integerValue]];
