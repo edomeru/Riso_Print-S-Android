@@ -21,6 +21,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusC
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
@@ -350,13 +351,15 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         if (tag.equals(PrintSettings.TAG_OUTPUT_TRAY)) {
             boolean isPunch = mPrintSettings.getPunch() != Punch.OFF;
+            boolean isFold = mPrintSettings.getBookletFinish() != BookletFinish.OFF;
             switch (OutputTray.values()[value]) {
                 case AUTO:
+                    return true;
                 case TOP:
                 case STACKING:
-                    return true;
+                    return !isFold;
                 case FACEDOWN:
-                    return !isPunch;
+                    return (!isPunch && !isFold);
             }
         }
         
@@ -577,6 +580,16 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     }
                 } else {
                     updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.TL_R.ordinal());
+                }
+            }
+        }
+        
+        // Constraint #6 BookletFinish
+        if (tag.equals(PrintSettings.TAG_BOOKLET_FINISH)) {
+            if (value != BookletFinish.OFF.ordinal()) {
+                int outputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_OUTPUT_TRAY);
+                if (outputTrayValue != OutputTray.AUTO.ordinal()) {
+                    updateValueWithConstraints(PrintSettings.TAG_OUTPUT_TRAY, getDefaultValueWithConstraints(PrintSettings.TAG_OUTPUT_TRAY));
                 }
             }
         }
