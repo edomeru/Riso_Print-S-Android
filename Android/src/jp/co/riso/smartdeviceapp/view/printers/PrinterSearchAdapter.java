@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {
     private PrinterSearchAdapterInterface mSearchAdapterInterface = null;
-    private Context mContext;
     private int layoutId;
     private PrinterManager mPrinterManager = null;
     
@@ -39,7 +38,6 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
      */
     public PrinterSearchAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
-        this.mContext = context;
         this.layoutId = resource;
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
     }
@@ -49,32 +47,46 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     public View getView(int position, View convertView, ViewGroup parent) {
         Printer printer = getItem(position);
         ViewHolder viewHolder;
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View separator = null;
-        String printerName = printer.getName();
-               
+        
         if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            
             convertView = inflater.inflate(layoutId, parent, false);
             AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
-            
             viewHolder = new ViewHolder();
-            viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.printerText);
-            viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.ipAddressText);
-            viewHolder.mAddedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
-            viewHolder.mPrinterName.setText(printer.getName());
-            viewHolder.mIpAddress.setText(printer.getIpAddress());
-            viewHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_addprinter);
-            viewHolder.mAddedIndicator.setTag(position);
-            
-            // Set listener for Add Button
-            convertView.setOnClickListener(this);
-            convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
-            viewHolder.mPrinterName.setText(printer.getName());
-            viewHolder.mIpAddress.setText(printer.getIpAddress());
-            viewHolder.mAddedIndicator.setTag(position);
         }
+        initializeView(viewHolder, convertView, printer, position);
+
+        return convertView;
+    }
+    
+    /**
+     * Initialize the view of the printer
+     * 
+     * @param viewHolder
+     *            View Holder of the printer object
+     * @param convertView
+     *            Row view
+     * @param position
+     *            Position or index of the printer object
+     */
+    public void initializeView(ViewHolder viewHolder, View convertView, Printer printer, int position) {
+        if (viewHolder == null || convertView == null || printer == null) {
+            return;
+        }
+        View separator = null;
+        String printerName = printer.getName();
+        
+        viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.printerText);
+        viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.ipAddressText);
+        viewHolder.mAddedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
+        viewHolder.mPrinterName.setText(printer.getName());
+        viewHolder.mIpAddress.setText(printer.getIpAddress());
+        viewHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_addprinter);
+        viewHolder.mAddedIndicator.setTag(position);
+        viewHolder.mAddedIndicator.setClickable(false);
         
         separator = convertView.findViewById(R.id.printers_separator);
         if (position == getCount() - 1) {
@@ -82,17 +94,19 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         } else {
             separator.setVisibility(View.VISIBLE);
         }
-        viewHolder.mAddedIndicator.setClickable(false);
         if (mPrinterManager.isExists(printer)) {
             convertView.setClickable(false);
             viewHolder.mAddedIndicator.setActivated(true);
         } else {
             viewHolder.mAddedIndicator.setActivated(false);
         }
-        if(printerName.isEmpty()) {
+        
+        if (printerName.isEmpty()) {
             viewHolder.mPrinterName.setText(getContext().getResources().getString(R.string.ids_lbl_no_name));
         }
-        return convertView;
+        
+        convertView.setOnClickListener(this);
+        convertView.setTag(viewHolder);
     }
     
     /**
