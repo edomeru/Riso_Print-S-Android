@@ -583,8 +583,8 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
             if (strcmp(AZA_DEVICE_NAMES[i], device->device_info[MIB_DEV_DESCR]) == 0)
             {
                 supported = 0;
+                break;
             }
-            break;
         }
         
         return supported;
