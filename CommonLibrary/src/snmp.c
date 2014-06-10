@@ -82,7 +82,7 @@ static const char *MIB_REQUESTS[] = {
     "1.3.6.1.2.1.43.15.1.1.2.1.5",
     "1.3.6.1.2.1.25.3.2.1.3.1",
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.3", // Booklet-finishing unit
-    "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.20", // Stapler
+    "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.20", // Offset Stapler
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.2", // Finisher 2/3 holes
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.1", // Finisher 2/4 holes
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.1", // Tray face-down
@@ -570,33 +570,42 @@ const char *snmp_device_get_name(snmp_device *device)
 
 int snmp_device_get_capability_status(snmp_device *device, int capability)
 {
-    if (capability == kSnmpCapabilityLPR)
+    int supported = 0;
+    switch (capability)
     {
-        return 1;
-    }
-    else if (capability == kSnmpCapabilityRaw)
-    {
-        int supported = 1;
-        // METHOD OF DETECTION IS TO BE UPDATED:
-        for (int i = 0; i < AZA_DEVICE_NAME_COUNT; i++)
-        {
-            if (strcmp(AZA_DEVICE_NAMES[i], device->device_info[MIB_DEV_DESCR]) == 0)
+        case kSnmpCapabilityLPR:
+            supported = 1;
+            break;
+        case kSnmpCapabilityRaw:
+            supported = 1;
+            
+            // METHOD OF DETECTION IS TO BE UPDATED:
+            for (int i = 0; i < AZA_DEVICE_NAME_COUNT; i++)
             {
-                supported = 0;
-                break;
+                if (strcmp(AZA_DEVICE_NAMES[i], device->device_info[MIB_DEV_DESCR]) == 0)
+                {
+                    supported = 0;
+                    break;
+                }
             }
-        }
-        
-        return supported;
+            break;
+        case kSnmpCapabilityStapler:
+            if ((strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityStapler]) > 0) ||
+                        (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin23Holes]) > 0) ||
+                        (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin24Holes]) > 0))
+            {
+                supported = 1;
+            }
+            break;
+        default:
+            if (strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0)
+            {
+                supported = 1;
+            }
+            break;
     }
     
-    
-    if (strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0)
-    {
-        return 1;
-    }
-    
-    return 0;
+    return supported;
 }
 
 /**
