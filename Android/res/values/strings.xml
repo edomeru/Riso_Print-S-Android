@@ -147,5 +147,6 @@
     <string name="ids_err_msg_file_too_large">File size is too large</string>
     <string name="ids_err_msg_not_enough_space">Not enough free space on device</string>
     <string name="ids_err_msg_network_error">No network available.</string>
+    <string name="ids_lbl_page_displayed" formatted="false">PAGE %d / %d</string>
 
 </resources>

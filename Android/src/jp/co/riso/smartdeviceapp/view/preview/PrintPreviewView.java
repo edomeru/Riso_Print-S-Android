@@ -477,8 +477,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         int faceCount = getFaceCount();
 
-        final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
-
+        final String FORMAT_ONE_PAGE_STATUS = getResources().getString(R.string.ids_lbl_page_displayed);
         return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentFace, faceCount);
     }
     
