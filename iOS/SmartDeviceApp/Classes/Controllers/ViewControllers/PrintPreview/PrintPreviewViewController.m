@@ -319,11 +319,7 @@
     UIPageViewController *pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:navigationOrientation options:@{UIPageViewControllerOptionSpineLocationKey: [NSNumber numberWithInteger:spineLocation]}];
     pageViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
     [self addChildViewController:pageViewController];
-    [self.previewView.contentView addSubview:pageViewController.view];
-    
-    NSDictionary *views = @{@"pageView": pageViewController.view};
-    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:0 metrics:nil views:views]];
-    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[pageView]|" options:0 metrics:nil views:views]];
+    [self.previewView setPageContentView:pageViewController.view];
     pageViewController.dataSource = self;
     pageViewController.delegate = self;
     
