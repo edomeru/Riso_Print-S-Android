@@ -69,7 +69,10 @@ namespace SNMP
                     SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
                     SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
                     SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK
+                    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
+                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
+                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
+                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
                 };
                 nextMIBIndex = 0;
                 requestMIBs = new string[]
@@ -81,7 +84,10 @@ namespace SNMP
                     SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
                     SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
                     SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK
+                    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
+                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
+                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
+                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
                 };
 
                 

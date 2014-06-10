@@ -469,14 +469,14 @@ namespace SmartDeviceApp.Controllers
                     //get capabilities
                     if (capabilitesList.Count > 0)
                     {
-                        printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true")? true : false;
-                        printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true")? true : false;
+                        printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true");
+                        printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true");
                         printer.EnabledPunchThree = true; // TODO: Update value here
-                        printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true")? true : false;
-                        printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true")? true : false;
+                        printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true");
+                        printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true");
                         //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
-                        printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true")? true : false;
-                        printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true") ? true : false;
+                        printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true");
+                        printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true");
                     }
                 
 
