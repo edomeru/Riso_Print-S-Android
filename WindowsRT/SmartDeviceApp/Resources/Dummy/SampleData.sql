@@ -1,14 +1,14 @@
 INSERT INTO Printer VALUES
-(1, 1, '192.168.0.1', 'Printer1 Full Default', 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1),
-(2, 2, '192.168.0.2', 'Printer2 LW Paper + Input Tray Hide', 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1),
-(3, 3, '192.168.0.3', 'Printer3 Booklet-Finishing Hide', 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1),
-(4, 4, '192.168.0.4', 'Printer4 Stapler Hide', 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1),
-(5, 5, '192.168.0.5', 'Printer5 Punch3 Show Punch4 Hide', 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1),
-(6, 6, '192.168.0.6', 'Printer6 Punch3,4 Hide', 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1),
-(7, 7, '192.168.0.7', 'Printer7 TrayFaceDown Hide', 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1),
-(8, 8, '192.168.0.8', 'Printer8 TrayTop Hide', 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1),
-(9, 9, '192.168.0.9', 'Printer9 TrayStack Hide spaced very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long name', 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0),
-(10, 10, '192.168.0.10', 'Printer10_All_Hide_continuous_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_name_', 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+(1, 1, '192.168.0.1', 'Printer1 Full Default', 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1),
+(2, 2, '192.168.0.2', 'Printer2 LW Paper + Input Tray Hide', 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1),
+(3, 3, '192.168.0.3', 'Printer3 Booklet-Finishing Hide', 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1),
+(4, 4, '192.168.0.4', 'Printer4 Stapler Hide', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1),
+(5, 5, '192.168.0.5', 'Printer5 Punch3 Show Punch4 Hide', 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1),
+(6, 6, '192.168.0.6', 'Printer6 Punch3,4 Hide', 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1),
+(7, 7, '192.168.0.7', 'Printer7 TrayFaceDown Hide', 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1),
+(8, 8, '192.168.0.8', 'Printer8 TrayTop Hide', 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1),
+(9, 9, '192.168.0.9', 'Printer9 TrayStack Hide spaced very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long name', 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0),
+(10, 10, '192.168.0.10', 'Printer10_All_Hide_continuous_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_name_', 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0);
 
 INSERT INTO PrintSetting VALUES
 (1, 1, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),

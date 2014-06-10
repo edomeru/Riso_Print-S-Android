@@ -28,7 +28,9 @@ namespace SmartDeviceApp.Common.Utilities
         public const string KEY_COLUMN_NAME_PRN_ENABLED_LPR = "prn_enabled_lpr";
         public const string KEY_COLUMN_NAME_PRN_ENABLED_RAW = "prn_enabled_raw";
         public const string KEY_COLUMN_NAME_PRN_ENABLED_PAPER_LW = "prn_enabled_paper_lw";
-        public const string KEY_COLUMN_NAME_PRN_ENABLED_FEED_TRAY = "prn_enabled_feed_tray";
+        public const string KEY_COLUMN_NAME_PRN_ENABLED_FEED_TRAY1 = "prn_enabled_feed_tray1";
+        public const string KEY_COLUMN_NAME_PRN_ENABLED_FEED_TRAY2 = "prn_enabled_feed_tray2";
+        public const string KEY_COLUMN_NAME_PRN_ENABLED_FEED_TRAY3 = "prn_enabled_feed_tray3";
         public const string KEY_COLUMN_NAME_PRN_ENABLED_BOOKLET = "prn_enabled_booklet";
         public const string KEY_COLUMN_NAME_PRN_ENABLED_STAPLER = "prn_enabled_stapler";
         public const string KEY_COLUMN_NAME_PRN_ENABLED_PUNCH3 = "prn_enabled_punch3";
