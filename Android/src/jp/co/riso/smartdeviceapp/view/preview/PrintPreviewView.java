@@ -283,6 +283,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * Request that the curl view renderer render a frame.
      */
     public void refreshView() {
+        setupCurlPageView();
+        setupCurlBind();
+        setDefaultMargins();
+        
         mCurlView.requestRender(); 
     }
     

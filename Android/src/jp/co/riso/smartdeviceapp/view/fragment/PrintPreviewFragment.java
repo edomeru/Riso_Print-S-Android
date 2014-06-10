@@ -581,6 +581,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
+        mPrintPreviewView.refreshView();
         mPrintPreviewView.setVisibility(msg.arg1);
         return true;
     }
