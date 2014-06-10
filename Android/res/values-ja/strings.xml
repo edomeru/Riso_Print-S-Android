@@ -147,5 +147,6 @@
     <string name="ids_err_msg_file_too_large">ファイルサイズが大きすぎます。</string>
     <string name="ids_err_msg_not_enough_space">デバイスの空き容量が不足しています。</string>
     <string name="ids_err_msg_network_error">ネットワークに接続できません。</string>
+    <string name="ids_err_msg_db_failure">The operation cannot be completed.</string>
 
 </resources>

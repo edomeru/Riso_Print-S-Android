@@ -290,18 +290,20 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         if (printer == null) {
             return -1;
         }
-        
+        DialogFragment info = null;
+
         String title = getResources().getString(R.string.ids_lbl_search_printers);
         String msg = null;
         if (!mPrinterManager.savePrinterToDB(printer, true)) {
             ret = -1;
-            msg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
+            msg = getResources().getString(R.string.ids_err_msg_db_failure);
+            info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));
         } else {
             msg = printer.getName() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
+            info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
+            info.setTargetFragment(this, 0);
         }
         
-        ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
-        info.setTargetFragment(this, 0);
         DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
         return ret;
     }

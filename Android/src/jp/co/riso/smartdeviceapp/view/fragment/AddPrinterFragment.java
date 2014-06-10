@@ -46,7 +46,8 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     private static final int ERR_INVALID_IP_ADDRESS = -1;
     private static final int ERR_CAN_NOT_ADD_PRINTER = -2;
     private static final int ERR_PRINTER_ADDED_WARNING = -3;
-    private static final int MSG_ERR_DB = 0;
+    private static final int ERR_DB_FAILURE = -4;
+    private static final int MSG_ERROR = 0;
     private static final int MSG_ADD_SUCCESS = 1;
     
     private ViewHolder mAddPrinterView = null;
@@ -203,6 +204,8 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         } else if (err == ERR_PRINTER_ADDED_WARNING) {
             errMsg = getResources().getString(R.string.ids_info_msg_warning_cannot_find_printer);
             errMsg += "\n" + mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
+        } else if (err == ERR_DB_FAILURE) {
+            errMsg = getResources().getString(R.string.ids_err_msg_db_failure);
         }
         DialogFragment info = null;
         
@@ -329,14 +332,19 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         if (mPrinterManager.isCancelled()) {
             return;
         }
+        Message newMessage = null;
         if (mPrinterManager.isExists(printer)) {
-            dialogErrCb(ERR_INVALID_IP_ADDRESS);
+            newMessage = Message.obtain(mPauseableHandler, MSG_ERROR);
+            newMessage.arg1 = ERR_INVALID_IP_ADDRESS;
         } else if (mPrinterManager.savePrinterToDB(printer, true)) {
             mAdded = true;
-            Message newMessage = Message.obtain(mPauseableHandler, MSG_ADD_SUCCESS);
+            newMessage = Message.obtain(mPauseableHandler, MSG_ADD_SUCCESS);
             newMessage.obj = printer;
-            mPauseableHandler.sendMessage(newMessage);
+        } else {
+            newMessage = Message.obtain(mPauseableHandler, MSG_ERROR);
+            newMessage.arg1 = ERR_DB_FAILURE;
         }
+        mPauseableHandler.sendMessage(newMessage);
     }
     
     /** {@inheritDoc} */
@@ -358,14 +366,16 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         if (!mAdded) {
             // Create Printer object
             Printer printer = new Printer("", ipAddress);
+            Message newWarningMsg = Message.obtain(mPauseableHandler, MSG_ERROR);
             
-            if (mPrinterManager.savePrinterToDB(printer, false)) {                                
-                Message newWarningMsg = new Message();
-                
+            if (mPrinterManager.savePrinterToDB(printer, false)) {
                 newWarningMsg.arg1 = ERR_PRINTER_ADDED_WARNING;
-                mPauseableHandler.sendMessage(newWarningMsg);
                 mAdded = true;
+            } else {
+                newWarningMsg = Message.obtain(mPauseableHandler, MSG_ERROR);
+                newWarningMsg.arg1 = ERR_DB_FAILURE;
             }
+            mPauseableHandler.sendMessage(newWarningMsg);
         }
     }
     
@@ -419,19 +429,21 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     /** {@inheritDoc} */
     @Override
     public boolean storeMessage(Message message) {
-        return message.what == MSG_ERR_DB || message.what == MSG_ADD_SUCCESS;
+        return message.what == MSG_ERROR || message.what == MSG_ADD_SUCCESS;
     }
     
     /** {@inheritDoc} */
     @Override
     public void processMessage(Message msg) {
-        switch (msg.what) {
-            case MSG_ERR_DB:
-                dialogErrCb(msg.arg1);
-                break;
-            case MSG_ADD_SUCCESS:
-                dialogCb((Printer) msg.obj);
-                break;
+        if (msg != null) {
+            switch (msg.what) {
+                case MSG_ERROR:
+                    dialogErrCb(msg.arg1);
+                    break;
+                case MSG_ADD_SUCCESS:
+                    dialogCb((Printer) msg.obj);
+                    break;
+            }
         }
     }
 }

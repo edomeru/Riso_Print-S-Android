@@ -271,11 +271,12 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param printer
      *            The Printer object selected
+     * @return true on success otherwise false
      */
-    public void setDefaultPrinter(Printer printer) {
+    public boolean setDefaultPrinter(Printer printer) {
         
         if (printer == null) {
-            return;
+            return false;
         }
         clearDefaultPrinter();
         
@@ -285,11 +286,12 @@ public class PrinterManager implements SNMPManagerCallback {
         
         if (!mDatabaseManager.insert(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, newDefaultPrinter)) {
             mDatabaseManager.close();
-            return;
+            return false;
         }
         
         mDefaultPrintId = printer.getId();
         mDatabaseManager.close();
+        return true;
     }
     
     /**
