@@ -70,6 +70,7 @@ namespace SNMP
                     SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
                     SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
                     SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
+                    SNMPConstants.MIB_GETNEXTOID_LWPAPER,
                     SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
                     SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
                     SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
@@ -85,6 +86,7 @@ namespace SNMP
                     SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
                     SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
                     SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
+                    SNMPConstants.MIB_GETNEXTOID_LWPAPER,
                     SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
                     SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
                     SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3

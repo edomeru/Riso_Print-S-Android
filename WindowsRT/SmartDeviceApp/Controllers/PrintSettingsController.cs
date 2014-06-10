@@ -411,15 +411,35 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            // prn_enabled_feed_tray
-            if (!printer.EnabledFeedTray)
+            // prn_enabled_feed_tray1
+            if (!printer.EnabledFeedTrayOne)
             {
                 PrintSetting inputTrayPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
                 if (inputTrayPrintSetting != null)
                 {
                     RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray1);
+                }
+            }
+
+            // prn_enabled_feed_tray2
+            if (!printer.EnabledFeedTrayTwo)
+            {
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
+                {
                     RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray2);
+                }
+            }
+
+            // prn_enabled_feed_tray3
+            if (!printer.EnabledFeedTrayThree)
+            {
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
+                {
                     RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray3);
                 }
             }

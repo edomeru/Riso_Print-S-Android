@@ -108,10 +108,22 @@ namespace SmartDeviceApp.Models
         public bool EnabledPaperLW { get; set; }
 
         /// <summary>
-        /// Printer capability for Input Tray: Tray1,2,3, used by Printer table
+        /// Printer capability for Input Tray 1, used by Printer table
         /// </summary>
-        [SQLite.Column("prn_enabled_feed_tray"), SQLite.NotNull]
-        public bool EnabledFeedTray { get; set; }
+        [SQLite.Column("prn_enabled_feed_tray1"), SQLite.NotNull]
+        public bool EnabledFeedTrayOne { get; set; }
+
+        /// <summary>
+        /// Printer capability for Input Tray 2 used by Printer table
+        /// </summary>
+        [SQLite.Column("prn_enabled_feed_tray2"), SQLite.NotNull]
+        public bool EnabledFeedTrayTwo { get; set; }
+
+        /// <summary>
+        /// Printer capability for Input Tray 3, used by Printer table
+        /// </summary>
+        [SQLite.Column("prn_enabled_feed_tray3"), SQLite.NotNull]
+        public bool EnabledFeedTrayThree { get; set; }
 
         /// <summary>
         /// Printer capability for booklet finishing, used by Printer table
@@ -234,7 +246,9 @@ namespace SmartDeviceApp.Models
             EnabledLpr = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_LPR, ListValueType.Boolean);
             EnabledRaw = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_RAW, ListValueType.Boolean);
             EnabledPaperLW = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_PAPER_LW, ListValueType.Boolean);
-            EnabledFeedTray = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_FEED_TRAY, ListValueType.Boolean);
+            EnabledFeedTrayOne = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_FEED_TRAY1, ListValueType.Boolean);
+            EnabledFeedTrayTwo = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_FEED_TRAY2, ListValueType.Boolean);
+            EnabledFeedTrayThree = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_FEED_TRAY3, ListValueType.Boolean);
             EnabledBookletFinishing = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_BOOKLET, ListValueType.Boolean);
             EnabledStapler = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_STAPLER, ListValueType.Boolean);
             EnabledPunchThree = (bool)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PRN_ENABLED_PUNCH3, ListValueType.Boolean);
