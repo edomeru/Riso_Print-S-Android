@@ -25,7 +25,7 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly DatabaseController _instance = new DatabaseController();
 
-        private const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
+        public const string FILE_NAME_DATABASE = "SmartDeviceAppDB.db";
         private const string FILE_PATH_DATABASE_SCRIPT = "Assets/SmartDeviceAppDB.sql";
         private const string FORMAT_PRAGMA_FOREIGN_KEYS = "PRAGMA foreign_keys = {0}";
         private const string ON = "ON";
@@ -79,7 +79,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="state">true when on, false otherwise</param>
         /// <returns>task</returns>
-        public async Task EnablePragmaForeignKeys(bool state)
+        private async Task EnablePragmaForeignKeys(bool state)
         {
             await _dbConnection.ExecuteAsync(string.Format(FORMAT_PRAGMA_FOREIGN_KEYS,
                                                            (state) ? ON : OFF));
@@ -99,7 +99,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="filePath">file path of the script; assumed to be a resource file</param>
         /// <returns>task</returns>
-        public async Task ExecuteScript(string filePath)
+        private async Task ExecuteScript(string filePath)
         {
             string scriptText = null;
 
