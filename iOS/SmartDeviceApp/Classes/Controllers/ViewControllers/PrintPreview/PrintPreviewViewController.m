@@ -854,6 +854,13 @@
                          withTitle:kAlertTitlePrintPreview
                        withDetails:nil];
     }
+    //if getDefaultPrinter returns nil, there is an error in db request
+    else if([[PrinterManager sharedPrinterManager] getDefaultPrinter] == nil)
+    {
+        [AlertHelper displayResult:kAlertResultErrDB
+                         withTitle:kAlertTitlePrintPreview
+                       withDetails:nil];
+    }
     else
     {
         [self.printSettingsButton setEnabled:NO];

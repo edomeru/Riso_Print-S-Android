@@ -317,6 +317,10 @@
             }
             else
             {
+                // reload list if not all jobs are deleted
+                NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
+                [weakSelf.groupsView reloadItemsAtIndexPaths:@[groupIndexPath]];
+                
                 [AlertHelper displayResult:kAlertResultErrDB
                                  withTitle:kAlertTitlePrintJobHistory
                                withDetails:nil];
