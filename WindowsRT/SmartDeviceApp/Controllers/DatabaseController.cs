@@ -79,7 +79,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="state">true when on, false otherwise</param>
         /// <returns>task</returns>
-        private async Task EnablePragmaForeignKeys(bool state)
+        public async Task EnablePragmaForeignKeys(bool state)
         {
             await _dbConnection.ExecuteAsync(string.Format(FORMAT_PRAGMA_FOREIGN_KEYS,
                                                            (state) ? ON : OFF));
@@ -99,7 +99,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="filePath">file path of the script; assumed to be a resource file</param>
         /// <returns>task</returns>
-        private async Task ExecuteScript(string filePath)
+        public async Task ExecuteScript(string filePath)
         {
             string scriptText = null;
 
