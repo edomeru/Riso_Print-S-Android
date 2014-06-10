@@ -343,8 +343,7 @@
     <Content Include="Assets\printsettings_authentication.xml" />
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Common\ReadMe.txt" />
-    <Content Include="Resources\Dummy\RZ1070.pdf" />
-    <Content Include="Resources\Dummy\SmartDeviceAppDB.db" />
+    <None Include="Resources\Dummy\RZ1070.pdf" />
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
     <PRIResource Include="Resources\Strings\en-US\Resources.resw">
@@ -353,6 +352,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\printsettings.xml" />
+    <Content Include="Resources\Dummy\SampleData.sql" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-100.png" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-140.png" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-180.png" />

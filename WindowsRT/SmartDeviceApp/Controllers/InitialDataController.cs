@@ -10,7 +10,6 @@
 //  ----------------------------------------------------------------------
 //
 
-using System;
 using SmartDeviceApp.Common.Utilities;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -22,7 +21,7 @@ namespace SmartDeviceApp.Controllers
 
         private static string PDF_FILE_PATH = "Resources/Dummy/RZ1070.pdf";
         private static string KEY_ISSAMPLEDATAALREADYLOADED = "IsSampleDataAlreadyLoaded";
-        private static string DB_SAMPLE_DATA_FILE_PATH = "Resources/Dummy/SmartDeviceAppDB.db";
+        private static string DB_SAMPLE_DATA_FILE_PATH = "Resources/Dummy/SampleData.sql";
 
         /// <summary>
         /// Opens a PDF at start
@@ -58,11 +57,9 @@ namespace SmartDeviceApp.Controllers
 
             if (!isPreviouslyLoaded)
             {
-                // Copy database file to AppData local store
-                StorageFile file = await StorageFileUtility.GetFileFromAppResource(DB_SAMPLE_DATA_FILE_PATH);
-                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-                await file.CopyAsync(localFolder, DatabaseController.FILE_NAME_DATABASE,
-                    NameCollisionOption.ReplaceExisting);
+                await DatabaseController.Instance.EnablePragmaForeignKeys(false); // Disable foreign keys temporarily
+                await DatabaseController.Instance.ExecuteScript(DB_SAMPLE_DATA_FILE_PATH);
+                await DatabaseController.Instance.EnablePragmaForeignKeys(true); // Re-enable foreign keys
             }
         }
 
