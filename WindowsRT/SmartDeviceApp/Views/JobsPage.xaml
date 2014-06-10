@@ -16,7 +16,8 @@
             <Setter Property="Width" Value="{Binding Converter={StaticResource PrintJobListWidthConverter}}"/>            
         </Style>        
         <DataTemplate x:Key="TEMPLATE_PrintJobItem">  
-            <controls:GroupListControl Text="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}}" 
+            <controls:GroupListControl x:Name="jobsGroupListControl"
+                                       Text="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}}" 
                                        SubText="{Binding IpAddress}"
                                        SubTextVisibility="Visible"
                                        Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
@@ -36,7 +37,7 @@
                               SelectionMode="None">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <controls:JobListItemControl />
+                                <controls:JobListItemControl Width="{Binding Width, ElementName=jobsGroupListControl}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>

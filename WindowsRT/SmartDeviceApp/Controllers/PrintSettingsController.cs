@@ -400,6 +400,30 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
+            // prn_enabled_paper_lw
+            if (!printer.EnabledPaperLW)
+            {
+                PrintSetting paperTypePrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
+                if (paperTypePrintSetting != null)
+                {
+                    RemovePrintSettingOption(paperTypePrintSetting, (int)PaperType.LWPaper);
+                }
+            }
+
+            // prn_enabled_feed_tray
+            if (!printer.EnabledFeedTray)
+            {
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
+                {
+                    RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray1);
+                    RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray2);
+                    RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray3);
+                }
+            }
+
             // prn_enabled_booklet_finishing
             if (!printer.EnabledBookletFinishing)
             {

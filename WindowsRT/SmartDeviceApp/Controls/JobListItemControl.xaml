@@ -15,7 +15,6 @@
     RightButtonVisibility="Collapsed"
     SeparatorVisibility="{Binding Converter={StaticResource PrintJobToSeparatorVisibilityConverter}}"
     PressedColor="{StaticResource BRUSH_Purple2}"
-    Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
     Loaded="OnLoaded">
 
     <local:KeyValueControl.Resources>

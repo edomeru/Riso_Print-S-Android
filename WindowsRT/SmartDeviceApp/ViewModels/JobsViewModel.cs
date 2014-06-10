@@ -34,6 +34,10 @@ namespace SmartDeviceApp.ViewModels
         private PrintJobList _printJobsColumn1;
         private PrintJobList _printJobsColumn2;
         private PrintJobList _printJobsColumn3;
+        private int _maxColumns;
+
+        private const int MAX_COLUMNS_LANDSCAPE = 3;
+        private const int MAX_COLUMNS_PORTRAIT = 2;
 
         private JobGestureController _gestureController;
         private ViewControlViewModel _viewControlViewModel;
@@ -47,6 +51,8 @@ namespace SmartDeviceApp.ViewModels
 
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => SetViewOrientation(viewOrientation));
+            SetViewOrientation(_viewControlViewModel.ViewOrientation); // Initialize MaxColumns
         }
         
         public ICommand DeleteAllJobsCommand
@@ -144,6 +150,20 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public int MaxColumns
+        {
+            get { return _maxColumns; }
+            set
+            {
+                if (_maxColumns != value)
+                {
+                    _maxColumns = value;
+                    RaisePropertyChanged("MaxColumns");
+                    SortPrintJobsListToColumns();
+                }
+            }
+        }
+
         public JobGestureController GestureController
         {
             get { return _gestureController; }
@@ -184,6 +204,18 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        private void SetViewOrientation(ViewOrientation viewOrientation)
+        {
+            if (viewOrientation == ViewOrientation.Landscape)
+            {
+                MaxColumns = MAX_COLUMNS_LANDSCAPE;
+            }
+            else if (viewOrientation == ViewOrientation.Portrait)
+            {
+                MaxColumns = MAX_COLUMNS_PORTRAIT;
+            }            
+        }
+
         private async void DeleteAllJobsExecute(int printerId)
         {
             await DialogService.Instance.ShowMessage(
@@ -216,7 +248,7 @@ namespace SmartDeviceApp.ViewModels
 
         public void SortPrintJobsListToColumns()
         {
-            if (PrintJobsList.Count == 0)
+            if (PrintJobsList == null || PrintJobsList.Count == 0)
             {
                 IsPrintJobsListEmpty = true;
                 return;
@@ -226,37 +258,56 @@ namespace SmartDeviceApp.ViewModels
                 IsPrintJobsListEmpty = false;
             }
 
-            var column1 = new PrintJobList();
-            var column2 = new PrintJobList();
-            var column3 = new PrintJobList();
-            var column1Count = 0;
-            var column2Count = 0;
-            var column3Count = 0;
-
             // Place each print job group in column with least items
             // Add 1 count for every group for group header control
-            foreach (PrintJobGroup group in PrintJobsList)
+            var column1 = new PrintJobList();
+            var column2 = new PrintJobList();            
+            var column1Count = 0;
+            var column2Count = 0;           
+
+            if (MaxColumns == MAX_COLUMNS_LANDSCAPE)
             {
-                if (column1Count <= column2Count && column1Count <= column3Count)
+                var column3 = new PrintJobList();
+                var column3Count = 0;
+                foreach (PrintJobGroup group in PrintJobsList)
                 {
-                    column1.Add(group);
-                    column1Count += 1 + group.Jobs.Count;
+                    if (column1Count <= column2Count && column1Count <= column3Count)
+                    {
+                        column1.Add(group);
+                        column1Count += 1 + group.Jobs.Count;
+                    }
+                    else if (column2Count <= column1Count && column2Count <= column3Count)
+                    {
+                        column2.Add(group);
+                        column2Count += 1 + group.Jobs.Count;
+                    }
+                    else if (column3Count <= column1Count && column3Count <= column2Count)
+                    {
+                        column3.Add(group);
+                        column3Count += 1 + group.Jobs.Count;
+                    }
                 }
-                else if (column2Count <= column1Count && column2Count <= column3Count)
+                PrintJobsColumn3 = column3;
+            }
+            else if (MaxColumns == MAX_COLUMNS_PORTRAIT)                
+            {
+                foreach (PrintJobGroup group in PrintJobsList)
                 {
-                    column2.Add(group);
-                    column2Count += 1 + group.Jobs.Count;
-                }
-                else if (column3Count <= column1Count && column3Count <= column2Count)
-                {
-                    column3.Add(group);
-                    column3Count += 1 + group.Jobs.Count;
+                    if (column1Count <= column2Count)
+                    {
+                        column1.Add(group);
+                        column1Count += 1 + group.Jobs.Count;
+                    }
+                    else if (column2Count <= column1Count)
+                    {
+                        column2.Add(group);
+                        column2Count += 1 + group.Jobs.Count;
+                    }
                 }
             }
 
             PrintJobsColumn1 = column1;
             PrintJobsColumn2 = column2;
-            PrintJobsColumn3 = column3;
         }
 
         #region For testing
@@ -376,15 +427,18 @@ namespace SmartDeviceApp.ViewModels
                 }
                 return;
             }
-            if (PrintJobsColumn3.Contains(deletedGroup))
+            if (MaxColumns == MAX_COLUMNS_LANDSCAPE)
             {
-                PrintJobsColumn3.Remove(deletedGroup);
-                if (PrintJobsColumn3.Count == 0)
+                if (PrintJobsColumn3.Contains(deletedGroup))
                 {
-                    SortPrintJobsListToColumns();
+                    PrintJobsColumn3.Remove(deletedGroup);
+                    if (PrintJobsColumn3.Count == 0)
+                    {
+                        SortPrintJobsListToColumns();
+                    }
+                    return;
                 }
-                return;
-            }
+            }            
         }
     }
 }
