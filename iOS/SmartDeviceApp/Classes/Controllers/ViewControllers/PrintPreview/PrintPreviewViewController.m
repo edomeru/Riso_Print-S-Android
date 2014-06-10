@@ -336,7 +336,12 @@
     {
         //booklet number of pages is always a multiple of 4 (1 paper folded in half = 2 leaves * 2 sides per leaf = 4 pages)
         //total number of pages is the actual number of pdf pages  + additional pages to make number of pages multiple by 4
-        self.totalPageNum = self.printDocument.pageCount  +  (4 - self.printDocument.pageCount % 4);
+        self.totalPageNum = self.printDocument.pageCount;
+        int oddPages = self.printDocument.pageCount % 4;
+        if (oddPages > 0)
+        {
+            self.totalPageNum += 4 - oddPages;
+        }
         
         //add two pages for the book ends
         self.layoutPageNum = self.totalPageNum + 2;
