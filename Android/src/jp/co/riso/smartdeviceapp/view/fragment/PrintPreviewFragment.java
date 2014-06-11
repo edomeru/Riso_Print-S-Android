@@ -14,6 +14,7 @@ import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.MemoryUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -39,6 +40,7 @@ import android.os.Message;
 import android.util.LruCache;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -260,6 +262,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             View newView = View.inflate(getActivity(), R.layout.preview_controls, null);
             newView.setLayoutParams(mPageControls.getLayoutParams());
             newView.setVisibility(mPageControls.getVisibility());
+            
+            AppUtils.changeChildrenFont((ViewGroup) newView, SmartDeviceApp.getAppFont());
 
             mainView.addView(newView);
             mPageControls = newView;
