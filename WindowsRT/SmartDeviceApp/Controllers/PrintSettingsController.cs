@@ -1689,7 +1689,9 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.FinishingSide != value)
                 {
-                    isPreviewAffected = UpdateConstraintsBasedOnFinishingSide(value, true);
+                    // No need to update preview for finishing side (since punch/staple are not updated also)
+                    //isPreviewAffected = UpdateConstraintsBasedOnFinishingSide(value, true);
+                    UpdateConstraintsBasedOnFinishingSide(value, true);
                     printSettings.FinishingSide = value;
                 }
             }
@@ -1697,11 +1699,12 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.Staple != value)
                 {
-                    isPreviewAffected = (value == (int)Staple.Off) ||
-                        (value == (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.One) ||
-                        (value == (int)Staple.OneUpperRight && printSettings.Staple != (int)Staple.One) ||
-                        (value == (int)Staple.One && (printSettings.Staple != (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.OneUpperRight)) ||
-                        (value == (int)Staple.Two);
+                    // No need to update preview for staple
+                    //isPreviewAffected = (value == (int)Staple.Off) ||
+                    //    (value == (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.One) ||
+                    //    (value == (int)Staple.OneUpperRight && printSettings.Staple != (int)Staple.One) ||
+                    //    (value == (int)Staple.One && (printSettings.Staple != (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.OneUpperRight)) ||
+                    //    (value == (int)Staple.Two);
                     printSettings.Staple = value;
                 }
             }
@@ -1709,7 +1712,9 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.Punch != value)
                 {
-                    isPreviewAffected = UpdateConstraintsBasedOnPunch(value, true);
+                    // No need to update preview for punch
+                    //isPreviewAffected = UpdateConstraintsBasedOnPunch(value, true);
+                    UpdateConstraintsBasedOnPunch(value, true);
                     printSettings.Punch = value;
                 }
             }
