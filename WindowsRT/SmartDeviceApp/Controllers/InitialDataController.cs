@@ -30,7 +30,7 @@ namespace SmartDeviceApp.Controllers
         public async static Task InitializeSamplePdf()
         {
             await DocumentController.Instance.Unload();
-            await PrintPreviewController.Instance.Cleanup();
+            PrintPreviewController.Instance.Cleanup();
 
             StorageFile samplePdf = await StorageFileUtility.GetFileFromAppResource(PDF_FILE_PATH);
             await DocumentController.Instance.Load(samplePdf);

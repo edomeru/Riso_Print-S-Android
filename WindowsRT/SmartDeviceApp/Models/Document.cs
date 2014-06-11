@@ -10,20 +10,12 @@
 //  ----------------------------------------------------------------------
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Data.Pdf;
 
 namespace SmartDeviceApp.Models
 {
     public class Document
     {
-
-        // TODO: Check if this is still necessary
-        private Dictionary<int, LogicalPage> _logicalPages;
 
         /// <summary>
         /// File path of the PDF file opened by the user
@@ -41,14 +33,6 @@ namespace SmartDeviceApp.Models
         public PdfDocument PdfDocument { get; private set; }
 
         /// <summary>
-        /// Generated logical pages of this document
-        /// </summary>
-        public Dictionary<int, LogicalPage> LogicalPages
-        {
-            get { return _logicalPages; }
-        }
-
-        /// <summary>
         /// Document class constructor
         /// </summary>
         /// <param name="sourceFilePath">file path of the actual PDF</param>
@@ -60,12 +44,6 @@ namespace SmartDeviceApp.Models
             OrigSource = sourceFilePath;
             TempSource = tempSource;
             PdfDocument = pdfDocument;
-            _logicalPages = new Dictionary<int, LogicalPage>();
-        }
-
-        public void AddLogicalPage(int pageIndex, LogicalPage logicalPage)
-        {
-            _logicalPages.Add(pageIndex, logicalPage);
         }
 
     }

@@ -38,7 +38,7 @@ namespace SmartDeviceApp
             InitializeComponent();
             Suspending += OnSuspending;
 
-            MainController.Initialize();            
+            MainController.Initialize();
         }
 
         /// <summary>
@@ -134,7 +134,6 @@ namespace SmartDeviceApp
             //}
 
             await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);
-            new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
 
             // Ensure the current window is active
             Window.Current.Activate();

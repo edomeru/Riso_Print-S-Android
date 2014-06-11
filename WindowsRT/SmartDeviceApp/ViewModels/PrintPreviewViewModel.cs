@@ -66,8 +66,8 @@ namespace SmartDeviceApp.ViewModels
         private double _scalingFactor = 1;
 
         private string _documentTitleText;
-        private BitmapImage _rightPageImage;
-        private BitmapImage _leftPageImage;
+        private WriteableBitmap _rightPageImage;
+        private WriteableBitmap _leftPageImage;
         private Size _rightPageActualSize;
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
@@ -83,9 +83,12 @@ namespace SmartDeviceApp.ViewModels
             _pageIndex = 0;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
 
+            _rightPageImage = new WriteableBitmap(1, 1);
+            _leftPageImage = new WriteableBitmap(1, 1);
+
             SetViewMode(_viewControlViewModel.ViewMode); 
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
-            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));            
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));
         }
 
         public void OnNavigatedTo()
@@ -109,8 +112,8 @@ namespace SmartDeviceApp.ViewModels
             if (!_isPageAreaGridLoaded)
             {   
                 _pageAreaGrid = pageAreaGrid;
-                _pageAreaGridMaxHeight = _pageAreaGrid.ActualHeight;
                 _controlReference = (UIElement)_pageAreaGrid.Parent;
+                ResetPageAreaGrid(_viewControlViewModel.ViewOrientation);
                 _isPageAreaGridLoaded = true;
             }
         }
@@ -146,13 +149,13 @@ namespace SmartDeviceApp.ViewModels
                     case PageViewMode.TwoPageViewHorizontal:
                         scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
                             _pageAreaGridMaxWidth / (LeftPageActualSize.Width + RightPageActualSize.Width));
-                        targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);  
+                        targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);
                         break;
 
                     case PageViewMode.TwoPageViewVertical:
                         scalingFactor = Math.Min(_pageAreaGridMaxHeight / (RightPageActualSize.Height + LeftPageActualSize.Height),
                             _pageAreaGridMaxWidth / RightPageActualSize.Width);
-                        targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);  
+                        targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);
                         break;
                 }
                 
@@ -202,13 +205,27 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public void Cleanup()
+        new public void Cleanup()
         {
             if (_gestureController != null)
             {
-                 _gestureController.Dispose();
-                 _gestureController = null;
+                _gestureController.Dispose();
+                _gestureController = null;
             }
+            if (_leftPageImage != null)
+            {
+                _leftPageImage.Clear();
+                _leftPageImage.Invalidate();
+            }
+            if (_rightPageImage != null)
+            {
+                _rightPageImage.Clear();
+                _rightPageImage.Invalidate();
+            }
+            _rightPageActualSize = new Size();
+            _leftPageActualSize = new Size();
+            _isPageAreaGridLoaded = false;
+            _scalingFactor = 0;
         }
 
         public bool IsReverseSwipe
@@ -262,7 +279,7 @@ namespace SmartDeviceApp.ViewModels
             get { return _isLoadPageActive; }
             set
             {
-                //if (_isLoadPageActive != value)
+                if (_isLoadPageActive != value)
                 {
                     _isLoadPageActive = value;
                     RaisePropertyChanged("IsLoadPageActive");
@@ -332,7 +349,7 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public BitmapImage RightPageImage
+        public WriteableBitmap RightPageImage
         {
             get { return _rightPageImage; }
             set
@@ -345,7 +362,7 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public BitmapImage LeftPageImage
+        public WriteableBitmap LeftPageImage
         {
             get { return _leftPageImage; }
             set
