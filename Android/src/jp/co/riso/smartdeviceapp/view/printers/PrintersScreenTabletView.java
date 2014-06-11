@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
@@ -552,7 +553,10 @@ OnItemSelectedListener {
                         getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
                 DialogUtils.displayDialog((Activity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
                 buttonView.setChecked(false);
-                buttonView.requestLayout();
+                // For versions below JELLY BEAN (4.2), the switch fails to return to its initial position
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    buttonView.requestLayout();
+                }
             }
         } else {
             setPrinterViewToNormal(viewHolder);

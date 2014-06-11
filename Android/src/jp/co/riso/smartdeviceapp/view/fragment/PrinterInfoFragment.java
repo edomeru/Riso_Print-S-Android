@@ -25,6 +25,7 @@ import jp.co.riso.smartprint.R;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Gravity;
@@ -267,7 +268,10 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                         getActivity().getString(R.string.ids_err_msg_db_failure), getActivity().getString(R.string.ids_lbl_ok));
                 DialogUtils.displayDialog(getActivity(), KEY_PRINTER_INFO_ERR_DIALOG, info);
                 buttonView.setChecked(false);
-                buttonView.requestLayout();
+                // For versions below JELLY BEAN (4.2), the switch fails to return to its initial position
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    buttonView.requestLayout();
+                }
             }
         }
     }

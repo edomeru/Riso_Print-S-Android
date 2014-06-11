@@ -197,17 +197,23 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
         String errMsg = null;
-        if (err == ERR_INVALID_IP_ADDRESS) {
-            errMsg = getResources().getString(R.string.ids_err_msg_invalid_ip_address);
-        } else if (err == ERR_CAN_NOT_ADD_PRINTER) {
-            errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
-        } else if (err == ERR_PRINTER_ADDED_WARNING) {
-            errMsg = getResources().getString(R.string.ids_info_msg_warning_cannot_find_printer);
-            errMsg += "\n" + mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
-        } else if (err == ERR_DB_FAILURE) {
-            errMsg = getResources().getString(R.string.ids_err_msg_db_failure);
-        }
         DialogFragment info = null;
+        
+        switch (err) {
+            case ERR_INVALID_IP_ADDRESS:
+                errMsg = getResources().getString(R.string.ids_err_msg_invalid_ip_address);
+                break;
+            case ERR_CAN_NOT_ADD_PRINTER:
+                errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
+                break;
+            case ERR_PRINTER_ADDED_WARNING:
+                errMsg = getResources().getString(R.string.ids_info_msg_warning_cannot_find_printer);
+                errMsg += "\n" + mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
+                break;
+            case ERR_DB_FAILURE:
+                errMsg = getResources().getString(R.string.ids_err_msg_db_failure);
+                break;
+        }
         
         if(err == ERR_PRINTER_ADDED_WARNING) {
             info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), null);

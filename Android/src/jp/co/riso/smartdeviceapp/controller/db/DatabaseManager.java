@@ -45,7 +45,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
     @Override
     public void onOpen(SQLiteDatabase db) {
         // http://stackoverflow.com/questions/13641250/sqlite-delete-cascade-not-working
-        db.execSQL("PRAGMA foreign_keys = ON;");
+        try {
+            db.execSQL("PRAGMA foreign_keys = ON;");
+        } catch (SQLException e) {
+            // Do nothing
+        }
     }
     
     /** {@inheritDoc} */
@@ -57,7 +61,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String[] separated = sqlString.split(";");
         
         for (int i = 0; i < separated.length; i++) {
-            db.execSQL(separated[i]);
+            try {
+                db.execSQL(separated[i]);
+            } catch (SQLException e) {
+                continue;   
+            }
         }
         
         /* for testing only */
@@ -66,7 +74,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
             separated = sqlString.split(";");
             
             for (int i = 0; i < separated.length; i++) {
-                db.execSQL(separated[i]);
+                try {
+                    db.execSQL(separated[i]);
+                } catch (SQLException e) {
+                    continue;
+                }
             }
             
             if (AppConstants.FOR_PERF_LOGS) {
@@ -76,7 +88,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
                         String sql = String.format(Locale.getDefault(), "INSERT INTO PrintJob" +
                         		"(prn_id, pjb_name, pjb_date, pjb_result) VALUES ('%d', '%s', '%s', '%d')",
                         		i, "Print Job " + j, PrintJobManager.convertDateToString(null), j % 2);
-                        db.execSQL(sql);
+                        try {
+                            db.execSQL(sql);
+                        } catch (SQLException e) {
+                            continue;
+                        }
                     }
                 }
             }
