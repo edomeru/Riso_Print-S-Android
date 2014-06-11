@@ -436,7 +436,7 @@ OnItemSelectedListener {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
         View pView = inflater.inflate(R.layout.printers_container_item, this, false);
-        AppUtils.changeChildrenFont((ViewGroup) pView, SmartDeviceApp.getAppFont());
+        // AppUtils.changeChildrenFont((ViewGroup) pView, SmartDeviceApp.getAppFont());
         
         String printerName = printer.getName();
         if(printerName == null || printerName.isEmpty()) {

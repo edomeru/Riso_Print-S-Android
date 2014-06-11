@@ -37,6 +37,9 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     private static final String INVALID_FOLDER_PATH = "invalid/help.html";
     private static final String INVALID_FOLDER_FULLPATH = "file:///android_asset/invalid/help.html";
     
+    final String FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf";
+    Typeface mAppFont;
+    
     public AppUtilsTest() {
         super(MainActivity.class);
     }
@@ -50,6 +53,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 		super.setUp();
 
         Locale.setDefault(Locale.US);
+        mAppFont = Typeface.DEFAULT;
 	}
 
     @Override
@@ -426,7 +430,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         typeFace.setTypeface(null);
         ll.addView(typeFace);
         typeFace = new TextView(getActivity());
-        typeFace.setTypeface(SmartDeviceApp.getAppFont());
+        typeFace.setTypeface(mAppFont);
         ll.addView(typeFace);
         
         ll2.addView(new TextView(getActivity()));
@@ -435,11 +439,11 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         ll2.addView(new EditText(getActivity()));
         ll2.addView(new Switch(getActivity()));
         
-        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont(ll, mAppFont);
     }
     
     public void testChangeChildrenFont_NullViewGroupValidFont() {
-        AppUtils.changeChildrenFont(null, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont(null, mAppFont);
     }
     
     public void testChangeChildrenFont_ValidViewGroupNullFont() {
@@ -463,7 +467,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         
         ll.addView(new MockClass(getActivity()));
         
-        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont(ll, mAppFont);
     }
     
     public void testChangeChildrenFont_TypeFaceNull() {
@@ -473,7 +477,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         nullTypeFace.setTypeface(null);
         ll.addView(nullTypeFace);
         
-        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont(ll, mAppFont);
     }
     
     //================================================================================
@@ -707,7 +711,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         }
         
         protected Typeface getTypeface() {
-            return SmartDeviceApp.getAppFont();
+            return mAppFont;
         }
         
         protected void setTypeface(Typeface tf) {

@@ -11,7 +11,6 @@ package jp.co.riso.smartdeviceapp.view.base;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.ActionBar.LayoutParams;
 import android.app.DialogFragment;
@@ -92,7 +91,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
             }
         }
         
-        AppUtils.changeChildrenFont((ViewGroup) view, SmartDeviceApp.getAppFont());
+        // AppUtils.changeChildrenFont((ViewGroup) view, SmartDeviceApp.getAppFont());
         
         Logger.logStopTime(getActivity(), this.getClass(), "Fragment View");
         

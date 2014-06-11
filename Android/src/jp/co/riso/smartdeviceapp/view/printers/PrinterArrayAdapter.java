@@ -11,7 +11,6 @@ package jp.co.riso.smartdeviceapp.view.printers;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -74,7 +73,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
             
             convertView.setTag(viewHolder);
             
-            AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
+            // AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
             
         } else {                        
             viewHolder = (ViewHolder) convertView.getTag();
