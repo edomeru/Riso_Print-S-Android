@@ -12,6 +12,7 @@
 #import "UIViewController+Segue.h"
 #import "PrintSettingsViewController.h"
 #import "UIView+Localization.h"
+#import "AlertHelper.h"
 
 @interface PrinterInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
@@ -101,13 +102,24 @@
 
 - (IBAction)defaultPrinterSwitchAction:(id)sender
 {
-    self.isDefaultPrinter = self.defaultPrinterSwitch.on;
-    if (self.isDefaultPrinter)
+    //if setting of printer as default failed, show alert message and turn off switch.
+    if([self.printerManager registerDefaultPrinter:self.printer])
     {
-        [self hideDefaultSwitch:YES];
-        [self.printerManager registerDefaultPrinter:self.printer];
+        self.isDefaultPrinter = self.defaultPrinterSwitch.on;
+        if (self.isDefaultPrinter)
+        {
+            [self hideDefaultSwitch:YES];
+        }
     }
-    //else do nothing
+    else
+    {
+        [AlertHelper displayResult:kAlertResultErrDB
+                         withTitle:kAlertTitlePrinters
+                       withDetails:nil
+                withDismissHandler:^(CXAlertView *alertView) {
+                    self.defaultPrinterSwitch.on = NO;
+                }];
+    }
     
     //switch is automatically turned off when a new default printer is selected
 }

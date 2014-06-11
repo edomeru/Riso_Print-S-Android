@@ -199,26 +199,33 @@
 - (IBAction)defaultPrinterSwitchAction:(id)sender
 {
     UISwitch *defaultSwitch = (UISwitch *) sender;
-    if (defaultSwitch.on)
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
+    
+    //if setting of printer as default failed, show alert message and turn off switch.
+    if([self setDefaultPrinter:indexPath] && defaultSwitch.on)
     {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
-        if([self setDefaultPrinter:indexPath])
+        if(self.defaultPrinterIndexPath != nil)
         {
-            if(self.defaultPrinterIndexPath != nil)
-            {
-                PrinterCollectionViewCell *oldDefaultCell =
-                    (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
-                [oldDefaultCell setAsDefaultPrinterCell:FALSE];
-            }
-            
-            PrinterCollectionViewCell *newDefaultCell =
-                (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            [newDefaultCell setAsDefaultPrinterCell:YES];
-            
-            self.defaultPrinterIndexPath = indexPath;
+            PrinterCollectionViewCell *oldDefaultCell =
+            (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+            [oldDefaultCell setAsDefaultPrinterCell:FALSE];
         }
+        
+        PrinterCollectionViewCell *newDefaultCell =
+        (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        [newDefaultCell setAsDefaultPrinterCell:YES];
+        
+        self.defaultPrinterIndexPath = indexPath;
     }
-    //else do nothing
+    else
+    {
+        [AlertHelper displayResult:kAlertResultErrDB
+                         withTitle:kAlertTitlePrinters
+                       withDetails:nil
+                withDismissHandler:^(CXAlertView *alertView) {
+                    defaultSwitch.on = NO;
+                }];
+    }
     
     //switch is automatically turned off when a new default printer is selected
 }
