@@ -233,7 +233,7 @@ public class PrintJobManager {
         pjvalues.put(KeyConstants.KEY_SQL_PRINTJOB_NAME, printJob.getName());
         pjvalues.put(KeyConstants.KEY_SQL_PRINTJOB_RESULT, printJob.getResult().ordinal());
         pjvalues.put(KeyConstants.KEY_SQL_PRINTJOB_DATE, convertDateToString(printJob.getDate()));
-        return mManager.insertOrReplace(KeyConstants.KEY_SQL_PRINTJOB_TABLE, null, pjvalues) != -1;
+        return mManager.insert(KeyConstants.KEY_SQL_PRINTJOB_TABLE, null, pjvalues);
     }
     
     /**
