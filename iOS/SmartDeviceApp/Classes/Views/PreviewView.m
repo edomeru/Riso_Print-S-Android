@@ -61,17 +61,17 @@
 /**
  Pinch gesture recognizer for scaling
  */
-@property (nonatomic, weak) UIPinchGestureRecognizer *pincher;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pincher;
 
 /**
  Pan gesture recognizer for panning
  */
-@property (nonatomic, weak) UIPanGestureRecognizer *panner;
+@property (nonatomic, strong) UIPanGestureRecognizer *panner;
 
 /**
  Double tap gesture recognizer for zooming out
  */
-@property (nonatomic, weak) UITapGestureRecognizer *tapper;
+@property (nonatomic, strong) UITapGestureRecognizer *tapper;
 
 /**
  Current scale
@@ -101,11 +101,23 @@
 - (void)initialize;
 
 /**
+ Add page content view to the content view
+ */
+- (void)setPageContentView:(UIView *)pageContentView;
+
+/**
  Snap dimensions and position to nearest valid value
  */
 - (void)snap;
 
+/**
+ Enable scale to fit constraints
+ */
 - (void)enableMaxDimensionRules;
+
+/*
+ Disable scale to fit constraints
+ */
 - (void)disableMaxDimensionRules;
 
 /**
@@ -151,13 +163,17 @@
     self.aspectRatio = ratio;
     
     // Remove existing constraints
-    //[self.contentView removeFromSuperview];
-    [self.contentView removeConstraint:self.aspectRatioConstraint];
     [self removeConstraint:self.sizeConstraint];
     [self removeConstraint:self.xAlignConstraint];
     [self removeConstraint:self.yAlignConstraint];
     [self removeConstraint:self.maxWidthConstraint];
     [self removeConstraint:self.maxHeightConstraint];
+    [self.contentView removeFromSuperview];
+    
+    // Create content view
+    self.contentView = [[UIView alloc] init];
+    self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self.contentView];
     
     // Create new constraints
     // Size constraint
@@ -181,7 +197,6 @@
     NSLayoutConstraint *maxHeightConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f];
                                                
     // Add new constraints
-    //[self addSubview:self.contentView];
     sizeConstraint.priority = UILayoutPriorityDefaultLow;
     [self.contentView addConstraint:aspectRatioConstraint];
     [self addConstraints:@[sizeConstraint, xAlignConstraint, yAlignConstraint, maxWidthConstraint, maxHeightConstraint]];
@@ -199,17 +214,26 @@
     self.position = CGPointZero;
     self.zoomAnchor = CGPointZero;
     
+    [self setupPageContentView];
+    
     [self layoutIfNeeded];
+}
+
+- (void)setPageContentView:(UIView *)pageContentView
+{
+    if (_pageContentView != nil)
+    {
+        [_pageContentView removeFromSuperview];
+    }
+    
+    _pageContentView = pageContentView;
+    [self setupPageContentView];
 }
 
 #pragma mark - Helper Methods
 
 - (void)initialize
 {
-    // Create content view
-    self.contentView = [[UIView alloc] init];
-    self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:self.contentView];
     
     // Create gesture recognizers
     UIPinchGestureRecognizer *pincher = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchAction:)];
@@ -232,6 +256,20 @@
     self.zoomAnchor = CGPointZero;
     self.minScale = MIN_SCALE;
     self.maxScale = MAX_SCALE;
+}
+
+- (void)setupPageContentView
+{
+    if (self.pageContentView == nil)
+    {
+        return;
+    }
+    
+    [self.contentView addSubview:self.pageContentView];
+    
+    NSDictionary *views = @{@"pageContentView": self.pageContentView};
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageContentView]|" options:0 metrics:nil views:views]];
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[pageContentView]|" options:0 metrics:nil views:views]];
 }
 
 - (void)snap
