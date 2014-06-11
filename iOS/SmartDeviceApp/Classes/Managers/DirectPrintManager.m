@@ -187,10 +187,11 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 {
     self.isPrinting = NO;
     
+    [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:1];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         [AlertHelper displayResult:kAlertResultPrintSuccessful withTitle:kAlertTitleDefault withDetails:nil withDismissHandler:^(CXAlertView *alertView){
             dispatch_async(dispatch_get_main_queue(), ^{
-                [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:1];
                 [self.delegate documentDidFinishPrinting:YES];
             });
         }];
