@@ -33,7 +33,7 @@
 - (void)setUpClass
 {
     self.titleDictionary = @{[NSNumber numberWithInt:kAlertTitleDefault]: NSLocalizedString(IDS_APP_NAME, @""),
-                             [NSNumber numberWithInt:kAlertTitlePrinters]: NSLocalizedString(IDS_LBL_PRINTER, @""),
+                             [NSNumber numberWithInt:kAlertTitlePrinters]: NSLocalizedString(IDS_LBL_PRINTERS, @""),
                              [NSNumber numberWithInt:kAlertTitlePrintersAdd]: NSLocalizedString(IDS_LBL_ADD_PRINTER, @""),
                              [NSNumber numberWithInt:kAlertTitlePrintersSearch]: NSLocalizedString(IDS_LBL_SEARCH_PRINTERS, @""),
                              [NSNumber numberWithInt:kAlertTitlePrintJobHistory]: NSLocalizedString(IDS_LBL_PRINT_JOB_HISTORY, @""),
@@ -49,6 +49,8 @@
                               [NSNumber numberWithInt:kAlertResultErrPrinterDuplicate]: NSLocalizedString(IDS_ERR_MSG_CANNOT_ADD_PRINTER, @""),
                               [NSNumber numberWithInt:kAlertResultErrPrinterCannotBeAdded]: @"The printer could not be added.",
                               [NSNumber numberWithInt:kAlertResultErrDelete]: NSLocalizedString(IDS_ERR_MSG_DELETE_FAILED, @""),
+                              [NSNumber numberWithInt:kAlertResultErrFileHasOpenPassword]: NSLocalizedString(IDS_ERR_MSG_PDF_ENCRYPTED, @""),
+                              [NSNumber numberWithInt:kAlertResultErrFileDoesNotAllowPrinting]: NSLocalizedString(IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED, @""),
                               [NSNumber numberWithInt:kAlertResultFileCannotBeOpened]: NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @""),
                               [NSNumber numberWithInt:kAlertResultPrintSuccessful]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL, @""),
                               [NSNumber numberWithInt:kAlertResultPrintFailed]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @""),

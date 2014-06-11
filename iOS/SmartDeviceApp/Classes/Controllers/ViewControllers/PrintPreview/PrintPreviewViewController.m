@@ -279,8 +279,22 @@
         }
         else
         {
+            kAlertResult result;
+            if (error == kPDFErrorPrintingNotAllowed)
+            {
+                result = kAlertResultErrFileDoesNotAllowPrinting;
+            }
+            else if (error == kPDFErrorLocked)
+            {
+                result = kAlertResultErrFileHasOpenPassword;
+            }
+            else
+            {
+                result = kAlertResultFileCannotBeOpened;
+            }
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                [AlertHelper displayResult:kAlertResultFileCannotBeOpened withTitle:kAlertTitleDefault withDetails:nil];
+                [AlertHelper displayResult:result withTitle:kAlertTitleDefault withDetails:nil];
                 [self.activityIndicator stopAnimating];
             });
         }

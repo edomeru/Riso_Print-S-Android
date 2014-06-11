@@ -136,6 +136,7 @@
 "IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "パスワードが正しくありません。確認してください。";
 "IDS_ERR_MSG_OPEN_FAILED" = "ファイルが開けません。";
 "IDS_ERR_MSG_PDF_ENCRYPTED" = "暗号化PDFには対応していません。";
+"IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" = "File does not allow printing.";
 "IDS_ERR_MSG_FILE_TOO_LARGE" = "ファイルサイズが大きすぎます。";
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "デバイスの空き容量が不足しています。";
 "IDS_ERR_MSG_NETWORK_ERROR" = "ネットワークに接続できません。";
