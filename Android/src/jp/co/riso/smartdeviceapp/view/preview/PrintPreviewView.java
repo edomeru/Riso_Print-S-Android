@@ -1399,23 +1399,58 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                     
                     int x = left;
                     int y = top;
+                    float rotate = 0.0f;
                     
-                    if (mPrintSettings.isScaleToFit()) {
-                        dim = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(curIndex), mPdfManager.getPageHeight(curIndex), right - left, bottom - top);
-                        
-                        // For Fit-XY
-                        //dim[0] = right - left;
-                        //dim[1] = bottom - top;
-                        
-                        x += (((right - left) - dim[0]) / 2);
-                        y += (((bottom - top) - dim[1]) / 2);
-                    } else {
-                        // Adjust x and y position when flipped
+                    boolean shouldRotate = ((right - left) > (bottom - top)) != (mPdfManager.getPageWidth(curIndex) > mPdfManager.getPageHeight(curIndex));
+                    
+                    if (shouldRotate) {
+                        x = left;
+                        y = bottom;
+                        rotate = -90.0f;
                         if (flipX) {
-                            x -= (dim[0] - (right - left));
+                            rotate += 180.0f;
                         }
                         if (flipY) {
-                            y -= (dim[1] - (bottom - top));
+                            rotate += 180.0f;
+                        }
+                    }
+                    
+                    int width = right - left;
+                    int height = bottom - top;
+                    if (shouldRotate) {
+                        width = bottom - top;
+                        height = right - left;
+                    }
+                    
+                    if (mPrintSettings.isScaleToFit()) {
+                        dim = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(curIndex), mPdfManager.getPageHeight(curIndex), width, height);
+                        // For Fit-XY
+                        //dim[0] = width;
+                        //dim[1] = height;
+                        if (shouldRotate) {
+                            x += ((height - dim[1]) / 2);
+                            y += ((width - dim[0]) / 2);
+                        } else {
+                            x += ((width - dim[0]) / 2);
+                            y += ((height - dim[1]) / 2);
+                        }
+                    } else {
+                        if (shouldRotate) {
+                            // Adjust x and y position when flipped
+                            if (flipX) {
+                                x -= (dim[1] - height);
+                            }
+                            if (flipY) {
+                                y += (dim[0] - width);
+                            }
+                        } else {
+                            // Adjust x and y position when flipped
+                            if (flipX) {
+                                x -= (dim[0] - width);
+                            }
+                            if (flipY) {
+                                y -= (dim[1] - height);
+                            }
                         }
                     }
                     
@@ -1426,10 +1461,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                     Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
                     ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), x, y, destRect);
                     */
-                    x += (dim[0] / 2);
-                    y += (dim[1] / 2);
+                    // Adjust x and y for rotation purposes
+                    if (shouldRotate) {
+                        x += (dim[1] / 2);
+                        y -= (dim[0] / 2);
+                    } else {
+                        x += (dim[0] / 2);
+                        y += (dim[1] / 2);
+                    }
                     float drawScale = dim[0] / (float)page.getWidth();
-                    ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), x, y, 0.0f, drawScale);
+                    ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), x, y, rotate, drawScale);
                     
                     canvas.restore();
                     

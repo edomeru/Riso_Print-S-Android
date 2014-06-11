@@ -358,6 +358,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             } else {
                 mPrintPreviewView.setVisibility(View.VISIBLE);
                 mPageControls.setVisibility(View.VISIBLE);
+                mPrintPreviewView.reconfigureCurlView();
                 mPrintPreviewView.refreshView();
                 updateSeekBar();
                 updatePageLabel();
