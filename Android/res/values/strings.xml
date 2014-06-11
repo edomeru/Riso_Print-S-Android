@@ -35,7 +35,7 @@
     <string name="ids_lbl_authentication">Authentication</string>
     <string name="ids_lbl_login_id">Log-in ID</string>
     <string name="ids_lbl_print_settings">Print Settings</string>
-    <string name="ids_lbl_page_displayed">Page %%d / %%d</string>
+    <string name="ids_lbl_page_displayed" formatted="false">Page %d / %d</string>
     <string name="ids_lbl_print">Print</string>
     <string name="ids_lbl_printer">Printer</string>
     <string name="ids_lbl_choose_printer">Choose printer</string>
@@ -143,6 +143,7 @@
     <string name="ids_err_msg_pdf_wrong_password">Please check the password you entered</string>
     <string name="ids_err_msg_open_failed">Please select a valid file.</string>
     <string name="ids_err_msg_pdf_encrypted">PDF Encryption is not supported</string>
+    <string name="ids_err_msg_pdf_printing_not_allowed">File does not allow printing.</string>
     <string name="ids_err_msg_file_too_large">File size is too large</string>
     <string name="ids_err_msg_not_enough_space">Not enough free space on device</string>
     <string name="ids_err_msg_network_error">No network available.</string>

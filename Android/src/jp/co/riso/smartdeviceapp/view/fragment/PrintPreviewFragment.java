@@ -423,7 +423,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             case PDFFileManager.PDF_ENCRYPTED:
                 return getResources().getString(R.string.ids_err_msg_pdf_encrypted);
             case PDFFileManager.PDF_PRINT_RESTRICTED:
-                return "Printing not Allowed";
+                return getResources().getString(R.string.ids_err_msg_pdf_printing_not_allowed);
             case PDFFileManager.PDF_OPEN_FAILED:
                 return getResources().getString(R.string.ids_err_msg_open_failed);
         }
