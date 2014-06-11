@@ -13,10 +13,16 @@
 /** 
  Requests the data source for the number of print jobs
  to be displayed for the current group (a fixed size
- for all groups cannot be used).
+ for all groups cannot be used) and whether the group
+ should be displayed as collapsed or expanded.
+ @param numJobs
+        number of print jobs
+ @param collapsed
+        YES if group is collapsed, NO if expanded
  @param indexPath
+        the group's index path
  */
-- (NSUInteger)numberOfJobsForGroupAtIndexPath:(NSIndexPath*)indexPath;
+- (void)getNumJobs:(NSUInteger*)numJobs getCollapsed:(BOOL*)collapsed forGroupAtIndexPath:(NSIndexPath*)indexPath;
 
 @end
 
@@ -34,5 +40,19 @@
         iPhone or iPad
  */
 - (void)setupForOrientation:(UIInterfaceOrientation)orientation forDevice:(UIUserInterfaceIdiom)idiom;
+
+/**
+ Notifies the layout to update the arrangement of the groups in their
+ respective columns during the next update.
+ */
+- (void)invalidateColumnAssignments;
+
+/**
+ Notifies the layout that the specified item will be deleted.
+ This allows the layout to take note of the deleted group's
+ frame, which is necessary to recalculate the other groups' 
+ positions after the delete operation.
+ */
+- (void)prepareForDelete:(NSIndexPath*)itemToDelete;
 
 @end

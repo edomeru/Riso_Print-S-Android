@@ -88,6 +88,7 @@
     self.emptyLabel.hidden = ([self.listPrintJobHistoryGroups count] == 0 ? NO : YES);
     
     self.groupsViewLayout.delegate = self;
+    [self.groupsViewLayout invalidateColumnAssignments];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         [self.groupsViewLayout setupForOrientation:self.interfaceOrientation
@@ -163,7 +164,6 @@
     // put the model contents into the view
     [groupCell initWithTag:group.tag]; // use a tag that is independent of the list or view position
                                        // (to support deleting groups later without need for reloading)
-    
     [groupCell putGroupName:group.groupName];
     [groupCell putGroupIP:group.groupIP];
     [groupCell putIndicator:group.isCollapsed];
@@ -195,18 +195,12 @@
 
 #pragma mark - PrintJobHistoryLayoutDelegate
 
-- (NSUInteger)numberOfJobsForGroupAtIndexPath:(NSIndexPath*)indexPath
+- (void)getNumJobs:(NSUInteger*)numJobs getCollapsed:(BOOL*)collapsed forGroupAtIndexPath:(NSIndexPath*)indexPath
 {
     PrintJobHistoryGroup* group = [self.listPrintJobHistoryGroups objectAtIndex:indexPath.item];
     
-#if DEBUG_LOG_PRINT_JOB_HISTORY_SCREEN
-    NSLog(@"[INFO][PrintJobCtrl] group=%ld printjobs=%lu", (long)group.tag, (unsigned long)group.countPrintJobs);
-#endif
-    
-    if (group.isCollapsed)
-        return 0; //no need to display any jobs
-    else
-        return group.countPrintJobs;
+    *numJobs = group.countPrintJobs;
+    *collapsed = group.isCollapsed;
 }
 
 #pragma mark - PrintJobHistoryGroupCellDelegate
@@ -319,6 +313,7 @@
                 
                 // remove the cell from the view
                 NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
+                [weakSelf.groupsViewLayout prepareForDelete:groupIndexPath];
                 [weakSelf.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
                 
                 weakSelf.emptyLabel.hidden = ([weakSelf.listPrintJobHistoryGroups count] == 0 ? NO : YES);
@@ -415,6 +410,7 @@
                 // no more jobs for this group
                 // remove the group from data source and the view
                 [weakSelf.listPrintJobHistoryGroups removeObjectAtIndex:groupIndex];
+                [weakSelf.groupsViewLayout prepareForDelete:groupIndexPath];
                 [weakSelf.groupsView deleteItemsAtIndexPaths:@[groupIndexPath]];
                 
                 weakSelf.emptyLabel.hidden = ([weakSelf.listPrintJobHistoryGroups count] == 0 ? NO : YES);
