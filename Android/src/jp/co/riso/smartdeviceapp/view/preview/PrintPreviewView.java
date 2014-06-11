@@ -510,7 +510,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         // Adjust display on screen.
         if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
-            if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
+            if (mCurlView.getBindPosition() == CurlView.BIND_TOP
+                    || mCurlView.getBindPosition() == CurlView.BIND_BOTTOM) {
                 // double the height if bind == top
                 paperDisplaySize[1] *= 2.0f;
             } else {
@@ -733,12 +734,18 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         int bindPosition = CurlView.BIND_LEFT;
         
         if (mPrintSettings.isBooklet()) {
-            bindPosition = CurlView.BIND_LEFT;
-            
-            if (shouldDisplayLandscape()) {
+            if (!shouldDisplayLandscape()) {
+                bindPosition = CurlView.BIND_LEFT;
+                
+                if (mPrintSettings.getBookletLayout() == BookletLayout.REVERSE) {
+                    bindPosition = CurlView.BIND_RIGHT;
+                }
+            } else {
                 bindPosition = CurlView.BIND_TOP;
-            } else if (mPrintSettings.getBookletLayout() == BookletLayout.R_L) {
-                bindPosition = CurlView.BIND_RIGHT;
+                
+                if (mPrintSettings.getBookletLayout() == BookletLayout.REVERSE) {
+                    bindPosition = CurlView.BIND_BOTTOM;
+                }
             }
         } else {
             switch (mPrintSettings.getFinishingSide()) {
@@ -1138,6 +1145,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 case CurlView.BIND_TOP:
                     toY = fromY;
                     break;
+                case CurlView.BIND_BOTTOM:
+                    fromY = toY;
+                    break;
             }
             
             paint.setStyle(Style.STROKE);
@@ -1194,7 +1204,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 for (int i = 0; i < count; i++) {
                     int x = staplePos;
                     int y = staplePos;
-                    float rotate = -90.0f;
+                    float rotate = 90.0f;
                     
                     if (mCurlView.getBindPosition() == CurlView.BIND_LEFT) {
                         y = (canvas.getHeight() * (i + 1)) / (count + 1);
@@ -1206,12 +1216,23 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         // do not rotate when booklet to show a "continuous" staple image
                         if (mPrintSettings.isBooklet()) {
                             if (mPrintSettings.getBookletFinish() == BookletFinish.FOLD_AND_STAPLE) {
-                                rotate = -rotate;
+                                rotate += 180.0f;
                             }
                         }
                     } else if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
                         x = (canvas.getWidth() * (i + 1)) / (count + 1);
                         rotate = 0.0f;
+                    } else if (mCurlView.getBindPosition() == CurlView.BIND_BOTTOM) {
+                        x = (canvas.getWidth() * (i + 1)) / (count + 1);
+                        y = (canvas.getHeight() - staplePos);
+                        rotate = 0.0f;
+                        
+                        // do not rotate when booklet to show a "continuous" staple image
+                        if (mPrintSettings.isBooklet()) {
+                            if (mPrintSettings.getBookletFinish() == BookletFinish.FOLD_AND_STAPLE) {
+                                rotate += 180.0f;
+                            }
+                        }
                     }
                     
                     ImageUtils.renderBmpToCanvas(mStapleBmp, canvas, shouldDisplayColor(), x, y, rotate, scale);
@@ -1242,6 +1263,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                     y = (canvas.getHeight() * (i + 1)) / (count + 1);
                 } else if (mCurlView.getBindPosition() == CurlView.BIND_TOP) {
                     x = (canvas.getWidth() * (i + 1)) / (count + 1);
+                } else if (mCurlView.getBindPosition() == CurlView.BIND_BOTTOM) {
+                    x = (canvas.getWidth() * (i + 1)) / (count + 1);
+                    y = (canvas.getHeight() - punchPos);
                 }
                 
                 ImageUtils.renderBmpToCanvas(mPunchBmp, canvas, shouldDisplayColor(), x, y, 0, scale);

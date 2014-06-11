@@ -69,7 +69,7 @@
             text="ids_lbl_scaletofit"
             icon="temp_img_printsettings_null"
             type="boolean"
-            default="false" />
+            default="true" />
         <setting
             name="paperType"
             dbkey="pst_paper_type"
@@ -166,9 +166,8 @@
             icon="temp_img_printsettings_null"
             type="list"
             default="0" >
-            <option>ids_lbl_booklet_layout_lr</option>
-            <option>ids_lbl_booklet_layout_rl</option>
-            <option>ids_lbl_booklet_layout_tb</option>
+            <option>ids_lbl_booklet_layout_forward</option>
+            <option>ids_lbl_booklet_layout_reverse</option>
         </setting>
         <setting
             name="finishingSide"

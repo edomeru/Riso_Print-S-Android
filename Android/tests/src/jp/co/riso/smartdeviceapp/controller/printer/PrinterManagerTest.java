@@ -664,7 +664,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             //Enabled Capabilities
             printer.getConfig().setLprAvailable(true);
             printer.getConfig().setRawAvailable(true);
-            printer.getConfig().setBookletAvailable(true);
+            printer.getConfig().setBookletFinishingAvailable(true);
             printer.getConfig().setStaplerAvailable(true);
             printer.getConfig().setPunch3Available(true);
             printer.getConfig().setPunch4Available(true);
@@ -678,7 +678,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             //Disabled Capabilities
             printer.getConfig().setLprAvailable(false);
             printer.getConfig().setRawAvailable(false);
-            printer.getConfig().setBookletAvailable(false);
+            printer.getConfig().setBookletFinishingAvailable(false);
             printer.getConfig().setStaplerAvailable(false);
             printer.getConfig().setPunch3Available(true);
             printer.getConfig().setPunch4Available(false);
@@ -1073,6 +1073,81 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
+    }
+
+    // ================================================================================
+    // Tests - setupPrinterConfig
+    // ================================================================================
+
+    public void testSetupPrinterConfig_null() {
+        try {
+            PrinterManager.setupPrinterConfig(null, null);
+            PrinterManager.setupPrinterConfig(null, new boolean[1]);
+            PrinterManager.setupPrinterConfig(new Printer("test", "ip"), null);
+        } catch (Exception e) {
+            // No exception should happen
+            fail();
+        }
+    }
+    public void testSetupPrinterConfig_allAvailable() {
+        boolean capabilities[] = new boolean[] {
+                true, true, true, true, true, true, true, true, true
+        };
+        Printer target = new Printer("test", "ip");
+        PrinterManager.setupPrinterConfig(target, capabilities);
+        
+        assertTrue(target.getConfig().isBookletFinishingAvailable());
+        assertTrue(target.getConfig().isStaplerAvailable());
+        assertTrue(target.getConfig().isPunch3Available());
+        assertTrue(target.getConfig().isPunch4Available());
+        assertTrue(target.getConfig().isTrayFaceDownAvailable());
+        assertTrue(target.getConfig().isTrayStackAvailable());
+        assertTrue(target.getConfig().isTrayTopAvailable());
+        assertTrue(target.getConfig().isLprAvailable());
+        assertTrue(target.getConfig().isRawAvailable());
+    }
+    
+    public void testSetupPrinterConfig_allFalse() {
+        boolean capabilities[] = new boolean[] {
+                false, false, false, false, false, false, false, false
+        };
+        Printer target = new Printer("test", "ip");
+        PrinterManager.setupPrinterConfig(target, capabilities);
+        
+        assertFalse(target.getConfig().isBookletFinishingAvailable());
+        assertFalse(target.getConfig().isStaplerAvailable());
+        assertFalse(target.getConfig().isPunch3Available());
+        assertFalse(target.getConfig().isPunch4Available());
+        assertFalse(target.getConfig().isTrayFaceDownAvailable());
+        assertFalse(target.getConfig().isTrayStackAvailable());
+        assertFalse(target.getConfig().isTrayTopAvailable());
+        assertFalse(target.getConfig().isLprAvailable());
+        assertFalse(target.getConfig().isRawAvailable());
+    }
+    
+    public void testSetupPrinterConfig_Incomplete() {
+        boolean capabilities[] = new boolean[] {
+                false
+        };
+        Printer target = new Printer("test", "ip");
+        try {
+            PrinterManager.setupPrinterConfig(target, capabilities);
+        } catch (Exception e) {
+            // No exception should happen
+            fail();
+        }
+
+        Printer defaultPrinter = new Printer("test", "ip");
+        
+        assertFalse(target.getConfig().isBookletFinishingAvailable());
+        assertEquals(defaultPrinter.getConfig().isStaplerAvailable(), target.getConfig().isStaplerAvailable());
+        assertEquals(defaultPrinter.getConfig().isPunch3Available(), target.getConfig().isPunch3Available());
+        assertEquals(defaultPrinter.getConfig().isPunch4Available(), target.getConfig().isPunch4Available());
+        assertEquals(defaultPrinter.getConfig().isTrayFaceDownAvailable(), target.getConfig().isTrayFaceDownAvailable());
+        assertEquals(defaultPrinter.getConfig().isTrayStackAvailable(), target.getConfig().isTrayStackAvailable());
+        assertEquals(defaultPrinter.getConfig().isTrayTopAvailable(), target.getConfig().isTrayTopAvailable());
+        assertEquals(defaultPrinter.getConfig().isLprAvailable(), target.getConfig().isLprAvailable());
+        assertEquals(defaultPrinter.getConfig().isRawAvailable(), target.getConfig().isRawAvailable());
     }
     
     // ================================================================================

@@ -9,7 +9,6 @@
 package jp.co.riso.smartdeviceapp.model;
 
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -189,16 +188,6 @@ public class Printer implements Parcelable {
     public void setConfig(Config config) {
         mConfig = config;
     }
-
-    /**
-     * Gets the print settings corresponding to the Printer
-     * 
-     * @return Printer's print settings
-     */
-    // TODO: For update
-    public PrintSettings getPrintSettings() {
-        return new PrintSettings(getId());
-    }
     
     // ================================================================================
     // Internal Class - Printer Config
@@ -210,7 +199,7 @@ public class Printer implements Parcelable {
     public class Config {
         private boolean mLprAvailable;
         private boolean mRawAvailable;
-        private boolean mBookletAvailable;
+        private boolean mBookletFinishingAvailable;
         private boolean mStaplerAvailable;
         private boolean mPunch3Available;
         private boolean mPunch4Available;
@@ -226,7 +215,7 @@ public class Printer implements Parcelable {
         public Config() {
             mLprAvailable = true;
             mRawAvailable = true;
-            mBookletAvailable = true;
+            mBookletFinishingAvailable = true;
             mStaplerAvailable = true;
             mPunch3Available = false;
             mPunch4Available = true;
@@ -268,19 +257,19 @@ public class Printer implements Parcelable {
         }
         
         /**
-         * @return the mBookletAvailable
+         * @return the mBookletFinishingAvailable
          */
-        public boolean isBookletAvailable() {
-            return mBookletAvailable;
+        public boolean isBookletFinishingAvailable() {
+            return mBookletFinishingAvailable;
         }
         
         /**
-         * updates the value of mBookletAvailable
+         * updates the value of mBookletFinishingAvailable
          * 
-         * @param bookletAvailable
+         * @param bookletFinishingAvailable
          */
-        public void setBookletAvailable(boolean bookletAvailable) {
-            this.mBookletAvailable = bookletAvailable;
+        public void setBookletFinishingAvailable(boolean bookletFinishingAvailable) {
+            this.mBookletFinishingAvailable = bookletFinishingAvailable;
         }
         
         /**
@@ -392,7 +381,7 @@ public class Printer implements Parcelable {
          * @param out
          */
         public void writeToParcel(Parcel out) {
-            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch3Available,
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletFinishingAvailable, mStaplerAvailable, mPunch3Available,
                     mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable };
             
             out.writeBooleanArray(config);
@@ -404,13 +393,13 @@ public class Printer implements Parcelable {
          * @param in
          */
         public void readFromParcel(Parcel in) {
-            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch3Available,
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletFinishingAvailable, mStaplerAvailable, mPunch3Available,
                     mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable };
             
             in.readBooleanArray(config);
             mConfig.mLprAvailable = config[0];
             mConfig.mRawAvailable = config[1];
-            mConfig.mBookletAvailable = config[2];
+            mConfig.mBookletFinishingAvailable = config[2];
             mConfig.mStaplerAvailable = config[3];
             mConfig.mPunch3Available = config[4];
             mConfig.mPunch4Available = config[5];

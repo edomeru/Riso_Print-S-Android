@@ -1,11 +1,9 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
-import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer.Config;
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import junit.framework.TestCase;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -236,20 +234,6 @@ public class PrinterTest extends TestCase {
             fail(); // Error should not be thrown
         }
     }
-
-    // ================================================================================
-    // Tests - setConfig
-    // ================================================================================
-
-    public void testGetPrintSettings() {
-        Printer printer = new Printer("", "");
-        PrintSettings printSettings = printer.getPrintSettings();
-
-        assertNotNull(printSettings);
-
-        printer.setId(AppConstants.CONST_MAX_PRINTER_COUNT + 1);
-        printer.getPrintSettings();
-    }
     
     // ================================================================================
     // Tests - describeContents
@@ -268,7 +252,7 @@ public class PrinterTest extends TestCase {
         Printer printer = new Printer("", "");
         printer.getConfig().isLprAvailable();
         printer.getConfig().isRawAvailable();
-        printer.getConfig().isBookletAvailable();
+        printer.getConfig().isBookletFinishingAvailable();
         printer.getConfig().isStaplerAvailable();
         printer.getConfig().isPunch3Available();
         printer.getConfig().isPunch4Available();

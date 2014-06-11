@@ -265,7 +265,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         if (!isInEditMode()) {
             mTitle = getResources().getString(R.string.ids_info_msg_delete_jobs_title);
             mOkText = getResources().getString(R.string.ids_lbl_ok);
-            mErrorMessage = getResources().getString(R.string.ids_err_msg_delete_failed);
+            mErrorMessage = getResources().getString(R.string.ids_err_msg_db_failure);
             setOrientation(VERTICAL);
             mHandler = new Handler(this);
         }
