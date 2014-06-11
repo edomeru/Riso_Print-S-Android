@@ -33,7 +33,6 @@
 @property (assign, nonatomic) BOOL enLpr;
 @property (assign, nonatomic) BOOL enRaw;
 @property (assign, nonatomic) BOOL enStaple;
-@property (assign, nonatomic) BOOL enTrayAutoStacking;
 @property (assign, nonatomic) BOOL enTrayFaceDown;
 @property (assign, nonatomic) BOOL enTrayStacking;
 @property (assign, nonatomic) BOOL enTrayTop;

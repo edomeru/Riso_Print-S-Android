@@ -19,7 +19,6 @@
 @dynamic enabled_lpr;
 @dynamic enabled_raw;
 @dynamic enabled_staple;
-@dynamic enabled_tray_auto_stacking;
 @dynamic enabled_tray_face_down;
 @dynamic enabled_tray_stacking;
 @dynamic enabled_tray_top;

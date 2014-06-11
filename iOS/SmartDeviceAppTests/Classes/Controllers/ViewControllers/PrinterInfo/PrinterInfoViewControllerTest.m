@@ -161,7 +161,6 @@
     pd1.enStaple = NO;
     pd1.enFinisher23Holes = YES;
     pd1.enFinisher24Holes = NO;
-    pd1.enTrayAutoStacking = YES;
     pd1.enTrayFaceDown = NO;
     pd1.enTrayStacking = YES;
     pd1.enTrayTop = NO;
@@ -179,7 +178,6 @@
     pd2.enStaple = YES;
     pd2.enFinisher23Holes = NO;
     pd2.enFinisher24Holes = YES;
-    pd2.enTrayAutoStacking = YES;
     pd2.enTrayFaceDown = YES;
     pd2.enTrayStacking = YES;
     pd2.enTrayTop = YES;

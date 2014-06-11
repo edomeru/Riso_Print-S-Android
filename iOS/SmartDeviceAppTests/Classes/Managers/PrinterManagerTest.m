@@ -69,7 +69,6 @@
     self.testPrinterDetails.enLpr = YES;
     self.testPrinterDetails.enRaw = NO;
     self.testPrinterDetails.enStaple = YES;
-    self.testPrinterDetails.enTrayAutoStacking = YES;
     self.testPrinterDetails.enTrayFaceDown = YES;
     self.testPrinterDetails.enTrayStacking = YES;
     self.testPrinterDetails.enTrayTop = YES;

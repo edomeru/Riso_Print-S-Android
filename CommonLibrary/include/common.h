@@ -69,14 +69,15 @@ typedef enum
 
 typedef enum
 {
-    kSnmpCapabilityBooklet,
+    kSnmpCapabilityBookletFinishing,
     kSnmpCapabilityStapler,
-    kSnmpCapabilityFin24Holes,
     kSnmpCapabilityFin23Holes,
+    kSnmpCapabilityFin24Holes,
     kSnmpCapabilityTrayFaceDown,
-    kSnmpCapabilityTrayAutoStack,
     kSnmpCapabilityTrayTop,
     kSnmpCapabilityTrayStack,
+    kSnmpCapabilityLPR,
+    kSnmpCapabilityRaw,
     kSnmpCapabilityCount
 } kSnmpCapability;
 
