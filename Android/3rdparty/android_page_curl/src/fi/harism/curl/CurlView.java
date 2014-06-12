@@ -366,8 +366,6 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			mPointerPos.mPressure = 0.8f;
 		}
 
-		boolean cancelAction = false;
-
 		switch (me.getAction()) {
 		case MotionEvent.ACTION_DOWN: {
 
@@ -532,7 +530,6 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 			break;
 		}
 		case MotionEvent.ACTION_CANCEL:
-			cancelAction = true;
 		case MotionEvent.ACTION_UP: {
 			if (mCurlState == CURL_LEFT || mCurlState == CURL_RIGHT) {
 				// Animation source is the point from where animation starts.
@@ -548,7 +545,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				if (mBindPosition == BIND_LEFT) {
 					// Given the explanation, here we decide whether to simulate
 					// drag to left or right end.
-					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x > (rightRect.left + rightRect.right) / 2)
+					if (((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x > (rightRect.left + rightRect.right) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
 							&& mPointerPos.mPos.x > rightRect.left)) {
 						// On right side target is always right page's right border.
@@ -571,7 +568,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				if (mBindPosition == BIND_RIGHT) {
 					// Given the explanation, here we decide whether to simulate
 					// drag to left or right end.
-					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x < (rightRect.left + rightRect.right) / 2)
+					if (((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.x < (rightRect.left + rightRect.right) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
 							&& mPointerPos.mPos.x < rightRect.right)) {
 						// On left side target is always right page's left border.
@@ -592,7 +589,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				}
 
 				if (mBindPosition == BIND_TOP) {
-					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y < (rightRect.top + rightRect.bottom) / 2)
+					if (((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y < (rightRect.top + rightRect.bottom) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
 							&& mPointerPos.mPos.y < rightRect.top)) {
 						// On right side target is always right page's right border.
@@ -613,7 +610,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 				}
 
 				if (mBindPosition == BIND_BOTTOM) {
-					if (cancelAction || ((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y > (rightRect.top + rightRect.bottom) / 2)
+					if (((mViewMode == SHOW_ONE_PAGE && mPointerPos.mPos.y > (rightRect.top + rightRect.bottom) / 2)
 							|| mViewMode == SHOW_TWO_PAGES
 							&& mPointerPos.mPos.y > rightRect.bottom)) {
 						// On right side target is always right page's right border.

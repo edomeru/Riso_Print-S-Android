@@ -360,6 +360,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             } else {
                 mPrintPreviewView.setVisibility(View.VISIBLE);
                 mPageControls.setVisibility(View.VISIBLE);
+                mPrintPreviewView.reconfigureCurlView();
                 mPrintPreviewView.refreshView();
                 updateSeekBar();
                 updatePageLabel();
@@ -583,6 +584,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
+        mPrintPreviewView.reconfigureCurlView();
         mPrintPreviewView.setVisibility(msg.arg1);
         return true;
     }
