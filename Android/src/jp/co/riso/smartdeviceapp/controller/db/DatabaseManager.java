@@ -45,7 +45,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
     @Override
     public void onOpen(SQLiteDatabase db) {
         // http://stackoverflow.com/questions/13641250/sqlite-delete-cascade-not-working
-        db.execSQL("PRAGMA foreign_keys = ON;");
+        try {
+            db.execSQL("PRAGMA foreign_keys = ON;");
+        } catch (SQLException e) {
+            // Do nothing
+        }
     }
     
     /** {@inheritDoc} */
@@ -57,7 +61,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String[] separated = sqlString.split(";");
         
         for (int i = 0; i < separated.length; i++) {
-            db.execSQL(separated[i]);
+            try {
+                db.execSQL(separated[i]);
+            } catch (SQLException e) {
+                continue;   
+            }
         }
         
         /* for testing only */
@@ -66,7 +74,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
             separated = sqlString.split(";");
             
             for (int i = 0; i < separated.length; i++) {
-                db.execSQL(separated[i]);
+                try {
+                    db.execSQL(separated[i]);
+                } catch (SQLException e) {
+                    continue;
+                }
             }
             
             if (AppConstants.FOR_PERF_LOGS) {
@@ -76,7 +88,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
                         String sql = String.format(Locale.getDefault(), "INSERT INTO PrintJob" +
                         		"(prn_id, pjb_name, pjb_date, pjb_result) VALUES ('%d', '%s', '%s', '%d')",
                         		i, "Print Job " + j, PrintJobManager.convertDateToString(null), j % 2);
-                        db.execSQL(sql);
+                        try {
+                            db.execSQL(sql);
+                        } catch (SQLException e) {
+                            continue;
+                        }
                     }
                 }
             }
@@ -154,16 +170,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
      */
     public boolean insert(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
-        SQLiteDatabase db = this.getWritableDatabase();
-        
+        SQLiteDatabase db = null;
         try {
+            db = this.getWritableDatabase();
+            
             rowId = db.insertOrThrow(table, nullColumnHack, values);
         } catch (SQLException e) {
             Logger.logError(DatabaseManager.class, "failed insert to " + table + ". Error: " + e.getMessage());
         }
         
-        db.close();
-        
+        if (db != null) {
+            db.close();
+        }
         return (rowId > -1);
     }
     
@@ -186,15 +204,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
      */
     public long insertOrReplace(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
-        SQLiteDatabase db = this.getWritableDatabase();
-        
         try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            
             rowId = db.insertWithOnConflict(table, nullColumnHack, values, SQLiteDatabase.CONFLICT_REPLACE);
+            db.close();
         } catch (SQLException e) {
             Logger.logError(DatabaseManager.class, "failed insert to " + table + ". Error: " + e.getMessage());
         }
-        
-        db.close();
         
         return rowId;
     }
@@ -212,16 +229,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
      */
     public boolean update(String table, ContentValues values, String whereClause, String whereArg) {
         int rowsNum = 0;
-        SQLiteDatabase db = this.getWritableDatabase();
-        String whereArgs[] = null;
-        
-        if (whereArg != null && !whereArg.isEmpty()) {
-            whereArgs = new String[] { whereArg };
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            String whereArgs[] = null;
+            
+            if (whereArg != null && !whereArg.isEmpty()) {
+                whereArgs = new String[] { whereArg };
+            }
+            
+            rowsNum = db.update(table, values, whereClause, whereArgs);
+            db.close();
+        } catch (SQLException e) {
+            Logger.logError(DatabaseManager.class, "failed update to " + table + ". Error: " + e.getMessage());
         }
-        
-        rowsNum = db.update(table, values, whereClause, whereArgs);
-        db.close();
-        
         return (rowsNum > 0);
     }
     
@@ -250,8 +270,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @return cursor
      */
     public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cur = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+        Cursor cur = null;
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            cur = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+        } catch (SQLException e) {
+            Logger.logError(DatabaseManager.class, "failed query to " + table + ". Error: " + e.getMessage());
+        }
         return cur;
     }
     
@@ -291,10 +316,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
      */
     private boolean delete(String table, String whereClause, String[] whereArgs) {
         int rowsNum = 0;
-        SQLiteDatabase db = this.getWritableDatabase();
-        rowsNum = db.delete(table, whereClause, whereArgs);
-        db.close();
-        
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            
+            rowsNum = db.delete(table, whereClause, whereArgs);
+            db.close();
+        } catch (SQLException e) {
+            Logger.logError(DatabaseManager.class, "failed delete to " + table + ". Error: " + e.getMessage());
+        }
         return (rowsNum > 0);
     }
 }

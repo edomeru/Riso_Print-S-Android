@@ -10,6 +10,8 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.List;
 
+import jp.co.riso.android.dialog.DialogUtils;
+import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -23,6 +25,7 @@ import jp.co.riso.smartprint.R;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Gravity;
@@ -43,6 +46,8 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
     public static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
+    
+    private static final String KEY_PRINTER_INFO_ERR_DIALOG = "printer_info_err_dialog";
     
     private Printer mPrinter = null;
     
@@ -255,9 +260,19 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
-            mPrinterManager.setDefaultPrinter(mPrinter);
-            mDefaultPrinter.setVisibility(View.GONE);
-            mDefaultView.setVisibility(View.VISIBLE);
+            if (mPrinterManager.setDefaultPrinter(mPrinter)) {
+                mDefaultPrinter.setVisibility(View.GONE);
+                mDefaultView.setVisibility(View.VISIBLE);
+            } else {
+                InfoDialogFragment info = InfoDialogFragment.newInstance(getActivity().getString(R.string.ids_lbl_printer_info),
+                        getActivity().getString(R.string.ids_err_msg_db_failure), getActivity().getString(R.string.ids_lbl_ok));
+                DialogUtils.displayDialog(getActivity(), KEY_PRINTER_INFO_ERR_DIALOG, info);
+                buttonView.setChecked(false);
+                // For versions below JELLY BEAN (4.2), the switch fails to return to its initial position
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    buttonView.requestLayout();
+                }
+            }
         }
     }
     

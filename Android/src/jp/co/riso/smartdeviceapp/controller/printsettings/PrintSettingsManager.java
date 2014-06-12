@@ -55,7 +55,7 @@ public class PrintSettingsManager {
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTSETTING_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID + "=?",
                 new String[] { String.valueOf(printerId) }, null, null, null);
         // overwrite values if there is an entry retrieved from database
-        if (c.moveToFirst()) {
+        if (c != null && c.moveToFirst()) {
             for (String key : PrintSettings.sSettingMap.keySet()) {
                 Setting setting = PrintSettings.sSettingMap.get(key);
                 
@@ -69,9 +69,10 @@ public class PrintSettingsManager {
                         break;
                 }
             }
+            c.close();
+            mManager.close();
         }
-        c.close();
-        mManager.close();
+        
         return printSettings;
     }
     
@@ -132,14 +133,14 @@ public class PrintSettingsManager {
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, new String[] { KeyConstants.KEY_SQL_PRINTSETTING_ID },
                 KeyConstants.KEY_SQL_PRINTER_ID + "=?", new String[] { String.valueOf(printerId) }, null, null, null);
         
-        if (c.moveToFirst()) {
+        if (c != null && c.moveToFirst()) {
             if (!c.isNull(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTSETTING_ID))) {
                 int pstId = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
                 cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, pstId);
             }
+            c.close();
         }
         
-        c.close();
         return cv;
     }
 }

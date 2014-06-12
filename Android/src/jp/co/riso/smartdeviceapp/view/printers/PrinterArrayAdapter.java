@@ -210,6 +210,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // INTERFACE - View.OnClick
     // ================================================================================
     
+    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         
@@ -224,8 +225,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
                 if (mCallbackRef != null && mCallbackRef.get() != null) {
                     PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
                     mDeleteViewHolder = (ViewHolder) printerContainer.getTag();
-                    mCallbackRef.get().onPrinterDeleteClicked();
-                    mCallbackRef.get().setDeletePrinter((Printer) mDeleteViewHolder.mDiscloseImage.getTag());
+                    mCallbackRef.get().onPrinterDeleteClicked((Printer) mDeleteViewHolder.mDiscloseImage.getTag());
                 }
                 break;
         }
@@ -241,16 +241,11 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     public interface PrinterArrayAdapterInterface {
         /**
          * Dialog which is displayed to confirm printer delete
-         */
-        public void onPrinterDeleteClicked();
-        
-        /**
-         * Set the printer to be deleted
          * 
          * @param printer
          *            Printer to be deleted
          */
-        public void setDeletePrinter(Printer printer);
+        public void onPrinterDeleteClicked(Printer printer);
         
         /**
          * Display the PrinterInfoFragment of the corresponding printer item clicked
