@@ -269,7 +269,8 @@ public final class AppUtils {
     }
     
     /**
-     * Change children font
+     * Change children font. <br>
+     * Note: Known issue on Jellybean ellipsize="middle" when using custom font
      * 
      * @param v
      *            ViewGroup to be changed
@@ -277,7 +278,7 @@ public final class AppUtils {
      *            font to be set
      */
     // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
-    public static void changeChildrenFont(ViewGroup v, Typeface font) {
+    protected static void changeChildrenFont(ViewGroup v, Typeface font) {
         if (font == null || v == null) {
             return;
         }

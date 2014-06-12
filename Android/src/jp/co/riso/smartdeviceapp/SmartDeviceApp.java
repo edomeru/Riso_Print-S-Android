@@ -15,20 +15,16 @@ import jp.co.riso.android.util.Logger;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 
 public class SmartDeviceApp extends Application {
 
     private static volatile Context sContext;
-    private static volatile Typeface sAppFont;
     
     /** {@inheritDoc} */
     @Override
     public void onCreate() {
         SmartDeviceApp.sContext = getApplicationContext();
-        SmartDeviceApp.sAppFont = Typeface.createFromAsset(getResources().getAssets(),
-                AppConstants.APP_FONT_FILE);
         
         initializeSharedPrefs();
         
@@ -45,15 +41,6 @@ public class SmartDeviceApp extends Application {
      */
     public static Context getAppContext() {
         return SmartDeviceApp.sContext;
-    }
-
-    /**
-     * Retrieve the application font
-     * 
-     * @return SmartDeviceAPP font
-     */
-    public static Typeface getAppFont() {
-        return SmartDeviceApp.sAppFont;
     }
     
     /**

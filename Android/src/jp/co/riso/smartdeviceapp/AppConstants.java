@@ -15,7 +15,6 @@ public class AppConstants {
     
     public static final boolean APP_SHOW_SPLASH = true;
     public static final long APP_SPLASH_DURATION = 2000;
-    public static final String APP_FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf";
     
     public static final String CONST_PDF_DIR = "pdfs";
     public static final String CONST_TEMP_PDF_PATH = "temp.pdf";

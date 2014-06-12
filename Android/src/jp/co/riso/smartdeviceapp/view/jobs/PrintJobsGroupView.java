@@ -14,8 +14,6 @@ import java.util.List;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
-import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -33,7 +31,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
@@ -311,7 +308,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         mPrintJobGroupLayout.setOnClickListener(this);
         printJobGroupDelete.setOnClickListener(this);
         
-        AppUtils.changeChildrenFont(mPrintJobGroupLayout, SmartDeviceApp.getAppFont());
+        // AppUtils.changeChildrenFont(mPrintJobGroupLayout, SmartDeviceApp.getAppFont());
         
         mJobsLayout = new LinearLayout(getContext());
         mJobsLayout.setOrientation(VERTICAL);
@@ -356,7 +353,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         mPrintJobViews.add(tempView);
         mJobsLayout.addView(tempView);
         
-        AppUtils.changeChildrenFont((ViewGroup) tempView, SmartDeviceApp.getAppFont());
+        // AppUtils.changeChildrenFont((ViewGroup) tempView, SmartDeviceApp.getAppFont());
         
         if (index == mPrintJobs.size() - 1) {
             tempView.findViewById(R.id.printJobSeparator).setVisibility(GONE);
