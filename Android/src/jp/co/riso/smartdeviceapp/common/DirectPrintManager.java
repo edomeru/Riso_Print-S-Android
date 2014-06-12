@@ -55,8 +55,8 @@ public class DirectPrintManager {
      * @param ipAddress
      */
     public void executeLPRPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress) {
-        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || userName.isEmpty() || jobName.isEmpty()
-                || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
+        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null 
+                || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
             return;
         }
         initializeDirectPrint(userName, jobName, fileName, printSetting, ipAddress);
@@ -73,8 +73,8 @@ public class DirectPrintManager {
      * @param ipAddress
      */
     public void executeRAWPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress) {
-        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || userName.isEmpty() || jobName.isEmpty()
-                || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
+        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null 
+                || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
             return;
         }
         initializeDirectPrint(userName, jobName, fileName, printSetting, ipAddress);

@@ -21,7 +21,6 @@ import java.util.Locale;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartprint.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -436,24 +435,22 @@ public final class AppUtils {
         StringBuffer strBuf = new StringBuffer();
         final String pinCodeFormat = "%s=%d\n";
         final String loginIdFormat = "%s=%s\n";
+        final String securePrintFormat = "%s=%d\n";
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-        boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+        boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);        
+        String loginId = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
+        String pinCode = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
         
-        if (isSecurePrint) {
-            String loginId = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
-            String pinCode = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
-            
-            if (!pinCode.isEmpty() && !loginId.isEmpty()) {
-                try {
-                    int pin = Integer.parseInt(pinCode);
-                    strBuf.append(String.format(Locale.getDefault(), loginIdFormat, AppConstants.KEY_LOGINID, loginId));
-                    strBuf.append(String.format(Locale.getDefault(), pinCodeFormat, AppConstants.KEY_PINCODE, pin));
-                } catch (NumberFormatException e) {
-                    Logger.logWarn(AppUtils.class, "PIN code is not numeric: " + pinCode);
-                }
-            }
+        try {
+            int pin = Integer.parseInt(pinCode);
+            strBuf.append(String.format(Locale.getDefault(), securePrintFormat, AppConstants.KEY_SECURE_PRINT, isSecurePrint ? 1 : 0));
+            strBuf.append(String.format(Locale.getDefault(), loginIdFormat, AppConstants.KEY_LOGINID, loginId));
+            strBuf.append(String.format(Locale.getDefault(), pinCodeFormat, AppConstants.KEY_PINCODE, pin));
+        } catch (NumberFormatException e) {
+            Logger.logWarn(AppUtils.class, "PIN code is not numeric: " + pinCode);
         }
+        
         return strBuf.toString();
     }
     
@@ -464,10 +461,6 @@ public final class AppUtils {
      */
     public static String getOwnerName() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-        String ownerName = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
-        if (ownerName.isEmpty()) {
-            ownerName = SmartDeviceApp.getAppContext().getString(R.string.ids_app_name);
-        }
-        return ownerName;
+        return prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
     }
 }
