@@ -170,15 +170,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
      */
     public boolean insert(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
+        SQLiteDatabase db = null;
         try {
-            SQLiteDatabase db = this.getWritableDatabase();
+            db = this.getWritableDatabase();
             
             rowId = db.insertOrThrow(table, nullColumnHack, values);
-            db.close();
         } catch (SQLException e) {
             Logger.logError(DatabaseManager.class, "failed insert to " + table + ". Error: " + e.getMessage());
         }
         
+        if (db != null) {
+            db.close();
+        }
         return (rowId > -1);
     }
     
