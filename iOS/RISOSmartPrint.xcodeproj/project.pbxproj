@@ -177,8 +177,6 @@
 		2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
 		2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
-		2DFEA9BE193F19E50083A73C /* PreviewPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFEA9BD193F19E50083A73C /* PreviewPageView.m */; };
-		2DFEA9BF193F19E50083A73C /* PreviewPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFEA9BD193F19E50083A73C /* PreviewPageView.m */; };
 		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
 		3195C0691911126100197397 /* TestPDF_3Pages_NoPass.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0651911126100197397 /* TestPDF_3Pages_NoPass.pdf */; };
 		3195C06A1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0661911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf */; };
@@ -607,8 +605,6 @@
 		2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrinterStatusView.m; sourceTree = "<group>"; };
 		2DA1AF7018E2F52300085F27 /* UIColor+Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Theme.h"; sourceTree = "<group>"; };
 		2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Theme.m"; sourceTree = "<group>"; };
-		2DFEA9BC193F19E50083A73C /* PreviewPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewPageView.h; sourceTree = "<group>"; };
-		2DFEA9BD193F19E50083A73C /* PreviewPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewPageView.m; sourceTree = "<group>"; };
 		312B0DEB1911DAC40033FB55 /* PrintSettingsOptionTableViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsOptionTableViewControllerTest.m; sourceTree = "<group>"; };
 		312B0DF119120E8D0033FB55 /* PDFPageContentViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPageContentViewControllerTest.m; sourceTree = "<group>"; };
 		312B0DF7191216200033FB55 /* PreviewViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewViewTest.m; sourceTree = "<group>"; };
@@ -1316,8 +1312,6 @@
 				2DA1AED418E2EF8500085F27 /* MenuScrollView.m */,
 				28D3349C19299C4000F99B23 /* PaddedLabel.h */,
 				28D3349D19299C4000F99B23 /* PaddedLabel.m */,
-				2DFEA9BC193F19E50083A73C /* PreviewPageView.h */,
-				2DFEA9BD193F19E50083A73C /* PreviewPageView.m */,
 				2D157BFF18ED765F0034F953 /* PreviewView.h */,
 				2D157C0018ED765F0034F953 /* PreviewView.m */,
 				2DA1AF6D18E2F1DA00085F27 /* PrinterStatusView.h */,
@@ -1861,7 +1855,6 @@
 				2D1F23AD1900FF5800301D1E /* CXAlertView.m in Sources */,
 				28D3349E19299C4000F99B23 /* PaddedLabel.m in Sources */,
 				2D1F23BC1901049400301D1E /* HelpViewController.m in Sources */,
-				2DFEA9BE193F19E50083A73C /* PreviewPageView.m in Sources */,
 				2DA1AEE518E2EF8500085F27 /* PrinterCell.m in Sources */,
 				2D157BFB18ED5B580034F953 /* XMLParser.m in Sources */,
 				2DA1AF3618E2EF9C00085F27 /* PrinterManager.m in Sources */,
@@ -1914,7 +1907,6 @@
 				28052CE91911C651007982DF /* InputHelperTest.m in Sources */,
 				28B774691918C94400E97C60 /* NSDateFormatTest.m in Sources */,
 				28052CEA1911C651007982DF /* PListHelperTest.m in Sources */,
-				2DFEA9BF193F19E50083A73C /* PreviewPageView.m in Sources */,
 				28052CF01911D16F007982DF /* PrintJobHistoryHelperTest.m in Sources */,
 				3195C1E819111A9700197397 /* PrintPreviewHelperTest.m in Sources */,
 				3195C1E919111A9700197397 /* PrintSettingsHelperTest.m in Sources */,

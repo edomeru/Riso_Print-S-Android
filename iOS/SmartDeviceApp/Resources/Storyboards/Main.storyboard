@@ -1595,30 +1595,29 @@
                         <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8DZ-U0-dEz" customClass="PreviewPageView">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NJd-72-4Vn">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </imageView>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="gch-aw-khZ">
                                 <rect key="frame" x="150" y="220" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="color" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
                             </activityIndicatorView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="8DZ-U0-dEz" secondAttribute="trailing" id="O2b-a7-WrO"/>
-                            <constraint firstItem="8DZ-U0-dEz" firstAttribute="leading" secondItem="vG3-Ry-l7y" secondAttribute="leading" id="YQJ-3Z-1XR"/>
-                            <constraint firstItem="8DZ-U0-dEz" firstAttribute="top" secondItem="oP8-FJ-n0I" secondAttribute="bottom" id="b07-3B-iZJ"/>
-                            <constraint firstItem="yS2-tr-AdO" firstAttribute="top" secondItem="8DZ-U0-dEz" secondAttribute="bottom" id="me5-4d-Ktf"/>
+                            <constraint firstAttribute="trailing" secondItem="NJd-72-4Vn" secondAttribute="trailing" id="W2Y-3R-vhY"/>
+                            <constraint firstAttribute="bottom" secondItem="NJd-72-4Vn" secondAttribute="bottom" id="XL6-rc-Hqf"/>
+                            <constraint firstItem="NJd-72-4Vn" firstAttribute="top" secondItem="vG3-Ry-l7y" secondAttribute="top" id="qvR-Ue-XkC"/>
                             <constraint firstAttribute="centerX" secondItem="gch-aw-khZ" secondAttribute="centerX" id="rXb-FG-y4c"/>
+                            <constraint firstItem="NJd-72-4Vn" firstAttribute="leading" secondItem="vG3-Ry-l7y" secondAttribute="leading" id="vY7-Cx-cNW"/>
                             <constraint firstAttribute="centerY" secondItem="gch-aw-khZ" secondAttribute="centerY" id="ys9-eT-5ce"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="activityIndicatorView" destination="gch-aw-khZ" id="vkD-4u-cDh"/>
-                        <outlet property="previewPageView" destination="8DZ-U0-dEz" id="GRW-4I-JPb"/>
+                        <outlet property="imageView" destination="NJd-72-4Vn" id="m7h-qj-7IF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iMd-xD-uRT" userLabel="First Responder" sceneMemberID="firstResponder"/>

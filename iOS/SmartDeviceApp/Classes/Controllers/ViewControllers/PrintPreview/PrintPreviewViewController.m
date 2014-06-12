@@ -446,29 +446,14 @@
     //Duplex 2 page view display area computation
     if(self.printDocument.previewSetting.duplex > kDuplexSettingOff && self.printDocument.previewSetting.booklet == NO)
     {
-        if (self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
+        if((self.printDocument.previewSetting.finishingSide == kFinishingSideTop && isLandscape == NO) ||
+           (self.printDocument.previewSetting.finishingSide != kFinishingSideTop && isLandscape == YES))
         {
             orientation = kPreviewViewOrientationPortrait;
-            if (isLandscape == YES)
-            {
-                aspectRatio = 0.5f / aspectRatio;
-            }
-            else
-            {
-                aspectRatio = 0.5f * aspectRatio;
-            }
         }
         else
         {
             orientation = kPreviewViewOrientationLandscape;
-            if (isLandscape == YES)
-            {
-                aspectRatio = 0.5f * aspectRatio;
-            }
-            else
-            {
-                aspectRatio = 0.5f / aspectRatio;
-            }
         }
     }
     

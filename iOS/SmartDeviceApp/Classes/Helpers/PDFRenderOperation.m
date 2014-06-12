@@ -210,6 +210,7 @@
 - (void)drawPage:(NSUInteger)pageNumber inRect:(CGRect)rect inContext:(CGContextRef)contextRef
 {
     CGPDFDocumentRef documentRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.printDocument.url);
+    //CGPDFPageRef pageRef = CGPDFDocumentGetPage(self.printDocument.pdfDocument, pageNumber);
     CGPDFPageRef pageRef = CGPDFDocumentGetPage(documentRef, pageNumber);
     // Cancel check
     if (self.isCancelled)
@@ -219,23 +220,12 @@
     }
     
     CGContextSaveGState(contextRef);
-    
     //get the rect of pdf to know actual pdf size in points (which is at 72 ppi)
     CGRect pdfRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
-    CGRect cropRect = CGPDFPageGetBoxRect(pageRef, kCGPDFCropBox);
     
-    // Adjust transform scale if booklet or n-up
-    if (self.printDocument.previewSetting.booklet == YES ||
-        self.printDocument.previewSetting.imposition != kImpositionOff)
-    {
-        rect.origin.x *= 2.0f;
-        rect.origin.y *= 2.0f;
-        rect.size.width *= 2.0f;
-        rect.size.height *= 2.0f;
-        CGContextScaleCTM(contextRef, 0.5f, 0.5f);
-    }
-    
-    if(self.printDocument.previewSetting.scaleToFit == YES)
+    if(self.printDocument.previewSetting.scaleToFit == YES ||
+       self.printDocument.previewSetting.booklet == YES ||
+       self.printDocument.previewSetting.imposition != kImpositionOff) //ScaleToFit is on or if there is booklet or imposition
     {
         //self.size is actual size of paper at 72ppi
         //check if paper is larger than pdf size.
@@ -249,26 +239,22 @@
             {
                 scaleRatio = heightScaleRatio;
             }
-            rect.origin.x /= scaleRatio;
-            rect.origin.y /= scaleRatio;
-            rect.size.height /= scaleRatio;
+            rect.size.height/= scaleRatio;
             rect.size.width /= scaleRatio;
             CGContextScaleCTM(contextRef, scaleRatio, scaleRatio);
         }
    
         //draw pdf at the center of the paper
-        CGContextTranslateCTM(contextRef, rect.origin.x, rect.origin.y);
-        CGContextTranslateCTM(contextRef, fabs(pdfRect.size.width - rect.size.width) / 2.0f, fabs(pdfRect.size.height - rect.size.height) / 2.0f);
+        CGContextConcatCTM(contextRef, CGPDFPageGetDrawingTransform(pageRef, kCGPDFMediaBox, rect, 0, true));
     }
     else
     {
         //Not scale to fit
         //translate the origin so the upper left corner of the pdf coincides to the upper left corner of the paper/rect
         CGContextTranslateCTM(contextRef, rect.origin.x, rect.origin.y);
-        CGContextTranslateCTM(contextRef, 0, fabs(pdfRect.size.height - rect.size.height));
+        CGContextTranslateCTM(contextRef, 0, -(pdfRect.size.height - rect.size.height));
     }
     
-    CGContextClipToRect(contextRef, cropRect);
     CGContextDrawPDFPage(contextRef, pageRef);
     CGContextRestoreGState(contextRef);
     CGPDFDocumentRelease(documentRef);
