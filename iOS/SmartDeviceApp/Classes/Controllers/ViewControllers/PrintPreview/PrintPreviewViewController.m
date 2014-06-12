@@ -198,7 +198,7 @@
     renderQueue.name = @"RenderQueue";
     self.renderQueue = renderQueue;
     self.renderArray = [[NSMutableArray alloc] init];
-    self.renderCache = [[RenderCache alloc] initWithMaxItemCount:20];
+    self.renderCache = [[RenderCache alloc] initWithMaxItemCount:11];
     self.renderCache.delegate = self;
     
     //set theme of UISlider
@@ -461,14 +461,29 @@
     //Duplex 2 page view display area computation
     if(self.printDocument.previewSetting.duplex > kDuplexSettingOff && self.printDocument.previewSetting.booklet == NO)
     {
-        if((self.printDocument.previewSetting.finishingSide == kFinishingSideTop && isLandscape == NO) ||
-           (self.printDocument.previewSetting.finishingSide != kFinishingSideTop && isLandscape == YES))
+        if (self.printDocument.previewSetting.finishingSide ==kFinishingSideTop)
         {
             orientation = kPreviewViewOrientationPortrait;
+            if (isLandscape == YES)
+            {
+                aspectRatio = 0.5f / aspectRatio;
+            }
+            else
+            {
+                aspectRatio = 0.5f * aspectRatio;
+            }
         }
         else
         {
             orientation = kPreviewViewOrientationLandscape;
+            if (isLandscape == YES)
+            {
+                aspectRatio = 0.5f * aspectRatio;
+            }
+            else
+            {
+                aspectRatio = 0.5f / aspectRatio;
+            }
         }
     }
     
@@ -669,7 +684,15 @@
             }
         }
 
-        PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:indices size:size delegate:self];
+        CGFloat aspectRatio = size.width / size.height;
+        CGSize pageRenderSize = [[UIScreen mainScreen] bounds].size;
+        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation) == YES)
+        {
+            pageRenderSize = CGSizeMake(pageRenderSize.height, pageRenderSize.width);
+        }
+        pageRenderSize.width = pageRenderSize.height * aspectRatio;
+        
+        PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:indices size:pageRenderSize delegate:self];
         [self.renderArray addObject:renderOperation];
         [self.renderQueue addOperation:renderOperation];
     }

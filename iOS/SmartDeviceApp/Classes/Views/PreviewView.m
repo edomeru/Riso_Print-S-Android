@@ -173,6 +173,9 @@
     // Create content view
     self.contentView = [[UIView alloc] init];
     self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.contentView addGestureRecognizer:self.panner];
+    [self.contentView addGestureRecognizer:self.pincher];
+    [self.contentView addGestureRecognizer:self.tapper];
     [self addSubview:self.contentView];
     
     // Create new constraints
@@ -489,6 +492,7 @@
         self.xAlignConstraint.constant = 0.0f;
         self.yAlignConstraint.constant = 0.0f;
         self.sizeConstraint.constant = 0.0f;
+        [self enableMaxDimensionRules];
         
         [UIView animateWithDuration:0.2f animations:^{
             [self layoutIfNeeded];

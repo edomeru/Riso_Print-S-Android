@@ -11,19 +11,7 @@
 #import "PreviewSetting.h"
 #import "PrintPreviewHelper.h"
 #import "PDFFileManager.h"
-#import "Printer.h"
-
-#define FINISHING_MARGIN  	10.0f
-//approximate staple and punch dimensions in points
-#define STAPLE_TOP_WIDTH        30.0f
-#define STAPLE_SIDE_WIDTH   	5.0f
-#define STAPLE_SIDE_HEIGHT  	42.4f //staple height when 
-#define PUNCH_WIDTH             18.0f
-
-//punch hole distance in points (converted from mm at 72dpi)
-#define PUNCH_2HOLE_DISTANCE 	228.0f
-#define PUNCH_3HOLE_DISTANCE 	306.1f 
-#define PUNCH_4HOLE_DISTANCE 	252.3f
+#import "UIColor+Theme.h"
 
 @interface PDFRenderOperation()
 
@@ -34,9 +22,19 @@
 @property (nonatomic, weak) PrintDocument *printDocument;
 
 /**
+ Preview setting of the print document
+ */
+@property (nonatomic, weak) PreviewSetting *previewSetting;
+
+/**
  Dimension of the ouput images
  */
 @property (nonatomic) CGSize size;
+
+/**
+ Dimension of the paper (in points)
+ */
+@property (nonatomic) CGSize paperSize;
 
 /**
  Current that is being rendered
@@ -44,19 +42,43 @@
 @property (nonatomic) NSUInteger currentPage;
 
 /**
- 
+ Whether or not the current page is a front-facing page (for duplex/booklet modes)
  */
 @property (nonatomic) BOOL isFrontPage;
 
-- (void)drawPagesInRect:(CGRect)rect inContext:(CGContextRef)contextRef;
-- (void)drawPage:(NSUInteger)pageNumber inRect:(CGRect)rect inContext:(CGContextRef)contextRef;
+/**
+ Renders PDF pages for the current page
+ */
+- (void)drawPagesInContext:(CGContextRef)contextRef;
+
+/**
+ Renders 2-in-1 page
+ */
 - (void)draw2In1InContext:(CGContextRef)contextRef;
+
+/**
+ Renders 4-in-1 page
+ */
 - (void)draw4In1InContext:(CGContextRef)contextRef;
-- (void)drawPagesInRects:(NSArray *)rectArray atStartPageNumber:(NSUInteger)pageNumber inContext:(CGContextRef)contextRef;
-- (void)drawFinishing:(CGContextRef)contextRef;
-- (void)drawStapleSingle:(CGContextRef)contextRef withStapleType:(kStapleType)stapleType atFinishingSide:(kFinishingSide)finishingSide;
-- (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide withMargin:(CGFloat)margin;
-- (void)drawPunch:(CGContextRef)contextRef withPunchType:(kPunchType)punchType atFinishingSide:(kFinishingSide)finishingSide;
+
+/**
+ Renders a PDF page based on size and page scaling
+ */
+- (void)drawPage:(NSUInteger)pageNumber forSize:(CGSize)size withPageScale:(CGFloat)pageScale inContext: (CGContextRef)contextRef;
+
+/**
+ Renders dashed lines for duplex and booklet modes
+ */
+- (void)drawPaperEdgeLineInContext:(CGContextRef)contextRef;
+
+/**
+ Calculates the scale for length based on area scale
+ */
+- (CGFloat)computeScaleForLength:(CGFloat)length areaScale:(CGFloat)areaScale;
+
+/**
+ Determines whether or not an image should be inverted (for duplex mode)
+ */
 - (BOOL)shouldInvertImage;
 
 @end
@@ -75,6 +97,7 @@
         _delegate = delegate;
         _images = [[NSMutableDictionary alloc] init];
         _printDocument = [[PDFFileManager sharedManager] printDocument];
+        _previewSetting = _printDocument.previewSetting;
     }
     return self;
 }
@@ -83,8 +106,14 @@
 {
     @autoreleasepool
     {
-        CGRect rect = CGRectMake(0.0f, 0.0f, self.size.width, self.size.height);
-       
+        // Adjust size forr retina display
+        CGFloat screenScale = [[UIScreen mainScreen] scale];
+        self.size = CGSizeApplyAffineTransform(self.size, CGAffineTransformMakeScale(screenScale, screenScale));
+        
+        // Compute paper size
+        BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
+        self.paperSize = [PrintPreviewHelper getPaperDimensions:(kPaperSize)self.previewSetting.paperSize isLandscape:isLandscape];
+        
         // Cancel check
         if (self.isCancelled)
         {
@@ -94,7 +123,7 @@
         // Create color space
         CGColorSpaceRef colorSpaceRef;
         CGBitmapInfo bitmapInfo;
-        if ([PrintPreviewHelper isGrayScaleColorForColorModeSetting:(kColorMode)self.printDocument.previewSetting.colorMode])
+        if ([PrintPreviewHelper isGrayScaleColorForColorModeSetting:(kColorMode)self.previewSetting.colorMode])
         {
             colorSpaceRef = CGColorSpaceCreateDeviceGray();
             bitmapInfo = (CGBitmapInfo)kCGImageAlphaNone;
@@ -128,28 +157,31 @@
             self.currentPage = [index unsignedIntegerValue];
             self.isFrontPage = ((self.currentPage % 2) == 0); //front side if index is even
             
-            // Clear context with white fill
-            CGContextSetRGBFillColor(contextRef, 1.0f, 1.0f, 1.0f, 1.0f);
-            CGContextFillRect(contextRef, rect);
+            CGContextSaveGState(contextRef);
             
             // Flip transform
-            CGContextSaveGState(contextRef);
-            CGContextTranslateCTM(contextRef, 0.0f, self.size.height);
-            CGContextScaleCTM(contextRef, 1.0f, -1.0f);
-            
-            // Render page
-            [self drawPagesInRect:rect inContext:contextRef];
-            
-            // Cancel check
-            if (self.isCancelled)
+            if ([self shouldInvertImage] == NO)
             {
-                *stop = YES;
-                return;
+                CGContextConcatCTM(contextRef, CGAffineTransformMake(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, self.size.height));
+            }
+            else
+            {
+                CGContextConcatCTM(contextRef, CGAffineTransformMake(-1.0f, 0.0f, 0.0f, 1.0f, self.size.width, 0.0f));
             }
             
-            // Render finishing
-            [self drawFinishing:contextRef];
+            // Clear context with white fill
+            CGContextSetFillColorWithColor(contextRef, [[UIColor whiteColor] CGColor]);
+            CGContextFillRect(contextRef, CGRectMake(0.0f, 0.0f, self.size.width, self.size.height));
             
+            // Render page
+            [self drawPagesInContext:contextRef];
+            if (self.currentPage > 0 && self.isFrontPage == YES &&
+                (self.previewSetting.bookletLayout != kBookletTypeOff || self.previewSetting.duplex != kDuplexSettingOff))
+            {
+                [self drawPaperEdgeLineInContext:contextRef];
+            }
+            
+            // Cancel check
             if (self.isCancelled)
             {
                 *stop = YES;
@@ -160,12 +192,7 @@
             
             // Create image
             CGImageRef imageRef = CGBitmapContextCreateImage(contextRef);
-            UIImageOrientation imageOrientation = UIImageOrientationDownMirrored;
-            if([self shouldInvertImage] == YES)
-            {
-                imageOrientation = UIImageOrientationUpMirrored;
-            }
-            UIImage *image = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:imageOrientation];
+            UIImage *image = [UIImage imageWithCGImage:imageRef scale:screenScale orientation:UIImageOrientationUp];
             [self.images setObject:image forKey:index];
             CGImageRelease(imageRef);
             dispatch_sync(dispatch_get_main_queue(), ^(void)
@@ -184,400 +211,322 @@
 
 #pragma mark - Helper Methods
 
-- (void)drawPagesInRect:(CGRect)rect inContext:(CGContextRef)contextRef
+- (void)drawPagesInContext:(CGContextRef)contextRef
 {
-    kImposition imposition = (kImposition)self.printDocument.previewSetting.imposition;
-    
-    if(self.printDocument.previewSetting.booklet == YES)
-    {
-        imposition = kImpositionOff;
-    }
-    
-    switch(imposition)
-    {
-        case kImposition2Pages:
-            [self draw2In1InContext:contextRef];
-            break;
-        case kImposition4pages:
-            [self draw4In1InContext:contextRef];
-            break;
-        default:
-            [self drawPage: self.currentPage + 1 inRect:rect inContext:contextRef];
-            break;
-    }
-}
-
-- (void)drawPage:(NSUInteger)pageNumber inRect:(CGRect)rect inContext:(CGContextRef)contextRef
-{
-    CGPDFDocumentRef documentRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.printDocument.url);
-    //CGPDFPageRef pageRef = CGPDFDocumentGetPage(self.printDocument.pdfDocument, pageNumber);
-    CGPDFPageRef pageRef = CGPDFDocumentGetPage(documentRef, pageNumber);
-    // Cancel check
-    if (self.isCancelled)
-    {
-        CGPDFDocumentRelease(documentRef);
-        return;
-    }
-    
     CGContextSaveGState(contextRef);
-    //get the rect of pdf to know actual pdf size in points (which is at 72 ppi)
-    CGRect pdfRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
     
-    if(self.printDocument.previewSetting.scaleToFit == YES ||
-       self.printDocument.previewSetting.booklet == YES ||
-       self.printDocument.previewSetting.imposition != kImpositionOff) //ScaleToFit is on or if there is booklet or imposition
+    BOOL isLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
+    
+    // Draw page depending on the following modes that affects output size
+    if (self.previewSetting.booklet == YES)
     {
-        //self.size is actual size of paper at 72ppi
-        //check if paper is larger than pdf size.
-        //if paper is larger than pdf, pdf must be scaled up to occupy whole paper but still retaining aspect ratio of pdf image
-        if(pdfRect.size.height < rect.size.height && pdfRect.size.width < rect.size.width)
+        // Scale the paper size to booklet dimensions
+        CGSize paperSize = self.paperSize;
+        if (isLandscape == YES)
         {
-            //use the ratio from the side with less difference to the original size of the pdf
-            CGFloat scaleRatio  = rect.size.width/pdfRect.size.width;
-            CGFloat heightScaleRatio = rect.size.height/pdfRect.size.height;
-            if(scaleRatio > heightScaleRatio)
-            {
-                scaleRatio = heightScaleRatio;
-            }
-            rect.size.height/= scaleRatio;
-            rect.size.width /= scaleRatio;
-            CGContextScaleCTM(contextRef, scaleRatio, scaleRatio);
+            paperSize.width /= 2;
         }
-   
-        //draw pdf at the center of the paper
-        CGContextConcatCTM(contextRef, CGPDFPageGetDrawingTransform(pageRef, kCGPDFMediaBox, rect, 0, true));
+        else
+        {
+            paperSize.height /= 2;
+        }
+        
+        // Scale rendering to paper size
+        CGFloat scale = self.size.width / paperSize.width;
+        CGContextScaleCTM(contextRef, scale, scale);
+        
+        // Draw PDF scaled by 0.5 (in booklet, the paper is divided into two)
+        [self drawPage:self.currentPage + 1 forSize:paperSize withPageScale:0.5f inContext:contextRef];
+    }
+    else if (self.previewSetting.imposition == kImposition2Pages)
+    {
+        // Draw as 2-in-1
+        [self draw2In1InContext:contextRef];
+    }
+    else if (self.previewSetting.imposition == kImposition4pages)
+    {
+        // Draw as 4-in-1
+        [self draw4In1InContext:contextRef];
     }
     else
     {
-        //Not scale to fit
-        //translate the origin so the upper left corner of the pdf coincides to the upper left corner of the paper/rect
-        CGContextTranslateCTM(contextRef, rect.origin.x, rect.origin.y);
-        CGContextTranslateCTM(contextRef, 0, -(pdfRect.size.height - rect.size.height));
+        // Scale rendering to paper size
+        CGFloat scale = self.size.width / self.paperSize.width;
+        CGContextScaleCTM(contextRef, scale, scale);
+        
+        // Draw normal page
+        [self drawPage:self.currentPage + 1 forSize:self.paperSize withPageScale:1.0f inContext:contextRef];
     }
     
-    CGContextDrawPDFPage(contextRef, pageRef);
     CGContextRestoreGState(contextRef);
-    CGPDFDocumentRelease(documentRef);
 }
 
 - (void)draw2In1InContext:(CGContextRef)contextRef
 {
-    kImpositionOrder order = (kImpositionOrder)self.printDocument.previewSetting.impositionOrder;
-    CGFloat rectWidth = self.size.width/2;
-    CGFloat rectHeight = self.size.height;
-    CGFloat xOffset = rectWidth;
-    CGFloat yOffset = 0;
-    CGFloat yPos = 0;
+    NSArray *rects;
     
-    if(self.printDocument.previewSetting.orientation == kOrientationLandscape)
+    // Compute dimensions for each pdf page in a paper
+    CGSize layerSize = self.size;
+    CGSize paperSize = self.paperSize;
+    if (self.previewSetting.orientation == kOrientationPortrait)
     {
-        rectHeight = self.size.height/2;
-        rectWidth = self.size.width;
-        yOffset = -rectHeight;
-        xOffset = 0;
-        yPos = rectHeight;
-    }
-    
-    CGRect leftRect = CGRectMake(0, yPos, rectWidth, rectHeight);
-    CGRect rightRect = CGRectOffset(leftRect, xOffset, yOffset);
-    
-    NSUInteger pageNumber = (self.currentPage * 2) + 1;
-    
-    NSArray *rectArray = nil;
-    
-    if(order == kImpositionOrderRightToLeft)
-    {
-        rectArray = [NSArray arrayWithObjects:
-                        [NSValue valueWithCGRect:rightRect],
-                        [NSValue valueWithCGRect:leftRect],
-                        nil];
+        layerSize.width /= 2.0f;
+        paperSize.width /= 2.0f;
+        
+        CGRect leftRect = CGRectMake(0.0f, 0.0f, layerSize.width, layerSize.height);
+        CGRect rightRect = CGRectMake(self.size.width / 2.0f, 0.0f, layerSize.width, layerSize.height);
+        
+        if (self.previewSetting.impositionOrder == kImpositionOrderLeftToRight)
+        {
+            rects = @[[NSValue valueWithCGRect:leftRect], [NSValue valueWithCGRect:rightRect]];
+        }
+        else
+        {
+            rects = @[[NSValue valueWithCGRect:rightRect], [NSValue valueWithCGRect:leftRect]];
+        }
     }
     else
     {
-        rectArray = [NSArray arrayWithObjects:
-                        [NSValue valueWithCGRect:leftRect],
-                        [NSValue valueWithCGRect:rightRect],
-                        nil];
+        layerSize.height /= 2.0f;
+        paperSize.height /= 2.0f;
+        
+        CGRect topRect = CGRectMake(0.0f, 0.0f, layerSize.width, layerSize.height);
+        CGRect bottomRect = CGRectMake(0.0f, self.size.height / 2.0f, layerSize.width, layerSize.height);
+        
+        rects = @[[NSValue valueWithCGRect:topRect], [NSValue valueWithCGRect:bottomRect]];
     }
-    [self drawPagesInRects:rectArray atStartPageNumber:pageNumber inContext:contextRef];
+    
+    CGFloat scale = layerSize.width / paperSize.width;
+    NSUInteger pageNumber = 1;
+    
+    for (NSValue *rectValue in rects)
+    {
+        CGRect rect = [rectValue CGRectValue];
+        
+        // Create a layer for each pdf page
+        CGLayerRef layerRef = CGLayerCreateWithContext(contextRef, layerSize, NULL);
+        CGContextRef layerContextRef = CGLayerGetContext(layerRef);
+        CGContextScaleCTM(layerContextRef, scale, scale);
+        
+        // Draw PDF scaled by 0.5 (in 2-up, the paper is divided into two) to the layer
+        [self drawPage:(self.currentPage * 2) + pageNumber forSize:paperSize withPageScale:0.5f inContext:layerContextRef];
+        
+        // Draw layer to the page at the rect origin
+        CGContextSaveGState(contextRef);
+        CGContextDrawLayerAtPoint(contextRef, rect.origin, layerRef);
+        CGContextRestoreGState(contextRef);
+        
+        CGLayerRelease(layerRef);
+        
+        pageNumber++;
+    }
 }
 
 - (void)draw4In1InContext:(CGContextRef)contextRef
 {
-    kImpositionOrder order = (kImpositionOrder)self.printDocument.previewSetting.impositionOrder;
-    CGFloat rectWidth = self.size.width/2;
-    CGFloat rectHeight = self.size.height/2;
+    NSArray *rects;
     
-    CGRect leftBottomRect = CGRectMake(0, 0, rectWidth,rectHeight);
-    CGRect rightBottomRect = CGRectOffset(leftBottomRect, rectWidth, 0);
-    CGRect leftTopRect = CGRectOffset(leftBottomRect, 0, rectHeight);
-    CGRect rightTopRect = CGRectOffset(leftTopRect, rectWidth, 0);
+    CGSize layerSize = self.size;
+    CGSize paperSize = self.paperSize;
     
-    NSUInteger pageNumber = (self.currentPage * 4) + 1;
+    // Scale sizes to 0.25 (page is divided in to 4)
+    layerSize.width /= 2.0f;
+    layerSize.height /= 2.0f;
+    paperSize.width /= 2.0f;
+    paperSize.height /= 2.0f;
     
-    NSArray *rectArray = nil;
-    if(order == kImpositionOrderUpperLeftToBottom)
+    CGRect topLeft = CGRectMake(0.0f, 0.0f, layerSize.width / 2.0f, layerSize.height);
+    /*CGRect topRight = CGRectMake(self.size.width / 2.0f, 0.0f, layerSize.width, layerSize.height);
+    CGRect bottomLeft = CGRectMake(0.0f, self.size.height / 2.0f, layerSize.width, layerSize.height);*/
+    CGRect topRight = CGRectOffset(topLeft, self.size.width / 2.0f, 0.0f);
+    CGRect bottomLeft = CGRectOffset(topLeft, 0.0f, self.size.height / 2.0f);
+    CGRect bottomRight = CGRectOffset(topLeft, self.size.width / 2.0f, self.size.height / 2.0f);
+    
+    if (self.previewSetting.impositionOrder == kImpositionOrderUpperLeftToRight)
     {
-        rectArray = [NSArray arrayWithObjects:
-                        [NSValue valueWithCGRect:leftTopRect],
-                        [NSValue valueWithCGRect:leftBottomRect],
-                        [NSValue valueWithCGRect:rightTopRect],
-                        [NSValue valueWithCGRect:rightBottomRect],
-                        nil];
+        rects = @[
+                  [NSValue valueWithCGRect:topLeft],
+                  [NSValue valueWithCGRect:topRight],
+                  [NSValue valueWithCGRect:bottomLeft],
+                  [NSValue valueWithCGRect:bottomRight],
+                  ];
     }
-    else if(order == kImpositionOrderUpperRightToBottom)
+    else if (self.previewSetting.impositionOrder == kImpositionOrderUpperLeftToBottom)
     {
-        rectArray = [NSArray arrayWithObjects:
-                     [NSValue valueWithCGRect:rightTopRect],
-                     [NSValue valueWithCGRect:rightBottomRect],
-                     [NSValue valueWithCGRect:leftTopRect],
-                     [NSValue valueWithCGRect:leftBottomRect],
-                     nil];
+        rects = @[
+                  [NSValue valueWithCGRect:topLeft],
+                  [NSValue valueWithCGRect:bottomLeft],
+                  [NSValue valueWithCGRect:topRight],
+                  [NSValue valueWithCGRect:bottomRight],
+                  ];
     }
-    else if(order == kImpositionOrderUpperRightToLeft)
+    else if (self.previewSetting.impositionOrder == kImpositionOrderUpperRightToLeft)
     {
-        rectArray = [NSArray arrayWithObjects:
-                     [NSValue valueWithCGRect:rightTopRect],
-                     [NSValue valueWithCGRect:leftTopRect],
-                     [NSValue valueWithCGRect:rightBottomRect],
-                     [NSValue valueWithCGRect:leftBottomRect],
-                     nil];
-   }
-   else
-   {
-       rectArray = [NSArray arrayWithObjects:
-                    [NSValue valueWithCGRect:leftTopRect],
-                    [NSValue valueWithCGRect:rightTopRect],
-                    [NSValue valueWithCGRect:leftBottomRect],
-                    [NSValue valueWithCGRect:rightBottomRect],
-                    nil];
-   }
+        rects = @[
+                  [NSValue valueWithCGRect:topRight],
+                  [NSValue valueWithCGRect:topLeft],
+                  [NSValue valueWithCGRect:bottomRight],
+                  [NSValue valueWithCGRect:bottomLeft],
+                  ];
+    }
+    else
+    {
+        rects = @[
+                  [NSValue valueWithCGRect:topRight],
+                  [NSValue valueWithCGRect:bottomRight],
+                  [NSValue valueWithCGRect:topLeft],
+                  [NSValue valueWithCGRect:bottomLeft],
+                  ];
+    }
     
-    [self drawPagesInRects:rectArray atStartPageNumber:pageNumber inContext:contextRef];
-}
-
-- (void)drawPagesInRects:(NSArray *)rectArray atStartPageNumber:(NSUInteger)pageNumber inContext:(CGContextRef)contextRef
-{
-    for(int i = 0; i < rectArray.count; i++)
+    CGFloat scale = layerSize.width / paperSize.width;
+    NSUInteger pageNumber = 1;
+    for (NSValue *rectValue in rects)
     {
-        CGRect rect = [(NSValue *)[rectArray objectAtIndex:i] CGRectValue];
-        [self drawPage:pageNumber+i inRect:rect inContext:contextRef];
+        CGRect rect = [rectValue CGRectValue];
         
-        // Cancel check
-        if (self.isCancelled)
-        {
-            return;
-        }
+        // Create a layer for each pdf page
+        CGLayerRef layerRef = CGLayerCreateWithContext(contextRef, layerSize, NULL);
+        CGContextRef layerContextRef = CGLayerGetContext(layerRef);
+        CGContextScaleCTM(layerContextRef, scale, scale);
+        
+        // Draw PDF scaled by 0.25 (in 4-up, the paper is divided into four) to the layer
+        [self drawPage:(self.currentPage * 4) + pageNumber forSize:paperSize withPageScale:0.25f inContext:layerContextRef];
+        
+        // Draw layer to the page at the rect origin
+        CGContextSaveGState(contextRef);
+        CGContextDrawLayerAtPoint(contextRef, rect.origin, layerRef);
+        CGContextRestoreGState(contextRef);
+        
+        CGLayerRelease(layerRef);
+        
+        pageNumber++;
     }
 }
 
-- (void)drawFinishing:(CGContextRef)contextRef
+- (void)drawPage:(NSUInteger)pageNumber forSize:(CGSize)size withPageScale:(CGFloat)pageScale inContext:(CGContextRef)contextRef
 {
-    //For booklet finishing
-    if(self.printDocument.previewSetting.booklet == YES)
+    // Get PDF data
+    CGPDFDocumentRef documentRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.printDocument.url);
+    CGPDFPageRef pageRef = CGPDFDocumentGetPage(documentRef, pageNumber);
+    if (pageRef == NULL)
     {
-        if(self.printDocument.previewSetting.bookletFinish == kBookletTypeFoldAndStaple &&
-           self.isFrontPage == YES)
+        return;
+    }
+    
+    // Get PDF rects
+    CGRect pdfRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
+    CGRect cropRect = CGPDFPageGetBoxRect(pageRef, kCGPDFCropBox);
+    
+    CGContextSaveGState(contextRef);
+    
+    // Invert Y - required by CGContextDrawPDFPage
+    CGContextScaleCTM(contextRef, 1.0f, -1.0f);
+    CGContextTranslateCTM(contextRef, 0.0f, -size.height);
+    
+    if (self.previewSetting.scaleToFit == YES)
+    {
+        // Pick a scale that will fit the PDF to expected size
+        CGFloat xScale = size.width / pdfRect.size.width;
+        CGFloat yScale = size.height / pdfRect.size.height;
+        CGFloat scale = (xScale < yScale) ? xScale : yScale;
+        
+        // Apply scale and center-align
+        CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scale, scale);
+        CGRect scaledPDFRect = CGRectApplyAffineTransform(pdfRect, scaleTransform);
+        CGContextTranslateCTM(contextRef, (size.width - scaledPDFRect.size.width) / 2.0f, (size.height - scaledPDFRect.size.height) / 2.0f);
+        CGContextConcatCTM(contextRef, scaleTransform);
+    }
+    else
+    {
+        // Compute scale for length
+        CGFloat scale = [self computeScaleForLength:pdfRect.size.height areaScale:pageScale];
+        CGContextTranslateCTM(contextRef, 0, -(pdfRect.size.height * scale - size.height));
+        CGContextScaleCTM(contextRef, scale, scale);
+    }
+    
+    // Clip rendering to crop rect of PDF
+    CGContextClipToRect(contextRef, cropRect);
+    
+    // Adjust scale quality and render PDF page
+    CGContextSetInterpolationQuality(contextRef, kCGInterpolationHigh);
+    CGContextDrawPDFPage(contextRef, pageRef);
+    
+    CGContextRestoreGState(contextRef);
+    
+    CGPDFDocumentRelease(documentRef);
+}
+
+- (void)drawPaperEdgeLineInContext:(CGContextRef)contextRef
+{
+    CGPoint startPoint;
+    CGPoint endPoint;
+    
+    if (self.previewSetting.booklet == YES)
+    {
+        if (self.previewSetting.orientation == kOrientationPortrait)
         {
-            if(self.printDocument.previewSetting.bookletLayout == kBookletLayoutTopToBottom)
+            if (self.previewSetting.bookletLayout == kBookletLayoutLeftToRight)
             {
-                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideTop withMargin:0];
+                startPoint = CGPointMake(0.0f, 0.0f);
+                endPoint = CGPointMake(0.0f, self.size.height);
             }
             else
             {
-                [self drawStaple2Pos:contextRef atFinishingSide:kFinishingSideLeft withMargin:0];
-            }
-        }
-        return;
-    }
-    
-    //For duplex, adjust the context  for the correct location of the staple and punch in the backside of the paper
-    if(self.printDocument.previewSetting.duplex > kDuplexSettingOff)
-    {
-        if(self.isFrontPage == NO)
-        {
-            if(([self shouldInvertImage] == NO && self.printDocument.previewSetting.finishingSide != kFinishingSideTop) ||
-               ([self shouldInvertImage] == YES && self.printDocument.previewSetting.finishingSide == kFinishingSideTop))
-            {
-                //flip context horizontally so that finishing marks in the left will be drawn at the right and vice versa
-                CGContextTranslateCTM(contextRef, self.size.width, 0);
-                CGContextScaleCTM(contextRef, -1.0f, 1.0f);
-            }
-            if(([self shouldInvertImage] == YES && self.printDocument.previewSetting.finishingSide != kFinishingSideTop) ||
-               ([self shouldInvertImage] == NO && self.printDocument.previewSetting.finishingSide == kFinishingSideTop))
-            {
-                //flip context vertically so that finishing at the top will be drawn at the bottom
-                CGContextTranslateCTM(contextRef, 0, self.size.height);
-                CGContextScaleCTM(contextRef, 1.0f, -1.0f);
+                startPoint = CGPointMake(self.size.width, 0.0f);
+                endPoint = CGPointMake(self.size.width, self.size.height);
             }
         }
         else
         {
-            if(self.currentPage > 0) //don't draw on the first page
-            {
-                [self drawPaperEdgeLine:contextRef];
-            }
+            startPoint = CGPointMake(0.0f, 0.0f);
+            endPoint = CGPointMake(self.size.width, 0.0f);
         }
     }
-    
-    kFinishingSide finishingSide = (kFinishingSide) self.printDocument.previewSetting.finishingSide;
-    kStapleType stapleType= (kStapleType)self.printDocument.previewSetting.staple;
-    if(stapleType > kStapleTypeNone)
+    else if (self.previewSetting.booklet == NO && self.previewSetting.duplex != kDuplexSettingOff)
     {
-        if(stapleType == kStapleType2Pos)
+        if (self.previewSetting.finishingSide == kFinishingSideLeft)
         {
-            [self drawStaple2Pos:contextRef atFinishingSide:finishingSide withMargin:FINISHING_MARGIN];
+            startPoint = CGPointMake(0.0f, 0.0f);
+            endPoint = CGPointMake(0.0f, self.size.height);
+        }
+        else if (self.previewSetting.finishingSide == kFinishingSideRight)
+        {
+            startPoint = CGPointMake(self.size.width, 0.0f);
+            endPoint = CGPointMake(self.size.width, self.size.height);
         }
         else
         {
-            [self drawStapleSingle:contextRef withStapleType:stapleType atFinishingSide:finishingSide];
+            startPoint = CGPointMake(0.0f, 0.0f);
+            endPoint = CGPointMake(self.size.width, 0.0f);
         }
     }
     
-    kPunchType punchType = (kPunchType)self.printDocument.previewSetting.punch;
-    if(punchType > kPunchTypeNone)
-    {
-        [self drawPunch:contextRef withPunchType:punchType atFinishingSide: finishingSide];
-    }
+    CGContextSaveGState(contextRef);
+    
+    CGContextSetLineWidth(contextRef, 2.0f);
+    float dashLine[] = { 16.0f, 16.0f };
+    
+    // Draw BG line (white)
+    CGContextSetLineDash(contextRef, 16.0f, dashLine, 2);
+    CGContextSetStrokeColorWithColor(contextRef, [[UIColor whiteColor] CGColor]);
+    CGContextMoveToPoint(contextRef, startPoint.x, startPoint.y);
+    CGContextAddLineToPoint(contextRef, endPoint.x, endPoint.y);
+    CGContextStrokePath(contextRef);
+    
+    // Draw dash line (Gray 3)
+    CGContextSetLineDash(contextRef, 0.0f, dashLine, 2);
+    CGContextSetStrokeColorWithColor(contextRef, [[UIColor gray3ThemeColor] CGColor]);
+    CGContextMoveToPoint(contextRef, startPoint.x, startPoint.y);
+    CGContextAddLineToPoint(contextRef, endPoint.x, endPoint.y);
+    CGContextStrokePath(contextRef);
+    
+    CGContextRestoreGState(contextRef);
 }
 
-- (void)drawStapleSingle:(CGContextRef)contextRef withStapleType:(kStapleType)stapleType atFinishingSide:(kFinishingSide)finishingSide
+- (CGFloat)computeScaleForLength:(CGFloat)length areaScale:(CGFloat)areaScale
 {
-    CGFloat xPos = FINISHING_MARGIN;
-    CGFloat yPos = self.size.height - STAPLE_TOP_WIDTH - FINISHING_MARGIN;
-    NSString *stapleImageName = @"img_staple_left_top";
-    
-    if(stapleType == kStapleTypeUpperRight || (stapleType == kStapleType1Pos && finishingSide == kFinishingSideRight))
-    {
-        xPos = self.size.width - FINISHING_MARGIN - STAPLE_TOP_WIDTH;
-        stapleImageName = @"img_staple_right_top";
-    }
-    
-    UIImage *stapleImage = [UIImage imageNamed:stapleImageName];
-    CGRect stapleRect = CGRectMake(xPos, yPos, STAPLE_TOP_WIDTH, STAPLE_TOP_WIDTH);
-    CGContextDrawImage(contextRef, stapleRect, [stapleImage CGImage]);
-}
-
-- (void)drawStaple2Pos:(CGContextRef)contextRef atFinishingSide:(kFinishingSide)finishingSide withMargin:(CGFloat)margin
-{
-    CGFloat xPos = FINISHING_MARGIN;
-    CGFloat yPos = (self.size.height * 0.25f) - (STAPLE_SIDE_HEIGHT * 0.5f);
-    CGFloat xOffset = 0;
-    CGFloat yOffset = self.size.height * 0.5f;
-    CGFloat stapleRectHeight = STAPLE_SIDE_HEIGHT;
-    CGFloat stapleRectWidth = STAPLE_SIDE_WIDTH;
-    NSString *stapleImageName = @"img_staple_left";
-    
-    if( finishingSide == kFinishingSideRight)
-    {
-        xPos = self.size.width - margin - stapleRectWidth;
-        stapleImageName = @"img_staple_right";
-    }
-    else if ( finishingSide == kFinishingSideTop)
-    {
-        stapleRectWidth = STAPLE_SIDE_HEIGHT;
-        stapleRectHeight = STAPLE_SIDE_WIDTH;
-        xPos = (self.size.width * 0.25f) - (stapleRectWidth * 0.5f);
-        yPos = self.size.height - margin - stapleRectHeight;
-        xOffset = (self.size.width * 0.5f);
-        yOffset = 0;
-        stapleImageName = @"img_staple_top";
-    }
-    
-    UIImage *stapleImage = [UIImage imageNamed:stapleImageName];
-    CGRect stapleRect = CGRectMake(xPos, yPos, stapleRectWidth, stapleRectHeight);
-    CGContextDrawImage(contextRef, stapleRect, [stapleImage CGImage]);
-    
-    // Cancel check
-    if (self.isCancelled)
-    {
-        return;
-    }
-    
-    CGContextDrawImage(contextRef, CGRectOffset(stapleRect, xOffset, yOffset), [stapleImage CGImage]);
-}
-
-- (void)drawPunch:(CGContextRef)contextRef withPunchType:(kPunchType)punchType atFinishingSide:(kFinishingSide)finishingSide
-{
-    BOOL isHorizontalLength = NO;
-    CGFloat edgeLength = self.size.height;
-    CGFloat xPos = FINISHING_MARGIN;
-    CGFloat yPos =  0;
-    
-    if(finishingSide == kFinishingSideRight)
-    {
-        xPos = self.size.width - FINISHING_MARGIN - PUNCH_WIDTH;
-    }
-    else if(finishingSide == kFinishingSideTop)
-    {
-        yPos = self.size.height - FINISHING_MARGIN - PUNCH_WIDTH;
-        xPos = 0;
-        isHorizontalLength = YES;
-        edgeLength = self.size.width;
-    }
-    
-    CGFloat xOffset =0;
-    CGFloat yOffset = 0;
-    CGFloat startDistanceFromCenter = 0;
-    CGFloat punchDistance = 0;
-    NSUInteger numHoles = 0;
-
-    if(punchType == kPunchType3or4Holes)
-    {
-        if([self.printDocument.printer.enabled_finisher_2_3_holes boolValue] == YES)
-        {
-            punchDistance = PUNCH_3HOLE_DISTANCE;
-            //center of the first hole is 1 punch distance from the center of the length of the finishing side
-            startDistanceFromCenter = punchDistance + (PUNCH_WIDTH * 0.5f);
-            numHoles = 3;
-        }
-        else if([self.printDocument.printer.enabled_finisher_2_4_holes boolValue] == YES)
-        {
-            punchDistance = PUNCH_4HOLE_DISTANCE;
-            //center of the first hole is 1 and half the punch distance from the center of the length of the finishing side
-            startDistanceFromCenter = (punchDistance * 1.5f) + (PUNCH_WIDTH * 0.5f);
-            numHoles = 4;
-        }
-    }
-    else
-    {
-        punchDistance = PUNCH_2HOLE_DISTANCE;
-        //center of the first hole is half the punch distance from the center of the length of the finishing side
-        startDistanceFromCenter =  (punchDistance * 0.5f) + (PUNCH_WIDTH * 0.5f);
-        numHoles = 2;
-    }
-    
-    if(isHorizontalLength == YES)
-    {
-        xOffset = punchDistance;
-        yOffset = 0;
-        xPos = (edgeLength * 0.5) - startDistanceFromCenter;
-    }
-    else
-    {
-        xOffset = 0;
-        yOffset = punchDistance;
-        yPos =  (edgeLength * 0.5) - startDistanceFromCenter;
-    }
-    
-    UIImage *punchImage = [UIImage imageNamed:@"img_punch"];
-    CGRect paperRec = CGRectMake(0, 0, self.size.width,self.size.height);
-    
-    for(int i = 0; i < numHoles; i++)
-    {
-        CGRect punchRect = CGRectMake(xPos, yPos, PUNCH_WIDTH, PUNCH_WIDTH);
-        if(CGRectContainsRect(paperRec, punchRect) == YES)
-        {
-            CGContextDrawImage(contextRef, punchRect, [punchImage CGImage]);
-        }
-        // Cancel check
-        if (self.isCancelled)
-        {
-            return;
-        }
-        xPos += xOffset;
-        yPos += yOffset;
-    }
+    return (sqrtf(powf(length, 2) * areaScale) / length);
 }
 
 - (BOOL)shouldInvertImage
@@ -606,38 +555,6 @@
         }
     }
     return NO;
-}
-
-- (void)drawPaperEdgeLine:(CGContextRef)contextRef
-{
-    CGContextSaveGState(contextRef);
-    
-    CGFloat lineWidth = 2.0f;
-    CGContextSetStrokeColorWithColor(contextRef, [UIColor blackColor].CGColor);
-    CGContextSetLineWidth(contextRef, lineWidth);
-    
-    float dashLine[] = { 6, 5 };
-    CGContextSetLineDash(contextRef, 0, dashLine, 2);
-    
-    if(self.printDocument.previewSetting.finishingSide == kFinishingSideTop)
-    {
-        CGContextMoveToPoint(contextRef, 0, self.size.height - lineWidth);
-        CGContextAddLineToPoint(contextRef, self.size.width, self.size.height - lineWidth);
-    }
-    else if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight)
-    {
-        CGContextMoveToPoint(contextRef, self.size.width - lineWidth, 0);
-        CGContextAddLineToPoint(contextRef, self.size.width - lineWidth, self.size.height);
-    }
-    else
-    {
-        CGContextMoveToPoint(contextRef, 0, 0);
-        CGContextAddLineToPoint(contextRef, 0, self.size.height);
-    }
-    
-    CGContextStrokePath(contextRef);
-    
-    CGContextRestoreGState(contextRef);
 }
 
 @end
