@@ -51,14 +51,17 @@
     }
     
     // add secure printing settings
-    if (self.securePrint)
+    NSString* loginIdStr = [[NSUserDefaults standardUserDefaults] valueForKey:KEY_APPSETTINGS_LOGIN_ID];
+    [string appendString:[NSString stringWithFormat:@"%@=%@\n", KEY_LOGIN_ID, (loginIdStr == nil) ? @"" : loginIdStr]];
+    
+    NSString* pinCodeStr;
+    if (self.securePrint == YES)
     {
-        NSString* loginIdStr = [[NSUserDefaults standardUserDefaults] valueForKey:KEY_APPSETTINGS_LOGIN_ID];
-        [string appendString:[NSString stringWithFormat:@"loginId=%@\n", (loginIdStr == nil) ? @"" : loginIdStr]];
-        
-        NSString* pinCodeStr = self.pinCode;
-        [string appendString:[NSString stringWithFormat:@"pinCode=%@\n", (pinCodeStr == nil) ? @"" : pinCodeStr]];
+        pinCodeStr = self.pinCode;
     }
+    [string appendString:[NSString stringWithFormat:@"%@=%@\n", KEY_PIN_CODE, (pinCodeStr == nil) ? @"" : pinCodeStr]];
+    
+    [string appendString:[NSString stringWithFormat:@"%@=%d\n", KEY_SECURE_PRINT, (self.securePrint == YES) ? 1 : 0]];
     
     return string;
 }

@@ -1,5 +1,6 @@
 /*WordingList_Alpha1*/
 "IDS_APP_NAME" = "RISO Smart Print";
+"IDS_APP_LAUNCHER_NAME" = "Smart Print";
 "IDS_LBL_SAVE" = "Save";
 "IDS_LBL_OK" = "OK";
 "IDS_LBL_CANCEL" = "Cancel";
@@ -91,9 +92,8 @@
 "IDS_LBL_BOOKLET_FINISHING_FOLD" = "Paper folding";
 "IDS_LBL_BOOKLET_FINISHING_FOLDSTAPLE" = "Fold + Staple";
 "IDS_LBL_BOOKLET_LAYOUT" = "Booklet Layout";
-"IDS_LBL_BOOKLET_LAYOUT_LR" = "Left to right";
-"IDS_LBL_BOOKLET_LAYOUT_RL" = "Right to left";
-"IDS_LBL_BOOKLET_LAYOUT_TB" = "Top to bottom";
+"IDS_LBL_BOOKLET_LAYOUT_FORWARD" = "Forward";
+"IDS_LBL_BOOKLET_LAYOUT_REVERSE" = "Reverse";
 "IDS_LBL_FINISHINGSIDE" = "Binding side";
 "IDS_LBL_FINISHINGSIDE_LEFT" = "Left";
 "IDS_LBL_FINISHINGSIDE_TOP" = "Top";

@@ -587,6 +587,10 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         [self applyBookletConstraints];
     }
+    if([key isEqualToString:KEY_BOOKLET_FINISH] == YES)
+    {
+        [self applyBookletFinishConstraints];
+    }
     if([key isEqualToString:KEY_FINISHING_SIDE] == YES)
     {
         [self applyFinishingConstraintsWithPreviousValue:previousValue];
@@ -595,8 +599,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     if([key isEqualToString:KEY_ORIENTATION] == YES)
     {
         [self applyFinishingWithOrientationConstraint];
-        [self applyBookletLayoutWithOrientationConstraint];
-        //[self applyOrientationConstraint];
     }
     if([key isEqualToString:KEY_PUNCH] == YES)
     {
@@ -616,17 +618,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingShortEdge];
         [self setOptionSettingWithKey:KEY_IMPOSITION toValue:(NSInteger)kImpositionOff];
-        if (self.previewSetting.orientation == kOrientationPortrait)
-        {
-            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutLeftToRight];
-        }
-        else
-        {
-            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutTopToBottom];
-        }
-#if OUTPUT_TRAY_CONSTRAINT_ENABLED
-        [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
-#endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
+        [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutForward];
     }
     else
     {
@@ -642,21 +634,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     [self reloadRowsForIndexPathsToUpdate];
 }
 
-- (void)applyBookletLayoutWithOrientationConstraint
+- (void)applyBookletFinishConstraints
 {
-    if (self.previewSetting.orientation == kOrientationPortrait)
+    if (self.previewSetting.bookletFinish != kBookletTypeOff)
     {
-        if (self.previewSetting.bookletLayout == kBookletLayoutTopToBottom)
-        {
-            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutLeftToRight];
-        }
-    }
-    else
-    {
-        if (self.previewSetting.bookletLayout != kBookletLayoutTopToBottom)
-        {
-            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutTopToBottom];
-        }
+        [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
     }
 }
 
