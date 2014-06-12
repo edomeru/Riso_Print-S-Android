@@ -279,8 +279,22 @@
         }
         else
         {
+            kAlertResult result;
+            if (error == kPDFErrorPrintingNotAllowed)
+            {
+                result = kAlertResultErrFileDoesNotAllowPrinting;
+            }
+            else if (error == kPDFErrorLocked)
+            {
+                result = kAlertResultErrFileHasOpenPassword;
+            }
+            else
+            {
+                result = kAlertResultFileCannotBeOpened;
+            }
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                [AlertHelper displayResult:kAlertResultFileCannotBeOpened withTitle:kAlertTitleDefault withDetails:nil];
+                [AlertHelper displayResult:result withTitle:kAlertTitleDefault withDetails:nil];
                 [self.activityIndicator stopAnimating];
             });
         }
@@ -319,11 +333,7 @@
     UIPageViewController *pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:navigationOrientation options:@{UIPageViewControllerOptionSpineLocationKey: [NSNumber numberWithInteger:spineLocation]}];
     pageViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
     [self addChildViewController:pageViewController];
-    [self.previewView.contentView addSubview:pageViewController.view];
-    
-    NSDictionary *views = @{@"pageView": pageViewController.view};
-    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:0 metrics:nil views:views]];
-    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[pageView]|" options:0 metrics:nil views:views]];
+    [self.previewView setPageContentView:pageViewController.view];
     pageViewController.dataSource = self;
     pageViewController.delegate = self;
     
@@ -336,7 +346,12 @@
     {
         //booklet number of pages is always a multiple of 4 (1 paper folded in half = 2 leaves * 2 sides per leaf = 4 pages)
         //total number of pages is the actual number of pdf pages  + additional pages to make number of pages multiple by 4
-        self.totalPageNum = self.printDocument.pageCount  +  (4 - self.printDocument.pageCount % 4);
+        self.totalPageNum = self.printDocument.pageCount;
+        int oddPages = self.printDocument.pageCount % 4;
+        if (oddPages > 0)
+        {
+            self.totalPageNum += 4 - oddPages;
+        }
         
         //add two pages for the book ends
         self.layoutPageNum = self.totalPageNum + 2;

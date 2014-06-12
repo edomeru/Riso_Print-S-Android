@@ -46,7 +46,8 @@
 {
     [super viewDidLoad];
     
-    self.printerManager = [PrinterManager sharedPrinterManager];   
+    self.printerManager = [PrinterManager sharedPrinterManager];
+    self.emptyLabel.hidden = (self.printerManager.countSavedPrinters == 0 ? NO : YES);
     self.toDeleteIndexPath = nil;
 }
 
@@ -117,7 +118,9 @@
         
         AddPrinterViewController* adderScreen = (AddPrinterViewController*)sourceViewController;
         if (adderScreen.hasAddedPrinters)
-            [self reloadData];
+        {
+            [self reloadPrinters];
+        }
     }
     else if ([sourceViewController isKindOfClass:[PrinterSearchViewController class]])
     {
@@ -125,7 +128,9 @@
         
         PrinterSearchViewController* adderScreen = (PrinterSearchViewController*)sourceViewController;
         if (adderScreen.hasAddedPrinters)
-            [self reloadData];
+        {
+            [self reloadPrinters];
+        }
     }
     else if([sender.sourceViewController isKindOfClass:[PrintSettingsViewController class]])
     {
@@ -136,19 +141,21 @@
         }
         else
         {
-            [self reloadData];
+            [self reloadPrinters];
         }
     }
 }
 
 #pragma mark - Reload
 
-- (void)reloadData
+- (void)reloadPrinters
 {
 #if DEBUG_LOG_PRINTERS_SCREEN
     NSLog(@"[INFO][Printers] reloading data");
 #endif
     //should be implemented depending on display
+    
+    self.emptyLabel.hidden = (self.printerManager.countSavedPrinters == 0 ? NO : YES);
 }
 
 @end

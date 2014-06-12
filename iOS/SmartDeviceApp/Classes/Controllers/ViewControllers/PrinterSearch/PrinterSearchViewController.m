@@ -91,6 +91,9 @@
 /** Internal flag, YES if controller is displayed on an iPad. */
 @property (assign, nonatomic) BOOL isIpad;
 
+/** Displays "No Printers Found" label if there are no printers. */
+@property (weak, nonatomic) IBOutlet UILabel *emptyLabel;
+
 #pragma mark - Internal Methods
 
 /**
@@ -268,6 +271,7 @@
     [self.searchResultsTable reloadData];
     
     [self startSearchingAnimation];
+    self.emptyLabel.hidden = YES;
     
     // check for network connection
     if (![NetworkManager isConnectedToLocalWifi])
@@ -338,7 +342,7 @@
         
         // if this is an iPad, reload the center panel
         if (self.isIpad)
-            [self.printersViewController reloadData];
+            [self.printersViewController reloadPrinters];
     }
     else
     {
@@ -360,6 +364,7 @@
 {
     self.isSearching = NO;
     [self stopSearchingAnimation];
+    self.emptyLabel.hidden = ([self.listPrinterIP count] == 0 ? NO : YES);
 }
 
 - (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails

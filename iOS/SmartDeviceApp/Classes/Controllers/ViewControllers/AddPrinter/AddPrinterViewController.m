@@ -13,10 +13,6 @@
 #import "AlertHelper.h"
 #import "InputHelper.h"
 
-#define TAG_TEXT_IP         0
-#define TAG_TEXT_USERNAME   1
-#define TAG_TEXT_PASSWORD   2
-
 @interface AddPrinterViewController ()
 
 #pragma mark - Data Properties
@@ -132,8 +128,8 @@
     
     [self.progressIndicator setHidden:YES];
     [self.saveButton setHidden:NO];
-    [self.saveButton setEnabled:NO];
     [self.textIP setEnabled:YES];
+    [self.textIP setPlaceholder:NSLocalizedString(IDS_LBL_IP_ADDRESS, @"")];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         self.isIpad = YES;
@@ -184,7 +180,6 @@
     pd.enStaple = YES;
     pd.enFinisher23Holes = NO;
     pd.enFinisher24Holes = YES;
-    pd.enTrayAutoStacking = YES;
     pd.enTrayFaceDown = YES;
     pd.enTrayStacking = YES;
     pd.enTrayTop = YES;
@@ -198,15 +193,7 @@
 {
     [self dismissKeypad];
     
-    // properly format/trim the input IP
-    NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
-#if DEBUG_LOG_ADD_PRINTER_SCREEN
-    NSLog(@"[INFO][AddPrinter] trimmedIP=%@", trimmedIP);
-#endif
-    self.textIP.text = trimmedIP;
-    
-    // is the IP a valid IP address?
-    if (![InputHelper isIPValid:trimmedIP])
+    if ([self.textIP.text isEqualToString:@""])
     {
         [AlertHelper displayResult:kAlertResultErrInvalidIP
                          withTitle:kAlertTitlePrintersAdd
@@ -214,8 +201,20 @@
         return;
     }
     
+    NSString *formattedIP = self.textIP.text;
+    bool isValid = [InputHelper isIPValid:&formattedIP];
+    if (!isValid)
+    {
+        [AlertHelper displayResult:kAlertResultErrInvalidIP
+                         withTitle:kAlertTitlePrintersAdd
+                       withDetails:nil];
+        return;
+    }
+
+    self.textIP.text = formattedIP;
+    
     // was this printer already added before?
-    if ([self.printerManager isIPAlreadyRegistered:trimmedIP])
+    if ([self.printerManager isIPAlreadyRegistered:formattedIP])
     {
         [AlertHelper displayResult:kAlertResultErrPrinterDuplicate
                          withTitle:kAlertTitlePrintersAdd
@@ -226,10 +225,10 @@
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [self addFullCapabilityPrinter:trimmedIP];
+        [self addFullCapabilityPrinter:formattedIP];
         self.hasAddedPrinters = YES;
         if (self.isIpad)
-            [self.printersViewController reloadData];
+            [self.printersViewController reloadPrinters];
         
         [AlertHelper displayResult:kAlertResultErrPrinterNotFound
                          withTitle:kAlertTitlePrintersAdd
@@ -244,7 +243,7 @@
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] initiating search");
 #endif
-    [self.printerManager searchForPrinter:trimmedIP];
+    [self.printerManager searchForPrinter:formattedIP];
     // callbacks for the search will be handled in delegate methods
     
     // if UI needs to do other things, do it here
@@ -264,11 +263,11 @@
 
     if (!printerFound)
     {
-        NSString* trimmedIP = [InputHelper trimIP:self.textIP.text];
+        NSString* trimmedIP = self.textIP.text;
         [self addFullCapabilityPrinter:trimmedIP];
         self.hasAddedPrinters = YES;
         if (self.isIpad)
-            [self.printersViewController reloadData];
+            [self.printersViewController reloadPrinters];
         
         [AlertHelper displayResult:kAlertResultErrPrinterNotFound
                          withTitle:kAlertTitlePrintersAdd
@@ -290,7 +289,7 @@
     {
         self.hasAddedPrinters = YES;
         if (self.isIpad)
-            [self.printersViewController reloadData];
+            [self.printersViewController reloadPrinters];
         
         [AlertHelper displayResult:kAlertResultInfoPrinterAdded
                          withTitle:kAlertTitlePrintersAdd
@@ -328,34 +327,13 @@
     return YES;
 }
 
-- (BOOL)textFieldShouldClear:(UITextField *)textField
-{
-    // disable the Save button if the IP Address text is cleared
-    if (textField.tag == TAG_TEXT_IP)
-        [self.saveButton setEnabled:NO];
-         
-    return YES;
-}
-
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if (textField.tag == TAG_TEXT_IP)
+    NSCharacterSet *validCharacters = [NSCharacterSet characterSetWithCharactersInString:@"0123456789abcdefABCDEF.:"];
+    // ignore not valid characters
+    if([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
     {
-        // ignore whitespace (for iPad keyboard)
-        if ([string isEqualToString:@" "])
-        {
-            return NO;
-        }
-
-        // disable the Save button if backspace will clear the IP Address text
-        if ((range.length == 1) && (range.location == 0) && ([string isEqualToString:@""]))
-        {
-            [self.saveButton setEnabled:NO];
-        }
-        else
-        {
-            [self.saveButton setEnabled:YES];
-        }
+        return NO;
     }
     
     return YES;

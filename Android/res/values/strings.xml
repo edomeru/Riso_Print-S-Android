@@ -35,6 +35,7 @@
     <string name="ids_lbl_authentication">Authentication</string>
     <string name="ids_lbl_login_id">Log-in ID</string>
     <string name="ids_lbl_print_settings">Print Settings</string>
+    <string name="ids_lbl_page_displayed">Page %%d / %%d</string>
     <string name="ids_lbl_print">Print</string>
     <string name="ids_lbl_printer">Printer</string>
     <string name="ids_lbl_choose_printer">Choose printer</string>
@@ -99,9 +100,8 @@
     <string name="ids_lbl_booklet_finishing_fold">Paper folding</string>
     <string name="ids_lbl_booklet_finishing_foldstaple">Fold + Staple</string>
     <string name="ids_lbl_booklet_layout">Booklet Layout</string>
-    <string name="ids_lbl_booklet_layout_lr">Left to right</string>
-    <string name="ids_lbl_booklet_layout_rl">Right to left</string>
-    <string name="ids_lbl_booklet_layout_tb">Top to bottom</string>
+    <string name="ids_lbl_booklet_layout_forward">Forward</string>
+    <string name="ids_lbl_booklet_layout_reverse">Reverse</string>
     <string name="ids_lbl_finishingside">Binding side</string>
     <string name="ids_lbl_finishingside_left">Left</string>
     <string name="ids_lbl_finishingside_top">Top</string>
@@ -126,6 +126,9 @@
     <string name="ids_lbl_on">On</string>
     <string name="ids_lbl_help">Help</string>
     <string name="ids_lbl_legal">Legal</string>
+    <string name="ids_lbl_printers_empty">No Printers</string>
+    <string name="ids_lbl_printjobhistory_empty">No Print Job History</string>
+    <string name="ids_lbl_printer_search_empty">No Printers Found</string>
     <string name="ids_info_msg_printer_add_successful">Added Successfully</string>
     <string name="ids_info_msg_warning_cannot_find_printer">Warning, Cannot find Printer.</string>
     <string name="ids_info_msg_printing">Printing&#8230;</string>
@@ -136,7 +139,6 @@
     <string name="ids_err_msg_cannot_add_printer">Printer already exists in saved printers list.</string>
     <string name="ids_err_msg_invalid_ip_address">Please enter a valid IP Address.</string>
     <string name="ids_err_msg_max_printer_count">Saved Printer reached maximum count.</string>
-    <string name="ids_err_msg_delete_failed">Unable to delete.</string>
     <string name="ids_err_msg_no_selected_printer">Please register a printer</string>
     <string name="ids_err_msg_pdf_wrong_password">Please check the password you entered</string>
     <string name="ids_err_msg_open_failed">Please select a valid file.</string>
@@ -144,5 +146,6 @@
     <string name="ids_err_msg_file_too_large">File size is too large</string>
     <string name="ids_err_msg_not_enough_space">Not enough free space on device</string>
     <string name="ids_err_msg_network_error">No network available.</string>
+    <string name="ids_err_msg_db_failure">The operation cannot be completed.</string>
 
 </resources>

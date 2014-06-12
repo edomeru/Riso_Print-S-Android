@@ -9,7 +9,6 @@
 package jp.co.riso.smartdeviceapp.model;
 
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,9 +19,13 @@ public class Printer implements Parcelable {
     private String mName = null;
     private String mIpAddress = null;
     private int mId = PrinterManager.EMPTY_ID;
-    private int mPortSetting = 0;
+    private PortSetting mPortSetting = PortSetting.LPR;
     
     private Config mConfig = null;
+    
+    public enum PortSetting {
+        LPR, RAW;
+    }
     
     /**
      * Printer Constructor
@@ -37,7 +40,7 @@ public class Printer implements Parcelable {
     public Printer(String name, String ipAddress) {
         mName = name;
         mIpAddress = ipAddress;
-        mPortSetting = 0;
+        mPortSetting = PortSetting.LPR;
         
         mConfig = new Config();
     }
@@ -71,7 +74,14 @@ public class Printer implements Parcelable {
         mName = in.readString();
         mIpAddress = in.readString();
         mId = in.readInt();
-        mPortSetting = in.readInt();
+        switch(in.readInt()) {
+            case 1:
+                mPortSetting = PortSetting.RAW;
+                break;
+            default:
+                mPortSetting = PortSetting.LPR;
+                break;
+        }
         mConfig.readFromParcel(in);
     }
     
@@ -91,7 +101,7 @@ public class Printer implements Parcelable {
         out.writeString(mName);
         out.writeString(mIpAddress);
         out.writeInt(mId);
-        out.writeInt(mPortSetting);
+        out.writeInt(mPortSetting.ordinal());
         mConfig.writeToParcel(out);
     }
     
@@ -150,7 +160,7 @@ public class Printer implements Parcelable {
     /**
      * @return the port setting (mPortSetting)
      */
-    public int getPortSetting() {
+    public PortSetting getPortSetting() {
         return mPortSetting;
     }
     
@@ -159,7 +169,7 @@ public class Printer implements Parcelable {
      * 
      * @param portSetting
      */
-    public void setPortSetting(int portSetting) {
+    public void setPortSetting(PortSetting portSetting) {
         this.mPortSetting = portSetting;
     }
     
@@ -178,16 +188,6 @@ public class Printer implements Parcelable {
     public void setConfig(Config config) {
         mConfig = config;
     }
-
-    /**
-     * Gets the print settings corresponding to the Printer
-     * 
-     * @return Printer's print settings
-     */
-    // TODO: For update
-    public PrintSettings getPrintSettings() {
-        return new PrintSettings(getId());
-    }
     
     // ================================================================================
     // Internal Class - Printer Config
@@ -199,7 +199,7 @@ public class Printer implements Parcelable {
     public class Config {
         private boolean mLprAvailable;
         private boolean mRawAvailable;
-        private boolean mBookletAvailable;
+        private boolean mBookletFinishingAvailable;
         private boolean mStaplerAvailable;
         private boolean mPunch3Available;
         private boolean mPunch4Available;
@@ -213,7 +213,9 @@ public class Printer implements Parcelable {
          * Create a config instance.
          */
         public Config() {
-            mBookletAvailable = true;
+            mLprAvailable = true;
+            mRawAvailable = true;
+            mBookletFinishingAvailable = true;
             mStaplerAvailable = true;
             mPunch3Available = false;
             mPunch4Available = true;
@@ -255,19 +257,19 @@ public class Printer implements Parcelable {
         }
         
         /**
-         * @return the mBookletAvailable
+         * @return the mBookletFinishingAvailable
          */
-        public boolean isBookletAvailable() {
-            return mBookletAvailable;
+        public boolean isBookletFinishingAvailable() {
+            return mBookletFinishingAvailable;
         }
         
         /**
-         * updates the value of mBookletAvailable
+         * updates the value of mBookletFinishingAvailable
          * 
-         * @param bookletAvailable
+         * @param bookletFinishingAvailable
          */
-        public void setBookletAvailable(boolean bookletAvailable) {
-            this.mBookletAvailable = bookletAvailable;
+        public void setBookletFinishingAvailable(boolean bookletFinishingAvailable) {
+            this.mBookletFinishingAvailable = bookletFinishingAvailable;
         }
         
         /**
@@ -379,7 +381,7 @@ public class Printer implements Parcelable {
          * @param out
          */
         public void writeToParcel(Parcel out) {
-            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch3Available,
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletFinishingAvailable, mStaplerAvailable, mPunch3Available,
                     mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable };
             
             out.writeBooleanArray(config);
@@ -391,13 +393,13 @@ public class Printer implements Parcelable {
          * @param in
          */
         public void readFromParcel(Parcel in) {
-            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletAvailable, mStaplerAvailable, mPunch3Available,
+            boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletFinishingAvailable, mStaplerAvailable, mPunch3Available,
                     mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable };
             
             in.readBooleanArray(config);
             mConfig.mLprAvailable = config[0];
             mConfig.mRawAvailable = config[1];
-            mConfig.mBookletAvailable = config[2];
+            mConfig.mBookletFinishingAvailable = config[2];
             mConfig.mStaplerAvailable = config[3];
             mConfig.mPunch3Available = config[4];
             mConfig.mPunch4Available = config[5];

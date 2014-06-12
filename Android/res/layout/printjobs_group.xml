@@ -39,25 +39,23 @@
             android:orientation="vertical" >
 
             <TextView
+                style="@style/EllipsizeText"
                 android:id="@+id/printJobGroupText"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_gravity="left"
                 android:layout_weight="1"
-                android:ellipsize="middle"
                 android:gravity="bottom"
-                android:singleLine="true"
                 android:textColor="@color/theme_light_1" />
 
             <TextView
+                style="@style/EllipsizeText"
                 android:id="@+id/printJobGroupSubText"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_gravity="left"
                 android:layout_weight="1"
-                android:ellipsize="middle"
                 android:gravity="top"
-                android:singleLine="true"
                 android:textColor="@color/theme_light_1"
                 android:textSize="@dimen/font_size_small" />
         </LinearLayout>

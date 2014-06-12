@@ -35,7 +35,6 @@
 		28D3349E19299C4000F99B23 /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D3349D19299C4000F99B23 /* PaddedLabel.m */; };
 		28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7B31518EE48D300FE15BA /* NSDate+Format.m */; };
 		28ED46DE19261DFD00B8D4A0 /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 280C096F19206DF000347991 /* DeleteButton.m */; };
-		28FBAF1A193C53420042ED4C /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 		28FDEDE118E53D5400423CFC /* PrintJobHistoryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FDEDE018E53D5400423CFC /* PrintJobHistoryGroup.m */; };
 		2D0AEC03185FDD2100810455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D0AEC05185FDD2100810455 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
@@ -134,6 +133,7 @@
 		2D6C90FC18F4FA57002A7F48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		2D6C912618F4FC2C002A7F48 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
 		2D6C913D18F53EA2002A7F48 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */; };
+		2DA07759193D7D4400FB21A0 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA07758193D7D4400FB21A0 /* util.c */; };
 		2DA1AEC218E2EF7D00085F27 /* DefaultPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB718E2EF7D00085F27 /* DefaultPrinter.m */; };
 		2DA1AEC318E2EF7D00085F27 /* PreviewSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEB918E2EF7D00085F27 /* PreviewSetting.m */; };
 		2DA1AEC418E2EF7D00085F27 /* Printer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEBB18E2EF7D00085F27 /* Printer.m */; };
@@ -177,6 +177,7 @@
 		2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6518E2F08900085F27 /* PrintPreviewHelper.m */; };
 		2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF6E18E2F1DA00085F27 /* PrinterStatusView.m */; };
 		2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
+		2DC61E5E1945C07D006E9A38 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA07758193D7D4400FB21A0 /* util.c */; };
 		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
 		3195C0691911126100197397 /* TestPDF_3Pages_NoPass.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0651911126100197397 /* TestPDF_3Pages_NoPass.pdf */; };
 		3195C06A1911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3195C0661911126100197397 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf */; };
@@ -513,6 +514,7 @@
 		2D6C913A18F53B0E002A7F48 /* snmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = snmp.c; sourceTree = "<group>"; };
 		2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetsnmp.a; path = "../CommonLibrary/3rdParty/net-snmp/lib/ios/libnetsnmp.a"; sourceTree = "<group>"; };
 		2D91C7A8193D559E00351E3B /* AppSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppSettings.h; sourceTree = "<group>"; };
+		2DA07758193D7D4400FB21A0 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
 		2DA1AEB618E2EF7D00085F27 /* DefaultPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPrinter.h; sourceTree = "<group>"; };
 		2DA1AEB718E2EF7D00085F27 /* DefaultPrinter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultPrinter.m; sourceTree = "<group>"; };
 		2DA1AEB818E2EF7D00085F27 /* PreviewSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewSetting.h; sourceTree = "<group>"; };
@@ -1236,6 +1238,7 @@
 				2D1B3E4718FBC701000080E1 /* printsettings.h */,
 				2D1B3E4818FC01E7000080E1 /* printsettings.c */,
 				2D6C913A18F53B0E002A7F48 /* snmp.c */,
+				2DA07758193D7D4400FB21A0 /* util.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -1746,7 +1749,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28FBAF1A193C53420042ED4C /* SmartDeviceApp-Settings.plist in Resources */,
 				3195C08D1911149B00197397 /* Main.storyboard in Resources */,
 				3195C08E1911149B00197397 /* printsettings.xml in Resources */,
 				3195C08B1911148C00197397 /* Images.xcassets in Resources */,
@@ -1978,6 +1980,7 @@
 				3195C18B191117F700197397 /* LegalViewController.m in Sources */,
 				2D6C70091925EEBA00E33789 /* NSManagedObject+MagicalDataImport.m in Sources */,
 				3195C18D191117F700197397 /* PrinterInfoViewController.m in Sources */,
+				2DC61E5E1945C07D006E9A38 /* util.c in Sources */,
 				3195C18F191117F700197397 /* PrintersIpadViewController.m in Sources */,
 				2D6C700B1925EEBA00E33789 /* NSManagedObject+MagicalRecord.m in Sources */,
 				3195C191191117F700197397 /* PrintersIphoneViewController.m in Sources */,
@@ -2028,6 +2031,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D22D8C9192B4BDC00BD0489 /* snmp.c in Sources */,
+				2DA07759193D7D4400FB21A0 /* util.c in Sources */,
 				2D22D8C8192B4BD700BD0489 /* directprint.c in Sources */,
 				2D1B3E4918FC01E7000080E1 /* printsettings.c in Sources */,
 			);

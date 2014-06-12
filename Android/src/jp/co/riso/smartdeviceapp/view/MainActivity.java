@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view;
 
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -56,6 +57,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     /** {@inheritDoc} */
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
+        if (getIntent() != null && getIntent().getData() != null) {
+            Logger.logStartTime(this, this.getClass(), "Open-in");
+        } else {
+            Logger.logStartTime(this, this.getClass(), "AppLaunch");
+        }
+        
         Global.Init(this);
 
         mHandler = new PauseableHandler(this);
@@ -89,7 +96,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             
-            ft.add(R.id.mainLayout, new PrintPreviewFragment());
+            ft.add(R.id.mainLayout, new PrintPreviewFragment(), HomeFragment.FRAGMENT_TAGS[HomeFragment.STATE_PRINTPREVIEW]);
             ft.add(R.id.leftLayout, new HomeFragment());
             
             ft.commit();
@@ -115,6 +122,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
+
+        if (getIntent() != null && getIntent().getData() != null) {
+            Logger.logStopTime(this, this.getClass(), "Open-in");
+        } else {
+            Logger.logStopTime(this, this.getClass(), "AppLaunch");
+        }
     }
     
     /** {@inheritDoc} */

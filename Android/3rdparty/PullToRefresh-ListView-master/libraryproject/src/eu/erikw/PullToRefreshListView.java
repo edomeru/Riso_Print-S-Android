@@ -58,6 +58,17 @@ public class PullToRefreshListView extends ListView{
          * Method to be called when a refresh is requested
          */
         public void onRefresh();
+        
+        /**
+         * Method to be called when the header margin is adjusted
+         */
+        public void onHeaderAdjusted(int margin);
+        
+        /**
+         * Method to be called on bounce back header animation
+         */
+        public void onBounceBackHeader(int duration);
+        
     }
 
     private static int measuredHeaderHeight;
@@ -267,6 +278,8 @@ public class PullToRefreshListView extends ListView{
         MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) header.getLayoutParams();
         mlp.setMargins(0, Math.round(padding), 0, 0);
         header.setLayoutParams(mlp);
+        
+        onRefreshListener.onHeaderAdjusted(Math.max(padding, 0));
     }
 
     @Override
@@ -296,7 +309,6 @@ public class PullToRefreshListView extends ListView{
                         case RELEASE_TO_REFRESH:
                             setState(State.REFRESHING);
                             bounceBackHeader();
-
                             break;
 
                         case PULL_TO_REFRESH:
@@ -359,6 +371,7 @@ public class PullToRefreshListView extends ListView{
         bounceAnimation.setAnimationListener(new HeaderAnimationListener(yTranslate));
 
         startAnimation(bounceAnimation);
+        onRefreshListener.onBounceBackHeader(BOUNCE_ANIMATION_DURATION);
     }
 
     private void resetHeader(){

@@ -19,15 +19,16 @@ public class SNMPManager {
     public native void deviceDiscovery();
     public native void manualDiscovery(String ipAddress);
     public native void cancel();
-
-    public static final int SNMP_CAPABILITY_BOOKLET = 0;
+    
+    public static final int SNMP_CAPABILITY_BOOKLET_FINISHING = 0;
     public static final int SNMP_CAPABILITY_STAPLER = 1;
     public static final int SNMP_CAPABILITY_FINISH_2_3 = 2;
     public static final int SNMP_CAPABILITY_FINISH_2_4 = 3;
     public static final int SNMP_CAPABILITY_TRAY_FACE_DOWN = 4;
-    public static final int SNMP_CAPABILITY_TRAY_AUTO_STACK = 5;
-    public static final int SNMP_CAPABILITY_TRAY_TOP = 6;
-    public static final int SNMP_CAPABILITY_TRAY_STACK = 7;
+    public static final int SNMP_CAPABILITY_TRAY_TOP = 5;
+    public static final int SNMP_CAPABILITY_TRAY_STACK = 6;
+    public static final int SNMP_CAPABILITY_LPR = 7;
+    public static final int SNMP_CAPABILITY_RAW = 8;
     
     /**
      * Set Callback.

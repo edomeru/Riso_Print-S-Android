@@ -41,7 +41,9 @@ typedef enum
     // error when deleting
     kAlertResultErrDelete,
     
-    // error when opening invalid file
+    // error when opening PDF
+    kAlertResultErrFileHasOpenPassword,
+    kAlertResultErrFileDoesNotAllowPrinting,
     kAlertResultFileCannotBeOpened,
     
     // printing

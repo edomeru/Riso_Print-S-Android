@@ -17,6 +17,7 @@ import jp.co.riso.android.dialog.WaitingDialogFragment;
 import jp.co.riso.android.dialog.WaitingDialogFragment.WaitingDialogListener;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -27,6 +28,7 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
@@ -221,7 +223,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             return;
         }
         
-        if (!NetUtils.isNetworkAvailable(getActivity())) {
+        if (!NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
             String strMsg = getString(R.string.ids_err_msg_network_error);
             String btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
@@ -239,8 +241,14 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mDirectPrintManager = new DirectPrintManager();
         mDirectPrintManager.setCallback(this);
         
-        String userName = getActivity().getString(R.string.ids_app_name);
-        mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+        
+        String userName = AppUtils.getOwnerName();
+
+        if (printer.getPortSetting() == PortSetting.LPR) {
+            mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+        } else {
+            mDirectPrintManager.executeRAWPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+        }
     }
     
     // ================================================================================
@@ -294,7 +302,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     /** {@inheritDoc} */
     @Override
     public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
-        if (NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext())) {
+        if (NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
             switch (status) {
                 case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
                 case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:
