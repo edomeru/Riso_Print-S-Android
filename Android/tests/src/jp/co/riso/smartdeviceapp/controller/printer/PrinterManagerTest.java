@@ -1122,7 +1122,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testSetupPrinterConfig_allFalse() {
         boolean capabilities[] = new boolean[] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
         };
         Printer target = new Printer("test", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);

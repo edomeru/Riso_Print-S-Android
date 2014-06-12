@@ -683,9 +683,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         String ownerName = AppUtils.getOwnerName();
 
         assertNotNull(ownerName);
-        assertFalse(ownerName.isEmpty());
-        assertEquals(getActivity().getString(jp.co.riso.smartprint.R.string.ids_app_name),
-                ownerName);
+        assertTrue(ownerName.isEmpty());
 
         editor.putString(AppConstants.PREF_KEY_LOGIN_ID, expected);
 
@@ -693,7 +691,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         ownerName = AppUtils.getOwnerName();
 
         assertNotNull(ownerName);
-        assertFalse(ownerName.isEmpty());
+        assertTrue(ownerName.isEmpty());
         assertEquals(expected, ownerName);
     }
     
