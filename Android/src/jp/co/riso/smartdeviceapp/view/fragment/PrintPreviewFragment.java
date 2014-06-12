@@ -260,6 +260,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             View newView = View.inflate(getActivity(), R.layout.preview_controls, null);
             newView.setLayoutParams(mPageControls.getLayoutParams());
             newView.setVisibility(mPageControls.getVisibility());
+            
+            // AppUtils.changeChildrenFont((ViewGroup) newView, SmartDeviceApp.getAppFont());
 
             mainView.addView(newView);
             mPageControls = newView;
