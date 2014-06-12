@@ -35,12 +35,12 @@
     <string name="ids_lbl_authentication">Authentication</string>
     <string name="ids_lbl_login_id">ログインID</string>
     <string name="ids_lbl_print_settings">印刷設定</string>
-    <string name="ids_lbl_page_displayed">ページ %%d / %%d</string>
+    <string name="ids_lbl_page_displayed" formatted="false">ページ %d / %d</string>
     <string name="ids_lbl_print">印刷</string>
     <string name="ids_lbl_printer">プリンター</string>
     <string name="ids_lbl_choose_printer">Choose Printer</string>
     <string name="ids_lbl_basic">基本</string>
-    <string name="ids_lbl_colormode">カラーモー</string>
+    <string name="ids_lbl_colormode">カラーモード</string>
     <string name="ids_lbl_colormode_auto">オート</string>
     <string name="ids_lbl_colormode_fullcolor">カラー</string>
     <string name="ids_lbl_colormode_black">白黒</string>
@@ -143,6 +143,7 @@
     <string name="ids_err_msg_pdf_wrong_password">パスワードが正しくありません。確認してください。</string>
     <string name="ids_err_msg_open_failed">ファイルが開けません。</string>
     <string name="ids_err_msg_pdf_encrypted">暗号化PDFには対応していません。</string>
+    <string name="ids_err_msg_pdf_printing_not_allowed">File does not allow printing.</string>
     <string name="ids_err_msg_file_too_large">ファイルサイズが大きすぎます。</string>
     <string name="ids_err_msg_not_enough_space">デバイスの空き容量が不足しています。</string>
     <string name="ids_err_msg_network_error">ネットワークに接続できません。</string>
