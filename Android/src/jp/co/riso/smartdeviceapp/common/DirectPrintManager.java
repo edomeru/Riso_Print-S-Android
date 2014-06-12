@@ -54,13 +54,17 @@ public class DirectPrintManager {
      * @param printSetting
      * @param ipAddress
      */
-    public void executeLPRPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress) {
-        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || userName.isEmpty() || jobName.isEmpty()
+    public boolean executeLPRPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress) {
+        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || jobName.isEmpty() 
                 || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
-            return;
+            return false;
         }
         initializeDirectPrint(userName, jobName, fileName, printSetting, ipAddress);
-        lprPrint();
+        if (isPrinting()) {
+            lprPrint();
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -72,13 +76,17 @@ public class DirectPrintManager {
      * @param printSetting
      * @param ipAddress
      */
-    public void executeRAWPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress) {
-        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || userName.isEmpty() || jobName.isEmpty()
-                || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
-            return;
+    public boolean executeRAWPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress) {
+        if (userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null 
+                || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
+            return false;
         }
         initializeDirectPrint(userName, jobName, fileName, printSetting, ipAddress);
-        rawPrint();
+        if (isPrinting()) {
+            rawPrint();
+            return true;
+        }
+        return false;
     }
     
     /**

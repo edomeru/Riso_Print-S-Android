@@ -635,15 +635,15 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         editor.apply();
         
         assertNotNull(AppUtils.getAuthenticationString());
-        assertTrue(AppUtils.getAuthenticationString().isEmpty());
+        assertFalse(AppUtils.getAuthenticationString().isEmpty());
+        assertTrue(AppUtils.getAuthenticationString().equals("securePrint=0\nloginId=test\npinCode=1234\n"));
         
-        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON
-        
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON        
         editor.apply();
         
         assertNotNull(AppUtils.getAuthenticationString());
         assertFalse(AppUtils.getAuthenticationString().isEmpty());
-        assertTrue(AppUtils.getAuthenticationString().equals("loginId=test\npinCode=1234\n"));
+        assertTrue(AppUtils.getAuthenticationString().equals("securePrint=1\nloginId=test\npinCode=1234\n"));
     }
     
     public void testGetAuthenticationString_Invalid() {
@@ -657,7 +657,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         editor.apply();
         
         assertNotNull(AppUtils.getAuthenticationString());
-        assertTrue(AppUtils.getAuthenticationString().isEmpty());
+        assertFalse(AppUtils.getAuthenticationString().isEmpty());
         
         // missing keys
         editor.remove(AppConstants.PREF_KEY_AUTH_SECURE_PRINT);
@@ -667,7 +667,9 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         editor.apply();
         
         assertNotNull(AppUtils.getAuthenticationString());
-        assertTrue(AppUtils.getAuthenticationString().isEmpty());
+        assertFalse(AppUtils.getAuthenticationString().isEmpty());
+        assertTrue(AppUtils.getAuthenticationString().equals("securePrint=0\nloginId=\npinCode=\n"));
+
     }
     
     //================================================================================
@@ -683,9 +685,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         String ownerName = AppUtils.getOwnerName();
 
         assertNotNull(ownerName);
-        assertFalse(ownerName.isEmpty());
-        assertEquals(getActivity().getString(jp.co.riso.smartprint.R.string.ids_app_name),
-                ownerName);
+        assertTrue(ownerName.isEmpty());
 
         editor.putString(AppConstants.PREF_KEY_LOGIN_ID, expected);
 

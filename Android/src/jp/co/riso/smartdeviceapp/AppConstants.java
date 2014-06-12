@@ -44,6 +44,7 @@ public class AppConstants {
     public static final int CONST_UPDATE_INTERVAL = 5000; // 5 seconds
     public static final String XML_FILENAME = "printsettings.xml";
     
+    public static final String KEY_SECURE_PRINT = "securePrint";
     public static final String KEY_LOGINID = "loginId";
     public static final String KEY_PINCODE = "pinCode";
 }
