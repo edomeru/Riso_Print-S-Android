@@ -23,9 +23,6 @@
     <integer name="match_parent_value">-1</integer>  
     <dimen name="settings_width">@integer/match_parent_value</dimen>
     
-    <dimen name="settings_pin_code_input_width">120dp</dimen>
-    
-    <dimen name="settings_separator_padding">24dp</dimen>
     <dimen name="printsettings_option_with_sub_height">56dp</dimen>
     
     <dimen name="printsettings_menu_padding">10dp</dimen>
@@ -55,8 +52,7 @@
     <dimen name="preview_controls_margin_side">32dp</dimen>
     <dimen name="preview_controls_margin_bottom">8dp</dimen>
     <dimen name="preview_logo_margin">24dp</dimen>
-        
-    <dimen name="printjob_column_margin_side">16dp</dimen>
+    
     <dimen name="printjob_padding_side">4dp</dimen>
     <dimen name="printjob_margin_top">8dp</dimen>
     <dimen name="printjob_status_padding_side">10dp</dimen>
@@ -77,7 +73,6 @@
     <dimen name="printers_row_left_icon_size">30dp</dimen>
 
     <dimen name="printers_row_left_padding">10dp</dimen>
-    <dimen name="printers_left_editbox_padding">10dp</dimen>
 
     <dimen name="printers_row_height">56dp</dimen>
     <dimen name="printers_edit_box_height">38dp</dimen>
@@ -88,12 +83,7 @@
     <dimen name="printers_row_right_icon_padding">6dp</dimen>
     <dimen name="printers_row_right_icon_size">30dp</dimen>
     
-    <dimen name="printers_row_top_padding">8dp</dimen>
-
-    <dimen name="printers_row_default_printer_margin">2dp</dimen>
-    <dimen name="printers_view_tablet_padding">5dp</dimen>    
-    <dimen name="printers_delbtn_padding_side">20dp</dimen>
-    <dimen name="printers_delbtn_margin">5dp</dimen>
+    <dimen name="printers_view_tablet_padding">5dp</dimen>
     <dimen name="printers_delbtn_right_margin">15dp</dimen>
     <dimen name="printers_separator_padding">40dp</dimen>
     <dimen name="printers_row_left_icon_margin">5dp</dimen>

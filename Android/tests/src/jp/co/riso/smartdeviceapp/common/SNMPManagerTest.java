@@ -14,7 +14,7 @@ public class SNMPManagerTest extends TestCase implements
     final CountDownLatch mSignal = new CountDownLatch(1);
     final int TIMEOUT = 15;
     private static final String IPV4_ONLINE_RISO_PRINTER_ADDRESS = "192.168.1.206";
-    private static final String IPV4_ONLINE_NONRISO_PRINTER_ADDRESS = "192.168.1.24";
+    private static final String IPV4_ONLINE_NONRISO_PRINTER_ADDRESS = "192.168.1.203";
     private static final String IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.0.24";
 
     private SNMPManager mSnmpManager = null;
@@ -38,6 +38,7 @@ public class SNMPManagerTest extends TestCase implements
 
     protected void tearDown() throws Exception {
         super.tearDown();
+        mSnmpManager.finalizeSNMPManager();
         testSetCallback_NullCallback();
     }
 
