@@ -1,5 +1,6 @@
 /*WordingList_Alpha1*/
 "IDS_APP_NAME" = "RISO Smart Print";
+"IDS_APP_LAUNCHER_NAME" = "Smart Print";
 "IDS_LBL_SAVE" = "Save";
 "IDS_LBL_OK" = "OK";
 "IDS_LBL_CANCEL" = "Cancel";
@@ -27,6 +28,7 @@
 "IDS_LBL_AUTHENTICATION" = "Authentication";
 "IDS_LBL_LOGIN_ID" = "Log-in ID";
 "IDS_LBL_PRINT_SETTINGS" = "Print Settings";
+"IDS_LBL_PAGE_DISPLAYED" = "Page %d / %d";
 "IDS_LBL_PRINT" = "Print";
 "IDS_LBL_PRINTER" = "Printer";
 "IDS_LBL_CHOOSE_PRINTER" = "Choose printer";
@@ -91,9 +93,8 @@
 "IDS_LBL_BOOKLET_FINISHING_FOLD" = "Paper folding";
 "IDS_LBL_BOOKLET_FINISHING_FOLDSTAPLE" = "Fold + Staple";
 "IDS_LBL_BOOKLET_LAYOUT" = "Booklet Layout";
-"IDS_LBL_BOOKLET_LAYOUT_LR" = "Left to right";
-"IDS_LBL_BOOKLET_LAYOUT_RL" = "Right to left";
-"IDS_LBL_BOOKLET_LAYOUT_TB" = "Top to bottom";
+"IDS_LBL_BOOKLET_LAYOUT_FORWARD" = "Forward";
+"IDS_LBL_BOOKLET_LAYOUT_REVERSE" = "Reverse";
 "IDS_LBL_FINISHINGSIDE" = "Binding side";
 "IDS_LBL_FINISHINGSIDE_LEFT" = "Left";
 "IDS_LBL_FINISHINGSIDE_TOP" = "Top";
@@ -136,6 +137,7 @@
 "IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "Please check the password you entered";
 "IDS_ERR_MSG_OPEN_FAILED" = "Please select a valid file.";
 "IDS_ERR_MSG_PDF_ENCRYPTED" = "PDF Encryption is not supported";
+"IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" = "File does not allow printing.";
 "IDS_ERR_MSG_FILE_TOO_LARGE" = "File size is too large";
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "Not enough free space on device";
 "IDS_ERR_MSG_NETWORK_ERROR" = "No network available.";

@@ -241,13 +241,24 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mDirectPrintManager = new DirectPrintManager();
         mDirectPrintManager.setCallback(this);
         
-        
         String userName = AppUtils.getOwnerName();
-
+        boolean ret = false;
+        
         if (printer.getPortSetting() == PortSetting.LPR) {
-            mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+            ret = mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
         } else {
-            mDirectPrintManager.executeRAWPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+            ret = mDirectPrintManager.executeRAWPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+        }
+        if (ret) {
+            btnMsg = getResources().getString(R.string.ids_lbl_cancel);
+            mWaitingDialog = WaitingDialogFragment.newInstance(null, mPrintMsg, true, btnMsg);
+            mWaitingDialog.setTargetFragment(this, 0);
+            DialogUtils.displayDialog(getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
+        } else {
+            String strMsg = getString(R.string.ids_info_msg_print_job_failed);
+            btnMsg = getString(R.string.ids_lbl_ok);
+            InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
+            DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
         }
     }
     

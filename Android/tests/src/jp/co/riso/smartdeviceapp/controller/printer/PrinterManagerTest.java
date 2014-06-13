@@ -126,7 +126,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             }
             
             testClearDefaultPrinter();
-            mPrinterManager.setDefaultPrinter(printer);
+            assertTrue(mPrinterManager.setDefaultPrinter(printer));
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -139,8 +139,12 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             if (mPrintersList != null && !mPrintersList.isEmpty()) {
                 printer = mPrintersList.get(0);
             }
+            if(printer == null) {
+                printer = new Printer("testSetDefaultPrinter_WithDefaultPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
+                mPrinterManager.savePrinterToDB(printer, true);
+            }
             testSetDefaultPrinter_NoDefaultPrinter();
-            mPrinterManager.setDefaultPrinter(printer);
+            assertTrue(mPrinterManager.setDefaultPrinter(printer));
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -149,7 +153,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testSetDefaultPrinter_NullPrinter() {
         try {
             
-            mPrinterManager.setDefaultPrinter(null);
+            assertFalse(mPrinterManager.setDefaultPrinter(null));
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
         }
@@ -158,9 +162,18 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testSetDefaultPrinter_NullDatabaseManager() {
         try {
             Printer printer = null;
-            
+
             mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), null);
-            mPrinterManager.setDefaultPrinter(printer);
+            assertFalse(mPrinterManager.setDefaultPrinter(printer));
+            
+            if (mPrintersList != null && !mPrintersList.isEmpty()) {
+                printer = mPrintersList.get(0);
+            }
+            if(printer == null) {
+                printer = new Printer("testSetDefaultPrinter_WithDefaultPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
+                mPrinterManager.savePrinterToDB(printer, true);
+            }
+            assertTrue(mPrinterManager.setDefaultPrinter(printer));
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -172,7 +185,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
                 SmartDeviceApp.getAppContext());
 
         mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), dbManager);
-        mPrinterManager.setDefaultPrinter(printer);
+        assertFalse(mPrinterManager.setDefaultPrinter(printer));
     }
     
     // ================================================================================
@@ -1109,7 +1122,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testSetupPrinterConfig_allFalse() {
         boolean capabilities[] = new boolean[] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
         };
         Printer target = new Printer("test", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);

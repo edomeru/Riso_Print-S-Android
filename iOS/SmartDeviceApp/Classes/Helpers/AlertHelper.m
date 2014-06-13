@@ -88,6 +88,14 @@
             alertMsg = NSLocalizedString(IDS_ERR_MSG_DELETE_FAILED, @"");
             break;
             
+        case kAlertResultErrFileHasOpenPassword:
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_PDF_ENCRYPTED, @"");
+            break;
+            
+        case kAlertResultErrFileDoesNotAllowPrinting:
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED, @"");
+            break;
+            
         case kAlertResultFileCannotBeOpened:
             alertMsg = NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @"");
             break;

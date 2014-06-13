@@ -1446,7 +1446,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             mMainView.setVisibility(View.GONE);
         }
         
-        AppUtils.changeChildrenFont(mSubView, SmartDeviceApp.getAppFont());
+        // AppUtils.changeChildrenFont(mSubView, SmartDeviceApp.getAppFont());
     }
     
     /**

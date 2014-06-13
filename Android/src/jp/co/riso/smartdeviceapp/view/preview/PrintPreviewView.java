@@ -35,7 +35,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.SystemClock;
@@ -72,7 +71,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     private static final int INVALID_IDX = -1;
     
-    private static final int SLEEP_DELAY = 128;
+    private static final int SLEEP_DELAY = 32;
     private static final int SMALL_BMP_SIZE = 64;
     private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.RGB_565;
     
@@ -309,8 +308,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             setCurrentPage(mPdfPageProvider.getPageCount());
         }
         
-        setupCurlPageView();
-        setupCurlBind();
+        reconfigureCurlView();
         mCurlView.requestLayout();
     }
     
@@ -433,10 +431,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         count = (int) Math.ceil(count / (double) getPagesPerSheet());
 
         if (isTwoPageDisplayed()) {
-            count = AppUtils.getNextIntegerMultiple(count, 2);
+            count = AppUtils.getNextIntegerMultiple(count, getFacesPerPaper());
             
             if (mPrintSettings.isBooklet()) {
-                count = AppUtils.getNextIntegerMultiple(count, 4);
+                count = AppUtils.getNextIntegerMultiple(count, getFacesPerPaper());
             }
         }
         
@@ -477,8 +475,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         int faceCount = getFaceCount();
 
-        final String FORMAT_ONE_PAGE_STATUS = "PAGE %d / %d";
-
+        final String FORMAT_ONE_PAGE_STATUS = getResources().getString(R.string.ids_lbl_page_displayed);
         return String.format(Locale.getDefault(), FORMAT_ONE_PAGE_STATUS, currentFace, faceCount);
     }
     
@@ -605,7 +602,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      */
     protected int convertDimension(float dimension, int bmpWidth, int bmpHeight) {
         float smallerDimension = Math.min(bmpWidth, bmpHeight);
-        return (int)((dimension / mPrintSettings.getPaperSize().getWidth()) * smallerDimension);
+        float[] paperSize = getPaperDisplaySize();
+        float smallerPaperSize = Math.min(paperSize[0], paperSize[1]);
+        
+        return (int)((dimension / smallerPaperSize) * smallerDimension);
     }
     
     // ================================================================================
@@ -657,6 +657,17 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         }
         
         return mPrintSettings.getImposition().getPerPage();
+    }
+    
+    /**
+     * @return get faces per paper
+     */
+    public int getFacesPerPaper() {
+        if (mPrintSettings.isBooklet()) {
+            return 4;
+        }
+        
+        return 2;
     }
     
     /**
@@ -806,9 +817,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.setBindPosition(CurlView.BIND_LEFT);
         mCurlView.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
         
-        setupCurlPageView();
-        setupCurlBind();
-        setDefaultMargins();
+        reconfigureCurlView();
         
         if (!isInEditMode()) {
             float percentage = getResources().getFraction(R.dimen.preview_view_drop_shadow_percentage, 1, 1);
@@ -816,6 +825,15 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         }
         
         addView(mCurlView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+    }
+    
+    /**
+     * Reinitialize the curlview settings
+     */
+    public void reconfigureCurlView() {
+        setupCurlPageView();
+        setupCurlBind();
+        setDefaultMargins();
     }
     
     /**
@@ -1310,6 +1328,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
             
+            int pagesDisplayed = getPagesPerSheet() * (getFacesPerPaper() / 2);
+            
             int paperWidth = bmp.getWidth();
             int paperHeight = bmp.getHeight();
             
@@ -1393,33 +1413,88 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 Bitmap page = mPdfManager.getPageBitmap(curIndex, scale, flipX, flipY);
                 
                 if (page != null) {
-                    int x = left;
-                    int y = top;
                     int dim[] = new int[] {
                             convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth(), canvas.getHeight()),
                             convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth(), canvas.getHeight())
                     };
                     
-                    int divide = Math.max(getColsPerSheet(), getRowsPerSheet());
-                    dim[0] /= divide;
-                    dim[1] /= divide;
+                    dim[0] = (int) Math.sqrt((dim[0] * dim[0] / (float)pagesDisplayed));
+                    dim[1] = (int) Math.sqrt((dim[1] * dim[1] / (float)pagesDisplayed));
+                    
+                    int x = left;
+                    int y = top;
+                    float rotate = 0.0f;
+                    
+                    boolean shouldRotate = ((right - left) > (bottom - top)) != (mPdfManager.getPageWidth(curIndex) > mPdfManager.getPageHeight(curIndex));
+                    
+                    if (shouldRotate) {
+                        x = left;
+                        y = bottom;
+                        rotate = -90.0f;
+                        if (flipX) {
+                            rotate += 180.0f;
+                        }
+                        if (flipY) {
+                            rotate += 180.0f;
+                        }
+                    }
+                    
+                    int width = right - left;
+                    int height = bottom - top;
+                    if (shouldRotate) {
+                        width = bottom - top;
+                        height = right - left;
+                    }
                     
                     if (mPrintSettings.isScaleToFit()) {
-                        dim = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(curIndex), mPdfManager.getPageHeight(curIndex), right - left, bottom - top);
-                        
+                        dim = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(curIndex), mPdfManager.getPageHeight(curIndex), width, height);
                         // For Fit-XY
-                        //dim[0] = right - left;
-                        //dim[1] = bottom - top;
-                        
-                        x = left + ((right - left) - dim[0]) / 2;
-                        y = top + ((bottom - top) - dim[1]) / 2;
+                        //dim[0] = width;
+                        //dim[1] = height;
+                        if (shouldRotate) {
+                            x += ((height - dim[1]) / 2);
+                            y += ((width - dim[0]) / 2);
+                        } else {
+                            x += ((width - dim[0]) / 2);
+                            y += ((height - dim[1]) / 2);
+                        }
+                    } else {
+                        if (shouldRotate) {
+                            // Adjust x and y position when flipped
+                            if (flipX) {
+                                x -= (dim[1] - height);
+                            }
+                            if (flipY) {
+                                y += (dim[0] - width);
+                            }
+                        } else {
+                            // Adjust x and y position when flipped
+                            if (flipX) {
+                                x -= (dim[0] - width);
+                            }
+                            if (flipY) {
+                                y -= (dim[1] - height);
+                            }
+                        }
                     }
                     
                     canvas.save(Canvas.CLIP_SAVE_FLAG);
                     canvas.clipRect(left, top, right + 1, bottom + 1);
                     
+                    /*
                     Rect destRect = new Rect(x, y, x + dim[0], y + dim[1]);
-                    ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), destRect);
+                    ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), x, y, destRect);
+                    */
+                    // Adjust x and y for rotation purposes
+                    if (shouldRotate) {
+                        x += (dim[1] / 2);
+                        y -= (dim[0] / 2);
+                    } else {
+                        x += (dim[0] / 2);
+                        y += (dim[1] / 2);
+                    }
+                    float drawScale = dim[0] / (float)page.getWidth();
+                    ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), x, y, rotate, drawScale);
                     
                     canvas.restore();
                     

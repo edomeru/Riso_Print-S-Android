@@ -39,6 +39,7 @@ typedef enum
     kPrintSettingsOutputTray,
     kPrintSettingsLoginId,
     kPrintSettingsPinCode,
+    kPrintSettingsSecurePrint,
     kPrintSettingsCount
 } kPrintSettings;
 
@@ -92,7 +93,8 @@ const char *printsetting_names[kPrintSettingsCount] =
     "punch",
     "outputTray",
     "loginId",
-    "pinCode"
+    "pinCode",
+    "securePrint"
 };
 
 const char *color_mode[] =
@@ -765,8 +767,7 @@ void add_pjl(char *pjl, setting_value values[], int command)
         case kPjlCommandOwner:
         {
             setting_value loginId = values[kPrintSettingsLoginId];
-            setting_value pinCode = values[kPrintSettingsPinCode];
-            if (loginId.set == 0 || pinCode.set == 0)
+            if (loginId.set == 0)
             {
                 return;
             }
@@ -776,24 +777,19 @@ void add_pjl(char *pjl, setting_value values[], int command)
         }
         case kPjlCommandPrivatePrinting:
         {
-            setting_value loginId = values[kPrintSettingsLoginId];
-            setting_value pinCode = values[kPrintSettingsPinCode];
-            if (loginId.set == 0 || pinCode.set == 0)
+            setting_value securePrint = values[kPrintSettingsSecurePrint];
+            if (securePrint.set == 0)
             {
-                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][0]);
+                return;
             }
-            else
-            {
-                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
-            }
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][securePrint.int_value]);
             strcat(pjl, pjl_line);
             break;
         }
         case kPjlCommandPrivatePrintingBoxNumber:
         {
-            setting_value loginId = values[kPrintSettingsLoginId];
             setting_value pinCode = values[kPrintSettingsPinCode];
-            if (loginId.set == 0 || pinCode.set == 0)
+            if (pinCode.set == 0)
             {
                 return;
             }

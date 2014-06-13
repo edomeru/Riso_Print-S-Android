@@ -222,6 +222,9 @@ public class PrinterManager implements SNMPManagerCallback {
         Cursor cursor = mDatabaseManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null);
         
         mPrinterList.clear();
+        if (cursor == null) {            
+            return mPrinterList;
+        }
         if (cursor.getCount() < 1) {
             mDatabaseManager.close();
             cursor.close();
@@ -271,11 +274,12 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @param printer
      *            The Printer object selected
+     * @return true on success otherwise false
      */
-    public void setDefaultPrinter(Printer printer) {
+    public boolean setDefaultPrinter(Printer printer) {
         
         if (printer == null) {
-            return;
+            return false;
         }
         clearDefaultPrinter();
         
@@ -285,11 +289,12 @@ public class PrinterManager implements SNMPManagerCallback {
         
         if (!mDatabaseManager.insert(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, newDefaultPrinter)) {
             mDatabaseManager.close();
-            return;
+            return false;
         }
         
         mDefaultPrintId = printer.getId();
         mDatabaseManager.close();
+        return true;
     }
     
     /**
@@ -359,6 +364,9 @@ public class PrinterManager implements SNMPManagerCallback {
                 
         Cursor cursor = mDatabaseManager.query(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID, null, null, null, null);
         
+        if (cursor == null) {
+            return EMPTY_ID;
+        }
         if (cursor.getCount() != 1) {
             mDatabaseManager.close();
             cursor.close();
@@ -678,8 +686,9 @@ public class PrinterManager implements SNMPManagerCallback {
         boolean ret = false;
                
         ret = getIdFromCursor(cursor, printer);
-
-        mDatabaseManager.close();
+        if (ret) {
+            mDatabaseManager.close();
+        }
         return ret;
     }
     

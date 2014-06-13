@@ -1,5 +1,6 @@
 /*WordingList_Alpha1*/
 "IDS_APP_NAME" = "RISO Smart Print";
+"IDS_APP_LAUNCHER_NAME" = "Smart Print";
 "IDS_LBL_SAVE" = "保存";
 "IDS_LBL_OK" = "OK";
 "IDS_LBL_CANCEL" = "キャンセル";
@@ -27,11 +28,12 @@
 "IDS_LBL_AUTHENTICATION" = "Authentication";
 "IDS_LBL_LOGIN_ID" = "ログインID";
 "IDS_LBL_PRINT_SETTINGS" = "印刷設定";
+"IDS_LBL_PAGE_DISPLAYED" = "ページ %d / %d";
 "IDS_LBL_PRINT" = "印刷";
 "IDS_LBL_PRINTER" = "プリンター";
 "IDS_LBL_CHOOSE_PRINTER" = "Choose Printer";
 "IDS_LBL_BASIC" = "基本";
-"IDS_LBL_COLORMODE" = "カラーモー";
+"IDS_LBL_COLORMODE" = "カラーモード";
 "IDS_LBL_COLORMODE_AUTO" = "オート";
 "IDS_LBL_COLORMODE_FULLCOLOR" = "カラー";
 "IDS_LBL_COLORMODE_BLACK" = "白黒";
@@ -91,9 +93,8 @@
 "IDS_LBL_BOOKLET_FINISHING_FOLD" = "折り";
 "IDS_LBL_BOOKLET_FINISHING_FOLDSTAPLE" = "折り＋ステープル";
 "IDS_LBL_BOOKLET_LAYOUT" = "小冊子レイアウト";
-"IDS_LBL_BOOKLET_LAYOUT_LR" = "左から右へ";
-"IDS_LBL_BOOKLET_LAYOUT_RL" = "右から左へ";
-"IDS_LBL_BOOKLET_LAYOUT_TB" = "上下開き";
+"IDS_LBL_BOOKLET_LAYOUT_FORWARD" = "Forward";
+"IDS_LBL_BOOKLET_LAYOUT_REVERSE" = "Reverse";
 "IDS_LBL_FINISHINGSIDE" = "とじ位置";
 "IDS_LBL_FINISHINGSIDE_LEFT" = "左側";
 "IDS_LBL_FINISHINGSIDE_TOP" = "上側";
@@ -131,12 +132,13 @@
 "IDS_ERR_MSG_CANNOT_ADD_PRINTER" = "このプリンターはすでに登録されています。";
 "IDS_ERR_MSG_INVALID_IP_ADDRESS" = "IP Addressを確認してください。";
 "IDS_ERR_MSG_MAX_PRINTER_COUNT" = "Saved Printer reached maximum count.";
-"IDS_ERR_MSG_DELETE_FAILED" = "削除に失敗しました。";
 "IDS_ERR_MSG_NO_SELECTED_PRINTER" = "プリンターを登録してください。";
 "IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "パスワードが正しくありません。確認してください。";
 "IDS_ERR_MSG_OPEN_FAILED" = "ファイルが開けません。";
 "IDS_ERR_MSG_PDF_ENCRYPTED" = "暗号化PDFには対応していません。";
+"IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" = "File does not allow printing.";
 "IDS_ERR_MSG_FILE_TOO_LARGE" = "ファイルサイズが大きすぎます。";
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "デバイスの空き容量が不足しています。";
 "IDS_ERR_MSG_NETWORK_ERROR" = "ネットワークに接続できません。";
+"IDS_ERR_MSG_DB_FAILURE" = "The operation cannot be completed.";
 

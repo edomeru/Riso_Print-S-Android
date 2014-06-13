@@ -198,7 +198,7 @@
     renderQueue.name = @"RenderQueue";
     self.renderQueue = renderQueue;
     self.renderArray = [[NSMutableArray alloc] init];
-    self.renderCache = [[RenderCache alloc] initWithMaxItemCount:20];
+    self.renderCache = [[RenderCache alloc] initWithMaxItemCount:11];
     self.renderCache.delegate = self;
     
     //set theme of UISlider
@@ -279,8 +279,22 @@
         }
         else
         {
+            kAlertResult result;
+            if (error == kPDFErrorPrintingNotAllowed)
+            {
+                result = kAlertResultErrFileDoesNotAllowPrinting;
+            }
+            else if (error == kPDFErrorLocked)
+            {
+                result = kAlertResultErrFileHasOpenPassword;
+            }
+            else
+            {
+                result = kAlertResultFileCannotBeOpened;
+            }
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                [AlertHelper displayResult:kAlertResultFileCannotBeOpened withTitle:kAlertTitleDefault withDetails:nil];
+                [AlertHelper displayResult:result withTitle:kAlertTitleDefault withDetails:nil];
                 [self.activityIndicator stopAnimating];
             });
         }
@@ -319,11 +333,7 @@
     UIPageViewController *pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:navigationOrientation options:@{UIPageViewControllerOptionSpineLocationKey: [NSNumber numberWithInteger:spineLocation]}];
     pageViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
     [self addChildViewController:pageViewController];
-    [self.previewView.contentView addSubview:pageViewController.view];
-    
-    NSDictionary *views = @{@"pageView": pageViewController.view};
-    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:0 metrics:nil views:views]];
-    [self.previewView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[pageView]|" options:0 metrics:nil views:views]];
+    [self.previewView setPageContentView:pageViewController.view];
     pageViewController.dataSource = self;
     pageViewController.delegate = self;
     
@@ -377,7 +387,6 @@
 
 - (void)setupPageLabel
 {
-    NSString *pageString = @"PAGE";
     NSInteger totalSheets = self.totalPageNum;
     NSInteger currentSheet = self.printDocument.currentPage + 1;
     if(self.printDocument.previewSetting.booklet == YES || self.printDocument.previewSetting.duplex != kDuplexSettingOff)
@@ -385,7 +394,7 @@
         currentSheet = self.printDocument.currentPage/2 + 1;
         totalSheets = self.totalPageNum/2 + self.totalPageNum % 2;
     }
-    self.pageLabel.text = [NSString stringWithFormat:@"%@ %ld/%ld", pageString, (long)currentSheet, (long)totalSheets];
+    self.pageLabel.text = [NSString stringWithFormat:NSLocalizedString(IDS_LBL_PAGE_DISPLAYED, @""), (long)currentSheet, (long)totalSheets];
 }
 
 - (void)setupPageviewControllerWithBindSetting
@@ -397,7 +406,7 @@
     if(self.printDocument.previewSetting.booklet == YES)
     {
         spineLocation = UIPageViewControllerSpineLocationMid;
-        if(self.printDocument.previewSetting.bookletLayout == kBookletLayoutTopToBottom)
+        if(self.printDocument.previewSetting.orientation == kOrientationLandscape)
         {
             navOrientation = UIPageViewControllerNavigationOrientationVertical;
         }
@@ -451,14 +460,29 @@
     //Duplex 2 page view display area computation
     if(self.printDocument.previewSetting.duplex > kDuplexSettingOff && self.printDocument.previewSetting.booklet == NO)
     {
-        if((self.printDocument.previewSetting.finishingSide == kFinishingSideTop && isLandscape == NO) ||
-           (self.printDocument.previewSetting.finishingSide != kFinishingSideTop && isLandscape == YES))
+        if (self.printDocument.previewSetting.finishingSide ==kFinishingSideTop)
         {
             orientation = kPreviewViewOrientationPortrait;
+            if (isLandscape == YES)
+            {
+                aspectRatio = 0.5f / aspectRatio;
+            }
+            else
+            {
+                aspectRatio = 0.5f * aspectRatio;
+            }
         }
         else
         {
             orientation = kPreviewViewOrientationLandscape;
+            if (isLandscape == YES)
+            {
+                aspectRatio = 0.5f * aspectRatio;
+            }
+            else
+            {
+                aspectRatio = 0.5f / aspectRatio;
+            }
         }
     }
     
@@ -474,7 +498,7 @@
     {
         //the two pages provided are reversed if right side finishing or booklet with right to left layout
         BOOL isReversed = (self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
-                           (self.printDocument.previewSetting.booklet == YES && self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft));
+                           (self.printDocument.previewSetting.booklet == YES && self.printDocument.previewSetting.bookletLayout == kBookletLayoutReverse));
         
         if(pageIndex == 0)//if first index, provide the last bookend page as the other half
         {
@@ -659,7 +683,15 @@
             }
         }
 
-        PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:indices size:size delegate:self];
+        CGFloat aspectRatio = size.width / size.height;
+        CGSize pageRenderSize = [[UIScreen mainScreen] bounds].size;
+        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation) == YES)
+        {
+            pageRenderSize = CGSizeMake(pageRenderSize.height, pageRenderSize.width);
+        }
+        pageRenderSize.width = pageRenderSize.height * aspectRatio;
+        
+        PDFRenderOperation *renderOperation = [[PDFRenderOperation alloc] initWithPageIndexSet:indices size:pageRenderSize delegate:self];
         [self.renderArray addObject:renderOperation];
         [self.renderQueue addOperation:renderOperation];
     }
@@ -679,7 +711,7 @@
     //if right to left paging, reverse provided pages
     if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
        (self.printDocument.previewSetting.booklet == YES &&
-        self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
+        self.printDocument.previewSetting.bookletLayout == kBookletLayoutReverse))
     {
         return [self nextViewController:index];
     }
@@ -696,7 +728,7 @@
    //if right to left paging, reverse provided pages
     if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
        (self.printDocument.previewSetting.booklet == YES &&
-        self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
+        self.printDocument.previewSetting.bookletLayout == kBookletLayoutReverse))
     {
         return [self previousViewController:index];
     }
@@ -823,6 +855,9 @@
                                         KEY_PAPER_TYPE,
                                         KEY_SORT,
                                         KEY_INPUT_TRAY,
+                                        KEY_BOOKLET_FINISH,
+                                        KEY_STAPLE,
+                                        KEY_PUNCH,
                                         nil];
     return [nonPreviewSettingKeys containsObject:settingKey];
 }

@@ -48,13 +48,13 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     public final static String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
+    public static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     public static final int ID_MENU_ACTION_SEARCH_BUTTON = 0x11000002;
     public static final int ID_MENU_ACTION_ADD_BUTTON = 0x11000003;
     public static final int MSG_ADD_NEW_PRINTER = 0x1;
     public static final int MSG_SUBMENU_BUTTON = 0x2;
     public static final int MSG_PRINTSETTINGS_BUTTON = 0x3;
     
-    private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     private static final String KEY_PRINTERS_DIALOG = "printers_dialog";
     private static final int MSG_POPULATE_PRINTERS_LIST = 0x0;
     
@@ -319,7 +319,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      */
     private boolean isMaxPrinterCountReached() {
         if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
-            String title = getResources().getString(R.string.ids_lbl_printer_info);
+            String title = getResources().getString(R.string.ids_lbl_printers);
             String errMsg = null;
             errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
             InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
@@ -387,6 +387,17 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
+    /**
+     * Dialog which is displayed during failed DB access
+     */
+    private void dialogErrCb() {
+        String title = getResources().getString(R.string.ids_lbl_printers);
+        String errMsg = getResources().getString(R.string.ids_err_msg_db_failure);
+        
+        DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
+        DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
+    }
+    
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -447,7 +458,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     /** {@inheritDoc} */
     @Override
-    public void onPrinterDeleteClicked() {
+    public void onPrinterDeleteClicked(Printer printer) {
         String title = getResources().getString(R.string.ids_lbl_printer);
         String errMsg = getResources().getString(R.string.ids_info_msg_delete_jobs);
         
@@ -456,6 +467,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), 
                 getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
+        mDeletePrinter = printer;
         DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
     }
     
@@ -469,12 +481,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
-    /** {@inheritDoc} */
-    @Override
-    public void setDeletePrinter(Printer printer) {
-        mDeletePrinter = printer;
-    }
-    
     // ================================================================================
     // INTERFACE - ConfirmDialogListener
     // ================================================================================
@@ -483,11 +489,18 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     @Override
     public void onConfirm() {
         if (isTablet()) {
-            mPrinterTabletView.confirmDeletePrinterView();
+            boolean relayout = mDeletePrinter.getId() == mPrinterManager.getDefaultPrinter() ? true : false;
+            
+            if (mPrinterManager.removePrinter(mDeletePrinter)) {
+                mPrinterTabletView.confirmDeletePrinterView(relayout);
+            } else {
+                dialogErrCb();
+            }
         } else {
             if (mPrinterManager.removePrinter(mDeletePrinter)) {
-                mPrinterAdapter.remove(mDeletePrinter);
                 mPrinterAdapter.notifyDataSetChanged();
+            } else {
+                dialogErrCb();
             }
             ((PrintersListView) mListView).resetDeleteView(false);
         }
