@@ -39,6 +39,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -304,8 +305,16 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = printSettings;
         
-        if (getCurrentPage() > mPdfPageProvider.getPageCount()) {
-            setCurrentPage(mPdfPageProvider.getPageCount());
+        if (mPdfPageProvider.getPageCount() > 0) {
+            if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
+                if (getCurrentPage() > mPdfPageProvider.getPageCount()) {
+                    setCurrentPage(0);
+                }
+            } else {
+                if (getCurrentPage() + 1 > mPdfPageProvider.getPageCount()) {
+                    setCurrentPage(0);
+                }
+            }
         }
         
         reconfigureCurlView();
@@ -1453,7 +1462,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         //dim[1] = height;
                         if (shouldRotate) {
                             x += ((height - dim[1]) / 2);
-                            y += ((width - dim[0]) / 2);
+                            y -= ((width - dim[0]) / 2);
                         } else {
                             x += ((width - dim[0]) / 2);
                             y += ((height - dim[1]) / 2);
