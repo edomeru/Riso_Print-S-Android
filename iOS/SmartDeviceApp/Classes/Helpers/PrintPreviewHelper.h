@@ -10,6 +10,7 @@
 #import "PreviewSetting.h"
 
 #define OUTPUT_TRAY_CONSTRAINT_ENABLED 1
+#define PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED 0
 
 typedef enum {
     kColorModeAuto,

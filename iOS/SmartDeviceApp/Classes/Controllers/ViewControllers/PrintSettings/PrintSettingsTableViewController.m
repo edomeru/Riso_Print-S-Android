@@ -594,12 +594,16 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     if([key isEqualToString:KEY_FINISHING_SIDE] == YES)
     {
         [self applyFinishingConstraintsWithPreviousValue:previousValue];
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
         [self applyFinishingWithOrientationConstraint];
+#endif
     }
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
     if([key isEqualToString:KEY_ORIENTATION] == YES)
     {
         [self applyFinishingWithOrientationConstraint];
     }
+#endif
     if([key isEqualToString:KEY_PUNCH] == YES)
     {
         [self applyPunchConstraint];
@@ -608,7 +612,9 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     if([key isEqualToString:KEY_IMPOSITION] == YES)
     {
         [self applyImpositionConstraintWithPreviousValue:previousValue];
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
         [self applyFinishingWithOrientationConstraint];
+#endif
     }
 }
 
@@ -674,6 +680,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
 }
 
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
 - (void)applyFinishingWithOrientationConstraint
 {
     kPunchType punch = (kPunchType)self.previewSetting.punch;
@@ -689,10 +696,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         }
     }
 }
+#endif
 
 - (void)applyPunchConstraint
 {
     kPunchType punch = (kPunchType)self.previewSetting.punch;
+    
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
     kFinishingSide finishingSide = (kFinishingSide)self.previewSetting.finishingSide;
     BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
     
@@ -707,6 +717,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             [self setOptionSettingWithKey:KEY_FINISHING_SIDE toValue:(NSInteger)kFinishingSideLeft];
         }
     }
+#endif
+    
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
     if(punch != kPunchTypeNone && self.previewSetting.outputTray == kOutputTrayFaceDownTray &&
        [self.printer.enabled_tray_face_down boolValue] == YES)
