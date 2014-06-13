@@ -62,6 +62,12 @@
     self.collectionView.dataSource = self;
     self.statusHelpers = [[NSMutableArray alloc] init];
     self.switchPreviousState = [[NSMutableArray alloc] init];
+
+    for(int i=0; i<[[PrinterManager sharedPrinterManager] countSavedPrinters]; i++)
+    {
+        [self.switchPreviousState addObject:[NSNumber numberWithBool:NO]];
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -146,9 +152,6 @@
     
     cell.deleteButton.highlightedColor = [UIColor purple2ThemeColor];
     cell.deleteButton.highlightedTextColor = [UIColor whiteThemeColor];
-    
-    
-    [self.switchPreviousState addObject:[NSNumber numberWithBool:NO]];
     
     return cell;
 }
