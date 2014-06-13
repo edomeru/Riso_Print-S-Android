@@ -28,7 +28,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
-import android.os.Process;
 
 public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListener {
     private static final int SWIPE_THRESHOLD = 50;
@@ -617,13 +616,16 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private class ViewCreationThread extends Thread {
         private volatile boolean mIsRunning = true;
         
+        public ViewCreationThread() {
+            setPriority(Thread.MIN_PRIORITY);
+        }
+        
         public synchronized void setIsRunning(boolean b) {
             mIsRunning = b;
         }
         
         @Override
         public void run() {
-            Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             int jobCtr = 0;
             int start = 0;
             for (int j = 0; j < mPrinters.size(); j++) {
