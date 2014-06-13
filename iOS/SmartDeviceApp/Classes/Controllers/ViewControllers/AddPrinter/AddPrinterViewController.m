@@ -57,8 +57,9 @@
 
 /**
  Adds a full-capability printer (for failed manual snmp search)
+ @return YES if successful, NO otherwise.
  */
-- (void)addFullCapabilityPrinter:(NSString *)ipAddress;
+- (BOOL)addFullCapabilityPrinter:(NSString *)ipAddress;
 
 /**
  Unwinds back to the Printers screen.
@@ -171,7 +172,7 @@
     [self savePrinter];
 }
 
-- (void)addFullCapabilityPrinter:(NSString *)ipAddress
+- (BOOL)addFullCapabilityPrinter:(NSString *)ipAddress
 {
     PrinterDetails *pd = [[PrinterDetails alloc] init];
     pd.ip = ipAddress;
@@ -186,7 +187,7 @@
     pd.enLpr = YES;
     pd.enRaw = YES;
     pd.isPrinterFound = NO;
-    [self.printerManager registerPrinter:pd];
+    return [self.printerManager registerPrinter:pd];
 }
 
 - (void)savePrinter
@@ -225,17 +226,26 @@
     // can the device connect to the network?
     if (![NetworkManager isConnectedToLocalWifi])
     {
-        [self addFullCapabilityPrinter:formattedIP];
-        self.hasAddedPrinters = YES;
-        if (self.isIpad)
-            [self.printersViewController reloadPrinters];
-        
-        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
-                         withTitle:kAlertTitlePrintersAdd
-                       withDetails:nil
-                withDismissHandler:^(CXAlertView *alertView) {
-                    [self dismissScreen];
-                }];
+        if([self addFullCapabilityPrinter:formattedIP])
+        {
+            self.hasAddedPrinters = YES;
+            if (self.isIpad)
+                [self.printersViewController reloadPrinters];
+            
+            [AlertHelper displayResult:kAlertResultErrPrinterNotFound
+                             withTitle:kAlertTitlePrintersAdd
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        [self dismissScreen];
+                    }];
+            
+        }
+        else
+        {
+            [AlertHelper displayResult:kAlertResultErrDB
+                             withTitle:kAlertTitlePrintersAdd
+                           withDetails:nil];
+        }
         
         return;
     }
@@ -264,17 +274,26 @@
     if (!printerFound)
     {
         NSString* trimmedIP = self.textIP.text;
-        [self addFullCapabilityPrinter:trimmedIP];
-        self.hasAddedPrinters = YES;
-        if (self.isIpad)
-            [self.printersViewController reloadPrinters];
-        
-        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
-                         withTitle:kAlertTitlePrintersAdd
-                       withDetails:nil
-         withDismissHandler:^(CXAlertView *alertView) {
-             [self dismissScreen];
-         }];
+        if([self addFullCapabilityPrinter:trimmedIP])
+        {
+            self.hasAddedPrinters = YES;
+            if (self.isIpad)
+                [self.printersViewController reloadPrinters];
+            
+            [AlertHelper displayResult:kAlertResultErrPrinterNotFound
+                             withTitle:kAlertTitlePrintersAdd
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        [self dismissScreen];
+                    }];
+            
+        }
+        else
+        {
+            [AlertHelper displayResult:kAlertResultErrDB
+                             withTitle:kAlertTitlePrintersAdd
+                           withDetails:nil];
+        }
     }
 }
 
@@ -300,7 +319,7 @@
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
+        [AlertHelper displayResult:kAlertResultErrDB
                          withTitle:kAlertTitlePrintersAdd
                        withDetails:nil];
     }
