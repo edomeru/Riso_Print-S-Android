@@ -264,6 +264,7 @@
     void (^confirmed)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
     {
         [weakSelf deletePrinter];
+        [weakSelf removeDeleteState];
         [alertView dismiss];
         [deleteButton keepHighlighted:NO];
         [deleteButton setHighlighted:NO];
@@ -409,9 +410,9 @@
 
 #pragma mark - Reload
 
-- (void)reloadData
+- (void)reloadPrinters
 {
-    [super reloadData];
+    [super reloadPrinters];
     [self.tableView reloadData];
 }
 
@@ -502,10 +503,12 @@
         }
         
         self.toDeleteIndexPath = nil;
+        
+        self.emptyLabel.hidden = (self.printerManager.countSavedPrinters == 0 ? NO : YES);
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrDelete
+        [AlertHelper displayResult:kAlertResultErrDB
                          withTitle:kAlertTitlePrinters
                        withDetails:nil];
     }

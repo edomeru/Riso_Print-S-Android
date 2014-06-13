@@ -18,7 +18,7 @@ public final class KeyConstants {
     public static final String KEY_SQL_PRINTER_PORT = "prn_port_setting";
     public static final String KEY_SQL_PRINTER_LPR = "prn_enabled_lpr";
     public static final String KEY_SQL_PRINTER_RAW = "prn_enabled_raw";
-    public static final String KEY_SQL_PRINTER_BOOKLET = "prn_enabled_booklet";
+    public static final String KEY_SQL_PRINTER_BOOKLET_FINISHING = "prn_enabled_booklet_finishing";
     public static final String KEY_SQL_PRINTER_STAPLER = "prn_enabled_stapler";
     public static final String KEY_SQL_PRINTER_PUNCH3 = "prn_enabled_punch3";
     public static final String KEY_SQL_PRINTER_PUNCH4 = "prn_enabled_punch4";

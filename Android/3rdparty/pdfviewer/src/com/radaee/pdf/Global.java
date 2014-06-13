@@ -443,7 +443,7 @@ public class Global {
 																// umaps file
 																// path
 
-		load_std_font( "rdf013", assets, files );
+		load_std_font( "pdfviewer/rdf013", assets, files );
 
 		// create temporary dictionary, to save media or attachment data.
 		File sdDir = Environment.getExternalStorageDirectory();
@@ -474,12 +474,12 @@ public class Global {
 				FileOutputStream dst = new FileOutputStream(
 						new File(cmaps_path));
 
-				src = assets.open("cmaps1");
+				src = assets.open("pdfviewer/cmaps1");
 				while ((read = src.read(buf)) > 0)
 					dst.write(buf, 0, read);
 				src.close();
 				src = null;
-				src = assets.open("cmaps2");
+				src = assets.open("pdfviewer/cmaps2");
 				while ((read = src.read(buf)) > 0)
 					dst.write(buf, 0, read);
 				src.close();
@@ -502,12 +502,12 @@ public class Global {
 				FileOutputStream dst = new FileOutputStream(
 						new File(umaps_path));
 
-				src = assets.open("umaps1");
+				src = assets.open("pdfviewer/umaps1");
 				while ((read = src.read(buf)) > 0)
 					dst.write(buf, 0, read);
 				src.close();
 				src = null;
-				src = assets.open("umaps2");
+				src = assets.open("pdfviewer/umaps2");
 				while ((read = src.read(buf)) > 0)
 					dst.write(buf, 0, read);
 				src.close();

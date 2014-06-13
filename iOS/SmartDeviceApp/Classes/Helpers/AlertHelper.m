@@ -26,7 +26,7 @@
     switch (title)
     {
         case kAlertTitlePrinters:
-            alertTitle = NSLocalizedString(IDS_LBL_PRINTER, @"");
+            alertTitle = NSLocalizedString(IDS_LBL_PRINTERS, @"");
             break;
         
         case kAlertTitlePrintersAdd:
@@ -79,13 +79,12 @@
             alertMsg = NSLocalizedString(IDS_ERR_MSG_CANNOT_ADD_PRINTER, @"");
             break;
             
-        case kAlertResultErrPrinterCannotBeAdded:
-            alertMsg = @"The printer could not be added.";
+        case kAlertResultErrFileHasOpenPassword:
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_PDF_ENCRYPTED, @"");
             break;
-            //TODO: only cause is DB error (registerPrinter: failed)
             
-        case kAlertResultErrDelete:
-            alertMsg = NSLocalizedString(IDS_ERR_MSG_DELETE_FAILED, @"");
+        case kAlertResultErrFileDoesNotAllowPrinting:
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED, @"");
             break;
             
         case kAlertResultFileCannotBeOpened:
@@ -104,11 +103,10 @@
             alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @"");
             break;
             
-        case kAlertResultErrDefault:
+        case kAlertResultErrDB:
         default:
-            alertMsg = @"The operation could not be completed.";
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @"");
             break;
-            //TODO: replace with localized string or remove if will not be used
     }
     
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:alertTitle

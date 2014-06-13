@@ -34,6 +34,7 @@
 @property (assign, nonatomic) BOOL isDefaultSettingsMode;
 @property (weak, nonatomic) Printer* printer;
 @property (weak, nonatomic) IBOutlet UITableView *printerTableView;
+@property (weak, nonatomic) PrintSettingsTableViewController* settingsController;
 - (void)executePrint;
 - (void)loadPrinterList;
 
@@ -221,6 +222,9 @@
     {
         if (indexPath.row == 0)
         {
+            //to force close keypads and save the textfield contents (i.e. copies, pin code)
+            [self.settingsController endEditing];
+            
             [self executePrint];
         }
         else
@@ -236,6 +240,7 @@
     {
         PrintSettingsTableViewController *viewController = (PrintSettingsTableViewController *)segue.destinationViewController;
         viewController.printerIndex = self.printerIndex;
+        self.settingsController = viewController;
     }
 }
 

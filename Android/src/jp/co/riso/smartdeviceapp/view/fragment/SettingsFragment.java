@@ -8,13 +8,13 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import jp.co.riso.android.text.AlphaNumericFilter;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartprint.R;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -53,22 +53,11 @@ public class SettingsFragment extends BaseFragment {
         editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_LOGIN_ID));
 
         filterArray = new InputFilter[] {
-                new InputFilter.LengthFilter(AppConstants.CONST_LOGIN_ID_LIMIT),
-                new AlphaNumericFilter()
+                new InputFilter.LengthFilter(AppConstants.CONST_LOGIN_ID_LIMIT)
         };
         editText.setFilters(filterArray);
         
-        if (!isTablet()) {
-            Point screenSize = AppUtils.getScreenDimensions(getActivity());
-            View rootView = view.findViewById(R.id.rootView);
-            if (rootView == null) {
-                return;
-            }
-            ViewGroup.LayoutParams params = rootView.getLayoutParams();
-            if (screenSize.x > screenSize.y) {
-                params.width = screenSize.y;
-            }
-        }
+        resizeView(view);
     }
     
     /** {@inheritDoc} */
@@ -89,6 +78,36 @@ public class SettingsFragment extends BaseFragment {
             case ID_MENU_ACTION_BUTTON:
                 AppUtils.hideSoftKeyboard(getActivity());
                 break;
+        }
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        resizeView(getView());
+    }
+    
+    // ================================================================================
+    // Private Methods
+    // ================================================================================
+    
+    /**
+     * Updates the view width
+     * 
+     * @param view
+     *            Container of the view to be updated
+     */
+    private void resizeView(View view) {
+        if (!isTablet()) {
+            Point screenSize = AppUtils.getScreenDimensions(getActivity());
+            View rootView = view.findViewById(R.id.rootView);
+            if (rootView == null) {
+                return;
+            }
+            ViewGroup.LayoutParams params = rootView.getLayoutParams();
+            if (screenSize.x > screenSize.y) {
+                params.width = screenSize.y;
+            }
         }
     }
     

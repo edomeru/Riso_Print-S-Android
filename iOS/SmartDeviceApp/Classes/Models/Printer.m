@@ -13,13 +13,12 @@
 
 @implementation Printer
 
-@dynamic enabled_booklet;
+@dynamic enabled_booklet_finishing;
 @dynamic enabled_finisher_2_3_holes;
 @dynamic enabled_finisher_2_4_holes;
 @dynamic enabled_lpr;
 @dynamic enabled_raw;
 @dynamic enabled_staple;
-@dynamic enabled_tray_auto_stacking;
 @dynamic enabled_tray_face_down;
 @dynamic enabled_tray_stacking;
 @dynamic enabled_tray_top;

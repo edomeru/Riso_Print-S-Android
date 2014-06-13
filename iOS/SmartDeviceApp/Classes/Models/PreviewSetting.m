@@ -8,6 +8,7 @@
 
 #import "PreviewSetting.h"
 #import "PrintSettingsHelper.h"
+#import "AppSettings.h"
 
 @implementation PreviewSetting
 
@@ -48,6 +49,19 @@
             [string appendString:item];
         }
     }
+    
+    // add secure printing settings
+    NSString* loginIdStr = [[NSUserDefaults standardUserDefaults] valueForKey:KEY_APPSETTINGS_LOGIN_ID];
+    [string appendString:[NSString stringWithFormat:@"%@=%@\n", KEY_LOGIN_ID, (loginIdStr == nil) ? @"" : loginIdStr]];
+    
+    NSString* pinCodeStr;
+    if (self.securePrint == YES)
+    {
+        pinCodeStr = self.pinCode;
+    }
+    [string appendString:[NSString stringWithFormat:@"%@=%@\n", KEY_PIN_CODE, (pinCodeStr == nil) ? @"" : pinCodeStr]];
+    
+    [string appendString:[NSString stringWithFormat:@"%@=%d\n", KEY_SECURE_PRINT, (self.securePrint == YES) ? 1 : 0]];
     
     return string;
 }

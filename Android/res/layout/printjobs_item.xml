@@ -5,92 +5,82 @@
     android:background="@color/theme_light_3"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/printJobItem"
         android:layout_width="match_parent"
         android:layout_height="@dimen/printjob_row_height"
-        android:background="@drawable/selector_jobs_deleterow"
-        android:orientation="horizontal" >
+        android:background="@drawable/selector_jobs_deleterow" >
 
-        <FrameLayout
-            android:id="@+id/printJobStatus"
+        <ImageView
+            android:id="@+id/printJobSuccess"
+            android:layout_width="@dimen/printjob_icon_width"
+            android:layout_height="@dimen/printjob_icon_width"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/printjob_status_padding_side"
+            android:layout_marginRight="@dimen/printjob_status_padding_side"
+            android:contentDescription="@string/default_content_description"
+            android:src="@drawable/img_btn_job_status_ok"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/printJobError"
+            android:layout_width="@dimen/printjob_icon_width"
+            android:layout_height="@dimen/printjob_icon_width"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/printjob_status_padding_side"
+            android:layout_marginRight="@dimen/printjob_status_padding_side"
+            android:contentDescription="@string/default_content_description"
+            android:src="@drawable/img_btn_job_status_ng"
+            android:visibility="gone" />
+
+        <TextView
+            style="@style/EllipsizeText"
+            android:id="@+id/printJobName"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:paddingLeft="@dimen/printjob_status_padding_side"
-            android:paddingRight="@dimen/printjob_status_padding_side" >
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="@dimen/printjob_separator_padding"
+            android:layout_toLeftOf="@+id/dateAndButtonContainer"
+            android:gravity="center_vertical"
+            android:textColor="@drawable/selector_jobs_textcolor" />
 
-            <ImageView
-                android:id="@+id/printJobSuccess"
-                android:layout_width="@dimen/printjob_icon_width"
-                android:layout_height="@dimen/printjob_icon_width"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/default_content_description"
-                android:src="@drawable/img_btn_job_status_ok"
-                android:visibility="visible" />
-
-            <ImageView
-                android:id="@+id/printJobError"
-                android:layout_width="@dimen/printjob_icon_width"
-                android:layout_height="@dimen/printjob_icon_width"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/default_content_description"
-                android:src="@drawable/img_btn_job_status_ng"
-                android:visibility="gone" />
-        </FrameLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+        <FrameLayout
+            android:id="@+id/dateAndButtonContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/printjob_dateframe_padding_side"
+            android:paddingRight="@dimen/printjob_dateframe_padding_side" >
 
             <TextView
-                android:id="@+id/printJobName"
+                android:id="@+id/printJobDate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="left|center_vertical"
-                android:layout_toLeftOf="@+id/dateAndButtonContainer"
-                android:ellipsize="middle"
+                android:layout_gravity="center"
                 android:gravity="center_vertical"
-                android:singleLine="true"
-                android:textColor="@drawable/selector_jobs_textcolor" />
+                android:textColor="@color/theme_light_1" />
 
-            <FrameLayout
-                android:id="@+id/dateAndButtonContainer"
+            <Button
+                android:id="@+id/printJobDeleteBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:paddingLeft="@dimen/printjob_dateframe_padding_side"
-                android:paddingRight="@dimen/printjob_dateframe_padding_side" >
-
-                <TextView
-                    android:id="@+id/printJobDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/theme_light_1" />
-
-                <Button
-                    android:id="@+id/printJobDeleteBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:layout_margin="@dimen/printjob_delbtn_margin"
-                    android:background="@drawable/selector_jobs_deletebutton"
-                    android:gravity="center"
-                    android:paddingLeft="@dimen/printjob_delbtn_padding_side"
-                    android:paddingRight="@dimen/printjob_delbtn_padding_side"
-                    android:text="@string/ids_lbl_delete"
-                    android:textAllCaps="true"
-                    android:textColor="@color/selector_jobs_deletebutton_text"
-                    android:visibility="gone" />
-            </FrameLayout>
-        </RelativeLayout>
-    </LinearLayout>
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_margin="@dimen/printjob_delbtn_margin"
+                android:background="@drawable/selector_jobs_deletebutton"
+                android:gravity="center"
+                android:paddingLeft="@dimen/printjob_delbtn_padding_side"
+                android:paddingRight="@dimen/printjob_delbtn_padding_side"
+                android:text="@string/ids_lbl_delete"
+                android:textAllCaps="true"
+                android:textColor="@color/selector_jobs_deletebutton_text"
+                android:visibility="gone" />
+        </FrameLayout>
+    </RelativeLayout>
 
     <View
         android:id="@+id/printJobSeparator"

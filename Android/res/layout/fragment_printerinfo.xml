@@ -18,21 +18,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/printers_row_right_margin"
+            android:layout_weight="0"
             android:text="@string/ids_lbl_printer_name"
             android:textColor="@color/theme_dark_1" />
 
+        <Space
+            android:layout_width="@dimen/printers_name_space"
+            android:layout_height="match_parent"
+            android:layout_weight="0" />
+
         <TextView
+            style="@style/EllipsizeText"
             android:id="@+id/inputPrinterName"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:ellipsize="middle"
+            android:layout_weight="1"
             android:gravity="right"
-            android:maxLines="1"
-            android:singleLine="true"
             android:textColor="@color/theme_light_1" />
-
     </LinearLayout>
 
     <View
@@ -52,19 +55,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/printers_row_right_margin"
             android:text="@string/ids_lbl_ip_address"
             android:textColor="@color/theme_dark_1" />
 
         <TextView
+            style="@style/EllipsizeText"
             android:id="@+id/inputIpAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:ellipsize="middle"
             android:gravity="right"
-            android:maxLines="1"
-            android:singleLine="true"
             android:textColor="@color/theme_light_1" />
     </LinearLayout>
 

@@ -33,26 +33,26 @@
 - (void)setUpClass
 {
     self.titleDictionary = @{[NSNumber numberWithInt:kAlertTitleDefault]: NSLocalizedString(IDS_APP_NAME, @""),
-                             [NSNumber numberWithInt:kAlertTitlePrinters]: NSLocalizedString(IDS_LBL_PRINTER, @""),
+                             [NSNumber numberWithInt:kAlertTitlePrinters]: NSLocalizedString(IDS_LBL_PRINTERS, @""),
                              [NSNumber numberWithInt:kAlertTitlePrintersAdd]: NSLocalizedString(IDS_LBL_ADD_PRINTER, @""),
                              [NSNumber numberWithInt:kAlertTitlePrintersSearch]: NSLocalizedString(IDS_LBL_SEARCH_PRINTERS, @""),
                              [NSNumber numberWithInt:kAlertTitlePrintJobHistory]: NSLocalizedString(IDS_LBL_PRINT_JOB_HISTORY, @""),
                              [NSNumber numberWithInt:100]: NSLocalizedString(IDS_APP_NAME, @"")
                              };
     
-    self.resultDictionary = @{[NSNumber numberWithInt:kAlertResultErrDefault]: @"The operation could not be completed.",
-                              [NSNumber numberWithInt:kAlertResultInfoPrinterAdded]: NSLocalizedString(IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL, @""),
+    self.resultDictionary = @{[NSNumber numberWithInt:kAlertResultInfoPrinterAdded]: NSLocalizedString(IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL, @""),
                               [NSNumber numberWithInt:kAlertResultErrNoNetwork]: NSLocalizedString(IDS_ERR_MSG_NETWORK_ERROR, @""),
                               [NSNumber numberWithInt:kAlertResultErrInvalidIP]: NSLocalizedString(IDS_ERR_MSG_INVALID_IP_ADDRESS, @""),
                               [NSNumber numberWithInt:kAlertResultErrMaxPrinters]: NSLocalizedString(IDS_ERR_MSG_MAX_PRINTER_COUNT, @""),
                               [NSNumber numberWithInt:kAlertResultErrPrinterNotFound]: NSLocalizedString(IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER, @""),
                               [NSNumber numberWithInt:kAlertResultErrPrinterDuplicate]: NSLocalizedString(IDS_ERR_MSG_CANNOT_ADD_PRINTER, @""),
-                              [NSNumber numberWithInt:kAlertResultErrPrinterCannotBeAdded]: @"The printer could not be added.",
-                              [NSNumber numberWithInt:kAlertResultErrDelete]: NSLocalizedString(IDS_ERR_MSG_DELETE_FAILED, @""),
+                              [NSNumber numberWithInt:kAlertResultErrFileHasOpenPassword]: NSLocalizedString(IDS_ERR_MSG_PDF_ENCRYPTED, @""),
+                              [NSNumber numberWithInt:kAlertResultErrFileDoesNotAllowPrinting]: NSLocalizedString(IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED, @""),
+                              [NSNumber numberWithInt:kAlertResultErrDB]: NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @""),
                               [NSNumber numberWithInt:kAlertResultFileCannotBeOpened]: NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @""),
                               [NSNumber numberWithInt:kAlertResultPrintSuccessful]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL, @""),
                               [NSNumber numberWithInt:kAlertResultPrintFailed]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @""),
-                              [NSNumber numberWithInt:100]: @"The operation could not be completed."
+                              [NSNumber numberWithInt:100]: NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @"")
                               };
     
     self.confirmTitleDictionary = @{[NSNumber numberWithInt:kAlertConfirmationDeleteAllJobs]: NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS_TITLE, @""),
@@ -103,7 +103,7 @@
     for (NSNumber *key in [self.titleDictionary allKeys])
     {
         kAlertTitle title = [key intValue];
-        [AlertHelper displayResult:kAlertResultErrDefault withTitle:title withDetails:nil];
+        [AlertHelper displayResult:kAlertResultErrDB withTitle:title withDetails:nil];
     }
     
     // Verification

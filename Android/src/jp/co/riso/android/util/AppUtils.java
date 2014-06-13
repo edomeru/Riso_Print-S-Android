@@ -268,7 +268,8 @@ public final class AppUtils {
     }
     
     /**
-     * Change children font
+     * Change children font. <br>
+     * Note: Known issue on Jellybean ellipsize="middle" when using custom font
      * 
      * @param v
      *            ViewGroup to be changed
@@ -276,7 +277,7 @@ public final class AppUtils {
      *            font to be set
      */
     // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
-    public static void changeChildrenFont(ViewGroup v, Typeface font) {
+    protected static void changeChildrenFont(ViewGroup v, Typeface font) {
         if (font == null || v == null) {
             return;
         }
@@ -432,26 +433,29 @@ public final class AppUtils {
      */
     public static String getAuthenticationString() {
         StringBuffer strBuf = new StringBuffer();
-        final String pinCodeFormat = "%s=%d\n";
+        final String pinCodeFormat = "%s=%s\n";
         final String loginIdFormat = "%s=%s\n";
+        final String securePrintFormat = "%s=%d\n";
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-        boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+        boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);        
+        String loginId = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
+        String pinCode = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
         
-        if (isSecurePrint) {
-            String loginId = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
-            String pinCode = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
-            
-            if (!pinCode.isEmpty() && !loginId.isEmpty()) {
-                try {
-                    int pin = Integer.parseInt(pinCode);
-                    strBuf.append(String.format(Locale.getDefault(), loginIdFormat, AppConstants.KEY_LOGINID, loginId));
-                    strBuf.append(String.format(Locale.getDefault(), pinCodeFormat, AppConstants.KEY_PINCODE, pin));
-                } catch (NumberFormatException e) {
-                    Logger.logWarn(AppUtils.class, "PIN code is not numeric: " + pinCode);
-                }
-            }
-        }
+        strBuf.append(String.format(Locale.getDefault(), securePrintFormat, AppConstants.KEY_SECURE_PRINT, isSecurePrint ? 1 : 0));
+        strBuf.append(String.format(Locale.getDefault(), loginIdFormat, AppConstants.KEY_LOGINID, loginId));
+        strBuf.append(String.format(Locale.getDefault(), pinCodeFormat, AppConstants.KEY_PINCODE, pinCode));
+        
         return strBuf.toString();
+    }
+    
+    /**
+     * Get the owner name based on the Log-in ID from Settings screen
+     * 
+     * @return Owner name
+     */
+    public static String getOwnerName() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        return prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
     }
 }

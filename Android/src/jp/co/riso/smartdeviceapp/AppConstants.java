@@ -11,10 +11,10 @@ package jp.co.riso.smartdeviceapp;
 public class AppConstants {
     public static final boolean DEBUG = false;
     public static final boolean INITIAL_DB = false;
+    public static final boolean FOR_PERF_LOGS = false;
     
     public static final boolean APP_SHOW_SPLASH = true;
     public static final long APP_SPLASH_DURATION = 2000;
-    public static final String APP_FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf";
     
     public static final String CONST_PDF_DIR = "pdfs";
     public static final String CONST_TEMP_PDF_PATH = "temp.pdf";
@@ -24,7 +24,7 @@ public class AppConstants {
     // Size = TOTAL MEMORY >> APP_BMP_CACHE_PART
     public static final int APP_BMP_CACHE_PART = 4;
 
-    public static final int CONST_LOGIN_ID_LIMIT = 31;
+    public static final int CONST_LOGIN_ID_LIMIT = 20;
     public static final int CONST_PIN_CODE_LIMIT = 8;
     public static final int CONST_COPIES_LIMIT = 4;
     
@@ -44,6 +44,7 @@ public class AppConstants {
     public static final int CONST_UPDATE_INTERVAL = 5000; // 5 seconds
     public static final String XML_FILENAME = "printsettings.xml";
     
+    public static final String KEY_SECURE_PRINT = "securePrint";
     public static final String KEY_LOGINID = "loginId";
     public static final String KEY_PINCODE = "pinCode";
 }

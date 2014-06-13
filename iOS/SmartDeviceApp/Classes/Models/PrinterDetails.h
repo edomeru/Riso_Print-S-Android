@@ -27,13 +27,12 @@
 @property (strong, nonatomic) NSString* name;
 @property (strong, nonatomic) NSString* ip;
 @property (strong, nonatomic) NSNumber* port;
-@property (assign, nonatomic) BOOL enBooklet;
+@property (assign, nonatomic) BOOL enBookletFinishing;
 @property (assign, nonatomic) BOOL enFinisher23Holes;
 @property (assign, nonatomic) BOOL enFinisher24Holes;
 @property (assign, nonatomic) BOOL enLpr;
 @property (assign, nonatomic) BOOL enRaw;
 @property (assign, nonatomic) BOOL enStaple;
-@property (assign, nonatomic) BOOL enTrayAutoStacking;
 @property (assign, nonatomic) BOOL enTrayFaceDown;
 @property (assign, nonatomic) BOOL enTrayStacking;
 @property (assign, nonatomic) BOOL enTrayTop;

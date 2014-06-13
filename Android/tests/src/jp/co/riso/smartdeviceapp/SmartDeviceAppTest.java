@@ -44,12 +44,4 @@ public class SmartDeviceAppTest extends ApplicationTestCase<SmartDeviceApp> {
     public void testGetAppContext() {
         assertNotNull(SmartDeviceApp.getAppContext());
     }
-
-    // ================================================================================
-    // Tests - getAppFont
-    // ================================================================================
-
-    public void testGetAppFont() {
-        assertNotNull(SmartDeviceApp.getAppFont());
-    }
 }

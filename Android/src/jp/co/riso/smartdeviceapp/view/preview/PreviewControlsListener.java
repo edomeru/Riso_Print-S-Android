@@ -25,6 +25,17 @@ public interface PreviewControlsListener {
     public int getControlsHeight();
     
     /**
+     * pan changed listener
+     * 
+     * @param panX
+     *            new x pan
+     * 
+     * @param panY
+     *            new y pan
+     */
+    public void panChanged(float panX, float panY);
+    
+    /**
      * zoom level changed listener
      * 
      * @param zoomLevel

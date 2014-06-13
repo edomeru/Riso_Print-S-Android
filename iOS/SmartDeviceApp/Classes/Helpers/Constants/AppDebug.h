@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
-#ifndef SmartDeviceApp_AppDebug_h
-#define SmartDeviceApp_AppDebug_h
+#ifndef _APPDEBUG_H_
+#define _APPDEBUG_H_
 
 #pragma mark - Debug Log Switches
 
@@ -47,6 +47,7 @@
 #pragma mark - Debug Behavior Switches
 #define DEBUG_SNMP_USE_FAKE_PRINTERS        0
 #define DEBUG_SNMP_USE_TIMEOUT              0
+#define DEBUG_PRINT_JOB_USE_TEST_DATA       0
 
 
 #endif

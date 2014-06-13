@@ -21,12 +21,11 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusC
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -349,26 +348,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         
-        if (tag.equals(PrintSettings.TAG_BOOKLET_LAYOUT)) {
-            boolean isLandscape = (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal());
-            switch (BookletLayout.values()[value]) {
-                case L_R:
-                case R_L:
-                    return !isLandscape;
-                case T_B:
-                    return isLandscape;
-            }
-        }
-        
         if (tag.equals(PrintSettings.TAG_OUTPUT_TRAY)) {
             boolean isPunch = mPrintSettings.getPunch() != Punch.OFF;
+            boolean isFold = mPrintSettings.getBookletFinish() != BookletFinish.OFF;
             switch (OutputTray.values()[value]) {
                 case AUTO:
+                    return true;
                 case TOP:
                 case STACKING:
-                    return true;
+                    return !isFold;
                 case FACEDOWN:
-                    return !isPunch;
+                    return (!isPunch && !isFold);
             }
         }
         
@@ -388,18 +378,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
         
         int defaultValue = PrintSettings.sSettingMap.get(tag).getDefaultValue();
-        
-        if (tag.equals(PrintSettings.TAG_FINISHING_SIDE)) {
-            if (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal()) {
-                defaultValue = FinishingSide.TOP.ordinal();
-            }
-        }
-        
-        if (tag.equals(PrintSettings.TAG_BOOKLET_LAYOUT)) {
-            if (mPrintSettings.getValue(PrintSettings.TAG_ORIENTATION) == Orientation.LANDSCAPE.ordinal()) {
-                defaultValue = BookletLayout.T_B.ordinal();
-            }
-        }
         
         return defaultValue;
     }
@@ -526,8 +504,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             updateValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH));
             updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
             
-            updateValueWithConstraints(PrintSettings.TAG_OUTPUT_TRAY, getDefaultValueWithConstraints(PrintSettings.TAG_OUTPUT_TRAY));
-            
             if (mPrintSettings.isBooklet()) {
                 updateValueWithConstraints(PrintSettings.TAG_DUPLEX, Duplex.SHORT_EDGE.ordinal());
             }
@@ -599,17 +575,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         
-        // Constraint #6 Orientation
-        if (tag.equals(PrintSettings.TAG_ORIENTATION)) {
-            int layoutValue = mPrintSettings.getBookletLayout().ordinal();
-            
-            if (value == Orientation.PORTRAIT.ordinal()) {
-                if (layoutValue == BookletLayout.T_B.ordinal()) {
-                    updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
-                }
-            } else {
-                if (layoutValue == BookletLayout.L_R.ordinal() || layoutValue == BookletLayout.R_L.ordinal()) {
-                    updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
+        // Constraint #6 BookletFinish
+        if (tag.equals(PrintSettings.TAG_BOOKLET_FINISH)) {
+            if (value != BookletFinish.OFF.ordinal()) {
+                int outputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_OUTPUT_TRAY);
+                if (outputTrayValue != OutputTray.AUTO.ordinal()) {
+                    updateValueWithConstraints(PrintSettings.TAG_OUTPUT_TRAY, getDefaultValueWithConstraints(PrintSettings.TAG_OUTPUT_TRAY));
                 }
             }
         }
@@ -683,10 +654,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         boolean isPunchAvailable = printer == null || printer.getConfig().isPunchAvailable();
         setViewVisible(PrintSettings.TAG_PUNCH, isPunchAvailable);
         
-        boolean isBookletAvailable = printer == null || printer.getConfig().isBookletAvailable();
-        setViewVisible(PrintSettings.TAG_BOOKLET, isBookletAvailable);
-        setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletAvailable);
-        setViewVisible(PrintSettings.TAG_BOOKLET_LAYOUT, isBookletAvailable);
+        boolean isBookletFinishingAvailable = printer == null || printer.getConfig().isBookletFinishingAvailable();
+        setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable);
         
     }
     
@@ -1475,7 +1444,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             mMainView.setVisibility(View.GONE);
         }
         
-        AppUtils.changeChildrenFont(mSubView, SmartDeviceApp.getAppFont());
+        // AppUtils.changeChildrenFont(mSubView, SmartDeviceApp.getAppFont());
     }
     
     /**

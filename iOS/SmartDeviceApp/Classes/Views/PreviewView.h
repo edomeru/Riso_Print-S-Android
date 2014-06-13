@@ -29,9 +29,9 @@ typedef enum
 } kPreviewViewOrientation;
 
 /**
- Container of the preview page
+ * Page content view
  */
-@property (nonatomic, strong, readonly) UIView *contentView;
+@property (nonatomic, strong) UIView *pageContentView;
 
 /**
  Orientation mode

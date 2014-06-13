@@ -91,6 +91,9 @@
 /** Internal flag, YES if controller is displayed on an iPad. */
 @property (assign, nonatomic) BOOL isIpad;
 
+/** Displays "No Printers Found" label if there are no printers. */
+@property (weak, nonatomic) IBOutlet UILabel *emptyLabel;
+
 #pragma mark - Internal Methods
 
 /**
@@ -268,6 +271,7 @@
     [self.searchResultsTable reloadData];
     
     [self startSearchingAnimation];
+    self.emptyLabel.hidden = YES;
     
     // check for network connection
     if (![NetworkManager isConnectedToLocalWifi])
@@ -304,10 +308,45 @@
 
 - (void)addPrinter:(NSUInteger)row
 {
-    // check if adding printers is allowed
-    if ([self.printerManager isAtMaximumPrinters])
+#if SORT_SEARCH_RESULTS
+    NSString* printerIP = [self.listNewPrinterIP objectAtIndex:row];
+    PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
+#else
+    NSString* printerIP = [self.listPrinterIP objectAtIndex:row];
+    PrinterDetails* printerDetails = [self.listPrinterDetails valueForKey:printerIP];
+#endif
+    if ([self.printerManager registerPrinter:printerDetails])
     {
-        [AlertHelper displayResult:kAlertResultErrMaxPrinters
+        self.hasAddedPrinters = YES;
+        [AlertHelper displayResult:kAlertResultInfoPrinterAdded
+                         withTitle:kAlertTitlePrintersSearch
+                       withDetails:nil
+                withDismissHandler:^(CXAlertView *alertView) {
+                    [self dismissScreen];
+                }];
+        
+        // change the '+' button to a checkmark
+#if SORT_SEARCH_RESULTS
+        [self.listOldPrinterNames addObject:printerDetails.name];
+        [self.listNewPrinterNames removeObjectAtIndex:row];
+        [self.listNewPrinterDetails removeObjectForKey:printerIP];
+        [self.listNewPrinterIP removeObjectAtIndex:row];
+        [self.tableView reloadData];
+#else
+        if (printerDetails.name == nil)
+            [self.listPrinterDetails setValue:@"" forKey:printerIP];
+        else
+            [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
+        [self.searchResultsTable reloadData];
+#endif
+        
+        // if this is an iPad, reload the center panel
+        if (self.isIpad)
+            [self.printersViewController reloadPrinters];
+    }
+    else
+    {
+        [AlertHelper displayResult:kAlertResultErrDB
                          withTitle:kAlertTitlePrintersSearch
                        withDetails:nil
                 withDismissHandler:^(CXAlertView *alertView) {
@@ -317,58 +356,6 @@
                                                    withRowAnimation:UITableViewRowAnimationNone];
                 }];
     }
-    else
-    {
-        // add the printer
-#if SORT_SEARCH_RESULTS
-        NSString* printerIP = [self.listNewPrinterIP objectAtIndex:row];
-        PrinterDetails* printerDetails = [self.listNewPrinterDetails valueForKey:printerIP];
-#else
-        NSString* printerIP = [self.listPrinterIP objectAtIndex:row];
-        PrinterDetails* printerDetails = [self.listPrinterDetails valueForKey:printerIP];
-#endif
-        if ([self.printerManager registerPrinter:printerDetails])
-        {
-            self.hasAddedPrinters = YES;
-            [AlertHelper displayResult:kAlertResultInfoPrinterAdded
-                             withTitle:kAlertTitlePrintersSearch
-                           withDetails:nil
-                    withDismissHandler:^(CXAlertView *alertView) {
-                        [self dismissScreen];
-                    }];
-            
-            // change the '+' button to a checkmark
-#if SORT_SEARCH_RESULTS
-            [self.listOldPrinterNames addObject:printerDetails.name];
-            [self.listNewPrinterNames removeObjectAtIndex:row];
-            [self.listNewPrinterDetails removeObjectForKey:printerIP];
-            [self.listNewPrinterIP removeObjectAtIndex:row];
-            [self.tableView reloadData];
-#else
-            if (printerDetails.name == nil)
-                [self.listPrinterDetails setValue:@"" forKey:printerIP];
-            else
-                [self.listPrinterDetails setValue:printerDetails.name forKey:printerIP];
-            [self.searchResultsTable reloadData];
-#endif
-            
-            // if this is an iPad, reload the center panel
-            if (self.isIpad)
-                [self.printersViewController reloadData];
-        }
-        else
-        {
-            [AlertHelper displayResult:kAlertResultErrPrinterCannotBeAdded
-                             withTitle:kAlertTitlePrintersSearch
-                           withDetails:nil
-                    withDismissHandler:^(CXAlertView *alertView) {
-                        // cancel the cell highlight
-                        NSIndexPath* rowIndexPath = [NSIndexPath indexPathForRow:row inSection:0];
-                        [self.searchResultsTable reloadRowsAtIndexPaths:@[rowIndexPath]
-                                                       withRowAnimation:UITableViewRowAnimationNone];
-                    }];
-        }
-    }
 }
 
 #pragma mark - PrinterSearchDelegate
@@ -377,6 +364,7 @@
 {
     self.isSearching = NO;
     [self stopSearchingAnimation];
+    self.emptyLabel.hidden = ([self.listPrinterIP count] == 0 ? NO : YES);
 }
 
 - (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails

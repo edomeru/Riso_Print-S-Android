@@ -11,12 +11,15 @@ package jp.co.riso.smartdeviceapp.view.printers;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import jp.co.riso.android.dialog.DialogUtils;
+import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
@@ -25,6 +28,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
@@ -300,17 +304,12 @@ OnItemSelectedListener {
     /**
      * This function is called when deletion of the printer view is confirmed
      */
-    public void confirmDeletePrinterView() {
+    public void confirmDeletePrinterView(boolean relayout) {
         if (mDeleteViewHolder == null) {
             return;
         }
-        Printer printer = (Printer) mDeleteViewHolder.mIpAddress.getTag();
-        boolean relayout = printer.getId() == mPrinterManager.getDefaultPrinter() ? true : false;
         
-        if (mPrinterManager.removePrinter(printer)) {
-            mPrinterList.remove(printer);
-            removeView((View) mDeleteViewHolder.mOnlineIndcator.getTag());
-        }
+        removeView((View) mDeleteViewHolder.mOnlineIndcator.getTag());
         mDeleteViewHolder = null;
         mDeleteItem = PrinterManager.EMPTY_ID;
         
@@ -435,7 +434,7 @@ OnItemSelectedListener {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
         View pView = inflater.inflate(R.layout.printers_container_item, this, false);
-        AppUtils.changeChildrenFont((ViewGroup) pView, SmartDeviceApp.getAppFont());
+        // AppUtils.changeChildrenFont((ViewGroup) pView, SmartDeviceApp.getAppFont());
         
         String printerName = printer.getName();
         if(printerName == null || printerName.isEmpty()) {
@@ -455,14 +454,17 @@ OnItemSelectedListener {
         viewHolder.mPort = (Spinner) pView.findViewById(R.id.input_port);
         
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getContext(), R.layout.printerinfo_port_item);
-        portAdapter.add(getContext().getString(R.string.ids_lbl_port_raw));
+        // Assumption is that LPR is always available
         portAdapter.add(getContext().getString(R.string.ids_lbl_port_lpr));
+        if (printer.getConfig().isRawAvailable()) {
+            portAdapter.add(getContext().getString(R.string.ids_lbl_port_raw));
+        }
         portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         viewHolder.mPort.setAdapter(portAdapter);
+        viewHolder.mPort.setSelection(printer.getPortSetting().ordinal());
         
         viewHolder.mPrinterName.setText(printerName);
         viewHolder.mIpAddress.setText(printer.getIpAddress());
-        viewHolder.mPort.setSelection(printer.getPortSetting());
         
         viewHolder.mDeleteButton.setOnClickListener(this);
         viewHolder.mPrintSettings.setOnClickListener(this);
@@ -493,26 +495,14 @@ OnItemSelectedListener {
     /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
-        ViewHolder viewHolder = null;
         Printer printer = null;
         
         switch (v.getId()) {
             case R.id.btn_delete:
-                if (mCallbackRef != null && mCallbackRef.get() != null) {
-                    mCallbackRef.get().onPrinterDeleteClicked();
-                }
                 mDeleteViewHolder = (ViewHolder) v.getTag();
-                break;
-            case R.id.default_printer_switch:
-                viewHolder = (ViewHolder) v.getTag();
-                printer = (Printer) viewHolder.mIpAddress.getTag();
-                
-                if (viewHolder.mDefaultPrinter.isChecked()) {
-                    setPrinterViewToDefault(viewHolder);
-                    mPrinterManager.setDefaultPrinter(printer);
-                } else {
-                    mPrinterManager.clearDefaultPrinter();
-                    setPrinterViewToNormal(viewHolder);
+                if (mCallbackRef != null && mCallbackRef.get() != null) {
+                    printer = (Printer) mDeleteViewHolder.mIpAddress.getTag();
+                    mCallbackRef.get().onPrinterDeleteClicked(printer);
                 }
                 break;
             case R.id.default_print_settings:
@@ -556,8 +546,18 @@ OnItemSelectedListener {
         ViewHolder viewHolder = (ViewHolder) buttonView.getTag();
         Printer printer = (Printer) viewHolder.mIpAddress.getTag();
         if (isChecked) {
-            setPrinterViewToDefault(viewHolder);
-            mPrinterManager.setDefaultPrinter(printer);
+            if (mPrinterManager.setDefaultPrinter(printer)) {
+                setPrinterViewToDefault(viewHolder);
+            } else {
+                InfoDialogFragment info = InfoDialogFragment.newInstance(getContext().getString(R.string.ids_lbl_printers),
+                        getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
+                DialogUtils.displayDialog((Activity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
+                buttonView.setChecked(false);
+                // For versions below JELLY BEAN (4.2), the switch fails to return to its initial position
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    buttonView.requestLayout();
+                }
+            }
         } else {
             setPrinterViewToNormal(viewHolder);
         }
@@ -592,14 +592,23 @@ OnItemSelectedListener {
     }
     
     // ================================================================================
-    // INTERFACE - onCheckedChanged
+    // INTERFACE - onItemSelected
     // ================================================================================
     
     /** {@inheritDoc} */
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         Printer printer = (Printer) parentView.getTag();
-        printer.setPortSetting(position);
+        PortSetting port = PortSetting.LPR;
+        switch (position) {
+            case 1:
+                port = PortSetting.RAW;
+                break;
+            default:
+                break;
+        }
+        printer.setPortSetting(port);
+        mPrinterManager.updatePortSettings(printer.getId(), port);
     }
     
     /** {@inheritDoc} */
@@ -619,8 +628,11 @@ OnItemSelectedListener {
     public interface PrintersViewCallback {
         /**
          * Dialog which is displayed to confirm printer delete
+         * 
+         * @param printer
+         *            Printer to be deleted
          */
-        public void onPrinterDeleteClicked();
+        public void onPrinterDeleteClicked(Printer printer);
     }
     
     // ================================================================================

@@ -29,11 +29,30 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             "0.1",
             "0.",
             "0",
+            "1000.00001.000002.0000003"
     };
     private final String[] IPv4_VALID_ADDRESS = {
             "0.0.0.0",
             "224.0.0.1",
             "192.168.0.1",
+            "255.255.255.255",
+            "000.000.000.000",
+            "0000.00000.000000.0000000",
+            "0224.0.0.1",
+            "192.00168.0.1",
+            "255.255.00255.255",
+            "255.255.255.000255"         
+    };
+    private final String[] IPv4_TRIMMED_VALID_ADDRESS = {
+            "0.0.0.0",
+            "224.0.0.1",
+            "192.168.0.1",
+            "255.255.255.255",
+            "0.0.0.0",
+            "0.0.0.0",
+            "224.0.0.1",
+            "192.168.0.1",
+            "255.255.255.255",
             "255.255.255.255"
     };
     private final String[] IPv4_MULTICAST_VALID_ADDRESS = {
@@ -102,8 +121,77 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             "a::",
             "A::",
             "::f",
-            "::F"
+            "::F",
+            "00001:000002:0000003:00000004:000000005:0000000006:00000000007:000000000008",
+            "00001:2:3:4:5:6:7::",
+            "1:000002:3:4:5:6::8",
+            "1:2:0000003:4:5::7:8",
+            "1:2:3:00000004::6:7:8",
+            "1:2:3::000000005:6:7:8",
+            "1:2::4:5:0000000006:7:8",
+            "1::3:4:5:6:00000000007:8",
+            "::2:3:4:5:6:7:000000000008",
+            "1:2:3:4:5::000000000009",
+            "1:2:3:4::7:00000000000a",
+            "1:2:3::6:7:00000000000b",
+            "1:2::5:6:7:00000000000c",
+            "1::4:5:6:7:00000000000d",
+            "1:2:3:4::00000000000e",
+            "1:2:3::7:00000000000f",
+            "00ff::0192.00168.00001.0000206"
     };
+    
+    private final String[] IPv6_TRIMMED_VALID_ADDRESS = {
+            "1:2:3:4:5:6:7:8",
+            "1:2:3:4:5:6:7::",
+            "1:2:3:4:5:6::8",
+            "1:2:3:4:5::7:8",
+            "1:2:3:4::6:7:8",
+            "1:2:3::5:6:7:8",
+            "1:2::4:5:6:7:8",
+            "1::3:4:5:6:7:8",
+            "::2:3:4:5:6:7:8",
+            "1:2:3:4:5::8",
+            "1:2:3:4::7:8",
+            "1:2:3::6:7:8",
+            "1:2::5:6:7:8",
+            "1::4:5:6:7:8",
+            "1:2:3:4::8",
+            "1:2:3::7:8",
+            "1:2::6:7:8",
+            "1::5:6:7:8",
+            "::4:5:6:7:8",
+            "1:2:3::8",
+            "1:2::7:8",
+            "1::6:7:8",
+            "1:2::8",
+            "1::7:8",
+            "1::8",
+            "::8",
+            "::",
+            "a::",
+            "a::",
+            "::f",
+            "::f",
+            "1:2:3:4:5:6:7:8",
+            "1:2:3:4:5:6:7::",
+            "1:2:3:4:5:6::8",
+            "1:2:3:4:5::7:8",
+            "1:2:3:4::6:7:8",
+            "1:2:3::5:6:7:8",
+            "1:2::4:5:6:7:8",
+            "1::3:4:5:6:7:8",
+            "::2:3:4:5:6:7:8",
+            "1:2:3:4:5::9",
+            "1:2:3:4::7:a",
+            "1:2:3::6:7:b",
+            "1:2::5:6:7:c",
+            "1::4:5:6:7:d",
+            "1:2:3:4::e",
+            "1:2:3::7:f",
+            "ff::192.168.1.206"
+    };
+    
     private final String[] IPv6_INVALID_ADDRESS = {
             "z:2:3:4:5:6:7:8",
             "z:2:3:4:5:6:7::",
@@ -294,12 +382,27 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         // wifi is OFF
         assertEquals(false, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
     }
-*/    
+*/
     public void testIsNetworkAvailable_WithConnection() {
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
         turnWifiOn();
         // wifi is ON
         assertEquals(true, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
+    }
+    
+    // ================================================================================
+    // Tests - isWifiAvailable
+    // ================================================================================
+    
+    public void testIsWifiAvailable_Null() {
+        assertEquals(false, NetUtils.isWifiAvailable(null));
+    }
+    
+    public void testIsWifiAvailable_WithConnection() {
+        // permission CHANGE_WIFI_STATE in app's manifest file must be present
+        turnWifiOn();
+        // wifi is ON
+        assertEquals(true, NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext()));
     }
 
     // ================================================================================
@@ -422,6 +525,64 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             turnWifiOn();
         } catch (NullPointerException e) {
             fail(); // Error should not be thrown
+        }
+    }
+    
+    // ================================================================================
+    // Tests - trimZeroes
+    // ================================================================================
+
+    public void testTrimZeroes_ipV6() {
+        String ipV6Addr = null;
+        for (int i = 0; i < IPv6_TRIMMED_VALID_ADDRESS.length; i++) {
+            ipV6Addr = IPv6_TRIMMED_VALID_ADDRESS[i];
+
+            assertEquals(ipV6Addr, NetUtils.trimZeroes(IPv6_VALID_ADDRESS[i]));
+        }
+    }
+
+    public void testTrimZeroes_ipV4() {
+        String ipV4Addr = null;
+        for (int i = 0; i < IPv4_TRIMMED_VALID_ADDRESS.length; i++) {
+            ipV4Addr = IPv4_TRIMMED_VALID_ADDRESS[i];
+
+            assertEquals(ipV4Addr, NetUtils.trimZeroes(IPv4_VALID_ADDRESS[i]));
+        }
+    }
+    
+    public void testTrimZeroes_nullIpAddress() {
+        assertNotNull(NetUtils.trimZeroes(null));
+    }
+
+    // ================================================================================
+    // Tests - validateIpAddress
+    // ================================================================================
+
+    public void testValidateIpAddress_ipV6() {
+        String ipV6Addr = null;
+        for (int i = 0; i < IPv6_TRIMMED_VALID_ADDRESS.length; i++) {
+            ipV6Addr = IPv6_TRIMMED_VALID_ADDRESS[i];
+
+            assertEquals(ipV6Addr, NetUtils.validateIpAddress(IPv6_VALID_ADDRESS[i]));
+        }
+    }
+
+    public void testValidateIpAddress_ipV4() {
+        String ipV4Addr = null;
+        for (int i = 0; i < IPv4_TRIMMED_VALID_ADDRESS.length; i++) {
+            ipV4Addr = IPv4_TRIMMED_VALID_ADDRESS[i];
+
+            assertEquals(ipV4Addr, NetUtils.validateIpAddress(IPv4_VALID_ADDRESS[i]));
+        }
+    }
+
+    public void testValidateIpAddress_nullIpAddress() {
+        assertNull(NetUtils.validateIpAddress(null));
+    }
+
+    public void testValidateIpAddress_invalid() {
+        for (int i = 0; i < IPv6_INVALID_ADDRESS.length; i++) {
+            assertNull(NetUtils.validateIpAddress(IPv6_INVALID_ADDRESS[i]));
         }
     }
     

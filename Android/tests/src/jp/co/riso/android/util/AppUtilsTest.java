@@ -37,6 +37,9 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     private static final String INVALID_FOLDER_PATH = "invalid/help.html";
     private static final String INVALID_FOLDER_FULLPATH = "file:///android_asset/invalid/help.html";
     
+    final String FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf";
+    Typeface mAppFont;
+    
     public AppUtilsTest() {
         super(MainActivity.class);
     }
@@ -50,6 +53,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 		super.setUp();
 
         Locale.setDefault(Locale.US);
+        mAppFont = Typeface.DEFAULT;
 	}
 
     @Override
@@ -426,7 +430,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         typeFace.setTypeface(null);
         ll.addView(typeFace);
         typeFace = new TextView(getActivity());
-        typeFace.setTypeface(SmartDeviceApp.getAppFont());
+        typeFace.setTypeface(mAppFont);
         ll.addView(typeFace);
         
         ll2.addView(new TextView(getActivity()));
@@ -435,11 +439,11 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         ll2.addView(new EditText(getActivity()));
         ll2.addView(new Switch(getActivity()));
         
-        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont(ll, mAppFont);
     }
     
     public void testChangeChildrenFont_NullViewGroupValidFont() {
-        AppUtils.changeChildrenFont(null, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont(null, mAppFont);
     }
     
     public void testChangeChildrenFont_ValidViewGroupNullFont() {
@@ -463,7 +467,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         
         ll.addView(new MockClass(getActivity()));
         
-        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont(ll, mAppFont);
     }
     
     public void testChangeChildrenFont_TypeFaceNull() {
@@ -473,7 +477,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         nullTypeFace.setTypeface(null);
         ll.addView(nullTypeFace);
         
-        AppUtils.changeChildrenFont(ll, SmartDeviceApp.getAppFont());
+        AppUtils.changeChildrenFont(ll, mAppFont);
     }
     
     //================================================================================
@@ -631,15 +635,15 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         editor.apply();
         
         assertNotNull(AppUtils.getAuthenticationString());
-        assertTrue(AppUtils.getAuthenticationString().isEmpty());
+        assertFalse(AppUtils.getAuthenticationString().isEmpty());
+        assertTrue(AppUtils.getAuthenticationString().equals("securePrint=0\nloginId=test\npinCode=1234\n"));
         
-        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON
-        
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON        
         editor.apply();
         
         assertNotNull(AppUtils.getAuthenticationString());
         assertFalse(AppUtils.getAuthenticationString().isEmpty());
-        assertTrue(AppUtils.getAuthenticationString().equals("loginId=test\npinCode=1234\n"));
+        assertTrue(AppUtils.getAuthenticationString().equals("securePrint=1\nloginId=test\npinCode=1234\n"));
     }
     
     public void testGetAuthenticationString_Invalid() {
@@ -653,7 +657,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         editor.apply();
         
         assertNotNull(AppUtils.getAuthenticationString());
-        assertTrue(AppUtils.getAuthenticationString().isEmpty());
+        assertFalse(AppUtils.getAuthenticationString().isEmpty());
         
         // missing keys
         editor.remove(AppConstants.PREF_KEY_AUTH_SECURE_PRINT);
@@ -663,7 +667,34 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         editor.apply();
         
         assertNotNull(AppUtils.getAuthenticationString());
-        assertTrue(AppUtils.getAuthenticationString().isEmpty());
+        assertFalse(AppUtils.getAuthenticationString().isEmpty());
+        assertTrue(AppUtils.getAuthenticationString().equals("securePrint=0\nloginId=\npinCode=\n"));
+
+    }
+    
+    //================================================================================
+    // Test getOwnerName
+    //================================================================================
+
+    public void testGetOwnerName_Valid() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        String expected = "testLogin";
+        editor.clear();
+        editor.apply();
+        String ownerName = AppUtils.getOwnerName();
+
+        assertNotNull(ownerName);
+        assertTrue(ownerName.isEmpty());
+
+        editor.putString(AppConstants.PREF_KEY_LOGIN_ID, expected);
+
+        editor.apply();
+        ownerName = AppUtils.getOwnerName();
+
+        assertNotNull(ownerName);
+        assertFalse(ownerName.isEmpty());
+        assertEquals(expected, ownerName);
     }
     
     //================================================================================
@@ -680,7 +711,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         }
         
         protected Typeface getTypeface() {
-            return SmartDeviceApp.getAppFont();
+            return mAppFont;
         }
         
         protected void setTypeface(Typeface tf) {

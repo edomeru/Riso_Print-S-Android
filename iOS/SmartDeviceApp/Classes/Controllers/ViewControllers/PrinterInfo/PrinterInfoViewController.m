@@ -12,6 +12,7 @@
 #import "UIViewController+Segue.h"
 #import "PrintSettingsViewController.h"
 #import "UIView+Localization.h"
+#import "AlertHelper.h"
 
 @interface PrinterInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
@@ -19,6 +20,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *defaultPrinterSwitch;
 @property (weak, nonatomic) IBOutlet UIImageView *defaultSetIcon;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *portSelection;
+@property (assign, nonatomic) BOOL switchPreviousState;
 
 @property (weak, nonatomic) Printer* printer;
 @property (weak, nonatomic) PrinterManager *printerManager;
@@ -61,6 +63,7 @@
         self.ipAddress.text = self.printer.ip_address;
         
         [self.portSelection setSelectedSegmentIndex:[self.printer.port integerValue]];
+        [self.portSelection setEnabled:[self.printer.enabled_raw boolValue] forSegmentAtIndex:1];
         
         if(self.isDefaultPrinter == YES)
         {
@@ -73,6 +76,8 @@
             [self hideDefaultSwitch:NO];
         }
     }
+    
+    self.switchPreviousState = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -101,14 +106,30 @@
 
 - (IBAction)defaultPrinterSwitchAction:(id)sender
 {
-    self.isDefaultPrinter = self.defaultPrinterSwitch.on;
-    if (self.isDefaultPrinter)
+    //if setting of printer as default failed, show alert message and turn off switch.
+    if(self.switchPreviousState != [self.defaultPrinterSwitch isOn] && [self.defaultPrinterSwitch isOn])
     {
-        [self hideDefaultSwitch:YES];
-        [self.printerManager registerDefaultPrinter:self.printer];
+        self.switchPreviousState = YES;
+        if([self.printerManager registerDefaultPrinter:self.printer])
+        {
+            self.isDefaultPrinter = self.defaultPrinterSwitch.on;
+            if (self.isDefaultPrinter)
+            {
+                [self hideDefaultSwitch:YES];
+            }
+        }
+        else
+        {
+            [AlertHelper displayResult:kAlertResultErrDB
+                             withTitle:kAlertTitlePrinters
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        [self.defaultPrinterSwitch setOn:NO animated:YES];
+                        self.switchPreviousState = NO;
+                    }];
+        }
+
     }
-    //else do nothing
-    
     //switch is automatically turned off when a new default printer is selected
 }
 

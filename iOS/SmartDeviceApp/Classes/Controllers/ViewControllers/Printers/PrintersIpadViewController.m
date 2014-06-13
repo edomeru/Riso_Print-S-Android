@@ -35,6 +35,7 @@
 @property (nonatomic) UIEdgeInsets insetLandscape;
 @property (nonatomic, strong) NSNumber *selectedPrinterIndex;
 @property (nonatomic, strong) NSMutableArray *statusHelpers;
+@property (nonatomic, strong) NSMutableArray *switchPreviousState;
 
 #pragma mark - Instance Methods
 
@@ -60,6 +61,13 @@
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     self.statusHelpers = [[NSMutableArray alloc] init];
+    self.switchPreviousState = [[NSMutableArray alloc] init];
+
+    for(int i=0; i<[[PrinterManager sharedPrinterManager] countSavedPrinters]; i++)
+    {
+        [self.switchPreviousState addObject:[NSNumber numberWithBool:NO]];
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -75,6 +83,8 @@
         [statusHelper stopPrinterStatusPolling];
     }
     [self.statusHelpers removeAllObjects];
+    
+    [self.switchPreviousState removeAllObjects];
 }
 
 #pragma mark - CollectionViewDataSource
@@ -119,6 +129,7 @@
     [cell.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_LPR, @"LPR") forSegmentAtIndex:0];
     [cell.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_RAW, @"RAW") forSegmentAtIndex:1];
     [cell.portSelection setSelectedSegmentIndex:[printer.port integerValue]];
+    [cell.portSelection setEnabled:[printer.enabled_raw boolValue] forSegmentAtIndex:1];
     
     cell.portSelection.tag = indexPath.row;
     cell.deleteButton.tag = indexPath.row;
@@ -199,26 +210,40 @@
 - (IBAction)defaultPrinterSwitchAction:(id)sender
 {
     UISwitch *defaultSwitch = (UISwitch *) sender;
-    if (defaultSwitch.on)
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
+    
+    //if setting of printer as default failed, show alert message and turn off switch.
+    if([[self.switchPreviousState objectAtIndex:indexPath.row] boolValue] != [defaultSwitch isOn] && [defaultSwitch isOn])
     {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
+        [self.switchPreviousState replaceObjectAtIndex:indexPath.row withObject:[NSNumber numberWithBool:YES]];
         if([self setDefaultPrinter:indexPath])
         {
             if(self.defaultPrinterIndexPath != nil)
             {
                 PrinterCollectionViewCell *oldDefaultCell =
-                    (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+                (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
                 [oldDefaultCell setAsDefaultPrinterCell:FALSE];
+                
+                [self.switchPreviousState replaceObjectAtIndex:self.defaultPrinterIndexPath.row withObject:[NSNumber numberWithBool:NO]];
             }
             
             PrinterCollectionViewCell *newDefaultCell =
-                (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
             [newDefaultCell setAsDefaultPrinterCell:YES];
             
             self.defaultPrinterIndexPath = indexPath;
         }
+        else
+        {
+            [AlertHelper displayResult:kAlertResultErrDB
+                             withTitle:kAlertTitlePrinters
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        [defaultSwitch setOn:NO animated:YES];
+                        [self.switchPreviousState replaceObjectAtIndex:indexPath.row withObject:[NSNumber numberWithBool:NO]];
+                    }];
+        }
     }
-    //else do nothing
     
     //switch is automatically turned off when a new default printer is selected
 }
@@ -340,10 +365,15 @@
         [self refreshControlTagsOfCellsAtIndexPaths:indexPathsToReload];
         
         self.toDeleteIndexPath = nil;
+        
+        self.emptyLabel.hidden = (self.printerManager.countSavedPrinters == 0 ? NO : YES);
+
+        //remove switchPreviousState of the deleted printer
+        [self.switchPreviousState removeObjectAtIndex:index];
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrDelete
+        [AlertHelper displayResult:kAlertResultErrDB
                         withTitle:kAlertTitlePrinters
                       withDetails:nil];
     }
@@ -388,9 +418,9 @@
 
 #pragma mark - Reload
 
-- (void)reloadData
+- (void)reloadPrinters
 {
-    [super reloadData];
+    [super reloadPrinters];
     if(self.selectedPrinterIndex != nil)
     {
         NSIndexPath* selectedIndexPath = [NSIndexPath indexPathForItem:[self.selectedPrinterIndex integerValue]
@@ -402,6 +432,13 @@
     else
     {
         [self.collectionView reloadData];
+    }
+    
+    //reset switchPreviousState when a printer is added.
+    [self.switchPreviousState removeAllObjects];
+    for(int i=0; i<[[PrinterManager sharedPrinterManager] countSavedPrinters]; i++)
+    {
+        [self.switchPreviousState addObject:[NSNumber numberWithBool:NO]];
     }
 }
 

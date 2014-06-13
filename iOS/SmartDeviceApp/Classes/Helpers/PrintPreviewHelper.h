@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "PreviewSetting.h"
 
-#define OUTPUT_TRAY_CONSTRAINT_ENABLED 0
+#define OUTPUT_TRAY_CONSTRAINT_ENABLED 1
+#define PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED 0
 
 typedef enum {
     kColorModeAuto,
@@ -18,8 +19,8 @@ typedef enum {
 } kColorMode;
 
 typedef enum {
-    kPaperSizeA3W,
     kPaperSizeA3,
+    kPaperSizeA3W,
     kPaperSizeA4,
     kPaperSizeA5,
     kPaperSizeA6,
@@ -86,15 +87,13 @@ typedef enum {
 } kBookletType;
 
 typedef enum {
-    kBookletLayoutLeftToRight,
-    kBookletLayoutRightToLeft,
-    kBookletLayoutTopToBottom
+    kBookletLayoutForward,
+    kBookletLayoutReverse,
 } kBookletLayout;
 
 typedef enum {
     kOutputTrayAuto,
     kOutputTrayFaceDownTray,
-    //kOutputTrayFaceUpTray,
     kOutputTrayTop,
     kOutputTrayStacking
 } kOutputTray;

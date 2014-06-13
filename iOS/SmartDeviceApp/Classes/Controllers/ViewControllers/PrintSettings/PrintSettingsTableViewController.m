@@ -179,7 +179,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
+#pragma mark - UITableView
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -205,7 +205,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     
     if(logicalSection == totalSections && self.isDefaultSettingsMode == NO) //pincode section
     {
-        return 2;
+        return 3; //header + secure print switch + pin code
     }
     else
     {
@@ -234,16 +234,37 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             headerCell.expanded = [[self.expandedSections objectAtIndex:section] boolValue];
             cell = headerCell;
         }
+        else if (row == 1)
+        {
+            // Secure Print switch
+            
+            PrintSettingsItemSwitchCell *itemSwitchCell =
+                [tableView dequeueReusableCellWithIdentifier:SETTING_ITEM_SWITCH_CELL forIndexPath:indexPath];
+            itemSwitchCell.settingLabel.localizationId = IDS_LBL_SECURE_PRINT;
+            itemSwitchCell.valueSwitch.on = self.previewSetting.securePrint;
+            itemSwitchCell.separator.hidden = NO;
+            itemSwitchCell.valueSwitch.tag = indexPath.section * 10 + indexPath.row;
+            [self.switchBindings setObject:KEY_SECURE_PRINT
+                                    forKey:[NSNumber numberWithInteger:itemSwitchCell.valueSwitch.tag]];
+            [itemSwitchCell.valueSwitch addTarget:self
+                                           action:@selector(switchAction:)
+                                 forControlEvents:UIControlEventValueChanged];
+            cell = itemSwitchCell;
+        }
         else
         {
+            // Pin Code textfield
+            
             PrintSettingsItemInputCell *itemInputCell = [tableView dequeueReusableCellWithIdentifier:PINCODE_INPUT_CELL forIndexPath:indexPath];
-            itemInputCell.settingLabel.localizationId =  IDS_LBL_PIN_CODE;
+            itemInputCell.settingLabel.localizationId = IDS_LBL_PIN_CODE;
             itemInputCell.valueTextField.secureTextEntry = YES;
             itemInputCell.valueTextField.text = [self.previewSetting valueForKey:KEY_PIN_CODE];
             itemInputCell.valueTextField.tag = indexPath.section * 10 + indexPath.row;
             itemInputCell.valueTextField.delegate = self;
             [self.textFieldBindings setObject:KEY_PIN_CODE forKey:[NSNumber numberWithInteger:itemInputCell.valueTextField.tag]];
             itemInputCell.separator.hidden = YES;
+            [itemInputCell setEnabled:self.previewSetting.securePrint];
+            [self.indexPathsForSettings setObject:indexPath forKey:KEY_PIN_CODE];
             cell = itemInputCell;
         }
     }
@@ -345,14 +366,19 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             PrintSettingsHeaderCell *headerCell = (PrintSettingsHeaderCell *)[tableView cellForRowAtIndexPath:indexPath];
             headerCell.expanded = ![[self.expandedSections objectAtIndex:section] boolValue];
             [self.expandedSections replaceObjectAtIndex:section withObject:[NSNumber numberWithBool:headerCell.expanded]];
-            NSIndexPath *pinCodeRowIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
+            NSIndexPath *securePrintRowIndexPath = [NSIndexPath indexPathForRow:(indexPath.row + 1)
+                                                                      inSection:indexPath.section];
+            NSIndexPath *pinCodeRowIndexPath = [NSIndexPath indexPathForRow:(indexPath.row + 2)
+                                                                  inSection:indexPath.section];
             if(headerCell.expanded)
             {
-                [tableView insertRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationFade];
+                [tableView insertRowsAtIndexPaths:@[securePrintRowIndexPath, pinCodeRowIndexPath]
+                                 withRowAnimation:UITableViewRowAnimationFade];
             }
             else
             {
-                [tableView deleteRowsAtIndexPaths:@[pinCodeRowIndexPath]  withRowAnimation:UITableViewRowAnimationFade];
+                [tableView deleteRowsAtIndexPaths:@[securePrintRowIndexPath, pinCodeRowIndexPath]
+                                 withRowAnimation:UITableViewRowAnimationFade];
             }
         }
     }
@@ -406,11 +432,25 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     [self.tableView endEditing:YES];
 }
 
+#pragma mark - Setting:Switch
+
 - (IBAction)switchAction:(id)sender
 {
     UISwitch *switchView = sender;
     NSString *key = [self.switchBindings objectForKey:[NSNumber numberWithInteger:switchView.tag]];
     [self.previewSetting setValue:[NSNumber numberWithBool:switchView.on] forKey:key];
+
+    if ([key isEqualToString:KEY_SECURE_PRINT])
+    {
+        [self setState:switchView.on forSettingKey:KEY_PIN_CODE];
+    }
+}
+
+#pragma mark - Setting:TextField
+
+- (void)endEditing
+{
+    [self.tableView endEditing:YES];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
@@ -489,6 +529,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     self.tapRecognizer.cancelsTouchesInView = NO;
 }
 
+#pragma mark - Setting:Options
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:@"PrintSettings-PrintOptions"])
@@ -498,6 +540,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         optionsController.previewSetting = self.previewSetting;
     }
 }
+
+#pragma mark - Settings KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -535,23 +579,31 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
 }
 
+#pragma mark - Apply Settings
+
 - (void)applySettingsConstraintForKey:(NSString*)key withPreviousValue:(NSInteger)previousValue
 {
     if([key isEqualToString:KEY_BOOKLET] == YES)
     {
         [self applyBookletConstraints];
     }
+    if([key isEqualToString:KEY_BOOKLET_FINISH] == YES)
+    {
+        [self applyBookletFinishConstraints];
+    }
     if([key isEqualToString:KEY_FINISHING_SIDE] == YES)
     {
         [self applyFinishingConstraintsWithPreviousValue:previousValue];
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
         [self applyFinishingWithOrientationConstraint];
+#endif
     }
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
     if([key isEqualToString:KEY_ORIENTATION] == YES)
     {
         [self applyFinishingWithOrientationConstraint];
-        [self applyBookletLayoutWithOrientationConstraint];
-        //[self applyOrientationConstraint];
     }
+#endif
     if([key isEqualToString:KEY_PUNCH] == YES)
     {
         [self applyPunchConstraint];
@@ -560,7 +612,9 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     if([key isEqualToString:KEY_IMPOSITION] == YES)
     {
         [self applyImpositionConstraintWithPreviousValue:previousValue];
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
         [self applyFinishingWithOrientationConstraint];
+#endif
     }
 }
 
@@ -570,17 +624,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingShortEdge];
         [self setOptionSettingWithKey:KEY_IMPOSITION toValue:(NSInteger)kImpositionOff];
-        if (self.previewSetting.orientation == kOrientationPortrait)
-        {
-            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutLeftToRight];
-        }
-        else
-        {
-            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutTopToBottom];
-        }
-#if OUTPUT_TRAY_CONSTRAINT_ENABLED
-        [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
-#endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
+        [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutForward];
     }
     else
     {
@@ -596,21 +640,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     [self reloadRowsForIndexPathsToUpdate];
 }
 
-- (void)applyBookletLayoutWithOrientationConstraint
+- (void)applyBookletFinishConstraints
 {
-    if (self.previewSetting.orientation == kOrientationPortrait)
+    if (self.previewSetting.bookletFinish != kBookletTypeOff)
     {
-        if (self.previewSetting.bookletLayout == kBookletLayoutTopToBottom)
-        {
-            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutLeftToRight];
-        }
-    }
-    else
-    {
-        if (self.previewSetting.bookletLayout != kBookletLayoutTopToBottom)
-        {
-            [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutTopToBottom];
-        }
+        [self setOptionSettingWithKey:KEY_OUTPUT_TRAY toValue:(NSInteger)kOutputTrayAuto];
     }
 }
 
@@ -646,7 +680,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
 }
 
--(void) applyFinishingWithOrientationConstraint
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
+- (void)applyFinishingWithOrientationConstraint
 {
     kPunchType punch = (kPunchType)self.previewSetting.punch;
     BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
@@ -661,10 +696,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         }
     }
 }
+#endif
 
 - (void)applyPunchConstraint
 {
     kPunchType punch = (kPunchType)self.previewSetting.punch;
+    
+#if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
     kFinishingSide finishingSide = (kFinishingSide)self.previewSetting.finishingSide;
     BOOL isPaperLandscape = [PrintPreviewHelper isPaperLandscapeForPreviewSetting:self.previewSetting];
     
@@ -679,6 +717,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             [self setOptionSettingWithKey:KEY_FINISHING_SIDE toValue:(NSInteger)kFinishingSideLeft];
         }
     }
+#endif
+    
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
     if(punch != kPunchTypeNone && self.previewSetting.outputTray == kOutputTrayFaceDownTray &&
        [self.printer.enabled_tray_face_down boolValue] == YES)
@@ -688,7 +728,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 #endif //OUTPUT_TRAY_CONSTRAINT_ENABLED
 }
 
--(void) applyImpositionConstraintWithPreviousValue:(NSInteger)previousImpositionValue
+- (void)applyImpositionConstraintWithPreviousValue:(NSInteger)previousImpositionValue
 {
     kImposition currentImpositionValue  = (kImposition) self.previewSetting.imposition;
     kImpositionOrder impositionOrder = (kImpositionOrder) self.previewSetting.impositionOrder;
@@ -737,6 +777,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
 }
 
+#pragma mark - Update Settings
+
 - (void)setState:(BOOL)isEnabled forSettingKey:(NSString*)key
 {
     NSIndexPath *indexPath = [self.indexPathsForSettings objectForKey:key];
@@ -744,14 +786,18 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         [cell setUserInteractionEnabled:isEnabled];
-        if([cell isKindOfClass:[PrintSettingsItemOptionCell class]] == YES)
+        if([cell isKindOfClass:[PrintSettingsItemOptionCell class]])
         {
             [(PrintSettingsItemOptionCell *)cell setHideValue:![self isSettingApplicable:key]];
+        }
+        else if ([cell isKindOfClass:[PrintSettingsItemInputCell class]])
+        {
+            [(PrintSettingsItemInputCell *)cell setEnabled:isEnabled];
         }
     }
 }
 
--(void) setOptionSettingToDefaultValue: (NSString*)key
+- (void)setOptionSettingToDefaultValue:(NSString*)key
 {
     PreviewSetting *defaultPreviewSetting = [PrintSettingsHelper defaultPreviewSetting];
     NSNumber *defaultValue = [defaultPreviewSetting valueForKey:key];
@@ -764,7 +810,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
 }
 
--(void) setOptionSettingWithKey:(NSString*)key toValue:(NSInteger)value
+- (void)setOptionSettingWithKey:(NSString*)key toValue:(NSInteger)value
 {
     NSNumber *num = [NSNumber numberWithInteger:value];
     [self.previewSetting setValue:num forKey:key];
@@ -775,6 +821,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         [self addToIndexToUpdate:indexPath];
     }
 }
+
+#pragma mark - Check Settings
 
 - (BOOL)isSettingEnabled:(NSString*)settingKey
 {
@@ -887,91 +935,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     return YES;
 }
 
-- (BOOL)isSettingSupported:(NSString*)settingKey
-{
-    if(self.printer == nil)
-    {
-        return YES;
-    }
-
-    if([settingKey isEqualToString:KEY_BOOKLET] ||
-       [settingKey isEqualToString:KEY_BOOKLET_LAYOUT] ||
-       [settingKey isEqualToString:KEY_BOOKLET_FINISH])
-    {
-        return [self.printer.enabled_booklet boolValue];
-    }
-    
-    if([settingKey isEqualToString:KEY_PUNCH])
-    {
-        return ([self.printer.enabled_finisher_2_3_holes boolValue] || [self.printer.enabled_finisher_2_4_holes boolValue]);
-    }
-    
-    if([settingKey isEqualToString:KEY_STAPLE])
-    {
-        return [self.printer.enabled_staple boolValue];
-    }
-    
-    return YES;
-}
-
-- (void)addToIndexToUpdate:(NSIndexPath *)indexPath
-{
-    if([self.indexPathsToUpdate containsObject:indexPath] == NO && [[self.expandedSections objectAtIndex:indexPath.section] boolValue] == YES)
-    {
-        [self.indexPathsToUpdate addObject:indexPath];
-    }
-}
-
-- (void)reloadRowsForIndexPathsToUpdate
-{
-    if([self.indexPathsToUpdate count] > 0)
-    {
-        [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationFade];
-        [self.indexPathsToUpdate removeAllObjects];
-    }
-}
-
--(void) fillSupportedSettings
-{
-    self.supportedSettings = [[NSMutableArray alloc] init];
-    NSArray *sections = [self.printSettingsTree objectForKey:@"group"];
-    
-    for(NSDictionary *section in sections)
-    {
-        NSMutableArray *settings =[[section objectForKey:@"setting"] mutableCopy];
-        NSMutableArray *effectiveSettings = [[NSMutableArray alloc] init];
-
-        for(NSDictionary *setting in settings)
-        {
-            NSString *key = [setting objectForKey:@"name"];
-            if([self isSettingSupported:key] == YES)
-            {
-                if([key isEqualToString:KEY_PUNCH] == YES || [key isEqualToString:KEY_OUTPUT_TRAY] == YES)
-                {
-                    NSMutableDictionary *tempSetting = [NSMutableDictionary dictionaryWithDictionary:setting];
-                    NSArray *options = [setting objectForKey:@"option"];
-                    NSMutableArray *tempOptions = [[NSMutableArray alloc] init];
-                    for(NSDictionary *option in options)
-                    {
-                        if([self isSettingOptionSupported:[option objectForKey:@"content-body"]] == YES)
-                        {
-                            [tempOptions addObject:option];
-                        }
-                    }
-                    [tempSetting setValue:tempOptions forKey:@"option"];
-                    [effectiveSettings addObject:tempSetting];
-                }
-                else
-                {
-                    [effectiveSettings addObject:setting];
-                }
-            }
-        }
-        [self.supportedSettings addObject:effectiveSettings];
-    }
-}
-
--(BOOL) isSettingOptionSupported:(NSString *) option
+- (BOOL)isSettingOptionSupported:(NSString *)option
 {
     if(self.printer == nil)
     {
@@ -1016,4 +980,89 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     
     return YES;
 }
+
+- (BOOL)isSettingSupported:(NSString*)settingKey
+{
+    if(self.printer == nil)
+    {
+        return YES;
+    }
+
+    if([settingKey isEqualToString:KEY_BOOKLET_FINISH])
+    {
+        return [self.printer.enabled_booklet_finishing boolValue];
+    }
+    
+    if([settingKey isEqualToString:KEY_PUNCH])
+    {
+        return ([self.printer.enabled_finisher_2_3_holes boolValue] || [self.printer.enabled_finisher_2_4_holes boolValue]);
+    }
+    
+    if([settingKey isEqualToString:KEY_STAPLE])
+    {
+        return [self.printer.enabled_staple boolValue];
+    }
+    
+    return YES;
+}
+
+#pragma mark - Utilities
+
+- (void)addToIndexToUpdate:(NSIndexPath *)indexPath
+{
+    if([self.indexPathsToUpdate containsObject:indexPath] == NO && [[self.expandedSections objectAtIndex:indexPath.section] boolValue] == YES)
+    {
+        [self.indexPathsToUpdate addObject:indexPath];
+    }
+}
+
+- (void)reloadRowsForIndexPathsToUpdate
+{
+    if([self.indexPathsToUpdate count] > 0)
+    {
+        [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationFade];
+        [self.indexPathsToUpdate removeAllObjects];
+    }
+}
+
+- (void)fillSupportedSettings
+{
+    self.supportedSettings = [[NSMutableArray alloc] init];
+    NSArray *sections = [self.printSettingsTree objectForKey:@"group"];
+    
+    for(NSDictionary *section in sections)
+    {
+        NSMutableArray *settings =[[section objectForKey:@"setting"] mutableCopy];
+        NSMutableArray *effectiveSettings = [[NSMutableArray alloc] init];
+
+        for(NSDictionary *setting in settings)
+        {
+            NSString *key = [setting objectForKey:@"name"];
+            if([self isSettingSupported:key] == YES)
+            {
+                if([key isEqualToString:KEY_PUNCH] == YES || [key isEqualToString:KEY_OUTPUT_TRAY] == YES)
+                {
+                    NSMutableDictionary *tempSetting = [NSMutableDictionary dictionaryWithDictionary:setting];
+                    NSArray *options = [setting objectForKey:@"option"];
+                    NSMutableArray *tempOptions = [[NSMutableArray alloc] init];
+                    for(NSDictionary *option in options)
+                    {
+                        if([self isSettingOptionSupported:[option objectForKey:@"content-body"]] == YES)
+                        {
+                            [tempOptions addObject:option];
+                        }
+                    }
+                    [tempSetting setValue:tempOptions forKey:@"option"];
+                    [effectiveSettings addObject:tempSetting];
+                }
+                else
+                {
+                    [effectiveSettings addObject:setting];
+                }
+            }
+        }
+        [self.supportedSettings addObject:effectiveSettings];
+    }
+}
+
 @end

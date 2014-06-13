@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3400" systemVersion="12F45" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3401" systemVersion="12F45" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="DefaultPrinter" representedClassName="DefaultPrinter" syncable="YES">
         <relationship name="printer" maxCount="1" deletionRule="Nullify" destinationEntity="Printer" inverseName="defaultprinter" inverseEntity="Printer" syncable="YES"/>
     </entity>
     <entity name="Printer" representedClassName="Printer" syncable="YES">
-        <attribute name="enabled_booklet" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="enabled_booklet_finishing" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_finisher_2_3_holes" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_finisher_2_4_holes" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_lpr" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_raw" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_staple" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="enabled_tray_auto_stacking" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_tray_face_down" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_tray_stacking" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="enabled_tray_top" optional="YES" attributeType="Boolean" syncable="YES"/>

@@ -14,6 +14,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -126,20 +127,107 @@ public class NetUtils {
     }
     
     /**
+     * Validates an IP Address
+     * 
+     * @param ipAddress
+     *            IP Address to be validated
+     * @return Valid IP address. Null is returned for invalid IP Address.
+     */
+    public static String validateIpAddress(String ipAddress) {
+        String validatedIp = null;
+        
+        if (NetUtils.isIPv4Address(ipAddress) || NetUtils.isIPv6Address(ipAddress)) {
+            validatedIp = NetUtils.trimZeroes(ipAddress);
+        }
+        return validatedIp;
+    }
+    
+    /**
      * Determines network connectivity
      * 
      * @param context
      *
      * @return true if is connected to network
      */
-    public static boolean isNetworkAvailable(Context context) {
+    protected static boolean isNetworkAvailable(Context context) {
         if (context == null) {
             return false;
         }
         
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
+        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+    }
+    
+    /**
+     * Determines wi-fi connectivity
+     * 
+     * @param context
+     *
+     * @return true if is connected to the network using wi-fi
+     */
+    public static boolean isWifiAvailable(Context context) {
+        if (context == null) {
+            return false;
+        }
+        
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return (wifi != null && wifi.isConnected());
+    }
+    
+    /**
+     * Trim leading zeroes from an IP Address
+     * 
+     * @param ipAddress
+     *            Input IP Address
+     * @return IP Address with leading zeroes trimmed
+     */
+    public static String trimZeroes(String ipAddress) {
+        if (ipAddress == null) {
+            return "";
+        }
+        List<String> ipv6part = null;
+        String ipv4Addr = null;
+        StringBuilder ipAddrBuilder = null;
+        String newIpAddress = null;
+        
+        if (isIPv4Address(ipAddress)) {
+            ipAddrBuilder = new StringBuilder();
+            ipv4Addr = ipAddress;
+        }
+        if (isIPv6Address(ipAddress)) {
+            ipAddrBuilder = new StringBuilder();
+            ipv6part = new ArrayList<String>(Arrays.asList(ipAddress.split("\\:")));
+            if (isIPv6Ipv4DerivedAddress(ipAddress)) {
+                ipv4Addr = ipv6part.get(ipv6part.size() - 1);
+                ipv6part.remove(ipv4Addr);
+            }
+            for (int i = 0; i < ipv6part.size(); i++) {
+                try {
+                    ipAddrBuilder.append(Integer.toHexString(Integer.parseInt(ipv6part.get(i), 16)));
+                    if (i < ipv6part.size() - 1 || ipv4Addr != null) {
+                        ipAddrBuilder.append(':');
+                    }
+                } catch (NumberFormatException e) {
+                    ipAddrBuilder.append(':');
+                }
+            }
+            if (ipAddress.endsWith("::")) {
+                ipAddrBuilder.append("::");
+            }
+        }
+        if (ipv4Addr != null) {
+            String[] ipv4part = ipv4Addr.split("\\.");
+            for (int i = 0; i < ipv4part.length; i++) {
+                ipAddrBuilder.append(Integer.parseInt(ipv4part[i]));
+                if (i < ipv4part.length - 1) {
+                    ipAddrBuilder.append('.');
+                }
+            }
+        }
+        newIpAddress = ipAddrBuilder.toString();
+        return newIpAddress;
     }
     
     // ================================================================================
@@ -204,7 +292,7 @@ public class NetUtils {
      * @return Pattern object for IPv4 Address
      */
     private static Pattern initializeIpv4Pattern_Standard() {
-        String ipV4Segment = "(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
+        String ipV4Segment = "0*(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.0*(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
         return Pattern.compile(ipV4Segment);
     }
     
@@ -226,7 +314,7 @@ public class NetUtils {
      * @return Pattern object for IPv6 Address
      */
     private static Pattern initializeIpv6Pattern_Standard() {
-        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        String ipV6Segment = "0*[0-9a-fA-F]{0,4}";
         return Pattern.compile("((" + ipV6Segment + ":){7,7}" + ipV6Segment + ")"); // Pattern # 1
     }
     
@@ -236,7 +324,7 @@ public class NetUtils {
      * @return Pattern object for IPv6 Compressed Address
      */
     private static Pattern initializeIpv6Pattern_Compressed() {
-        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        String ipV6Segment = "0*[0-9a-fA-F]{0,4}";
         return Pattern.compile("((" + ipV6Segment + ":){1,7}:" + // Pattern # 2
                 "|" + "(" + ipV6Segment + ":){1,6}:" + ipV6Segment + // Pattern # 3
                 "|" + "(" + ipV6Segment + ":){1,5}(:" + ipV6Segment + "){1,2}" + // Pattern # 4
@@ -254,7 +342,7 @@ public class NetUtils {
      * @return Pattern object for IPv6 Local Address
      */
     private static Pattern initializeIpv6Pattern_Local() {
-        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        String ipV6Segment = "0*[0-9a-fA-F]{0,4}";
         return Pattern.compile("(fe80:(:" + ipV6Segment + "){0,4}%[0-9a-zA-Z]{1,})"); // Pattern # 10
         
     }
@@ -265,10 +353,10 @@ public class NetUtils {
      * @return Pattern object for IPv6 Derived from Ipv4 Address
      */
     private static Pattern initializeIpv6Pattern_Ipv4Derived() {
-        String ipV4Segment = "(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
-        String ipV6Segment = "[0-9a-fA-F]{1,4}";
+        String ipV4Segment = "0*(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.0*(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
+        String ipV6Segment = "0*[0-9a-fA-F]{0,4}";
         
-        return Pattern.compile("(::(ffff(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
+        return Pattern.compile("(::0*(ffff(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
                 "|" + "(" + ipV6Segment + ":){1,4}:" + ipV4Segment + ")"); // Pattern # 12
     }
     
