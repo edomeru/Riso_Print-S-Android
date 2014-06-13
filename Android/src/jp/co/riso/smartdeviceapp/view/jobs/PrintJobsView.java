@@ -199,6 +199,26 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     }
     
     /**
+     * Deletes printjob from list
+     * 
+     * @param job
+     *            PrintJob to be deleted
+     */
+    public void deleteJobFromList(PrintJob job) {
+        mPrintJobs.remove(job);
+    }
+    
+    /**
+     * Deletes printer from list
+     * 
+     * @param printer
+     *            Printer to be deleted
+     */
+    public void deletePrinterFromList(Printer printer) {
+        mPrinters.remove(printer);
+    }
+    
+    /**
      * Initialize PrintJobsView
      */
     private void init() {
@@ -304,7 +324,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             placeInColumns(mPrintGroupViews.get(i));
         }
         
-        mGroupViewCtr = mPrintGroupViews.size();
+        mGroupViewCtr = mPrinters.size() - 1;
         post(mRunnable);
     }
     
@@ -473,7 +493,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
 //        if (mGroupViewCtr < mPrintGroupViews.size()) {
 //            addViewsToColumns();
 //        } else 
-        if (mColumns.size() > 1 && mGroupViewCtr > mPrintGroupViews.size()) {
+        if (mColumns.size() > 1 && (mGroupViewCtr > mPrinters.size() - 1)) {
             // if multiple columns and after deletion of a PrintJobsGroupView
             relayoutColumns();
         }
@@ -544,7 +564,6 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     /** {@inheritDoc} */
     @Override
     public void deletePrintJobsGroup(PrintJobsGroupView printJobsGroupView) {
-        mPrinters.remove((Printer) printJobsGroupView.findViewById(R.id.printJobGroupDelete).getTag());
         mPrintGroupViews.remove(printJobsGroupView);
     }
     
@@ -581,7 +600,6 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     /** {@inheritDoc} */
     @Override
     public void onDeleteJob() {
-        mPrintJobs.remove((PrintJob) mDeleteView.getTag());
         endDelete(false);
     }
     
