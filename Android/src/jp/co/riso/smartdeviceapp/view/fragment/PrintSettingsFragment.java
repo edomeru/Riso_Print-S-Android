@@ -47,8 +47,10 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private DirectPrintManager mDirectPrintManager = null;
     
     private static final int MSG_PRINT = 0;
+    private static final int REQUEST_CODE_INVALID = -1;
+    private static final int REQUEST_CODE_CANCEL = 0;
     private static final int REQUEST_CODE_PRINT = 1;
-
+    
     private boolean mFragmentForPrinting = false;
     
     private int mPrinterId = PrinterManager.EMPTY_ID;
@@ -252,7 +254,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         if (ret) {
             btnMsg = getResources().getString(R.string.ids_lbl_cancel);
             mWaitingDialog = WaitingDialogFragment.newInstance(null, mPrintMsg, true, btnMsg);
-            mWaitingDialog.setTargetFragment(this, 0);
+            mWaitingDialog.setTargetFragment(this, REQUEST_CODE_CANCEL);
             DialogUtils.displayDialog(getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
         } else {
             String strMsg = getString(R.string.ids_info_msg_print_job_failed);
@@ -353,14 +355,29 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     /** {@inheritDoc} */
     @Override
     public void onCancel() {
-        if (mConfirmDialog == null || mConfirmDialog.getTargetRequestCode() != REQUEST_CODE_PRINT) {
-            if (mDirectPrintManager != null) {
-                mDirectPrintManager.sendCancelCommand();
-                mDirectPrintManager = null;
+        if (mWaitingDialog != null) {
+            switch (mWaitingDialog.getTargetRequestCode()) {
+                case REQUEST_CODE_CANCEL:
+                    if (mDirectPrintManager != null) {
+                        mDirectPrintManager.sendCancelCommand();
+                        mDirectPrintManager = null;
+                    }
+                    mWaitingDialog.setTargetFragment(this, REQUEST_CODE_INVALID);
+                    break;
+                case REQUEST_CODE_INVALID:
+                    break;
             }
-        } else if (mConfirmDialog != null) {
-            mConfirmDialog.setTargetFragment(this, 0);
-            ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
+        }
+        
+        if (mConfirmDialog != null) {
+            switch (mConfirmDialog.getTargetRequestCode()) {
+                case REQUEST_CODE_PRINT:
+                    mConfirmDialog.setTargetFragment(this, REQUEST_CODE_INVALID);
+                    ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
+                    break;
+                case REQUEST_CODE_INVALID:
+                    break;
+            }
         }
     }
 
