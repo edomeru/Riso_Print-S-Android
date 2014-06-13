@@ -35,6 +35,7 @@
 @property (nonatomic) UIEdgeInsets insetLandscape;
 @property (nonatomic, strong) NSNumber *selectedPrinterIndex;
 @property (nonatomic, strong) NSMutableArray *statusHelpers;
+@property (nonatomic, strong) NSMutableArray *switchPreviousState;
 
 #pragma mark - Instance Methods
 
@@ -60,6 +61,7 @@
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     self.statusHelpers = [[NSMutableArray alloc] init];
+    self.switchPreviousState = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -75,6 +77,8 @@
         [statusHelper stopPrinterStatusPolling];
     }
     [self.statusHelpers removeAllObjects];
+    
+    [self.switchPreviousState removeAllObjects];
 }
 
 #pragma mark - CollectionViewDataSource
@@ -143,6 +147,9 @@
     cell.deleteButton.highlightedColor = [UIColor purple2ThemeColor];
     cell.deleteButton.highlightedTextColor = [UIColor whiteThemeColor];
     
+    
+    [self.switchPreviousState addObject:[NSNumber numberWithBool:NO]];
+    
     return cell;
 }
 
@@ -202,29 +209,36 @@
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:defaultSwitch.tag inSection:0];
     
     //if setting of printer as default failed, show alert message and turn off switch.
-    if([self setDefaultPrinter:indexPath] && defaultSwitch.on)
+    if([[self.switchPreviousState objectAtIndex:indexPath.row] boolValue] != [defaultSwitch isOn] && [defaultSwitch isOn])
     {
-        if(self.defaultPrinterIndexPath != nil)
+        [self.switchPreviousState replaceObjectAtIndex:indexPath.row withObject:[NSNumber numberWithBool:YES]];
+        if([self setDefaultPrinter:indexPath])
         {
-            PrinterCollectionViewCell *oldDefaultCell =
-            (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
-            [oldDefaultCell setAsDefaultPrinterCell:FALSE];
+            if(self.defaultPrinterIndexPath != nil)
+            {
+                PrinterCollectionViewCell *oldDefaultCell =
+                (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.defaultPrinterIndexPath];
+                [oldDefaultCell setAsDefaultPrinterCell:FALSE];
+                
+                [self.switchPreviousState replaceObjectAtIndex:self.defaultPrinterIndexPath.row withObject:[NSNumber numberWithBool:NO]];
+            }
+            
+            PrinterCollectionViewCell *newDefaultCell =
+            (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            [newDefaultCell setAsDefaultPrinterCell:YES];
+            
+            self.defaultPrinterIndexPath = indexPath;
         }
-        
-        PrinterCollectionViewCell *newDefaultCell =
-        (PrinterCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-        [newDefaultCell setAsDefaultPrinterCell:YES];
-        
-        self.defaultPrinterIndexPath = indexPath;
-    }
-    else
-    {
-        [AlertHelper displayResult:kAlertResultErrDB
-                         withTitle:kAlertTitlePrinters
-                       withDetails:nil
-                withDismissHandler:^(CXAlertView *alertView) {
-                    defaultSwitch.on = NO;
-                }];
+        else
+        {
+            [AlertHelper displayResult:kAlertResultErrDB
+                             withTitle:kAlertTitlePrinters
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        [defaultSwitch setOn:NO animated:YES];
+                        [self.switchPreviousState replaceObjectAtIndex:indexPath.row withObject:[NSNumber numberWithBool:NO]];
+                    }];
+        }
     }
     
     //switch is automatically turned off when a new default printer is selected
@@ -347,6 +361,8 @@
         [self refreshControlTagsOfCellsAtIndexPaths:indexPathsToReload];
         
         self.toDeleteIndexPath = nil;
+        
+        [self.switchPreviousState removeObjectAtIndex:index];
     }
     else
     {

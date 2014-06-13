@@ -20,6 +20,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *defaultPrinterSwitch;
 @property (weak, nonatomic) IBOutlet UIImageView *defaultSetIcon;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *portSelection;
+@property (assign, nonatomic) BOOL switchPreviousState;
 
 @property (weak, nonatomic) Printer* printer;
 @property (weak, nonatomic) PrinterManager *printerManager;
@@ -74,6 +75,8 @@
             [self hideDefaultSwitch:NO];
         }
     }
+    
+    self.switchPreviousState = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -103,24 +106,29 @@
 - (IBAction)defaultPrinterSwitchAction:(id)sender
 {
     //if setting of printer as default failed, show alert message and turn off switch.
-    if([self.printerManager registerDefaultPrinter:self.printer])
+    if(self.switchPreviousState != [self.defaultPrinterSwitch isOn] && [self.defaultPrinterSwitch isOn])
     {
-        self.isDefaultPrinter = self.defaultPrinterSwitch.on;
-        if (self.isDefaultPrinter)
+        self.switchPreviousState = YES;
+        if([self.printerManager registerDefaultPrinter:self.printer])
         {
-            [self hideDefaultSwitch:YES];
+            self.isDefaultPrinter = self.defaultPrinterSwitch.on;
+            if (self.isDefaultPrinter)
+            {
+                [self hideDefaultSwitch:YES];
+            }
         }
+        else
+        {
+            [AlertHelper displayResult:kAlertResultErrDB
+                             withTitle:kAlertTitlePrinters
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        [self.defaultPrinterSwitch setOn:NO animated:YES];
+                        self.switchPreviousState = NO;
+                    }];
+        }
+
     }
-    else
-    {
-        [AlertHelper displayResult:kAlertResultErrDB
-                         withTitle:kAlertTitlePrinters
-                       withDetails:nil
-                withDismissHandler:^(CXAlertView *alertView) {
-                    self.defaultPrinterSwitch.on = NO;
-                }];
-    }
-    
     //switch is automatically turned off when a new default printer is selected
 }
 
