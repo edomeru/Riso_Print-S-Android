@@ -27,11 +27,12 @@
 "IDS_LBL_AUTHENTICATION" = "Authentication";
 "IDS_LBL_LOGIN_ID" = "ログインID";
 "IDS_LBL_PRINT_SETTINGS" = "印刷設定";
+"IDS_LBL_PAGE_DISPLAYED" = "ページ %d / %d";
 "IDS_LBL_PRINT" = "印刷";
 "IDS_LBL_PRINTER" = "プリンター";
 "IDS_LBL_CHOOSE_PRINTER" = "Choose Printer";
 "IDS_LBL_BASIC" = "基本";
-"IDS_LBL_COLORMODE" = "カラーモー";
+"IDS_LBL_COLORMODE" = "カラーモード";
 "IDS_LBL_COLORMODE_AUTO" = "オート";
 "IDS_LBL_COLORMODE_FULLCOLOR" = "カラー";
 "IDS_LBL_COLORMODE_BLACK" = "白黒";

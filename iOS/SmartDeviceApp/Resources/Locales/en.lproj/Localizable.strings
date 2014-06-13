@@ -27,6 +27,7 @@
 "IDS_LBL_AUTHENTICATION" = "Authentication";
 "IDS_LBL_LOGIN_ID" = "Log-in ID";
 "IDS_LBL_PRINT_SETTINGS" = "Print Settings";
+"IDS_LBL_PAGE_DISPLAYED" = "Page %d / %d";
 "IDS_LBL_PRINT" = "Print";
 "IDS_LBL_PRINTER" = "Printer";
 "IDS_LBL_CHOOSE_PRINTER" = "Choose printer";

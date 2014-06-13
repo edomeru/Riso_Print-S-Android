@@ -387,7 +387,6 @@
 
 - (void)setupPageLabel
 {
-    NSString *pageString = @"PAGE";
     NSInteger totalSheets = self.totalPageNum;
     NSInteger currentSheet = self.printDocument.currentPage + 1;
     if(self.printDocument.previewSetting.booklet == YES || self.printDocument.previewSetting.duplex != kDuplexSettingOff)
@@ -395,7 +394,7 @@
         currentSheet = self.printDocument.currentPage/2 + 1;
         totalSheets = self.totalPageNum/2 + self.totalPageNum % 2;
     }
-    self.pageLabel.text = [NSString stringWithFormat:@"%@ %ld/%ld", pageString, (long)currentSheet, (long)totalSheets];
+    self.pageLabel.text = [NSString stringWithFormat:NSLocalizedString(IDS_LBL_PAGE_DISPLAYED, @""), (long)currentSheet, (long)totalSheets];
 }
 
 - (void)setupPageviewControllerWithBindSetting
