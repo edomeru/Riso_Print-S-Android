@@ -416,6 +416,7 @@
     CGPDFPageRef pageRef = CGPDFDocumentGetPage(documentRef, pageNumber);
     if (pageRef == NULL)
     {
+        CGPDFDocumentRelease(documentRef);
         return;
     }
     
@@ -476,8 +477,8 @@
 
 - (void)drawPaperEdgeLineInContext:(CGContextRef)contextRef
 {
-    CGPoint startPoint;
-    CGPoint endPoint;
+    CGPoint startPoint = CGPointZero;
+    CGPoint endPoint = CGPointZero;
     
     if (self.previewSetting.booklet == YES)
     {
@@ -530,7 +531,7 @@
     CGContextSaveGState(contextRef);
     
     CGContextSetLineWidth(contextRef, 2.0f);
-    float dashLine[] = { 16.0f, 16.0f };
+    CGFloat dashLine[] = { 16.0f, 16.0f };
     
     // Draw BG line (white)
     CGContextSetLineDash(contextRef, 16.0f, dashLine, 2);

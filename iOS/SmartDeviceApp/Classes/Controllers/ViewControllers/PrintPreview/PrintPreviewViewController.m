@@ -38,6 +38,7 @@
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageNavAreaHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageScrollLeftConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageScrollTopConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelTopConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelRightConstraint;
 
@@ -233,6 +234,7 @@
         {
             self.pageNavAreaHeightConstraint.constant = 60;
             self.pageScrollLeftConstraint.constant = 20;
+            self.pageScrollTopConstraint.constant = 10;
             self.pageLabelTopConstraint.constant = 40;
             self.pageLabelRightConstraint.constant = 0;
         }
@@ -241,6 +243,7 @@
             CGFloat screenHeight = [[UIScreen mainScreen] bounds].size.height;
             self.pageNavAreaHeightConstraint.constant = 30;
             self.pageScrollLeftConstraint.constant = screenHeight * 0.25f;
+            self.pageScrollTopConstraint.constant = 0;
             self.pageLabelRightConstraint.constant = screenHeight * 0.75f;
             self.pageLabelTopConstraint.constant = 10;
         }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
         <!--Root View Controller-->
@@ -333,6 +333,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="270" height="548"/>
                     <connections>
                         <outlet property="helpButton" destination="OmG-Fw-HSu" id="Plr-0e-iuJ"/>
                         <outlet property="homeButton" destination="poM-vX-7aa" id="Ee1-ru-pIs"/>
@@ -346,7 +347,6 @@
                         <segue destination="ZEw-b3-LhF" kind="custom" identifier="Home-PrintersIpad" customClass="ReplaceSegue" id="4XP-TL-zfE"/>
                         <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="sGm-hI-lJr"/>
                         <segue destination="jTA-Cg-WoR" kind="custom" identifier="Home-PrintersIphone" customClass="ReplaceSegue" id="tJh-Ye-iSk"/>
-                        <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToPrintersIphone" unwindAction="unwindToPrinters:" id="rDR-Jk-2JO"/>
                         <segue destination="q52-no-4j2" kind="custom" identifier="Home-Help" customClass="ReplaceSegue" id="H0h-lG-4no"/>
                         <segue destination="qJ2-cp-Jx8" kind="unwind" identifier="UnwindToHelp" unwindAction="unwindToHelp:" id="JC1-fU-iYo"/>
                         <segue destination="CcX-hU-zgH" kind="custom" identifier="Home-Legal" customClass="ReplaceSegue" id="dLV-ea-A15"/>
@@ -463,7 +463,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
-                                                <rect key="frame" x="18" y="10" width="284" height="23"/>
+                                                <rect key="frame" x="18" y="10" width="284" height="31"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <gestureRecognizers/>
                                                 <connections>
@@ -571,6 +571,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="activityIndicator" destination="Tfn-V2-BUp" id="COZ-vn-opT"/>
                         <outlet property="mainMenuButton" destination="31J-j4-hVx" id="bkC-U2-PZp"/>
@@ -581,6 +582,7 @@
                         <outlet property="pageNavAreaHeightConstraint" destination="Pk8-dR-V9V" id="72D-1R-pWJ"/>
                         <outlet property="pageScroll" destination="k35-as-6xb" id="415-cb-7Tb"/>
                         <outlet property="pageScrollLeftConstraint" destination="p5c-dn-zTt" id="wWZ-ct-17P"/>
+                        <outlet property="pageScrollTopConstraint" destination="wpz-j1-nhV" id="oMl-Ee-sBq"/>
                         <outlet property="previewArea" destination="q8a-bN-pFV" id="TCH-Tx-hm1"/>
                         <outlet property="previewView" destination="GCh-6b-axd" id="WCl-Ct-mpT"/>
                         <outlet property="printSettingsButton" destination="ABd-RJ-eVH" id="mj6-GY-FhA"/>
@@ -1001,6 +1003,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="600" height="784"/>
                     <connections>
                         <outlet property="addPrinterButton" destination="A02-B0-54s" id="AVy-O4-DD4"/>
                         <outlet property="collectionView" destination="wgF-aL-OIc" id="8OG-GL-x70"/>
@@ -1124,6 +1127,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="270" height="784"/>
                     <connections>
                         <outlet property="progressIndicator" destination="TyO-Rg-RpP" id="Iy1-A3-Fxa"/>
                         <outlet property="saveButton" destination="kAx-cM-pCZ" id="5CN-pT-L9P"/>
@@ -1317,6 +1321,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="mainMenuButton" destination="FUI-6T-A5e" id="mph-Gh-c6S"/>
                         <outlet property="webView" destination="9XV-Rp-02s" id="lxk-nh-PJo"/>
@@ -1405,6 +1410,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="mainMenuButton" destination="GNk-12-Xr8" id="RIc-My-kl2"/>
                         <outlet property="webView" destination="JWb-Bs-Kp2" id="XJz-lG-qXC"/>
@@ -1501,6 +1507,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="270" height="784"/>
                     <connections>
                         <outlet property="emptyLabel" destination="YzF-oR-uCS" id="lEb-f7-IAg"/>
                         <segue destination="lDn-gr-Ojb" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="Cfi-aZ-cpN"/>
@@ -1586,6 +1593,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="270" height="548"/>
                     <connections>
                         <outlet property="printSettingsScreenTitle" destination="7VB-SO-uD9" id="tgH-Ss-VSM"/>
                         <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintPreview" unwindAction="unwindToPrintPreview:" id="W5A-uc-DU4"/>
@@ -1920,6 +1928,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="progressIndicator" destination="g0d-xd-vqb" id="DYM-Vl-dGh"/>
                         <outlet property="saveButton" destination="ydC-sb-GhE" id="YK4-g5-xR4"/>
@@ -2325,6 +2334,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="480"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="FZ9-iZ-vyS">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -2615,6 +2625,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="defaultPrinterSwitch" destination="V7Y-Ut-ufD" id="PGa-hq-szW"/>
                         <outlet property="defaultSetIcon" destination="DoY-TP-6hF" id="Tgu-dN-Gwi"/>
@@ -2868,6 +2879,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="addPrinterButton" destination="vao-bW-C6W" id="Mae-lQ-Gd2"/>
                         <outlet property="emptyLabel" destination="dOk-xR-7Ro" id="KJp-ar-g7e"/>
@@ -2992,6 +3004,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="270" height="548"/>
                     <connections>
                         <outlet property="emptyLabel" destination="95f-Zp-9Cm" id="cla-Ar-KI3"/>
                         <segue destination="5BY-kL-11l" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindToPrinters:" id="Lua-LL-PLr"/>
@@ -3082,6 +3095,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="460"/>
                     <connections>
                         <outlet property="printerListHeader" destination="0jn-TH-TiD" id="m2l-6K-9xP"/>
                     </connections>
@@ -3465,6 +3479,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="600" height="784"/>
                     <connections>
                         <outlet property="emptyLabel" destination="xwM-rE-jVT" id="BDY-1l-gwo"/>
                         <outlet property="groupsView" destination="rMa-FV-gDr" id="GAe-vx-3Oe"/>
@@ -3705,6 +3720,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="270" height="548"/>
                     <connections>
                         <outlet property="printerTableView" destination="hdY-tn-chQ" id="AS1-AA-gyh"/>
                         <outlet property="tableViewHeight" destination="L2n-BW-hqn" id="kXO-iI-lsP"/>
@@ -3755,10 +3771,10 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="CWW-vD-UgO"/>
-        <segue reference="oE4-lZ-OOf"/>
-        <segue reference="scK-T0-ew0"/>
+        <segue reference="c8V-UF-iWe"/>
         <segue reference="ax2-Mn-NH0"/>
-        <segue reference="4qT-Co-wxF"/>
+        <segue reference="5pT-ga-236"/>
+        <segue reference="gRW-en-vNy"/>
+        <segue reference="h8r-TR-IcV"/>
     </inferredMetricsTieBreakers>
 </document>
