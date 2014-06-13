@@ -582,6 +582,7 @@
                         <outlet property="pageNavAreaHeightConstraint" destination="Pk8-dR-V9V" id="72D-1R-pWJ"/>
                         <outlet property="pageScroll" destination="k35-as-6xb" id="415-cb-7Tb"/>
                         <outlet property="pageScrollLeftConstraint" destination="p5c-dn-zTt" id="wWZ-ct-17P"/>
+                        <outlet property="pageScrollTopConstraint" destination="wpz-j1-nhV" id="oMl-Ee-sBq"/>
                         <outlet property="previewArea" destination="q8a-bN-pFV" id="TCH-Tx-hm1"/>
                         <outlet property="previewView" destination="GCh-6b-axd" id="WCl-Ct-mpT"/>
                         <outlet property="printSettingsButton" destination="ABd-RJ-eVH" id="mj6-GY-FhA"/>
