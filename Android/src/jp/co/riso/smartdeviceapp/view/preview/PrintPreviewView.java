@@ -39,7 +39,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.LruCache;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
