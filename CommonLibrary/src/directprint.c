@@ -225,7 +225,7 @@ int can_start_print(directprint_job *print_job)
     {
         return 0;
     }
-    if (print_job->user_name == 0 || strlen(print_job->user_name) <= 0)
+    if (print_job->user_name == 0)
     {
         return 0;
     }
