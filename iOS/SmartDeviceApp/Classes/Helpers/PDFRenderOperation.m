@@ -416,6 +416,7 @@
     CGPDFPageRef pageRef = CGPDFDocumentGetPage(documentRef, pageNumber);
     if (pageRef == NULL)
     {
+        CGPDFDocumentRelease(documentRef);
         return;
     }
     
@@ -476,8 +477,8 @@
 
 - (void)drawPaperEdgeLineInContext:(CGContextRef)contextRef
 {
-    CGPoint startPoint;
-    CGPoint endPoint;
+    CGPoint startPoint = CGPointZero;
+    CGPoint endPoint = CGPointZero;
     
     if (self.previewSetting.booklet == YES)
     {
