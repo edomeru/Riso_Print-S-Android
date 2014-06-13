@@ -36,10 +36,6 @@ typedef enum
     kAlertResultErrMaxPrinters,
     kAlertResultErrPrinterNotFound,
     kAlertResultErrPrinterDuplicate,
-    kAlertResultErrPrinterCannotBeAdded,
-    
-    // error when deleting
-    kAlertResultErrDelete,
     
     // error when opening PDF
     kAlertResultErrFileHasOpenPassword,
@@ -51,8 +47,8 @@ typedef enum
     kAlertResultPrintFailed,
     kAlertResultPrintSuccessful,
     
-    // default error message
-    kAlertResultErrDefault
+    // db-related errors
+    kAlertResultErrDB
     
 } kAlertResult;
 

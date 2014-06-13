@@ -264,6 +264,7 @@
     void (^confirmed)(CXAlertView*, CXAlertButtonItem*) = ^void(CXAlertView* alertView, CXAlertButtonItem* button)
     {
         [weakSelf deletePrinter];
+        [weakSelf removeDeleteState];
         [alertView dismiss];
         [deleteButton keepHighlighted:NO];
         [deleteButton setHighlighted:NO];
@@ -507,7 +508,7 @@
     }
     else
     {
-        [AlertHelper displayResult:kAlertResultErrDelete
+        [AlertHelper displayResult:kAlertResultErrDB
                          withTitle:kAlertTitlePrinters
                        withDetails:nil];
     }
