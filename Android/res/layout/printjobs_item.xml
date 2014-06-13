@@ -36,6 +36,7 @@
             android:visibility="gone" />
 
         <TextView
+            style="@style/EllipsizeText"
             android:id="@+id/printJobName"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -44,9 +45,7 @@
             android:layout_gravity="left|center_vertical"
             android:layout_marginLeft="@dimen/printjob_separator_padding"
             android:layout_toLeftOf="@+id/dateAndButtonContainer"
-            android:ellipsize="middle"
             android:gravity="center_vertical"
-            android:singleLine="true"
             android:textColor="@drawable/selector_jobs_textcolor" />
 
         <FrameLayout

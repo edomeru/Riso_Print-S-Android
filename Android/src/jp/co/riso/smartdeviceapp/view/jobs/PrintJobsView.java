@@ -28,14 +28,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.os.Process;
 
 public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListener {
     private static final int SWIPE_THRESHOLD = 50;
     private static final int MIN_COLUMNS = 2;
     
     private WeakReference<PrintJobsViewListener> mListenerRef;
-    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();;
-    private List<Printer> mPrinters = new ArrayList<Printer>();;
+    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
+    private List<Printer> mPrinters = new ArrayList<Printer>();
     private List<Printer> mCollapsedPrinters = new ArrayList<Printer>();
     private List<LinearLayout> mColumns = new ArrayList<LinearLayout>();
     private List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<PrintJobsGroupView>();
@@ -614,14 +615,15 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * Background Thread for creating PrintJobsGroupViews
      */
     private class ViewCreationThread extends Thread {
-        private boolean mIsRunning = true;
+        private volatile boolean mIsRunning = true;
         
-        public void setIsRunning(boolean b) {
+        public synchronized void setIsRunning(boolean b) {
             mIsRunning = b;
         }
         
         @Override
         public void run() {
+            Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             int jobCtr = 0;
             int start = 0;
             for (int j = 0; j < mPrinters.size(); j++) {
