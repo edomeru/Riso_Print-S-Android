@@ -19,8 +19,8 @@ typedef enum {
 } kColorMode;
 
 typedef enum {
-    kPaperSizeA3W,
     kPaperSizeA3,
+    kPaperSizeA3W,
     kPaperSizeA4,
     kPaperSizeA5,
     kPaperSizeA6,

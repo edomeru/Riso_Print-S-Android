@@ -81,6 +81,11 @@
  */
 - (BOOL)shouldInvertImage;
 
+/**
+ Determines whether or not a rect is landscape
+ */
+- (BOOL) isSizeLandscape:(CGSize)rect;
+
 @end
 
 @implementation PDFRenderOperation
@@ -151,9 +156,11 @@
             return;
         }
         
+        __weak PDFRenderOperation *weakSelf = self;
+        
         // Render pages
         [self.pageIndices enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            NSNumber *index = obj;
+            __block NSNumber *index = obj;
             self.currentPage = [index unsignedIntegerValue];
             self.isFrontPage = ((self.currentPage % 2) == 0); //front side if index is even
             
@@ -176,7 +183,7 @@
             // Render page
             [self drawPagesInContext:contextRef];
             if (self.currentPage > 0 && self.isFrontPage == YES &&
-                (self.previewSetting.bookletLayout != kBookletTypeOff || self.previewSetting.duplex != kDuplexSettingOff))
+                (self.previewSetting.booklet == YES || self.previewSetting.duplex != kDuplexSettingOff))
             {
                 [self drawPaperEdgeLineInContext:contextRef];
             }
@@ -195,10 +202,10 @@
             UIImage *image = [UIImage imageWithCGImage:imageRef scale:screenScale orientation:UIImageOrientationUp];
             [self.images setObject:image forKey:index];
             CGImageRelease(imageRef);
-            dispatch_sync(dispatch_get_main_queue(), ^(void)
+            dispatch_async(dispatch_get_main_queue(), ^(void)
             {
                 // Notify delegate that a page has finished rendering
-                [self.delegate renderOperation:self didFinishRenderingImageForPage:index];
+                [weakSelf.delegate renderOperation:self didFinishRenderingImageForPage:index];
             });
         }];
         
@@ -336,8 +343,6 @@
     paperSize.height /= 2.0f;
     
     CGRect topLeft = CGRectMake(0.0f, 0.0f, layerSize.width / 2.0f, layerSize.height);
-    /*CGRect topRight = CGRectMake(self.size.width / 2.0f, 0.0f, layerSize.width, layerSize.height);
-    CGRect bottomLeft = CGRectMake(0.0f, self.size.height / 2.0f, layerSize.width, layerSize.height);*/
     CGRect topRight = CGRectOffset(topLeft, self.size.width / 2.0f, 0.0f);
     CGRect bottomLeft = CGRectOffset(topLeft, 0.0f, self.size.height / 2.0f);
     CGRect bottomRight = CGRectOffset(topLeft, self.size.width / 2.0f, self.size.height / 2.0f);
@@ -419,6 +424,18 @@
     CGRect cropRect = CGPDFPageGetBoxRect(pageRef, kCGPDFCropBox);
     
     CGContextSaveGState(contextRef);
+   
+    // Rotate page depending on PDF orientation
+    BOOL isPageLandscape = [self isSizeLandscape:size];
+    BOOL isPDFLandscape = [self isSizeLandscape:pdfRect.size];
+    
+    if (isPageLandscape != isPDFLandscape)
+    {
+        CGContextTranslateCTM(contextRef, size.width / 2.0f, size.height / 2.0f);
+        CGContextRotateCTM(contextRef, -M_PI_2);
+        CGContextTranslateCTM(contextRef, -size.height / 2.0f, -size.width / 2.0f);
+        size = CGSizeMake(size.height, size.width);
+    }
     
     // Invert Y - required by CGContextDrawPDFPage
     CGContextScaleCTM(contextRef, 1.0f, -1.0f);
@@ -563,6 +580,11 @@
         }
     }
     return NO;
+}
+
+- (BOOL) isSizeLandscape:(CGSize)size
+{
+    return (size.width > size.height);
 }
 
 @end
