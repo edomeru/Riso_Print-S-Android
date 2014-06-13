@@ -131,7 +131,6 @@
 "IDS_ERR_MSG_CANNOT_ADD_PRINTER" = "Printer already exists in saved printers list.";
 "IDS_ERR_MSG_INVALID_IP_ADDRESS" = "Please enter a valid IP Address.";
 "IDS_ERR_MSG_MAX_PRINTER_COUNT" = "Saved Printer reached maximum count.";
-"IDS_ERR_MSG_DELETE_FAILED" = "Unable to delete.";
 "IDS_ERR_MSG_NO_SELECTED_PRINTER" = "Please register a printer";
 "IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "Please check the password you entered";
 "IDS_ERR_MSG_OPEN_FAILED" = "Please select a valid file.";
@@ -140,4 +139,5 @@
 "IDS_ERR_MSG_FILE_TOO_LARGE" = "File size is too large";
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "Not enough free space on device";
 "IDS_ERR_MSG_NETWORK_ERROR" = "No network available.";
+"IDS_ERR_MSG_DB_FAILURE" = "The operation cannot be completed.";
 
