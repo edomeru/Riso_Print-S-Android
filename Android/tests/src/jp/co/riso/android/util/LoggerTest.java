@@ -268,8 +268,6 @@ public class LoggerTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
         try {
             Logger.logStopTime(getActivity(), LoggerTest.class, "PROCESS1");
-            
-            assertTrue(Logger.getLogString(getActivity()) == null);
         } catch (Exception e) {
             fail("Should not throw any exception");
         }

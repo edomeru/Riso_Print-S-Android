@@ -296,8 +296,9 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
         assertNotNull(mPrintSettings.formattedString());
         assertFalse(mPrintSettings.formattedString().isEmpty());
-        assertFalse(mPrintSettings.formattedString().contains("loginId=test\n"));
-        assertFalse(mPrintSettings.formattedString().contains("pinCode=1234\n"));
+        assertTrue(mPrintSettings.formattedString().contains("securePrint=0\n"));
+        assertTrue(mPrintSettings.formattedString().contains("loginId=test\n"));
+        assertTrue(mPrintSettings.formattedString().contains("pinCode=1234\n"));
 
         String formattedString = mPrintSettings.formattedString(); // for comparison
 
@@ -308,7 +309,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertNotNull(mPrintSettings.formattedString());
         assertFalse(mPrintSettings.formattedString().isEmpty());
         assertFalse(mPrintSettings.formattedString().equals(formattedString));
-        assertTrue(mPrintSettings.formattedString().contains(formattedString));
+        assertTrue(mPrintSettings.formattedString().contains("securePrint=1\n"));
         assertTrue(mPrintSettings.formattedString().contains("loginId=test\n"));
         assertTrue(mPrintSettings.formattedString().contains("pinCode=1234\n"));
     }
