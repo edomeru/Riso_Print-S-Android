@@ -365,6 +365,7 @@
         
         self.toDeleteIndexPath = nil;
         
+        //remove switchPreviousState of the deleted printer
         [self.switchPreviousState removeObjectAtIndex:index];
     }
     else
@@ -428,6 +429,13 @@
     else
     {
         [self.collectionView reloadData];
+    }
+    
+    //reset switchPreviousState when a printer is added.
+    [self.switchPreviousState removeAllObjects];
+    for(int i=0; i<[[PrinterManager sharedPrinterManager] countSavedPrinters]; i++)
+    {
+        [self.switchPreviousState addObject:[NSNumber numberWithBool:NO]];
     }
 }
 
