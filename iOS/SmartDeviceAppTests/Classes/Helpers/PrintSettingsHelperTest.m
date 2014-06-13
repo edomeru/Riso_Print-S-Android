@@ -85,7 +85,7 @@
                         [NSNumber numberWithInt:1], //copies
                         [NSNumber numberWithInt:0], //duplex
                         [NSNumber numberWithInt:2], //paper size
-                        [NSNumber numberWithInt:0], //scale to fit
+                        [NSNumber numberWithInt:1], //scale to fit
                         [NSNumber numberWithInt:0], //paper type
                         [NSNumber numberWithInt:0], //input tray
                         [NSNumber numberWithInt:0], //imposition

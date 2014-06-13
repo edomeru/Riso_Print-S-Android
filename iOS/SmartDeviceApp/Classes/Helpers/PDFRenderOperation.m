@@ -466,7 +466,7 @@
     {
         if (self.previewSetting.orientation == kOrientationPortrait)
         {
-            if (self.previewSetting.bookletLayout == kBookletLayoutLeftToRight)
+            if (self.previewSetting.bookletLayout == kBookletLayoutForward)
             {
                 startPoint = CGPointMake(0.0f, 0.0f);
                 endPoint = CGPointMake(0.0f, self.size.height);
@@ -479,8 +479,16 @@
         }
         else
         {
-            startPoint = CGPointMake(0.0f, 0.0f);
-            endPoint = CGPointMake(self.size.width, 0.0f);
+            if (self.previewSetting.bookletLayout == kBookletLayoutForward)
+            {
+                startPoint = CGPointMake(0.0f, 0.0f);
+                endPoint = CGPointMake(self.size.width, 0.0f);
+            }
+            else
+            {
+                startPoint = CGPointMake(0.0f, self.size.height);
+                endPoint = CGPointMake(self.size.width, self.size.height);
+            }
         }
     }
     else if (self.previewSetting.booklet == NO && self.previewSetting.duplex != kDuplexSettingOff)

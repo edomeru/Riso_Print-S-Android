@@ -285,16 +285,13 @@
     PreviewSetting *previewSettingData = [[PreviewSetting alloc] init];
     
     previewSettingData.booklet = YES;
-    previewSettingData.bookletLayout = kBookletLayoutTopToBottom;
-    previewSettingData.orientation = kOrientationPortrait;
+    previewSettingData.bookletLayout = kBookletLayoutForward;
+    previewSettingData.orientation = kOrientationLandscape;
     previewSettingData.imposition = kImpositionOff;
 
     GHAssertFalse([PrintPreviewHelper isPaperLandscapeForPreviewSetting:previewSettingData], @"");
     
-    previewSettingData.bookletLayout = kBookletLayoutLeftToRight;
-    GHAssertTrue([PrintPreviewHelper isPaperLandscapeForPreviewSetting:previewSettingData], @"");
-    
-    previewSettingData.bookletLayout = kBookletLayoutRightToLeft;
+    previewSettingData.orientation = kOrientationPortrait;
     GHAssertTrue([PrintPreviewHelper isPaperLandscapeForPreviewSetting:previewSettingData], @"");
     
     previewSettingData.booklet = NO;

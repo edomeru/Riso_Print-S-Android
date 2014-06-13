@@ -406,7 +406,7 @@
     if(self.printDocument.previewSetting.booklet == YES)
     {
         spineLocation = UIPageViewControllerSpineLocationMid;
-        if(self.printDocument.previewSetting.bookletLayout == kBookletLayoutTopToBottom)
+        if(self.printDocument.previewSetting.orientation == kOrientationLandscape)
         {
             navOrientation = UIPageViewControllerNavigationOrientationVertical;
         }
@@ -498,7 +498,7 @@
     {
         //the two pages provided are reversed if right side finishing or booklet with right to left layout
         BOOL isReversed = (self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
-                           (self.printDocument.previewSetting.booklet == YES && self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft));
+                           (self.printDocument.previewSetting.booklet == YES && self.printDocument.previewSetting.bookletLayout == kBookletLayoutReverse));
         
         if(pageIndex == 0)//if first index, provide the last bookend page as the other half
         {
@@ -711,7 +711,7 @@
     //if right to left paging, reverse provided pages
     if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
        (self.printDocument.previewSetting.booklet == YES &&
-        self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
+        self.printDocument.previewSetting.bookletLayout == kBookletLayoutReverse))
     {
         return [self nextViewController:index];
     }
@@ -728,7 +728,7 @@
    //if right to left paging, reverse provided pages
     if(self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
        (self.printDocument.previewSetting.booklet == YES &&
-        self.printDocument.previewSetting.bookletLayout == kBookletLayoutRightToLeft))
+        self.printDocument.previewSetting.bookletLayout == kBookletLayoutReverse))
     {
         return [self previousViewController:index];
     }
@@ -855,6 +855,9 @@
                                         KEY_PAPER_TYPE,
                                         KEY_SORT,
                                         KEY_INPUT_TRAY,
+                                        KEY_BOOKLET_FINISH,
+                                        KEY_STAPLE,
+                                        KEY_PUNCH,
                                         nil];
     return [nonPreviewSettingKeys containsObject:settingKey];
 }
