@@ -162,29 +162,10 @@
         }
     }
     
-    if ([self.key isEqualToString:KEY_BOOKLET_LAYOUT] == YES)
-    {
-        if ([option isEqualToString:@"ids_lbl_booklet_layout_lr"] == YES ||
-            [option isEqualToString:@"ids_lbl_booklet_layout_rl"] == YES)
-        {
-            if (self.previewSetting.orientation == kOrientationLandscape)
-            {
-                return NO;
-            }
-        }
-        else
-        {
-            if (self.previewSetting.orientation == kOrientationPortrait)
-            {
-                return NO;
-            }
-        }
-    }
-
 #if OUTPUT_TRAY_CONSTRAINT_ENABLED
     if([self.key isEqualToString:KEY_OUTPUT_TRAY] == YES)
     {
-        if(self.previewSetting.booklet == YES)
+        if(self.previewSetting.bookletFinish != kBookletTypeOff)
         {
             if([option isEqualToString:@"ids_lbl_outputtray_auto"] == NO)
             {

@@ -15,6 +15,7 @@
 #import "UIColor+Theme.h"
 #import "AlertHelper.h"
 #import "PrintJobHistoryHelper.h"
+#import "AppSettings.h"
 #include "common.h"
 
 #define PROGRESS_WIDTH 280.0f
@@ -131,8 +132,13 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     NSString *fileName = self.printDocument.name;
     NSString *ipAddress = [self.printDocument.printer ip_address];
     NSString *printSettings = [self.printDocument.previewSetting formattedString];
+    NSString* loginId = [[NSUserDefaults standardUserDefaults] valueForKey:KEY_APPSETTINGS_LOGIN_ID];
+    if (loginId == nil)
+    {
+        loginId = @"";
+    }
     
-    self.job = directprint_job_new([NSLocalizedString(IDS_APP_NAME, @"") UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
+    self.job = directprint_job_new([loginId UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
     directprint_job_set_caller_data(self.job, (void *)CFBridgingRetain(self));
     UIView *progressView = [self createProgressView];
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_INFO_MSG_PRINTING, @"") contentView:progressView cancelButtonTitle:nil];

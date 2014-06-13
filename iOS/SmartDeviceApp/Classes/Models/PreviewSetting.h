@@ -25,6 +25,7 @@
 #define KEY_PAPER_TYPE          @"paperType"
 #define KEY_SECURE_PRINT        @"securePrint"
 #define KEY_PIN_CODE            @"pinCode"
+#define KEY_LOGIN_ID            @"loginId"
 
 @interface PreviewSetting : NSObject
 @property (nonatomic) NSInteger colorMode;

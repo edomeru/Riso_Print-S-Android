@@ -12,8 +12,8 @@
 #define MM_PER_INCH 25.4f //1 inch == ~25.4 mm
 
 CGSize paperDimensionsMM[] = {
-    {306.0f, 460.0f}, // A3W
     {297.0f, 420.0f}, // A3
+    {316.0f, 460.0f}, // A3W
     {210.0f, 297.0f}, // A4
     {148.0f, 210.0f}, // A5
     {105.0f, 148.0f}, // A6
@@ -71,7 +71,7 @@ CGSize paperDimensionsMM[] = {
     
     if(setting.booklet == YES)
     {
-        if(setting.bookletLayout != kBookletLayoutTopToBottom)
+        if(setting.orientation == kOrientationPortrait)
         {
             return YES;
         }
