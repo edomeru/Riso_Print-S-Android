@@ -148,12 +148,14 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     @Override
     public void deletePrinterFromList(Printer printer) {
         mPrinters.remove(printer);
+        mPrintJobsView.deletePrinterFromList(printer);
     }
     
     /** {@inheritDoc} */
     @Override
     public void deleteJobFromList(PrintJob printJob) {
         mPrintJobs.remove(printJob);
+        mPrintJobsView.deleteJobFromList(printJob);
         if (mPrintJobs.isEmpty()) {
             showEmptyText();
         }

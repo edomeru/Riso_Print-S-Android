@@ -141,7 +141,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      */
     public void restoreState(boolean isCollapsed, Printer printerToDelete, PrintJob jobToDelete) {
         boolean isDeleteAllClicked = printerToDelete != null && printerToDelete.equals(mPrinter);
-
+        boolean isDeleteShown = jobToDelete != null && mPrintJobs.contains(jobToDelete);
+        
         if (isCollapsed) {
             animateCollapse(false);
             mIsCollapsed = isCollapsed;
@@ -152,7 +153,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mPrintGroupView.findViewWithTag(printerToDelete).setSelected(true);
         }
         
-        mGroupListener.setDeletePrintJob(this, jobToDelete);
+        if (isDeleteShown) {
+            mGroupListener.setDeletePrintJob(this, jobToDelete);
+        }
     }
     
     /**
