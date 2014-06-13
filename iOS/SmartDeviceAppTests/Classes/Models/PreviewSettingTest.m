@@ -97,10 +97,13 @@
     GHAssertNotNil(formattedString, @"formattedString must not be nil.");
     NSString *loginIdField = @"loginId=user\n";
     NSString *pinCodeField = @"pinCode=1234\n";
+    NSString *securePrint = @"securePrint=1";
     NSRange rangeLogin = [formattedString rangeOfString:loginIdField];
     GHAssertTrue(rangeLogin.location != NSNotFound, @"Formatted string should have login ID.");
     NSRange rangePinCode = [formattedString rangeOfString:pinCodeField];
     GHAssertTrue(rangePinCode.location != NSNotFound, @"Formatted string should have pin code.");
+    NSRange rangeSecurePrint = [formattedString rangeOfString:securePrint];
+    GHAssertTrue(rangeSecurePrint.location != NSNotFound, @"Formatted string should have secure print.");
 }
 
 - (void)testFormattedString_SecurePrint_Empty
@@ -121,10 +124,13 @@
     GHAssertNotNil(formattedString, @"formattedString must not be nil.");
     NSString *loginIdField = @"loginId=\n";
     NSString *pinCodeField = @"pinCode=\n";
+    NSString *securePrint = @"securePrint=1";
     NSRange rangeLogin = [formattedString rangeOfString:loginIdField];
     GHAssertTrue(rangeLogin.location != NSNotFound, @"Formatted string should have login ID.");
     NSRange rangePinCode = [formattedString rangeOfString:pinCodeField];
     GHAssertTrue(rangePinCode.location != NSNotFound, @"Formatted string should have pin code.");
+    NSRange rangeSecurePrint = [formattedString rangeOfString:securePrint];
+    GHAssertTrue(rangeSecurePrint.location != NSNotFound, @"Formatted string should have secure print.");
 }
 
 - (void)testFormattedString_PrinterSettingsNil
