@@ -59,8 +59,10 @@ public class PrintJobManagerTest extends AndroidTestCase {
         // set printers
         db.delete(TABLE_PRINTER, null, null);
         ContentValues pvalues = new ContentValues();
+        pvalues.put(C_PRN_ID, 1);
         pvalues.put(C_PRN_NAME, mPrinterName1);
         db.insert(TABLE_PRINTER, "true", pvalues);
+        pvalues.put(C_PRN_ID, 2);
         pvalues.put(C_PRN_NAME, mPrinterName2);
         db.insert(TABLE_PRINTER, "true", pvalues);
         Cursor c = db.query(TABLE_PRINTER, null, null, null, null, null, null);
@@ -494,6 +496,53 @@ public class PrintJobManagerTest extends AndroidTestCase {
                 cur.getString(cur.getColumnIndex(C_PJB_NAME)));
         assertEquals("2014-03-17 13:12:11",
                 cur.getString(cur.getColumnIndex(C_PJB_DATE)));
+        assertEquals(JobResult.ERROR.ordinal(),
+                cur.getInt(cur.getColumnIndex(C_PJB_RESULT)));
+
+        cur.close();
+        db.close();
+    }
+
+    public void testCreatePrintJob_Max() {
+        boolean result = false;
+
+        SQLiteDatabase db = mManager.getWritableDatabase();
+        db.delete(TABLE, null, null);
+  
+
+        for (int j = 1; j <= 100; j++) {
+            String sql = String.format(Locale.getDefault(), "INSERT INTO PrintJob" +
+                    "(prn_id, pjb_name, pjb_date, pjb_result) VALUES ('%d', '%s', '%s', '%d')",
+                    1, "Print Job " + j, PrintJobManager.convertDateToString(new Date()), j % 2);
+            db.execSQL(sql);
+        }
+        db.close();
+        
+
+        result = mPrintJobManager.createPrintJob(1, "printjob.pdf", new Date(),
+                JobResult.ERROR);
+        assertTrue(result);
+
+        assertTrue(mPrintJobManager.isRefreshFlag());
+
+        db = mManager.getReadableDatabase();
+
+        Cursor cur = db.query(TABLE, null, null, null, null, null, "pjb_id ASC");
+        assertNotNull(cur);
+
+        assertEquals(100, cur.getCount());
+        
+        // Print Job 1 will be deleted and Print Job 2 will be retrieved as first entry 
+        cur.moveToFirst();
+        assertEquals(cur.getString(cur.getColumnIndex("pjb_id")), "Print Job 2",
+                cur.getString(cur.getColumnIndex(C_PJB_NAME)));
+        assertEquals(JobResult.SUCCESSFUL.ordinal(),
+                cur.getInt(cur.getColumnIndex(C_PJB_RESULT)));
+
+        cur.moveToLast();
+
+        assertEquals("printjob.pdf",
+                cur.getString(cur.getColumnIndex(C_PJB_NAME)));
         assertEquals(JobResult.ERROR.ordinal(),
                 cur.getInt(cur.getColumnIndex(C_PJB_RESULT)));
 
