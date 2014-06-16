@@ -10,6 +10,7 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
@@ -54,6 +55,11 @@ namespace SmartDeviceApp.Controllers
         /// File name of the actual PDF file
         /// </summary>
         public string FileName { get; private set; }
+
+        /// <summary>
+        /// True when PDF is portrait, false otherwise
+        /// </summary>
+        public bool IsPdfPortrait { get; private set; }
 
         /// <summary>
         /// PDF loading result
@@ -105,6 +111,7 @@ namespace SmartDeviceApp.Controllers
                 PageCount = pdfDocument.PageCount;
                 FileName = file.Name;
                 Result = LoadDocumentResult.Successful;
+                GetPdfOrientation();
 
                 GenerateLogicalPageImages(0, MAX_LOGICAL_PAGE_IMAGE_CACHE, new CancellationTokenSource());
             }
@@ -241,22 +248,43 @@ namespace SmartDeviceApp.Controllers
                 using (IRandomAccessStream raStream = new MemoryStream().AsRandomAccessStream())
                 {
                     PdfPageRenderOptions options = new PdfPageRenderOptions();
-                    options.DestinationWidth = (uint)pdfPage.Size.Width;
-                    options.DestinationHeight = (uint)pdfPage.Size.Height;
+                    double dpiScaleFactor = ImageConstant.GetDpiScaleFactor();
+                    if (dpiScaleFactor > 1.0)
+                    {
+                        options.DestinationWidth = (uint)(pdfPage.Size.Width / dpiScaleFactor);
+                        options.DestinationHeight = (uint)(pdfPage.Size.Height / dpiScaleFactor);
+                    }
+                    else
+                    {
+                        options.DestinationWidth = (uint)(pdfPage.Size.Width * dpiScaleFactor);
+                        options.DestinationHeight = (uint)(pdfPage.Size.Height * dpiScaleFactor);
+                    }
+                    options.BackgroundColor = Windows.UI.Colors.White;
                     await pdfPage.RenderToStreamAsync(raStream, options);
-                    WriteableBitmap pageBitmap = new WriteableBitmap((int)pdfPage.Size.Width,
-                        (int)pdfPage.Size.Height);
+                    WriteableBitmap pageBitmap = new WriteableBitmap((int)options.DestinationWidth,
+                        (int)options.DestinationHeight);
                     pageBitmap = await WriteableBitmapExtensions.FromStream(pageBitmap, raStream);
 
                     // Needs to resize since FromStream() does not follow the size specified
                     // from the initialization of pageBitmap, even from PdfPageRenderOptions
-                    pageBitmap = WriteableBitmapExtensions.Resize(pageBitmap, (int)pdfPage.Size.Width,
-                        (int)pdfPage.Size.Height, WriteableBitmapExtensions.Interpolation.Bilinear);
+                    pageBitmap = WriteableBitmapExtensions.Resize(pageBitmap, (int)options.DestinationWidth,
+                        (int)options.DestinationHeight, WriteableBitmapExtensions.Interpolation.Bilinear);
 
                     await raStream.FlushAsync();
 
                     return pageBitmap;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Determines the orientation of the PDF document based on its initial page
+        /// </summary>
+        private void GetPdfOrientation()
+        {
+            using (PdfPage pdfPage = _document.PdfDocument.GetPage(0))
+            {
+                IsPdfPortrait = pdfPage.Size.Width <= pdfPage.Size.Height;
             }
         }
 

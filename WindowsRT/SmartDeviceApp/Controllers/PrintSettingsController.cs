@@ -1112,13 +1112,13 @@ namespace SmartDeviceApp.Controllers
         /// <returns>true when dependent values are updated, false otherwise</returns>
         private bool UpdateConstraintsBasedOnFinishingSide(int value, bool updateValues)
         {
-            bool isUpdated = false;
+            bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
             _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
-                return isUpdated;
+                return isValueUpdated;
             }
 
             PrintSetting staplePrintSetting =
@@ -1133,7 +1133,7 @@ namespace SmartDeviceApp.Controllers
 
             if (currStaple == (int)Staple.Two)
             {
-                isUpdated = true;
+                isValueUpdated = true;
             }
 
             if (value == (int)FinishingSide.Left || value == (int)FinishingSide.Right)
@@ -1144,7 +1144,7 @@ namespace SmartDeviceApp.Controllers
                     (value == (int)FinishingSide.Right && currFinishingSide == (int)FinishingSide.Left && currStaple == (int)Staple.One) ||
                     (value == (int)FinishingSide.Right && currFinishingSide == (int)FinishingSide.Top && currStaple == (int)Staple.OneUpperLeft))
                 {
-                    isUpdated = true;
+                    isValueUpdated = true;
                 }
 
                 if (currOrientation == (int)Orientation.Landscape && currPunch == (int)Punch.FourHoles)
@@ -1156,7 +1156,7 @@ namespace SmartDeviceApp.Controllers
                         {
                             punchPrintSetting.Value = newPunch;
                             printSettings.Punch = newPunch;
-                            isUpdated = true;
+                            isValueUpdated = true;
                         }
                     }
                 }
@@ -1167,7 +1167,7 @@ namespace SmartDeviceApp.Controllers
                     {
                         staplePrintSetting.Value = (int)Staple.One;
                         printSettings.Staple = (int)Staple.One;
-                        isUpdated = true;
+                        isValueUpdated = true;
                     }
 
                     PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
@@ -1198,7 +1198,7 @@ namespace SmartDeviceApp.Controllers
                         {
                             punchPrintSetting.Value = newPunch;
                             printSettings.Punch = newPunch;
-                            isUpdated = true;
+                            isValueUpdated = true;
                         }
                     }
                 }
@@ -1211,13 +1211,13 @@ namespace SmartDeviceApp.Controllers
                         {
                             staplePrintSetting.Value = (int)Staple.OneUpperLeft;
                             printSettings.Staple = (int)Staple.OneUpperLeft;
-                            isUpdated = true;
+                            isValueUpdated = true;
                         }
                         else if (currFinishingSide == (int)FinishingSide.Right && currStaple == (int)Staple.One)
                         {
                             staplePrintSetting.Value = (int)Staple.OneUpperRight;
                             printSettings.Staple = (int)Staple.OneUpperRight;
-                            isUpdated = true;
+                            isValueUpdated = true;
                         }
                     }
 
@@ -1241,7 +1241,7 @@ namespace SmartDeviceApp.Controllers
 
             _printSettingsMap[_activeScreen] = printSettings;
 
-            return isUpdated;
+            return isValueUpdated;
         }
 
         /// <summary>
@@ -1576,6 +1576,10 @@ namespace SmartDeviceApp.Controllers
                 {
                     // No need to update preview for finishing side (since punch/staple are not updated also)
                     //isPreviewAffected = UpdateConstraintsBasedOnFinishingSide(value, true);
+                    // Update preview to update binding side for duplex
+                    isPreviewAffected = printSettings.Duplex != (int)Duplex.Off &&
+                                        ((printSettings.FinishingSide == (int)FinishingSide.Top && value != (int)FinishingSide.Top) ||
+                                         (printSettings.FinishingSide != (int)FinishingSide.Top && value == (int)FinishingSide.Top));
                     UpdateConstraintsBasedOnFinishingSide(value, true);
                     printSettings.FinishingSide = value;
                 }

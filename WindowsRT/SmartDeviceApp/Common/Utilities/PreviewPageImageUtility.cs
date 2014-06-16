@@ -16,10 +16,7 @@ using SmartDeviceApp.Common.Enum;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Common.Utilities
@@ -86,15 +83,21 @@ namespace SmartDeviceApp.Common.Utilities
         }
 
         /// <summary>
-        /// Checks if the orientation is portrait based on selected orientation
+        /// Checks preview page is portrait
         /// </summary>
         /// <param name="orientation">orientation</param>
+        /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
         /// <param name="imposition">imposition</param>
         /// <returns>true when portrait, false otherwise</returns>
-        public static bool IsPortrait(int orientation, int? imposition = null)
+        public static bool IsPreviewPagePortrait(int orientation, bool isBooklet,
+            int? imposition = null)
         {
             bool isPortrait = (orientation == (int)Orientation.Portrait);
-            if (imposition != null && imposition == (int)Imposition.TwoUp)
+            if (isBooklet)
+            {
+                isPortrait = (orientation != (int)Orientation.Portrait);
+            }
+            else if (imposition != null && imposition == (int)Imposition.TwoUp)
             {
                 isPortrait = !isPortrait;
             }
@@ -174,21 +177,30 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="canvasSize">canvas size</param>
         /// <param name="overlayBitmap">overlay image</param>
         /// <param name="overlaySize">overlay size</param>
+        /// <param name="isPdfPortrait">true when first logical page is portrait, false otherwise</param>
+        /// <param name="isPortrait">true when selected orientation is portrait, false otherwise</param>
         /// <param name="enableScaleToFit">true when fit to scale, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
         public static void OverlayImage(WriteableBitmap canvasBitmap, Size canvasSize,
-            WriteableBitmap overlayBitmap, Size overlaySize, bool enableScaleToFit,
-            CancellationTokenSource cancellationToken)
+            WriteableBitmap overlayBitmap, Size overlaySize, bool isPdfPortrait,
+            bool isPortrait, bool enableScaleToFit, CancellationTokenSource cancellationToken)
         {
             PreviewPageImageUtility.FillWhitePageImage(canvasBitmap);
+
+            bool rotateLeft = isPdfPortrait != isPortrait;
 
             if (enableScaleToFit)
             {
                 ScaleImageToFit(canvasBitmap, canvasSize, overlayBitmap, overlaySize,
-                    cancellationToken);
+                    isPdfPortrait, isPortrait, rotateLeft, cancellationToken);
             }
             else
             {
+                if (rotateLeft)
+                {
+                    overlaySize = new Size(overlaySize.Height, overlaySize.Width); // Swap dimensions
+                }
+
                 // Determine logical page size if cropping is needed
                 // If not cropped, logical page just fits into paper
                 int cropWidth = (int)canvasSize.Width;
@@ -212,11 +224,23 @@ namespace SmartDeviceApp.Common.Utilities
                 }
 
                 // Place image into paper
-                DispatcherHelper.CheckBeginInvokeOnUI(
-                    () =>
-                    {
-                        WriteableBitmapExtensions.Blit(canvasBitmap, rect, overlayBitmap, rect);
-                    });
+                if (rotateLeft)
+                {
+                    DispatcherHelper.CheckBeginInvokeOnUI(
+                        () =>
+                        {
+                            WriteableBitmapExtensions.Blit(canvasBitmap, rect,
+                                WriteableBitmapExtensions.Rotate(overlayBitmap, 270), rect);
+                        });
+                }
+                else
+                {
+                    DispatcherHelper.CheckBeginInvokeOnUI(
+                        () =>
+                        {
+                            WriteableBitmapExtensions.Blit(canvasBitmap, rect, overlayBitmap, rect);
+                        });
+                }
 
             }
         }
@@ -234,20 +258,30 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="imposition">imposition</param>
         /// <param name="impositionOrder">imposition order</param>
         /// <param name="scaleToFit">scaleToFit</param>
-        /// <param name="isPortrait">sets the new orientation based on imposition; true if portrait, false otherwise</param>
+        /// <param name="isPdfPortrait">true when first logical page is portrait, false otherwise</param>
+        /// <param name="isPortrait">true when selected orientation is portrait, false otherwise</param>
+        /// <param name="isImpositionPortrait">sets the new orientation based on imposition; true if portrait, false otherwise</param>
+        /// <param name="rotateLeft">true when rotate left is enabled, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
         public static void OverlayImagesForImposition(WriteableBitmap canvasBitmap, Size canvasSize,
             List<WriteableBitmap> overlayImages, Size overlaySize, int orientation, int imposition,
-            int impositionOrder, bool scaleToFit, out bool isPortrait, CancellationTokenSource cancellationToken)
+            int impositionOrder, bool scaleToFit, bool isPdfPortrait, bool isPortrait,
+            out bool isImpositionPortrait, CancellationTokenSource cancellationToken)
         {
             // Determine final orientation based on imposition
             int pagesPerSheet = GetPagesPerSheet(imposition);
-            isPortrait = IsPortrait(orientation, imposition);
+            bool rotateLeft = (isPdfPortrait != isPortrait);
+            isImpositionPortrait = IsPreviewPagePortrait(orientation, false, imposition);
+
+            if (rotateLeft)
+            {
+                overlaySize = new Size(overlaySize.Height, overlaySize.Width); // Swap dimensions
+            }
 
             // Compute number of pages per row and column
             int pagesPerRow = 0;
             int pagesPerColumn = 0;
-            if (isPortrait)
+            if (isImpositionPortrait)
             {
                 pagesPerColumn = (int)Math.Sqrt(pagesPerSheet);
                 pagesPerRow = pagesPerSheet / pagesPerColumn;
@@ -268,6 +302,7 @@ namespace SmartDeviceApp.Common.Utilities
             double marginBetweenPages = PrintSettingConstant.MARGIN_IMPOSITION_BETWEEN_PAGES * ImageConstant.BASE_DPI;
             Size impositionPageAreaSize = GetImpositionSinglePageAreaSize(canvasSize,
                 pagesPerRow, pagesPerColumn, marginBetweenPages, marginPaper);
+            Size scaledSize = GetScaledSize(impositionPageAreaSize, overlaySize);
 
             // Set initial positions
             double initialOffsetX = 0;
@@ -280,7 +315,7 @@ namespace SmartDeviceApp.Common.Utilities
                     (impositionPageAreaSize.Width * (pagesPerColumn - 1));
             }
             if (impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft &&
-                isPortrait)
+                isImpositionPortrait)
             {
                 initialOffsetY = (marginBetweenPages * (pagesPerRow - 1)) +
                     (impositionPageAreaSize.Height * (pagesPerRow - 1));
@@ -308,7 +343,6 @@ namespace SmartDeviceApp.Common.Utilities
                 destRect.Y = y;
                 if (scaleToFit)
                 {
-                    Size scaledSize = GetScaledSize(impositionPageAreaSize, overlaySize);
                     destRect.X += (impositionPageAreaSize.Width - scaledSize.Width) / 2;
                     destRect.Y += (impositionPageAreaSize.Height - scaledSize.Height) / 2;
                     destRect.Width = scaledSize.Width;
@@ -329,11 +363,24 @@ namespace SmartDeviceApp.Common.Utilities
                 }
                 Rect srcRect = new Rect(0, 0, overlaySize.Width, overlaySize.Height);
 
-                DispatcherHelper.CheckBeginInvokeOnUI(
-                    () =>
-                    {
-                        WriteableBitmapExtensions.Blit(canvasBitmap, destRect, impositionPageBitmap, srcRect);
-                    });
+                if (rotateLeft)
+                {
+                    DispatcherHelper.CheckBeginInvokeOnUI(
+                        () =>
+                        {
+                            WriteableBitmapExtensions.Blit(canvasBitmap, destRect,
+                                WriteableBitmapExtensions.Rotate(impositionPageBitmap, 270), srcRect);
+                        });
+                }
+                else
+                {
+                    DispatcherHelper.CheckBeginInvokeOnUI(
+                        () =>
+                        {
+                            WriteableBitmapExtensions.Blit(canvasBitmap, destRect,
+                                impositionPageBitmap, srcRect);
+                        });
+                }
 
                 // Update offset/postion based on direction
                 if (impositionOrder == (int)ImpositionOrder.TwoUpLeftToRight ||
@@ -348,7 +395,7 @@ namespace SmartDeviceApp.Common.Utilities
                     }
                 }
                 else if (impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft &&
-                    isPortrait)
+                    isImpositionPortrait)
                 {
                     // Lower left to right
                     pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
@@ -378,7 +425,7 @@ namespace SmartDeviceApp.Common.Utilities
                         pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
                     }
                 }
-                else if ((impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft && !isPortrait) ||
+                else if ((impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft && !isImpositionPortrait) ||
                     impositionOrder == (int)ImpositionOrder.FourUpUpperRightToLeft)
                 {
                     // Upper right to left
@@ -451,7 +498,7 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="cancellationToken">cancellation token</param>
         public static void FormatPageImageForDuplex(WriteableBitmap canvasBitmap, Size canvasSize,
             int duplexType, int finishingSide, int punch, bool enabledPunchFour, int staple,
-            bool isPortrait, bool isRightSide, bool isBackSide,
+            bool isPdfPortrait, bool isPortrait, bool isRightSide, bool isBackSide,
             CancellationTokenSource cancellationToken)
         {
             // Rotate image if needed
@@ -464,7 +511,8 @@ namespace SmartDeviceApp.Common.Utilities
                     () =>
                     {
                         PreviewPageImageUtility.OverlayImage(canvasBitmap, canvasSize,
-                            WriteableBitmapExtensions.Rotate(canvasBitmap, 180), canvasSize, false, cancellationToken);
+                            WriteableBitmapExtensions.Rotate(canvasBitmap, 180), canvasSize,
+                            isPdfPortrait, isPortrait, false, cancellationToken);
                     });
                 }
 
@@ -840,16 +888,17 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="marginBetween">margin between pages (in pixels)</param>
         /// <param name="marginOuter">margin of the preview page image (in pixels)</param>
         /// <returns>size of a page for imposition</returns>
-        /// <returns>size of a page for imposition</returns>
         private static Size GetImpositionSinglePageAreaSize(Size canvasSize,
             int numRows, int numColumns, double marginBetween, double marginOuter)
         {
             Size pageAreaSize = new Size();
             if (canvasSize.Width > 0 && canvasSize.Height > 0 && numRows > 0 && numColumns > 0)
             {
-                pageAreaSize.Width = (canvasSize.Width - (marginBetween * (numColumns - 1)) - (marginOuter * 2))
+                pageAreaSize.Width =
+                    (canvasSize.Width - (marginBetween * (numColumns - 1)) - (marginOuter * 2))
                     / numColumns;
-                pageAreaSize.Height = (canvasSize.Width - (marginBetween * (numRows - 1)) - (marginOuter * 2))
+                pageAreaSize.Height =
+                    (canvasSize.Height - (marginBetween * (numRows - 1)) - (marginOuter * 2))
                     / numRows;
             }
             return pageAreaSize;
@@ -937,13 +986,22 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="canvasSize">canvas size</param>
         /// <param name="overlayBitmap">overlay image</param>
         /// <param name="overlaySize">overlay size</param>
+        /// <param name="isPdfPortrait">true when first logical page is portrait, false otherwise</param>
+        /// <param name="isPortrait">true when selected orientation is portrait, false otherwise</param>
+        /// <param name="rotateLeft">true when rotate left is enabled, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
         private static void ScaleImageToFit(WriteableBitmap canvasBitmap, Size canvasSize,
-            WriteableBitmap overlayBitmap, Size overlaySize, CancellationTokenSource cancellationToken)
+            WriteableBitmap overlayBitmap, Size overlaySize, bool isPdfPortrait, bool isPortrait,
+            bool rotateLeft, CancellationTokenSource cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
             {
                 return;
+            }
+
+            if (rotateLeft)
+            {
+                overlaySize = new Size(overlaySize.Height, overlaySize.Width); // Swap dimensions
             }
 
             Size scaledSize = GetScaledSize(canvasSize, overlaySize);
@@ -960,11 +1018,23 @@ namespace SmartDeviceApp.Common.Utilities
                 return;
             }
 
-            DispatcherHelper.CheckBeginInvokeOnUI(
-            () =>
+            if (rotateLeft)
             {
-                WriteableBitmapExtensions.Blit(canvasBitmap, destRect, overlayBitmap, srcRect);
-            });
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        WriteableBitmapExtensions.Blit(canvasBitmap, destRect,
+                            WriteableBitmapExtensions.Rotate(overlayBitmap, 270), srcRect);
+                    });
+            }
+            else
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        WriteableBitmapExtensions.Blit(canvasBitmap, destRect, overlayBitmap, srcRect);
+                    });
+            }
         }
 
         /// <summary>
@@ -979,7 +1049,8 @@ namespace SmartDeviceApp.Common.Utilities
             double scaleY = canvasSize.Height / overlaySize.Height;
             double targetScaleFactor = (scaleX < scaleY) ? scaleX : scaleY;
 
-            return new Size(overlaySize.Width * targetScaleFactor, overlaySize.Height * targetScaleFactor);
+            return new Size(overlaySize.Width * targetScaleFactor,
+                            overlaySize.Height * targetScaleFactor);
         }
 
         ///// <summary>
