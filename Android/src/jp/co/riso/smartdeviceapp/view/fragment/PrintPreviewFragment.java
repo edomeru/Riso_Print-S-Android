@@ -154,7 +154,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         
         mPrintPreviewView = (PrintPreviewView) view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
-        mPrintPreviewView.setShow3Punch(isPrinterJapanese());
+        //mPrintPreviewView.setShow3Punch(isPrinterJapanese());
         mPrintPreviewView.setPrintSettings(mPrintSettings);
         mPrintPreviewView.setBmpCache(mBmpCache);
         mPrintPreviewView.setListener(this);
@@ -298,7 +298,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public void setPrintId(int printerId) {
         mPrinterId = printerId;
         if (mPrintPreviewView != null) {
-            mPrintPreviewView.setShow3Punch(isPrinterJapanese());
+            //mPrintPreviewView.setShow3Punch(isPrinterJapanese());
             mPrintPreviewView.refreshView();
         }
     }
