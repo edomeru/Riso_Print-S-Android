@@ -702,36 +702,6 @@ namespace SmartDeviceApp.Controllers
                         }
                     }
                 }
-                if (currBooklet && currBookletLayout != (int)BookletLayout.TopToBottom)
-                {
-                    if (bookletLayoutPrintSetting != null)
-                    {
-                        PrintSettingOption leftToRight = GetPrintSettingOption(bookletLayoutPrintSetting,
-                            (int)BookletLayout.LeftToRight);
-                        if (leftToRight != null)
-                        {
-                            leftToRight.IsEnabled = false;
-                        }
-                        PrintSettingOption rightToLeft = GetPrintSettingOption(bookletLayoutPrintSetting,
-                            (int)BookletLayout.RightToLeft);
-                        if (rightToLeft != null)
-                        {
-                            rightToLeft.IsEnabled = false;
-                        }
-                        PrintSettingOption topToBottom = GetPrintSettingOption(bookletLayoutPrintSetting,
-                            (int)BookletLayout.TopToBottom);
-                        if (topToBottom != null)
-                        {
-                            topToBottom.IsEnabled = true;
-                        }
-
-                        if (updateValues)
-                        {
-                            bookletLayoutPrintSetting.Value = (int)BookletLayout.TopToBottom;
-                            printSettings.BookletLayout = (int)BookletLayout.TopToBottom;
-                        }
-                    }
-                }
                 isValueUpdated = true;
             }
             else if (value == (int)Orientation.Portrait)
@@ -746,37 +716,6 @@ namespace SmartDeviceApp.Controllers
                         {
                             punchPrintSetting.Value = newPunch;
                             printSettings.Punch = newPunch;
-                        }
-                    }
-                }
-                if (currBooklet && currBookletLayout == (int)BookletLayout.TopToBottom)
-                {
-                    if (bookletLayoutPrintSetting != null)
-                    {
-                        PrintSettingOption leftToRight = GetPrintSettingOption(bookletLayoutPrintSetting,
-                            (int)BookletLayout.LeftToRight);
-                        if (leftToRight != null)
-                        {
-                            leftToRight.IsEnabled = true;
-                        }
-                        PrintSettingOption rightToLeft = GetPrintSettingOption(bookletLayoutPrintSetting,
-                            (int)BookletLayout.RightToLeft);
-                        if (rightToLeft != null)
-                        {
-                            rightToLeft.IsEnabled = true;
-                        }
-                        PrintSettingOption topToBottom = GetPrintSettingOption(bookletLayoutPrintSetting,
-                            (int)BookletLayout.TopToBottom);
-                        if (topToBottom != null)
-                        {
-                            topToBottom.IsEnabled = false;
-                        }
-
-                        int newBookletLayout = (int)bookletLayoutPrintSetting.Default; // Left to Right
-                        if (updateValues)
-                        {
-                            bookletLayoutPrintSetting.Value = newBookletLayout;
-                            printSettings.BookletLayout = newBookletLayout;
                         }
                     }
                 }
@@ -1081,32 +1020,6 @@ namespace SmartDeviceApp.Controllers
                 {
                     bookletLayoutPrintSetting.IsEnabled = true;
                     bookletLayoutPrintSetting.IsValueDisplayed = true;
-
-                    bool isPortrait = (currOrientation == (int)Orientation.Portrait);
-                    PrintSettingOption leftToRight = GetPrintSettingOption(bookletLayoutPrintSetting,
-                        (int)BookletLayout.LeftToRight);
-                    if (leftToRight != null)
-                    {
-                        leftToRight.IsEnabled = isPortrait;
-                    }
-                    PrintSettingOption rightToLeft = GetPrintSettingOption(bookletLayoutPrintSetting,
-                        (int)BookletLayout.RightToLeft);
-                    if (rightToLeft != null)
-                    {
-                        rightToLeft.IsEnabled = isPortrait;
-                    }
-                    PrintSettingOption topToBottom = GetPrintSettingOption(bookletLayoutPrintSetting,
-                        (int)BookletLayout.TopToBottom);
-                    if (topToBottom != null)
-                    {
-                        topToBottom.IsEnabled = !isPortrait;
-                    }
-                    if (updateValues)
-                    {
-                        int newBookletLayout = (isPortrait) ? (int)bookletLayoutPrintSetting.Default : (int)BookletLayout.TopToBottom;
-                        bookletLayoutPrintSetting.Value = newBookletLayout;
-                        printSettings.BookletLayout = newBookletLayout;
-                    }
                 }
                 isValueUpdated = true;
             }

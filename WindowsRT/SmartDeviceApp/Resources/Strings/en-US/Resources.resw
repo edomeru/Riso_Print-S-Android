@@ -396,14 +396,11 @@
   <data name="IDS_LBL_BOOKLET_LAYOUT" xml:space="preserve">
     <value>Booklet Layout</value>
   </data>
-  <data name="IDS_LBL_BOOKLET_LAYOUT_LR" xml:space="preserve">
-    <value>Left to right</value>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_FORWARD" xml:space="preserve">
+    <value>Forward</value>
   </data>
-  <data name="IDS_LBL_BOOKLET_LAYOUT_RL" xml:space="preserve">
-    <value>Right to left</value>
-  </data>
-  <data name="IDS_LBL_BOOKLET_LAYOUT_TB" xml:space="preserve">
-    <value>Top to bottom</value>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_REVERSE" xml:space="preserve">
+    <value>Reverse</value>
   </data>
   <data name="IDS_LBL_FINISHINGSIDE" xml:space="preserve">
     <value>Binding side</value>

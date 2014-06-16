@@ -326,9 +326,9 @@ namespace SmartDeviceApp.Controllers
             {
                 Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
                 bool isPortrait = PreviewPageImageUtility.IsPortrait(_currPrintSettings.Orientation,
-                    _isBooklet, _currPrintSettings.BookletLayout, _currPrintSettings.Imposition);
+                    _currPrintSettings.Imposition);
 
-                if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
+                if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse)
                 {
                     _printPreviewViewModel.IsReverseSwipe = true;
                 }
@@ -337,7 +337,7 @@ namespace SmartDeviceApp.Controllers
                     _printPreviewViewModel.IsReverseSwipe = false;
                 }
 
-                if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.TopToBottom)
+                if (_isBooklet && !isPortrait)
                 {
                     _printPreviewViewModel.IsHorizontalSwipeEnabled = false;
                 }
@@ -510,7 +510,7 @@ namespace SmartDeviceApp.Controllers
 
             _currLeftPageIndex = rightPageIndex - 1;
             _currRightPageIndex = rightPageIndex;
-            if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
+            if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse)
             {
                 _currLeftPageIndex = rightPageIndex;
                 _currRightPageIndex = rightPageIndex - 1;
@@ -659,8 +659,7 @@ namespace SmartDeviceApp.Controllers
 
             Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
 
-            bool isPortrait = PreviewPageImageUtility.IsPortrait(_currPrintSettings.Orientation,
-                _isBooklet, _currPrintSettings.BookletLayout);
+            bool isPortrait = PreviewPageImageUtility.IsPortrait(_currPrintSettings.Orientation);
 
             if (logicalPageImages != null && logicalPageImages.Count > 0)
             {

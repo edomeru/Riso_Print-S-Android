@@ -86,23 +86,15 @@ namespace SmartDeviceApp.Common.Utilities
         }
 
         /// <summary>
-        /// Checks if the orientation is portrait based on selected orientation (when booklet is off)
-        /// or based on selected booklet layout (when booklet is on)
+        /// Checks if the orientation is portrait based on selected orientation
         /// </summary>
         /// <param name="orientation">orientation</param>
-        /// <param name="isBooklet">true when booklet is enabled, false othwerise</param>
-        /// <param name="bookletLayout">booklet layout</param>
         /// <param name="imposition">imposition</param>
         /// <returns>true when portrait, false otherwise</returns>
-        public static bool IsPortrait(int orientation, bool isBooklet, int bookletLayout,
-            int? imposition = null)
+        public static bool IsPortrait(int orientation, int? imposition = null)
         {
             bool isPortrait = (orientation == (int)Orientation.Portrait);
-            if (isBooklet)
-            {
-                isPortrait = (bookletLayout != (int)BookletLayout.TopToBottom);
-            }
-            else if (imposition != null && imposition == (int)Imposition.TwoUp)
+            if (imposition != null && imposition == (int)Imposition.TwoUp)
             {
                 isPortrait = !isPortrait;
             }
@@ -250,7 +242,7 @@ namespace SmartDeviceApp.Common.Utilities
         {
             // Determine final orientation based on imposition
             int pagesPerSheet = GetPagesPerSheet(imposition);
-            isPortrait = IsPortrait(orientation, false, -1, imposition); // Booklet is not needed here since only imposition is applied at this point
+            isPortrait = IsPortrait(orientation, imposition);
 
             // Compute number of pages per row and column
             int pagesPerRow = 0;
