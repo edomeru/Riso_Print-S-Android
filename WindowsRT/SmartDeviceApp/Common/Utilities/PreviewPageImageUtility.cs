@@ -402,35 +402,35 @@ namespace SmartDeviceApp.Common.Utilities
         public static void GrayscalePageImage(WriteableBitmap canvasBitmap,
             CancellationTokenSource cancellationToken)
         {
-            byte[] pixelBytes = WriteableBitmapExtensions.ToByteArray(canvasBitmap);
-
-            // From http://social.msdn.microsoft.com/Forums/windowsapps/en-US/5ff10c14-51d4-4760-afe6-091624adc532/sample-code-for-making-a-bitmapimage-grayscale
-            for (int i = 0; i < pixelBytes.Length; i += 4)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                double b = (double)pixelBytes[i] / 255.0;
-                double g = (double)pixelBytes[i + 1] / 255.0;
-                double r = (double)pixelBytes[i + 2] / 255.0;
-                byte a = pixelBytes[i + 3];
-
-                // Altered color factor to be equal
-                double bwPixel = (0.3 * r + 0.59 * g + 0.11 * b) * 255;
-                byte bwPixelByte = Convert.ToByte(bwPixel);
-
-                pixelBytes[i] = bwPixelByte;
-                pixelBytes[i + 1] = bwPixelByte;
-                pixelBytes[i + 2] = bwPixelByte;
-                pixelBytes[i + 3] = a;
-            }
-
-            // Copy pixels to bitmap
             DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
                 {
+                    byte[] pixelBytes = WriteableBitmapExtensions.ToByteArray(canvasBitmap);
+
+                    // From http://social.msdn.microsoft.com/Forums/windowsapps/en-US/5ff10c14-51d4-4760-afe6-091624adc532/sample-code-for-making-a-bitmapimage-grayscale
+                    for (int i = 0; i < pixelBytes.Length; i += 4)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        double b = (double)pixelBytes[i] / 255.0;
+                        double g = (double)pixelBytes[i + 1] / 255.0;
+                        double r = (double)pixelBytes[i + 2] / 255.0;
+                        //byte a = pixelBytes[i + 3];
+
+                        // Altered color factor to be equal
+                        double bwPixel = (0.3 * r + 0.59 * g + 0.11 * b) * 255;
+                        byte bwPixelByte = Convert.ToByte(bwPixel);
+
+                        pixelBytes[i] = bwPixelByte;
+                        pixelBytes[i + 1] = bwPixelByte;
+                        pixelBytes[i + 2] = bwPixelByte;
+                        //pixelBytes[i + 3] = a;
+                    }
+
+                    // Copy new pixels to bitmap
                     WriteableBitmapExtensions.FromByteArray(canvasBitmap, pixelBytes);
                 });
         }
