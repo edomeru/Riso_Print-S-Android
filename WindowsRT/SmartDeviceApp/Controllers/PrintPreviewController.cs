@@ -611,9 +611,9 @@ namespace SmartDeviceApp.Controllers
                     (int)_previewPageImageSize.Height);
 
                 await ThreadPool.RunAsync(
-                    async (workItem) =>
+                    (workItem) =>
                     {
-                        await ApplyPrintSettings(canvasBitmap, _previewPageImageSize,
+                        ApplyPrintSettings(canvasBitmap, _previewPageImageSize,
                             logicalPageImages, logicalPageSize,
                             previewPageIndex, isRightSide, isBackSide, enableSend,
                             cancellationToken);
@@ -649,8 +649,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="isBackSide">true when duplex is on and is for back side, false otherwise</param>
         /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
-        /// <returns>task</returns>
-        private async Task ApplyPrintSettings(WriteableBitmap canvasBitmap,
+        private async void ApplyPrintSettings(WriteableBitmap canvasBitmap,
             Size previewPageSize, List<WriteableBitmap> logicalPageImages, Size logicalPageSize,
             int previewPageIndex, bool isRightSide, bool isBackSide, bool enableSend,
             CancellationTokenSource cancellationToken)
@@ -690,58 +689,59 @@ namespace SmartDeviceApp.Controllers
                     PreviewPageImageUtility.GrayscalePageImage(canvasBitmap, cancellationToken);
                 }
 
-                if (_isBooklet)
+                //if (_isBooklet)
+                //{
+                //    if (cancellationToken.IsCancellationRequested)
+                //    {
+                //        return;
+                //    }
+
+                //    await PreviewPageImageUtility.FormatPageImageForBooklet(canvasBitmap,
+                //        _currPrintSettings.BookletFinishing, isPortrait, isRightSide, isBackSide,
+                //        cancellationToken);
+                //}
+                //else if (_isDuplex)
+                if (_isDuplex)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
                         return;
                     }
 
-                    await PreviewPageImageUtility.FormatPageImageForBooklet(canvasBitmap,
-                        _currPrintSettings.BookletFinishing, isPortrait, isRightSide, isBackSide,
-                        cancellationToken);
-                }
-                else if (_isDuplex)
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
-                    await PreviewPageImageUtility.FormatPageImageForDuplex(canvasBitmap,
+                    PreviewPageImageUtility.FormatPageImageForDuplex(canvasBitmap,
                         previewPageSize,  _currPrintSettings.Duplex, _currPrintSettings.FinishingSide,
                         _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
                         _currPrintSettings.Staple, isPortrait, isRightSide, isBackSide,
                         cancellationToken);
                 }
-                else // Not duplex and not booket
-                {
-                    // Apply punch
-                    if (_currPrintSettings.Punch != (int)Punch.Off)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
+                //else // Not duplex and not booket
+                //{
+                //    // Apply punch
+                //    if (_currPrintSettings.Punch != (int)Punch.Off)
+                //    {
+                //        if (cancellationToken.IsCancellationRequested)
+                //        {
+                //            return;
+                //        }
 
-                        await PreviewPageImageUtility.OverlayPunch(canvasBitmap,
-                            _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
-                            _currPrintSettings.FinishingSide, cancellationToken);
-                    }
+                //        await PreviewPageImageUtility.OverlayPunch(canvasBitmap,
+                //            _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
+                //            _currPrintSettings.FinishingSide, cancellationToken);
+                //    }
 
-                    // Apply staple
-                    if (_currPrintSettings.Staple != (int)Staple.Off)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
+                //    // Apply staple
+                //    if (_currPrintSettings.Staple != (int)Staple.Off)
+                //    {
+                //        if (cancellationToken.IsCancellationRequested)
+                //        {
+                //            return;
+                //        }
 
-                        await PreviewPageImageUtility.OverlayStaple(canvasBitmap,
-                            _currPrintSettings.Staple, _currPrintSettings.FinishingSide,
-                            false, false, cancellationToken);
-                    }
-                }
+                //        await PreviewPageImageUtility.OverlayStaple(canvasBitmap,
+                //            _currPrintSettings.Staple, _currPrintSettings.FinishingSide,
+                //            false, false, cancellationToken);
+                //    }
+                //}
             }
             else
             {

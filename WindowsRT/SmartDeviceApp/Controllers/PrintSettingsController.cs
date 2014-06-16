@@ -1555,9 +1555,10 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.BookletFinishing != value)
                 {
-                    isPreviewAffected = (printSettings.Booklet == true) &&
-                        ((printSettings.BookletFinishing == (int)BookletFinishing.FoldAndStaple && value != (int)BookletFinishing.FoldAndStaple) ||
-                        (printSettings.BookletFinishing != (int)BookletFinishing.FoldAndStaple && value == (int)BookletFinishing.FoldAndStaple));
+                    // No need to update preview for booklet finishing (since staple is not updated also)
+                    //isPreviewAffected = (printSettings.Booklet == true) &&
+                    //    ((printSettings.BookletFinishing == (int)BookletFinishing.FoldAndStaple && value != (int)BookletFinishing.FoldAndStaple) ||
+                    //    (printSettings.BookletFinishing != (int)BookletFinishing.FoldAndStaple && value == (int)BookletFinishing.FoldAndStaple));
                     printSettings.BookletFinishing = value;
                 }
             }
