@@ -178,9 +178,18 @@ namespace SmartDeviceApp.ViewModels
                 }
                 else
                 {
-                    swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTop);
-                    swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottom);
+                    if (!IsReverseSwipe)
+                    {
+                        swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTop);
+                        swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottom);
+                    }
+                    else
+                    {
+                        swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTopReverse);
+                        swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottomReverse);
+                    }
                 }
+
                 // Note: If view and page areas are not resized or PageViewMode is not changed, 
                 // no need to reset gestureController
                 if (scalingFactor != _scalingFactor || PageViewMode != _previousPageViewMode)
@@ -265,9 +274,19 @@ namespace SmartDeviceApp.ViewModels
             GoToNextPage.Execute(null);
         }
 
+        private void SwipeTopReverse()
+        {
+            GoToPreviousPage.Execute(null);
+        }
+
         private void SwipeBottom()
         {
             GoToPreviousPage.Execute(null);
+        }
+
+        private void SwipeBottomReverse()
+        {
+            GoToNextPage.Execute(null);
         }
 
         #region PANE VISIBILITY
