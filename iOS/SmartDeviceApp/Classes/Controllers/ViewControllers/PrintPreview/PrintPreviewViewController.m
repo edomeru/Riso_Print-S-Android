@@ -38,6 +38,7 @@
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageNavAreaHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageScrollLeftConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageScrollVerticalCenterConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelTopConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelRightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *previewBottomConstraint;
@@ -232,11 +233,12 @@
     {
         if(UIInterfaceOrientationIsPortrait(self.interfaceOrientation) ==UIInterfaceOrientationPortrait)
         {
-            self.pageNavAreaHeightConstraint.constant = 60;
+            self.pageNavAreaHeightConstraint.constant = 50;
             self.pageScrollLeftConstraint.constant = 20;
-            self.pageLabelTopConstraint.constant = 40;
+            self.pageLabelTopConstraint.constant = 30;
             self.pageLabelRightConstraint.constant = 0;
-            self.previewBottomConstraint.constant = -20;
+            self.previewBottomConstraint.constant = 0;
+            self.pageScrollVerticalCenterConstraint.constant = 4;
         }
         else
         {
@@ -246,6 +248,7 @@
             self.pageLabelRightConstraint.constant = screenHeight * 0.75f;
             self.pageLabelTopConstraint.constant = 10;
             self.previewBottomConstraint.constant = 10;
+            self.pageScrollVerticalCenterConstraint.constant = 0;
         }
     }
     [self.view layoutIfNeeded];
