@@ -41,7 +41,6 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageScrollVerticalCenterConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelTopConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelRightConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *previewBottomConstraint;
 
 /**
  Page view controller
@@ -237,8 +236,7 @@
             self.pageScrollLeftConstraint.constant = 20;
             self.pageLabelTopConstraint.constant = 30;
             self.pageLabelRightConstraint.constant = 0;
-            self.previewBottomConstraint.constant = 0;
-            self.pageScrollVerticalCenterConstraint.constant = 4;
+            self.pageScrollVerticalCenterConstraint.constant = 8;
         }
         else
         {
@@ -247,7 +245,6 @@
             self.pageScrollLeftConstraint.constant = screenHeight * 0.25f;
             self.pageLabelRightConstraint.constant = screenHeight * 0.75f;
             self.pageLabelTopConstraint.constant = 10;
-            self.previewBottomConstraint.constant = 10;
             self.pageScrollVerticalCenterConstraint.constant = 0;
         }
     }

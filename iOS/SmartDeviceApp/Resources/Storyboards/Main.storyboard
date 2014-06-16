@@ -447,14 +447,14 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GCh-6b-axd" customClass="PreviewView">
-                                                <rect key="frame" x="10" y="10" width="300" height="440"/>
+                                                <rect key="frame" x="10" y="10" width="300" height="430"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             </view>
                                         </subviews>
                                         <constraints>
                                             <constraint firstItem="GCh-6b-axd" firstAttribute="leading" secondItem="q8a-bN-pFV" secondAttribute="leading" constant="10" id="2OP-un-iU7"/>
                                             <constraint firstAttribute="trailing" secondItem="GCh-6b-axd" secondAttribute="trailing" constant="10" id="Agd-Lc-5vK"/>
-                                            <constraint firstAttribute="bottom" secondItem="GCh-6b-axd" secondAttribute="bottom" id="nA1-6Q-EaA"/>
+                                            <constraint firstAttribute="bottom" secondItem="GCh-6b-axd" secondAttribute="bottom" constant="10" id="nA1-6Q-EaA"/>
                                             <constraint firstItem="GCh-6b-axd" firstAttribute="top" secondItem="q8a-bN-pFV" secondAttribute="top" constant="10" id="o0i-Sd-VlF"/>
                                         </constraints>
                                     </view>
@@ -463,7 +463,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
-                                                <rect key="frame" x="18" y="6" width="284" height="31"/>
+                                                <rect key="frame" x="18" y="2" width="284" height="31"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <gestureRecognizers/>
                                                 <connections>
@@ -483,7 +483,7 @@
                                             <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="ZT1-SS-2ii" secondAttribute="trailing" id="14n-9I-H1I"/>
                                             <constraint firstItem="ZT1-SS-2ii" firstAttribute="leading" secondItem="XgQ-UQ-sVe" secondAttribute="leading" id="6hS-5i-fLk"/>
                                             <constraint firstAttribute="height" constant="50" id="Pk8-dR-V9V"/>
-                                            <constraint firstAttribute="centerY" secondItem="k35-as-6xb" secondAttribute="centerY" constant="4" id="Rd0-eO-16G"/>
+                                            <constraint firstAttribute="centerY" secondItem="k35-as-6xb" secondAttribute="centerY" constant="8" id="Rd0-eO-16G"/>
                                             <constraint firstItem="ZT1-SS-2ii" firstAttribute="top" secondItem="XgQ-UQ-sVe" secondAttribute="top" constant="30" id="aB4-tR-yDi"/>
                                             <constraint firstItem="k35-as-6xb" firstAttribute="leading" secondItem="XgQ-UQ-sVe" secondAttribute="leading" constant="20" id="p5c-dn-zTt"/>
                                             <constraint firstAttribute="trailing" secondItem="k35-as-6xb" secondAttribute="trailing" constant="20" id="wFY-96-omg"/>
@@ -584,7 +584,6 @@
                         <outlet property="pageScrollLeftConstraint" destination="p5c-dn-zTt" id="wWZ-ct-17P"/>
                         <outlet property="pageScrollVerticalCenterConstraint" destination="Rd0-eO-16G" id="R4E-sM-kQh"/>
                         <outlet property="previewArea" destination="q8a-bN-pFV" id="TCH-Tx-hm1"/>
-                        <outlet property="previewBottomConstraint" destination="nA1-6Q-EaA" id="fSc-UA-7kI"/>
                         <outlet property="previewView" destination="GCh-6b-axd" id="WCl-Ct-mpT"/>
                         <outlet property="printSettingsButton" destination="ABd-RJ-eVH" id="mj6-GY-FhA"/>
                         <outlet property="splashView" destination="EHp-dJ-tNh" id="QuR-TS-XsN"/>
