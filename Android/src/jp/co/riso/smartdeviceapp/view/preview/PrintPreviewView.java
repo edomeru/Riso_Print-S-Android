@@ -15,6 +15,7 @@ import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
@@ -558,7 +559,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         buffer.append(shouldDisplayColor());
         buffer.append(mPrintSettings.isScaleToFit());
-        buffer.append(mPrintSettings.getOrientation().ordinal());
+        if (!AppConstants.USE_PDF_ORIENTATION) {
+            buffer.append(mPrintSettings.getOrientation().ordinal());
+        }
         buffer.append(mPrintSettings.getPaperSize().ordinal());
         
         buffer.append(mPrintSettings.getDuplex().ordinal());
@@ -626,7 +629,13 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @return true if should display landscape
      */
     private boolean shouldDisplayLandscape() {
-        boolean flipToLandscape = (mPrintSettings.getOrientation() == Orientation.LANDSCAPE);
+        boolean flipToLandscape = false;
+        
+        if (AppConstants.USE_PDF_ORIENTATION) {
+            flipToLandscape = mPdfManager.isPDFLandscape();
+        } else {
+            flipToLandscape = (mPrintSettings.getOrientation() == Orientation.LANDSCAPE);
+        }
         
         if (!mPrintSettings.isBooklet()) {
             if (mPrintSettings.getImposition().isFlipLandscape()) {
@@ -686,8 +695,14 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             return 1;
         }
         
-        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
-            return mPrintSettings.getImposition().getRows();
+        if (AppConstants.USE_PDF_ORIENTATION) {
+            if (mPdfManager.isPDFLandscape()) {
+                return mPrintSettings.getImposition().getRows();
+            }
+        } else {
+            if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
+                return mPrintSettings.getImposition().getRows();
+            }
         }
         
         return mPrintSettings.getImposition().getCols();
@@ -700,9 +715,15 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         if (mPrintSettings.isBooklet()) {
             return 1;
         }
-        
-        if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
-            return mPrintSettings.getImposition().getCols();
+
+        if (AppConstants.USE_PDF_ORIENTATION) {
+            if (mPdfManager.isPDFLandscape()) {
+                return mPrintSettings.getImposition().getCols();
+            }
+        } else {
+            if (mPrintSettings.getOrientation() == Orientation.LANDSCAPE) {
+                return mPrintSettings.getImposition().getCols();
+            }
         }
         
         return mPrintSettings.getImposition().getRows();

@@ -59,6 +59,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private Bundle mPrintSettingsBundle = null;
     
     private String mPdfPath = null;
+    private boolean mPDFisLandscape = false;
     private PauseableHandler mPauseableHandler = null;
     private WaitingDialogFragment mWaitingDialog = null;
     private ConfirmDialogFragment mConfirmDialog = null;
@@ -181,6 +182,17 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mPdfPath = pdfPath;
     }
     
+    /**
+     * This method sets the whether the pdf is landscape.
+     * Will be passed in PJL
+     * 
+     * @param pdfIsLandscape
+     *             Whether PDF is landscape or not
+     */
+    public void setPDFisLandscape(boolean pdfIsLandscape) {
+        mPDFisLandscape = pdfIsLandscape;
+    }
+    
     // ================================================================================
     // INTERFACE - ValueChangedListener
     // ================================================================================
@@ -246,10 +258,11 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         String userName = AppUtils.getOwnerName();
         boolean ret = false;
         
+        String formattedString = printSettings.formattedString(mPDFisLandscape);
         if (printer.getPortSetting() == PortSetting.LPR) {
-            ret = mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+            ret = mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
         } else {
-            ret = mDirectPrintManager.executeRAWPrint(userName, jobname, mPdfPath, printSettings.formattedString(), printer.getIpAddress());
+            ret = mDirectPrintManager.executeRAWPrint(userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
         }
         if (ret) {
             btnMsg = getResources().getString(R.string.ids_lbl_cancel);

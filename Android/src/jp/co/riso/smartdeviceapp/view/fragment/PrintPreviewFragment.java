@@ -635,6 +635,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         
                         fragment.setPrinterId(mPrinterId);
                         fragment.setPdfPath(mPdfManager.getPath());
+                        fragment.setPDFisLandscape(mPdfManager.isPDFLandscape());
                         fragment.setPrintSettings(mPrintSettings);
                         fragment.setFragmentForPrinting(true);
                         fragment.setTargetFragment(this, 0);
