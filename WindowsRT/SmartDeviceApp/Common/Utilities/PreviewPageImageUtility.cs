@@ -10,6 +10,7 @@
 //  ----------------------------------------------------------------------
 //
 
+using GalaSoft.MvvmLight.Threading;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using System;
@@ -93,7 +94,8 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="bookletLayout">booklet layout</param>
         /// <param name="imposition">imposition</param>
         /// <returns>true when portrait, false otherwise</returns>
-        public static bool IsPortrait(int orientation, bool isBooklet, int bookletLayout, int? imposition = null)
+        public static bool IsPortrait(int orientation, bool isBooklet, int bookletLayout,
+            int? imposition = null)
         {
             bool isPortrait = (orientation == (int)Orientation.Portrait);
             if (isBooklet)
@@ -134,32 +136,15 @@ namespace SmartDeviceApp.Common.Utilities
         /// <summary>
         /// Creates a bitmap based on target paper size and orientation
         /// </summary>
-        /// <param name="paperSize">target paper size</param>
-        /// <param name="isPortrait">orientation</param>
-        /// <returns>bitmap filled with white</returns>
-        public static WriteableBitmap CreateNewPageImage(Size paperSize, bool isPortrait)
+        /// <param name="canvasBitmap">canvas bitmap</param>
+        public static void FillWhitePageImage(WriteableBitmap canvasBitmap)
         {
-            Size pageImageSize = GetPreviewPageImageSize(paperSize, isPortrait);
-
-            // Create canvas based on paper size and orientation
-            WriteableBitmap canvasBitmap = new WriteableBitmap((int)pageImageSize.Width,
-                (int)pageImageSize.Height);
-
-            return canvasBitmap;
-        }
-
-        /// <summary>
-        /// Creates a bitmap based on target paper size and orientation
-        /// </summary>
-        /// <param name="paperSize">target paper size</param>
-        /// <param name="isPortrait">orientation</param>
-        /// <returns>bitmap filled with white</returns>
-        public static WriteableBitmap FillWhitePageImage(WriteableBitmap canvasBitmap)
-        {
-            WriteableBitmapExtensions.FillRectangle(canvasBitmap, 0, 0, canvasBitmap.PixelWidth,
-                canvasBitmap.PixelHeight, Windows.UI.Colors.White);
-
-            return canvasBitmap;
+            DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    WriteableBitmapExtensions.FillRectangle(canvasBitmap, 0, 0, canvasBitmap.PixelWidth,
+                        canvasBitmap.PixelHeight, Windows.UI.Colors.White);
+                });
         }
 
         /// <summary>
@@ -191,32 +176,38 @@ namespace SmartDeviceApp.Common.Utilities
         }
 
         /// <summary>
-        /// Puts logical page image into the preview page image
+        /// Puts an image into the canvas
         /// </summary>
-        /// <param name="enableScaleToFit">scale to fit setting</param>
-        /// <param name="canvasBitmap">preview page image</param>
-        /// <param name="pageBitmap">logical page image</param>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="overlayBitmap">overlay image</param>
+        /// <param name="overlaySize">overlay size</param>
+        /// <param name="enableScaleToFit">true when fit to scale, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
-        public static void OverlayLogicalPageImage(bool enableScaleToFit, WriteableBitmap canvasBitmap,
-            WriteableBitmap pageBitmap, CancellationTokenSource cancellationToken)
+        public static void OverlayImage(WriteableBitmap canvasBitmap, Size canvasSize,
+            WriteableBitmap overlayBitmap, Size overlaySize, bool enableScaleToFit,
+            CancellationTokenSource cancellationToken)
         {
+            PreviewPageImageUtility.FillWhitePageImage(canvasBitmap);
+
             if (enableScaleToFit)
             {
-                ScaleLogicalPageImageToFit(canvasBitmap, pageBitmap, false, cancellationToken);
+                ScaleImageToFit(canvasBitmap, canvasSize, overlayBitmap, overlaySize,
+                    cancellationToken);
             }
             else
             {
                 // Determine logical page size if cropping is needed
                 // If not cropped, logical page just fits into paper
-                int cropWidth = canvasBitmap.PixelWidth;
-                if (canvasBitmap.PixelWidth > pageBitmap.PixelWidth)
+                int cropWidth = (int)canvasSize.Width;
+                if (canvasSize.Width > overlaySize.Width)
                 {
-                    cropWidth = pageBitmap.PixelWidth;
+                    cropWidth = (int)overlaySize.Width;
                 }
-                int cropHeight = canvasBitmap.PixelHeight;
-                if (canvasBitmap.PixelHeight > pageBitmap.PixelHeight)
+                int cropHeight = (int)canvasSize.Height;
+                if (canvasSize.Height > overlaySize.Height)
                 {
-                    cropHeight = pageBitmap.PixelHeight;
+                    cropHeight = (int)overlaySize.Height;
                 }
 
                 // Source and destination rectangle are the same since
@@ -229,7 +220,11 @@ namespace SmartDeviceApp.Common.Utilities
                 }
 
                 // Place image into paper
-                WriteableBitmapExtensions.Blit(canvasBitmap, rect, pageBitmap, rect);
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        WriteableBitmapExtensions.Blit(canvasBitmap, rect, overlayBitmap, rect);
+                    });
 
             }
         }
@@ -239,16 +234,19 @@ namespace SmartDeviceApp.Common.Utilities
         /// Imposition images are assumed to be applied with selected paper size and orientation.
         /// The page images are assumed to be in order based on logical page index.
         /// </summary>
-        /// <param name="paperSize">selected paper size used in scaling the imposition page images</param>
-        /// <param name="pageImages">imposition page images</param>
-        /// <param name="isPortrait">selected orientation; true if portrait, false otherwise</param>
-        /// <param name="impositionOrder">direction of imposition</param>
-        /// <returns>page image with applied imposition value
-        /// Final output page image is
-        /// * portrait when imposition value is 4-up
-        /// * otherwise landscape</returns>
-        public static void OverlayPageImagesForImposition(WriteableBitmap canvasBitmap, List<WriteableBitmap> pageImages, int orientation, int imposition,
-            int impositionOrder, out bool isPortrait, CancellationTokenSource cancellationToken)
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="overlayImages">overlay image</param>
+        /// <param name="overlaySize">overlay size</param>
+        /// <param name="orientation">orientation</param>
+        /// <param name="imposition">imposition</param>
+        /// <param name="impositionOrder">imposition order</param>
+        /// <param name="scaleToFit">scaleToFit</param>
+        /// <param name="isPortrait">sets the new orientation based on imposition; true if portrait, false otherwise</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        public static void OverlayImagesForImposition(WriteableBitmap canvasBitmap, Size canvasSize,
+            List<WriteableBitmap> overlayImages, Size overlaySize, int orientation, int imposition,
+            int impositionOrder, bool scaleToFit, out bool isPortrait, CancellationTokenSource cancellationToken)
         {
             // Determine final orientation based on imposition
             int pagesPerSheet = GetPagesPerSheet(imposition);
@@ -276,9 +274,8 @@ namespace SmartDeviceApp.Common.Utilities
             // Compute page area size and margin
             double marginPaper = PrintSettingConstant.MARGIN_IMPOSITION_EDGE * ImageConstant.BASE_DPI;
             double marginBetweenPages = PrintSettingConstant.MARGIN_IMPOSITION_BETWEEN_PAGES * ImageConstant.BASE_DPI;
-            Size impositionPageAreaSize = GetImpositionSinglePageAreaSize(canvasBitmap.PixelWidth,
-                canvasBitmap.PixelHeight, pagesPerRow, pagesPerColumn,
-                marginBetweenPages, marginPaper);
+            Size impositionPageAreaSize = GetImpositionSinglePageAreaSize(canvasSize,
+                pagesPerRow, pagesPerColumn, marginBetweenPages, marginPaper);
 
             // Set initial positions
             double initialOffsetX = 0;
@@ -297,11 +294,13 @@ namespace SmartDeviceApp.Common.Utilities
                     (impositionPageAreaSize.Height * (pagesPerRow - 1));
             }
 
+            FillWhitePageImage(canvasBitmap);
+
             // Loop each imposition page
             int impositionPageIndex = 0;
             double pageImageOffsetX = initialOffsetX;
             double pageImageOffsetY = initialOffsetY;
-            foreach (WriteableBitmap impositionPageBitmap in pageImages)
+            foreach (WriteableBitmap impositionPageBitmap in overlayImages)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -312,22 +311,37 @@ namespace SmartDeviceApp.Common.Utilities
                 double x = marginPaper + pageImageOffsetX;
                 double y = marginPaper + pageImageOffsetY;
 
-                // Scale imposition page
-                WriteableBitmap scaledImpositionPageBitmap =
-                    new WriteableBitmap((int)impositionPageAreaSize.Width,
-                        (int)impositionPageAreaSize.Height);
-                WriteableBitmapExtensions.FillRectangle(scaledImpositionPageBitmap, 0, 0,
-                    scaledImpositionPageBitmap.PixelWidth, scaledImpositionPageBitmap.PixelHeight,
-                    Windows.UI.Colors.White);
-                ScaleLogicalPageImageToFit(scaledImpositionPageBitmap, impositionPageBitmap, false, cancellationToken); // No border
+                Rect destRect = new Rect();
+                destRect.X = x;
+                destRect.Y = y;
+                if (scaleToFit)
+                {
+                    Size scaledSize = GetScaledSize(impositionPageAreaSize, overlaySize);
+                    destRect.X += (impositionPageAreaSize.Width - scaledSize.Width) / 2;
+                    destRect.Y += (impositionPageAreaSize.Height - scaledSize.Height) / 2;
+                    destRect.Width = scaledSize.Width;
+                    destRect.Height = scaledSize.Height;
+                }
+                else
+                {
+                    if (imposition == (int)Imposition.FourUp)
+                    {
+                        destRect.Width = overlaySize.Width * 0.5;
+                        destRect.Height = overlaySize.Height * 0.5;
+                    }
+                    else if (imposition == (int)Imposition.TwoUp)
+                    {
+                        destRect.Width = overlaySize.Width * 0.75;
+                        destRect.Height = overlaySize.Height * 0.75;
+                    }
+                }
+                Rect srcRect = new Rect(0, 0, overlaySize.Width, overlaySize.Height);
 
-                // Put imposition page image to target page image
-                Rect destRect = new Rect(x, y, scaledImpositionPageBitmap.PixelWidth,
-                    scaledImpositionPageBitmap.PixelHeight);
-                Rect srcRect = new Rect(0, 0, scaledImpositionPageBitmap.PixelWidth,
-                    scaledImpositionPageBitmap.PixelHeight);
-                WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledImpositionPageBitmap,
-                    srcRect);
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        WriteableBitmapExtensions.Blit(canvasBitmap, destRect, impositionPageBitmap, srcRect);
+                    });
 
                 // Update offset/postion based on direction
                 if (impositionOrder == (int)ImpositionOrder.TwoUpLeftToRight ||
@@ -391,8 +405,10 @@ namespace SmartDeviceApp.Common.Utilities
         /// <summary>
         /// Changes the bitmap to grayscale
         /// </summary>
-        /// <param name="canvasBitmap">bitmap to change</param>
-        public static void GrayscalePageImage(WriteableBitmap canvasBitmap, CancellationTokenSource cancellationToken)
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        public static void GrayscalePageImage(WriteableBitmap canvasBitmap,
+            CancellationTokenSource cancellationToken)
         {
             byte[] pixelBytes = WriteableBitmapExtensions.ToByteArray(canvasBitmap);
 
@@ -420,24 +436,32 @@ namespace SmartDeviceApp.Common.Utilities
             }
 
             // Copy pixels to bitmap
-            WriteableBitmapExtensions.FromByteArray(canvasBitmap, pixelBytes);
+            DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    WriteableBitmapExtensions.FromByteArray(canvasBitmap, pixelBytes);
+                });
         }
 
         /// <summary>
         /// Applies duplex into image with staple and punch as needed
         /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="duplexType">duplex setting</param>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="duplexType">duplex</param>
         /// <param name="finishingSide">finishing side</param>
-        /// <param name="holeCount">hole punch count; 0 if punch is off</param>
-        /// <param name="staple">staple type</param>
+        /// <param name="punch">punch</param>
+        /// <param name="enabledPunchFour">true when punch4 is enabled, false when punch3 is enabled</param>
+        /// <param name="staple">staple</param>
         /// <param name="isPortrait">true when portrait, false, otherwise</param>
         /// <param name="isRightSide">true when page is on right side, false otherwise</param>
         /// <param name="isBackSide">true if for backside (duplex), false otherwise</param>
+        /// <param name="cancellationToken">cancellation token</param>
         /// <returns>task</returns>
-        public static async Task FormatPageImageForDuplex(WriteableBitmap canvasBitmap,
+        public static async Task FormatPageImageForDuplex(WriteableBitmap canvasBitmap, Size canvasSize,
             int duplexType, int finishingSide, int punch, bool enabledPunchFour, int staple,
-            bool isPortrait, bool isRightSide, bool isBackSide, CancellationTokenSource cancellationToken)
+            bool isPortrait, bool isRightSide, bool isBackSide,
+            CancellationTokenSource cancellationToken)
         {
             // Rotate image if needed
             if (!isRightSide || isBackSide)
@@ -445,8 +469,12 @@ namespace SmartDeviceApp.Common.Utilities
                 if ((duplexType == (int)Duplex.LongEdge && !isPortrait) ||
                     (duplexType == (int)Duplex.ShortEdge && isPortrait))
                 {
-                    PreviewPageImageUtility.OverlayLogicalPageImage(false, canvasBitmap,
-                        WriteableBitmapExtensions.Rotate(canvasBitmap, 180), cancellationToken);
+                    DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        PreviewPageImageUtility.OverlayImage(canvasBitmap, canvasSize,
+                            WriteableBitmapExtensions.Rotate(canvasBitmap, 180), canvasSize, false, cancellationToken);
+                    });
                 }
 
                 // Change the side of the staple if letf or right
@@ -476,11 +504,12 @@ namespace SmartDeviceApp.Common.Utilities
         /// <summary>
         /// Applies booklet settings into a single page image
         /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
+        /// <param name="canvasBitmap">canvas</param>
         /// <param name="bookletFinishing">booklet finishing</param>
         /// <param name="isPortrait">true when portrait, false otherwise</param>
         /// <param name="isRightSide">true when page is on right side, false otherwise</param>
         /// <param name="isBackSide">true if for backside (booklet), false otherwise</param>
+        /// <param name="cancellationToken">cancellation token</param>
         /// <returns>task</returns>
         public static async Task FormatPageImageForBooklet(WriteableBitmap canvasBitmap, int bookletFinishing,
             bool isPortrait, bool isRightSide, bool isBackSide, CancellationTokenSource cancellationToken)
@@ -520,16 +549,18 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        // TODO: Does not handle thread here!!!
         /// <summary>
         /// Adds staple wire image into target page image specifying the booklet setting.
         /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="stapleType">type indicating number of staple (not used when booklet is on)</param>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="staple">staple</param>
         /// <param name="finishingSide">position of staple</param>
         /// <param name="isBooklet">true when booklet is on, false otherwise</param>
         /// <param name="isRightSide">true when page is on right side, false otherwise</param>
-        /// <returns>true</returns>
-        public static async Task OverlayStaple(WriteableBitmap canvasBitmap, int stapleType,
+        /// <param name="cancellationToken">cancellation token</param>
+        /// <returns>task</returns>
+        public static async Task OverlayStaple(WriteableBitmap canvasBitmap, int staple,
             int finishingSide, bool isBooklet, bool isRightSide, CancellationTokenSource cancellationToken)
         {
             // Get staple image
@@ -592,15 +623,15 @@ namespace SmartDeviceApp.Common.Utilities
                 // Determine finishing side
                 if (finishingSide == (int)FinishingSide.Top)
                 {
-                    if (stapleType == (int)Staple.OneUpperLeft)
+                    if (staple == (int)Staple.OneUpperLeft)
                     {
                         OverlayCornerStaple(canvasBitmap, scaledStapleBitmap, 135, false, false, cancellationToken);
                     }
-                    else if (stapleType == (int)Staple.OneUpperRight)
+                    else if (staple == (int)Staple.OneUpperRight)
                     {
                         OverlayCornerStaple(canvasBitmap, scaledStapleBitmap, 45, true, false, cancellationToken);
                     }
-                    else if (stapleType == (int)Staple.Two)
+                    else if (staple == (int)Staple.Two)
                     {
                         OverlaySideStaple(canvasBitmap, scaledStapleBitmap, 0, false, false,
                             canvasBitmap.PixelWidth, true, 0.25, cancellationToken);
@@ -610,11 +641,11 @@ namespace SmartDeviceApp.Common.Utilities
                 }
                 else if (finishingSide == (int)FinishingSide.Left)
                 {
-                    if (stapleType == (int)Staple.One)
+                    if (staple == (int)Staple.One)
                     {
                         OverlayCornerStaple(canvasBitmap, scaledStapleBitmap, 135, false, false, cancellationToken);
                     }
-                    else if (stapleType == (int)Staple.Two)
+                    else if (staple == (int)Staple.Two)
                     {
                         OverlaySideStaple(canvasBitmap, scaledStapleBitmap, 90, false, false,
                             canvasBitmap.PixelHeight, false, 0.25, cancellationToken);
@@ -624,11 +655,11 @@ namespace SmartDeviceApp.Common.Utilities
                 }
                 else if (finishingSide == (int)FinishingSide.Right)
                 {
-                    if (stapleType == (int)Staple.One)
+                    if (staple == (int)Staple.One)
                     {
                         OverlayCornerStaple(canvasBitmap, scaledStapleBitmap, 45, true, false, cancellationToken);
                     }
-                    else if (stapleType == (int)Staple.Two)
+                    else if (staple == (int)Staple.Two)
                     {
                         OverlaySideStaple(canvasBitmap, scaledStapleBitmap, 270, true, false,
                             canvasBitmap.PixelHeight, false, 0.25, cancellationToken);
@@ -639,17 +670,20 @@ namespace SmartDeviceApp.Common.Utilities
             } // if (isBooklet)
         }
 
+        // TODO: Does not handle thread here!!!
         /// <summary>
         /// Adds punch hole image into page image
         /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="holeCount">number of punch holes</param>
-        /// <param name="finishingSide">postion/edge of punch</param>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="punch">punch</param>
+        /// <param name="enabledPunchFour">true when punch4 is enabled, false when punch3 is enabled</param>
+        /// <param name="finishingSide">finishing side</param>
+        /// <param name="cancellationToken">cancellation token</param>
         /// <returns>task</returns>
-        public static async Task OverlayPunch(WriteableBitmap canvasBitmap, int punchType,
+        public static async Task OverlayPunch(WriteableBitmap canvasBitmap, int punch,
             bool enabledPunchFour, int finishingSide, CancellationTokenSource cancellationToken)
         {
-            int holeCount = GetPunchHoleCount(punchType, enabledPunchFour);
+            int holeCount = GetPunchHoleCount(punch, enabledPunchFour);
 
             // Get punch image
             WriteableBitmap punchBitmap = new WriteableBitmap(1, 1); // Size doesn't matter here yet
@@ -677,7 +711,7 @@ namespace SmartDeviceApp.Common.Utilities
             // Determine punch
             double diameterPunch = PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI;
             double marginPunch = PrintSettingConstant.MARGIN_PUNCH * ImageConstant.BASE_DPI;
-            double distanceBetweenHoles = GetDistanceBetweenHoles(enabledPunchFour, punchType);
+            double distanceBetweenHoles = GetDistanceBetweenHoles(enabledPunchFour, punch);
             if (finishingSide == (int)FinishingSide.Top)
             {
                 double startPos = GetPunchStartPosition(canvasBitmap.PixelWidth, true, holeCount,
@@ -702,16 +736,18 @@ namespace SmartDeviceApp.Common.Utilities
         }
 
         /// <summary>
-        /// 
+        /// Adds dash lines at the edge of an image
         /// </summary>
-        /// <param name="canvasBitmap"></param>
-        /// <param name="isRightEdge"></param>
-        /// <param name="isPortrait"></param>
-        /// <param name="cancellationToken"></param>
-        public static void OverlayDashLineToEdge(WriteableBitmap canvasBitmap, bool isRightEdge,
-            bool isPortrait, CancellationTokenSource cancellationToken)
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="isRightSide">true when page is on right side, false otherwise</param>
+        /// <param name="isPortrait">true when portrait, false otherwise</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        public static void OverlayDashLineToEdge(WriteableBitmap canvasBitmap, Size canvasSize,
+            bool isRightEdge, bool isPortrait, CancellationTokenSource cancellationToken)
         {
             int point = 0;
+
             if (isPortrait)
             {
                 if (isRightEdge) // for left page
@@ -723,13 +759,17 @@ namespace SmartDeviceApp.Common.Utilities
                             return;
                         }
 
-                        Point p1 = new Point(canvasBitmap.PixelWidth - 1, point);
-                        Point p2 = new Point(canvasBitmap.PixelWidth - 1, point +
+                        Point p1 = new Point(canvasSize.Width - 1, point);
+                        Point p2 = new Point(canvasSize.Width - 1, point +
                             PrintSettingConstant.DASH_LINE_LENGTH);
                         point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
+                        DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
                         WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
                             (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-                    } while (point < canvasBitmap.PixelHeight);
+                    });
+                    } while (point < canvasSize.Height);
                 }
                 else // for right page
                 {
@@ -743,9 +783,13 @@ namespace SmartDeviceApp.Common.Utilities
                         Point p1 = new Point(0, point);
                         Point p2 = new Point(0, point + PrintSettingConstant.DASH_LINE_LENGTH);
                         point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
+                        DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
                         WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
                             (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-                    } while (point < canvasBitmap.PixelHeight);
+                    });
+                    } while (point < canvasSize.Height);
                 }
             }
             else // for landscape
@@ -759,13 +803,17 @@ namespace SmartDeviceApp.Common.Utilities
                             return;
                         }
 
-                        Point p1 = new Point(point, canvasBitmap.PixelHeight - 1);
+                        Point p1 = new Point(point, canvasSize.Height - 1);
                         Point p2 = new Point(point + PrintSettingConstant.DASH_LINE_LENGTH,
-                            canvasBitmap.PixelHeight - 1);
+                            canvasSize.Height - 1);
                         point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
+                        DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
                         WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
                             (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-                    } while (point < canvasBitmap.PixelWidth);
+                    });
+                    } while (point < canvasSize.Width);
                 }
                 else // for right page
                 {
@@ -779,34 +827,38 @@ namespace SmartDeviceApp.Common.Utilities
                         Point p1 = new Point(point, 0);
                         Point p2 = new Point(point + PrintSettingConstant.DASH_LINE_LENGTH, 0);
                         point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
+                        DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
                         WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
                             (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-                    } while (point < canvasBitmap.PixelWidth);
+                    });
+                    } while (point < canvasSize.Width);
                 }
             }
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////// PRIVATE
+        #region Private Methods
 
         /// <summary>
-        /// Computes the page area for imposition
+        /// Computes the imposition area size for a single page
         /// </summary>
-        /// <param name="width">preview page image width</param>
-        /// <param name="height">preview page image height</param>
+        /// <param name="canvasSize">canvas size</param>
         /// <param name="numRows">number of rows based on imposition</param>
         /// <param name="numColumns">number of columns based on imposition</param>
         /// <param name="marginBetween">margin between pages (in pixels)</param>
         /// <param name="marginOuter">margin of the preview page image (in pixels)</param>
         /// <returns>size of a page for imposition</returns>
-        private static Size GetImpositionSinglePageAreaSize(int width, int height, int numRows, int numColumns,
-            double marginBetween, double marginOuter)
+        /// <returns>size of a page for imposition</returns>
+        private static Size GetImpositionSinglePageAreaSize(Size canvasSize,
+            int numRows, int numColumns, double marginBetween, double marginOuter)
         {
             Size pageAreaSize = new Size();
-            if (width > 0 && height > 0 && numRows > 0 && numColumns > 0)
+            if (canvasSize.Width > 0 && canvasSize.Height > 0 && numRows > 0 && numColumns > 0)
             {
-                pageAreaSize.Width = (width - (marginBetween * (numColumns - 1)) - (marginOuter * 2))
+                pageAreaSize.Width = (canvasSize.Width - (marginBetween * (numColumns - 1)) - (marginOuter * 2))
                     / numColumns;
-                pageAreaSize.Height = (height - (marginBetween * (numRows - 1)) - (marginOuter * 2))
+                pageAreaSize.Height = (canvasSize.Width - (marginBetween * (numRows - 1)) - (marginOuter * 2))
                     / numRows;
             }
             return pageAreaSize;
@@ -844,6 +896,7 @@ namespace SmartDeviceApp.Common.Utilities
         /// <summary>
         /// Computes the distance between punch holes based on number of punches
         /// </summary>
+        /// <param name="enabledPunchFour">true when punch4 is enabled, false when punch3 is enabled</param>
         /// <param name="punch">punch type</param>
         /// <returns>distance</returns>
         private static double GetDistanceBetweenHoles(bool enabledPunchFour, int punch)
@@ -889,40 +942,53 @@ namespace SmartDeviceApp.Common.Utilities
         /// <summary>
         /// Scales the logical page image into the preview page image
         /// </summary>
-        /// <param name="canvasBitmap">target page image placement</param>
-        /// <param name="pageBitmap">page image to be fitted</param>
-        /// <param name="addBorder">true when border is added to fitted image, false otherwise</param>
-        private static void ScaleLogicalPageImageToFit(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap,
-            bool addBorder, CancellationTokenSource cancellationToken)
+        /// <param name="canvasBitmap">canvas bitmap</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="overlayBitmap">overlay image</param>
+        /// <param name="overlaySize">overlay size</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        private static void ScaleImageToFit(WriteableBitmap canvasBitmap, Size canvasSize,
+            WriteableBitmap overlayBitmap, Size overlaySize, CancellationTokenSource cancellationToken)
         {
-            double scaleX = (double)canvasBitmap.PixelWidth / pageBitmap.PixelWidth;
-            double scaleY = (double)canvasBitmap.PixelHeight / pageBitmap.PixelHeight;
-            double targetScaleFactor = (scaleX < scaleY) ? scaleX : scaleY;
-
             if (cancellationToken.IsCancellationRequested)
             {
                 return;
             }
 
-            // Scale the logical page image
-            WriteableBitmap scaledBitmap = WriteableBitmapExtensions.Resize(pageBitmap,
-                (int)(pageBitmap.PixelWidth * targetScaleFactor),
-                (int)(pageBitmap.PixelHeight * targetScaleFactor),
-                WriteableBitmapExtensions.Interpolation.Bilinear);
+            Size scaledSize = GetScaledSize(canvasSize, overlaySize);
 
             // Compute position in preview page image
-            Rect srcRect = new Rect(0, 0, scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
+            Rect srcRect = new Rect(0, 0, overlaySize.Width, overlaySize.Height);
             Rect destRect = new Rect(
-                (canvasBitmap.PixelWidth - scaledBitmap.PixelWidth) / 2,    // Puts the image to the center X
-                (canvasBitmap.PixelHeight - scaledBitmap.PixelHeight) / 2,  // Puts the image to the center Y
-                scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
+                (canvasSize.Width - scaledSize.Width) / 2,    // Puts the image to the center X
+                (canvasSize.Height - scaledSize.Height) / 2,  // Puts the image to the center Y
+                scaledSize.Width, scaledSize.Height);
 
             if (cancellationToken.IsCancellationRequested)
             {
                 return;
             }
 
-            WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledBitmap, srcRect);
+            DispatcherHelper.CheckBeginInvokeOnUI(
+            () =>
+            {
+                WriteableBitmapExtensions.Blit(canvasBitmap, destRect, overlayBitmap, srcRect);
+            });
+        }
+
+        /// <summary>
+        /// Computes the scaling size
+        /// </summary>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="overlaySize">overlay size</param>
+        /// <returns>scaled size</returns>
+        private static Size GetScaledSize(Size canvasSize, Size overlaySize)
+        {
+            double scaleX = canvasSize.Width / overlaySize.Width;
+            double scaleY = canvasSize.Height / overlaySize.Height;
+            double targetScaleFactor = (scaleX < scaleY) ? scaleX : scaleY;
+
+            return new Size(overlaySize.Width * targetScaleFactor, overlaySize.Height * targetScaleFactor);
         }
 
         /// <summary>
@@ -934,6 +1000,7 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="angle">angle for rotation</param>
         /// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
         /// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
+        /// <param name="cancellationToken">cancellation token</param>
         private static void OverlayCornerStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
             int angle, bool isXEnd, bool isYEnd, CancellationTokenSource cancellationToken)
         {
@@ -953,6 +1020,7 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
         /// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
         /// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
+        /// <param name="cancellationToken">cancellation token</param>
         private static void OverlaySideStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
             int angle, bool isXEnd, bool isYEnd, int edgeLength, bool isAlongXAxis,
             double positionPercentage, CancellationTokenSource cancellationToken)
@@ -974,6 +1042,7 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
         /// <param name="marginStaple">margin from edge</param>
         /// <param name="isBooklet">true when applied with booklet, false otherwise</param>
+        /// <param name="cancellationToken">cancellation token</param>
         private static void OverlayRotateStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
             int angle, bool isXEnd, bool isYEnd, int edgeLength, bool isAlongXAxis,
             double positionPercentage, double marginStaple, bool isBooklet, CancellationTokenSource cancellationToken)
@@ -1058,6 +1127,7 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="diameterPunch">size of punch hole</param>
         /// <param name="marginPunch">margin of punch hole against edge of page image</param>
         /// <param name="distanceBetweenHoles">distance between punch holes</param>
+        /// <param name="cancellationToken">cancellation token</param>
         private static void OverlayScalePunch(WriteableBitmap canvasBitmap, WriteableBitmap punchBitmap,
             int holeCount, double startPos, bool isXEnd, bool isAlongXAxis, double diameterPunch,
             double marginPunch, double distanceBetweenHoles, CancellationTokenSource cancellationToken)
@@ -1087,6 +1157,8 @@ namespace SmartDeviceApp.Common.Utilities
                 WriteableBitmapExtensions.Blit(canvasBitmap, destRect, punchBitmap, srcRect);
             }
         }
+
+        #endregion Private Methods
 
     }
 }

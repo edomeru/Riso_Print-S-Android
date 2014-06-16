@@ -23,7 +23,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.System.Threading;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media.Imaging;
@@ -89,10 +88,10 @@ namespace SmartDeviceApp.Controllers
         private bool _resetPrintSettings; // Flag used only when selected printer is deleted
 
         private int _requestPageImageCounter = 0;
-        private WriteableBitmap[] _frontPreviewPageImages;
 
+        byte[] _dummyPixels;
         List<CancellationTokenSource> _cancellationTokenSourceQueue;
-        LruCacheHelper<int, WriteableBitmap> _previewPageImages;
+        LruCacheHelper<int, byte[]> _previewPageImages;
 
         private ICommand _cancelPrintingCommand;
         private Popup _printingPopup;
@@ -114,11 +113,7 @@ namespace SmartDeviceApp.Controllers
             _screenName = ScreenMode.PrintPreview.ToString();
 
             _cancellationTokenSourceQueue = new List<CancellationTokenSource>();
-            _previewPageImages = new LruCacheHelper<int, WriteableBitmap>(MAX_PREVIEW_PAGE_IMAGE_CACHE);
-
-            _frontPreviewPageImages = new WriteableBitmap[2];
-            _frontPreviewPageImages[0] = new WriteableBitmap(1, 1);
-            _frontPreviewPageImages[1] = new WriteableBitmap(1, 1);
+            _previewPageImages = new LruCacheHelper<int, byte[]>(MAX_PREVIEW_PAGE_IMAGE_CACHE);
 
             _updatePreviewEventHandler = new UpdatePreviewEventHandler(UpdatePreview);
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
@@ -145,6 +140,7 @@ namespace SmartDeviceApp.Controllers
         public async Task Initialize()
         {
             PageAreaGridLoaded += InitializeGestures;
+
             // Get print settings if document is successfully loaded
             if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
@@ -352,10 +348,17 @@ namespace SmartDeviceApp.Controllers
 
                 _previewPageImageSize = PreviewPageImageUtility.GetPreviewPageImageSize(paperSize,
                     isPortrait);
+                _printPreviewViewModel.RightPageImage =
+                    new WriteableBitmap((int)_previewPageImageSize.Width,
+                        (int)_previewPageImageSize.Height);
                 _printPreviewViewModel.RightPageActualSize = _previewPageImageSize;
+
                 if (_isBooklet || _isDuplex)
                 {
                     _printPreviewViewModel.LeftPageActualSize = _previewPageImageSize;
+                    _printPreviewViewModel.LeftPageImage =
+                        new WriteableBitmap((int)_previewPageImageSize.Width,
+                            (int)_previewPageImageSize.Height);
                 }
                 else
                 {
@@ -363,6 +366,8 @@ namespace SmartDeviceApp.Controllers
                 }
                 _printPreviewViewModel.PageViewMode = _pageViewMode;
                 _printPreviewViewModel.InitializeGestures();
+
+                _dummyPixels = _printPreviewViewModel.RightPageImage.ToByteArray();
             }
         }
 
@@ -483,66 +488,62 @@ namespace SmartDeviceApp.Controllers
         /// Assumes that requested page index is for right side page index
         /// </summary>
         /// <param name="sliderIndex">requested right page index based on slider value</param>
-        private async void LoadPage(int sliderIndex)
+        private void LoadPage(int sliderIndex)
         {
             LogUtility.BeginTimestamp("LoadPage");
 
-            await ThreadPool.RunAsync(
-                (workItem) =>
+            foreach (CancellationTokenSource token in _cancellationTokenSourceQueue)
+            {
+                token.Cancel();
+            }
+            _cancellationTokenSourceQueue.Clear();
+
+            CancellationTokenSource cancellationToken = new CancellationTokenSource();
+            _cancellationTokenSourceQueue.Add(cancellationToken);
+
+            _requestPageImageCounter = 2;
+            int rightPageIndex = sliderIndex;
+            if (_isBooklet || _isDuplex)
+            {
+                rightPageIndex = sliderIndex * 2;
+            }
+
+            _currLeftPageIndex = rightPageIndex - 1;
+            _currRightPageIndex = rightPageIndex;
+            if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
+            {
+                _currLeftPageIndex = rightPageIndex;
+                _currRightPageIndex = rightPageIndex - 1;
+            }
+
+            // Generate pages to send
+            GenerateSpread(_currLeftPageIndex, _currRightPageIndex, true, cancellationToken);
+
+            // Near pages
+            if (_currRightPageIndex + 1 < _maxPreviewPageCount)
+            {
+                if (_isDuplex || _isBooklet)
                 {
-                    foreach (CancellationTokenSource token in _cancellationTokenSourceQueue)
-                    {
-                        token.Cancel();
-                    }
-                    _cancellationTokenSourceQueue.Clear();
-
-                    CancellationTokenSource cancellationToken = new CancellationTokenSource();
-                    _cancellationTokenSourceQueue.Add(cancellationToken);
-
-                    _requestPageImageCounter = 2;
-                    int rightPageIndex = sliderIndex;
-                    if (_isBooklet || _isDuplex)
-                    {
-                        rightPageIndex = sliderIndex * 2;
-                    }
-
-                    _currLeftPageIndex = rightPageIndex - 1;
-                    _currRightPageIndex = rightPageIndex;
-                    if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft)
-                    {
-                        _currLeftPageIndex = rightPageIndex;
-                        _currRightPageIndex = rightPageIndex - 1;
-                    }
-
-                    // Generate pages to send
-                    GenerateSpread(_currLeftPageIndex, _currRightPageIndex, true, cancellationToken);
-
-                    // Near pages
-                    if (_currRightPageIndex + 1 < _maxPreviewPageCount)
-                    {
-                        if (_isDuplex || _isBooklet)
-                        {
-                            GenerateSpread(_currRightPageIndex + 1, _currRightPageIndex + 2, false,
-                                cancellationToken);
-                        }
-                        else
-                        {
-                            GenerateSpread(-1, _currRightPageIndex + 1, false, cancellationToken);
-                        }
-                    }
-                    if (_currLeftPageIndex - 1 > -1)
-                    {
-                        if (_isDuplex || _isBooklet)
-                        {
-                            GenerateSpread(_currLeftPageIndex - 2, _currLeftPageIndex - 1, false,
-                                cancellationToken);
-                        }
-                        else
-                        {
-                            GenerateSpread(-1, _currRightPageIndex - 1, false, cancellationToken);
-                        }
-                    }
-                });
+                    GenerateSpread(_currRightPageIndex + 1, _currRightPageIndex + 2, false,
+                        cancellationToken);
+                }
+                else
+                {
+                    GenerateSpread(-1, _currRightPageIndex + 1, false, cancellationToken);
+                }
+            }
+            if (_currLeftPageIndex - 1 > -1)
+            {
+                if (_isDuplex || _isBooklet)
+                {
+                    GenerateSpread(_currLeftPageIndex - 2, _currLeftPageIndex - 1, false,
+                        cancellationToken);
+                }
+                else
+                {
+                    GenerateSpread(-1, _currRightPageIndex - 1, false, cancellationToken);
+                }
+            }
 
             LogUtility.EndTimestamp("LoadPage");
         }
@@ -550,8 +551,10 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Generates PreviewPage images on a single spread
         /// </summary>
-        /// <param name="sliderIndex">right page index based on slider value</param>
+        /// <param name="leftPageIndex">left preview page index</param>
+        /// <param name="rightPageIndex">right preview page index</param>
         /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
+        /// <param name="cancellationToken">cancellation token</param>
         private void GenerateSpread(int leftPageIndex, int rightPageIndex, bool enableSend,
             CancellationTokenSource cancellationToken)
         {
@@ -563,12 +566,7 @@ namespace SmartDeviceApp.Controllers
             }
             else if (enableSend)
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(
-                    () =>
-                    {
-                        _frontPreviewPageImages[0] = new WriteableBitmap(1, 1);
-                        SendPreviewPageImage(leftPageIndex, cancellationToken);
-                    });
+                SendPreviewPageImage(leftPageIndex, cancellationToken);
             }
 
             if (rightPageIndex > -1 && rightPageIndex < _maxPreviewPageCount)
@@ -579,12 +577,7 @@ namespace SmartDeviceApp.Controllers
             }
             else if (enableSend)
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(
-                    () =>
-                    {
-                        _frontPreviewPageImages[1] = new WriteableBitmap(1, 1);
-                        SendPreviewPageImage(rightPageIndex, cancellationToken);
-                    });
+                SendPreviewPageImage(rightPageIndex, cancellationToken);
             }
         }
 
@@ -597,7 +590,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="isBackSide">true if the requested page is to be displayed at the back, false otherwise</param>
         /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
-        private void GeneratePreviewPage(int previewPageIndex, int logicalPageIndex,
+        private async void GeneratePreviewPage(int previewPageIndex, int logicalPageIndex,
             bool isRightSide, bool isBackSide, bool enableSend, CancellationTokenSource cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -605,31 +598,39 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            DispatcherHelper.CheckBeginInvokeOnUI(
-                async () =>
-                {
-                    if (!_previewPageImages.ContainsKey(previewPageIndex))
-                    {
-                        List<WriteableBitmap> logicalPageImages = await DocumentController.Instance
-                            .GetLogicalPageImages(logicalPageIndex, _pagesPerSheet, cancellationToken);
-                        await ApplyPrintSettings(logicalPageImages,
-                            previewPageIndex, isRightSide, isBackSide, enableSend, cancellationToken);
-                    }
+            if (!_previewPageImages.ContainsKey(previewPageIndex))
+            {
+                List<WriteableBitmap> logicalPageImages = await DocumentController.Instance
+                    .GetLogicalPageImages(logicalPageIndex, _pagesPerSheet, cancellationToken);
 
-                    if (enableSend)
+                Size logicalPageSize = new Size();
+                logicalPageSize.Width = (logicalPageImages.Count > 0) ? logicalPageImages[0].PixelWidth : 0;
+                logicalPageSize.Height = (logicalPageImages.Count > 0) ? logicalPageImages[0].PixelHeight : 0;
+
+                WriteableBitmap canvasBitmap = new WriteableBitmap((int)_previewPageImageSize.Width,
+                    (int)_previewPageImageSize.Height);
+
+                await ThreadPool.RunAsync(
+                    async (workItem) =>
                     {
-                        if (isRightSide)
+                        await ApplyPrintSettings(canvasBitmap, _previewPageImageSize,
+                            logicalPageImages, logicalPageSize,
+                            previewPageIndex, isRightSide, isBackSide, enableSend,
+                            cancellationToken);
+
+                        if (enableSend)
                         {
-                            _frontPreviewPageImages[1] = _previewPageImages.GetValue(previewPageIndex);
                             SendPreviewPageImage(previewPageIndex, cancellationToken);
                         }
-                        else
-                        {
-                            _frontPreviewPageImages[0] = _previewPageImages.GetValue(previewPageIndex);
-                            SendPreviewPageImage(previewPageIndex, cancellationToken);
-                        }
-                    }
-                });
+                    });
+            }
+            else
+            {
+                if (enableSend)
+                {
+                    SendPreviewPageImage(previewPageIndex, cancellationToken);
+                }
+            }
         }
 
         #endregion Preview Page Navigation
@@ -639,21 +640,22 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Applies print settings to logical page images to create a single preview page
         /// </summary>
+        /// <param name="canvasBitmap">preview page image</param>
+        /// <param name="previewPageSize">preview page size</param>
         /// <param name="logicalPageImages">logical page images</param>
+        /// <param name="logicalPageSize">logical page size</param>
         /// <param name="previewPageIndex">preview page index</param>
         /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
         /// <param name="isBackSide">true when duplex is on and is for back side, false otherwise</param>
         /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
-        /// <returns>task; preview page image</returns>
-        private async Task<WriteableBitmap> ApplyPrintSettings(List<WriteableBitmap> logicalPageImages,
+        /// <returns>task</returns>
+        private async Task ApplyPrintSettings(WriteableBitmap canvasBitmap,
+            Size previewPageSize, List<WriteableBitmap> logicalPageImages, Size logicalPageSize,
             int previewPageIndex, bool isRightSide, bool isBackSide, bool enableSend,
             CancellationTokenSource cancellationToken)
         {
             LogUtility.BeginTimestamp("ApplyPrintSettings #" + previewPageIndex);
-
-            WriteableBitmap finalBitmap = new WriteableBitmap((int)_previewPageImageSize.Width,
-                (int)_previewPageImageSize.Height);
 
             Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
 
@@ -662,71 +664,41 @@ namespace SmartDeviceApp.Controllers
 
             if (logicalPageImages != null && logicalPageImages.Count > 0)
             {
-                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-
-                List<WriteableBitmap> pageImages = new List<WriteableBitmap>(); // Ordered list
-
-                // Loop to each LogicalPage(s) to selected paper size and orientation
-                foreach (WriteableBitmap logicalPage in logicalPageImages)
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        return finalBitmap;
-                    }
-
-                    if (_pagesPerSheet > 1)
-                    {
-                        pageImages.Add(logicalPage);
-                    }
-                    else if (_pagesPerSheet == 1)
-                    {
-                        WriteableBitmap pageBitmap =
-                            PreviewPageImageUtility.CreateNewPageImage(paperSize, isPortrait);
-                        PreviewPageImageUtility.FillWhitePageImage(pageBitmap);
-                        PreviewPageImageUtility.OverlayLogicalPageImage(_currPrintSettings.ScaleToFit,
-                            pageBitmap, logicalPage, cancellationToken);
-                        pageImages.Add(pageBitmap);
-                    }
-                }
-
                 // Check imposition value
                 if (_pagesPerSheet > 1)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        return finalBitmap;
+                        return;
                     }
 
-                    PreviewPageImageUtility.OverlayPageImagesForImposition(finalBitmap, pageImages,
+                    PreviewPageImageUtility.OverlayImagesForImposition(canvasBitmap, previewPageSize,
+                        logicalPageImages, logicalPageSize,
                         _currPrintSettings.Orientation, _currPrintSettings.Imposition,
-                        _currPrintSettings.ImpositionOrder, out isPortrait, cancellationToken);
+                        _currPrintSettings.ImpositionOrder, _currPrintSettings.ScaleToFit,
+                        out isPortrait, cancellationToken);
                 }
                 else if (_pagesPerSheet == 1)
                 {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        return finalBitmap;
-                    }
-
-                    // Fit to scale is not necessary here since it is already done in the loop above
-                    PreviewPageImageUtility.OverlayLogicalPageImage(false, finalBitmap, pageImages[0],
-                        cancellationToken);
+                    PreviewPageImageUtility.OverlayImage(canvasBitmap, previewPageSize,
+                        logicalPageImages[0], logicalPageSize,
+                        _currPrintSettings.ScaleToFit, cancellationToken);
                 }
 
                 // Check color mode value
                 if (_currPrintSettings.ColorMode.Equals((int)ColorMode.Mono))
                 {
-                    PreviewPageImageUtility.GrayscalePageImage(finalBitmap, cancellationToken);
+                    PreviewPageImageUtility.GrayscalePageImage(canvasBitmap, cancellationToken);
                 }
 
                 if (_isBooklet)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        return finalBitmap;
+                        return;
                     }
 
-                    await PreviewPageImageUtility.FormatPageImageForBooklet(finalBitmap,
+                    await PreviewPageImageUtility.FormatPageImageForBooklet(canvasBitmap,
                         _currPrintSettings.BookletFinishing, isPortrait, isRightSide, isBackSide,
                         cancellationToken);
                 }
@@ -734,11 +706,11 @@ namespace SmartDeviceApp.Controllers
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        return finalBitmap;
+                        return;
                     }
 
-                    await PreviewPageImageUtility.FormatPageImageForDuplex(finalBitmap,
-                        _currPrintSettings.Duplex, _currPrintSettings.FinishingSide,
+                    await PreviewPageImageUtility.FormatPageImageForDuplex(canvasBitmap,
+                        previewPageSize,  _currPrintSettings.Duplex, _currPrintSettings.FinishingSide,
                         _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
                         _currPrintSettings.Staple, isPortrait, isRightSide, isBackSide,
                         cancellationToken);
@@ -750,10 +722,10 @@ namespace SmartDeviceApp.Controllers
                     {
                         if (cancellationToken.IsCancellationRequested)
                         {
-                            return finalBitmap;
+                            return;
                         }
 
-                        await PreviewPageImageUtility.OverlayPunch(finalBitmap,
+                        await PreviewPageImageUtility.OverlayPunch(canvasBitmap,
                             _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
                             _currPrintSettings.FinishingSide, cancellationToken);
                     }
@@ -763,10 +735,10 @@ namespace SmartDeviceApp.Controllers
                     {
                         if (cancellationToken.IsCancellationRequested)
                         {
-                            return finalBitmap;
+                            return;
                         }
 
-                        await PreviewPageImageUtility.OverlayStaple(finalBitmap,
+                        await PreviewPageImageUtility.OverlayStaple(canvasBitmap,
                             _currPrintSettings.Staple, _currPrintSettings.FinishingSide,
                             false, false, cancellationToken);
                     }
@@ -777,23 +749,27 @@ namespace SmartDeviceApp.Controllers
                 // Create white page
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    return finalBitmap;
+                    return;
                 }
 
-                PreviewPageImageUtility.FillWhitePageImage(finalBitmap);
+                PreviewPageImageUtility.FillWhitePageImage(canvasBitmap);
             }
 
             if (_isBooklet || _isDuplex)
             {
-                PreviewPageImageUtility.OverlayDashLineToEdge(finalBitmap, !isRightSide,
-                    isPortrait, cancellationToken);
+                PreviewPageImageUtility.OverlayDashLineToEdge(canvasBitmap, previewPageSize,
+                    !isRightSide, isPortrait, cancellationToken);
             }
+
+            DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    _previewPageImages.Add(previewPageIndex, canvasBitmap.ToByteArray());
+                });
 
             LogUtility.EndTimestamp("ApplyPrintSettings #" + previewPageIndex);
 
-            _previewPageImages.Add(previewPageIndex, finalBitmap);
-
-            return finalBitmap;
+            return;
         }
 
         /// <summary>
@@ -819,17 +795,41 @@ namespace SmartDeviceApp.Controllers
                 {
                     return;
                 }
-                _printPreviewViewModel.LeftPageImage = _frontPreviewPageImages[0];
-                _printPreviewViewModel.LeftPageActualSize = new Size(_frontPreviewPageImages[0].PixelWidth,
-                    _frontPreviewPageImages[0].PixelHeight);
-                _printPreviewViewModel.LeftPageImage.Invalidate();
 
-                _printPreviewViewModel.RightPageImage = _frontPreviewPageImages[1];
-                _printPreviewViewModel.RightPageActualSize = new Size(_frontPreviewPageImages[1].PixelWidth,
-                    _frontPreviewPageImages[1].PixelHeight);
-                _printPreviewViewModel.RightPageImage.Invalidate();
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        if (_isBooklet || _isDuplex)
+                        {
+                            if (_previewPageImages.ContainsKey(_currLeftPageIndex))
+                            {
+                                WriteableBitmapExtensions.FromByteArray(
+                                    _printPreviewViewModel.LeftPageImage,
+                                    _previewPageImages.GetValue(_currLeftPageIndex));
+                            }
+                            else
+                            {
+                                WriteableBitmapExtensions.FromByteArray(
+                                    _printPreviewViewModel.LeftPageImage, _dummyPixels);
+                            }
+                            _printPreviewViewModel.LeftPageImage.Invalidate();
+                        }
 
-                _printPreviewViewModel.IsLoadPageActive = false;
+                        if (_previewPageImages.ContainsKey(_currRightPageIndex))
+                        {
+                            WriteableBitmapExtensions.FromByteArray(
+                                _printPreviewViewModel.RightPageImage,
+                                _previewPageImages.GetValue(_currRightPageIndex));
+                        }
+                        else
+                        {
+                            WriteableBitmapExtensions.FromByteArray(
+                                _printPreviewViewModel.RightPageImage, _dummyPixels);
+                        }
+                        _printPreviewViewModel.RightPageImage.Invalidate();
+
+                        _printPreviewViewModel.IsLoadPageActive = false;
+                    });
             }
         }
 

@@ -10,7 +10,6 @@
 //  ----------------------------------------------------------------------
 //
 
-using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
