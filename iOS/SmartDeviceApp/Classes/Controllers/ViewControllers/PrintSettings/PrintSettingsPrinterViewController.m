@@ -278,10 +278,7 @@
 
 - (void)documentDidFinishPrinting:(BOOL)successful
 {
-    if (successful)
-    {
-        [self performSegueTo:[PrintJobHistoryViewController class]];
-    }
+    // Do nothing
 }
 
 #pragma mark - Printer Selection
