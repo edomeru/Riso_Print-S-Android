@@ -87,8 +87,6 @@ namespace SmartDeviceApp.Controllers
         private static int _currRightPageIndex;
         private bool _resetPrintSettings; // Flag used only when selected printer is deleted
 
-        private int _requestPageImageCounter = 0;
-
         byte[] _dummyPixels;
         List<CancellationTokenSource> _cancellationTokenSourceQueue;
         LruCacheHelper<int, byte[]> _previewPageImages;
@@ -461,7 +459,8 @@ namespace SmartDeviceApp.Controllers
         /// <param name="sliderIndex">requested right page index based on slider value</param>
         public void GoToPage(int sliderIndex)
         {
-            _printPreviewViewModel.IsLoadPageActive = true;
+            _printPreviewViewModel.IsLoadLeftPageActive = true;
+            _printPreviewViewModel.IsLoadRightPageActive = true;
             _currSliderIndex = sliderIndex;
             LoadPage(_currSliderIndex);
         }
@@ -471,7 +470,14 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void ReloadCurrentPage()
         {
-            _printPreviewViewModel.IsLoadPageActive = true;
+            // Show loading indicators
+            if (_isBooklet || _isDuplex)
+            {
+                _printPreviewViewModel.IsLoadLeftPageActive = true;
+            }
+            _printPreviewViewModel.IsLoadRightPageActive = true;
+
+            // Cancel other processing if any
             foreach (CancellationTokenSource token in _cancellationTokenSourceQueue)
             {
                 token.Cancel();
@@ -502,7 +508,6 @@ namespace SmartDeviceApp.Controllers
             CancellationTokenSource cancellationToken = new CancellationTokenSource();
             _cancellationTokenSourceQueue.Add(cancellationToken);
 
-            _requestPageImageCounter = 2;
             int rightPageIndex = sliderIndex;
             if (_isBooklet || _isDuplex)
             {
@@ -601,6 +606,16 @@ namespace SmartDeviceApp.Controllers
 
             if (!_previewPageImages.ContainsKey(previewPageIndex))
             {
+                // Temporary fill white page
+                if (isRightSide)
+                {
+                    PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightPageImage);
+                }
+                else
+                {
+                    PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftPageImage);
+                }
+
                 List<WriteableBitmap> logicalPageImages = await DocumentController.Instance
                     .GetLogicalPageImages(logicalPageIndex, _pagesPerSheet, cancellationToken);
 
@@ -758,11 +773,12 @@ namespace SmartDeviceApp.Controllers
                 PreviewPageImageUtility.FillWhitePageImage(canvasBitmap);
             }
 
-            if (_isBooklet || _isDuplex)
-            {
-                PreviewPageImageUtility.OverlayDashLineToEdge(canvasBitmap, previewPageSize,
-                    !isRightSide, isPreviewPagePortrait, cancellationToken);
-            }
+            // Note: Dash line is now drawn in XAML
+            //if (_isBooklet || _isDuplex)
+            //{
+            //    PreviewPageImageUtility.OverlayDashLineToEdge(canvasBitmap, previewPageSize,
+            //        !isRightSide, isPreviewPagePortrait, cancellationToken);
+            //}
 
             DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
@@ -780,59 +796,53 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="previewPageIndex">preview page index</param>
         /// <param name="cancellationToken">cancellation token</param>
-        private void SendPreviewPageImage(int previewPageIndex, CancellationTokenSource cancellationToken)
+        private void SendPreviewPageImage(int previewPageIndex,
+            CancellationTokenSource cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
             {
                 return;
             }
 
-            if (_currLeftPageIndex == previewPageIndex || _currRightPageIndex == previewPageIndex)
+            if ((_isBooklet || _isDuplex) && previewPageIndex == _currLeftPageIndex)
             {
-                --_requestPageImageCounter;
-            }
-
-            if (_requestPageImageCounter == 0)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-
                 DispatcherHelper.CheckBeginInvokeOnUI(
                     () =>
                     {
-                        if (_isBooklet || _isDuplex)
-                        {
-                            if (_previewPageImages.ContainsKey(_currLeftPageIndex))
-                            {
-                                WriteableBitmapExtensions.FromByteArray(
-                                    _printPreviewViewModel.LeftPageImage,
-                                    _previewPageImages.GetValue(_currLeftPageIndex));
-                            }
-                            else
-                            {
-                                WriteableBitmapExtensions.FromByteArray(
-                                    _printPreviewViewModel.LeftPageImage, _dummyPixels);
-                            }
-                            _printPreviewViewModel.LeftPageImage.Invalidate();
-                        }
-
-                        if (_previewPageImages.ContainsKey(_currRightPageIndex))
+                        if (_previewPageImages.ContainsKey(_currLeftPageIndex))
                         {
                             WriteableBitmapExtensions.FromByteArray(
-                                _printPreviewViewModel.RightPageImage,
-                                _previewPageImages.GetValue(_currRightPageIndex));
+                                _printPreviewViewModel.LeftPageImage,
+                                _previewPageImages.GetValue(_currLeftPageIndex));
                         }
                         else
                         {
                             WriteableBitmapExtensions.FromByteArray(
-                                _printPreviewViewModel.RightPageImage, _dummyPixels);
+                                _printPreviewViewModel.LeftPageImage, _dummyPixels);
                         }
-                        _printPreviewViewModel.RightPageImage.Invalidate();
-
-                        _printPreviewViewModel.IsLoadPageActive = false;
+                        //_printPreviewViewModel.LeftPageImage.Invalidate();
+                        _printPreviewViewModel.IsLoadLeftPageActive = false;
                     });
+            }
+            else if (previewPageIndex == _currRightPageIndex)
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    if (_previewPageImages.ContainsKey(_currRightPageIndex))
+                    {
+                        WriteableBitmapExtensions.FromByteArray(
+                            _printPreviewViewModel.RightPageImage,
+                            _previewPageImages.GetValue(_currRightPageIndex));
+                    }
+                    else
+                    {
+                        WriteableBitmapExtensions.FromByteArray(
+                            _printPreviewViewModel.RightPageImage, _dummyPixels);
+                    }
+                    //_printPreviewViewModel.RightPageImage.Invalidate();
+                    _printPreviewViewModel.IsLoadRightPageActive = false;
+                });
             }
         }
 

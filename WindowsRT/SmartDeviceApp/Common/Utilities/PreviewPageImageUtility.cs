@@ -768,108 +768,109 @@ namespace SmartDeviceApp.Common.Utilities
         //    }
         //}
 
-        /// <summary>
-        /// Adds dash lines at the edge of an image
-        /// </summary>
-        /// <param name="canvasBitmap">canvas</param>
-        /// <param name="canvasSize">canvas size</param>
-        /// <param name="isRightSide">true when page is on right side, false otherwise</param>
-        /// <param name="isPortrait">true when portrait, false otherwise</param>
-        /// <param name="cancellationToken">cancellation token</param>
-        public static void OverlayDashLineToEdge(WriteableBitmap canvasBitmap, Size canvasSize,
-            bool isRightEdge, bool isPortrait, CancellationTokenSource cancellationToken)
-        {
-            int point = 0;
+        // Note: Dash line is now drawn in XAML
+        ///// <summary>
+        ///// Adds dash lines at the edge of an image
+        ///// </summary>
+        ///// <param name="canvasBitmap">canvas</param>
+        ///// <param name="canvasSize">canvas size</param>
+        ///// <param name="isRightSide">true when page is on right side, false otherwise</param>
+        ///// <param name="isPortrait">true when portrait, false otherwise</param>
+        ///// <param name="cancellationToken">cancellation token</param>
+        //public static void OverlayDashLineToEdge(WriteableBitmap canvasBitmap, Size canvasSize,
+        //    bool isRightEdge, bool isPortrait, CancellationTokenSource cancellationToken)
+        //{
+        //    int point = 0;
 
-            if (isPortrait)
-            {
-                if (isRightEdge) // for left page
-                {
-                    do
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
+        //    if (isPortrait)
+        //    {
+        //        if (isRightEdge) // for left page
+        //        {
+        //            do
+        //            {
+        //                if (cancellationToken.IsCancellationRequested)
+        //                {
+        //                    return;
+        //                }
 
-                        Point p1 = new Point(canvasSize.Width - 1, point);
-                        Point p2 = new Point(canvasSize.Width - 1, point +
-                            PrintSettingConstant.DASH_LINE_LENGTH);
-                        point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
-                        DispatcherHelper.CheckBeginInvokeOnUI(
-                    () =>
-                    {
-                        WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
-                            (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-                    });
-                    } while (point < canvasSize.Height);
-                }
-                else // for right page
-                {
-                    do
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
+        //                Point p1 = new Point(canvasSize.Width - 1, point);
+        //                Point p2 = new Point(canvasSize.Width - 1, point +
+        //                    PrintSettingConstant.DASH_LINE_LENGTH);
+        //                point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
+        //                DispatcherHelper.CheckBeginInvokeOnUI(
+        //            () =>
+        //            {
+        //                WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
+        //                    (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
+        //            });
+        //            } while (point < canvasSize.Height);
+        //        }
+        //        else // for right page
+        //        {
+        //            do
+        //            {
+        //                if (cancellationToken.IsCancellationRequested)
+        //                {
+        //                    return;
+        //                }
 
-                        Point p1 = new Point(0, point);
-                        Point p2 = new Point(0, point + PrintSettingConstant.DASH_LINE_LENGTH);
-                        point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
-                        DispatcherHelper.CheckBeginInvokeOnUI(
-                    () =>
-                    {
-                        WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
-                            (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-                    });
-                    } while (point < canvasSize.Height);
-                }
-            }
-            else // for landscape
-            {
-                if (isRightEdge) // for left page
-                {
-                    do
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
+        //                Point p1 = new Point(0, point);
+        //                Point p2 = new Point(0, point + PrintSettingConstant.DASH_LINE_LENGTH);
+        //                point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
+        //                DispatcherHelper.CheckBeginInvokeOnUI(
+        //            () =>
+        //            {
+        //                WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
+        //                    (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
+        //            });
+        //            } while (point < canvasSize.Height);
+        //        }
+        //    }
+        //    else // for landscape
+        //    {
+        //        if (isRightEdge) // for left page
+        //        {
+        //            do
+        //            {
+        //                if (cancellationToken.IsCancellationRequested)
+        //                {
+        //                    return;
+        //                }
 
-                        Point p1 = new Point(point, canvasSize.Height - 1);
-                        Point p2 = new Point(point + PrintSettingConstant.DASH_LINE_LENGTH,
-                            canvasSize.Height - 1);
-                        point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
-                        DispatcherHelper.CheckBeginInvokeOnUI(
-                    () =>
-                    {
-                        WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
-                            (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-                    });
-                    } while (point < canvasSize.Width);
-                }
-                else // for right page
-                {
-                    do
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
+        //                Point p1 = new Point(point, canvasSize.Height - 1);
+        //                Point p2 = new Point(point + PrintSettingConstant.DASH_LINE_LENGTH,
+        //                    canvasSize.Height - 1);
+        //                point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
+        //                DispatcherHelper.CheckBeginInvokeOnUI(
+        //            () =>
+        //            {
+        //                WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
+        //                    (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
+        //            });
+        //            } while (point < canvasSize.Width);
+        //        }
+        //        else // for right page
+        //        {
+        //            do
+        //            {
+        //                if (cancellationToken.IsCancellationRequested)
+        //                {
+        //                    return;
+        //                }
 
-                        Point p1 = new Point(point, 0);
-                        Point p2 = new Point(point + PrintSettingConstant.DASH_LINE_LENGTH, 0);
-                        point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
-                        DispatcherHelper.CheckBeginInvokeOnUI(
-                    () =>
-                    {
-                        WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
-                            (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-                    });
-                    } while (point < canvasSize.Width);
-                }
-            }
-        }
+        //                Point p1 = new Point(point, 0);
+        //                Point p2 = new Point(point + PrintSettingConstant.DASH_LINE_LENGTH, 0);
+        //                point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
+        //                DispatcherHelper.CheckBeginInvokeOnUI(
+        //            () =>
+        //            {
+        //                WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
+        //                    (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
+        //            });
+        //            } while (point < canvasSize.Width);
+        //        }
+        //    }
+        //}
 
         #region Private Methods
 

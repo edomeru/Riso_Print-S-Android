@@ -291,17 +291,31 @@ namespace SmartDeviceApp.ViewModels
 
         #region PANE VISIBILITY
 
-        private bool _isLoadPageActive;
+        private bool _isLoadLeftPageActive;
+        private bool _isLoadRightPageActive;
 
-        public bool IsLoadPageActive
+        public bool IsLoadLeftPageActive
         {
-            get { return _isLoadPageActive; }
+            get { return _isLoadLeftPageActive; }
             set
             {
-                if (_isLoadPageActive != value)
+                if (_isLoadLeftPageActive != value)
                 {
-                    _isLoadPageActive = value;
-                    RaisePropertyChanged("IsLoadPageActive");
+                    _isLoadLeftPageActive = value;
+                    RaisePropertyChanged("IsLoadLeftPageActive");
+                }
+            }
+        }
+
+        public bool IsLoadRightPageActive
+        {
+            get { return _isLoadRightPageActive; }
+            set
+            {
+                if (_isLoadRightPageActive != value)
+                {
+                    _isLoadRightPageActive = value;
+                    RaisePropertyChanged("IsLoadRightPageActive");
                 }
             }
         }

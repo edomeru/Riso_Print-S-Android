@@ -29,8 +29,14 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty RightPageImageProperty =
             DependencyProperty.Register("RightPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
 
+        public static readonly DependencyProperty IsLoadRightPageActiveProperty =
+            DependencyProperty.Register("IsLoadRightPageActive", typeof(bool), typeof(TwoPageControl), null);
+
         public static readonly DependencyProperty LeftPageImageProperty =
             DependencyProperty.Register("LeftPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty IsLoadLeftPageActiveProperty =
+            DependencyProperty.Register("IsLoadLeftPageActive", typeof(bool), typeof(TwoPageControl), null);
 
         public static readonly DependencyProperty PageViewModeProperty =
            DependencyProperty.Register("PageViewMode", typeof(PageViewMode), typeof(TwoPageControl),
@@ -50,12 +56,24 @@ namespace SmartDeviceApp.Controls
             set { SetValue(RightPageImageProperty, value); }
         }
 
+        public bool IsLoadRightPageActive
+        {
+            get { return (bool)GetValue(IsLoadRightPageActiveProperty); }
+            set { SetValue(IsLoadRightPageActiveProperty, value); }
+        }
+
         public ImageSource LeftPageImage
         {
             get { return (ImageSource)GetValue(LeftPageImageProperty); }
             set { SetValue(LeftPageImageProperty, value); }
         }
-		
+
+        public bool IsLoadLeftPageActive
+        {
+            get { return (bool)GetValue(IsLoadLeftPageActiveProperty); }
+            set { SetValue(IsLoadLeftPageActiveProperty, value); }
+        }
+
         public PageViewMode PageViewMode
         {
             get { return (PageViewMode)GetValue(PageViewModeProperty); }
@@ -86,6 +104,11 @@ namespace SmartDeviceApp.Controls
                     control.topPage.Visibility = Visibility.Collapsed;
                     control.topPageArea.Height = gridLengthCollapsed;
                     control.bottomPageArea.Height = gridLengthFull;
+
+                    // Dash lines
+                    control.horizontalSeparator.Visibility = Visibility.Collapsed;
+                    control.verticalSeparator.Visibility = Visibility.Collapsed;
+
                     break;
                 }
                 case PageViewMode.TwoPageViewHorizontal:
@@ -96,6 +119,12 @@ namespace SmartDeviceApp.Controls
                     control.topPage.Visibility = Visibility.Collapsed;
                     control.topPageArea.Height = gridLengthCollapsed;
                     control.bottomPageArea.Height = gridLengthFull;
+
+                    // Dash lines
+                    control.horizontalSeparator.Visibility = Visibility.Collapsed;
+                    control.verticalSeparator.Visibility = Visibility.Visible;
+                    control.verticalSeparator.Y2 = control.PageAreaSize.Height;
+
                     break;
                 }
                 case PageViewMode.TwoPageViewVertical:
@@ -103,9 +132,15 @@ namespace SmartDeviceApp.Controls
                     control.leftPage.Visibility = Visibility.Collapsed;
                     control.leftPageArea.Width = gridLengthCollapsed;
                     control.rightPageArea.Width = gridLengthFull;
-                    control.topPage.Visibility = Visibility.Visible;          
+                    control.topPage.Visibility = Visibility.Visible;
                     control.topPageArea.Height = gridHeight;
-                    control.bottomPageArea.Height = gridHeight;                    
+                    control.bottomPageArea.Height = gridHeight;
+                    
+                    // Dash lines
+                    control.horizontalSeparator.Visibility = Visibility.Visible;
+                    control.verticalSeparator.Visibility = Visibility.Collapsed;
+                    control.horizontalSeparator.X2 = control.PageAreaSize.Width;
+
                     break;
                 }
             }
