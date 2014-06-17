@@ -101,6 +101,19 @@ namespace SmartDeviceApp.Controllers
             }
             currPrintSettings = await GetPrintSettings(printSettingId);
 
+            // Special handling: Set Orientation value based on first page of PDF
+            if (screenName.Equals(ScreenMode.PrintPreview.ToString()))
+            {
+                if (DocumentController.Instance.IsPdfPortrait)
+                {
+                    currPrintSettings.Orientation = (int)Orientation.Portrait;
+                }
+                else
+                {
+                    currPrintSettings.Orientation = (int)Orientation.Landscape;
+                }
+            }
+
             if (screenName.Equals(ScreenMode.PrintPreview.ToString()))
             {
                 _prevPinCode = null;
