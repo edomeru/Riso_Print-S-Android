@@ -74,11 +74,14 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
     {
         PreviewSetting *previewSetting = self.previewSetting;
         [PrintSettingsHelper copyPrintSettings:printer.printsetting toPreviewSetting:&previewSetting];
-        
-#if GET_ORIENTATION_FROM_PDF_ENABLED
-        [self getOrientationFromPDF];
-#endif
     }
+    
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+    if(self.previewSetting != nil)
+    {
+        [self getOrientationFromPDF];
+    }
+#endif
 }
 
 - (NSInteger)pageCount
