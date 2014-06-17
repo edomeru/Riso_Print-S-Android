@@ -11,6 +11,7 @@
 @interface PrintSettingsHeaderCell : UITableViewCell
 
 @property (nonatomic, weak) IBOutlet UILabel *groupLabel;
+@property (nonatomic, weak) IBOutlet UIView *separator;
 @property (nonatomic) BOOL expanded;
 
 @end

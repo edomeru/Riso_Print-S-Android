@@ -232,6 +232,16 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
             headerCell.groupLabel.uppercaseLocalizationId = IDS_LBL_AUTHENTICATION;
             headerCell.expanded = [[self.expandedSections objectAtIndex:section] boolValue];
+            
+            if(headerCell.expanded || section == [self.supportedSettings count])
+            {
+                headerCell.separator.hidden = YES;
+            }
+            else
+            {
+                headerCell.separator.hidden = NO;
+            }
+            
             cell = headerCell;
         }
         else if (row == 1)
@@ -276,6 +286,16 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
             headerCell.groupLabel.uppercaseLocalizationId = [group objectForKey:@"text"];
             headerCell.expanded = [[self.expandedSections objectAtIndex:section] boolValue];
+            
+            if(headerCell.expanded || section == [self.supportedSettings count])
+            {
+                headerCell.separator.hidden = YES;
+            }
+            else
+            {
+                headerCell.separator.hidden = NO;
+            }
+            
             cell = headerCell;
         }
         else
@@ -374,11 +394,16 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             {
                 [tableView insertRowsAtIndexPaths:@[securePrintRowIndexPath, pinCodeRowIndexPath]
                                  withRowAnimation:UITableViewRowAnimationFade];
+                headerCell.separator.hidden = YES;
             }
             else
             {
                 [tableView deleteRowsAtIndexPaths:@[securePrintRowIndexPath, pinCodeRowIndexPath]
                                  withRowAnimation:UITableViewRowAnimationFade];
+                if(section != [self.supportedSettings count])
+                {
+                    headerCell.separator.hidden = NO;
+                }
             }
         }
     }
@@ -402,11 +427,16 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             {
                 [tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
                 headerCell.expanded = NO;
+                if(section != [self.supportedSettings count])
+                {
+                    headerCell.separator.hidden = NO;
+                }
             }
             else
             {
                 [tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
                 headerCell.expanded = YES;
+                headerCell.separator.hidden = YES;
             }
         }
         else
