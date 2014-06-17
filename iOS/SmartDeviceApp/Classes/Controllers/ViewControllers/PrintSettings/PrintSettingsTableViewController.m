@@ -1033,6 +1033,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         return [self.printer.enabled_staple boolValue];
     }
     
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+    if ([settingKey isEqualToString:KEY_ORIENTATION])
+    {
+        return NO;
+    }
+#endif
+    
     return YES;
 }
 

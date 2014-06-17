@@ -31,6 +31,10 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
  */
 - (void)removeObservers;
 
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+- (void)getOrientationFromPDF;
+#endif
+
 @end
 
 @implementation PrintDocument
@@ -71,6 +75,13 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
         PreviewSetting *previewSetting = self.previewSetting;
         [PrintSettingsHelper copyPrintSettings:printer.printsetting toPreviewSetting:&previewSetting];
     }
+    
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+    if(self.previewSetting != nil)
+    {
+        [self getOrientationFromPDF];
+    }
+#endif
 }
 
 - (NSInteger)pageCount
@@ -94,6 +105,15 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
         for (NSDictionary *setting in settings)
         {
             NSString *key = [setting objectForKey:@"name"];
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+            if ([key isEqualToString:KEY_ORIENTATION])
+            {
+                // do not observe this setting
+                // fix for the flicker in orientation when changing selected printer
+                continue;
+            }
+#endif
+            
             [self.previewSetting addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&previewSettingContext];
         }
     }
@@ -110,10 +130,35 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
         for (NSDictionary *setting in settings)
         {
             NSString *key = [setting objectForKey:@"name"];
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+            if ([key isEqualToString:KEY_ORIENTATION])
+            {
+                continue;
+            }
+#endif
+            
             [self.previewSetting removeObserver:self forKeyPath:key context:&previewSettingContext];
         }
     }
 }
+
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+- (void)getOrientationFromPDF
+{
+    CGPDFDocumentRef docRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.url);
+    CGPDFPageRef pageRef = CGPDFDocumentGetPage(docRef, 1);
+    CGRect pageRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
+    
+    kOrientation orientation = kOrientationPortrait;
+    if (pageRect.size.width > pageRect.size.height)
+    {
+        orientation = kOrientationLandscape;
+    }
+    self.previewSetting.orientation = orientation;
+    
+    CGPDFDocumentRelease(docRef);
+}
+#endif
 
 #pragma mark - Key-Value Observing Methods
 

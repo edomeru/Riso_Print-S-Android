@@ -316,7 +316,7 @@
     [self.activityIndicator stopAnimating];
     [self setupTotalPageNum];
     [self setupPageLabel];
-    
+
     self.previewView.hidden = NO;
     [self setupDisplayAspectRatio];
 
