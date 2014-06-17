@@ -86,18 +86,12 @@ namespace SmartDeviceApp.Common.Utilities
         /// Checks preview page is portrait
         /// </summary>
         /// <param name="orientation">orientation</param>
-        /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
         /// <param name="imposition">imposition</param>
         /// <returns>true when portrait, false otherwise</returns>
-        public static bool IsPreviewPagePortrait(int orientation, bool isBooklet,
-            int? imposition = null)
+        public static bool IsPreviewPagePortrait(int orientation, int? imposition = null)
         {
             bool isPortrait = (orientation == (int)Orientation.Portrait);
-            if (isBooklet)
-            {
-                isPortrait = (orientation != (int)Orientation.Portrait);
-            }
-            else if (imposition != null && imposition == (int)Imposition.TwoUp)
+            if (imposition != null && imposition == (int)Imposition.TwoUp)
             {
                 isPortrait = !isPortrait;
             }
@@ -271,7 +265,7 @@ namespace SmartDeviceApp.Common.Utilities
             // Determine final orientation based on imposition
             int pagesPerSheet = GetPagesPerSheet(imposition);
             bool rotateLeft = (isPdfPortrait != isPortrait);
-            isImpositionPortrait = IsPreviewPagePortrait(orientation, false, imposition);
+            isImpositionPortrait = IsPreviewPagePortrait(orientation, imposition);
 
             if (rotateLeft)
             {

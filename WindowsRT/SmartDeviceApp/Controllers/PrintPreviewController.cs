@@ -326,7 +326,7 @@ namespace SmartDeviceApp.Controllers
             {
                 Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
                 bool isPortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
-                    _currPrintSettings.Orientation, _isBooklet, _currPrintSettings.Imposition);
+                    _currPrintSettings.Orientation, _currPrintSettings.Imposition);
 
                 if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse)
                 {
@@ -661,7 +661,7 @@ namespace SmartDeviceApp.Controllers
 
             bool isPdfPortait = DocumentController.Instance.IsPdfPortrait;
             bool isPreviewPagePortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
-                _currPrintSettings.Orientation, _isBooklet);
+                _currPrintSettings.Orientation);
 
             if (logicalPageImages != null && logicalPageImages.Count > 0)
             {
@@ -705,7 +705,7 @@ namespace SmartDeviceApp.Controllers
                 //        cancellationToken);
                 //}
                 //else if (_isDuplex)
-                if (_isDuplex)
+                if (_isDuplex && !_isBooklet)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
