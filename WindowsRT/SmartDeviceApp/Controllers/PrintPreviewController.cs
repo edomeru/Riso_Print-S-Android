@@ -322,10 +322,10 @@ namespace SmartDeviceApp.Controllers
         {
             if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
-                Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
                 bool isPortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
                     _currPrintSettings.Orientation, _currPrintSettings.Imposition);
 
+                // Update swipe direction/flow
                 if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse)
                 {
                     _printPreviewViewModel.IsReverseSwipe = true;
@@ -335,6 +335,7 @@ namespace SmartDeviceApp.Controllers
                     _printPreviewViewModel.IsReverseSwipe = false;
                 }
 
+                // Update swipe direction
                 if ((_isBooklet && !isPortrait) ||
                     (_isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Top)) 
                 {
@@ -345,28 +346,21 @@ namespace SmartDeviceApp.Controllers
                     _printPreviewViewModel.IsHorizontalSwipeEnabled = true;
                 }
 
-                _previewPageImageSize = PreviewPageImageUtility.GetPreviewPageImageSize(paperSize,
-                    isPortrait);
-                _printPreviewViewModel.RightPageImage =
-                    new WriteableBitmap((int)_previewPageImageSize.Width,
-                        (int)_previewPageImageSize.Height);
+                // Update base page bitmap sizes
                 _printPreviewViewModel.RightPageActualSize = _previewPageImageSize;
-
                 if (_isBooklet || _isDuplex)
                 {
                     _printPreviewViewModel.LeftPageActualSize = _previewPageImageSize;
-                    _printPreviewViewModel.LeftPageImage =
-                        new WriteableBitmap((int)_previewPageImageSize.Width,
-                            (int)_previewPageImageSize.Height);
                 }
                 else
                 {
                     _printPreviewViewModel.LeftPageActualSize = new Size();
                 }
-                _printPreviewViewModel.PageViewMode = _pageViewMode;
-                _printPreviewViewModel.InitializeGestures();
 
-                _dummyPixels = _printPreviewViewModel.RightPageImage.ToByteArray();
+                // Update page view mode
+                _printPreviewViewModel.PageViewMode = _pageViewMode;
+
+                _printPreviewViewModel.InitializeGestures();
             }
         }
 
@@ -391,6 +385,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void UpdatePreviewInfo()
         {
+            // Determine view mode
             _isBooklet = _currPrintSettings.Booklet;
             _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
             if (_isBooklet)
@@ -417,11 +412,10 @@ namespace SmartDeviceApp.Controllers
                 _pageViewMode = PageViewMode.SinglePageView;
             }
 
+            // Update page count and page number
             _pagesPerSheet = PreviewPageImageUtility.GetPagesPerSheet(_currPrintSettings.Imposition);
-
             _previewPageTotal = (uint)Math.Ceiling((decimal)DocumentController.Instance.PageCount /
                                                     _pagesPerSheet);
-
             if (_isBooklet)
             {
                 _previewPageTotal = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 2;
@@ -447,6 +441,28 @@ namespace SmartDeviceApp.Controllers
             {
                 _maxPreviewPageCount = ((int)_previewPageTotal * 2) - 2;
             }
+
+            Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
+            bool isPortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
+                _currPrintSettings.Orientation, _currPrintSettings.Imposition);
+
+            // Determine page size
+            _previewPageImageSize = PreviewPageImageUtility.GetPreviewPageImageSize(paperSize,
+                isPortrait);
+
+            // Update source page bitmap
+            if (_isBooklet || _isDuplex)
+            {
+                _printPreviewViewModel.LeftPageImage =
+                    new WriteableBitmap((int)_previewPageImageSize.Width,
+                        (int)_previewPageImageSize.Height);
+            }
+            _printPreviewViewModel.RightPageImage =
+                new WriteableBitmap((int)_previewPageImageSize.Width,
+                    (int)_previewPageImageSize.Height);
+
+            // Create blank bitmap (store it as byte array)
+            _dummyPixels = _printPreviewViewModel.RightPageImage.ToByteArray();
         }
 
         #endregion Print Preview
