@@ -1974,10 +1974,10 @@
                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F0W-7E-OX4" userLabel="Separator">
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F0W-7E-OX4" userLabel="Separator">
                                             <rect key="frame" x="0.0" y="43" width="320" height="1"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                            <color key="backgroundColor" red="0.67843137254901964" green="0.67843137254901964" blue="0.67843137254901964" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="1" id="YXm-JK-QhP"/>
                                             </constraints>
@@ -1986,8 +1986,11 @@
                                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstItem="x85-jj-Tp0" firstAttribute="leading" secondItem="wrx-wK-2jR" secondAttribute="leading" constant="4" id="7bB-D7-wDg"/>
+                                        <constraint firstItem="F0W-7E-OX4" firstAttribute="leading" secondItem="wrx-wK-2jR" secondAttribute="leading" id="AFf-5d-tjk"/>
                                         <constraint firstAttribute="centerY" secondItem="x85-jj-Tp0" secondAttribute="centerY" constant="2" id="L8M-pl-mdk"/>
+                                        <constraint firstAttribute="trailing" secondItem="F0W-7E-OX4" secondAttribute="trailing" id="ObZ-is-w2t"/>
                                         <constraint firstItem="yjL-Hh-HTV" firstAttribute="leading" secondItem="wrx-wK-2jR" secondAttribute="leading" constant="36" id="a03-cV-CJV"/>
+                                        <constraint firstAttribute="bottom" secondItem="F0W-7E-OX4" secondAttribute="bottom" id="m7t-PO-yOW"/>
                                         <constraint firstAttribute="centerY" secondItem="yjL-Hh-HTV" secondAttribute="centerY" id="sEt-lz-ZlN"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -3780,9 +3783,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="c8V-UF-iWe"/>
-        <segue reference="ax2-Mn-NH0"/>
         <segue reference="5pT-ga-236"/>
+        <segue reference="ax2-Mn-NH0"/>
+        <segue reference="oE4-lZ-OOf"/>
         <segue reference="gRW-en-vNy"/>
         <segue reference="h8r-TR-IcV"/>
     </inferredMetricsTieBreakers>
