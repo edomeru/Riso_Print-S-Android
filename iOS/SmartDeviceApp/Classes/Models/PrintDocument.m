@@ -102,6 +102,15 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
         for (NSDictionary *setting in settings)
         {
             NSString *key = [setting objectForKey:@"name"];
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+            if ([key isEqualToString:KEY_ORIENTATION])
+            {
+                // do not observe this setting
+                // fix for the flicker in orientation when changing selected printer
+                continue;
+            }
+#endif
+            
             [self.previewSetting addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&previewSettingContext];
         }
     }
@@ -118,6 +127,13 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
         for (NSDictionary *setting in settings)
         {
             NSString *key = [setting objectForKey:@"name"];
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+            if ([key isEqualToString:KEY_ORIENTATION])
+            {
+                continue;
+            }
+#endif
+            
             [self.previewSetting removeObserver:self forKeyPath:key context:&previewSettingContext];
         }
     }
