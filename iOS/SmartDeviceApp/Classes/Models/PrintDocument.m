@@ -31,6 +31,10 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
  */
 - (void)removeObservers;
 
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+- (void)getOrientationFromPDF;
+#endif
+
 @end
 
 @implementation PrintDocument
@@ -70,6 +74,10 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
     {
         PreviewSetting *previewSetting = self.previewSetting;
         [PrintSettingsHelper copyPrintSettings:printer.printsetting toPreviewSetting:&previewSetting];
+        
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+        [self getOrientationFromPDF];
+#endif
     }
 }
 
@@ -114,6 +122,24 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
         }
     }
 }
+
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+- (void)getOrientationFromPDF
+{
+    CGPDFDocumentRef docRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.url);
+    CGPDFPageRef pageRef = CGPDFDocumentGetPage(docRef, 1);
+    CGRect pageRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
+    
+    kOrientation orientation = kOrientationPortrait;
+    if (pageRect.size.width > pageRect.size.height)
+    {
+        orientation = kOrientationLandscape;
+    }
+    self.previewSetting.orientation = orientation;
+    
+    CGPDFDocumentRelease(docRef);
+}
+#endif
 
 #pragma mark - Key-Value Observing Methods
 

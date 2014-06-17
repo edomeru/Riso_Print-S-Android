@@ -109,10 +109,6 @@
  */
 - (void)setupPageLabel;
 
-#if GET_ORIENTATION_FROM_PDF_ENABLED
-- (void)setupOrientationFromPDF;
-#endif
-
 /**
  Setup display aspect ratio to match paper size and finishing
  */
@@ -320,11 +316,8 @@
     [self.activityIndicator stopAnimating];
     [self setupTotalPageNum];
     [self setupPageLabel];
+
     self.previewView.hidden = NO;
-    
-#if GET_ORIENTATION_FROM_PDF_ENABLED
-    [self setupOrientationFromPDF];
-#endif
     [self setupDisplayAspectRatio];
 
     [self setupPageviewControllerWithBindSetting];
@@ -455,23 +448,6 @@
         [self.pageViewController setDoubleSided:NO];
     }
 }
-
-#if GET_ORIENTATION_FROM_PDF_ENABLED
-- (void)setupOrientationFromPDF
-{
-    CGPDFDocumentRef docRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.printDocument.url);
-    CGPDFPageRef pageRef = CGPDFDocumentGetPage(docRef, 1);
-    CGRect pageRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
-    
-    kOrientation orientation = kOrientationPortrait;
-    if (pageRect.size.width > pageRect.size.height)
-    {
-        orientation = kOrientationLandscape;
-    }
-    
-    self.printDocument.previewSetting.orientation = orientation;
-}
-#endif
 
 - (void)setupDisplayAspectRatio
 {
