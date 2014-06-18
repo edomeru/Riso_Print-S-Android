@@ -283,8 +283,8 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         }
         db.close();
     }
-
-    public void testFormattedString() {
+    
+    public void testFormattedString_Portrait() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
         SharedPreferences.Editor editor = prefs.edit();
 
@@ -293,25 +293,63 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, "1234");
 
         editor.apply();
+        
+        String formattedString = mPrintSettings.formattedString(false);
 
-        assertNotNull(mPrintSettings.formattedString());
-        assertFalse(mPrintSettings.formattedString().isEmpty());
-        assertTrue(mPrintSettings.formattedString().contains("securePrint=0\n"));
-        assertTrue(mPrintSettings.formattedString().contains("loginId=test\n"));
-        assertTrue(mPrintSettings.formattedString().contains("pinCode=1234\n"));
+        assertNotNull(formattedString);
+        assertFalse(formattedString.isEmpty());
+        assertTrue(formattedString.contains("orientation=0\n"));
+        assertTrue(formattedString.contains("securePrint=0\n"));
+        assertTrue(formattedString.contains("loginId=test\n"));
+        assertTrue(formattedString.contains("pinCode=1234\n"));
 
-        String formattedString = mPrintSettings.formattedString(); // for comparison
-
+        mPrintSettings.setValue(KEY_ORIENTATION, 1);
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON
+        editor.apply();
+        
+        String formattedString2 = mPrintSettings.formattedString(false);
+
+        assertNotNull(formattedString2);
+        assertFalse(formattedString2.isEmpty());
+        assertFalse(formattedString2.equals(formattedString));
+        assertTrue(formattedString2.contains("orientation=0\n"));
+        assertTrue(formattedString2.contains("securePrint=1\n"));
+        assertTrue(formattedString2.contains("loginId=test\n"));
+        assertTrue(formattedString2.contains("pinCode=1234\n"));
+    }
+    
+    public void testFormattedString_Landscape() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, false);
+        editor.putString(AppConstants.PREF_KEY_LOGIN_ID, "test");
+        editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, "1234");
 
         editor.apply();
+        
+        String formattedString = mPrintSettings.formattedString(true);
 
-        assertNotNull(mPrintSettings.formattedString());
-        assertFalse(mPrintSettings.formattedString().isEmpty());
-        assertFalse(mPrintSettings.formattedString().equals(formattedString));
-        assertTrue(mPrintSettings.formattedString().contains("securePrint=1\n"));
-        assertTrue(mPrintSettings.formattedString().contains("loginId=test\n"));
-        assertTrue(mPrintSettings.formattedString().contains("pinCode=1234\n"));
+        assertNotNull(formattedString);
+        assertFalse(formattedString.isEmpty());
+        assertTrue(formattedString.contains("orientation=1\n"));
+        assertTrue(formattedString.contains("securePrint=0\n"));
+        assertTrue(formattedString.contains("loginId=test\n"));
+        assertTrue(formattedString.contains("pinCode=1234\n"));
+
+        mPrintSettings.setValue(KEY_ORIENTATION, 1);
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON
+        editor.apply();
+        
+        String formattedString2 = mPrintSettings.formattedString(true);
+
+        assertNotNull(formattedString2);
+        assertFalse(formattedString2.isEmpty());
+        assertFalse(formattedString2.equals(formattedString));
+        assertTrue(formattedString2.contains("orientation=1\n"));
+        assertTrue(formattedString2.contains("securePrint=1\n"));
+        assertTrue(formattedString2.contains("loginId=test\n"));
+        assertTrue(formattedString2.contains("pinCode=1234\n"));
     }
 
     public void testGetSettingValues() {

@@ -24,9 +24,10 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     String mPdfInSandboxPath;
     String mEncryptedPdfPath;
     String mPrintingDisallowed;
+    String mLandscapePDF;
     int mStatus;
     PDFFileManager mPdfManager;
-
+    
     public PDFFileManagerTest() {
         super(MainActivity.class);
     }
@@ -44,6 +45,8 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         mEncryptedPdfPath = getAssetPath("40RC4_Nitro.pdf");
         
         mPrintingDisallowed = getAssetPath("PDF-0010pages.pdf");
+        
+        mLandscapePDF = getAssetPath("4pages_Landscape_TestData.pdf");
         
         mPdfInSandboxPath = PDFFileManager.getSandboxPath();
         FileUtils.copy(new File(mPdfPath), new File(mPdfInSandboxPath));
@@ -301,6 +304,41 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         
         assertTrue(width == 0);
         assertTrue(height == 0);
+    }
+
+    
+    //================================================================================
+    // Tests - is PDF landscape
+    //================================================================================
+    
+    public void testIsPDFLandscape_Valid() {
+        mPdfManager.setPDF(mPdfPath);
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OK);
+        
+        boolean isLandscape = mPdfManager.isPDFLandscape();
+
+        assertFalse(isLandscape);
+    }
+
+    public void testIsPDFLandscape_Invalid() {
+        mPdfManager.setPDF("");
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OPEN_FAILED);
+        
+        boolean isLandscape = mPdfManager.isPDFLandscape();
+        
+        assertFalse(isLandscape);
+    }
+
+    public void testIsPDFLandscape_LandscapeValid() {
+        mPdfManager.setPDF(mLandscapePDF);
+        int status = mPdfManager.openDocument();
+        assertEquals(status, PDFFileManager.PDF_OK);
+        
+        boolean isLandscape = mPdfManager.isPDFLandscape();
+        
+        assertTrue(isLandscape);
     }
     
     //================================================================================

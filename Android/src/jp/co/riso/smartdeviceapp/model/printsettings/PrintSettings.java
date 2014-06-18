@@ -184,8 +184,10 @@ public class PrintSettings {
         for (String key : getSettingValues().keySet()) {
             int value = getSettingValues().get(key);
             
-            if (key.equals(TAG_ORIENTATION)) {
-                value = isLandscape ? 1 : 0;
+            if (AppConstants.USE_PDF_ORIENTATION) {
+                if (key.equals(TAG_ORIENTATION)) {
+                    value = isLandscape ? 1 : 0;
+                }
             }
             
             strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
