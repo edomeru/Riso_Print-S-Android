@@ -39,6 +39,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty PageAreaSizeProperty =
            DependencyProperty.Register("PageAreaSize", typeof(Size), typeof(TwoPageControl), null);
 
+        public static readonly DependencyProperty DrawingSurfaceProperty =
+            DependencyProperty.Register("DrawingSurface", typeof(ContentControl), typeof(TwoPageControl), null);
+
         public Grid PageAreaGrid
         {
             get { return pageAreaGrid; }
@@ -109,6 +112,21 @@ namespace SmartDeviceApp.Controls
                     break;
                 }
             }
+        }
+
+        public ContentControl DrawingSurface
+        {
+            get { return ccDrawingSurface; }
+        }
+
+        private void pageAreaScrollViewer_LayoutUpdated(object sender, object e)
+        {
+            if (sender != null)
+            {
+                DrawingSurface.Height = ((ScrollViewer)sender).ActualHeight;
+                DrawingSurface.Width = ((ScrollViewer)sender).ActualWidth;
+            }
+            
         }
     }
 }

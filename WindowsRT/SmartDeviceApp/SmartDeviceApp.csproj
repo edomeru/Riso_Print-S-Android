@@ -140,6 +140,7 @@
     <Compile Include="Controllers\DirectPrintController.cs" />
     <Compile Include="Controllers\InitialDataController.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\PageRenderController.cs" />
     <Compile Include="Controllers\PrintersGestureController.cs" />
     <Compile Include="Controllers\PrintSettingsController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
@@ -176,6 +177,9 @@
     <Compile Include="Controls\GroupListControl.xaml.cs">
       <DependentUpon>GroupListControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PageCurlControl.xaml.cs">
+      <DependentUpon>PageCurlControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PrinterNameControl.xaml.cs">
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
@@ -208,8 +212,12 @@
     <Compile Include="Converters\SidePaneLineGeometryConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
+    <Compile Include="Interface\IRenderer.cs" />
+    <Compile Include="Models\CurlParameters.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
+    <Compile Include="Models\Vertex.cs" />
     <Compile Include="Models\ViewItemParameters.cs" />
+    <Compile Include="Renderer\PageCurlRenderer.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
     <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
@@ -332,8 +340,18 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Assets\MiniCube.fx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\San_Francisco_City.jpg" />
     <Content Include="Resources\Images\StoreLogo.scale-140.png" />
     <Content Include="Resources\Images\StoreLogo.scale-180.png" />
+    <Content Include="Assets\MiniCube_PS.fxo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\MiniCube_VS.fxo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -524,6 +542,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\PageCurlControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\PrinterNameControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -622,6 +644,21 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\netcore45\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.MediaFoundation">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.MediaFoundation.dll</HintPath>
+    </Reference>
     <Reference Include="WriteableBitmapEx.WinRT">
       <HintPath>..\packages\WriteableBitmapEx.1.0.12.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
     </Reference>
@@ -640,6 +677,10 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\CommonDX\CommonDX.csproj">
+      <Project>{45cd76a3-e21e-47a3-8bfd-9a1241aadb9d}</Project>
+      <Name>CommonDX</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DirectPrint\DirectPrint.csproj">
       <Project>{6506b581-99ad-4244-badd-c87d3a79f11a}</Project>
       <Name>DirectPrint</Name>
@@ -706,6 +747,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="..\packages\SharpDX.2.6.1\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.1\build\SharpDX.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

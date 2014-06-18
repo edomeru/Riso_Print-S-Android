@@ -230,10 +230,10 @@ namespace SmartDeviceApp.Controllers
 
         private void OnManipulationUpdated(object sender, ManipulationUpdatedEventArgs e)
         {
-            var isSwipe = DetectSwipe(e);
-            if (isSwipe) return;
-            var isScale = DetectScale(e);
-            DetectTranslate(e, isScale);
+            //var isSwipe = DetectSwipe(e);
+            //if (isSwipe) return;
+            //var isScale = DetectScale(e);
+            //DetectTranslate(e, isScale);
         }
 
         private bool DetectSwipe(ManipulationUpdatedEventArgs e)

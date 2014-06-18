@@ -32,6 +32,10 @@ using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Common.Enum;
+using CommonDX;
+using Windows.Graphics.Display;
+using SmartDeviceApp.Interface;
+using SmartDeviceApp.Renderer;
 
 
 namespace SmartDeviceApp.Views
@@ -39,6 +43,7 @@ namespace SmartDeviceApp.Views
     public sealed partial class PrintPreviewPage : PageBase
     {
         public event PrintPreviewController.PageAreaGridLoadedEventHandler PageAreaGridLoaded;
+       
 
         public PrintPreviewPage()
         {
@@ -75,6 +80,7 @@ namespace SmartDeviceApp.Views
             var twoPageControl = (TwoPageControl)sender;
             var pageAreaGrid = twoPageControl.PageAreaGrid;
             ViewModel.SetPageAreaGrid(pageAreaGrid);
+            ViewModel.DrawingSurface = twoPageControl.DrawingSurface;
             if (PageAreaGridLoaded != null)
             {
                 PageAreaGridLoaded();

@@ -29,7 +29,7 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}">
+    <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}" >
         <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="topPageArea"/>
@@ -45,6 +45,13 @@
                                 Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
             <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
                                 Image="{Binding RightPageImage, ElementName=twoPageControl}"/>
+            <Grid Width ="Auto" Height="Auto" x:Name="pageRenderGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Background="Transparent" LayoutUpdated="pageAreaScrollViewer_LayoutUpdated">
+                <!-- This grid will contain the curling -->
+
+                <ContentControl Width="Auto" Height="Auto" x:Name="ccDrawingSurface" Background="Red" HorizontalAlignment="Left"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top" />
+            </Grid>
         </Grid>
+        
     </ScrollViewer>
+    
 </UserControl>
