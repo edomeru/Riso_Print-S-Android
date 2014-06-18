@@ -151,17 +151,15 @@ namespace SmartDeviceApp.Renderer
             context2D.EndDraw();
 
             //TODO: insert curling here 
-            //RenderCurl();
+            RenderCurl();
 
-            //var context3D = target.DeviceManager.ContextDirect3D;
+            var context3D = target.DeviceManager.ContextDirect3D;
             //vertexBuffer = SharpDX.Direct3D11.Buffer.Create(target.DeviceManager.DeviceDirect3D, BindFlags.VertexBuffer, _vertexBuffer);
 
             //float width = (float)target.RenderTargetSize.Width;
             //float height = (float)target.RenderTargetSize.Height;
             //// Prepare matrices
-            //var view = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY);
-            //var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, width / (float)height, 0.1f, 100.0f);
-            //var viewProj = Matrix.Multiply(view, proj);
+
 
             //context3D.OutputMerger.SetTargets(target.DepthStencilView, target.RenderTargetView);
 
@@ -172,19 +170,133 @@ namespace SmartDeviceApp.Renderer
             //var worldViewProj = Matrix.Scaling(Scale) * viewProj;
             //worldViewProj.Transpose();
 
-            ////w
+            //////w
             //context3D.InputAssembler.SetVertexBuffers(0, vertexBufferBinding);
-            ////context3D.InputAssembler.InputLayout = layout;
+            //context3D.InputAssembler.InputLayout = layout;
             //context3D.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleStrip; //triangle strip used in austin
             //context3D.VertexShader.SetConstantBuffer(0, constantBuffer);
-            ////context3D.VertexShader.Set(vertexShader);
-            ////context3D.PixelShader.Set(pixelShader);
+            //context3D.VertexShader.Set(vertexShader);
+            //context3D.PixelShader.Set(pixelShader);
 
             //context3D.UpdateSubresource(ref worldViewProj, constantBuffer, 0);
 
             //context3D.Draw(_vertexBuffer.Count(), 0);
 
 
+            //==========================
+            int width = 100;
+            int height = 100;
+            int index = 0;
+
+            var _vertexCount = (width - 1) * (height - 1) * 8;
+
+            Vector4[] vertices = new Vector4[_vertexCount * 2];
+            int[] indices = new int[vertices.Length];
+            float positionW = 1f;
+
+
+
+            for (int j = 0; j < height - 1; j++)
+            {
+                for (int i = 0; i < width - 1; i++)
+                {
+
+                    // LINE 1
+                    // Upper left.
+                    float positionX = (float)i;
+                    float positionZ = (float)(j + 1);
+                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+                    index++;
+                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                    index++;
+
+
+                    // Upper right.
+                    positionX = (float)(i + 1);
+                    positionZ = (float)(j + 1);
+                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+                    index++;
+                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                    index++;
+
+                    // LINE 2
+                    // Upper right.
+                    positionX = (float)(i + 1);
+                    positionZ = (float)(j + 1);
+                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+                    index++;
+                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                    index++;
+
+                    // Bottom right.
+                    positionX = (float)(i + 1);
+                    positionZ = (float)j;
+                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+                    index++;
+                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                    index++;
+
+                    // LINE 3
+                    // Bottom right.
+                    positionX = (float)(i + 1);
+                    positionZ = (float)j;
+                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+                    index++;
+                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                    index++;
+
+                    // Bottom left.
+                    positionX = (float)i;
+                    positionZ = (float)j;
+                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+                    index++;
+                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                    index++;
+
+                    // LINE 4
+                    // Bottom left.
+                    positionX = (float)i;
+                    positionZ = (float)j;
+                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+                    index++;
+                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                    index++;
+
+                    // Upper left.
+                    positionX = (float)i;
+                    positionZ = (float)(j + 1);
+                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+                    index++;
+                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                    index++;
+                }
+            }
+
+            var _vertices = SharpDX.Direct3D11.Buffer.Create(target.DeviceManager.DeviceDirect3D, BindFlags.VertexBuffer, vertices);
+            vertices = null;
+
+            // Create Contant Buffer
+            var _contantBuffer = new SharpDX.Direct3D11.Buffer(target.DeviceManager.DeviceDirect3D, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
+
+            context3D.InputAssembler.InputLayout = layout;
+            context3D.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
+            context3D.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertices, Utilities.SizeOf<Vector4>() + Utilities.SizeOf<Vector4>(), 0));
+            context3D.VertexShader.SetConstantBuffer(0, _contantBuffer);
+            context3D.VertexShader.Set(vertexShader);
+            context3D.PixelShader.Set(pixelShader);
+
+            var view = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY);
+            var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, width / (float)height, 0.1f, 100.0f);
+            var viewProj = Matrix.Multiply(view, proj);
+            //// Calculate WorldViewProj
+            var worldViewProj = Matrix.Scaling(Scale) * viewProj;
+            worldViewProj.Transpose();
+            // Update WorldViewProj Matrix
+
+            context3D.UpdateSubresource(ref worldViewProj, _contantBuffer);
+
+            // Draw the _cube
+            context3D.Draw(_vertexCount, 0);
            
 
         }
@@ -213,7 +325,7 @@ namespace SmartDeviceApp.Renderer
 
             var vertexBufferCount = _vertexCountX * _vertexCountY;
 
-            _vertexBuffer = new Vector3[vertexBufferCount];
+            _vertexBuffer = new Vector4[vertexBufferCount];
 
 
             //WIRE UP : POINTER EVENTS
@@ -273,7 +385,7 @@ namespace SmartDeviceApp.Renderer
 
         private int _vertexCountX;
         private int _vertexCountY;
-        private Vector3[] _vertexBuffer;
+        private Vector4[] _vertexBuffer;
 
         private void curlPage(CurlParameters curlParams)
         {
@@ -305,7 +417,7 @@ namespace SmartDeviceApp.Renderer
             conicContribution = Math.Abs(conicContribution);
             for (int j = 0; j < _vertexCountY; j++)
             {
-                for (int i = 0; i < _vertexCountX; i++)
+                for (int i = 0; i < _vertexCountX - 1; i++)
                 {
                     float x = (float)i;
                     float y = (float)j;
@@ -348,6 +460,12 @@ namespace SmartDeviceApp.Renderer
                     _vertexBuffer[j * _vertexCountX + i].X = x;
                     _vertexBuffer[j * _vertexCountX + i].Y = y;
                     _vertexBuffer[j * _vertexCountX + i].Z = z;
+                    _vertexBuffer[j * _vertexCountX + i].W = 1.0f;
+                    _vertexBuffer[j * _vertexCountX + i + 1].X = 1.0f;
+                    _vertexBuffer[j * _vertexCountX + i + 1].Y = 1.0f;
+                    _vertexBuffer[j * _vertexCountX + i + 1].Z = 1.0f;
+                    _vertexBuffer[j * _vertexCountX + i + 1].W = 1.0f;
+
                 }
             }
 
