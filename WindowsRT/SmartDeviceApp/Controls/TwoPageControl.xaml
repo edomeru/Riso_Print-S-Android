@@ -44,29 +44,25 @@
         <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="topPageArea"/>
-                <RowDefinition x:Name="tHorizontalSeparatorArea" Height="1"/>
-                <RowDefinition x:Name="bHorizontalSeparatorArea" Height="1"/>
                 <RowDefinition x:Name="bottomPageArea"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="leftPageArea"/>
-                <ColumnDefinition x:Name="lVerticalSeparatorArea" Width="1"/>
-                <ColumnDefinition x:Name="rVerticalSeparatorArea" Width="1"/>
                 <ColumnDefinition x:Name="rightPageArea"/>
             </Grid.ColumnDefinitions>
-            <local:PageControl x:Name="topPage" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2"
+            <local:PageControl x:Name="topPage" Grid.Row="0" Grid.Column="1"
                                 Image="{Binding LeftPageImage, ElementName=twoPageControl}"
                                 IsLoadPageActive="{Binding IsLoadLeftPageActive, ElementName=twoPageControl}"/>
-            <local:PageControl x:Name="leftPage" Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
+            <local:PageControl x:Name="leftPage" Grid.Row="1" Grid.Column="0"
                                 Image="{Binding LeftPageImage, ElementName=twoPageControl}"
                                 IsLoadPageActive="{Binding IsLoadLeftPageActive, ElementName=twoPageControl}"/>
-            <local:PageControl x:Name="rightPage" Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2"
+            <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
                                 Image="{Binding RightPageImage, ElementName=twoPageControl}"
                                 IsLoadPageActive="{Binding IsLoadRightPageActive, ElementName=twoPageControl}"/>
-            <Line x:Name="horizontalSeparator" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"
+            <Line x:Name="horizontalSeparator" Grid.Row="1" Grid.Column="1"
                   StrokeDashArray="7,5"
                   Style="{StaticResource STYLE_PageSeparator}" />
-            <Line x:Name="verticalSeparator" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2"
+            <Line x:Name="verticalSeparator" Grid.Row="1" Grid.Column="1"
                   StrokeDashArray="7,5"
                   Style="{StaticResource STYLE_PageSeparator}" />
         </Grid>
