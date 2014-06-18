@@ -265,11 +265,6 @@ namespace SmartDeviceApp.Controllers
                         (int)options.DestinationHeight);
                     pageBitmap = await WriteableBitmapExtensions.FromStream(pageBitmap, raStream);
 
-                    // Needs to resize since FromStream() does not follow the size specified
-                    // from the initialization of pageBitmap, even from PdfPageRenderOptions
-                    pageBitmap = WriteableBitmapExtensions.Resize(pageBitmap, (int)options.DestinationWidth,
-                        (int)options.DestinationHeight, WriteableBitmapExtensions.Interpolation.Bilinear);
-
                     await raStream.FlushAsync();
 
                     return pageBitmap;
