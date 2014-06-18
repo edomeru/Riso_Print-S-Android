@@ -461,6 +461,7 @@ OnItemSelectedListener {
             portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         } else {
             viewHolder.mPort.setVisibility(View.GONE);
+            // Port setting is always displayed as LPR
             pView.findViewById(R.id.defaultPort).setVisibility(View.VISIBLE);
         }
         viewHolder.mPort.setAdapter(portAdapter);
