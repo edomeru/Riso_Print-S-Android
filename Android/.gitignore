@@ -28,3 +28,6 @@ obj/
 # Eclipse project settings
 .cproject
 .project
+
+# doxygen generated
+doc/
