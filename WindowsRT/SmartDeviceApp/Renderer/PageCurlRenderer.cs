@@ -184,108 +184,160 @@ namespace SmartDeviceApp.Renderer
 
 
             //==========================
-            int width = 100;
-            int height = 100;
+           float width = (float)target.RenderTargetSize.Width;
+            float height = (float)target.RenderTargetSize.Height;
             int index = 0;
 
-            var _vertexCount = (width - 1) * (height - 1) * 8;
+            //var _vertexCount = (width - 1) * (height - 1) * 8;
 
-            Vector4[] vertices = new Vector4[_vertexCount * 2];
-            int[] indices = new int[vertices.Length];
-            float positionW = 1f;
-
-
-
-            for (int j = 0; j < height - 1; j++)
-            {
-                for (int i = 0; i < width - 1; i++)
-                {
-
-                    // LINE 1
-                    // Upper left.
-                    float positionX = (float)i;
-                    float positionZ = (float)(j + 1);
-                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
-                    index++;
-                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-                    index++;
+            //Vector4[] vertices = new Vector4[_vertexCount * 2];
+            //int[] indices = new int[vertices.Length];
+            //float positionW = 1f;
 
 
-                    // Upper right.
-                    positionX = (float)(i + 1);
-                    positionZ = (float)(j + 1);
-                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
-                    index++;
-                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-                    index++;
 
-                    // LINE 2
-                    // Upper right.
-                    positionX = (float)(i + 1);
-                    positionZ = (float)(j + 1);
-                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
-                    index++;
-                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-                    index++;
+            //for (int j = 0; j < height - 1; j++)
+            //{
+            //    for (int i = 0; i < width - 1; i++)
+            //    {
 
-                    // Bottom right.
-                    positionX = (float)(i + 1);
-                    positionZ = (float)j;
-                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
-                    index++;
-                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-                    index++;
+            //        // LINE 1
+            //        // Upper left.
+            //        float positionX = (float)i;
+            //        float positionZ = (float)(j + 1);
+            //        vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+            //        index++;
+            //        vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            //        index++;
 
-                    // LINE 3
-                    // Bottom right.
-                    positionX = (float)(i + 1);
-                    positionZ = (float)j;
-                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
-                    index++;
-                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-                    index++;
 
-                    // Bottom left.
-                    positionX = (float)i;
-                    positionZ = (float)j;
-                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
-                    index++;
-                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-                    index++;
+            //        // Upper right.
+            //        positionX = (float)(i + 1);
+            //        positionZ = (float)(j + 1);
+            //        vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+            //        index++;
+            //        vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            //        index++;
 
-                    // LINE 4
-                    // Bottom left.
-                    positionX = (float)i;
-                    positionZ = (float)j;
-                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
-                    index++;
-                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-                    index++;
+            //        // LINE 2
+            //        // Upper right.
+            //        positionX = (float)(i + 1);
+            //        positionZ = (float)(j + 1);
+            //        vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+            //        index++;
+            //        vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            //        index++;
 
-                    // Upper left.
-                    positionX = (float)i;
-                    positionZ = (float)(j + 1);
-                    vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
-                    index++;
-                    vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-                    index++;
-                }
-            }
+            //        // Bottom right.
+            //        positionX = (float)(i + 1);
+            //        positionZ = (float)j;
+            //        vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+            //        index++;
+            //        vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            //        index++;
 
-            var _vertices = SharpDX.Direct3D11.Buffer.Create(target.DeviceManager.DeviceDirect3D, BindFlags.VertexBuffer, vertices);
-            vertices = null;
+            //        // LINE 3
+            //        // Bottom right.
+            //        positionX = (float)(i + 1);
+            //        positionZ = (float)j;
+            //        vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+            //        index++;
+            //        vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            //        index++;
+
+            //        // Bottom left.
+            //        positionX = (float)i;
+            //        positionZ = (float)j;
+            //        vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+            //        index++;
+            //        vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            //        index++;
+
+            //        // LINE 4
+            //        // Bottom left.
+            //        positionX = (float)i;
+            //        positionZ = (float)j;
+            //        vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+            //        index++;
+            //        vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            //        index++;
+
+            //        // Upper left.
+            //        positionX = (float)i;
+            //        positionZ = (float)(j + 1);
+            //        vertices[index] = new Vector4(positionX, 0.0f, positionZ, positionW);
+            //        index++;
+            //        vertices[index] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            //        index++;
+            //    }
+            //}
+
+            var vertices2 = SharpDX.Direct3D11.Buffer.Create(target.DeviceManager.DeviceDirect3D, BindFlags.VertexBuffer, new[]
+                                  {
+                                      new Vector4(-1.0f, -1.0f, -1.0f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f), // Front
+                                      new Vector4(-1.0f,  1.0f, -1.0f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+                                      new Vector4( 1.0f,  1.0f, -1.0f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+                                      new Vector4(-1.0f, -1.0f, -1.0f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+                                      new Vector4( 1.0f,  1.0f, -1.0f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+                                      new Vector4( 1.0f, -1.0f, -1.0f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+
+                                      new Vector4(-1.0f, -1.0f,  1.0f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f), // BACK
+                                      new Vector4( 1.0f,  1.0f,  1.0f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4(-1.0f,  1.0f,  1.0f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4(-1.0f, -1.0f,  1.0f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4( 1.0f, -1.0f,  1.0f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4( 1.0f,  1.0f,  1.0f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+
+                                      new Vector4(-1.0f, 1.0f, -1.0f,  1.0f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f), // Top
+                                      new Vector4(-1.0f, 1.0f,  1.0f,  1.0f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+                                      new Vector4( 1.0f, 1.0f,  1.0f,  1.0f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+                                      new Vector4(-1.0f, 1.0f, -1.0f,  1.0f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+                                      new Vector4( 1.0f, 1.0f,  1.0f,  1.0f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+                                      new Vector4( 1.0f, 1.0f, -1.0f,  1.0f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+
+                                      new Vector4(-1.0f,-1.0f, -1.0f,  1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f), // Bottom
+                                      new Vector4( 1.0f,-1.0f,  1.0f,  1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4(-1.0f,-1.0f,  1.0f,  1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4(-1.0f,-1.0f, -1.0f,  1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4( 1.0f,-1.0f, -1.0f,  1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4( 1.0f,-1.0f,  1.0f,  1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+
+                                      new Vector4(-1.0f, -1.0f, -1.0f, 1.0f), new Vector4(1.0f, 0.0f, 1.0f, 1.0f), // Left
+                                      new Vector4(-1.0f, -1.0f,  1.0f, 1.0f), new Vector4(1.0f, 0.0f, 1.0f, 1.0f),
+                                      new Vector4(-1.0f,  1.0f,  1.0f, 1.0f), new Vector4(1.0f, 0.0f, 1.0f, 1.0f),
+                                      new Vector4(-1.0f, -1.0f, -1.0f, 1.0f), new Vector4(1.0f, 0.0f, 1.0f, 1.0f),
+                                      new Vector4(-1.0f,  1.0f,  1.0f, 1.0f), new Vector4(1.0f, 0.0f, 1.0f, 1.0f),
+                                      new Vector4(-1.0f,  1.0f, -1.0f, 1.0f), new Vector4(1.0f, 0.0f, 1.0f, 1.0f),
+
+                                      new Vector4( 1.0f, -1.0f, -1.0f, 1.0f), new Vector4(0.0f, 1.0f, 1.0f, 1.0f), // Right
+                                      new Vector4( 1.0f,  1.0f,  1.0f, 1.0f), new Vector4(0.0f, 1.0f, 1.0f, 1.0f),
+                                      new Vector4( 1.0f, -1.0f,  1.0f, 1.0f), new Vector4(0.0f, 1.0f, 1.0f, 1.0f),
+                                      new Vector4( 1.0f, -1.0f, -1.0f, 1.0f), new Vector4(0.0f, 1.0f, 1.0f, 1.0f),
+                                      new Vector4( 1.0f,  1.0f, -1.0f, 1.0f), new Vector4(0.0f, 1.0f, 1.0f, 1.0f),
+                                      new Vector4( 1.0f,  1.0f,  1.0f, 1.0f), new Vector4(0.0f, 1.0f, 1.0f, 1.0f),
+                            });
+
+            vertexBufferBinding = new VertexBufferBinding(vertices2, Utilities.SizeOf<Vector4>() * 2, 0);
+
+            context3D.OutputMerger.SetTargets(target.DepthStencilView, target.RenderTargetView);
+
+            context3D.ClearDepthStencilView(target.DepthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
+
+            //var _vertices = SharpDX.Direct3D11.Buffer.Create(target.DeviceManager.DeviceDirect3D, BindFlags.VertexBuffer, vertices);
+            //vertices = null;
 
             // Create Contant Buffer
             var _contantBuffer = new SharpDX.Direct3D11.Buffer(target.DeviceManager.DeviceDirect3D, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
 
+            context3D.InputAssembler.SetVertexBuffers(0, vertexBufferBinding);
             context3D.InputAssembler.InputLayout = layout;
-            context3D.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
-            context3D.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertices, Utilities.SizeOf<Vector4>() + Utilities.SizeOf<Vector4>(), 0));
+            context3D.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
+            //context3D.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertices, Utilities.SizeOf<Vector4>() + Utilities.SizeOf<Vector4>(), 0));
             context3D.VertexShader.SetConstantBuffer(0, _contantBuffer);
             context3D.VertexShader.Set(vertexShader);
             context3D.PixelShader.Set(pixelShader);
 
-            var view = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY);
+            var view = Matrix.LookAtLH(new Vector3(2f, 1.5f, -5), new Vector3(0, 0, 0), Vector3.UnitY);
             var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, width / (float)height, 0.1f, 100.0f);
             var viewProj = Matrix.Multiply(view, proj);
             //// Calculate WorldViewProj
@@ -296,7 +348,7 @@ namespace SmartDeviceApp.Renderer
             context3D.UpdateSubresource(ref worldViewProj, _contantBuffer);
 
             // Draw the _cube
-            context3D.Draw(_vertexCount, 0);
+            context3D.Draw(36, 0);
            
 
         }
