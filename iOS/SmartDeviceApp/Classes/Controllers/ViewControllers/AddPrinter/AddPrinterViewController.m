@@ -194,7 +194,7 @@
 {
     [self dismissKeypad];
     
-    if ([self.textIP.text isEqualToString:@""])
+    if (self.textIP.text == nil || [self.textIP.text length] == 0)
     {
         [AlertHelper displayResult:kAlertResultErrInvalidIP
                          withTitle:kAlertTitlePrintersAdd
