@@ -8,13 +8,13 @@ android_page_curl (2014-02-07)
 
 
 	Files included:
-		/src/fi/harism/curl/CurlMesh.java
+		/src/fi/harism/curl/CurlMesh.java (modified)
 		/src/fi/harism/curl/CurlPage.java (modified)
-		/src/fi/harism/curl/CurlRenderer.java
+		/src/fi/harism/curl/CurlRenderer.java (modified)
 		/src/fi/harism/curl/CurlView.java (modified)
 
 
-PDFViewer SDK v2.9.9.1c (12 May 2014)
+PDFViewer SDK v2.9.9.1c (2014-05-12)
 	http://www.androidpdf.mobi/index.php
 	http://www.androidpdf.mobi/shop
 	http://www.androidpdf.mobi/download/download-android/file/84-pdfviewer-sdk-2991c
@@ -22,7 +22,7 @@ PDFViewer SDK v2.9.9.1c (12 May 2014)
 	Files included:
 		/src/com/radaee/pdf/BMDatabase.java
 		/src/com/radaee/pdf/Document.java
-		/src/com/radaee/pdf/Global.java
+		/src/com/radaee/pdf/Global.java (modified)
 		/src/com/radaee/pdf/HWriting.java
 		/src/com/radaee/pdf/Ink.java
 		/src/com/radaee/pdf/Matrix.java
@@ -39,4 +39,4 @@ PullToRefresh-ListView v1.3.0 (2013-06-07)
 	https://github.com/erikwt/PullToRefresh-ListView
 
 	Files included:
-		/libraryproject/src/eu/erikw/PullToRefreshListView.java
+		/libraryproject/src/eu/erikw/PullToRefreshListView.java (modified)

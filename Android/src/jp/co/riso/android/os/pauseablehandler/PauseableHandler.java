@@ -14,29 +14,33 @@ import android.os.Handler;
 import android.os.Message;
 
 /**
- * Message Handler class that supports buffering up of messages when the activity is paused i.e. in the background.
- * http://stackoverflow.com/questions/8040280/how-to-handle-handler-messages-when-activity-fragment-is-paused
+ * @class PauseableHandler
+ * @brief Message Handler class that supports buffering up of messages when the activity is paused
+ * (i.e. in the background)
+ * @see http://stackoverflow.com/questions/8040280/how-to-handle-handler-messages-when-activity-fragment-is-paused
  */
 public class PauseableHandler extends Handler {
     
-    /**
-     * Message Queue Buffer
-     */
+    /// Message Queue Buffer
     final Vector<Message> mMessageQueueBuffer = new Vector<Message>();
     
-    /**
-     * Flag indicating the pause state
-     */
+    /// Flag indicating the paused state
     private boolean mPaused = false;
     
+    /// Callback reference
     final WeakReference<PauseableHandlerCallback> mCallBack;
     
+    /**
+     * @brief Creates a PausableHander instance
+     * @param callback Listener for PauseableHandler events
+     */
     public PauseableHandler(PauseableHandlerCallback callback) {
         mCallBack = new WeakReference<PauseableHandlerCallback>(callback);
     }
     
     /**
-     * Resume the handler
+     * @brief Resumes the handler. Enables processing of messages.
+     * @note Stored messages will be executed.
      */
     final public void resume() {
         mPaused = false;
@@ -47,33 +51,20 @@ public class PauseableHandler extends Handler {
             sendMessage(msg);
         }
     }
-    
+
     /**
-     * Pause the handler
+     * @brief Pauses the handler. Messages processed during pause will be stored.
      */
     final public void pause() {
         mPaused = true;
     }
     
-    /** {@inheritDoc} */
-    @Override
-    final public void handleMessage(Message msg) {
-        if (mCallBack.get() != null) {
-            if (mPaused) {
-                if (mCallBack.get().storeMessage(msg)) {
-                    Message msgCopy = new Message();
-                    msgCopy.copyFrom(msg);
-                    mMessageQueueBuffer.add(msgCopy);
-                }
-            } else {
-                mCallBack.get().processMessage(msg);
-            }
-        }
-    }
-    
     /**
-     * @param what
-     * @return true if there are any pending posts of messages with code 'what' in the message queue.
+     * @brief Determines whether a message will be stored or discarded if processed while paused 
+     * 
+     * @param what ID of the processed message.
+     * @retval true Message will be stored
+     * @retval false Message will be discarded
      */
     final public boolean hasStoredMessage(int what) {
         boolean contains = hasMessages(what);
@@ -87,5 +78,24 @@ public class PauseableHandler extends Handler {
         }
         
         return contains;
+    }
+    
+    // ================================================================================
+    // INTERFACE - Handler
+    // ================================================================================
+    
+    @Override
+    final public void handleMessage(Message msg) {
+        if (mCallBack.get() != null) {
+            if (mPaused) {
+                if (mCallBack.get().storeMessage(msg)) {
+                    Message msgCopy = new Message();
+                    msgCopy.copyFrom(msg);
+                    mMessageQueueBuffer.add(msgCopy);
+                }
+            } else {
+                mCallBack.get().processMessage(msg);
+            }
+        }
     }
 }
