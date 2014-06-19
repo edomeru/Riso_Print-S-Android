@@ -71,7 +71,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     private static final int INVALID_IDX = -1;
     
-    private static final int SLEEP_DELAY = 32;
+    private static final int SLEEP_DELAY = 100;
     private static final int SMALL_BMP_SIZE = 64;
     private static final Bitmap.Config BMP_CONFIG_TEXTURE = Config.RGB_565;
     
