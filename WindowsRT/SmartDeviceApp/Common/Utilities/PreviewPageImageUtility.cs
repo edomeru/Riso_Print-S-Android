@@ -19,13 +19,68 @@ using System.Threading;
 using Windows.Foundation;
 using Windows.UI.Xaml.Media.Imaging;
 
+#if PREVIEW_STAPLE || PREVIEW_PUNCH
+using System.Threading.Tasks;
+#endif // PREVIEW_STAPLE || PREVIEW_PUNCH
+
+
 namespace SmartDeviceApp.Common.Utilities
 {
     public static class PreviewPageImageUtility
     {
 
-        private const string FILE_PATH_RES_IMAGE_STAPLE = "Resources/Images/img_staple.png";
+#if PREVIEW_PUNCH
         private const string FILE_PATH_RES_IMAGE_PUNCH = "Resources/Images/img_punch.png";
+#endif // PREVIEW_PUNCH
+#if PREVIEW_STAPLE
+        private const string FILE_PATH_RES_IMAGE_STAPLE = "Resources/Images/img_staple.png";
+#endif // PREVIEW_STAPLE
+
+#if PREVIEW_PUNCH
+        private static WriteableBitmap _punchBitmap;
+        private static Size _punchBitmapSize;
+#endif // PREVIEW_PUNCH
+#if PREVIEW_STAPLE
+        private static WriteableBitmap _stapleBitmap;
+        private static Size _stapleBitmapSize;
+#endif // PREVIEW_STAPLE
+
+
+#if PREVIEW_PUNCH
+        /// <summary>
+        /// Loads the punch bitmap image
+        /// </summary>
+        /// <returns>task</returns>
+        public static async Task LoadPunchBitmap()
+        {
+            if (_punchBitmap == null)
+            {
+                _punchBitmap = new WriteableBitmap(1, 1); // Size doesn't matter here yet
+                _punchBitmap = await WriteableBitmapExtensions.FromContent(_punchBitmap,
+                    new Uri(StorageFileUtility.URL_SCHEME_LOCAL_PACKAGE + FILE_PATH_RES_IMAGE_PUNCH));
+
+                _punchBitmapSize = new Size(_punchBitmap.PixelWidth, _punchBitmap.PixelHeight);
+            }
+        }
+#endif // PREVIEW_PUNCH
+
+#if PREVIEW_STAPLE
+        /// <summary>
+        /// Loads the staple bitmap image
+        /// </summary>
+        /// <returns>task</returns>
+        public static async Task LoadStapleBitmap()
+        {
+            if (_stapleBitmap == null)
+            {
+                _stapleBitmap = new WriteableBitmap(1, 1); // Size doesn't matter here yet
+                _stapleBitmap = await WriteableBitmapExtensions.FromContent(_stapleBitmap,
+                    new Uri(StorageFileUtility.URL_SCHEME_LOCAL_PACKAGE + FILE_PATH_RES_IMAGE_STAPLE));
+
+                _stapleBitmapSize = new Size(_stapleBitmap.PixelWidth, _stapleBitmap.PixelHeight);
+            }
+        }
+#endif // PREVIEW_STAPLE
 
         /// <summary>
         /// Gets the target size based on paper size
@@ -513,367 +568,285 @@ namespace SmartDeviceApp.Common.Utilities
                     });
                 }
 
-                //// Change the side of the staple if letf or right
-                //if (finishingSide == (int)FinishingSide.Left)
-                //{
-                //    finishingSide = (int)FinishingSide.Right;
-                //}
-                //else if (finishingSide == (int)FinishingSide.Right)
-                //{
-                //    finishingSide = (int)FinishingSide.Left;
-                //}
+#if PREVIEW_PUNCH || PREVIEW_STAPLE
+                // Change the side of the staple if letf or right
+                if (finishingSide == (int)FinishingSide.Left)
+                {
+                    finishingSide = (int)FinishingSide.Right;
+                }
+                else if (finishingSide == (int)FinishingSide.Right)
+                {
+                    finishingSide = (int)FinishingSide.Left;
+                }
+#endif // PREVIEW_PUNCH || PREVIEW_STAPLE
             }
 
-            //// Apply punch
-            //if (punch != (int)Punch.Off)
-            //{
-            //    await OverlayPunch(canvasBitmap, punch, enabledPunchFour, finishingSide, cancellationToken);
-            //}
+#if PREVIEW_PUNCH
+            // Apply punch
+            if (punch != (int)Punch.Off)
+            {
+                OverlayPunch(canvasBitmap, canvasSize, punch, enabledPunchFour, finishingSide,
+                    cancellationToken);
+            }
+#endif // PREVIEW_PUNCH
 
-            //// Apply staple
-            //if (staple != (int)Staple.Off)
-            //{
-            //    await OverlayStaple(canvasBitmap, staple, finishingSide, false, false, cancellationToken);
-            //}
+#if PREVIEW_STAPLE
+            // Apply staple
+            if (staple != (int)Staple.Off)
+            {
+                OverlayStaple(canvasBitmap, canvasSize, staple, finishingSide, false, false,
+                    cancellationToken);
+            }
+#endif // PREVIEW_STAPLE
         }
 
-        ///// <summary>
-        ///// Applies booklet settings into a single page image
-        ///// </summary>
-        ///// <param name="canvasBitmap">canvas</param>
-        ///// <param name="bookletFinishing">booklet finishing</param>
-        ///// <param name="isPortrait">true when portrait, false otherwise</param>
-        ///// <param name="isRightSide">true when page is on right side, false otherwise</param>
-        ///// <param name="isBackSide">true if for backside (booklet), false otherwise</param>
-        ///// <param name="cancellationToken">cancellation token</param>
-        ///// <returns>task</returns>
-        //public static async Task FormatPageImageForBooklet(WriteableBitmap canvasBitmap, int bookletFinishing,
-        //    bool isPortrait, bool isRightSide, bool isBackSide, CancellationTokenSource cancellationToken)
-        //{
-        //    // Determine finishing side
-        //    int bindingSide;
-        //    if (isPortrait)
-        //    {
-        //        if ((isRightSide && isBackSide) || (!isRightSide && !isBackSide))
-        //        {
-        //            bindingSide = (int)FinishingSide.Right;
-        //        }
-        //        else
-        //        {
-        //            bindingSide = (int)FinishingSide.Left;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if ((isRightSide && isBackSide) || (!isRightSide && !isBackSide))
-        //        {
-        //            bindingSide = -1; // Out of range number to denote bottom
-        //        }
-        //        else
-        //        {
-        //            bindingSide = (int)FinishingSide.Top;
-        //        }
-        //    }
+#if PREVIEW_STAPLE
+        /// <summary>
+        /// Applies booklet settings into a single page image
+        /// </summary>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="bookletFinishing">booklet finishing</param>
+        /// <param name="isPortrait">true when portrait, false otherwise</param>
+        /// <param name="isRightSide">true when page is on right side, false otherwise</param>
+        /// <param name="isBackSide">true if for backside (booklet), false otherwise</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        public static void FormatPageImageForBooklet(WriteableBitmap canvasBitmap, Size canvasSize,
+            int bookletFinishing, bool isPortrait, bool isRightSide, bool isBackSide,
+            CancellationTokenSource cancellationToken)
+        {
+            // Determine finishing side
+            int bindingSide;
+            if (isPortrait)
+            {
+                if ((isRightSide && isBackSide) || (!isRightSide && !isBackSide))
+                {
+                    bindingSide = (int)FinishingSide.Right;
+                }
+                else
+                {
+                    bindingSide = (int)FinishingSide.Left;
+                }
+            }
+            else
+            {
+                if ((isRightSide && isBackSide) || (!isRightSide && !isBackSide))
+                {
+                    bindingSide = -1; // Out of range number to denote bottom
+                }
+                else
+                {
+                    bindingSide = (int)FinishingSide.Top;
+                }
+            }
 
-        //    // Determine booklet type
-        //    bool applyStaple = (bookletFinishing == (int)BookletFinishing.FoldAndStaple);
+            // Determine booklet type
+            bool applyStaple = (bookletFinishing == (int)BookletFinishing.FoldAndStaple);
 
-        //    // Apply staple at the edge based on finishing side
-        //    if (applyStaple)
-        //    {
-        //        await OverlayStaple(canvasBitmap, 0, bindingSide, true, isRightSide, cancellationToken);
-        //    }
-        //}
+            // Apply staple at the edge based on finishing side
+            if (applyStaple)
+            {
+                OverlayStaple(canvasBitmap, canvasSize, 0, bindingSide, true, isRightSide, cancellationToken);
+            }
+        }
 
-        //// TODO: Does not handle thread here!!!
-        ///// <summary>
-        ///// Adds staple wire image into target page image specifying the booklet setting.
-        ///// </summary>
-        ///// <param name="canvasBitmap">canvas</param>
-        ///// <param name="staple">staple</param>
-        ///// <param name="finishingSide">position of staple</param>
-        ///// <param name="isBooklet">true when booklet is on, false otherwise</param>
-        ///// <param name="isRightSide">true when page is on right side, false otherwise</param>
-        ///// <param name="cancellationToken">cancellation token</param>
-        ///// <returns>task</returns>
-        //public static async Task OverlayStaple(WriteableBitmap canvasBitmap, int staple,
-        //    int finishingSide, bool isBooklet, bool isRightSide, CancellationTokenSource cancellationToken)
-        //{
-        //    // Get staple image
-        //    WriteableBitmap stapleBitmap = new WriteableBitmap(1, 1); // Size doesn't matter here yet
-        //    StorageFile stapleFile = await StorageFileUtility.GetFileFromAppResource(FILE_PATH_RES_IMAGE_STAPLE);
-        //    using (IRandomAccessStream raStream = await stapleFile.OpenReadAsync())
-        //    {
-        //        // Put staple image to a bitmap
-        //        stapleBitmap = await WriteableBitmapExtensions.FromStream(null, raStream);
-        //    }
+        /// <summary>
+        /// Adds staple wire image into target page image specifying the booklet setting.
+        /// </summary>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="staple">staple</param>
+        /// <param name="finishingSide">position of staple</param>
+        /// <param name="isBooklet">true when booklet is on, false otherwise</param>
+        /// <param name="isRightSide">true when page is on right side, false otherwise</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        public static void OverlayStaple(WriteableBitmap canvasBitmap, Size canvasSize, int staple,
+            int finishingSide, bool isBooklet, bool isRightSide, CancellationTokenSource cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
 
-        //    if (cancellationToken.IsCancellationRequested)
-        //    {
-        //        return;
-        //    }
+            DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    double targetScaleFactor =
+                        (double)(PrintSettingConstant.STAPLE_CROWN_LENGTH * ImageConstant.BASE_DPI)
+                        / _stapleBitmapSize.Width;
 
-        //    double targetScaleFactor =
-        //        (double)(PrintSettingConstant.STAPLE_CROWN_LENGTH * ImageConstant.BASE_DPI)
-        //        / stapleBitmap.PixelWidth;
-        //    // Scale the staple image
-        //    WriteableBitmap scaledStapleBitmap = WriteableBitmapExtensions.Resize(stapleBitmap,
-        //        (int)(stapleBitmap.PixelWidth * targetScaleFactor),
-        //        (int)(stapleBitmap.PixelHeight * targetScaleFactor),
-        //        WriteableBitmapExtensions.Interpolation.Bilinear);
+                    // Scale the staple image
+                    WriteableBitmap scaledStapleBitmap = WriteableBitmapExtensions.Resize(_stapleBitmap,
+                        (int)(_stapleBitmapSize.Width * targetScaleFactor),
+                        (int)(_stapleBitmapSize.Height * targetScaleFactor),
+                        WriteableBitmapExtensions.Interpolation.Bilinear);
 
-        //    if (isBooklet)
-        //    {
-        //        // Determine finishing side
-        //        if (finishingSide == (int)FinishingSide.Top)
-        //        {
-        //            OverlayRotateStaple(canvasBitmap, scaledStapleBitmap, 0, false, false,
-        //                canvasBitmap.PixelWidth, true, 0.25, 0, true, cancellationToken);
-        //            OverlayRotateStaple(canvasBitmap, scaledStapleBitmap, 0, true, false,
-        //                canvasBitmap.PixelWidth, true, 0.75, 0, true, cancellationToken);
-        //        }
-        //        else if (finishingSide == (int)FinishingSide.Left)
-        //        {
-        //            OverlayRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, false,
-        //                canvasBitmap.PixelHeight, false, 0.25, 0, true, cancellationToken);
-        //            OverlayRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, true,
-        //                canvasBitmap.PixelHeight, false, 0.75, 0, true, cancellationToken);
-        //        }
-        //        else if (finishingSide == (int)FinishingSide.Right)
-        //        {
-        //            OverlayRotateStaple(canvasBitmap, scaledStapleBitmap, 90, true, false,
-        //                    canvasBitmap.PixelHeight, false, 0.25, 0, true, cancellationToken);
-        //            OverlayRotateStaple(canvasBitmap, scaledStapleBitmap, 90, true, true,
-        //                canvasBitmap.PixelHeight, false, 0.75, 0, true, cancellationToken);
-        //        }
-        //        else
-        //        {
-        //            OverlayRotateStaple(canvasBitmap, scaledStapleBitmap, 0, false, true,
-        //                canvasBitmap.PixelWidth, true, 0.25, 0, true, cancellationToken);
-        //            OverlayRotateStaple(canvasBitmap, scaledStapleBitmap, 0, true, true,
-        //                canvasBitmap.PixelWidth, true, 0.75, 0, true, cancellationToken);
-        //        }
-        //    }
-        //    else  // if (isBooklet)
-        //    {
-        //        // Determine finishing side
-        //        if (finishingSide == (int)FinishingSide.Top)
-        //        {
-        //            if (staple == (int)Staple.OneUpperLeft)
-        //            {
-        //                OverlayCornerStaple(canvasBitmap, scaledStapleBitmap, 135, false, false, cancellationToken);
-        //            }
-        //            else if (staple == (int)Staple.OneUpperRight)
-        //            {
-        //                OverlayCornerStaple(canvasBitmap, scaledStapleBitmap, 45, true, false, cancellationToken);
-        //            }
-        //            else if (staple == (int)Staple.Two)
-        //            {
-        //                OverlaySideStaple(canvasBitmap, scaledStapleBitmap, 0, false, false,
-        //                    canvasBitmap.PixelWidth, true, 0.25, cancellationToken);
-        //                OverlaySideStaple(canvasBitmap, scaledStapleBitmap, 0, true, false,
-        //                    canvasBitmap.PixelWidth, true, 0.75, cancellationToken);
-        //            }
-        //        }
-        //        else if (finishingSide == (int)FinishingSide.Left)
-        //        {
-        //            if (staple == (int)Staple.One)
-        //            {
-        //                OverlayCornerStaple(canvasBitmap, scaledStapleBitmap, 135, false, false, cancellationToken);
-        //            }
-        //            else if (staple == (int)Staple.Two)
-        //            {
-        //                OverlaySideStaple(canvasBitmap, scaledStapleBitmap, 90, false, false,
-        //                    canvasBitmap.PixelHeight, false, 0.25, cancellationToken);
-        //                OverlaySideStaple(canvasBitmap, scaledStapleBitmap, 90, false, true,
-        //                    canvasBitmap.PixelHeight, false, 0.75, cancellationToken);
-        //            }
-        //        }
-        //        else if (finishingSide == (int)FinishingSide.Right)
-        //        {
-        //            if (staple == (int)Staple.One)
-        //            {
-        //                OverlayCornerStaple(canvasBitmap, scaledStapleBitmap, 45, true, false, cancellationToken);
-        //            }
-        //            else if (staple == (int)Staple.Two)
-        //            {
-        //                OverlaySideStaple(canvasBitmap, scaledStapleBitmap, 270, true, false,
-        //                    canvasBitmap.PixelHeight, false, 0.25, cancellationToken);
-        //                OverlaySideStaple(canvasBitmap, scaledStapleBitmap, 270, true, true,
-        //                    canvasBitmap.PixelHeight, false, 0.75, cancellationToken);
-        //            }
-        //        }
-        //    } // if (isBooklet)
-        //}
+                    if (isBooklet)
+                    {
+                        // Determine finishing side
+                        if (finishingSide == (int)FinishingSide.Top)
+                        {
+                            OverlayRotateStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 0,
+                                false, false, (int)canvasSize.Width, true, 0.25, 0, true,
+                                cancellationToken);
+                            OverlayRotateStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 0,
+                                true, false, (int)canvasSize.Width, true, 0.75, 0, true,
+                                cancellationToken);
+                        }
+                        else if (finishingSide == (int)FinishingSide.Left)
+                        {
+                            OverlayRotateStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 90,
+                                false, false, (int)canvasSize.Height, false, 0.25, 0, true,
+                                cancellationToken);
+                            OverlayRotateStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 90,
+                                false, true, (int)canvasSize.Height, false, 0.75, 0, true,
+                                cancellationToken);
+                        }
+                        else if (finishingSide == (int)FinishingSide.Right)
+                        {
+                            OverlayRotateStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 90,
+                                true, false, (int)canvasSize.Height, false, 0.25, 0, true,
+                                cancellationToken);
+                            OverlayRotateStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 90,
+                                true, true, (int)canvasSize.Height, false, 0.75, 0, true,
+                                cancellationToken);
+                        }
+                        else
+                        {
+                            OverlayRotateStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 0,
+                                false, true, (int)canvasSize.Width, true, 0.25, 0, true,
+                                cancellationToken);
+                            OverlayRotateStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 0,
+                                true, true, (int)canvasSize.Width, true, 0.75, 0, true,
+                                cancellationToken);
+                        }
+                    }
+                    else  // if (isBooklet)
+                    {
+                        // Determine finishing side
+                        if (finishingSide == (int)FinishingSide.Top)
+                        {
+                            if (staple == (int)Staple.OneUpperLeft)
+                            {
+                                OverlayCornerStaple(canvasBitmap, canvasSize, scaledStapleBitmap,
+                                    135, false, false, cancellationToken);
+                            }
+                            else if (staple == (int)Staple.OneUpperRight)
+                            {
+                                OverlayCornerStaple(canvasBitmap, canvasSize, scaledStapleBitmap,
+                                    45, true, false, cancellationToken);
+                            }
+                            else if (staple == (int)Staple.Two)
+                            {
+                                OverlaySideStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 0,
+                                    false, false, (int)canvasSize.Width, true, 0.25,
+                                    cancellationToken);
+                                OverlaySideStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 0,
+                                    true, false, (int)canvasSize.Width, true, 0.75,
+                                    cancellationToken);
+                            }
+                        }
+                        else if (finishingSide == (int)FinishingSide.Left)
+                        {
+                            if (staple == (int)Staple.One)
+                            {
+                                OverlayCornerStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 135, false, false,
+                                    cancellationToken);
+                            }
+                            else if (staple == (int)Staple.Two)
+                            {
+                                OverlaySideStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 90,
+                                    false, false, (int)canvasSize.Height, false, 0.25,
+                                    cancellationToken);
+                                OverlaySideStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 90,
+                                    false, true, (int)canvasSize.Height, false, 0.75,
+                                    cancellationToken);
+                            }
+                        }
+                        else if (finishingSide == (int)FinishingSide.Right)
+                        {
+                            if (staple == (int)Staple.One)
+                            {
+                                OverlayCornerStaple(canvasBitmap, canvasSize, scaledStapleBitmap,
+                                    45, true, false, cancellationToken);
+                            }
+                            else if (staple == (int)Staple.Two)
+                            {
+                                OverlaySideStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 270, true, false,
+                                    (int)canvasSize.Height, false, 0.25, cancellationToken);
+                                OverlaySideStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 270, true, true,
+                                    (int)canvasSize.Height, false, 0.75, cancellationToken);
+                            }
+                        }
+                    } // if (isBooklet)
+                });
+        }
+#endif // PREVIEW_STAPLE
 
-        //// TODO: Does not handle thread here!!!
-        ///// <summary>
-        ///// Adds punch hole image into page image
-        ///// </summary>
-        ///// <param name="canvasBitmap">canvas</param>
-        ///// <param name="punch">punch</param>
-        ///// <param name="enabledPunchFour">true when punch4 is enabled, false when punch3 is enabled</param>
-        ///// <param name="finishingSide">finishing side</param>
-        ///// <param name="cancellationToken">cancellation token</param>
-        ///// <returns>task</returns>
-        //public static async Task OverlayPunch(WriteableBitmap canvasBitmap, int punch,
-        //    bool enabledPunchFour, int finishingSide, CancellationTokenSource cancellationToken)
-        //{
-        //    int holeCount = GetPunchHoleCount(punch, enabledPunchFour);
+#if PREVIEW_PUNCH
+        /// <summary>
+        /// Adds punch hole image into page image
+        /// </summary>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="punch">punch</param>
+        /// <param name="enabledPunchFour">true when punch4 is enabled, false when punch3 is enabled</param>
+        /// <param name="finishingSide">finishing side</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        public static void OverlayPunch(WriteableBitmap canvasBitmap, Size canvasSize, int punch,
+            bool enabledPunchFour, int finishingSide, CancellationTokenSource cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
 
-        //    // Get punch image
-        //    WriteableBitmap punchBitmap = new WriteableBitmap(1, 1); // Size doesn't matter here yet
-        //    StorageFile stapleFile = await StorageFileUtility.GetFileFromAppResource(FILE_PATH_RES_IMAGE_PUNCH);
-        //    using (IRandomAccessStream raStream = await stapleFile.OpenReadAsync())
-        //    {
-        //        // Put staple image to a bitmap
-        //        punchBitmap = await WriteableBitmapExtensions.FromStream(null, raStream);
-        //    }
+            int holeCount = GetPunchHoleCount(punch, enabledPunchFour);
 
-        //    if (cancellationToken.IsCancellationRequested)
-        //    {
-        //        return;
-        //    }
+            DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    double targetScaleFactor =
+                        (double)(PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI)
+                        / _punchBitmapSize.Width;
 
-        //    double targetScaleFactor =
-        //        (double)(PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI)
-        //        / punchBitmap.PixelWidth;
-        //    // Scale the staple image
-        //    WriteableBitmap scaledPunchBitmap = WriteableBitmapExtensions.Resize(punchBitmap,
-        //        (int)(punchBitmap.PixelWidth * targetScaleFactor),
-        //        (int)(punchBitmap.PixelHeight * targetScaleFactor),
-        //        WriteableBitmapExtensions.Interpolation.Bilinear);
+                    // Scale the staple image
+                    WriteableBitmap scaledPunchBitmap = WriteableBitmapExtensions.Resize(_punchBitmap,
+                        (int)(_punchBitmapSize.Width * targetScaleFactor),
+                        (int)(_punchBitmapSize.Height * targetScaleFactor),
+                        WriteableBitmapExtensions.Interpolation.Bilinear);
 
-        //    // Determine punch
-        //    double diameterPunch = PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI;
-        //    double marginPunch = PrintSettingConstant.MARGIN_PUNCH * ImageConstant.BASE_DPI;
-        //    double distanceBetweenHoles = GetDistanceBetweenHoles(enabledPunchFour, punch);
-        //    if (finishingSide == (int)FinishingSide.Top)
-        //    {
-        //        double startPos = GetPunchStartPosition(canvasBitmap.PixelWidth, true, holeCount,
-        //            diameterPunch, marginPunch, distanceBetweenHoles);
-        //        OverlayScalePunch(canvasBitmap, scaledPunchBitmap, holeCount, startPos, false, true,
-        //            diameterPunch, marginPunch, distanceBetweenHoles, cancellationToken);
-        //    }
-        //    else if (finishingSide == (int)FinishingSide.Left)
-        //    {
-        //        double startPos = GetPunchStartPosition(canvasBitmap.PixelHeight, false, holeCount,
-        //            diameterPunch, marginPunch, distanceBetweenHoles);
-        //        OverlayScalePunch(canvasBitmap, scaledPunchBitmap, holeCount, startPos, false, false,
-        //            diameterPunch, marginPunch, distanceBetweenHoles, cancellationToken);
-        //    }
-        //    else if (finishingSide == (int)FinishingSide.Right)
-        //    {
-        //        double startPos = GetPunchStartPosition(canvasBitmap.PixelHeight, false, holeCount,
-        //            diameterPunch, marginPunch, distanceBetweenHoles);
-        //        OverlayScalePunch(canvasBitmap, scaledPunchBitmap, holeCount, startPos, true, false,
-        //            diameterPunch, marginPunch, distanceBetweenHoles, cancellationToken);
-        //    }
-        //}
-
-        // Note: Dash line is now drawn in XAML
-        ///// <summary>
-        ///// Adds dash lines at the edge of an image
-        ///// </summary>
-        ///// <param name="canvasBitmap">canvas</param>
-        ///// <param name="canvasSize">canvas size</param>
-        ///// <param name="isRightSide">true when page is on right side, false otherwise</param>
-        ///// <param name="isPortrait">true when portrait, false otherwise</param>
-        ///// <param name="cancellationToken">cancellation token</param>
-        //public static void OverlayDashLineToEdge(WriteableBitmap canvasBitmap, Size canvasSize,
-        //    bool isRightEdge, bool isPortrait, CancellationTokenSource cancellationToken)
-        //{
-        //    int point = 0;
-
-        //    if (isPortrait)
-        //    {
-        //        if (isRightEdge) // for left page
-        //        {
-        //            do
-        //            {
-        //                if (cancellationToken.IsCancellationRequested)
-        //                {
-        //                    return;
-        //                }
-
-        //                Point p1 = new Point(canvasSize.Width - 1, point);
-        //                Point p2 = new Point(canvasSize.Width - 1, point +
-        //                    PrintSettingConstant.DASH_LINE_LENGTH);
-        //                point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
-        //                DispatcherHelper.CheckBeginInvokeOnUI(
-        //            () =>
-        //            {
-        //                WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
-        //                    (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-        //            });
-        //            } while (point < canvasSize.Height);
-        //        }
-        //        else // for right page
-        //        {
-        //            do
-        //            {
-        //                if (cancellationToken.IsCancellationRequested)
-        //                {
-        //                    return;
-        //                }
-
-        //                Point p1 = new Point(0, point);
-        //                Point p2 = new Point(0, point + PrintSettingConstant.DASH_LINE_LENGTH);
-        //                point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
-        //                DispatcherHelper.CheckBeginInvokeOnUI(
-        //            () =>
-        //            {
-        //                WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
-        //                    (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-        //            });
-        //            } while (point < canvasSize.Height);
-        //        }
-        //    }
-        //    else // for landscape
-        //    {
-        //        if (isRightEdge) // for left page
-        //        {
-        //            do
-        //            {
-        //                if (cancellationToken.IsCancellationRequested)
-        //                {
-        //                    return;
-        //                }
-
-        //                Point p1 = new Point(point, canvasSize.Height - 1);
-        //                Point p2 = new Point(point + PrintSettingConstant.DASH_LINE_LENGTH,
-        //                    canvasSize.Height - 1);
-        //                point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
-        //                DispatcherHelper.CheckBeginInvokeOnUI(
-        //            () =>
-        //            {
-        //                WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
-        //                    (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-        //            });
-        //            } while (point < canvasSize.Width);
-        //        }
-        //        else // for right page
-        //        {
-        //            do
-        //            {
-        //                if (cancellationToken.IsCancellationRequested)
-        //                {
-        //                    return;
-        //                }
-
-        //                Point p1 = new Point(point, 0);
-        //                Point p2 = new Point(point + PrintSettingConstant.DASH_LINE_LENGTH, 0);
-        //                point += PrintSettingConstant.DASH_LINE_LENGTH * 2;
-        //                DispatcherHelper.CheckBeginInvokeOnUI(
-        //            () =>
-        //            {
-        //                WriteableBitmapExtensions.DrawLine(canvasBitmap, (int)p1.X, (int)p1.Y,
-        //                    (int)p2.X, (int)p2.Y, Windows.UI.Colors.Gray);
-        //            });
-        //            } while (point < canvasSize.Width);
-        //        }
-        //    }
-        //}
+                    // Determine punch
+                    double diameterPunch = PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI;
+                    double marginPunch = PrintSettingConstant.MARGIN_PUNCH * ImageConstant.BASE_DPI;
+                    double distanceBetweenHoles = GetDistanceBetweenHoles(enabledPunchFour, punch);
+                    if (finishingSide == (int)FinishingSide.Top)
+                    {
+                        double startPos = GetPunchStartPosition(canvasSize.Width, true, holeCount,
+                            diameterPunch, marginPunch, distanceBetweenHoles);
+                        OverlayScalePunch(canvasBitmap, canvasSize, scaledPunchBitmap, holeCount,
+                            startPos, false, true, diameterPunch, marginPunch, distanceBetweenHoles,
+                            cancellationToken);
+                    }
+                    else if (finishingSide == (int)FinishingSide.Left)
+                    {
+                        double startPos = GetPunchStartPosition(canvasSize.Height, false, holeCount,
+                            diameterPunch, marginPunch, distanceBetweenHoles);
+                        OverlayScalePunch(canvasBitmap, canvasSize, scaledPunchBitmap, holeCount,
+                            startPos, false, false, diameterPunch, marginPunch, distanceBetweenHoles,
+                            cancellationToken);
+                    }
+                    else if (finishingSide == (int)FinishingSide.Right)
+                    {
+                        double startPos = GetPunchStartPosition(canvasSize.Height, false, holeCount,
+                            diameterPunch, marginPunch, distanceBetweenHoles);
+                        OverlayScalePunch(canvasBitmap, canvasSize, scaledPunchBitmap, holeCount,
+                            startPos, true, false, diameterPunch, marginPunch, distanceBetweenHoles,
+                            cancellationToken);
+                    }
+                });
+        }
+#endif // PREVIEW_PUNCH
 
         #region Private Methods
 
@@ -902,85 +875,10 @@ namespace SmartDeviceApp.Common.Utilities
             return pageAreaSize;
         }
 
-        ///// <summary>
-        ///// Gets the number of punch holes based on punch type
-        ///// </summary>
-        ///// <param name="punch">punch type</param>
-        ///// <returns>number of punch holes</returns>
-        //private static int GetPunchHoleCount(int punch, bool enabledPunchFour)
-        //{
-        //    int numberOfHoles = 0;
-        //    switch (punch)
-        //    {
-        //        case (int)Punch.TwoHoles:
-        //            numberOfHoles = 2;
-        //            break;
-        //        case (int)Punch.FourHoles:
-        //            numberOfHoles = 4;
-        //            if (!enabledPunchFour)
-        //            {
-        //                numberOfHoles = 3;
-        //            }
-        //            break;
-        //        case (int)Punch.Off:
-        //        default:
-        //            // Do nothing
-        //            break;
-        //    }
-
-        //    return numberOfHoles;
-        //}
-
-        ///// <summary>
-        ///// Computes the distance between punch holes based on number of punches
-        ///// </summary>
-        ///// <param name="enabledPunchFour">true when punch4 is enabled, false when punch3 is enabled</param>
-        ///// <param name="punch">punch type</param>
-        ///// <returns>distance</returns>
-        //private static double GetDistanceBetweenHoles(bool enabledPunchFour, int punch)
-        //{
-        //    double distance = 0;
-        //    switch (punch)
-        //    {
-        //        case (int)Punch.TwoHoles:
-        //            distance = PrintSettingConstant.PUNCH_BETWEEN_TWO_HOLES_DISTANCE;
-        //            break;
-        //        case (int)Punch.FourHoles:
-        //            distance = (enabledPunchFour) ?
-        //                PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE :
-        //                PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE;
-        //            break;
-        //        case (int)Punch.Off:
-        //        default:
-        //            // Do nothing
-        //            break;
-        //    }
-
-        //    return distance * ImageConstant.BASE_DPI;
-        //}
-
-        ///// <summary>
-        ///// Computes the starting position of the punch hole image
-        ///// </summary>
-        ///// <param name="edgeLength">length of page image edge where punch will be placed</param>
-        ///// <param name="isAlongXAxis">direction of punch holes</param>
-        ///// <param name="holeCount">number of punch holes</param>
-        ///// <param name="diameterPunch">size of punch hole</param>
-        ///// <param name="marginPunch">margin of punch hole against edge of page image</param>
-        ///// <param name="distanceBetweenHoles">distance between punch holes</param>
-        ///// <returns>starting position of the first punch hole</returns>
-        //private static double GetPunchStartPosition(double edgeLength, bool isAlongXAxis, int holeCount,
-        //    double diameterPunch, double marginPunch, double distanceBetweenHoles)
-        //{
-        //    double startPos = (edgeLength - (holeCount * diameterPunch) -
-        //                        ((holeCount - 1) * distanceBetweenHoles)) / 2;
-        //    return startPos;
-        //}
-
         /// <summary>
         /// Scales the logical page image into the preview page image
         /// </summary>
-        /// <param name="canvasBitmap">canvas bitmap</param>
+        /// <param name="canvasBitmap">canvas</param>
         /// <param name="canvasSize">canvas size</param>
         /// <param name="overlayBitmap">overlay image</param>
         /// <param name="overlaySize">overlay size</param>
@@ -1051,172 +949,266 @@ namespace SmartDeviceApp.Common.Utilities
                             overlaySize.Height * targetScaleFactor);
         }
 
-        ///// <summary>
-        ///// Adds a staple image. Requires that the staple image is already scaled.
-        ///// For single staple and non-booklet only.
-        ///// </summary>
-        ///// <param name="canvasBitmap">destination image</param>
-        ///// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
-        ///// <param name="angle">angle for rotation</param>
-        ///// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
-        ///// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
-        ///// <param name="cancellationToken">cancellation token</param>
-        //private static void OverlayCornerStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
-        //    int angle, bool isXEnd, bool isYEnd, CancellationTokenSource cancellationToken)
-        //{
-        //    OverlayRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, 0, false, 0,
-        //        PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI, false, cancellationToken);
-        //}
+#if PREVIEW_STAPLE
+        /// <summary>
+        /// Adds a staple image. Requires that the staple image is already scaled.
+        /// For single staple and non-booklet only.
+        /// </summary>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
+        /// <param name="angle">angle for rotation</param>
+        /// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
+        /// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        private static void OverlayCornerStaple(WriteableBitmap canvasBitmap, Size canvasSize,
+            WriteableBitmap stapleBitmap, int angle, bool isXEnd, bool isYEnd,
+            CancellationTokenSource cancellationToken)
+        {
+            OverlayRotateStaple(canvasBitmap, canvasSize, stapleBitmap, angle, isXEnd, isYEnd, 0, false, 0,
+                PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI, false, cancellationToken);
+        }
 
-        ///// <summary>
-        ///// Adds a staple image. Requires that the staple image is already scaled.
-        ///// For double staple and non-booklet only.
-        ///// </summary>
-        ///// <param name="canvasBitmap">destination image</param>
-        ///// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
-        ///// <param name="angle">angle for rotation</param>
-        ///// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
-        ///// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
-        ///// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
-        ///// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
-        ///// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
-        ///// <param name="cancellationToken">cancellation token</param>
-        //private static void OverlaySideStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
-        //    int angle, bool isXEnd, bool isYEnd, int edgeLength, bool isAlongXAxis,
-        //    double positionPercentage, CancellationTokenSource cancellationToken)
-        //{
-        //    OverlayRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, edgeLength, isAlongXAxis,
-        //        positionPercentage, PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI, false, cancellationToken);
-        //}
+        /// <summary>
+        /// Adds a staple image. Requires that the staple image is already scaled.
+        /// For double staple and non-booklet only.
+        /// </summary>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
+        /// <param name="angle">angle for rotation</param>
+        /// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
+        /// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
+        /// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
+        /// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
+        /// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        private static void OverlaySideStaple(WriteableBitmap canvasBitmap, Size canvasSize,
+            WriteableBitmap stapleBitmap, int angle, bool isXEnd, bool isYEnd, int edgeLength,
+            bool isAlongXAxis, double positionPercentage, CancellationTokenSource cancellationToken)
+        {
+            OverlayRotateStaple(canvasBitmap, canvasSize, stapleBitmap, angle, isXEnd, isYEnd,
+                edgeLength, isAlongXAxis, positionPercentage,
+                PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI, false,
+                cancellationToken);
+        }
 
-        ///// <summary>
-        ///// Adds a staple image. Requires that the staple image is already scaled.
-        ///// </summary>
-        ///// <param name="canvasBitmap">destination image</param>
-        ///// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
-        ///// <param name="angle">angle for rotation</param>
-        ///// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
-        ///// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
-        ///// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
-        ///// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
-        ///// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
-        ///// <param name="marginStaple">margin from edge</param>
-        ///// <param name="isBooklet">true when applied with booklet, false otherwise</param>
-        ///// <param name="cancellationToken">cancellation token</param>
-        //private static void OverlayRotateStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
-        //    int angle, bool isXEnd, bool isYEnd, int edgeLength, bool isAlongXAxis,
-        //    double positionPercentage, double marginStaple, bool isBooklet, CancellationTokenSource cancellationToken)
-        //{
-        //    // Rotate
-        //    WriteableBitmap rotatedStapleBitmap = stapleBitmap;
-        //    if (angle > 0)
-        //    {
-        //        if (cancellationToken.IsCancellationRequested)
-        //        {
-        //            return;
-        //        }
+        /// <summary>
+        /// Adds a staple image. Requires that the staple image is already scaled.
+        /// </summary>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
+        /// <param name="angle">angle for rotation</param>
+        /// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
+        /// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
+        /// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
+        /// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
+        /// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
+        /// <param name="marginStaple">margin from edge</param>
+        /// <param name="isBooklet">true when applied with booklet, false otherwise</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        private static void OverlayRotateStaple(WriteableBitmap canvasBitmap, Size canvasSize,
+            WriteableBitmap stapleBitmap, int angle, bool isXEnd, bool isYEnd, int edgeLength,
+            bool isAlongXAxis, double positionPercentage, double marginStaple, bool isBooklet,
+            CancellationTokenSource cancellationToken)
+        {
+            // Rotate
+            WriteableBitmap rotatedStapleBitmap = stapleBitmap;
+            if (angle > 0)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
 
-        //        rotatedStapleBitmap = WriteableBitmapExtensions.RotateFree(stapleBitmap, angle, false);
-        //    }
+                rotatedStapleBitmap = WriteableBitmapExtensions.RotateFree(stapleBitmap, angle, false);
+            }
 
-        //    double destXOrigin;
-        //    if (positionPercentage > 0 && isAlongXAxis)
-        //    {
-        //        destXOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelWidth / 2);
-        //    }
-        //    else if (isXEnd && isBooklet)
-        //    {
-        //        destXOrigin = canvasBitmap.PixelWidth - (rotatedStapleBitmap.PixelWidth / 2) - marginStaple;
-        //    }
-        //    else if (isXEnd && !isBooklet)
-        //    {
-        //        destXOrigin = canvasBitmap.PixelWidth - rotatedStapleBitmap.PixelWidth - marginStaple;
-        //    }
-        //    else if (!isXEnd && isBooklet)
-        //    {
-        //        destXOrigin = 0 - (rotatedStapleBitmap.PixelWidth / 2);
-        //    }
-        //    else
-        //    {
-        //        destXOrigin = marginStaple;
-        //    }
+            double destXOrigin;
+            if (positionPercentage > 0 && isAlongXAxis)
+            {
+                destXOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelWidth / 2);
+            }
+            else if (isXEnd && isBooklet)
+            {
+                destXOrigin = canvasSize.Width - (rotatedStapleBitmap.PixelWidth / 2) - marginStaple;
+            }
+            else if (isXEnd && !isBooklet)
+            {
+                destXOrigin = canvasSize.Width - rotatedStapleBitmap.PixelWidth - marginStaple;
+            }
+            else if (!isXEnd && isBooklet)
+            {
+                destXOrigin = 0 - (rotatedStapleBitmap.PixelWidth / 2);
+            }
+            else
+            {
+                destXOrigin = marginStaple;
+            }
 
-        //    double destYOrigin;
-        //    if (positionPercentage > 0 && !isAlongXAxis)
-        //    {
-        //        destYOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelHeight / 2);
-        //    }
-        //    else if (isYEnd && isBooklet)
-        //    {
-        //        destYOrigin = canvasBitmap.PixelHeight - (rotatedStapleBitmap.PixelHeight / 2) - marginStaple;
-        //    }
-        //    else if (isYEnd && !isBooklet)
-        //    {
-        //        destYOrigin = canvasBitmap.PixelHeight - rotatedStapleBitmap.PixelHeight - marginStaple;
-        //    }
-        //    else if (!isYEnd && isBooklet)
-        //    {
-        //        destYOrigin = 0 - (rotatedStapleBitmap.PixelHeight / 2);
-        //    }
-        //    else
-        //    {
-        //        destYOrigin = marginStaple;
-        //    }
+            double destYOrigin;
+            if (positionPercentage > 0 && !isAlongXAxis)
+            {
+                destYOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelHeight / 2);
+            }
+            else if (isYEnd && isBooklet)
+            {
+                destYOrigin = canvasSize.Height - (rotatedStapleBitmap.PixelHeight / 2) - marginStaple;
+            }
+            else if (isYEnd && !isBooklet)
+            {
+                destYOrigin = canvasSize.Height - rotatedStapleBitmap.PixelHeight - marginStaple;
+            }
+            else if (!isYEnd && isBooklet)
+            {
+                destYOrigin = 0 - (rotatedStapleBitmap.PixelHeight / 2);
+            }
+            else
+            {
+                destYOrigin = marginStaple;
+            }
 
-        //    Rect destRect = new Rect(destXOrigin, destYOrigin, rotatedStapleBitmap.PixelWidth,
-        //        rotatedStapleBitmap.PixelHeight);
-        //    Rect srcRect = new Rect(0, 0, rotatedStapleBitmap.PixelWidth, rotatedStapleBitmap.PixelHeight);
+            Rect destRect = new Rect(destXOrigin, destYOrigin, rotatedStapleBitmap.PixelWidth,
+                rotatedStapleBitmap.PixelHeight);
+            Rect srcRect = new Rect(0, 0, rotatedStapleBitmap.PixelWidth, rotatedStapleBitmap.PixelHeight);
 
-        //    if (cancellationToken.IsCancellationRequested)
-        //    {
-        //        return;
-        //    }
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
 
-        //    WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStapleBitmap, srcRect);
-        //}
+            WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStapleBitmap, srcRect);
+        }
+#endif // PREVIEW_STAPLE
 
-        ///// <summary>
-        ///// Adds punch hole images
-        ///// </summary>
-        ///// <param name="canvasBitmap">destination image</param>
-        ///// <param name="punchBitmap">punch hole image</param>
-        ///// <param name="holeCount">number of punch holes</param>
-        ///// <param name="startPos">starting position</param>
-        ///// <param name="isXEnd">true when punch holes are to be placed near the end along X-axis</param>
-        ///// <param name="isAlongXAxis">true when punch holes are to be placed horizontally</param>
-        ///// <param name="diameterPunch">size of punch hole</param>
-        ///// <param name="marginPunch">margin of punch hole against edge of page image</param>
-        ///// <param name="distanceBetweenHoles">distance between punch holes</param>
-        ///// <param name="cancellationToken">cancellation token</param>
-        //private static void OverlayScalePunch(WriteableBitmap canvasBitmap, WriteableBitmap punchBitmap,
-        //    int holeCount, double startPos, bool isXEnd, bool isAlongXAxis, double diameterPunch,
-        //    double marginPunch, double distanceBetweenHoles, CancellationTokenSource cancellationToken)
-        //{
-        //    double endMarginPunch = (isXEnd) ? canvasBitmap.PixelWidth - diameterPunch - marginPunch : marginPunch;
+#if PREVIEW_PUNCH
+        /// <summary>
+        /// Adds punch hole images
+        /// </summary>
+        /// <param name="canvasBitmap">canvas</param>
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="punchBitmap">punch hole image</param>
+        /// <param name="holeCount">number of punch holes</param>
+        /// <param name="startPos">starting position</param>
+        /// <param name="isXEnd">true when punch holes are to be placed near the end along X-axis</param>
+        /// <param name="isAlongXAxis">true when punch holes are to be placed horizontally</param>
+        /// <param name="diameterPunch">size of punch hole</param>
+        /// <param name="marginPunch">margin of punch hole against edge of page image</param>
+        /// <param name="distanceBetweenHoles">distance between punch holes</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        private static void OverlayScalePunch(WriteableBitmap canvasBitmap, Size canvasSize,
+            WriteableBitmap punchBitmap, int holeCount, double startPos, bool isXEnd,
+            bool isAlongXAxis, double diameterPunch, double marginPunch, double distanceBetweenHoles,
+            CancellationTokenSource cancellationToken)
+        {
+            double endMarginPunch = (isXEnd) ? canvasSize.Width - diameterPunch - marginPunch : marginPunch;
 
-        //    double currPos = startPos;
-        //    for (int index = 0; index < holeCount; ++index, currPos += diameterPunch + distanceBetweenHoles)
-        //    {
-        //        if (cancellationToken.IsCancellationRequested)
-        //        {
-        //            return;
-        //        }
+            double currPos = startPos;
+            for (int index = 0; index < holeCount; ++index, currPos += diameterPunch + distanceBetweenHoles)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
 
-        //        // Do not put punch hole image when it is outside the page image size
-        //        if (currPos < 0 || (isAlongXAxis && currPos > canvasBitmap.PixelWidth) ||
-        //            (!isAlongXAxis && currPos > canvasBitmap.PixelHeight))
-        //        {
-        //            continue;
-        //        }
+                // Do not put punch hole image when it is outside the page image size
+                if (currPos < 0 || (isAlongXAxis && currPos > canvasSize.Width) ||
+                    (!isAlongXAxis && currPos > canvasSize.Height))
+                {
+                    continue;
+                }
 
-        //        double destXOrigin = (isAlongXAxis) ? currPos : endMarginPunch;
-        //        double destYOrigin = (isAlongXAxis) ? marginPunch : currPos;
-        //        Rect destRect = new Rect(destXOrigin, destYOrigin, punchBitmap.PixelWidth,
-        //            punchBitmap.PixelHeight);
-        //        Rect srcRect = new Rect(0, 0, punchBitmap.PixelWidth, punchBitmap.PixelHeight);
-        //        WriteableBitmapExtensions.Blit(canvasBitmap, destRect, punchBitmap, srcRect);
-        //    }
-        //}
+                double destXOrigin = (isAlongXAxis) ? currPos : endMarginPunch;
+                double destYOrigin = (isAlongXAxis) ? marginPunch : currPos;
+                Rect destRect = new Rect(destXOrigin, destYOrigin, punchBitmap.PixelWidth,
+                    punchBitmap.PixelHeight);
+                Rect srcRect = new Rect(0, 0, punchBitmap.PixelWidth, punchBitmap.PixelHeight);
+
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        WriteableBitmapExtensions.Blit(canvasBitmap, destRect, punchBitmap, srcRect);
+                    });
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of punch holes based on punch type
+        /// </summary>
+        /// <param name="punch">punch type</param>
+        /// <param name="enabledPunchFour">true when punch4 is enabled, false when punch3 is enabled</param>
+        /// <returns>number of punch holes</returns>
+        private static int GetPunchHoleCount(int punch, bool enabledPunchFour)
+        {
+            int numberOfHoles = 0;
+            switch (punch)
+            {
+                case (int)Punch.TwoHoles:
+                    numberOfHoles = 2;
+                    break;
+                case (int)Punch.FourHoles:
+                    numberOfHoles = 4;
+                    if (!enabledPunchFour)
+                    {
+                        numberOfHoles = 3;
+                    }
+                    break;
+                case (int)Punch.Off:
+                default:
+                    // Do nothing
+                    break;
+            }
+
+            return numberOfHoles;
+        }
+
+        /// <summary>
+        /// Computes the distance between punch holes based on number of punches
+        /// </summary>
+        /// <param name="enabledPunchFour">true when punch4 is enabled, false when punch3 is enabled</param>
+        /// <param name="punch">punch type</param>
+        /// <returns>distance</returns>
+        private static double GetDistanceBetweenHoles(bool enabledPunchFour, int punch)
+        {
+            double distance = 0;
+            switch (punch)
+            {
+                case (int)Punch.TwoHoles:
+                    distance = PrintSettingConstant.PUNCH_BETWEEN_TWO_HOLES_DISTANCE;
+                    break;
+                case (int)Punch.FourHoles:
+                    distance = (enabledPunchFour) ?
+                        PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE :
+                        PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE;
+                    break;
+                case (int)Punch.Off:
+                default:
+                    // Do nothing
+                    break;
+            }
+
+            return distance * ImageConstant.BASE_DPI;
+        }
+
+        /// <summary>
+        /// Computes the starting position of the punch hole image
+        /// </summary>
+        /// <param name="edgeLength">length of page image edge where punch will be placed</param>
+        /// <param name="isAlongXAxis">direction of punch holes</param>
+        /// <param name="holeCount">number of punch holes</param>
+        /// <param name="diameterPunch">size of punch hole</param>
+        /// <param name="marginPunch">margin of punch hole against edge of page image</param>
+        /// <param name="distanceBetweenHoles">distance between punch holes</param>
+        /// <returns>starting position of the first punch hole</returns>
+        private static double GetPunchStartPosition(double edgeLength, bool isAlongXAxis, int holeCount,
+            double diameterPunch, double marginPunch, double distanceBetweenHoles)
+        {
+            double startPos = (edgeLength - (holeCount * diameterPunch) -
+                                ((holeCount - 1) * distanceBetweenHoles)) / 2;
+            return startPos;
+        }
+#endif // PREVIEW_PUNCH
 
         #endregion Private Methods
 

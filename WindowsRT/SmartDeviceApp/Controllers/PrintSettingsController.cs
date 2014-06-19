@@ -101,6 +101,7 @@ namespace SmartDeviceApp.Controllers
             }
             currPrintSettings = await GetPrintSettings(printSettingId);
 
+#if !PRINTSETTING_ORIENTATION
             // Special handling: Set Orientation value based on first page of PDF
             if (screenName.Equals(ScreenMode.PrintPreview.ToString()))
             {
@@ -113,6 +114,7 @@ namespace SmartDeviceApp.Controllers
                     currPrintSettings.Orientation = (int)Orientation.Landscape;
                 }
             }
+#endif // !PRINTSETTING_ORIENTATION
 
             if (screenName.Equals(ScreenMode.PrintPreview.ToString()))
             {
@@ -316,10 +318,21 @@ namespace SmartDeviceApp.Controllers
             {
                 tempList.AddRange(ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML).AsEnumerable());
             }
+
+            // Bind list with UI
             foreach (PrintSettingGroup group in tempList)
             {
                 _printSettingsViewModel.PrintSettingsList.Add(group);
             }
+
+#if !PRINTSETTING_ORIENTATION
+            // Remove Orientation in list
+            PrintSetting orientationPrintSetting = GetPrintSetting(PrintSettingConstant.NAME_VALUE_ORIENTATION);
+            if (orientationPrintSetting != null)
+            {
+                RemovePrintSetting(orientationPrintSetting);
+            }
+#endif // !PRINTSETTING_ORIENTATION
         }
 
         /// <summary>
@@ -1553,10 +1566,11 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.BookletFinishing != value)
                 {
-                    // No need to update preview for booklet finishing (since staple is not updated also)
-                    //isPreviewAffected = (printSettings.Booklet == true) &&
-                    //    ((printSettings.BookletFinishing == (int)BookletFinishing.FoldAndStaple && value != (int)BookletFinishing.FoldAndStaple) ||
-                    //    (printSettings.BookletFinishing != (int)BookletFinishing.FoldAndStaple && value == (int)BookletFinishing.FoldAndStaple));
+#if PREVIEW_STAPLE
+                    isPreviewAffected = (printSettings.Booklet == true) &&
+                        ((printSettings.BookletFinishing == (int)BookletFinishing.FoldAndStaple && value != (int)BookletFinishing.FoldAndStaple) ||
+                        (printSettings.BookletFinishing != (int)BookletFinishing.FoldAndStaple && value == (int)BookletFinishing.FoldAndStaple));
+#endif // PREVIEW_STAPLE
                     printSettings.BookletFinishing = value;
                 }
             }
@@ -1580,12 +1594,13 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.Staple != value)
                 {
-                    // No need to update preview for staple
-                    //isPreviewAffected = (value == (int)Staple.Off) ||
-                    //    (value == (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.One) ||
-                    //    (value == (int)Staple.OneUpperRight && printSettings.Staple != (int)Staple.One) ||
-                    //    (value == (int)Staple.One && (printSettings.Staple != (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.OneUpperRight)) ||
-                    //    (value == (int)Staple.Two);
+#if PREVIEW_STAPLE
+                    isPreviewAffected = (value == (int)Staple.Off) ||
+                        (value == (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.One) ||
+                        (value == (int)Staple.OneUpperRight && printSettings.Staple != (int)Staple.One) ||
+                        (value == (int)Staple.One && (printSettings.Staple != (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.OneUpperRight)) ||
+                        (value == (int)Staple.Two);
+#endif // PREVIEW_STAPLE
                     printSettings.Staple = value;
                 }
             }
@@ -1593,9 +1608,10 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.Punch != value)
                 {
-                    // No need to update preview for punch
-                    //isPreviewAffected = UpdateConstraintsBasedOnPunch(value, true);
-                    UpdateConstraintsBasedOnPunch(value, true);
+#if PREVIEW_PUNCH
+                    isPreviewAffected =
+#endif // PREVIEW_PUNCH
+                        UpdateConstraintsBasedOnPunch(value, true);
                     printSettings.Punch = value;
                 }
             }

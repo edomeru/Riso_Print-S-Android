@@ -15,6 +15,16 @@
             <option>ids_lbl_colormode_black</option>
         </setting>
         <setting
+            name="orientation"
+            dbkey="pst_orientation"
+            text="ids_lbl_orientation"
+            icon="temp_img_printsettings_orientation"
+            type="list"
+            default="0" >
+            <option>ids_lbl_orientation_portrait</option>
+            <option>ids_lbl_orientation_landscape</option>
+        </setting>
+        <setting
             name="copies"
             dbkey="pst_copies"
             text="ids_lbl_number_of_copies"

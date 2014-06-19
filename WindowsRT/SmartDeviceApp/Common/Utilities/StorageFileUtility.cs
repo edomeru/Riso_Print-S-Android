@@ -20,6 +20,8 @@ namespace SmartDeviceApp.Common.Utilities
     public static class StorageFileUtility
     {
 
+        public const string URL_SCHEME_LOCAL_PACKAGE = "ms-appx:///";
+
         /// <summary>
         /// Retrives the file from the specified location
         /// </summary>
@@ -112,7 +114,7 @@ namespace SmartDeviceApp.Common.Utilities
             StorageFile storageFile = null;
             try
             {
-                Uri uri = new Uri("ms-appx:///" + filePath);
+                Uri uri = new Uri(URL_SCHEME_LOCAL_PACKAGE + filePath);
                 return await StorageFile.GetFileFromApplicationUriAsync(uri);
             }
             catch (FileNotFoundException)

@@ -138,6 +138,13 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Initialize()
         {
+#if PREVIEW_PUNCH
+            await PreviewPageImageUtility.LoadPunchBitmap();
+#endif // PREVIEW_PUNCH
+#if PREVIEW_STAPLE
+            await PreviewPageImageUtility.LoadStapleBitmap();
+#endif // PREVIEW_STAPLE
+
             // Get print settings if document is successfully loaded
             if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
@@ -727,19 +734,22 @@ namespace SmartDeviceApp.Controllers
                     PreviewPageImageUtility.GrayscalePageImage(canvasBitmap, cancellationToken);
                 }
 
-                //if (_isBooklet)
-                //{
-                //    if (cancellationToken.IsCancellationRequested)
-                //    {
-                //        return;
-                //    }
+#if PREVIEW_STAPLE
+                if (_isBooklet)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
 
-                //    await PreviewPageImageUtility.FormatPageImageForBooklet(canvasBitmap,
-                //        _currPrintSettings.BookletFinishing, isPortrait, isRightSide, isBackSide,
-                //        cancellationToken);
-                //}
-                //else if (_isDuplex)
+                    PreviewPageImageUtility.FormatPageImageForBooklet(canvasBitmap, previewPageSize,
+                        _currPrintSettings.BookletFinishing, isPreviewPagePortrait, isRightSide,
+                        isBackSide, cancellationToken);
+                }
+                else if (_isDuplex)
+#else // PREVIEW_STAPLE
                 if (_isDuplex && !_isBooklet)
+#endif // PREVIEW_STAPLE
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -747,39 +757,43 @@ namespace SmartDeviceApp.Controllers
                     }
 
                     PreviewPageImageUtility.FormatPageImageForDuplex(canvasBitmap,
-                        previewPageSize,  _currPrintSettings.Duplex, _currPrintSettings.FinishingSide,
+                        previewPageSize, _currPrintSettings.Duplex, _currPrintSettings.FinishingSide,
                         _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
                         _currPrintSettings.Staple, isPdfPortait, isPreviewPagePortrait,
                         isRightSide, isBackSide, cancellationToken);
                 }
-                //else // Not duplex and not booket
-                //{
-                //    // Apply punch
-                //    if (_currPrintSettings.Punch != (int)Punch.Off)
-                //    {
-                //        if (cancellationToken.IsCancellationRequested)
-                //        {
-                //            return;
-                //        }
+                else // Not duplex and not booket
+                {
+#if PREVIEW_PUNCH
+                    // Apply punch
+                    if (_currPrintSettings.Punch != (int)Punch.Off)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return;
+                        }
 
-                //        await PreviewPageImageUtility.OverlayPunch(canvasBitmap,
-                //            _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
-                //            _currPrintSettings.FinishingSide, cancellationToken);
-                //    }
+                        PreviewPageImageUtility.OverlayPunch(canvasBitmap, previewPageSize,
+                            _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
+                            _currPrintSettings.FinishingSide, cancellationToken);
+                    }
+#endif // PREVIEW_PUNCH
 
-                //    // Apply staple
-                //    if (_currPrintSettings.Staple != (int)Staple.Off)
-                //    {
-                //        if (cancellationToken.IsCancellationRequested)
-                //        {
-                //            return;
-                //        }
+#if PREVIEW_STAPLE
+                    // Apply staple
+                    if (_currPrintSettings.Staple != (int)Staple.Off)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return;
+                        }
 
-                //        await PreviewPageImageUtility.OverlayStaple(canvasBitmap,
-                //            _currPrintSettings.Staple, _currPrintSettings.FinishingSide,
-                //            false, false, cancellationToken);
-                //    }
-                //}
+                        PreviewPageImageUtility.OverlayStaple(canvasBitmap, previewPageSize,
+                            _currPrintSettings.Staple, _currPrintSettings.FinishingSide,
+                            false, false, cancellationToken);
+                    }
+#endif // PREVIEW_STAPLE
+                }
             }
             else
             {
@@ -791,13 +805,6 @@ namespace SmartDeviceApp.Controllers
 
                 PreviewPageImageUtility.FillWhitePageImage(canvasBitmap);
             }
-
-            // Note: Dash line is now drawn in XAML
-            //if (_isBooklet || _isDuplex)
-            //{
-            //    PreviewPageImageUtility.OverlayDashLineToEdge(canvasBitmap, previewPageSize,
-            //        !isRightSide, isPreviewPagePortrait, cancellationToken);
-            //}
 
             DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
@@ -839,7 +846,6 @@ namespace SmartDeviceApp.Controllers
                             WriteableBitmapExtensions.FromByteArray(
                                 _printPreviewViewModel.LeftPageImage, _dummyPixels);
                         }
-                        //_printPreviewViewModel.LeftPageImage.Invalidate();
                         _printPreviewViewModel.IsLoadLeftPageActive = false;
                     });
             }
@@ -859,7 +865,6 @@ namespace SmartDeviceApp.Controllers
                         WriteableBitmapExtensions.FromByteArray(
                             _printPreviewViewModel.RightPageImage, _dummyPixels);
                     }
-                    //_printPreviewViewModel.RightPageImage.Invalidate();
                     _printPreviewViewModel.IsLoadRightPageActive = false;
                 });
             }
