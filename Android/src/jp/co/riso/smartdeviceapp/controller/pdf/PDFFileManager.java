@@ -212,6 +212,19 @@ public class PDFFileManager {
     }
     
     /**
+     * Checks whether the PDF loaded is landscape basing the dimensions on the first page.
+     * 
+     * @return true if pdf is landscape
+     */
+    public boolean isPDFLandscape() {
+        float width = getPageWidth(0);
+        float height = getPageHeight(0);
+        
+        // if width == height, it is considered portrait
+        return (width > height);
+    }
+    
+    /**
      * Appends the sandbox path
      * 
      * @return PDF sandbox directory

@@ -43,6 +43,7 @@ public class SmartDeviceApp extends Application {
         return SmartDeviceApp.sContext;
     }
     
+    //TODO: Remove this NOT NECESSARY
     /**
      * Initializes state of Shared Preferences.
      * Adds default values if default shared preferences does not contain value.

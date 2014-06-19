@@ -177,12 +177,18 @@ public class PrintSettings {
     /**
      * @return PJL formatted string
      */
-    public String formattedString() {
+    public String formattedString(boolean isLandscape) {
         StringBuffer strBuf = new StringBuffer();
         String KEY_VAL_FORMAT = "%s=%d\n";
         
         for (String key : getSettingValues().keySet()) {
             int value = getSettingValues().get(key);
+            
+            if (AppConstants.USE_PDF_ORIENTATION) {
+                if (key.equals(TAG_ORIENTATION)) {
+                    value = isLandscape ? 1 : 0;
+                }
+            }
             
             strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
         }

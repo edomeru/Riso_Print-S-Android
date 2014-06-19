@@ -13,6 +13,8 @@ public class AppConstants {
     public static final boolean INITIAL_DB = false;
     public static final boolean FOR_PERF_LOGS = false;
     
+    public static boolean USE_PDF_ORIENTATION = true;
+    
     public static final boolean APP_SHOW_SPLASH = true;
     public static final long APP_SPLASH_DURATION = 2000;
     

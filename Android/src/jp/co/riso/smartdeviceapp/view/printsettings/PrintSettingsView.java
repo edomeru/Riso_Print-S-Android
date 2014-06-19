@@ -657,6 +657,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         boolean isBookletFinishingAvailable = printer == null || printer.getConfig().isBookletFinishingAvailable();
         setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable);
         
+        setViewVisible(PrintSettings.TAG_ORIENTATION, !AppConstants.USE_PDF_ORIENTATION);
+        
     }
     
     /**
