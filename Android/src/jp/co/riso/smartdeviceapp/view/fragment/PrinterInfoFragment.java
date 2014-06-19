@@ -91,8 +91,12 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         portAdapter.add(getString(R.string.ids_lbl_port_lpr));
         if (mPrinter.getConfig().isRawAvailable()) {
             portAdapter.add(getString(R.string.ids_lbl_port_raw));
+            portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
+        } else {
+            mPort.setVisibility(View.GONE);
+            // Port setting is always displayed as LPR
+            view.findViewById(R.id.defaultPort).setVisibility(View.VISIBLE);
         }
-        portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         mPort.setAdapter(portAdapter);
         mPort.setSelection(mPrinter.getPortSetting().ordinal());
     }

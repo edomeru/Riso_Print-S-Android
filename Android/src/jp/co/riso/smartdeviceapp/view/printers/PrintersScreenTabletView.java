@@ -458,8 +458,12 @@ OnItemSelectedListener {
         portAdapter.add(getContext().getString(R.string.ids_lbl_port_lpr));
         if (printer.getConfig().isRawAvailable()) {
             portAdapter.add(getContext().getString(R.string.ids_lbl_port_raw));
+            portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
+        } else {
+            viewHolder.mPort.setVisibility(View.GONE);
+            // Port setting is always displayed as LPR
+            pView.findViewById(R.id.defaultPort).setVisibility(View.VISIBLE);
         }
-        portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
         viewHolder.mPort.setAdapter(portAdapter);
         viewHolder.mPort.setSelection(printer.getPortSetting().ordinal());
         
