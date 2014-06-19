@@ -96,16 +96,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     }
     
     // ================================================================================
-    // Public Methods
-    // ================================================================================
-    
-    /**
-     * This method updates the selected state fragment to "Print Job History" (STATE_PRINTJOBS)
-     */
-    public void goToJobsFragment(){
-        setCurrentState(STATE_PRINTJOBS);
-    }
-    // ================================================================================
     // Private Methods
     // ================================================================================
     

@@ -11,8 +11,6 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import java.util.Date;
 import java.util.Locale;
 
-import jp.co.riso.android.dialog.ConfirmDialogFragment;
-import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.dialog.WaitingDialogFragment;
@@ -39,7 +37,7 @@ import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
-public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.PrintSettingsViewInterface, PauseableHandlerCallback, DirectPrintCallback, WaitingDialogListener, ConfirmDialogListener {
+public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.PrintSettingsViewInterface, PauseableHandlerCallback, DirectPrintCallback, WaitingDialogListener {
     
     private static final String TAG_WAITING_DIALOG = "dialog_printing";
     private static final String TAG_MESSAGE_DIALOG = "dialog_message";
@@ -47,9 +45,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private DirectPrintManager mDirectPrintManager = null;
     
     private static final int MSG_PRINT = 0;
-    private static final int REQUEST_CODE_INVALID = -1;
     private static final int REQUEST_CODE_CANCEL = 0;
-    private static final int REQUEST_CODE_PRINT = 1;
     
     private boolean mFragmentForPrinting = false;
     
@@ -62,7 +58,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private boolean mPDFisLandscape = false;
     private PauseableHandler mPauseableHandler = null;
     private WaitingDialogFragment mWaitingDialog = null;
-    private ConfirmDialogFragment mConfirmDialog = null;
     private String mPrintMsg = "";
     
     /** {@inheritDoc} */
@@ -296,30 +291,25 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 
                 PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
                 String filename = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
+                InfoDialogFragment fragment = null;
+                String strMsg = null;
+                String btnMsg = null;
                 
                 if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
                     ((PrintPreviewFragment) getFragmentManager().findFragmentById(R.id.mainLayout)).clearIconStates();
                     
-                    // Show dialog
-                    String strMsg = getString(R.string.ids_info_msg_print_job_successful);
-                    String btnMsg = getString(R.string.ids_lbl_ok);
-                    
-                    if (mConfirmDialog == null) {
-                        mConfirmDialog = ConfirmDialogFragment.newInstance(strMsg, btnMsg, null);
-                    }
-                    mConfirmDialog.setTargetFragment(this, REQUEST_CODE_PRINT);
-                    DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, mConfirmDialog);
-                }
-                else {
+                    strMsg = getString(R.string.ids_info_msg_print_job_successful);
+                    btnMsg = getString(R.string.ids_lbl_ok);
+                } else {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.ERROR);
                     
-                    // Show dialog
-                    String strMsg = getString(R.string.ids_info_msg_print_job_failed);
-                    String btnMsg = getString(R.string.ids_lbl_ok);
-                    InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
-                    DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                    strMsg = getString(R.string.ids_info_msg_print_job_failed);
+                    btnMsg = getString(R.string.ids_lbl_ok);
                 }
+                // Show dialog
+                fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
+                DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
                 break;
         }
     }
@@ -368,39 +358,9 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     /** {@inheritDoc} */
     @Override
     public void onCancel() {
-        if (mWaitingDialog != null) {
-            switch (mWaitingDialog.getTargetRequestCode()) {
-                case REQUEST_CODE_CANCEL:
-                    if (mDirectPrintManager != null) {
-                        mDirectPrintManager.sendCancelCommand();
-                        mDirectPrintManager = null;
-                    }
-                    mWaitingDialog.setTargetFragment(this, REQUEST_CODE_INVALID);
-                    break;
-                case REQUEST_CODE_INVALID:
-                    break;
-            }
+        if (mDirectPrintManager != null) {
+            mDirectPrintManager.sendCancelCommand();
+            mDirectPrintManager = null;
         }
-        
-        if (mConfirmDialog != null) {
-            switch (mConfirmDialog.getTargetRequestCode()) {
-                case REQUEST_CODE_PRINT:
-                    mConfirmDialog.setTargetFragment(this, REQUEST_CODE_INVALID);
-                    ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
-                    break;
-                case REQUEST_CODE_INVALID:
-                    break;
-            }
-        }
-    }
-
-    // ================================================================================
-    // INTERFACE - ConfirmDialogListener
-    // ================================================================================
-    
-    /** {@inheritDoc} */
-    @Override
-    public void onConfirm() {
-        ((HomeFragment) getFragmentManager().findFragmentById(R.id.leftLayout)).goToJobsFragment();
     }
 }
