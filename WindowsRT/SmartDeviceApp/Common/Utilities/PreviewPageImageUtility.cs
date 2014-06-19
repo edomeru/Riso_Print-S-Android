@@ -506,7 +506,9 @@ namespace SmartDeviceApp.Common.Utilities
                     {
                         PreviewPageImageUtility.OverlayImage(canvasBitmap, canvasSize,
                             WriteableBitmapExtensions.Rotate(canvasBitmap, 180), canvasSize,
-                            isPdfPortrait, isPortrait, false, cancellationToken);
+                            isPortrait, isPortrait, false, cancellationToken);
+                            // Use the same isPortrait value to avoid rotate left on OverlayImage().
+                            // Rotation is not needed there since overlayImage is rotated here.
                     });
                 }
 
