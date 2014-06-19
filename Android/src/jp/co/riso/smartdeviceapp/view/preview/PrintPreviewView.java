@@ -16,19 +16,16 @@ import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ColorMode;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -58,6 +55,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private static final float CREASE_DARK_LENGTH = 8.0f;
     private static final float CREASE_WHITE_LENGTH = 4.0f;
     
+    /*
     private static final float PUNCH_DIAMETER_IN_MM = 8;
     private static final float PUNCH_POS_SIDE_IN_MM = 8;
     
@@ -65,6 +63,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     private static final float STAPLE_POS_CORNER_IN_MM = 6;
     private static final float STAPLE_POS_SIDE_IN_MM = 4;
+    */
 
     public static final float BASE_ZOOM_LEVEL = 1.0f;
     public static final float MAX_ZOOM_LEVEL = 4.0f;
@@ -81,15 +80,19 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private PrintSettings mPrintSettings = null;
     private LruCache<String, Bitmap> mBmpCache = null;
     
+    /*
     private Bitmap mStapleBmp = null;
     private Bitmap mPunchBmp = null;
+    */
     
     private float mMarginLeft = 0;
     private float mMarginRight = 0;
     private float mMarginTop = 0;
     private float mMarginBottom = 0;
     
+    /*
     private boolean mShow3Punch = false;
+    */
     
     private PreviewControlsListener mListener = null;
     
@@ -266,16 +269,20 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * Load Bitmap resources such as staple and punch
      */
     public void loadResources() {
+        /*
         mStapleBmp = BitmapFactory.decodeResource(getResources(), R.drawable.img_staple);
         mPunchBmp = BitmapFactory.decodeResource(getResources(), R.drawable.img_punch);
+        */
     }
     
     /**
      * Free the native object associated with the Bitmap loaded by method loadResources()
      */
     public void freeResources() {
+        /*
         mStapleBmp.recycle();
         mPunchBmp.recycle();
+        */
     }
     
     /**
@@ -386,9 +393,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @param show3Punch
      *            Should show 3 holes
      */
+    /*
     public void setShow3Punch(boolean show3Punch) {
         mShow3Punch = show3Punch;
     }
+    */
     
     /**
      * Set the Preview Controls Listener
@@ -566,8 +575,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         buffer.append(mPrintSettings.getImpositionOrder().ordinal());
         
         buffer.append(mPrintSettings.getFinishingSide().ordinal());
+        /*
         buffer.append(mPrintSettings.getStaple().ordinal());
         buffer.append(mPrintSettings.getPunch().getCount(mShow3Punch));
+        */
         
         buffer.append(mPrintSettings.isBooklet());
         buffer.append(mPrintSettings.getBookletFinish().ordinal());
@@ -1191,6 +1202,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
          * 
          * @param canvas
          */
+        /*
         private void drawStapleImages(Canvas canvas) {
             int stapleLength = convertDimension(STAPLE_LENGTH_IN_MM, canvas.getWidth(), canvas.getHeight());
             float scale = stapleLength / (float) mStapleBmp.getWidth();
@@ -1265,12 +1277,14 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 }
             }
         }
+        */
         
         /**
          * Draw punch images to the canvas
          * 
          * @param canvas
          */
+        /*
         private void drawPunchImages(Canvas canvas) {
             int punchDiameter = convertDimension(PUNCH_DIAMETER_IN_MM, canvas.getWidth(), canvas.getHeight());
             float scale = punchDiameter / (float) mPunchBmp.getWidth();
@@ -1297,6 +1311,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 ImageUtils.renderBmpToCanvas(mPunchBmp, canvas, shouldDisplayColor(), x, y, 0, scale);
             }
         }
+        */
         
         /**
          * Get begin positions
@@ -1513,8 +1528,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 if (drawCrease) {
                     drawCrease(canvas);
                 }
+                /*
                 drawStapleImages(canvas);
                 drawPunchImages(canvas);
+                */
             }
         }
         
