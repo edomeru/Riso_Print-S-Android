@@ -742,6 +742,7 @@
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers
 {
     self.pageIsAnimating = YES;
+    self.pageScroll.userInteractionEnabled = NO;
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
@@ -749,6 +750,7 @@
     if (completed || finished)
     {
         self.pageIsAnimating = NO;
+        self.pageScroll.userInteractionEnabled = YES;
     }
     
     if(completed == YES)
