@@ -22,6 +22,7 @@ namespace SmartDeviceApp.Controllers
     public class PreviewGestureController : IDisposable
     {
         private const int SWIPE_THRESHOLD = 100;
+        private const int MAX_ZOOM_LEVEL_FACTOR = 4;
 
         private GestureRecognizer _gestureRecognizer;
         private UIElement _control;
@@ -45,6 +46,8 @@ namespace SmartDeviceApp.Controllers
         private double _originalScale;
         private bool _isScaled;
         private Point _startPoint;
+        private double _currentZoomLength; // based on width
+        private double _maxZoomLength; // based on width * max zoom level factor
 
         private bool _isEnabled;
         private bool _isDisposed;
@@ -62,6 +65,8 @@ namespace SmartDeviceApp.Controllers
             _swipeRightHandler = swipeRightHandler;
             _swipeLeftHandler = swipeLeftHandler;
             Initialize();
+            _currentZoomLength = _targetSize.Width;
+            _maxZoomLength = _targetSize.Width * MAX_ZOOM_LEVEL_FACTOR;
 
             ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
         }
@@ -188,8 +193,10 @@ namespace SmartDeviceApp.Controllers
 
             // Set original scale
             _deltaTransform.CenterX = _center.X;
-            _deltaTransform.CenterY = _center.Y;            
+            _deltaTransform.CenterY = _center.Y;
             _deltaTransform.ScaleX = _deltaTransform.ScaleY = _originalScale;
+
+            _currentZoomLength = _targetSize.Width;
 
             Normalize();
             // Reset scale
@@ -292,11 +299,21 @@ namespace SmartDeviceApp.Controllers
         private bool DetectScale(ManipulationUpdatedEventArgs e)
         {
             var isScale = false; // Currently scaling
-            if (e.Delta.Scale == 1)
+            float scale = e.Delta.Scale;
+
+            if (scale == 1 || // No scale change
+                (_currentZoomLength > _maxZoomLength && scale > 1)) // Prevent scale up on maximum
             {
                 return isScale;
             }
-            
+
+            double tempWidth = _currentZoomLength * scale;
+            if (tempWidth > _maxZoomLength)
+            {
+                scale = (float)_maxZoomLength / (float)_currentZoomLength; // Change scale to maximum
+                tempWidth = _currentZoomLength * scale;
+            }
+
             _tempPreviousTransform.Matrix = _tempCumulativeTransform.Value;
 
             // Get scale center
@@ -305,7 +322,7 @@ namespace SmartDeviceApp.Controllers
             _tempDeltaTransform.CenterY = center.Y;
 
             // Apply scaling on temp transforms first
-            _tempDeltaTransform.ScaleX = _tempDeltaTransform.ScaleY = e.Delta.Scale;
+            _tempDeltaTransform.ScaleX = _tempDeltaTransform.ScaleY = scale;
             
             // Check if scale is valid, do not scale less than original size
             if (_tempCumulativeTransform.Value.M11 > 1)
@@ -316,13 +333,15 @@ namespace SmartDeviceApp.Controllers
                     _previousTransform.Matrix = _cumulativeTransform.Value;
                     _deltaTransform.CenterX = center.X;
                     _deltaTransform.CenterY = center.Y;
-                    _deltaTransform.ScaleX = _deltaTransform.ScaleY = e.Delta.Scale;
+                    _deltaTransform.ScaleX = _deltaTransform.ScaleY = scale;
                     _deltaTransform.TranslateX = _deltaTransform.TranslateY = 0;
 
                     _isScaled = true; // not original size
                     isScale = true;
                     _isTranslateXEnabled = true;
                     _isTranslateYEnabled = true;
+
+                    _currentZoomLength = tempWidth;
                 }
             }
             else
