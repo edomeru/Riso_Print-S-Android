@@ -534,7 +534,8 @@ namespace SmartDeviceApp.Controllers
 
             _currLeftPageIndex = rightPageIndex - 1;
             _currRightPageIndex = rightPageIndex;
-            if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse)
+            if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
+                (!_isBooklet && _isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
             {
                 _currLeftPageIndex = rightPageIndex;
                 _currRightPageIndex = rightPageIndex - 1;
