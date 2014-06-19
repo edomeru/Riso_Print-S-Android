@@ -327,7 +327,8 @@ namespace SmartDeviceApp.Controllers
                     _currPrintSettings.Orientation, _currPrintSettings.Imposition);
 
                 // Update swipe direction/flow
-                if (_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse)
+                if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
+                    (!_isBooklet && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
                 {
                     _printPreviewViewModel.IsReverseSwipe = true;
                 }
@@ -338,7 +339,7 @@ namespace SmartDeviceApp.Controllers
 
                 // Update swipe direction
                 if ((_isBooklet && !isPortrait) ||
-                    (_isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Top)) 
+                    (_currPrintSettings.FinishingSide == (int)FinishingSide.Top)) 
                 {
                     _printPreviewViewModel.IsHorizontalSwipeEnabled = false;
                 }

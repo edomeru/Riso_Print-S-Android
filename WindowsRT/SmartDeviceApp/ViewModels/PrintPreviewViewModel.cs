@@ -63,6 +63,7 @@ namespace SmartDeviceApp.ViewModels
         private bool _isReverseSwipe;
         private bool _isReverseSwipePrevious;
         private bool _isHorizontalSwipeEnabled;
+        private bool _isHorizontalSwipeEnabledPrevious;
         private double _scalingFactor = 1;
 
         private string _documentTitleText;
@@ -217,7 +218,8 @@ namespace SmartDeviceApp.ViewModels
                 }
                 else
                 {
-                    if (IsReverseSwipe != _isReverseSwipePrevious)
+                    if (IsReverseSwipe != _isReverseSwipePrevious ||
+                        IsHorizontalSwipeEnabled != _isHorizontalSwipeEnabledPrevious)
                     {
                         _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
                             swipeTop, swipeBottom);
@@ -225,6 +227,7 @@ namespace SmartDeviceApp.ViewModels
                 }
                 _previousPageViewMode = PageViewMode;
                 _isReverseSwipePrevious = IsReverseSwipe;
+                _isHorizontalSwipeEnabledPrevious = IsHorizontalSwipeEnabled;
             }
         }
 
