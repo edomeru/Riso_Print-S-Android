@@ -115,6 +115,7 @@
     <Compile Include="Common\Constants\ImageConstantTest.cs" />
     <Compile Include="Common\Constants\PrintSettingConstantTest.cs" />
     <Compile Include="Common\Utilities\DefaultsUtilityTest.cs" />
+    <Compile Include="Common\Utilities\PreviewPageImageUtilityTest.cs" />
     <Compile Include="Common\Utilities\UnitTestUtility.cs" />
     <Compile Include="Controllers\DocumentControllerTest.cs" />
     <Compile Include="Controllers\InitialDataControllerTest.cs" />
@@ -161,7 +162,6 @@
     <Compile Include="Models\MainMenuItemTest.cs" />
     <Compile Include="Models\PageNumberInfoTest.cs" />
     <Compile Include="Models\PreviewSettingsTest.cs" />
-    <Compile Include="Models\PreviewPageTest.cs" />
     <Compile Include="Models\DataItemTest.cs" />
     <Compile Include="DirectPrint\TCPSocketTest.cs" />
     <Compile Include="DirectPrint\DirectPrintTest.cs" />
