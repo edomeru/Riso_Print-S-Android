@@ -81,9 +81,6 @@ namespace SmartDeviceApp.Common.Constants
         public const double PUNCH_BETWEEN_THREE_HOLES_DISTANCE = 4.00;
         public const double PUNCH_BETWEEN_FOUR_HOLES_DISTANCE  = 3.25;
 
-        // Dash line size; in pixels
-        public const int DASH_LINE_LENGTH = 10;
-
         // Copies Acceptable Values
         public const int COPIES_MIN = 1;
         public const int COPIES_MAX = 9999;
