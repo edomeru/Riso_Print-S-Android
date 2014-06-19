@@ -41,7 +41,8 @@
     </UserControl.Resources>
 
     <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}">
-        <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}">
+        <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}"
+              HorizontalAlignment="Left" VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="topPageArea"/>
                 <RowDefinition x:Name="bottomPageArea"/>
@@ -59,11 +60,21 @@
             <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
                                 Image="{Binding RightPageImage, ElementName=twoPageControl}"
                                 IsLoadPageActive="{Binding IsLoadRightPageActive, ElementName=twoPageControl}"/>
-            <Line x:Name="horizontalSeparator" Grid.Row="1" Grid.Column="1"
+            <Line x:Name="horizontalSeparator"
+                  Grid.Row="0" Grid.Column="0"
+                  Grid.RowSpan="2" Grid.ColumnSpan="2"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
                   StrokeDashArray="7,5"
+                  X2="{Binding MaxWidth, ElementName=pageAreaGrid}"
                   Style="{StaticResource STYLE_PageSeparator}" />
-            <Line x:Name="verticalSeparator" Grid.Row="1" Grid.Column="1"
+            <Line x:Name="verticalSeparator"
+                  Grid.Row="0" Grid.Column="0"
+                  Grid.RowSpan="2" Grid.ColumnSpan="2"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
                   StrokeDashArray="7,5"
+                  Y2="{Binding MaxHeight, ElementName=pageAreaGrid}"
                   Style="{StaticResource STYLE_PageSeparator}" />
         </Grid>
     </ScrollViewer>

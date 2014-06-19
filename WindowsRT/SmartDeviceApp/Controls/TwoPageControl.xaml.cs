@@ -1,4 +1,16 @@
-﻿using System;
+﻿//
+//  TwoPageControl.xaml.cs
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group on 2014/02/25.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -91,8 +103,6 @@ namespace SmartDeviceApp.Controls
             var control = (TwoPageControl)obj;
             var gridLengthCollapsed = new GridLength(0);
             var gridLengthFull = new GridLength(1, GridUnitType.Star);
-            var gridWidth = new GridLength(control.PageAreaSize.Width);
-            var gridHeight = new GridLength(control.PageAreaSize.Height);
 
             switch((PageViewMode)e.NewValue)
             {
@@ -114,8 +124,8 @@ namespace SmartDeviceApp.Controls
                 case PageViewMode.TwoPageViewHorizontal:
                 {
                     control.leftPage.Visibility = Visibility.Visible;
-                    control.leftPageArea.Width = gridWidth;
-                    control.rightPageArea.Width = gridWidth;
+                    control.leftPageArea.Width = gridLengthFull;
+                    control.rightPageArea.Width = gridLengthFull;
                     control.topPage.Visibility = Visibility.Collapsed;
                     control.topPageArea.Height = gridLengthCollapsed;
                     control.bottomPageArea.Height = gridLengthFull;
@@ -123,7 +133,6 @@ namespace SmartDeviceApp.Controls
                     // Dash lines
                     control.horizontalSeparator.Visibility = Visibility.Collapsed;
                     control.verticalSeparator.Visibility = Visibility.Visible;
-                    control.verticalSeparator.Y2 = control.PageAreaSize.Height;
 
                     break;
                 }
@@ -133,13 +142,12 @@ namespace SmartDeviceApp.Controls
                     control.leftPageArea.Width = gridLengthCollapsed;
                     control.rightPageArea.Width = gridLengthFull;
                     control.topPage.Visibility = Visibility.Visible;
-                    control.topPageArea.Height = gridHeight;
-                    control.bottomPageArea.Height = gridHeight;
+                    control.topPageArea.Height = gridLengthFull;
+                    control.bottomPageArea.Height = gridLengthFull;
                     
                     // Dash lines
                     control.horizontalSeparator.Visibility = Visibility.Visible;
                     control.verticalSeparator.Visibility = Visibility.Collapsed;
-                    control.horizontalSeparator.X2 = control.PageAreaSize.Width;
 
                     break;
                 }

@@ -1,9 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//
+//  PreviewGestureController.cs
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group on 2014/02/25.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
+using System;
 using Windows.Foundation;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -163,7 +170,7 @@ namespace SmartDeviceApp.Controllers
             Normalize();
         }
 
-        public void ResetTransforms() // TODO: Set to private after debug!!
+        private void ResetTransforms()
         {
             _cumulativeTransform = new TransformGroup();
             _deltaTransform = new CompositeTransform();

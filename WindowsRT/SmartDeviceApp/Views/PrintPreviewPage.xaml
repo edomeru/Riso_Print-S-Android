@@ -417,8 +417,7 @@
                                      PageAreaSize="{Binding RightPageActualSize}"
                                      Loaded="OnPageAreaLoaded"
                                      IsLoadLeftPageActive="{Binding IsLoadLeftPageActive}"
-                                     IsLoadRightPageActive="{Binding IsLoadRightPageActive}"
-                                     VerticalAlignment="Stretch"/>
+                                     IsLoadRightPageActive="{Binding IsLoadRightPageActive}"/>
             <Slider x:Name="pageNumberSlider" Grid.Row="1" 
                     IsEnabled="{Binding IsPageNumberSliderEnabled}" 
                     Maximum="{Binding PageTotal, Mode=TwoWay}" 

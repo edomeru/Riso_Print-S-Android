@@ -63,7 +63,7 @@ namespace SmartDeviceApp.Controllers
 
         // PageAreaGrid loaded
         public delegate void PageAreaGridLoadedEventHandler();
-        public static PageAreaGridLoadedEventHandler PageAreaGridLoaded;
+        private PageAreaGridLoadedEventHandler _pageAreaGridLoadedEventHandler;
 
         // Constants
         private const int NO_SELECTED_PRINTER_ID = -1;
@@ -120,6 +120,7 @@ namespace SmartDeviceApp.Controllers
             _cancelPrintEventHandler = new CancelPrintEventHandler(CancelPrint);
             _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
             _onNavigateFromEventHandler = new OnNavigateFromEventHandler(UnregisterPrintSettingValueChange);
+            _pageAreaGridLoadedEventHandler = new PageAreaGridLoadedEventHandler(InitializeGestures);
         }
 
         /// <summary>
@@ -137,8 +138,6 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Initialize()
         {
-            PageAreaGridLoaded += InitializeGestures;
-
             // Get print settings if document is successfully loaded
             if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
@@ -156,6 +155,7 @@ namespace SmartDeviceApp.Controllers
 
                 _printPreviewViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
                 _printPreviewViewModel.OnNavigateToEventHandler += _onNavigateToEventHandler;
+                _printPreviewViewModel.PageAreaGridLoadedEventHandler += _pageAreaGridLoadedEventHandler;
 
                 PrinterController.Instance.DeletePrinterItemsEventHandler += PrinterDeleted;
             }
@@ -178,8 +178,8 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void Cleanup()
         {
-            PageAreaGridLoaded -= InitializeGestures;
             _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
+            _printPreviewViewModel.PageAreaGridLoadedEventHandler -= _pageAreaGridLoadedEventHandler;
             PrintSettingsController.Instance.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
             _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
@@ -316,11 +316,12 @@ namespace SmartDeviceApp.Controllers
 
         /// <summary>
         /// Initializes the gesture of the preview area.
-        /// Requires initial paper size before using this function.
+        /// Requires initial paper size and grid is already loaded before using this function.
         /// </summary>
         private void InitializeGestures()
         {
-            if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
+            if (DocumentController.Instance.Result == LoadDocumentResult.Successful &&
+                _printPreviewViewModel.IsPageAreaGridLoaded)
             {
                 bool isPortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
                     _currPrintSettings.Orientation, _currPrintSettings.Imposition);
