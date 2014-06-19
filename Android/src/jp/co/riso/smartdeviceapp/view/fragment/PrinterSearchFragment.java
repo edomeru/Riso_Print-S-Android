@@ -55,13 +55,11 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private PauseableHandler mPauseableHandler = null;
     private TextView mEmptySearchText;
     
-    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printersearch;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -78,7 +76,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         mPrinterManager.setPrinterSearchCallback(this);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mListView = (PullToRefreshListView) view.findViewById(R.id.printer_list);
@@ -95,7 +92,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         arrowLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -111,7 +107,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -125,21 +120,18 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter);
         super.onSaveInstanceState(savedInstanceState);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onPause() {
         super.onPause();
         mPauseableHandler.pause();
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();
@@ -151,7 +143,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // ================================================================================
     
     /**
-     * Updates the status of the refresh bar
+     * @brief Updates the status of the refresh bar.
      */
     private void updateRefreshBar() {
         Message newMessage = Message.obtain(mPauseableHandler, MSG_UPDATE_REFRESH_BAR);
@@ -160,7 +152,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     }
     
     /**
-     * Dialog which is displayed during error
+     * @brief Dialog which is displayed during error.
      */
     private void dialogErrCb() {
         String title = getResources().getString(R.string.ids_lbl_search_printers);
@@ -172,7 +164,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     }
     
     /**
-     * Closes the PrinterSearch Screen
+     * @brief Closes the PrinterSearch Screen.
      */
     private void closeScreen() {
         if (isTablet()) {
@@ -192,7 +184,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - onRefresh()
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onRefresh() {
         mPrinter.clear();
@@ -206,7 +197,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         mPrinterManager.startPrinterSearch();
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onHeaderAdjusted(int margin) {
         if (mEmptySearchText != null) {
@@ -216,7 +206,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onBounceBackHeader(int duration) {
         // http://stackoverflow.com/questions/13881419/android-change-left-margin-using-animation
@@ -237,7 +226,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         // Back Button
@@ -251,7 +239,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - OnPrinterSearchCallback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onPrinterAdd(final Printer printer) {
         if (getActivity() == null) {
@@ -272,7 +259,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         });
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onSearchEnd() {
         updateRefreshBar();
@@ -282,7 +268,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - PrinterSearchAdapterInterface
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public int onAddPrinter(Printer printer) {
         int ret = 0;
@@ -312,13 +297,11 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - ConfirmDialogListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onConfirm() {
         closeScreen();
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onCancel() {
         closeScreen();
@@ -328,13 +311,11 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public boolean storeMessage(Message message) {
         return message.what == MSG_UPDATE_REFRESH_BAR;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void processMessage(Message msg) {
         switch (msg.what) {

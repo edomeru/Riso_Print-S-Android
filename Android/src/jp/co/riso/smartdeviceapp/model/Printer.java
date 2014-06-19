@@ -12,9 +12,6 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Printer object
- */
 public class Printer implements Parcelable {
     private String mName = null;
     private String mIpAddress = null;
@@ -28,14 +25,12 @@ public class Printer implements Parcelable {
     }
     
     /**
-     * Printer Constructor
-     * <p>
+     * @brief Printer Constructor. <br>
+     *
      * Create a printer instance
      * 
-     * @param name
-     *            Device Name
-     * @param ipAddress
-     *            IP address
+     * @param name Device Name
+     * @param ipAddress IP address
      */
     public Printer(String name, String ipAddress) {
         mName = name;
@@ -45,26 +40,22 @@ public class Printer implements Parcelable {
         mConfig = new Config();
     }
     
-    /** {@inheritDoc} */
     public static final Printer.Creator<Printer> CREATOR = new Parcelable.Creator<Printer>() {
-        /** {@inheritDoc} */
         public Printer createFromParcel(Parcel in) {
             return new Printer(in);
         }
         
-        /** {@inheritDoc} */
         public Printer[] newArray(int size) {
             return new Printer[size];
         }
     };
     
     /**
-     * Printer Constructor
-     * <p>
-     * Create a printer instance
+     * @brief Printer Constructor. <br>
+     *
+     * Create a Printer instance
      * 
-     * @param in
-     *            Parcel containing the printer information.
+     * @param in Parcel containing the printer information.
      */
     public Printer(Parcel in) {
         if (mConfig == null) {
@@ -85,13 +76,11 @@ public class Printer implements Parcelable {
         mConfig.readFromParcel(in);
     }
     
-    /** {@inheritDoc} */
     @Override
     public int describeContents() {
         return 0;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void writeToParcel(Parcel out, int flags) {
         if (mConfig == null) {
@@ -110,6 +99,8 @@ public class Printer implements Parcelable {
     // ================================================================================
     
     /**
+     * @brief Obtain the Printer ID.
+     * 
      * @return the ID (mId)
      */
     public int getId() {
@@ -117,73 +108,82 @@ public class Printer implements Parcelable {
     }
     
     /**
-     * updates the value of mId
+     * @brief Updates the value of printer ID.
      * 
-     * @param id
+     * @param id Printer ID
      */
     public void setId(int id) {
         this.mId = id;
     }
     
     /**
-     * @return the name (mName)
+     * @brief Obtain the printer device name.
+     * 
+     * @return The name of the printer device
      */
     public String getName() {
         return mName;
     }
     
     /**
-     * updates the value of mName
+     * @brief Updates the value of printer device name.
      * 
-     * @param name
+     * @param name The name of the printer device
      */
     public void setName(String name) {
         this.mName = name;
     }
     
     /**
-     * @return the IP address (mIpAddress)
+     * @brief Obtain the printer device IP address.
+     * 
+     * @return The printer device IP address
      */
     public String getIpAddress() {
         return mIpAddress;
     }
     
     /**
-     * updates the value of mIpAddress
+     * @brief Updates the value of printer device IP Address.
      * 
-     * @param ipAddress
+     * @param ipAddress The printer device IP address
      */
     public void setIpAddress(String ipAddress) {
         this.mIpAddress = ipAddress;
     }
     
     /**
-     * @return the port setting (mPortSetting)
+     * @brief Obtain the printer device port setting.
+     * 
+     * @retval LPR LPR port setting 
+     * @retval RAW Raw port setting
      */
     public PortSetting getPortSetting() {
         return mPortSetting;
     }
     
     /**
-     * updates the value of mPortSetting
+     * @brief Updates the value of printer device port setting.
      * 
-     * @param portSetting
+     * @param portSetting The printer device port setting 
      */
     public void setPortSetting(PortSetting portSetting) {
         this.mPortSetting = portSetting;
     }
     
     /**
-     * @return the printer configuration (mConfig)
+     * @brief Obtain the printer device configuration.
+     * 
+     * @return The printer device configuration
      */
     public Config getConfig() {
         return mConfig;
     }
     
     /**
-     * updates the value of mConfig
+     * @brief Updates the value of printer device configuration.
      * 
-     * @param config
+     * @param config The printer device configuration
      */
     public void setConfig(Config config) {
         mConfig = config;
@@ -193,9 +193,6 @@ public class Printer implements Parcelable {
     // Internal Class - Printer Config
     // ================================================================================
     
-    /**
-     * Printer Capabilities
-     */
     public class Config {
         private boolean mLprAvailable;
         private boolean mRawAvailable;
@@ -208,9 +205,7 @@ public class Printer implements Parcelable {
         private boolean mTrayStackAvailable;
         
         /**
-         * Config Constructor
-         * <p>
-         * Create a config instance.
+         * @brief Config Constructor.
          */
         public Config() {
             mLprAvailable = true;
@@ -225,160 +220,190 @@ public class Printer implements Parcelable {
         }
         
         /**
-         * @return the mLprAvailable
+         * @brief Determines LPR capability for printing.
+         * 
+         * @retval true LPR is enabled
+         * @retval false LPR is disabled
          */
         public boolean isLprAvailable() {
             return mLprAvailable;
         }
         
         /**
-         * updates the value of mLprAvailable
+         * @brief Updates the value of mLprAvailable.
          * 
-         * @param lprAvailable
+         * @param lprAvailable Enable/Disable LPR capability
          */
         public void setLprAvailable(boolean lprAvailable) {
             this.mLprAvailable = lprAvailable;
         }
         
         /**
-         * @return the mRawAvailable
+         * @brief Determines the Raw capability for printing.
+         * 
+         * @retval true Raw is enabled
+         * @retval false Raw is disabled
          */
         public boolean isRawAvailable() {
             return mRawAvailable;
         }
         
         /**
-         * updates the value of mRawAvailable
+         * @brief Updates the value of mRawAvailable.
          * 
-         * @param rawAvailable
+         * @param rawAvailable Enable/Disable Raw print capability
          */
         public void setRawAvailable(boolean rawAvailable) {
             this.mRawAvailable = rawAvailable;
         }
         
         /**
-         * @return the mBookletFinishingAvailable
+         * @brief Determines the Booklet finishing capability of the device.
+         * 
+         * @retval true Booklet Finishing is enabled
+         * @retval false Booklet Finishing is disabled 
          */
         public boolean isBookletFinishingAvailable() {
             return mBookletFinishingAvailable;
         }
         
         /**
-         * updates the value of mBookletFinishingAvailable
+         * @brief Updates the value of mBookletFinishingAvailable.
          * 
-         * @param bookletFinishingAvailable
+         * @param bookletFinishingAvailable Enable/Disable Booklet Finishing
          */
         public void setBookletFinishingAvailable(boolean bookletFinishingAvailable) {
             this.mBookletFinishingAvailable = bookletFinishingAvailable;
         }
         
         /**
-         * @return the mStaplerAvailable
+         * @brief Determines the Staple capability of the device.
+         * 
+         * @retval true Staple is enabled
+         * @retval false Staple is disabled
          */
         public boolean isStaplerAvailable() {
             return mStaplerAvailable;
         }
         
         /**
-         * updates the value of mStaplerAvailable
+         * @brief Updates the value of mStaplerAvailable.
          * 
-         * @param staplerAvailable
+         * @param staplerAvailable Enable/Disable Staple capability
          */
         public void setStaplerAvailable(boolean staplerAvailable) {
             this.mStaplerAvailable = staplerAvailable;
         }
         
         /**
-         * @return Whether punch is available or not.
+         * @brief Determines the Punch capability of the device.
+         * 
+         * @retval true Punch is enabled
+         * @retval false Punch is disabled
          */
         public boolean isPunchAvailable() {
             return mPunch3Available || mPunch4Available;
         }
         
         /**
-         * @return the mPunch3Available
+         * @brief Determines the Punch capability of the device for 3 holes.
+         * 
+         * @retval true Punch 3 holes is enabled
+         * @retval false Punch 3 holes is disabled
          */
         public boolean isPunch3Available() {
             return mPunch3Available;
         }
         
         /**
-         * updates the value of mPunch4Available
+         * @brief Updates the value of mPunch3Available.
          * 
-         * @param punch3Available
+         * @param punch3Available Enable/Disable Punch 3 holes capability
          */
         public void setPunch3Available(boolean punch3Available) {
             this.mPunch3Available = punch3Available;
         }
         
         /**
-         * @return the mPunch4Available
+         * @brief Determines the Punch capability of the device for 4 holes.
+         *  
+         * @retval true Punch 4 holes is enabled
+         * @retval false Punch 4 holes is disabled
          */
         public boolean isPunch4Available() {
             return mPunch4Available;
         }
         
         /**
-         * updates the value of mPunch4Available
+         * @brief Updates the value of mPunch4Available.
          * 
-         * @param punch4Available
+         * @param punch4Available Enable/Disable Punch 4 holes capability
          */
         public void setPunch4Available(boolean punch4Available) {
             this.mPunch4Available = punch4Available;
         }
         
         /**
-         * @return the mTrayFaceDownAvailable
+         * @brief Determines the TrayFaceDown capability.
+         * 
+         * @retval true TrayFaceDown is enabled
+         * @retval false TrayFaceDown is disabled
          */
         public boolean isTrayFaceDownAvailable() {
             return mTrayFaceDownAvailable;
         }
         
         /**
-         * updates the value of mTrayFaceDownAvailable
+         * @brief Updates the value of mTrayFaceDownAvailable.
          * 
-         * @param trayFaceDownAvailable
+         * @param trayFaceDownAvailable Enable/Disable TrayFaceDown capability
          */
         public void setTrayFaceDownAvailable(boolean trayFaceDownAvailable) {
             this.mTrayFaceDownAvailable = trayFaceDownAvailable;
         }
         
         /**
-         * @return the mTrayTopAvailable
+         * @brief Determines the TrayTop capability.
+         * 
+         * @retval true TrayTop is enabled
+         * @retval false TrayTop is disabled
          */
         public boolean isTrayTopAvailable() {
             return mTrayTopAvailable;
         }
         
         /**
-         * updates the value of mTrayTopAvailable
+         * @brief Updates the value of mTrayTopAvailable.
          * 
-         * @param trayTopAvailable
+         * @param trayTopAvailable Enable/Disable TrayTop capability
          */
         public void setTrayTopAvailable(boolean trayTopAvailable) {
             this.mTrayTopAvailable = trayTopAvailable;
         }
         
         /**
-         * @return the mTrayStackAvailable
+         * @brief Determines the TrayStack capability.
+         * 
+         * @retval true TrayStack is enabled
+         * @retval false TrayStack is disabled
          */
         public boolean isTrayStackAvailable() {
             return mTrayStackAvailable;
         }
         
         /**
-         * updates the value of mTrayStackAvailable
+         * @brief Updates the value of mTrayStackAvailable.
          * 
-         * @param trayStackAvailable
+         * @param trayStackAvailable Enable/Disable TrayStack capability
          */
         public void setTrayStackAvailable(boolean trayStackAvailable) {
             this.mTrayStackAvailable = trayStackAvailable;
         }
         
         /**
-         * saves the value of all class members to a Parcel
+         * @brief Saves the value of all class members to a Parcel.
          * 
-         * @param out
+         * @param out Destination parcel where to save the data
          */
         public void writeToParcel(Parcel out) {
             boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletFinishingAvailable, mStaplerAvailable, mPunch3Available,
@@ -388,9 +413,9 @@ public class Printer implements Parcelable {
         }
         
         /**
-         * retrieves the value of all the class members from a Parcel
+         * @brief Retrieves the value of all the class members from a Parcel.
          * 
-         * @param in
+         * @param in Source parcel where to retrieve the data
          */
         public void readFromParcel(Parcel in) {
             boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletFinishingAvailable, mStaplerAvailable, mPunch3Available,

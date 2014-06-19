@@ -57,7 +57,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     
     private PauseableHandler mHandler = null;
     
-    /** {@inheritDoc} */
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
         if (getIntent() != null && getIntent().getData() != null) {
@@ -119,7 +118,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -133,7 +131,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -143,7 +140,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         outState.putBoolean(KEY_RESIZE_VIEW, mResizeView);
     }
     
-    /** {@inheritDoc} */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -167,7 +163,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         mHandler.resume();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -185,22 +180,19 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     // ================================================================================
 
     /**
-     * Open Drawer
+     * @brief Open Drawer.
      * 
-     * @param gravity
-     *            Drawer gravity
+     * @param gravity Drawer gravity
      */
     public void openDrawer(int gravity) {
         openDrawer(gravity, false);
     }
     
     /**
-     * Open Drawer
+     * @brief Open Drawer.
      * 
-     * @param gravity
-     *            Drawer gravity
-     * @param resizeView
-     *            Prevent layout from touches
+     * @param gravity Drawer gravity
+     * @param resizeView Prevent layout from touches
      */
     public void openDrawer(int gravity, boolean resizeView) {
         Message msg = Message.obtain(mHandler, MSG_OPEN_DRAWER);
@@ -213,7 +205,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     }
     
     /**
-     * Close drawers
+     * @brief Close drawers.
      */
     public void closeDrawers() {
         Message msg = Message.obtain(mHandler, MSG_CLOSE_DRAWER);
@@ -221,11 +213,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     }
     
     /**
-     * Determines if the drawer indicated by gravity is open
+     * @brief Determines if the drawer indicated by gravity is open.
      * 
-     * @param gravity
-     *            Drawer gravity
-     * @return true if the drawer is open
+     * @param gravity Drawer gravity
+     * 
+     * @retval true The drawer is open
+     * @retval false The drawer is close
      */
     public boolean isDrawerOpen(int gravity) {
         return mDrawerLayout.isDrawerOpen(gravity);
@@ -235,7 +228,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     // INTERFACE - PauseableHandlerCallback 
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public boolean storeMessage(Message message) {
         return (message.what == MSG_OPEN_DRAWER
@@ -243,7 +235,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 || message.what == MSG_CLEAR_ICON_STATES);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void processMessage(Message msg) {
         BaseFragment fragment = ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout));
@@ -279,25 +270,19 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     private class SDAActionBarDrawerToggle extends ActionBarDrawerToggle {
         
         /**
-         * Constructor
+         * @brief Constructor.
          * 
-         * @param activity
-         *            activity
-         * @param drawerLayout
-         *            drawer layout
-         * @param drawerImageRes
-         *            drawer image resources
-         * @param openDrawerContentDescRes
-         *            drawer content description
-         * @param closeDrawerContentDescRes
-         *            drawer content description
+         * @param activity Activity
+         * @param drawerLayout Drawer layout
+         * @param drawerImageRes Drawer image resource
+         * @param openDrawerContentDescRes Drawer content description resource
+         * @param closeDrawerContentDescRes Drawer content description resource
          */
         public SDAActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, int drawerImageRes, int openDrawerContentDescRes,
                 int closeDrawerContentDescRes) {
             super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
         }
         
-        /** {@inheritDoc} */
         @Override
         public void syncState() {
             super.syncState();
@@ -308,7 +293,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             }
         }
         
-        /** {@inheritDoc} */
         @Override
         public void onDrawerSlide(View drawerView, float slideOffset) {
             float moveFactor = (mLeftLayout.getWidth() * slideOffset);
@@ -331,7 +315,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             }
         }
         
-        /** {@inheritDoc} */
         @Override
         public void onDrawerStateChanged(int newState) {
             
@@ -360,7 +343,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         }
         
         /**
-         * Called when a drawer has settled in a completely closed state.
+         * @brief Called when a drawer has settled in a completely closed state.
          */
         @Override
         public void onDrawerClosed(View view) {
@@ -377,7 +360,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         }
         
         /**
-         * Called when a drawer has settled in a completely opened state.
+         * @brief Called when a drawer has settled in a completely opened state.
          */
         @Override
         public void onDrawerOpened(View drawerView) {

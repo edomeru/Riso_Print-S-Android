@@ -48,19 +48,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
     public int mState = STATE_PRINTPREVIEW;
     
-    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_home;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         
     }
     
-    /** {@inheritDoc} */ 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         view.findViewById(R.id.printPreviewButton).setOnClickListener(this);
@@ -81,13 +78,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         setSelectedButton(view, mState);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         //This has no custom action bar
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -100,12 +95,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     // ================================================================================
     
     /**
-     * This method sets the state of the selected button
+     * @brief This method sets the state of the selected button.
      * 
-     * @param view
-     *            Parent view
-     * @param state
-     *            Fragment state
+     * @param view Parent view
+     * @param state Fragment state
      */
     private void setSelectedButton(View view, int state) {
         if (view == null) {
@@ -125,22 +118,19 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     }
     
     /**
-     * This method sets the state of the Home Fragment
+     * @brief This method sets the state of the Home Fragment.
      * 
-     * @param state
-     *            Fragment state
+     * @param state Fragment state
      */
     private void setCurrentState(int state) {
         setCurrentState(state, true);
     }
     
     /**
-     * This method sets the state of the Home Fragment
+     * @brief This method sets the state of the Home Fragment.
      * 
-     * @param state
-     *            Fragment state
-     * @param animate
-     *            Animate changes in layout
+     * @param state Fragment state
+     * @param animate Animate changes in layout
      */
     private void setCurrentState(int state, boolean animate) {
         if (mState != state) {
@@ -156,12 +146,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     }
     
     /**
-     * Switch to fragment
+     * @brief Switch to fragment.
      * 
-     * @param state
-     *            Fragment state
-     * @param animate
-     *            Animate changes in layout
+     * @param state Fragment state
+     * @param animate Animate changes in layout
      */
     private void switchToFragment(int state, boolean animate) {
         FragmentManager fm = getFragmentManager();
@@ -220,7 +208,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

@@ -17,7 +17,6 @@ public class SmartDeviceApp extends Application {
 
     private static volatile Context sContext;
     
-    /** {@inheritDoc} */
     @Override
     public void onCreate() {
         SmartDeviceApp.sContext = getApplicationContext();
@@ -29,9 +28,9 @@ public class SmartDeviceApp extends Application {
     }
 
     /**
-     * Retrieve the application context
+     * @brief Retrieve the application context.
      * 
-     * @return SmartDeviceAPP context
+     * @return Application shared context
      */
     public static Context getAppContext() {
         return SmartDeviceApp.sContext;

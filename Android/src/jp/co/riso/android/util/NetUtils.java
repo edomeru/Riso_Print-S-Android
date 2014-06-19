@@ -38,13 +38,14 @@ public class NetUtils {
     // ================================================================================
     
     /**
-     * Validates an IP Address.
-     * <p>
-     * Checks if the IP Address is a valid IPv4 Address.
+     * @brief Validates an IP Address. <br>
      * 
-     * @param ipAddress
-     *            IP Address
-     * @return true if the IP Address is a valid IPv4 Address.
+     * Checks if the IP Address is a valid IPv4 Address
+     * 
+     * @param ipAddress IP Address
+     * 
+     * @retval true IP Address is a valid IPv4 Address
+     * @retval false IP Address is not an IPv4 Address
      */
     public static boolean isIPv4Address(final String ipAddress) {
         if (ipAddress == null) {
@@ -54,13 +55,14 @@ public class NetUtils {
     }
     
     /**
-     * Validates an IP Address.
-     * <p>
-     * Checks if the IP Address is a valid IPv4 Multicast Address.
+     * @brief Validates an IP Address. <br>
      * 
-     * @param ipAddress
-     *            IP Address
-     * @return true if the IP Address is a valid IPv4 Multicast Address.
+     * Checks if the IP Address is a valid IPv4 Multicast Address
+     * 
+     * @param ipAddress IP Address
+     * 
+     * @retval true IP Address is a valid IPv4 Multicast Address
+     * @retval false IP Address not a valid IPv4 Multicast Address
      */
     public static boolean isIPv4MulticastAddress(final String ipAddress) {
         if (ipAddress == null) {
@@ -70,13 +72,14 @@ public class NetUtils {
     }
     
     /**
-     * Validates an IP Address.
-     * <p>
-     * Checks if the IP Address is a valid IPv6 Address.
+     * @brief Validates an IP Address. <br>
      * 
-     * @param ipAddress
-     *            IP Address
-     * @return true if the IP Address is a valid IPv6 Address.
+     * Checks if the IP Address is a valid IPv6 Address
+     * 
+     * @param ipAddress IP Address
+     * 
+     * @retval true IP Address is a valid IPv6 Address
+     * @retval false IP Address in not an IPv6 Address
      */
     public static boolean isIPv6Address(final String ipAddress) {
         if (ipAddress == null) {
@@ -86,15 +89,15 @@ public class NetUtils {
     }
     
     /**
-     * Check an IP Address if it is reachable.
-     * <p>
-     * Checks if the IPv6 Address is reachable.
+     * @brief Check an IP Address if it is reachable. <br>
      * 
-     * @param ipAddress
-     *            IPv6 Address
-     * @param inetIpAddress
-     *            IP Address object
-     * @return true if the IPv6 Address is reachable.
+     * Checks if the IPv6 Address is reachable
+     * 
+     * @param ipAddress IPv6 Address
+     * @param inetIpAddress IP Address object
+     * 
+     * @retval true The IPv6 Address is reachable
+     * @retval false IPv6 address is not reachable
      */
     public static boolean connectToIpv6Address(String ipAddress, InetAddress inetIpAddress) {
         try {
@@ -127,11 +130,12 @@ public class NetUtils {
     }
     
     /**
-     * Validates an IP Address
+     * @brief Validates an IP Address.
      * 
-     * @param ipAddress
-     *            IP Address to be validated
-     * @return Valid IP address. Null is returned for invalid IP Address.
+     * @param ipAddress IP Address to be validated
+     * 
+     * @return Valid IP address. 
+     * @retval null Invalid IP Address.
      */
     public static String validateIpAddress(String ipAddress) {
         String validatedIp = null;
@@ -143,11 +147,12 @@ public class NetUtils {
     }
     
     /**
-     * Determines network connectivity
+     * @brief Determines network connectivity.
      * 
-     * @param context
-     *
-     * @return true if is connected to network
+     * @param context Application context
+     * 
+     * @retval true Connected to network
+     * @retval false Not connected to network
      */
     protected static boolean isNetworkAvailable(Context context) {
         if (context == null) {
@@ -160,11 +165,12 @@ public class NetUtils {
     }
     
     /**
-     * Determines wi-fi connectivity
+     * @brief Determines wi-fi connectivity.
      * 
-     * @param context
-     *
-     * @return true if is connected to the network using wi-fi
+     * @param context Application context
+     * 
+     * @retval true Connected to the network using wi-fi
+     * @retval false Not connected to the network using wi-fi 
      */
     public static boolean isWifiAvailable(Context context) {
         if (context == null) {
@@ -177,10 +183,10 @@ public class NetUtils {
     }
     
     /**
-     * Trim leading zeroes from an IP Address
+     * @brief Trim leading zeroes from an IP Address
      * 
-     * @param ipAddress
-     *            Input IP Address
+     * @param ipAddress Input IP Address
+     * 
      * @return IP Address with leading zeroes trimmed
      */
     public static String trimZeroes(String ipAddress) {
@@ -235,59 +241,63 @@ public class NetUtils {
     // ================================================================================
     
     /**
-     * Validates an IP Address.
-     * <p>
-     * Checks if the IP Address is a valid IPv6 Standard Address.
+     * @brief Validates an IP Address. <br>
      * 
-     * @param ipAddress
-     *            IP Address
-     * @return true if the IP Address is a valid IPv6 Standard Address.
+     * Checks if the IP Address is a valid IPv6 Standard Address
+     * 
+     * @param ipAddress IP Address
+     * 
+     * @retval true IP Address is a valid IPv6 Standard Address
+     * @retval false IP Address is an invalid IPv6 Standard Address
      */
     private static boolean isIPv6StdAddress(final String ipAddress) {
         return IPV6_STD_PATTERN.matcher(ipAddress).matches();
     }
     
     /**
-     * Validates an IP Address.
-     * <p>
-     * Checks if the IP Address is a valid IPv6 Compressed Address.
+     * @brief Validates an IP Address. <br>
      * 
-     * @param ipAddress
-     *            IP Address
-     * @return true if the IP Address is a valid IPv6 Compressed Address.
+     * Checks if the IP Address is a valid IPv6 Compressed Address
+     * 
+     * @param ipAddress IP Address
+     * 
+     * @retval true IP Address is a valid IPv6 Compressed Address
+     * @retval false IP Address is an invalid IPv6 Compressed Address
      */
     private static boolean isIPv6HexCompressedAddress(final String ipAddress) {
         return IPV6_HEX_COMPRESSED_PATTERN.matcher(ipAddress).matches();
     }
     
     /**
-     * Validates an IP Address.
-     * <p>
-     * Checks if the IP Address is a valid IPv6 Link Local Address.
+     * @brief Validates an IP Address. <br>
      * 
-     * @param ipAddress
-     *            IP Address
-     * @return true if the IP Address is a valid IPv6 Link Local Address.
+     * Checks if the IP Address is a valid IPv6 Link Local Address
+     * 
+     * @param ipAddress IP Address
+     * 
+     * @retval true IP Address is a valid IPv6 Link Local Address
+     * @retval false IP Address is an invalid IPv6 Link Local Address
      */
     private static boolean isIPv6LinkLocalAddress(final String ipAddress) {
         return IPV6_LINK_LOCAL_PATTERN.matcher(ipAddress).matches();
     }
     
     /**
-     * Validates an IP Address.
-     * <p>
-     * Checks if the IP Address is a valid IPv6 Address derived from IPv4 Address.
+     * @brief Validates an IP Address. <br>
      * 
-     * @param ipAddress
-     *            IP Address
-     * @return true if the IP Address is a valid IPv6 Address derived from IPv4 Address.
+     * Checks if the IP Address is a valid IPv6 Address derived from IPv4 Address
+     * 
+     * @param ipAddress IP Address
+     * 
+     * @retval true IP Address is a valid IPv6 Address derived from IPv4 Address
+     * @retval false IP Address is an invalid IPv6 Address derived from IPv4 Address
      */
     private static boolean isIPv6Ipv4DerivedAddress(final String ipAddress) {
         return IPV6_IPv4_DERIVED_PATTERN.matcher(ipAddress).matches();
     }
     
     /**
-     * Obtain pattern for standard IPv4 address
+     * @brief Obtain pattern for standard IPv4 address
      * 
      * @return Pattern object for IPv4 Address
      */
@@ -297,7 +307,7 @@ public class NetUtils {
     }
     
     /**
-     * Obtain pattern for IPv4 multicast address
+     * @brief Obtain pattern for IPv4 multicast address
      * 
      * @return Pattern object for IPv4 Multicast Address
      */
@@ -309,7 +319,7 @@ public class NetUtils {
     }
     
     /**
-     * Obtain pattern for standard IPv6 address
+     * @brief Obtain pattern for standard IPv6 address
      * 
      * @return Pattern object for IPv6 Address
      */
@@ -319,7 +329,7 @@ public class NetUtils {
     }
     
     /**
-     * Obtain pattern for compressed IPv6 address
+     * @brief Obtain pattern for compressed IPv6 address
      * 
      * @return Pattern object for IPv6 Compressed Address
      */
@@ -337,7 +347,7 @@ public class NetUtils {
     }
     
     /**
-     * Obtain pattern for local IPv6 address
+     * @brief Obtain pattern for local IPv6 address
      * 
      * @return Pattern object for IPv6 Local Address
      */
@@ -348,7 +358,7 @@ public class NetUtils {
     }
     
     /**
-     * Obtain pattern for standard IPv6 address
+     * @brief Obtain pattern for standard IPv6 address
      * 
      * @return Pattern object for IPv6 Derived from Ipv4 Address
      */
@@ -361,7 +371,7 @@ public class NetUtils {
     }
     
     /**
-     * Obtain Ipv6 Interface list
+     * @brief Obtain Ipv6 Interface list
      * 
      * @return IPv6 Interface list
      */

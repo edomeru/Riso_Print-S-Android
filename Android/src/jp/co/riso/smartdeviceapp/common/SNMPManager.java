@@ -31,24 +31,18 @@ public class SNMPManager {
     public static final int SNMP_CAPABILITY_RAW = 8;
     
     /**
-     * Set Callback.
-     * <p>
-     * Sets the callback for the SNMP Manager.
+     * @brief Sets the callback function for the SNMP Manager.
      * 
-     * @param callback
-     *            Callback function
+     * @param callback Callback function
      */
     public void setCallback(SNMPManagerCallback callback) {
         mCallbackRef = new WeakReference<SNMPManagerCallback>(callback);
     }
     
     /**
-     * On end discovery callback.
-     * <p>
-     * Callback called at the end of device discovery
+     * @brief Callback called at the end of device discovery
      * 
-     * @param result
-     *            Result of device discovery
+     * @param result Result of device discovery
      */
     private void onEndDiscovery(int result) {
         if (mCallbackRef != null && mCallbackRef.get() != null) {
@@ -57,16 +51,11 @@ public class SNMPManager {
     }
     
     /**
-     * On device found callback.
-     * <p>
-     * Callback called when a device is found during device discovery
+     * @brief Callback called when a device is found during device discovery
      * 
-     * @param ipAddress
-     *            IP Address of the device
-     * @param name
-     *            Name of the device
-     * @param capabilities
-     *            Device capabilities
+     * @param ipAddress Device IP Address
+     * @param name Device Name
+     * @param capabilities Device capabilities
      */
     private void onFoundDevice(String ipAddress, String name, boolean[] capabilities) {
         if (mCallbackRef != null && mCallbackRef.get() != null) {
@@ -75,34 +64,24 @@ public class SNMPManager {
     }
     
     /**
-     * SNMP Manager Interface
+     * @brief SNMP Manager Interface
      */
     public interface SNMPManagerCallback {
         /**
-         * On end discovery callback.
-         * <p>
-         * Callback called at the end of device discovery
+         * @brief Callback called at the end of device discovery
          * 
-         * @param manager
-         *            SNMP Manager
-         * @param result
-         *            Result of device discovery
+         * @param manager SNMP Manager
+         * @param result Result of device discovery
          */
         public void onEndDiscovery(SNMPManager manager, int result);
         
         /**
-         * On device found callback.
-         * <p>
-         * Callback called when a device is found during device discovery
+         * @brief Callback called when a device is found during device discovery
          * 
-         * @param manager
-         *            SNMP Manager
-         * @param ipAddress
-         *            IP Address of the device
-         * @param name
-         *            Name of the device
-         * @param capabilities
-         *            Device capabilities
+         * @param manager SNMP Manager
+         * @param ipAddress Device IP Address 
+         * @param name Device Name 
+         * @param capabilities Device capabilities
          */
         public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities);
     }

@@ -46,26 +46,19 @@ public class PrinterManager implements SNMPManagerCallback {
     private DatabaseManager mDatabaseManager = null;
 
     /**
-     * Printer Manager Constructor
-     * <p>
-     * Printer Manager Constructor
+     * @brief PrinterManager Constructor.
      * 
-     * @param context
-     *            Context of the SmartDeviceApp
+     * @param context Application context
      */
     private PrinterManager(Context context) {
         this(context, new DatabaseManager(context));
     }
     
     /**
-     * Printer Manager Constructor for testing
-     * <p>
-     * Printer Manager Constructor
+     * @brief PrinterManager Constructor.
      * 
-     * @param context
-     *            Context of the SmartDeviceApp
-     * @param databaseManager
-     *            DatabaseManager instance
+     * @param context Application context
+     * @param databaseManager DatabaseManager instance
      */
     protected PrinterManager(Context context, DatabaseManager databaseManager) {
         if (databaseManager == null) {
@@ -78,13 +71,11 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Get PrinterManager instance
-     * <p>
-     * Get the PrinterManager instance
+     * @brief Get the PrinterManager instance.
      * 
-     * @param context
-     *            Context of the SmartDeviceApp
-     * @return sSharedMngr
+     * @param context Application context
+     * 
+     * @return Shared PrinterManager instance
      */
     public static PrinterManager getInstance(Context context) {
         if (sSharedMngr == null) {
@@ -98,15 +89,13 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
-     * Save Printer to the Database
-     * <p>
-     * Saves the Printer to the Database
+     * @brief Save Printer to the Database.
      * 
-     * @param printer
-     *            Printer object containing the Printer Information such as Print Settings
-     * @param isOnline
-     *            Printer online status
-     * @return true if successful
+     * @param printer Printer object containing the Printer Information such as Printer capabilities
+     * @param isOnline Printer online status
+     * 
+     * @retval true Save to Database is successful
+     * @retval false Save to Database has failed
      */
     public boolean savePrinterToDB(Printer printer, boolean isOnline) {
         if (printer == null || isExists(printer)) {
@@ -135,13 +124,14 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Check Printer Existence
-     * <p>
+     * @brief Check Printer Existence. <br>
+     * 
      * Determines if the Printer exists in the Saved Printer List
      * 
-     * @param printer
-     *            Printer object that must contain the IP address and Printer Name.
-     * @return true if exists
+     * @param printer Printer object that must contain the IP address and Printer Name
+     * 
+     * @retval true Printer exists in the Saved Printers List
+     * @retval false Printer does not exists in the Saved Printers List
      */
     public boolean isExists(Printer printer) {
         if (printer == null) {
@@ -160,13 +150,16 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Check Printer Existence
-     * <p>
-     * Determines if the Printer exists in the Saved Printer List
+     * @brief Check Printer Existence. <br>
      * 
-     * @param ipAddress
-     *            IP address of the Printer.
-     * @return true if exists
+     * Determines if the Printer exists in the Saved Printer List by
+     * matching the IP Address to the Printers in the Saved Printers
+     * List
+     * 
+     * @param ipAddress IP address of the Printer
+     * 
+     * @retval true Printer exists in the Saved Printers List
+     * @retval false Printer does not exists in the Saved Printers List
      */
     public boolean isExists(String ipAddress) {
         if (ipAddress == null) {
@@ -185,13 +178,16 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Check Printer Existence
-     * <p>
-     * Determines if the Printer exists in the Saved Printer List
+     * @brief Check Printer Existence. <br>
+     *
+     * Determines if the Printer exists in the Saved Printer List by
+     * matching the printer ID to the Printers in the Saved Printers
+     * List
      * 
-     * @param printerId
-     *            Printer ID.
-     * @return true if exists
+     * @param printerId Printer ID.
+     * 
+     * @retval true Printer exists in the Saved Printers List
+     * @retval false Printer does not exists in the Saved Printers List
      */
     public boolean isExists(int printerId) {
         if (printerId == EMPTY_ID) {
@@ -210,9 +206,9 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Retrieves the Printer objects from the Database
+     * @brief Retrieves the Printer objects from the Database.
      * 
-     * @return list of Printer objects
+     * @return List of Saved Printer objects
      */
     public List<Printer> getSavedPrintersList() {
         if (mPrinterList.size() != 0) {
@@ -270,11 +266,12 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Sets the Default Printer by clearing and inserting an entry in DefaultPrinter table
+     * @brief Sets the Default Printer by clearing and inserting an entry in DefaultPrinter table.
      * 
-     * @param printer
-     *            The Printer object selected
-     * @return true on success otherwise false
+     * @param printer The Printer object selected
+     * 
+     * @retval true Save to Database is Successful
+     * @retval false Save to Database is Failed
      */
     public boolean setDefaultPrinter(Printer printer) {
         
@@ -298,8 +295,7 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Clears the Default Printer table in the database.
-     * 
+     * @brief Clears the Default Printer table in the database.
      */
     public void clearDefaultPrinter() {
         mDatabaseManager.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null);
@@ -308,11 +304,12 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Removes the Printer from the database.
+     * @brief Removes the Printer from the database.
      * 
-     * @param printer
-     *            The Printer object selected for deletion
-     * @return true if successful
+     * @param printer The Printer object selected for deletion
+     * 
+     * @retval true Save to Database is successful
+     * @retval false Save to Database has failed
      */
     public boolean removePrinter(Printer printer) {
         boolean ret = false;
@@ -351,11 +348,10 @@ public class PrinterManager implements SNMPManagerCallback {
     }
 
     /**
-     * Get Default Printer
-     * <p>
-     * Obtains the printer ID of the default printer
+     * @brief Obtains the printer ID of the default printer.
      * 
-     * @return Printer ID of the default printer
+     * @retval mDefaultPrintId default Printer ID
+     * @retval EMPTY_ID No default printer
      */
     public int getDefaultPrinter() {
         if (mDefaultPrintId != EMPTY_ID) {
@@ -383,13 +379,13 @@ public class PrinterManager implements SNMPManagerCallback {
     }
         
     /**
-     * Update the value of port settings
+     * @brief Update the value of port settings.
      * 
-     * @param printerId
-     *            Printer ID
-     * @param portSettings
-     *            Port Settings
-     * @return true if successful
+     * @param printerId Printer ID
+     * @param portSettings Port Settings
+     * 
+     * @retval true Save to Database is Successful
+     * @retval false Save to Database is Failed
      */
     public boolean updatePortSettings(int printerId, PortSetting portSettings) {
         if (portSettings == null) {
@@ -404,12 +400,9 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Search for Printer Device
-     * <p>
-     * Search for the Printer Devices using Device Discovery/Auto Search.
+     * @brief Search for the Printer Devices using Device Discovery/Auto Search. <br>
      * 
-     * @param ipAddress
-     *            The IP Address of the Printer
+     * The search can be cancelled by calling cancelPrinterSearch()
      */
     public void startPrinterSearch() {
         mIsSearching = true;
@@ -419,12 +412,11 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Search for Printer Device
-     * <p>
-     * Search for the Printer Device using Manual Search.
+     * @brief Search for the Printer Device using Manual Search. <br>
      * 
-     * @param ipAddress
-     *            The IP Address of the Printer
+     * The search can be cancelled by calling cancelPrinterSearch()
+     *  
+     * @param ipAddress The IP Address of the Printer
      */
     public void searchPrinter(String ipAddress) {
         
@@ -439,9 +431,9 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Cancel Printer Search
-     * <p>
-     * Stops Device Discovery/Manual Search.
+     * @brief Cancel Printer Search. <br>
+     *
+     * Stops Device Discovery or Manual Search operation.
      */
     public void cancelPrinterSearch() {
         mIsSearching = false;
@@ -456,33 +448,30 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * <p>
-     * Checks if there is an ongoing printer search.
+     * @brief Checks if there is an ongoing printer search.
      * 
-     * @return mIsSearching
+     * @retval true Printer search is ongoing
+     * @retval false No ongoing Printer search
      */
     public boolean isSearching() {
         return mIsSearching;
     }
     
     /**
-     * <p>
-     * Checks if the printer search was cancelled.
+     * @brief Checks if the printer search was cancelled.
      * 
-     * @return mIsCancelled
+     * @retval true Printer search is cancelled
+     * @retval false Printer search is not cancelled
      */
     public boolean isCancelled() {
         return mIsCancelled;
     }
     
     /**
-     * <p>
-     * Updates the Online Status of the specified printer view
+     * @brief Updates the Online Status of the specified printer view.
      * 
-     * @param ipAddress
-     *            IP Address of the printer
-     * @param view
-     *            View of the online indicator
+     * @param ipAddress IP Address of the printer
+     * @param view View of the online indicator
      */
     public void updateOnlineStatus(String ipAddress, View view) {
         if(ipAddress == null) {
@@ -492,8 +481,8 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Set Printer Search Screen Callback
-     * <p>
+     * @brief Set Printer Search Screen Callback. <br>
+     *
      * Set the Callback for Adding Printer to the Searched Printer List during Device Discovery/Manual search.
      */
     public void setPrinterSearchCallback(PrinterSearchCallback printerSearchCallback) {
@@ -501,8 +490,8 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Set Printer Screen Callback
-     * <p>
+     * @brief Set Printer Screen Callback. <br>
+     *
      * Sets the Saved Printer List/View Callback for adding printers.
      */
     public void setPrintersCallback(PrintersCallback printersCallback) {
@@ -510,8 +499,8 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Set Update Status Callback
-     * <p>
+     * @brief Set Update Status Callback. <br>
+     *
      * Set the Callback for Updating Printer Status. Changes status from online to off-line or vice-versa.
      */
     public void setUpdateStatusCallback(UpdateStatusCallback updateStatusCallback) {
@@ -519,21 +508,21 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Get Printer Count
-     * <p>
+     * @brief Get Printer Count.
      * 
-     * @return printer count
+     * @return Printer count
      */
     public int getPrinterCount() {
         return mPrinterList.size();
     }
     
     /**
-     * Check if the Device is online
-     * <p>
+     * @brief Check the Device status. <br>
+     *
      * Checks the Device if it is online. This function should not be called from the main thread.
      * 
-     * @return true if online
+     * @retval true Device is online
+     * @retval false Device is off-line
      */
     public boolean isOnline(String ipAddress) {
         InetAddress inetIpAddress = null;
@@ -553,9 +542,11 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Create Update Status Thread
-     * <p>
-     * Creates a thread that updates the online/off-line status.
+     * @brief Create Update Status Thread. <br>
+     *
+     * Creates the thread that updates the online/off-line status.
+     * The thread must be terminated by calling cancelUpdateStatusThread()
+     * when the status view is no longer visible.
      */
     public void createUpdateStatusThread() {
         if (mUpdateStatusTimer != null) {
@@ -574,8 +565,8 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Cancel Update Status Thread
-     * <p>
+     * @brief Cancel Update Status Thread. <br>
+     *
      * Stops the thread that updates the online/off-line status.
      */
     public void cancelUpdateStatusThread() {
@@ -587,12 +578,12 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Setup printer configuration
-     * <p>
+     * @brief Setup printer configuration. <br>
+     *
      * Saves the printer configuration/capabilities
      * 
-     * @param capabilities
-     *            Printer capabilities
+     * @param printer Printer object
+     * @param capabilities Printer capabilities
      */
     protected static void setupPrinterConfig(Printer printer, boolean[] capabilities) {
         if (printer == null || capabilities == null) {
@@ -637,13 +628,14 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
-     * Save Printer Information
-     * <p>
+     * @brief Save Printer Information. <br>
+     *
      * Saves the printer information to the database
      * 
-     * @param printer
-     *            Printer object
-     * @return true if successful
+     * @param printer Printer object
+     * 
+     * @retval true Successful
+     * @retval false Failed
      */
     private boolean savePrinterInfo(Printer printer) {
         // Create Content
@@ -672,13 +664,12 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Set Printer ID
-     * <p>
-     * Set the Printer ID of the Printer object. 
+     * @brief Set the Printer ID of the Printer object.
      * 
-     * @param printer
-     *            Printer object
-     * @return true if successful
+     * @param printer Printer object
+     * 
+     * @retval true Successful
+     * @retval false Failed
      */
     private boolean setPrinterId(Printer printer) {
         Cursor cursor = mDatabaseManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
@@ -693,13 +684,13 @@ public class PrinterManager implements SNMPManagerCallback {
     }
     
     /**
-     * Get Printer ID from Cursor object
+     * @brief Get Printer ID from Cursor object.
      * 
-     * @param cursor
-     *            Cursor object
-     * @param printer
-     *            Printer object
-     * @return true when successful
+     * @param cursor Cursor object
+     * @param printer Printer object
+     * 
+     * @retval true Successful
+     * @retval false Failed
      */
     protected boolean getIdFromCursor(Cursor cursor, Printer printer) {
         if (cursor != null && cursor.moveToFirst() && printer != null) {
@@ -714,7 +705,6 @@ public class PrinterManager implements SNMPManagerCallback {
     // Interface - SNMPManagerCallback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onEndDiscovery(SNMPManager manager, int result) {
         if (manager == null) {
@@ -728,7 +718,6 @@ public class PrinterManager implements SNMPManagerCallback {
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
         if (manager == null || ipAddress == null || name == null || capabilities == null) {
@@ -749,24 +738,23 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
-     * Printers Search Screen Interface
-     * <p>
+     * @brief Printers Search Screen Interface. <br>
+     *
      * Interface for Printers Search Screen. Used for updating view in the Printers Search Screen.
      */
     public interface PrinterSearchCallback {
         /**
-         * On Printer Add callback.
-         * <p>
+         * @brief On Printer Add callback. <br>
+         *
          * Callback called when a printer is to be added as a result of Printers Search (Manual/Auto)
          * 
-         * @param printer
-         *            Printer object
+         * @param printer Printer object
          */
         public void onPrinterAdd(Printer printer);
         
         /**
-         * On Search End callback.
-         * <p>
+         * @brief On Search End callback. <br>
+         *
          * Callback called at the end of Printer Search
          */
         public void onSearchEnd();
@@ -777,18 +765,16 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
-     * Printers Screen Interface
-     * <p>
+     * @brief Printers Screen Interface. <br>
+     *
      * Interface for Printers Screen. Used for updating view in the Printers Screen.
      */
     public interface PrintersCallback {
         /**
-         * Adds printer to the Printers Screen
+         * @brief Adds printer to the Printers Screen
          * 
-         * @param printer
-         *            printer object
-         * @param isOnline
-         *            Printer online status            
+         * @param printer Printer object
+         * @param isOnline Printer online status            
          */
         public void onAddedNewPrinter(Printer printer, boolean isOnline);
     }
@@ -798,13 +784,13 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
-     * Update Online Status Interface
-     * <p>
+     * @brief Update Online Status Interface. <br>
+     *
      * Interface for updating the online status.
      */
     public interface UpdateStatusCallback {
         /**
-         * Callback to update the online status
+         * @brief Callback to update the online status
          */
         public void updateOnlineStatus();
     }
@@ -814,8 +800,8 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
-     * Update Online Status Task
-     * <p>
+     * @brief Update Online Status Task. <br>
+     *
      * AsyncTask that updates changes the online status image.
      */
     class UpdateOnlineStatusTask extends AsyncTask<Object, View, Boolean> {
@@ -823,14 +809,13 @@ public class PrinterManager implements SNMPManagerCallback {
         private String mIpAddress = null;
         
         /**
-         * Instantiate UpdateOnlineStatusTask
+         * @brief Instantiate UpdateOnlineStatusTask.
          */
         public UpdateOnlineStatusTask(View view, String ipAddress) {
             mViewRef = new WeakReference<View>(view);
             mIpAddress = ipAddress;
         }
         
-        /** {@inheritDoc} */
         @Override
         protected Boolean doInBackground(Object... arg) {
             if (mIpAddress.isEmpty()) {
@@ -839,7 +824,6 @@ public class PrinterManager implements SNMPManagerCallback {
             return isOnline(mIpAddress);
         }
         
-        /** {@inheritDoc} */
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);

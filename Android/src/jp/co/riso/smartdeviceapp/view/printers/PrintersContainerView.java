@@ -14,7 +14,7 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 /**
- * LinearLayout with custom states
+ * @brief LinearLayout with custom states
  */
 public class PrintersContainerView extends LinearLayout {
     private static final int[] STATE_DELETE = { R.attr.state_delete };
@@ -24,36 +24,36 @@ public class PrintersContainerView extends LinearLayout {
     private boolean mIsDefault = false;
     
     /**
-     * Constructor
-     * <p>
+     * @brief Constructor. <br>
+     *
      * Instantiate LinearLayout with custom states
      * 
-     * @param context
+     * @param context Application context
      */
     public PrintersContainerView(Context context) {
         super(context);
     }
     
     /**
-     * Constructor
-     * <p>
+     * @brief Constructor. <br>
+     *
      * Instantiate LinearLayout with custom states
      * 
-     * @param context
-     * @param attrs
+     * @param context Application context
+     * @param attrs Layout attributes
      */
     public PrintersContainerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
     
     /**
-     * Constructor
-     * <p>
+     * @brief Constructor. <br>
+     * 
      * Instantiate LinearLayout with custom states
      * 
-     * @param context
-     * @param attrs
-     * @param defStyle
+     * @param context Application context
+     * @param attrs Layout attributes
+     * @param defStyle Layout style
      */
     public PrintersContainerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -75,10 +75,11 @@ public class PrintersContainerView extends LinearLayout {
     }
     
     /**
-     * Set delete state
+     * @brief Set delete state. <br>
      * 
-     * @param isDelete
-     *            delete state
+     * Sets and refreshes the drawable state of the view
+     * 
+     * @param isDelete Delete state
      */
     public void setDelete(boolean isDelete) {
         if (mIsDelete != isDelete) {
@@ -88,17 +89,22 @@ public class PrintersContainerView extends LinearLayout {
     }
     
     /**
-     * @return delete state
+     * @brief Get the delete state of the view.
+     * 
+     * @retval true View state is delete state
+     * @retval false View state is not delete state
      */    
     public boolean getDelete() {
         return mIsDelete;
     }
     
     /**
-     * Set default state
+     * @brief Set default state. <br>
      * 
-     * @param isDefault
-     *            default state
+     * Sets and refreshes the drawable state of the view.
+     * The view is used for default printer view.
+     * 
+     * @param isDefault Default state
      */
     public void setDefault(boolean isDefault) {
         if (mIsDefault != isDefault) {
@@ -108,7 +114,10 @@ public class PrintersContainerView extends LinearLayout {
     }
     
     /**
-     * @return default state
+     * @brief Get the default state of the view.
+     * 
+     * @retval true The view is set to default state.
+     * @retval false The view is not set to default state.
      */
     public boolean getDefault() {
         return mIsDefault;

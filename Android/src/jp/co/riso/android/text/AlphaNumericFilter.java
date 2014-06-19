@@ -14,11 +14,10 @@ import android.text.InputFilter;
 import android.text.Spanned;
 
 /**
- * EditText filter for Alpha Numeric characters
+ * @brief EditText filter for Alpha Numeric characters
  */
 public class AlphaNumericFilter implements InputFilter {
     
-    /** {@inheritDoc} */
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         if (!Pattern.matches("^[A-Za-z0-9]*$", source)) {

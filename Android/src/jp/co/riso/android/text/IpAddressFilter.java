@@ -15,13 +15,13 @@ import android.text.InputFilter;
 import android.text.Spanned;
 
 /**
- * EditText filter for IP Address characters
+ * @brief EditText filter for IP Address characters
  */
 public class IpAddressFilter implements InputFilter {
     private Set<Character> mCharSet;
     
     /**
-     * Constructor
+     * @brief Constructor for IP Address Filter 
      */
     public IpAddressFilter() {
         String validChars = "1234567890abcdefABCDEF.:";
@@ -31,7 +31,6 @@ public class IpAddressFilter implements InputFilter {
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         for (int i = start; i < end; i++) {

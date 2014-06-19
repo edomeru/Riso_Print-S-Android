@@ -55,13 +55,11 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     private boolean mAdded = false;
     private PauseableHandler mPauseableHandler = null;
     
-    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_addprinter;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
@@ -75,7 +73,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mAddPrinterView.mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
@@ -105,7 +102,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -119,14 +115,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onPause() {
         super.onPause();
         mPauseableHandler.pause();
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();        
@@ -138,20 +132,18 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // ================================================================================
     
     /**
-     * Search for printer device
+     * @brief Search for printer device
      * 
-     * @param ipAddress
-     *            Printer IP Address
+     * @param ipAddress Printer IP Address
      */
     private void findPrinter(String ipAddress) {
         mPrinterManager.searchPrinter(ipAddress);
     }
     
     /**
-     * Dialog which is displayed during successful printer search
+     * @brief Dialog which is displayed during successful printer search
      * 
-     * @param printer
-     *            Searched printer
+     * @param printer Searched printer
      */
     private void dialogCb(Printer printer) {
         if (isTablet() && getActivity() != null && getActivity() instanceof MainActivity) {
@@ -179,10 +171,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     /**
-     * Dialog which is displayed during failed printer search
+     * @brief Dialog which is displayed during failed printer search
      * 
-     * @param err
-     *            Error code
+     * @param err Error code
      */
     private void dialogErrCb(int err) {
         if (isTablet()) {
@@ -225,7 +216,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     /**
-     * Close Add Printer screen
+     * @brief Close the Add Printer screen
      */
     private void closeScreen() {
         
@@ -252,10 +243,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     /**
-     * Set the Add Printer Screen to disabled mode to prevent changes from user input
+     * @brief Set the Add Printer Screen to disabled mode to prevent changes from user input
      * 
-     * @param viewHolder
-     *            Add Printer Screen view holder
+     * @param viewHolder Add Printer Screen view holder
      */
     private void setViewToDisable(ViewHolder viewHolder) {
         if (viewHolder == null) {
@@ -270,10 +260,9 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     /**
-     * Set the Add Printer Screen to normal
+     * @brief Set the Add Printer Screen to normal
      * 
-     * @param viewHolder
-     *            Add Printer Screen view holder
+     * @param viewHolder Add Printer Screen view holder
      */
     private void setViewToNormal(ViewHolder viewHolder) {
         if (viewHolder == null) {
@@ -287,8 +276,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     /**
-     * Start manual printer search
-     * 
+     * @brief Start manual printer search
      */
     private void startManualSearch() {       
         String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
@@ -314,7 +302,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -332,7 +319,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - OnPrinterSearch
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onPrinterAdd(Printer printer) {
         if (mPrinterManager.isCancelled()) {
@@ -353,7 +339,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mPauseableHandler.sendMessage(newMessage);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onSearchEnd() {
         if(mPrinterManager.isCancelled()) {
@@ -389,7 +374,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - OnEditorActionListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if ((actionId & EditorInfo.IME_MASK_ACTION) == EditorInfo.IME_ACTION_DONE) {
@@ -403,13 +387,11 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - ConfirmDialogListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onConfirm() {
         closeScreen();
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onCancel() {
         closeScreen();
@@ -420,7 +402,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // ================================================================================
     
     /**
-     * Add Printer Screen view holder
+     * @brief Add Printer Screen view holder
      */
     public class ViewHolder {
         private EditText mIpAddress;
@@ -432,13 +414,11 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public boolean storeMessage(Message message) {
         return message.what == MSG_ERROR || message.what == MSG_ADD_SUCCESS;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void processMessage(Message msg) {
         if (msg != null) {

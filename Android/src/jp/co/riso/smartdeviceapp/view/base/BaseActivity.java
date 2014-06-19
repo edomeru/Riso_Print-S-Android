@@ -16,7 +16,6 @@ import android.os.Bundle;
 
 public abstract class BaseActivity extends Activity {
 
-    /** {@inheritDoc} */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,10 +28,9 @@ public abstract class BaseActivity extends Activity {
     // ================================================================================
     
     /**
-     * Called in onCreate which will serve as the main activity initialization
+     * @brief Called in onCreate which will serve as the main activity initialization.
      * 
-     * @param savedInstanceState
-     *            Bundle which contains a saved state during recreation
+     * @param savedInstanceState Bundle which contains a saved state during recreation
      */
     protected abstract void onCreateContent(Bundle savedInstanceState);
     
@@ -41,16 +39,17 @@ public abstract class BaseActivity extends Activity {
     // ================================================================================
     
     /**
-     * Checks whether the device is in tablet mode
+     * @brief Checks whether the device is in tablet mode.
      * 
-     * @return True if device is tablet, False otherwise
+     * @retval true Device is a tablet
+     * @retval false Device is a phone
      */
     public boolean isTablet() {
         return getResources().getBoolean(R.bool.is_tablet);
     }
     
     /**
-     * Gets the action bar height from the android defaults
+     * @brief Gets the action bar height from the android defaults.
      * 
      * @return Action bar height in pixels
      */
@@ -61,7 +60,7 @@ public abstract class BaseActivity extends Activity {
     }
     
     /**
-     * Gets the drawer width.
+     * @brief Gets the drawer width.
      * 
      * @return Drawer width in pixels
      */

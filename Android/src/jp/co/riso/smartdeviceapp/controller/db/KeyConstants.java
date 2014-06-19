@@ -9,7 +9,7 @@
 package jp.co.riso.smartdeviceapp.controller.db;
 
 /**
- * Keys used for Database Access
+ * @brief Keys used for Database Access
  */
 public final class KeyConstants {
     public static final String KEY_SQL_PRINTER_ID = "prn_id";
