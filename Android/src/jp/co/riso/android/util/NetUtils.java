@@ -110,6 +110,10 @@ public class NetUtils {
                     }
                 }
             }
+            inetIpAddress = InetAddress.getByName(ip);
+            if (inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING)) {
+                return true;
+            }
             for (int i = 0; i < IPV6_INTERFACE_NAMES.size(); i++) {
                 inetIpAddress = InetAddress.getByName(ip + "%" + IPV6_INTERFACE_NAMES.get(i));
                 if (inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING)) {
@@ -343,8 +347,7 @@ public class NetUtils {
      */
     private static Pattern initializeIpv6Pattern_Local() {
         String ipV6Segment = "0*[0-9a-fA-F]{0,4}";
-        return Pattern.compile("(fe80:(:" + ipV6Segment + "){0,4}%[0-9a-zA-Z]{1,})"); // Pattern # 10
-        
+        return Pattern.compile("([f|F][e|E]80:(:" + ipV6Segment + "){0,4}%[0-9a-zA-Z]{1,})"); // Pattern # 10        
     }
     
     /**
@@ -356,7 +359,7 @@ public class NetUtils {
         String ipV4Segment = "0*(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.0*(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}";
         String ipV6Segment = "0*[0-9a-fA-F]{0,4}";
         
-        return Pattern.compile("(::0*(ffff(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
+        return Pattern.compile("(::0*([f|F]{4}(:0{1,4}){0,1}:){0,1}" + ipV4Segment + // Pattern # 11
                 "|" + "(" + ipV6Segment + ":){1,4}:" + ipV4Segment + ")"); // Pattern # 12
     }
     
