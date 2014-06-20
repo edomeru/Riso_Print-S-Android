@@ -208,7 +208,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 break;
             case ERR_PRINTER_ADDED_WARNING:
                 errMsg = getResources().getString(R.string.ids_info_msg_warning_cannot_find_printer);
-                errMsg += "\n" + mAddPrinterView.mIpAddress.getText().toString() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
                 break;
             case ERR_DB_FAILURE:
                 errMsg = getResources().getString(R.string.ids_err_msg_db_failure);
