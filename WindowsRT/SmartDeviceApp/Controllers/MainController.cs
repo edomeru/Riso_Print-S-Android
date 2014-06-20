@@ -46,13 +46,17 @@ namespace SmartDeviceApp.Controllers
 
             // Reset to Home screen
             (new ViewModelLocator().HomeViewModel).IsProgressRingActive = true; // Enable loading
+            new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = true;
             new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
+            new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = false;
 
             await DocumentController.Instance.Load(file);
             await PrintPreviewController.Instance.Initialize();
 
             // Change to correct screen after loading
+            new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = true;
             new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
+            new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = false;
         }
 
         /// <summary>

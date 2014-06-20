@@ -272,7 +272,8 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _goToLegalPage;
 
         private MainMenuItemList _mainMenuItems;
-        private int _selectedMainMenuItem;
+
+        public bool EnabledGoToHomeExecute { get; set; } // Enables the GoToHomePage command
 
         public MainMenuItemList MainMenuItems
         {
@@ -295,7 +296,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _goToHomePage = new RelayCommand(
                         () => GoToHomePageExecute(),
-                        () => true // Note: checking is done in GoToHomePageExecute
+                        () => CanGoToHomePage()
                     );
                 }
                 return _goToHomePage;
@@ -386,6 +387,16 @@ namespace SmartDeviceApp.ViewModels
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_SETTINGS", GoToSettingsPage, false));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_HELP", GoToHelpPage, false));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_LEGAL", GoToLegalPage, false));
+        }
+
+        private bool CanGoToHomePage()
+        {
+            if (!EnabledGoToHomeExecute &&
+                (ScreenMode == ScreenMode.Home || ScreenMode == ScreenMode.PrintPreview))
+            {
+                return false;
+            }
+            return true;
         }
         
         private bool CanGoToPrintersPage()

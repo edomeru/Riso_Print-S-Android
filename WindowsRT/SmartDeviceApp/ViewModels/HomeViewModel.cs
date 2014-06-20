@@ -95,7 +95,9 @@ namespace SmartDeviceApp.ViewModels
                     await MainController.FileActivationHandler(file);
                     if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
                     {
+                        new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = true;
                         new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
+                        new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = false;
                     }
                     IsProgressRingActive = false;
                 }
