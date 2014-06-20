@@ -27,32 +27,40 @@ import com.radaee.pdf.Document;
 import com.radaee.pdf.Matrix;
 import com.radaee.pdf.Page;
 
+/**
+ * @class PDFFileManager
+ * @brief Wrapper class for Radaee PDFViewer.
+ * 
+ * Contains operations to open/close PDF (asynchronously),
+ * get page bitmap, and get pdf information
+ */
 public class PDFFileManager {
     
-    public static final String KEY_NEW_PDF_DATA = "new_pdf_data";
-    public static final String KEY_SANDBOX_PDF_NAME = "key_sandbox_pdf_name";
+    public static final int PDF_OK = 0; /// Open successful
+    public static final int PDF_ENCRYPTED = -1; /// PDF is encrypted
+    public static final int PDF_PRINT_RESTRICTED = -2; /// Printing is restricted
+    public static final int PDF_OPEN_FAILED = -3; /// PDF open failed
+    public static final int PDF_CANCELLED = -4; /// PDF open was cancelled
     
-    public static final int PDF_OK = 0;
-    public static final int PDF_ENCRYPTED = -1;
-    public static final int PDF_PRINT_RESTRICTED = -2;
-    public static final int PDF_OPEN_FAILED = -3;
+    protected static final String KEY_NEW_PDF_DATA = "new_pdf_data";
+    protected static final String KEY_SANDBOX_PDF_NAME = "key_sandbox_pdf_name";
     
-    private static final int RADAEE_OK = 0;
-    private static final int RADAEE_ENCRYPTED = -1;
-    private static final int RADAEE_UNKNOWN_ENCRYPTION = -2;
-    @SuppressWarnings("unused") // Radaee error with general error handling
-    private static final int RADAEE_DAMAGED = -3;
-    @SuppressWarnings("unused") // Radaee error with general error handling
-    private static final int RADAEE_INVALID_PATH = -10;
+    private static final int RADAEE_OK = 0; /// PDFViewer: PDF is opened successfully
+    private static final int RADAEE_ENCRYPTED = -1; /// PDFViewer: Cannot open encrypted PDF
+    private static final int RADAEE_UNKNOWN_ENCRYPTION = -2; /// PDFViewer: Unknown Encryption
+    @SuppressWarnings("unused") // Radaee error (Handled on general error handling)
+    private static final int RADAEE_DAMAGED = -3; /// PDFViewer: PDF is Damaged
+    @SuppressWarnings("unused") // Radaee error (Handled on general error handling)
+    private static final int RADAEE_INVALID_PATH = -10; /// PDFViewer: Invalid PDF Path
     
-    // For design consideration
-    private static final boolean CONST_KEEP_DOCUMENT_CLOSED = false;
+    /// Should keep the document closed after every access
+    private static final boolean CONST_KEEP_DOCUMENT_CLOSED = false; 
     
-    private static final float CONST_RADAEE_DPI = 72.0f;
-    private static final float CONST_INCHES_TO_MM = 25.4f;
-    
+    private static final float CONST_RADAEE_DPI = 72.0f; /// PDFViewer: resolution of the PDF
+    private static final float CONST_INCHES_TO_MM = 25.4f; /// mm per inches
+
+    private volatile String mPath;
     private Document mDocument;
-    private String mPath;
     private String mFileName;
     private WeakReference<PDFFileManagerInterface> mInterfaceRef;
     
@@ -62,10 +70,9 @@ public class PDFFileManager {
     private volatile int mPageCount;
     
     /**
-     * Constructor
+     * @brief Creates a PDFFileManager with an Interface class
      * 
-     * @param pdfFileManagerInterface
-     *            Object to send callbacks
+     * @param pdfFileManagerInterface Object which receives the events. 
      */
     public PDFFileManager(PDFFileManagerInterface pdfFileManagerInterface) {
         mDocument = new Document();
@@ -74,7 +81,7 @@ public class PDFFileManager {
     }
     
     /**
-     * Gets the current path of the pdf
+     * @brief Gets the current path of the PDF
      * 
      * @return Path from the file system.
      */
@@ -83,19 +90,18 @@ public class PDFFileManager {
     }
     
     /**
-     * Gets the current filename of the pdf
+     * @brief Gets the current filename of the PDF
      * 
-     * @return Filename of the PDF.
+     * @return Filename of the PDF (with extension)
      */
     public String getFileName() {
         return mFileName;
     }
     
     /**
-     * Sets the path of the PDF
+     * @brief Sets the PDF to be processed.
      * 
-     * @param path
-     *            New path value
+     * @param path Path of the PDF to be opened.
      */
     public void setPDF(String path) {
         mIsInitialized = false;
@@ -113,39 +119,45 @@ public class PDFFileManager {
         mPath = path;
         mFileName = file.getName();
     }
+
     
+    /**
+     * @brief Sets the PDF in the sandbox as the PDF to be processed.
+     */
     public void setSandboxPDF() {
         setPDF(getSandboxPath());
         mFileName = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
         
-        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), true);
     }
     
     /**
-     * Checks if PDF path is initialized
+     * @brief Checks if the PDF is already initialized
      * 
-     * @return PDF path is initialized
+     * @retval true PDF manager is initialized
+     * @retval true Initialization is not yet completed
      */
     public boolean isInitialized() {
         return mIsInitialized;
     }
     
     /**
-     * Gets the number of pages in the PDF
+     * @brief Gets the number of pages in the PDF.
      * 
-     * @return page count
+     * @return Page count
+     * @retval 0 If not initialized.
      */
     public int getPageCount() {
         return mPageCount;
     }
     
     /**
-     * Gets the page width
+     * @brief Gets the width of a specific page in the PDF
+     * @note Radaee returns 72 dpi.
      * 
-     * @param pageNo
-     *            Page Index
+     * @param pageNo Page Index
      * 
-     * @return page width in mm
+     * @return Page width in mm
      */
     public float getPageWidth(int pageNo) {
         if (!isInitialized()) {
@@ -174,14 +186,15 @@ public class PDFFileManager {
         
         return width;
     }
+
     
     /**
-     * Gets the page height
+     * @brief Gets the height of a specific page in the PDF
+     * @note Radaee returns 72 dpi.
      * 
-     * @param pageNo
-     *            Page Index
+     * @param pageNo Page Index
      * 
-     * @return page height in mm
+     * @return Page width in mm
      */
     public float getPageHeight(int pageNo) {
         if (!isInitialized()) {
@@ -210,11 +223,14 @@ public class PDFFileManager {
         
         return height;
     }
+
     
     /**
-     * Checks whether the PDF loaded is landscape basing the dimensions on the first page.
+     * @brief Checks whether the PDF loaded is landscape.
+     * @note Orientation is based on the irst page
      * 
-     * @return true if pdf is landscape
+     * @retval true PDF is landscape
+     * @retval false PDF is portrait, square.
      */
     public boolean isPDFLandscape() {
         float width = getPageWidth(0);
@@ -225,9 +241,9 @@ public class PDFFileManager {
     }
     
     /**
-     * Appends the sandbox path
+     * @brief Gets the sandbox path to store the PDF
      * 
-     * @return PDF sandbox directory
+     * @return PDF path from the sandbox
      */
     public static final String getSandboxPath() {
         return SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) 
@@ -235,13 +251,14 @@ public class PDFFileManager {
     }
     
     /**
-     * Checks whether a new PDF is available through open-in
+     * @brief Checks whether a new PDF is available from open-in
      * 
-     * @param context
-     *            Application instance context
-     * @return A new PDF is available
+     * @param context Application instance context
+     * 
+     * @retval true A PDF is available from open-in
+     * @retval false No PDF is available from open-in
      */
-    public static boolean hasNewPDFData(Context context) {
+    public synchronized static boolean hasNewPDFData(Context context) {
         if (context == null) {
             return false;
         }
@@ -251,10 +268,10 @@ public class PDFFileManager {
     }
     
     /**
-     * @param context
-     *            Application instance context
-     * @param newData
-     *            New value for has PDF Flag
+     * @brief Sets the path of a new PDF data.
+     * 
+     * @param context Application instance context
+     * @param newData New PDF data is launched through Open-in
      */
     public static void setHasNewPDFData(Context context, boolean newData) {
         if (context == null) {
@@ -264,6 +281,7 @@ public class PDFFileManager {
         // Notify PDF File Data that there is a new PDF
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor edit = prefs.edit();
+
         edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, newData);
         if (newData) {
             edit.remove(PDFFileManager.KEY_SANDBOX_PDF_NAME);
@@ -271,6 +289,11 @@ public class PDFFileManager {
         edit.apply();
     }
     
+    /**
+     * @brief Clears the PDF saved in the sandbox
+     * 
+     * @param context Application instance context
+     */
     public static void clearSandboxPDFName(Context context) {
         if (context == null) {
             return;
@@ -283,6 +306,14 @@ public class PDFFileManager {
         edit.apply();
     }
     
+    /**
+     * @brief Gets the filename of the PDF saved in the sandbox
+     * 
+     * @param context Application instance context
+     * 
+     * @return Filename of the PDF in the sandbox
+     * @retval null If no PDF is in the sandbox
+     */
     public static String getSandboxPDFName(Context context) {
         if (context == null) {
             return null;
@@ -293,6 +324,12 @@ public class PDFFileManager {
         return prefs.getString(KEY_SANDBOX_PDF_NAME, null);
     }
     
+    /**
+     * @brief Sets the filename of the PDF saved in the sandbox
+     * 
+     * @param context Application instance context
+     * @param fileName Filename to be saved
+     */
     public static void setSandboxPDF(Context context, String fileName) {
         if (context == null) {
             return;
@@ -310,11 +347,14 @@ public class PDFFileManager {
     }
     
     /**
-     * Initializes the set PDF path asynchronously. <br>
-     * Performs the following: <br>
-     * 1. Save to file <br>
-     * 2. Test if file is openable. <br>
-     * 3. Returns status via PDFFileManagerInterface
+     * @brief Initializes the set PDF path asynchronously.
+     * 
+     * Performs the following:
+     * <ol>
+     * <li>Save to file </li>
+     * <li>Test if file is open-able. </li>
+     * <li>Returns status via PDFFileManagerInterface </li>
+     * </ol>
      */
     public void initializeAsync() {
         mIsInitialized = false;
@@ -326,14 +366,13 @@ public class PDFFileManager {
         }
         
         mInitTask = new PDFInitTask();
-        mInitTask.execute();
+        mInitTask.execute(mPath);
     }
     
     /**
-     * Gets the Bitmap of the page
+     * @brief Gets the page bitmap
      * 
-     * @param pageNo
-     *            PDF page of the requested page
+     * @param pageNo Page Index
      * 
      * @return Bitmap of the page
      */
@@ -342,10 +381,12 @@ public class PDFFileManager {
     }
     
     /**
-     * Gets the Bitmap of the page
+     * @brief Gets the page bitmap
      * 
-     * @param pageNo
-     *            PDF page of the requested page
+     * @param pageNo Page Index
+     * @param scale X and Y scale of the page
+     * @param flipX Flip the page horizontally
+     * @param flipY Flip the page vertically
      * 
      * @return Bitmap of the page
      */
@@ -423,33 +464,32 @@ public class PDFFileManager {
     // ================================================================================
     // Protected methods
     // ================================================================================
-
+    
     /**
-     * Opens the document
+     * @brief Opens the PDF
      * 
-     * @return status of open <br>
-     *         PDF_OK = 0; <br>
-     *         PDF_ENCRYPTED = -1; <br>
-     *         PDF_UNKNOWN_ENCRYPTION = -2; <br>
-     *         PDF_DAMAGED = -3; <br>
-     *         PDF_INVALID_PATH = -10;
+     * @return Status of open PDF open operation
+     * @retval PDF_OK(0)
+     * @retval PDF_ENCRYPTED(-1)
+     * @retval PDF_UNKNOWN_ENCRYPTION(-2)
+     * @retval PDF_DAMAGED(-3)
+     * @retval PDF_INVALID_PATH(-10)
      */
     protected synchronized int openDocument() {
         return openDocument(mPath);
     }
     
     /**
-     * Opens the document
+     * @brief Opens the PDF. Sets the status of the class to initialized
      * 
-     * @param path
-     *            Opens the document. Sets the status of the class to initialized
+     * @param path Path to the PDF to be opened
      * 
-     * @return status of open <br>
-     *         PDF_OK = 0; <br>
-     *         PDF_ENCRYPTED = -1; <br>
-     *         PDF_UNKNOWN_ENCRYPTION = -2; <br>
-     *         PDF_DAMAGED = -3; <br>
-     *         PDF_INVALID_PATH = -10;
+     * @return Status of open document operation
+     * @retval PDF_OK(0)
+     * @retval PDF_ENCRYPTED(-1)
+     * @retval PDF_UNKNOWN_ENCRYPTION(-2)
+     * @retval PDF_DAMAGED(-3)
+     * @retval PDF_INVALID_PATH(-10)
      */
     protected synchronized int openDocument(String path) {
         if (mDocument.is_opened()) {
@@ -484,20 +524,18 @@ public class PDFFileManager {
                 return PDF_OPEN_FAILED;
         }
     }
-
     
     /**
-     * Checks whether the document can be opened
+     * @brief Tests whether the PDF can be opened or not.
      * 
-     * @param path
-     *            Path of the document to be opened
+     * @param path Path to the PDF to be opened
      * 
-     * @return status of open <br>
-     *         PDF_OK = 0; <br>
-     *         PDF_ENCRYPTED = -1; <br>
-     *         PDF_UNKNOWN_ENCRYPTION = -2; <br>
-     *         PDF_DAMAGED = -3; <br>
-     *         PDF_INVALID_PATH = -10;
+     * @return Status of open document operation
+     * @retval PDF_OK(0)
+     * @retval PDF_ENCRYPTED(-1)
+     * @retval PDF_UNKNOWN_ENCRYPTION(-2)
+     * @retval PDF_DAMAGED(-3)
+     * @retval PDF_INVALID_PATH(-10)
      */
     protected synchronized int testDocument(String path) {
         if (path == null || path.length() == 0) {
@@ -529,7 +567,7 @@ public class PDFFileManager {
     }
     
     /**
-     * Closes the document
+     * @brief Closes the document
      */
     protected synchronized void closeDocument() {
         if (mDocument.is_opened()) {
@@ -541,22 +579,28 @@ public class PDFFileManager {
     // Internal classes
     // ================================================================================
     
-    class PDFInitTask extends AsyncTask<Void, Void, Integer> {
+    /**
+     * @class PDFInitTask
+     * @brief Background task which initialized the PDF.
+     * <br>
+     * The PDF is copied to the sandbox.
+     */
+    private class PDFInitTask extends AsyncTask<String, Void, Integer> {
         
-        /**
-         * Save the document in sandbox and test if openable
-         */
         @Override
-        protected Integer doInBackground(Void... params) {
-            int status = testDocument(mPath);
+        protected Integer doInBackground(String... params) {
+            int status = testDocument(params[0]);
             
+            if (isCancelled() || (mPath != null && !mPath.equals(params[0]))) {
+                return PDF_CANCELLED;
+            }
             if (status == PDF_OK) {
                 File file = new File(mPath);
                 String fileName = file.getName();
                 String sandboxPath = PDFFileManager.getSandboxPath();
                 
                 if (PDFFileManager.hasNewPDFData(SmartDeviceApp.getAppContext())) {
-                    PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false);
+                    PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
                     
                     try {
                         if (!mPath.equals(sandboxPath)) {
@@ -576,15 +620,18 @@ public class PDFFileManager {
             return status;
         }
         
-        /**
-         * Delegate the result
-         */
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            
-            if (mInterfaceRef != null && mInterfaceRef.get() != null) {
-                mInterfaceRef.get().onFileInitialized(result);
+
+            if (result != PDF_CANCELLED) {
+                if (result != PDF_OK) {
+                    setPDF(null);
+                }
+                
+                if (mInterfaceRef != null && mInterfaceRef.get() != null) {
+                    mInterfaceRef.get().onFileInitialized(result);
+                }
             }
         }
     }

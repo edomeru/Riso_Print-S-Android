@@ -580,8 +580,8 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         }
 
         getInstrumentation().waitForIdleSync();
-        
-        assertEquals(mStatus, PDFFileManager.PDF_OPEN_FAILED);
+
+        assertEquals(PDFFileManager.PDF_OPEN_FAILED, mStatus);
     }
     
     public void testOpenAsync_InvalidPdfPath() {
@@ -598,7 +598,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
 
         getInstrumentation().waitForIdleSync();
         
-        assertEquals(mStatus, PDFFileManager.PDF_OPEN_FAILED);
+        assertEquals(PDFFileManager.PDF_OPEN_FAILED, mStatus);
     }
     
     public void testOpenAsync_Consecutive() {
@@ -617,7 +617,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
 
         getInstrumentation().waitForIdleSync();
         
-        assertEquals(mStatus, 0);
+        assertEquals(PDFFileManager.PDF_OK, mStatus);
     }
     
     //================================================================================
