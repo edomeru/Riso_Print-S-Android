@@ -468,8 +468,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             setViewEnabledWithConstraints(PrintSettings.TAG_FINISHING_SIDE, enabled, true);
             setViewEnabledWithConstraints(PrintSettings.TAG_STAPLE, enabled, true);
             setViewEnabledWithConstraints(PrintSettings.TAG_PUNCH, enabled, true);
-            setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION, enabled, true);
-            setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled, true);
+            //setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION, enabled, true);
+            //setViewEnabledWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, enabled, true);
             
             setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, !enabled, true);
             setViewEnabledWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, !enabled, true);
@@ -505,8 +505,13 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
             
             if (mPrintSettings.isBooklet()) {
+                // OFF to ON
                 updateValueWithConstraints(PrintSettings.TAG_DUPLEX, Duplex.SHORT_EDGE.ordinal());
+            } else {
+                // ON to OFF
+                updateValueWithConstraints(PrintSettings.TAG_IMPOSITION, getDefaultValueWithConstraints(PrintSettings.TAG_IMPOSITION));
             }
+            
         }
         
         // Constraint #2 Finishing Side
@@ -541,6 +546,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
             if (value == Imposition.OFF.ordinal()) {
                 updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.L_R.ordinal());
+            } else {
+                updateValueWithConstraints(PrintSettings.TAG_BOOKLET, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET));
             }
             if (value == Imposition.TWO_UP.ordinal()) {
                 if (prevValue == Imposition.FOUR_UP.ordinal()) {
