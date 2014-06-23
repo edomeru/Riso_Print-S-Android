@@ -636,7 +636,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         
         assertNotNull(AppUtils.getAuthenticationString());
         assertFalse(AppUtils.getAuthenticationString().isEmpty());
-        assertTrue(AppUtils.getAuthenticationString().equals("securePrint=0\nloginId=test\npinCode=1234\n"));
+        assertTrue(AppUtils.getAuthenticationString().equals("securePrint=0\nloginId=test\npinCode=\n"));
         
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON        
         editor.apply();
