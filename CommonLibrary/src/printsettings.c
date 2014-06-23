@@ -788,8 +788,9 @@ void add_pjl(char *pjl, setting_value values[], int command)
         }
         case kPjlCommandPrivatePrintingBoxNumber:
         {
+            setting_value securePrint = values[kPrintSettingsSecurePrint];
             setting_value pinCode = values[kPrintSettingsPinCode];
-            if (pinCode.set == 0)
+            if (pinCode.set == 0 || securePrint.set == 0 || securePrint.int_value == 0)
             {
                 return;
             }
