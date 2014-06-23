@@ -223,6 +223,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     private static final String IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%lo";
     private static final String IPV6_STD_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
     private static final String IPV6_STD_OFFLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb3";
+    private static final String IPV6_STD_RISO_PRINTER_ADDRESS = "2001::4:225:5cff:fe34:7c27";
 
     public NetUtilsTest() {
         super(MainActivity.class);
@@ -464,6 +465,22 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
                 }
             }
             // Reset retry
+            retry = 10;
+            while (retry > 0) {
+                isReachable = NetUtils.connectToIpv6Address(ipv6Addr, inetIpAddress);
+                if (isReachable) {
+                    break;
+                }
+                mSignal.await(1, TimeUnit.SECONDS);
+                retry--;
+            }
+            assertEquals(true, isReachable);
+            
+            mSignal.await(500, TimeUnit.MILLISECONDS);
+            
+            // Reset retry
+            inetIpAddress = InetAddress.getByName(IPV6_STD_RISO_PRINTER_ADDRESS);
+            ipv6Addr = IPV6_STD_RISO_PRINTER_ADDRESS;
             retry = 10;
             while (retry > 0) {
                 isReachable = NetUtils.connectToIpv6Address(ipv6Addr, inetIpAddress);
