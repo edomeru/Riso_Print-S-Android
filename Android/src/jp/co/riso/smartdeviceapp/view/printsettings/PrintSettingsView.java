@@ -503,13 +503,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             
             updateValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH));
             updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
+
+            updateValueWithConstraints(PrintSettings.TAG_IMPOSITION, getDefaultValueWithConstraints(PrintSettings.TAG_IMPOSITION));
             
             if (mPrintSettings.isBooklet()) {
                 // OFF to ON
                 updateValueWithConstraints(PrintSettings.TAG_DUPLEX, Duplex.SHORT_EDGE.ordinal());
-            } else {
-                // ON to OFF
-                updateValueWithConstraints(PrintSettings.TAG_IMPOSITION, getDefaultValueWithConstraints(PrintSettings.TAG_IMPOSITION));
             }
             
         }
