@@ -34,6 +34,11 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+/**
+ * @class PrintJobsFragment
+ * 
+ * @brief Fragment class for displaying Print Job History screen.
+ */
 public class PrintJobsFragment extends BaseFragment implements OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener, ConfirmDialogListener {
     
     private static final String TAG = PrintJobsFragment.class.getName();
@@ -50,27 +55,23 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private ConfirmDialogFragment mConfirmDialog;
     private ScrollView mScrollView;
     private TextView mEmptyJobsText;
-
     /**
-     * Instantiate PrintJobsFragment
+     * @brief Creates a PrintJobsFragment instance.
      */
     public PrintJobsFragment() {
         super();
     }
     
-    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printjobs;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mCollapsedPrinters.clear();
@@ -86,7 +87,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mLoadPrintJobsTask.start();
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -94,7 +94,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         addActionMenuButton(view);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -109,7 +108,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // ================================================================================
     
     /**
-     * Displays empty message and hides print jobs view
+     * @brief Displays empty message and hides PrintJobsView.
      */
     private void showEmptyText() {
         mEmptyJobsText.setVisibility(View.VISIBLE);
@@ -124,7 +123,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // INTERFACE - View.onTouchListener
     // ================================================================================
 
-    /** {@inheritDoc} */
     @Override
     public boolean onTouch(View v, MotionEvent e) {
         if (v.getId() == R.id.printJobContainer) {
@@ -137,7 +135,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // INTERFACE - PrintJobsGroupViewListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void setPrinterToDelete(PrintJobsGroupView printJobsGroupView, Printer printer) {
         mPrintGroupToDelete = printJobsGroupView;
@@ -145,14 +142,12 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mPrintJobsView.setPrinterToDelete(printer);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void deletePrinterFromList(Printer printer) {
         mPrinters.remove(printer);
         mPrintJobsView.deletePrinterFromList(printer);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void deleteJobFromList(PrintJob printJob) {
         mPrintJobs.remove(printJob);
@@ -162,7 +157,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public boolean showDeleteDialog() {
         String title = getResources().getString(R.string.ids_info_msg_delete_jobs_title);
@@ -180,7 +174,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void setCollapsed(Printer printer, boolean isCollapsed) {
         if (isCollapsed) {
@@ -191,7 +184,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mPrintJobsView.setCollapsedPrinters(printer, isCollapsed);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void setDeletePrintJob(PrintJobsGroupView printJobsGroupView, PrintJob job) {
         mPrintGroupToDelete = printJobsGroupView;
@@ -203,9 +195,8 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // INTERFACE - PrintJobsViewListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
-    public void hideLoading() {
+    public void onLoadFinished() {
         if (!isTablet()) {
             View view = getView();
             if (view != null) {
@@ -218,7 +209,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // INTERFACE - ConfirmationDialogListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onConfirm() {
         if (mPrintGroupToDelete != null) {
@@ -234,7 +224,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onCancel() {
         if (mPrintGroupToDelete != null) {
@@ -256,13 +245,22 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // ================================================================================
     
     /**
-     * AsyncTask for Loading Print Job Tasks
+     * @class LoadPrintJobsTask
+     * 
+     * @brief AsyncTask for Loading Print Job Tasks
      */
     private class LoadPrintJobsTask extends Thread {
         private WeakReference<Context> mContextRef;
         private List<PrintJob> mPrintJobsList;
         private List<Printer> mPrintersList;
         
+        /**
+         * @brief Creates LoadPrintJobsTask instance.
+         * 
+         * @param context Activity context.
+         * @param printJobs list of PrintJob objects
+         * @param printers list of Printer objects
+         */
         public LoadPrintJobsTask(Context context, List<PrintJob> printJobs, List<Printer> printers) {
             mContextRef = new WeakReference<Context>(context);
             if (printJobs != null) {
@@ -284,6 +282,21 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
                     mPrintersList = printers;
                     pm.setRefreshFlag(false);
                 }
+            }
+            return null;
+        }
+        
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (mPrintJobsList.isEmpty()) {
+                showEmptyText();
+            } else {
+                // if (mPrintJobsList.isEmpty() || isCancelled()) {
+                // mPrintJobsLoadIndicator.setVisibility(View.GONE);
+                // } else {
+                mPrintJobs = new ArrayList<PrintJob>(mPrintJobsList);
+                mPrinters = new ArrayList<Printer>(mPrintersList);
                 
                 ((Activity) mContextRef.get()).runOnUiThread(new Runnable() {
                     @Override

@@ -13,16 +13,19 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 
+/**
+ * @class DialogUtils
+ * 
+ * @brief Helper class for displaying and dismissing dialog fragments.
+ */
 public final class DialogUtils {
     
     /**
      * @brief Removes a dialog fragment with the given tag in a activity using a transaction
-     * @param ft
-     *            FragmentTransaction to include the removal of fragment
-     * @param activity
-     *            Activity where the fragment resides
-     * @param tag
-     *            The tag of fragment for removal
+     * 
+     * @param ft FragmentTransaction to include the removal of fragment
+     * @param activity Activity where the fragment resides
+     * @param tag The tag of fragment for removal
      */
     private static void removeDialogFragment(FragmentTransaction ft, Activity activity, String tag) {
         
@@ -37,12 +40,10 @@ public final class DialogUtils {
     
     /**
      * @brief Displays a dialog fragment specifying a tag in an activity
-     * @param activity
-     *            Activity to display the fragment on.
-     * @param tag
-     *            The assigned tag of the fragment to be added
-     * @param newFragment
-     *            DialogFragment object to be added
+     * 
+     * @param activity Activity to display the fragment on.
+     * @param tag The assigned tag of the fragment to be added
+     * @param newFragment DialogFragment object to be added
      */
     public static void displayDialog(Activity activity, String tag, DialogFragment newFragment) {
         
@@ -58,10 +59,9 @@ public final class DialogUtils {
     
     /**
      * @brief Dismisses a dialog with the given tag in an activity
-     * @param activity
-     *            Activity where the fragment resides
-     * @param tag
-     *            The tag of fragment for removal
+     * 
+     * @param activity Activity where the fragment resides
+     * @param tag The tag of fragment for removal
      */
     public static void dismissDialog(Activity activity, String tag) {
         

@@ -17,22 +17,28 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+/**
+ * @class PrintSettingsManager
+ * @brief Helper class for managing the database transactions of Print Settings.
+ */
 public class PrintSettingsManager {
     private static PrintSettingsManager sInstance;
     
     private DatabaseManager mManager;
     
     /**
-     * Constructor
+     * @brief Creates a PrintSettingsManager instance.
      * 
-     * @param context
+     * @param context Context object to use to manage the database.
      */
     private PrintSettingsManager(Context context) {
         mManager = new DatabaseManager(context);
     }
     
     /**
-     * @param context
+     * @brief Gets a PrintSettingsManager instance.
+     * 
+     * @param context Context object to use to manage the database.
      * @return PrintSettingsManager instance
      */
     public static PrintSettingsManager getInstance(Context context) {
@@ -43,10 +49,9 @@ public class PrintSettingsManager {
     }
     
     /**
-     * This method retrieves the Printer Settings from the database using printer ID.
+     * @brief Retrieves the Printer Settings from the database using printer ID.
      * 
-     * @param printerId
-     *            current printer ID selected
+     * @param printerId Current printer ID selected
      * @return PrintSettings object containing the values from the database
      */
     public PrintSettings getPrintSetting(int printerId) {
@@ -77,14 +82,13 @@ public class PrintSettingsManager {
     }
     
     /**
-     * This method inserts a PrintSetting entry in the database or replaces the entry if the
+     * @brief Inserts a PrintSetting entry in the database or replaces the entry if the
      * PrintSetting is already existing; and updates the Print Setting ID in the Printer table.
      * 
-     * @param printerId
-     *            current printer ID selected
-     * @param printSettings
-     *            values of the settings to be saved
-     * @return boolean result of insert/replace to DB, returns true if successful.
+     * @param printerId Current printer ID selected
+     * @param printSettings Values of the settings to be saved
+     * @retval true Insert/Replace in DB is successful.
+     * @retval false Insert/Replace in DB has failed.
      */
     public boolean saveToDB(int printerId, PrintSettings printSettings) {
         if (printerId == PrinterManager.EMPTY_ID || printSettings == null) {
@@ -108,13 +112,11 @@ public class PrintSettingsManager {
     }
     
     /**
-     * This method converts the Print Settings Values into a ContentValues object.
+     * @brief Converts the Print Settings Values into a ContentValues object.
      * 
-     * @param printerId
-     *            current printer ID selected
-     * @param printSettings
-     *            values of the settings to be saved
-     * @return content value containing the print settings
+     * @param printerId Current printer ID selected
+     * @param printSettings Values of the settings to be saved
+     * @return ContentValues object containing the print settings
      */
     private ContentValues createContentValues(int printerId, PrintSettings printSettings) {
         ContentValues cv = new ContentValues();

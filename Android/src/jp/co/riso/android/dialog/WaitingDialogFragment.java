@@ -18,20 +18,27 @@ import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 
 /**
- * To use do the ff:
- * 1. Target Fragment must implement the ConfirmDialogListener
+ * @class WaitingDialogFragment
+ * 
+ * @brief Custom Dialog Fragment class for waiting dialog
+ * 
+ * @note Generic waiting dialog. To use do the ff:
+ * 1. Target Fragment must implement the WaitingDialogFragment
  * 2. In the target fragment, add these snippet:
- *      WaitingDialogFragment dialog = new WaitingDialogFragment(<parameters>):
- *      DialogUtils.showdisplayDialog(activity, tag, dialog);
- * 3. To dismiss, simply call: dialog.dismiss();
+ *      @code 
+ *      WaitingDialogFragment dialog = WaitingDialogFragment.newInstance(<parameters>):
+ *      dialog.setTargetFragment(this, requestCode);
+ *      DialogUtils.showdisplayDialog(activity, tag, dialog); 
+ *      @endcode
+ * 3. To dismiss, call: DialogUtils.dismissDialog(activity, tag);
  */
 public class WaitingDialogFragment extends DialogFragment {
-    public static final String KEY_TITLE = "title";
-    public static final String KEY_MESSAGE = "message";
-    public static final String KEY_CANCELABLE = "cancelable";
-    public static final String KEY_NEG_BUTTON = "negButton";
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_CANCELABLE = "cancelable";
+    private static final String KEY_NEG_BUTTON = "negButton";
     
-    public static final OnKeyListener sCancelBackButtonListener;
+    private static final OnKeyListener sCancelBackButtonListener;
     
     static {
         sCancelBackButtonListener = new OnKeyListener() {
@@ -47,10 +54,13 @@ public class WaitingDialogFragment extends DialogFragment {
     }
     
     /**
-     * @param title
-     * @param message
-     * @param cancelable
-     * @param buttonTitle
+     * @brief Creates an WaitingDialogFragment instance.
+     * 
+     * @param title The text displayed as the title in the dialog
+     * @param message The text displayed as the message in the dialog
+     * @param cancelable True if the dialog is cancelable
+     * @param buttonTitle The text displayed in the button of the dialog
+     * 
      * @return WaitingDialogFragment instance
      */
     public static WaitingDialogFragment newInstance(String title, String message, boolean cancelable, String buttonTitle) {
@@ -67,7 +77,6 @@ public class WaitingDialogFragment extends DialogFragment {
         return dialog;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +84,6 @@ public class WaitingDialogFragment extends DialogFragment {
         setRetainInstance(true);
     }
     
-    /** {@inheritDoc} */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);
@@ -117,7 +125,6 @@ public class WaitingDialogFragment extends DialogFragment {
         return dialog;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onDestroyView() {
         Dialog dialog = getDialog();
@@ -131,7 +138,6 @@ public class WaitingDialogFragment extends DialogFragment {
         super.onDestroyView();
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
@@ -142,10 +148,9 @@ public class WaitingDialogFragment extends DialogFragment {
     }
     
     /**
-     * Sets the message displayed in the Progress dialog.
+     * @brief Sets the message displayed in the Progress dialog.
      * 
-     * @param msg
-     *            String to be displayed
+     * @param msg String to be displayed
      */
     public void setMessage(final String msg) {
         if (getActivity() != null) {
@@ -167,10 +172,14 @@ public class WaitingDialogFragment extends DialogFragment {
     // ================================================================================
     // Internal Classes
     // ================================================================================
-    
+    /**
+     * @interface WaitingDialogListener
+     * 
+     * @brief Interface for WaitingDialog events
+     */
     public interface WaitingDialogListener {
         /**
-         * Cancel listener
+         * @brief Called when the button is clicked or when dialog is cancelled
          */
         public void onCancel();
     }
