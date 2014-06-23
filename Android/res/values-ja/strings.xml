@@ -5,13 +5,13 @@
     <string name="default_textview">&#8230;</string>
     <string name="default_content_description">Content Description</string>
 
-    <!-- WordingList_Alpha1 -->
+    <!-- WordingList -->
     <string name="ids_app_name">RISO Smart Print</string>
     <string name="ids_app_launcher_name">Smart Print</string>
     <string name="ids_lbl_save">保存</string>
     <string name="ids_lbl_ok">OK</string>
     <string name="ids_lbl_cancel">キャンセル</string>
-    <string name="ids_lbl_no_name">No Name</string>
+    <string name="ids_lbl_no_name">名前無し</string>
     <string name="ids_lbl_delete">削除</string>
     <string name="ids_lbl_open_in_ios">ドキュメントを選択してください。</string>
     <string name="ids_lbl_open_in_android">ドキュメントを選択してください。</string>
@@ -32,13 +32,13 @@
     <string name="ids_lbl_port_raw">Raw</string>
     <string name="ids_lbl_port_lpr">LPR</string>
     <string name="ids_lbl_default_print_settings">デフォルト印刷設定</string>
-    <string name="ids_lbl_authentication">Authentication</string>
+    <string name="ids_lbl_authentication">認証</string>
     <string name="ids_lbl_login_id">ログインID</string>
     <string name="ids_lbl_print_settings">印刷設定</string>
     <string name="ids_lbl_page_displayed" formatted="false">ページ %d / %d</string>
     <string name="ids_lbl_print">印刷</string>
     <string name="ids_lbl_printer">プリンター</string>
-    <string name="ids_lbl_choose_printer">Choose Printer</string>
+    <string name="ids_lbl_choose_printer">プリンターの選択</string>
     <string name="ids_lbl_basic">基本</string>
     <string name="ids_lbl_colormode">カラーモード</string>
     <string name="ids_lbl_colormode_auto">オート</string>
@@ -100,8 +100,8 @@
     <string name="ids_lbl_booklet_finishing_fold">折り</string>
     <string name="ids_lbl_booklet_finishing_foldstaple">折り＋ステープル</string>
     <string name="ids_lbl_booklet_layout">小冊子レイアウト</string>
-    <string name="ids_lbl_booklet_layout_forward">Forward</string>
-    <string name="ids_lbl_booklet_layout_reverse">Reverse</string>
+    <string name="ids_lbl_booklet_layout_forward">順方向</string>
+    <string name="ids_lbl_booklet_layout_reverse">逆方向</string>
     <string name="ids_lbl_finishingside">とじ位置</string>
     <string name="ids_lbl_finishingside_left">左側</string>
     <string name="ids_lbl_finishingside_top">上側</string>
@@ -120,33 +120,33 @@
     <string name="ids_lbl_outputtray_facedown">フェイスダウン排紙トレイ</string>
     <string name="ids_lbl_outputtray_top">トップトレイ</string>
     <string name="ids_lbl_outputtray_stacking">スタックトレイ</string>
-    <string name="ids_lbl_secure_print">Secure Print</string>
+    <string name="ids_lbl_secure_print">暗証番号をつける</string>
     <string name="ids_lbl_pin_code">PINコード</string>
     <string name="ids_lbl_off">Off</string>
     <string name="ids_lbl_on">On</string>
     <string name="ids_lbl_help">ヘルプ</string>
     <string name="ids_lbl_legal">リーガル情報</string>
-    <string name="ids_lbl_printers_empty">No Printers</string>
-    <string name="ids_lbl_printjobhistory_empty">No Print Job History</string>
-    <string name="ids_lbl_printer_search_empty">No Printers Found</string>
-    <string name="ids_info_msg_printer_add_successful">追加に成功しました</string>
-    <string name="ids_info_msg_warning_cannot_find_printer">Warning, Cannot find Printer.</string>
+    <string name="ids_lbl_printers_empty">プリンターがありません。</string>
+    <string name="ids_lbl_printjobhistory_empty">印刷履歴がありません。</string>
+    <string name="ids_lbl_printer_search_empty">プリンターが見つかりません。</string>
+    <string name="ids_info_msg_printer_add_successful">追加しました。</string>
+    <string name="ids_info_msg_warning_cannot_find_printer">警告\nプリンターが見つかりません。</string>
     <string name="ids_info_msg_printing">印刷中&#8230;</string>
     <string name="ids_info_msg_delete_jobs_title">履歴を削除</string>
     <string name="ids_info_msg_delete_jobs">本当に削除してよろしいですか？</string>
     <string name="ids_info_msg_print_job_successful">成功しました。</string>
     <string name="ids_info_msg_print_job_failed">失敗しました。</string>
     <string name="ids_err_msg_cannot_add_printer">このプリンターはすでに登録されています。</string>
-    <string name="ids_err_msg_invalid_ip_address">IP Addressを確認してください。</string>
-    <string name="ids_err_msg_max_printer_count">Saved Printer reached maximum count.</string>
+    <string name="ids_err_msg_invalid_ip_address">IPアドレスを確認してください。</string>
+    <string name="ids_err_msg_max_printer_count">プリンターの最大登録数を超えています。</string>
     <string name="ids_err_msg_no_selected_printer">プリンターを登録してください。</string>
     <string name="ids_err_msg_pdf_wrong_password">パスワードが正しくありません。確認してください。</string>
     <string name="ids_err_msg_open_failed">ファイルが開けません。</string>
     <string name="ids_err_msg_pdf_encrypted">暗号化PDFには対応していません。</string>
-    <string name="ids_err_msg_pdf_printing_not_allowed">File does not allow printing.</string>
+    <string name="ids_err_msg_pdf_printing_not_allowed">印刷が許可されていません。</string>
     <string name="ids_err_msg_file_too_large">ファイルサイズが大きすぎます。</string>
     <string name="ids_err_msg_not_enough_space">デバイスの空き容量が不足しています。</string>
     <string name="ids_err_msg_network_error">ネットワークに接続できません。</string>
-    <string name="ids_err_msg_db_failure">The operation cannot be completed.</string>
+    <string name="ids_err_msg_db_failure">内部データにアクセスできません。\n再起動してみてください。\n再起動しても解消されない場合は、再インストールしてください。</string>
 
 </resources>
