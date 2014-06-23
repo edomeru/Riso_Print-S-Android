@@ -495,7 +495,6 @@
 {
     NSMutableArray* allAttributes = [NSMutableArray arrayWithCapacity:self.groupLayoutInfo.count];
     
-    __block int counter = 0;
     // check which groups are part of the passed CGRect
     [self.groupLayoutInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath* indexPath,
                                                               UICollectionViewLayoutAttributes* attributes,
@@ -504,11 +503,8 @@
         if (CGRectIntersectsRect(rect, attributes.frame))
         {
             [allAttributes addObject:attributes];
-            counter++;
         }
     }];
-    NSLog(@"Count: %d", counter);
-    
    
     return allAttributes;
 }
