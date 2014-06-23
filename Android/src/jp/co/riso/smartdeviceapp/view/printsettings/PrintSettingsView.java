@@ -509,7 +509,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             
             updateValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH));
             updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
-
+            
             updateValueWithConstraints(PrintSettings.TAG_IMPOSITION, getDefaultValueWithConstraints(PrintSettings.TAG_IMPOSITION));
             updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, getDefaultValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER));
             
@@ -552,8 +552,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
             if (value == Imposition.OFF.ordinal()) {
                 updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.L_R.ordinal());
-            } else {
+            } else if (mPrintSettings.isBooklet()){
                 updateValueWithConstraints(PrintSettings.TAG_BOOKLET, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET));
+                updateValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH));
+                updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
             }
             if (value == Imposition.TWO_UP.ordinal()) {
                 if (prevValue == Imposition.FOUR_UP.ordinal()) {
