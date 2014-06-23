@@ -33,11 +33,11 @@ public class PrintersListView extends ListView implements Callback {
     private Handler mHandler = null;
     
     /**
-     * Constructor
-     * <p>
+     * @brief Constructor. <br>
+     *
      * Instantiate Printers Screen ListView
      * 
-     * @param context
+     * @param context Application context
      */
     public PrintersListView(Context context) {
         super(context);
@@ -46,12 +46,12 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * Constructor
-     * <p>
+     * @brief Constructor. <br>
+     *
      * Instantiate Printers Screen ListView
      * 
-     * @param context
-     * @param attrs
+     * @param context Application context
+     * @param attrs layout attributes
      */
     public PrintersListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -60,13 +60,13 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * Constructor
-     * <p>
+     * @brief Constructor. <br>
+     *
      * Instantiate Printers Screen ListView
      * 
-     * @param context
-     * @param attrs
-     * @param defStyle
+     * @param context Application context
+     * @param attrs Layout attributes
+     * @param defStyle Layout style
      */
     public PrintersListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -74,7 +74,6 @@ public class PrintersListView extends ListView implements Callback {
         init();
     }
     
-    /** {@inheritDoc} */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int coords[] = new int[2];
@@ -145,12 +144,10 @@ public class PrintersListView extends ListView implements Callback {
     // ================================================================================
     
     /**
-     * Restore the ListView's previous state
+     * @brief Restore the ListView's previous state.
      * 
-     * @param state
-     *            ListView state
-     * @param index
-     *            delete view index
+     * @param state ListView state
+     * @param index Delete view index
      */
     public void onRestoreInstanceState(Parcelable state, int index) {
         super.onRestoreInstanceState(state);
@@ -162,7 +159,10 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * @return delete view index
+     * @brief Get the delete view index.
+     * 
+     * @return Delete view index
+     * @retval EMPTY_ID No delete item 
      */
     public int getDeleteItemPosition() {
         if (!mDeleteMode) {
@@ -176,10 +176,9 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * Reset delete view
+     * @brief Reset delete view.
      * 
-     * @param animate
-     *            Animate delete button
+     * @param animate Animate delete button
      */
     public void resetDeleteView(boolean animate) {
         if (mDeleteView != null) {
@@ -196,7 +195,7 @@ public class PrintersListView extends ListView implements Callback {
     // ================================================================================
     
     /**
-     * Initialize PrintersListView
+     * @brief Initialize PrintersListView.
      */
     private void init() {
         mDeleteAnimation = new DisplayDeleteAnimation();
@@ -204,9 +203,11 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * Checks if swipe was performed
+     * @brief Checks if swipe was performed.
      * 
-     *  @return true if swiped
+     * @param ev Event object
+     * @retval true Action is swipe to left
+     * @retval false Action is not swipe to left
      */
     private boolean checkSwipe(MotionEvent ev) {
         
@@ -248,9 +249,11 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * Process swipe event
+     * @brief Process swipe event.
      * 
-     * @param ev
+     * @param ev Event object
+     * @retval true Action is swipe to left
+     * @retval false Action is not swipe to left
      */
     private boolean processSwipe(MotionEvent ev) {
         boolean ret = false;
@@ -269,9 +272,9 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * Start delete mode
+     * @brief Start delete mode.
      * 
-     * @param view
+     * @param view View to set as delete view
      */
     private void startDeleteMode(View view) {
         if (!mDeleteMode) {
@@ -283,9 +286,9 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * End delete mode
+     * @brief End delete mode.
      * 
-     * @param view
+     * @param view Delete view
      */
     private void endDeleteMode(View view) {
         if (mDeleteMode) {
@@ -298,7 +301,7 @@ public class PrintersListView extends ListView implements Callback {
     }
     
     /**
-     * End delete mode
+     * @brief End delete mode.
      */
     private void endDeleteMode() {
         mDeleteMode = false;
@@ -308,7 +311,6 @@ public class PrintersListView extends ListView implements Callback {
     // Interface - Callback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
@@ -320,6 +322,5 @@ public class PrintersListView extends ListView implements Callback {
                 return true;
         }
         return false;
-    }
-    
+    }    
 }

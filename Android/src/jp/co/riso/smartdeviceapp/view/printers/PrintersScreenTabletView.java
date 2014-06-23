@@ -50,8 +50,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class PrintersScreenTabletView extends ViewGroup implements View.OnClickListener, OnCheckedChangeListener, Callback,
-OnItemSelectedListener {
+public class PrintersScreenTabletView extends ViewGroup implements View.OnClickListener, OnCheckedChangeListener, Callback, OnItemSelectedListener {
     private static final int MSG_ADD_PRINTER = 0x01;
     private static final int MSG_SET_UPDATE_VIEWS = 0x02;
     private static final int MIN_COLUMN = 2;
@@ -72,11 +71,11 @@ OnItemSelectedListener {
     private PauseableHandler mPauseableHandler = null;
 
     /**
-     * Constructor
-     * <p>
+     * @brief Constructor. <br>
+     *
      * Instantiate Printers Screen tablet view
      * 
-     * @param context
+     * @param context Application context
      */
     public PrintersScreenTabletView(Context context) {
         super(context);
@@ -84,12 +83,12 @@ OnItemSelectedListener {
     }
     
     /**
-     * Constructor
-     * <p>
+     * @brief Constructor. <br>
+     *
      * Instantiate Printers Screen tablet view
      * 
-     * @param context
-     * @param attrs
+     * @param context Application context
+     * @param attrs Layout attributes
      */
     public PrintersScreenTabletView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -97,32 +96,29 @@ OnItemSelectedListener {
     }
     
     /**
-     * Constructor
-     * <p>
+     * @brief Constructor. <br>
+     * 
      * Instantiate Printers Screen tablet view
      * 
-     * @param context
-     * @param attrs
-     * @param defStyle
+     * @param context Application context
+     * @param attrs Layout attributes
+     * @param defStyle Layout styles
      */
     public PrintersScreenTabletView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }
     
-    /** {@inheritDoc} */
     @Override
     protected LayoutParams generateLayoutParams(LayoutParams layoutParams) {
         return new MarginLayoutParams(layoutParams);
     }
     
-    /** {@inheritDoc} */
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);
     }
     
-    /** {@inheritDoc} */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -156,7 +152,6 @@ OnItemSelectedListener {
         setMeasuredDimension(screenWidth, childHeight * numberOfRow);
     }
     
-    /** {@inheritDoc} */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         final int childCount = getChildCount();
@@ -184,7 +179,6 @@ OnItemSelectedListener {
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int coords[] = new int[2];
@@ -215,12 +209,10 @@ OnItemSelectedListener {
     // ================================================================================
     
     /**
-     * Add Printer.
-     * <p>
-     * Add printer to the Printers Screen
+     * @brief Add printer to the Printers Screen.
      * 
-     * @param printer
-     *            Printer object
+     * @param printer Printer object
+     * @param isOnline Printer online status
      */
     public void onAddedNewPrinter(Printer printer, boolean isOnline) {
         Message newMessage = Message.obtain(mHandler, MSG_ADD_PRINTER);
@@ -234,10 +226,11 @@ OnItemSelectedListener {
     }
     
     /**
-     * Restore the Printers Screen previous state
+     * @brief Restore the Printers Screen previous state.
      * 
-     * @param printer
-     * @param deleteItem
+     * @param printer Printer object
+     * @param deleteItem Delete item index
+     * @param settingItem Default Print Setting item
      */
     public void restoreState(List<Printer> printer, int deleteItem, int settingItem) {
         mPrinterList = printer;
@@ -252,7 +245,9 @@ OnItemSelectedListener {
     }
     
     /**
-     * @return delete view index
+     * @brief Get the delete view index.
+     * 
+     * @return Delete view index
      */
     public int getDeleteItemPosition() {
         if (mDeleteViewHolder != null) {
@@ -263,17 +258,22 @@ OnItemSelectedListener {
     
     
     /**
+     * @brief Get the index of the selected printer having an opened Default Print Settings.
+     * 
      * @return Index of the selected default print settings
+     * @retval EMPTY_ID No selected printers having an opened Default Print Settings
      */
     public int getDefaultSettingSelected() {
         return mSettingItem;
     }
     
     /**
-     * Sets the selected state of a Printer's default setting
+     * @brief Sets the selected state of a Printer. <br>
      * 
-     * @param boolean
-     *            is in selected state
+     * This selected state is set when Default Print Settings is pressed.
+     * 
+     * @param printerId Printer ID of the selected printer
+     * @param state Selected state of the Printer
      */
     public void setDefaultSettingSelected (int printerId, boolean state) {
         if (printerId != PrinterManager.EMPTY_ID) {
@@ -292,17 +292,18 @@ OnItemSelectedListener {
     }
 
     /**
-     * Sets the PrintersViewCallback function
+     * @brief Sets the PrintersViewCallback function.
      * 
-     * @param callback
-     *            Callback function
+     * @param callback Callback function
      */
     public void setPrintersViewCallback (PrintersViewCallback callback) {
         mCallbackRef = new WeakReference<PrintersViewCallback>(callback);
     }
     
     /**
-     * This function is called when deletion of the printer view is confirmed
+     * @brief This function is called when deletion of the printer view is confirmed.
+     * 
+     * @param relayout Re-layout the entire view
      */
     public void confirmDeletePrinterView(boolean relayout) {
         if (mDeleteViewHolder == null) {
@@ -320,7 +321,7 @@ OnItemSelectedListener {
     }
     
     /**
-     * This function is called when deletion of the printer view is confirmed
+     * @brief This function is called when deletion of the printer view is confirmed.
      */
     public void resetDeletePrinterView() {
         if (mDeleteViewHolder != null) {
@@ -330,9 +331,9 @@ OnItemSelectedListener {
     }
     
     /**
-     * Set the pausable handler object
+     * @brief Set the pausable handler object.
      * 
-     * @param handler
+     * @param handler Pausable handler
      */
     public void setPausableHandler(PauseableHandler handler) {
         mPauseableHandler = handler;
@@ -343,9 +344,9 @@ OnItemSelectedListener {
     // ================================================================================
     
     /**
-     * Initialize PrinterScreenTabletView
+     * @brief Initialize PrinterScreenTabletView.
      * 
-     * @param context
+     * @param context Application context
      */
     private void init(Context context) {
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
@@ -353,10 +354,9 @@ OnItemSelectedListener {
     }
     
     /**
-     * Set view holder to normal
+     * @brief Set view holder to normal.
      * 
-     * @param viewHolder
-     *            view holder to set as normal
+     * @param viewHolder View holder to set as normal.
      */
     private void setPrinterViewToNormal(ViewHolder viewHolder) {
         if (viewHolder == null) {
@@ -374,10 +374,9 @@ OnItemSelectedListener {
     }
     
     /**
-     * Set view holder to default
+     * @brief Set view holder to default.
      * 
-     * @param viewHolder
-     *            view holder to set as default
+     * @param viewHolder View holder to set as default
      */
     private void setPrinterViewToDefault(ViewHolder viewHolder) {
         if (viewHolder == null) {
@@ -405,10 +404,9 @@ OnItemSelectedListener {
     }
     
     /**
-     * Reset view holder
+     * @brief Reset view holder.
      * 
-     * @param viewHolder
-     *            view holder to reset
+     * @param viewHolder View holder to reset
      */
     private void setPrinterView(ViewHolder viewHolder) {
         Printer printer = (Printer) viewHolder.mIpAddress.getTag();
@@ -421,10 +419,10 @@ OnItemSelectedListener {
     }
     
     /**
-     * Adds printer object to the Printers Screen
+     * @brief Adds printer object to the Printers Screen.
      * 
-     * @param printer
-     *            printer object
+     * @param printer Printer object
+     * @param isOnline Printer online status
      */
     private void addToTabletPrinterScreen(Printer printer, boolean isOnline) {
         if (printer == null) {
@@ -496,7 +494,6 @@ OnItemSelectedListener {
     // INTERFACE - onClick
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         Printer printer = null;
@@ -544,7 +541,6 @@ OnItemSelectedListener {
     // INTERFACE - onCheckedChanged
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         ViewHolder viewHolder = (ViewHolder) buttonView.getTag();
@@ -571,7 +567,6 @@ OnItemSelectedListener {
     // INTERFACE - Callback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
@@ -599,7 +594,6 @@ OnItemSelectedListener {
     // INTERFACE - onItemSelected
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         Printer printer = (Printer) parentView.getTag();
@@ -615,7 +609,6 @@ OnItemSelectedListener {
         mPrinterManager.updatePortSettings(printer.getId(), port);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onNothingSelected(AdapterView<?> parentView) {
         // Do nothing
@@ -627,14 +620,13 @@ OnItemSelectedListener {
     // ================================================================================
     
     /**
-     * Printers Screen Interface
+     * @brief Printers Screen Interface.
      */
     public interface PrintersViewCallback {
         /**
-         * Dialog which is displayed to confirm printer delete
+         * @brief Dialog which is displayed to confirm printer delete.
          * 
-         * @param printer
-         *            Printer to be deleted
+         * @param printer Printer to be deleted
          */
         public void onPrinterDeleteClicked(Printer printer);
     }
@@ -644,7 +636,7 @@ OnItemSelectedListener {
     // ================================================================================
     
     /**
-     * Printers Screen view holder for tablet
+     * @brief Printers Screen view holder for tablet.
      */
     public class ViewHolder {
         private ImageView mOnlineIndcator;

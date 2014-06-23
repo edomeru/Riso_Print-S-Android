@@ -19,14 +19,11 @@ import android.graphics.Rect;
 public final class ImageUtils {
     
     /**
-     * Render Bitmap to Canvas
+     * @brief Render Bitmap to Canvas.
      * 
-     * @param bmp
-     *            bitmap image
-     * @param canvas
-     *            canvas
-     * @param color
-     *            color
+     * @param bmp Bitmap image
+     * @param canvas Canvas where the image will be rendered
+     * @param color Render colored image
      */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color) {
         if(canvas == null) {
@@ -36,16 +33,12 @@ public final class ImageUtils {
     }
     
     /**
-     * Render Bitmap to Canvas
+     * @brief Render Bitmap to Canvas.
      * 
-     * @param bmp
-     *            bitmap image
-     * @param canvas
-     *            canvas
-     * @param color
-     *            color
-     * @param rect
-     *            rectangular coordinates
+     * @param bmp Bitmap image
+     * @param canvas Canvas where the image will be rendered
+     * @param color Render colored image
+     * @param rect Rectangular coordinates
      */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, Rect rect) {
         if (bmp == null || rect == null) {
@@ -61,48 +54,31 @@ public final class ImageUtils {
     }
     
     /**
-     * Render Bitmap to Canvas
+     * @brief Render Bitmap to Canvas.
      * 
-     * @param bmp
-     *            bitmap image
-     * @param canvas
-     *            canvas
-     * @param color
-     *            color
-     * @param x
-     *            x coordinates
-     * @param y
-     *            y coordinates
-     * @param rotate
-     *            rotation
-     * @param scale
-     *            scale
+     * @param bmp Bitmap image
+     * @param canvas Canvas where the image will be rendered
+     * @param color Render colored image
+     * @param x x-coordinates
+     * @param y y-coordinates
+     * @param rotate Image rotation
+     * @param scale Scale
      */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, int x, int y, float rotate, float scale) {
         renderBmpToCanvas(bmp, canvas, color, x, y, rotate, scale, scale);
     }
     
     /**
-     * Render Bitmap to Canvas
+     * @brief Render Bitmap to Canvas.
      * 
-     * @param bmp
-     *            bitmap image
-     * @param canvas
-     *            canvas
-     * @param color
-     *            color
-     * @param x
-     *            x coordinates
-     * @param y
-     *            y coordinates
-     * @param rotate
-     *            rotation
-     * @param scale
-     *            scale
-     * @param scaleX
-     *            scale of x-axis
-     * @param scaleY
-     *            scale of y-axis
+     * @param bmp Bitmap image
+     * @param canvas Canvas where the image will be rendered
+     * @param color Render colored image
+     * @param x x-coordinates
+     * @param y y-coordinates
+     * @param rotate Image rotation
+     * @param scaleX Scale of x-axis
+     * @param scaleY Scale of y-axis
      */
     public static void renderBmpToCanvas(Bitmap bmp, Canvas canvas, boolean color, int x, int y, float rotate, float scaleX, float scaleY) {
         if (bmp == null || canvas == null) {

@@ -31,11 +31,11 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     private int mLayoutId = 0;
 
     /**
-     * Constructor
+     * @brief Constructor.
      * 
-     * @param context
-     * @param resource
-     * @param values
+     * @param context Application context
+     * @param resource Resource ID to be used as a printer row
+     * @param values Printers list
      */
     public PrinterArrayAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
@@ -44,7 +44,6 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         mDeleteViewHolder = null;
     }
     
-    /** {@inheritDoc} */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -103,24 +102,22 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         return convertView;
     }
     
-    /** {@inheritDoc} */
     @Override
     public boolean isEnabled(int position) {
         return false;
     }
     
     /**
-     * Sets the PrinterArrayAdapterInterface function
+     * @brief Sets the PrinterArrayAdapterInterface function.
      * 
-     * @param callback
-     *            Callback function
+     * @param callback Callback function
      */
     public void setPrintersArrayAdapterInterface (PrinterArrayAdapterInterface callback) {
         mCallbackRef = new WeakReference<PrinterArrayAdapterInterface>(callback);
     }
       
     /**
-     * This function is called to reset the delete view
+     * @brief This function is called to reset the delete view.
      */
     public void resetDeletePrinterView() {
         if (mDeleteViewHolder != null) {
@@ -135,10 +132,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // ================================================================================
     
     /**
-     * Set the view to delete
+     * @brief Set the view to delete.
      * 
-     * @param convertView
-     *            view to set as delete view
+     * @param convertView View to set as delete view
      */
     public void setPrinterRowToDelete(View convertView) {
         if (convertView == null) {
@@ -151,10 +147,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     }
     
     /**
-     * Reset the view
+     * @brief Reset the view.
      * 
-     * @param convertView
-     *            view to reset
+     * @param convertView View to reset
      */
     public void setPrinterRow(View convertView) {
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
@@ -172,10 +167,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // ================================================================================
     
     /**
-     * Set the view holder to normal
+     * @brief Set the view holder to normal.
      * 
-     * @param viewHolder
-     *            view holder to set as normal view
+     * @param viewHolder View holder to set as normal view
      */
     private void setPrinterRowToNormal(ViewHolder viewHolder) {
         if (viewHolder == null) {
@@ -193,10 +187,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     }
     
     /**
-     * Set the view holder to default
+     * @brief Set the view holder to default.
      * 
-     * @param viewHolder
-     *            view holder to set as default view
+     * @param viewHolder View holder to set as default view
      */
     private void setPrinterRowToDefault(ViewHolder viewHolder) {
         if (viewHolder == null) {
@@ -210,7 +203,6 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // INTERFACE - View.OnClick
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         
@@ -236,22 +228,20 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // ================================================================================
     
     /**
-     * PrinterArrayAdapter Interface
+     * @brief PrinterArrayAdapter Interface.
      */
     public interface PrinterArrayAdapterInterface {
         /**
-         * Dialog which is displayed to confirm printer delete
+         * @brief Dialog which is displayed to confirm printer delete.
          * 
-         * @param printer
-         *            Printer to be deleted
+         * @param printer Printer to be deleted
          */
         public void onPrinterDeleteClicked(Printer printer);
         
         /**
-         * Display the PrinterInfoFragment of the corresponding printer item clicked
+         * @brief Display the PrinterInfoFragment of the corresponding printer item clicked.
          * 
-         * @param fragment
-         *            PrinterInfoFragment to be displayed
+         * @param printer PrinterInfoFragment to be displayed
          */
         public void onPrinterListClicked(Printer printer);
     }
@@ -261,7 +251,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // ================================================================================
     
     /**
-     * Printers Screen view holder for phone
+     * @brief Printers Screen view holder for phone.
      */
     public class ViewHolder {
         private TextView mPrinterName;

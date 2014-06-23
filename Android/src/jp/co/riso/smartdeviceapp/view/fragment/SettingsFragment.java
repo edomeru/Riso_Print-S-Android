@@ -28,19 +28,16 @@ import android.widget.TextView;
 
 public class SettingsFragment extends BaseFragment {
     
-    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_settings;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -60,7 +57,6 @@ public class SettingsFragment extends BaseFragment {
         resizeView(view);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -69,7 +65,6 @@ public class SettingsFragment extends BaseFragment {
         addActionMenuButton(view);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -92,10 +87,9 @@ public class SettingsFragment extends BaseFragment {
     // ================================================================================
     
     /**
-     * Updates the view width
+     * @brief Updates the view width.
      * 
-     * @param view
-     *            Container of the view to be updated
+     * @param view Container of the view to be updated
      */
     private void resizeView(View view) {
         if (!isTablet()) {
@@ -120,19 +114,16 @@ public class SettingsFragment extends BaseFragment {
         private String mPrefKey;
         
         /**
-         * Constructor
+         * @brief Constructor.
          * 
-         * @param context
-         *            Context
-         * @param prefKey
-         *            Shared preference key
+         * @param context Context
+         * @param prefKey Shared preference key
          */
         public SharedPreferenceTextWatcher(Context context, String prefKey) {
             mContext = context;
             mPrefKey = prefKey;
         }
 
-        /** {@inheritDoc} */
         @Override
         public synchronized void afterTextChanged(Editable s) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -141,12 +132,10 @@ public class SettingsFragment extends BaseFragment {
             editor.apply();
         }
 
-        /** {@inheritDoc} */
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
-        /** {@inheritDoc} */
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         }

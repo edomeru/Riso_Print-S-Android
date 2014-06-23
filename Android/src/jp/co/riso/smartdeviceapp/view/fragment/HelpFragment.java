@@ -20,13 +20,11 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 public class HelpFragment extends BaseWebFragment {
-    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_helplegal;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -35,7 +33,6 @@ public class HelpFragment extends BaseWebFragment {
         addActionMenuButton(view);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void configureWebView(WebView webView) {
         webView.setWebViewClient(new WebViewClient() {
@@ -54,7 +51,6 @@ public class HelpFragment extends BaseWebFragment {
         });
     }
     
-    /** {@inheritDoc} */
     @Override
     public String getUrlString() {
         String htmlFolder = getString(R.string.html_folder);

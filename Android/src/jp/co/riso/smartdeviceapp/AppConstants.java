@@ -8,6 +8,9 @@
 
 package jp.co.riso.smartdeviceapp;
 
+/**
+ * @brief Application Constants
+ */
 public class AppConstants {
     public static final boolean DEBUG = false;
     public static final boolean INITIAL_DB = false;

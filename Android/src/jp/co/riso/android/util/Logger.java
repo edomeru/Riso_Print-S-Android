@@ -57,15 +57,13 @@ public class Logger {
     }
     
     /**
-     * Logs a VERBOSE message.
+     * @brief Logs a VERBOSE message. <br>
+     * 
      * Logs a formatted string, using the supplied format and arguments.
      * 
-     * @param cls
-     *            Calling class. Will be used as Log's TAG
-     * @param format
-     *            the format string
-     * @param args
-     *            the list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
+     * @param cls Calling class. Will be used as Log's TAG
+     * @param format The format string
+     * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     public static void logVerbose(Class<?> cls, String format, Object...args) {
         if (cls == null || sLogLevel > LOGLEVEL_VERBOSE) {
@@ -77,15 +75,13 @@ public class Logger {
     }
 
     /**
-     * Logs a DEBUG message.
+     * @brief Logs a DEBUG message. <br>
+     * 
      * Logs a formatted string, using the supplied format and arguments.
      * 
-     * @param cls
-     *            Calling class. Will be used as Log's TAG
-     * @param format
-     *            the format string
-     * @param args
-     *            the list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
+     * @param cls Calling class. Will be used as Log's TAG
+     * @param format The format string
+     * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     public static void logDebug(Class<?> cls, String format, Object...args) {
         if (cls == null || sLogLevel > LOGLEVEL_DEBUG) {
@@ -97,15 +93,13 @@ public class Logger {
     }
 
     /**
-     * Logs a INFO message.
+     * @brief Logs a INFO message. <br>
+     * 
      * Logs a formatted string, using the supplied format and arguments.
      * 
-     * @param cls
-     *            Calling class. Will be used as Log's TAG
-     * @param format
-     *            the format string
-     * @param args
-     *            the list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
+     * @param cls Calling class. Will be used as Log's TAG
+     * @param format The format string
+     * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     public static void logInfo(Class<?> cls, String format, Object...args) {
         if (cls == null || sLogLevel > LOGLEVEL_INFO) {
@@ -117,15 +111,13 @@ public class Logger {
     }
 
     /**
-     * Logs a WARN message.
+     * @brief Logs a WARN message. <br>
+     * 
      * Logs a formatted string, using the supplied format and arguments.
      * 
-     * @param cls
-     *            Calling class. Will be used as Log's TAG
-     * @param format
-     *            the format string
-     * @param args
-     *            the list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
+     * @param cls Calling class. Will be used as Log's TAG
+     * @param format The format string
+     * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     public static void logWarn(Class<?> cls, String format, Object...args) {
         if (cls == null || sLogLevel > LOGLEVEL_WARN) {
@@ -137,15 +129,13 @@ public class Logger {
     }
 
     /**
-     * Logs a ERROR message.
+     * @brief Logs a ERROR message. <br>
+     * 
      * Logs a formatted string, using the supplied format and arguments.
      * 
-     * @param cls
-     *            Calling class. Will be used as Log's TAG
-     * @param format
-     *            the format string
-     * @param args
-     *            the list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
+     * @param cls Calling class. Will be used as Log's TAG
+     * @param format The format string
+     * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     public static void logError(Class<?> cls, String format, Object...args) {
         if (cls == null || sLogLevel > LOGLEVEL_ERROR) {
@@ -157,15 +147,13 @@ public class Logger {
     }
 
     /**
-     * Logs a WTF message.
+     * @brief Logs a WTF message. <br>
+     * 
      * Logs a formatted string, using the supplied format and arguments.
      * 
-     * @param cls
-     *            Calling class. Will be used as Log's TAG
-     * @param format
-     *            the format string
-     * @param args
-     *            the list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
+     * @param cls Calling class. Will be used as Log's TAG
+     * @param format The format string
+     * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     public static void logAssert(Class<?> cls, String format, Object...args) {
         if (cls == null || sLogLevel > LOGLEVEL_ASSERT) {
@@ -177,14 +165,11 @@ public class Logger {
     }
     
     /**
-     * Starts a Log Time sequence
+     * @brief Starts a Log Time sequence.
      * 
-     * @param context
-     *            Valid context
-     * @param cls
-     *            Calling class, will be used as identifier
-     * @param processName
-     *            Process Name, will be used as identifier
+     * @param context Valid context
+     * @param cls Calling class, will be used as identifier
+     * @param processName Process Name, will be used as identifier
      */
     public static void logStartTime(Context context, Class<?> cls, String processName) {
         if (!sPerfLogs || context == null || cls == null || processName == null || processName.isEmpty()) {
@@ -214,14 +199,11 @@ public class Logger {
     }
     
     /**
-     * Stops a Log Time sequence
+     * @brief Stops a Log Time sequence.
      * 
-     * @param context
-     *            Valid context
-     * @param cls
-     *            Calling class, will be used as identifier
-     * @param processName
-     *            Process Name, will be used as identifier
+     * @param context Valid context
+     * @param cls Calling class, will be used as identifier
+     * @param processName Process Name, will be used as identifier
      */
     public static void logStopTime(Context context, Class<?> cls, String processName) {
         if (!sPerfLogs || context == null || cls == null) {
@@ -258,10 +240,9 @@ public class Logger {
     }
     
     /**
-     * Gets the entire log string from file
+     * @brief Gets the entire log string from file.
      * 
-     * @param context
-     *            Valid context
+     * @param context Valid context
      * @return String containing the log
      */
     public static String getLogString(Context context) {
@@ -288,12 +269,10 @@ public class Logger {
     }
     
     /**
-     * Writes the message to the log text file
+     * @brief Writes the message to the log text file.
      * 
-     * @param context
-     *            Valid context
-     * @param msg
-     *            Message to be written
+     * @param context Valid context
+     * @param msg Message to be written
      */
     protected static void writeToFile(Context context, String msg) {
         if (context == null) {
@@ -314,10 +293,9 @@ public class Logger {
     }
     
     /**
-     * Get the current logger's folder string
+     * @brief Get the current logger's folder string.
      * 
-     * @param context
-     *            Valid context
+     * @param context Valid context
      * @return File containing the folder path.
      */
     protected static File getFolderString(Context context) {
@@ -329,12 +307,10 @@ public class Logger {
     }
 
     /**
-     * Creates the log message, and throws unnecessary exceptions
+     * @brief Creates the log message, and throws unnecessary exceptions.
      * 
-     * @param format
-     *            the format string
-     * @param args
-     *            the list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
+     * @param format The format string
+     * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     private static String formatMessage(String format, Object...args) {
         try {
@@ -347,7 +323,7 @@ public class Logger {
     }
 
     /**
-     * Runs a background task which deletes the application logs.
+     * @brief Runs a background task which deletes the application logs.
      */
     public static void runDeleteTask(Context context) {
         if (context == null) {

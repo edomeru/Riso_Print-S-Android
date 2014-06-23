@@ -42,12 +42,11 @@ public final class AppUtils {
     public static final String CONST_ASSET_PATH = "file:///android_asset/";
     
     /**
-     * Creates an activity intent launcher
+     * @brief Creates an activity intent launcher.
      * 
-     * @param context
-     *            Application Context
-     * @param cls
-     *            Activity class
+     * @param context Application Context
+     * @param cls Activity class
+     * 
      * @return Intent generated
      */
     public static Intent createActivityIntent(Context context, Class<?> cls) {
@@ -62,7 +61,7 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the 2 character locale code based on the current Locale. (e.g., en, ja, etc)
+     * @brief Gets the 2 character locale code based on the current Locale. (e.g., en, ja, etc)
      * 
      * @return Locale Code String
      */
@@ -74,10 +73,10 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the Application package name
+     * @brief Gets the Application package name.
      * 
-     * @param context
-     *            Application Context
+     * @param context Application Context
+     * 
      * @return Package name of the application
      */
     public static String getApplicationPackageName(Context context) {
@@ -89,12 +88,12 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the Application install date using the package manager
+     * @brief Gets the Application install date using the package manager.
      * 
-     * @param context
-     *            Application Context
+     * @param context Application Context
+     * @param packageName Package name
      * 
-     * @return Time in millis of the the last install date
+     * @return Time in millisecond of the the last install date
      */
     public static long getApplicationLastInstallDate(Context context, String packageName) throws NameNotFoundException {
         if (context == null) {
@@ -117,10 +116,9 @@ public final class AppUtils {
     }
     
     /**
-     * Forcibly dismisses the Softkeyboard
+     * @brief Forcibly dismisses the Softkeyboard.
      * 
-     * @param activity
-     *            Valid activity
+     * @param activity Valid activity
      */
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -130,12 +128,11 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the Screen Dimensions of the Device
+     * @brief Gets the Screen Dimensions of the Device.
      * 
-     * @param activity
-     *            Valid activity
+     * @param activity Valid activity
      * 
-     * @return Screen size
+     * @return Screen dimensions
      */
     public static Point getScreenDimensions(Activity activity) {
         if (activity == null) {
@@ -151,14 +148,13 @@ public final class AppUtils {
     }
     
     /**
-     * Checks whether the asset exists
+     * @brief Checks whether the asset exists.
      * 
-     * @param context
-     *            Valid Context
-     * @param assetFile
-     *            Relative path of the asset (from assets/)
+     * @param context Valid Context
+     * @param assetFile Relative path of the asset (from assets/)
      * 
-     * @return Whether the asset exists or not
+     * @retval true The asset exists
+     * @retval false The asset does not exist
      */
     public static String getFileContentsFromAssets(Context context, String assetFile) {
         if (context == null) {
@@ -186,14 +182,13 @@ public final class AppUtils {
     }
     
     /**
-     * Checks whether the asset exists
+     * @brief Checks whether the asset exists.
      * 
-     * @param context
-     *            Valid Context
-     * @param assetFile
-     *            Relative path of the asset (from assets/)
+     * @param context Valid Context
+     * @param assetFile Relative path of the asset (from assets/)
      * 
-     * @return Whether the asset exists or not
+     * @retval true The asset exists
+     * @retval false The asset does not exist
      */
     public static boolean assetExists(Context context, String assetFile) {
         if (context == null || assetFile == null) {
@@ -214,14 +209,11 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the relative localized path
+     * @brief Gets the relative localized path.
      * 
-     * @param context
-     *            Valid Context
-     * @param folder
-     *            Directory of the file for localization
-     * @param resource
-     *            File to be opened
+     * @param context Valid Context
+     * @param folder Directory of the file for localization
+     * @param resource File to be opened
      * 
      * @return Localized relative path of the asset file
      */
@@ -246,14 +238,11 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the full localized path
+     * @brief Gets the full localized path.
      * 
-     * @param context
-     *            Valid Context
-     * @param folder
-     *            Directory of the file for localization
-     * @param resource
-     *            File to be opened
+     * @param context Valid Context
+     * @param folder Directory of the file for localization
+     * @param resource File to be opened
      * 
      * @return Localized full path of the asset file
      */
@@ -268,13 +257,12 @@ public final class AppUtils {
     }
     
     /**
-     * Change children font. <br>
+     * @brief Change children font <br>
+     * 
      * Note: Known issue on Jellybean ellipsize="middle" when using custom font
      * 
-     * @param v
-     *            ViewGroup to be changed
-     * @param font
-     *            font to be set
+     * @param v ViewGroup to be changed
+     * @param font Font to be set
      */
     // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
     protected static void changeChildrenFont(ViewGroup v, Typeface font) {
@@ -314,15 +302,13 @@ public final class AppUtils {
     }
     
     /**
-     * Dynamically retrieve resource Id
+     * @brief Dynamically retrieve resource Id
      * 
-     * @param variableName
-     *            variable name
-     * @param c
-     *            Class
-     * @param defaultId
-     *            default resource ID
+     * @param variableName Variable name
+     * @param c Class
+     * @param defaultId Default resource ID
      * 
+     * @return Resource ID
      */
     // http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
     public static int getResourseId(String variableName, Class<?> c, int defaultId) {
@@ -346,16 +332,13 @@ public final class AppUtils {
     }
     
     /**
-     * Get fit to aspect ratio size
+     * @brief Get fit to aspect ratio size
      * 
-     * @param srcWidth
-     *            Source width
-     * @param srcHeight
-     *            Source height
-     * @param destWidth
-     *            Destination width
-     * @param destHeight
-     *            Destination height
+     * @param srcWidth Source width
+     * @param srcHeight Source height
+     * @param destWidth Destination width
+     * @param destHeight Destination height
+     * 
      * @return New width and height
      */
     public static int[] getFitToAspectRatioSize(float srcWidth, float srcHeight, int destWidth, int destHeight) {
@@ -378,11 +361,12 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the next integer multiple
+     * @brief Gets the next integer multiple
      * 
-     * @param n
-     * @param m
-     * @return next multiple of m of n 
+     * @param n First Factor
+     * @param m Second Factor
+     * 
+     * @return Next multiple of m and n 
      */
     public static int getNextIntegerMultiple(int n, int m) {
         if (m == 0) {
@@ -398,15 +382,14 @@ public final class AppUtils {
     }
     
     /**
-     * Checks if x and y is inside the view coordinates
+     * @brief Checks if x and y is inside the view coordinates
      * 
-     * @param view
-     *            View to check
-     * @param x
-     *            MotionEvent.getRawX();
-     * @param y
-     *            MotionEvent.getRawX();
-     * @return Whether x and y is inside the View.
+     * @param view View to check
+     * @param x MotionEvent.getRawX();
+     * @param y MotionEvent.getRawY();
+     * 
+     * @retval true x and y is inside the View.
+     * @retval false x and y is outside the View.
      */
     public static boolean checkViewHitTest(View view, int x, int y) {
         if (view == null) {
@@ -426,10 +409,10 @@ public final class AppUtils {
     }
     
     /**
-     * Gets Secure Print, Login ID and PIN Code from preferences
+     * @brief Gets Secure Print, Login ID and PIN Code from preferences
      * and returns formatted string if Secure Print is ON
      * 
-     * @return authentication String
+     * @return Authentication String
      */
     public static String getAuthenticationString() {
         StringBuffer strBuf = new StringBuffer();
@@ -454,7 +437,7 @@ public final class AppUtils {
     }
     
     /**
-     * Get the owner name based on the Log-in ID from Settings screen
+     * @brief Get the owner name based on the Log-in ID from Settings screen
      * 
      * @return Owner name
      */

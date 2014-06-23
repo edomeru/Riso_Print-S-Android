@@ -74,13 +74,11 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private Runnable mUpdateOnlineStatus = null;
     private TextView mEmptyPrintersText;
     
-    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printers;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
@@ -100,7 +98,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         };
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         
@@ -135,7 +132,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         mDeleteItem = PrinterManager.EMPTY_ID;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -145,7 +141,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         addActionMenuButton(view);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
@@ -163,7 +158,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();
@@ -183,7 +177,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         
     }
 
-    /** {@inheritDoc} */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -197,7 +190,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onPause() {
         super.onPause();
@@ -208,10 +200,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Sets the selected state of a Printer's default setting in tablet view
+     * @brief Sets the selected state of a Printer's default setting in tablet view.
      * 
-     * @param boolean
-     *            Printer is in selected state
+     * @param state Set Printer to selected state
      */
     public void setDefaultSettingSelected(boolean state) {
         if (mPrinterTabletView != null) {
@@ -219,7 +210,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void clearIconStates() {
         super.clearIconStates();
@@ -234,7 +224,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // ================================================================================
     
     /**
-     * Displays the Printer Search Screen
+     * @brief Displays the Printer Search Screen.
      */
     private void displayPrinterSearchFragment() {
         if (isMaxPrinterCountReached()) {
@@ -249,7 +239,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Displays the Add Printer Screen
+     * @brief Displays the Add Printer Screen.
      */
     private void displayAddPrinterFragment() {
         if (isMaxPrinterCountReached()) {
@@ -264,10 +254,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Displays the Printer Info Screen
+     * @brief Displays the Printer Info Screen.
      * 
-     * @param printer
-     *            Printer to be displayed in the PrinterInfo Screen
+     * @param printer Printer to be displayed in the PrinterInfo Screen
      */
     private void displayPrinterInfoFragment(Printer printer) {
         PrinterInfoFragment fragment = new PrinterInfoFragment();
@@ -276,22 +265,19 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Displays the Default Print Settings Screen
+     * @brief Displays the Default Print Settings Screen.
      * 
-     * @param fragment
-     *            Default Print Settings Fragment
+     * @param fragment Default Print Settings Fragment
      */
     private void displayDefaultPrintSettings(PrintSettingsFragment fragment) {
         switchToFragment(fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
     }
 
     /**
-     * Switch to a fragment
+     * @brief Switch to a fragment.
      * 
-     * @param fragment
-     *            Fragment object
-     * @param tag
-     *            Fragment tag
+     * @param fragment Fragment object
+     * @param tag Fragment tag
      */
     private void switchToFragment(BaseFragment fragment, String tag) {
         FragmentManager fm = getFragmentManager();
@@ -313,9 +299,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Determines if the maximum number of saved printers is reached
+     * @brief Determines if the maximum number of saved printers is reached.
      * 
-     * @return true if maximum printer count is reached
+     * @retval true Maximum printer count is reached
+     * @retval false Maximum printer count is not yet reached
      */
     private boolean isMaxPrinterCountReached() {
         if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
@@ -330,7 +317,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Updates the online status for the whole view
+     * @brief Updates the online status for the whole view.
      */
     private void updateOnlineStatus() {
         int childCount = 0;
@@ -360,7 +347,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Displays empty message, hides printers view and stops updates of online status
+     * @brief Displays empty message, hides printers view and stops updates of online status.
      */
     private void showEmptyText() {
         mPauseableHandler.removeCallbacks(mUpdateOnlineStatus);
@@ -374,7 +361,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Displays printers view, hides empty message and starts updates of online status
+     * @brief Displays printers view, hides empty message and starts updates of online status.
      */
     private void showPrintersView() {
         mPauseableHandler.post(mUpdateOnlineStatus);
@@ -388,7 +375,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * Dialog which is displayed during failed DB access
+     * @brief Dialog which is displayed during failed DB access.
      */
     private void dialogErrCb() {
         String title = getResources().getString(R.string.ids_lbl_printers);
@@ -402,7 +389,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - View.OnClickListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {        
         switch (v.getId()) {
@@ -443,7 +429,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - PrintersCallback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onAddedNewPrinter(Printer printer, boolean isOnline) {
         Message newMessage = Message.obtain(mPauseableHandler, MSG_ADD_NEW_PRINTER);
@@ -456,7 +441,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - PrintersViewCallback/PrinterArrayAdapterInterface 
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onPrinterDeleteClicked(Printer printer) {
         String title = getResources().getString(R.string.ids_lbl_printer);
@@ -471,7 +455,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onPrinterListClicked(Printer printer) {
         if (mPauseableHandler != null) {
@@ -485,7 +468,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - ConfirmDialogListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onConfirm() {
         if (isTablet()) {
@@ -510,7 +492,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onCancel() {
         if (isTablet()) {
@@ -526,14 +507,12 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public boolean storeMessage(Message message) {
         return message.what != ID_MENU_ACTION_ADD_BUTTON && message.what != ID_MENU_ACTION_SEARCH_BUTTON && message.what != ID_MENU_ACTION_BUTTON
                 && message.what != MSG_SUBMENU_BUTTON && message.what != MSG_PRINTSETTINGS_BUTTON;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void processMessage(Message msg) {
         switch (msg.what) {

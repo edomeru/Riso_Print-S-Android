@@ -14,10 +14,11 @@ public class JniUtils {
     public static native String validateIp(String ipAddress);
     
     /**
-     * Validate IP Address
+     * @brief Validate IP Address
      * 
-     * @param ipAddress
-     * @return Validated IP Address.
+     * @param ipAddress IP Address
+     * @return Validated IP Address
+     * @retval null ipAddress is an invalid IP Address
      */
     public static String validateIpAddress(String ipAddress) {
         ipAddress = NetUtils.validateIpAddress(ipAddress);

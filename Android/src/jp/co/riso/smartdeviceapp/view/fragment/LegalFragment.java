@@ -30,13 +30,11 @@ public class LegalFragment extends BaseWebFragment {
     public static final String JS_REPLACE_FORMAT = "javascript:document.getElementById('%s').innerHTML='%s';";
     public static final String VERSION_HTML_ID = "localize_version";
     
-    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_helplegal;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
@@ -45,7 +43,6 @@ public class LegalFragment extends BaseWebFragment {
         addActionMenuButton(view);
     }
     
-    /** {@inheritDoc} */
     @SuppressLint("NewApi") // Difference in injection in Kitkat and previous devices
     @Override
     public void configureWebView(WebView webView) {
@@ -82,7 +79,6 @@ public class LegalFragment extends BaseWebFragment {
         });
     }
     
-    /** {@inheritDoc} */
     @Override
     public String getUrlString() {
         String htmlFolder = getString(R.string.html_folder);

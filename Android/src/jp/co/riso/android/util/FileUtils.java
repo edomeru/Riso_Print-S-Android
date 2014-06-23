@@ -18,12 +18,10 @@ import java.io.OutputStream;
 public class FileUtils {
     
     /**
-     * copy a file
+     * @brief Copy a file.
      * 
-     * @param src
-     *            Source
-     * @param dst
-     *            Destination
+     * @param src Source file
+     * @param dst Destination file
      */
     public static void copy(File src, File dst) throws IOException {
         if(src == null || dst == null) {

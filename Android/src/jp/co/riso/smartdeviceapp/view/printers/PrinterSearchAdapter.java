@@ -29,11 +29,11 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     private PrinterManager mPrinterManager = null;
     
     /**
-     * Constructor
+     * @brief Constructor.
      * 
-     * @param context
-     * @param resource
-     * @param values
+     * @param context Application context
+     * @param resource Resource ID to be used as Searched printer row
+     * @param values Searched printers list
      */
     public PrinterSearchAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
@@ -41,7 +41,6 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
     }
     
-    /** {@inheritDoc} */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Printer printer = getItem(position);
@@ -62,14 +61,12 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     }
     
     /**
-     * Initialize the view of the printer
+     * @brief Initialize the view of the printer.
      * 
-     * @param viewHolder
-     *            View Holder of the printer object
-     * @param convertView
-     *            Row view
-     * @param position
-     *            Position or index of the printer object
+     * @param viewHolder View Holder of the printer object
+     * @param convertView Row view
+     * @param printer Printer object
+     * @param position Position or index of the printer object
      */
     public void initializeView(ViewHolder viewHolder, View convertView, Printer printer, int position) {
         if (viewHolder == null || convertView == null || printer == null) {
@@ -109,7 +106,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     }
     
     /**
-     * Set Printer Search Screen Adapter Interface
+     * @brief Set Printer Search Screen Adapter Interface.
      */
     public void setSearchAdapterInterface(PrinterSearchAdapterInterface searchAdapterInterface) {
         mSearchAdapterInterface = searchAdapterInterface;
@@ -120,7 +117,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // ================================================================================
     
     /**
-     * Printer Search Screen view holder
+     * @brief Printer Search Screen view holder.
      */
     public class ViewHolder {
         public ImageView mAddedIndicator;
@@ -133,16 +130,15 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // ================================================================================
     
     /**
-     * Printer Search Screen interface
+     * @brief Printer Search Screen interface.
      */
     public interface PrinterSearchAdapterInterface {
         /**
-         * On add printer callback.
-         * <p>
+         * @brief On add printer callback. <br>
+         *
          * Callback called to add a searched printer to the Printers Screen.
          * 
-         * @param printer
-         *            searched printer
+         * @param printer Searched printer
          */
         public int onAddPrinter(Printer printer);
     }
@@ -151,7 +147,6 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // Interface View.OnClick
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.printer_search_row) {
