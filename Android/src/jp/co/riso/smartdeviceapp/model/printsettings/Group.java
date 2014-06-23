@@ -14,13 +14,18 @@ import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * @class Group
+ * @brief Group data class representing a group in PrintSettings. 
+ * Data represented by \<group\> tag in XML.
+ */
 public class Group extends XmlNode {
     private List<Setting> mSettings;
     
     /**
-     * Constructor
+     * @brief Creates a Group instance.
      * 
-     * @param groupNode
+     * @param groupNode Node represented by \<group\> tag in XML.
      */
     public Group(Node groupNode) {
         super(groupNode);
@@ -34,7 +39,9 @@ public class Group extends XmlNode {
     }
     
     /**
-     * @return settings
+     * @brief Gets settings of a Group.
+     * 
+     * @return list of Setting objects.
      */
     public List<Setting> getSettings() {
         return mSettings;

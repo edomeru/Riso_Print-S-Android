@@ -26,6 +26,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+/**
+ * @class PrintJobManager
+ * 
+ * @brief Helper class for managing the database transactions of Print Job History.
+ */
 public class PrintJobManager {
     private static final String C_WHERE_PJB_ID = KeyConstants.KEY_SQL_PRINTJOB_ID + "=?";
     private static final String C_WHERE_PRN_ID = KeyConstants.KEY_SQL_PRINTER_ID + "=?";
@@ -43,18 +48,19 @@ public class PrintJobManager {
     private boolean mRefreshFlag;
     
     /**
-     * Constructor
+     * @brief Creates a PrintJobManager instance.
      * 
-     * @param context
+     * @param context Context object to use to manage the database.
      */
     private PrintJobManager(Context context) {
         mManager = new DatabaseManager(context);
     }
     
     /**
-     * Get instance of the PrintJob Manager
+     * @brief Gets instance of the PrintJobManager
      * 
-     * @param context
+     * @param context Context object to use to manage the database.
+     * 
      * @return instance of PrintJobManager
      */
     public static PrintJobManager getInstance(Context context) {
@@ -65,26 +71,27 @@ public class PrintJobManager {
     }
     
     /**
-     * set Refresh flag
+     * @brief Sets the refresh flag to determine that Print Job History contains new data.
      * 
-     * @param refreshFlag
-     *            refresh flag
+     * @param refreshFlag true if Print Job History contains new data
      */
     public void setRefreshFlag(boolean refreshFlag) {
         this.mRefreshFlag = refreshFlag;
     }
     
     /**
-     * @return mRefreshFlag
+     * @brief Returns true if Print Job History contains new data. 
+     * 
+     * @retval true There is a new job.
+     * @retval false No new job. 
      */
     public boolean isRefreshFlag() {
         return mRefreshFlag;
     }
     
     /**
-     * Returns a list of PrintJob objects
-     * <p>
-     * This method retrieves the PrintJob objects from the database sorted according to printer ID (in ascending order)
+     * @brief Retrieves a list of PrintJob objects. This method retrieves the PrintJob objects 
+     * from the database sorted according to printer ID (in ascending order) 
      * and print job date (from latest to oldest).
      * 
      * @return list of PrintJob objects
@@ -111,9 +118,8 @@ public class PrintJobManager {
     }
     
     /**
-     * Returns a list of Printer objects with Print Jobs
-     * <p>
-     * This method retrieves the Printer objects from the database if it has corresponding print jobs sorted according
+     * @brief Retrieves a list of Printer objects with Print Jobs. This method retrieves the 
+     * Printer objects from the database if it has corresponding print jobs sorted according
      * to printer ID.
      * 
      * @return list of Printer objects
@@ -140,43 +146,39 @@ public class PrintJobManager {
     }
     
     /**
-     * Delete all print jobs with Printer ID
-     * <p>
-     * This method deletes all print jobs with printer id in the database.
+     * @brief Deletes all print jobs with the given printer id in the database.
      * 
-     * @param prn_id
-     *            printer ID of the print jobs to be deleted
-     * @return boolean result of delete in the database
+     * @param prn_id Printer ID of the print jobs to be deleted
+     * 
+     * @retval true Delete is successful.
+     * @retval false Delete has failed.
      */
     public boolean deleteWithPrinterId(int prn_id) {
         return mManager.delete(KeyConstants.KEY_SQL_PRINTJOB_TABLE, C_WHERE_PRN_ID, String.valueOf(prn_id));
     }
     
     /**
-     * Delete print job with the given print job id
-     * <p>
-     * This method deletes the print job with print job id in the database.
+     * @brief Deletes the print job with the given print job id in the database.
      * 
-     * @param pjb_id
-     *            ID of the print job to be deleted
-     * @return boolean result of deletee in the database
+     * @param pjb_id ID of the print job to be deleted
+     * 
+     * @retval true Delete is successful.
+     * @retval false Delete has failed.
      */
     public boolean deleteWithJobId(int pjb_id) {
         return mManager.delete(KeyConstants.KEY_SQL_PRINTJOB_TABLE, C_WHERE_PJB_ID, String.valueOf(pjb_id));
     }
     
     /**
-     * This method creates a print job and inserts the value to the database.
+     * @brief Creates a print job and inserts the value to the database.
      * 
-     * @param prn_id
-     *            printer ID
-     * @param PDFfilename
-     *            PDF filename to be used as job name
-     * @param pjb_date
-     *            date when job is created
-     * @param pjb_result
-     *            the status of print job (SUCCESSFUL, ERROR)
-     * @return boolean result of insert to the database
+     * @param prn_id Printer ID
+     * @param PDFfilename PDF filename to be used as job name
+     * @param pjb_date Date when job is created
+     * @param pjb_result The of print job status (SUCCESSFUL, ERROR)
+     * 
+     * @retval true Insert to database is successful.
+     * @retval false Insert to database has failed.
      */
     public boolean createPrintJob(int prn_id, String PDFfilename, Date pjb_date, JobResult pjb_result) {
         PrintJob pj = new PrintJob(prn_id, PDFfilename, pjb_date, pjb_result);
@@ -190,12 +192,13 @@ public class PrintJobManager {
     }
     
     /**
-     * This method retrieves the id of the oldest print job of a printer 
-     * if the printer contains 100 or more print jobs, else returns -1 
+     * @brief Retrieves the id of the oldest print job of a printer in the database
+     * if the printer contains 100 or more print jobs, else returns -1. 
      * 
-     * @param printerId
-     *            printer ID
-     * @return job id of the oldest print job if the printer contains 100 or more print jobs, else -1 
+     * @param printerId Printer ID of the print jobs
+     * 
+     * @return Print job id of the oldest print job if the printer contains 100 or more print jobs.
+     * @retval -1 Printer contains less than 100 print jobs. 
      */
     public int getOldest(int printerId) {
         int jobId = -1;
@@ -216,12 +219,13 @@ public class PrintJobManager {
     }
 
     /**
-     * This method inserts the value of the print job to the database and deletes the 
+     * @brief Inserts the value of the print job to the database and deletes the 
      * oldest print job of a printer if print jobs >= 100.
      * 
-     * @param printJob
-     *            the PrintJob object containing the values to be inserted
-     * @return boolean result of insert to the database
+     * @param printJob the PrintJob object containing the values to be inserted
+     * 
+     * @retval true Insert to database is successful.
+     * @retval false Insert to database has failed.
      */
     private boolean insertPrintJob(PrintJob printJob) {
         ContentValues pjvalues = new ContentValues();
@@ -240,11 +244,12 @@ public class PrintJobManager {
     }
     
     /**
-     * This method converts the date into String using the UTC/GMT timezone
+     * @brief Converts the date into String using the UTC/GMT timezone and format C_SQL_DATEFORMAT.
      * 
-     * @param date
-     *            the date to be converted to String
-     * @return converted string
+     * @param date The date to be converted to String
+     * 
+     * @return converted string format
+     * @retval "1970-01-01 00:00:00" date is null
      */
     public static String convertDateToString(Date date) {
         if (date == null) {
@@ -257,11 +262,11 @@ public class PrintJobManager {
     }
     
     /**
-     * This method converts the String into Date using the UTC/GMT timezone
+     * @brief Converts the String into Date using the UTC/GMT timezone and format C_SQL_DATEFORMAT.
      * 
-     * @param strDate
-     *            the string to be converted to Date
-     * @return converted date
+     * @param strDate the string to be converted to Date
+     * @return converted date if strDate is in valid format
+     * @retval "Date(0) equivalent of Jan.1,1970 UTC" strDate is in invalid format
      */
     private static Date convertStringToDate(String strDate) {
         SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());

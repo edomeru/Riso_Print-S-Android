@@ -17,13 +17,18 @@ import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 
 /**
- * Generic confirmation dialog. To use do the ff:
+ * @class ConfirmDialogFragment
+ * 
+ * @brief Custom Dialog Fragment class for confirmation dialog
+ * 
+ * @note Generic confirmation dialog. To use do the ff:
  * 1. Target Fragment must implement the ConfirmDialogListener
  * 2. In the target fragment, add these snippet:
- *      ConfirmDialogFragment dialog = new ConfirmDialogFragment(<parameters>):
+ *      @code 
+ *      ConfirmDialogFragment dialog = ConfirmDialogFragment.newInstance(<parameters>):
  *      dialog.setTargetFragment(this, requestCode);
- *      DialogUtils.showdisplayDialog(activity, tag, dialog);
- * 3. To dismiss, simply call: dialog.dismiss();
+ *      DialogUtils.showdisplayDialog(activity, tag, dialog); 
+ *      @endcode
  */
 public class ConfirmDialogFragment extends DialogFragment implements OnClickListener {
     
@@ -33,12 +38,12 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     private static final String KEY_NEG_BUTTON = "negButton";
     
     /**
-     * @param message
-     *           the text displayed as the message in the dialog
-     * @param buttonPosTitle
-     *           the text displayed in the positive button of the dialog
-     * @param buttonNegTitle
-     *           the text displayed in the negative button of the dialog
+     * @brief Creates a ConfirmDialogFragment instance.
+     *      
+     * @param message The text displayed as the message in the dialog
+     * @param buttonPosTitle The text displayed in the positive button of the dialog
+     * @param buttonNegTitle The text displayed in the negative button of the dialog
+     * 
      * @return ConfirmDialogFragment instance
      */
     public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
@@ -46,14 +51,13 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     }
     
     /**
-     * @param title
-     *           the text displayed as the title in the dialog
-     * @param message
-     *           the text displayed as the message in the dialog
-     * @param buttonPosTitle
-     *           the text displayed in the positive button of the dialog
-     * @param buttonNegTitle
-     *           the text displayed in the negative button of the dialog
+     * @brief Creates a ConfirmDialogFragment instance.
+     * 
+     * @param title The text displayed as the title in the dialog
+     * @param message The text displayed as the message in the dialog
+     * @param buttonPosTitle The text displayed in the positive button of the dialog
+     * @param buttonNegTitle The text displayed in the negative button of the dialog
+     * 
      * @return ConfirmDialogFragment instance
      */
     public static ConfirmDialogFragment newInstance(String title, String message, String buttonPosTitle, String buttonNegTitle) {
@@ -71,13 +75,11 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         return dialog;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
     
-    /** {@inheritDoc} */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);
@@ -110,7 +112,6 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         return dialog;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (getTargetFragment() instanceof ConfirmDialogListener) {
@@ -126,10 +127,6 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         }
     }
     
-    // ================================================================================
-    // Internal Classes
-    // ================================================================================
-    
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
@@ -139,14 +136,22 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         }
     }
     
+    // ================================================================================
+    // Internal Classes
+    // ================================================================================
+    /**
+     * @interface ConfirmDialogListener
+     * 
+     * @brief Interface ConfirmDialogFragment events
+     */
     public interface ConfirmDialogListener {
         /**
-         * Confirm listener
+         * @brief Called when positive button is clicked
          */
         public void onConfirm();
         
         /**
-         * Cancel listener
+         * @brief Called when negative button is clicked
          */
         public void onCancel();
     }

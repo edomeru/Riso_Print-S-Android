@@ -14,16 +14,32 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 
+/**
+ * @class InfoDialogFragment
+ * 
+ * @brief Custom Dialog Fragment class for information display dialog
+ * 
+ * @note Generic information dialog. To use do the ff:
+ * 1. Target Fragment must implement the WaitingDialogFragment
+ * 2. In the target fragment, add these snippet:
+ *      @code
+ *      InfoDialogFragment dialog = new InfoDialogFragment(<parameters>):
+ *      InfoDialogFragment.showdisplayDialog(activity, tag, dialog);
+ *      @endcode
+ */
 public class InfoDialogFragment extends DialogFragment {
     
-    public static final String KEY_TITLE = "title";
-    public static final String KEY_MESSAGE = "message";
-    public static final String KEY_BUTTON = "button";
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_BUTTON = "button";
     
     
     /**
-     * @param message
-     * @param buttonTitle
+     * @brief Creates an InfoDialogFragment instance.
+     *
+     * @param message The text displayed as the message in the dialog
+     * @param buttonTitle The text displayed in the button of the dialog
+     * 
      * @return InfoDialogFragment instance
      */
     public static InfoDialogFragment newInstance(String message, String buttonTitle) {
@@ -31,9 +47,12 @@ public class InfoDialogFragment extends DialogFragment {
     }
     
     /**
-     * @param title
-     * @param message
-     * @param buttonTitle
+     * @brief Creates an InfoDialogFragment instance.
+     * 
+     * @param title The text displayed as the title in the dialog
+     * @param message The text displayed as the message in the dialog
+     * @param buttonTitle The text displayed in the button of the dialog
+     * 
      * @return InfoDialogFragment instance
      */
     public static InfoDialogFragment newInstance(String title, String message, String buttonTitle) {
@@ -50,13 +69,11 @@ public class InfoDialogFragment extends DialogFragment {
         return dialog;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
     
-    /** {@inheritDoc} */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString(KEY_TITLE);

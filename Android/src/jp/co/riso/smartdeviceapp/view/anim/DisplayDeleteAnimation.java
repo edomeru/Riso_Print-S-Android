@@ -16,26 +16,22 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
 /**
- * Class for displaying a view (e.g. delete button) using TranslateAnimation and
- * hiding other views using AlphaAnimation.
+ * @class DisplayDeleteAnimation
+ * 
+ * @brief Class for displaying a view (e.g. delete button) using TranslateAnimation and
+ * hiding other views (optional).
  */
 public class DisplayDeleteAnimation {
     private static final int ANIM_DURATION = 250;
     
     /**
-     * Returns a View object that represents the item layout for deletion.
-     * <p>
-     * This method displays a view (e.g. delete button) using TranslateAnimation and hides
-     * other views using AlphaAnimation if animation is enabled.
+     * @brief This method displays a view (e.g. delete button) using TranslateAnimation 
+     * if animation is enabled and hides other views.
      * 
-     * @param view
-     *            the row layout
-     * @param animate
-     *            determines if animation will be used
-     * @param deleteId
-     *            the id of the view to be displayed (e.g. delete button)
-     * @param ids
-     *            the ids of the views to be hidden (optional)
+     * @param view The row layout
+     * @param animate Determines if animation will be used
+     * @param deleteId The id of the view to be displayed (e.g. delete button)
+     * @param ids The ids of the views to be hidden (optional)
      */
     public void beginDeleteModeOnView(View view, boolean animate, int deleteId, int... ids) {
         
@@ -65,17 +61,13 @@ public class DisplayDeleteAnimation {
     }
     
     /**
-     * This method hides a view (e.g. delete button) using TranslateAnimation and displays
+     * @brief This method hides a view (e.g. delete button) using TranslateAnimation and displays
      * other views using AlphaAnimation if animation is enabled.
      * 
-     * @param view
-     *            the row layout
-     * @param animate
-     *            determines if animation will be used
-     * @param deleteId
-     *            the id of the view to be hidden (e.g. delete button)
-     * @param ids
-     *            the ids of the views to be displayed (optional)
+     * @param view The row layout
+     * @param animate Determines if animation will be used
+     * @param deleteId The id of the view to be hidden (e.g. delete button)
+     * @param ids The ids of the views to be displayed (optional)
      */
     public void endDeleteMode(View view, boolean animate, int deleteId, int... ids) {
         
@@ -116,43 +108,43 @@ public class DisplayDeleteAnimation {
     // ================================================================================
     // Internal Classes
     // ================================================================================
-    
+    /**
+     * @class HideOnFadeAnimationListener
+     * 
+     * @brief Listener class that hides the view and displays other views after animation end
+     */
     public class HideOnFadeAnimationListener implements Animation.AnimationListener {
         private WeakReference<View> mRowViewReference = null;
         private WeakReference<View> mViewReference = null;
         private int[] mIdsReference = null;
         
         /**
-         * Set delete view
+         * @brief Set delete view
          * 
-         * @param view
-         *            Delete button
+         * @param view Delete button
          */
         public void setView(View view) {
             mViewReference = new WeakReference<View>(view);
         }
         
         /**
-         * Set Row view
+         * @brief Set Row view
          * 
-         * @param view
-         *            Row view or parent view of the delete button
+         * @param view Row view or parent view of the delete button
          */
         public void setRowView(View view) {
             mRowViewReference = new WeakReference<View>(view);
         }
 
         /**
-         * Set other resource ID that needs to be redisplayed
+         * @brief Set other resource ID that needs to be redisplayed
          * 
-         * @param ids
-         *            Array of resource IDs that needs to be redisplayed
+         * @param ids Array of resource IDs that needs to be redisplayed
          */
         public void setIds(int[] ids) {
             mIdsReference = ids;            
         }
 
-        /** {@inheritDoc} */
         @Override
         public void onAnimationEnd(Animation animation) {
             if (mViewReference != null) {
@@ -178,12 +170,10 @@ public class DisplayDeleteAnimation {
             }
         }
         
-        /** {@inheritDoc} */
         @Override
         public void onAnimationRepeat(Animation animation) {
         }
         
-        /** {@inheritDoc} */
         @Override
         public void onAnimationStart(Animation animation) {
         }

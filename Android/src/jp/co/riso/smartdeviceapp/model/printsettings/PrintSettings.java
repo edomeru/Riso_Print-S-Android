@@ -43,33 +43,38 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * @class PrintSettings
+ * 
+ * @brief PrintSettings class representing the printer settings data.
+ */
 public class PrintSettings {
-    public static final String TAG_COLOR_MODE = "colorMode";
-    public static final String TAG_ORIENTATION = "orientation";
-    public static final String TAG_COPIES = "copies";
-    public static final String TAG_DUPLEX = "duplex";
-    public static final String TAG_PAPER_SIZE = "paperSize";
-    public static final String TAG_SCALE_TO_FIT = "scaleToFit";
-    public static final String TAG_PAPER_TYPE = "paperType";
-    public static final String TAG_INPUT_TRAY = "inputTray";
-    public static final String TAG_IMPOSITION = "imposition";
-    public static final String TAG_IMPOSITION_ORDER = "impositionOrder";
-    public static final String TAG_SORT = "sort";
-    public static final String TAG_BOOKLET = "booklet";
-    public static final String TAG_BOOKLET_FINISH = "bookletFinish";
-    public static final String TAG_BOOKLET_LAYOUT = "bookletLayout";
-    public static final String TAG_FINISHING_SIDE = "finishingSide";
-    public static final String TAG_STAPLE = "staple";
-    public static final String TAG_PUNCH = "punch";
-    public static final String TAG_OUTPUT_TRAY = "outputTray";
+    public static final String TAG_COLOR_MODE = "colorMode"; ///< Tag used to identify ColorMode settings
+    public static final String TAG_ORIENTATION = "orientation"; ///< Tag used to identify Orientation settings
+    public static final String TAG_COPIES = "copies"; ///< Tag used to identify Copies settings
+    public static final String TAG_DUPLEX = "duplex"; ///< Tag used to identify Duplex settings
+    public static final String TAG_PAPER_SIZE = "paperSize"; ///< Tag used to identify PaperSizesettings
+    public static final String TAG_SCALE_TO_FIT = "scaleToFit"; ///< Tag used to identify ScaleToFit settings
+    public static final String TAG_PAPER_TYPE = "paperType"; ///< Tag used to identify PaperType settings
+    public static final String TAG_INPUT_TRAY = "inputTray"; ///< Tag used to identify InputTraye settings
+    public static final String TAG_IMPOSITION = "imposition"; ///< Tag used to identify Imposition settings
+    public static final String TAG_IMPOSITION_ORDER = "impositionOrder"; ///< Tag used to identify ImpositionOrdersettings
+    public static final String TAG_SORT = "sort"; ///< Tag used to identify Sort settings
+    public static final String TAG_BOOKLET = "booklet"; ///< Tag used to identify Booklet settings
+    public static final String TAG_BOOKLET_FINISH = "bookletFinish"; ///< Tag used to identify BookletFinish settings
+    public static final String TAG_BOOKLET_LAYOUT = "bookletLayout"; ///< Tag used to identify BookletLayout settings
+    public static final String TAG_FINISHING_SIDE = "finishingSide"; ///< Tag used to identify FinishingSide settings
+    public static final String TAG_STAPLE = "staple"; ///< Tag used to identify Staple settings
+    public static final String TAG_PUNCH = "punch"; ///< Tag used to identify Punch settings
+    public static final String TAG_OUTPUT_TRAY = "outputTray"; ///< Tag used to identify OutputTray settings
     
-    public static final List<Group> sGroupList;
-    public static final HashMap<String, Setting> sSettingMap; // ConvenienceHashMap
+    public static final List<Group> sGroupList; ///< ConvenienceList for groups
+    public static final HashMap<String, Setting> sSettingMap; ///< ConvenienceHashMap for settings
     
     private HashMap<String, Integer> mSettingValues;
     
     /**
-     * Default Print Settings Constructor
+     * @brief Creates a PrintSettings instance using default values.
      */
     public PrintSettings() {
         mSettingValues = new HashMap<String, Integer>();
@@ -82,10 +87,9 @@ public class PrintSettings {
     }
     
     /**
-     * Constructor
+     * @brief Creates a PrintSettings instance from another existing PrintSettings instance.
      * 
-     * @param printSettings
-     *            Print settings
+     * @param printSettings Print settings to be copied
      */
     public PrintSettings(PrintSettings printSettings) {
         mSettingValues = new HashMap<String, Integer>();
@@ -96,13 +100,10 @@ public class PrintSettings {
     }
     
     /**
-     * Constructor
-     * <p>
-     * This method creates PrintSettings from the database using printer ID.
+     * @brief Creates a PrintSettings instance from the database using printer ID.
      * If not existing in the database, default values are used.
      * 
-     * @param printerId
-     *            Printer ID
+     * @param printerId Printer ID of the Print Settings to be retrieved from the database.
      */
     public PrintSettings(int printerId) {
         this();
@@ -120,7 +121,9 @@ public class PrintSettings {
     }
     
     /**
-     * Initialize static objects
+     * @brief Initialize static objects
+     * 
+     * @param xmlString Text content of the XML for initialization of PrintSettings values. 
      */
     protected static void initializeStaticObjects(String xmlString) {
         if (xmlString == null) {
@@ -148,9 +151,9 @@ public class PrintSettings {
     }
     
     /**
-     * Parse print settings
+     * @brief Parses print settings from a document.
      * 
-     * @param printSettingsContent
+     * @param printSettingsContent Document to be parsed.
      */
     private static void parsePrintSettings(Document printSettingsContent) {
         if (printSettingsContent == null) {
@@ -175,6 +178,10 @@ public class PrintSettings {
     // ================================================================================
     
     /**
+     * @brief Formats print settings into PJL string. 
+     * 
+     * @param isLandscape true if PDF's first page is in landscape mode
+     * 
      * @return PJL formatted string
      */
     public String formattedString(boolean isLandscape) {
@@ -202,31 +209,32 @@ public class PrintSettings {
     // ================================================================================
     
     /**
-     * @return setting values
+     * @brief Gets map containing the settings values.
+     * 
+     * @return HashMap of settings values
      */
     public HashMap<String, Integer> getSettingValues() {
         return mSettingValues;
     }
     
     /**
-     * Get print settings value from key
+     * @brief Gets print settings value from the specified key.
      * 
-     * @param key
-     *            Print settings key
-     * @return value
+     * @param key Print settings key
+     * 
+     * @return value of the print settings given the specified key
      */
     public int getValue(String key) {
         return mSettingValues.get(key);
     }
     
     /**
-     * Set print settings value to key
+     * @brief Sets print settings value to the specified key.
      * 
-     * @param key
-     *            Print settings key
-     * @param value
-     *            Value
-     * @return success
+     * @param key Print settings key to be updated
+     * @param value New value to update
+     * 
+     * @retval true success (always returns true)
      */
     public boolean setValue(String key, int value) {
         mSettingValues.put(key, value);
@@ -238,97 +246,164 @@ public class PrintSettings {
     // ================================================================================
     
     /**
-     * @return the ColorMode
+     * @brief Retrieves ColorMode setting value i.e. the color mode of the print job.
+     * 
+     * @retval AUTO Auto color mode
+     * @retval FULL_COLOR Colored mode
+     * @retval MONOCHROME Gray scale color mode
      */
     public ColorMode getColorMode() {
         return ColorMode.values()[mSettingValues.get(TAG_COLOR_MODE)];
     }
     
     /**
-     * @return the Orientation
+     * @brief Retrieves Orientation setting value i.e. page orientation.
+     * 
+     * @retval PORTRAIT Portrait orientation
+     * @retval LANDSCAPE Landscape orientation
      */
     public Orientation getOrientation() {
         return Orientation.values()[mSettingValues.get(TAG_ORIENTATION)];
     }
     
     /**
-     * @return the mDuplex
+     * @brief Retrieves Duplex setting value i.e. duplex printing mode.
+     * 
+     * @retval OFF
+     * @retval LONG_EDGE
+     * @retval SHORT_EDGE
      */
     public Duplex getDuplex() {
         return Duplex.values()[mSettingValues.get(TAG_DUPLEX)];
     }
     
     /**
-     * @return the mPaperSize
+     * @brief Retrieves PaperSize setting value i.e. paper to be used during print.
+     * 
+     * @retval A3 297mm x 420mm
+     * @retval A3W 316.0mm x 460mm
+     * @retval A4 210.0mm x 297mm
+     * @retval A5 148.0mm x 210mm
+     * @retval A6 105.0mm x 148mm
+     * @retval B4 257.0mm x 364mm
+     * @retval B5 182.0mm x 257mm
+     * @retval B6 128.0mm x 182mm
+     * @retval FOOLSCAP 216.0mm x 340mm
+     * @retval TABLOID 280.0mm x 432mm
+     * @retval LEGAL 216.0mm x 356mm
+     * @retval LETTER 216.0mm x 280mm
+     * @retval STATEMENT 140.0mm x 216mm
      */
     public PaperSize getPaperSize() {
         return PaperSize.values()[mSettingValues.get(TAG_PAPER_SIZE)];
     }
     
     /**
-     * @return the mScaleToFit
+     * @brief Retrieves ScaleToFit setting value i.e. whether PDF page will be scaled to fit the whole page.
+     * 
+     * @retval true PDF page will be scaled to fit the whole page
+     * @retval false PDF page will not be scaled
      */
     public boolean isScaleToFit() {
         return (mSettingValues.get(TAG_SCALE_TO_FIT) == 1) ? true : false;
     }
     
     /**
-     * @return the mImposition
+     * @brief Retrieves Imposition setting value i.e. number of pages to print per sheet.
+     * 
+     * @retval OFF 1 page per sheet
+     * @retval TWO_UP 2 pages per sheet
+     * @retval FOUR_UP 4 pages per sheet
      */
     public Imposition getImposition() {
         return Imposition.values()[mSettingValues.get(TAG_IMPOSITION)];
     }
     
     /**
-     * @return the mImpositionOrder
+     * @brief Retrieves ImpositionOrder setting value i.e. direction of the PDF pages printed in one sheet.
+     * 
+     * @retval L_R left to right
+     * @retval R_L right to left
+     * @retval TL_R Upper left to right
+     * @retval TR_L Upper right to left
+     * @retval TL_B Upper left to bottom
+     * @retval TR_B Upper right to bottom
+
      */
     public ImpositionOrder getImpositionOrder() {
         return ImpositionOrder.values()[mSettingValues.get(TAG_IMPOSITION_ORDER)];
     }
     
     /**
-     * @return the mSort
+     * @brief Retrieves Sort setting value i.e. defines how the print output will be sorted.
+     * 
+     * @retval PER_PAGE Sort according to per page / group sort
+     * @retval PER_COPY Sort according to copy
      */
     public Sort getSort() {
         return Sort.values()[mSettingValues.get(TAG_SORT)];
     }
     /**
-     * @return the mBooklet
+     * @brief Retrieves Booklet setting value i.e. the pages is in booklet format.
+     * 
+     * @retval true is in booklet format
+     * @retval false not in booklet format
      */
     public boolean isBooklet() {
         return (mSettingValues.get(TAG_BOOKLET) == 1) ? true : false;
     }
     
     /**
-     * @return the mBookletFinish
+     * @brief Retrieves BookletFinish setting value i.e. finishing options for when booklet is on.
+     * 
+     * @retval OFF Not displayed in two-page view
+     * @retval PAPER_FOLDING Sheets in the preview are displayed in the two-page view
+     * @retval FOLD_AND_STAPLE Staple images displayed in the two-page view.
      */
     public BookletFinish getBookletFinish() {
         return BookletFinish.values()[mSettingValues.get(TAG_BOOKLET_FINISH)];
     }
     
     /**
-     * @return the mBookletLayout
+     * @brief Retrieves BookletLayout setting value i.e. direction of pages when booklet is on.
+     * 
+     * @retval FORWARD Retain direction of pages
+     * @retval REVERSE Reverse direction of pages
      */
     public BookletLayout getBookletLayout() {
         return BookletLayout.values()[mSettingValues.get(TAG_BOOKLET_LAYOUT)];
     }
     
     /**
-     * @return the mFinishingSide
+     * @brief Retrieves FinishingSide setting value i.e. the edge where the document will be bound.
+     * 
+     * @retval LEFT Document will be bound on the left edge
+     * @retval TOP Document will be bound on the top edge
+     * @retval RIGHT Document will be bound on the right edge
      */
     public FinishingSide getFinishingSide() {
         return FinishingSide.values()[mSettingValues.get(TAG_FINISHING_SIDE)];
     }
     
     /**
-     * @return the mStaple
+     * @brief Retrieves Staple setting value i.e. position where the print job will be stapled.
+     * 
+     * @retval OFF No staples
+     * @retval ONE_UL Upper left staple
+     * @retval ONE_UR Upper right staple
+     * @retval ONE One staple
+     * @retval TWO Two staples
      */
     public Staple getStaple() {
         return Staple.values()[mSettingValues.get(TAG_STAPLE)];
     }
     
     /**
-     * @return the mPunch
+     * @brief Retrieves Punch setting value i.e. punch holes in the print output.
+     * 
+     * @retval OFF No punch holes
+     * @retval HOLES_2 2 holes
+     * @retval HOLES_4 3 or 4 holes
      */
     public Punch getPunch() {
         return Punch.values()[mSettingValues.get(TAG_PUNCH)];
@@ -339,11 +414,12 @@ public class PrintSettings {
     // ================================================================================
     
     /**
-     * This method saves the Print Setting in the database
+     * @brief Saves the Print Setting in the database
      * 
-     * @param printerId
-     *            current printer ID selected
-     * @return boolean result of insert/replace to DB, returns true if successful.
+     * @param printerId Printer ID of the print settings to be saved
+     * 
+     * @retval true Save to database is successful
+     * @retval false Save to database has failed
      */
     public boolean savePrintSettingToDB(int printerId) {
         if (printerId == PrinterManager.EMPTY_ID) {

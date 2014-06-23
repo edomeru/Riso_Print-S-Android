@@ -107,10 +107,6 @@ public class PreviewTest extends AndroidTestCase {
         assertEquals(PaperSize.A3, PaperSize.valueOf("A3"));
     }
 
-    public void testPaperSizeGetTag() {
-        assertEquals("paperSize", PaperSize.getTag());
-    }
-
     public void testPaperSizeGetWidth() {
         assertEquals(297.0f, PaperSize.A3.getWidth());
         assertEquals(210.0f, PaperSize.A4.getWidth());

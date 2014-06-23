@@ -21,8 +21,13 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * @class DatabaseManager
+ * 
+ * @brief Helper class for opening, creating and managing the database.
+ */
 public class DatabaseManager extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 1; ///< current database version of the application
     
     private static final String DATABASE_NAME = "SmartDeviceAppDB.sqlite";
     private static final String DATABASE_SQL = "db/SmartDeviceAppDB.sql";
@@ -32,16 +37,15 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private Context mContext;
     
     /**
-     * Constructor
+     * @brief Creates a DatabaseManager instance.
      * 
-     * @param context
+     * @param context Context to use to open or create the database.
      */
     public DatabaseManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onOpen(SQLiteDatabase db) {
         // http://stackoverflow.com/questions/13641250/sqlite-delete-cascade-not-working
@@ -52,7 +56,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onCreate(SQLiteDatabase db) {
         Logger.logInfo(DatabaseManager.class, "onCreate - Begin");
@@ -102,7 +105,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Logger.logInfo(DatabaseManager.class, "onCreate - End");
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Logger.logInfo(DatabaseManager.class, "onUpgrade - Begin (" + oldVersion + "=>" + newVersion + ")");
@@ -111,62 +113,58 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
-     * Get the value of the requested column as a String.
+     * @brief Gets the value of the requested column as a String.
      * 
-     * @param cursor
-     *            cursor
-     * @param columnName
-     *            column name
-     * @return Returns the value of the requested column as a String.
+     * @param cursor Cursor object
+     * @param columnName Name of the column in the database
+     * 
+     * @return the value of the requested column as a String.
      */
     public static String getStringFromCursor(Cursor cursor, String columnName) {
         return cursor.getString(cursor.getColumnIndex(columnName));
     }
     
     /**
-     * Get the value of the requested column as an integer.
+     * @brief Gets the value of the requested column as an integer.
      * 
-     * @param cursor
-     *            cursor
-     * @param columnName
-     *            column name
-     * @return Returns the value of the requested column as an integer.
+     * @param cursor Cursor object
+     * @param columnName Name of the column in the database
+     * 
+     * @return the value of the requested column as an integer.
      */
     public static int getIntFromCursor(Cursor cursor, String columnName) {
         return cursor.getInt(cursor.getColumnIndex(columnName));
     }
     
     /**
-     * Get the value of the requested column as a boolean.
-     * <p>
-     * Converts integer value retrieved from database to boolean
-     * http://www.sqlite.org/datatype3.html
-     * http://stackoverflow.com/questions/2510652/is-there-a-boolean-literal-in-sqlite
+     * @brief Gets the value of the requested column as a boolean i.e. 
+     * converts integer value retrieved from database to boolean.
+     * @see http://www.sqlite.org/datatype3.html
+     * @see http://stackoverflow.com/questions/2510652/is-there-a-boolean-literal-in-sqlite
      * 
-     * @param cursor
-     *            cursor
-     * @param columnName
-     *            column name
-     * @return Returns the value of the requested column as a boolean.
+     * @param cursor Cursor object
+     * @param columnName Name of the column in the database
+     * 
+     * @retval true Value is 1.
+     * @retval false Value is not 1.
      */
     public static boolean getBooleanFromCursor(Cursor cursor, String columnName) {
         return (cursor.getInt(cursor.getColumnIndex(columnName)) == 1);
     }
     
     /**
-     * Convenience method for inserting a row into the database.
+     * @brief Convenience method for inserting a row into the database.
      * 
-     * @param table
-     *            the table to insert the row into
-     * @param nullColumnHack
-     *            optional; may be null. SQL doesn't allow inserting a completely empty row without naming at least one
+     * @param table The table to insert the row into.
+     * @param nullColumnHack Optional; may be null. SQL doesn't allow inserting a completely empty row without naming at least one
      *            column name. If your provided values is empty, no column names are known and an empty row can't be
      *            inserted. If not set to null, the nullColumnHack parameter provides the name of nullable column name
      *            to explicitly insert a NULL into in the case where your values is empty.
-     * @param values
-     *            this map contains the initial column values for the row. The keys should be the column names and the
-     *            values the column values
-     * @return insert is successful
+     * @param values This map contains the initial column values for the row. The keys should be the column names and the
+     *            values the column values.
+     * 
+     * @retval true Insert is successful.
+     * @retval false Insert has failed.
      */
     public boolean insert(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
@@ -186,21 +184,20 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
-     * General method for inserting a row into the database.
+     * @brief General method for inserting a row into the database.
      * When a UNIQUE constraint violation occurs, the pre-existing rows that are causing the
      * constraint violation are removed prior to inserting or updating the current row.
      * 
-     * @param table
-     *           the table to insert / replace the row into
-     * @param nullColumnHack
-     *            optional; may be null. SQL doesn't allow inserting a completely empty row without naming at least one
+     * @param table The table to insert / replace the row into
+     * @param nullColumnHack Optional; may be null. SQL doesn't allow inserting a completely empty row without naming at least one
      *            column name. If your provided values is empty, no column names are known and an empty row can't be
      *            inserted. If not set to null, the nullColumnHack parameter provides the name of nullable column name
      *            to explicitly insert a NULL into in the case where your values is empty.
-     * @param values
-     *            this map contains the initial column values for the row. The keys should be the column names and the
+     * @param values This map contains the initial column values for the row. The keys should be the column names and the
      *            values the column values
-     * @return rowId of the inserted row if successful else -1
+     * 
+     * @return Row id of the inserted row.
+     * @retval -1 Insert has failed.
      */
     public long insertOrReplace(String table, String nullColumnHack, ContentValues values) {
         long rowId = -1;
@@ -217,15 +214,16 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
-     * Convenience method for updating rows in the database.
+     * @brief Convenience method for updating rows in the database.
      * 
-     * @param table
-     *            the table to update in
-     * @param whereClause
-     *            the optional WHERE clause to apply when updating. Passing null will update all rows.
-     * @param whereArg
-     *            You may include ?s in the where clause, which will be replaced by the value from whereArg.
-     * @return update is successful
+     * @param table The table to update in.
+     * @param values This map contains the column values for the row. The keys should be the column names and the
+     *            values the column values
+     * @param whereClause The optional WHERE clause to apply when updating. Passing null will update all rows.
+     * @param whereArg You may include ?s in the where clause, which will be replaced by the value from whereArg.
+     * 
+     * @retval true Update is successful.
+     * @retval false Update has failed.
      */
     public boolean update(String table, ContentValues values, String whereClause, String whereArg) {
         int rowsNum = 0;
@@ -246,28 +244,23 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
-     * Query the given table, returning a Cursor over the result set.
+     * @brief Convenience method for querying, returning a Cursor over the result set.
      * 
-     * @param table
-     *            The table name to compile the query against.
-     * @param columns
-     *            A list of which columns to return.
-     * @param selection
-     *            A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE
+     * @param table The table name to compile the query against.
+     * @param columns A list of which columns to return.
+     * @param selection A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE
      *            itself).
-     * @param selectionArgs
-     *            You may include ?s in selection, which will be replaced by the values from selectionArgs, in order
+     * @param selectionArgs You may include ?s in selection, which will be replaced by the values from selectionArgs, in order
      *            that they appear in the selection.
-     * @param groupBy
-     *            A filter declaring how to group rows, formatted as an SQL GROUP BY clause (excluding the GROUP BY
+     * @param groupBy A filter declaring how to group rows, formatted as an SQL GROUP BY clause (excluding the GROUP BY
      *            itself).
-     * @param having
-     *            A filter declare which row groups to include in the cursor, if row grouping is being used, formatted
+     * @param having A filter declare which row groups to include in the cursor, if row grouping is being used, formatted
      *            as an SQL HAVING clause (excluding the HAVING itself). Passing null will cause all row groups to be
      *            included, and is required when row grouping is not being used.
-     * @param orderBy
-     *            How to order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself).
-     * @return cursor
+     * @param orderBy How to order the rows, formatted as an SQL ORDER BY clause (excluding the ORDER BY itself).
+     * 
+     * @return Cursor containing the data retrieved from the database.
+     * @retval null Query has failed.
      */
     public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
         Cursor cur = null;
@@ -281,16 +274,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
-     * Delete items from database
+     * @brief Convenience method for deleting items from database.
      * 
-     * @param table
-     *            the table to delete from
+     * @param table The table to delete from
+     * @param whereClause The optional WHERE clause to apply when deleting. Passing null will delete all rows.
+     * @param whereArg You may include ?s in the where clause, which will be replaced by the value from whereArg.
      * 
-     * @param whereClause
-     *            the optional WHERE clause to apply when deleting. Passing null will delete all rows.
-     * @param whereArg
-     *            You may include ?s in the where clause, which will be replaced by the value from whereArg.
-     * @return delete is successful
+     * @retval true Delete is successful.
+     * @retval false Delete has failed.
      */
     public boolean delete(String table, String whereClause, String whereArg) {
         String whereArgs[] = null;
@@ -302,17 +293,15 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
     
     /**
-     * Delete items from database
+     * @brief Deletes items from database.
      * 
-     * @param table
-     *            the table to delete from
-     * 
-     * @param whereClause
-     *            the optional WHERE clause to apply when deleting. Passing null will delete all rows.
-     * @param whereArgs
-     *            You may include ?s in the where clause, which will be replaced by the values from whereArgs. The
+     * @param table The table to delete from
+     * @param whereClause the optional WHERE clause to apply when deleting. Passing null will delete all rows.
+     * @param whereArgs You may include ?s in the where clause, which will be replaced by the values from whereArgs. The
      *            values will be bound as Strings.
-     * @return delete is successful
+     * 
+     * @retval true Delete is successful.
+     * @retval false Delete has failed.
      */
     private boolean delete(String table, String whereClause, String[] whereArgs) {
         int rowsNum = 0;

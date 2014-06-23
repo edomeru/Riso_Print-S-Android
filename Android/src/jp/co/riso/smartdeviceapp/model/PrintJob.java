@@ -10,6 +10,11 @@ package jp.co.riso.smartdeviceapp.model;
 
 import java.util.Date;
 
+/**
+ * @class PrintJob
+ * 
+ * @brief Class representing the Print Job data in Print Job History.
+ */
 public class PrintJob {
     
     private int mId;
@@ -19,18 +24,13 @@ public class PrintJob {
     private JobResult mResult;
     
     /**
-     * Constructor
+     * @brief Creates a PrintJob instance
      * 
-     * @param mId
-     *            print job ID
-     * @param mPrinterId
-     *            printer ID
-     * @param mName
-     *            print job name
-     * @param mDate
-     *            date of execution
-     * @param mResult
-     *            print job result
+     * @param mId Print job ID
+     * @param mPrinterId Print job's printer ID
+     * @param mName Print job name
+     * @param mDate Print job's date of execution
+     * @param mResult Print job result
      */
     public PrintJob(int mId, int mPrinterId, String mName, Date mDate, JobResult mResult) {
         this.mId = mId;
@@ -41,16 +41,12 @@ public class PrintJob {
     }
     
     /**
-     * Constructor
+     * @brief Creates a PrintJob instance
      * 
-     * @param mPrinterId
-     *            printer ID
-     * @param mName
-     *            print job name
-     * @param mDate
-     *            date of execution
-     * @param mResult
-     *            print job result
+     * @param mPrinterId Print job's printer ID
+     * @param mName Print job name
+     * @param mDate Print job's date of execution
+     * @param mResult Print job result
      */
     public PrintJob(int mPrinterId, String mName, Date mDate, JobResult mResult) {
         this.mPrinterId = mPrinterId;
@@ -60,6 +56,8 @@ public class PrintJob {
     }
     
     /** 
+     * @brief Retrieves the ID of the Print Job
+     * 
      * @return print job ID
      */
     public int getId() {
@@ -67,33 +65,35 @@ public class PrintJob {
     }
     
     /**
-     * Set print job ID
+     * @brief Sets print job ID
      * 
-     * @param mName
-     *            print job ID
+     * @param mId Print job ID
      */
     public void setId(int mId) {
         this.mId = mId;
     }
     
     /** 
-     * @return printer ID
+     * @brief Retrieves the Printer ID of the Print Job
+     * 
+     * @return Printer ID of the Print Job
      */
     public int getPrinterId() {
         return mPrinterId;
     }
     
     /**
-     * Set printer ID
+     * @brief Sets printer ID
      * 
-     * @param mPrinterId
-     *            printer ID
+     * @param mPrinterId Printer ID of the Print Job
      */
     public void setPrinterId(int mPrinterId) {
         this.mPrinterId = mPrinterId;
     }
     
     /** 
+     * @brief Retrieves the name of the Print Job
+     * 
      * @return print job name
      */
     public String getName() {
@@ -101,16 +101,17 @@ public class PrintJob {
     }
     
     /**
-     * Set print job name
+     * @brief Sets print job name
      * 
-     * @param mName
-     *            print job name
+     * @param mName Print job name
      */
     public void setName(String mName) {
         this.mName = mName;
     }
     
     /** 
+     * @brief Retrieves the Print Job date of execution
+     * 
      * @return print job date
      */
     public Date getDate() {
@@ -118,34 +119,40 @@ public class PrintJob {
     }
     
     /**
-     * Set print job date
+     * @brief Set print job date of execution
      * 
-     * @param mDate
-     *            print job date
+     * @param mDate Print job date
      */
     public void setDate(Date mDate) {
         this.mDate = mDate;
     }
     
     /** 
-     * @return print job result
+     * @brief Retrieves the Print Job status (JobResult)
+     * 
+     * @retval SUCCESSFUL Printing is successful
+     * @retval ERROR Printing has failed
      */
     public JobResult getResult() {
         return mResult;
     }
     
     /**
-     * Set print job result
+     * @brief Sets Print Job status (JobResult)
      * 
-     * @param mResult
-     *            print job result
+     * @param mResult print job result
      */
     public void setResult(JobResult mResult) {
         this.mResult = mResult;
     }
     
+    /**
+     * @brief Printing result status
+     */
     public enum JobResult{
+        /// Printing is successful
         SUCCESSFUL,
+       /// Printing has failed
         ERROR
     }
     
