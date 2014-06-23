@@ -247,7 +247,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     /**
      * @class LoadPrintJobsTask
      * 
-     * @brief AsyncTask for Loading Print Job Tasks
+     * @brief Thread for Loading Print Job Tasks
      */
     private class LoadPrintJobsTask extends Thread {
         private WeakReference<Context> mContextRef;
@@ -282,21 +282,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
                     mPrintersList = printers;
                     pm.setRefreshFlag(false);
                 }
-            }
-            return null;
-        }
-        
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            if (mPrintJobsList.isEmpty()) {
-                showEmptyText();
-            } else {
-                // if (mPrintJobsList.isEmpty() || isCancelled()) {
-                // mPrintJobsLoadIndicator.setVisibility(View.GONE);
-                // } else {
-                mPrintJobs = new ArrayList<PrintJob>(mPrintJobsList);
-                mPrinters = new ArrayList<Printer>(mPrintersList);
                 
                 ((Activity) mContextRef.get()).runOnUiThread(new Runnable() {
                     @Override
