@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Common.Enum;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -64,6 +66,11 @@ namespace SmartDeviceApp.Controls
         {
             get { return (double)GetValue(HeightProperty); }
             set { SetValue(HeightProperty, value); }
+        }
+
+        private void pageImage_ImageOpened(object sender, RoutedEventArgs e)
+        {
+            Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
         }
     }
 }

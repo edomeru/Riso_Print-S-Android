@@ -140,7 +140,6 @@
     <Compile Include="Controllers\DirectPrintController.cs" />
     <Compile Include="Controllers\InitialDataController.cs" />
     <Compile Include="Controllers\MainController.cs" />
-    <Compile Include="Controllers\PageRenderController.cs" />
     <Compile Include="Controllers\PrintersGestureController.cs" />
     <Compile Include="Controllers\PrintSettingsController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
@@ -177,9 +176,6 @@
     <Compile Include="Controls\GroupListControl.xaml.cs">
       <DependentUpon>GroupListControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PageCurlControl.xaml.cs">
-      <DependentUpon>PageCurlControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\PrinterNameControl.xaml.cs">
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
@@ -212,12 +208,9 @@
     <Compile Include="Converters\SidePaneLineGeometryConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
-    <Compile Include="Interface\IRenderer.cs" />
     <Compile Include="Models\CurlParameters.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
-    <Compile Include="Models\Vertex.cs" />
     <Compile Include="Models\ViewItemParameters.cs" />
-    <Compile Include="Renderer\PageCurlRenderer.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
     <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
@@ -343,6 +336,7 @@
     <Content Include="Assets\MiniCube.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\RZ1070-page1.jpg" />
     <Content Include="Assets\San_Francisco_City.jpg" />
     <Content Include="Resources\Images\StoreLogo.scale-140.png" />
     <Content Include="Resources\Images\StoreLogo.scale-180.png" />
@@ -352,6 +346,8 @@
     <Content Include="Assets\MiniCube_VS.fxo">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\MiniCubeTexture_PS.fxo" />
+    <Content Include="Assets\MiniCubeTexture_VS.fxo" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -542,10 +538,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PageCurlControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\PrinterNameControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -677,10 +669,6 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\CommonDX\CommonDX.csproj">
-      <Project>{45cd76a3-e21e-47a3-8bfd-9a1241aadb9d}</Project>
-      <Name>CommonDX</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DirectPrint\DirectPrint.csproj">
       <Project>{6506b581-99ad-4244-badd-c87d3a79f11a}</Project>
       <Name>DirectPrint</Name>

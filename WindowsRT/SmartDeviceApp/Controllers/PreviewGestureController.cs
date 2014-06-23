@@ -45,8 +45,12 @@ namespace SmartDeviceApp.Controllers
         private bool _isTranslateXEnabled;
         private bool _isTranslateYEnabled;
 
+        private UIElement _displyArea;
+        private UIElement _transitionGrid;
+        private UIElement _manipulationGrid;
+
         public PreviewGestureController(UIElement control, UIElement controlReference, Size targetSize,
-            double originalScale, SwipeRightDelegate swipeRightHandler, SwipeLeftDelegate swipeLeftHandler)
+            double originalScale, SwipeRightDelegate swipeRightHandler, SwipeLeftDelegate swipeLeftHandler, UIElement displayArea, UIElement transitionGrid, UIElement manipulationGrid)
         {
             _control = control;
             _controlReference = controlReference;
@@ -54,6 +58,10 @@ namespace SmartDeviceApp.Controllers
             _originalScale = originalScale;
             _swipeRightHandler = swipeRightHandler;
             _swipeLeftHandler = swipeLeftHandler;
+
+            _displyArea = displayArea;
+            _transitionGrid = transitionGrid;
+            _manipulationGrid = manipulationGrid;
             Initialize();
 
             ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
@@ -170,7 +178,12 @@ namespace SmartDeviceApp.Controllers
             _previousTransform = new MatrixTransform() { Matrix = Matrix.Identity };
             _cumulativeTransform.Children.Add(_previousTransform);
             _cumulativeTransform.Children.Add(_deltaTransform);
-            _control.RenderTransform = _cumulativeTransform;
+
+
+            //_transitionGrid.RenderTransform = _cumulativeTransform;
+            //_control.RenderTransform = _cumulativeTransform;
+            //_displyArea.RenderTransform = _cumulativeTransform;
+            _manipulationGrid.RenderTransform = _cumulativeTransform;
 
             // Temp transforms for checking validity of transforms before applying
             _tempCumulativeTransform = new TransformGroup();

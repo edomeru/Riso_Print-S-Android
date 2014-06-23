@@ -30,7 +30,7 @@
           HorizontalAlignment="{Binding ElementName=pageControl, Path=HorizontalAlignment}"
           Margin="{Binding ElementName=pageControl, Path=Margin}">
         <Border x:Name="pageBorder" Style="{StaticResource STYLE_PageImageBorder}">
-            <Image x:Name="pageImage" Source="{Binding ElementName=pageControl, Path=Image}" Style="{StaticResource STYLE_PageImage}" />
+            <Image x:Name="pageImage" Source="{Binding ElementName=pageControl, Path=Image}" Style="{StaticResource STYLE_PageImage}" ImageOpened="pageImage_ImageOpened"/>
         </Border>        
     </Grid>
     

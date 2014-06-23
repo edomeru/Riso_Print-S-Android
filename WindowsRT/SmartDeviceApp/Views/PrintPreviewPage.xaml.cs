@@ -32,10 +32,7 @@ using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Common.Enum;
-using CommonDX;
 using Windows.Graphics.Display;
-using SmartDeviceApp.Interface;
-using SmartDeviceApp.Renderer;
 
 
 namespace SmartDeviceApp.Views
@@ -80,7 +77,9 @@ namespace SmartDeviceApp.Views
             var twoPageControl = (TwoPageControl)sender;
             var pageAreaGrid = twoPageControl.PageAreaGrid;
             ViewModel.SetPageAreaGrid(pageAreaGrid);
-            ViewModel.DrawingSurface = twoPageControl.DrawingSurface;
+            ViewModel.DisplayAreaGrid = twoPageControl.DisplayAreaGrid;
+            ViewModel.TransitionGrid = twoPageControl.TransitionGrid;
+            ViewModel.ManipulationGrid = twoPageControl.ManipulationGrid;
             if (PageAreaGridLoaded != null)
             {
                 PageAreaGridLoaded();

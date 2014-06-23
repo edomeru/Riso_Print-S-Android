@@ -29,10 +29,7 @@ using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Converters;
-using SmartDeviceApp.Renderer;
 using SmartDeviceApp.Controls;
-using CommonDX;
-using SmartDeviceApp.Interface;
 using Windows.Graphics.Display;
 
 namespace SmartDeviceApp.ViewModels
@@ -115,7 +112,7 @@ namespace SmartDeviceApp.ViewModels
             {   
                 _pageAreaGrid = pageAreaGrid;
                 _pageAreaGridMaxHeight = _pageAreaGrid.ActualHeight;
-                _controlReference = (UIElement)_pageAreaGrid.Parent;
+                _controlReference = (UIElement)((Grid)_pageAreaGrid.Parent).Parent;
                 _isPageAreaGridLoaded = true;
             }
         }
@@ -132,13 +129,6 @@ namespace SmartDeviceApp.ViewModels
             _pageAreaGridMaxHeight = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null))
                 - defaultMargin * 2 - titleHeight - sliderHeight - sliderTextHeight;
 
-            if (DrawingSurface != null)
-            {
-                ((ContentControl)DrawingSurface).Height = _pageAreaGridMaxHeight;
-                ((ContentControl)DrawingSurface).Width = _pageAreaGridMaxWidth;
-
-                InitializeRenderer();
-            }
         }
 
         public void InitializeGestures()
@@ -193,20 +183,20 @@ namespace SmartDeviceApp.ViewModels
                 }
                 // Note: If view and page areas are not resized or PageViewMode is not changed, 
                 // no need to reset gestureController
-                if (DrawingSurface != null)
-                {
-                    ((ContentControl)DrawingSurface).Height = targetSize.Height;
-                    ((ContentControl)DrawingSurface).Width = targetSize.Width;
-
-                    InitializeRenderer();
-                }
                 
+                
+                //if (DisplayAreaGrid != null)
+                //{
+                //    ((Grid)DisplayAreaGrid).Height = targetSize.Height;
+                //    ((Grid)DisplayAreaGrid).Width = targetSize.Width;
+                //}
+
                 if (scalingFactor != _scalingFactor || PageViewMode != _previousPageViewMode)
                 {
                     _scalingFactor = scalingFactor;
                     if (_gestureController != null) _gestureController.Dispose();
                     _gestureController = new PreviewGestureController(_pageAreaGrid, _controlReference,
-                           targetSize, scalingFactor, swipeRight, swipeLeft);
+                           targetSize, scalingFactor, swipeRight, swipeLeft, DisplayAreaGrid, TransitionGrid, ManipulationGrid);
                     _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
                         swipeTop, swipeBottom);
                 }
@@ -279,42 +269,7 @@ namespace SmartDeviceApp.ViewModels
             get;
             set;
         }
-        private DeviceManager deviceManager;
-        private IRenderer renderer;
-        private PageCurlControl dsSIS;
-        private void InitializeRenderer()
-        {
-            // Safely dispose any previous instance
-            // Creates a new DeviceManager (Direct3D, Direct2D, DirectWrite, WIC)
-            deviceManager = new DeviceManager();
-
-            // New CubeRenderer
-            renderer = new PageCurlRenderer();
-
-            //((UIElement)twoPageControl.PageAreaGrid.Parent).PointerMoved += ((PageCurlRenderer)renderer)._root_PointerMoved;
-            _pageAreaGrid.PointerMoved -= ((PageCurlRenderer)renderer)._root_PointerMoved;
-            _pageAreaGrid.PointerMoved += ((PageCurlRenderer)renderer)._root_PointerMoved;
-            //twoPageControl.PageAreaGrid.PointerPressed += ((PageCurlRenderer)renderer)._root_PointerPressed;
-            //twoPageControl.PageAreaGrid.PointerReleased += ((PageCurlRenderer)renderer)._root_PointerReleased;
-
-
-            //twoPageControl.PageAreaGrid.PointerPressed += ((PageCurlRenderer)renderer)._root_PointerPressed;
-            //twoPageControl.PageAreaGrid.PointerReleased += ((PageCurlRenderer)renderer)._root_PointerReleased;
-
-            dsSIS = new PageCurlControl(renderer);
-            ((ContentControl)DrawingSurface).Content = dsSIS;
-
-            // Add Initializer to device manager
-            deviceManager.OnInitialize += renderer.Initialize;
-
-            // Initialize the device manager and all registered deviceManager.OnInitialize 
-            deviceManager.Initialize(DisplayProperties.LogicalDpi);
-
-            // Setup rendering callback
-            //CompositionTarget.Rendering += CompositionTarget_Rendering;
-
-            dsSIS.IsRunning = true;
-        }
+        
 
         #region PANE VISIBILITY
 
@@ -346,30 +301,18 @@ namespace SmartDeviceApp.ViewModels
                 case ViewMode.MainMenuPaneVisible:
                     {
                         DisablePreviewGestures();
-                        if (DrawingSurface != null)
-                        {
-                            _pageAreaGrid.PointerMoved -= ((PageCurlRenderer)renderer)._root_PointerMoved;
-                        }
                         break;
                     }
 
                 case ViewMode.FullScreen:
                     {
                         EnablePreviewGestures();
-                        if (DrawingSurface != null)
-                        {
-                            _pageAreaGrid.PointerMoved += ((PageCurlRenderer)renderer)._root_PointerMoved;
-                        }
                         break;
                     }
                 case ViewMode.RightPaneVisible: // NOTE: Technically not possible
                 case ViewMode.RightPaneVisible_ResizedWidth:
                     {
                         DisablePreviewGestures();
-                        if (DrawingSurface!=null)
-                        {
-                            _pageAreaGrid.PointerMoved -= ((PageCurlRenderer)renderer)._root_PointerMoved;
-                        }
                         break;
                     }
             }
@@ -416,6 +359,8 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _rightPageImage = value;
                     RaisePropertyChanged("RightPageImage");
+
+                    
                 }
             }
         }
@@ -471,6 +416,24 @@ namespace SmartDeviceApp.ViewModels
                     RaisePropertyChanged("PageViewMode");
                 }
             }
+        }
+
+        public UIElement DisplayAreaGrid
+        {
+            get;
+            set;
+        }
+
+        public UIElement TransitionGrid
+        {
+            get;
+            set;
+        }
+
+        public UIElement ManipulationGrid
+        {
+            get;
+            set;
         }
 
         #endregion

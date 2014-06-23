@@ -30,28 +30,120 @@
     </UserControl.Resources>
 
     <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}" >
-        <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}">
-            <Grid.RowDefinitions>
-                <RowDefinition x:Name="topPageArea"/>
-                <RowDefinition x:Name="bottomPageArea"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="leftPageArea"/>
-                <ColumnDefinition x:Name="rightPageArea"/>
-            </Grid.ColumnDefinitions>
-            <local:PageControl x:Name="topPage" Grid.Row="0" Grid.Column="1"
-                                Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
-            <local:PageControl x:Name="leftPage"  Grid.Row="1" Grid.Column="0"                           
-                                Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
-            <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
-                                Image="{Binding RightPageImage, ElementName=twoPageControl}"/>
-            <Grid Width ="Auto" Height="Auto" x:Name="pageRenderGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Background="Transparent" LayoutUpdated="pageAreaScrollViewer_LayoutUpdated">
-                <!-- This grid will contain the curling -->
+        <Grid x:Name="manipulationGrid"  ManipulationMode="TranslateX,TranslateY,TranslateInertia"
+                ManipulationStarted="ManipulationGrid_OnManipulationStarted"
+                ManipulationDelta="ManipulationGrid_OnManipulationDelta"
+                ManipulationCompleted="ManipulationGrid_OnManipulationCompleted" >
+            <Grid x:Name="displayAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" 
+                 Background="Yellow"
+                  >
+                <Grid.Clip>
+                    <RectangleGeometry
+                    Rect="0,0,80000,80000">
+                        <RectangleGeometry.Transform>
+                            <TransformGroup>
+                                <TranslateTransform
+                                x:Name="Page1ClipTranslateTransform" />
+                                <RotateTransform
+                                x:Name="Page1ClipRotateTransform" />
+                            </TransformGroup>
+                        </RectangleGeometry.Transform>
+                    </RectangleGeometry>
+                </Grid.Clip>
 
-                <ContentControl Width="Auto" Height="Auto" x:Name="ccDrawingSurface" Background="Red" HorizontalAlignment="Left"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top" />
+
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="topDisplayArea"/>
+                    <RowDefinition x:Name="bottomDisplayArea"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="leftDisplayArea"/>
+                    <ColumnDefinition x:Name="rightDisplayArea"/>
+                </Grid.ColumnDefinitions>
+
+                <local:PageControl x:Name="topDisplay" Grid.Row="0" Grid.Column="1"
+                                    Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
+                <local:PageControl x:Name="leftDisplay"  Grid.Row="1" Grid.Column="0"                           
+                                    Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
+                <local:PageControl x:Name="rightDisplay" Grid.Row="1" Grid.Column="1"
+                                    Image="{Binding RightPageImage, ElementName=twoPageControl}" BorderThickness="1"/>
             </Grid>
-        </Grid>
-        
+           
+
+            <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" 
+                 Background="Blue" Loaded="pageAreaGrid_Loaded"
+                  >
+                <Grid.Clip>
+                    <RectangleGeometry
+                    Rect="0,0,80000,80000">
+                        <RectangleGeometry.Transform>
+                            <TransformGroup>
+                                <TranslateTransform
+                                x:Name="Page2ClipTranslateTransform" />
+                                <RotateTransform
+                                x:Name="Page2ClipRotateTransform" />
+                            </TransformGroup>
+                        </RectangleGeometry.Transform>
+                    </RectangleGeometry>
+                </Grid.Clip>
+
+
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="topPageArea"/>
+                    <RowDefinition x:Name="bottomPageArea"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="leftPageArea"/>
+                    <ColumnDefinition x:Name="rightPageArea"/>
+                </Grid.ColumnDefinitions>
+                
+                <local:PageControl x:Name="topPage" Grid.Row="0" Grid.Column="1"
+                                    Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
+                <local:PageControl x:Name="leftPage"  Grid.Row="1" Grid.Column="0"                           
+                                    Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
+                <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
+                                    Image="{Binding RightPageImage, ElementName=twoPageControl}" BorderThickness="1"/>
+                
+            </Grid>
+            
+
+            <!--<Grid
+            x:Name="TransitionGridContainer" Background="Green">-->
+                <Grid
+                x:Name="transitionGrid"
+                Opacity="0">
+                    <Grid.RenderTransform>
+                        <CompositeTransform
+                        x:Name="TransitionGridContainerTransform" />
+                    </Grid.RenderTransform>
+                    <Grid.Clip>
+                        <RectangleGeometry
+                        Rect="0,0,80000,80000">
+                            <RectangleGeometry.Transform>
+                                <TransformGroup>
+                                    <TranslateTransform
+                                    x:Name="TransitionGridClipTranslateTransform" />
+                                    <RotateTransform
+                                    x:Name="TransitionGridClipRotateTransform" />
+                                </TransformGroup>
+                            </RectangleGeometry.Transform>
+                        </RectangleGeometry>
+                    </Grid.Clip>
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="topTransitionArea"/>
+                    <RowDefinition x:Name="bottomTransitionArea"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="leftTransitionArea"/>
+                    <ColumnDefinition x:Name="rightTransitionArea"/>
+                </Grid.ColumnDefinitions>
+                <Image
+                    x:Name="TransitionImage"
+                    Stretch="None" />
+                </Grid>
+            </Grid>
+
+        <!--</Grid>-->
     </ScrollViewer>
     
 </UserControl>

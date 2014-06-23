@@ -13,6 +13,15 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Common.Enum;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Popups;
+using Windows.UI.Xaml.Media.Animation;
+using SmartDeviceApp.ViewModels;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.Graphics.Imaging;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace SmartDeviceApp.Controls
 {
@@ -21,6 +30,346 @@ namespace SmartDeviceApp.Controls
         public TwoPageControl()
         {
             this.InitializeComponent();
+
+            Messenger.Default.Register<MessageType>(this, (msg) => getScreenshot(msg));
+
+            getScreenImage();
+        }
+
+        private async void getScreenImage()
+        {
+            var rtb = new RenderTargetBitmap();
+            await rtb.RenderAsync(PageAreaGrid);
+            TransitionImage.Source = rtb;
+            await Task.Delay(40000);
+
+
+
+            
+        }
+
+
+        private async void getScreenshot(MessageType msg)
+        {
+            if (msg == MessageType.RightPageImageUpdated)
+            {
+                var rtb = new RenderTargetBitmap();
+                await rtb.RenderAsync(PageAreaGrid);
+                TransitionImage.Source = rtb;
+
+
+                await Task.Delay(40000);
+
+                //save image
+                //var filePicker = new FileSavePicker();
+                //filePicker.FileTypeChoices.Add("Raw Images", new List<string> { ".raw", ".dat" });
+                //filePicker.FileTypeChoices.Add(".jpg Image", new List<string> { ".jpg" });
+                //var file = await filePicker.PickSaveFileAsync();
+
+                //var renderTargetBitmap = new RenderTargetBitmap();
+
+                //var pixelBuffer = await rtb.GetPixelsAsync();
+
+                //using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                //{
+                //    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                //    encoder.SetPixelData(
+                //        BitmapPixelFormat.Bgra8,
+                //        BitmapAlphaMode.Ignore,
+                //        (uint)rtb.PixelWidth,
+                //        (uint)rtb.PixelHeight, 96d, 96d,
+                //        pixelBuffer.ToArray());
+
+                //    await encoder.FlushAsync();
+                //} 
+
+            }
+        }
+
+        private async Task PreloadTransitionGridContentAsync()
+        {
+            #region Waiting for page 2 content to load
+            //var bi = Page2SampleContentImage.Source as BitmapImage;
+
+            //if (bi.PixelWidth == 0)
+            //{
+            //    bi.ImageFailed += (s, e) => new MessageDialog("Need a different sample image.").ShowAsync();
+            //    bi.ImageOpened += (s, e) => PreloadTransitionGridContentAsync();
+            //    return;
+            //}
+
+            //if (PageAreaGrid.ActualWidth == 0)
+            //{
+            //    SizeChangedEventHandler sizeChangedEventHandler = null;
+            //    sizeChangedEventHandler = (s, e) =>
+            //    {
+            //        PreloadTransitionGridContentAsync();
+            //        PageAreaGrid.SizeChanged -= sizeChangedEventHandler;
+            //    };
+
+            //    PageAreaGrid.SizeChanged += sizeChangedEventHandler;
+
+            //    return;
+            //}
+            #endregion
+
+            var rtb = new RenderTargetBitmap();
+            await rtb.RenderAsync(PageAreaGrid);
+            TransitionImage.Source = rtb;
+
+
+            await Task.Delay(40000);
+        }
+
+        private bool isCancellationRequested;
+
+        private enum FlipDirections
+        {
+            Left,
+            Right
+        }
+
+        private FlipDirections flipDirection;
+        private Point manipulationStartPosition;
+        private double rotationCenterX;
+        private double rotationCenterY;
+        private bool _backCurl;
+        private bool _willContinue;
+
+        private void ManipulationGrid_OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            if (TransitionImage.Source == null)
+            {
+                CancelManipulation(e);
+                return;
+            }
+
+            manipulationStartPosition = e.Position;
+
+            _backCurl = false;
+            if (manipulationStartPosition.X < ManipulationGrid.ActualWidth / 2)
+            {
+                //use page1 clip transition
+                _backCurl = true;
+                //Page1ClipTranslateTransform.X = 0;
+                //TransitionGridClipTranslateTransform.X = -80000;
+                //TransitionGridContainerTransform.TranslateX = 0;
+                //TransitionGrid.Opacity = .975;
+
+                //var rtb = new RenderTargetBitmap();
+
+
+                ////Page1ClipScaleTransform.ScaleX = -1;
+                //rtb.RenderAsync(Page1ContentGrid);
+                //TransitionImage.Source = rtb;
+                //Page1ClipScaleTransform.ScaleX = 1;
+
+                //TrainsitionGridClipScaleTransform.ScaleX = -1;
+                //TransitionImage.FlowDirection = Windows.UI.Xaml.FlowDirection.RightToLeft;
+            }
+
+            var viewModel = new ViewModelLocator().PrintPreviewViewModel;
+            if (true)//check if flip left or flip right
+            {
+                flipDirection = FlipDirections.Left;
+                Page2ClipTranslateTransform.X = PageAreaGrid.ActualWidth; //get Page2ClipTranslateTransform and put in XAML.
+                //Page2.Opacity = 1;
+                //PageAreaGrid.Opacity = 1;
+                TransitionGridClipTranslateTransform.X = -80000;
+                TransitionGridContainerTransform.TranslateX = PageAreaGrid.ActualWidth;
+                TransitionGrid.Opacity = .975;
+            }
+            else
+            {
+                if (manipulationStartPosition.X >= this.PageAreaGrid.ActualWidth)// /2 //single view
+                {
+                    // Can't flip left since there is no page after the current one
+                    CancelManipulation(e);
+                    return;
+                }
+
+                flipDirection = FlipDirections.Right;
+
+                //Page1.Opacity = 1;
+            }
+        }
+
+        private void ManipulationGrid_OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (this.isCancellationRequested)
+            {
+                return;
+            }
+
+            if (flipDirection == FlipDirections.Left)
+            {
+                var w = this.PageAreaGrid.ActualWidth;
+                var h = this.PageAreaGrid.ActualHeight;
+                
+                var cx = Math.Min(0, Math.Max(e.Position.X - w, -w));
+                var cy = e.Cumulative.Translation.Y;
+                var angle = (Math.Atan2(cx + manipulationStartPosition.Y - w, -cy) * 180 / Math.PI + +90) % 360;
+
+                this.rotationCenterX = w + cx / 2;/// 2
+
+                if (cy < 0)
+                {
+                    this.rotationCenterY = h;
+                }
+                else
+                {
+                    this.rotationCenterY = 0;
+                }
+
+                Page2ClipTranslateTransform.X = w + cx / 2;/// 2
+                Page2ClipTranslateTransform.Y = -40000 + h / 2;/// 2
+                Page2ClipRotateTransform.CenterX = this.rotationCenterX;
+                Page2ClipRotateTransform.CenterY = this.rotationCenterY;
+                Page2ClipRotateTransform.Angle = angle;
+
+                TransitionGridClipTranslateTransform.X = -80000 - (cx / 2);/// 2
+                TransitionGridClipTranslateTransform.Y = -40000 + h / 2;/// 2
+                TransitionGridClipRotateTransform.CenterX = -cx /2;/// 2
+                TransitionGridClipRotateTransform.CenterY = this.rotationCenterY;
+                TransitionGridClipRotateTransform.Angle = -angle;
+
+                TransitionGridContainerTransform.TranslateX = w + cx;
+                TransitionGridContainerTransform.CenterX = -cx / 2;
+                TransitionGridContainerTransform.CenterY = this.rotationCenterY;
+                TransitionGridContainerTransform.Rotation = 2 * angle;
+
+                _willContinue = false;
+                if (_backCurl)
+                {
+                    if (e.Position.X > w * 0.25)
+                    {
+                        _willContinue = true;
+                    }
+                }
+                else
+                {
+                    if (e.Position.X < w * 0.75)
+                    {
+                        _willContinue = true;
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine("w: {0} h: {1} cx: {2} cy: {3} angle: {4} rotationCenterX: {5} rotationCenterY: {6}", w, h, cx, cy,angle, rotationCenterX, rotationCenterY);
+
+                System.Diagnostics.Debug.WriteLine("Page2ClipTranslateTransform.X: {0} \nPage2ClipTranslateTransform.Y: {1} \nPage2ClipRotateTransform.CenterX: {2} \nPage2ClipRotateTransform.CenterY: {3} \nPage2ClipRotateTransform.Angle: {4}",
+                    Page2ClipTranslateTransform.X,
+                    Page2ClipTranslateTransform.Y,
+                    Page2ClipRotateTransform.CenterX,
+                    Page2ClipRotateTransform.CenterY,
+                    Page2ClipRotateTransform.Angle);
+
+                System.Diagnostics.Debug.WriteLine("TransitionGridClipTranslateTransform.X: {0} \nTransitionGridClipTranslateTransform.Y: {1} \nTransitionGridClipRotateTransform.CenterX: {2} \nTransitionGridClipRotateTransform.CenterY: {3} \nTransitionGridClipRotateTransform.Angle: {4}",
+                    TransitionGridClipTranslateTransform.X,
+                    TransitionGridClipTranslateTransform.Y,
+                    TransitionGridClipRotateTransform.CenterX,
+                    TransitionGridClipRotateTransform.CenterY,
+                    TransitionGridClipRotateTransform.Angle);
+
+                System.Diagnostics.Debug.WriteLine("TransitionGridContainerTransform.TranslateX: {0} \nTransitionGridContainerTransform.CenterX: {1} \nTransitionGridClipRotateTransform.Centery: {2} \nTransitionGridContainerTransform.Rotation: {3}",
+                    TransitionGridContainerTransform.TranslateX,
+                    TransitionGridContainerTransform.CenterX,
+                    TransitionGridContainerTransform.CenterY,
+                    TransitionGridContainerTransform.Rotation);
+            }
+        }
+
+        private void ManipulationGrid_OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            if (this.isCancellationRequested)
+            {
+                this.isCancellationRequested = false;
+                return;
+            }
+
+            var w = this.PageAreaGrid.ActualWidth;
+            var h = this.PageAreaGrid.ActualHeight;
+
+            var sb = new Storyboard();
+            if (!_backCurl)
+            {
+                var to = 0;
+                if (_willContinue)
+                {
+                    to = (int)(w / 2);
+                }
+                else
+                {
+                    to = (int)w;
+                }
+                AddAnimation(sb, Page2ClipTranslateTransform, "X", to);
+                AddAnimation(sb, Page2ClipRotateTransform, "CenterX", w / 2);
+                AddAnimation(sb, Page2ClipRotateTransform, "Angle", 0);
+
+                if (_willContinue)
+                {
+                    to = (int)(-80000 + (w / 2));
+                }
+                else
+                {
+                    to = (int)-80000;
+                }
+                AddAnimation(sb, TransitionGridClipTranslateTransform, "X", to);
+                AddAnimation(sb, TransitionGridClipRotateTransform, "CenterX", w / 2);
+                AddAnimation(sb, TransitionGridClipRotateTransform, "Angle", 0);
+                if (_willContinue)
+                {
+                    to = 0;
+                }
+                else
+                {
+                    to = (int)w;
+                }
+                AddAnimation(sb, TransitionGridContainerTransform, "TranslateX", to);
+                AddAnimation(sb, TransitionGridContainerTransform, "CenterX", w / 2);
+                AddAnimation(sb, TransitionGridContainerTransform, "Rotation", 0);
+                sb.Begin();
+            }
+            else
+            {
+                AddAnimation(sb, Page1ClipTranslateTransform, "X", 0);
+                AddAnimation(sb, Page1ClipRotateTransform, "CenterX", w / 2);
+                AddAnimation(sb, Page1ClipRotateTransform, "Angle", 0);
+                //Page1.Opacity = 1;
+                //Page2.Opacity = 0;
+                var to = 0;
+                if (_willContinue)
+                {
+                    to = (int)(-80000);
+                }
+                else
+                {
+                    to = (int)0;
+                }
+                AddAnimation(sb, TransitionGridClipTranslateTransform, "X", to);
+                AddAnimation(sb, TransitionGridClipRotateTransform, "CenterX", w / 2);
+                AddAnimation(sb, TransitionGridClipRotateTransform, "Angle", 0);
+
+                AddAnimation(sb, TransitionGridContainerTransform, "TranslateX", to);
+                AddAnimation(sb, TransitionGridContainerTransform, "CenterX", w / 2);
+                AddAnimation(sb, TransitionGridContainerTransform, "Rotation", 0);
+                sb.Begin();
+            }
+        }
+
+        private static void AddAnimation(Storyboard sb, DependencyObject dob, string path, double to)
+        {
+            var da = new DoubleAnimation();
+            Storyboard.SetTarget(da, dob);
+            Storyboard.SetTargetProperty(da, path);
+            da.To = to;
+            da.Duration = TimeSpan.FromSeconds(.2);
+            sb.Children.Add(da);
+        }
+
+        private void CancelManipulation(ManipulationStartedRoutedEventArgs e)
+        {
+            this.isCancellationRequested = true;
+            e.Complete();
         }
 
         public static readonly DependencyProperty PageAreaGridProperty =
@@ -41,6 +390,8 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty DrawingSurfaceProperty =
             DependencyProperty.Register("DrawingSurface", typeof(ContentControl), typeof(TwoPageControl), null);
+        public static readonly DependencyProperty LeftPageImage2Property =
+            DependencyProperty.Register("LeftPageImage2", typeof(ImageSource), typeof(TwoPageControl), null);
 
         public Grid PageAreaGrid
         {
@@ -71,6 +422,12 @@ namespace SmartDeviceApp.Controls
             set { SetValue(PageAreaSizeProperty, value); }
         }
 
+        public ImageSource LeftPageImage2
+        {
+            get { return (ImageSource)GetValue(LeftPageImage2Property); }
+            set { SetValue(LeftPageImage2Property, value); }
+        }
+
         private static void SetPageViewMode(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             var control = (TwoPageControl)obj;
@@ -83,6 +440,14 @@ namespace SmartDeviceApp.Controls
             {
                 case PageViewMode.SinglePageView:
                 {
+                    control.leftDisplay.Visibility = Visibility.Collapsed;
+                    control.topDisplay.Visibility = Visibility.Collapsed;
+                    control.rightDisplayArea.Width = gridLengthFull;
+                    control.topDisplay.Visibility = Visibility.Collapsed;
+                    control.topDisplayArea.Height = gridLengthCollapsed;
+                    control.bottomDisplayArea.Height = gridLengthFull;
+
+
                     control.leftPage.Visibility = Visibility.Collapsed;
                     control.leftPageArea.Width = gridLengthCollapsed;
                     control.rightPageArea.Width = gridLengthFull;
@@ -93,6 +458,12 @@ namespace SmartDeviceApp.Controls
                 }
                 case PageViewMode.TwoPageViewHorizontal:
                 {
+                    control.leftDisplay.Visibility = Visibility.Visible;
+                    control.topDisplay.Visibility = Visibility.Collapsed;
+                    control.leftDisplayArea.Width = gridWidth;
+                    control.rightDisplayArea.Width = gridWidth;
+
+
                     control.leftPage.Visibility = Visibility.Visible;
                     control.leftPageArea.Width = gridWidth;
                     control.rightPageArea.Width = gridWidth;
@@ -114,19 +485,31 @@ namespace SmartDeviceApp.Controls
             }
         }
 
-        public ContentControl DrawingSurface
-        {
-            get { return ccDrawingSurface; }
-        }
 
         private void pageAreaScrollViewer_LayoutUpdated(object sender, object e)
         {
-            if (sender != null)
-            {
-                DrawingSurface.Height = ((ScrollViewer)sender).ActualHeight;
-                DrawingSurface.Width = ((ScrollViewer)sender).ActualWidth;
-            }
             
+        }
+
+        public Grid DisplayAreaGrid
+        {
+            get { return displayAreaGrid; }
+        }
+
+        public Grid TransitionGrid
+        {
+            get { return transitionGrid; }
+        }
+
+        public Grid ManipulationGrid
+        {
+            get { return manipulationGrid; }
+        }
+
+        private async void pageAreaGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+
         }
     }
 }
