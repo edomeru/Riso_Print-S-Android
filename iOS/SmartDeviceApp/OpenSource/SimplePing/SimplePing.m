@@ -107,6 +107,9 @@ static uint16_t in_cksum(const void *buffer, size_t bufferLen)
 
 @property (nonatomic, copy,   readwrite) NSData *           hostAddress;
 @property (nonatomic, assign, readwrite) uint16_t           nextSequenceNumber;
+// *SDA Added - BEGIN
+@property (nonatomic, assign, readwrite) BOOL isIPv6;
+// *SDA Added - End
 
 - (void)stopHostResolution;
 - (void)stopDataTransfer;
@@ -227,7 +230,16 @@ static uint16_t in_cksum(const void *buffer, size_t bufferLen)
     assert(packet != nil);
 
     icmpPtr = [packet mutableBytes];
-    icmpPtr->type = kICMPTypeEchoRequest;
+    // *SDA Added - BEGIN
+    if (self.isIPv6)
+    {
+        icmpPtr->type = kICMPv6TypeEchoRequest;
+    }
+    // *SDA Added - END
+    else
+    {
+        icmpPtr->type = kICMPTypeEchoRequest;
+    }
     icmpPtr->code = 0;
     icmpPtr->checksum = 0;
     icmpPtr->identifier     = OSSwapHostToBigInt16(self.identifier);
@@ -332,20 +344,40 @@ static uint16_t in_cksum(const void *buffer, size_t bufferLen)
     
     result = NO;
     
-    icmpHeaderOffset = [[self class] icmpHeaderOffsetInPacket:packet];
-    if (icmpHeaderOffset != NSNotFound) {
-        icmpPtr = (struct ICMPHeader *) (((uint8_t *)[packet mutableBytes]) + icmpHeaderOffset);
-
-        receivedChecksum   = icmpPtr->checksum;
-        icmpPtr->checksum  = 0;
-        calculatedChecksum = in_cksum(icmpPtr, [packet length] - icmpHeaderOffset);
-        icmpPtr->checksum  = receivedChecksum;
+    // *SDA Added - BEGIN
+    if (self.isIPv6 == YES)
+    {
+        icmpPtr = (struct ICMPHeader *)[packet bytes];
         
-        if (receivedChecksum == calculatedChecksum) {
-            if ( (icmpPtr->type == kICMPTypeEchoReply) && (icmpPtr->code == 0) ) {
-                if ( OSSwapBigToHostInt16(icmpPtr->identifier) == self.identifier ) {
-                    if ( OSSwapBigToHostInt16(icmpPtr->sequenceNumber) < self.nextSequenceNumber ) {
-                        result = YES;
+        if (icmpPtr->type == kICMPv6TypeEchoReply && icmpPtr->code == 0)
+        {
+            if (OSSwapBigToHostInt16(icmpPtr->identifier) == self.identifier)
+            {
+                if (OSSwapBigToHostInt16(icmpPtr->sequenceNumber) < self.nextSequenceNumber)
+                {
+                    result = YES;
+                }
+            }
+        }
+    }
+    // *SDA Added - END
+    else
+    {
+        icmpHeaderOffset = [[self class] icmpHeaderOffsetInPacket:packet];
+        if (icmpHeaderOffset != NSNotFound) {
+            icmpPtr = (struct ICMPHeader *) (((uint8_t *)[packet mutableBytes]) + icmpHeaderOffset);
+
+            receivedChecksum   = icmpPtr->checksum;
+            icmpPtr->checksum  = 0;
+            calculatedChecksum = in_cksum(icmpPtr, [packet length] - icmpHeaderOffset);
+            icmpPtr->checksum  = receivedChecksum;
+            
+            if (receivedChecksum == calculatedChecksum) {
+                if ( (icmpPtr->type == kICMPTypeEchoReply) && (icmpPtr->code == 0) ) {
+                    if ( OSSwapBigToHostInt16(icmpPtr->identifier) == self.identifier ) {
+                        if ( OSSwapBigToHostInt16(icmpPtr->sequenceNumber) < self.nextSequenceNumber ) {
+                            result = YES;
+                        }
                     }
                 }
             }
@@ -460,8 +492,15 @@ static void SocketReadCallback(CFSocketRef s, CFSocketCallBackType type, CFDataR
             }
         } break;
         case AF_INET6:
-            assert(NO);
-            // fall through
+            // *SDA Added - BEGIN
+            self.isIPv6 = YES;
+            fd = socket(AF_INET6, SOCK_DGRAM, IPPROTO_ICMPV6);
+            if (fd < 0)
+            {
+                err = errno;
+            }
+            break;
+            // *SDA Added - END
         default: {
             err = EPROTONOSUPPORT;
         } break;
@@ -520,6 +559,22 @@ static void SocketReadCallback(CFSocketRef s, CFSocketCallBackType type, CFDataR
                 break;
             }
         }
+        // *SDA Added - BEGIN
+        // Look for IPv6 address if no IPv4 available
+        if (resolved == false)
+        {
+            for (NSData * address in addresses) {
+                const struct sockaddr * addrPtr;
+                
+                addrPtr = (const struct sockaddr *) [address bytes];
+                if ( [address length] >= sizeof(struct sockaddr) && addrPtr->sa_family == AF_INET6) {
+                    self.hostAddress = address;
+                    resolved = true;
+                    break;
+                }
+            }
+        }
+        // *SDA Added - END
     }
 
     // We're done resolving, so shut that down.
