@@ -23,9 +23,9 @@ import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupList
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener;
 import jp.co.riso.smartprint.R;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,7 +51,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private ScrollView mScrollView;
     private TextView mEmptyJobsText;
 
-    
     /**
      * Instantiate PrintJobsFragment
      */
@@ -77,7 +76,6 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mCollapsedPrinters.clear();
         mPrintJobToDelete = null;
         mPrinterToDelete = null;
-        // mPrintJobsLoadIndicator = (ProgressBar) view.findViewById(R.id.printJobsLoadIndicator);
         mPrintJobContainer = (LinearLayout) view.findViewById(R.id.printJobContainer);
         mPrintJobsView = (PrintJobsView) view.findViewById(R.id.printJobsView);
         mEmptyJobsText = (TextView) view.findViewById(R.id.emptyJobsText);
@@ -85,7 +83,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mPrintJobContainer.setOnTouchListener(this);
         
         mLoadPrintJobsTask = new LoadPrintJobsTask(getActivity(), mPrintJobs, mPrinters);
-        mLoadPrintJobsTask.execute();
+        mLoadPrintJobsTask.start();
     }
     
     /** {@inheritDoc} */
@@ -116,7 +114,10 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private void showEmptyText() {
         mEmptyJobsText.setVisibility(View.VISIBLE);
         mScrollView.setVisibility(View.GONE);
-        getView().setBackgroundColor(getResources().getColor(R.color.theme_light_2));
+        View view = getView();
+        if (view != null) {
+            view.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
+        }
     }
     
     // ================================================================================
@@ -206,11 +207,11 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     @Override
     public void hideLoading() {
         if (!isTablet()) {
-            getView().setBackgroundColor(getResources().getColor(R.color.theme_light_3));
+            View view = getView();
+            if (view != null) {
+                view.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
+            }
         }
-        
-        // mPrintJobsView.setVisibility(View.VISIBLE);
-        // mPrintJobsLoadIndicator.setVisibility(View.GONE);
     }
     
     // ================================================================================
@@ -257,7 +258,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     /**
      * AsyncTask for Loading Print Job Tasks
      */
-    private class LoadPrintJobsTask extends AsyncTask<Void, Void, Void> {
+    private class LoadPrintJobsTask extends Thread {
         private WeakReference<Context> mContextRef;
         private List<PrintJob> mPrintJobsList;
         private List<Printer> mPrintersList;
@@ -272,9 +273,8 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
             }
         }
         
-        /** {@inheritDoc} */
         @Override
-        protected Void doInBackground(Void... arg0) {
+        public void run() {
             if (mContextRef != null && mContextRef.get() != null) {
                 PrintJobManager pm = PrintJobManager.getInstance(mContextRef.get());
                 List<Printer> printers = pm.getPrintersWithJobs();
@@ -284,26 +284,22 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
                     mPrintersList = printers;
                     pm.setRefreshFlag(false);
                 }
-            }
-            return null;
-        }
-        
-        /** {@inheritDoc} */
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            if (mPrintJobsList.isEmpty()) {
-                showEmptyText();
-            } else {
-                // if (mPrintJobsList.isEmpty() || isCancelled()) {
-                // mPrintJobsLoadIndicator.setVisibility(View.GONE);
-                // } else {
-                mPrintJobs = new ArrayList<PrintJob>(mPrintJobsList);
-                mPrinters = new ArrayList<Printer>(mPrintersList);
                 
-                if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList.isEmpty() && !mPrintersList.isEmpty()) {
-                    mPrintJobsView.setData(mPrintJobsList, mPrintersList, PrintJobsFragment.this, PrintJobsFragment.this);
-                }
+                ((Activity) mContextRef.get()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mPrintJobsList.isEmpty()) {
+                            showEmptyText();
+                        } else {
+                            mPrintJobs = new ArrayList<PrintJob>(mPrintJobsList);
+                            mPrinters = new ArrayList<Printer>(mPrintersList);
+                            
+                            if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList.isEmpty() && !mPrintersList.isEmpty()) {
+                                mPrintJobsView.setData(mPrintJobsList, mPrintersList, PrintJobsFragment.this, PrintJobsFragment.this);
+                            }
+                        }
+                    }
+                });
             }
         }
     }    
