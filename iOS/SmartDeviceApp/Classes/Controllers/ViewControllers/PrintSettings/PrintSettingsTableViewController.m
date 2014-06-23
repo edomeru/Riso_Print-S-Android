@@ -654,18 +654,21 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingShortEdge];
         [self setOptionSettingWithKey:KEY_IMPOSITION toValue:(NSInteger)kImpositionOff];
-        [self setOptionSettingWithKey:KEY_BOOKLET_LAYOUT toValue:kBookletLayoutForward];
+        [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:(NSInteger)kImpositionOrderLeftToRight];
+        [self setOptionSettingWithKey:KEY_FINISHING_SIDE toValue:(NSInteger)kFinishingSideLeft];
+        [self setOptionSettingWithKey:KEY_STAPLE toValue:(NSInteger)kStapleTypeNone];
+        [self setOptionSettingWithKey:KEY_PUNCH toValue:(NSInteger)kPunchTypeNone];
     }
     else
     {
-        [self setState:YES forSettingKey:KEY_IMPOSITION];
-        [self setOptionSettingWithKey:KEY_DUPLEX toValue:(NSInteger)kDuplexSettingOff];
-        [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
+        [self setOptionSettingToDefaultValue:KEY_DUPLEX];
+        [self setOptionSettingToDefaultValue:KEY_IMPOSITION_ORDER];
+        [self setOptionSettingToDefaultValue:KEY_FINISHING_SIDE];
+        [self setOptionSettingToDefaultValue:KEY_STAPLE];
+        [self setOptionSettingToDefaultValue:KEY_PUNCH];
     }
     
-    [self setOptionSettingToDefaultValue:KEY_FINISHING_SIDE];
-    [self setOptionSettingToDefaultValue:KEY_STAPLE];
-    [self setOptionSettingToDefaultValue:KEY_PUNCH];
+    [self setOptionSettingToDefaultValue:KEY_BOOKLET_LAYOUT];
     [self setOptionSettingToDefaultValue:KEY_BOOKLET_FINISH];
     [self reloadRowsForIndexPathsToUpdate];
 }
@@ -765,9 +768,17 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     switch(currentImpositionValue)
     {
         case kImpositionOff:
+            if([self.indexPathsForSettings objectForKey:KEY_IMPOSITION] != nil)
+            {
+                [self addToIndexToUpdate:[self.indexPathsForSettings objectForKey:KEY_IMPOSITION]];
+            }
             [self setOptionSettingWithKey:KEY_IMPOSITION_ORDER toValue:kImpositionOrderLeftToRight];
             break;
         case kImposition2Pages:
+            if (self.previewSetting.booklet == YES)
+            {
+                [self setOptionSettingWithKey:KEY_BOOKLET toValue:(NSInteger)kBookletTypeOff];
+            }
             if(previousImpositionValue == kImposition4pages)
             {
                 if(impositionOrder == kImpositionOrderUpperLeftToRight || impositionOrder == kImpositionOrderUpperLeftToBottom)
@@ -785,6 +796,10 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             }
             break;
         case kImposition4pages:
+            if (self.previewSetting.booklet == YES)
+            {
+                [self setOptionSettingWithKey:KEY_BOOKLET toValue:(NSInteger)kBookletTypeOff];
+            }
             if(previousImpositionValue == kImposition2Pages)
             {
                 if(impositionOrder == kImpositionOrderLeftToRight)
@@ -888,14 +903,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         }
     }
     
-    if([settingKey isEqualToString:KEY_IMPOSITION])
-    {
-        if(self.previewSetting.booklet == YES)
-        {
-            return NO;
-        }
-    }
-    
     if([settingKey isEqualToString:KEY_IMPOSITION_ORDER])
     {
         if(self.previewSetting.booklet == YES ||
@@ -916,50 +923,13 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 - (BOOL)isSettingApplicable:(NSString*)settingKey
 {
-    if([settingKey isEqualToString:KEY_FINISHING_SIDE])
-    {
-        if(self.previewSetting.booklet == YES)
-        {
-            return NO;
-        }
-    }
-    
-    if([settingKey isEqualToString:KEY_STAPLE])
-    {
-        if(self.previewSetting.booklet == YES)
-        {
-            return NO;
-        }
-    }
-    
-    if([settingKey isEqualToString:KEY_PUNCH])
-    {
-        if(self.previewSetting.booklet == YES)
-        {
-            return NO;
-        }
-    }
-    
-    if([settingKey isEqualToString:KEY_IMPOSITION])
-    {
-        if(self.previewSetting.booklet == YES)
-        {
-            return NO;
-        }
-    }
-    
     if([settingKey isEqualToString:KEY_IMPOSITION_ORDER])
     {
-        if(self.previewSetting.imposition == kImpositionOff)
+        if(self.previewSetting.imposition == kImpositionOff &&
+           self.previewSetting.booklet == NO)
         {
             return NO;
         }
-    }
-    
-    if([settingKey isEqualToString:KEY_BOOKLET_LAYOUT] ||
-       [settingKey isEqualToString:KEY_BOOKLET_FINISH])
-    {
-        return self.previewSetting.booklet;
     }
     
     return YES;
