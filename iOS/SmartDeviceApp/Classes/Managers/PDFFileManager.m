@@ -72,6 +72,7 @@
     
     //revert flags and variables before setting up new document
     self.fileAvailableForPreview = NO;
+    self.fileAvailableForLoad = NO;
     self.printDocument = nil;
     
     if (![self moveFileToDocuments:&documentURL])
@@ -83,7 +84,6 @@
     if (result == kPDFErrorNone)
     {
         self.fileAvailableForPreview = YES;
-        self.fileAvailableForLoad = NO;
         NSString *fileName = [self.fileURL lastPathComponent];
         self.printDocument = [[PrintDocument alloc] initWithURL:documentURL name:fileName];
         self.printDocument.previewSetting = [PrintSettingsHelper defaultPreviewSetting];

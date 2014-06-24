@@ -176,6 +176,16 @@ enum {
     kICMPTypeEchoRequest = 8            // code is always 0
 };
 
+// *SDA ADDITION - BEGIN
+// ICMPv6 type and code combinations:
+
+enum {
+    kICMPv6TypeEchoRequest = 128,
+    kICMPv6TypeEchoReply
+};
+
+// *SDA ADDITION - END
+
 // ICMP header structure:
 
 struct ICMPHeader {
