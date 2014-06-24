@@ -100,6 +100,9 @@
 /** Stores the current device orientation. */
 @property (assign, nonatomic) UIInterfaceOrientation orientation;
 
+/** Flag that indicates whether or not the view height should be resized. */
+@property (assign, nonatomic) BOOL shouldResizeViewHeight;
+
 #pragma mark - Methods
 
 /**
@@ -255,6 +258,7 @@
     [self invalidateColumnHeights];
     [self setNotLayoutForDelete];
     
+    self.shouldResizeViewHeight = YES;
     [self invalidateLayout];
 }
 
@@ -328,6 +332,9 @@
     NSLog(@"[INFO][PrintJobLayout] sectionCount=%ld, groupCount=%ld", (long)section, (long)groupCount);
 #endif
     
+    CGFloat largestHeight = 0.0f;
+    BOOL useWorkAround = (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1);
+    
     // for each group in the section
     for (NSInteger group = 0; group < groupCount; group++)
     {
@@ -351,6 +358,10 @@
             // generate a new frame
             groupAttributes.frame = [self newFrameForGroupAtIndexPath:groupIndexPath];
         }
+        if (useWorkAround == YES && groupAttributes.frame.size.height > largestHeight)
+        {
+            largestHeight = groupAttributes.frame.size.height;
+        }
         
         // add this group's attributes to the dictionary
         groupLayoutInfo[groupIndexPath] = groupAttributes;
@@ -360,6 +371,23 @@
     
     // replace the container for the group frames
     self.groupLayoutInfo = groupLayoutInfo;
+    
+    if (useWorkAround == YES && self.shouldResizeViewHeight == YES)
+    {
+        self.shouldResizeViewHeight = NO;
+        self.bottomConstraint.constant = 0.0;
+        [self.collectionView layoutIfNeeded];
+        CGFloat currentHeight = CGRectGetHeight(self.collectionView.frame);
+        if (largestHeight > currentHeight)
+        {
+            largestHeight -= self.collectionView.frame.size.height;
+            self.bottomConstraint.constant = -largestHeight;
+            UIEdgeInsets edgeInset = UIEdgeInsetsMake(0.0f, 0.0f, largestHeight, 0.0f);
+            self.collectionView.contentInset = edgeInset;
+            self.collectionView.scrollIndicatorInsets = edgeInset;
+            [self.collectionView setNeedsUpdateConstraints];
+        }
+    }
 }
 
 - (CGRect)newFrameForGroupAtIndexPath:(NSIndexPath*)indexPath
@@ -466,6 +494,11 @@
 
 #pragma mark - UICollectionViewLayout Required Methods
 
+- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
+{
+    return YES;
+}
+
 - (NSArray*)layoutAttributesForElementsInRect:(CGRect)rect
 {
     NSMutableArray* allAttributes = [NSMutableArray arrayWithCapacity:self.groupLayoutInfo.count];
@@ -476,7 +509,9 @@
                                                               BOOL* innerStop)
     {
         if (CGRectIntersectsRect(rect, attributes.frame))
+        {
             [allAttributes addObject:attributes];
+        }
     }];
    
     return allAttributes;

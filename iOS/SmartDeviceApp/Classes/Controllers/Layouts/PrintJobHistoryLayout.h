@@ -31,6 +31,9 @@
 /** Reference to the ViewController containing the UICollectionView */
 @property (weak, nonatomic) id<PrintJobHistoryLayoutDelegate> delegate;
 
+/** Reference Bottom constraint of the UICollectionView for adjusting the height (work-around) */
+@property (weak, nonatomic) NSLayoutConstraint *bottomConstraint;
+
 /**
  Initializes the properties containing the constant layout measurements
  depending on the specified orientation and device type.

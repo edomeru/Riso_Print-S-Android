@@ -3496,6 +3496,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="784"/>
                     <connections>
+                        <outlet property="bottomConstraint" destination="ygk-1C-L9k" id="Mt1-Si-qrS"/>
                         <outlet property="emptyLabel" destination="xwM-rE-jVT" id="BDY-1l-gwo"/>
                         <outlet property="groupsView" destination="rMa-FV-gDr" id="GAe-vx-3Oe"/>
                         <outlet property="groupsViewLayout" destination="Ko6-qP-yYm" id="ELH-1w-Oqz"/>
@@ -3788,7 +3789,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="5pT-ga-236"/>
         <segue reference="ax2-Mn-NH0"/>
-        <segue reference="c8V-UF-iWe"/>
+        <segue reference="oE4-lZ-OOf"/>
         <segue reference="gRW-en-vNy"/>
         <segue reference="h8r-TR-IcV"/>
     </inferredMetricsTieBreakers>
