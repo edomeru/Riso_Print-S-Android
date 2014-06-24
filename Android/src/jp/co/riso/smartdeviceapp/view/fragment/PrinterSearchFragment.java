@@ -54,6 +54,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private PrinterManager mPrinterManager = null;
     private PauseableHandler mPauseableHandler = null;
     private TextView mEmptySearchText;
+    private boolean mNoNetwork;
     
     @Override
     public int getViewLayout() {
@@ -188,7 +189,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public void onRefresh() {
         mPrinter.clear();
         mEmptySearchText.setVisibility(View.GONE);
+        mNoNetwork = false;
         if (!NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
+            mNoNetwork = true;
             dialogErrCb();
             updateRefreshBar();
             return;
@@ -324,7 +327,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                     mListView.setRefreshing();
                 } else {
                     mListView.onRefreshComplete();
-                    if (mPrinter.isEmpty()) {
+                    if (mPrinter.isEmpty() && !mNoNetwork) {
                         mEmptySearchText.setVisibility(View.VISIBLE);
                     }
                 }
