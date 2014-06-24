@@ -34,6 +34,9 @@
 /** Displays "No Print Job History" label if there are no jobs. */
 @property (weak, nonatomic) IBOutlet UILabel *emptyLabel;
 
+/** Reference Bottom constraint of the UICollectionView for adjusting the height (work-around) */
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomConstraint;
+
 #pragma mark - Data Properties
 
 /** The data source for the list PrintJobHistoryGroup objects. */
@@ -88,6 +91,7 @@
     self.emptyLabel.hidden = ([self.listPrintJobHistoryGroups count] == 0 ? NO : YES);
     
     self.groupsViewLayout.delegate = self;
+    self.groupsViewLayout.bottomConstraint = self.bottomConstraint;
     [self.groupsViewLayout invalidateColumnAssignments];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
