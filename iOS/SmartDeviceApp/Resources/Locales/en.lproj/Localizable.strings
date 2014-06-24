@@ -1,4 +1,4 @@
-/*WordingList_Alpha1*/
+/*WordingList*/
 "IDS_APP_NAME" = "RISO Smart Print";
 "IDS_APP_LAUNCHER_NAME" = "Smart Print";
 "IDS_LBL_SAVE" = "Save";
@@ -123,7 +123,7 @@
 "IDS_LBL_PRINTJOBHISTORY_EMPTY" = "No Print Job History";
 "IDS_LBL_PRINTER_SEARCH_EMPTY" = "No Printers Found";
 "IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" = "Added Successfully";
-"IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" = "Warning, Cannot find Printer.";
+"IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" = "Warning\nCannot find Printer.";
 "IDS_INFO_MSG_PRINTING" = "Printing…";
 "IDS_INFO_MSG_DELETE_JOBS_TITLE" = "Delete Print Job History";
 "IDS_INFO_MSG_DELETE_JOBS" = "Are you sure you want to delete?";
@@ -140,5 +140,5 @@
 "IDS_ERR_MSG_FILE_TOO_LARGE" = "File size is too large";
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "Not enough free space on device";
 "IDS_ERR_MSG_NETWORK_ERROR" = "No network available.";
-"IDS_ERR_MSG_DB_FAILURE" = "The operation cannot be completed.";
+"IDS_ERR_MSG_DB_FAILURE" = "Database failure. Please restart the application. If the problem persists, please reinstall the application.";
 

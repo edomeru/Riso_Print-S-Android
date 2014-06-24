@@ -1,6 +1,6 @@
 //
 // AppStrings.h
-// WordingList_Alpha1
+// WordingList
 //
 
 #ifndef _APPSTRINGS_H_
