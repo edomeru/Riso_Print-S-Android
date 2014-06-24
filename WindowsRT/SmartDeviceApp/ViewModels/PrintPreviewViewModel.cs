@@ -166,6 +166,8 @@ namespace SmartDeviceApp.ViewModels
                 PreviewGestureController.SwipeLeftDelegate swipeLeft = null;
                 PreviewGestureController.SwipeTopDelegate swipeTop = null;
                 PreviewGestureController.SwipeBottomDelegate swipeBottom = null;
+
+                
                 if (IsHorizontalSwipeEnabled)
                 {                
                     if (!IsReverseSwipe)
@@ -198,8 +200,8 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _scalingFactor = scalingFactor;
                     if (_gestureController != null) _gestureController.Dispose();
-                    _gestureController = new PreviewGestureController(_pageAreaGrid, _controlReference,
-                           targetSize, scalingFactor, swipeRight, swipeLeft, DisplayAreaGrid, TransitionGrid, ManipulationGrid);
+                    _gestureController = new PreviewGestureController(ManipulationGrid, _controlReference,
+                           targetSize, scalingFactor, swipeRight, swipeLeft, DisplayAreaGrid, TransitionGrid, ManipulationGrid, TwoPageControl, RightPageActualSize.Width);
                     _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
                         swipeTop, swipeBottom);
                 }
@@ -214,6 +216,7 @@ namespace SmartDeviceApp.ViewModels
                 _previousPageViewMode = PageViewMode;
                 _isReverseSwipePrevious = IsReverseSwipe;
                 //Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
+                //_gestureController.getScreenShot();
             }
         }
 
@@ -290,7 +293,9 @@ namespace SmartDeviceApp.ViewModels
                     if (_isLoadPageActive && !value) //(true amd false)
                     {
                         //tell two page control to grab screen
-                        Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
+                        //Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
+                        if (_gestureController != null)
+                            _gestureController.getScreenShot();
                     }
 
                     _isLoadPageActive = value;
@@ -449,6 +454,12 @@ namespace SmartDeviceApp.ViewModels
         }
 
         public bool IsDuplex
+        {
+            get;
+            set;
+        }
+
+        public TwoPageControl TwoPageControl
         {
             get;
             set;

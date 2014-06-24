@@ -333,21 +333,8 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <Content Include="Assets\MiniCube.fx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\RZ1070-page1.jpg" />
-    <Content Include="Assets\San_Francisco_City.jpg" />
     <Content Include="Resources\Images\StoreLogo.scale-140.png" />
     <Content Include="Resources\Images\StoreLogo.scale-180.png" />
-    <Content Include="Assets\MiniCube_PS.fxo">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\MiniCube_VS.fxo">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\MiniCubeTexture_PS.fxo" />
-    <Content Include="Assets\MiniCubeTexture_VS.fxo" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

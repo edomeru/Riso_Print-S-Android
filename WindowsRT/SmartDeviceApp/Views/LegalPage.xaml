@@ -21,5 +21,12 @@
                            Right="{StaticResource MARGIN_Default}"></Thickness>
             </WebView.Margin>
         </WebView>
+        <Grid 
+            x:Name="LegalGestureGrid"
+            Loaded="Grid_Loaded"
+            Width="Auto"
+            Height="Auto"
+            Background="Transparent"
+            ManipulationMode="All"/>
     </controls:ViewControl>
 </base:PageBase>

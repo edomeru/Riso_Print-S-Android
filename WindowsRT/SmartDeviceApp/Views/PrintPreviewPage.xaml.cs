@@ -76,6 +76,7 @@ namespace SmartDeviceApp.Views
             // Initialize gesture controller
             var twoPageControl = (TwoPageControl)sender;
             var pageAreaGrid = twoPageControl.PageAreaGrid;
+            ViewModel.TwoPageControl = twoPageControl;
             ViewModel.SetPageAreaGrid(pageAreaGrid);
             ViewModel.DisplayAreaGrid = twoPageControl.DisplayAreaGrid;
             ViewModel.TransitionGrid = twoPageControl.TransitionGrid;

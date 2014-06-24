@@ -75,7 +75,7 @@ namespace SmartDeviceApp.Controls
 
         private void pageImage_ImageOpened(object sender, RoutedEventArgs e)
         {
-            Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
+            //Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
         }
     }
 }

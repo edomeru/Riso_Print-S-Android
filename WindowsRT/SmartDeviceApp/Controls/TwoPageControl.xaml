@@ -5,7 +5,7 @@
     xmlns:local="using:SmartDeviceApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" LayoutUpdated="twoPageControl_LayoutUpdated">
+    mc:Ignorable="d" >
     
     <UserControl.Resources>
         <Style x:Key="STYLE_PageAreaScrollViewer" TargetType="ScrollViewer">
@@ -30,10 +30,7 @@
     </UserControl.Resources>
 
     <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}" >
-        <Grid x:Name="manipulationGrid"  ManipulationMode="TranslateX,TranslateY,TranslateInertia"
-                ManipulationStarted="ManipulationGrid_OnManipulationStarted"
-                ManipulationDelta="ManipulationGrid_OnManipulationDelta"
-                ManipulationCompleted="ManipulationGrid_OnManipulationCompleted" LayoutUpdated="manipulationGrid_LayoutUpdated">
+        <Grid x:Name="manipulationGrid"  ManipulationMode="All" >
             <Grid x:Name="displayAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" 
                  Background="Yellow"
                   >
@@ -71,7 +68,6 @@
            
 
             <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" 
-                 Loaded="pageAreaGrid_Loaded"
                  Background="Blue"
                   >
                 <Grid.Clip>
