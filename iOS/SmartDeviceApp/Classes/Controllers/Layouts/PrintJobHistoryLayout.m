@@ -373,6 +373,7 @@
         CGFloat currentHeight = CGRectGetHeight(self.collectionView.frame);
         if (largestHeight > currentHeight)
         {
+            largestHeight -= self.collectionView.frame.size.height;
             self.bottomConstraint.constant = -largestHeight;
             UIEdgeInsets edgeInset = UIEdgeInsetsMake(0.0f, 0.0f, largestHeight, 0.0f);
             self.collectionView.contentInset = edgeInset;
