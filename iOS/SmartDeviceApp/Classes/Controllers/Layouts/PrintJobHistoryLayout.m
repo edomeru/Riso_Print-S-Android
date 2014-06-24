@@ -100,6 +100,9 @@
 /** Stores the current device orientation. */
 @property (assign, nonatomic) UIInterfaceOrientation orientation;
 
+/** Flag that indicates whether or not the view height should be resized. */
+@property (assign, nonatomic) BOOL shouldResizeViewHeight;
+
 #pragma mark - Methods
 
 /**
@@ -255,6 +258,7 @@
     [self invalidateColumnHeights];
     [self setNotLayoutForDelete];
     
+    self.shouldResizeViewHeight = YES;
     [self invalidateLayout];
 }
 
@@ -368,8 +372,11 @@
     // replace the container for the group frames
     self.groupLayoutInfo = groupLayoutInfo;
     
-    if (useWorkAround == YES)
+    if (useWorkAround == YES && self.shouldResizeViewHeight == YES)
     {
+        self.shouldResizeViewHeight = NO;
+        self.bottomConstraint.constant = 0.0;
+        [self.collectionView layoutIfNeeded];
         CGFloat currentHeight = CGRectGetHeight(self.collectionView.frame);
         if (largestHeight > currentHeight)
         {
