@@ -68,6 +68,11 @@ namespace SmartDeviceApp.Controls
             set { SetValue(HeightProperty, value); }
         }
 
+        public Image ImageElement
+        {
+            get { return pageImage; }
+        }
+
         private void pageImage_ImageOpened(object sender, RoutedEventArgs e)
         {
             Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);

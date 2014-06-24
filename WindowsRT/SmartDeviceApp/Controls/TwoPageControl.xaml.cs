@@ -32,8 +32,26 @@ namespace SmartDeviceApp.Controls
             this.InitializeComponent();
 
             Messenger.Default.Register<MessageType>(this, (msg) => getScreenshot(msg));
-
+            //Messenger.Default.Register<ViewMode>(this, (viewMode) => grabScreenImage(viewMode));
+            rightPage.ImageElement.ImageOpened += setRightPageImageOpened;
+            leftPage.ImageElement.ImageOpened += setLeftPageImageOpened;
             getScreenImage();
+        }
+
+        private void setLeftPageImageOpened(object sender, RoutedEventArgs e)
+        {
+            _isLeftImageOpened = true;
+            System.Diagnostics.Debug.WriteLine("Right Image Opened");
+            //getScreenshot();
+            
+        }
+
+        private void setRightPageImageOpened(object sender, RoutedEventArgs e)
+        {
+            _isRightImageOpened = true;
+            System.Diagnostics.Debug.WriteLine("Right Image Opened");
+            //getScreenshot();
+            
         }
 
         private async void getScreenImage()
@@ -42,47 +60,57 @@ namespace SmartDeviceApp.Controls
             await rtb.RenderAsync(PageAreaGrid);
             TransitionImage.Source = rtb;
             await Task.Delay(40000);
-
-
-
-            
         }
 
 
-        private async void getScreenshot(MessageType msg)
+        private void getScreenshot(MessageType msg)
         {
-            if (msg == MessageType.RightPageImageUpdated)
+            IsDuplex = false;
+            if (pageAreaGrid.ActualWidth > rightPage.ActualWidth)
             {
-                var rtb = new RenderTargetBitmap();
-                await rtb.RenderAsync(PageAreaGrid);
-                TransitionImage.Source = rtb;
+                IsDuplex = true;
+            }
 
+            if (IsDuplex)
+            {
+                //check both
+                if (msg == MessageType.RightPageImageUpdated)
+                {
+                    System.Diagnostics.Debug.WriteLine("Duplex");
+                    getScreenImage();
+                }
+            }
+            else
+            {
+                if (msg == MessageType.RightPageImageUpdated)
+                {
+                    System.Diagnostics.Debug.WriteLine("Single");
+                    getScreenImage();
 
-                await Task.Delay(40000);
+                    //save image
+                    //var filePicker = new FileSavePicker();
+                    //filePicker.FileTypeChoices.Add("Raw Images", new List<string> { ".raw", ".dat" });
+                    //filePicker.FileTypeChoices.Add(".jpg Image", new List<string> { ".jpg" });
+                    //var file = await filePicker.PickSaveFileAsync();
 
-                //save image
-                //var filePicker = new FileSavePicker();
-                //filePicker.FileTypeChoices.Add("Raw Images", new List<string> { ".raw", ".dat" });
-                //filePicker.FileTypeChoices.Add(".jpg Image", new List<string> { ".jpg" });
-                //var file = await filePicker.PickSaveFileAsync();
+                    //var renderTargetBitmap = new RenderTargetBitmap();
 
-                //var renderTargetBitmap = new RenderTargetBitmap();
+                    //var pixelBuffer = await rtb.GetPixelsAsync();
 
-                //var pixelBuffer = await rtb.GetPixelsAsync();
+                    //using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                    //{
+                    //    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                    //    encoder.SetPixelData(
+                    //        BitmapPixelFormat.Bgra8,
+                    //        BitmapAlphaMode.Ignore,
+                    //        (uint)rtb.PixelWidth,
+                    //        (uint)rtb.PixelHeight, 96d, 96d,
+                    //        pixelBuffer.ToArray());
 
-                //using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
-                //{
-                //    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
-                //    encoder.SetPixelData(
-                //        BitmapPixelFormat.Bgra8,
-                //        BitmapAlphaMode.Ignore,
-                //        (uint)rtb.PixelWidth,
-                //        (uint)rtb.PixelHeight, 96d, 96d,
-                //        pixelBuffer.ToArray());
+                    //    await encoder.FlushAsync();
+                    //} 
 
-                //    await encoder.FlushAsync();
-                //} 
-
+                }
             }
         }
 
@@ -147,7 +175,17 @@ namespace SmartDeviceApp.Controls
             manipulationStartPosition = e.Position;
 
             _backCurl = false;
-            if (manipulationStartPosition.X < ManipulationGrid.ActualWidth / 2)
+            var startOfBackCurlPosition = 0.0;
+            if (pageAreaGrid.ActualWidth > rightPage.ActualWidth)
+            {
+                startOfBackCurlPosition = ManipulationGrid.ActualWidth * 0.5;
+            }
+            else
+            {
+                startOfBackCurlPosition = (ManipulationGrid.ActualWidth * 0.25);
+            }
+
+            if (manipulationStartPosition.X < startOfBackCurlPosition)
             {
                 //use page1 clip transition
                 _backCurl = true;
@@ -205,8 +243,18 @@ namespace SmartDeviceApp.Controls
             {
                 var w = this.PageAreaGrid.ActualWidth;
                 var h = this.PageAreaGrid.ActualHeight;
+
+                var tempW = 0.0;
+                if (pageAreaGrid.ActualWidth > rightPage.ActualWidth)
+                {
+                    tempW = -w;
+                }
+                else
+                {
+                    tempW = -w * 2;
+                }
                 
-                var cx = Math.Min(0, Math.Max(e.Position.X - w, -w));
+                var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
                 var cy = e.Cumulative.Translation.Y;
                 var angle = (Math.Atan2(cx + manipulationStartPosition.Y - w, -cy) * 180 / Math.PI + +90) % 360;
 
@@ -238,21 +286,7 @@ namespace SmartDeviceApp.Controls
                 TransitionGridContainerTransform.CenterY = this.rotationCenterY;
                 TransitionGridContainerTransform.Rotation = 2 * angle;
 
-                _willContinue = false;
-                if (_backCurl)
-                {
-                    if (e.Position.X > w * 0.25)
-                    {
-                        _willContinue = true;
-                    }
-                }
-                else
-                {
-                    if (e.Position.X < w * 0.75)
-                    {
-                        _willContinue = true;
-                    }
-                }
+                
 
                 System.Diagnostics.Debug.WriteLine("w: {0} h: {1} cx: {2} cy: {3} angle: {4} rotationCenterX: {5} rotationCenterY: {6}", w, h, cx, cy,angle, rotationCenterX, rotationCenterY);
 
@@ -286,8 +320,28 @@ namespace SmartDeviceApp.Controls
                 return;
             }
 
+            
+
             var w = this.PageAreaGrid.ActualWidth;
             var h = this.PageAreaGrid.ActualHeight;
+
+            System.Diagnostics.Debug.WriteLine("Position X: {0}", e.Position.X);
+
+            _willContinue = false;
+            if (_backCurl)
+            {
+                if (e.Position.X > w * 0.25)
+                {
+                    _willContinue = true;
+                }
+            }
+            else
+            {
+                if (e.Position.X < w * 0.75)
+                {
+                    _willContinue = true;
+                }
+            }
 
             var sb = new Storyboard();
             if (!_backCurl)
@@ -295,39 +349,50 @@ namespace SmartDeviceApp.Controls
                 var to = 0;
                 if (_willContinue)
                 {
-                    to = (int)(w / 2);
+                    if (IsDuplex)
+                        to = (int)(w / 2);
+                    else
+                        to = (int)-w;
+                    System.Diagnostics.Debug.WriteLine("Will continue");
                 }
                 else
                 {
                     to = (int)w;
                 }
                 AddAnimation(sb, Page2ClipTranslateTransform, "X", to);
-                AddAnimation(sb, Page2ClipRotateTransform, "CenterX", w / 2);
+                AddAnimation(sb, Page2ClipRotateTransform, "CenterX", 0);
                 AddAnimation(sb, Page2ClipRotateTransform, "Angle", 0);
 
                 if (_willContinue)
                 {
-                    to = (int)(-80000 + (w / 2));
+                    if (IsDuplex)
+                        to = (int)(-80000 + (w / 2));
+                    else
+                        to = (int)(-80000 + (w));
                 }
                 else
                 {
                     to = (int)-80000;
                 }
                 AddAnimation(sb, TransitionGridClipTranslateTransform, "X", to);
-                AddAnimation(sb, TransitionGridClipRotateTransform, "CenterX", w / 2);
+                AddAnimation(sb, TransitionGridClipRotateTransform, "CenterX", 0);
                 AddAnimation(sb, TransitionGridClipRotateTransform, "Angle", 0);
                 if (_willContinue)
                 {
-                    to = 0;
+                    if (IsDuplex)
+                        to = 0;
+                    else
+                        to = (int)-w;
                 }
                 else
                 {
                     to = (int)w;
                 }
                 AddAnimation(sb, TransitionGridContainerTransform, "TranslateX", to);
-                AddAnimation(sb, TransitionGridContainerTransform, "CenterX", w / 2);
+                AddAnimation(sb, TransitionGridContainerTransform, "CenterX", 0);
                 AddAnimation(sb, TransitionGridContainerTransform, "Rotation", 0);
                 sb.Begin();
+                TransitionGrid.Opacity = 0;
             }
             else
             {
@@ -393,6 +458,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty LeftPageImage2Property =
             DependencyProperty.Register("LeftPageImage2", typeof(ImageSource), typeof(TwoPageControl), null);
 
+        public static readonly DependencyProperty IsDuplexProperty =
+            DependencyProperty.Register("IsDuplex", typeof(bool), typeof(TwoPageControl), null);
+
         public Grid PageAreaGrid
         {
             get { return pageAreaGrid; }
@@ -426,6 +494,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (ImageSource)GetValue(LeftPageImage2Property); }
             set { SetValue(LeftPageImage2Property, value); }
+        }
+
+        public bool IsDuplex
+        {
+            get { return (bool)GetValue(IsDuplexProperty); }
+            set { SetValue(IsDuplexProperty, value); }
         }
 
         private static void SetPageViewMode(DependencyObject obj, DependencyPropertyChangedEventArgs e)
@@ -511,5 +585,20 @@ namespace SmartDeviceApp.Controls
             
 
         }
+
+        private void manipulationGrid_LayoutUpdated(object sender, object e)
+        {
+            if (sender != null)
+            getScreenImage();
+        }
+
+        private void twoPageControl_LayoutUpdated(object sender, object e)
+        {
+            if (sender != null)
+                getScreenImage();
+        }
+
+        private bool _isRightImageOpened;
+        private bool _isLeftImageOpened;
     }
 }

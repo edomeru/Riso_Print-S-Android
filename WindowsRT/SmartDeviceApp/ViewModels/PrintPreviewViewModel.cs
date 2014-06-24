@@ -144,18 +144,21 @@ namespace SmartDeviceApp.ViewModels
                         scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
                             _pageAreaGridMaxWidth / RightPageActualSize.Width);
                         targetSize = RightPageActualSize;
+                        IsDuplex = false;
                         break;
 
                     case PageViewMode.TwoPageViewHorizontal:
                         scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
                             _pageAreaGridMaxWidth / (LeftPageActualSize.Width + RightPageActualSize.Width));
-                        targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);  
+                        targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);
+                        IsDuplex = true;
                         break;
 
                     case PageViewMode.TwoPageViewVertical:
                         scalingFactor = Math.Min(_pageAreaGridMaxHeight / (RightPageActualSize.Height + LeftPageActualSize.Height),
                             _pageAreaGridMaxWidth / RightPageActualSize.Width);
-                        targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);  
+                        targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);
+                        IsDuplex = true;
                         break;
                 }
                 
@@ -210,6 +213,7 @@ namespace SmartDeviceApp.ViewModels
                 }
                 _previousPageViewMode = PageViewMode;
                 _isReverseSwipePrevious = IsReverseSwipe;
+                //Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
             }
         }
 
@@ -282,8 +286,16 @@ namespace SmartDeviceApp.ViewModels
             {
                 //if (_isLoadPageActive != value)
                 {
+                    
+                    if (_isLoadPageActive && !value) //(true amd false)
+                    {
+                        //tell two page control to grab screen
+                        Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
+                    }
+
                     _isLoadPageActive = value;
                     RaisePropertyChanged("IsLoadPageActive");
+                    
                 }
             }
         }
@@ -431,6 +443,12 @@ namespace SmartDeviceApp.ViewModels
         }
 
         public UIElement ManipulationGrid
+        {
+            get;
+            set;
+        }
+
+        public bool IsDuplex
         {
             get;
             set;

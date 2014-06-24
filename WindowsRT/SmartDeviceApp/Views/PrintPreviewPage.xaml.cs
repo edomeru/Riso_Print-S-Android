@@ -80,6 +80,7 @@ namespace SmartDeviceApp.Views
             ViewModel.DisplayAreaGrid = twoPageControl.DisplayAreaGrid;
             ViewModel.TransitionGrid = twoPageControl.TransitionGrid;
             ViewModel.ManipulationGrid = twoPageControl.ManipulationGrid;
+            ViewModel.IsDuplex = twoPageControl.IsDuplex;
             if (PageAreaGridLoaded != null)
             {
                 PageAreaGridLoaded();
