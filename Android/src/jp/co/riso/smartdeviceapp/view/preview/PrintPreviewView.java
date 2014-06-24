@@ -311,20 +311,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      */
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = printSettings;
-        
-        if (mPdfPageProvider.getPageCount() > 0) {
-            if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
-                if (getCurrentPage() > mPdfPageProvider.getPageCount()) {
-                    setCurrentPage(0);
-                }
-            } else {
-                if (getCurrentPage() + 1 > mPdfPageProvider.getPageCount()) {
-                    setCurrentPage(0);
-                }
-            }
-        }
-        
+
         reconfigureCurlView();
+        displayValidPage();
         mCurlView.requestLayout();
     }
     
@@ -874,6 +863,23 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         setupCurlPageView();
         setupCurlBind();
         setDefaultMargins();
+    }
+    
+    /**
+     * @brief Display the correct page to prevent out of bounds.
+     */
+    public void displayValidPage() {
+        if (mPdfPageProvider.getPageCount() > 0) {
+            if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
+                if (getCurrentPage() > mPdfPageProvider.getPageCount()) {
+                    setCurrentPage(0);
+                }
+            } else {
+                if (getCurrentPage() + 1 > mPdfPageProvider.getPageCount()) {
+                    setCurrentPage(0);
+                }
+            }
+        }
     }
     
     /**
