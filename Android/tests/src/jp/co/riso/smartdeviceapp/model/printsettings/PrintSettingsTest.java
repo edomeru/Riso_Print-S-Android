@@ -301,7 +301,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertTrue(formattedString.contains("orientation=0\n"));
         assertTrue(formattedString.contains("securePrint=0\n"));
         assertTrue(formattedString.contains("loginId=test\n"));
-        assertTrue(formattedString.contains("pinCode=1234\n"));
+        assertTrue(formattedString.contains("pinCode=\n"));
 
         mPrintSettings.setValue(KEY_ORIENTATION, 1);
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON
@@ -335,7 +335,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertTrue(formattedString.contains("orientation=1\n"));
         assertTrue(formattedString.contains("securePrint=0\n"));
         assertTrue(formattedString.contains("loginId=test\n"));
-        assertTrue(formattedString.contains("pinCode=1234\n"));
+        assertTrue(formattedString.contains("pinCode=\n"));
 
         mPrintSettings.setValue(KEY_ORIENTATION, 1);
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true); // secure print ON
