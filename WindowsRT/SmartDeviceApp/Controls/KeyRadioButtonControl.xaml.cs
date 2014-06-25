@@ -18,7 +18,7 @@ using GalaSoft.MvvmLight.Command;
 
 namespace SmartDeviceApp.Controls
 {
-    public sealed partial class KeyRadioButtonControl : KeyValueControl
+    public partial class KeyRadioButtonControl : KeyValueControl
     {
         public KeyRadioButtonControl()
         {

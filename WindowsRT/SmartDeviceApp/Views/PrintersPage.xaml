@@ -181,6 +181,7 @@
                                                       RightButtonVisibility="Collapsed"
                                                       ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
+                                                      IsListItem="True"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                       PressedColor="{StaticResource BRUSH_Gray2}"
                                                       />
@@ -191,6 +192,7 @@
                                                           RightButtonVisibility="Collapsed"
                                                           ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
+                                                      IsListItem="True"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                       
                                                       PressedColor="{StaticResource BRUSH_Gray2}"
@@ -213,6 +215,7 @@
                                                              RightButtonVisibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                              IsOn="{Binding IsDefault, Mode=TwoWay}"
                                                              SeparatorVisibility="Visible"
+                                                             IsListItem="True"
                                                              Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                              PressedColor="{StaticResource BRUSH_Purple2}"
                                                              KeyPressedColor="{StaticResource BRUSH_White}"

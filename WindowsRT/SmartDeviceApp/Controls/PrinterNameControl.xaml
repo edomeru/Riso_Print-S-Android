@@ -17,12 +17,6 @@
         <Style x:Key="STYLE_ListItemGrid" TargetType="Grid">
             <Setter Property="Background" Value="{StaticResource BRUSH_Gray2}"/>
         </Style>
-        <Style x:Key="STYLE_List_Separator" TargetType="Line">
-            <Setter Property="X1" Value="{StaticResource MARGIN_List}"/>
-            <Setter Property="X2" Value="{StaticResource SIZE_SidePaneWidth}"/>
-            <Setter Property="Stroke" Value="{StaticResource BRUSH_Gray1}"/>
-            <Setter Property="StrokeThickness" Value="2"/>
-        </Style>
         <Style x:Name="STYLE_ListButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="Transparent"/>

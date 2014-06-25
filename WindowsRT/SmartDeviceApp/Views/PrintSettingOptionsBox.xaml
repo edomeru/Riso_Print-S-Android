@@ -71,6 +71,7 @@
                                                 IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}, Mode=TwoWay}"
                                                 IsEnabled="{Binding IsEnabled}"
                                                 SeparatorVisibility="{Binding Index, Converter={StaticResource PrintSettingOptionToSeparatorVisibilityConverter}}"
+                                                IsListItem="True"
                                                 Width="{Binding Width, ElementName=printSettingOptionsBox}"
                                                 PressedColor="{StaticResource BRUSH_Purple1}">
                 </controls:KeyRadioButtonControl>

@@ -658,15 +658,11 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            if (!_previewPageImages.ContainsKey(previewPageIndex))
+            if (!_previewPageImages.ContainsKey(previewPageIndex) &&
+                !(isBackSide && !(_isBooklet || _isDuplex)))
             {
-                List<WriteableBitmap> logicalPageImages = null;
-                if (!(isBackSide && !(_isBooklet || _isDuplex)))
-                {
-                    // Get logical pages only when not for backside of single-page view
-                    logicalPageImages = await DocumentController.Instance
-                        .GetLogicalPageImages(logicalPageIndex, _pagesPerSheet, cancellationToken);
-                }
+                List<WriteableBitmap> logicalPageImages = await DocumentController.Instance
+                    .GetLogicalPageImages(logicalPageIndex, _pagesPerSheet, cancellationToken);
 
                 Size logicalPageSize = new Size(0, 0);
                 if (logicalPageImages != null && logicalPageImages.Count > 0)

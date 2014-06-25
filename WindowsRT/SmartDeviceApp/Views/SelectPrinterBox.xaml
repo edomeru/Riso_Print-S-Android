@@ -34,12 +34,6 @@
                 </VisualStateManager.VisualStateGroups>
                 <StackPanel Style="{StaticResource STYLE_StackLeft}">
                     <Image x:Name="backImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_back_normal.png"/>
-                    <!-- TO BE REMOVED, I think.
-                    <Image x:Name="icon"
-                           Source="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
-                           Style="{StaticResource STYLE_AlignLeft}" Stretch="None"
-                           Visibility="Collapsed"/>
-                    -->
                     <TextBlock x:Name="key" 
                             Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" 
                             Style="{StaticResource STYLE_TextListHeader}" />
@@ -70,21 +64,20 @@
               SelectionMode="Single">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <controls:KeyRadioButtonControl x:Name="keyRadioButtonControl"
-                                                Command="{Binding DataContext.SelectPrinter, ElementName=selectPrinterBox}"
-                                                CommandParameter="{Binding}"
-                                                GroupName="printersList"
-                                                Index="{Binding Id}"
-                                                Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}}"
-                                                IconImage="{Binding IsOnline, Converter={StaticResource PrinterStatusToImageSourceConverter}}"
-                                                IsChecked="{Binding Id, Converter={StaticResource SelectedPrinterToBooleanConverter}, Mode=TwoWay}"
-                                                IsEnabled="True"
-                                                SeparatorVisibility="{Binding Id, Converter={StaticResource SelectPrinterToSeparatorVisibilityConverter}}"
-                                                SubText="{Binding IpAddress}"
-                                                SubTextVisibility="{Binding IpAddress, Converter={StaticResource StringToVisibilityConverter}}"
-                                                Width="{Binding Width, ElementName=selectPrinterBox}"
-                                                PressedColor="{StaticResource BRUSH_Purple1}">
-                </controls:KeyRadioButtonControl>
+                <controls:SelectPrinterItemControl GroupName="printersList"
+                                                   Command="{Binding DataContext.SelectPrinter, ElementName=selectPrinterBox}"
+                                                   CommandParameter="{Binding}"
+                                                   Index="{Binding Id}"
+                                                   Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}}"
+                                                   IconImage="{Binding IsOnline, Converter={StaticResource PrinterStatusToImageSourceConverter}}"
+                                                   IsChecked="{Binding Id, Converter={StaticResource SelectedPrinterToBooleanConverter}, Mode=TwoWay}"
+                                                   IsEnabled="True"
+                                                   IsListItem="True"
+                                                   SeparatorVisibility="{Binding Id, Converter={StaticResource SelectPrinterToSeparatorVisibilityConverter}}"
+                                                   SubText="{Binding IpAddress}"
+                                                   SubTextVisibility="{Binding IpAddress, Converter={StaticResource StringToVisibilityConverter}}"
+                                                   Width="{Binding Width, ElementName=selectPrinterBox}"
+                                                   PressedColor="{StaticResource BRUSH_Purple1}" />
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>
