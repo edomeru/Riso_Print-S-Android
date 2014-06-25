@@ -172,6 +172,7 @@ public class WaitingDialogFragment extends DialogFragment {
     // ================================================================================
     // Internal Classes
     // ================================================================================
+    
     /**
      * @interface WaitingDialogListener
      * 

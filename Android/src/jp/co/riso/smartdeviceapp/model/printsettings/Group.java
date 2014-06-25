@@ -16,7 +16,9 @@ import org.w3c.dom.NodeList;
 
 /**
  * @class Group
+ * 
  * @brief Group data class representing a group in PrintSettings. 
+ * 
  * Data represented by \<group\> tag in XML.
  */
 public class Group extends XmlNode {
@@ -41,7 +43,7 @@ public class Group extends XmlNode {
     /**
      * @brief Gets settings of a Group.
      * 
-     * @return list of Setting objects.
+     * @return List of Setting objects.
      */
     public List<Setting> getSettings() {
         return mSettings;

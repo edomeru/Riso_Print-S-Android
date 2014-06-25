@@ -257,9 +257,9 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         /**
          * @brief Creates LoadPrintJobsTask instance.
          * 
-         * @param context Activity context.
-         * @param printJobs list of PrintJob objects
-         * @param printers list of Printer objects
+         * @param context Activity context
+         * @param printJobs List of PrintJob objects
+         * @param printers List of Printer objects
          */
         public LoadPrintJobsTask(Context context, List<PrintJob> printJobs, List<Printer> printers) {
             mContextRef = new WeakReference<Context>(context);

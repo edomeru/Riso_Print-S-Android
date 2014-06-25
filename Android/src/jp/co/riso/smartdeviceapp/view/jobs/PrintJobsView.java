@@ -227,7 +227,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     /**
      * @brief Gets the column with the least height.
      * 
-     * @return index of the smallest column
+     * @return Index of the smallest column
      */
     private int getSmallestColumn() {
         // initially assign to 1st column
@@ -351,7 +351,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     /**
      * @brief Creates column layouts as containers of PrintJobsGroupView.
      * 
-     * @param width size of width available for Print Jobs View
+     * @param width Size of width available for Print Jobs View
      */
     private void createColumns(int width) {
         int colNum = 1;
@@ -587,9 +587,10 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * @class AddViewRunnable 
      * 
      * @brief Requests layout after adding views during onLayout
-     * @see // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
+     * 
      */
     private class AddViewRunnable implements Runnable {
+        // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
         @Override
         public void run() {
             requestLayout();

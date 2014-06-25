@@ -248,7 +248,7 @@ public class PrintJobManager {
      * 
      * @param date The date to be converted to String
      * 
-     * @return converted string format
+     * @return Converted string format
      * @retval "1970-01-01 00:00:00" date is null
      */
     public static String convertDateToString(Date date) {
@@ -265,7 +265,7 @@ public class PrintJobManager {
      * @brief Converts the String into Date using the UTC/GMT timezone and format C_SQL_DATEFORMAT.
      * 
      * @param strDate the string to be converted to Date
-     * @return converted date if strDate is in valid format
+     * @return Converted date if strDate is in valid format
      * @retval "Date(0) equivalent of Jan.1,1970 UTC" strDate is in invalid format
      */
     private static Date convertStringToDate(String strDate) {

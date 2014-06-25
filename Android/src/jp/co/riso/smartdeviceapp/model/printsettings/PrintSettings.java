@@ -53,12 +53,12 @@ public class PrintSettings {
     public static final String TAG_ORIENTATION = "orientation"; ///< Tag used to identify Orientation settings
     public static final String TAG_COPIES = "copies"; ///< Tag used to identify Copies settings
     public static final String TAG_DUPLEX = "duplex"; ///< Tag used to identify Duplex settings
-    public static final String TAG_PAPER_SIZE = "paperSize"; ///< Tag used to identify PaperSizesettings
+    public static final String TAG_PAPER_SIZE = "paperSize"; ///< Tag used to identify PaperSize settings
     public static final String TAG_SCALE_TO_FIT = "scaleToFit"; ///< Tag used to identify ScaleToFit settings
     public static final String TAG_PAPER_TYPE = "paperType"; ///< Tag used to identify PaperType settings
-    public static final String TAG_INPUT_TRAY = "inputTray"; ///< Tag used to identify InputTraye settings
+    public static final String TAG_INPUT_TRAY = "inputTray"; ///< Tag used to identify InputTray settings
     public static final String TAG_IMPOSITION = "imposition"; ///< Tag used to identify Imposition settings
-    public static final String TAG_IMPOSITION_ORDER = "impositionOrder"; ///< Tag used to identify ImpositionOrdersettings
+    public static final String TAG_IMPOSITION_ORDER = "impositionOrder"; ///< Tag used to identify ImpositionOrder settings
     public static final String TAG_SORT = "sort"; ///< Tag used to identify Sort settings
     public static final String TAG_BOOKLET = "booklet"; ///< Tag used to identify Booklet settings
     public static final String TAG_BOOKLET_FINISH = "bookletFinish"; ///< Tag used to identify BookletFinish settings
@@ -101,7 +101,8 @@ public class PrintSettings {
     
     /**
      * @brief Creates a PrintSettings instance from the database using printer ID.
-     * If not existing in the database, default values are used.
+     * 
+     * If print settings is not existing in the database, default values are used.
      * 
      * @param printerId Printer ID of the Print Settings to be retrieved from the database.
      */
@@ -222,7 +223,7 @@ public class PrintSettings {
      * 
      * @param key Print settings key
      * 
-     * @return value of the print settings given the specified key
+     * @return Value of the print settings given the specified key
      */
     public int getValue(String key) {
         return mSettingValues.get(key);
@@ -234,7 +235,7 @@ public class PrintSettings {
      * @param key Print settings key to be updated
      * @param value New value to update
      * 
-     * @retval true success (always returns true)
+     * @retval true Success (always returns true)
      */
     public boolean setValue(String key, int value) {
         mSettingValues.put(key, value);
@@ -269,9 +270,9 @@ public class PrintSettings {
     /**
      * @brief Retrieves Duplex setting value i.e. duplex printing mode.
      * 
-     * @retval OFF
-     * @retval LONG_EDGE
-     * @retval SHORT_EDGE
+     * @retval OFF Duplex mode is OFF
+     * @retval LONG_EDGE Long Edge duplex mode
+     * @retval SHORT_EDGE Short Edge duplex mode
      */
     public Duplex getDuplex() {
         return Duplex.values()[mSettingValues.get(TAG_DUPLEX)];
@@ -281,18 +282,18 @@ public class PrintSettings {
      * @brief Retrieves PaperSize setting value i.e. paper to be used during print.
      * 
      * @retval A3 297mm x 420mm
-     * @retval A3W 316.0mm x 460mm
-     * @retval A4 210.0mm x 297mm
-     * @retval A5 148.0mm x 210mm
-     * @retval A6 105.0mm x 148mm
-     * @retval B4 257.0mm x 364mm
-     * @retval B5 182.0mm x 257mm
-     * @retval B6 128.0mm x 182mm
-     * @retval FOOLSCAP 216.0mm x 340mm
-     * @retval TABLOID 280.0mm x 432mm
-     * @retval LEGAL 216.0mm x 356mm
-     * @retval LETTER 216.0mm x 280mm
-     * @retval STATEMENT 140.0mm x 216mm
+     * @retval A3W 316mm x 460mm
+     * @retval A4 210mm x 297mm
+     * @retval A5 148mm x 210mm
+     * @retval A6 105mm x 148mm
+     * @retval B4 257mm x 364mm
+     * @retval B5 182mm x 257mm
+     * @retval B6 128mm x 182mm
+     * @retval FOOLSCAP 216mm x 340mm
+     * @retval TABLOID 280mm x 432mm
+     * @retval LEGAL 216mm x 356mm
+     * @retval LETTER 216mm x 280mm
+     * @retval STATEMENT 140mm x 216mm
      */
     public PaperSize getPaperSize() {
         return PaperSize.values()[mSettingValues.get(TAG_PAPER_SIZE)];
@@ -322,8 +323,8 @@ public class PrintSettings {
     /**
      * @brief Retrieves ImpositionOrder setting value i.e. direction of the PDF pages printed in one sheet.
      * 
-     * @retval L_R left to right
-     * @retval R_L right to left
+     * @retval L_R Left to right
+     * @retval R_L Right to left
      * @retval TL_R Upper left to right
      * @retval TR_L Upper right to left
      * @retval TL_B Upper left to bottom
@@ -337,8 +338,8 @@ public class PrintSettings {
     /**
      * @brief Retrieves Sort setting value i.e. defines how the print output will be sorted.
      * 
-     * @retval PER_PAGE Sort according to per page / group sort
-     * @retval PER_COPY Sort according to copy
+     * @retval PER_PAGE To be grouped according to page
+     * @retval PER_COPY To be sorted according to copy
      */
     public Sort getSort() {
         return Sort.values()[mSettingValues.get(TAG_SORT)];
@@ -356,9 +357,9 @@ public class PrintSettings {
     /**
      * @brief Retrieves BookletFinish setting value i.e. finishing options for when booklet is on.
      * 
-     * @retval OFF Not displayed in two-page view
-     * @retval PAPER_FOLDING Sheets in the preview are displayed in the two-page view
-     * @retval FOLD_AND_STAPLE Staple images displayed in the two-page view.
+     * @retval OFF Booklet Finish is OFF
+     * @retval PAPER_FOLDING Paper will be folded 
+     * @retval FOLD_AND_STAPLE Paper will be folded and stapled
      */
     public BookletFinish getBookletFinish() {
         return BookletFinish.values()[mSettingValues.get(TAG_BOOKLET_FINISH)];

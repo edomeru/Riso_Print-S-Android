@@ -139,6 +139,7 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     // ================================================================================
     // Internal Classes
     // ================================================================================
+    
     /**
      * @interface ConfirmDialogListener
      * 
