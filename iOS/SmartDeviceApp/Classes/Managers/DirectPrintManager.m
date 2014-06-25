@@ -29,19 +29,110 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 @interface DirectPrintManager()
 
+/**
+ * Popup displaying the progress in sending the print job to the printer.
+ */
 @property (nonatomic, weak) CXAlertView *alertView;
+
+/**
+ * Subview of the {@link alertView} showing the progress as a percentage.
+ */
 @property (nonatomic, weak) UILabel *progressLabel;
+
+/**
+ * Subview of the {@link alertView} showing the progress animation.
+ */
 @property (nonatomic, weak) UIActivityIndicatorView *progressIndicator;
+
+/**
+ * Reference to the document object to be sent to the printer.
+ */
 @property (nonatomic, weak) PrintDocument *printDocument;
+
+/**
+ * Reference to the print job that will be sent to the printer.
+ * This is created using the Direct Print common library.\n
+ * It contains the name and path to the document, the printer info,
+ * and the print settings.
+ */
 @property (nonatomic, assign) directprint_job *job;
+
+/** 
+ * Flag that indicates whether a print operation is ongoing.
+ */
 @property (nonatomic, assign) BOOL isPrinting;
 
+/**
+ * Creates the print job that will be sent to the printer.
+ * The print job is created using the Direct Print common library.\n
+ * After the print job is created, the printing progress popup is displayed.
+ */
 - (void)preparePrintJob;
+
+/**
+ * Prepares the contents of the {@link alertView}.
+ *
+ * @return the combined contents of the {@link alertView}
+ */
 - (UIView *)createProgressView;
+
+/**
+ * Updates the percentage value displayed in the printing progress popup.
+ *
+ * @param progress the new percentage to display
+ */
 - (void)updateProgress:(float)progress;
+
+/**
+ * Replaces the printing progress popup with another popup showing the
+ * printing success message.
+ * A PrintJob object is also created containing the details of the
+ * print operation which can be viewed in the Print Job History screen.
+ */
 - (void)updateSuccess;
+
+/**
+ * Replaces the printing progress popup with another popup showing the
+ * printing failed message.
+ * A PrintJob object is also created containing the details of the
+ * print operation which the user can view in the Print Job History screen.
+ */
 - (void)updateError;
+
+/**
+ * Stops an ongoing print operation started by either {@link printDocumentViaLPR}
+ * or {@link printDocumentViaRaw}. This method waits until the print operation
+ * in the Direct Print common library has been terminated before returning. \n
+ */
 - (void)cancelJob;
+
+/**
+ * Initializes the list that will contain DirectPrintManager instances
+ * performing print operations.
+ * The list is used for handling printing when the application goes to
+ * either the background or to an inactive state.
+ */
++ (void)initialize;
+
+/**
+ * Adds an instance to the list of DirectPrintManager instances
+ * performing print operations.
+ * The list is used for handling printing when the application goes to
+ * either the background or to an inactive state.
+ *
+ * @param manager a DirectPrintManager instance
+ */
++ (void)addTask:(DirectPrintManager *)manager;
+
+/**
+ * Removes an instance from the list of DirectPrintManager instances
+ * performing print operations.
+ * The list is used for handling printing when the application goes to
+ * either the background or to an inactive state.
+ *
+ * @param manager a DirectPrintManager instance
+ */
++ (void)removeTask:(DirectPrintManager *)manager;
 
 @end
 

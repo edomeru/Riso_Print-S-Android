@@ -8,69 +8,75 @@
 
 #import <Foundation/Foundation.h>
 
+/** @file PDFFileManager.h */
 /**
- PDF Error types
+ * Types of errors when opening a PDF.
  */
 typedef enum
 {
-    /**
-     No error
-     */
-    kPDFErrorNone,
-    
-    /**
-     PDF File cannot be opened
-     */
-    kPDFErrorOpen,
-    
-    /**
-     PDF File is locked/has open password
-     */
-    kPDFErrorLocked,
-    
-    /**
-     PDF File does not allow printing
-     */
-    kPDFErrorPrintingNotAllowed,
-    
-    /**
-     PDF File was not copied succesfully
-     */
-    kPDFErrorProcessingFailed
+    kPDFErrorNone,                  /**< No error */
+    kPDFErrorOpen,                  /**< PDF cannot be opened */
+    kPDFErrorLocked,                /**< PDF is locked or has an open password */
+    kPDFErrorPrintingNotAllowed,    /**< PDF does not allow printing */
+    kPDFErrorProcessingFailed       /**< PDF was not copied successfully */
 } kPDFError;
 
 @class PrintDocument;
 
+/**
+ * Handler for the PDF file.
+ * If there are no errors ({@link kPDFErrorNone}) in setting-up the PDF ({@link setupDocument}),
+ * this class will keep a reference to the PDF file stored in the {@link printDocument} 
+ * property.\n
+ * The PDF file is also copied to the Documents directory of the application.\n\n
+ * This class is designed to be used as a singleton to keep a single reference
+ * to the PDF file throughout the application and for its entire lifecycle.
+ */
 @interface PDFFileManager : NSObject
 
 /**
- Indicates whether or not a file is available for loading (Open In...)
+ * Flag that indicates whether or not a PDF is available to be loaded into the application.
+ * This flag is set to YES only when the application is launched via open-in. 
+ * Otherwise, it is NO.
  */
 @property (nonatomic) BOOL fileAvailableForLoad;
 
 /**
- Indicates whether or not a file ready for preview
+ * Flag that indicates whether or not a PDF is available to be displayed in print preview.
+ * This flag is set to YES only when the error status is ({@link kPDFErrorNone}).
+ * Otherwise, it is NO.
  */
 @property (nonatomic, readonly) BOOL fileAvailableForPreview;
 
 /**
- URL of the PDF File
+ * URL of the PDF file.
  */
 @property (nonatomic, strong) NSURL *fileURL;
 
 /**
- Print Document object
+ * Reference to the PDF file in the form of a PrintDocument object.
  */
 @property (nonatomic, strong, readonly) PrintDocument *printDocument;
 
 /**
- Returns the single instance of the PDFFileManager
- @return shared PDFFileManager instance
- **/
+ * Returns the singleton PDFFileManager object.
+ * If the manager does not exist yet, then this method creates it.\n
+ *
+ * @return the single instance of PDFFileManager
+ */
 + (id)sharedManager;
 
 /**
- Prepares the document for preview
+ * Prepares the PDF file for preview.
+ * The following steps are performed:
+ *  - copy the PDF file to the Documents directory of the application
+ *  - check if the PDF can be opened, previewed, and printed
+ *  - if ({@link kPDFErrorNone}), then store a reference to the PDF in {@link printDocument} 
+ * 
+ * In addition, when the {@link printDocument} is set, the corresponding Printer
+ * and PreviewSetting objects are also set and attached to the PrintDocument object.
+ *
+ * @return one of {@link kPDFError} values
  */
 - (kPDFError)setupDocument;
 
