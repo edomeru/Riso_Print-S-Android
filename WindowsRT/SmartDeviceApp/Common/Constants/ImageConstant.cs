@@ -72,10 +72,14 @@ namespace SmartDeviceApp.Common.Constants
         private const int RIGHT_BUTTON_IMAGE_WIDTH_180  = 26;
         private const int RIGHT_BUTTON_IMAGE_HEIGHT_180 = 36;
 
-        public static int GetIconImageWidth(object sender)
+        public static int GetIconImageWidth(object sender, bool? isIgnoreResolution = false)
         {
             int width = 0;
             var resolution = DisplayInformation.GetForCurrentView().ResolutionScale;
+            if (isIgnoreResolution != null && isIgnoreResolution.Value == true)
+            {
+                resolution = ResolutionScale.Scale100Percent;
+            }
             var type = sender.GetType();
             if (type == typeof(JobListItemControl))
             {
@@ -118,7 +122,7 @@ namespace SmartDeviceApp.Common.Constants
         public static int GetRightButtonImageWidth()
         {
             int width = 0;
-            var resolution = DisplayInformation.GetForCurrentView().ResolutionScale;            
+            var resolution = DisplayInformation.GetForCurrentView().ResolutionScale;
             switch (resolution)
             {
                 case ResolutionScale.Scale100Percent:

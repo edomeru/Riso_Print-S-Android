@@ -119,11 +119,11 @@
                            Visibility="{Binding RightButtonVisibility, ElementName=keyValueControl}" 
                            Style="{StaticResource STYLE_AlignRight}" Stretch="None"/>
                 </StackPanel>
-                <Path Grid.Row="1" Grid.ColumnSpan="2" 
+                <Path Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                       Visibility="{Binding SeparatorVisibility, ElementName=keyValueControl}"
                       Style="{StaticResource STYLE_List_Separator}">
                     <Path.Data>
-                        <LineGeometry StartPoint="{Binding Source={StaticResource MARGIN_List},Converter={StaticResource SeparatorLineGeometryStartPointConverter}}"
+                        <LineGeometry StartPoint="{Binding SeparatorStartPoint, ElementName=keyValueControl, Converter={StaticResource SeparatorLineGeometryStartPointConverter}}"
                                       EndPoint="{Binding Width, ElementName=keyValueControl, Converter={StaticResource SeparatorLineGeometryEndPointConverter}}"/>
                     </Path.Data>                 
                 </Path>

@@ -14,6 +14,7 @@
     SubTextVisibility="Collapsed"
     RightButtonVisibility="Collapsed"
     SeparatorVisibility="{Binding Converter={StaticResource PrintJobToSeparatorVisibilityConverter}}"
+    IsListItem="true"
     PressedColor="{StaticResource BRUSH_Purple2}"
     Loaded="OnLoaded">
 

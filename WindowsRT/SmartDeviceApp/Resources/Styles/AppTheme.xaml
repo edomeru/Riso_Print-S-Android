@@ -22,8 +22,8 @@
     <!-- PRINT SETTING CONSTANTS END -->
 
     <!-- APP THEME CONSTANTS START -->
+    <x:Double x:Key="MARGIN_None">0</x:Double>
     <x:Double x:Key="MARGIN_Default">20</x:Double>
-    <x:Double x:Key="MARGIN_List">50</x:Double>
     <x:Double x:Key="MARGIN_Large">30</x:Double>
     <x:Double x:Key="MARGIN_Medium">10</x:Double>
     <x:Double x:Key="MARGIN_Small">5</x:Double>

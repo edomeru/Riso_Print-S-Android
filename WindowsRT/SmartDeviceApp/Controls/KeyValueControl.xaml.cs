@@ -31,13 +31,16 @@ namespace SmartDeviceApp.Controls
             this.InitializeComponent();
             if (!_isLoaded) Loaded += new RoutedEventHandler(OnLoaded);
         }
-		
+
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register("Command", typeof(ICommand), typeof(KeyValueControl), null);
         
         public static readonly DependencyProperty CommandParameterProperty =
             DependencyProperty.Register("CommandParameter", typeof(object), typeof(KeyValueControl), null);
-        
+
+        public static readonly DependencyProperty IsListItemProperty =
+            DependencyProperty.Register("IsListItem", typeof(bool), typeof(KeyValueControl), null);
+
         public static readonly DependencyProperty RightButtonVisibilityProperty =
             DependencyProperty.Register("RightButtonVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Visible));
 
@@ -93,6 +96,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty SeparatorVisibilityProperty =
             DependencyProperty.Register("SeparatorVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Visible));
 
+        public static readonly DependencyProperty SeparatorStartPointProperty =
+            DependencyProperty.Register("SeparatorStartPoint", typeof(double), typeof(KeyValueControl), new PropertyMetadata(0.0));
+
         public static new readonly DependencyProperty IsEnabledProperty =
             DependencyProperty.Register("IsEnabled", typeof(bool), typeof(KeyValueControl), new PropertyMetadata(true, SetIsEnabled));
 
@@ -113,6 +119,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (object)GetValue(CommandParameterProperty); }
             set { SetValue(CommandParameterProperty, value); }
+        }
+
+        public bool IsListItem
+        {
+            get { return (bool)GetValue(IsListItemProperty); }
+            set { SetValue(IsListItemProperty, value); }
         }
 
         public Visibility RightButtonVisibility
@@ -156,8 +168,8 @@ namespace SmartDeviceApp.Controls
             get { return (ImageSource)GetValue(IconImageProperty); }
             set { SetValue(IconImageProperty, value); }
         }
-		
-		public ImageSource RightImage
+
+        public ImageSource RightImage
         {
             get { return (ImageSource)GetValue(RightImageProperty); }
             set { SetValue(RightImageProperty, value); }
@@ -217,10 +229,16 @@ namespace SmartDeviceApp.Controls
             set { SetValue(ValueTextWidthProperty, value); }
         }
 
-        public string SeparatorVisibility
+        public Visibility SeparatorVisibility
         {
-            get { return (string)GetValue(SeparatorVisibilityProperty); }
+            get { return (Visibility)GetValue(SeparatorVisibilityProperty); }
             set { SetValue(SeparatorVisibilityProperty, value); }
+        }
+
+        public double SeparatorStartPoint
+        {
+            get { return (double)GetValue(SeparatorStartPointProperty); }
+            set { SetValue(SeparatorStartPointProperty, value); }
         }
 
         public new bool IsEnabled
@@ -273,9 +291,10 @@ namespace SmartDeviceApp.Controls
                     ValueTextStyle = (Style)Application.Current.Resources["STYLE_TextValue"];
                 }
 
-                // Adjust text widths
-                var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
-                var smallMargin = (int)((double)Application.Current.Resources["MARGIN_Small"]);
+                // Adjust widths
+                var noMargin = (double)Application.Current.Resources["MARGIN_None"];
+                var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+                var smallMargin = (double)Application.Current.Resources["MARGIN_Small"];
 
                 // Get text width by subtracting widths and margins of visible components
                 var keyValueControlWidth = (int)keyValueControl.ActualWidth;
@@ -298,7 +317,7 @@ namespace SmartDeviceApp.Controls
                 int maxTextWidth = keyValueControlWidth;
 
                 // Left and right margins
-                maxTextWidth -= (defaultMargin * 2);
+                maxTextWidth -= ((int)defaultMargin * 2);
 
                 // Icon is visible
                 if (IconVisibility == Visibility.Visible)
@@ -306,7 +325,7 @@ namespace SmartDeviceApp.Controls
                     var imageWidth = ((BitmapImage)IconImage).PixelWidth;
                     if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(sender);
                     maxTextWidth -= imageWidth;
-                    maxTextWidth -= defaultMargin;
+                    maxTextWidth -= (int)defaultMargin;
                 }
                 // RightButton is visible
                 if (RightButtonVisibility == Visibility.Visible)
@@ -314,7 +333,7 @@ namespace SmartDeviceApp.Controls
                     var rightButtonImageWidth = ((BitmapImage)RightImage).PixelWidth;
                     if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth();
                     maxTextWidth -= rightButtonImageWidth;
-                    maxTextWidth -= defaultMargin;
+                    maxTextWidth -= (int)defaultMargin;
                 }
 
                 // ValueContent is visible
@@ -322,14 +341,14 @@ namespace SmartDeviceApp.Controls
                 if (valueContent != null && valueContent.Visibility == Visibility.Visible)
                 {
                     maxTextWidth -= (int)valueContent.ActualWidth;
-                    maxTextWidth -= defaultMargin;
+                    maxTextWidth -= (int)defaultMargin;
                 }
 
                 // Value is visible
                 if (ValueVisibility == Visibility.Visible && IsEnabled) // Note: If disabled, value is not visible
                 {
                     // Space between key and value texts
-                    maxTextWidth -= smallMargin;
+                    maxTextWidth -= (int)smallMargin;
                     maxTextWidth /= 2;
                     // Set key and value to equal widths
                     KeyTextWidth = maxTextWidth;
@@ -340,6 +359,28 @@ namespace SmartDeviceApp.Controls
                 {
                     KeyTextWidth = maxTextWidth;
                 }
+
+                // Set separator start point
+                if (SeparatorVisibility == Visibility.Visible)
+                {
+                    if (IsListItem)
+                    {
+                        if (IconVisibility == Visibility.Visible)
+                        {
+                            var imageWidth = ImageConstant.GetIconImageWidth(sender, true);
+                            SeparatorStartPoint = imageWidth + (defaultMargin * 2);
+                        }
+                        else
+                        {
+                            SeparatorStartPoint = defaultMargin;
+                        }
+                    }
+                    else
+                    {
+                        SeparatorStartPoint = noMargin;
+                    }
+                }
+
                 _isLoaded = true;
             }
             catch (Exception ex)
