@@ -181,13 +181,21 @@ namespace SmartDeviceApp.Common.Utilities
         /// Creates a bitmap based on target paper size and orientation
         /// </summary>
         /// <param name="canvasBitmap">canvas bitmap</param>
-        public static void FillWhitePageImage(WriteableBitmap canvasBitmap)
+        /// <param name="canvasSize">canvas size</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        public static void FillWhitePageImage(WriteableBitmap canvasBitmap, Size canvasSize,
+            CancellationTokenSource cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
                 {
-                    WriteableBitmapExtensions.FillRectangle(canvasBitmap, 0, 0, canvasBitmap.PixelWidth,
-                        canvasBitmap.PixelHeight, Windows.UI.Colors.White);
+                    WriteableBitmapExtensions.FillRectangle(canvasBitmap, 0, 0,
+                        (int)canvasSize.Width, (int)canvasSize.Height, Windows.UI.Colors.White);
                 });
         }
 
@@ -234,7 +242,7 @@ namespace SmartDeviceApp.Common.Utilities
             WriteableBitmap overlayBitmap, Size overlaySize, bool isPdfPortrait,
             bool isPortrait, bool enableScaleToFit, CancellationTokenSource cancellationToken)
         {
-            PreviewPageImageUtility.FillWhitePageImage(canvasBitmap);
+            PreviewPageImageUtility.FillWhitePageImage(canvasBitmap, canvasSize, cancellationToken);
 
             bool rotateLeft = isPdfPortrait != isPortrait;
 
@@ -370,7 +378,7 @@ namespace SmartDeviceApp.Common.Utilities
                     (impositionPageAreaSize.Height * (pagesPerRow - 1));
             }
 
-            FillWhitePageImage(canvasBitmap);
+            FillWhitePageImage(canvasBitmap, canvasSize, cancellationToken);
 
             // Loop each imposition page
             int impositionPageIndex = 0;
@@ -551,8 +559,8 @@ namespace SmartDeviceApp.Common.Utilities
             CancellationTokenSource cancellationToken)
         {
             // Rotate image if needed
-            if ((!isRightSide && finishingSide != (int)FinishingSide.Right) ||
-                (isRightSide && finishingSide == (int)FinishingSide.Right))
+            if ((finishingSide != (int)FinishingSide.Right) && ((!isRightSide && !isBackSide) || (isRightSide && isBackSide)) ||
+                (finishingSide == (int)FinishingSide.Right) && ((isRightSide && !isBackSide) || (!isRightSide && isBackSide)))
             {
                 if ((duplexType == (int)Duplex.LongEdge && !isPortrait) ||
                     (duplexType == (int)Duplex.ShortEdge && isPortrait))
@@ -569,7 +577,7 @@ namespace SmartDeviceApp.Common.Utilities
                 }
 
 #if PREVIEW_PUNCH || PREVIEW_STAPLE
-                // Change the side of the staple if letf or right
+                // Change the side of the staple if left or right
                 if (finishingSide == (int)FinishingSide.Left)
                 {
                     finishingSide = (int)FinishingSide.Right;
@@ -577,6 +585,10 @@ namespace SmartDeviceApp.Common.Utilities
                 else if (finishingSide == (int)FinishingSide.Right)
                 {
                     finishingSide = (int)FinishingSide.Left;
+                }
+                else if (finishingSide == (int)FinishingSide.Top)
+                {
+                    finishingSide = -1; // Out of range number to denote bottom
                 }
 #endif // PREVIEW_PUNCH || PREVIEW_STAPLE
             }
@@ -594,7 +606,7 @@ namespace SmartDeviceApp.Common.Utilities
             // Apply staple
             if (staple != (int)Staple.Off)
             {
-                OverlayStaple(canvasBitmap, canvasSize, staple, finishingSide, false, false,
+                OverlayStaple(canvasBitmap, canvasSize, staple, finishingSide, false,
                     cancellationToken);
             }
 #endif // PREVIEW_STAPLE
@@ -646,7 +658,7 @@ namespace SmartDeviceApp.Common.Utilities
             // Apply staple at the edge based on finishing side
             if (applyStaple)
             {
-                OverlayStaple(canvasBitmap, canvasSize, 0, bindingSide, true, isRightSide, cancellationToken);
+                OverlayStaple(canvasBitmap, canvasSize, 0, bindingSide, true, cancellationToken);
             }
         }
 
@@ -658,10 +670,9 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="staple">staple</param>
         /// <param name="finishingSide">position of staple</param>
         /// <param name="isBooklet">true when booklet is on, false otherwise</param>
-        /// <param name="isRightSide">true when page is on right side, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
         public static void OverlayStaple(WriteableBitmap canvasBitmap, Size canvasSize, int staple,
-            int finishingSide, bool isBooklet, bool isRightSide, CancellationTokenSource cancellationToken)
+            int finishingSide, bool isBooklet, CancellationTokenSource cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -778,6 +789,28 @@ namespace SmartDeviceApp.Common.Utilities
                                     (int)canvasSize.Height, false, 0.75, cancellationToken);
                             }
                         }
+                        else
+                        {
+                            if (staple == (int)Staple.OneUpperLeft)
+                            {
+                                OverlayCornerStaple(canvasBitmap, canvasSize, scaledStapleBitmap,
+                                    135, true, true, cancellationToken);
+                            }
+                            else if (staple == (int)Staple.OneUpperRight)
+                            {
+                                OverlayCornerStaple(canvasBitmap, canvasSize, scaledStapleBitmap,
+                                    45, false, true, cancellationToken);
+                            }
+                            else if (staple == (int)Staple.Two)
+                            {
+                                OverlaySideStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 0,
+                                    true, true, (int)canvasSize.Width, true, 0.25,
+                                    cancellationToken);
+                                OverlaySideStaple(canvasBitmap, canvasSize, scaledStapleBitmap, 0,
+                                    false, true, (int)canvasSize.Width, true, 0.75,
+                                    cancellationToken);
+                            }
+                        }
                     } // if (isBooklet)
                 });
         }
@@ -825,7 +858,7 @@ namespace SmartDeviceApp.Common.Utilities
                         double startPos = GetPunchStartPosition(canvasSize.Width, true, holeCount,
                             diameterPunch, marginPunch, distanceBetweenHoles);
                         OverlayScalePunch(canvasBitmap, canvasSize, scaledPunchBitmap, holeCount,
-                            startPos, false, true, diameterPunch, marginPunch, distanceBetweenHoles,
+                            startPos, false, false, true, diameterPunch, marginPunch, distanceBetweenHoles,
                             cancellationToken);
                     }
                     else if (finishingSide == (int)FinishingSide.Left)
@@ -833,7 +866,7 @@ namespace SmartDeviceApp.Common.Utilities
                         double startPos = GetPunchStartPosition(canvasSize.Height, false, holeCount,
                             diameterPunch, marginPunch, distanceBetweenHoles);
                         OverlayScalePunch(canvasBitmap, canvasSize, scaledPunchBitmap, holeCount,
-                            startPos, false, false, diameterPunch, marginPunch, distanceBetweenHoles,
+                            startPos, false, false, false, diameterPunch, marginPunch, distanceBetweenHoles,
                             cancellationToken);
                     }
                     else if (finishingSide == (int)FinishingSide.Right)
@@ -841,7 +874,15 @@ namespace SmartDeviceApp.Common.Utilities
                         double startPos = GetPunchStartPosition(canvasSize.Height, false, holeCount,
                             diameterPunch, marginPunch, distanceBetweenHoles);
                         OverlayScalePunch(canvasBitmap, canvasSize, scaledPunchBitmap, holeCount,
-                            startPos, true, false, diameterPunch, marginPunch, distanceBetweenHoles,
+                            startPos, true, false, false, diameterPunch, marginPunch, distanceBetweenHoles,
+                            cancellationToken);
+                    }
+                    else
+                    {
+                        double startPos = GetPunchStartPosition(canvasSize.Width, true, holeCount,
+                            diameterPunch, marginPunch, distanceBetweenHoles);
+                        OverlayScalePunch(canvasBitmap, canvasSize, scaledPunchBitmap, holeCount,
+                            startPos, false, true, true, diameterPunch, marginPunch, distanceBetweenHoles,
                             cancellationToken);
                     }
                 });
@@ -1092,17 +1133,19 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="holeCount">number of punch holes</param>
         /// <param name="startPos">starting position</param>
         /// <param name="isXEnd">true when punch holes are to be placed near the end along X-axis</param>
+        /// <param name="isYEnd">true when punch holes are to be placed near the end along Y-axis</param>
         /// <param name="isAlongXAxis">true when punch holes are to be placed horizontally</param>
         /// <param name="diameterPunch">size of punch hole</param>
         /// <param name="marginPunch">margin of punch hole against edge of page image</param>
         /// <param name="distanceBetweenHoles">distance between punch holes</param>
         /// <param name="cancellationToken">cancellation token</param>
         private static void OverlayScalePunch(WriteableBitmap canvasBitmap, Size canvasSize,
-            WriteableBitmap punchBitmap, int holeCount, double startPos, bool isXEnd,
+            WriteableBitmap punchBitmap, int holeCount, double startPos, bool isXEnd, bool isYEnd,
             bool isAlongXAxis, double diameterPunch, double marginPunch, double distanceBetweenHoles,
             CancellationTokenSource cancellationToken)
         {
-            double endMarginPunch = (isXEnd) ? canvasSize.Width - diameterPunch - marginPunch : marginPunch;
+            double endXMarginPunch = (isXEnd) ? canvasSize.Width - diameterPunch - marginPunch : marginPunch;
+            double endYMarginPunch = (isYEnd) ? canvasSize.Height - diameterPunch - marginPunch : marginPunch;
 
             double currPos = startPos;
             for (int index = 0; index < holeCount; ++index, currPos += diameterPunch + distanceBetweenHoles)
@@ -1119,8 +1162,35 @@ namespace SmartDeviceApp.Common.Utilities
                     continue;
                 }
 
-                double destXOrigin = (isAlongXAxis) ? currPos : endMarginPunch;
+                double destXOrigin = (isAlongXAxis) ? currPos : endXMarginPunch;
                 double destYOrigin = (isAlongXAxis) ? marginPunch : currPos;
+
+                if (isAlongXAxis)
+                {
+                    destXOrigin = currPos;
+                    if (isYEnd)
+                    {
+                        destYOrigin = endYMarginPunch;
+                    }
+                    else
+                    {
+                        destYOrigin = marginPunch;
+                    }
+                }
+                else
+                {
+                    destYOrigin = currPos;
+                    if (isXEnd)
+                    {
+                        destXOrigin = endXMarginPunch;
+                    }
+                    else
+                    {
+                        destXOrigin = marginPunch;
+                    }
+                    
+                }
+
                 Rect destRect = new Rect(destXOrigin, destYOrigin, punchBitmap.PixelWidth,
                     punchBitmap.PixelHeight);
                 Rect srcRect = new Rect(0, 0, punchBitmap.PixelWidth, punchBitmap.PixelHeight);

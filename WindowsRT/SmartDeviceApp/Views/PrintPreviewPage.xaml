@@ -411,6 +411,10 @@
                 <RowDefinition Height="{StaticResource SIZE_PageNumberTextHeight}"/>
             </Grid.RowDefinitions>
             <controls:TwoPageControl Grid.Row="0"
+                                     RightBackPageImage="{Binding RightBackPageImage}"
+                                     LeftBackPageImage="{Binding LeftBackPageImage}"
+                                     IsLoadLeftBackPageActive="{Binding IsLoadLeftBackPageActive}"
+                                     IsLoadRightBackPageActive="{Binding IsLoadRightBackPageActive}"
                                      RightPageImage="{Binding RightPageImage}"
                                      LeftPageImage="{Binding LeftPageImage}"
                                      PageViewMode="{Binding PageViewMode}"

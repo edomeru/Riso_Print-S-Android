@@ -35,6 +35,18 @@ namespace SmartDeviceApp.Controls
             this.InitializeComponent();
         }
 
+        public static readonly DependencyProperty RightBackPageImageProperty =
+            DependencyProperty.Register("RightBackPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty LoadRightBackPageActiveProperty =
+            DependencyProperty.Register("IsLoadRightBackPageActive", typeof(bool), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty LeftBackPageImageProperty =
+            DependencyProperty.Register("LeftBackPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty IsLoadLeftBackPageActiveProperty =
+            DependencyProperty.Register("IsLoadLeftBackPageActive", typeof(bool), typeof(TwoPageControl), null);
+
         public static readonly DependencyProperty PageAreaGridProperty =
             DependencyProperty.Register("PageAreaGrid", typeof(Grid), typeof(TwoPageControl), null);
         
@@ -56,6 +68,30 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty PageAreaSizeProperty =
            DependencyProperty.Register("PageAreaSize", typeof(Size), typeof(TwoPageControl), null);
+
+        public ImageSource RightBackPageImage
+        {
+            get { return (ImageSource)GetValue(RightBackPageImageProperty); }
+            set { SetValue(RightBackPageImageProperty, value); }
+        }
+
+        public bool IsLoadRightBackPageActive
+        {
+            get { return (bool)GetValue(LoadRightBackPageActiveProperty); }
+            set { SetValue(LoadRightBackPageActiveProperty, value); }
+        }
+
+        public ImageSource LeftBackPageImage
+        {
+            get { return (ImageSource)GetValue(LeftBackPageImageProperty); }
+            set { SetValue(LeftBackPageImageProperty, value); }
+        }
+
+        public bool IsLoadLeftBackPageActive
+        {
+            get { return (bool)GetValue(IsLoadLeftBackPageActiveProperty); }
+            set { SetValue(IsLoadLeftBackPageActiveProperty, value); }
+        }
 
         public Grid PageAreaGrid
         {
