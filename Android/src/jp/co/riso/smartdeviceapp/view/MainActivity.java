@@ -37,10 +37,18 @@ import android.view.ViewGroup;
 
 import com.radaee.pdf.Global;
 
+/**
+ * @class MainActivity
+ * 
+ * @brief Main activity class.
+ */
 public class MainActivity extends BaseActivity implements PauseableHandlerCallback {
 
+    /// Key for right drawer
     public static final String KEY_RIGHT_OPEN = "right_drawer_open";
+    /// Key for left drawer
     public static final String KEY_LEFT_OPEN = "left_drawer_open";
+    /// Key for view resize
     public static final String KEY_RESIZE_VIEW = "resize_view";
     //public static final String KEY_TRANSLATION = "translate";
     
@@ -267,6 +275,11 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     // Internal Classes
     // ================================================================================
     
+    /**
+     * @class SDAActionBarDrawerToggle
+     * 
+     * @brief Class for Action Bar Drawer toggle.
+     */
     private class SDAActionBarDrawerToggle extends ActionBarDrawerToggle {
         
         /**
@@ -342,9 +355,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             
         }
         
-        /**
-         * @brief Called when a drawer has settled in a completely closed state.
-         */
         @Override
         public void onDrawerClosed(View view) {
             super.onDrawerClosed(view);
@@ -359,9 +369,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             
         }
         
-        /**
-         * @brief Called when a drawer has settled in a completely opened state.
-         */
         @Override
         public void onDrawerOpened(View drawerView) {
             super.onDrawerOpened(drawerView);

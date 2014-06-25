@@ -13,12 +13,18 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
 
+/**
+ * @class MemoryUtils
+ * 
+ * @brief Utility class for memory operations
+ */
 public class MemoryUtils {
     
     /**
      * @brief Get cache size.
      * 
      * @param activity Activity
+     * 
      * @return Cache size
      */
     public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
@@ -38,6 +44,7 @@ public class MemoryUtils {
      * @brief Get available memory.
      * 
      * @param context Application context
+     * 
      * @return Available memory
      */
     public static float getAvailableMemory(Context context) {

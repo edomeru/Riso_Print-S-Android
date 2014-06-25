@@ -19,6 +19,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+/**
+ * @class HelpFragment
+ * 
+ * @brief Fragment class for Help Screen
+ */
 public class HelpFragment extends BaseWebFragment {
     @Override
     public int getViewLayout() {

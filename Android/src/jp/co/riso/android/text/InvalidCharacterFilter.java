@@ -15,6 +15,8 @@ import android.text.InputFilter;
 import android.text.Spanned;
 
 /**
+ * @class InvalidCharacterFilter
+ * 
  * @brief EditText filter for Invalid characters
  */
 public class InvalidCharacterFilter implements InputFilter {

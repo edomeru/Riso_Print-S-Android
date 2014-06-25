@@ -28,9 +28,14 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.AndroidRuntimeException;
 
+/**
+ * @class SplashActivity
+ * 
+ * @brief Splash activity class.
+ */
 public class SplashActivity extends BaseActivity implements PauseableHandlerCallback {
     
-    // Messages
+    /// Message ID for running main activity
     public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
     
     public static final String KEY_DB_INITIALIZED = "database_initialized";
@@ -212,6 +217,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     // Internal Classes
     // ================================================================================
     
+    /**
+     * @class DBInitTask
+     * 
+     * @brief Async task for initializing database.
+     */
     private class DBInitTask extends AsyncTask<Void, Void, Void> {
         
         @Override

@@ -14,6 +14,11 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
 
+/**
+ * @class BaseActivity
+ * 
+ * @brief Base activity class
+ */
 public abstract class BaseActivity extends Activity {
 
     @Override

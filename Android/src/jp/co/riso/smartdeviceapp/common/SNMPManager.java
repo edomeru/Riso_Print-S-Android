@@ -10,6 +10,11 @@ package jp.co.riso.smartdeviceapp.common;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * @class SNMPManager
+ * 
+ * @brief Manager responsible for SNMP operations. 
+ */
 public class SNMPManager {
     public long mContext = 0;
     private WeakReference<SNMPManagerCallback> mCallbackRef = null;
@@ -20,14 +25,23 @@ public class SNMPManager {
     public native void manualDiscovery(String ipAddress);
     public native void cancel();
     
+    /// Booklet finishing capability
     public static final int SNMP_CAPABILITY_BOOKLET_FINISHING = 0;
+    /// Staple capability
     public static final int SNMP_CAPABILITY_STAPLER = 1;
+    /// Punch 3 holes capability for Japan printers
     public static final int SNMP_CAPABILITY_FINISH_2_3 = 2;
+    /// Punch 4 holes capability
     public static final int SNMP_CAPABILITY_FINISH_2_4 = 3;
+    /// Tray face down capability
     public static final int SNMP_CAPABILITY_TRAY_FACE_DOWN = 4;
+    /// Tray top capability
     public static final int SNMP_CAPABILITY_TRAY_TOP = 5;
+    /// Tray stack capability
     public static final int SNMP_CAPABILITY_TRAY_STACK = 6;
+    /// LPR print capability
     public static final int SNMP_CAPABILITY_LPR = 7;
+    /// Raw print capability 
     public static final int SNMP_CAPABILITY_RAW = 8;
     
     /**
@@ -64,6 +78,8 @@ public class SNMPManager {
     }
     
     /**
+     * @interface SNMPManagerCallback
+     * 
      * @brief SNMP Manager Interface
      */
     public interface SNMPManagerCallback {

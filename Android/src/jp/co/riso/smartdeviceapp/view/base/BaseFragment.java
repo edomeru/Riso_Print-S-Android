@@ -23,8 +23,13 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+/**
+ * @class BaseFragment
+ * 
+ * @brief Base fragment class
+ */
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
-    
+    /// Menu action button ID
     public static final int ID_MENU_ACTION_BUTTON = 0x11000001;
     private static final String KEY_ICON_STATE = "icon_state";
     private static final String KEY_ICON_ID = "icon_id";

@@ -13,6 +13,11 @@ import jp.co.riso.android.util.Logger;
 import android.app.Application;
 import android.content.Context;
 
+/**
+ * @class SmartDeviceApp
+ * 
+ * @brief Application class.
+ */
 public class SmartDeviceApp extends Application {
 
     private static volatile Context sContext;

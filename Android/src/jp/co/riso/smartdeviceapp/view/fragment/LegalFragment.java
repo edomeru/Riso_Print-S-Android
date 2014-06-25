@@ -26,8 +26,15 @@ import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment;
 
+/**
+ * @class LegalFragment
+ * 
+ * @brief Web fragment for Legal Screen
+ */
 public class LegalFragment extends BaseWebFragment {
+    /// JS Format
     public static final String JS_REPLACE_FORMAT = "javascript:document.getElementById('%s').innerHTML='%s';";
+    /// HTML version
     public static final String VERSION_HTML_ID = "localize_version";
     
     @Override

@@ -40,6 +40,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+/**
+ * @class AddPrinterFragment
+ * 
+ * @brief Fragment for Add Printer Screen.
+ */
 public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnEditorActionListener, ConfirmDialogListener, PauseableHandlerCallback {
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
@@ -141,7 +146,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     /**
-     * @brief Dialog which is displayed during successful printer search
+     * @brief Display success dialog during successful printer search
      * 
      * @param printer Searched printer
      */
@@ -171,7 +176,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     /**
-     * @brief Dialog which is displayed during failed printer search
+     * @brief Display error dialog during failed printer search
      * 
      * @param err Error code
      */
@@ -401,6 +406,8 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     // ================================================================================
     
     /**
+     * @class ViewHolder
+     * 
      * @brief Add Printer Screen view holder
      */
     public class ViewHolder {

@@ -24,6 +24,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * @class PrinterArrayAdapter
+ * 
+ * @brief Array Adapter used for Printers Screen of a phone
+ */
 public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {    
     private WeakReference<PrinterArrayAdapterInterface> mCallbackRef = null;
     private PrinterManager mPrinterManager = null;
@@ -251,6 +256,8 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     // ================================================================================
     
     /**
+     * @class ViewHolder 
+     * 
      * @brief Printers Screen view holder for phone.
      */
     public class ViewHolder {

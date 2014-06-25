@@ -39,6 +39,11 @@ import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
+/**
+ * @class PrinterSearchFragment
+ * 
+ * @brief Fragment for Printer Search Screen
+ */
 public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface,
         ConfirmDialogListener, PauseableHandlerCallback {
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
@@ -153,7 +158,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     }
     
     /**
-     * @brief Dialog which is displayed during error.
+     * @brief Display error dialog during failed printer search
      */
     private void dialogErrCb() {
         String title = getResources().getString(R.string.ids_lbl_search_printers);

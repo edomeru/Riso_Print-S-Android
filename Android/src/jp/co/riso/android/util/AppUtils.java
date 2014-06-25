@@ -37,8 +37,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
+/**
+ * @class AppUtils
+ * 
+ * @brief Utility class for application operations
+ */
 public final class AppUtils {
     
+    /// Path to asset files
     public static final String CONST_ASSET_PATH = "file:///android_asset/";
     
     /**
@@ -148,13 +154,13 @@ public final class AppUtils {
     }
     
     /**
-     * @brief Checks whether the asset exists.
+     * @brief Get file contents from assets.
      * 
      * @param context Valid Context
-     * @param assetFile Relative path of the asset (from assets/)
+     * @param assetFile Relative path of the asset file (from assets/)
      * 
-     * @retval true The asset exists
-     * @retval false The asset does not exist
+     * @return File contents
+     * @retval null Error in reading asset file
      */
     public static String getFileContentsFromAssets(Context context, String assetFile) {
         if (context == null) {
@@ -259,12 +265,12 @@ public final class AppUtils {
     /**
      * @brief Change children font <br>
      * 
-     * Note: Known issue on Jellybean ellipsize="middle" when using custom font
+     * Note: Known issue on Jellybean ellipsize="middle" when using custom font.
+     * Based on: http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
      * 
      * @param v ViewGroup to be changed
      * @param font Font to be set
      */
-    // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
     protected static void changeChildrenFont(ViewGroup v, Typeface font) {
         if (font == null || v == null) {
             return;
@@ -302,15 +308,16 @@ public final class AppUtils {
     }
     
     /**
-     * @brief Dynamically retrieve resource Id
+     * @brief Dynamically retrieve resource Id. </br>
+     * 
+     * Based on: http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
      * 
      * @param variableName Variable name
-     * @param c Class
+     * @param c Resource class
      * @param defaultId Default resource ID
      * 
      * @return Resource ID
      */
-    // http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
     public static int getResourseId(String variableName, Class<?> c, int defaultId) {
         if (variableName == null || c == null) {
             return defaultId;
@@ -409,8 +416,7 @@ public final class AppUtils {
     }
     
     /**
-     * @brief Gets Secure Print, Login ID and PIN Code from preferences
-     * and returns formatted string if Secure Print is ON
+     * @brief Gets Secure Print, Login ID and PIN Code from preferences and returns formatted string
      * 
      * @return Authentication String
      */
@@ -437,7 +443,9 @@ public final class AppUtils {
     }
     
     /**
-     * @brief Get the owner name based on the Log-in ID from Settings screen
+     * @brief Get the owner name based on the Log-in ID as seen from the Settings screen. </br>
+     * 
+     * The Log-in ID is retrieved from the shared preferences.
      * 
      * @return Owner name
      */

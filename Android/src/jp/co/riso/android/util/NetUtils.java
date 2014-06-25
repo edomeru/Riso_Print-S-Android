@@ -24,6 +24,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+/**
+ * @class NetUtils
+ * 
+ * @brief Utility class for network operations.
+ */
 public class NetUtils {
     private static final Pattern IPV4_PATTERN;
     private static final Pattern IPV4_MULTICAST_PATTERN;
@@ -192,6 +197,7 @@ public class NetUtils {
      * @param ipAddress Input IP Address
      * 
      * @return IP Address with leading zeroes trimmed
+     * @retval "" IP Address is null
      */
     public static String trimZeroes(String ipAddress) {
         if (ipAddress == null) {

@@ -10,6 +10,11 @@ package jp.co.riso.smartdeviceapp.common;
 
 import jp.co.riso.android.util.NetUtils;
 
+/**
+ * @class JniUtils
+ * 
+ * @brief Utility class using JNI to validate IP Address. 
+ */
 public class JniUtils {
     public static native String validateIp(String ipAddress);
     
@@ -17,6 +22,7 @@ public class JniUtils {
      * @brief Validate IP Address
      * 
      * @param ipAddress IP Address
+     * 
      * @return Validated IP Address
      * @retval null ipAddress is an invalid IP Address
      */

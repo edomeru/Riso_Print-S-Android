@@ -14,6 +14,8 @@ import android.text.InputFilter;
 import android.text.Spanned;
 
 /**
+ * @class AlphaNumericFilter
+ * 
  * @brief EditText filter for Alpha Numeric characters
  */
 public class AlphaNumericFilter implements InputFilter {

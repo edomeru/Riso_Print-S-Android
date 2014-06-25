@@ -14,6 +14,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
 
+/**
+ * @class BaseWebFragment
+ * 
+ * @brief Base web fragment class
+ */
 public abstract class BaseWebFragment extends BaseFragment {
     protected SDAWebView mWebView = null;
     
