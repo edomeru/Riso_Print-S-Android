@@ -140,6 +140,7 @@ namespace SmartDeviceApp.Controllers
         public async Task Unload()
         {
             await StorageFileUtility.DeleteAllTempFiles();
+            _logicalPageImages.Clear();
             _document = null;
             PageCount = 0;
             PdfFile = null;
