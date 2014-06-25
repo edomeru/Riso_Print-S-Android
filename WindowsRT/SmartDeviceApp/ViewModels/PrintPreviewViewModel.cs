@@ -69,6 +69,8 @@ namespace SmartDeviceApp.ViewModels
         private string _documentTitleText;
         private WriteableBitmap _rightPageImage;
         private WriteableBitmap _leftPageImage;
+        private WriteableBitmap _rightBackPageImage;
+        private WriteableBitmap _leftBackPageImage;
         private Size _rightPageActualSize;
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
@@ -86,6 +88,8 @@ namespace SmartDeviceApp.ViewModels
 
             _rightPageImage = new WriteableBitmap(1, 1);
             _leftPageImage = new WriteableBitmap(1, 1);
+            _rightBackPageImage = new WriteableBitmap(1, 1);
+            _leftBackPageImage = new WriteableBitmap(1, 1);
 
             SetViewMode(_viewControlViewModel.ViewMode); 
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
@@ -248,6 +252,16 @@ namespace SmartDeviceApp.ViewModels
                 _rightPageImage.Clear();
                 _rightPageImage.Invalidate();
             }
+            if (_leftBackPageImage != null)
+            {
+                _leftBackPageImage.Clear();
+                _leftBackPageImage.Invalidate();
+            }
+            if (_rightBackPageImage != null)
+            {
+                _rightBackPageImage.Clear();
+                _rightBackPageImage.Invalidate();
+            }
             _rightPageActualSize = new Size();
             _leftPageActualSize = new Size();
             IsPageAreaGridLoaded = false;
@@ -310,6 +324,34 @@ namespace SmartDeviceApp.ViewModels
 
         private bool _isLoadLeftPageActive;
         private bool _isLoadRightPageActive;
+        private bool _isLoadLeftBackPageActive;
+        private bool _isLoadRightBackPageActive;
+
+        public bool IsLoadLeftBackPageActive
+        {
+            get { return _isLoadLeftBackPageActive; }
+            set
+            {
+                if (_isLoadLeftBackPageActive != value)
+                {
+                    _isLoadLeftBackPageActive = value;
+                    RaisePropertyChanged("IsLoadLeftBackPageActive");
+                }
+            }
+        }
+
+        public bool IsLoadRightBackPageActive
+        {
+            get { return _isLoadRightBackPageActive; }
+            set
+            {
+                if (_isLoadRightBackPageActive != value)
+                {
+                    _isLoadRightBackPageActive = value;
+                    RaisePropertyChanged("IsLoadRightBackPageActive");
+                }
+            }
+        }
 
         public bool IsLoadLeftPageActive
         {
@@ -395,6 +437,32 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _documentTitleText = value;
                     RaisePropertyChanged("DocumentTitleText");
+                }
+            }
+        }
+
+        public WriteableBitmap RightBackPageImage
+        {
+            get { return _rightBackPageImage; }
+            set
+            {
+                if (_rightBackPageImage != value)
+                {
+                    _rightBackPageImage = value;
+                    RaisePropertyChanged("RightBackPageImage");
+                }
+            }
+        }
+
+        public WriteableBitmap LeftBackPageImage
+        {
+            get { return _leftBackPageImage; }
+            set
+            {
+                if (_leftBackPageImage != value)
+                {
+                    _leftBackPageImage = value;
+                    RaisePropertyChanged("LeftBackPageImage");
                 }
             }
         }

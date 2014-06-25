@@ -161,6 +161,11 @@ namespace SmartDeviceApp.Controllers
 
             List<WriteableBitmap> logicalPages = new List<WriteableBitmap>();
 
+            if (basePageIndex < 0 || basePageIndex > PageCount - 1)
+            {
+                return logicalPages;
+            }
+
             int pageIndex = basePageIndex;
             for (int i = 0; i < numPages && pageIndex < PageCount; ++i, ++pageIndex)
             {
