@@ -48,12 +48,12 @@ namespace SmartDeviceApp.Common.Constants
         #region Default Image Sizes
 
         private const string JOB_STATUS_IMAGE = "img_btn_job_status";
-        private const int JOB_STATUS_IMAGE_WIDTH_100  = 34;
-        private const int JOB_STATUS_IMAGE_HEIGHT_100 = 34;
-        private const int JOB_STATUS_IMAGE_WIDTH_140  = 48;
-        private const int JOB_STATUS_IMAGE_HEIGHT_140 = 48;
-        private const int JOB_STATUS_IMAGE_WIDTH_180  = 62;
-        private const int JOB_STATUS_IMAGE_HEIGHT_180 = 62;
+        private const int STATUS_IMAGE_WIDTH_100  = 34;
+        private const int STATUS_IMAGE_HEIGHT_100 = 34;
+        private const int STATUS_IMAGE_WIDTH_140  = 48;
+        private const int STATUS_IMAGE_HEIGHT_140 = 48;
+        private const int STATUS_IMAGE_WIDTH_180  = 62;
+        private const int STATUS_IMAGE_HEIGHT_180 = 62;
 
         private const string COLLAPSE_IMAGE = "img_btn_collapse";
         // TODO: Replace when print setting icons become available
@@ -81,18 +81,19 @@ namespace SmartDeviceApp.Common.Constants
                 resolution = ResolutionScale.Scale100Percent;
             }
             var type = sender.GetType();
-            if (type == typeof(JobListItemControl))
+            if (type == typeof(JobListItemControl) ||
+                type == typeof(SelectPrinterItemControl))
             {
                 switch (resolution)
                 {
                     case ResolutionScale.Scale100Percent:
-                        width = JOB_STATUS_IMAGE_WIDTH_100;
+                        width = STATUS_IMAGE_WIDTH_100;
                         break;
                     case ResolutionScale.Scale140Percent:
-                        width = JOB_STATUS_IMAGE_WIDTH_140;
+                        width = STATUS_IMAGE_WIDTH_140;
                         break;
                     case ResolutionScale.Scale180Percent:
-                        width = JOB_STATUS_IMAGE_WIDTH_180;
+                        width = STATUS_IMAGE_WIDTH_180;
                         break;
                 }
             }

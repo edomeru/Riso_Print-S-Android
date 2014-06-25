@@ -191,7 +191,7 @@
                                                           RightButtonVisibility="Visible"
                                                           IconVisibility="Collapsed"
                                                           SeparatorVisibility="{Binding Converter={StaticResource PrinterSearchItemToSeparatorVisibility}}"
-                                                          IsListItem="true"
+                                                          IsListItem="True"
                                                           PressedColor="{StaticResource BRUSH_Purple1}"
                                                               />
                             </Grid>

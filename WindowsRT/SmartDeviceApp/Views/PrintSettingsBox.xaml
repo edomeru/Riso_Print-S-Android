@@ -19,7 +19,7 @@
                                              utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                              IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                              SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
-                                             IsListItem="true"
+                                             IsListItem="True"
                                              Width="{Binding Width, ElementName=printSettingsBox}"
                                              IsEnabled="{Binding Path=IsEnabled}"
                                              PressedColor="{StaticResource BRUSH_Purple1}"/>
@@ -31,7 +31,7 @@
                                         TextBoxBehavior="Numeric"
                                         IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                                         SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
-                                        IsListItem="true"
+                                        IsListItem="True"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
                                         TextBoxAlignment="Right"
                                         TextBoxMaxLength="{StaticResource MAXLENGTH_Copies}"
@@ -40,7 +40,7 @@
                                         PressedColor="{StaticResource BRUSH_Purple1}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemPasswordBox">
-            <controls:KeyPasswordBoxControl IsListItem="true"
+            <controls:KeyPasswordBoxControl IsListItem="True"
                                             Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                             ValueText="{Binding Path=Value, Mode=TwoWay}"
                                             utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
@@ -66,7 +66,7 @@
                                       RightImage="ms-appx:///Resources/Images/img_btn_submenu.png"
                                       RightDisabledImage="ms-appx:///Resources/Images/img_btn_submenu_disabled.png"
                                       SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
-                                      IsListItem="true"
+                                      IsListItem="True"
                                       Width="{Binding Width, ElementName=printSettingsBox}"
                                       IsEnabled="{Binding Path=IsEnabled}"
                                       PressedColor="{StaticResource BRUSH_Purple1}"/>
