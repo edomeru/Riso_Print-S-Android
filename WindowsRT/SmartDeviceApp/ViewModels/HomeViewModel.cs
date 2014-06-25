@@ -25,6 +25,7 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
+using Windows.UI.Xaml.Controls;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -45,6 +46,7 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
             IsProgressRingActive = false;
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 
         public ICommand OpenDocumentCommand
@@ -108,6 +110,30 @@ namespace SmartDeviceApp.ViewModels
                 LogUtility.LogError(ex);
                 DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
+        }
+
+        private void EnableMode(ViewMode viewMode)
+        {
+            if (viewMode == ViewMode.FullScreen)
+            {
+                if (HomeGestureGrid != null)
+                {
+                    HomeGestureGrid.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                if (HomeGestureGrid != null)
+                {
+                    HomeGestureGrid.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+            }
+        }
+
+        public Grid HomeGestureGrid
+        {
+            get;
+            set;
         }
     }
 }

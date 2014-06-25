@@ -17,6 +17,7 @@ using SmartDeviceApp.Common.Base;
 using Windows.Storage;
 using SmartDeviceApp.Common.Utilities;
 using Windows.ApplicationModel;
+using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Views
 {
@@ -41,6 +42,21 @@ namespace SmartDeviceApp.Views
             MyWebPageString = MyWebPageString.Insert(IndexOfScriptTag + LengthOfScriptTag + 1, versionString);
             ((WebView)sender).NavigateToString(MyWebPageString);
 
+        }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            ViewModel.LegalGestureGrid = (Grid)sender;
+
+        }
+
+        public LegalViewModel ViewModel
+        {
+            get
+            {
+                return (LegalViewModel)DataContext;
+            }
         }
     }
 }

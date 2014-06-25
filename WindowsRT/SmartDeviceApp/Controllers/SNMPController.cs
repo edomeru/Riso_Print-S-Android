@@ -106,30 +106,18 @@ namespace SmartDeviceApp.Controllers
                 if (device.CapabilitiesList.Count > 0)
                 {
                     List<string> capabilitesList = device.CapabilitiesList;
-                    printer.EnabledPaperLW = true; // TODO: Update value here
-                    printer.EnabledFeedTrayOne = true; // TODO: Update value here
-                    printer.EnabledFeedTrayTwo = true; // TODO: Update value here
-                    printer.EnabledFeedTrayThree = true; // TODO: Update value here
-                    printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true") ? true : false;
-                    printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") ? true : false;
-                    printer.EnabledPunchThree = true; // TODO: Update value here
-                    printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true") ? true : false;
-                    printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true") ? true : false;
-                    // printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true") ? true : false; // TODO: Remove
-                    printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true") ? true : false;
-                    printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true") ? true : false;
-                }
-                else
-                {
-                    // TODO: This else-block is safe to remove
-                    printer.EnabledBookletFinishing = true;
-                    printer.EnabledStapler = true;
-                    printer.EnabledPunchThree = true;
-                    printer.EnabledPunchFour = true;
-                    printer.EnabledTrayFacedown = true;
-                    // printer.EnabledTrayAutostack = true; // TODO: Remove
-                    printer.EnabledTrayTop = true;
-                    printer.EnabledTrayStack = true;
+                    printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true");
+                    printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true");
+                    printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true");
+                    printer.EnabledPunchThree = (capabilitesList.ElementAt(3) == "true");
+                    printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true");
+                    //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
+                    printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true");
+                    printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true");
+                    printer.EnabledPaperLW = (capabilitesList.ElementAt(8) == "true");
+                    printer.EnabledFeedTrayOne = (capabilitesList.ElementAt(9) == "true");
+                    printer.EnabledFeedTrayTwo = (capabilitesList.ElementAt(10) == "true");
+                    printer.EnabledFeedTrayThree = (capabilitesList.ElementAt(11) == "true");
                 }
 
                 return printer;

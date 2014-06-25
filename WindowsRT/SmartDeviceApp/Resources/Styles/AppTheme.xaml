@@ -14,6 +14,7 @@
     <SolidColorBrush x:Key="BRUSH_Purple1" Color="#FF8541D8" />
     <SolidColorBrush x:Key="BRUSH_Purple2" Color="#5207B6" />
     <!-- APP THEME BRUSHES END -->
+    <Color x:Key="COLOR_Gray4">#FF242424</Color>
 
     <!-- PRINT SETTING CONSTANTS START -->
     <x:Int32 x:Key="MAXLENGTH_Copies">4</x:Int32>

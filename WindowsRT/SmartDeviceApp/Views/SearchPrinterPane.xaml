@@ -61,7 +61,7 @@
                         <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
                             <ScrollViewer x:Name="ScrollViewer" AutomationProperties.AccessibilityView="Raw" BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}" IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}" IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" TabNavigation="{TemplateBinding TabNavigation}" VerticalScrollBarVisibility="Visible" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}" ManipulationMode="TranslateY">
                                 <Grid x:Name="GridInTemplate" ManipulationMode="All">
-                                    <Rectangle x:Name="ReleaseElement"  Height="80" Margin="0,-80,0,0"  VerticalAlignment="Top" Grid.Row="0" Fill="#FF262626" />
+                                    <Rectangle x:Name="ReleaseElement"  Height="80" Margin="0,-80,0,0"  VerticalAlignment="Top" Grid.Row="0" Fill="{StaticResource BRUSH_Gray4}" />
                                     <ItemsPresenter FooterTransitions="{TemplateBinding FooterTransitions}" FooterTemplate="{TemplateBinding FooterTemplate}" Footer="{TemplateBinding Footer}" HeaderTemplate="{TemplateBinding HeaderTemplate}" Header="{TemplateBinding Header}" HeaderTransitions="{TemplateBinding HeaderTransitions}" Padding="{TemplateBinding Padding}" Grid.Row="1" />
                                 </Grid>
                             </ScrollViewer>
@@ -124,10 +124,6 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <!--<Grid.RowDefinitions>
-            <RowDefinition Height ="{Binding Height, ElementName=SearchPrinterPaneControl}"/>
-            <RowDefinition />
-        </Grid.RowDefinitions>-->
         <Path Grid.RowSpan="2" Grid.Column="0" 
               Style="{StaticResource STYLE_List_Separator}">
             <Path.Data>
@@ -137,13 +133,13 @@
         </Path>
         <controls:SidePaneTitleControl Title="{Binding Source=IDS_LBL_SEARCH_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 
                                        Loaded="OnLoaded" Grid.Row ="0" Grid.Column="1"/>
-        <Grid Grid.Row="1" Grid.Column="1" Background="#FF262626" >
+        <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource BRUSH_Gray4}" >
             
 
             <!--CONTENTS HERE-->
             <StackPanel Height="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}" Width="400">
                 <Grid x:Name="ProgressGrid" Height="60" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="40" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="#FF262626">
+                    <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="40" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="{StaticResource BRUSH_Gray4}">
                         <Interactivity:Interaction.Behaviors>
                             <Core:DataTriggerBehavior Binding="{Binding DataContext.WillRefresh,  ElementName=SearchPrinterPaneControl}" Value="True">
                                 <Core:InvokeCommandAction Command="{Binding DataContext.PrinterSearchRefreshed,  ElementName=SearchPrinterPaneControl}"/>
@@ -153,9 +149,6 @@
                     
                 </Grid>
 
-                <!--<Grid Background="{StaticResource BRUSH_Gray2}" Height="719" Visibility="{Binding DataContext.NoPrintersFound, ElementName=SearchPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    
-                </Grid>-->
                 <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="NoPrintersFoundView"
                                              Visibility="{Binding DataContext.NoPrintersFound, ElementName=SearchPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}"
 				                    	     ItemContainerStyle="{StaticResource STYLE_ListViewItem}"

@@ -56,6 +56,13 @@
                           Visibility="{Binding IsProgressRingActive, Converter={StaticResource BooleanToVisibilityConverter}}"
                           Style="{StaticResource STYLE_ProgressRing}"/>
         </StackPanel>
+        <Grid 
+            x:Name="HomeGestureGrid"
+            Loaded="Grid_Loaded"
+            Width="Auto"
+            Height="Auto"
+            Background="Transparent"
+            ManipulationMode="All"/>
     </controls:ViewControl>
 </base:PageBase>
 

@@ -15,6 +15,7 @@ namespace SmartDeviceApp.Controllers
 {
     public class NetworkController
     {
+        private const string port = "80";
 
         public Action<string, bool> networkControllerPingStatusCallback { get; set; } //PrintersModule
 
@@ -36,8 +37,6 @@ namespace SmartDeviceApp.Controllers
            try
            {
                 tcpClient = new StreamSocket();
-
-                string port = "80";
                
                 await tcpClient.ConnectAsync(new Windows.Networking.HostName(ip), port, SocketProtectionLevel.PlainSocket);
                    
