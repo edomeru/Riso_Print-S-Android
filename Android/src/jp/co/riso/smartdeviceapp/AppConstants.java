@@ -26,7 +26,7 @@ public class AppConstants {
     
     /// Flag for showing splash screen
     public static final boolean APP_SHOW_SPLASH = true;
-    /// Splash screen duration
+    /// Splash screen duration in milliseconds
     public static final long APP_SPLASH_DURATION = 2000;
     
     /// PDF directory
