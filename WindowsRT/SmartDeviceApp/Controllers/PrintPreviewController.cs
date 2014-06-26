@@ -428,7 +428,7 @@ namespace SmartDeviceApp.Controllers
                                                     _pagesPerSheet);
             if (_isBooklet)
             {
-                _previewPageTotal = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 2;
+                _previewPageTotal = ((_previewPageTotal / 4) * 2) + (uint)(((_previewPageTotal % 4) == 0) ? 1 : 3);
             }
             else if (_isDuplex)
             {
