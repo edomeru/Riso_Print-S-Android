@@ -126,7 +126,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     /**
      * @brief Retrieves the expanded height of the PrintJobsGroupView
      * 
-     * @return expanded height of PrintJobsGroupView
+     * @return Expanded height of PrintJobsGroupView
      */
     public int getGroupHeight() {
         return ((mJobsLayout.getChildCount() + 1) * mRowHeight) + ((mJobsLayout.getChildCount() - 1) * mSeparatorHeight);
@@ -262,7 +262,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      * 
      * @param originalHeight Height of the view to be animated 
      * 
-     * @return computed animation duration 
+     * @return Computed animation duration 
      */    
     public int getAnimationDuration(int originalHeight) {
         int newHeight = Math.min(originalHeight, AppUtils.getScreenDimensions((Activity) getContext()).y);
@@ -379,7 +379,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      * 
      * @param date Date to be formatted
      * 
-     * @return converted string format
+     * @return Converted string format
      */
     private String formatDate(Date date) {
         String dateStr = DateFormat.getDateFormat(getContext()).format(date);
@@ -663,6 +663,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
+    
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -681,6 +682,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     // ================================================================================
     // INTERFACE - View.onTouchListener
     // ================================================================================
+   
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction();
@@ -704,6 +706,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     // ================================================================================
     // INTERFACE - Callback
     // ================================================================================
+    
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
@@ -726,6 +729,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     // ================================================================================
     // Internal Classes
     // ================================================================================
+    
     /**
      * @interface PrintJobsGroupListener
      * 

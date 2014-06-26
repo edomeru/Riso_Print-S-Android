@@ -118,7 +118,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @param cursor Cursor object
      * @param columnName Name of the column in the database
      * 
-     * @return the value of the requested column as a String.
+     * @return Value of the requested column as a String.
      */
     public static String getStringFromCursor(Cursor cursor, String columnName) {
         return cursor.getString(cursor.getColumnIndex(columnName));
@@ -130,17 +130,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @param cursor Cursor object
      * @param columnName Name of the column in the database
      * 
-     * @return the value of the requested column as an integer.
+     * @return Value of the requested column as an integer.
      */
     public static int getIntFromCursor(Cursor cursor, String columnName) {
         return cursor.getInt(cursor.getColumnIndex(columnName));
     }
     
     /**
-     * @brief Gets the value of the requested column as a boolean i.e. 
-     * converts integer value retrieved from database to boolean.
-     * @see http://www.sqlite.org/datatype3.html
-     * @see http://stackoverflow.com/questions/2510652/is-there-a-boolean-literal-in-sqlite
+     * @brief Gets the value of the requested column as a boolean (i.e. 
+     * converts integer value retrieved from database to boolean).
+     * 
+     * Based on http://stackoverflow.com/questions/2510652/is-there-a-boolean-literal-in-sqlite
      * 
      * @param cursor Cursor object
      * @param columnName Name of the column in the database
@@ -185,6 +185,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     
     /**
      * @brief General method for inserting a row into the database.
+     * 
      * When a UNIQUE constraint violation occurs, the pre-existing rows that are causing the
      * constraint violation are removed prior to inserting or updating the current row.
      * 

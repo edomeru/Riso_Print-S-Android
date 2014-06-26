@@ -54,7 +54,7 @@ public class Setting extends XmlNode {
     /**
      * @brief Gets options of the setting.
      * 
-     * @return list of Option objects
+     * @return List of Option objects
      */
     public List<Option> getOptions() {
         return mOptions;
@@ -107,7 +107,7 @@ public class Setting extends XmlNode {
     /**
      * @brief Gets the database column name of a Setting. The value of attribute \"dbkey\" in XML. 
      * 
-     * @return database key
+     * @return Database key
      */
     public String getDbKey() {
         return getAttributeValue(ATTR_DBKEY);

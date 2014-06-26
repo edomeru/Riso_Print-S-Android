@@ -19,6 +19,7 @@ import android.database.Cursor;
 
 /**
  * @class PrintSettingsManager
+ * 
  * @brief Helper class for managing the database transactions of Print Settings.
  */
 public class PrintSettingsManager {
@@ -39,6 +40,7 @@ public class PrintSettingsManager {
      * @brief Gets a PrintSettingsManager instance.
      * 
      * @param context Context object to use to manage the database.
+     * 
      * @return PrintSettingsManager instance
      */
     public static PrintSettingsManager getInstance(Context context) {
@@ -52,6 +54,7 @@ public class PrintSettingsManager {
      * @brief Retrieves the Printer Settings from the database using printer ID.
      * 
      * @param printerId Current printer ID selected
+     * 
      * @return PrintSettings object containing the values from the database
      */
     public PrintSettings getPrintSetting(int printerId) {
@@ -87,6 +90,7 @@ public class PrintSettingsManager {
      * 
      * @param printerId Current printer ID selected
      * @param printSettings Values of the settings to be saved
+     * 
      * @retval true Insert/Replace in DB is successful.
      * @retval false Insert/Replace in DB has failed.
      */
@@ -116,6 +120,7 @@ public class PrintSettingsManager {
      * 
      * @param printerId Current printer ID selected
      * @param printSettings Values of the settings to be saved
+     * 
      * @return ContentValues object containing the print settings
      */
     private ContentValues createContentValues(int printerId, PrintSettings printSettings) {

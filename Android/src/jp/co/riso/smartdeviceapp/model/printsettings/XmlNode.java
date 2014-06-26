@@ -42,8 +42,8 @@ public abstract class XmlNode {
      * 
      * @param key Attribute key in XML. 
      * 
-     * @return attribute value of the specified key
-     * @retval "" key is invalid
+     * @return Attribute value of the specified key
+     * @retval "" Key is invalid
      */
     public String getAttributeValue(String key) {
         if (mAttributes.getNamedItem(key) == null) {

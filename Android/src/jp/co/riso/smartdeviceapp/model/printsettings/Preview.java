@@ -18,42 +18,47 @@ public class Preview {
      * @brief Color Mode print settings that defines the color mode of the print job.
      */
     public enum ColorMode {
-        AUTO, FULL_COLOR, MONOCHROME;
+        AUTO, ///< Auto color mode
+        FULL_COLOR, ///< Colored mode
+        MONOCHROME ///< Gray scale color mode
     }
     
     /**
      * @brief Orientation print settings that defines the page orientation.
      */
     public enum Orientation {
-        PORTRAIT, LANDSCAPE;
+        PORTRAIT, ///< Portrait page orientation
+        LANDSCAPE ///< Landscape page orientation
     }
     
     /**
      * @brief Duplex print settings that determines duplex printing mode.
      */
     public enum Duplex {
-        OFF, LONG_EDGE, SHORT_EDGE;
+        OFF,  ///< Duplex mode is OFF
+        LONG_EDGE,  ///< Long Edge duplex mode
+        SHORT_EDGE ///< Short Edge duplex mode
     }
-    
     
     /**
      * @brief PaperSize print settings that determines the paper sizes to be used during print.
-     * @note sizes from IS1000CJ 
+     * 
+     * @note Sizes is based from IS1000CJ
      */
     public enum PaperSize {
-        A3(297.0f, 420.0f),
-        A3W(316.0f, 460.0f),
-        A4(210.0f, 297.0f),
-        A5(148.0f, 210.0f),
-        A6(105.0f, 148.0f),
-        B4(257.0f, 364.0f),
-        B5(182.0f, 257.0f),
-        B6(128.0f, 182.0f),
-        FOOLSCAP(216.0f, 340.0f),
-        TABLOID(280.0f, 432.0f),
-        LEGAL(216.0f, 356.0f),
-        LETTER(216.0f, 280.0f),
-        STATEMENT(140.0f, 216.0f);
+        A3(297.0f, 420.0f), ///< 297mm x 420mm
+        A3W(316.0f, 460.0f), ///< 316mm x 460mm
+        A4(210.0f, 297.0f), ///< 210mm x 297mm
+        A5(148.0f, 210.0f), ///< 148mm x 210mm
+        A6(105.0f, 148.0f), ///< 105mm x 148mm
+        B4(257.0f, 364.0f), ///< 257mm x 364mm
+        B5(182.0f, 257.0f), ///< 182mm x 257mm
+        B6(128.0f, 182.0f), ///< 128mm x 182mm
+        FOOLSCAP(216.0f, 340.0f), ///< 216mm x 340mm
+        TABLOID(280.0f, 432.0f), ///< 280mm x 432mm
+        LEGAL(216.0f, 356.0f), ///< 216mm x 356mm
+        LETTER(216.0f, 280.0f), ///< 216mm x 280mm
+        STATEMENT(140.0f, 216.0f); ///< 140mm x 216mm
         
         private final float mWidth;
         private final float mHeight;
@@ -62,7 +67,7 @@ public class Preview {
          * @brief PaperSize enum constructor
          * 
          * @param width Width of the paper in mm
-         * @param height height of the paper in mm
+         * @param height Height of the paper in mm
          */
         PaperSize(float width, float height) {
             mWidth = width;
@@ -72,7 +77,7 @@ public class Preview {
         /**
          * @brief Retrieves width of the paper in mm.
          * 
-         * @return width in mm
+         * @return Width in mm
          */
         public float getWidth() {
             return mWidth;
@@ -81,7 +86,7 @@ public class Preview {
         /**
          * @brief Retrieves height of the paper in mm.
          * 
-         * @return height in mm
+         * @return Height in mm
          */
         public float getHeight() {
             return mHeight;
@@ -92,9 +97,9 @@ public class Preview {
      * @brief Imposition print settings that determines the number of pages to print per sheet.
      */
     public enum Imposition {
-        OFF (1, 1, 1, false),
-        TWO_UP (2, 2, 1, true),
-        FOUR_UP (4, 2, 2, false);
+        OFF (1, 1, 1, false), ///< 1 page per sheet
+        TWO_UP (2, 2, 1, true), ///< 2 pages per sheet
+        FOUR_UP (4, 2, 2, false); ///< 4 pages per sheet
         
         private final int mPerPage;
         private final int mRows;
@@ -158,12 +163,12 @@ public class Preview {
      * @brief ImpositionOrder print settings that determines the direction of the PDF pages printed in one sheet.
      */
     public enum ImpositionOrder {
-        L_R (true, true, true),
-        R_L (false, false, true),
-        TL_R (true, true, true),
-        TR_L (false, true, true),
-        TL_B (true, true, false),
-        TR_B (false, true, false);
+        L_R (true, true, true), ///< Left to right
+        R_L (false, false, true), ///< Right to left
+        TL_R (true, true, true), ///< Upper left to right
+        TR_L (false, true, true), ///< Upper right to left
+        TL_B (true, true, false), ///< Upper left to bottom
+        TR_B (false, true, false); ///< Upper right to bottom
 
         private boolean mLeftToRight;
         private boolean mTopToBottom;
@@ -217,39 +222,45 @@ public class Preview {
      * @brief Sort print settings that defines how the print output will be sorted.
      */
     public enum Sort {
-        PER_PAGE, PER_COPY;
+        PER_PAGE, ///< To be grouped according to page
+        PER_COPY ///< To be sorted according to copy
     }
     
     /**
      * @brief BookletFinish print settings that defines the finishing options for when booklet is on.
      */
     public enum BookletFinish {
-        OFF, PAPER_FOLDING, FOLD_AND_STAPLE;
+        OFF,  ///< Booklet Finish is OFF
+        PAPER_FOLDING,  ///< Paper will be folded
+        FOLD_AND_STAPLE ///< Paper will be folded and stapled
     }
     
     /**
      * @brief BookletLayout print settings that determines the direction of pages when booklet is on.
      */
     public enum BookletLayout {
-        FORWARD, REVERSE;
+        FORWARD,  ///< Retain direction of pages
+        REVERSE ///< Reverse direction of pages
     }
     
     /**
      * @brief FinishingSide print settings that refers to the edge where the document will be bound.
      */
     public enum FinishingSide {
-        LEFT, TOP, RIGHT;
+        LEFT,  ///< Document will be bound on the left edge
+        TOP,  ///< Document will be bound on the top edge
+        RIGHT ///< Document will be bound on the right edge
     }
     
     /**
      * @brief Staple print settings that determines how the print job will be stapled.
      */
     public enum Staple {
-        OFF (0),
-        ONE_UL (1),
-        ONE_UR (1),
-        ONE (1),
-        TWO (2);
+        OFF (0), ///< No staples
+        ONE_UL (1), ///< Upper left staple
+        ONE_UR (1), ///< Upper right staple
+        ONE (1), ///< One staple
+        TWO (2); ///< Two staples
         
         private final int mCount;
 
@@ -276,9 +287,9 @@ public class Preview {
      * @brief Punch print settings that determines how the printer will make a punch in the print output. 
      */
     public enum Punch {
-        OFF (0),
-        HOLES_2 (2),
-        HOLES_4 (4);
+        OFF (0), ///< No punch holes
+        HOLES_2 (2), ///< 2 holes
+        HOLES_4 (4); ///< 3 or 4 holes
         
         private final int mCount;
 
@@ -310,6 +321,9 @@ public class Preview {
      * @brief OutputTray print settings that refers to the tray location of the finished copies.
      */
     public enum OutputTray {
-        AUTO, FACEDOWN, TOP, STACKING;
+        AUTO,  ///< Auto Tray 
+        FACEDOWN,  ///< Face down Tray
+        TOP,  ///< Top Tray
+        STACKING ///< Stacking Tray
     }
 }

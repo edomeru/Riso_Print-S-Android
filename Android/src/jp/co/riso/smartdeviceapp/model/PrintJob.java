@@ -58,7 +58,7 @@ public class PrintJob {
     /** 
      * @brief Retrieves the ID of the Print Job
      * 
-     * @return print job ID
+     * @return Print job ID
      */
     public int getId() {
         return mId;
@@ -94,7 +94,7 @@ public class PrintJob {
     /** 
      * @brief Retrieves the name of the Print Job
      * 
-     * @return print job name
+     * @return Print job name
      */
     public String getName() {
         return mName;
@@ -112,7 +112,7 @@ public class PrintJob {
     /** 
      * @brief Retrieves the Print Job date of execution
      * 
-     * @return print job date
+     * @return Print job date
      */
     public Date getDate() {
         return mDate;
@@ -140,7 +140,7 @@ public class PrintJob {
     /**
      * @brief Sets Print Job status (JobResult)
      * 
-     * @param mResult print job result
+     * @param mResult Print job result
      */
     public void setResult(JobResult mResult) {
         this.mResult = mResult;
