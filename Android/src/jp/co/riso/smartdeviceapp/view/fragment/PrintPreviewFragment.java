@@ -47,7 +47,7 @@ import android.widget.TextView;
 
 /**
  * @class PrintPreviewFragment
- * @brief Fragment which corresponds to the Print Preview Screen
+ * @brief Fragment which contains the Print Preview Screen
  */
 public class PrintPreviewFragment extends BaseFragment implements Callback, PDFFileManagerInterface,
         PreviewControlsListener, OnSeekBarChangeListener, PauseableHandlerCallback {

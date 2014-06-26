@@ -37,6 +37,10 @@ import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
+/**
+ * @class PrintSettingsFragment
+ * @brief Fragment which contains the Print Settings Screen
+ */
 public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.PrintSettingsViewInterface, PauseableHandlerCallback, DirectPrintCallback, WaitingDialogListener {
     
     private static final String TAG_WAITING_DIALOG = "dialog_printing";
@@ -60,13 +64,11 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private WaitingDialogFragment mWaitingDialog = null;
     private String mPrintMsg = "";
     
-    /** {@inheritDoc} */
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printsettings;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
@@ -81,7 +83,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mPrintMsg = getResources().getString(R.string.ids_info_msg_printing);
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mPrintSettingsView = (PrintSettingsView) view.findViewById(R.id.rootView);
@@ -104,12 +105,10 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -120,7 +119,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onPause() {
         super.onPause();
@@ -129,7 +127,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         mPauseableHandler.pause();
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onResume() {
         super.onResume();
@@ -141,48 +138,47 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // ================================================================================
     
     /**
-     * Set fragment for printing
+     * @brief Sets fragment for printing
      * 
-     * @param fragmentForPrinting
+     * @param fragmentForPrinting Whether the fragment is for printing or for default print settings
      */
     public void setFragmentForPrinting(boolean fragmentForPrinting) {
         mFragmentForPrinting = fragmentForPrinting;
     }
     
     /**
-     * Set printer ID
+     * @brief Sets the printer ID of the view
      * 
-     * @param printerId
+     * @param printerId Printer ID
      */
     public void setPrinterId(int printerId) {
         mPrinterId = printerId;
     }
-    
+
     /**
-     * Set print settings
+     * @brief Creates a copy of the print settings to be applied as print settings values
      * 
-     * @param printSettings
+     * @param printSettings Print settings to be applied
      */
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
     }
     
     /**
-     * This method sets the value of mPdfPath
+     * @brief This method sets the value of mPdfPath
      * 
-     * @param pdfPath
-     *            the PDF sandbox path
+     * @param pdfPath The path of the PDF to be printed
      */
     public void setPdfPath(String pdfPath) {
         mPdfPath = pdfPath;
     }
     
     /**
-     * This method sets the whether the pdf is landscape.
-     * Will be passed in PJL
+     * @brief This method sets whether the PDF is landscape or not
      * 
-     * @param pdfIsLandscape
-     *             Whether PDF is landscape or not
+     * @note Will be passed in the PJL
+     * 
+     * @param pdfIsLandscape Whether PDF is landscape or not
      */
     public void setPDFisLandscape(boolean pdfIsLandscape) {
         mPDFisLandscape = pdfIsLandscape;
@@ -192,7 +188,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - ValueChangedListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onPrinterIdSelectedChanged(int printerId) {
         setPrinterId(printerId);
@@ -203,7 +198,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
     }
     
-    /** {@inheritDoc} */
     @Override
     public void onPrintSettingsValueChanged(PrintSettings printSettings) {
         setPrintSettings(printSettings);
@@ -219,7 +213,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     }
     
     /**
-     * This method is triggered when the print button is pressed and displays the waiting dialog.
+     * @brief This method is triggered when the print button is pressed and displays the waiting dialog.
      */
     @Override
     public void onPrint(Printer printer, PrintSettings printSettings) {
@@ -276,13 +270,11 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public boolean storeMessage(Message message) {
         return message.what == MSG_PRINT;
     }
     
-    /** {@inheritDoc} */
     @Override
     public void processMessage(Message message) {
         switch (message.what) {
@@ -317,7 +309,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - DirectPrintCallback
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
         if (NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
@@ -354,7 +345,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - WaitingDialogListener
     // ================================================================================
     
-    /** {@inheritDoc} */
     @Override
     public void onCancel() {
         if (mDirectPrintManager != null) {

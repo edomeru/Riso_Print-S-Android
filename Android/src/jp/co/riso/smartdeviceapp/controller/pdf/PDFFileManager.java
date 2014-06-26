@@ -36,28 +36,28 @@ import com.radaee.pdf.Page;
  */
 public class PDFFileManager {
     
-    public static final int PDF_OK = 0; /// Open successful
-    public static final int PDF_ENCRYPTED = -1; /// PDF is encrypted
-    public static final int PDF_PRINT_RESTRICTED = -2; /// Printing is restricted
-    public static final int PDF_OPEN_FAILED = -3; /// PDF open failed
-    public static final int PDF_CANCELLED = -4; /// PDF open was cancelled
+    public static final int PDF_OK = 0; ///< Open successful
+    public static final int PDF_ENCRYPTED = -1; ///< PDF is encrypted
+    public static final int PDF_PRINT_RESTRICTED = -2; ///< Printing is restricted
+    public static final int PDF_OPEN_FAILED = -3; ///< PDF open failed
+    public static final int PDF_CANCELLED = -4; ///< PDF open was cancelled
     
     protected static final String KEY_NEW_PDF_DATA = "new_pdf_data";
     protected static final String KEY_SANDBOX_PDF_NAME = "key_sandbox_pdf_name";
     
-    private static final int RADAEE_OK = 0; /// PDFViewer: PDF is opened successfully
-    private static final int RADAEE_ENCRYPTED = -1; /// PDFViewer: Cannot open encrypted PDF
-    private static final int RADAEE_UNKNOWN_ENCRYPTION = -2; /// PDFViewer: Unknown Encryption
+    private static final int RADAEE_OK = 0; ///< PDFViewer: PDF is opened successfully
+    private static final int RADAEE_ENCRYPTED = -1; ///< PDFViewer: Cannot open encrypted PDF
+    private static final int RADAEE_UNKNOWN_ENCRYPTION = -2; ///< PDFViewer: Unknown Encryption
     @SuppressWarnings("unused") // Radaee error (Handled on general error handling)
-    private static final int RADAEE_DAMAGED = -3; /// PDFViewer: PDF is Damaged
+    private static final int RADAEE_DAMAGED = -3; ///< PDFViewer: PDF is Damaged
     @SuppressWarnings("unused") // Radaee error (Handled on general error handling)
-    private static final int RADAEE_INVALID_PATH = -10; /// PDFViewer: Invalid PDF Path
+    private static final int RADAEE_INVALID_PATH = -10; ///< PDFViewer: Invalid PDF Path
     
     /// Should keep the document closed after every access
     private static final boolean CONST_KEEP_DOCUMENT_CLOSED = false; 
     
-    private static final float CONST_RADAEE_DPI = 72.0f; /// PDFViewer: resolution of the PDF
-    private static final float CONST_INCHES_TO_MM = 25.4f; /// mm per inches
+    private static final float CONST_RADAEE_DPI = 72.0f; ///< PDFViewer: resolution of the PDF
+    private static final float CONST_INCHES_TO_MM = 25.4f; ///< mm per inches
 
     private volatile String mPath;
     private Document mDocument;

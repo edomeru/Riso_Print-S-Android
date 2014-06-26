@@ -12,48 +12,46 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
+/**
+ * @class SDALinearLayout
+ * @brief Subclass of LinearLayout class. Adds support for fraction animation
+ */
 public class SDALinearLayout extends LinearLayout {
-
+    
     /**
-     * Constructor
-     * <p>
-     * Instantiate custom LinearLayout
+     * @brief Constructs a new LinearLayout with a Context object
      * 
-     * @param context
-     * @param attrs
-     * @param defStyle
+     * @param context a Context object used to access application assets 
+     */
+    public SDALinearLayout(Context context) {
+        super(context);
+    }
+    
+    /**
+     * @brief Constructs a new LinearLayout with layout parameters.
+     * 
+     * @param context a Context object used to access application assets
+     * @param attrs an AttributeSet passed to our parent 
+     */
+    public SDALinearLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+    
+    /**
+     * @brief Constructs a new LinearLayout with layout parameters and a default style.
+     * 
+     * @param context a Context object used to access application assets
+     * @param attrs an AttributeSet passed to our parent 
+     * @param defStyle the default style resource ID  
      */
     public SDALinearLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
     /**
-     * Constructor
-     * <p>
-     * Instantiate custom LinearLayout
+     * @brief Gets the current x position of the view in percentage with respect to view width
      * 
-     * @param context
-     * @param attrs
-     */
-    public SDALinearLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    /**
-     * Constructor
-     * <p>
-     * Instantiate custom LinearLayout
-     * 
-     * @param context
-     */
-    public SDALinearLayout(Context context) {
-        super(context);
-    }
-
-    /**
-     * Gets a fraction of the visual x position of this view in pixels
-     * 
-     * @return Return x-position
+     * @return Return x position percentage
      */
     public float getXFraction() {
         int width = getWidth();
@@ -61,9 +59,9 @@ public class SDALinearLayout extends LinearLayout {
     }
 
     /**
-     * Sets the visual x position of this view in pixels
+     * @brief Sets the x position of the view
      * 
-     * @param xFraction
+     * @param xFraction x position fraction (percentage of width)
      */
     public void setXFraction(float xFraction) {
         int width = getWidth();
