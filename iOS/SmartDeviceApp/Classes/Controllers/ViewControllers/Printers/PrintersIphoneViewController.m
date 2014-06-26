@@ -24,21 +24,103 @@
 
 #pragma mark - Data Properties
 
-/** NSIndexPath of the tapped printer cell **/
+/**
+ * Index path of the printer selected (highlighted).
+ * The index path refers to a row in the UITableView.
+ */
 @property (strong, nonatomic) NSIndexPath *selectedPrinterIndexPath;
 
 #pragma mark - UI Properties
 
+/**
+ * Reference to the UITableView displaying the list of printers.
+ */
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
+/**
+ * List of PrinterStatusHelper objects monitoring the online/offline status of each printer.
+ * There is one PrinterStatusHelper for each printer on the list.\n
+ * These helpers are allocated during the initialization of the screen
+ * and are deallocated when the screen is unloaded.
+ */
 @property (nonatomic, strong) NSMutableArray *statusHelpers;
 
 #pragma mark - Instance Methods
 
 /**
- Action when the PrinterCell is tapped to segue to the PrinterInfo screen
+ * Responds to tapping anywhere on the list.
+ * Calls {@link removeDeleteState}.
+ *
+ * @param sender UITableView object
  */
 - (IBAction)tapTableViewAction:(id)sender;
+
+/**
+ * Responds to long-pressing a printer on the list.
+ * The long press duration is very short, which makes it similar to a "delayed tap".\n
+ * The long press allows the printer to be highlighted before displaying the 
+ * "Printer Info" screen.
+ *
+ * @param sender the printer cell
+ */
+- (void)pressTableViewAction:(id)sender;
+
+/** 
+ * Responds to a right-to-left swipe gesture on a printer.
+ * If there is another printer marked for deletion, then call {@link removeDeleteState}.\n
+ * If there no other printer marked for deletion, mark the swiped printer for deletion.
+ *
+ * @param sender the printer cell
+ */
+- (void)swipeLeftTableViewAction:(id)sender;
+
+/**
+ * Responds to any non-right-to-left swipe gesture on a printer.
+ * Calls {@link removeDeleteState}.
+ *
+ * @param sender the printer cell
+ */
+- (void)swipeNotLeftTableViewAction:(id)sender;
+
+/**
+ * Responds to the "Delete" button press.
+ * Displays the delete confirmation message.\n
+ * If the user confirms the deletion, the {@link deletePrinter} method is called.
+ * If the user cancels, then the alert is just dismissed.
+ *
+ * @param sender the button object
+ */
+- (IBAction)tapDeleteButtonAction:(DeleteButton*)button;
+
+/**
+ * Removes the printer specified by {@link toDeleteIndexPath} from the display and from the database.
+ * Uses PrinterManager to update the printer in the database.\n
+ * If the removed printer is the default printer, the display is also updated to
+ * indicate the new default printer (unless this is the last printer).
+ */
+- (void)deletePrinter;
+
+/**
+ * Updates the display to mark the printer as either a normal or a default printer.
+ * 
+ * @param indexPath the printer's index path on the UITableView
+ * @param isDefault YES if this is a default printer, NO otherwise
+ */
+- (void)setPrinterCell:(NSIndexPath *)indexPath asDefault:(BOOL)isDefault;
+
+/**
+ * Cancels the delete state (highlight and visible delete button) of a printer on the list.
+ */
+- (void)removeDeleteState;
+
+/**
+ * Unwind segue back to the "Printers" screen (for phones only).
+ * Called when transitioning back to the "Printers" screen from the
+ * "Printer Info" screen.
+ *
+ * @param unwindSegue the segue object
+ */
+- (IBAction)unwindFromPrinterInfo:(UIStoryboardSegue*)unwindSegue;
 
 @end
 

@@ -56,7 +56,7 @@
  *
  * In addition, this class keeps a list of references to all the Printers currently
  * saved in the database, which it automatically updates when add or delete
- * operations are performed. It also keeps track of which printer is set
+ * operations are performed.\n It also keeps track of which printer is set
  * as the default printer.\n\n
  * This class is designed to be used as a singleton, which makes its list of saved
  * printers consistent throughout the lifecycle of the application.
