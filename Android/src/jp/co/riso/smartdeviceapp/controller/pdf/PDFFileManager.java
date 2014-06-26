@@ -31,35 +31,32 @@ import com.radaee.pdf.Page;
  * @class PDFFileManager
  * 
  * @brief Wrapper class for Radaee PDFViewer.
- * 
- *        Contains operations to open/close PDF (asynchronously), get page bitmap, and get pdf information
+ * Contains operations to open/close PDF (asynchronously), get page bitmap, and get pdf information
  */
 public class PDFFileManager {
     
-    public static final int PDF_OK = 0; // /< Open successful
-    public static final int PDF_ENCRYPTED = -1; // /< PDF is encrypted
-    public static final int PDF_PRINT_RESTRICTED = -2; // /< Printing is restricted
-    public static final int PDF_OPEN_FAILED = -3; // /< PDF open failed
-    public static final int PDF_CANCELLED = -4; // /< PDF open was cancelled
+    public static final int PDF_OK = 0; ///< Open successful
+    public static final int PDF_ENCRYPTED = -1; ///< PDF is encrypted
+    public static final int PDF_PRINT_RESTRICTED = -2; ///< Printing is restricted
+    public static final int PDF_OPEN_FAILED = -3; ///< PDF open failed
+    public static final int PDF_CANCELLED = -4; ///< PDF open was cancelled
     
     protected static final String KEY_NEW_PDF_DATA = "new_pdf_data";
     protected static final String KEY_SANDBOX_PDF_NAME = "key_sandbox_pdf_name";
     
-    private static final int RADAEE_OK = 0; // /< PDFViewer: PDF is opened successfully
-    private static final int RADAEE_ENCRYPTED = -1; // /< PDFViewer: Cannot open encrypted PDF
-    private static final int RADAEE_UNKNOWN_ENCRYPTION = -2; // /< PDFViewer: Unknown Encryption
-    @SuppressWarnings("unused")
-    // Radaee error (Handled on general error handling)
-    private static final int RADAEE_DAMAGED = -3; // /< PDFViewer: PDF is Damaged
-    @SuppressWarnings("unused")
-    // Radaee error (Handled on general error handling)
-    private static final int RADAEE_INVALID_PATH = -10; // /< PDFViewer: Invalid PDF Path
+    private static final int RADAEE_OK = 0; ///< PDFViewer: PDF is opened successfully
+    private static final int RADAEE_ENCRYPTED = -1; ///< PDFViewer: Cannot open encrypted PDF
+    private static final int RADAEE_UNKNOWN_ENCRYPTION = -2; ///< PDFViewer: Unknown Encryption
+    @SuppressWarnings("unused") // Radaee error (Handled on general error handling)
+    private static final int RADAEE_DAMAGED = -3; ///< PDFViewer: PDF is Damaged
+    @SuppressWarnings("unused") // Radaee error (Handled on general error handling)
+    private static final int RADAEE_INVALID_PATH = -10; ///< PDFViewer: Invalid PDF Path
     
-    // / Should keep the document closed after every access
+    /// Should keep the document closed after every access
     private static final boolean CONST_KEEP_DOCUMENT_CLOSED = false;
     
-    private static final float CONST_RADAEE_DPI = 72.0f; // /< PDFViewer: resolution of the PDF
-    private static final float CONST_INCHES_TO_MM = 25.4f; // /< mm per inches
+    private static final float CONST_RADAEE_DPI = 72.0f; ///< PDFViewer: resolution of the PDF
+    private static final float CONST_INCHES_TO_MM = 25.4f; ///< mm per inches
     
     private volatile String mPath;
     private Document mDocument;
@@ -74,8 +71,7 @@ public class PDFFileManager {
     /**
      * @brief Creates a PDFFileManager with an Interface class
      * 
-     * @param pdfFileManagerInterface
-     *            Object which receives the events.
+     * @param pdfFileManagerInterface Object which receives the events.
      */
     public PDFFileManager(PDFFileManagerInterface pdfFileManagerInterface) {
         mDocument = new Document();
@@ -104,8 +100,7 @@ public class PDFFileManager {
     /**
      * @brief Sets the PDF to be processed.
      * 
-     * @param path
-     *            Path of the PDF to be opened.
+     * @param path Path of the PDF to be opened.
      */
     public void setPDF(String path) {
         mIsInitialized = false;
@@ -159,8 +154,7 @@ public class PDFFileManager {
      * 
      * @note Radaee returns 72 dpi.
      * 
-     * @param pageNo
-     *            Page Index
+     * @param pageNo Page Index
      * 
      * @return Page width in mm
      */
@@ -197,8 +191,7 @@ public class PDFFileManager {
      * 
      * @note Radaee returns 72 dpi.
      * 
-     * @param pageNo
-     *            Page Index
+     * @param pageNo Page Index
      * 
      * @return Page width in mm
      */
@@ -276,10 +269,8 @@ public class PDFFileManager {
     /**
      * @brief Sets the path of a new PDF data.
      * 
-     * @param context
-     *            Application instance context
-     * @param newData
-     *            New PDF data is launched through Open-in
+     * @param context Application instance context
+     * @param newData New PDF data is launched through Open-in
      */
     public static void setHasNewPDFData(Context context, boolean newData) {
         if (context == null) {
@@ -300,8 +291,7 @@ public class PDFFileManager {
     /**
      * @brief Clears the PDF saved in the sandbox
      * 
-     * @param context
-     *            Application instance context
+     * @param context Application instance context
      */
     public static void clearSandboxPDFName(Context context) {
         if (context == null) {
@@ -318,8 +308,7 @@ public class PDFFileManager {
     /**
      * @brief Gets the filename of the PDF saved in the sandbox
      * 
-     * @param context
-     *            Application instance context
+     * @param context Application instance context
      * 
      * @return Filename of the PDF in the sandbox
      * @retval null If no PDF is in the sandbox
@@ -384,8 +373,7 @@ public class PDFFileManager {
     /**
      * @brief Gets the page bitmap
      * 
-     * @param pageNo
-     *            Page Index
+     * @param pageNo Page Index
      * 
      * @return Bitmap of the page
      */
@@ -396,14 +384,10 @@ public class PDFFileManager {
     /**
      * @brief Gets the page bitmap
      * 
-     * @param pageNo
-     *            Page Index
-     * @param scale
-     *            X and Y scale of the page
-     * @param flipX
-     *            Flip the page horizontally
-     * @param flipY
-     *            Flip the page vertically
+     * @param pageNo Page Index
+     * @param scale X and Y scale of the page
+     * @param flipX Flip the page horizontally
+     * @param flipY Flip the page vertically
      * 
      * @return Bitmap of the page
      */
@@ -499,8 +483,7 @@ public class PDFFileManager {
     /**
      * @brief Opens the PDF. Sets the status of the class to initialized
      * 
-     * @param path
-     *            Path to the PDF to be opened
+     * @param path Path to the PDF to be opened
      * 
      * @return Status of open document operation
      * @retval PDF_OK(0)
@@ -546,8 +529,7 @@ public class PDFFileManager {
     /**
      * @brief Tests whether the PDF can be opened or not.
      * 
-     * @param path
-     *            Path to the PDF to be opened
+     * @param path Path to the PDF to be opened
      * 
      * @return Status of open document operation
      * @retval PDF_OK(0)
@@ -601,8 +583,8 @@ public class PDFFileManager {
     /**
      * @class PDFInitTask
      * 
-     * @brief Background task which initialized the PDF. <br>
-     *        The PDF is copied to the sandbox.
+     * @brief Background task which initialized the PDF.
+     * The PDF is copied to the sandbox.
      */
     private class PDFInitTask extends AsyncTask<String, Void, Integer> {
         

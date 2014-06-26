@@ -56,7 +56,7 @@ public class SDADrawerLayout extends DrawerLayout {
      * 
      * @param context A Context object used to access application assets
      * @param attrs An AttributeSet passed to our parent 
-     * @param defStyle the default style resource ID  
+     * @param defStyle The default style resource ID  
      */
     public SDADrawerLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);

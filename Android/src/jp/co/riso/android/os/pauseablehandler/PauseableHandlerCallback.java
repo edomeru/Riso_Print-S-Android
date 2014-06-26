@@ -23,8 +23,8 @@ public interface PauseableHandlerCallback {
      * 
      * @param message The message which optional can be handled
      * 
-     * @retval true if the message is to be stored
-     * @retval false if the message will be discarded
+     * @retval true The message is to be stored
+     * @retval false The message will be discarded
      */
     abstract boolean storeMessage(Message message);
     
@@ -32,7 +32,7 @@ public interface PauseableHandlerCallback {
      * @brief Notification message to be processed. This will either be directly from handleMessage or played back from a saved
      * message when the activity was paused.
      * 
-     * @param message the message to be handled
+     * @param message The message to be handled
      */
     abstract void processMessage(Message message);
 }
