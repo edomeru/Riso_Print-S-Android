@@ -58,9 +58,13 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetPrintSettingsPaneMode(ViewMode viewMode)
         {
-            if (new ViewModelLocator().ViewControlViewModel.ScreenMode != ScreenMode.Home && // For Open-In
-                new ViewModelLocator().ViewControlViewModel.ScreenMode != ScreenMode.PrintPreview &&
-                new ViewModelLocator().ViewControlViewModel.ScreenMode != ScreenMode.Printers) return;
+            var screenMode = new ViewModelLocator().ViewControlViewModel.ScreenMode;
+            if (screenMode != ScreenMode.Home && // For Open-In: since during loading of page, Home screen is displayed
+                screenMode != ScreenMode.PrintPreview &&
+                screenMode != ScreenMode.Printers)
+            {
+                return;
+            }
             if (viewMode == ViewMode.FullScreen && PrintSettingsPaneMode != PrintSettingsPaneMode.PrintSettings)
             {
                 PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
