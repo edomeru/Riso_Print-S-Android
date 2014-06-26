@@ -187,33 +187,36 @@ namespace SmartDeviceApp.Controllers
             //get printers from db
             int indexOfDefaultPrinter = 0;
             var printerListFromDB = await DatabaseController.Instance.GetPrinters();
+            if (printerListFromDB == null)
+            {
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                        "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                return;
+            }
+
             var defaultPrinter = await DatabaseController.Instance.GetDefaultPrinter();
+            if (defaultPrinter == null)
+            {
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                        "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                return;
+            }
 
             foreach (var printerFromDB in printerListFromDB)
             {
-                //check
-                //if default printer
-                if (defaultPrinter == null)
+                //check if default printer
+                if (defaultPrinter.PrinterId == printerFromDB.Id)
                 {
-                    printerFromDB.IsDefault = false;
+                    printerFromDB.IsDefault = true;
+                    indexOfDefaultPrinter = _printerList.Count();
                 }
                 else
                 {
-
-                    if (defaultPrinter.PrinterId == printerFromDB.Id)
-                    {
-                        printerFromDB.IsDefault = true;
-                        indexOfDefaultPrinter = _printerList.Count();
-                    }
-                    else
-                    {
-                        printerFromDB.IsDefault = false;
-                    }
+                    printerFromDB.IsDefault = false;
                 }
                 printerFromDB.IsOnline = false;
                 
                 _printerList.Add(printerFromDB);
-                
             }
 
             if (_printerList.Count > 0)
@@ -482,21 +485,34 @@ namespace SmartDeviceApp.Controllers
                         printer.EnabledFeedTrayTwo = (capabilitesList.ElementAt(10) == "true");
                         printer.EnabledFeedTrayThree = (capabilitesList.ElementAt(11) == "true");
                     }
-                
 
-                    int i = await DatabaseController.Instance.InsertPrinter(printer);
-                    if (i == 0)
+                    bool result = await DatabaseController.Instance.InsertPrinter(printer);
+                    if (!result)
                     {
-                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER",
+                            "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                        return;
                     }
                     printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
+                    if (printer.PrintSettingId == -1)
+                    {
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                            "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                        return;
+                    }
                     await DatabaseController.Instance.UpdatePrinter(printer);
                     printer.IsOnline = true;
 
                     if (PrinterList.Count == 0)
                     {
                         printer.IsDefault = true;
-                        await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                        result = await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                        if (!result)
+                        {
+                            await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                                "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                            return;
+                        }
                     }
                                 
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
@@ -511,7 +527,8 @@ namespace SmartDeviceApp.Controllers
                         _addPrinterViewModel.handleAddIsSuccessful(true);
 
                         //if added from printer search
-                        if (PrinterSearchList.Count > 0) { 
+                        if (PrinterSearchList.Count > 0)
+                        { 
                             PrinterSearchItem searchItem = PrinterSearchList.FirstOrDefault(x => x.Ip_address == ip);
                             if (searchItem == null)
                             {
@@ -553,13 +570,20 @@ namespace SmartDeviceApp.Controllers
                         Printer printer = new Printer() { IpAddress = ip, Name = name };
 
                         //insert to database
-                        int i = await DatabaseController.Instance.InsertPrinter(printer);
-                        if (i == 0)
+                        bool result = await DatabaseController.Instance.InsertPrinter(printer);
+                        if (!result)
                         {
-                            await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                            await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER",
+                                "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                             return;
                         }
                         printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
+                        if (printer.PrintSettingId == -1)
+                        {
+                            await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                                "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                            return;
+                        }
                         await DatabaseController.Instance.UpdatePrinter(printer);
 
                         printer.IsOnline = false;
@@ -568,7 +592,13 @@ namespace SmartDeviceApp.Controllers
                         if (PrinterList.Count == 0)
                         {
                             printer.IsDefault = true;
-                            await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                            result = await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                            if (!result)
+                            {
+                                await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                                    "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                                return;
+                            }
                         }
 
                         await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
@@ -619,7 +649,13 @@ namespace SmartDeviceApp.Controllers
                 //change default printer in list and in db
                 if (printer.IsDefault == true)
                 {
-                    DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                    bool result = await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                    if (!result)
+                    {
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                            "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                        return;
+                    }
 
                     foreach (var printerInList in PrinterList)
                     {
@@ -746,14 +782,21 @@ namespace SmartDeviceApp.Controllers
             { 
                 try
                 {
-                    int i = await DatabaseController.Instance.InsertPrinter(printer);
-                    if (i == 0)
+                    bool result = await DatabaseController.Instance.InsertPrinter(printer);
+                    if (!result)
                     {
-                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER",
+                            "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                         return false;
                     }
                         
                     printer.PrintSettingId = await PrintSettingsController.Instance.CreatePrintSettings(printer);
+                    if (printer.PrintSettingId == -1)
+                    {
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                            "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                        return false;
+                    }
                     await DatabaseController.Instance.UpdatePrinter(printer);
 
                     printer.IsOnline = true;
@@ -767,7 +810,13 @@ namespace SmartDeviceApp.Controllers
                 if (PrinterList.Count == 0)
                 {
                     printer.IsDefault = true;
-                    await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                    bool result = await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
+                    if (!result)
+                    {
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                            "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                        return false;
+                    }
                 }
                 printer.PropertyChanged += handlePropertyChanged;
                 _printerList.Add(printer);
@@ -811,18 +860,11 @@ namespace SmartDeviceApp.Controllers
         public async Task<bool> deletePrinter(string ipAddress)
         {
             Printer printer =  _printerList.FirstOrDefault(x => x.IpAddress == ipAddress);
-
-            if (printer == null)
+            bool result = await DatabaseController.Instance.DeletePrinter(printer);
+            if (!result)
             {
-                await DialogService.Instance.ShowError("IDS_ERR_MSG_DELETE_FAILED", "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
-                return false;
-            }
-
-            int result = await DatabaseController.Instance.DeletePrinter(printer);
-
-            if (result == 0)
-            {
-                await DialogService.Instance.ShowError("IDS_ERR_MSG_DELETE_FAILED", "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE", "IDS_LBL_PRINTERS",
+                    "IDS_LBL_OK", null);
                 return false;
             }
             int index = _printerList.IndexOf(printer);
@@ -847,7 +889,13 @@ namespace SmartDeviceApp.Controllers
                     if (nextDefault != null)
                     {
                         //save to db
-                        await DatabaseController.Instance.SetDefaultPrinter(nextDefault.Id);
+                        result = await DatabaseController.Instance.SetDefaultPrinter(nextDefault.Id);
+                        if (!result)
+                        {
+                            await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                                "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                            return false;
+                        }
                     }
                  }
             }

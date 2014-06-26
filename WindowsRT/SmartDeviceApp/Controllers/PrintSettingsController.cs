@@ -195,6 +195,7 @@ namespace SmartDeviceApp.Controllers
             if (id > -1)
             {
                 currPrintSettings = await DatabaseController.Instance.GetPrintSettings(id);
+                // Ignore checking for currPrintSettings result from DB
             }
             if (currPrintSettings == null)
             {
@@ -210,7 +211,7 @@ namespace SmartDeviceApp.Controllers
         /// Requires that the printer is valid.
         /// </summary>
         /// <param name="printer">printer</param>
-        /// <returns>task; print setting ID</returns>
+        /// <returns>task; print setting ID when successful, -1 otherwise</returns>
         public async Task<int> CreatePrintSettings(Printer printer)
         {
             PrintSettings printSettings = new PrintSettings();
@@ -218,10 +219,9 @@ namespace SmartDeviceApp.Controllers
             if (printer != null && printer.Id > -1)
             {
                 printSettings.PrinterId = printer.Id;
-                int added = await DatabaseController.Instance.InsertPrintSettings(printSettings);
-                if (added == 0)
+                bool result = await DatabaseController.Instance.InsertPrintSettings(printSettings);
+                if (!result)
                 {
-                    // TODO: Display error?
                     return -1;
                 }
             }
@@ -1652,7 +1652,13 @@ namespace SmartDeviceApp.Controllers
 
             if (!_printSettingsViewModel.IsPrintPreview)
             {
-                await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                bool result = await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                if (!result)
+                {
+                    await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                        "IDS_LBL_PRINT_SETTINGS", "IDS_LBL_OK", null);
+                    return false;
+                }
             }
 
             if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
@@ -1711,7 +1717,13 @@ namespace SmartDeviceApp.Controllers
 
             if (!_printSettingsViewModel.IsPrintPreview)
             {
-                await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                bool result = await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                if (!result)
+                {
+                    await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                        "IDS_LBL_PRINT_SETTINGS", "IDS_LBL_OK", null);
+                    return false;
+                }
             }
 
             if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))

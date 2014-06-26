@@ -146,29 +146,35 @@ namespace SmartDeviceApp.Controllers
         /// Insert an item into Printer table
         /// </summary>
         /// <param name="printer">printer to be added</param>
-        /// <returns>task; number for added rows</returns>
-        public async Task<int> InsertPrinter(Printer printer)
+        /// <returns>task; true when successful, false otherwise</returns>
+        public async Task<bool> InsertPrinter(Printer printer)
         {
+            bool result = true;
+
             if (printer == null)
             {
-                return 0;
+                return result;
             }
 
             try
             {
-                return await _dbConnection.InsertAsync(printer);
+                await _dbConnection.InsertAsync(printer);
             }
             catch
             {
-                // Error handling
+                result = false;
             }
 
-            return 0;
+            return result;
         }
 
+        /// <summary>
+        /// Retrieves all print jobs
+        /// </summary>
+        /// <returns>task; list of printers when successful, null otherwise</returns>
         public async Task<List<Printer>> GetPrinters()
         {
-            var printerList = new List<Printer>();
+            List<Printer> printerList = new List<Printer>();
 
             try
             {
@@ -176,7 +182,7 @@ namespace SmartDeviceApp.Controllers
             }
             catch
             {
-                // Error handling
+                printerList = null;
             }
 
             return printerList;
@@ -210,16 +216,19 @@ namespace SmartDeviceApp.Controllers
         /// Deletes a printer from the database
         /// </summary>
         /// <param name="printer">printer to be deleted</param>
-        /// <returns>task; number of deleted items</returns>
-        public async Task<int> DeletePrinter(Printer printer)
+        /// <returns>task; true when successful, false otherwise</returns>
+        public async Task<bool> DeletePrinter(Printer printer)
         {
+            bool result = true;
+
             if (printer == null)
             {
-                return 0;
+                return result; // No DB error since no item is deleted
             }
 
             try
             {
+                /*
                 int count = await _dbConnection.Table<DefaultPrinter>().CountAsync();
                 if (count > 0)
                 {
@@ -231,15 +240,16 @@ namespace SmartDeviceApp.Controllers
                         await _dbConnection.DeleteAsync(dp);
                     }
                 }
+                 * */
 
-                return await _dbConnection.DeleteAsync(printer);
+                await _dbConnection.DeleteAsync(printer);
             }
             catch
             {
-                // Error handling
+                result = false;
             }
 
-            return 0;
+            return result;
         }
 
         /// <summary>
@@ -267,54 +277,66 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Retrieves the default printer
         /// </summary>
-        /// <returns>task; DefaultPrinter object if found, null otherwise</returns>
+        /// <returns>task; DefaultPrinter object when found,
+        /// DefaultPrinter object with printer ID -1 when no default printer set, null otherwise</returns>
         public async Task<DefaultPrinter> GetDefaultPrinter()
         {
+            DefaultPrinter defaultPrinter = new DefaultPrinter(); // Unset DefaultPrinter
+
             try
             {
-                return await _dbConnection.Table<DefaultPrinter>().FirstOrDefaultAsync();
+                int count = await _dbConnection.Table<DefaultPrinter>().CountAsync();
+                if (count > 0)
+                {
+                    defaultPrinter = await _dbConnection.Table<DefaultPrinter>().FirstAsync();
+                }
             }
             catch
             {
-                // Error handling here
+                defaultPrinter = null;
             }
-            return null;
+
+            return defaultPrinter;
         }
 
         /// <summary>
         /// Sets the default printer in the database
         /// </summary>
         /// <param name="printerId">printer ID</param>
-        /// <returns>task; number of updated rows</returns>
-        public async Task<int> SetDefaultPrinter(int printerId)
+        /// <returns>task; true when successful, false otherwise</returns>
+        public async Task<bool> SetDefaultPrinter(int printerId)
         {
+            bool result = true;
+
             try
             {
                 DefaultPrinter existingDefault = await _dbConnection.Table<DefaultPrinter>()
                                                                     .FirstOrDefaultAsync();
-
                 if (existingDefault != null)
                 {
-                    await DeleteDefaultPrinter();
+                    result = await DeleteDefaultPrinter();
                 }
 
-                DefaultPrinter newDefaultPrinter = new DefaultPrinter();
-                newDefaultPrinter.PrinterId = (uint)printerId;
-                return await _dbConnection.InsertAsync(newDefaultPrinter);
+                if (result)
+                {
+                    DefaultPrinter newDefaultPrinter = new DefaultPrinter();
+                    newDefaultPrinter.PrinterId = (uint)printerId;
+                    await _dbConnection.InsertAsync(newDefaultPrinter);
+                }
             }
             catch
             {
-                // Error handling
+                result = false;
             }
 
-            return 0;
+            return result;
         }
 
         /// <summary>
         /// Deletes the existing default printer
         /// </summary>
-        /// <returns>task; number of deleted items</returns>
-        public async Task<int> DeleteDefaultPrinter()
+        /// <returns>task; truw when successful, false otherwise</returns>
+        public async Task<bool> DeleteDefaultPrinter()
         {
             try
             {
@@ -323,15 +345,15 @@ namespace SmartDeviceApp.Controllers
 
                 if (existingDefault != null)
                 {
-                    return await _dbConnection.DeleteAsync(existingDefault);
+                    await _dbConnection.DeleteAsync(existingDefault);
                 }
             }
             catch
             {
-                // Error handling
+                return false;
             }
 
-            return 0;
+            return true;
         }
 
         #endregion DefaultPrinter Table Operations
@@ -351,8 +373,9 @@ namespace SmartDeviceApp.Controllers
             }
             catch
             {
-                // Error handling here
+                // Do nothing
             }
+
             return null;
         }
 
@@ -360,71 +383,78 @@ namespace SmartDeviceApp.Controllers
         /// Insert an item into PrintSetting table
         /// </summary>
         /// <param name="printSettings">print settings to be added</param>
-        /// <returns>task; number for added rows</returns>
-        public async Task<int> InsertPrintSettings(PrintSettings printSettings)
+        /// <returns>task; true when successful, false otherwise</returns>
+        public async Task<bool> InsertPrintSettings(PrintSettings printSettings)
         {
+            bool result = true;
+
             if (printSettings == null)
             {
-                return 0;
+                return result;
             }
 
             try
             {
-                return await _dbConnection.InsertAsync(printSettings);
+                await _dbConnection.InsertAsync(printSettings);
             }
             catch
             {
-                // Error handling
+                result = false;
             }
 
-            return 0;
+            return result;
         }
 
         /// <summary>
         /// Updates a print setting in the database
         /// </summary>
         /// <param name="printSettings">print settings</param>
-        /// <returns>task; number of updated print settings</returns>
-        public async Task<int> UpdatePrintSettings(PrintSettings printSettings)
+        /// <returns>task; true when successful, false otherwise</returns>
+        public async Task<bool> UpdatePrintSettings(PrintSettings printSettings)
         {
+            bool result = true;
+
             if (printSettings == null)
             {
-                return 0;
+                return result;
             }
 
             try
             {
-                return await _dbConnection.UpdateAsync(printSettings);
+                await _dbConnection.UpdateAsync(printSettings);
             }
             catch
             {
-                // Error handling here
+                result = false;
             }
-            return 0;
+
+            return result;
         }
 
         ///// <summary>
         ///// Deletes a print setting in the database
         ///// </summary>
         ///// <param name="printSettings">print settings</param>
-        ///// <returns>task; number of deleted rows</returns>
-        //public async Task<int> DeletePrintSettings(PrintSettings printSettings)
+        ///// <returns>task; true when successful, false otherwise</returns>
+        //public async Task<bool> DeletePrintSettings(PrintSettings printSettings)
         //{
+        //    bool result = true;
+
         //    if (printSettings == null)
         //    {
-        //        return 0;
+        //        return result;
         //    }
 
         //    try
         //    {
-        //        return await _dbConnection.DeleteAsync(printSettings);
+        //        await _dbConnection.DeleteAsync(printSettings);
         //    }
         //    catch
         //    {
-        //        // Error handling
+        //        result = false;
         //    }
 
-        //    return 0;
+        //    return result;
         //}
 
         #endregion PrintSetting Table Operations
@@ -434,7 +464,7 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Retrieves all print jobs
         /// </summary>
-        /// <returns>task; list of all print jobs</returns>
+        /// <returns>task; list of all print jobs when successful, null otherwise</returns>
         public async Task<List<PrintJob>> GetPrintJobs()
         {
             var printJobsList = new List<PrintJob>();
@@ -445,7 +475,7 @@ namespace SmartDeviceApp.Controllers
             }
             catch
             {
-                // Error handling here
+                printJobsList = null;
             }
 
             return printJobsList;
@@ -455,72 +485,78 @@ namespace SmartDeviceApp.Controllers
         /// Insert an item into PrintJob table
         /// </summary>
         /// <param name="printJob">print job to be added</param>
-        /// <returns>task; number for added rows</returns>
-        public async Task<int> InsertPrintJob(PrintJob printJob)
+        /// <returns>task; true if successful, false otherwise</returns>
+        public async Task<bool> InsertPrintJob(PrintJob printJob)
         {
+            bool result = true;
+
             if (printJob == null)
             {
-                return 0;
+                return result;
             }
 
             try
             {
-                return await _dbConnection.InsertAsync(printJob);
+                await _dbConnection.InsertAsync(printJob);
             }
             catch
             {
-                // Error handling
+                result = false;
             }
 
-            return 0;
+            return result;
         }
 
-        /// <summary>
-        /// Updates a print job in the database
-        /// </summary>
-        /// <param name="printJob">print job to be updated</param>
-        /// <returns>task; number of updated rows</returns>
-        public async Task<int> UpdatePrintJob(PrintJob printJob)
-        {
-            if (printJob == null)
-            {
-                return 0;
-            }
+        ///// <summary>
+        ///// Updates a print job in the database
+        ///// </summary>
+        ///// <param name="printJob">print job to be updated</param>
+        ///// <returns>task; true when successful, false otherwise</returns>
+        //public async Task<bool> UpdatePrintJob(PrintJob printJob)
+        //{
+        //    bool result = true;
 
-            try
-            {
-                return await _dbConnection.UpdateAsync(printJob);
-            }
-            catch
-            {
-                // Error handling
-            }
+        //    if (printJob == null)
+        //    {
+        //        return result;
+        //    }
 
-            return 0;
-        }
+        //    try
+        //    {
+        //        await _dbConnection.UpdateAsync(printJob);
+        //    }
+        //    catch
+        //    {
+        //        result = false;
+        //    }
+
+        //    return result;
+        //}
 
         /// <summary>
         /// Deletes a print job from the database
         /// </summary>
         /// <param name="printJob">print job to be deleted</param>
-        /// <returns>task; number of deleted items</returns>
-        public async Task<int> DeletePrintJob(PrintJob printJob)
+        /// <returns>task; true when successful, false otherwise</returns>
+        public async Task<bool> DeletePrintJob(PrintJob printJob)
         {
+            bool result = true;
+
             if (printJob == null)
             {
-                return 0;
+                return result; // No DB error since no item is deleted
             }
 
             try
             {
-                return await _dbConnection.DeleteAsync(printJob);
+                await _dbConnection.DeleteAsync(printJob);
             }
             catch
             {
-                // Error handling
+                result = false;
             }
 
-            return 0;
+            return result;
         }
 
         #endregion PrintJob Table Operations
