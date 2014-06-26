@@ -19,8 +19,9 @@ import android.view.View;
 
 /**
  * @class SDADrawerLayout
+ * 
  * @brief Subclass of DrawerLayout class.
- * <br>
+ * 
  * Adds following functionalities:
  * <ol>
  * <li> Prevent touch intercept of the main view </li>
@@ -34,7 +35,7 @@ public class SDADrawerLayout extends DrawerLayout {
     /**
      * @brief Constructs a new DrawerLayout with a Context object
      * 
-     * @param context a Context object used to access application assets 
+     * @param context A Context object used to access application assets 
      */
     public SDADrawerLayout(Context context) {
         super(context);
@@ -43,8 +44,8 @@ public class SDADrawerLayout extends DrawerLayout {
     /**
      * @brief Constructs a new DrawerLayout with layout parameters.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
      */
     public SDADrawerLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,8 +54,8 @@ public class SDADrawerLayout extends DrawerLayout {
     /**
      * @brief Constructs a new DrawerLayout with layout parameters and a default style.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
      * @param defStyle the default style resource ID  
      */
     public SDADrawerLayout(Context context, AttributeSet attrs, int defStyle) {

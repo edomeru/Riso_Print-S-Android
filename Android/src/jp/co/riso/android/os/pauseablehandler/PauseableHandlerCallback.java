@@ -12,6 +12,7 @@ import android.os.Message;
 
 /**
  * @interface PauseableHandlerCallback
+ * 
  * @brief Interface for PauseableHandler Events
  */
 public interface PauseableHandlerCallback {
@@ -21,6 +22,7 @@ public interface PauseableHandlerCallback {
      * saved and replayed when the activity resumes.
      * 
      * @param message The message which optional can be handled
+     * 
      * @retval true if the message is to be stored
      * @retval false if the message will be discarded
      */

@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view.preview;
 
 /**
  * @interface PreviewControlsListener
+ * 
  * @brief Interface for PrintPreviewView Events
  */
 public interface PreviewControlsListener {
@@ -17,7 +18,7 @@ public interface PreviewControlsListener {
     /**
      * @brief Called when the index page is updated
      * 
-     * @param index page index
+     * @param index Page index
      */
     public void onIndexChanged(int index);
     
@@ -31,8 +32,8 @@ public interface PreviewControlsListener {
     /**
      * @brief Notify that the pan has changed
      * 
-     * @param panX new x pan
-     * @param panY new y pan
+     * @param panX New x pan
+     * @param panY New y pan
      */
     public void panChanged(float panX, float panY);
     

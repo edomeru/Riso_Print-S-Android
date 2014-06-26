@@ -67,6 +67,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 /**
  * @class PrintSettingsView
+ * 
  * @brief A View that displays the Print settings and Print controls.
  */
 public class PrintSettingsView extends FrameLayout implements View.OnClickListener, Callback, CompoundButton.OnCheckedChangeListener, UpdateStatusCallback, OnEditorActionListener {
@@ -136,7 +137,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     /**
      * @brief Constructs a new PrintSettingsView with a Context object
      * 
-     * @param context a Context object used to access application assets 
+     * @param context A Context object used to access application assets 
      */
     public PrintSettingsView(Context context) {
         this(context, null);
@@ -145,8 +146,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     /**
      * @brief Constructs a new PrintSettingsView with layout parameters.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
      */
     public PrintSettingsView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -155,9 +156,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     /**
      * @brief Constructs a new PrintSettingsView with layout parameters and a default style.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
-     * @param defStyle the default style resource ID  
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
+     * @param defStyle The default style resource ID  
      */
     public PrintSettingsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -266,11 +267,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             outState.putInt(KEY_SUB_SCROLL_POSITION, mSubScrollView.getScrollY());
         }
     }
-
+    
     /**
      * @brief Restore the state of the PrintSettingsView from a Bundle
      * 
-     * @param outState  The incoming Bundle of state.
+     * @param savedInstanceState The incoming Bundle of state.
      */
     public void restoreState(Bundle savedInstanceState) {
         // Collapse the headers retrieved from the saved bundle
@@ -364,6 +365,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @brief Gets the default value of a setting.
      * 
      * @param tag Print settings tag
+     * 
      * @return Default value for the tag
      */
     private int getDefaultValueWithConstraints(String tag) {
@@ -380,7 +382,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @brief Checks if the view is enabled.
      * 
      * @param tag Print settings tag
-     * @return true if view is enabled
+     * 
+     * @retval true View is enabled
+     * @retval false View is disabled
      */
     private boolean isViewEnabled(String tag) {
         if (mMainView != null) {
@@ -632,7 +636,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @brief Sets the visibility of a view
      * 
      * @param name Layout tag
-     * @param visible VISIBLE, INVISIBLE, or GONE.
+     * @param visible Visibility of the view. (VISIBLE, INVISIBLE, or GONE)
      */
     private void setViewVisible(String name, boolean visible) {
         View view = mMainView.findViewWithTag(name);
@@ -694,6 +698,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * 
      * @param name Print settings tag name
      * @param id Current ID
+     * 
      * @return Updated string ID           
      */
     private int getUpdatedStringId(String name, int id) {
@@ -707,11 +712,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         return id;
     }
-    
+
     /**
      * @brief Updates the value and applies the value and view constraints
      * 
-     * @param name Print settings tag name
+     * @param tag Print settings tag name
      * @param newValue New value
      * 
      * @retval true Update is successful
@@ -939,6 +944,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * 
      * @param name Print settings tag
      * @param options Options list
+     * 
      * @return Option strings
      */
     private Object[] getOptionsStrings(String name, List<Option> options) {
@@ -1063,12 +1069,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     // ================================================================================
     // Authentication controls functions
     // ================================================================================
-    
+
     /**
      * @brief Add an authentication view sub item to a layout 
      * 
      * @param ll Layout to add the Authentication view
-     * @param title Text Title of the View
+     * @param titleText Text Title of the View
      * @param view Control view to be added
      * @param tag Item tag to be used for identification
      * @param withSeparator Should add separator view
@@ -1248,12 +1254,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         mSubView.startAnimation(animOut);
     }
-    
+
     /**
      * @brief Add sub-view options list
      * 
      * @param str Main text
-     * @param sub Sub text
      * @param value Value
      * @param tagValue Tag value for identification
      * @param withSeparator View has separator
@@ -1621,6 +1626,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * 
      * @param type type (boolean/numeric/list)
      * @param tag Identifying tag
+     * 
      * @return Return created view
      */
     private View createControlView(String type, String tag) {
@@ -2059,6 +2065,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * @class EditTextWatcher
+     * 
      * @brief Class to manage input on the copies field
      */
     private class EditTextWatcher implements TextWatcher {
@@ -2118,6 +2125,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
 
     /**
      * @class PinCodeTextWatcher
+     * 
      * @brief Class to manage input on the pincode textfield
      */
     private class PinCodeTextWatcher implements TextWatcher {
@@ -2147,6 +2155,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * @interface PrintSettingsViewInterface 
+     * 
      * @brief Interface for PrintSettingsView Events
      */
     public interface PrintSettingsViewInterface {

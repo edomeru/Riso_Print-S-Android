@@ -50,6 +50,7 @@ import fi.harism.curl.CurlView;
 
 /**
  * @class PrintPreviewView
+ * 
  * @brief A View that displays a PDF. Uses CurlView to present the PDF.
  */
 public class PrintPreviewView extends FrameLayout implements OnScaleGestureListener, OnGestureListener, OnDoubleTapListener {
@@ -69,8 +70,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private static final float STAPLE_POS_CORNER_IN_MM = 6;
     private static final float STAPLE_POS_SIDE_IN_MM = 4;
     */
-
+    
+    /// Base and minimum zoom level of the preview
     public static final float BASE_ZOOM_LEVEL = 1.0f;
+    /// Maximum zoom level of the preview
     public static final float MAX_ZOOM_LEVEL = 4.0f;
     
     private static final int INVALID_IDX = -1;
@@ -114,7 +117,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Constructs a new PrintPreviewView with a Context object
      * 
-     * @param context a Context object used to access application assets 
+     * @param context A Context object used to access application assets 
      */
     public PrintPreviewView(Context context) {
         this(context, null);
@@ -123,8 +126,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Constructs a new PrintPreviewView with layout parameters.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
      */
     public PrintPreviewView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -133,9 +136,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Constructs a new PrintPreviewView with layout parameters and a default style.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
-     * @param defStyle the default style resource ID  
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
+     * @param defStyle The default style resource ID  
      */
     public PrintPreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -194,6 +197,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @brief Process panning events when PrintPreviewView is zoomed.
      *
      * @param ev The event to be processed
+     * 
+     * @retval true Event was processed
+     * @retval false Event was not processed
      */
     public boolean processTouchEvent(MotionEvent ev) {
         if (ev.getPointerCount() == 1) {
@@ -331,7 +337,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Sets the left margin
      * 
-     * @param marginLeft left margin in mm
+     * @param marginLeft Left margin in mm
      */
     public void setMarginLeftInMm(float marginLeft) {
         mMarginLeft = marginLeft;
@@ -340,7 +346,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Sets the right margin
      * 
-     * @param marginRight right margin in mm
+     * @param marginRight Tight margin in mm
      */
     public void setMarginRightInMm(float marginRight) {
         mMarginRight = marginRight;
@@ -349,7 +355,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Sets the top margin
      * 
-     * @param marginTop top margin in mm
+     * @param marginTop Top margin in mm
      */
     public void setMarginTopInMm(float marginTop) {
         mMarginTop = marginTop;
@@ -358,7 +364,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Sets the bottom margin
      * 
-     * @param marginTop bottom margin in mm
+     * @param marginBottom Bottom margin in mm
      */
     public void setMarginBottomInMm(float marginBottom) {
         mMarginBottom = marginBottom;
@@ -413,6 +419,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Get the face count. Face count depends on the PDF
      * page count and pagination.
+     * 
      * @note If booklet or duplex, dependent on faces per paper
      * 
      * @return Number of faces
@@ -499,6 +506,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * 
      * @param screenWidth Screen width
      * @param screenHeight Screen height
+     * 
      * @return CurlView width and height
      */
     protected int[] getCurlViewDimensions(int screenWidth, int screenHeight) {
@@ -525,6 +533,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * 
      * @param screenWidth Screen width
      * @param screenHeight Screen height
+     * 
      * @return Paper width and height
      */
     protected int[] getPaperDimensions(int screenWidth, int screenHeight) {
@@ -541,6 +550,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * 
      * @param index Sheet index
      * @param side Front or back
+     * 
      * @return Cache String
      */
     protected String getCacheKey(int index, int side) {
@@ -576,6 +586,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * @brief Get the bitmaps of the page from the Bitmap
+     * 
      * @note Will not return a null array, only the Bitmaps will be null.
      * 
      * @param index Sheet index
@@ -609,6 +620,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @param dimension Unit of measure in mm.
      * @param bmpWidth Paper width in pixels
      * @param bmpHeight Paper height in pixels.
+     * 
      * @return Dimension in pixels.
      */
     protected int convertDimension(float dimension, int bmpWidth, int bmpHeight) {
@@ -626,8 +638,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Check if should display landscape
      * 
-     * @return true Should display landscape
-     * @return false Should display portrait
+     * @retval true Should display landscape
+     * @retval false Should display portrait
      */
     private boolean shouldDisplayLandscape() {
         boolean flipToLandscape = false;
@@ -683,6 +695,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * @brief Gets the number of faces in one paper.
+     * 
      * @note If booklet, 4 faces can be displayed in one paper.
      * 
      * @return Number of faces on a paper.
@@ -966,6 +979,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * @brief Animates a zoom to a specified zoom level.
+     * 
      * @note Animation Speed: 0.25 seconds
      * 
      * @param zoomLevel Target zoom level.
@@ -1084,6 +1098,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     /**
      * @class PDFPageProvider
+     * 
      * @brief Provider class for the PrintPreviewView
      */
     private class PDFPageProvider implements CurlView.PageProvider {
@@ -1133,6 +1148,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
 
     /**
      * @class PDFRenderTask
+     * 
      * @brief Background task which performs rendering of PDF pages.
      */
     private class PDFRenderTask extends AsyncTask<Void, Void, Void> {
@@ -1351,6 +1367,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
          * @param paperHeight Paper height
          * @param pageWidth Page width
          * @param pageHeight Page height
+         * 
          * @return Beginning position (x and y)
          */
         private int[] getBeginPositions(int paperWidth, int paperHeight, int pageWidth, int pageHeight) {
@@ -1568,6 +1585,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         /**
          * @brief Gets the Front and back bitmaps.
+         * 
          * @note The bitmaps are saved in the cache.
          * 
          * @return Front and back bitmaps

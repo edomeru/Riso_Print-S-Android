@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 
 /**
  * @class SDALinearLayout
+ * 
  * @brief Subclass of LinearLayout class. Adds support for fraction animation
  */
 public class SDALinearLayout extends LinearLayout {
@@ -21,7 +22,7 @@ public class SDALinearLayout extends LinearLayout {
     /**
      * @brief Constructs a new LinearLayout with a Context object
      * 
-     * @param context a Context object used to access application assets 
+     * @param context A Context object used to access application assets 
      */
     public SDALinearLayout(Context context) {
         super(context);
@@ -30,8 +31,8 @@ public class SDALinearLayout extends LinearLayout {
     /**
      * @brief Constructs a new LinearLayout with layout parameters.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
      */
     public SDALinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -40,9 +41,9 @@ public class SDALinearLayout extends LinearLayout {
     /**
      * @brief Constructs a new LinearLayout with layout parameters and a default style.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
-     * @param defStyle the default style resource ID  
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
+     * @param defStyle The default style resource ID  
      */
     public SDALinearLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);

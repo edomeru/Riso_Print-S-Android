@@ -14,6 +14,7 @@ import android.webkit.WebView;
 
 /**
  * @class SDAWebView
+ * 
  * @brief Subclass of WebView class. Sets the standard functionalities of the WebView.
  */
 public class SDAWebView extends WebView {
@@ -21,7 +22,7 @@ public class SDAWebView extends WebView {
     /**
      * @brief Constructs a new WebView with a Context object
      * 
-     * @param context a Context object used to access application assets 
+     * @param context A Context object used to access application assets 
      */
     public SDAWebView(Context context) {
         this(context, null);
@@ -30,8 +31,8 @@ public class SDAWebView extends WebView {
     /**
      * @brief Constructs a new WebView with layout parameters.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
      */
     public SDAWebView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -40,9 +41,9 @@ public class SDAWebView extends WebView {
     /**
      * @brief Constructs a new WebView with layout parameters and a default style.
      * 
-     * @param context a Context object used to access application assets
-     * @param attrs an AttributeSet passed to our parent 
-     * @param defStyle the default style resource ID  
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
+     * @param defStyle The default style resource ID  
      */
     public SDAWebView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);

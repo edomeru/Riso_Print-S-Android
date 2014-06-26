@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 /**
  * @class PrintSettingsFragment
+ * 
  * @brief Fragment which contains the Print Settings Screen
  */
 public class PrintSettingsFragment extends BaseFragment implements PrintSettingsView.PrintSettingsViewInterface, PauseableHandlerCallback, DirectPrintCallback, WaitingDialogListener {
@@ -212,9 +213,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
     }
     
-    /**
-     * @brief This method is triggered when the print button is pressed and displays the waiting dialog.
-     */
     @Override
     public void onPrint(Printer printer, PrintSettings printSettings) {
         // do not print if mPdfPath is not set
