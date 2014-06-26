@@ -17,47 +17,51 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 
+/**
+ * @class SDADrawerLayout
+ * 
+ * @brief Subclass of DrawerLayout class.
+ * 
+ * Adds following functionalities:
+ * <ol>
+ * <li> Prevent touch intercept of the main view </li>
+ * <li> Prevent dragging from drawer views </li>
+ * </ol> 
+ */
 public class SDADrawerLayout extends DrawerLayout {
     
     private boolean mPreventInterceptTouches = false;
-
+    
     /**
-     * Constructor
-     * <p>
-     * Instantiate custom DrawerLayout
+     * @brief Constructs a new DrawerLayout with a Context object
      * 
-     * @param context
-     * @param attrs
-     * @param defStyle
-     */
-    public SDADrawerLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
-    /**
-     * Constructor
-     * <p>
-     * Instantiate custom DrawerLayout
-     * 
-     * @param context
-     * @param attrs
-     */
-    public SDADrawerLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    /**
-     * Constructor
-     * <p>
-     * Instantiate custom DrawerLayout
-     * 
-     * @param context
+     * @param context A Context object used to access application assets 
      */
     public SDADrawerLayout(Context context) {
         super(context);
     }
-
-    /** {@inheritDoc} */
+    
+    /**
+     * @brief Constructs a new DrawerLayout with layout parameters.
+     * 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
+     */
+    public SDADrawerLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+    
+    /**
+     * @brief Constructs a new DrawerLayout with layout parameters and a default style.
+     * 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
+     * @param defStyle The default style resource ID  
+     */
+    public SDADrawerLayout(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
+    
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (mPreventInterceptTouches) {
@@ -83,10 +87,9 @@ public class SDADrawerLayout extends DrawerLayout {
     }
     
     /**
-     * Set prevent intercept touches
+     * @brief Enable the prevention of touch intercept during onInterceptTouchEvent
      * 
-     * @param preventInterceptTouches
-     *            Prevent touches
+     * @param preventInterceptTouches DrawerLayout should prevent touch interception
      */
     public void setPreventInterceptTouches(boolean preventInterceptTouches) {
         mPreventInterceptTouches = preventInterceptTouches;

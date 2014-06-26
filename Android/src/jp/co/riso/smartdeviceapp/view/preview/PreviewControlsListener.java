@@ -8,46 +8,46 @@
 
 package jp.co.riso.smartdeviceapp.view.preview;
 
+/**
+ * @interface PreviewControlsListener
+ * 
+ * @brief Interface for PrintPreviewView Events
+ */
 public interface PreviewControlsListener {
+    
     /**
-     * Called when the index page is updated
+     * @brief Called when the index page is updated
      * 
-     * @param index
-     *            page index
+     * @param index Page index
      */
     public void onIndexChanged(int index);
     
     /**
-     * Used to add bottom margin to glview to allow overlapping of views
+     * @brief Used to add bottom margin to GLView to allow overlapping of views
      * 
-     * @return controls height
+     * @return Height of the control view
      */
     public int getControlsHeight();
     
     /**
-     * pan changed listener
+     * @brief Notify that the pan has changed
      * 
-     * @param panX
-     *            new x pan
-     * 
-     * @param panY
-     *            new y pan
+     * @param panX New x pan
+     * @param panY New y pan
      */
     public void panChanged(float panX, float panY);
     
     /**
-     * zoom level changed listener
+     * @brief Notify that the zoom level has changed
      * 
-     * @param zoomLevel
-     *            new zoom level
+     * @param zoomLevel New zoom level
      */
     public void zoomLevelChanged(float zoomLevel);
     
     /**
-     * Set controls Enabled state
+     * @brief Set whether the curl view controls are enabled
      * 
-     * @param enabled
-     *            new controls enabled state
+     * @param enabled New controls enabled state
      */
     public void setControlsEnabled(boolean enabled);
 }

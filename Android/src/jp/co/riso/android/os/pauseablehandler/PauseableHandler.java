@@ -15,9 +15,11 @@ import android.os.Message;
 
 /**
  * @class PauseableHandler
+ * 
  * @brief Message Handler class that supports buffering up of messages when the activity is paused
  * (i.e. in the background)
- * @see http://stackoverflow.com/questions/8040280/how-to-handle-handler-messages-when-activity-fragment-is-paused
+ * <br>
+ * Based on: http://stackoverflow.com/questions/8040280/how-to-handle-handler-messages-when-activity-fragment-is-paused
  */
 public class PauseableHandler extends Handler {
     

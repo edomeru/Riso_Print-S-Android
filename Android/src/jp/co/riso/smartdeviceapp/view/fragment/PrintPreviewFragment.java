@@ -47,7 +47,8 @@ import android.widget.TextView;
 
 /**
  * @class PrintPreviewFragment
- * @brief Fragment which corresponds to the Print Preview Screen
+ * 
+ * @brief Fragment which contains the Print Preview Screen
  */
 public class PrintPreviewFragment extends BaseFragment implements Callback, PDFFileManagerInterface,
         PreviewControlsListener, OnSeekBarChangeListener, PauseableHandlerCallback {
@@ -420,9 +421,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * 
      * @param status PDF open status
      * 
-     * @retval <pre>ids_err_msg_pdf_encrypted</pre> Encrypted status
-     * @retval <pre>ids_err_msg_pdf_printing_not_allowed</pre> Print restricted status
-     * @retval <pre>ids_err_msg_open_failed</pre> Open failed status
+     * @retval ids_err_msg_pdf_encrypted Encrypted status
+     * @retval ids_err_msg_pdf_printing_not_allowed Print restricted status
+     * @retval ids_err_msg_open_failed Open failed status
      * @retval Empty No error status
      */
     private String getPdfErrorMessage(int status) {
