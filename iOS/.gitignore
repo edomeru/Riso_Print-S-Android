@@ -23,3 +23,6 @@ Pods
 report/
 build/
 result/
+
+# Docs
+doc/
