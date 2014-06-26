@@ -271,6 +271,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             if (v != null) {
                 beginDelete(pj, v, false);
                 pj.restoreState(isCollapsed, mPrinterToDelete, mPrintJobToDelete);
+            } else {
+                pj.restoreState(isCollapsed, mPrinterToDelete, null);
             }
         } else {
             pj.restoreState(isCollapsed, mPrinterToDelete, null);
