@@ -614,6 +614,14 @@ namespace SmartDeviceApp.Controls
                     control.topPageArea.Height = gridLengthCollapsed;
                     control.bottomPageArea.Height = gridLengthFull;
 
+                    control.leftPage2.Visibility = Visibility.Collapsed;
+                    control.leftPageArea2.Width = gridLengthCollapsed;
+
+                    control.rightPageArea2.Width = gridLengthFull;
+                    control.topPage2.Visibility = Visibility.Collapsed;
+                    control.topPageArea2.Height = gridLengthCollapsed;
+                    control.bottomPageArea2.Height = gridLengthFull;
+
                     // Dash lines
                     control.horizontalSeparator.Visibility = Visibility.Collapsed;
                     control.verticalSeparator.Visibility = Visibility.Collapsed;
@@ -634,6 +642,13 @@ namespace SmartDeviceApp.Controls
                     control.topPage.Visibility = Visibility.Collapsed;
                     control.topPageArea.Height = gridLengthCollapsed;
                     control.bottomPageArea.Height = gridLengthFull;
+
+                    control.leftPage2.Visibility = Visibility.Visible;
+                    control.leftPageArea2.Width = gridLengthFull;
+                    control.rightPageArea2.Width = gridLengthFull;
+                    control.topPage2.Visibility = Visibility.Collapsed;
+                    control.topPageArea2.Height = gridLengthCollapsed;
+                    control.bottomPageArea2.Height = gridLengthFull;
 
                     // Dash lines
                     control.horizontalSeparator.Visibility = Visibility.Collapsed;
@@ -658,13 +673,6 @@ namespace SmartDeviceApp.Controls
                 }
             }
         }
-
-
-
-        //private void pageAreaScrollViewer_LayoutUpdated(object sender, object e)
-        //{
-            
-        //}
 
         public Grid DisplayAreaGrid
         {
@@ -725,6 +733,21 @@ namespace SmartDeviceApp.Controls
         {
             get { return TransitionDisplayImage; }
         }
+
+        public Grid PageAreaGrid2
+        {
+            get { return pageAreaGrid2; }
+        }
+
+        //public PageControl LeftPage
+        //{
+        //    get { return leftPage; }
+        //}
+
+        //public PageControl RightPage
+        //{
+        //    get { return rightPage; }
+        //}
 
         private void pageAreaGrid_LayoutUpdated(object sender, object e)
         {

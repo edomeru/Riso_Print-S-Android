@@ -98,6 +98,8 @@ namespace SmartDeviceApp.ViewModels
             SetViewMode(_viewControlViewModel.ViewMode); 
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));
+
+            
         }
 
         public void OnNavigatedTo()
@@ -167,7 +169,6 @@ namespace SmartDeviceApp.ViewModels
                         scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
                             _pageAreaGridMaxWidth / RightPageActualSize.Width);
                         targetSize = RightPageActualSize;
-                        
                         IsDuplex = false;
                         break;
 
@@ -189,6 +190,19 @@ namespace SmartDeviceApp.ViewModels
                 // Resize grid
                 _pageAreaGrid.MaxWidth = targetSize.Width;
                 _pageAreaGrid.MaxHeight = targetSize.Height;
+
+                if (PageCurlControl != null)
+                {
+                    PageCurlControl.PageAreaGrid.MaxWidth = targetSize.Width;
+                    PageCurlControl.PageAreaGrid.MaxHeight = targetSize.Height;
+
+                    PageCurlControl.Width = pageAreaGridSize.Width;
+                    PageCurlControl.Height = pageAreaGridSize.Height;
+
+                    PageCurlControl.PageAreaGrid.Width = pageAreaGridSize.Width;
+                    PageCurlControl.PageAreaGrid.Height = pageAreaGridSize.Height;
+                }
+                
 
                 //((Grid)DisplayAreaGrid).MaxWidth = pageAreaGridSize.Width;
                 //((Grid)DisplayAreaGrid).MaxHeight = pageAreaGridSize.Height;
@@ -229,13 +243,6 @@ namespace SmartDeviceApp.ViewModels
 
                 // Note: If view and page areas are not resized or PageViewMode is not changed, 
                 // no need to reset gestureController
-                
-                
-                //if (DisplayAreaGrid != null)
-                //{
-                //    ((Grid)DisplayAreaGrid).Height = targetSize.Height;
-                //    ((Grid)DisplayAreaGrid).Width = targetSize.Width;
-                //}
 
                 if (scalingFactor != _scalingFactor || PageViewMode != _previousPageViewMode)
                 {
@@ -246,7 +253,7 @@ namespace SmartDeviceApp.ViewModels
                         _gestureController = null;
                     }
                     _gestureController = new PreviewGestureController(ManipulationGrid, _controlReference,
-                           targetSize, scalingFactor, swipeRight, swipeLeft, DisplayAreaGrid, TransitionGrid, ManipulationGrid, TwoPageControl, RightPageActualSize.Width);
+                           targetSize, scalingFactor, swipeRight, swipeLeft, DisplayAreaGrid, TransitionGrid, ManipulationGrid, TwoPageControl, RightPageActualSize.Width, PageCurlControl);
                     _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
                         swipeTop, swipeBottom);
                 }
@@ -375,13 +382,13 @@ namespace SmartDeviceApp.ViewModels
                     _isLoadLeftBackPageActive = value;
                     RaisePropertyChanged("IsLoadLeftBackPageActive");
                     
-                    //if (_isLoadLeftBackPageActive && !value) //(true amd false)
-                    //{
+                    if (_isLoadLeftBackPageActive && !value) //(true amd false)
+                    {
                         //tell two page control to grab screen
                         //Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
                         //if (_gestureController != null)
                             //_gestureController.getScreenShot();
-                    //}
+                    }
 
                     _isLoadLeftBackPageActive = value;
                     RaisePropertyChanged("IsLoadPageActive");
@@ -500,6 +507,8 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _rightBackPageImage = value;
                     RaisePropertyChanged("RightBackPageImage");
+                    if (PageCurlControl != null)
+                    PageCurlControl.RightBackPageImage = value;
                 }
             }
         }
@@ -513,6 +522,8 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _leftBackPageImage = value;
                     RaisePropertyChanged("LeftBackPageImage");
+                    if (PageCurlControl != null)
+                    PageCurlControl.LeftBackPageImage = value;
                 }
             }
         }
@@ -640,6 +651,13 @@ namespace SmartDeviceApp.ViewModels
         }
 
         public TwoPageControl TwoPageControl
+        {
+            get;
+            set;
+        }
+
+        //private PageCurlControl pageCurlControl;
+        public PageCurlControl PageCurlControl
         {
             get;
             set;

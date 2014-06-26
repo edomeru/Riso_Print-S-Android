@@ -66,6 +66,7 @@ namespace SmartDeviceApp.Controllers
         private Grid _manipulationGrid;
         private TwoPageControl _twoPageControl;
         private double _rightPageWidth;
+        private PageCurlControl _pageCurlControl;
 
         //public delegate void ImageUpdateHandler();
         //private ImageUpdateHandler _imageUpdateHandler;
@@ -73,7 +74,7 @@ namespace SmartDeviceApp.Controllers
         public PreviewGestureController(UIElement control, UIElement controlReference, Size targetSize,
             double originalScale, SwipeRightDelegate swipeRightHandler, SwipeLeftDelegate swipeLeftHandler, 
             UIElement displayArea, UIElement transitionGrid, UIElement manipulationGrid, TwoPageControl twoPageControl,
-            double rightPageWidth)
+            double rightPageWidth, PageCurlControl pageCurlControl)
         {
             _control = control;
             _controlReference = controlReference;
@@ -87,9 +88,12 @@ namespace SmartDeviceApp.Controllers
             _manipulationGrid = (Grid)manipulationGrid;
             _twoPageControl = twoPageControl;
             _rightPageWidth = rightPageWidth;
+            _pageCurlControl = pageCurlControl;
+
             Initialize();
             _currentZoomLength = _targetSize.Width;
             _maxZoomLength = _targetSize.Width * MAX_ZOOM_LEVEL_FACTOR;
+
 
             ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
         }
@@ -212,6 +216,7 @@ namespace SmartDeviceApp.Controllers
 
             //_transitionGrid.RenderTransform = _cumulativeTransform;
             _control.RenderTransform = _cumulativeTransform;
+            //_pageCurlControl.RenderTransform = _cumulativeTransform;
             //_displyArea.RenderTransform = _cumulativeTransform;
             //_manipulationGrid.RenderTransform = _cumulativeTransform;
 
@@ -237,7 +242,9 @@ namespace SmartDeviceApp.Controllers
         private bool _multipleFingersDetected = false;
         void OnPointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
+
             getScreenShot();
+            
             _gestureRecognizer.ProcessDownEvent(args.GetCurrentPoint(_controlReference));
             pointerCount++;
 
@@ -286,6 +293,7 @@ namespace SmartDeviceApp.Controllers
 
         private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
         {
+            _twoPageControl.PageAreaGrid.Opacity = 1;
             _startPoint = e.Position;
             if (!_multipleFingersDetected)
                 ManipulationGrid_ManipulationStarted(e);
@@ -539,9 +547,12 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
             
+            //
+            
+            //getScreenShot();
             manipulationStartPosition = e.Position;
             isNextPageCalled = false;
-
+            
             _backCurl = false;
             var startOfBackCurlPosition = 0.0;
             if (_twoPageControl.PageAreaGrid.ActualWidth > _rightPageWidth)
@@ -643,6 +654,26 @@ namespace SmartDeviceApp.Controllers
 
                 System.Diagnostics.Debug.WriteLine("w: {0} h: {1} cx: {2} cy: {3} angle: {4} rotationCenterX: {5} rotationCenterY: {6}", w, h, cx, cy, angle, rotationCenterX, rotationCenterY);
 
+                System.Diagnostics.Debug.WriteLine("Page2ClipTranslateTransform.X: {0} \nPage2ClipTranslateTransform.Y: {1} \nPage2ClipRotateTransform.CenterX: {2} \nPage2ClipRotateTransform.CenterY: {3} \nPage2ClipRotateTransform.Angle: {4}",
+                    _twoPageControl.Page2TranslateTransform.X,
+                    _twoPageControl.Page2TranslateTransform.Y,
+                    _twoPageControl.Page2RotateTransform.CenterX,
+                    _twoPageControl.Page2RotateTransform.CenterY,
+                    _twoPageControl.Page2RotateTransform.Angle);
+
+                System.Diagnostics.Debug.WriteLine("TransitionGridClipTranslateTransform.X: {0} \nTransitionGridClipTranslateTransform.Y: {1} \nTransitionGridClipRotateTransform.CenterX: {2} \nTransitionGridClipRotateTransform.CenterY: {3} \nTransitionGridClipRotateTransform.Angle: {4}",
+                    _twoPageControl.TransitionTranslateTransform.X,
+                    _twoPageControl.TransitionTranslateTransform.Y,
+                    _twoPageControl.TransitionRotateTransform.CenterX,
+                    _twoPageControl.TransitionRotateTransform.CenterY,
+                    _twoPageControl.TransitionRotateTransform.Angle);
+
+                System.Diagnostics.Debug.WriteLine("TransitionGridContainerTransform.TranslateX: {0} \nTransitionGridContainerTransform.CenterX: {1} \nTransitionGridClipRotateTransform.Centery: {2} \nTransitionGridContainerTransform.Rotation: {3}",
+                    _twoPageControl.TransitionContainerTransform.TranslateX,
+                    _twoPageControl.TransitionContainerTransform.CenterX,
+                    _twoPageControl.TransitionContainerTransform.CenterY,
+                    _twoPageControl.TransitionContainerTransform.Rotation);
+
         }
 
         private void ManipulationGrid_ManipulationCompleted(ManipulationCompletedEventArgs e)
@@ -679,13 +710,14 @@ namespace SmartDeviceApp.Controllers
             }
 
             var sb = new Storyboard();
+            sb.Completed += StoryBoardAnimationCompleted;
             if (!_backCurl)
             {
                 var to = 0;
                 if (_willContinue)
                 {
                     if (IsDuplex)
-                        to = (int)(w / 2);
+                        to = (int)(0);
                     else
                         to = (int)-w;
                     System.Diagnostics.Debug.WriteLine("Will continue");
@@ -701,7 +733,7 @@ namespace SmartDeviceApp.Controllers
                 if (_willContinue)
                 {
                     if (IsDuplex)
-                        to = (int)(-80000 + (w / 2));
+                        to = (int)(-80000 + (w));
                     else
                         to = (int)(-80000 + (w));
                 }
@@ -727,8 +759,9 @@ namespace SmartDeviceApp.Controllers
                 AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "CenterX", 0);
                 AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "Rotation", 0);
                 sb.Begin();
-                if (!IsDuplex)
-                    _transitionGrid.Opacity = 0;
+                //if (!IsDuplex)
+                _transitionGrid.Opacity = 0;
+
             }
             else
             {
@@ -755,6 +788,18 @@ namespace SmartDeviceApp.Controllers
                 AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "Rotation", 0);
                 sb.Begin();
             }
+            
+        }
+
+        private void StoryBoardAnimationCompleted(object sender, object e)
+        {
+            //reset
+            _twoPageControl.Page2TranslateTransform.X = 0;
+            //set image of display
+            var viewModel = new ViewModelLocator().PrintPreviewViewModel;
+            viewModel.RightPageImage = viewModel.RightBackPageImage;
+            //
+            _twoPageControl.PageAreaGrid.Opacity = 0.01;
         }
 
         private static void AddAnimation(Storyboard sb, DependencyObject dob, string path, double to)
@@ -777,9 +822,9 @@ namespace SmartDeviceApp.Controllers
         public async void getScreenShot()
         {
             var rtb = new RenderTargetBitmap();
-            await rtb.RenderAsync(_twoPageControl.PageAreaGrid);
+            await rtb.RenderAsync(_twoPageControl.PageAreaGrid2);
             _twoPageControl.Image.Source = rtb;
-            await Task.Delay(40000);
+            await Task.Delay(80000);
         }
 
         private bool isCancellationRequested;
