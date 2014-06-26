@@ -80,6 +80,7 @@ namespace SmartDeviceApp.ViewModels
         private void BackToPrintSettingsExecute()
         {
             new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
+            PrintSetting = null; // Reset PrintSetting on back so that bindings will refresh on re-open
         }
     }
 
