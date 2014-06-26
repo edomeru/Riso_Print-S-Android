@@ -8,8 +8,9 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
-        android:orientation="horizontal" 
-        android:background="@drawable/selector_printersearch_container">
+        android:background="@drawable/selector_printersearch_container"
+        android:duplicateParentState="true"
+        android:orientation="horizontal" >
 
         <LinearLayout
             android:layout_width="wrap_content"
