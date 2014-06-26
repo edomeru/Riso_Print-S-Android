@@ -14,6 +14,8 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 /**
+ * @class PrintersContainerView
+ * 
  * @brief LinearLayout with custom states
  */
 public class PrintersContainerView extends LinearLayout {

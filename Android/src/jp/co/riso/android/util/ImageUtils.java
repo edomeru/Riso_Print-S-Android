@@ -16,6 +16,11 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+/**
+ * @class ImageUtils
+ * 
+ * @brief Utility class for image operations
+ */
 public final class ImageUtils {
     
     /**

@@ -15,6 +15,8 @@ import android.text.InputFilter;
 import android.text.Spanned;
 
 /**
+ * @class IpAddressFilter
+ * 
  * @brief EditText filter for IP Address characters
  */
 public class IpAddressFilter implements InputFilter {

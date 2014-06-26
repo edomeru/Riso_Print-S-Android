@@ -50,6 +50,11 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+/**
+ * @class PrintersScreenTabletView
+ * 
+ * @brief View for Printers Screen of tablet.
+ */
 public class PrintersScreenTabletView extends ViewGroup implements View.OnClickListener, OnCheckedChangeListener, Callback, OnItemSelectedListener {
     private static final int MSG_ADD_PRINTER = 0x01;
     private static final int MSG_SET_UPDATE_VIEWS = 0x02;
@@ -620,6 +625,8 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     // ================================================================================
     
     /**
+     * @interface PrintersViewCallback
+     * 
      * @brief Printers Screen Interface.
      */
     public interface PrintersViewCallback {
@@ -636,6 +643,8 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     // ================================================================================
     
     /**
+     * @class ViewHolder
+     * 
      * @brief Printers Screen view holder for tablet.
      */
     public class ViewHolder {

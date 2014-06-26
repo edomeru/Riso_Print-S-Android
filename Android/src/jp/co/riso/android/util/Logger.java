@@ -25,16 +25,30 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+/**
+ * @class Logger
+ * 
+ * @brief Utility class for logging operations
+ */
 public class Logger {
+    /// Log level to disable logs
     public static final int LOGLEVEL_NONE = Log.ASSERT + 1;
+    /// Log level to enable logs for assert
     public static final int LOGLEVEL_ASSERT = Log.ASSERT;
+    /// Log level to enable logs for error
     public static final int LOGLEVEL_ERROR = Log.ERROR;
+    /// Log level to enable logs for warning
     public static final int LOGLEVEL_WARN = Log.WARN;
+    /// Log level to enable logs for info
     public static final int LOGLEVEL_INFO = Log.INFO;
+    /// Log level to enable logs for debug
     public static final int LOGLEVEL_DEBUG = Log.DEBUG;
+    /// Log level to enable logs for verbose
     public static final int LOGLEVEL_VERBOSE= Log.VERBOSE;
     
+    /// Log directory
     public static final String CONST_LOGS_DIR = "logs";
+    /// Log filename
     public static final String CONST_TXT_FILENAME = "log.txt";
     
     private static int sLogLevel = LOGLEVEL_NONE;
@@ -45,6 +59,13 @@ public class Logger {
     private static HashMap<String, Long> sTimeLog = new HashMap<String, Long>();
     private static HashMap<String, Float> sMemoryLog = new HashMap<String, Float>();
     
+    /**
+     * @brief Initialize log.
+     * 
+     * @param logLevel Log level
+     * @param perfLogs Enable log to logger (logcat)
+     * @param perfLogsToFile Enable log to file 
+     */
     public static void initialize(int logLevel, boolean perfLogs, boolean perfLogsToFile) {
         sLogLevel = logLevel;
         sPerfLogs = perfLogs;
@@ -243,6 +264,7 @@ public class Logger {
      * @brief Gets the entire log string from file.
      * 
      * @param context Valid context
+     * 
      * @return String containing the log
      */
     public static String getLogString(Context context) {
@@ -324,6 +346,8 @@ public class Logger {
 
     /**
      * @brief Runs a background task which deletes the application logs.
+     * 
+     * @param context Application context
      */
     public static void runDeleteTask(Context context) {
         if (context == null) {
@@ -336,11 +360,22 @@ public class Logger {
         task.execute(context);
     }
     
+    /**
+     * @class DeleteTask
+     * 
+     * @brief Async Task for deleting a directory
+     */
     public class DeleteTask extends AsyncTask<Context, Void, Void> {
         int count = 0;
         double time = 0;
         
-        //http://stackoverflow.com/questions/5701586/delete-a-folder-on-sd-card
+        /**
+         * @brief Delete specified directory.
+         * 
+         * Based on: http://stackoverflow.com/questions/5701586/delete-a-folder-on-sd-card 
+         * 
+         * @param path File object of the Directory path to delete
+         */
         public boolean deleteDirectory(File path) {
             if (path.exists()) {
                 File[] files = path.listFiles();
@@ -358,9 +393,12 @@ public class Logger {
             return true;
         }
         
-        /*
-         * Base on: http://stackoverflow.com/questions/5701586/delete-a-folder-on-sd-card
-         * Deletes the sub folders inside the AppLogDirectory of parapara
+        /**
+         * @brief Deletes the sub folders inside the AppLogDirectory.
+         * 
+         * Based on: http://stackoverflow.com/questions/5701586/delete-a-folder-on-sd-card
+         * 
+         * @param path File object of the Directory path to delete
          */
         public boolean deleteAppLogDirectory(File path) {
             if (path.exists()) {

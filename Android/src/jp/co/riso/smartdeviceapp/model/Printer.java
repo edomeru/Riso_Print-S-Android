@@ -12,6 +12,11 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * @class Printer
+ * 
+ * @brief Class representation of printer object
+ */
 public class Printer implements Parcelable {
     private String mName = null;
     private String mIpAddress = null;
@@ -20,8 +25,12 @@ public class Printer implements Parcelable {
     
     private Config mConfig = null;
     
+    /**
+     * @brief Printer port setting.
+     */
     public enum PortSetting {
-        LPR, RAW;
+        LPR, ///< LPR port
+        RAW ///< Raw port
     }
     
     /**
@@ -101,7 +110,7 @@ public class Printer implements Parcelable {
     /**
      * @brief Obtain the Printer ID.
      * 
-     * @return the ID (mId)
+     * @return The printer ID (mId)
      */
     public int getId() {
         return mId;
@@ -193,6 +202,11 @@ public class Printer implements Parcelable {
     // Internal Class - Printer Config
     // ================================================================================
     
+    /**
+     * @class Config
+     * 
+     * @brief Configuration class for printer capabilities
+     */
     public class Config {
         private boolean mLprAvailable;
         private boolean mRawAvailable;

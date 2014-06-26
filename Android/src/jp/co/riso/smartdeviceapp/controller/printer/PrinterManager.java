@@ -31,7 +31,13 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
 
+/**
+ * @class PrinterManager
+ * 
+ * @brief Manager responsible for Printer management
+ */
 public class PrinterManager implements SNMPManagerCallback {
+    /// Printer ID for invalid printer
     public static final int EMPTY_ID = -1;
     private static PrinterManager sSharedMngr = null;
     private List<Printer> mPrinterList = null;
@@ -350,7 +356,7 @@ public class PrinterManager implements SNMPManagerCallback {
     /**
      * @brief Obtains the printer ID of the default printer.
      * 
-     * @retval mDefaultPrintId default Printer ID
+     * @return Default Printer ID
      * @retval EMPTY_ID No default printer
      */
     public int getDefaultPrinter() {
@@ -484,6 +490,8 @@ public class PrinterManager implements SNMPManagerCallback {
      * @brief Set Printer Search Screen Callback. <br>
      *
      * Set the Callback for Adding Printer to the Searched Printer List during Device Discovery/Manual search.
+     * 
+     * @param printerSearchCallback Printer search callback function
      */
     public void setPrinterSearchCallback(PrinterSearchCallback printerSearchCallback) {
         mPrinterSearchCallback = new WeakReference<PrinterSearchCallback>(printerSearchCallback);
@@ -493,6 +501,8 @@ public class PrinterManager implements SNMPManagerCallback {
      * @brief Set Printer Screen Callback. <br>
      *
      * Sets the Saved Printer List/View Callback for adding printers.
+     * 
+     * @param printersCallback Printers screen callback function
      */
     public void setPrintersCallback(PrintersCallback printersCallback) {
         mPrintersCallback = new WeakReference<PrintersCallback>(printersCallback);
@@ -502,6 +512,8 @@ public class PrinterManager implements SNMPManagerCallback {
      * @brief Set Update Status Callback. <br>
      *
      * Set the Callback for Updating Printer Status. Changes status from online to off-line or vice-versa.
+     * 
+     * @param updateStatusCallback Update online status callback function
      */
     public void setUpdateStatusCallback(UpdateStatusCallback updateStatusCallback) {
         mUpdateStatusCallback = new WeakReference<UpdateStatusCallback>(updateStatusCallback);
@@ -520,6 +532,8 @@ public class PrinterManager implements SNMPManagerCallback {
      * @brief Check the Device status. <br>
      *
      * Checks the Device if it is online. This function should not be called from the main thread.
+     * 
+     * @param ipAddress IP Address
      * 
      * @retval true Device is online
      * @retval false Device is off-line
@@ -738,6 +752,8 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
+     * @interface PrinterSearchCallback
+     * 
      * @brief Printers Search Screen Interface. <br>
      *
      * Interface for Printers Search Screen. Used for updating view in the Printers Search Screen.
@@ -765,6 +781,8 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
+     * @interface PrintersCallback
+     * 
      * @brief Printers Screen Interface. <br>
      *
      * Interface for Printers Screen. Used for updating view in the Printers Screen.
@@ -784,6 +802,8 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
+     * @interface UpdateOnlineStatusTask
+     * 
      * @brief Update Online Status Interface. <br>
      *
      * Interface for updating the online status.
@@ -800,6 +820,8 @@ public class PrinterManager implements SNMPManagerCallback {
     // ================================================================================
     
     /**
+     * @class UpdateOnlineStatusTask
+     * 
      * @brief Update Online Status Task. <br>
      *
      * AsyncTask that updates changes the online status image.

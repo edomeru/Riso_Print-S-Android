@@ -23,6 +23,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
 
+/**
+ * @class PrintersListView
+ * 
+ * @brief ListView for Printers Screen having custom states.
+ */
 public class PrintersListView extends ListView implements Callback {
     private static final int SWIPE_THRESHOLD = 50;
     private static final int MSG_START_DELETE_MODE = 0x1;
@@ -206,6 +211,7 @@ public class PrintersListView extends ListView implements Callback {
      * @brief Checks if swipe was performed.
      * 
      * @param ev Event object
+     * 
      * @retval true Action is swipe to left
      * @retval false Action is not swipe to left
      */
@@ -252,6 +258,7 @@ public class PrintersListView extends ListView implements Callback {
      * @brief Process swipe event.
      * 
      * @param ev Event object
+     * 
      * @retval true Action is swipe to left
      * @retval false Action is not swipe to left
      */

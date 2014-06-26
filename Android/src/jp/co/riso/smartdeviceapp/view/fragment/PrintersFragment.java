@@ -43,6 +43,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * @class PrintersFragment
+ * 
+ * @brief Fragment for Printers Screen
+ */
 public class PrintersFragment extends BaseFragment implements PrintersCallback, PauseableHandlerCallback, PrintersViewCallback, ConfirmDialogListener,
         PrinterArrayAdapterInterface {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
@@ -375,7 +380,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * @brief Dialog which is displayed during failed DB access.
+     * @brief Display dialog during failed database access.
      */
     private void dialogErrCb() {
         String title = getResources().getString(R.string.ids_lbl_printers);

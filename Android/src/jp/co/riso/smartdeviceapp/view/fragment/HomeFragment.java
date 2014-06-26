@@ -17,15 +17,27 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
 
+/**
+ * @class HomeFragment
+ * 
+ * @brief Web fragment class for Home Screen.
+ */
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
+    /// Print Preview Screen
     public static final int STATE_PRINTPREVIEW = 0;
+    /// Printers Screen
     public static final int STATE_PRINTERS = 1;
+    /// Print Jobs Screen
     public static final int STATE_PRINTJOBS = 2;
+    /// Settings Screen
     public static final int STATE_SETTINGS = 3;
+    /// Help Screen
     public static final int STATE_HELP = 4;
+    /// Legal Screen
     public static final int STATE_LEGAL = 5;
     
+    /// Home Fragment key state
     public static final String KEY_STATE = "HomeFragment_State";
     
     public static int MENU_ITEMS[] = {

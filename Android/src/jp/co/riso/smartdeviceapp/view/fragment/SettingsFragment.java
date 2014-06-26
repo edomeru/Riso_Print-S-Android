@@ -26,6 +26,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+/**
+ * @class SettingsFragment
+ * 
+ * @brief Fragment for Settings Screen
+ */
 public class SettingsFragment extends BaseFragment {
     
     @Override
@@ -109,6 +114,11 @@ public class SettingsFragment extends BaseFragment {
     // Internal Classes
     // ================================================================================
     
+    /**
+     * @class SharedPreferenceTextWatcher
+     * 
+     * @brief Class for monitoring changes in text values
+     */
     private class SharedPreferenceTextWatcher implements TextWatcher {
         private Context mContext;
         private String mPrefKey;

@@ -40,11 +40,15 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+/**
+ * @class PrinterInfo
+ * 
+ * @brief Fragment for Printer Info Screen
+ */
 public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener, OnItemSelectedListener, PauseableHandlerCallback {
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
-    public static final String KEY_PRINTER_INFO = "fragment_printer_info";
-    public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
-    public static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
+    private static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
+    private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
     private static final String KEY_PRINTER_INFO_ERR_DIALOG = "printer_info_err_dialog";

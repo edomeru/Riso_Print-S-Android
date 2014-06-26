@@ -23,6 +23,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * @class PrinterSearchAdapter
+ * 
+ * @brief Array Adapter used for Printers Search Screen
+ */
 public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {
     private PrinterSearchAdapterInterface mSearchAdapterInterface = null;
     private int layoutId;
@@ -107,6 +112,8 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     
     /**
      * @brief Set Printer Search Screen Adapter Interface.
+     * 
+     * @param searchAdapterInterface Printer search adapter interface
      */
     public void setSearchAdapterInterface(PrinterSearchAdapterInterface searchAdapterInterface) {
         mSearchAdapterInterface = searchAdapterInterface;
@@ -117,6 +124,8 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // ================================================================================
     
     /**
+     * @class ViewHolder
+     * 
      * @brief Printer Search Screen view holder.
      */
     public class ViewHolder {
@@ -130,6 +139,8 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // ================================================================================
     
     /**
+     * @interface PrinterSearchAdapterInterface
+     * 
      * @brief Printer Search Screen interface.
      */
     public interface PrinterSearchAdapterInterface {
@@ -139,6 +150,9 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
          * Callback called to add a searched printer to the Printers Screen.
          * 
          * @param printer Searched printer
+         * 
+         * @retval 0 Success
+         * @retval -1 Error
          */
         public int onAddPrinter(Printer printer);
     }
