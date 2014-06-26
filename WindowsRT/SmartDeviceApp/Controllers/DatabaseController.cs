@@ -228,20 +228,6 @@ namespace SmartDeviceApp.Controllers
 
             try
             {
-                /*
-                int count = await _dbConnection.Table<DefaultPrinter>().CountAsync();
-                if (count > 0)
-                {
-                    DefaultPrinter dp = await _dbConnection.Table<DefaultPrinter>().FirstAsync();
-
-                    if (printer.Id == dp.PrinterId)
-                    {
-                        //delete default.
-                        await _dbConnection.DeleteAsync(dp);
-                    }
-                }
-                 * */
-
                 await _dbConnection.DeleteAsync(printer);
             }
             catch
