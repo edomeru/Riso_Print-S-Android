@@ -287,7 +287,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             msg = getResources().getString(R.string.ids_err_msg_db_failure);
             info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));
         } else {
-            msg = printer.getName() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
+            msg = getResources().getString(R.string.ids_info_msg_printer_add_successful);
             info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
             info.setTargetFragment(this, 0);
         }

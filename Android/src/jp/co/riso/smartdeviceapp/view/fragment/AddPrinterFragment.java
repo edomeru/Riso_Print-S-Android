@@ -155,13 +155,8 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             return;
         }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
-        String msg = null;
-        
-        if (printer.getName().isEmpty()) {
-            msg = getResources().getString(R.string.ids_lbl_no_name) + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
-        } else {
-            msg = printer.getName() + " " + getResources().getString(R.string.ids_info_msg_printer_add_successful);
-        }     
+        String msg = getResources().getString(R.string.ids_info_msg_printer_add_successful);
+
         ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
         info.setTargetFragment(this, 0);
         
