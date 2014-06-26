@@ -14,121 +14,178 @@
 @interface PreviewView ()
 
 /**
- Container of the preview page
+ * Container of the preview page.
+ * This view will be resized using the orientation, aspectRatio, scale and position values.
+ *
+ * @see orientation
+ * @see aspectRatio
+ * @see scale
+ * @see position
  */
 @property (nonatomic, strong) UIView *contentView;
 
 /**
- Orientation mode
+ * Orientation mode.
+ * - kPreviewOrientationPortrait: The page will be displayed in Portrait mode.
+ * The page will adjust its size according to its height.
+ * - kPreviewOrientationLandscape: The page will be displayed in Landscape mode.
+ * The page will adjust its size according to its width.
+ *
+ * @see aspectRatio
  */
 @property (nonatomic) kPreviewViewOrientation orientation;
 
 /**
- Aspect ratio (W:H)
+ * Aspect ratio (W:H).
+ * Used in computing the length of the page's sides based on the orientation setting.
+ *
+ * @see orientation
  */
 @property (nonatomic) CGFloat aspectRatio;
 
 /**
- Constraint that ensures that the aspect ratio is maintained
+ * Constraint that ensures that the aspect ratio is maintained.
+ *
+ * @see aspectRatio
  */
 @property (nonatomic, weak) NSLayoutConstraint *aspectRatioConstraint;
 
 /**
- Constraint that ensures that the size of the content view is based on the container + scale
+ * Constraint that ensures that the size of the content view is based on the container + scale.
+ *
+ * @see scale
  */
 @property (nonatomic, weak) NSLayoutConstraint *sizeConstraint;
 
 /**
- Constraint that ensure that the content view is centered horizontally inside the container + pan value
+ * Constraint that ensure that the content view is centered horizontally inside the container + pan value.
+ *
+ * @see position
  */
 @property (nonatomic, weak) NSLayoutConstraint *xAlignConstraint;
 
 /**
- Constraint that ensure that the content view is centered vertically inside the container + pan value
+ * Constraint that ensure that the content view is centered vertically inside the container + pan value.
+ *
+ * @see position
  */
 @property (nonatomic, weak) NSLayoutConstraint *yAlignConstraint;
 
 /**
- Constraint that ensures that the width of the content view is not greater than the container
+ * Constraint that ensures that the width of the content view is not greater than the container.
+ * This constraint is only applied when the contentView is not scaled.
  */
 @property (nonatomic, weak) NSLayoutConstraint *maxWidthConstraint;
 
 /**
- Constraint that ensures that the height of the content view is not greater than the container
+ * Constraint that ensures that the height of the content view is not greater than the container.
+ * This constraint is only applied when the contentView is not scaled.
  */
 @property (nonatomic, weak) NSLayoutConstraint *maxHeightConstraint;
 
 /**
- Pinch gesture recognizer for scaling
+ * Pinch gesture recognizer for scaling.
  */
 @property (nonatomic, strong) UIPinchGestureRecognizer *pincher;
 
 /**
- Pan gesture recognizer for panning
+ * Pan gesture recognizer for panning.
  */
 @property (nonatomic, strong) UIPanGestureRecognizer *panner;
 
 /**
- Double tap gesture recognizer for zooming out
+ * Double tap gesture recognizer for zooming out.
  */
 @property (nonatomic, strong) UITapGestureRecognizer *tapper;
 
 /**
- Current scale
+ * Current scale.
+ * Used in sizeConstraint. Allowed values are determined by minScale and maxScale.
+ *
+ * @see sizeConstraint
+ * @see maxScale
+ * @see minScale
  */
 @property (nonatomic) CGFloat scale;
 
 /**
- Current position
+ * Current position.
+ * Used in xAlignConstraint and yAlignConstraint
+ *
+ * @see xAlignConstraint
+ * @see yAlignConstraint
  */
 @property (nonatomic) CGPoint position;
 
 /**
- Center point of the pinch gesture
+ * Center point of the pinch gesture.
+ * Used for determing the center of zooming.
  */
 @property (nonatomic) CGPoint zoomAnchor;
 
 /**
- Indicates whether or not the content view is currently being scaled
+ * Indicates whether or not the content view is currently being scaled.
  */
 @property (nonatomic) BOOL zooming;
 
+/**
+ * Size difference of the container and contentView.
+ */
 @property (nonatomic) CGFloat sizeOffset;
 
 /**
- Initializes the content view and property values
+ * Initializes the content view and property values.
  */
 - (void)initialize;
 
 /**
- Add page content view to the content view
+ * Adds the pageContentView view to the contentView.
+ *
+ * @see contentView
  */
 - (void)setPageContentView:(UIView *)pageContentView;
 
 /**
- Snap dimensions and position to nearest valid value
+ * Snaps dimensions and position to nearest valid value.
+ * Used in enforcing the minScale, maxScale and center-aligning the contentView.
  */
 - (void)snap;
 
 /**
- Enable scale to fit constraints
+ * Enables scale to fit constraints.
+ * Enables maxWidthConstraint and maxHeightConstraint.
+ *
+ * @see maxWidthConstraint
+ * @see maxHeightConstraint
  */
 - (void)enableMaxDimensionRules;
 
 /*
- Disable scale to fit constraints
+ * Disables scale to fit constraints.
+ * Disables maxWidthConstraint and maxHeightConstraint.
+ *
+ * @see maxWidthConstraint
+ * @see maxHeightConstraint
  */
 - (void)disableMaxDimensionRules;
 
 /**
- Action when content view is pinched/being pinched
+ * Handles pinch gesture.
+ * Performs zooming action.
  */
 - (IBAction)pinchAction:(id)sender;
 
 /**
- Action when content view is panned/being panned
+ * Handles pan gesture.
+ * Performs panning action.
  */
 - (IBAction)panAction:(id)sender;
+
+/**
+ * Handles double-tap gesture.
+ * Performs zooming-out action (scale of 1.0)
+ */
+- (IBAction)tapAction:(id)sender;
 
 @end
 
