@@ -79,6 +79,8 @@ typedef enum
  *
  * @see orientation
  * @see aspectRatio
+ * @param orientation Orientation of the view.
+ * @param aspectRatio Aspect Ratio of the view (W:H).
  */
 - (void)setPreviewWithOrientation:(kPreviewViewOrientation)orientation aspectRatio:(CGFloat)ratio;
 @end
@@ -93,6 +95,9 @@ typedef enum
 /**
  * Notifies that the zoom level has changed
  * Allows the delegate to change the behavior of the PreviewView when the page is scaled.
+ *
+ * @param previewView PreviewView that triggered the event.
+ * @param zoomed Whether or not the PreviewView is zoomed.
  */
 - (void)previewView:(PreviewView *) previewView didChangeZoomMode:(BOOL)zoomed;
 @end
