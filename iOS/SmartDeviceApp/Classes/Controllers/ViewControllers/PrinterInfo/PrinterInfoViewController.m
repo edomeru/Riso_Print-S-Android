@@ -15,15 +15,82 @@
 #import "AlertHelper.h"
 
 @interface PrinterInfoViewController ()
+
+/**
+ * Reference to the label displaying the printer's name.
+ */
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
+
+/**
+ * Reference to the label displaying the printer's IP address.
+ */
 @property (weak, nonatomic) IBOutlet UILabel *ipAddress;
+
+/**
+ * Reference to the "Set as Default Printer" switch.
+ * If this is the default printer, the {@link defaultSetIcon} is displayed instead.
+ */
 @property (weak, nonatomic) IBOutlet UISwitch *defaultPrinterSwitch;
+
+/**
+ * Reference to the icon indicating that this printer is the default printer.
+ * If this is not the default printer, the {@link defaultPrinterSwitch} is displayed instead.
+ */
 @property (weak, nonatomic) IBOutlet UIImageView *defaultSetIcon;
+
+/**
+ * Reference to the port selection switch.
+ */
 @property (weak, nonatomic) IBOutlet UISegmentedControl *portSelection;
+
+/**
+ * Stores the previous state of {@link defaultPrinterSwitch} (on/off).
+ */
 @property (assign, nonatomic) BOOL switchPreviousState;
 
+/**
+ * Reference to the Printer object being displayed.
+ */
 @property (weak, nonatomic) Printer* printer;
+
+/**
+ * Reference to the PrinterManager singleton.
+ */
 @property (weak, nonatomic) PrinterManager *printerManager;
+
+/**
+ * Responds to the "Set as Default Printer" switch action.
+ * If the switch is set to on, updates the Printer object to be set
+ * as the default printer (using PrinterManager), then
+ * updates the display ({@link hideDefaultSwitch}).
+ *
+ * @param sender the switch object
+ */
+- (IBAction)defaultPrinterSwitchAction:(id)sender;
+
+/**
+ * Responds to the default print settings button press.
+ * Displays the "Default Print Settings" screen.
+ *
+ * @param sender the button object
+ */
+- (IBAction)printSettingsAction:(id)sender;
+
+/**
+ * Responds to the printer port selection action.
+ * Updates the display then updates the printer object (using PrinterManager).
+ *
+ * @param sender the port selection object
+ */
+- (IBAction)selectPortAction:(id)sender;
+
+/**
+ * Toggles the display of the {@link defaultSetIcon} and the {@link defaultPrinterSwitch} views.
+ *
+ * @param hidden if YES, hides {@link defaultPrinterSwitch} then shows {@link defaultSetIcon}\n
+ *               if NO, hides {@link defaultSetIcon} then shows {@link defaultPrinterSwitch}
+ */
+- (void)hideDefaultSwitch:(BOOL)hidden;
 
 @end
 

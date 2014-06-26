@@ -17,61 +17,91 @@
 
 #pragma mark - Data Properties
 
-/** Handler for the Printer data. */
+/**
+ * Reference to the PrinterManager singleton.
+ */
 @property (strong, nonatomic) PrinterManager* printerManager;
 
-/** Flag that will be set to YES when at least one successful printer was added. */
+/**
+ * Flag that will be set to YES when a printer is successfully added.
+ */
 @property (readwrite, assign, nonatomic) BOOL hasAddedPrinters;
 
 #pragma mark - UI Properties
 
+/**
+ * Reference to the animated progress indicator.
+ */
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* progressIndicator;
 
-/** Input TextField for the IP Address. */
+/** 
+ * Reference to the input textField for the IP address.
+ */
 @property (weak, nonatomic) IBOutlet UITextField *textIP;
 
-/** Save Button in the Header. */
+/** 
+ * Reference to the save (+) button.
+ */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
 
+/**
+ * Flag that will be set to YES when the device is a tablet.
+ */
 @property (assign, nonatomic) BOOL isIpad;
 
 #pragma mark - Internal Methods
 
 /**
- Called when screen loads.
- Sets-up this controller's properties and views.
+ * Sets-up this controller's properties and views.
  */
 - (void)setupScreen;
 
 /**
- Called to close the Add Printer screen.
+ * Closes the "Add Printer" screen.
  */
 - (void)dismissScreen;
 
 /**
- Tells the currently active TextField to close the keypad/numpad.
+ * Dismisses the keypad.
  */
 - (void)dismissKeypad;
 
+/**
+ * Gets the input IP address then searches the network for the printer.
+ * If the input IP address is invalid or if the device is not connected to a network,
+ * then the search is not started and an error message is displayed instead.\n\n
+ * The results of the search are handled in the PrinterSearchDelegate methods.
+ */
 - (void)savePrinter;
 
 /**
- Adds a full-capability printer (for failed manual snmp search)
- @return YES if successful, NO otherwise.
+ * Sets the properties of the SlidingViewController.
+ */
+- (void)initialize;
+
+/**
+ * Adds a full-capability printer.
+ * This is called when the printer search has failed (printer was not
+ * found or when the device is not connected to a network).
+ * 
+ * @param ipAddress the printer's IP address
+ * @return YES if successful, NO otherwise
  */
 - (BOOL)addFullCapabilityPrinter:(NSString *)ipAddress;
 
 /**
- Unwinds back to the Printers screen.
- Cancels any ongoing search operation.
- This is for the iPhone only.
+ * Responds to pressing the back (<) button in the header (for phones only).
+ * Calls the {@link dismissScreen} method.
+ * 
+ * @param sender the button object
  */
 - (IBAction)onBack:(UIButton*)sender;
 
 /**
- The Printer IP and other details are retrieved from the UI, then
- the printer is searched from the network. If it is available, the
- Printer object is created and stored in the DB.
+ * Responds to pressing the save (+) button.
+ * Calls the {@link savePrinter} method.
+ *
+ * @param sender the button object
  */
 - (IBAction)onSave:(UIButton*)sender;
 

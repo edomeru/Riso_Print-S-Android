@@ -11,6 +11,9 @@
 #import "PrinterCollectionViewCell.h"
 #import "PrinterStatusHelper.h"
 
+/**
+ * Controller for the "Printers" screen (tablet).
+ */
 @interface PrintersIpadViewController : PrintersViewController<UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, PrinterStatusHelperDelegate>
 
 @end

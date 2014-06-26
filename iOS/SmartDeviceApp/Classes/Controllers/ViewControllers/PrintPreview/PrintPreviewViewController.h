@@ -12,6 +12,9 @@
 #import "PreviewView.h"
 #import "RenderCache.h"
 
+/**
+ * Controller for the "Print Preview" screen (phone and tablet).
+ */
 @interface PrintPreviewViewController : UIViewController<UIPageViewControllerDataSource, UIPageViewControllerDelegate, PreviewViewDelegate, PrintDocumentDelegate, PDFRenderOperationDelegate, RenderCacheDelegate>
 
 @end

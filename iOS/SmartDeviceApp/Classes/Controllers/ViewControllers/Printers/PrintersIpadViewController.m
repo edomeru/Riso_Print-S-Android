@@ -30,16 +30,112 @@
 
 #pragma mark - UI Properties
 
+/** 
+ * Reference to the UICollectionView displaying the list of printers.
+ */
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
+
+/**
+ * Spacing for the UICollectionView items in portrait orientation.
+ */
 @property (nonatomic) UIEdgeInsets insetPortrait;
+
+/**
+ * Spacing for the UICollectionView items in landscape orientation.
+ */
 @property (nonatomic) UIEdgeInsets insetLandscape;
+
+/**
+ * Item index of the printer whose default print settings are to be displayed.
+ */
 @property (nonatomic, strong) NSNumber *selectedPrinterIndex;
+
+/**
+ * List of PrinterStatusHelper objects monitoring the online/offline status of each printer.
+ * There is one PrinterStatusHelper for each printer on the list.\n
+ * These helpers are allocated during the initialization of the screen
+ * and are deallocated when the screen is unloaded.
+ */
 @property (nonatomic, strong) NSMutableArray *statusHelpers;
+
+/**
+ * List of boolean values indicating the on/off state of each "Set as Default Printer" switch.
+ * There is one value for each printer on the list.\n
+ * These values are set during the initialization of the screen
+ * and are removed when the screen is unloaded.
+ */
 @property (nonatomic, strong) NSMutableArray *switchPreviousState;
 
 #pragma mark - Instance Methods
 
+/** 
+ * Updates the database to set the specified printer as the default printer.
+ * Uses PrinterManager to update the printer in the database.
+ *
+ * @param indexPath the printer's index path in the UICollectionView
+ * @return YES if successful, NO otherwise
+ */
 - (BOOL)setDefaultPrinter:(NSIndexPath *)indexPath;
+
+/**
+ * Removes the specified printer from the display and from the database.
+ * Uses PrinterManager to update the printer in the database.\n
+ * If the removed printer is the default printer, the display is also updated to
+ * indicate the new default printer (unless this is the last printer).
+ * 
+ * @param index item index of deleted printer in the UICollectionView
+ */
+- (void)deletePrinterAtIndex:(NSUInteger)index;
+
+/**
+ * Responds to the "Set as Default Printer" switch action.
+ * The display is updated to indicate that the printer is the default printer
+ * and calls {@link setDefaultPrinter:}.
+ * 
+ * @param sender the switch object
+ */
+- (IBAction)defaultPrinterSwitchAction:(id)sender;
+
+/**
+ * Responds to the "Delete" button press.
+ * Displays the delete confirmation message.\n
+ * If the user confirms the deletion, the {@link deletePrinterAtIndex:} method is called.
+ * If the user cancels, then the alert is just dismissed.
+ *
+ * @param sender the button object
+ */
+- (IBAction)printerDeleteButtonAction:(id)sender;
+
+/**
+ * Responds to the default print settings button press.
+ * Displays the "Default Print Settings" screen.
+ *
+ * @param sender the button object
+ */
+- (IBAction)defaultSettingsButtonAction:(id)sender;
+
+/**
+ * Responds to the default print settings button press.
+ * Displays the "Default Print Settings" screen.
+ *
+ * @param sender the button object
+ */
+- (IBAction)pressDefaultSettingsRowAction:(id)sender;
+
+/**
+ * Responds to the printer port selection action.
+ * Updates the display and updates the Printer object using PrinterManager.
+ * 
+ * @param sender the port selection object
+ */
+- (IBAction)portSelectionAction:(id)sender;
+
+/**
+ * Shifts the tags of the UICollectionView cells.
+ * This is used when a printer is removed from display.\n
+ * The tags need to be shifted to still be continuous and consistent with the list.
+ */
+- (void)refreshControlTagsOfCellsAtIndexPaths:(NSArray *)indexPaths;
 
 @end
 

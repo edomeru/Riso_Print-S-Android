@@ -23,152 +23,254 @@
 @interface PrintPreviewViewController ()
 
 /**
- IBOutlets
+ * Reference to the label displaying the PDF's filename.
  */
 @property (nonatomic, weak) IBOutlet UILabel *titleLabel;
+
+/**
+ * Reference to the main menu button on the header.
+ */
 @property (nonatomic, weak) IBOutlet UIButton *mainMenuButton;
+
+/**
+ * Reference to the print settings button on the header.
+ */
 @property (nonatomic, weak) IBOutlet UIButton *printSettingsButton;
+
+/**
+ * Reference to the animated loading indicator in the preview area.
+ */
 @property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicator;
+
+/**
+ * Reference to the area where the preview is displayed.
+ */
 @property (nonatomic, weak) IBOutlet UIView *previewArea;
+
+/**
+ * Reference to the area where the page slider is displayed.
+ */
 @property (weak, nonatomic) IBOutlet UIView *pageNavArea;
+
+/**
+ * Reference to the page slider.
+ */
 @property (weak, nonatomic) IBOutlet UISlider *pageScroll;
+
+/**
+ * Reference to the label displaying the "current page / total pages".
+ */
 @property (weak, nonatomic) IBOutlet UILabel *pageLabel;
+
+/**
+ * Reference to the splash screen.
+ */
 @property (weak, nonatomic) IBOutlet UIView *splashView;
+
+/**
+ * Reference to the actual print preview.
+ */
 @property (nonatomic, weak) IBOutlet PreviewView *previewView;
 
+/**
+ * Reference to the height constraint of the {@link pageNavArea}.
+ */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageNavAreaHeightConstraint;
+
+/**
+ * Reference to the left constraint of the {@link pageScroll}.
+ */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageScrollLeftConstraint;
+
+/**
+ * Reference to the vertical constraint of the {@link pageScroll}.
+ */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageScrollVerticalCenterConstraint;
+
+/**
+ * Reference to the top constraint of the {@link pageLabel}.
+ */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelTopConstraint;
+
+/**
+ * Reference to the right constraint of the {@link pageLabel}.
+ */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pageLabelRightConstraint;
 
 /**
- Page view controller
+ * Reference to the UIPageViewController which controls the page-turning with curl display and animation.
  */
 @property (nonatomic, weak) UIPageViewController *pageViewController;
 
 /**
- Document object:
+ * Reference to the PDF document object held by PDFFileManager.
  */
 @property (nonatomic, weak) PrintDocument *printDocument;
 
 /**
- Indicates whether or not the page view controller is currently being animated (page curl)
+ * Flag that indicates whether or not {@link pageViewController} is currently being animated (page curl).
  */
 @property (nonatomic) BOOL pageIsAnimating;
 
 /**
- Number of pages
+ * Stores the total number of pages to be displayed.
+ * This is needed in the {@link pageLabel} and is dependent on the current preview settings.
  */
 @property (nonatomic) NSInteger totalPageNum;
 
 /**
- Number of pages needed the needed layout. Includes the padded pages used as book ends.
+ * Stores the total number of pages needed for the layout. 
+ * This includes the padded pages used as book ends.
  */
 @property (nonatomic) NSInteger layoutPageNum;
 
 /**
- Render queue
+ * Queue for the PDFRenderOperation objects.
  */
 @property (atomic, strong) NSOperationQueue *renderQueue;
 
 /**
- List of active render operations
+ * List of all active PDFRenderOperation objects.
  */
 @property (atomic, strong) NSMutableArray *renderArray;
 
 /**
- Cache of pages and rendered images
+ * Cache for all the rendered pages.
  */
 @property (atomic, strong) RenderCache *renderCache;
 
 /**
- Prepares PDF document
+ * Requests the PDFFileManager to prepare the document object.
+ * If there is no error ({@link kPDFErrorNone}), {@link setupPreview} is called after.\n
+ * If there is an error, an error message is displayed instead after and the preview area remains empty.
  */
 - (void)loadPDF;
 
 /**
- Setup views for preview
+ * Sets-up the screen for displaying the first page of the preview.
+ * The following steps are performed:
+ *  - retrieves the PDF document object from PDFFileManager
+ *  - displays the title of the PDF
+ *  - displays the page slider area
+ *  - applies the current preview settings
+ *  - displays the first page
  */
 - (void)setupPreview;
 
 /**
- Setup page view controller based on spine location
+ * Sets-up the spine location of the {@link pageViewController}.
+ * This depends on the current preview settings.
+ *
+ * @param spineLocation the location of the spine
+ * @param navigationOrientation the direction of page-turning
  */
 - (void)setupPageviewControllerWithSpineLocation:(UIPageViewControllerSpineLocation)spineLocation navigationOrientation:(UIPageViewControllerNavigationOrientation)navigationOrientation;;
 
+/**
+ * Sets-up the binding side of the {@link pageViewController}.
+ * This depends on the current preview settings.
+ */
 - (void)setupPageviewControllerWithBindSetting;
 
 /**
- Calculate total page number based on print settings
+ * Calculates the total pages based on the preview settings.
  */
 - (void)setupTotalPageNum;
 
 /**
- Setup page label view
+ * Sets-up the {@link pageLabel}.
  */
 - (void)setupPageLabel;
 
 /**
- Setup display aspect ratio to match paper size and finishing
+ * Sets-up the display aspect ratio to match the paper size and finishing settings.
  */
 - (void)setupDisplayAspectRatio;
 
 /**
- Loads next view controller of the page view controller
- @param index
-        Index of current view controller
- @return Next view controller
+ * Loads the next UIViewController of the {@link pageViewController}.
+ * This is used when turning the pages forward.
+ *
+ * @param index index of current UIViewController
+ * @return the next UIViewController
  */
 - (UIViewController *)nextViewController:(NSInteger)index;
 
 /**
- Loads previous view controlller of the page view controller
- @param index
-        Index of the current view controller
- @return Previous view controller
+ * Loads the previous UIViewController of the {@link pageViewController}.
+ * This is used when turning the pages backward.
+ *
+ * @param index index of current UIViewController
+ * @return the previous UIViewController
  */
 - (UIViewController *)previousViewController:(NSInteger)index;
 
 /**
- Loads view controller for the specified index
- @param index
-        Index of the view controller to be loaded
- @return View controller for the specified index
+ * Loads the actual PDFPageContentViewController at the specified page.
+ * This is used when turning pages.\n
+ * If the required page is not yet rendered, it is added to the queue and the 
+ * loading indicator is displayed.\n
+ * If the required page is already rendered, it is retrieved instead from the
+ * cache of rendered pages.
+ *
+ * @param index page to display
+ * @return the PDFPageContentViewController at the specified page
  */
 - (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index;
 
 /**
- Change current page to specified page
- @param pageNum
-        Index of the page
+ * Loads the specified page to the {@link pageViewController}.
+ * @param pageNum page to display
  */
 - (void)goToPage:(NSInteger)pageNum;
 
 /**
- Action when view unwinds back to print preview
+ * Unwind segue back to the "Print Preview" screen.
+ * Called when transitioning back to the "Print Preview" screen from the
+ * "Print Settings" screen or from the Main Menu panel.
+ *
+ * @param sender the segue object
  */
 - (IBAction)unwindToPrintPreview:(UIStoryboardSegue *)segue;
 
 /**
- Action when main menu button is tapped
+ * Responds to pressing the main menu button in the header.
+ * Displays the Main Menu panel.
+ *
+ * @param sender the button object
  */
 - (IBAction)mainMenuAction:(id)sender;
 
 /**
- Action when print settings button is tapped
+ * Responds to the print settings button press.
+ * Displays the "Print Settings" screen.
+ *
+ * @param sender the button object
  */
 - (IBAction)printSettingsAction:(id)sender;
 
 /**
- Action when page scroller thumb is dragged
+ * Responds to dragging the thumb in the page slider.
+ * 
+ * @param sender the page slider object
+ * @param event the drag touch event
  */
 - (IBAction)dragPageScrollAction:(id)sender withEvent:(UIEvent *)event;
 
 /**
- Action when page scroller is tapped
+ * Responds to tapping anywhere on the page slider.
+ *
+ * @param sender the page slider object
  */
 - (IBAction)tapPageScrollAction:(id)sender;
+
+/**
+ * Checks if the specified setting can be previewed.
+ * 
+ * @param settingKey the defined string name of the preview setting
+ * @return YES if previewable, NO otherwise
+ */
+- (BOOL)isNonPreviewableSetting:(NSString *)settingKey;
 
 @end
 

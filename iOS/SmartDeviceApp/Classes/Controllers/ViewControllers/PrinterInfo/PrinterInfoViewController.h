@@ -11,21 +11,43 @@
 @class Printer;
 @class PrinterManager;
 
-@protocol PrinterInfoDelegate
-/** Method called by PrinterInfoViewController to be able to segue to print settings screen
-   @note This method is used by the PrinterInfoViewController to call the parent view controller to do the segue to the Print Settings view controller. This is because the slide segue can only be executed correctly by the view controller in the root view controller which is the parent of the PrinterInfoViewController */
+/**
+ * Allows the "Printer Info" screen to coordinate with the "Printers" screen.
+ */
+@protocol PrinterInfoDelegate <NSObject>
+
+@required
+
+/** 
+ * Requests the "Printers" screen to display the "Default Print Settings" screen.
+ */
 - (void)segueToPrintSettings;
+
 @end
 
-
+/**
+ * Controller for the "Printer Info" screen (phone only).
+ */
 @interface PrinterInfoViewController : SlidingViewController
-/*NSIndexPath of the printer of which info was shown*/
+
+/** 
+ * Index path of the printer in the list displayed in PrintersIphoneViewController.
+ */
 @property (weak, nonatomic) NSIndexPath* indexPath;
-/*Default printer indicator*/
+
+/**
+ * Flag that is set to YES if the printer being displayed is the default printer.
+ */
 @property BOOL isDefaultPrinter;
-/*Online status of printer*/
+
+/**
+ * Reference to the PrintersIphoneViewController.
+ */
 @property (weak, nonatomic) id <PrinterInfoDelegate> delegate;
-/*Button to default print settings screen*/
+
+/**
+ * Reference to the default print settings button.
+ */
 @property (weak, nonatomic) IBOutlet UIButton *printSettingsButton;
 
 @end
