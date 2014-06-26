@@ -223,9 +223,6 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public async void RegisterPrintSettingValueChange()
         {
-            // Workaround: Reload printer list on when on Print Preview screen
-            new ViewModelLocator().SelectPrinterViewModel.PrinterList = PrinterController.Instance.PrinterList;
-
             if (_resetPrintSettings)
             {
                 _selectedPrinter = null;
@@ -243,9 +240,6 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void UnregisterPrintSettingValueChange()
         {
-            // Workaround: Reload printer list on when on Print Preview screen
-            new ViewModelLocator().SelectPrinterViewModel.PrinterList = null;
-
             PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
         }
 

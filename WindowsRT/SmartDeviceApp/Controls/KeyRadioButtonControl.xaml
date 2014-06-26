@@ -7,6 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Tapped="OnTapped"
+    PointerEntered="OnPressed"
+    PointerCaptureLost="OnReleased"
     d:DesignHeight="60"
     d:DesignWidth="400"
     Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"

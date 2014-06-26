@@ -63,6 +63,9 @@ namespace SmartDeviceApp.Controllers
 
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
+
+            // Set PrinterList in PrintSettingsViewModel only once (this will be the original list)
+            new ViewModelLocator().PrintSettingsViewModel.PrinterList = PrinterController.Instance.PrinterList;
         }
 
         /// <summary>

@@ -82,14 +82,9 @@ namespace SmartDeviceApp.ViewModels
             {
                 if (_selectPrinter == null)
                 {
-                    _selectPrinter = new RelayCommand<Printer>(
-                        (prn) => {
-                            if (prn != null)
-                            {
-                                SelectPrinterExecute(prn.Id); 
-                            }
-                        },
-                        (prn) => true
+                    _selectPrinter = new RelayCommand<int>(
+                        (prnId) => SelectPrinterExecute(prnId),
+                        (prnId) => true
                     );
                 }
                 return _selectPrinter;
@@ -147,6 +142,7 @@ namespace SmartDeviceApp.ViewModels
                 PollingHandler(false);
             }
             new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
+            PrinterList = null; // Reset PrinterList on back so that bindings will refresh on re-open
         }
 
     }

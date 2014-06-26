@@ -145,6 +145,8 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public ObservableCollection<Printer> PrinterList { get; set; }
+
         public PrintSettingList PrintSettingsList
         {
             get { return _printSettingsList; }
@@ -201,6 +203,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void ListPrintersCommandExecute()
         {
+            new ViewModelLocator().SelectPrinterViewModel.PrinterList = PrinterList; // Set printer list
             new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
 
             Messenger.Default.Send<PrintSettingsPaneMode>(PrintSettingsPaneMode.SelectPrinter);

@@ -62,8 +62,7 @@
         <ListView.ItemTemplate>
             <DataTemplate>
                 <controls:KeyRadioButtonControl x:Name="keyRadioButtonControl"
-                                                Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}"
-                                                CommandParameter="{Binding}"
+                                                SelectOptionCommand="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}"
                                                 GroupName="printSettingOptionsGroup"
                                                 Index="{Binding Index}"
                                                 Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"

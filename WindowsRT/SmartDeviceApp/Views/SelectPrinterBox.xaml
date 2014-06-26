@@ -65,8 +65,7 @@
         <ListView.ItemTemplate>
             <DataTemplate>
                 <controls:SelectPrinterItemControl GroupName="printersList"
-                                                   Command="{Binding DataContext.SelectPrinter, ElementName=selectPrinterBox}"
-                                                   CommandParameter="{Binding}"
+                                                   SelectOptionCommand="{Binding DataContext.SelectPrinter, ElementName=selectPrinterBox}"
                                                    Index="{Binding Id}"
                                                    Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}}"
                                                    IconImage="{Binding IsOnline, Converter={StaticResource PrinterStatusToImageSourceConverter}}"

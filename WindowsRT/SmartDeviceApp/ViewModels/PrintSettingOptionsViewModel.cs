@@ -48,9 +48,9 @@ namespace SmartDeviceApp.ViewModels
             {
                 if (_selectPrintSettingOption == null)
                 {
-                    _selectPrintSettingOption = new RelayCommand<PrintSettingOption>(
-                        (option) => SelectPrintSettingOptionExecute(option),
-                        (option) => option != null
+                    _selectPrintSettingOption = new RelayCommand<int>(
+                        (selectedIndex) => SelectPrintSettingOptionExecute(selectedIndex),
+                        (selectedIndex) => true
                     );
                 }
                 return _selectPrintSettingOption;
@@ -72,9 +72,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void SelectPrintSettingOptionExecute(PrintSettingOption option)
+        private void SelectPrintSettingOptionExecute(int index)
         {
-            PrintSetting.Value = option.Index;
+            PrintSetting.Value = index;
         }
 
         private void BackToPrintSettingsExecute()
