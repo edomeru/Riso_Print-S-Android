@@ -39,12 +39,14 @@ namespace SmartDeviceApp.ViewModels
 
         private ICommand _openDocumentCommand;
         private bool _isProgressRingActive;
+        private bool _enabledOpenDocumentCommand;
                 
         public HomeViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            _enabledOpenDocumentCommand = true;
             IsProgressRingActive = false;
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
@@ -57,7 +59,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _openDocumentCommand = new RelayCommand(
                         () => OpenDocumentCommandExecute(),
-                        () => true
+                        () => _enabledOpenDocumentCommand
                     );
                 }
                 return _openDocumentCommand;
@@ -79,6 +81,7 @@ namespace SmartDeviceApp.ViewModels
 
         private async void OpenDocumentCommandExecute()
         {
+            _enabledOpenDocumentCommand = false;
             try
             {
                 FileOpenPicker openPicker = new FileOpenPicker();
@@ -110,6 +113,7 @@ namespace SmartDeviceApp.ViewModels
                 LogUtility.LogError(ex);
                 DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
+            _enabledOpenDocumentCommand = true;
         }
 
         private void EnableMode(ViewMode viewMode)
