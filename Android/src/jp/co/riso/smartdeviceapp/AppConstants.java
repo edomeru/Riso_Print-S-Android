@@ -34,9 +34,7 @@ public class AppConstants {
     /// PDF temporary file name
     public static final String CONST_TEMP_PDF_PATH = "temp.pdf";
     
-    /// Part of Memory to be allocated to Print Preview
-    /// Bit shift operator
-    /// Size = TOTAL MEMORY >> APP_BMP_CACHE_PART
+    /// Part of Memory to be allocated to Print. Value of Bit shift operator, Preview Size = TOTAL MEMORY >> APP_BMP_CACHE_PART
     public static final int APP_BMP_CACHE_PART = 4;
 
     /// Log-in ID maximum length
@@ -66,9 +64,9 @@ public class AppConstants {
     
     /// Maximum printer count
     public static final int CONST_MAX_PRINTER_COUNT = 10;
-    /// Ping timeout
+    /// Ping timeout in milliseconds
     public static final int CONST_TIMEOUT_PING = 100;
-    /// Update interval for update online status thread
+    /// Update interval for update online status thread in milliseconds
     public static final int CONST_UPDATE_INTERVAL = 5000; // 5 seconds
     /// Print settings xml name
     public static final String XML_FILENAME = "printsettings.xml";

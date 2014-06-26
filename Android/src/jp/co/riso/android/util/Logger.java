@@ -370,7 +370,7 @@ public class Logger {
         double time = 0;
         
         /**
-         * @brief Delete specified directory. </br>
+         * @brief Delete specified directory.
          * 
          * Based on: http://stackoverflow.com/questions/5701586/delete-a-folder-on-sd-card 
          * 
@@ -394,9 +394,11 @@ public class Logger {
         }
         
         /**
-         * @brief Deletes the sub folders inside the AppLogDirectory. </br>
+         * @brief Deletes the sub folders inside the AppLogDirectory.
          * 
          * Based on: http://stackoverflow.com/questions/5701586/delete-a-folder-on-sd-card
+         * 
+         * @param path File object of the Directory path to delete
          */
         public boolean deleteAppLogDirectory(File path) {
             if (path.exists()) {

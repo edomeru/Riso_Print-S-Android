@@ -308,7 +308,7 @@ public final class AppUtils {
     }
     
     /**
-     * @brief Dynamically retrieve resource Id. </br>
+     * @brief Dynamically retrieve resource Id.
      * 
      * Based on: http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
      * 
@@ -443,7 +443,7 @@ public final class AppUtils {
     }
     
     /**
-     * @brief Get the owner name based on the Log-in ID as seen from the Settings screen. </br>
+     * @brief Get the owner name based on the Log-in ID as seen from the Settings screen.
      * 
      * The Log-in ID is retrieved from the shared preferences.
      * 

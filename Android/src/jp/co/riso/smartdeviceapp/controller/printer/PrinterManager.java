@@ -533,6 +533,8 @@ public class PrinterManager implements SNMPManagerCallback {
      *
      * Checks the Device if it is online. This function should not be called from the main thread.
      * 
+     * @param ipAddress IP Address
+     * 
      * @retval true Device is online
      * @retval false Device is off-line
      */

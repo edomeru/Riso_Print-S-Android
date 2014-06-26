@@ -32,9 +32,9 @@ import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment;
  * @brief Web fragment for Legal Screen
  */
 public class LegalFragment extends BaseWebFragment {
-    /// JS Format
+    /// String Format for Javascript replace statement 
     public static final String JS_REPLACE_FORMAT = "javascript:document.getElementById('%s').innerHTML='%s';";
-    /// HTML version
+    /// HTML ID for app version name
     public static final String VERSION_HTML_ID = "localize_version";
     
     @Override

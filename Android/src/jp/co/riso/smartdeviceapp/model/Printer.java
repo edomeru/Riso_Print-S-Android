@@ -29,7 +29,8 @@ public class Printer implements Parcelable {
      * @brief Printer port setting.
      */
     public enum PortSetting {
-        LPR, RAW
+        LPR, ///< LPR port
+        RAW ///< Raw port
     }
     
     /**
