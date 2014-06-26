@@ -663,7 +663,7 @@ namespace SmartDeviceAppTests.Controllers
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             Assert.AreEqual(1, printSettings.Orientation);
-            Assert.AreEqual((int)BookletLayout.TopToBottom, printSettings.BookletLayout);
+            Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -690,7 +690,7 @@ namespace SmartDeviceAppTests.Controllers
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             Assert.AreEqual(0, printSettings.Orientation);
-            Assert.AreEqual((int)BookletLayout.LeftToRight, printSettings.BookletLayout);
+            Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -716,7 +716,7 @@ namespace SmartDeviceAppTests.Controllers
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
             PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             Assert.AreEqual(1, printSettings.Orientation);
-            Assert.AreEqual((int)BookletLayout.TopToBottom, printSettings.BookletLayout);
+            Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -743,7 +743,7 @@ namespace SmartDeviceAppTests.Controllers
             PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
             PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             Assert.AreEqual(0, printSettings.Orientation);
-            Assert.AreEqual((int)BookletLayout.TopToBottom, printSettings.BookletLayout);
+            Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1256,7 +1256,7 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual((int)Staple.Off, printSettings.Staple);
             Assert.AreEqual((int)Punch.Off, printSettings.Punch);
             Assert.AreEqual((int)OutputTray.Auto, printSettings.OutputTray);
-            Assert.AreEqual((int)BookletLayout.LeftToRight, printSettings.BookletLayout);
+            Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -1290,7 +1290,7 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual((int)Staple.Off, printSettings.Staple);
             Assert.AreEqual((int)Punch.Off, printSettings.Punch);
             Assert.AreEqual((int)OutputTray.Auto, printSettings.OutputTray);
-            Assert.AreEqual((int)BookletLayout.LeftToRight, printSettings.BookletLayout);
+            Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
@@ -2097,44 +2097,6 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(0, printSettings.OutputTray);
             Assert.IsNull(printSettings.LoginId);
             Assert.IsNull(printSettings.PinCode);
-
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
-
-        [TestMethod]
-        public void Test_GetPagesPerSheet_Null()
-        {
-            int pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(null);
-            Assert.AreEqual(1, pagesPerSheet);
-        }
-
-        [TestMethod]
-        public void Test_GetPagesPerSheet_Empty()
-        {
-            int pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(string.Empty);
-            Assert.AreEqual(1, pagesPerSheet);
-        }
-
-        [TestMethod]
-        public void Test_GetPagesPerSheet_NotExists()
-        {
-            int pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet("sample");
-            Assert.AreEqual(1, pagesPerSheet);
-        }
-
-        [TestMethod]
-        public async Task Test_GetPagesPerSheet_Exists()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
-
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_imposition.sql", _dbConnection);
-
-            _screenName = ScreenMode.PrintPreview.ToString();
-            Printer printer = await _dbConnection.GetAsync<Printer>(2);
-            await PrintSettingsController.Instance.Initialize(_screenName, printer);
-
-            int pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(_screenName);
-            Assert.AreEqual(2, pagesPerSheet);
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }

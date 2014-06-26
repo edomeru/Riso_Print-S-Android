@@ -50,7 +50,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _selectPrintSettingOption = new RelayCommand<PrintSettingOption>(
                         (option) => SelectPrintSettingOptionExecute(option),
-                        (option) => true
+                        (option) => option != null
                     );
                 }
                 return _selectPrintSettingOption;

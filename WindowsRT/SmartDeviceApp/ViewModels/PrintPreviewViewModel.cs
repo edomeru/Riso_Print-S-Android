@@ -43,6 +43,7 @@ namespace SmartDeviceApp.ViewModels
         public event SmartDeviceApp.Controllers.PrintPreviewController.GoToPageEventHandler GoToPageEventHandler;
         public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateToEventHandler OnNavigateToEventHandler;
         public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateFromEventHandler OnNavigateFromEventHandler;
+        public event SmartDeviceApp.Controllers.PrintPreviewController.PageAreaGridLoadedEventHandler PageAreaGridLoadedEventHandler;
 
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
@@ -51,8 +52,7 @@ namespace SmartDeviceApp.ViewModels
         private UIElement _controlReference;
         private double _pageAreaGridMaxHeight;
         private double _pageAreaGridMaxWidth;
-        private bool _isPageAreaGridLoaded;
-        public PreviewGestureController _gestureController; // TODO: Set to private after removing easter egg!!
+        private PreviewGestureController _gestureController;
         private bool _isPageNumberSliderEnabled;
         private ICommand _goToPreviousPage;
         private ICommand _goToNextPage;
@@ -65,11 +65,16 @@ namespace SmartDeviceApp.ViewModels
         private bool _isReverseSwipe;
         private bool _isReverseSwipePrevious;
         private bool _isHorizontalSwipeEnabled;
+        private bool _isHorizontalSwipeEnabledPrevious;
         private double _scalingFactor = 1;
 
         private string _documentTitleText;
-        private BitmapImage _rightPageImage;
-        private BitmapImage _leftPageImage;
+        private WriteableBitmap _rightPageImage;
+        private WriteableBitmap _leftPageImage;
+        private WriteableBitmap _rightBackPageImage;
+        private WriteableBitmap _leftBackPageImage;
+        private WriteableBitmap _rightNextPageImage;
+        private WriteableBitmap _leftNextPageImage;
         private Size _rightPageActualSize;
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
@@ -85,9 +90,14 @@ namespace SmartDeviceApp.ViewModels
             _pageIndex = 0;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
 
+            _rightPageImage = new WriteableBitmap(1, 1);
+            _leftPageImage = new WriteableBitmap(1, 1);
+            _rightBackPageImage = new WriteableBitmap(1, 1);
+            _leftBackPageImage = new WriteableBitmap(1, 1);
+
             SetViewMode(_viewControlViewModel.ViewMode); 
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
-            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));            
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));
         }
 
         public void OnNavigatedTo()
@@ -106,14 +116,26 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public void SetPageAreaGrid(Grid pageAreaGrid)
+        public void SetPageAreaGrid(SmartDeviceApp.Controls.TwoPageControl twoPageControl)
         {
-            if (!_isPageAreaGridLoaded)
-            {   
-                _pageAreaGrid = pageAreaGrid;
-                _pageAreaGridMaxHeight = _pageAreaGrid.ActualHeight;
+            if (!IsPageAreaGridLoaded)
+            {
+                _pageAreaGrid = twoPageControl.PageAreaGrid;
                 _controlReference = (UIElement)((Grid)_pageAreaGrid.Parent).Parent;
-                _isPageAreaGridLoaded = true;
+                ResetPageAreaGrid(_viewControlViewModel.ViewOrientation);
+
+
+                ManipulationGrid = twoPageControl.ManipulationGrid;
+                TransitionGrid = twoPageControl.TransitionGrid;
+                DisplayAreaGrid = twoPageControl.DisplayAreaGrid;
+
+                //twoPageControl.PageAreaGrid.Opacity = 0.01;
+                IsPageAreaGridLoaded = true;
+
+                if (PageAreaGridLoadedEventHandler != null)
+                {
+                    PageAreaGridLoadedEventHandler();
+                }
             }
         }
 
@@ -133,17 +155,19 @@ namespace SmartDeviceApp.ViewModels
 
         public void InitializeGestures()
         {
-            if (_isPageAreaGridLoaded)
+            if (IsPageAreaGridLoaded)
             {
                 // Save page height to be used in resizing page images
                 double scalingFactor = 1;
                 Size targetSize;
+                Size pageAreaGridSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);
                 switch (PageViewMode)
                 {
                     case PageViewMode.SinglePageView:
                         scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
                             _pageAreaGridMaxWidth / RightPageActualSize.Width);
                         targetSize = RightPageActualSize;
+                        
                         IsDuplex = false;
                         break;
 
@@ -161,6 +185,14 @@ namespace SmartDeviceApp.ViewModels
                         IsDuplex = true;
                         break;
                 }
+
+                // Resize grid
+                _pageAreaGrid.MaxWidth = targetSize.Width;
+                _pageAreaGrid.MaxHeight = targetSize.Height;
+
+                //((Grid)DisplayAreaGrid).MaxWidth = pageAreaGridSize.Width;
+                //((Grid)DisplayAreaGrid).MaxHeight = pageAreaGridSize.Height;
+                
                 
                 PreviewGestureController.SwipeRightDelegate swipeRight = null;
                 PreviewGestureController.SwipeLeftDelegate swipeLeft = null;
@@ -183,9 +215,18 @@ namespace SmartDeviceApp.ViewModels
                 }
                 else
                 {
-                    swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTop);
-                    swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottom);
+                    if (!IsReverseSwipe)
+                    {
+                        swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTop);
+                        swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottom);
+                    }
+                    else
+                    {
+                        swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTopReverse);
+                        swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottomReverse);
+                    }
                 }
+
                 // Note: If view and page areas are not resized or PageViewMode is not changed, 
                 // no need to reset gestureController
                 
@@ -199,7 +240,11 @@ namespace SmartDeviceApp.ViewModels
                 if (scalingFactor != _scalingFactor || PageViewMode != _previousPageViewMode)
                 {
                     _scalingFactor = scalingFactor;
-                    if (_gestureController != null) _gestureController.Dispose();
+                    if (_gestureController != null)
+                    {
+                        _gestureController.Dispose();
+                        _gestureController = null;
+                    }
                     _gestureController = new PreviewGestureController(ManipulationGrid, _controlReference,
                            targetSize, scalingFactor, swipeRight, swipeLeft, DisplayAreaGrid, TransitionGrid, ManipulationGrid, TwoPageControl, RightPageActualSize.Width);
                     _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
@@ -207,7 +252,8 @@ namespace SmartDeviceApp.ViewModels
                 }
                 else
                 {
-                    if (IsReverseSwipe != _isReverseSwipePrevious)
+                    if (IsReverseSwipe != _isReverseSwipePrevious ||
+                        IsHorizontalSwipeEnabled != _isHorizontalSwipeEnabledPrevious)
                     {
                         _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
                             swipeTop, swipeBottom);
@@ -215,18 +261,42 @@ namespace SmartDeviceApp.ViewModels
                 }
                 _previousPageViewMode = PageViewMode;
                 _isReverseSwipePrevious = IsReverseSwipe;
-                //Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
-                //_gestureController.getScreenShot();
+                _isHorizontalSwipeEnabledPrevious = IsHorizontalSwipeEnabled;
+                //TwoPageControl.SetLeftDisplayInvisible();
             }
         }
 
-        public void Cleanup()
+        new public void Cleanup()
         {
             if (_gestureController != null)
             {
-                 _gestureController.Dispose();
-                 _gestureController = null;
+                _gestureController.Dispose();
+                _gestureController = null;
             }
+            if (_leftPageImage != null)
+            {
+                _leftPageImage.Clear();
+                _leftPageImage.Invalidate();
+            }
+            if (_rightPageImage != null)
+            {
+                _rightPageImage.Clear();
+                _rightPageImage.Invalidate();
+            }
+            if (_leftBackPageImage != null)
+            {
+                _leftBackPageImage.Clear();
+                _leftBackPageImage.Invalidate();
+            }
+            if (_rightBackPageImage != null)
+            {
+                _rightBackPageImage.Clear();
+                _rightBackPageImage.Invalidate();
+            }
+            _rightPageActualSize = new Size();
+            _leftPageActualSize = new Size();
+            IsPageAreaGridLoaded = false;
+            _scalingFactor = 1;
         }
 
         public bool IsReverseSwipe
@@ -266,9 +336,19 @@ namespace SmartDeviceApp.ViewModels
             GoToNextPage.Execute(null);
         }
 
+        private void SwipeTopReverse()
+        {
+            GoToPreviousPage.Execute(null);
+        }
+
         private void SwipeBottom()
         {
             GoToPreviousPage.Execute(null);
+        }
+
+        private void SwipeBottomReverse()
+        {
+            GoToNextPage.Execute(null);
         }
 
         public ContentControl DrawingSurface
@@ -280,27 +360,71 @@ namespace SmartDeviceApp.ViewModels
 
         #region PANE VISIBILITY
 
-        private bool _isLoadPageActive;
+        private bool _isLoadLeftPageActive;
+        private bool _isLoadRightPageActive;
+        private bool _isLoadLeftBackPageActive;
+        private bool _isLoadRightBackPageActive;
 
-        public bool IsLoadPageActive
+        public bool IsLoadLeftBackPageActive
         {
-            get { return _isLoadPageActive; }
+            get { return _isLoadLeftBackPageActive; }
             set
             {
-                //if (_isLoadPageActive != value)
+                if (_isLoadLeftBackPageActive != value)
                 {
+                    _isLoadLeftBackPageActive = value;
+                    RaisePropertyChanged("IsLoadLeftBackPageActive");
                     
-                    if (_isLoadPageActive && !value) //(true amd false)
-                    {
+                    //if (_isLoadLeftBackPageActive && !value) //(true amd false)
+                    //{
                         //tell two page control to grab screen
                         //Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
-                        if (_gestureController != null)
-                            _gestureController.getScreenShot();
-                    }
+                        //if (_gestureController != null)
+                            //_gestureController.getScreenShot();
+                    //}
 
-                    _isLoadPageActive = value;
+                    _isLoadLeftBackPageActive = value;
                     RaisePropertyChanged("IsLoadPageActive");
                     
+                }
+            }
+        }
+
+        public bool IsLoadRightBackPageActive
+        {
+            get { return _isLoadRightBackPageActive; }
+            set
+            {
+                if (_isLoadRightBackPageActive != value)
+                {
+                    _isLoadRightBackPageActive = value;
+                    RaisePropertyChanged("IsLoadRightBackPageActive");
+                }
+            }
+        }
+
+        public bool IsLoadLeftPageActive
+        {
+            get { return _isLoadLeftPageActive; }
+            set
+            {
+                if (_isLoadLeftPageActive != value)
+                {
+                    _isLoadLeftPageActive = value;
+                    RaisePropertyChanged("IsLoadLeftPageActive");
+                }
+            }
+        }
+
+        public bool IsLoadRightPageActive
+        {
+            get { return _isLoadRightPageActive; }
+            set
+            {
+                if (_isLoadRightPageActive != value)
+                {
+                    _isLoadRightPageActive = value;
+                    RaisePropertyChanged("IsLoadRightPageActive");
                 }
             }
         }
@@ -367,7 +491,33 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public BitmapImage RightPageImage
+        public WriteableBitmap RightBackPageImage
+        {
+            get { return _rightBackPageImage; }
+            set
+            {
+                if (_rightBackPageImage != value)
+                {
+                    _rightBackPageImage = value;
+                    RaisePropertyChanged("RightBackPageImage");
+                }
+            }
+        }
+
+        public WriteableBitmap LeftBackPageImage
+        {
+            get { return _leftBackPageImage; }
+            set
+            {
+                if (_leftBackPageImage != value)
+                {
+                    _leftBackPageImage = value;
+                    RaisePropertyChanged("LeftBackPageImage");
+                }
+            }
+        }
+
+        public WriteableBitmap RightPageImage
         {
             get { return _rightPageImage; }
             set
@@ -382,7 +532,7 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public BitmapImage LeftPageImage
+        public WriteableBitmap LeftPageImage
         {
             get { return _leftPageImage; }
             set
@@ -391,6 +541,34 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _leftPageImage = value;
                     RaisePropertyChanged("LeftPageImage");
+                }
+            }
+        }
+
+        public WriteableBitmap RightNextPageImage
+        {
+            get { return _rightNextPageImage; }
+            set
+            {
+                if (_rightNextPageImage != value)
+                {
+                    _rightNextPageImage = value;
+                    RaisePropertyChanged("RightNextPageImage");
+
+
+                }
+            }
+        }
+
+        public WriteableBitmap LeftNextPageImage
+        {
+            get { return _leftNextPageImage; }
+            set
+            {
+                if (_leftNextPageImage != value)
+                {
+                    _leftNextPageImage = value;
+                    RaisePropertyChanged("LeftNextPageImage");
                 }
             }
         }
@@ -434,6 +612,8 @@ namespace SmartDeviceApp.ViewModels
                 }
             }
         }
+
+        public bool IsPageAreaGridLoaded { get; private set; }
 
         public UIElement DisplayAreaGrid
         {

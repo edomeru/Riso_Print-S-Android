@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Foundation;
 using SmartDeviceApp.Models;
 using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
+using SmartDeviceApp.Controls;
 
 namespace SmartDeviceAppTests.ViewModels
 {
@@ -55,8 +56,8 @@ namespace SmartDeviceAppTests.ViewModels
         [UI.UITestMethod]
         public void Test_SetPageAreaGrid()
         {
-            var grid = new Grid();
-            GetPrintPreviewViewModel().SetPageAreaGrid(grid);
+            var control = new TwoPageControl();
+            GetPrintPreviewViewModel().SetPageAreaGrid(control);
         }
 
         [UI.UITestMethod]
@@ -67,11 +68,19 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [UI.UITestMethod]
-        public void Test_IsLoadPageActive()
+        public void Test_IsLoadLeftPageActive()
         {
             var isLoadPageActive = true;
-            GetPrintPreviewViewModel().IsLoadPageActive = isLoadPageActive;
-            Assert.IsTrue(GetPrintPreviewViewModel().IsLoadPageActive);
+            GetPrintPreviewViewModel().IsLoadLeftPageActive = isLoadPageActive;
+            Assert.IsTrue(GetPrintPreviewViewModel().IsLoadLeftPageActive);
+        }
+
+        [UI.UITestMethod]
+        public void Test_IsLoadRightPageActive()
+        {
+            var isLoadPageActive = true;
+            GetPrintPreviewViewModel().IsLoadRightPageActive = isLoadPageActive;
+            Assert.IsTrue(GetPrintPreviewViewModel().IsLoadRightPageActive);
         }
 
         [UI.UITestMethod]
@@ -101,8 +110,9 @@ namespace SmartDeviceAppTests.ViewModels
         [UI.UITestMethod]
         public void Test_RightPageImage()
         {
-            var rightPageImage = new BitmapImage();
-            rightPageImage.UriSource = new Uri("ms-appx:///Resources/Images/RZ1070-page1.jpg");
+            //var rightPageImage = new BitmapImage();
+            //rightPageImage.UriSource = new Uri("ms-appx:///Resources/Images/RZ1070-page1.jpg");
+            var rightPageImage = new WriteableBitmap(1, 1);
             GetPrintPreviewViewModel().RightPageImage = rightPageImage;
             Assert.AreEqual(rightPageImage, GetPrintPreviewViewModel().RightPageImage);
         }
@@ -110,8 +120,9 @@ namespace SmartDeviceAppTests.ViewModels
         [UI.UITestMethod]
         public void Test_LeftPageImage()
         {
-            var leftPageImage = new BitmapImage();
-            leftPageImage.UriSource = new Uri("ms-appx:///Resources/Images/RZ1070-page1.jpg");
+            //var leftPageImage = new BitmapImage();
+            //leftPageImage.UriSource = new Uri("ms-appx:///Resources/Images/RZ1070-page1.jpg");
+            var leftPageImage = new WriteableBitmap(1, 1);
             GetPrintPreviewViewModel().LeftPageImage = leftPageImage;
             Assert.AreEqual(leftPageImage, GetPrintPreviewViewModel().LeftPageImage);
         }

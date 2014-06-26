@@ -134,6 +134,8 @@
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\LogUtility.cs" />
+    <Compile Include="Common\Utilities\LruCacheHelper.cs" />
+    <Compile Include="Common\Utilities\PreviewPageImageUtility.cs" />
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
@@ -175,6 +177,9 @@
     </Compile>
     <Compile Include="Controls\GroupListControl.xaml.cs">
       <DependentUpon>GroupListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PageCurlControl.xaml.cs">
+      <DependentUpon>PageCurlControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PrinterNameControl.xaml.cs">
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
@@ -257,8 +262,6 @@
     <Compile Include="Models\DefaultPrinter.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\IDataService.cs" />
-    <Compile Include="Models\LogicalPage.cs" />
-    <Compile Include="Models\PreviewPage.cs" />
     <Compile Include="Models\Printer.cs" />
     <Compile Include="Models\PrinterSearchItem.cs" />
     <Compile Include="Models\PrintJob.cs" />
@@ -522,6 +525,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\GroupListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PageCurlControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

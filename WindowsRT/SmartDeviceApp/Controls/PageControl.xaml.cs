@@ -32,6 +32,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty ImageProperty =
             DependencyProperty.Register("Image", typeof(ImageSource), typeof(PageControl), null);
 
+        public static readonly DependencyProperty IsLoadPageActiveProperty =
+            DependencyProperty.Register("IsLoadPageActive", typeof(bool), typeof(PageControl), null);
+
         public static new readonly DependencyProperty HorizontalAlignmentProperty =
             DependencyProperty.Register("HorizontalAlignment", typeof(HorizontalAlignment), typeof(PageControl), null);
 
@@ -48,6 +51,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (ImageSource)GetValue(ImageProperty); }
             set { SetValue(ImageProperty, value); }
+        }
+
+        public bool IsLoadPageActive
+        {
+            get { return (bool)GetValue(IsLoadPageActiveProperty); }
+            set { SetValue(IsLoadPageActiveProperty, value); }
         }
 
         public new HorizontalAlignment HorizontalAlignment
@@ -75,7 +84,7 @@ namespace SmartDeviceApp.Controls
 
         private void pageImage_ImageOpened(object sender, RoutedEventArgs e)
         {
-            //Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
+            Messenger.Default.Send<MessageType>(MessageType.RightPageImageUpdated);
         }
     }
 }

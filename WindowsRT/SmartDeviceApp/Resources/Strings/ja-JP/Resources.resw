@@ -396,14 +396,11 @@
   <data name="IDS_LBL_BOOKLET_LAYOUT" xml:space="preserve">
     <value>小冊子レイアウト</value>
   </data>
-  <data name="IDS_LBL_BOOKLET_LAYOUT_LR" xml:space="preserve">
-    <value>左から右へ</value>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_FORWARD" xml:space="preserve">
+    <value>Forward</value>
   </data>
-  <data name="IDS_LBL_BOOKLET_LAYOUT_RL" xml:space="preserve">
-    <value>右から左へ</value>
-  </data>
-  <data name="IDS_LBL_BOOKLET_LAYOUT_TB" xml:space="preserve">
-    <value>上下開き</value>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_REVERSE" xml:space="preserve">
+    <value>Reverse</value>
   </data>
   <data name="IDS_LBL_FINISHINGSIDE" xml:space="preserve">
     <value>とじ位置</value>

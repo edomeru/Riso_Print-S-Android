@@ -27,12 +27,116 @@
                 <Setter Property="ManipulationMode" Value="All"/>
             </Style.Setters>
         </Style>
+        <Style x:Key="STYLE_PageSeparator" TargetType="Line">
+            <Style.Setters>
+                <Setter Property="Stroke" Value="{StaticResource BRUSH_Gray3}"/>
+                <Setter Property="StrokeThickness" Value="2"/>
+                <Setter Property="StrokeDashCap" Value="Flat"/>
+                <Setter Property="X1" Value="0"/>
+                <Setter Property="Y1" Value="0"/>
+                <Setter Property="X2" Value="0"/>
+                <Setter Property="Y2" Value="0"/>
+            </Style.Setters>
+        </Style>
     </UserControl.Resources>
 
     <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}" >
         <Grid x:Name="manipulationGrid"  ManipulationMode="All" >
+            <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" 
+                 Background="Blue">
+                <Grid.Clip>
+                    <RectangleGeometry
+                    Rect="0,0,80000,80000">
+                        <RectangleGeometry.Transform>
+                            <TransformGroup>
+                                <TranslateTransform
+                                x:Name="Page2ClipTranslateTransform" />
+                                <RotateTransform
+                                x:Name="Page2ClipRotateTransform" />
+                            </TransformGroup>
+                        </RectangleGeometry.Transform>
+                    </RectangleGeometry>
+                </Grid.Clip>
+
+
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="topPageArea"/>
+                    <RowDefinition x:Name="bottomPageArea"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="leftPageArea"/>
+                    <ColumnDefinition x:Name="rightPageArea"/>
+                </Grid.ColumnDefinitions>
+
+                <local:PageControl x:Name="topPage" Grid.Row="0" Grid.Column="1"
+                                Image="{Binding LeftBackPageImage, ElementName=twoPageControl}"
+                                IsLoadPageActive="{Binding IsLoadLeftPageActive, ElementName=twoPageControl}"/>
+                <local:PageControl x:Name="leftPage" Grid.Row="1" Grid.Column="0"
+                                Image="{Binding LeftBackPageImage, ElementName=twoPageControl}"
+                                IsLoadPageActive="{Binding IsLoadLeftPageActive, ElementName=twoPageControl}"/>
+                <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
+                                Image="{Binding RightPageImage, ElementName=twoPageControl}"
+                                IsLoadPageActive="{Binding IsLoadRightPageActive, ElementName=twoPageControl}"/>
+
+            </Grid>
+           
+
+            
+
+            <!--<Grid x:Name="nextDisplayAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" 
+                 Background="Red" Opacity="0.01"
+                  >
+                <Grid.Clip>
+                    <RectangleGeometry
+                    Rect="0,0,80000,80000">
+                        <RectangleGeometry.Transform>
+                            <TransformGroup>
+                                <TranslateTransform
+                                x:Name="Page3ClipTranslateTransform" />
+                                <RotateTransform
+                                x:Name="Page3ClipRotateTransform" />
+                            </TransformGroup>
+                        </RectangleGeometry.Transform>
+                    </RectangleGeometry>
+                </Grid.Clip>
+
+
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="topNextDisplayArea"/>
+                    <RowDefinition x:Name="bottomNextDisplayArea"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="leftNextDisplayArea"/>
+                    <ColumnDefinition x:Name="rightNextDisplayArea"/>
+                </Grid.ColumnDefinitions>
+
+                <local:PageControl x:Name="topNextDisplay" Grid.Row="0" Grid.Column="1"
+                                    Image="{Binding LeftNextPageImage, ElementName=twoPageControl}"/>
+                <local:PageControl x:Name="leftNextDisplay"  Grid.Row="1" Grid.Column="0"                           
+                                    Image="{Binding LeftNextPageImage, ElementName=twoPageControl}"/>
+                <local:PageControl x:Name="rightNextDisplay" Grid.Row="1" Grid.Column="1"
+                                    Image="{Binding RightNextPageImage, ElementName=twoPageControl}" BorderThickness="1"/>
+
+                <Line x:Name="horizontalSeparator"
+                  Grid.Row="0" Grid.Column="0"
+                  Grid.RowSpan="2" Grid.ColumnSpan="2"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  StrokeDashArray="7,5"
+                  X2="{Binding MaxWidth, ElementName=pageAreaGrid}"
+                  Style="{StaticResource STYLE_PageSeparator}" />
+                <Line x:Name="verticalSeparator"
+                  Grid.Row="0" Grid.Column="0"
+                  Grid.RowSpan="2" Grid.ColumnSpan="2"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  StrokeDashArray="7,5"
+                  Y2="{Binding MaxHeight, ElementName=pageAreaGrid}"
+                  Style="{StaticResource STYLE_PageSeparator}" />
+            </Grid>-->
+
             <Grid x:Name="displayAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" 
-                 Background="Yellow"
+                 Background="Yellow"  
                   >
                 <Grid.Clip>
                     <RectangleGeometry
@@ -64,48 +168,61 @@
                                     Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
                 <local:PageControl x:Name="rightDisplay" Grid.Row="1" Grid.Column="1"
                                     Image="{Binding RightPageImage, ElementName=twoPageControl}" BorderThickness="1"/>
+                <Line x:Name="horizontalSeparator"
+                  Grid.Row="0" Grid.Column="0"
+                  Grid.RowSpan="2" Grid.ColumnSpan="2"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  StrokeDashArray="7,5"
+                  X2="{Binding MaxWidth, ElementName=pageAreaGrid}"
+                  Style="{StaticResource STYLE_PageSeparator}" />
+                <Line x:Name="verticalSeparator"
+                  Grid.Row="0" Grid.Column="0"
+                  Grid.RowSpan="2" Grid.ColumnSpan="2"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  StrokeDashArray="7,5"
+                  Y2="{Binding MaxHeight, ElementName=pageAreaGrid}"
+                  Style="{StaticResource STYLE_PageSeparator}" />
+
             </Grid>
-           
 
-            <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" 
-                 Background="Blue"
-                  >
-                <Grid.Clip>
-                    <RectangleGeometry
-                    Rect="0,0,80000,80000">
-                        <RectangleGeometry.Transform>
-                            <TransformGroup>
-                                <TranslateTransform
-                                x:Name="Page2ClipTranslateTransform" />
-                                <RotateTransform
-                                x:Name="Page2ClipRotateTransform" />
-                            </TransformGroup>
-                        </RectangleGeometry.Transform>
-                    </RectangleGeometry>
-                </Grid.Clip>
-
-
-                <Grid.RowDefinitions>
-                    <RowDefinition x:Name="topPageArea"/>
-                    <RowDefinition x:Name="bottomPageArea"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="leftPageArea"/>
-                    <ColumnDefinition x:Name="rightPageArea"/>
-                </Grid.ColumnDefinitions>
-                
-                <local:PageControl x:Name="topPage" Grid.Row="0" Grid.Column="1"
-                                    Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
-                <local:PageControl x:Name="leftPage"  Grid.Row="1" Grid.Column="0"                           
-                                    Image="{Binding LeftPageImage, ElementName=twoPageControl}"/>
-                <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
-                                    Image="{Binding RightPageImage, ElementName=twoPageControl}" BorderThickness="1"/>
-                
-            </Grid>
-            
 
             <!--<Grid
             x:Name="TransitionGridContainer" Background="Green">-->
+                <Grid
+                    x:Name="transitionDisplayGrid"
+                    Opacity="0">
+                    <Grid.RenderTransform>
+                        <CompositeTransform
+                            x:Name="TransitionDisplayGridContainerTransform" />
+                    </Grid.RenderTransform>
+                    <Grid.Clip>
+                        <RectangleGeometry
+                            Rect="0,0,80000,80000">
+                            <RectangleGeometry.Transform>
+                                <TransformGroup>
+                                    <TranslateTransform
+                                        x:Name="TransitionDisplayGridClipTranslateTransform" />
+                                    <RotateTransform
+                                        x:Name="TransitionDisplayGridClipRotateTransform" />
+                                </TransformGroup>
+                            </RectangleGeometry.Transform>
+                        </RectangleGeometry>
+                    </Grid.Clip>
+                    <Grid.RowDefinitions>
+                    <RowDefinition x:Name="topTransitionDisplayArea"/>
+                    <RowDefinition x:Name="bottomTransitionDisplayArea"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="leftTransitionDisplayArea"/>
+                    <ColumnDefinition x:Name="rightTransitionDisplayArea"/>
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        x:Name="TransitionDisplayImage"
+                        Stretch="None" />
+                </Grid>
+        
                 <Grid
                 x:Name="transitionGrid"
                 Opacity="0">

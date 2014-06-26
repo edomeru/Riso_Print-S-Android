@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Views
 {

@@ -105,9 +105,8 @@ namespace SmartDeviceApp.Common.Enum
 
     public enum BookletLayout
     {
-        LeftToRight,
-        RightToLeft,
-        TopToBottom
+        Forward,
+        Reverse
     }
 
     public enum FinishingSide
@@ -137,7 +136,6 @@ namespace SmartDeviceApp.Common.Enum
     {
         Auto,
         FaceDown,
-        //FaceUp,
         Top,
         Stacking
     }

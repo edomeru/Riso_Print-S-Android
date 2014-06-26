@@ -32,7 +32,7 @@
             <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextSelectionHighlightColorThemeBrush}"/>
             <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}"/>
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="FontSize" Value="20"/>
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
@@ -197,7 +197,7 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <TextBox x:Name="ipTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" IsTabStop="{Binding IsButtonVisible}"
-                                   PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" FontSize="20" Style="{StaticResource IPAddressTextBoxStyle1}"
+                                   PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" Style="{StaticResource IPAddressTextBoxStyle1}"
                          Loaded="ipTextBox_Loaded" IsReadOnly="{Binding IsProgressRingVisible}" Margin="30,20,10,10" Width="300"/>
                 <StackPanel Style="{StaticResource STYLE_StackRight}" Orientation="Horizontal">
                     <ProgressRing x:Name="progressRing" Foreground="White" IsActive="True" Visibility="{Binding DataContext.IsProgressRingVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}" Width="34" Height="34"/>

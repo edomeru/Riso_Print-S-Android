@@ -410,17 +410,18 @@
                 <RowDefinition Height="{StaticResource SIZE_PageNumberSliderHeight}"/>
                 <RowDefinition Height="{StaticResource SIZE_PageNumberTextHeight}"/>
             </Grid.RowDefinitions>
-            <ProgressRing x:Name="loadPageProgressRing" Grid.Row="0"
-                          IsActive="{Binding IsLoadPageActive}"
-                          Visibility="{Binding IsLoadPageActive, Converter={StaticResource BooleanToVisibilityConverter}}"
-                          Style="{StaticResource STYLE_ProgressRing}"/>
             <controls:TwoPageControl Grid.Row="0"
-                                     RightPageImage="{Binding RightPageImage}" 
-                                     LeftPageImage="{Binding LeftPageImage}" 
-                                     PageViewMode="{Binding PageViewMode}" 
+                                     RightBackPageImage="{Binding RightBackPageImage}"
+                                     LeftBackPageImage="{Binding LeftBackPageImage}"
+                                     IsLoadLeftBackPageActive="{Binding IsLoadLeftBackPageActive}"
+                                     IsLoadRightBackPageActive="{Binding IsLoadRightBackPageActive}"
+                                     RightPageImage="{Binding RightPageImage}"
+                                     LeftPageImage="{Binding LeftPageImage}"
+                                     PageViewMode="{Binding PageViewMode}"
                                      PageAreaSize="{Binding RightPageActualSize}"
                                      Loaded="OnPageAreaLoaded"
-                                     VerticalAlignment="Stretch"/>
+                                     IsLoadLeftPageActive="{Binding IsLoadLeftPageActive}"
+                                     IsLoadRightPageActive="{Binding IsLoadRightPageActive}"/>
             
             <Slider x:Name="pageNumberSlider" Grid.Row="1" 
                     IsEnabled="{Binding IsPageNumberSliderEnabled}" 

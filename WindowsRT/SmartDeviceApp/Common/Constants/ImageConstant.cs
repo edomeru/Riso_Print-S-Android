@@ -28,7 +28,7 @@ namespace SmartDeviceApp.Common.Constants
         {
             try
             {
-                return (int)DisplayInformation.GetForCurrentView().LogicalDpi / BASE_DPI;
+                return (double)GetLogicalDpi() / BASE_DPI;
             }
             catch (Exception)
             {
@@ -36,6 +36,11 @@ namespace SmartDeviceApp.Common.Constants
             }
 
             return 1.0;
+        }
+
+        public static int GetLogicalDpi()
+        {
+            return (int)DisplayInformation.GetForCurrentView().LogicalDpi;
         }
 
         #endregion Print Preview Page

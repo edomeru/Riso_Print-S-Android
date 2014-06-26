@@ -31,7 +31,11 @@
           Margin="{Binding ElementName=pageControl, Path=Margin}">
         <Border x:Name="pageBorder" Style="{StaticResource STYLE_PageImageBorder}">
             <Image x:Name="pageImage" Source="{Binding ElementName=pageControl, Path=Image}" Style="{StaticResource STYLE_PageImage}" ImageOpened="pageImage_ImageOpened"/>
-        </Border>        
+        </Border>
+        <ProgressRing x:Name="loadPageProgressRing" Grid.Row="0"
+                          IsActive="{Binding ElementName=pageControl, Path=IsLoadPageActive}"
+                          Visibility="{Binding ElementName=pageControl, Path=IsLoadPageActive, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          Style="{StaticResource STYLE_ProgressRing}"/>
     </Grid>
     
 </UserControl>

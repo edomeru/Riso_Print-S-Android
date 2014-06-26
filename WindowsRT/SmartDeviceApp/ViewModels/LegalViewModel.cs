@@ -9,8 +9,8 @@ using GalaSoft.MvvmLight.Command;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
-using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight.Messaging;
+using Windows.UI.Xaml.Controls;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -23,7 +23,6 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
-
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 

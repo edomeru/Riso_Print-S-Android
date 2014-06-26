@@ -23,7 +23,6 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
-
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 

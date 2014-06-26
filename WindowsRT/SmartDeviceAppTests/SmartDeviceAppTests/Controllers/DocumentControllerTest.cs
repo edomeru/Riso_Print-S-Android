@@ -9,6 +9,8 @@ using SmartDeviceApp.Common.Utilities;
 using System.Threading.Tasks;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Models;
+using Windows.UI.Xaml.Media.Imaging;
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
 namespace SmartDeviceAppTests.Controllers
 {
@@ -88,90 +90,41 @@ namespace SmartDeviceAppTests.Controllers
             await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
-        [TestMethod]
-        public async Task Test_GetLogicalPages_NotLoaded()
+        [UI.UITestMethod]
+        public async Task Test_GetLogicalPageImages_NotLoaded()
         {
-            List<LogicalPage> result = await DocumentController.Instance.GetLogicalPages(0, 1);
+            List<WriteableBitmap> result =
+                await DocumentController.Instance.GetLogicalPageImages(0, 1,
+                new System.Threading.CancellationTokenSource());
             Assert.IsNull(result);
         }
 
-        [TestMethod]
-        public async Task Test_GetLogicalPages_Loaded_Start()
+        [UI.UITestMethod]
+        public async Task Test_GetLogicalPageImages_Loaded_Start()
         {
             StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
             await DocumentController.Instance.Load(file);
 
-            List<LogicalPage> result = await DocumentController.Instance.GetLogicalPages(0, 2);
+            List<WriteableBitmap> result =
+                await DocumentController.Instance.GetLogicalPageImages(0, 2,
+                new System.Threading.CancellationTokenSource());
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Count); // Count should be same as requested
 
             await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
 
-        [TestMethod]
-        public async Task Test_GetLogicalPages_Loaded_End()
+        [UI.UITestMethod]
+        public async Task Test_GetLogicalPageImages_Loaded_End()
         {
             StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
             await DocumentController.Instance.Load(file);
 
-            List<LogicalPage> result = await DocumentController.Instance.GetLogicalPages(11, 5);
+            List<WriteableBitmap> result =
+                await DocumentController.Instance.GetLogicalPageImages(11, 5,
+                new System.Threading.CancellationTokenSource());
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count); // Should only be one since it is the last page, regardless of request count
-
-            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
-
-        [TestMethod]
-        public async Task Test_GenerageLogicalPages_NotLoaded()
-        {
-            await DocumentController.Instance.GenerateLogicalPages(0, 1);
-            // Note: no public property or return value to assert
-        }
-
-        [TestMethod]
-        public async Task Test_GenerageLogicalPages_Loaded_Start()
-        {
-            StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
-            await DocumentController.Instance.Load(file);
-
-            await DocumentController.Instance.GenerateLogicalPages(0, 4);
-            // Note: no public property or return value to assert
-
-            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
-
-        [TestMethod]
-        public async Task Test_GenerageLogicalPages_Loaded_End()
-        {
-            StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
-            await DocumentController.Instance.Load(file);
-
-            await DocumentController.Instance.GenerateLogicalPages(11, 4);
-            // Note: no public property or return value to assert
-
-            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
-
-        [TestMethod]
-        public async Task Test_GenerageLogicalPages_Loaded_BeforeStart()
-        {
-            StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
-            await DocumentController.Instance.Load(file);
-
-            await DocumentController.Instance.GenerateLogicalPages(-1, 4);
-            // Note: no public property or return value to assert
-
-            await Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
-
-        [TestMethod]
-        public async Task Test_GenerageLogicalPages_Loaded_AfterEnd()
-        {
-            StorageFile file = await StorageFileUtility.GetFileFromAppResource(TESTDATA_PDF_REGULAR);
-            await DocumentController.Instance.Load(file);
-
-            await DocumentController.Instance.GenerateLogicalPages(100, 4);
-            // Note: no public property or return value to assert
 
             await Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }

@@ -39,13 +39,10 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class PrintPreviewPage : PageBase
     {
-        public event PrintPreviewController.PageAreaGridLoadedEventHandler PageAreaGridLoaded;
-       
-
+        
         public PrintPreviewPage()
         {
             this.InitializeComponent();
-            PageAreaGridLoaded += PrintPreviewController.PageAreaGridLoaded;
         }
 
         public PrintPreviewViewModel ViewModel
@@ -76,16 +73,14 @@ namespace SmartDeviceApp.Views
             // Initialize gesture controller
             var twoPageControl = (TwoPageControl)sender;
             var pageAreaGrid = twoPageControl.PageAreaGrid;
+
+            //TODO: Remove unnecessary items
             ViewModel.TwoPageControl = twoPageControl;
-            ViewModel.SetPageAreaGrid(pageAreaGrid);
+            ViewModel.SetPageAreaGrid(twoPageControl);
             ViewModel.DisplayAreaGrid = twoPageControl.DisplayAreaGrid;
             ViewModel.TransitionGrid = twoPageControl.TransitionGrid;
             ViewModel.ManipulationGrid = twoPageControl.ManipulationGrid;
             ViewModel.IsDuplex = twoPageControl.IsDuplex;
-            if (PageAreaGridLoaded != null)
-            {
-                PageAreaGridLoaded();
-            }
         }
     }
 }

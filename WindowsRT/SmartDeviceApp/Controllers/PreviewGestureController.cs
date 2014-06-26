@@ -1,9 +1,18 @@
-﻿using SmartDeviceApp.Controls;
+﻿//
+//  PreviewGestureController.cs
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group on 2014/02/25.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
+using SmartDeviceApp.Controls;
+using SmartDeviceApp.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Input;
@@ -19,6 +28,7 @@ namespace SmartDeviceApp.Controllers
     public class PreviewGestureController : IDisposable
     {
         private const int SWIPE_THRESHOLD = 100;
+        private const int MAX_ZOOM_LEVEL_FACTOR = 4;
 
         private GestureRecognizer _gestureRecognizer;
         private UIElement _control;
@@ -42,6 +52,8 @@ namespace SmartDeviceApp.Controllers
         private double _originalScale;
         private bool _isScaled;
         private Point _startPoint;
+        private double _currentZoomLength; // based on width
+        private double _maxZoomLength; // based on width * max zoom level factor
 
         private bool _isEnabled;
         private bool _isDisposed;
@@ -76,6 +88,8 @@ namespace SmartDeviceApp.Controllers
             _twoPageControl = twoPageControl;
             _rightPageWidth = rightPageWidth;
             Initialize();
+            _currentZoomLength = _targetSize.Width;
+            _maxZoomLength = _targetSize.Width * MAX_ZOOM_LEVEL_FACTOR;
 
             ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
         }
@@ -120,6 +134,8 @@ namespace SmartDeviceApp.Controllers
             _controlSize = new Size(((ScrollViewer)_controlReference).ActualWidth, ((ScrollViewer)_controlReference).ActualHeight);
             _center = new Point(_controlSize.Width / 2, _controlSize.Height / 2);
             ResetTransforms();
+
+            
         }
 
         public void EnableGestures()
@@ -185,7 +201,7 @@ namespace SmartDeviceApp.Controllers
             Normalize();
         }
 
-        public void ResetTransforms() // TODO: Set to private after debug!!
+        private void ResetTransforms()
         {
             _cumulativeTransform = new TransformGroup();
             _deltaTransform = new CompositeTransform();
@@ -208,20 +224,21 @@ namespace SmartDeviceApp.Controllers
 
             // Set original scale
             _deltaTransform.CenterX = _center.X;
-            _deltaTransform.CenterY = _center.Y;            
+            _deltaTransform.CenterY = _center.Y;
             _deltaTransform.ScaleX = _deltaTransform.ScaleY = _originalScale;
+
+            _currentZoomLength = _targetSize.Width;
 
             Normalize();
             // Reset scale
             _isScaled = false;
         }
-        private List<Pointer> pointsOnPress = new List<Pointer>();
         private uint pointerCount = 0;
         private bool _multipleFingersDetected = false;
         void OnPointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
+            getScreenShot();
             _gestureRecognizer.ProcessDownEvent(args.GetCurrentPoint(_controlReference));
-            pointsOnPress.Add(args.Pointer);
             pointerCount++;
 
             if (pointerCount > 1)
@@ -230,6 +247,7 @@ namespace SmartDeviceApp.Controllers
                 _multipleFingersDetected = false;
             _control.CapturePointer(args.Pointer);
             args.Handled = true;
+            
         }
         void OnPointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
@@ -337,11 +355,21 @@ namespace SmartDeviceApp.Controllers
         private bool DetectScale(ManipulationUpdatedEventArgs e)
         {
             var isScale = false; // Currently scaling
-            if (e.Delta.Scale == 1)
+            float scale = e.Delta.Scale;
+
+            if (scale == 1 || // No scale change
+                (_currentZoomLength > _maxZoomLength && scale > 1)) // Prevent scale up on maximum
             {
                 return isScale;
             }
-            
+
+            double tempWidth = _currentZoomLength * scale;
+            if (tempWidth > _maxZoomLength)
+            {
+                scale = (float)_maxZoomLength / (float)_currentZoomLength; // Change scale to maximum
+                tempWidth = _currentZoomLength * scale;
+            }
+
             _tempPreviousTransform.Matrix = _tempCumulativeTransform.Value;
 
             // Get scale center
@@ -350,7 +378,7 @@ namespace SmartDeviceApp.Controllers
             _tempDeltaTransform.CenterY = center.Y;
 
             // Apply scaling on temp transforms first
-            _tempDeltaTransform.ScaleX = _tempDeltaTransform.ScaleY = e.Delta.Scale;
+            _tempDeltaTransform.ScaleX = _tempDeltaTransform.ScaleY = scale;
             
             // Check if scale is valid, do not scale less than original size
             if (_tempCumulativeTransform.Value.M11 > 1)
@@ -361,13 +389,15 @@ namespace SmartDeviceApp.Controllers
                     _previousTransform.Matrix = _cumulativeTransform.Value;
                     _deltaTransform.CenterX = center.X;
                     _deltaTransform.CenterY = center.Y;
-                    _deltaTransform.ScaleX = _deltaTransform.ScaleY = e.Delta.Scale;
+                    _deltaTransform.ScaleX = _deltaTransform.ScaleY = scale;
                     _deltaTransform.TranslateX = _deltaTransform.TranslateY = 0;
 
                     _isScaled = true; // not original size
                     isScale = true;
                     _isTranslateXEnabled = true;
                     _isTranslateYEnabled = true;
+
+                    _currentZoomLength = tempWidth;
                 }
             }
             else
@@ -445,6 +475,9 @@ namespace SmartDeviceApp.Controllers
 
         private void FitToCenter()
         {
+            //get pageview mode
+            var viewModel = new ViewModelLocator().PrintPreviewViewModel;
+ 
             // t1 = target top-left point, t2 = target bottom-right point
             var t1 = new Point(_cumulativeTransform.Value.OffsetX, _cumulativeTransform.Value.OffsetY);
             var t2 = new Point(_cumulativeTransform.Value.OffsetX + _targetSize.Width * _cumulativeTransform.Value.M11,
@@ -499,13 +532,15 @@ namespace SmartDeviceApp.Controllers
 
         private void ManipulationGrid_ManipulationStarted(ManipulationStartedEventArgs e)
         {
+
             if (_twoPageControl.Image.Source == null)
             {
                 //CancelManipulation(e);
                 return;
             }
-
+            
             manipulationStartPosition = e.Position;
+            isNextPageCalled = false;
 
             _backCurl = false;
             var startOfBackCurlPosition = 0.0;
@@ -531,14 +566,14 @@ namespace SmartDeviceApp.Controllers
             //flipDirection = FlipDirections.Left;
             _twoPageControl.Page2TranslateTransform.X = _manipulationGrid.ActualWidth; //get Page2ClipTranslateTransform and put in XAML.
             //Page2.Opacity = 1;
-            //PageAreaGrid.Opacity = 1;
+            //_twoPageControl.PageAreaGrid.Opacity = 1;
             _twoPageControl.TransitionTranslateTransform.X = -80000;
             _twoPageControl.TransitionContainerTransform.TranslateX = _manipulationGrid.ActualWidth;
             _transitionGrid.Opacity = .975;
             
         }
 
-
+        private bool isNextPageCalled = false;
         private void ManipulationGrid_ManipulationDelta(ManipulationUpdatedEventArgs e)
         {
             if (this.isCancellationRequested)
@@ -551,6 +586,17 @@ namespace SmartDeviceApp.Controllers
             var w = _twoPageControl.PageAreaGrid.ActualWidth;
             var h = _twoPageControl.PageAreaGrid.ActualHeight;
 
+            //_twoPageControl.PageAreaGrid.Opacity = 1;
+
+            if (!isNextPageCalled)
+            {
+                if (!_backCurl)
+                {
+                    //_swipeLeftHandler();
+                    //isNextPageCalled = true;
+                }
+
+            }
                 var tempW = 0.0;
                 if (_twoPageControl.PageAreaGrid.ActualWidth > _rightPageWidth)
                 {
@@ -576,7 +622,7 @@ namespace SmartDeviceApp.Controllers
                     this.rotationCenterY = 0;
                 }
 
-                _twoPageControl.Page2TranslateTransform.X = w + cx / 2;/// 2
+                _twoPageControl.Page2TranslateTransform.X = w + cx / 2;/// 2 
                 _twoPageControl.Page2TranslateTransform.Y = -40000 + h / 2;/// 2
                 _twoPageControl.Page2RotateTransform.CenterX = this.rotationCenterX;
                 _twoPageControl.Page2RotateTransform.CenterY = this.rotationCenterY;
@@ -597,26 +643,6 @@ namespace SmartDeviceApp.Controllers
 
                 System.Diagnostics.Debug.WriteLine("w: {0} h: {1} cx: {2} cy: {3} angle: {4} rotationCenterX: {5} rotationCenterY: {6}", w, h, cx, cy, angle, rotationCenterX, rotationCenterY);
 
-                //System.Diagnostics.Debug.WriteLine("Page2ClipTranslateTransform.X: {0} \nPage2ClipTranslateTransform.Y: {1} \nPage2ClipRotateTransform.CenterX: {2} \nPage2ClipRotateTransform.CenterY: {3} \nPage2ClipRotateTransform.Angle: {4}",
-                //    Page2ClipTranslateTransform.X,
-                //    Page2ClipTranslateTransform.Y,
-                //    Page2ClipRotateTransform.CenterX,
-                //    Page2ClipRotateTransform.CenterY,
-                //    Page2ClipRotateTransform.Angle);
-
-                //System.Diagnostics.Debug.WriteLine("TransitionGridClipTranslateTransform.X: {0} \nTransitionGridClipTranslateTransform.Y: {1} \nTransitionGridClipRotateTransform.CenterX: {2} \nTransitionGridClipRotateTransform.CenterY: {3} \nTransitionGridClipRotateTransform.Angle: {4}",
-                //    TransitionGridClipTranslateTransform.X,
-                //    TransitionGridClipTranslateTransform.Y,
-                //    TransitionGridClipRotateTransform.CenterX,
-                //    TransitionGridClipRotateTransform.CenterY,
-                //    TransitionGridClipRotateTransform.Angle);
-
-                //System.Diagnostics.Debug.WriteLine("TransitionGridContainerTransform.TranslateX: {0} \nTransitionGridContainerTransform.CenterX: {1} \nTransitionGridClipRotateTransform.Centery: {2} \nTransitionGridContainerTransform.Rotation: {3}",
-                //    TransitionGridContainerTransform.TranslateX,
-                //    TransitionGridContainerTransform.CenterX,
-                //    TransitionGridContainerTransform.CenterY,
-                //    TransitionGridContainerTransform.Rotation);
-            //}
         }
 
         private void ManipulationGrid_ManipulationCompleted(ManipulationCompletedEventArgs e)
@@ -631,6 +657,8 @@ namespace SmartDeviceApp.Controllers
 
             var w = _twoPageControl.PageAreaGrid.ActualWidth;
             var h = _twoPageControl.PageAreaGrid.ActualHeight;
+
+            //_twoPageControl.PageAreaGrid.Opacity = 0.01;
 
             System.Diagnostics.Debug.WriteLine("Position X: {0}", e.Position.X);
 

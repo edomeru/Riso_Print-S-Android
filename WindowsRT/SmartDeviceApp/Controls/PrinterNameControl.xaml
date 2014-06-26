@@ -163,13 +163,13 @@
         
     </UserControl.Resources>
 
-    <Grid x:Name="button"  Background="#FF919191"  Style="{StaticResource STYLE_ListItemGrid}" Height="60">
+    <Grid x:Name="button"  Background="{StaticResource BRUSH_Gray3}"  Style="{StaticResource STYLE_ListItemGrid}" Height="60">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonStates">
                 <VisualState x:Name="DefaultPrinterState">
                     <Storyboard>
-                        <ColorAnimation Duration="0" To="#FF242424" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="button" d:IsOptimized="True"/>
-                        <ColorAnimation Duration="0" To="#FFFFFDFD" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="key" d:IsOptimized="True"/>
+                        <ColorAnimation Duration="0" To="{StaticResource COLOR_Gray4}" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="button" d:IsOptimized="True"/>
+                        <ColorAnimation Duration="0" To="White" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="key" d:IsOptimized="True"/>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="DeletePrinterState"/>
