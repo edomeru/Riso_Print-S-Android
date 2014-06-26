@@ -140,6 +140,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @brief Gets the value of the requested column as a boolean (i.e. 
      * converts integer value retrieved from database to boolean).
      * 
+     * Based on http://stackoverflow.com/questions/2510652/is-there-a-boolean-literal-in-sqlite
+     * 
      * @param cursor Cursor object
      * @param columnName Name of the column in the database
      * 

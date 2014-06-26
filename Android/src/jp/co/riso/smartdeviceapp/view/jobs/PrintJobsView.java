@@ -588,9 +588,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * 
      * @brief Requests layout after adding views during onLayout
      * 
+     * Based on: http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
      */
     private class AddViewRunnable implements Runnable {
-        // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
         @Override
         public void run() {
             requestLayout();
