@@ -42,7 +42,8 @@ public class Preview {
     
     /**
      * @brief PaperSize print settings that determines the paper sizes to be used during print.
-     * @note sizes from IS1000CJ 
+     * 
+     * @note Sizes is based from IS1000CJ
      */
     public enum PaperSize {
         A3(297.0f, 420.0f), ///< 297mm x 420mm

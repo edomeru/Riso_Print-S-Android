@@ -58,7 +58,7 @@ public class PrintJob {
     /** 
      * @brief Retrieves the ID of the Print Job
      * 
-     * @return print job ID
+     * @return Print job ID
      */
     public int getId() {
         return mId;
