@@ -251,8 +251,7 @@ public class PDFFileManager {
     /**
      * @brief Checks whether a new PDF is available from open-in
      * 
-     * @param context
-     *            Application instance context
+     * @param context Application instance context
      * 
      * @retval true A PDF is available from open-in
      * @retval false No PDF is available from open-in
@@ -326,10 +325,8 @@ public class PDFFileManager {
     /**
      * @brief Sets the filename of the PDF saved in the sandbox
      * 
-     * @param context
-     *            Application instance context
-     * @param fileName
-     *            Filename to be saved
+     * @param context Application instance context
+     * @param fileName Filename to be saved
      */
     public static void setSandboxPDF(Context context, String fileName) {
         if (context == null) {

@@ -346,7 +346,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     /**
      * @brief Sets the right margin
      * 
-     * @param marginRight Tight margin in mm
+     * @param marginRight Right margin in mm
      */
     public void setMarginRightInMm(float marginRight) {
         mMarginRight = marginRight;
