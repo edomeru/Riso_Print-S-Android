@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jp.co.riso.smartprint"
     android:versionCode="1"
-    android:versionName="v0.1.20140624.debug" >
+    android:versionName="v0.1.20140627" >
 
     <uses-sdk
         android:minSdkVersion="14"
