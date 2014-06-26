@@ -29,7 +29,7 @@
 #define SNMPV3_USER "risosnmp"
 #define SNMPV3_PASS "risosnmp"
 
-#define DETECT_ALL_DEVICES 0  // 0 for RISO only
+#define DETECT_ALL_DEVICES 1  // 0 for RISO only
 
 typedef struct
 {
