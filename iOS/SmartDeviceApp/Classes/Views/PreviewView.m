@@ -85,16 +85,22 @@
 
 /**
  * Pinch gesture recognizer for scaling.
+ *
+ * @see - (IBAction)pinchAction:(id)sender;
  */
 @property (nonatomic, strong) UIPinchGestureRecognizer *pincher;
 
 /**
  * Pan gesture recognizer for panning.
+ *
+ * @see - (IBAction)panAction:(id)sender;
  */
 @property (nonatomic, strong) UIPanGestureRecognizer *panner;
 
 /**
  * Double tap gesture recognizer for zooming out.
+ *
+ * @see - (IBAction)tapAction:(id)sender;
  */
 @property (nonatomic, strong) UITapGestureRecognizer *tapper;
 
@@ -172,18 +178,24 @@
 /**
  * Handles pinch gesture.
  * Performs zooming action.
+ *
+ * @param sender Gesture recognizer that triggered the action
  */
 - (IBAction)pinchAction:(id)sender;
 
 /**
  * Handles pan gesture.
  * Performs panning action.
+ *
+ * @param sender Gesture recognizer that triggered the action
  */
 - (IBAction)panAction:(id)sender;
 
 /**
  * Handles double-tap gesture.
  * Performs zooming-out action (scale of 1.0)
+ *
+ * @param sender Gesture recognizer that triggered the action
  */
 - (IBAction)tapAction:(id)sender;
 
