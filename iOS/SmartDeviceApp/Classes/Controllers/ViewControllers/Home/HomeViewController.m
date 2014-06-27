@@ -19,18 +19,110 @@
 
 @interface HomeViewController ()
 
-- (void)initialize;
-
+/**
+ * Reference to the tap gesture action.
+ */
 @property (nonatomic, weak) UITapGestureRecognizer *tapRecognizer;
+
+/**
+ * Reference to the "Home" menu button.
+ */
 @property (nonatomic, weak) IBOutlet UIButton *homeButton;
+
+/**
+ * Reference to the "Printers" menu button.
+ */
 @property (nonatomic, weak) IBOutlet UIButton *printersButton;
+
+/**
+ * Reference to the "Print Job History" menu button.
+ */
 @property (nonatomic, weak) IBOutlet UIButton *printJobHistoryButton;
+
+/**
+ * Reference to the "Settings" menu button.
+ */
 @property (nonatomic, weak) IBOutlet UIButton *settingsButton;
+
+/**
+ * Reference to the "Help" menu button.
+ */
 @property (nonatomic, weak) IBOutlet UIButton *helpButton;
+
+/**
+ * Reference to the "Legal" menu button.
+ */
 @property (nonatomic, weak) IBOutlet UIButton *legaButton;
 
+/**
+ * Reference to the currently selected menu button.
+ * The selected menu button should have its corresponding controller
+ * displayed in the center panel.
+ */
 @property (nonatomic, weak) UIButton *selectedButton;
+
+/**
+ * Sets the properties of the SlidingViewController.
+ */
+- (void)initialize;
+
+/**
+ * Changes the background color of the menu button.
+ * The menu button has a different background color to indicate 
+ * that the menu item is already displayed in the center panel.\n
+ *
+ * @param item the menu button object
+ * @return YES if the menu button was selected, NO if the menu button is already selected
+ */
 - (BOOL)selectButton:(UIButton *)item;
+
+/**
+ * Responds to tapping the "Home" menu button.
+ * Displays the PrintPreviewViewController.
+ * 
+ * @param sender the menu button object
+ */
+- (IBAction)homeAction:(id)sender;
+
+/**
+ * Responds to tapping the "Printers" menu button.
+ * Displays either the PrintersIphoneViewController or the PrintersIpadViewController.
+ *
+ * @param sender the menu button object
+ */
+- (IBAction)printersAction:(id)sender;
+
+/**
+ * Responds to tapping the "Print Job History" menu button.
+ * Displays PrintJobHistoryViewController.
+ *
+ * @param sender the menu button object
+ */
+- (IBAction)printJobHistoryAction:(id)sender;
+
+/**
+ * Responds to tapping the "Settings" menu button.
+ * Displays SettingsViewController.
+ *
+ * @param sender the menu button object
+ */
+- (IBAction)settingsAction:(id)sender;
+
+/**
+ * Responds to tapping the "Help" menu button.
+ * Displays HelpViewController.
+ *
+ * @param sender the menu button object
+ */
+- (IBAction)helpAction:(id)sender;
+
+/**
+ * Responds to tapping the "Legal" menu button.
+ * Displays LegalViewController.
+ *
+ * @param sender the menu button object
+ */
+- (IBAction)legalAction:(id)sender;
 
 @end
 

@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ * Controller for the "Help" screen (phone and tablet).
+ */
 @interface HelpViewController : UIViewController
 
 @end

@@ -39,6 +39,7 @@
 
 /**
  * Reference to the animated loading indicator in the preview area.
+ * This is displayed while the page is not yet available for display.
  */
 @property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicator;
 

@@ -88,6 +88,7 @@
 
 /** 
  * Reference to the animated searching indicator.
+ * This is displayed while the printer search is ongoing.
  */
 @property (weak, nonatomic) SearchingIndicator* refreshControl;
 

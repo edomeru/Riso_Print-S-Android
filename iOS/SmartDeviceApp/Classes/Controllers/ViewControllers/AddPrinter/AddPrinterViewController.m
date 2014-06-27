@@ -30,12 +30,13 @@
 #pragma mark - UI Properties
 
 /**
- * Reference to the animated progress indicator.
+ * Reference to the animated searching indicator.
+ * This is displayed while the printer search is ongoing.
  */
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* progressIndicator;
 
 /** 
- * Reference to the input textField for the IP address.
+ * Reference to the textfield for the IP address.
  */
 @property (weak, nonatomic) IBOutlet UITextField *textIP;
 

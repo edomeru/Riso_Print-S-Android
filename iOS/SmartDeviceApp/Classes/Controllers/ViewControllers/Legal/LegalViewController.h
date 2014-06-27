@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ * Controller for the "Legal" screen (phone and tablet).
+ */
 @interface LegalViewController : UIViewController
 
 @end

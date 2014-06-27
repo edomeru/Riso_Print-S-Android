@@ -10,7 +10,8 @@
 #import "SlidingViewController.h"
 
 /**
- * Controller for both the "Default Print Settings" and the "Print Settings" screen.
+ * Controller for both the "Default Print Settings" and the "Print Settings" 
+ * screen (phone and tablet).
  * The "Default Print Settings" screen is accessed from the "Printers" screen.\n
  * The "Print Settings" screen is accessed from the "Print Preview" screen.\n
  * This serves as the container for the PrintSettingsPrinterViewController.\n
