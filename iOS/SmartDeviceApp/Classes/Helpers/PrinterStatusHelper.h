@@ -17,8 +17,8 @@
 @protocol PrinterStatusHelperDelegate
 
 /**
- Notifies the delegate that the printer status changed.
- @param isOnline Indicates the status of the printer.
+ * Notifies the delegate that the printer status changed.
+ * @param isOnline Indicates the status of the printer.
  */
 - (void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline;
 
@@ -40,24 +40,24 @@
 @property (strong, nonatomic) NSString *ipAddress;
 
 /**
- Initialize class with printer's IP address.
- @param ipAddress The IP address of the printer.
+ * Initialize class with printer's IP address.
+ * @param ipAddress The IP address of the printer.
  */
 - (id)initWithPrinterIP:(NSString *)ipAddress;
 
 /**
- Stops the polling of printer status.
+ * Stops the polling of printer status.
  */
 - (void)stopPrinterStatusPolling;
 
 /**
- Starts the polling of printer status.
+ * Starts the polling of printer status.
  */
 - (void)startPrinterStatusPolling;
 
 /**
- Check if polling for printer status.
- @return YES if polling for printer status, NO otherwise.
+ * Check if polling for printer status.
+ * @return YES if polling for printer status, NO otherwise.
  */
 - (BOOL)isPolling;
 

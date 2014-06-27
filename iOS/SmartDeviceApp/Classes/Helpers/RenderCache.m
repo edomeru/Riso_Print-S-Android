@@ -30,14 +30,14 @@
 @property (nonatomic, strong) NSMutableDictionary *itemsDictionary;
 
 /**
- Removes item from the cache
- @param index
-        Index of of the item
+ * Removes item from the cache
+ * @param index
+ *        Index of of the item
  */
 - (void)removeItemAtIndex:(NSUInteger)index;
 
 /**
- Performs clean-up on low memory
+ * Performs clean-up on low memory
  */
 - (void)didReceiveMemoryWarning;
 

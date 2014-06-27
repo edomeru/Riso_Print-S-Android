@@ -77,51 +77,48 @@ typedef enum
 @interface AlertHelper : NSObject
 
 /**
- Displays an AlertView informing the user of a result.
- 
- @param result
-        one of the defined kAlertResult values
-        (use kAlertResult* for error messages, kAlertInfo* for success messages)
- @param title
-        one of the defined kAlertTitle values
-        (use kAlertTitle*)
- @param details
-        array of extra information optionally needed when displaying
-        the alert (ex. specify the printer IP when adding the printer
-        failed)
+ * Displays an AlertView informing the user of a result.
+ * @param result
+ *        one of the defined kAlertResult values
+ *        (use kAlertResult* for error messages, kAlertInfo* for success messages)
+ * @param title
+ *        one of the defined kAlertTitle values
+ *        (use kAlertTitle*)
+ * @param details
+ *        array of extra information optionally needed when displaying
+ *        the alert (ex. specify the printer IP when adding the printer
+ *        failed)
  */
 + (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details;
 
 /**
- Displays an AlertView informing the user of a result.
- 
- @param result
-        one of the defined kAlertResult values
-        (use kAlertResult* for error messages, kAlertInfo* for success messages)
- @param title
-        one of the defined kAlertTitle values
-        (use kAlertTitle*)
- @param details
-        array of extra information optionally needed when displaying
-        the alert (ex. specify the printer IP when adding the printer
-        failed)
- @param handler
-        block to handle event when alert view is dismissed
+ * Displays an AlertView informing the user of a result.
+ * @param result
+ *        one of the defined kAlertResult values
+ *        (use kAlertResult* for error messages, kAlertInfo* for success messages)
+ * @param title
+ *        one of the defined kAlertTitle values
+ *        (use kAlertTitle*)
+ * @param details
+ *        array of extra information optionally needed when displaying
+ *        the alert (ex. specify the printer IP when adding the printer
+ *        failed)
+ * @param handler
+ *        block to handle event when alert view is dismissed
  */
 + (void)displayResult:(kAlertResult)result withTitle:(kAlertTitle)title withDetails:(NSArray*)details withDismissHandler:(CXAlertViewHandler)handler;
 
 /**
- Displays an AlertView asking for user confirmation.
- The following buttons are available as a response:
- (1) cancel, (2) OK.
- 
- @param confirmation
-        one of the defined kAlertConfirmation values
-        (use kAlertConfirmation*)
- @param cancelled
-        block to execute when the user presses cancel
- @param confirmed
-        block to execute when the user presses OK
+ * Displays an AlertView asking for user confirmation.
+ * The following buttons are available as a response:
+ * (1) cancel, (2) OK.
+ * @param confirmation
+ *        one of the defined kAlertConfirmation values
+ *        (use kAlertConfirmation*)
+ * @param cancelled
+ *        block to execute when the user presses cancel
+ * @param confirmed
+ *        block to execute when the user presses OK
  */
 + (void)displayConfirmation:(kAlertConfirmation)confirmation withCancelHandler:(void (^)(CXAlertView*, CXAlertButtonItem*))cancelled withConfirmHandler:(void (^)(CXAlertView*, CXAlertButtonItem*))confirmed;
 

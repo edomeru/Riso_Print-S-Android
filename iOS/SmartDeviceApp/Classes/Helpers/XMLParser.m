@@ -21,10 +21,10 @@
 @property (nonatomic, strong) NSMutableString *currentString;
 
 /**
- Creates a dictionary by parsing an XML data
- @param data
-        Data of the XML file
- @return Dictionary object of the parsed XML file
+ * Creates a dictionary by parsing an XML data
+ * @param data
+ *        Data of the XML file
+ * @return Dictionary object of the parsed XML file
  */
 - (NSDictionary *)dictionaryWithXMLData:(NSData *)data;
 

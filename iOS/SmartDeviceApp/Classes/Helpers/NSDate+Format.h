@@ -14,8 +14,8 @@
 @interface NSDate (Format)
 
 /**
- Creates formatted NSString dependent on current locale.
- @return NSString of date.
+ * Creates formatted NSString dependent on current locale.
+ * @return NSString of date.
  */
 - (NSString*)formattedString;
 

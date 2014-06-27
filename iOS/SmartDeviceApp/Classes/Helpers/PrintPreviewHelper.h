@@ -157,38 +157,38 @@ typedef enum {
 @interface PrintPreviewHelper : NSObject
 
 /**
- Helper function to determine if preview is in grayscale based on color mode setting value
- @param colorMode - color mode setting value
- @return YES if grayscale; NO otherwise
+ * Helper function to determine if preview is in grayscale based on color mode setting value
+ * @param colorMode - color mode setting value
+ * @return YES if grayscale; NO otherwise
  */
 +(BOOL) isGrayScaleColorForColorModeSetting : (kColorMode) colorMode;
 
 /**
- Helper function to determine the aspect ratio of the paper
- @param paperSize - paper size
- @return aspect ratio (height / width)
+ * Helper function to determine the aspect ratio of the paper
+ * @param paperSize - paper size
+ * @return aspect ratio (height / width)
  */
 +(CGFloat) getAspectRatioForPaperSize:(kPaperSize) paperSize;
 
 /**
- Helper function to determine actual paper dimensions in points
- @param paperSize - paper size
- @param isLandscape - if paper should be in landscape
- @return CGSize
+ * Helper function to determine actual paper dimensions in points
+ * @param paperSize - paper size
+ * @param isLandscape - if paper should be in landscape
+ * @return CGSize
  */
 + (CGSize)getPaperDimensions:(kPaperSize)paperSize isLandscape: (BOOL) isLandscape;
 
 /**
- Helper function to determine if paper orientation is landscape based on combination of settings
- @param previewSetting - preview setting object containing setting values
- @return YES if paper is landscape; NO otherwise
+ * Helper function to determine if paper orientation is landscape based on combination of settings
+ * @param previewSetting - preview setting object containing setting values
+ * @return YES if paper is landscape; NO otherwise
  **/
 +(BOOL) isPaperLandscapeForPreviewSetting:(PreviewSetting*) setting;
 
 /**
- Helper function to determine number of pages in a sheet based on the pagination settings
- @param pagination - value of paginationsetting
- @return Number of pages per sheet
+ * Helper function to determine number of pages in a sheet based on the pagination settings
+ * @param pagination - value of paginationsetting
+ * @return Number of pages per sheet
  **/
 + (NSUInteger)getNumberOfPagesPerSheetForImpostionSetting:(NSUInteger)imposition;
 

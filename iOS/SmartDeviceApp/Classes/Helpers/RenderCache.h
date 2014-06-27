@@ -14,6 +14,7 @@
 
 /**
  * RenderCache class creates a cache of the loaded document.
+ * The maximum number of pages that can be cached is set during initialization using the method initWithMaxItemCount.
  */
 @interface RenderCache : NSObject
 
@@ -29,32 +30,32 @@
 
 
 /**
- Initialize a RenderCache object with maximum item count
- @param maxItemCount
-        Maximum number of items the cache should hold
- @return RenderCache object
+ * Initialize a RenderCache object with maximum item count
+ * @param maxItemCount
+ *        Maximum number of items the cache should hold
+ * @return RenderCache object
  */
 - (id)initWithMaxItemCount:(NSInteger)maxItemCount;
 
 /**
- Adds item to the cache
- @param item
-        A RenderCacheItem object to be added
- @param index
-        Index of the object
+ * Adds item to the cache
+ * @param item
+ *        A RenderCacheItem object to be added
+ * @param index
+ *        Index of the object
  */
 - (void)addItem:(RenderCacheItem *)item withIndex:(NSUInteger)index;
 
 /**
- Retrieves an item from the cache
- @param index
-    Index of the object
- @return RenderCacheItem object
+ * Retrieves an item from the cache
+ * @param index
+ *    Index of the object
+ * @return RenderCacheItem object
  */
 - (RenderCacheItem *)itemWithIndex:(NSUInteger)index;
 
 /**
- Removes all items in the cache
+ * Removes all items in the cache
  */
 - (void)removeAllItems;
 
@@ -66,12 +67,12 @@
 @interface RenderCacheItem : NSObject
 
 /**
- View Controller of a UIPageViewController
+ * View Controller of a UIPageViewController
  */
 @property (nonatomic, strong) PDFPageContentViewController *viewController;
 
 /**
- Image of the cached index
+ * Image of the cached index
  */
 @property (nonatomic, strong) UIImage *image;
 
@@ -85,8 +86,8 @@
 @required
 
 /**
- Gets the current index.
- @return The current index
+ * Gets the current index.
+ * @return The current index
  */
 - (NSUInteger)currentIndex;
 

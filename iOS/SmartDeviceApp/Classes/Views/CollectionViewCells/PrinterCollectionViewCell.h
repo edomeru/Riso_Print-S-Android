@@ -68,21 +68,21 @@
 @property (weak, nonatomic) IBOutlet UIView *defaultSettingsRow;
 
 /**
- Sets the cell as default printer.
- Changes the cell header to black; Hide the default switch and show the deafult icon.
- @param isDefaultPrinter flag if the printer is default or not.
+ * Sets the cell as default printer.
+ * Changes the cell header to black; Hide the default switch and show the deafult icon.
+ * @param isDefaultPrinter flag if the printer is default or not.
  */
 - (void)setAsDefaultPrinterCell:(BOOL)isDefaultPrinterCell;
 
 /**
- Marks the cell for deletion.
- @param isCellForDelete flag if the printer is to be deleted.
+ * Marks the cell for deletion.
+ * @param isCellForDelete flag if the printer is to be deleted.
  */
 - (void)setCellToBeDeletedState:(BOOL)isCellForDelete;
 
 /**
- Highlights the default settings button when selected
- @param isSelected flag if default settings button is pressed.
+ * Highlights the default settings button when selected
+ * @param isSelected flag if default settings button is pressed.
  */
 - (void)setDefaultSettingsRowToSelected:(BOOL)isSelected;
 @end

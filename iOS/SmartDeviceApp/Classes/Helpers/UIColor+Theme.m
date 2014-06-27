@@ -14,12 +14,12 @@
 @interface UIColor(Theme_Internal)
 
 /**
- Create a UIColor with RGBA input.
- @param red Red component
- @param green Green component
- @param blue Blue component
- @param alpha Alpha component
- @return UIColor
+ * Create a UIColor with RGBA input.
+ * @param red Red component
+ * @param green Green component
+ * @param blue Blue component
+ * @param alpha Alpha component
+ * @return UIColor
  */
 + (UIColor *)colorWithR:(CGFloat)red G:(CGFloat)green B:(CGFloat)blue A:(CGFloat)alpha;
 

@@ -11,8 +11,8 @@
 @interface Printer (Log)
 
 /**
- Logs the Printer info and capabilities.
- This is used for debugging only.
+ * Logs the Printer info and capabilities.
+ * This is used for debugging only.
  */
 - (void)log;
 

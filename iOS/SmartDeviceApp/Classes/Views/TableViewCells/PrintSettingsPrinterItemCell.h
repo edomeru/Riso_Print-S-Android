@@ -29,9 +29,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *selectPrinterLabel;
 
 /**
- Set the printerNameLabel to the name of the selected printer.
- If the printer has no name, it will set the printerNameLabel to "No Name".
- @param name Name of the printer
+ * Set the printerNameLabel to the name of the selected printer.
+ * If the printer has no name, it will set the printerNameLabel to "No Name".
+ * @param name Name of the printer
  */
 - (void)setPrinterName:(NSString*)name;
 

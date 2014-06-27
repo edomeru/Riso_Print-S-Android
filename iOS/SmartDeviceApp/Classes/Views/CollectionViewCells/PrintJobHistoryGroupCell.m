@@ -22,40 +22,54 @@
 #pragma mark - UI Properties
 
 /**
- The hidden button covering the entire group header
- responsible for reacting to the touch actions on 
- the header.
+ * The hidden button covering the entire group header
+ * responsible for reacting to the touch actions on
+ * the header.
  */
 @property (weak, nonatomic) IBOutlet UIButton *header;
 
-/** Displays the printer name. */
+/** 
+ * Displays the printer name.
+ */
 @property (weak, nonatomic) IBOutlet UILabel* groupName;
 
-/** Displays the printer IP address. */
+/** 
+ * Displays the printer IP address.
+ */
 @property (weak, nonatomic) IBOutlet UILabel* groupIP;
 
-/** Displays "-" if the group is expanded, "+" if the group is collapsed. */
+/** 
+ * Displays "-" if the group is expanded, "+" if the group is collapsed. 
+ */
 @property (weak, nonatomic) IBOutlet UILabel* groupIndicator;
 
-/** Removes the entire group. */
+/** 
+ * Removes the entire group.
+ */
 @property (weak, nonatomic) IBOutlet DeleteButton* deleteAllButton;
 
-/** The UI for displaying the list of print jobs. */
+/** 
+ * The UI for displaying the list of print jobs. 
+ */
 @property (weak, nonatomic) IBOutlet UITableView* printJobsView;
 
-/** Keeps track of the index of the print job that has the delete button. */
+/** 
+ * Keeps track of the index of the print job that has the delete button. 
+ */
 @property (strong, nonatomic) NSIndexPath* jobWithDelete;
 
 #pragma mark - Data Properties
 
-/** The data source for the list of print jobs (result, name, timestamp). */
+/** 
+ * The data source for the list of print jobs (result, name, timestamp). 
+ */
 @property (strong, nonatomic) NSMutableArray* listPrintJobs;
 
 #pragma mark - Methods
 
 /**
- Display delete button if the user swiped from right to left on the prin job item
- @param gesture The UIGestureRecognizer for swipe
+ * Display delete button if the user swiped from right to left on the prin job item
+ * @param gesture The UIGestureRecognizer for swipe
  */
 - (void)putDeleteButton:(UIGestureRecognizer*)gesture;
 
@@ -81,7 +95,7 @@
 
 /**
  * Informs the delegate that the user tapped delete print job button
- @param button The button tapped by the user.
+ * @param button The button tapped by the user.
  */
 - (IBAction)tappedDeleteJob:(DeleteButton*)button;
 

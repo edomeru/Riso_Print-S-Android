@@ -11,8 +11,8 @@
 @interface PrintJob (Log)
 
 /**
- Logs the Print Job details.
- This is used for debugging only.
+ * Logs the Print Job details.
+ * This is used for debugging only.
  */
 - (void)log;
 

@@ -16,9 +16,9 @@
 #pragma mark - IP Address
 
 /**
- Checks if the input IP is a valid IP address.
- @param inputIP The IP address the user want to validate.
- @return YES if valid, NO otherwise.
+ * Checks if the input is a valid IP address.
+ * @param inputIP The IP address the user wants to validate.
+ * @return YES if valid, NO otherwise.
  */
 + (BOOL)isIPValid:(NSString**)inputIP;
 

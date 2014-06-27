@@ -29,8 +29,8 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet UILabel *defaultSettingsRowLabel;
 
 /**
- Sets the cell header color theme.
- @param cellFormat one of the defined kPrinterCollectionCellType values
+ * Sets the cell header color theme.
+ * @param cellFormat one of the defined kPrinterCollectionCellType values
  */
 - (void)setCellHeaderFormat:(kPrinterCollectionCellType)cellFormat;
 

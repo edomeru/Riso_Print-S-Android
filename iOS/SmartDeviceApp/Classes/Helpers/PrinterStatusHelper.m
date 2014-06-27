@@ -34,17 +34,17 @@
 @property (assign, nonatomic) BOOL cancelledToBackground;
 
 /**
- Updates the UI for printer status.
+ * Updates the UI for printer status.
  */
 - (void)getPrinterStatus;
 
 /**
- Called when app goes to background.
+ * Called when app goes to background.
  */
 - (void)didEnterBackground;
 
 /**
- Called when app is resumed from background.
+ * Called when app is resumed from background.
  */
 - (void)willEnterForeground;
 

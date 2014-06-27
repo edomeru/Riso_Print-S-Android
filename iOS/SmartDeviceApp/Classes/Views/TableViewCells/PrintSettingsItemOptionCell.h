@@ -34,8 +34,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *subMenuImage;
 
 /**
- Shows or hides the currently selected option for the item.
- @param isValueHidden flag wether to show or hide the currently selected option for the item.
+ * Shows or hides the currently selected option for the item.
+ * @param isValueHidden flag wether to show or hide the currently selected option for the item.
  */
 - (void) setHideValue:(BOOL)isValueHidden;
 @end

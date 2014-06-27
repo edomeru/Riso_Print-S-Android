@@ -25,9 +25,9 @@ typedef enum
 @interface PListHelper : NSObject
 
 /**
- Wrapper for reading an unsigned int value from the property list.
- @param kPlistUintVal key
- @return value for the specified key
+ * Wrapper for reading an unsigned int value from the property list.
+ * @param kPlistUintVal key
+ * @return value for the specified key
  */
 + (NSUInteger)readUint:(kPlistUintVal)type;
 

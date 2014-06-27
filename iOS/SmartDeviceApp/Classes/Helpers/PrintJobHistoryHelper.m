@@ -21,21 +21,21 @@
 
 #if DEBUG_PRINT_JOB_USE_TEST_DATA
 /**
- Fills the database with PrintJob objects.
- It creates default-capability Printers, adds some pre-defined 
- number of PrintJob objects per printer, then saves the database.
- This is to be used only for debugging.
+ * Fills the database with PrintJob objects.
+ * It creates default-capability Printers, adds some pre-defined
+ * number of PrintJob objects per printer, then saves the database.
+ * This is to be used only for debugging.
  */
 + (void)populateWithTestData;
 #endif
 
 /**
- Checks if a printer already has the maximum number of print jobs.
- If it does, it removes the oldest print job of the printer from
- the database.
- @param ip
-        printer IP address
- @return YES if successful, NO otherwise.
+ * Checks if a printer already has the maximum number of print jobs.
+ * If it does, it removes the oldest print job of the printer from
+ * the database.
+ * @param ip
+ *        printer IP address
+ * @return YES if successful, NO otherwise.
  */
 + (BOOL)preparePrinterForNewPrintJob:(NSString*)printerIP;
 

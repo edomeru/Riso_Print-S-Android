@@ -53,8 +53,8 @@
 - (void)setDeleteButtonLayout;
 
 /**
- Shows or hide the delete button.
- @param marked flag if the delete button should be shown or hid.
+ * Shows or hide the delete button.
+ * @param marked flag if the delete button should be shown or hid.
  */
 - (void)markForDeletion:(BOOL)marked;
 
