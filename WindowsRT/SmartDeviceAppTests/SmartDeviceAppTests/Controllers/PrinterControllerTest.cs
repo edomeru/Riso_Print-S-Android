@@ -149,8 +149,9 @@ namespace SmartDeviceAppTests.Controllers
             printer.IpAddress = "192.168.0.1";
 
             await PrinterController.Instance.Initialize();
-            PrinterController.Instance.PrinterList.Add(printer);
             await DatabaseController.Instance.InsertPrinter(printer);
+            PrinterController.Instance.PrinterList.Add(printer);
+            
             
             PrinterController.Instance.setPolling(true);
 
@@ -170,13 +171,14 @@ namespace SmartDeviceAppTests.Controllers
             printer.IpAddress = "192.168.0.1";
 
             await PrinterController.Instance.Initialize();
+            await DatabaseController.Instance.InsertPrinter(printer);
 
             PrinterController.Instance.PrinterList.Add(printer);
 
 
             PrinterController.Instance.setPolling(true);
 
-            await DatabaseController.Instance.InsertPrinter(printer);
+            
 
             PrinterController.Instance.DeletePrinterItemsEventHandler += RemoveGroupedJobsByPrinter;
 

@@ -157,7 +157,7 @@ namespace SmartDeviceAppTests.Controllers
             }
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_RegisterPrintSettingValueChange_ResetFalse()
         {
             PrintPreviewController.Instance.RegisterPrintSettingValueChange();
@@ -255,7 +255,7 @@ namespace SmartDeviceAppTests.Controllers
             }
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_UpdatePreview_Null()
         {
             PrintPreviewController.Instance.UpdatePreview(null);
