@@ -112,6 +112,10 @@ namespace SmartDeviceAppTests.Controllers
             device.CapabilitiesList.Add("true");
             device.CapabilitiesList.Add("true");
             device.CapabilitiesList.Add("true");
+            device.CapabilitiesList.Add("true");
+            device.CapabilitiesList.Add("true");
+            device.CapabilitiesList.Add("true");
+            device.CapabilitiesList.Add("true");
             SNMPController.Instance.Discovery.SnmpDevices.Add(device);
             Printer printer = SNMPController.Instance.getPrinterFromSNMPDevice(ip);
             Assert.IsNotNull(printer);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using SmartDeviceApp.ViewModels;
 using GalaSoft.MvvmLight;
+using UI = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.AppContainer;
 
 namespace SmartDeviceAppTests.ViewModels
 {
@@ -35,7 +36,7 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(viewModelLocator.HomeViewModel);
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_PrintPreviewViewModel()
         {
             Assert.IsNotNull(viewModelLocator.PrintPreviewViewModel);

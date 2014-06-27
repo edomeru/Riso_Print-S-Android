@@ -24,7 +24,7 @@ namespace SmartDeviceAppTests.Models
             Assert.IsNotNull(item.Name);
             Assert.IsNotNull(item.Ip_address);
             Assert.IsNotNull(item.IsInPrinterList);
-            Assert.IsNotNull(item.ImageSource);
+            //Assert.IsNotNull(item.ImageSource);
         }
 
         [UI.UITestMethod]
@@ -40,7 +40,7 @@ namespace SmartDeviceAppTests.Models
             Assert.IsNotNull(item.Name);
             Assert.IsNotNull(item.Ip_address);
             Assert.IsNotNull(item.IsInPrinterList);
-            Assert.IsNotNull(item.ImageSource);
+            //Assert.IsNotNull(item.ImageSource);
 
             item.PropertyChanged -= MockOnPropertyChanged;
         }

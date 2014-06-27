@@ -42,7 +42,7 @@ namespace SmartDeviceAppTests.ViewModels
             Assert.IsNotNull(jobsViewModel.DeleteAllJobsCommand);
         }
 
-        [TestMethod]
+        [UI.UITestMethod]
         public void Test_DeleteJobCommand()
         {
             JobController.RemoveJobEventHandler eventHandler = new JobController.RemoveJobEventHandler(Test_RemoveJobEventHandler);

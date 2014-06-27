@@ -80,7 +80,7 @@ namespace SmartDeviceAppTests.Converters
         [UI.UITestMethod]
         public void Test_Convert()
         {
-            var result = heightConverter.Convert(null, null, null, null);
+            var result = heightConverter.Convert(SmartDeviceApp.Common.Enum.ViewOrientation.Landscape, null, null, null);
             Assert.AreEqual(Window.Current.Bounds.Height, result);
         }
 

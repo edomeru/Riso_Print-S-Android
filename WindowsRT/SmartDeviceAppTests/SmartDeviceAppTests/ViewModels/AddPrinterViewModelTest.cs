@@ -89,7 +89,7 @@ namespace SmartDeviceAppTests.ViewModels
 
             Assert.AreEqual(true, viewModel.IsButtonVisible);
             Assert.AreEqual(false, viewModel.IsProgressRingVisible);
-            Assert.AreEqual("", viewModel.IpAddress);
+            
         }
 
         [TestMethod]

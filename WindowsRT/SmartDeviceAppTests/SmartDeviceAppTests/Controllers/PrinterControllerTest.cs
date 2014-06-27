@@ -150,11 +150,11 @@ namespace SmartDeviceAppTests.Controllers
 
             await PrinterController.Instance.Initialize();
             PrinterController.Instance.PrinterList.Add(printer);
-
+            await DatabaseController.Instance.InsertPrinter(printer);
             
             PrinterController.Instance.setPolling(true);
 
-            await DatabaseController.Instance.InsertPrinter(printer);
+            
             await DatabaseController.Instance.SetDefaultPrinter(printer.Id);
             int firstCount = PrinterController.Instance.PrinterList.Count - 1;
 
@@ -288,18 +288,20 @@ namespace SmartDeviceAppTests.Controllers
         [TestMethod]
         public async Task Test_PrinterController_PropertyChanged()
         {
+            await PrinterController.Instance.Initialize();
             Printer printer = new Printer();
             printer.IpAddress = "192.168.0.1";
-            await DatabaseController.Instance.InsertPrinter(printer);
+            PrinterController.Instance.PrinterList.Add(printer);
 
             Printer printer2 = new Printer();
             printer2.IpAddress = "192.168.0.2";
-            await DatabaseController.Instance.InsertPrinter(printer2);
+            PrinterController.Instance.PrinterList.Add(printer2);
 
-            await PrinterController.Instance.Initialize();
+            
 
-            PrinterController.Instance.PrinterList.ElementAt(0).WillBeDeleted = true;
             PrinterController.Instance.PrinterList.ElementAt(0).IsDefault = true;
+            PrinterController.Instance.PrinterList.ElementAt(0).WillBeDeleted = true;
+            
         }
     }
 }

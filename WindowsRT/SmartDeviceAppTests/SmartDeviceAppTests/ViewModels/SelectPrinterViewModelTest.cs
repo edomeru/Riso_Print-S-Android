@@ -44,9 +44,9 @@ namespace SmartDeviceAppTests.ViewModels
         {
             PrintPreviewController.SelectedPrinterChangedEventHandler eventHandler = new PrintPreviewController.SelectedPrinterChangedEventHandler(Test_SelectedPrinterChangedEventHandler);
             selectPrinterViewModel.SelectPrinterEvent += eventHandler;
-            var printer = new Printer();
+            Printer printer = new Printer();
             printer.Id = 0;
-            selectPrinterViewModel.SelectPrinter.Execute(printer);
+            selectPrinterViewModel.SelectPrinter.Execute(printer.Id);
             Assert.IsNotNull(selectPrinterViewModel.SelectPrinter);
         }
 
