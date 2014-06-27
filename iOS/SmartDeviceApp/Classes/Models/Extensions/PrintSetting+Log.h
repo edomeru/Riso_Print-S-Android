@@ -8,6 +8,9 @@
 
 #import "PrintSetting.h"
 
+/**
+ * Extension of the PrintSetting model that provides debugging methods.
+ */
 @interface PrintSetting (Log)
 
 /**

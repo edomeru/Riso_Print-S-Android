@@ -8,6 +8,9 @@
 
 #import "Printer.h"
 
+/**
+ * Extension of the Printer model that provides debugging methods.
+ */
 @interface Printer (Log)
 
 /**

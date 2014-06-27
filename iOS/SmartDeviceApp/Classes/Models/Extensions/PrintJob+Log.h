@@ -8,6 +8,9 @@
 
 #import "PrintJob.h"
 
+/**
+ * Extension of the PrintJob model that provides debugging methods.
+ */
 @interface PrintJob (Log)
 
 /**

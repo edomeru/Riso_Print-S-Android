@@ -9,20 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "SimplePing.h"
 
-@class PrinterStatusHelper;
-
-/**
- * PrinterStatusHelperDelegate protocol declares method for delegates to know that the printer status has changed.
- */
-@protocol PrinterStatusHelperDelegate
-
-/**
- * Notifies the delegate that the printer status changed.
- * @param isOnline Indicates the status of the printer.
- */
-- (void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline;
-
-@end
+@protocol PrinterStatusHelperDelegate;
 
 /**
  * PrinterStatusHelper is a helper class that provides methods for polling the printer's status and informs the delegate if there is a change in the status.
@@ -60,5 +47,18 @@
  * @return YES if polling for printer status, NO otherwise.
  */
 - (BOOL)isPolling;
+
+@end
+
+/**
+ * PrinterStatusHelperDelegate protocol declares method for delegates to know that the printer status has changed.
+ */
+@protocol PrinterStatusHelperDelegate
+
+/**
+ * Notifies the delegate that the printer status changed.
+ * @param isOnline Indicates the status of the printer.
+ */
+- (void)printerStatusHelper:(PrinterStatusHelper *)statusHelper statusDidChange:(BOOL)isOnline;
 
 @end
