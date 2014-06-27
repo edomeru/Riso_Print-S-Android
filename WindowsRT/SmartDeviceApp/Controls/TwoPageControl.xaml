@@ -141,7 +141,7 @@
             </Grid>
 
             <Grid x:Name="displayAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" 
-                 Background="Yellow"
+                 
                   >
                 <Grid.Clip>
                     <RectangleGeometry

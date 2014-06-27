@@ -796,8 +796,8 @@ namespace SmartDeviceApp.Controllers
             //reset
             _twoPageControl.Page2TranslateTransform.X = 0;
             //set image of display
-            var viewModel = new ViewModelLocator().PrintPreviewViewModel;
-            viewModel.RightPageImage = viewModel.RightBackPageImage;
+            //var viewModel = new ViewModelLocator().PrintPreviewViewModel;
+            //viewModel.RightPageImage = viewModel.RightBackPageImage;
             //
             _twoPageControl.PageAreaGrid.Opacity = 0.01;
         }
