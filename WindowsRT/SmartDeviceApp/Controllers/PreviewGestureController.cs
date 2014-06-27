@@ -575,7 +575,7 @@ namespace SmartDeviceApp.Controllers
 
             
             //flipDirection = FlipDirections.Left;
-            _twoPageControl.PageAreaTranslateTransform.X = _manipulationGrid.ActualWidth; //get Page2ClipTranslateTransform and put in XAML.
+            _twoPageControl.Page2TranslateTransform.X = _manipulationGrid.ActualWidth; //get Page2ClipTranslateTransform and put in XAML.
             //Page2.Opacity = 1;
             //_twoPageControl.PageAreaGrid.Opacity = 1;
             _twoPageControl.TransitionTranslateTransform.X = -80000;
@@ -603,8 +603,8 @@ namespace SmartDeviceApp.Controllers
             {
                 if (!_backCurl)
                 {
-                    _swipeLeftHandler();
-                    isNextPageCalled = true;
+                    //_swipeLeftHandler();
+                    //isNextPageCalled = true;
                 }
 
             }
@@ -633,11 +633,11 @@ namespace SmartDeviceApp.Controllers
                     this.rotationCenterY = 0;
                 }
 
-                _twoPageControl.PageAreaTranslateTransform.X = w + cx / 2;/// 2 
-                _twoPageControl.PageAreaTranslateTransform.Y = -40000 + h / 2;/// 2
-                _twoPageControl.PageAreaRotateTransform.CenterX = this.rotationCenterX;
-                _twoPageControl.PageAreaRotateTransform.CenterY = this.rotationCenterY;
-                _twoPageControl.PageAreaRotateTransform.Angle = angle;
+                _twoPageControl.Page2TranslateTransform.X = w + cx / 2;/// 2 
+                _twoPageControl.Page2TranslateTransform.Y = -40000 + h / 2;/// 2
+                _twoPageControl.Page2RotateTransform.CenterX = this.rotationCenterX;
+                _twoPageControl.Page2RotateTransform.CenterY = this.rotationCenterY;
+                _twoPageControl.Page2RotateTransform.Angle = angle;
 
                 _twoPageControl.TransitionTranslateTransform.X = -80000 - (cx / 2);/// 2
                 _twoPageControl.TransitionTranslateTransform.Y = -40000 + h / 2;/// 2
@@ -655,11 +655,11 @@ namespace SmartDeviceApp.Controllers
                 System.Diagnostics.Debug.WriteLine("w: {0} h: {1} cx: {2} cy: {3} angle: {4} rotationCenterX: {5} rotationCenterY: {6}", w, h, cx, cy, angle, rotationCenterX, rotationCenterY);
 
                 System.Diagnostics.Debug.WriteLine("Page2ClipTranslateTransform.X: {0} \nPage2ClipTranslateTransform.Y: {1} \nPage2ClipRotateTransform.CenterX: {2} \nPage2ClipRotateTransform.CenterY: {3} \nPage2ClipRotateTransform.Angle: {4}",
-                    _twoPageControl.PageAreaTranslateTransform.X,
-                    _twoPageControl.PageAreaTranslateTransform.Y,
-                    _twoPageControl.PageAreaRotateTransform.CenterX,
-                    _twoPageControl.PageAreaRotateTransform.CenterY,
-                    _twoPageControl.PageAreaRotateTransform.Angle);
+                    _twoPageControl.Page2TranslateTransform.X,
+                    _twoPageControl.Page2TranslateTransform.Y,
+                    _twoPageControl.Page2RotateTransform.CenterX,
+                    _twoPageControl.Page2RotateTransform.CenterY,
+                    _twoPageControl.Page2RotateTransform.Angle);
 
                 System.Diagnostics.Debug.WriteLine("TransitionGridClipTranslateTransform.X: {0} \nTransitionGridClipTranslateTransform.Y: {1} \nTransitionGridClipRotateTransform.CenterX: {2} \nTransitionGridClipRotateTransform.CenterY: {3} \nTransitionGridClipRotateTransform.Angle: {4}",
                     _twoPageControl.TransitionTranslateTransform.X,
@@ -726,9 +726,9 @@ namespace SmartDeviceApp.Controllers
                 {
                     to = (int)w;
                 }
-                AddAnimation(sb, _twoPageControl.PageAreaTranslateTransform, "X", to);
-                AddAnimation(sb, _twoPageControl.PageAreaRotateTransform, "CenterX", 0);
-                AddAnimation(sb, _twoPageControl.PageAreaRotateTransform, "Angle", 0);
+                AddAnimation(sb, _twoPageControl.Page2TranslateTransform, "X", to);
+                AddAnimation(sb, _twoPageControl.Page2RotateTransform, "CenterX", 0);
+                AddAnimation(sb, _twoPageControl.Page2RotateTransform, "Angle", 0);
 
                 if (_willContinue)
                 {
@@ -794,15 +794,10 @@ namespace SmartDeviceApp.Controllers
         private void StoryBoardAnimationCompleted(object sender, object e)
         {
             //reset
-            _twoPageControl.PageAreaTranslateTransform.X = 0;
+            _twoPageControl.Page2TranslateTransform.X = 0;
             //set image of display
-            
-            if (_willContinue)
-            {
-                var viewModel = new ViewModelLocator().PrintPreviewViewModel;
-                viewModel.RightPageImage = viewModel.RightBackPageImage;
-            }
-            
+            var viewModel = new ViewModelLocator().PrintPreviewViewModel;
+            viewModel.RightPageImage = viewModel.RightBackPageImage;
             //
             _twoPageControl.PageAreaGrid.Opacity = 0.01;
         }
@@ -827,7 +822,7 @@ namespace SmartDeviceApp.Controllers
         public async void getScreenShot()
         {
             var rtb = new RenderTargetBitmap();
-            await rtb.RenderAsync(_twoPageControl.PageCurlGrid);
+            await rtb.RenderAsync(_twoPageControl.PageAreaGrid2);
             _twoPageControl.Image.Source = rtb;
             await Task.Delay(80000);
         }

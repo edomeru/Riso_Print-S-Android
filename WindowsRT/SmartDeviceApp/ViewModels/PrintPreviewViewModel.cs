@@ -73,8 +73,8 @@ namespace SmartDeviceApp.ViewModels
         private WriteableBitmap _leftPageImage;
         private WriteableBitmap _rightBackPageImage;
         private WriteableBitmap _leftBackPageImage;
-        private WriteableBitmap _rightPageCurlImage;
-        private WriteableBitmap _leftPageCurlImage;
+        private WriteableBitmap _rightNextPageImage;
+        private WriteableBitmap _leftNextPageImage;
         private Size _rightPageActualSize;
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
@@ -358,6 +358,13 @@ namespace SmartDeviceApp.ViewModels
             GoToNextPage.Execute(null);
         }
 
+        public ContentControl DrawingSurface
+        {
+            get;
+            set;
+        }
+        
+
         #region PANE VISIBILITY
 
         private bool _isLoadLeftPageActive;
@@ -549,34 +556,30 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-
-        /// <summary>
-        /// This will be used in the 
-        /// </summary>
-        public WriteableBitmap RightPageCurlImage
+        public WriteableBitmap RightNextPageImage
         {
-            get { return _rightPageCurlImage; }
+            get { return _rightNextPageImage; }
             set
             {
-                if (_rightPageCurlImage != value)
+                if (_rightNextPageImage != value)
                 {
-                    _rightPageCurlImage = value;
-                    RaisePropertyChanged("RightPageCurlImage");
+                    _rightNextPageImage = value;
+                    RaisePropertyChanged("RightNextPageImage");
 
 
                 }
             }
         }
 
-        public WriteableBitmap LeftPageCurlImage
+        public WriteableBitmap LeftNextPageImage
         {
-            get { return _leftPageCurlImage; }
+            get { return _leftNextPageImage; }
             set
             {
-                if (_leftPageCurlImage != value)
+                if (_leftNextPageImage != value)
                 {
-                    _leftPageCurlImage = value;
-                    RaisePropertyChanged("LeftPageCurlImage");
+                    _leftNextPageImage = value;
+                    RaisePropertyChanged("LeftNextPageImage");
                 }
             }
         }

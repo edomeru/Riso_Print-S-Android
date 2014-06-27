@@ -614,13 +614,13 @@ namespace SmartDeviceApp.Controls
                     control.topPageArea.Height = gridLengthCollapsed;
                     control.bottomPageArea.Height = gridLengthFull;
 
-                    control.leftPageCurl.Visibility = Visibility.Collapsed;
-                    control.leftPageCurlArea.Width = gridLengthCollapsed;
+                    control.leftPage2.Visibility = Visibility.Collapsed;
+                    control.leftPageArea2.Width = gridLengthCollapsed;
 
-                    control.rightPageCurlArea.Width = gridLengthFull;
-                    control.topPageCurl.Visibility = Visibility.Collapsed;
-                    control.topPageCurlArea.Height = gridLengthCollapsed;
-                    control.bottomPageCurlArea.Height = gridLengthFull;
+                    control.rightPageArea2.Width = gridLengthFull;
+                    control.topPage2.Visibility = Visibility.Collapsed;
+                    control.topPageArea2.Height = gridLengthCollapsed;
+                    control.bottomPageArea2.Height = gridLengthFull;
 
                     // Dash lines
                     control.horizontalSeparator.Visibility = Visibility.Collapsed;
@@ -643,12 +643,12 @@ namespace SmartDeviceApp.Controls
                     control.topPageArea.Height = gridLengthCollapsed;
                     control.bottomPageArea.Height = gridLengthFull;
 
-                    control.leftPageCurl.Visibility = Visibility.Visible;
-                    control.leftPageCurlArea.Width = gridLengthFull;
-                    control.rightPageCurlArea.Width = gridLengthFull;
-                    control.topPageCurl.Visibility = Visibility.Collapsed;
-                    control.topPageCurlArea.Height = gridLengthCollapsed;
-                    control.bottomPageCurlArea.Height = gridLengthFull;
+                    control.leftPage2.Visibility = Visibility.Visible;
+                    control.leftPageArea2.Width = gridLengthFull;
+                    control.rightPageArea2.Width = gridLengthFull;
+                    control.topPage2.Visibility = Visibility.Collapsed;
+                    control.topPageArea2.Height = gridLengthCollapsed;
+                    control.bottomPageArea2.Height = gridLengthFull;
 
                     // Dash lines
                     control.horizontalSeparator.Visibility = Visibility.Collapsed;
@@ -699,14 +699,14 @@ namespace SmartDeviceApp.Controls
             get { return Page1ClipRotateTransform; }
         }
 
-        public TranslateTransform PageAreaTranslateTransform
+        public TranslateTransform Page2TranslateTransform
         {
-            get { return pageAreaTranslateTransform; }
+            get { return Page2ClipTranslateTransform; }
         }
 
-        public RotateTransform PageAreaRotateTransform
+        public RotateTransform Page2RotateTransform
         {
-            get { return pageAreaRotateTransform; }
+            get { return Page2ClipRotateTransform; }
         }
 
         public TranslateTransform TransitionTranslateTransform
@@ -729,14 +729,14 @@ namespace SmartDeviceApp.Controls
             get { return TransitionImage; }
         }
 
-        //public Image DisplayImage
-        //{
-        //    get { return TransitionDisplayImage; }
-        //}
-
-        public Grid PageCurlGrid
+        public Image DisplayImage
         {
-            get { return pageCurlGrid; }
+            get { return TransitionDisplayImage; }
+        }
+
+        public Grid PageAreaGrid2
+        {
+            get { return pageAreaGrid2; }
         }
 
         //public PageControl LeftPage
