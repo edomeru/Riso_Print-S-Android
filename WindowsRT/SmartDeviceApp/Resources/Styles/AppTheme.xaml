@@ -4,17 +4,19 @@
     xmlns:local="using:SmartDeviceApp.Resources.Styles"
     xmlns:conv="using:SmartDeviceApp.Converters">
 
+    <Color x:Key="COLOR_Gray4">#FF242424</Color>
+    
     <!-- APP THEME BRUSHES START -->
     <SolidColorBrush x:Key="BRUSH_Gray1" Color="#CDCDCD" />
     <SolidColorBrush x:Key="BRUSH_Gray2" Color="#ADADAD" />
     <SolidColorBrush x:Key="BRUSH_Gray3" Color="#919191" />
-    <SolidColorBrush x:Key="BRUSH_Gray4" Color="#242424" />
+    <SolidColorBrush x:Key="BRUSH_Gray4" Color="{StaticResource COLOR_Gray4}" />
     <SolidColorBrush x:Key="BRUSH_Black" Color="#000000" />
     <SolidColorBrush x:Key="BRUSH_White" Color="#FFFFFF" />
     <SolidColorBrush x:Key="BRUSH_Purple1" Color="#FF8541D8" />
     <SolidColorBrush x:Key="BRUSH_Purple2" Color="#5207B6" />
     <!-- APP THEME BRUSHES END -->
-    <Color x:Key="COLOR_Gray4">#FF242424</Color>
+    
 
     <!-- PRINT SETTING CONSTANTS START -->
     <x:Int32 x:Key="MAXLENGTH_Copies">4</x:Int32>
