@@ -133,7 +133,7 @@
     <value>キャンセル</value>
   </data>
   <data name="IDS_LBL_NO_NAME" xml:space="preserve">
-    <value>No Name</value>
+    <value>名前無し</value>
   </data>
   <data name="IDS_LBL_DELETE" xml:space="preserve">
     <value>削除</value>
@@ -196,13 +196,16 @@
     <value>デフォルト印刷設定</value>
   </data>
   <data name="IDS_LBL_AUTHENTICATION" xml:space="preserve">
-    <value>Authentication</value>
+    <value>認証</value>
   </data>
   <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
     <value>ログインID</value>
   </data>
   <data name="IDS_LBL_PRINT_SETTINGS" xml:space="preserve">
     <value>印刷設定</value>
+  </data>
+  <data name="IDS_LBL_PAGE_DISPLAYED" xml:space="preserve">
+    <value>ページ {0} / {1}</value>
   </data>
   <data name="IDS_LBL_PRINT" xml:space="preserve">
     <value>印刷</value>
@@ -211,13 +214,13 @@
     <value>プリンター</value>
   </data>
   <data name="IDS_LBL_CHOOSE_PRINTER" xml:space="preserve">
-    <value>Choose Printer</value>
+    <value>プリンターの選択</value>
   </data>
   <data name="IDS_LBL_BASIC" xml:space="preserve">
     <value>基本</value>
   </data>
   <data name="IDS_LBL_COLORMODE" xml:space="preserve">
-    <value>カラーモー</value>
+    <value>カラーモード</value>
   </data>
   <data name="IDS_LBL_COLORMODE_AUTO" xml:space="preserve">
     <value>オート</value>
@@ -397,10 +400,10 @@
     <value>小冊子レイアウト</value>
   </data>
   <data name="IDS_LBL_BOOKLET_LAYOUT_FORWARD" xml:space="preserve">
-    <value>Forward</value>
+    <value>順方向</value>
   </data>
   <data name="IDS_LBL_BOOKLET_LAYOUT_REVERSE" xml:space="preserve">
-    <value>Reverse</value>
+    <value>逆方向</value>
   </data>
   <data name="IDS_LBL_FINISHINGSIDE" xml:space="preserve">
     <value>とじ位置</value>
@@ -457,7 +460,7 @@
     <value>スタックトレイ</value>
   </data>
   <data name="IDS_LBL_SECURE_PRINT" xml:space="preserve">
-    <value>Secure Print</value>
+    <value>暗証番号をつける</value>
   </data>
   <data name="IDS_LBL_PIN_CODE" xml:space="preserve">
     <value>PINコード</value>
@@ -474,11 +477,21 @@
   <data name="IDS_LBL_LEGAL" xml:space="preserve">
     <value>リーガル情報</value>
   </data>
+  <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
+    <value>プリンターがありません。</value>
+  </data>
+  <data name="IDS_LBL_PRINTJOBHISTORY_EMPTY" xml:space="preserve">
+    <value>印刷履歴がありません。</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_SEARCH_EMPTY" xml:space="preserve">
+    <value>プリンターが見つかりません。</value>
+  </data>
   <data name="IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" xml:space="preserve">
-    <value>追加に成功しました</value>
+    <value>追加しました。</value>
   </data>
   <data name="IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" xml:space="preserve">
-    <value>Warning, Cannot find Printer.</value>
+    <value>警告
+プリンターが見つかりません。</value>
   </data>
   <data name="IDS_INFO_MSG_PRINTING" xml:space="preserve">
     <value>印刷中…</value>
@@ -499,13 +512,10 @@
     <value>このプリンターはすでに登録されています。</value>
   </data>
   <data name="IDS_ERR_MSG_INVALID_IP_ADDRESS" xml:space="preserve">
-    <value>IP Addressを確認してください。</value>
+    <value>IPアドレスを確認してください。</value>
   </data>
   <data name="IDS_ERR_MSG_MAX_PRINTER_COUNT" xml:space="preserve">
-    <value>Saved Printer reached maximum count.</value>
-  </data>
-  <data name="IDS_ERR_MSG_DELETE_FAILED" xml:space="preserve">
-    <value>削除に失敗しました。</value>
+    <value>プリンターの最大登録数を超えています。</value>
   </data>
   <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
     <value>プリンターを登録してください。</value>
@@ -519,6 +529,9 @@
   <data name="IDS_ERR_MSG_PDF_ENCRYPTED" xml:space="preserve">
     <value>暗号化PDFには対応していません。</value>
   </data>
+  <data name="IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" xml:space="preserve">
+    <value>印刷が許可されていません。</value>
+  </data>
   <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
     <value>ファイルサイズが大きすぎます。</value>
   </data>
@@ -528,17 +541,10 @@
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>ネットワークに接続できません。</value>
   </data>
-  <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
-    <value>No Printers</value>
+  <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
+    <value>内部データにアクセスできません。
+再起動してみてください。
+再起動しても解消されない場合は、再インストールしてください。</value>
   </data>
-  <data name="IDS_LBL_PRINTJOBHISTORY_EMPTY" xml:space="preserve">
-    <value>No Print Job History</value>
-  </data>
-  <data name="IDS_LBL_PRINTER_SEARCH_EMPTY" xml:space="preserve">
-    <value>No Printers Found</value>
-  </data>
-  <!-- Not in wording list -->
-  <data name="IDS_LBL_PAGE_NUMBER" xml:space="preserve">
-    <value>Page {0} / {1}</value>
-  </data>
+
 </root>

@@ -10,6 +10,7 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 using System.Collections.Generic;
@@ -93,6 +94,7 @@ namespace SmartDeviceApp.Controllers
         private async Task FetchJobs()
         {
             List<PrintJob> printJobList = await DatabaseController.Instance.GetPrintJobs();
+
             PrintJobList tempList = new PrintJobList();
             var orderedList = printJobList.OrderBy(pj => pj.PrinterId)
                                           .ThenByDescending(pj => pj.Date)
@@ -125,12 +127,8 @@ namespace SmartDeviceApp.Controllers
         {
             if (printJob != null && printJob.PrinterId > -1)
             {
-                int added = await DatabaseController.Instance.InsertPrintJob(printJob);
-                if (added == 0)
-                {
-                    // TODO: Notify error?
-                    return;
-                }
+                await DatabaseController.Instance.InsertPrintJob(printJob);
+                // Ignore error
 
                 PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList
                     .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);
@@ -166,12 +164,13 @@ namespace SmartDeviceApp.Controllers
         {
             if (printJob != null)
             {
-                int deleted = await DatabaseController.Instance.DeletePrintJob(printJob);
-                //if (deleted == 0)
-                //{
-                //    // TODO: Notify view model to display error message
-                //    return;
-                //}
+                bool result = await DatabaseController.Instance.DeletePrintJob(printJob);
+                if (!result)
+                {
+                    await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                        "IDS_LBL_PRINT_JOB_HISTORY", "IDS_LBL_OK", null);
+                    return;
+                }
 
                 PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList
                     .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);

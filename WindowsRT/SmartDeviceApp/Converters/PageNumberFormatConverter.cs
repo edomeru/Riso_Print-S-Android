@@ -18,7 +18,7 @@ namespace SmartDeviceApp.Converters
             string formattedPageNumber = String.Empty;
             formattedPageNumber = (pageNumber.PageIndex + 1).ToString();
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            var pageNumberFormat = loader.GetString("IDS_LBL_PAGE_NUMBER");
+            var pageNumberFormat = loader.GetString("IDS_LBL_PAGE_DISPLAYED");
             formattedPageNumber = String.Format(pageNumberFormat, formattedPageNumber, pageNumber.PageTotal);
 
             return formattedPageNumber;

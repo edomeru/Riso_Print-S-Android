@@ -204,6 +204,9 @@
   <data name="IDS_LBL_PRINT_SETTINGS" xml:space="preserve">
     <value>Print Settings</value>
   </data>
+  <data name="IDS_LBL_PAGE_DISPLAYED" xml:space="preserve">
+    <value>Page {0} / {1}</value>
+  </data>
   <data name="IDS_LBL_PRINT" xml:space="preserve">
     <value>Print</value>
   </data>
@@ -474,11 +477,21 @@
   <data name="IDS_LBL_LEGAL" xml:space="preserve">
     <value>Legal</value>
   </data>
+  <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
+    <value>No Printers</value>
+  </data>
+  <data name="IDS_LBL_PRINTJOBHISTORY_EMPTY" xml:space="preserve">
+    <value>No Print Job History</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_SEARCH_EMPTY" xml:space="preserve">
+    <value>No Printers Found</value>
+  </data>
   <data name="IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" xml:space="preserve">
     <value>Added Successfully</value>
   </data>
   <data name="IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" xml:space="preserve">
-    <value>Warning, Cannot find Printer.</value>
+    <value>Warning
+Cannot find Printer.</value>
   </data>
   <data name="IDS_INFO_MSG_PRINTING" xml:space="preserve">
     <value>Printing…</value>
@@ -504,9 +517,6 @@
   <data name="IDS_ERR_MSG_MAX_PRINTER_COUNT" xml:space="preserve">
     <value>Saved Printer reached maximum count.</value>
   </data>
-  <data name="IDS_ERR_MSG_DELETE_FAILED" xml:space="preserve">
-    <value>Unable to delete.</value>
-  </data>
   <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
     <value>Please register a printer</value>
   </data>
@@ -519,6 +529,9 @@
   <data name="IDS_ERR_MSG_PDF_ENCRYPTED" xml:space="preserve">
     <value>PDF Encryption is not supported</value>
   </data>
+  <data name="IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" xml:space="preserve">
+    <value>File does not allow printing.</value>
+  </data>
   <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
     <value>File size is too large</value>
   </data>
@@ -528,18 +541,8 @@
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>No network available.</value>
   </data>
-  <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
-    <value>No Printers</value>
-  </data>
-  <data name="IDS_LBL_PRINTJOBHISTORY_EMPTY" xml:space="preserve">
-    <value>No Print Job History</value>
-  </data>
-  <data name="IDS_LBL_PRINTER_SEARCH_EMPTY" xml:space="preserve">
-    <value>No Printers Found</value>
-  </data>
-  <!-- Not in wording list -->
-  <data name="IDS_LBL_PAGE_NUMBER" xml:space="preserve">
-    <value>Page {0} / {1}</value>
+  <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
+    <value>Database failure. Please restart the application. If the problem persists, please reinstall the application.</value>
   </data>
 
 </root>

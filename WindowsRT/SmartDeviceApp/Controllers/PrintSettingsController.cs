@@ -195,6 +195,7 @@ namespace SmartDeviceApp.Controllers
             if (id > -1)
             {
                 currPrintSettings = await DatabaseController.Instance.GetPrintSettings(id);
+                // Ignore error
             }
             if (currPrintSettings == null)
             {
@@ -210,7 +211,7 @@ namespace SmartDeviceApp.Controllers
         /// Requires that the printer is valid.
         /// </summary>
         /// <param name="printer">printer</param>
-        /// <returns>task; print setting ID</returns>
+        /// <returns>task; print setting ID when successful, -1 otherwise</returns>
         public async Task<int> CreatePrintSettings(Printer printer)
         {
             PrintSettings printSettings = new PrintSettings();
@@ -218,12 +219,12 @@ namespace SmartDeviceApp.Controllers
             if (printer != null && printer.Id > -1)
             {
                 printSettings.PrinterId = printer.Id;
-                int added = await DatabaseController.Instance.InsertPrintSettings(printSettings);
-                if (added == 0)
-                {
-                    // TODO: Display error?
-                    return -1;
-                }
+                bool result = await DatabaseController.Instance.InsertPrintSettings(printSettings);
+                // TODO: Check DB error with Add Printer
+                //if (!result)
+                //{
+                //    return -1;
+                //}
             }
 
             return printSettings.Id;
@@ -1653,6 +1654,7 @@ namespace SmartDeviceApp.Controllers
             if (!_printSettingsViewModel.IsPrintPreview)
             {
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                // Ignore error
             }
 
             if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
@@ -1712,6 +1714,7 @@ namespace SmartDeviceApp.Controllers
             if (!_printSettingsViewModel.IsPrintPreview)
             {
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                // Ignore error
             }
 
             if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
