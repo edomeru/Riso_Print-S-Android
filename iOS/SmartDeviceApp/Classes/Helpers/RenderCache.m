@@ -14,8 +14,19 @@
 
 @interface RenderCache ()
 
+/**
+ * Maximum number of cached page indices.
+ */
 @property (nonatomic) NSInteger maxItemCount;
+
+/**
+ * Array of page indices currently cached.
+ */
 @property (nonatomic, strong) NSMutableIndexSet *indexSet;
+
+/**
+ * Array of RenderCacheItem currently cached.
+ */
 @property (nonatomic, strong) NSMutableDictionary *itemsDictionary;
 
 /**

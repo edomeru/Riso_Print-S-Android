@@ -10,7 +10,14 @@
 
 @interface XMLParser()
 
+/**
+ * Stack of nodes in the XML file
+ */
 @property (nonatomic, strong) NSMutableArray *stack;
+
+/**
+ * Current text node to read.
+ */
 @property (nonatomic, strong) NSMutableString *currentString;
 
 /**

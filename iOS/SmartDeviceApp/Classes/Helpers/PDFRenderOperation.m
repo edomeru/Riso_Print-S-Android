@@ -15,7 +15,11 @@
 
 @interface PDFRenderOperation()
 
+/**
+ Indices of the pages to be rendered
+ */
 @property (nonatomic, strong) NSArray *pageIndices;
+
 /**
  Print Document object
  */

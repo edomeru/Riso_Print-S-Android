@@ -12,15 +12,18 @@
 @protocol RenderCacheDelegate;
 @class PDFPageContentViewController;
 
+/**
+ * RenderCache class creates a cache of the loaded document.
+ */
 @interface RenderCache : NSObject
 
 /**
- Maximum number of items the cache should hold
+ * Maximum number of items the cache should hold
  */
 @property (nonatomic, readonly) NSInteger maxItemCount;
 
 /**
- The delegate that provides the current/active index
+ * The delegate that provides the current/active index
  */
 @property (nonatomic, weak) id<RenderCacheDelegate>delegate;
 
@@ -57,6 +60,9 @@
 
 @end
 
+/**
+ * RenderCacheItem class contains the image of the cached index.
+ */
 @interface RenderCacheItem : NSObject
 
 /**
@@ -65,17 +71,22 @@
 @property (nonatomic, strong) PDFPageContentViewController *viewController;
 
 /**
- Image
+ Image of the cached index
  */
 @property (nonatomic, strong) UIImage *image;
 
 @end
 
+/**
+ * RenderCacheDelegate protocol provides method to get the current index of the document.
+ */
 @protocol RenderCacheDelegate <NSObject>
 
 @required
+
 /**
- The current index
+ Gets the current index.
+ @return The current index
  */
 - (NSUInteger)currentIndex;
 

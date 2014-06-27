@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ * SearchResultCell class is used to display the printers found on printer search.
+ */
 @interface SearchResultCell : UITableViewCell
 
 /**

@@ -10,6 +10,9 @@
 
 @class PrintDocument;
 
+/**
+ * PrintJobHistoryHelper is a helper class that provides methods for the creation of a print job.
+ */
 @interface PrintJobHistoryHelper : NSObject
 
 /**
@@ -20,6 +23,13 @@
  */
 + (NSMutableArray*)preparePrintJobHistoryGroups;
 
+
+/**
+ Creates a print job based on the printed document.
+ @param printDocument The printed document.
+ @param result non-zero value if printing succeeded, 0 otherwise.
+ @return YES if successfully created a print job, NO otherwise.
+ */
 + (BOOL)createPrintJobFromDocument:(PrintDocument *)printDocument withResult:(NSInteger)result;
 
 @end

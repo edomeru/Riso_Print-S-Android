@@ -17,10 +17,25 @@ typedef enum {
 }kPrinterCollectionCellType;
 
 @interface PrinterCollectionViewCell()
+
+/**
+ * Flag if the cell is the default printer.
+ */
 @property BOOL isDefaultPrinterCell;
+
+/**
+ * The label of the default print settings
+ */
 @property (weak, nonatomic) IBOutlet UILabel *defaultSettingsRowLabel;
 
+/**
+ Sets the cell header color theme.
+ @param cellFormat one of the defined kPrinterCollectionCellType values
+ */
+- (void)setCellHeaderFormat:(kPrinterCollectionCellType)cellFormat;
+
 @end
+
 @implementation PrinterCollectionViewCell
 
 - (id)initWithFrame:(CGRect)frame
