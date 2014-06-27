@@ -1,0 +1,27 @@
+﻿<local:KeyValueControl x:Name="keyToggleCheckControl"
+    x:Class="SmartDeviceApp.Controls.KeyToggleCheckControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SmartDeviceApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    SubTextVisibility="Collapsed"
+    ValueVisibility="Collapsed"
+    RightImage="ms-appx:///Resources/Images/img_btn_add_printer_search_ok.scale-100.png"
+    
+    mc:Ignorable="d"
+    d:DesignHeight="60"
+    d:DesignWidth="400">
+    
+    <local:KeyValueControl.ValueContent>
+        <ToggleSwitch x:Name="toggleSwitch"
+                      Loaded="OnToggleSwitchLoaded"
+                      IsOn="{Binding IsOn, ElementName=keyToggleCheckControl}"
+                      Style="{StaticResource STYLE_ListValue_ToggleSwitch}" 
+                      >
+
+        </ToggleSwitch>
+    </local:KeyValueControl.ValueContent>
+</local:KeyValueControl>

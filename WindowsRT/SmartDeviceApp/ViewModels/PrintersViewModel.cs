@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
-using SmartDeviceApp.DummyControllers;
 using SmartDeviceApp.Controllers;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -23,6 +22,8 @@ using GalaSoft.MvvmLight;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Views;
+using SmartDeviceApp.Converters;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -39,10 +40,8 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _openDefaultPrinterSettings;
 
         private ObservableCollection<Printer> _printerList;
+        private bool _isPrinterListEmpty;
 
-        private int _height;
-
-        
         /**
          * 
          * Delegates for controllers
@@ -70,16 +69,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public int Height
-        {
-            get { return this._height; }
-            set
-            {
-                _height = value;
-                OnPropertyChanged("Height");
-            }
-        }
-
         public ObservableCollection<Printer> PrinterList
         {
             get{ return this._printerList; }
@@ -87,20 +76,24 @@ namespace SmartDeviceApp.ViewModels
             {
                 _printerList = value;
                 OnPropertyChanged("PrinterList");
+                
+            }
+        }
+
+        public bool IsPrinterListEmpty
+        {
+            get { return _isPrinterListEmpty; }
+            set
+            {
+                if (_isPrinterListEmpty != value)
+                {
+                    _isPrinterListEmpty = value;
+                    OnPropertyChanged("IsPrinterListEmpty");
+                }
             }
         }
 
         
-        private string _searchPrintersPaneTitleText;
-        public string SearchPrintersPaneTitleText
-        {
-            get { return this._searchPrintersPaneTitleText; }
-            set
-            {
-                _searchPrintersPaneTitleText = value;
-                OnPropertyChanged("SearchPrintersPaneTitleText");
-            }
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(String propertyName)
@@ -118,9 +111,19 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<VisibleRightPane>(this, (visibleRightPane) => SetRightPaneMode(visibleRightPane));
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
             Messenger.Default.Register<ScreenMode>(this, (screenMode) => ScreenModeChanged(screenMode));
-            Messenger.Default.Register<string>(this, (tapped) => GridTapped(tapped));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPrinterInfoGrid(viewOrientation));            
+        }
 
-            
+        private void ResetPrinterInfoGrid(ViewOrientation viewOrientation)
+        {
+            if (GestureController != null)
+            {
+                var columns = (viewOrientation == Common.Enum.ViewOrientation.Landscape) ? 3 : 2;
+                var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+                var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+                ((AdaptableGridView)GestureController.TargetControl).ItemWidth = (double)((new PrintersListWidthConverter()).Convert(_viewControlViewModel.ViewMode, null,
+                    new ViewItemParameters() { columns = columns, viewOrientation = viewOrientation }, null));
+            }
         }
 
         private void ScreenModeChanged(Common.Enum.ScreenMode screenMode)
@@ -143,35 +146,27 @@ namespace SmartDeviceApp.ViewModels
                     if (viewMode == Common.Enum.ViewMode.FullScreen)
                     {
                         _gestureController.EnableGestures();
+                        foreach(Printer p in PrinterList)
+                        {
+                            p.VisualState = "Normal";
+                        }
+                        
 
                         //start polling
-                        PollingHandler(true);
+                        if (PollingHandler != null)
+                            PollingHandler(true);
                     }
                     else
                     {
                         //end polling
-                        PollingHandler(false);
+                        if (PollingHandler != null)
+                            PollingHandler(false);
                         _gestureController.DisableGestures();
                     }
                 }
             }
             
         }
-
-        private void GridTapped(string tapped)
-        {
-            if (tapped == "ClearDelete")
-            {
-                int i = 0;
-                while (i < PrinterList.Count)
-                {
-                    Printer printer = PrinterList.ElementAt(i);
-                    printer.WillBeDeleted = false;
-                    i++;
-                } 
-            }
-        }
-
 
         public PrintersRightPaneMode RightPaneMode
         {
@@ -218,10 +213,31 @@ namespace SmartDeviceApp.ViewModels
                 return _deletePrinter;
             }
         }
-
-        private void DeletePrinterExecute(string ipAddress)
+        private string _printerToBeDeleted;
+        private async Task DeletePrinterExecute(string ipAddress)
         {
-            DeletePrinterHandler(ipAddress);
+            _printerToBeDeleted = ipAddress;
+            await DialogService.Instance.ShowMessage("IDS_INFO_MSG_DELETE_JOBS", "IDS_LBL_PRINTERS", "IDS_LBL_OK", "IDS_LBL_CANCEL", new Action<bool>(DeletePrinterFromDB));
+        }
+
+        private void DeletePrinterFromDB(bool isOk)
+        {
+
+            if (isOk)
+            {
+                if (_printerToBeDeleted != "")
+                {
+                    DeletePrinterHandler(_printerToBeDeleted);
+                    _printerToBeDeleted = "";
+                }
+            }
+            else
+            {
+                Printer printer = PrinterList.FirstOrDefault(x => x.IpAddress == _printerToBeDeleted);
+                if (printer != null)
+                    printer.WillBeDeleted = false;
+            }
+            
         }
 
         public ICommand OpenDefaultPrinterSettings
@@ -246,13 +262,16 @@ namespace SmartDeviceApp.ViewModels
             //use visual state.
             //get default printer settings using ip
             System.Diagnostics.Debug.WriteLine("OpenDefaultPrinterSettingsExecute");
-
+            printer.VisualState = "Pressed";
             var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-
+            
             _viewControlViewModel.ViewMode = Common.Enum.ViewMode.RightPaneVisible;
+            
             _viewControlViewModel.TapHandled = true;
             RightPaneMode = Common.Enum.PrintersRightPaneMode.PrintSettings;
+            _viewControlViewModel.IsPane1Visible = true; // Note: Need to set this so that pane will be closed when pane buttons are toggled
             _gestureController.DisableGestures();
+            
             OpenDefaultPrintSettingsHandler(printer);
             
         }

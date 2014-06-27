@@ -35,8 +35,8 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register("Command", typeof(ICommand), typeof(MainMenuKeyControl), null);
 
-        public static readonly DependencyProperty IndexProperty =
-           DependencyProperty.Register("Index", typeof(int), typeof(MainMenuKeyControl), null);
+        public static readonly DependencyProperty IsCheckedProperty =
+           DependencyProperty.Register("IsChecked", typeof(bool), typeof(MainMenuKeyControl), null);
 
         public string GroupName
         {
@@ -62,10 +62,10 @@ namespace SmartDeviceApp.Controls
             set { SetValue(CommandProperty, value); }
         }
 
-        public int Index
+        public bool IsChecked
         {
-            get { return (int)GetValue(IndexProperty); }
-            set { SetValue(IndexProperty, value); }
+            get { return (bool)GetValue(IsCheckedProperty); }
+            set { SetValue(IsCheckedProperty, value); }
         }
     }
 }

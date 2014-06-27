@@ -172,7 +172,7 @@
                                     <Thickness Top="0"
                                                Bottom="0"
                                                Left="0"
-                                               Right="{StaticResource SIZE_SidePaneWidth}">
+                                               Right="{StaticResource SIZE_SidePaneWidthWithBorder}">
                                     </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
@@ -183,7 +183,7 @@
                                     <Thickness Top="0"
                                                Bottom="0"
                                                Left="0"
-                                               Right="{StaticResource SIZE_SidePaneWidth}">
+                                               Right="{StaticResource SIZE_SidePaneWidthWithBorder}">
                                     </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
@@ -200,7 +200,7 @@
                                     <Thickness Top="0"
                                                Bottom="0"
                                                Left="0"
-                                               Right="{StaticResource SIZE_SidePaneWidth}">
+                                               Right="{StaticResource SIZE_SidePaneWidthWithBorder}">
                                     </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
@@ -211,7 +211,7 @@
                                     <Thickness Top="0"
                                                Bottom="0"
                                                Left="0"
-                                               Right="{StaticResource SIZE_SidePaneWidth}">
+                                               Right="{StaticResource SIZE_SidePaneWidthWithBorder}">
                                     </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
@@ -249,7 +249,7 @@
         <Grid x:Name="viewRoot" Grid.Row="0"
               Style="{StaticResource STYLE_ViewGrid}"
               Width="{Binding ViewMode, Converter={StaticResource ResizedViewWidthConverter}}"
-              Height="{Binding Converter={StaticResource HeightConverter}}"
+              Height="{Binding ViewOrientation, Converter={StaticResource HeightConverter}}"
               Tapped="OnViewRootTapped">
             <Grid.Projection>
                 <PlaneProjection/>

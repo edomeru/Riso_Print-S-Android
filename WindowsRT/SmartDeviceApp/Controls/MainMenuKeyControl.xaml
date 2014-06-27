@@ -74,7 +74,7 @@
 
     <RadioButton x:Name="radioButton"
                  Template="{StaticResource TEMPLATE_RadioButton}"
-                 IsChecked="{Binding Index, ElementName=mainMenuKeyControl, Converter={StaticResource MainItemIndexToIsCheckedConverter}}"
+                 IsChecked="{Binding IsChecked, ElementName=mainMenuKeyControl, Mode=TwoWay}"
                  Command="{Binding Command, ElementName=mainMenuKeyControl}"
                  GroupName="{Binding GroupName, ElementName=mainMenuKeyControl}"
                  Width="{Binding Width, ElementName=mainMenuKeyControl}"/>

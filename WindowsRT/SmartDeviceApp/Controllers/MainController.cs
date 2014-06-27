@@ -10,12 +10,8 @@
 //  ----------------------------------------------------------------------
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using SmartDeviceApp.ViewModels;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 
 namespace SmartDeviceApp.Controllers
@@ -46,12 +42,26 @@ namespace SmartDeviceApp.Controllers
             }
 
             await DocumentController.Instance.Unload();
-            await PrintPreviewController.Instance.Cleanup();
+            PrintPreviewController.Instance.Cleanup();
+
+            // Reset to Home screen
+            (new ViewModelLocator().HomeViewModel).IsProgressRingActive = true; // Enable loading
+            new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = true;
+            new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
+            new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = false;
 
             await DocumentController.Instance.Load(file);
             await PrintPreviewController.Instance.Initialize();
+
+            // Change to correct screen after loading
+            new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = true;
+            new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
+            new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = false;
         }
 
+        /// <summary>
+        /// Clean-up
+        /// </summary>
         public static void Cleanup()
         {
             DatabaseController.Instance.Cleanup();
@@ -64,33 +74,22 @@ namespace SmartDeviceApp.Controllers
         private static async Task InitializeDataStorage()
         {
             await DatabaseController.Instance.Initialize();
+
+#if INITIAL_DATA_ON
+            await InitialDataController.InsertSampleData();
+#endif //INITIAL_DATA_ON
         }
 
         /// <summary>
-        /// Other initializations (TBD)
+        /// Other initializations
         /// </summary>
         /// <returns>task</returns>
         private static async Task InitializeControllers()
         {
-            // TODO: Verify timing of each initialization
             SettingController.Instance.Initialize();
             await PrinterController.Instance.Initialize();
             await JobController.Instance.Initialize();
         }
-
-        #region TEST - Sample PDF Page - FOR DELETION --------------------------------------------------------------------------------
-
-        public async static Task InitializeSamplePdf()
-        {
-            await DocumentController.Instance.Unload();
-            await PrintPreviewController.Instance.Cleanup();
-
-            StorageFile samplePdf = await DummyControllers.DummyProvider.Instance.GetSamplePdf();
-            await DocumentController.Instance.Load(samplePdf);
-            await PrintPreviewController.Instance.Initialize();
-        }
-
-        #endregion TEST - Sample PDF Page - FOR DELETION -----------------------------------------------------------------------------
 
     }
 }

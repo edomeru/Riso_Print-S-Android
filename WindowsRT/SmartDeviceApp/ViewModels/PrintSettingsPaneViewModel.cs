@@ -25,6 +25,7 @@ using GalaSoft.MvvmLight;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -39,6 +40,7 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => SetPrintSettingsPaneMode(viewMode));
         }
 
         public PrintSettingsPaneMode PrintSettingsPaneMode
@@ -51,6 +53,21 @@ namespace SmartDeviceApp.ViewModels
                     _printSettingsPaneMode = value;
                     RaisePropertyChanged("PrintSettingsPaneMode");
                 }
+            }
+        }
+
+        private void SetPrintSettingsPaneMode(ViewMode viewMode)
+        {
+            var screenMode = new ViewModelLocator().ViewControlViewModel.ScreenMode;
+            if (screenMode != ScreenMode.Home && // For Open-In: since during loading of page, Home screen is displayed
+                screenMode != ScreenMode.PrintPreview &&
+                screenMode != ScreenMode.Printers)
+            {
+                return;
+            }
+            if (viewMode == ViewMode.FullScreen && PrintSettingsPaneMode != PrintSettingsPaneMode.PrintSettings)
+            {
+                PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
             }
         }
     }

@@ -10,19 +10,19 @@
 //  ----------------------------------------------------------------------
 //
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Windows.Data.Pdf;
-using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
-using Windows.Storage.Streams;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.Data.Pdf;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -32,13 +32,14 @@ namespace SmartDeviceApp.Controllers
 
         static readonly DocumentController _instance = new DocumentController();
 
-        private const int MAX_PAGES = 5;
+        private const int MAX_LOGICAL_PAGE_IMAGE_CACHE = 5;
         private const string TEMP_PDF_NAME = "tempDoc.pdf";
-        private const string FORMAT_LOGICAL_PAGE_IMAGE_FILENAME = "logicalpage{0:0000}.jpg";
         private const string PDF_PASSWORD_EMPTY = "";
 
+        private LruCacheHelper<int, WriteableBitmap> _logicalPageImages =
+            new LruCacheHelper<int, WriteableBitmap>(MAX_LOGICAL_PAGE_IMAGE_CACHE);
+
         private Document _document;
-        private bool _isFileLoaded;
 
         /// <summary>
         /// Number of pages of the actual PDF file
@@ -56,24 +57,14 @@ namespace SmartDeviceApp.Controllers
         public string FileName { get; private set; }
 
         /// <summary>
+        /// True when PDF is portrait, false otherwise
+        /// </summary>
+        public bool IsPdfPortrait { get; private set; }
+
+        /// <summary>
         /// PDF loading result
         /// </summary>
         public LoadDocumentResult Result { get; private set; }
-
-        /// <summary>
-        /// Flag to determine if document is loaded
-        /// </summary>
-        public bool IsFileLoaded
-        {
-            get
-            {
-                return _isFileLoaded;
-            }
-            private set
-            {
-                _isFileLoaded = value;
-            }
-        }
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -119,23 +110,14 @@ namespace SmartDeviceApp.Controllers
                 _document = new Document(file.Path, PdfFile.Path, pdfDocument);
                 PageCount = pdfDocument.PageCount;
                 FileName = file.Name;
-                _isFileLoaded = true;
                 Result = LoadDocumentResult.Successful;
+                GetPdfOrientation();
 
-                await GenerateLogicalPages(0, 0); // Pre-load LogicalPages
-            }
-            catch (FileNotFoundException ex)
-            {
-                // CopyAsync was not able to find the original source
-                LogUtility.LogError(ex);
-                _isFileLoaded = false;
-                Result = LoadDocumentResult.ErrorReadPdf;
+                GenerateLogicalPageImages(0, MAX_LOGICAL_PAGE_IMAGE_CACHE, new CancellationTokenSource());
             }
             catch (Exception ex)
             {
                 LogUtility.LogError(ex);
-                // Error in loading/reading TEMP_PDF_NAME
-                _isFileLoaded = false;
                 Result = LoadDocumentResult.ErrorReadPdf;
 
                 // Check HResult value since LoadFromFileAsync returns error for
@@ -158,180 +140,155 @@ namespace SmartDeviceApp.Controllers
         public async Task Unload()
         {
             await StorageFileUtility.DeleteAllTempFiles();
-            if (_document != null)
-            {
-                _document = null;
-            }
-            _isFileLoaded = false;
-            //IsFromFilePicker = false;
+            _logicalPageImages.Clear();
+            _document = null;
+            PageCount = 0;
+            PdfFile = null;
+            FileName = null;
+            Result = LoadDocumentResult.NotStarted;
         }
 
         /// <summary>
-        /// Get generated LogicalPage(s) from the list.
-        /// If target page is not found in the list,
-        /// LogicalPage image is created then added to list.
+        /// Fetches generated logical page images
         /// </summary>
-        /// <param name="basePageIndex">base page index</param>
-        /// <param name="numPages">number of pages needed (for imposition)</param>
-        /// <returns>task with generated LogicalPage(s)</returns>
-        public async Task<List<LogicalPage>> GetLogicalPages(int basePageIndex, int numPages)
+        /// <param name="basePageIndex">start page index</param>
+        /// <param name="numPages">number of pages needed</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        /// <returns>task; list of logical page images</returns>
+        public async Task<List<WriteableBitmap>> GetLogicalPageImages(int basePageIndex,
+            int numPages, CancellationTokenSource cancellationToken)
         {
-            List<LogicalPage> logicalPages = new List<LogicalPage>();
+            LogUtility.BeginTimestamp("GetLogicalPages #" + basePageIndex);
 
-            int offset = 0;
-            do
+            List<WriteableBitmap> logicalPages = new List<WriteableBitmap>();
+
+            if (basePageIndex < 0 || basePageIndex > PageCount - 1)
             {
-                int key = basePageIndex + offset;
+                return logicalPages;
+            }
 
-                // Check page bounds
-                int pageCount = (int)_document.PdfDocument.PageCount;
-                if (key < 0 || key > pageCount - 1)
+            int pageIndex = basePageIndex;
+            for (int i = 0; i < numPages && pageIndex < PageCount; ++i, ++pageIndex)
+            {
+                if (cancellationToken.IsCancellationRequested)
                 {
-                    break;
+                    LogUtility.EndTimestamp("GetLogicalPages #" + basePageIndex);
+                    return logicalPages;
                 }
 
-                if (_document.LogicalPages.ContainsKey(key))
+                if (_logicalPageImages.ContainsKey(pageIndex))
                 {
-                    logicalPages.Add(_document.LogicalPages[key]);
-                    ++offset;
+                    logicalPages.Add(_logicalPageImages.GetValue(pageIndex));
                 }
                 else
                 {
-                    LogicalPage logicalPage = await GenerateLogicalPage(key);
-                    if (logicalPage != null)
+                    WriteableBitmap pageBitmap = await GenerateLogicalPageImage(pageIndex, cancellationToken);
+
+                    if (cancellationToken.IsCancellationRequested)
                     {
-                        logicalPages.Add(logicalPage);
-                        ++offset;
+                        LogUtility.EndTimestamp("GetLogicalPages #" + basePageIndex);
+                        return logicalPages;
                     }
+
+                    logicalPages.Add(pageBitmap);
+                    _logicalPageImages.Add(pageIndex, pageBitmap);
                 }
-            } while (offset < numPages);
+            }
+
+            GenerateLogicalPageImages(pageIndex, MAX_LOGICAL_PAGE_IMAGE_CACHE, cancellationToken);
+
+            LogUtility.EndTimestamp("GetLogicalPages #" + basePageIndex);
 
             return logicalPages;
         }
 
         /// <summary>
-        /// Generates N pages to JPEG then saves in AppData temporary store.
-        /// If pages per sheet count is provided, this count is used instead of the defined max
-        /// pages.
+        /// Generates logical page images and adds them to cache
         /// </summary>
-        /// <param name="basePageIndex">base page index</param>
-        /// <param name="numPages">number of pages needed (for imposition)</param>
-        /// <returns>task</returns>
-        public async Task GenerateLogicalPages(int basePageIndex, int numPages)
+        /// <param name="basePageIndex">start page index</param>
+        /// <param name="numPages">number of pages needed</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        private async void GenerateLogicalPageImages(int basePageIndex, int numPages,
+            CancellationTokenSource cancellationToken)
         {
-            if (!_isFileLoaded)
+            LogUtility.BeginTimestamp("GenerateLogicalPageImages #" + basePageIndex);
+
+            if (Result != LoadDocumentResult.Successful)
             {
+                LogUtility.EndTimestamp("GenerateLogicalPageImages #" + basePageIndex);
                 return;
             }
 
-            int pageCount = (int)_document.PdfDocument.PageCount;
-            if (basePageIndex < 0 || basePageIndex > pageCount - 1)
+            for (int i = 0, pageIndex = basePageIndex;
+                 i < numPages && pageIndex + i < PageCount;
+                 ++i, ++pageIndex)
             {
-                return;
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    LogUtility.EndTimestamp("GenerateLogicalPageImages #" + basePageIndex);
+                    return;
+                }
+
+                _logicalPageImages.Add(pageIndex,
+                    await GenerateLogicalPageImage(pageIndex, cancellationToken));
             }
 
-            // Compute for start page index
-            int maxPages = MAX_PAGES;
-            if (numPages > 1)
-            {
-                maxPages = (numPages * 2) + 1; // Generate on both sides plus 1 (itself)
-            }
-            int midPt = maxPages / 2; // Round down to the nearest whole number
-            int endPageIndex = basePageIndex + midPt;
-            int startPageIndex = endPageIndex - (midPt * 2);
-            // Compute start page based on end page
-            if ((startPageIndex + MAX_PAGES) > pageCount)
-            {
-                startPageIndex = startPageIndex - ((startPageIndex + MAX_PAGES) - pageCount);
-            }
-            // Reset to 0 when out of bounds
-            if (startPageIndex < 0)
-            {
-                startPageIndex = 0;
-            }
+            LogUtility.EndTimestamp("GenerateLogicalPageImages #" + basePageIndex);
 
-            int generatedPageCount = 0;
-            int currPageIndex = startPageIndex;
-            do
-            {
-                await GenerateLogicalPage(currPageIndex);
-                ++generatedPageCount;
-                ++currPageIndex;
-            } while ((generatedPageCount < maxPages) && currPageIndex < pageCount);
+            return;
         }
 
         /// <summary>
-        /// Generates a page to JPEG then saved to AppData temporary store
+        /// Generates a single logical page image
         /// </summary>
         /// <param name="pageIndex">page index</param>
-        /// <returns>task</returns>
-        private async Task<LogicalPage> GenerateLogicalPage(int pageIndex)
+        /// <param name="cancellationToken">cancellation token</param>
+        /// <returns>task; logical page image</returns>
+        private async Task<WriteableBitmap> GenerateLogicalPageImage(int pageIndex,
+            CancellationTokenSource cancellationToken)
         {
-            var pageCount = _document.PdfDocument.PageCount;
-            if (pageIndex < 0 || pageIndex > pageCount - 1)
+            using (PdfPage pdfPage = _document.PdfDocument.GetPage((uint)(pageIndex)))
             {
-                return null;
-            }
+                await pdfPage.PreparePageAsync();
 
-            // Convert page to JPEG
-            LogicalPage logicalPage = null;
-            try
-            {
-                using (PdfPage pdfPage = _document.PdfDocument.GetPage((uint)pageIndex))
+                using (IRandomAccessStream raStream = new MemoryStream().AsRandomAccessStream())
                 {
-                    await pdfPage.PreparePageAsync();
-
-                    if (!_document.LogicalPages.TryGetValue(pageIndex, out logicalPage))
+                    PdfPageRenderOptions options = new PdfPageRenderOptions();
+                    double dpiScaleFactor = ImageConstant.GetDpiScaleFactor();
+                    if (dpiScaleFactor > 1.0)
                     {
-                        StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                        string fileName = String.Format(FORMAT_LOGICAL_PAGE_IMAGE_FILENAME, pageIndex);
-
-                        BitmapDecoder decoder = null;
-                        StorageFile jpegFile = await tempFolder.CreateFileAsync(fileName,
-                                CreationCollisionOption.ReplaceExisting);
-                        using (IRandomAccessStream raStream =
-                            await jpegFile.OpenAsync(FileAccessMode.ReadWrite))
-                        {
-                            // Scale to destination condering the device's DPI
-                            PdfPageRenderOptions opt = new PdfPageRenderOptions();
-                            double dpiScaleFactor = ImageConstant.DpiScaleFactor;
-                            if (dpiScaleFactor > 1.0)
-                            {
-                                opt.DestinationWidth = (uint)(pdfPage.Size.Width / dpiScaleFactor);
-                                opt.DestinationHeight = (uint)(pdfPage.Size.Height / dpiScaleFactor);
-                            }
-                            else
-                            {
-                                opt.DestinationWidth = (uint)(pdfPage.Size.Width * dpiScaleFactor);
-                                opt.DestinationHeight = (uint)(pdfPage.Size.Height * dpiScaleFactor);
-                            }
-                            opt.BitmapEncoderId = BitmapEncoder.JpegEncoderId;
-                            opt.BackgroundColor = Windows.UI.Colors.White;
-
-                            // Write to stream
-                            raStream.Seek(0);
-                            await pdfPage.RenderToStreamAsync(raStream, opt);
-
-                            // Get actual size
-                            decoder = await BitmapDecoder.CreateAsync(raStream);
-                            await raStream.FlushAsync();
-                        }
-
-                        // Add to LogicalPage list
-                        logicalPage = new LogicalPage((uint)pageIndex, jpegFile.Name,
-                            new Size(decoder.PixelWidth, decoder.PixelHeight), pdfPage.Rotation);
-                        _document.AddLogicalPage(pageIndex, logicalPage);
+                        options.DestinationWidth = (uint)(pdfPage.Size.Width / dpiScaleFactor);
+                        options.DestinationHeight = (uint)(pdfPage.Size.Height / dpiScaleFactor);
                     }
+                    else
+                    {
+                        options.DestinationWidth = (uint)(pdfPage.Size.Width * dpiScaleFactor);
+                        options.DestinationHeight = (uint)(pdfPage.Size.Height * dpiScaleFactor);
+                    }
+                    options.BackgroundColor = Windows.UI.Colors.White;
+                    await pdfPage.RenderToStreamAsync(raStream, options);
+                    WriteableBitmap pageBitmap = new WriteableBitmap((int)options.DestinationWidth,
+                        (int)options.DestinationHeight);
+                    pageBitmap = await WriteableBitmapExtensions.FromStream(pageBitmap, raStream);
+
+                    await raStream.FlushAsync();
+
+                    return pageBitmap;
                 }
             }
-            catch (UnauthorizedAccessException)
-            {
-                // Error in reading PDF
-                // But usually UnauthorizedAccessException is thrown here due to CreateFileAsync
-            }
+        }
 
-            return logicalPage;
+        /// <summary>
+        /// Determines the orientation of the PDF document based on its initial page
+        /// </summary>
+        private void GetPdfOrientation()
+        {
+            using (PdfPage pdfPage = _document.PdfDocument.GetPage(0))
+            {
+                IsPdfPortrait = pdfPage.Size.Width <= pdfPage.Size.Height;
+            }
         }
 
     }
+
 }

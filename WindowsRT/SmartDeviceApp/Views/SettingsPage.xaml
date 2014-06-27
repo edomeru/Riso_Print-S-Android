@@ -33,17 +33,20 @@
         <StackPanel x:Name="settingsPane" Style="{StaticResource STYLE_SettingsPane}">
             <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
                 <StackPanel Style="{StaticResource STYLE_StackLeft}">
-                    <TextBlock Text="{Binding Source=IDS_LBL_CARD_READER_GROUP, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                    <TextBlock Text="{Binding Source=IDS_LBL_AUTHENTICATION, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
                                Style="{StaticResource STYLE_TextListHeader}" />
                 </StackPanel>
             </Grid>
-            <controls:KeyTextBoxControl Text="{Binding Source=IDS_LBL_CARD_ID, Converter={StaticResource ResourceStringToTextConverter}}"
+            <controls:KeyTextBoxControl Text="{Binding Source=IDS_LBL_LOGIN_ID, Converter={StaticResource ResourceStringToTextConverter}}"
                                         ValueText="{Binding CardId, Mode=TwoWay}"
-                                        IsNumeric="False"
+                                        TextBoxBehavior="Alphanumeric"
+                                        TextBoxMaxLength="{StaticResource MAXLENGTH_AuthenticationLoginId}"
                                         IconVisibility="Collapsed"
                                         SeparatorVisibility="Collapsed"
                                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
-                                        TextBoxAlignment="Left"/>
+                                        TextBoxAlignment="Left"
+                                        PressedColor="{StaticResource BRUSH_Purple2}"
+                                        KeyPressedColor="{StaticResource BRUSH_White}"/>
         </StackPanel>
     </controls:ViewControl>
 </base:PageBase>

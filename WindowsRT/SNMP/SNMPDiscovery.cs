@@ -32,10 +32,6 @@ namespace SNMP
 
         }
 
-        public SNMPDiscovery()
-        {
-        }
-
         public SNMPDiscovery(string readCommunityName,string address)
         {
             {
@@ -46,7 +42,7 @@ namespace SNMP
                 snmpDevices = new List<SNMPDevice>();
                 communityName = readCommunityName;
                 broadcastAddress = address;
-                requestMIB = new string[]{SNMPConstants.MIB_RICOH_SYS_PRODUCT_OID,
+                requestMIB = new string[]{
                               SNMPConstants.MIB_GETNEXTOID_LOC,
                               SNMPConstants.MIB_GETNEXTOID_DESC,
                               SNMPConstants.MIB_GETNEXTOID_MACADDRESS,
@@ -83,18 +79,17 @@ namespace SNMP
                 //sysid, loc and desc, etc
                 if (values.Count() == requestMIB.Count())
                 {
-                    
-                    Dictionary<string,string> sysIdDict = values[0];       
-                    Dictionary<string,string> locDict = values[1];   
-                    Dictionary<string,string> descDict = values[2];
-                    Dictionary<string,string> macAddressDict = values[3];
-                    Dictionary<string,string> printerMibDict = values[4];
-                    Dictionary<string,string> sysNameDict = values[5];
+                     
+                    Dictionary<string,string> locDict = values[0];   
+                    Dictionary<string,string> descDict = values[1];
+                    Dictionary<string,string> macAddressDict = values[2];
+                    Dictionary<string,string> printerMibDict = values[3];
+                    Dictionary<string,string> sysNameDict = values[4];
             
                     string printerMibOid = printerMibDict[SNMPConstants.KEY_OID];
                     if (printerMibOid != null)
                     {
-                        if (printerMibOid != null && printerMibOid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERMIB))
+                        if (printerMibOid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERMIB))
                         { 
                             string host = sender.ToString();
                     
@@ -105,12 +100,12 @@ namespace SNMP
                                 snmpDevice.snmpControllerDeviceCallBack = snmpControllerDiscoverCallback;
                             }
                     
-                            snmpDevice.setIpAddress(host);
-                            snmpDevice.setLocation(locDict[SNMPConstants.KEY_VAL]);
-                            snmpDevice.setDescription(descDict[SNMPConstants.KEY_VAL]);
-                            snmpDevice.setMacAddress(macAddressDict[SNMPConstants.KEY_VAL]);
-                            snmpDevice.setSysName(sysNameDict[SNMPConstants.KEY_VAL]);
-                            snmpDevice.setCommunityName(this.communityName);
+                            snmpDevice.IpAddress = host;
+                            snmpDevice.Location = locDict[SNMPConstants.KEY_VAL];
+                            snmpDevice.Description = descDict[SNMPConstants.KEY_VAL];
+                            snmpDevice.MacAddress = macAddressDict[SNMPConstants.KEY_VAL];
+                            snmpDevice.SysName = sysNameDict[SNMPConstants.KEY_VAL];
+                            snmpDevice.CommunityName = this.communityName;
                     
                             snmpDevices.Add(snmpDevice);
 
@@ -128,9 +123,6 @@ namespace SNMP
                     }
 
                  }
-            }
-            else
-            {
             }
 
             return;

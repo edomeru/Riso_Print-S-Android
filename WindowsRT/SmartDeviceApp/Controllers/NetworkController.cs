@@ -13,11 +13,11 @@ using Windows.Networking.Connectivity;
 
 namespace SmartDeviceApp.Controllers
 {
-    class NetworkController
+    public class NetworkController
     {
+        private const string port = "80";
 
         public Action<string, bool> networkControllerPingStatusCallback { get; set; } //PrintersModule
-        private IOutputStream outputStream;
 
         static readonly NetworkController _instance = new NetworkController();
 
@@ -30,12 +30,6 @@ namespace SmartDeviceApp.Controllers
             get { return _instance; }
         }
 
-        DatagramSocket udpClient;
-        public void Initialize()
-        {
-            
-        }
-
         StreamSocket tcpClient;
 
         public async Task pingDevice(string ip)
@@ -44,7 +38,7 @@ namespace SmartDeviceApp.Controllers
            {
                 tcpClient = new StreamSocket();
                
-                await tcpClient.ConnectAsync(new Windows.Networking.HostName(ip), "8080", SocketProtectionLevel.PlainSocket);
+                await tcpClient.ConnectAsync(new Windows.Networking.HostName(ip), port, SocketProtectionLevel.PlainSocket);
                    
                 networkControllerPingStatusCallback(ip, true);
                    

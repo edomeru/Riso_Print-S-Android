@@ -14,11 +14,26 @@ namespace SmartDeviceApp.Models
     {
         public string Text { get; set; }
         public ICommand Command { get; set; }
+        private bool isChecked;
         
-        public MainMenuItem(string text, ICommand command)
+        public MainMenuItem(string text, ICommand command, bool isChecked)
         {
             Text = text;
             Command = command;
+            IsChecked = isChecked;
+        }
+
+        public bool IsChecked
+        {
+            get { return isChecked; }
+            set
+            {
+                if (isChecked != value)
+                {
+                    isChecked = value;
+                    RaisePropertyChanged("IsChecked");
+                }
+            }
         }
 
         public override bool Equals(System.Object obj)

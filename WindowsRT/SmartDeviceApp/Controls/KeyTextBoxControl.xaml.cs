@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
+using Microsoft.Xaml.Interactivity;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
@@ -16,6 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using GalaSoft.MvvmLight.Command;
 using SmartDeviceApp.Behaviors;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Controls
 {
@@ -44,8 +46,8 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TextBoxMaxLengthProperty =
             DependencyProperty.Register("TextBoxMaxLength", typeof(int), typeof(KeyTextBoxControl), null);
 
-        public static readonly DependencyProperty IsNumericProperty =
-            DependencyProperty.Register("IsNumeric", typeof(bool), typeof(KeyTextBoxControl), new PropertyMetadata(false, SetNumeric));
+        public static readonly DependencyProperty TextBoxBehaviorProperty =
+            DependencyProperty.Register("TextBoxBehavior", typeof(TextBoxBehavior), typeof(KeyTextBoxControl), new PropertyMetadata(TextBoxBehavior.Alphanumeric, SetTextBoxBehavior));
         
         public new string ValueText
         {
@@ -71,12 +73,11 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TextBoxMaxLengthProperty, value); }
         }
 
-        public bool IsNumeric
+        public TextBoxBehavior TextBoxBehavior
         {
-            get { return (bool)GetValue(IsNumericProperty); }
-            set { SetValue(IsNumericProperty, value); }
+            get { return (TextBoxBehavior)GetValue(TextBoxBehaviorProperty); }
+            set { SetValue(TextBoxBehaviorProperty, value); }
         }
-
 
         // Sets the focus to the textbox when any part of the button is tapped
         public ICommand SetFocus
@@ -128,7 +129,16 @@ namespace SmartDeviceApp.Controls
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
         {
-            ValueText = ((TextBox)sender).Text;
+            if ((TextBoxBehavior)GetValue(TextBoxBehaviorProperty) == TextBoxBehavior.Numeric)
+            {
+                var value = ((TextBox)sender).Text;
+                int intValue;
+                if (int.TryParse(value, out intValue))
+                {
+                    if (intValue == 0) ValueText = "1"; // Set value to 1 instead of 0
+                    else ValueText = ((TextBox)sender).Text;
+                }
+            }
             FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
         }
 
@@ -140,14 +150,20 @@ namespace SmartDeviceApp.Controls
             }
         }
 
-        private static void SetNumeric(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        private static void SetTextBoxBehavior(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            if (e.NewValue == null || !(e.NewValue is bool)) return;
-
-            if ((bool)e.NewValue)
+            if (e.NewValue == null || !(e.NewValue is TextBoxBehavior)) return;
+            IBehavior behavior = null; 
+            switch ((TextBoxBehavior)e.NewValue)
             {
-                var behavior = new NumericTextBoxBehavior();
-                behavior.Attach(((KeyTextBoxControl)obj).textBox);
+                case TextBoxBehavior.Numeric:
+                    behavior = new NumericTextBoxBehavior();
+                    behavior.Attach(((KeyTextBoxControl)obj).textBox);
+                    break;
+                case TextBoxBehavior.Alphanumeric:
+                    behavior = new AlphanumericTextBoxBehavior();
+                    behavior.Attach(((KeyTextBoxControl)obj).textBox);
+                    break;
             }
         }
     }

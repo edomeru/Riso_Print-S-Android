@@ -21,7 +21,7 @@ namespace SmartDeviceApp.Models
     public class PrintSettingOption
     {
         public string Text { get; set; }
-        public int Index { get; set; }
+        public int Index { get; set; } // Note: Index here refers to index from original options (not with respect to some options removed due to constraints)
         public bool IsEnabled { get; set; }
 
         public override bool Equals(System.Object obj)
@@ -83,8 +83,7 @@ namespace SmartDeviceApp.Models
         {
             get 
             {
-                if ((int)Value < Options.Count) _selectedOption = Options[(int)Value];
-                else _selectedOption = null;
+                _selectedOption = Options.Find(option => option.Index == (int)Value);
                 return _selectedOption;
             }
             set
@@ -293,6 +292,12 @@ namespace SmartDeviceApp.Models
         public int OutputTray { get; set; }
 
         /// <summary>
+        /// Secure Print option
+        /// </summary>
+        [SQLite.Ignore]
+        public bool EnabledSecurePrint { get; set; }
+
+        /// <summary>
         /// Log-in ID for Authentication; used only on a single print session
         /// </summary>
         [SQLite.Ignore]
@@ -331,6 +336,7 @@ namespace SmartDeviceApp.Models
             Staple = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_STAPLE, ListValueType.Int);
             Punch = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_PUNCH, ListValueType.Int);
             OutputTray = (int)DefaultsUtility.GetDefaultValueFromSqlScript(DefaultsUtility.KEY_COLUMN_NAME_PST_OUTPUT_TRAY, ListValueType.Int);
+            EnabledSecurePrint = false;
             LoginId = null;
             PinCode = null;
         }

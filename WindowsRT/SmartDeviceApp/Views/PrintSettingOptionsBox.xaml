@@ -15,7 +15,23 @@
 
     <Grid.Resources>
         <ControlTemplate x:Key="TEMPLATE_HeaderButton" TargetType="Button">
-            <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
+            <Grid x:Name="buttonGrid" Style="{StaticResource STYLE_ListHeaderGrid}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal"/>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="buttonGrid">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Purple1}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="key">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_White}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Disabled"/>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
                 <StackPanel Style="{StaticResource STYLE_StackLeft}">
                     <Image x:Name="backImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_back_normal.png"/>
                     <Image x:Name="icon"
@@ -23,7 +39,7 @@
                            Style="{StaticResource STYLE_AlignLeft}" Stretch="None"
                            Visibility="Collapsed"/>
                     <TextBlock x:Name="key" 
-                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}}" 
+                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" 
                             Style="{StaticResource STYLE_TextListHeader}" />
                 </StackPanel>
             </Grid>
@@ -46,15 +62,15 @@
         <ListView.ItemTemplate>
             <DataTemplate>
                 <controls:KeyRadioButtonControl x:Name="keyRadioButtonControl"
-                                                Command="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}"
-                                                CommandParameter="{Binding}"
+                                                SelectOptionCommand="{Binding DataContext.SelectPrintSettingOption, ElementName=printSettingOptionsBox}"
                                                 GroupName="printSettingOptionsGroup"
                                                 Index="{Binding Index}"
                                                 Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                                 IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
-                                                IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}}"
+                                                IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}, Mode=TwoWay}"
                                                 IsEnabled="{Binding IsEnabled}"
                                                 SeparatorVisibility="{Binding Index, Converter={StaticResource PrintSettingOptionToSeparatorVisibilityConverter}}"
+                                                IsListItem="True"
                                                 Width="{Binding Width, ElementName=printSettingOptionsBox}"
                                                 PressedColor="{StaticResource BRUSH_Purple1}">
                 </controls:KeyRadioButtonControl>

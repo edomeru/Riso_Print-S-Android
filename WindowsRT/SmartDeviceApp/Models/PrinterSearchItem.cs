@@ -69,24 +69,29 @@ namespace SmartDeviceApp.Models
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void setImageSource()
+        private async void setImageSource()
         {
             if (IsInPrinterList)
             {
-                ImageSource = convertImageSource(_AddPrinterOkImagePressed);
+                ImageSource = await convertImageSource(_AddPrinterOkImagePressed);
             } 
             else
             {
-                ImageSource = convertImageSource(_AddImageNormal);
+                ImageSource = await convertImageSource(_AddImageNormal);
             }
         }
 
-        private ImageSource convertImageSource(string src)
+        private async Task<ImageSource> convertImageSource(string src)
         {
-            
-            BitmapImage image = new BitmapImage(new Uri(src));
-            ImageSource imgSrc = image;
+            ImageSource imgSrc = null;
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                BitmapImage image = new BitmapImage(new Uri(src));
+                imgSrc = image;
 
+               
+            });
             return imgSrc;
         }
     }

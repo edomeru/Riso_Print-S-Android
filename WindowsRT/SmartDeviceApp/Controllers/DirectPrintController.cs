@@ -70,7 +70,7 @@ namespace SmartDeviceApp.Controllers
         {
             _startTime = DateTime.Now;
             _directPrint = new DirectPrint.DirectPrint();
-            _directPrint.startLPRPrint(_printJob);            
+            _directPrint.startLPRPrint(_printJob);
         }
 
         /// <summary>
@@ -78,7 +78,10 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void CancelPrintJob()
         {
-            _directPrint.cancelPrint();
+            if (_directPrint != null)
+            {
+                _directPrint.cancelPrint();
+            }
         }
 
         /// <summary>
