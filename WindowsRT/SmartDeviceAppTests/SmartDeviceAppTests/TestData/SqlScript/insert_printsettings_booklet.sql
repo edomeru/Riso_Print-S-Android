@@ -1,5 +1,5 @@
-INSERT INTO Printer VALUES(1, 1, "192.168.0.1", "Booklet_1", 0, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-INSERT INTO Printer VALUES(2, 2, "192.168.0.2", "Booklet_2", 0, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(1, 1, '192.168.0.1', 'Booklet_1', 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1);
+INSERT INTO Printer VALUES(2, 2, '192.168.0.2', 'Booklet_2', 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1);
 
 INSERT INTO DefaultPrinter VALUES(2);
 

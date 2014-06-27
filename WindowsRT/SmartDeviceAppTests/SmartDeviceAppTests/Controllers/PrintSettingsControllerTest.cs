@@ -82,7 +82,7 @@ namespace SmartDeviceAppTests.Controllers
 
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
-            _screenName = ScreenMode.PrintPreview.ToString();
+            _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
             await PrintSettingsController.Instance.Initialize(_screenName, printer);
             PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
@@ -198,7 +198,7 @@ namespace SmartDeviceAppTests.Controllers
 
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
-            _screenName = ScreenMode.PrintPreview.ToString();
+            _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(10);
             await PrintSettingsController.Instance.Initialize(_screenName, printer);
             PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
@@ -210,7 +210,7 @@ namespace SmartDeviceAppTests.Controllers
             Assert.AreEqual(1, printSettings.Copies);
             Assert.AreEqual(0, printSettings.Duplex);
             Assert.AreEqual(2, printSettings.PaperSize);
-            Assert.IsFalse(printSettings.ScaleToFit);
+            Assert.IsTrue(printSettings.ScaleToFit);
             Assert.AreEqual(0, printSettings.PaperType);
             Assert.AreEqual(0, printSettings.InputTray);
             Assert.AreEqual(0, printSettings.Imposition);
@@ -694,59 +694,60 @@ namespace SmartDeviceAppTests.Controllers
 
             Cleanup(); // Workaround for Cover Unit Tests using dotCover
         }
-        [TestMethod]
-        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromPortraitBookletLayoutTB()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
+        //[TestMethod]
+        //public async Task Test_PrintSettingValueChanged_Int_Orientation_FromPortraitBookletLayoutTB()
+        //{
+        //    await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
-            _screenName = ScreenMode.Printers.ToString();
-            Printer printer = await _dbConnection.GetAsync<Printer>(7);
-            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+        //    await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
 
-            PrintSetting printSetting = new PrintSetting()
-            {
-                Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
-                Type = PrintSettingType.numeric,
-                Value = 1,
-                Default = 0
-            };
+        //    _screenName = ScreenMode.Printers.ToString();
+        //    Printer printer = await _dbConnection.GetAsync<Printer>(7);
+        //    await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
-            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
-            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
-            Assert.AreEqual(1, printSettings.Orientation);
-            Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
+        //    PrintSetting printSetting = new PrintSetting()
+        //    {
+        //        Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
+        //        Type = PrintSettingType.numeric,
+        //        Value = 1,
+        //        Default = 0
+        //    };
 
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
+        //    PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 1);
+        //    PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+        //    Assert.AreEqual(1, printSettings.Orientation);
+        //    Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
 
-        [TestMethod]
-        public async Task Test_PrintSettingValueChanged_Int_Orientation_FromLandscapeBookletLayoutTB()
-        {
-            await Initialize(); // Workaround for Cover Unit Tests using dotCover
+        //    Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        //}
 
-            await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
+        //[TestMethod]
+        //public async Task Test_PrintSettingValueChanged_Int_Orientation_FromLandscapeBookletLayoutTB()
+        //{
+        //    await Initialize(); // Workaround for Cover Unit Tests using dotCover
 
-            _screenName = ScreenMode.Printers.ToString();
-            Printer printer = await _dbConnection.GetAsync<Printer>(8);
-            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+        //    await UnitTestUtility.ExecuteScript("TestData/SqlScript/insert_printsettings_orientation.sql", _dbConnection);
 
-            PrintSetting printSetting = new PrintSetting()
-            {
-                Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
-                Type = PrintSettingType.numeric,
-                Value = 1,
-                Default = 0
-            };
+        //    _screenName = ScreenMode.Printers.ToString();
+        //    Printer printer = await _dbConnection.GetAsync<Printer>(8);
+        //    await PrintSettingsController.Instance.Initialize(_screenName, printer);
 
-            PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
-            PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
-            Assert.AreEqual(0, printSettings.Orientation);
-            Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
+        //    PrintSetting printSetting = new PrintSetting()
+        //    {
+        //        Name = PrintSettingConstant.NAME_VALUE_ORIENTATION,
+        //        Type = PrintSettingType.numeric,
+        //        Value = 1,
+        //        Default = 0
+        //    };
 
-            Cleanup(); // Workaround for Cover Unit Tests using dotCover
-        }
+        //    PrintSettingsController.Instance.PrintSettingValueChanged(printSetting, 0);
+        //    PrintSettings printSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
+        //    Assert.AreEqual(0, printSettings.Orientation);
+        //    Assert.AreEqual((int)BookletLayout.Forward, printSettings.BookletLayout);
+
+        //    Cleanup(); // Workaround for Cover Unit Tests using dotCover
+        //}
 
         [TestMethod]
         public async Task Test_PrintSettingValueChanged_Int_Copies()
@@ -2069,7 +2070,7 @@ namespace SmartDeviceAppTests.Controllers
 
             await UnitTestUtility.ExecuteScript("TestData/SqlScript/SampleData.sql", _dbConnection);
 
-            _screenName = ScreenMode.PrintPreview.ToString();
+            _screenName = ScreenMode.Printers.ToString();
             Printer printer = await _dbConnection.GetAsync<Printer>(2);
             await PrintSettingsController.Instance.Initialize(_screenName, printer);
 

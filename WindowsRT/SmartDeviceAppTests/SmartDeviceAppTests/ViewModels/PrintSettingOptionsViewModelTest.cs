@@ -34,10 +34,11 @@ namespace SmartDeviceAppTests.ViewModels
         {
             var option = new PrintSettingOption();
             option.Text = "PRINT_SETTING_OPTION_TEXT";
+            option.Index = 0;
             var printSetting = new PrintSetting();
             printSetting.Text = "PRINT_SETTING_TEXT";
             printSettingOptionsViewModel.PrintSetting = printSetting;
-            printSettingOptionsViewModel.SelectPrintSettingOption.Execute(option);
+            printSettingOptionsViewModel.SelectPrintSettingOption.Execute(option.Index);
             Assert.IsNotNull(printSettingOptionsViewModel.SelectPrintSettingOption);
             Assert.AreEqual(0, printSettingOptionsViewModel.PrintSetting.Value);
         }
