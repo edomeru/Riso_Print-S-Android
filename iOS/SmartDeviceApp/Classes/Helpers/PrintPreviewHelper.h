@@ -13,8 +13,11 @@
 #define PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED 0
 #define GET_ORIENTATION_FROM_PDF_ENABLED 1
 
+/** @file PrintPreviewHelper.h */
+
 /**
  * List of possible value for Color Mode option.
+ * Defines the color mode of the print job.
  */
 typedef enum {
     kColorModeAuto, /**< Auto */
@@ -24,6 +27,7 @@ typedef enum {
 
 /**
  * List of possible value for Paper Size option.
+ * Sets the paper type to be used during print.
  */
 typedef enum {
     kPaperSizeA3, /**< A3 */
@@ -43,6 +47,7 @@ typedef enum {
 
 /**
  * List of possible value for Imposition option.
+ * Number of pages to print per sheet.
  */
 typedef enum {
     kImpositionOff, /**< Off */
@@ -52,6 +57,7 @@ typedef enum {
 
 /**
  * List of possible value for Imposition Order option.
+ * Direction of the PDF pages printed in one sheet.
  */
 typedef enum {
     kImpositionOrderLeftToRight, /**< Left to right */
@@ -64,6 +70,7 @@ typedef enum {
 
 /**
  * List of possible value for Orientation option.
+ * Defines the page orientation (will depend on the first page of the PDF).
  */
 typedef enum {
     kOrientationPortrait, /**< Portrait */
@@ -72,6 +79,7 @@ typedef enum {
 
 /**
  * List of possible value for Staple Type option.
+ * The print job will be stapled on the specified position.
  */
 typedef enum{
     kStapleTypeNone, /**< None */
@@ -83,6 +91,7 @@ typedef enum{
 
 /**
  * List of possible value for Finishing Side option.
+ * Refers to the edge where the document will be bound.
  */
 typedef enum{
     kFinishingSideLeft, /**< Left */
@@ -92,6 +101,7 @@ typedef enum{
 
 /**
  * List of possible value for Punch Type option.
+ * The printer will make a punch in the print output.
  */
 typedef enum{
     kPunchTypeNone, /**< None */
@@ -101,6 +111,7 @@ typedef enum{
 
 /**
  * List of possible value for Duplex Setting option.
+ * Determines the duplex printing mode.
  */
 typedef enum {
     kDuplexSettingOff, /**< Off */
@@ -110,6 +121,7 @@ typedef enum {
 
 /**
  * List of possible value for Booklet Type option.
+ * Finishing options for when booklet is on.
  */
 typedef enum {
     kBookletTypeOff, /**< Off */
@@ -119,6 +131,7 @@ typedef enum {
 
 /**
  * List of possible value for Booklet Layout option.
+ * Direction of pages when booklet is on.
  */
 typedef enum {
     kBookletLayoutForward, /**< Forward */
@@ -127,6 +140,7 @@ typedef enum {
 
 /**
  * List of possible value for Output Tray option.
+ * Selects the tray location of the finished copies (depends on the machine configuration).
  */
 typedef enum {
     kOutputTrayAuto, /**< Auto */
@@ -137,6 +151,8 @@ typedef enum {
 
 /**
  * PrintPreviewHelper is a helper class that provides methods concerning the viewing of the document's print preview.
+ *
+ * @see PreviewSetting 
  */
 @interface PrintPreviewHelper : NSObject
 

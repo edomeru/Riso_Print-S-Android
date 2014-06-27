@@ -15,7 +15,6 @@
  *  - for portrait, the printers are listed in two columns
  *  - for landscape, the printers are listed in three columns
  *  - when a printer is deleted, the other printers are shifted to the left
- *  - 
  */
 @interface PrinterLayout : UICollectionViewLayout
 

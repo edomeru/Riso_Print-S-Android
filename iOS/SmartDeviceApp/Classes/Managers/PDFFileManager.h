@@ -30,7 +30,10 @@ typedef enum
  * property.\n
  * The PDF file is also copied to the Documents directory of the application.\n\n
  * This class is designed to be used as a singleton to keep a single reference
- * to the PDF file throughout the application and for its entire lifecycle.
+ * to the PDF file throughout the application and for its entire lifecycle.\n
+ * It uses the native CGPDFDocument class of iOS.
+ * 
+ * @see https://developer.apple.com/library/mac/documentation/graphicsimaging/reference/CGPDFDocument/Reference/reference.html
  */
 @interface PDFFileManager : NSObject
 
