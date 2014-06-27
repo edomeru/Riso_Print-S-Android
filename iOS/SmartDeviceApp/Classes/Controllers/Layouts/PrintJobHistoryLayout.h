@@ -31,7 +31,7 @@
 @end
 
 /**
- * Custom UICollectionView layout class for organizing the content of the Print Job History screen.
+ * Custom UICollectionView layout class for organizing the content of the "Print Job History" screen.
  * The print job history groups are organized according to the following rules:
  *  - for phones, the groups are listed in a single continuous column
  *  - for tablets in portrait, the groups are listed in two columns

@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ * Custom view for labels with padding.
+ * This is used in the following screens:
+ *  - "Print Job History" (printer name)
+ */
 @interface PaddedLabel : UILabel
 
 @end
