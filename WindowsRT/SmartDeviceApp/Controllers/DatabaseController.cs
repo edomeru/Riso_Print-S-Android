@@ -171,7 +171,7 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Retrieves all print jobs
         /// </summary>
-        /// <returns>task; list of printers when successful, null otherwise</returns>
+        /// <returns>task; list of printers when successful</returns>
         public async Task<List<Printer>> GetPrinters()
         {
             List<Printer> printerList = new List<Printer>();
@@ -182,7 +182,8 @@ namespace SmartDeviceApp.Controllers
             }
             catch
             {
-                printerList = null;
+                //printerList = null;
+                // Ignore error
             }
 
             return printerList;
@@ -264,7 +265,7 @@ namespace SmartDeviceApp.Controllers
         /// Retrieves the default printer
         /// </summary>
         /// <returns>task; DefaultPrinter object when found,
-        /// DefaultPrinter object with printer ID -1 when no default printer set, null otherwise</returns>
+        /// DefaultPrinter object with printer ID is 0 when no default printer set</returns>
         public async Task<DefaultPrinter> GetDefaultPrinter()
         {
             DefaultPrinter defaultPrinter = new DefaultPrinter(); // Unset DefaultPrinter
@@ -279,7 +280,8 @@ namespace SmartDeviceApp.Controllers
             }
             catch
             {
-                defaultPrinter = null;
+                //defaultPrinter = null;
+                // Ignore error
             }
 
             return defaultPrinter;
@@ -303,6 +305,8 @@ namespace SmartDeviceApp.Controllers
                     result = await DeleteDefaultPrinter();
                 }
 
+                int count = await _dbConnection.Table<DefaultPrinter>().CountAsync();
+
                 if (result)
                 {
                     DefaultPrinter newDefaultPrinter = new DefaultPrinter();
@@ -321,14 +325,15 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Deletes the existing default printer
         /// </summary>
-        /// <returns>task; truw when successful, false otherwise</returns>
+        /// <returns>task; true when successful</returns>
         public async Task<bool> DeleteDefaultPrinter()
         {
+            bool result = true;
+
             try
             {
                 DefaultPrinter existingDefault = await _dbConnection.Table<DefaultPrinter>()
                                                                     .FirstOrDefaultAsync();
-
                 if (existingDefault != null)
                 {
                     await _dbConnection.DeleteAsync(existingDefault);
@@ -336,10 +341,11 @@ namespace SmartDeviceApp.Controllers
             }
             catch
             {
-                return false;
+                //result = false;
+                // TODO: Handle error
             }
 
-            return true;
+            return result;
         }
 
         #endregion DefaultPrinter Table Operations
@@ -450,10 +456,10 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Retrieves all print jobs
         /// </summary>
-        /// <returns>task; list of all print jobs when successful, null otherwise</returns>
+        /// <returns>task; list of all print jobs when successful</returns>
         public async Task<List<PrintJob>> GetPrintJobs()
         {
-            var printJobsList = new List<PrintJob>();
+            List<PrintJob> printJobsList = new List<PrintJob>();
 
             try
             {
@@ -461,7 +467,8 @@ namespace SmartDeviceApp.Controllers
             }
             catch
             {
-                printJobsList = null;
+                //printJobsList = null;
+                // Ignore error
             }
 
             return printJobsList;

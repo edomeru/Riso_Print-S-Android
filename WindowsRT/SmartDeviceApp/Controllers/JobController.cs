@@ -94,12 +94,6 @@ namespace SmartDeviceApp.Controllers
         private async Task FetchJobs()
         {
             List<PrintJob> printJobList = await DatabaseController.Instance.GetPrintJobs();
-            if (printJobList == null)
-            {
-                await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
-                    "IDS_LBL_PRINT_JOB_HISTORY", "IDS_LBL_OK", null);
-                return;
-            }
 
             PrintJobList tempList = new PrintJobList();
             var orderedList = printJobList.OrderBy(pj => pj.PrinterId)
@@ -133,13 +127,8 @@ namespace SmartDeviceApp.Controllers
         {
             if (printJob != null && printJob.PrinterId > -1)
             {
-                bool result = await DatabaseController.Instance.InsertPrintJob(printJob);
-                if (!result)
-                {
-                    await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
-                        "IDS_LBL_PRINT_JOB_HISTORY", "IDS_LBL_OK", null);
-                    return;
-                }
+                await DatabaseController.Instance.InsertPrintJob(printJob);
+                // Ignore error
 
                 PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList
                     .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);

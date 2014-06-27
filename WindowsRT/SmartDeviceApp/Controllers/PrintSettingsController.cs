@@ -195,7 +195,7 @@ namespace SmartDeviceApp.Controllers
             if (id > -1)
             {
                 currPrintSettings = await DatabaseController.Instance.GetPrintSettings(id);
-                // Ignore checking for currPrintSettings result from DB
+                // Ignore error
             }
             if (currPrintSettings == null)
             {
@@ -220,10 +220,11 @@ namespace SmartDeviceApp.Controllers
             {
                 printSettings.PrinterId = printer.Id;
                 bool result = await DatabaseController.Instance.InsertPrintSettings(printSettings);
-                if (!result)
-                {
-                    return -1;
-                }
+                // TODO: Check DB error with Add Printer
+                //if (!result)
+                //{
+                //    return -1;
+                //}
             }
 
             return printSettings.Id;
@@ -1652,13 +1653,8 @@ namespace SmartDeviceApp.Controllers
 
             if (!_printSettingsViewModel.IsPrintPreview)
             {
-                bool result = await DatabaseController.Instance.UpdatePrintSettings(printSettings);
-                if (!result)
-                {
-                    await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
-                        "IDS_LBL_PRINT_SETTINGS", "IDS_LBL_OK", null);
-                    return false;
-                }
+                await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                // Ignore error
             }
 
             if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
@@ -1717,13 +1713,8 @@ namespace SmartDeviceApp.Controllers
 
             if (!_printSettingsViewModel.IsPrintPreview)
             {
-                bool result = await DatabaseController.Instance.UpdatePrintSettings(printSettings);
-                if (!result)
-                {
-                    await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
-                        "IDS_LBL_PRINT_SETTINGS", "IDS_LBL_OK", null);
-                    return false;
-                }
+                await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                // Ignore error
             }
 
             if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
