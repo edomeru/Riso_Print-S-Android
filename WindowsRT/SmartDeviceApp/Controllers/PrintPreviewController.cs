@@ -1054,7 +1054,6 @@ namespace SmartDeviceApp.Controllers
                     {
                         await DialogService.Instance.ShowMessage("IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL",
                             "IDS_APP_NAME");
-                        new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
                     }
                     else if (result == (int)PrintJobResult.Error)
                     {
