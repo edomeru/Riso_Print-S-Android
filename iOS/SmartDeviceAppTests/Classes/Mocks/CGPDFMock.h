@@ -15,3 +15,8 @@ DECLARE_FAKE_VALUE_FUNC0(bool, CGPDFDocumentIsUnlocked);
 DECLARE_FAKE_VALUE_FUNC0(bool, CGPDFDocumentIsEncrypted);
 DECLARE_FAKE_VALUE_FUNC0(bool, CGPDFDocumentAllowsPrinting);
 DECLARE_FAKE_VALUE_FUNC0(size_t, CGPDFDocumentGetNumberOfPages)
+DECLARE_FAKE_VALUE_FUNC0(CGPDFPageRef, CGPDFDocumentGetPage)
+DECLARE_FAKE_VALUE_FUNC0(CGRect, CGPDFPageGetBoxRect)
+
+/*    CGPDFPageRef pageRef = CGPDFDocumentGetPage(docRef, 1);
+    CGRect pageRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);*/

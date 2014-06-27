@@ -42,7 +42,7 @@
 // Run at start of all tests in the class
 - (void)setUpClass
 {
-    A3WSize = CGSizeMake(867.402, 1303.937);
+    A3WSize = CGSizeMake(895.748, 1303.937);
     A3Size = CGSizeMake(841.890, 1190.551);
     A4Size = CGSizeMake(595.276, 841.890);
     A5Size = CGSizeMake(419.528, 595.276);
