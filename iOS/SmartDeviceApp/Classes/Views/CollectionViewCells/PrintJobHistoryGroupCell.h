@@ -15,21 +15,70 @@
 
 @class DeleteButton;
 
+/**
+ * PrintJobHistoryGroupCellDelegate protocol provides methods to inform the delegate about user actions.
+ * These actions include tapping the header, deleting a group of print jobs or just a single print job.
+ */
 @protocol PrintJobHistoryGroupCellDelegate <NSObject>
 
 @required
+
+/**
+ Checks if the header needs to be highlighted.
+ When the user taps the group header, it should be highlighted.
+ @return YES if header needs to be highlighted, NO otherwise.
+ */
 - (BOOL)shouldHighlightGroupHeader;
+
+/**
+ Called when the user taps the header
+ @param groupTag The tag of the group being tapped.
+ */
 - (void)didTapGroupHeader:(NSUInteger)groupTag;
+
+/**
+ Checks if the delete group button needs to be highlighted.
+ @return YES if delete group button needs to be highlighted, NO otherwise.
+*/
 - (BOOL)shouldHighlightDeleteGroupButton;
+
+/**
+ Called when the user taps the delete group button
+ @param groupTag The tag of the group.
+ */
 - (void)didTapDeleteGroupButton:(DeleteButton*)button ofGroup:(NSUInteger)groupTag;
+
+/**
+ Checks if the delete button for a print job needs to be displayed.
+ When the user swiped left on the printjob item, delete button should be displayed.
+ @param groupTag The tag of the group.
+ */
 - (BOOL)shouldPutDeleteJobButton:(NSUInteger)groupTag;
+
+/**
+ Called when the user taps the delete job button
+ @param jobtag The tag of the job to be deleted.
+ @param groupTag The tag of the group being tapped.
+ */
 - (void)didTapDeleteJobButton:(DeleteButton*)button ofJob:(NSUInteger)jobTag ofGroup:(NSUInteger)groupTag;
+
+/**
+ Checks if the print job item needs to be highlighted.
+ When the user swiped left to show the delete button, the cell should be highlighted.
+ @return YES if the print job item needs to be highlighted, NO otherwise.
+ */
 - (BOOL)shouldHighlightJob;
 
 @end
 
+/**
+ * PrintJobHistoryGroupCell class is used to display the list of saved print jobs.
+ */
 @interface PrintJobHistoryGroupCell : UICollectionViewCell <UITableViewDataSource, UITableViewDelegate, DeleteButtonDelegate>
 
+/**
+ * The delegate receives notification that the user performs an action on the print job history group.
+ */
 @property (weak, nonatomic) id<PrintJobHistoryGroupCellDelegate> delegate;
 
 /**

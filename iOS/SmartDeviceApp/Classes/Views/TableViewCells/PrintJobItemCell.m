@@ -12,9 +12,19 @@
 
 @interface PrintJobItemCell ()
 
+/**
+ * Constraint for the horizontal space of the delete button to the content view.
+ */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint* spaceDeleteButtonToSuperView;
 
+/**
+ * Shows the delete button.
+ */
 - (void)putDeleteButton;
+
+/**
+ * Removes the delete button.
+ */
 - (void)cancelDeleteButton;
 
 @end

@@ -10,10 +10,39 @@
 
 @interface PrinterLayout()
 
+/**
+ * Stores the size (height, width) of a printer cell.
+ */
 @property (nonatomic) CGSize itemSize;
+
+/**
+ * Stores the spacing in between printer cells.
+ */
 @property (nonatomic) CGFloat spacing;
+
+/**
+ * Stores the number of columns to display.
+ */
 @property (nonatomic) NSInteger numberOfColumns;
+
+/**
+ * Stores the UICollectionViewLayoutAttributes for each printer cell.
+ */
 @property (nonatomic, strong) NSDictionary *layoutInfo;
+
+/**
+ * Initializes the PrinterLayout properties.
+ */
+- (void)setup;
+
+/**
+ * Calculates the (x,y) origin and the (height,width) size of
+ * a printer cell at the specified index path.
+ *
+ * @param indexPath the printer cell's index path in the UICollectionView
+ * @return the printer cell's frame
+ */
+- (CGRect)frameForCellAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 

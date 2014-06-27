@@ -53,11 +53,36 @@
 
 #pragma mark - Methods
 
+/**
+ Display delete button if the user swiped from right to left on the prin job item
+ @param gesture The UIGestureRecognizer for swipe
+ */
 - (void)putDeleteButton:(UIGestureRecognizer*)gesture;
+
+/**
+ * Set the group header higlighted.
+ */
 - (void)colorHeader;
+
+/**
+ * Remove the group header highlight.
+ */
 - (void)clearHeader;
+
+/**
+ * Informs the delegate that the user tapped the header
+ */
 - (void)tappedHeader;
+
+/**
+ * Informs the delegate that the user tapped delete all print job in group button
+ */
 - (void)tappedDeleteAll;
+
+/**
+ * Informs the delegate that the user tapped delete print job button
+ @param button The button tapped by the user.
+ */
 - (IBAction)tappedDeleteJob:(DeleteButton*)button;
 
 @end

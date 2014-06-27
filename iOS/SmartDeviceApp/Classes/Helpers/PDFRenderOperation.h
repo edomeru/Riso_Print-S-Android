@@ -10,6 +10,9 @@
 
 @protocol PDFRenderOperationDelegate;
 
+/**
+ * PDFRenderOperation class provides methods for rendering the PDF document.
+ */
 @interface PDFRenderOperation : NSOperation
 
 /**
@@ -39,6 +42,9 @@
 
 @end
 
+/**
+ * PDFRenderOperationDelegate protocol provides methods to notify the delegate concerning rendering of the document.
+ */
 @protocol PDFRenderOperationDelegate <NSObject>
 
 @required

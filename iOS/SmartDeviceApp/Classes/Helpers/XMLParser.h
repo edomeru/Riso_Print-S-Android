@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * XMLParser class is used to parse an XML file and convert it to an instance of NSDictionary for reading.
+ */
 @interface XMLParser : NSObject<NSXMLParserDelegate>
 
 /**

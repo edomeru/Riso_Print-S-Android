@@ -8,8 +8,19 @@
 
 #import "UIColor+Theme.h"
 
+/**
+ * Theme_Internal category provides methods to return a UIColor using RGBA input.
+ */
 @interface UIColor(Theme_Internal)
 
+/**
+ Create a UIColor with RGBA input.
+ @param red Red component
+ @param green Green component
+ @param blue Blue component
+ @param alpha Alpha component
+ @return UIColor
+ */
 + (UIColor *)colorWithR:(CGFloat)red G:(CGFloat)green B:(CGFloat)blue A:(CGFloat)alpha;
 
 @end
