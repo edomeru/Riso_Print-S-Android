@@ -56,6 +56,7 @@ namespace SmartDeviceApp.Controllers
 
         public UIElement TargetControl
         {
+            get { return _targetControl; }
             set { _targetControl = value; }
         }
 

@@ -41,26 +41,29 @@ namespace DirectPrint
         public const int PRINT_STATUS_OK = 0;
         public const int PRINT_STATUS_ERROR = 1;
 
-        string PORT_LPR = "515";
-        string PORT_RAW = "9100";
+        private const string PORT_LPR = "515";
+        private const string PORT_RAW = "9100";
 
-        int TIMEOUT_CONNECT = 10;
-        int TIMEOUT_RECEIVE = 30;
+        private const int TIMEOUT_CONNECT = 10;
+        private const int TIMEOUT_RECEIVE = 30;
 
-        int BUFFER_SIZE = 4096;
+        private const int BUFFER_SIZE = 4096;
 
-        string QUEUE_NAME = "normal";
-        string HOST_NAME = "SmartDeviceApp";
+        private const string QUEUE_NAME = "normal";
+        private const string HOST_NAME = "SmartDeviceApp";
 
-        string PJL_ESCAPE = "\x1B-12345X";
-        string PJL_LANGUAGE = "@PJL ENTER LANGUAGE = PDF\x0d\x0a";
-        string PJL_EOJ = "@PJL EOJ\x0d\x0a";
+        private const string PJL_ESCAPE = "\x1B%-12345X";
+        private const string PJL_LANGUAGE = "@PJL ENTER LANGUAGE = PDF\x0d\x0a";
+        private const string PJL_EOJ = "@PJL EOJ\x0d\x0a";
 
-        float LPR_PREP_PROGRESS_STEP = 6.0f;
-        float LPR_PREP_END_PROGRESS = 20.0f;
-        float PJL_HEADER_PROGRESS_STEP = 5.0f;
-        float PJL_FOOTER_PROGRESS_STEP = 4.0f;
-        float END_PROGRESS = 100.0f;
+        private const float LPR_PREP_PROGRESS_STEP = 6.0f;
+        private const float LPR_PREP_END_PROGRESS = 20.0f;
+        private const float PJL_HEADER_PROGRESS_STEP = 5.0f;
+        private const float PJL_FOOTER_PROGRESS_STEP = 4.0f;
+        private const float END_PROGRESS = 100.0f;
+
+        private bool datareceived = false;
+        private int ack = 0;
 
         TCPSocket socket;
 
@@ -96,32 +99,39 @@ namespace DirectPrint
             Task.Run(() => _startLPRPrint(parameter));
         }
 
-        public async void _startLPRPrint(directprint_job parameter)
+        public async Task _startLPRPrint(directprint_job parameter)
         {
 
             if (parameter == null)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
 
             print_job = parameter;
 
             //start socket
-            socket = new TCPSocket();
-            socket.connect(print_job.ip_address, PORT_LPR);
-            socket.assignDelegate(receiveData);
-            /*
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-            (workItem) =>
+            socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData);
+            int connectretries = 0;
+            int maxretries = 4;
+            while (connectretries < maxretries)
             {
-                startLPRPrint(print_job);
-            });
-            */
-            //
+                try
+                {
+                    await socket.connect();
+                    connectretries = maxretries;
+                }
+                catch (Exception)
+                {
+                    if (connectretries++ >= maxretries)
+                    {
+                        triggerCallback(PRINT_STATUS_ERROR);
+                        if (socket != null) socket.disconnect();
+                        return;
+                    }
+                }
+            }
 
             // Prepare PJL header
             string pjl_header = "";
@@ -166,34 +176,41 @@ namespace DirectPrint
             buffer[pos++] = (byte)'\n';
 
             //***write buffer to socket
-            socket.write(buffer, 0, pos);
+            try
+            {
+                await socket.write(buffer, 0, pos);
+            }
+            catch (Exception e)
+            {
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
+                return;
+            }
             /////////////////////////////////////////////////////////
             /// READ ACK
-            if (waitForAck() != 0)//TODO: no response here:
+            if (waitForAck() != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
             print_job.progress += LPR_PREP_PROGRESS_STEP;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
             if (print_job.cancel_print == 1)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
 
 
             // CONTROL FILE : Prepare
+            string username = "WinRTユーザ";//"SDA WinRT User";
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
             string cname = String.Format("cfA{0}{1}", 1, HOST_NAME);
             string controlfile = String.Format("H{0}\nP{1}\nJ{2}\nf{3}\nU{4}\nN{5}\n",
-                                        HOST_NAME, "SDA WinRT User", print_job.job_name, dname, dname, print_job.job_name);
+                                        HOST_NAME, username, print_job.job_name, dname, dname, print_job.job_name);
+            byte[] controlfilebytes = System.Text.Encoding.UTF8.GetBytes(controlfile);
             //string controlfile = String.Format("H{0}\nP{1}\nf{2}\nU{3}\nN{4}\n",
             //                HOST_NAME, "User", dname, dname, print_job.job_name);
             /////////////////////////////////////////////////////////
@@ -208,7 +225,7 @@ namespace DirectPrint
             ///
             pos = 0;
             buffer[pos++] = 0x2;
-            string controlfile_length_str = String.Format("{0}", controlfile.Length);
+            string controlfile_length_str = controlfilebytes.Length.ToString();//controlfile.Length.ToString();
             for (i = 0; i < controlfile_length_str.Length; i++)
             {
                 buffer[pos++] = (byte)controlfile_length_str[i];
@@ -221,17 +238,14 @@ namespace DirectPrint
             buffer[pos++] = (byte)'\n';
 
             //***write buffer to socket
-            socket.write(buffer, 0, pos);
-            string test000 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
+            await socket.write(buffer, 0, pos);
 
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
             print_job.progress += LPR_PREP_PROGRESS_STEP;
@@ -240,31 +254,28 @@ namespace DirectPrint
             /////////////////////////////////////////////////////////
             /// ADD CONTENT OF CONTROLFILE
             pos = 0;
-            for (i = 0; i < controlfile.Length; i++)
+            for (i = 0; i < controlfilebytes.Length; i++)
             {
-                buffer[pos++] = (byte)controlfile[i];
+                buffer[pos++] = controlfilebytes[i];
             }
             buffer[pos++] = 0;
 
             //***write buffer to socket
-            socket.write(buffer, 0, pos);
+            await socket.write(buffer, 0, pos);
             string test001 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
+
             if (print_job.cancel_print == 1)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
 
@@ -319,127 +330,106 @@ namespace DirectPrint
             buffer[pos++] = (byte)'\n';
 
             //***write buffer to socket
-            socket.write(buffer, 0, pos);
-            {
-                string test = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
-            }
+            await socket.write(buffer, 0, pos);
+            string test002 = System.Text.Encoding.UTF8.GetString(buffer, 0, pos);
+
             /////////////////////////////////////////////////////////
             /// READ ACK
             if (waitForAck() != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
 
-            //send file data
-
-
-            //***write buffer to socket
-            //socket.write(filebuffer, 0, pos);
-            
+            //send file data in chunks            
             ulong totalbytes = 0;
             int bytesRead = 0;
 
-            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length, false);
+            await socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length);
             totalbytes += (ulong)pjl_header.Length;
 
             MemoryStream fstream = new MemoryStream(filebuffer);
             while ((bytesRead = fstream.Read(buffer, 0, BUFFER_SIZE)) > 0)
             {
                 totalbytes += (ulong)bytesRead;
-                socket.write(buffer, 0, bytesRead, false);
+                await socket.write(buffer, 0, bytesRead);
                 print_job.progress += data_step;
                 if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
                 if (print_job.cancel_print == 1)
                 {
-                    if (print_job.callback != null)
-                    {
-                        print_job.callback(PRINT_STATUS_ERROR);
-                    }
+                    triggerCallback(PRINT_STATUS_ERROR);
+                    if (socket != null) socket.disconnect();
                     return;
                 }
             }
-            socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length, false);
+            await socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
             totalbytes += (ulong)pjl_footer.Length;
-
-            //fstream.Dispose();
 
             if (total_data_size != totalbytes)
             {
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
 
-            // close data file with a 0 ..
+            // close data file with a 0
             pos = 0;
             buffer[pos++] = 0;
-            socket.write(buffer, 0, pos);
+            await socket.write(buffer, 0, pos);
             print_job.progress = 99.0f;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
 
             /////////////////////////////////////////////////////////
             /// READ ACK
-            int retval = 0;
-            if ((retval = waitForAck()) != 0)
+            if (waitForAck() != 0)
             {
-                if (print_job.callback != null)
-                {
-                    print_job.callback(PRINT_STATUS_ERROR);
-                }
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
                 return;
             }
-            socket.disconnect();
+            
 
-            print_job.progress = 100.0f;
+            print_job.progress = END_PROGRESS;
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
-            if (print_job.callback != null)
-            {
-                print_job.callback(PRINT_STATUS_OK);
-            }
+            triggerCallback(PRINT_STATUS_OK);
+            if (socket != null) socket.disconnect();
+
             return;
             //end!
         }
 
-        private int waitForAck()
+        private void triggerCallback(int status)
         {
-            long start = Environment.TickCount;
+            if (print_job.callback != null)
             {
-               
-                while (!datareceived)
-                {
-                    //if (socket != null) socket.read();
-                    // wait for data
-                    // read data
-
-                    if (Environment.TickCount - start > 10000){
-                        //operation timeout
-                        return -1;
-                    }
-                }
-                datareceived = false;
-            }            
-
-            if (ack != 0)
-            {
-                return ack;
+                print_job.callback(status);
             }
+        }
+
+        private int waitForAck()
+        {            
+            long start = Environment.TickCount;
+            datareceived = false;
+            socket.read();
+            while (!datareceived)
+            {
+                if (Environment.TickCount - start > TIMEOUT_RECEIVE)
+                {
+                    //operation timeout
+                    return -1;
+                }
+            }
+            datareceived = false;
 
             return ack;
         }
 
-
-        private bool datareceived = false;
-        private int ack = 0;
-        public void receiveData(HostName hostname, byte[] data)
+        public void receiveData(HostName hostname, byte data)
         {
-            if (data != null)
-            {
-                datareceived = true;
-                ack = data[0];
-            }
+            datareceived = true;
+            ack = data;
         }
     }
 }

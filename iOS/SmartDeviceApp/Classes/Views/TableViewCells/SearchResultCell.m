@@ -12,10 +12,29 @@
 
 @interface SearchResultCell ()
 
+/**
+ * The IP address of the printer
+ */
 @property (weak, nonatomic) IBOutlet UILabel* printerIP;
+
+/**
+ * The name of the printer
+ */
 @property (weak, nonatomic) IBOutlet UILabel* printerName;
+
+/**
+ * Line separator of the items.
+ */
 @property (weak, nonatomic) IBOutlet UIView* separator;
+
+/**
+ * Icon indicating that the printer has already been added.
+ */
 @property (weak, nonatomic) IBOutlet UIButton* oldIcon;
+
+/**
+ * Icon indicating that the printer can been added.
+ */
 @property (weak, nonatomic) IBOutlet UIButton* addIcon;
 
 @end

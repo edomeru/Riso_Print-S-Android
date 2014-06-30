@@ -25,5 +25,13 @@ namespace SmartDeviceApp.Models
 
         #endregion Properties
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public DefaultPrinter()
+        {
+            PrinterId = 0; // Unset
+        }
+
     }
 }

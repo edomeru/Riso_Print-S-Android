@@ -43,8 +43,13 @@ String^ DirectPrintSettingsWrapper::create_pjl_wrapper(String^ settings)
 
     wchar_t *wcPjl = (wchar_t *)calloc(BUFFER_SIZE, sizeof(wchar_t));
     memset(wcPjl, 0, BUFFER_SIZE * sizeof(wchar_t));
-    free(wcPjl);
 
     convertCharArrayToWChar(&wcPjl, pjl);
-    return ref new String(wcPjl); // Note: memory used by wcPjl is not released
+
+    String^ printSettingsPjl = ref new String(wcPjl);
+
+    free(strSettings);
+    free(wcPjl);
+
+    return printSettingsPjl;
 };

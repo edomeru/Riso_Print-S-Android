@@ -28,6 +28,7 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Converters;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -40,30 +41,40 @@ namespace SmartDeviceApp.ViewModels
         public event SmartDeviceApp.Controllers.PrintPreviewController.GoToPageEventHandler GoToPageEventHandler;
         public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateToEventHandler OnNavigateToEventHandler;
         public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateFromEventHandler OnNavigateFromEventHandler;
+        public event SmartDeviceApp.Controllers.PrintPreviewController.PageAreaGridLoadedEventHandler PageAreaGridLoadedEventHandler;
 
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
         private Grid _pageAreaGrid;
-        private double _pageAreaGridOriginalHeight;
-        private bool _isPageAreaGridLoaded;
-        public PreviewGestureController _gestureController; // TODO: Set to private after removing easter egg!!
+        private UIElement _controlReference;
+        private double _pageAreaGridMaxHeight;
+        private double _pageAreaGridMaxWidth;
+        private PreviewGestureController _gestureController;
         private bool _isPageNumberSliderEnabled;
-        private ICommand _goToPage;
         private ICommand _goToPreviousPage;
         private ICommand _goToNextPage;
         private ICommand _pageNumberSliderValueChange;
+        private ICommand _pageNumberSliderPointerCaptureLost;
         private uint _pageTotal;
         private uint _currentPageIndex;
         private uint _pageIndex;
         private PageNumberInfo _pageNumber;
+        private bool _isReverseSwipe;
+        private bool _isReverseSwipePrevious;
+        private bool _isHorizontalSwipeEnabled;
+        private bool _isHorizontalSwipeEnabledPrevious;
+        private double _scalingFactor = 1;
 
         private string _documentTitleText;
-        private BitmapImage _rightPageImage;
-        private BitmapImage _leftPageImage;
+        private WriteableBitmap _rightPageImage;
+        private WriteableBitmap _leftPageImage;
+        private WriteableBitmap _rightBackPageImage;
+        private WriteableBitmap _leftBackPageImage;
         private Size _rightPageActualSize;
         private Size _leftPageActualSize;
         private PageViewMode _pageViewMode;
+        private PageViewMode _previousPageViewMode;
 
         private ViewControlViewModel _viewControlViewModel;
 
@@ -75,8 +86,14 @@ namespace SmartDeviceApp.ViewModels
             _pageIndex = 0;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
 
+            _rightPageImage = new WriteableBitmap(1, 1);
+            _leftPageImage = new WriteableBitmap(1, 1);
+            _rightBackPageImage = new WriteableBitmap(1, 1);
+            _leftBackPageImage = new WriteableBitmap(1, 1);
+
             SetViewMode(_viewControlViewModel.ViewMode); 
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));
         }
 
         public void OnNavigatedTo()
@@ -95,39 +112,172 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public void SetPageAreaGrid(Grid pageAreaGrid)
+        public void SetPageAreaGrid(SmartDeviceApp.Controls.TwoPageControl twoPageControl)
         {
-            if (!_isPageAreaGridLoaded)
-            {   
-                _pageAreaGrid = pageAreaGrid;
-                _pageAreaGridOriginalHeight = _pageAreaGrid.ActualHeight;
-                _isPageAreaGridLoaded = true;
+            if (!IsPageAreaGridLoaded)
+            {
+                _pageAreaGrid = twoPageControl.PageAreaGrid;
+                _controlReference = (UIElement)_pageAreaGrid.Parent;
+                ResetPageAreaGrid(_viewControlViewModel.ViewOrientation);
+
+                IsPageAreaGridLoaded = true;
+
+                if (PageAreaGridLoadedEventHandler != null)
+                {
+                    PageAreaGridLoadedEventHandler();
+                }
             }
+        }
+
+        // Should be reset everytime the view orientation is changed
+        private void ResetPageAreaGrid(ViewOrientation viewOrientation)
+        {
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(_viewControlViewModel.ViewMode, null, viewOrientation, null)) - defaultMargin * 2;
+            ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
+            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+            var sliderHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberSliderHeight"]).Value;
+            var sliderTextHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberTextHeight"]).Value;
+            _pageAreaGridMaxHeight = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null))
+                - defaultMargin * 2 - titleHeight - sliderHeight - sliderTextHeight;
         }
 
         public void InitializeGestures()
         {
-            if (_isPageAreaGridLoaded)
+            if (IsPageAreaGridLoaded)
             {
-                // Save page height to be used in resizing page images                
-                var scalingFactor = _pageAreaGridOriginalHeight / RightPageActualSize.Height;
-                var pageAreaScrollViewer = (UIElement)_pageAreaGrid.Parent;
-                if (_gestureController != null) _gestureController.Dispose();
+                // Save page height to be used in resizing page images
+                double scalingFactor = 1;
                 Size targetSize;
-                if (PageViewMode == PageViewMode.SinglePageView)
+                switch (PageViewMode)
                 {
-                    targetSize = RightPageActualSize;
+                    case PageViewMode.SinglePageView:
+                        scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
+                            _pageAreaGridMaxWidth / RightPageActualSize.Width);
+                        targetSize = RightPageActualSize;
+                        break;
+
+                    case PageViewMode.TwoPageViewHorizontal:
+                        scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
+                            _pageAreaGridMaxWidth / (LeftPageActualSize.Width + RightPageActualSize.Width));
+                        targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);
+                        break;
+
+                    case PageViewMode.TwoPageViewVertical:
+                        scalingFactor = Math.Min(_pageAreaGridMaxHeight / (RightPageActualSize.Height + LeftPageActualSize.Height),
+                            _pageAreaGridMaxWidth / RightPageActualSize.Width);
+                        targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);
+                        break;
                 }
-                else if (PageViewMode == PageViewMode.TwoPageView)
+
+                // Resize grid
+                _pageAreaGrid.MaxWidth = targetSize.Width;
+                _pageAreaGrid.MaxHeight = targetSize.Height;
+                
+                PreviewGestureController.SwipeRightDelegate swipeRight = null;
+                PreviewGestureController.SwipeLeftDelegate swipeLeft = null;
+                PreviewGestureController.SwipeTopDelegate swipeTop = null;
+                PreviewGestureController.SwipeBottomDelegate swipeBottom = null;
+                if (IsHorizontalSwipeEnabled)
+                {                
+                    if (!IsReverseSwipe)
+                    {
+                        swipeRight = new PreviewGestureController.SwipeRightDelegate(SwipeRight);
+                        swipeLeft = new PreviewGestureController.SwipeLeftDelegate(SwipeLeft);
+                    }
+                    else
+                    {
+                        swipeRight = new PreviewGestureController.SwipeRightDelegate(SwipeRightReverse);
+                        swipeLeft = new PreviewGestureController.SwipeLeftDelegate(SwipeLeftReverse);
+                    }
+                }
+                else
                 {
-                    var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
-                    targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width + defaultMargin, RightPageActualSize.Height);                   
+                    if (!IsReverseSwipe)
+                    {
+                        swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTop);
+                        swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottom);
+                    }
+                    else
+                    {
+                        swipeTop = new PreviewGestureController.SwipeTopDelegate(SwipeTopReverse);
+                        swipeBottom = new PreviewGestureController.SwipeBottomDelegate(SwipeBottomReverse);
+                    }
                 }
-                _gestureController = new PreviewGestureController(_pageAreaGrid, pageAreaScrollViewer,
-                       targetSize, scalingFactor,
-                       new PreviewGestureController.SwipeRightDelegate(SwipeRight),
-                       new PreviewGestureController.SwipeLeftDelegate(SwipeLeft));
+
+                // Note: If view and page areas are not resized or PageViewMode is not changed, 
+                // no need to reset gestureController
+                if (scalingFactor != _scalingFactor || PageViewMode != _previousPageViewMode)
+                {
+                    _scalingFactor = scalingFactor;
+                    if (_gestureController != null)
+                    {
+                        _gestureController.Dispose();
+                        _gestureController = null;
+                    }
+                    _gestureController = new PreviewGestureController(_pageAreaGrid, _controlReference,
+                           targetSize, scalingFactor, swipeRight, swipeLeft);
+                    _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
+                        swipeTop, swipeBottom);
+                }
+                else
+                {
+                    if (IsReverseSwipe != _isReverseSwipePrevious ||
+                        IsHorizontalSwipeEnabled != _isHorizontalSwipeEnabledPrevious)
+                    {
+                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
+                            swipeTop, swipeBottom);
+                    }
+                }
+                _previousPageViewMode = PageViewMode;
+                _isReverseSwipePrevious = IsReverseSwipe;
+                _isHorizontalSwipeEnabledPrevious = IsHorizontalSwipeEnabled;
             }
+        }
+
+        new public void Cleanup()
+        {
+            if (_gestureController != null)
+            {
+                _gestureController.Dispose();
+                _gestureController = null;
+            }
+            if (_leftPageImage != null)
+            {
+                _leftPageImage.Clear();
+                _leftPageImage.Invalidate();
+            }
+            if (_rightPageImage != null)
+            {
+                _rightPageImage.Clear();
+                _rightPageImage.Invalidate();
+            }
+            if (_leftBackPageImage != null)
+            {
+                _leftBackPageImage.Clear();
+                _leftBackPageImage.Invalidate();
+            }
+            if (_rightBackPageImage != null)
+            {
+                _rightBackPageImage.Clear();
+                _rightBackPageImage.Invalidate();
+            }
+            _rightPageActualSize = new Size();
+            _leftPageActualSize = new Size();
+            IsPageAreaGridLoaded = false;
+            _scalingFactor = 1;
+        }
+
+        public bool IsReverseSwipe
+        {
+            get { return _isReverseSwipe; }
+            set { _isReverseSwipe = value; }
+        }
+
+        public bool IsHorizontalSwipeEnabled
+        {
+            get { return _isHorizontalSwipeEnabled; }
+            set { _isHorizontalSwipeEnabled = value; }
         }
 
         private void SwipeRight()
@@ -135,31 +285,108 @@ namespace SmartDeviceApp.ViewModels
             GoToPreviousPage.Execute(null);
         }
 
+        private void SwipeRightReverse()
+        {
+            GoToNextPage.Execute(null);
+        }
+
         private void SwipeLeft()
+        {
+            GoToNextPage.Execute(null);
+        }
+
+        private void SwipeLeftReverse()
+        {
+            GoToPreviousPage.Execute(null);
+        }
+
+        private void SwipeTop()
+        {
+            GoToNextPage.Execute(null);
+        }
+
+        private void SwipeTopReverse()
+        {
+            GoToPreviousPage.Execute(null);
+        }
+
+        private void SwipeBottom()
+        {
+            GoToPreviousPage.Execute(null);
+        }
+
+        private void SwipeBottomReverse()
         {
             GoToNextPage.Execute(null);
         }
 
         #region PANE VISIBILITY
 
-        private bool _isLoadPageActive;
+        private bool _isLoadLeftPageActive;
+        private bool _isLoadRightPageActive;
+        private bool _isLoadLeftBackPageActive;
+        private bool _isLoadRightBackPageActive;
 
-        public bool IsLoadPageActive
+        public bool IsLoadLeftBackPageActive
         {
-            get { return _isLoadPageActive; }
+            get { return _isLoadLeftBackPageActive; }
             set
             {
-                //if (_isLoadPageActive != value)
+                if (_isLoadLeftBackPageActive != value)
                 {
-                    _isLoadPageActive = value;
-                    RaisePropertyChanged("IsLoadPageActive");
+                    _isLoadLeftBackPageActive = value;
+                    RaisePropertyChanged("IsLoadLeftBackPageActive");
+                }
+            }
+        }
+
+        public bool IsLoadRightBackPageActive
+        {
+            get { return _isLoadRightBackPageActive; }
+            set
+            {
+                if (_isLoadRightBackPageActive != value)
+                {
+                    _isLoadRightBackPageActive = value;
+                    RaisePropertyChanged("IsLoadRightBackPageActive");
+                }
+            }
+        }
+
+        public bool IsLoadLeftPageActive
+        {
+            get { return _isLoadLeftPageActive; }
+            set
+            {
+                if (_isLoadLeftPageActive != value)
+                {
+                    _isLoadLeftPageActive = value;
+                    RaisePropertyChanged("IsLoadLeftPageActive");
+                }
+            }
+        }
+
+        public bool IsLoadRightPageActive
+        {
+            get { return _isLoadRightPageActive; }
+            set
+            {
+                if (_isLoadRightPageActive != value)
+                {
+                    _isLoadRightPageActive = value;
+                    RaisePropertyChanged("IsLoadRightPageActive");
                 }
             }
         }
                 
         private void SetViewMode(ViewMode viewMode)
         {
-            if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview) return;
+            if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview &&
+                _viewControlViewModel.ScreenMode != ScreenMode.Home) return;
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(viewMode, null, null, null)) - defaultMargin * 2;
+            if (_controlReference != null) ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
+            InitializeGestures();
             switch (viewMode)
             {
                 case ViewMode.MainMenuPaneVisible:
@@ -214,7 +441,33 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public BitmapImage RightPageImage
+        public WriteableBitmap RightBackPageImage
+        {
+            get { return _rightBackPageImage; }
+            set
+            {
+                if (_rightBackPageImage != value)
+                {
+                    _rightBackPageImage = value;
+                    RaisePropertyChanged("RightBackPageImage");
+                }
+            }
+        }
+
+        public WriteableBitmap LeftBackPageImage
+        {
+            get { return _leftBackPageImage; }
+            set
+            {
+                if (_leftBackPageImage != value)
+                {
+                    _leftBackPageImage = value;
+                    RaisePropertyChanged("LeftBackPageImage");
+                }
+            }
+        }
+
+        public WriteableBitmap RightPageImage
         {
             get { return _rightPageImage; }
             set
@@ -227,7 +480,7 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public BitmapImage LeftPageImage
+        public WriteableBitmap LeftPageImage
         {
             get { return _leftPageImage; }
             set
@@ -249,6 +502,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _rightPageActualSize = value;
                     RaisePropertyChanged("RightPageActualSize");
+                    RaisePropertyChanged("PageViewMode");
                 }
             }
         }
@@ -278,6 +532,8 @@ namespace SmartDeviceApp.ViewModels
                 }
             }
         }
+
+        public bool IsPageAreaGridLoaded { get; private set; }
 
         #endregion
 
@@ -332,14 +588,12 @@ namespace SmartDeviceApp.ViewModels
             SetPageIndexes();
         }
 
-        // TODO: Two-page view
         public void GoToPage(uint index)
         {
             if (GoToPageEventHandler != null)
             {
                 GoToPageEventHandler((int)index);
             }
-            UpdatePageIndexes(index);
         }
 
         public void UpdatePageIndexes(uint index)
@@ -348,11 +602,11 @@ namespace SmartDeviceApp.ViewModels
             SetPageIndexes();
         }
 
-        // TODO: Two-page view
         private void GoToPreviousPageExecute()
         {
-            --_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
+            --_pageIndex;
             SetPageIndexes();
+            GoToPage(_pageIndex);
         }
 
         private bool CanGoToPreviousPage()
@@ -364,8 +618,9 @@ namespace SmartDeviceApp.ViewModels
 
         private void GoToNextPageExecute()
         {
-            ++_pageIndex; // Page image will be requested on PageSliderValueChangeExecute
+            ++_pageIndex;
             SetPageIndexes();
+            GoToPage(_pageIndex);
         }
 
         private bool CanGoToNextPage()
@@ -397,6 +652,21 @@ namespace SmartDeviceApp.ViewModels
                     );
                 }
                 return _pageNumberSliderValueChange;
+            }
+        }
+
+        public ICommand PageNumberSliderPointerCaptureLost
+        {
+            get
+            {
+                if (_pageNumberSliderPointerCaptureLost == null)
+                {
+                    _pageNumberSliderPointerCaptureLost = new RelayCommand(
+                        () => PageNumberSliderPointerCaptureLostExecute(),
+                        () => true
+                    );
+                }
+                return _pageNumberSliderPointerCaptureLost;
             }
         }
 
@@ -445,9 +715,13 @@ namespace SmartDeviceApp.ViewModels
 
         private void PageNumberSliderValueChangeExecute()
         {
-            // TODO: Consider handling the event only when drag is released 
-            var newValue = CurrentPageIndex; // verify 0-based
-            GoToPage(newValue);
+            var newValue = CurrentPageIndex;
+            UpdatePageIndexes(newValue);
+        }
+
+        private void PageNumberSliderPointerCaptureLostExecute()
+        {
+            GoToPage(_pageIndex);
         }
 
         #endregion

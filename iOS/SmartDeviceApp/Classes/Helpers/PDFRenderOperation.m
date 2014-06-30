@@ -15,74 +15,78 @@
 
 @interface PDFRenderOperation()
 
-@property (nonatomic, strong) NSArray *pageIndices;
 /**
- Print Document object
+ * Indices of the pages to be rendered
+ */
+@property (nonatomic, strong) NSArray *pageIndices;
+
+/**
+ * Print Document object
  */
 @property (nonatomic, weak) PrintDocument *printDocument;
 
 /**
- Preview setting of the print document
+ * Preview setting of the print document
  */
 @property (nonatomic, weak) PreviewSetting *previewSetting;
 
 /**
- Dimension of the ouput images
+ * Dimension of the ouput images
  */
 @property (nonatomic) CGSize size;
 
 /**
- Dimension of the paper (in points)
+ * Dimension of the paper (in points)
  */
 @property (nonatomic) CGSize paperSize;
 
 /**
- Current that is being rendered
+ * Current that is being rendered
  */
 @property (nonatomic) NSUInteger currentPage;
 
 /**
- Whether or not the current page is a front-facing page (for duplex/booklet modes)
+ * Whether or not the current page is a front-facing page (for duplex/booklet modes)
  */
 @property (nonatomic) BOOL isFrontPage;
 
 /**
- Renders PDF pages for the current page
+ * Renders PDF pages for the current page
  */
 - (void)drawPagesInContext:(CGContextRef)contextRef;
 
 /**
- Renders 2-in-1 page
+ * Renders 2-in-1 page
  */
 - (void)draw2In1InContext:(CGContextRef)contextRef;
 
 /**
- Renders 4-in-1 page
+ * Renders 4-in-1 page
  */
 - (void)draw4In1InContext:(CGContextRef)contextRef;
 
 /**
- Renders a PDF page based on size and page scaling
+ * Renders a PDF page based on size and page scaling
  */
 - (void)drawPage:(NSUInteger)pageNumber forSize:(CGSize)size withPageScale:(CGFloat)pageScale inContext: (CGContextRef)contextRef;
 
 /**
- Renders dashed lines for duplex and booklet modes
+ * Renders dashed lines for duplex and booklet modes
  */
 - (void)drawPaperEdgeLineInContext:(CGContextRef)contextRef;
 
 /**
- Calculates the scale for length based on area scale
+ * Calculates the scale for length based on area scale
  */
 - (CGFloat)computeScaleForLength:(CGFloat)length areaScale:(CGFloat)areaScale;
 
 /**
- Determines whether or not an image should be inverted (for duplex mode)
+ * Determines whether or not an image should be inverted (for duplex mode)
  */
 - (BOOL)shouldInvertImage;
 
 /**
- Determines whether or not a rect is landscape
+ * Determines whether or not a rect is landscape
  */
 - (BOOL) isSizeLandscape:(CGSize)rect;
 

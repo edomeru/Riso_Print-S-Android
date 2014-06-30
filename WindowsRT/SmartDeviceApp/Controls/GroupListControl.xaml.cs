@@ -13,20 +13,24 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using SmartDeviceApp.Common.Constants;
 using Windows.UI.Xaml.Media.Imaging;
+using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Controls
 {
     public sealed partial class GroupListControl : UserControl
     {
         private bool _isLoaded;
+        private bool _isOrientationChanged;
 
         public GroupListControl()
         {
             this.InitializeComponent();
             if (!_isLoaded) Loaded += new RoutedEventHandler(OnLoaded);
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ViewOrientationChanged());
         }
 
         public static readonly DependencyProperty TextProperty =
@@ -52,6 +56,9 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty DeleteButtonVisibilityProperty =
            DependencyProperty.Register("DeleteButtonVisibility", typeof(Visibility), typeof(GroupListControl), new PropertyMetadata(Visibility.Visible));
+
+        public static readonly DependencyProperty PressedHeaderColorProperty =
+            DependencyProperty.Register("PressedHeaderColor", typeof(SolidColorBrush), typeof(GroupListControl), null);
 
         public string Text
         {
@@ -101,21 +108,35 @@ namespace SmartDeviceApp.Controls
             set { SetValue(DeleteButtonVisibilityProperty, value); }
         }
 
+        public SolidColorBrush PressedHeaderColor
+        {
+            get { return (SolidColorBrush)GetValue(PressedHeaderColorProperty); }
+            set { SetValue(PressedHeaderColorProperty, value); }
+        }
+
+        private void ViewOrientationChanged()
+        {
+            _isOrientationChanged = true;
+            OnLoaded(this, null);
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (_isLoaded) return;
+                if (_isLoaded && !_isOrientationChanged) return;
                 var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
 
                 // Get text width by subtracting widths and margins of visible components
-                var groupControlWidth = (int)groupListControl.ActualWidth;
+                // Workaround because sometimes (when view orientation is changed) 
+				// Width != ActualWidth, need to get value of Width when possible
+                var groupControlWidth = ((int)groupListControl.Width > 0) ? (int)groupListControl.Width : (int)groupListControl.ActualWidth;
                 if (groupControlWidth <= 0)
                 {
                     var parent = (FrameworkElement)groupListControl.Parent;
                     if (parent != null)
                     {
-                        groupControlWidth = (int)parent.ActualWidth;
+                        groupControlWidth = ((int)parent.Width > 0) ? (int)parent.Width : (int)parent.ActualWidth;
                         if (groupControlWidth <= 0)
                         {
                             throw new ArgumentException("Zero width element");
@@ -149,10 +170,12 @@ namespace SmartDeviceApp.Controls
                 {
                     TextWidth = maxTextWidth;
                 }
+                _isOrientationChanged = false;
             }
             catch (Exception ex)
             {
                 LogUtility.LogError(ex);
+                _isOrientationChanged = false;
             }
         }
     }

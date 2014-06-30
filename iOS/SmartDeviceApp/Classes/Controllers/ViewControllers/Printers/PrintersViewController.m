@@ -21,11 +21,32 @@
 
 #pragma mark - UI Properties
 
+/**
+ * Reference to the main menu button on the header.
+ */
 @property (weak, nonatomic) IBOutlet UIButton* mainMenuButton;
+
+/**
+ * Reference to the add printer button on the header.
+ */
 @property (weak, nonatomic) IBOutlet UIButton* addPrinterButton;
+
+/**
+ * Reference to the printer search button on the header.
+ */
 @property (weak, nonatomic) IBOutlet UIButton* printerSearchButton;
 
 #pragma mark - Instance Methods
+
+/** 
+ * Unwind segue back to the "Printers" screen.
+ * Called when transitioning back to the "Printers" screen from the
+ * "Add Printer" screen, the "Printer Search" screen, or the Main
+ * Menu panel.
+ * 
+ * @param sender the segue object
+ */
+- (IBAction)unwindToPrinters:(UIStoryboardSegue *)sender;
 
 @end
 

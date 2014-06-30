@@ -11,36 +11,47 @@
 
 @class PreviewSetting;
 @class PrintSetting;
-@interface PrintSettingsHelper : NSObject
+
 /**
- Returns the print settings tree from the printsettings.xml
+ * PrintSettingsHelper is a helper class that provides methods for the printer's settings.
+ * This class also reads the default settings from the printsettings.xml.
+ */
+@interface PrintSettingsHelper : NSObject
+
+/**
+ * Returns the print settings tree from the printsettings.xml
  */
 + (NSDictionary *)sharedPrintSettingsTree;
+
 /**
- Returns the preview setting containing the default settings from the printsettings.xml
+ * Returns the preview setting containing the default settings from the printsettings.xml
  */
 + (PreviewSetting *)defaultPreviewSetting;
+
 /**
- Copies the default print setting values from the printsettings.xml to the Print setting object
- @param printSetting - pointer to the destination print setting object
+ * Copies the default print setting values from the printsettings.xml to the Print setting object
+ * @param printSetting - pointer to the destination print setting object
  */
 + (void)copyDefaultPrintSettings:(PrintSetting **)printSetting;
+
 /**
- Copies the settings value from the Print Settings objectto the Preview setting object
- @param printSetting - source print setting object
- @param previewSetting - pointer to the destination  Preview setting object
+ * Copies the settings value from the Print Settings object to the Preview setting object
+ * @param printSetting - source print setting object
+ * @param previewSetting - pointer to the destination  Preview setting object
  */
 + (void)copyPrintSettings:(PrintSetting *)printSetting toPreviewSetting:(PreviewSetting **) previewSetting;
+
 /**
- Add an observer to the preview setting object values
- @param observer - object to observe the preview setting object values
- @param previewSetting - pointer preview setting object to observe
+ * Add an observer to the preview setting object values
+ * @param observer - object to observe the preview setting object values
+ * @param previewSetting - pointer preview setting object to observe
  */
 + (void)addObserver:(id)observer toPreviewSetting:(PreviewSetting **)previewSetting;
+
 /**
- Remove the observer to the preview setting object values
- @param observer - object observing the preview setting object values
- @param previewSetting - pointer preview setting object being observed
+ * Remove the observer to the preview setting object values
+ * @param observer - object observing the preview setting object values
+ * @param previewSetting - pointer preview setting object being observed
  */
 + (void)removeObserver:(id)observer fromPreviewSetting:(PreviewSetting **)previewSetting;
 @end

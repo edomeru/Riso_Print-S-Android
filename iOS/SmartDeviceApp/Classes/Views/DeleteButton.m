@@ -11,6 +11,9 @@
 
 @interface DeleteButton()
 
+/**
+ * Flag the indicates whether the button should remain highlighted.
+ */
 @property (assign, nonatomic) BOOL stayHighlighted;
 
 @end

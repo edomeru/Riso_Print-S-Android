@@ -11,7 +11,8 @@
 @interface PDFPageContentViewController ()
 
 /**
- Outlet for the Activity Indicator of the View
+ * Reference to the animated loading indicator.
+ * This is displayed while the rendered image is not yet available for display.
  */
 @property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicatorView;
 

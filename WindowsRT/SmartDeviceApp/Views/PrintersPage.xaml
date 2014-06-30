@@ -19,8 +19,6 @@
     DataContext="{Binding PrintersViewModel, Source={StaticResource Locator}}">
 
     <base:PageBase.Resources>
-        <converters:BooleanToImageSourceConverter x:Name="BooleanToImageSourceConverter"/>
-
         <DataTemplate x:Key="TEMPLATE_AddPrinterPane">
             <local:AddPrinterPane/>
         </DataTemplate>
@@ -84,6 +82,21 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="GridViewItemStyle1" TargetType="GridViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="Margin" Value="0,0,20,20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewItem">
+                        <GridViewItemPresenter CheckHintBrush="{ThemeResource ListViewItemCheckHintThemeBrush}" CheckBrush="{ThemeResource ListViewItemCheckThemeBrush}" ContentMargin="0" ContentTransitions="{TemplateBinding ContentTransitions}" CheckSelectingBrush="{ThemeResource ListViewItemCheckSelectingThemeBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource ListViewItemFocusBorderThemeBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" PointerOverBackgroundMargin="1" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource ListViewItemPointerOverBackgroundThemeBrush}" ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedPointerOverBorderBrush="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource ListViewItemSelectedForegroundThemeBrush}" SelectedPointerOverBackground="{ThemeResource ListViewItemSelectedPointerOverBackgroundThemeBrush}" SelectedBorderThickness="{ThemeResource GridViewItemCompactSelectedBorderThemeThickness}" SelectedBackground="{ThemeResource ListViewItemSelectedBackgroundThemeBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </base:PageBase.Resources>
 
@@ -98,24 +111,31 @@
                           RightPaneContent="{Binding DataContext.RightPaneMode, ElementName=printersPage}"
                           RightPaneContentTemplateSelector="{StaticResource PrintersRightPaneTemplateSelector}" Grid.Row="0" Tag="{Binding}">
         <Grid Tag="{Binding}">
-            <local:AdaptableGridView x:Name="printerInfoView" ItemWidth="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
+            <Grid x:Name="noPrintersGrid"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Visibility="{Binding IsPrinterListEmpty, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="{Binding Source=IDS_LBL_PRINTERS_EMPTY, Converter={StaticResource ResourceStringToTextConverter}}"
+                           Style="{StaticResource STYLE_TextBody}"/>
+            </Grid>
+            <local:AdaptableGridView x:Name="printerInfoView" ItemWidth="{Binding Converter={StaticResource PrintJobListWidthConverter}}" ItemWidthWithMargin="{Binding Converter={StaticResource PrintersListWidthConverter}}"
 						ScrollViewer.VerticalScrollMode="Enabled"
 						ScrollViewer.VerticalScrollBarVisibility="Visible"
 						SelectionMode="None"
 						IsItemClickEnabled="False"  
                         ItemsSource="{Binding PrinterList}"  ScrollViewer.HorizontalScrollMode="Disabled"
-                              Loaded="printerInfoView_Loaded"       Style="{StaticResource AdaptableGridViewStyle1}">
-                <local:AdaptableGridView.Margin>
+                              Loaded="printerInfoView_Loaded"   LayoutUpdated="printerInfoView_LayoutUpdated"    Style="{StaticResource AdaptableGridViewStyle1}" IsSwipeEnabled="False" IsHoldingEnabled="False" IsTapEnabled="False" ItemContainerStyle="{StaticResource GridViewItemStyle1}">
+                <!--<local:AdaptableGridView.Margin>
                     <Thickness Top="{StaticResource MARGIN_Default}"
                                    Bottom="{StaticResource MARGIN_Default}"
                                    Left="{StaticResource MARGIN_Default}"
                                    Right="{StaticResource MARGIN_Default}">
                     </Thickness>
-                </local:AdaptableGridView.Margin>
+                </local:AdaptableGridView.Margin>-->
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VariableSizedWrapGrid  Orientation="Horizontal" 
-									ItemWidth="{Binding ItemWidth, ElementName=printerInfoView}"
+									ItemWidth="{Binding ItemWidthWithMargin, ElementName=printerInfoView}"
 									MaximumRowsOrColumns="{Binding MaxRowsOrColumns, ElementName=printerInfoView}"
                                                         >
                             <VariableSizedWrapGrid.Margin>
@@ -133,32 +153,36 @@
                     <DataTemplate x:Name="DataTemplate">
                         <ListView x:Name="PrinterInfoList" 
                                               ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
-                                              IsItemClickEnabled="True" SelectionMode="None"
-                                               DataContext="{Binding}">
+                                  Width="{Binding ItemWidth, ElementName=printerInfoView}"
+                                              IsItemClickEnabled="False" SelectionMode="None"
+                                               DataContext="{Binding}"  IsSwipeEnabled="False" IsHoldingEnabled="False">
+                            <!--RightButtonVisibility="Collapsed"-->
                             <controls:PrinterNameControl x:Name="printerName"  
                                                                      Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}}"
-                                                                     RightButtonVisibility="Collapsed" 
+                                                                     Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                                      IsDefault="{Binding IsDefault}"
                                                                      IsOnline="{Binding IsOnline}"
                                                                      IconVisibility="Visible"
                                                                      LeftButtonVisibility="Collapsed"
                                                                      PrinterIp="{Binding IpAddress}"
                                                                      WillBeDeleted ="{Binding WillBeDeleted, Mode=TwoWay}"
-                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printerInfoView}"/>
+                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printerInfoView}"
+                                                         Loaded="printerName_Loaded"/>
 
                             <controls:KeyImageControl x:Name="printerImage" 
+                                                      Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                           PrinterImage="ms-appx:///Resources/Dummy/RZ1070-page1.jpg"/>
                             <!--TODO: bind this to image data-->
 
                             <controls:KeyValueControl x:Name="ipAddress" 
                                                       IconVisibility="Collapsed"
-                                                          Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                                                      Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
                                                       ValueText="{Binding IpAddress}"
-                                                          RightButtonVisibility="Collapsed"
-                                                          ValueVisibility="Visible"
+                                                      RightButtonVisibility="Collapsed"
+                                                      ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
+                                                      IsListItem="True"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                      Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printersPage}"
                                                       PressedColor="{StaticResource BRUSH_Gray2}"
                                                       />
                             <controls:KeyValueControl x:Name="port" 
@@ -168,33 +192,36 @@
                                                           RightButtonVisibility="Collapsed"
                                                           ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
+                                                      IsListItem="True"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                      Command="{Binding DataContext.OpenDefaultPrinterSettings, ElementName=printersPage}"
+                                                      
                                                       PressedColor="{StaticResource BRUSH_Gray2}"
                                                       />
                             <!--<controls:PortItemControl x:Name="port"
                                                              Text="Port"
                                                       IsRawSelected="{Binding PortSetting, Converter={StaticResource IntToBooleanConverter}, Mode=TwoWay}"
                                                       IconVisibility="Collapsed"
-                                                      RightButtonVisibility="Collapsed"
+                                                      RightButtonV
+                            isibility="Collapsed"
                                                         SeparatorVisibility="Visible"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                       PressedColor="{StaticResource BRUSH_Purple2}"
                                                       />-->
 
-                            <!--<controls:KeyValueControl x:Name="port" 
-                                                          Text="Port"
-                                                          LeftButtonVisibility="Collapsed" RightImage="ms-appx:///Resources/Images/img_btn_submenu.scale-100.png"/>-->
-                            <controls:KeyToggleSwitchControl x:Name="defaultPrinterSwitch"  
-                                                                 Text="{Binding Source=IDS_LBL_SET_DEFAULT_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
+
+                            <controls:KeyToggleCheckControl x:Name="defaultPrinterSwitch"  
+                                                             Text="{Binding Source=IDS_LBL_SET_DEFAULT_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                                                              IconVisibility="Collapsed"
-                                                                 RightButtonVisibility="Collapsed"
-                                                                 IsOn="{Binding IsDefault, Mode=TwoWay}"
+                                                             RightButtonVisibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                             IsOn="{Binding IsDefault, Mode=TwoWay}"
                                                              SeparatorVisibility="Visible"
+                                                             IsListItem="True"
                                                              Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                             PressedColor="{StaticResource BRUSH_Purple2}"/>
-                            <controls:KeyValueControl x:Name="settings" 
-                                                      IconVisibility="Collapsed"
+                                                             PressedColor="{StaticResource BRUSH_Purple2}"
+                                                             KeyPressedColor="{StaticResource BRUSH_White}"
+                                                            ToggleVisibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
+                            <controls:DefaultPrintSettingsControl x:Name="settings" 
+                                                                  IconVisibility="Collapsed"
                                                           Text="{Binding Source=IDS_LBL_DEFAULT_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}"
                                                           RightImage="ms-appx:///Resources/Images/img_btn_default_print_settings.scale-100.png"
                                                       
@@ -203,8 +230,7 @@
                                                       CommandParameter="{Binding}"
                                                       PressedColor="{StaticResource BRUSH_Purple2}"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                     SeparatorVisibility="Collapsed"
-                                                      />
+                                                      VisualState="{Binding VisualState, Mode=TwoWay}"/>
 
                         </ListView>
                     </DataTemplate>

@@ -59,7 +59,7 @@ namespace SNMP
         public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANG       = "1.3.6.1.2.1.43.15.1.1.2";
         public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANGLEVEL  = "1.3.6.1.2.1.43.15.1.1.3";
 
-        //marjun
+        //Capabilities
         public const string MIB_GETNEXTOID_SYSID = "1.3.6.1.2.1.1.2"; // sysObjectId
         public const string MIB_GETNEXTOID_SYSDESC = "1.3.6.1.2.1.1.1"; // sysDescr
         public const string MIB_GETNEXTOID_GENERALNAME = "1.3.6.1.4.1.24807.1.2.1.1.1"; // ijGeneralName
@@ -71,6 +71,10 @@ namespace SNMP
         public const string MIB_GETNEXTOID_TRAY_AUTO = "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.2"; // Tray auto-stacking
         public const string MIB_GETNEXTOID_TRAY_TOP = "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.3"; // Tray top
         public const string MIB_GETNEXTOID_TRAY_STACK = "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.4"; // Tray stack
+        public const string MIB_GETNEXTOID_LWPAPER = "1.3.6.1.4.1.24807.1.2.1.1.7.0"; // LW Paper
+        public const string MIB_GETNEXTOID_INPUT_TRAY_1 = "1.3.6.1.4.1.24807.1.2.1.2.1.1.2.1"; //Input tray 1
+        public const string MIB_GETNEXTOID_INPUT_TRAY_2 = "1.3.6.1.4.1.24807.1.2.1.2.1.1.2.2"; //Input tray 2
+        public const string MIB_GETNEXTOID_INPUT_TRAY_3 = "1.3.6.1.4.1.24807.1.2.1.2.1.1.2.3"; //Input tray 3
 
         // For OID tokens greater than 127
         public const int SNMP_2_EXP_7                = 128;

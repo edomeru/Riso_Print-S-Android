@@ -22,29 +22,39 @@ static PrinterManager* sharedPrinterManager = nil;
 
 @interface PrinterManager ()
 
-/** Stores the Printer objects currently existing in the DB */
+/** 
+ * Reference to all the Printer objects currently saved in the database.
+ * This list is auto-initialized at the start during the call to {@link sharedPrinterManager}.\n
+ * It is then auto-updated when add or delete operations are performed.
+ */
 @property (strong, nonatomic) NSMutableArray* listSavedPrinters;
 
-/** Stores a reference to the DefaultPrinter object in DB */
+/**
+ * Reference to the DefaultPrinter object.
+ * This property is not nil if there is a printer set as the default printer.
+ */
 @property (strong, nonatomic) DefaultPrinter* defaultPrinter;
 
-/** Number of Printer objects in the list of saved printers */
-@property (readwrite, assign, nonatomic) NSUInteger countSavedPrinters; //redeclare to modify
+/** 
+ * Number of Printer objects in {@link listSavedPrinters}.
+ * This counter is auto-updated when add or delete operations are performed.
+ */
+@property (readwrite, assign, nonatomic) NSUInteger countSavedPrinters;
 
-/** Maximum number of printers that are allowed to be added to the DB. */
+/**
+ * Maximum number of printers that are allowed to be added to the database.
+ */
 @property (assign, nonatomic) NSUInteger maxPrinterCount;
 
 /**
- Gets the list of Printers stored in DB.
- If the list is non-empty, this PrinterManager will keep
- a reference to this list as its list of saved printers.
+ * Gets the list of Printer objects saved in the database.
+ * This list is stored in the {@link listSavedPrinters} property.
  */
 - (void)getListOfSavedPrinters;
 
 /**
- Gets the DefaultPrinter object stored in DB.
- If this object exists, this PrinterManager will keep a
- reference to this DefaultPrinter object.
+ * Gets the DefaultPrinter object saved in the database.
+ * The DefaultPrinter object is stored in the {@link defaultPrinter} property.
  */
 - (void)retrieveDefaultPrinter;
 

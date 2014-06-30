@@ -57,7 +57,6 @@ static NSString *context = @"PrintDocumentTestContext";
     self.keyChangedSet = [[NSMutableSet alloc] init];
     self.expectedKeys = @[
                           @"colorMode",
-                          @"orientation",
                           @"copies",
                           @"duplex",
                           @"paperSize",

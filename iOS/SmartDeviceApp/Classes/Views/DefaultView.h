@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ * Custom UIView with auto-resize settings.
+ * Automatically sets autoresizing mask to flexible width and height, and
+ * content mode to center.
+ */
 @interface DefaultView : UIView
 
 @end

@@ -47,20 +47,24 @@ namespace SmartDeviceApp.Common.Constants
         public const string NAME_VALUE_PUNCH             = "punch";
         public const string NAME_VALUE_OUTPUT_TRAY       = "outputTray";
 
-        // Paper sizes in portrait mode; in inches
-        public static Size PAPER_SIZE_A3         = new Size(11.69, 16.54);
-        public static Size PAPER_SIZE_A3W        = new Size(13.00, 19.00);
-        public static Size PAPER_SIZE_A4         = new Size( 8.27, 11.69);
-        public static Size PAPER_SIZE_A5         = new Size( 5.83,  8.27);
-        public static Size PAPER_SIZE_A6         = new Size( 4.13,  5.83);
-        public static Size PAPER_SIZE_B4         = new Size(10.12, 14.33);
-        public static Size PAPER_SIZE_B5         = new Size( 7.17, 10.12);
-        public static Size PAPER_SIZE_B6         = new Size( 5.04,  7.17);
-        public static Size PAPER_SIZE_FOOLSCAP   = new Size( 8.50, 13.00);
-        public static Size PAPER_SIZE_TABLOID    = new Size(11.00, 17.00);
-        public static Size PAPER_SIZE_LEGAL      = new Size( 8.50, 14.00);
-        public static Size PAPER_SIZE_LETTER     = new Size( 8.50, 11.00);
-        public static Size PAPER_SIZE_STATEMENT  = new Size( 5.50,  8.50);
+        // printsettings_authentication.xml Name values
+        public const string NAME_VALUE_SECURE_PRINT      = "securePrint";
+        public const string NAME_VALUE_PIN_CODE          = "pinCode";
+
+        // Paper sizes in portrait mode; in millimeters
+        public static Size PAPER_SIZE_A3         = new Size(297.0, 420.0);
+        public static Size PAPER_SIZE_A3W        = new Size(316.0, 460.0);
+        public static Size PAPER_SIZE_A4         = new Size(210.0, 297.0);
+        public static Size PAPER_SIZE_A5         = new Size(148.0, 210.0);
+        public static Size PAPER_SIZE_A6         = new Size(105.0, 148.0);
+        public static Size PAPER_SIZE_B4         = new Size(257.0, 364.0);
+        public static Size PAPER_SIZE_B5         = new Size(182.0, 257.0);
+        public static Size PAPER_SIZE_B6         = new Size(128.0, 182.0);
+        public static Size PAPER_SIZE_FOOLSCAP   = new Size(216.0, 340.0);
+        public static Size PAPER_SIZE_TABLOID    = new Size(280.0, 432.0);
+        public static Size PAPER_SIZE_LEGAL      = new Size(216.0, 356.0);
+        public static Size PAPER_SIZE_LETTER     = new Size(216.0, 280.0);
+        public static Size PAPER_SIZE_STATEMENT  = new Size(140.0, 216.0);
 
         // Margin; in inches
         public const double MARGIN_IMPOSITION_EDGE          = 0;

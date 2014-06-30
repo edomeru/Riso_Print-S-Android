@@ -30,13 +30,57 @@
 
 @interface PrintSettingsPrinterViewController () <DirectPrintManagerDelegate>
 
+/**
+ * Reference to the height constraint of the {@link printerTableView}.
+ */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeight;
+
+/**
+ * Flag that indicates whether this is for the "Default Print Settings" screen
+ * or the "Print Settings" screen.
+ */
 @property (assign, nonatomic) BOOL isDefaultSettingsMode;
+
+/**
+ * Reference to the selected printer.
+ */
 @property (weak, nonatomic) Printer* printer;
+
+/** 
+ * Reference to the UITableView showing the selected printer and the print button.
+ * The print button is only available for the "Print Settings" screen.
+ */
 @property (weak, nonatomic) IBOutlet UITableView *printerTableView;
+
+/**
+ * Reference to the PrintSettingsTableViewController.
+ */
 @property (weak, nonatomic) PrintSettingsTableViewController* settingsController;
+
+/**
+ * Responds to tapping the print button which executes the print operation.
+ */
 - (void)executePrint;
+
+/**
+ * Responds to tapping the selected printer, which 
+ * loads the PrintSettingsPrinterListViewController.
+ */
 - (void)loadPrinterList;
+
+/**
+ * Called when the keypad is about to be shown.
+ *
+ * @param notification the notification object
+ */
+- (void)keyboardWillShow:(NSNotification *)notification;
+
+/**
+ * Called when the keypad is about to be dismissed.
+ *
+ * @param notification the notification object
+ */
+- (void)keyboardWillHide:(NSNotification *)notification;
 
 @end
 

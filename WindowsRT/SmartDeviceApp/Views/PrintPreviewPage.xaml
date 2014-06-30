@@ -410,14 +410,18 @@
                 <RowDefinition Height="{StaticResource SIZE_PageNumberSliderHeight}"/>
                 <RowDefinition Height="{StaticResource SIZE_PageNumberTextHeight}"/>
             </Grid.RowDefinitions>
-            <ProgressRing x:Name="loadPageProgressRing" Grid.Row="0"
-                          IsActive="{Binding IsLoadPageActive}"
-                          Visibility="{Binding IsLoadPageActive, Converter={StaticResource BooleanToVisibilityConverter}}"
-                          Style="{StaticResource STYLE_ProgressRing}"/>
             <controls:TwoPageControl Grid.Row="0"
-                                     RightPageImage="{Binding RightPageImage}" 
-                                     LeftPageImage="{Binding LeftPageImage}" 
-                                     PageViewMode="{Binding PageViewMode}" Loaded="OnPageAreaLoaded"/>
+                                     RightBackPageImage="{Binding RightBackPageImage}"
+                                     LeftBackPageImage="{Binding LeftBackPageImage}"
+                                     IsLoadLeftBackPageActive="{Binding IsLoadLeftBackPageActive}"
+                                     IsLoadRightBackPageActive="{Binding IsLoadRightBackPageActive}"
+                                     RightPageImage="{Binding RightPageImage}"
+                                     LeftPageImage="{Binding LeftPageImage}"
+                                     PageViewMode="{Binding PageViewMode}"
+                                     PageAreaSize="{Binding RightPageActualSize}"
+                                     Loaded="OnPageAreaLoaded"
+                                     IsLoadLeftPageActive="{Binding IsLoadLeftPageActive}"
+                                     IsLoadRightPageActive="{Binding IsLoadRightPageActive}"/>
             <Slider x:Name="pageNumberSlider" Grid.Row="1" 
                     IsEnabled="{Binding IsPageNumberSliderEnabled}" 
                     Maximum="{Binding PageTotal, Mode=TwoWay}" 
@@ -427,6 +431,10 @@
                     <Core:EventTriggerBehavior EventName="ValueChanged">
                         <Core:InvokeCommandAction Command="{Binding PageNumberSliderValueChange}" 
                                                   CommandParameter="{Binding Value, ElementName=pageNumberSlider}"/>
+                    </Core:EventTriggerBehavior>
+                    <Core:EventTriggerBehavior EventName="PointerCaptureLost">
+                        <Core:InvokeCommandAction Command="{Binding PageNumberSliderPointerCaptureLost}" 
+                                                  CommandParameter="{Binding}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Slider>

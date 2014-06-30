@@ -12,6 +12,7 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
@@ -29,6 +30,7 @@ namespace SmartDeviceApp.ViewModels
     public class SelectPrinterViewModel : ViewModelBase
     {
         public event SmartDeviceApp.Controllers.PrintPreviewController.SelectedPrinterChangedEventHandler SelectPrinterEvent;
+        public event SmartDeviceApp.Controllers.PrinterController.PollingHandler PollingHandler;
 
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
@@ -37,12 +39,14 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _backToPrintSettings;
 
         private ObservableCollection<Printer> _printerList;
-        private int _selectedPrinterId;
+        private bool _isPrinterListEmpty;
 
         public SelectPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
+
+            Messenger.Default.Register<PrintSettingsPaneMode>(this, (printSettingsPaneMode) => StartPolling(printSettingsPaneMode));
         }
 
         public ObservableCollection<Printer> PrinterList
@@ -50,20 +54,24 @@ namespace SmartDeviceApp.ViewModels
             get { return _printerList; }
             set
             {
-                _printerList = value;
-                RaisePropertyChanged("PrinterList");
+                if (_printerList != value)
+                {
+                    _printerList = value;
+                    RaisePropertyChanged("PrinterList");
+                    CheckPrinterListEmpty();
+                }
             }
         }
 
-        public int SelectedPrinterId
+        public bool IsPrinterListEmpty
         {
-            get { return _selectedPrinterId; }
+            get { return _isPrinterListEmpty; }
             set
             {
-                if (_selectedPrinterId != value)
+                if (_isPrinterListEmpty != value)
                 {
-                    _selectedPrinterId = value;
-                    RaisePropertyChanged("SelectedPrinterId");
+                    _isPrinterListEmpty = value;
+                    RaisePropertyChanged("IsPrinterListEmpty");
                 }
             }
         }
@@ -74,9 +82,9 @@ namespace SmartDeviceApp.ViewModels
             {
                 if (_selectPrinter == null)
                 {
-                    _selectPrinter = new RelayCommand<Printer>(
-                        (prn) => SelectPrinterExecute(prn.Id),
-                        (prn) => true
+                    _selectPrinter = new RelayCommand<int>(
+                        (prnId) => SelectPrinterExecute(prnId),
+                        (prnId) => true
                     );
                 }
                 return _selectPrinter;
@@ -98,6 +106,18 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        private void CheckPrinterListEmpty()
+        {
+            if (_printerList != null && _printerList.Count == 0)
+            {
+                IsPrinterListEmpty = true;
+            }
+            else
+            {
+                IsPrinterListEmpty = false;
+            }
+        }
+
         private void SelectPrinterExecute(int id)
         {
             if (SelectPrinterEvent != null)
@@ -106,9 +126,23 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        private void StartPolling(PrintSettingsPaneMode printSettingsPaneMode)
+        {
+            if (printSettingsPaneMode == PrintSettingsPaneMode.SelectPrinter
+                && PollingHandler != null)
+            {
+                PollingHandler(true);
+            }
+        }
+
         private void BackToPrintSettingsExecute()
         {
+            if (PollingHandler != null)
+            {
+                PollingHandler(false);
+            }
             new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
+            PrinterList = null; // Reset PrinterList on back so that bindings will refresh on re-open
         }
 
     }

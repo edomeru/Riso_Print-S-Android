@@ -10,14 +10,21 @@
 
 @interface XMLParser()
 
+/**
+ * Stack of nodes in the XML file
+ */
 @property (nonatomic, strong) NSMutableArray *stack;
+
+/**
+ * Current text node to read.
+ */
 @property (nonatomic, strong) NSMutableString *currentString;
 
 /**
- Creates a dictionary by parsing an XML data
- @param data
-        Data of the XML file
- @return Dictionary object of the parsed XML file
+ * Creates a dictionary by parsing an XML data
+ * @param data
+ *        Data of the XML file
+ * @return Dictionary object of the parsed XML file
  */
 - (NSDictionary *)dictionaryWithXMLData:(NSData *)data;
 

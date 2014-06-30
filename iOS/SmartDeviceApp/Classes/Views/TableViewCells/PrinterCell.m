@@ -17,7 +17,14 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *spacePrinterNameToDisclosureButton;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *spaceDeleteButtonToSuperview;
 
+/**
+ * Shows the delete button.
+ */
 - (void)putDeleteButton;
+
+/**
+ * Removes the delete button.
+ */
 - (void)cancelDeleteButton;
 
 @end

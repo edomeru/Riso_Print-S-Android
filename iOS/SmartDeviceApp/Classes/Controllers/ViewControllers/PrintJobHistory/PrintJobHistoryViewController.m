@@ -19,54 +19,111 @@
 
 #pragma mark - UI Properties
 
-/** Main Menu button on the Header. */
+/**
+ * Reference to the main menu button on the header.
+ */
 @property (weak, nonatomic) IBOutlet UIButton* mainMenuButton;
 
-/** The UI for displaying the PrintJobHistoryGroups. */
+/**
+ * Reference to the UICollectionView displaying the print job history groups.
+ */
 @property (weak, nonatomic) IBOutlet UICollectionView* groupsView;
 
-/** The custom UICollectionViewLayout for arranging the PrintJobHistoryGroups. */
+/**
+ * Reference to the PrintJobHistoryLayout for organizing the {@link groupsView} content.
+ */
 @property (weak, nonatomic) IBOutlet PrintJobHistoryLayout* groupsViewLayout;
 
-/** Reference to the Delete All button. */
+/**
+ * Reference to the most recently tapped "Delete All" button.
+ */
 @property (weak, nonatomic) DeleteButton* tappedDeleteButton;
 
-/** Displays "No Print Job History" label if there are no jobs. */
+/**
+ * Reference to the "No Print Job History" label that is displayed if there are no print jobs.
+ */
 @property (weak, nonatomic) IBOutlet UILabel *emptyLabel;
 
-/** Reference Bottom constraint of the UICollectionView for adjusting the height (work-around) */
+/**
+ * Reference to the bottom constraint of the UICollectionView.
+ * This is used for adjusting the height of the UICollectionView (work-around).
+ */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomConstraint;
 
 #pragma mark - Data Properties
 
-/** The data source for the list PrintJobHistoryGroup objects. */
+/**
+ * The data source for all print job history items.
+ * Contains references to PrintJobHistoryGroup objects.
+ */
 @property (strong, nonatomic) NSMutableArray* listPrintJobHistoryGroups;
 
-/** Keeps track of the index of the group that has the delete button. */
+/** 
+ * Index path of the print job history group that has a "Delete" button.
+ * This is nil if no print job history group has a "Delete" button.
+ */
 @property (strong, nonatomic) NSIndexPath* groupWithDelete;
 
-/** Keeps track of the index of the group marked for deletion. */
+/**
+ * Item index of the print job history group that has a "Delete" button.
+ * This is -1 if no print job history group has a "Delete" button.
+ */
 @property (assign, nonatomic) NSInteger groupToDeleteIndex;
 
-/** Keeps track of the index of the job marked for deletion. */
+/**
+ * Item index of the print job that has a "Delete" button.
+ * This is -1 if no print job has a "Delete" button.
+ */
 @property (assign, nonatomic) NSInteger jobToDeleteIndex;
 
 #pragma mark - Methods
 
-/** Tapping the Main Menu button displays the Main Menu panel. */
+/**
+ * Responds to pressing the main menu button in the header.
+ * Displays the Main Menu panel.
+ *
+ * @param sender the button object
+ */
 - (IBAction)mainMenuAction:(UIButton*)sender;
 
-/** Tapping anywhere on the UICollectionView hides any DELETE button displayed. */
+/**
+ * Responds to tapping anywhere on the collection.
+ * Calls {@link removeDeleteButton}.
+ *
+ * @param gestureRecognizer the gesture object
+ */
 - (void)tappedCollection:(UIGestureRecognizer*)gestureRecognizer;
 
-/** Removes a displayed DELETE button from a group. */
+/**
+ * Responds to any non-right-to-left swipe gesture on the collection.
+ * Calls {@link removeDeleteButton}.
+ *
+ * @param gestureRecognizer the gesture object
+ */
+- (void)swipedNotLeftCollection:(UIGestureRecognizer*)gestureRecognizer;
+
+/**
+ * Removes the "Delete" button from a group specified by {@link groupWithDelete}.
+ */
 - (void)removeDeleteButton;
 
 /** 
- Searches the list of PrintJobHistoryGroups for a group with the specified tag.
- Returns the group index and the actual group as out parameters.
+ * Searches {@link listPrintJobHistoryGroups} for a group with the specified tag.
+ * 
+ * @param tag the tag to search
+ * @param index output parameter that will be set to the searched group index
+ * @param group output parameter that will be set to the searched PrintJobHistoryGroup
  */
 - (void)findGroupWithTag:(NSInteger)tag outIndex:(NSInteger*)index outGroup:(PrintJobHistoryGroup**)group;
+
+/**
+ * Unwind segue back to the "Print Job History" screen.
+ * Called when transitioning back to the "Print Job History" 
+ * screen from the the Main Menu panel.
+ *
+ * @param sender the segue object
+ */
+- (IBAction)unwindToPrintJobHistory:(UIStoryboardSegue*)sender;
 
 @end
 

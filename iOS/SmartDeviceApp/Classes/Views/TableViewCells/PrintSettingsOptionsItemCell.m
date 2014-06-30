@@ -11,6 +11,9 @@
 
 @interface PrintSettingsOptionsItemCell()
 
+/**
+ * Indicator for the currently selected option.
+ */
 @property (nonatomic, weak) IBOutlet UIImageView *radioImageView;
 
 @end

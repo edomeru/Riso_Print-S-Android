@@ -33,21 +33,24 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="keyValueControlGrid">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PressedColor, ElementName=keyValueControl}"/>
                                 </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="key">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding KeyPressedColor, ElementName=keyValueControl}"/>
+                                </ObjectAnimationUsingKeyFrames>
                             </Storyboard>
                         </VisualState>
                         <VisualState x:Name="Disabled">
                             <Storyboard>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Style" Storyboard.TargetName="key">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource STYLE_TextKeyDisabled}"/>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="key">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Gray3}"/>
                                 </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Style" Storyboard.TargetName="keySubText">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource STYLE_TextKeySubTextDisabled}"/>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="keySubText">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Gray3}"/>
                                 </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Style" Storyboard.TargetName="value">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource STYLE_TextValueDisabled}"/>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="value">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Gray3}"/>
                                 </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Style" Storyboard.TargetName="valueSubText">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource STYLE_TextValueSubTextDisabled}"/>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="valueSubText">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Gray3}"/>
                                 </ObjectAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Source" Storyboard.TargetName="rightButton">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding RightDisabledImage, ElementName=keyValueControl}"/>
@@ -89,35 +92,38 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
-                    <ContentPresenter Content="{Binding ValueContent, ElementName=keyValueControl}" 
-                                      Width="Auto"
-                                      Style="{StaticResource STYLE_AlignRight}"/>
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                        <TextBlock x:Name="value" 
-                                   Text="{Binding ValueText, ElementName=keyValueControl}"
-                                   Visibility="{Binding ValueVisibility, ElementName=keyValueControl}"
-                                   Width="{Binding ValueTextWidth, ElementName=keyValueControl}"
-                                   Style="{StaticResource STYLE_TextValue}" />
-                        <TextBlock x:Name="valueSubText"
-                                   Text="{Binding ValueSubText, ElementName=keyValueControl}"
-                                   Width="{Binding ValueTextWidth, ElementName=keyValueControl}"
-                                   Visibility="{Binding ValueSubTextVisibility, ElementName=keyValueControl}"
-                                   Style="{StaticResource STYLE_TextValueSubText}">
-                            <TextBlock.Margin>
-                                <Thickness Top="{StaticResource MARGIN_Medium}"></Thickness>
-                            </TextBlock.Margin>
-                        </TextBlock>
-                    </StackPanel>
+                    <Grid>           
+                        <ContentPresenter Content="{Binding ValueContent, ElementName=keyValueControl}" 
+                                          Width="Auto"
+                                          Style="{StaticResource STYLE_AlignRight}"/>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                            <TextBlock x:Name="value" 
+                                       Text="{Binding ValueText, ElementName=keyValueControl}"
+                                       Visibility="{Binding ValueVisibility, ElementName=keyValueControl}"
+                                       Width="{Binding ValueTextWidth, ElementName=keyValueControl}"
+                                       Style="{Binding ValueTextStyle, ElementName=keyValueControl}" />
+                            <TextBlock x:Name="valueSubText"
+                                       Text="{Binding ValueSubText, ElementName=keyValueControl}"
+                                       Width="{Binding ValueTextWidth, ElementName=keyValueControl}"
+                                       Visibility="{Binding ValueSubTextVisibility, ElementName=keyValueControl}"
+                                       Style="{StaticResource STYLE_TextValueSubText}">
+                                <TextBlock.Margin>
+                                    <Thickness Top="{StaticResource MARGIN_Medium}"></Thickness>
+                                </TextBlock.Margin>
+                            </TextBlock>
+                        </StackPanel>
+                       
+                    </Grid>
                     <Image x:Name="rightButton" 
 	                       Source="{Binding RightImage, ElementName=keyValueControl}"
                            Visibility="{Binding RightButtonVisibility, ElementName=keyValueControl}" 
                            Style="{StaticResource STYLE_AlignRight}" Stretch="None"/>
                 </StackPanel>
-                <Path Grid.Row="1" Grid.ColumnSpan="2" 
+                <Path Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                       Visibility="{Binding SeparatorVisibility, ElementName=keyValueControl}"
                       Style="{StaticResource STYLE_List_Separator}">
                     <Path.Data>
-                        <LineGeometry StartPoint="{Binding Source={StaticResource MARGIN_List},Converter={StaticResource SeparatorLineGeometryStartPointConverter}}"
+                        <LineGeometry StartPoint="{Binding SeparatorStartPoint, ElementName=keyValueControl, Converter={StaticResource SeparatorLineGeometryStartPointConverter}}"
                                       EndPoint="{Binding Width, ElementName=keyValueControl, Converter={StaticResource SeparatorLineGeometryEndPointConverter}}"/>
                     </Path.Data>                 
                 </Path>

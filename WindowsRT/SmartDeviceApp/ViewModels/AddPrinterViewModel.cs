@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Converters;
 using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -24,21 +26,20 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private string _ipAddress;
-        private string _username;
-        private string _password;
 
         private ICommand _addPrinter;
 
         private bool _isProgressRingVisible;
         private bool _isButtonVisible;
 
-        private ImageSource _buttonImage;
+        private double _height;
 
         public event SmartDeviceApp.Controllers.PrinterController.AddPrinterHandler AddPrinterHandler;
+        public event SmartDeviceApp.Controllers.PrinterController.ClearIpAddressToAddHandler ClearIpAddressToAddHandler;
 
         private ObservableCollection<PrinterSearchItem> _printerSearchList;
+        private ObservableCollection<Printer> _printerList;
 
-        private string ADD_IMAGE = "ms-appx:///Resources/Images/img_btn_add_printer_normal.scale-100.png";
         private ViewControlViewModel _viewControlViewModel;
         public AddPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -47,12 +48,38 @@ namespace SmartDeviceApp.ViewModels
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
 
             IpAddress = "";
-            //Username = "";
-            //Password = "";
-            //ButtonImage = new ImageSource();
             IsProgressRingVisible = false;
             IsButtonVisible = true;
-            Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
+            Messenger.Default.Register<VisibleRightPane>(this, (rightPaneMode) => SetRightPaneMode(rightPaneMode));
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
+            Messenger.Default.Register<MessageType>(this, (strMsg) => HandleStringMessage(strMsg));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetAddPane(viewOrientation));
+            
+        }
+
+        private void ResetAddPane(ViewOrientation viewOrientation)
+        {
+            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+            Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
+        }
+
+        public double Height
+        {
+            get { return this._height; }
+            set
+            {
+                _height = value;
+                OnPropertyChanged("Height");
+
+            }
+        }
+
+        private async Task HandleStringMessage(MessageType strMsg)
+        {
+            if (strMsg == MessageType.AddPrinter)
+            {
+                await AddPrinterExecute();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -72,26 +99,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public string Username
-        {
-            get { return _username; }
-            set
-            {
-                this._username = value;
-                OnPropertyChanged("Username");
-            }
-        }
-
-        public string Password
-        {
-            get { return _password; }
-            set
-            {
-                this._password = value;
-                OnPropertyChanged("Password");
-            }
-        }
-
         public ObservableCollection<PrinterSearchItem> PrinterSearchList
         {
             get { return this._printerSearchList; }
@@ -99,6 +106,17 @@ namespace SmartDeviceApp.ViewModels
             {
                 _printerSearchList = value;
                 OnPropertyChanged("PrinterSearchList");
+            }
+        }
+
+        public ObservableCollection<Printer> PrinterList
+        {
+            get { return this._printerList; }
+            set
+            {
+                _printerList = value;
+                OnPropertyChanged("PrinterList");
+
             }
         }
 
@@ -117,8 +135,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private void AddPrinterExecute()
+        private async Task AddPrinterExecute()
         {
+            //Messenger.Default.Send<string>("HideKeyboard");
+
             System.Diagnostics.Debug.WriteLine(IpAddress);
 
             PrinterSearchList.Clear();
@@ -135,7 +155,8 @@ namespace SmartDeviceApp.ViewModels
 
             IsButtonVisible = false;
             IsProgressRingVisible = true;
-            if (AddPrinterHandler(IpAddress) == false)
+            bool result = await AddPrinterHandler(IpAddress);
+            if (result == false)
             {
                 setVisibilities();
             }
@@ -162,17 +183,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public ImageSource ButtonImage
-        {
-            get { return _buttonImage; }
-            set
-            {
-                this._buttonImage = value;
-                OnPropertyChanged("ButtonImage");
-            }
-        }
-
-
         public void handleAddIsSuccessful(bool isSuccessful)
         {
             string caption = "";
@@ -182,16 +192,14 @@ namespace SmartDeviceApp.ViewModels
 
             if (isSuccessful)
             {
-                DialogService.Instance.ShowError("IDS_LBL_ADD_SUCCESSFUL", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-
-                return;
+                content = loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
             }
             else
             {
                 if (NetworkController.IsConnectedToNetwork)
                 {
-                    content = loader.GetString("IDS_ERR_MSG_WARNING_CANNOT_FIND_PRINTER") + "\n" + IpAddress + " " +
-                        loader.GetString("IDS_LBL_ADD_SUCCESSFUL");
+                    content = loader.GetString("IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER") + "\n" + IpAddress + " " +
+                        loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
                 }
                 else
                 {
@@ -201,10 +209,7 @@ namespace SmartDeviceApp.ViewModels
             }
             caption = loader.GetString("IDS_LBL_ADD_PRINTER");
             buttonText = loader.GetString("IDS_LBL_OK");
-            //clear data
-            IpAddress = "";
-            Username = "";
-            Password = "";
+            
 
             setVisibilities();
             DisplayMessage(caption, content, buttonText);
@@ -218,22 +223,43 @@ namespace SmartDeviceApp.ViewModels
 
         public void DisplayMessage(string caption, string content, string buttonText)
         {
-            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, null);
+            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, new Action(ClosePane));
         }
 
-        private void SetViewMode(VisibleRightPane viewMode)
+        private void ClosePane()
+        {
+            _viewControlViewModel.ViewMode = ViewMode.FullScreen;
+        }
+
+        private async void SetRightPaneMode(VisibleRightPane rightPaneMode)
         {
             if (_viewControlViewModel.ScreenMode == ScreenMode.Printers)
             {
-                if (viewMode == VisibleRightPane.Pane2)
+                if (rightPaneMode == VisibleRightPane.Pane2)
                 {
-                    //clear data
-                    IpAddress = "";
-                    Username = "";
-                    Password = "";
+                    if (PrinterList.Count >= 10)
+                    {
+                        ClosePane();
+                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                        Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                        {
+                            await DialogService.Instance.ShowError("IDS_ERR_MSG_MAX_PRINTER_COUNT", "IDS_LBL_PRINTERS", "IDS_LBL_OK", null);
+                        });
+                        return;
+                    }
                 }
+                
             }
+        }
 
+        private void SetViewMode(ViewMode viewMode)
+        {
+            if (viewMode == ViewMode.FullScreen)
+            {
+                IpAddress = "";
+                setVisibilities();
+                ClearIpAddressToAddHandler();
+            }
         }
     }
 }

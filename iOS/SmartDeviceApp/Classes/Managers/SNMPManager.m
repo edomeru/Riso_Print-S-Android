@@ -24,31 +24,29 @@ static SNMPManager* sharedSNMPManager = nil;
 @interface SNMPManager ()
 
 /**
- Handler for the Add Printer Callback of the Net-SNMP.
- Parses the printer name, IP, and capabilities from the device
- object then posts a notification that a printer was found.
- @param device
-        object containing the device name, IP, and capabilities
+ * Handler for the snmpPrinterAddedCallback of the SNMP common library.
+ * Parses the printer name, IP address, port, and capabilities from the device
+ * object then posts a NOTIF_SNMP_ADD notification which contains the said printer info.
+ *
+ * @param device object containing the printer name, IP, port, and printer capabilities
  */
 - (void)addRealPrinter:(snmp_device*)device;
 
 #if DEBUG_SNMP_USE_FAKE_PRINTERS
 /**
- Handler for the Add Printer Callback of the Fake SNMP.
- Generates a fake printer name, IP, and capabilities then
- posts a notification that a printer was found.
- FOR DEBUGGING PURPOSES ONLY.
- @param ip
-         IP address for the fake printer
+ * THIS IS FOR DEBUGGING PURPOSES ONLY.
+ * This simulates the Add Printer callback of the SNMP common library.
+ *
+ * @param fakeIP IP address of the fake printer
  */
 - (void)addFakePrinter:(NSString*)fakeIP;
 #endif
 
 /**
- Handler for the Search End Callback of the Net-SNMP.
- Posts a notification that the search has ended.
- @param success
-        YES if at least one printer was found, NO otherwise
+ * Handler for the the snmpDiscoveryEndedCallback of the SNMP common library.
+ * Posts the NOTIF_SNMP_END notification which contains the result of the search.
+ *
+ * @param success YES if at least one printer was found, NO otherwise
  */
 - (void)endSearchWithResult:(BOOL)success;
 

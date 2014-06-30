@@ -12,12 +12,20 @@
 #import "PrintersIpadViewController.h"
 #import "PrinterManager.h"
 
+/**
+ * Controller for the "Add Printer" screen (phone and tablet).
+ */
 @interface AddPrinterViewController : SlidingViewController <UITextFieldDelegate, PrinterSearchDelegate>
 
-/** Flag that will be set to YES when at least one successful printer was added. */
+/**
+ * Flag that will be set to YES when a printer is successfully added.
+ */
 @property (readonly, assign, nonatomic) BOOL hasAddedPrinters;
 
-/** Reference to the Printers screen (for iPad only) */
+/** 
+ * Reference to the controller of the "Printers" screen on a tablet.
+ * If the device is a phone, then this property is nil and unused.
+ */
 @property (weak, nonatomic) PrintersIpadViewController* printersViewController;
 
 @end

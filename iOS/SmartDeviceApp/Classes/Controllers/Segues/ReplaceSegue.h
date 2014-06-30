@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ * Custom segue that replaces the "Center" View Controller.
+ * This segue is used when changing screens using 
+ * the Main Menu (HomeViewController) and via Open-In.
+ */
+
 @interface ReplaceSegue : UIStoryboardSegue
 
 @end

@@ -19,10 +19,49 @@ const CGFloat _AnimationDuration = 0.3f;
 
 @interface SlidingViewController ()
 
+/**
+ * Gesture recognizer for tap gesture.
+ * Captures gestures on the area oocupied by the center view.
+ *
+ * @see - (IBAction)handleTap:(UITapGestureRecognizer *)gestureRecognizer
+ */
 @property (nonatomic, weak) UITapGestureRecognizer *tapRecognizer;
+
+/**
+ * Gesture recognizer for pan gesture.
+ * Captures gestures on the area oocupied by the center view.
+ *
+ * @see - (IBAction)handlePan:(UITapGestureRecognizer *)gestureRecognizer
+ */
 @property (nonatomic, weak) UIPanGestureRecognizer *panRecognizer;
+
+/**
+ * Instance of the RootViewController.
+ */
 @property (nonatomic, weak) RootViewController *container;
+
+/**
+ * Determines whether or not the view is animating.
+ */
 @property (atomic) BOOL isAnimating;
+
+/**
+ * Handles tap gestures.
+ * Performs unwinding action on tap.
+ *
+ * @param gestureRecognizer Gesture recognizer that triggered the action.
+ */
+- (IBAction)handleTap:(UITapGestureRecognizer *)gestureRecognizer;
+
+/**
+ * Handles pan gestures.
+ * Performs sliding animation while the view is being dragged.
+ * Depending on the current position, the views will snap back to
+ * either side upon release.
+ *
+ * @param gestureRecognizer Gesture recognizer that triggered the action.
+ */
+- (IBAction)handlePan:(UIPanGestureRecognizer *)gestureRecognizer;
 
 @end
 

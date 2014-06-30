@@ -10,24 +10,22 @@
 //  ----------------------------------------------------------------------
 //
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.UI.Xaml.Media.Imaging;
-using SmartDeviceApp.Common.Constants;
+using GalaSoft.MvvmLight.Threading;
+using SmartDeviceApp.Common;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Controls;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
-using Windows.ApplicationModel.Resources;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Foundation;
+using Windows.System.Threading;
 using Windows.UI.Xaml.Controls.Primitives;
-using SmartDeviceApp.Controls;
-using SmartDeviceApp.Common;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -55,10 +53,6 @@ namespace SmartDeviceApp.Controllers
         public delegate void SelectedPrinterChangedEventHandler(int printerId);
         private SelectedPrinterChangedEventHandler _selectedPrinterChangedEventHandler;
 
-        // Authentication PIN Code
-        public delegate void PinCodeValueChangedEventHandler(string pinCode);
-        private PinCodeValueChangedEventHandler _pinCodeValueChangedEventHandler;
-
         // Print button
         public delegate void PrintEventHandler();
         private PrintEventHandler _printEventHandler;
@@ -69,16 +63,11 @@ namespace SmartDeviceApp.Controllers
 
         // PageAreaGrid loaded
         public delegate void PageAreaGridLoadedEventHandler();
-        public static PageAreaGridLoadedEventHandler PageAreaGridLoaded;
+        private PageAreaGridLoadedEventHandler _pageAreaGridLoadedEventHandler;
 
         // Constants
-        private const string PREFIX_PREVIEW_PAGE_IMAGE = "previewpage";
-        private const string FORMAT_PREFIX_PREVIEW_PAGE_IMAGE_WITH_INDEX =
-            PREFIX_PREVIEW_PAGE_IMAGE + "{0:0000}";
-        private const string FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE =
-            FORMAT_PREFIX_PREVIEW_PAGE_IMAGE_WITH_INDEX + "-{1:yyyyMMddHHmmssffff}.jpg";
-        private const string FILE_PATH_RES_IMAGE_STAPLE = "Resources/Images/img_staple.png";
-        private const string FILE_PATH_RES_IMAGE_PUNCH = "Resources/Images/img_punch.png";
+        private const int NO_SELECTED_PRINTER_ID = -1;
+        private const int MAX_PREVIEW_PAGE_IMAGE_CACHE = 10;
 
         private PrintPreviewViewModel _printPreviewViewModel;
         private SelectPrinterViewModel _selectPrinterViewModel;
@@ -90,15 +79,24 @@ namespace SmartDeviceApp.Controllers
         private int _pagesPerSheet = 1;
         private bool _isDuplex = false;
         private bool _isBooklet = false;
-        private bool _isReversePages = false;
-        private Dictionary<int, PreviewPage> _previewPages; // Generated PreviewPages from the start
         private uint _previewPageTotal;
-        private static int _currPreviewPageIndex;
+        private int _maxPreviewPageCount;
+        private Size _previewPageImageSize;
+        private static int _currSliderIndex;
+        private static int _currLeftPageIndex;
+        private static int _currRightPageIndex;
+        private static int _currLeftBackPageIndex;
+        private static int _currRightBackPageIndex;
         private bool _resetPrintSettings; // Flag used only when selected printer is deleted
+
+        List<CancellationTokenSource> _cancellationTokenSourceQueue;
+        LruCacheHelper<int, byte[]> _previewPageImages;
 
         private ICommand _cancelPrintingCommand;
         private Popup _printingPopup;
         private MessageProgressBarControl _printingProgress;
+
+        private PageViewMode _pageViewMode;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -113,16 +111,17 @@ namespace SmartDeviceApp.Controllers
 
             _screenName = ScreenMode.PrintPreview.ToString();
 
-            _previewPages = new Dictionary<int, PreviewPage>();
+            _cancellationTokenSourceQueue = new List<CancellationTokenSource>();
+            _previewPageImages = new LruCacheHelper<int, byte[]>(MAX_PREVIEW_PAGE_IMAGE_CACHE);
 
             _updatePreviewEventHandler = new UpdatePreviewEventHandler(UpdatePreview);
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
-            _pinCodeValueChangedEventHandler = new PinCodeValueChangedEventHandler(PinCodeValueChanged);
             _printEventHandler = new PrintEventHandler(Print);
             _cancelPrintEventHandler = new CancelPrintEventHandler(CancelPrint);
             _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
             _onNavigateFromEventHandler = new OnNavigateFromEventHandler(UnregisterPrintSettingValueChange);
+            _pageAreaGridLoadedEventHandler = new PageAreaGridLoadedEventHandler(InitializeGestures);
         }
 
         /// <summary>
@@ -140,82 +139,81 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Initialize()
         {
-            PageAreaGridLoaded += InitializeGestures;
+#if PREVIEW_PUNCH
+            await PreviewPageImageUtility.LoadPunchBitmap();
+#endif // PREVIEW_PUNCH
+#if PREVIEW_STAPLE
+            await PreviewPageImageUtility.LoadStapleBitmap();
+#endif // PREVIEW_STAPLE
 
             // Get print settings if document is successfully loaded
             if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
                 _previewPageTotal = DocumentController.Instance.PageCount;
 
-                new ViewModelLocator().SelectPrinterViewModel.PrinterList = PrinterController.Instance.PrinterList;
-
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();
 
-                _resetPrintSettings = false;
-                _currPreviewPageIndex = 0;
                 _printPreviewViewModel.SetInitialPageIndex(0);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
                 _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
 
-                _printSettingsViewModel.PinCodeValueChangedEventHandler += _pinCodeValueChangedEventHandler;
                 _printSettingsViewModel.ExecutePrintEventHandler += _printEventHandler;
 
                 _printPreviewViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
                 _printPreviewViewModel.OnNavigateToEventHandler += _onNavigateToEventHandler;
+                _printPreviewViewModel.PageAreaGridLoadedEventHandler += _pageAreaGridLoadedEventHandler;
 
                 PrinterController.Instance.DeletePrinterItemsEventHandler += PrinterDeleted;
-            }
-            else if (DocumentController.Instance.Result == LoadDocumentResult.ErrorReadPdf)
-            {
-                (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
-                await DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
             else if (DocumentController.Instance.Result == LoadDocumentResult.UnsupportedPdf)
             {
                 (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
-                await DialogService.Instance.ShowError("IDS_ERR_MSG_PDF_ENCRYPTED", "IDS_APP_NAME", "IDS_LBL_OK", null);
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_PDF_ENCRYPTED", "IDS_APP_NAME",
+                    "IDS_LBL_OK", null);
+            }
+            else // DocumentController.Instance.Result == LoadDocumentResult.ErrorReadPdf or LoadDocumentResult.NotStarted
+            {
+                (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME",
+                    "IDS_LBL_OK", null);
             }
         }
 
         /// <summary>
         /// Clean-up
         /// </summary>
-        /// <returns>task</returns>
-        public async Task Cleanup()
+        public void Cleanup()
         {
-            if (_printPreviewViewModel != null)
-            {
-                _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
-            }
+            _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
+            _printPreviewViewModel.PageAreaGridLoadedEventHandler -= _pageAreaGridLoadedEventHandler;
             PrintSettingsController.Instance.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
-            _printSettingsViewModel.PinCodeValueChangedEventHandler -= _pinCodeValueChangedEventHandler;
             _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
             PrinterController.Instance.DeletePrinterItemsEventHandler -= PrinterDeleted;
 
+            foreach (CancellationTokenSource token in _cancellationTokenSourceQueue)
+            {
+                token.Cancel();
+            }
+            _cancellationTokenSourceQueue.Clear();
+
             _resetPrintSettings = false;
             _selectedPrinter = null;
-            await ClearPreviewPageListAndImages();
 
             _pagesPerSheet = 1;
             _isDuplex = false;
             _isBooklet = false;
-            _isReversePages = false;
-        }
 
-        /// <summary>
-        /// Resets the generated PreviewPage(s) list and removed the page images from AppData
-        /// temporary store.
-        /// </summary>
-        /// <returns>task</returns>
-        private async Task ClearPreviewPageListAndImages()
-        {
-            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            await StorageFileUtility.DeleteFiles(PREFIX_PREVIEW_PAGE_IMAGE, tempFolder);
+            _currSliderIndex = 0;
+            _currLeftPageIndex = 0;
+            _currRightPageIndex = 0;
 
-            _previewPages.Clear();
+            _printPreviewViewModel.PageTotal = 0;
+
+            _previewPageImages.Clear();
+            _printPreviewViewModel.Cleanup();
         }
 
         #region Printer and Print Settings Initialization
@@ -228,7 +226,7 @@ namespace SmartDeviceApp.Controllers
             if (_resetPrintSettings)
             {
                 _selectedPrinter = null;
-                await SetSelectedPrinterAndPrintSettings(-1);
+                await SetSelectedPrinterAndPrintSettings(NO_SELECTED_PRINTER_ID);
                 _resetPrintSettings = false;
             }
             else
@@ -260,19 +258,13 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Event handler for selected printer
         /// </summary>
-        /// <param name="printerId"></param>
+        /// <param name="printerId">printer ID</param>
         public async void SelectedPrinterChanged(int printerId)
         {
-            await SetSelectedPrinterAndPrintSettings(printerId);
-        }
-
-        /// <summary>
-        /// Event handler for PIN code text
-        /// </summary>
-        /// <param name="pinCode"></param>
-        public void PinCodeValueChanged(string pinCode)
-        {
-            PrintSettingsController.Instance.SetPinCode(_screenName, pinCode);
+            if (_selectedPrinter.Id != printerId)
+            {
+                await SetSelectedPrinterAndPrintSettings(printerId);
+            }
         }
 
         /// <summary>
@@ -283,18 +275,16 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         private async Task GetDefaultPrinter()
         {
-            // TODo: Check if this function should use PrinterController (avoid conflicting roles)
             // Get default printer
-            DefaultPrinter defaultPrinter = await DatabaseController.Instance.GetDefaultPrinter();
-
+            Printer defaultPrinter = PrinterController.Instance.GetDefaultPrinter();
             if (defaultPrinter != null)
             {
-                await SetSelectedPrinterAndPrintSettings((int)defaultPrinter.PrinterId);
+                await SetSelectedPrinterAndPrintSettings(defaultPrinter.Id);
             }
             else
             {
                 _selectedPrinter = null;
-                await SetSelectedPrinterAndPrintSettings(-1);
+                await SetSelectedPrinterAndPrintSettings(NO_SELECTED_PRINTER_ID);
             }
         }
 
@@ -307,7 +297,7 @@ namespace SmartDeviceApp.Controllers
         {
             if (printerId > -1)
             {
-                _selectedPrinter = await DatabaseController.Instance.GetPrinter(printerId);
+                _selectedPrinter = PrinterController.Instance.GetPrinter(printerId);
             }
             if (_selectedPrinter == null)
             {
@@ -315,16 +305,11 @@ namespace SmartDeviceApp.Controllers
                 _selectedPrinter = new Printer();
             }
 
-            _printSettingsViewModel.PrinterName = _selectedPrinter.Name;
-            _printSettingsViewModel.PrinterId = _selectedPrinter.Id;
-            _printSettingsViewModel.PrinterIpAddress = _selectedPrinter.IpAddress;
-
             PrintSettingsController.Instance.Uninitialize(_screenName);
-            _currPrintSettings = await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter);
+            await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter);
+            _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             PrintSettingsController.Instance.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
-            await ReloadCurrentPage();
-
-            _printSettingsViewModel.PrinterId = _selectedPrinter.Id;
+            ReloadCurrentPage();
         }
 
         #endregion Printer and Print Settings Initialization
@@ -333,26 +318,52 @@ namespace SmartDeviceApp.Controllers
 
         /// <summary>
         /// Initializes the gesture of the preview area.
-        /// Requires initial paper size before using this function.
+        /// Requires initial paper size and grid is already loaded before using this function.
         /// </summary>
         private void InitializeGestures()
         {
-            if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
+            if (DocumentController.Instance.Result == LoadDocumentResult.Successful &&
+                _printPreviewViewModel.IsPageAreaGridLoaded)
             {
-                Size paperSize = GetPaperSize(_currPrintSettings.PaperSize);
-                bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
-                    _currPrintSettings.BookletLayout);
+                bool isPortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
+                    _currPrintSettings.Orientation, _currPrintSettings.Imposition);
 
-                Size sampleSize = GetPreviewPageImageSize(paperSize, isPortrait);
-                _printPreviewViewModel.RightPageActualSize = sampleSize;
-                if (_isBooklet)
+                // Update swipe direction/flow
+                if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
+                    (!_isBooklet && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
                 {
-                    _printPreviewViewModel.LeftPageActualSize = sampleSize;
+                    _printPreviewViewModel.IsReverseSwipe = true;
+                }
+                else
+                {
+                    _printPreviewViewModel.IsReverseSwipe = false;
+                }
+
+                // Update swipe direction
+                if ((_isBooklet && !isPortrait) ||
+                    (_currPrintSettings.FinishingSide == (int)FinishingSide.Top)) 
+                {
+                    _printPreviewViewModel.IsHorizontalSwipeEnabled = false;
+                }
+                else
+                {
+                    _printPreviewViewModel.IsHorizontalSwipeEnabled = true;
+                }
+
+                // Update base page bitmap sizes
+                _printPreviewViewModel.RightPageActualSize = _previewPageImageSize;
+                if (_isBooklet || _isDuplex)
+                {
+                    _printPreviewViewModel.LeftPageActualSize = _previewPageImageSize;
                 }
                 else
                 {
                     _printPreviewViewModel.LeftPageActualSize = new Size();
                 }
+
+                // Update page view mode
+                _printPreviewViewModel.PageViewMode = _pageViewMode;
+
                 _printPreviewViewModel.InitializeGestures();
             }
         }
@@ -361,7 +372,7 @@ namespace SmartDeviceApp.Controllers
         /// Event handler that receives modified print setting to update preview
         /// </summary>
         /// <param name="printSetting">affected print setting</param>
-        public async void UpdatePreview(PrintSetting printSetting)
+        public void UpdatePreview(PrintSetting printSetting)
         {
             if (printSetting == null)
             {
@@ -370,17 +381,7 @@ namespace SmartDeviceApp.Controllers
 
             _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-            string name = printSetting.Name;
-
-            if (printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX) ||
-                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION) ||
-                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT) ||
-                printSetting.Name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
-            {
-                _currPreviewPageIndex = 0; // TODO: Proper handling when total page count changes
-            }
-
-            await ReloadCurrentPage();
+            ReloadCurrentPage();
         }
 
         /// <summary>
@@ -388,65 +389,87 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void UpdatePreviewInfo()
         {
-            // Send UI related items
-            if (_currPrintSettings.Booklet)
+            // Determine view mode
+            _isBooklet = _currPrintSettings.Booklet;
+            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
+            if (_isBooklet)
             {
-                _isBooklet = true;
-                _printPreviewViewModel.PageViewMode = PageViewMode.TwoPageView;
+                if (_currPrintSettings.Orientation == (int)Orientation.Landscape)
+                {
+                    _pageViewMode = PageViewMode.TwoPageViewVertical;
+                }
+                else
+                {
+                    _pageViewMode = PageViewMode.TwoPageViewHorizontal;
+                }
+            }
+            else if (_isDuplex && _currPrintSettings.FinishingSide != (int)FinishingSide.Top)
+            {
+                _pageViewMode = PageViewMode.TwoPageViewHorizontal;
+            }
+            else if (_isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Top)
+            {
+                _pageViewMode = PageViewMode.TwoPageViewVertical;
             }
             else
             {
-                _isBooklet = false;
-                _printPreviewViewModel.PageViewMode = PageViewMode.SinglePageView;
+                _pageViewMode = PageViewMode.SinglePageView;
             }
 
-            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off) ||
-                (_isBooklet && _currPrintSettings.BookletFinishing == (int)BookletFinishing.Off);
-
-            _isReversePages = _isBooklet &&
-                _currPrintSettings.BookletLayout == (int)BookletLayout.RightToLeft;
-
-            _pagesPerSheet = PrintSettingsController.Instance.GetPagesPerSheet(_screenName);
-
+            // Update page count and page number
+            _pagesPerSheet = PreviewPageImageUtility.GetPagesPerSheet(_currPrintSettings.Imposition);
             _previewPageTotal = (uint)Math.Ceiling((decimal)DocumentController.Instance.PageCount /
                                                     _pagesPerSheet);
-            uint sliderMaxValue = _previewPageTotal;
-            if (_isDuplex)
-            {
-                sliderMaxValue = (_previewPageTotal / 2) + (_previewPageTotal % 2);
-            }
-            else if (_isBooklet)
-            {
-                sliderMaxValue = (_previewPageTotal / 2) + 1;
-            }
-            if (_printPreviewViewModel.PageTotal != sliderMaxValue)
-            {
-                _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
-                if (_currPreviewPageIndex > _previewPageTotal)
-                {
-                    _currPreviewPageIndex = (int)_previewPageTotal - 1;
-                }
-                _printPreviewViewModel.PageTotal = sliderMaxValue;
-                _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
-            }
-        }
-
-        /// <summary>
-        /// Checks if the orientation is portrait based on selected orientation (when booklet is off)
-        /// or based on selected booklet layout (when booklet is on)
-        /// </summary>
-        /// <param name="orientation">orientation</param>
-        /// <param name="bookletLayout">booklet layout</param>
-        /// <returns>true when portrait, false otherwise</returns>
-        private bool IsPortrait(int orientation, int bookletLayout)
-        {
-            bool isPortrait = (orientation == (int)Orientation.Portrait);
             if (_isBooklet)
             {
-                isPortrait = (bookletLayout != (int)BookletLayout.TopToBottom);
+                _previewPageTotal = ((_previewPageTotal / 4) * 2) + (uint)(((_previewPageTotal % 4) == 0) ? 1 : 3);
+            }
+            else if (_isDuplex)
+            {
+                _previewPageTotal = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 1;
+            }
+            if (_printPreviewViewModel.PageTotal != _previewPageTotal)
+            {
+                _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
+                _printPreviewViewModel.PageTotal = _previewPageTotal;
+                _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
+                if (_currSliderIndex >= _previewPageTotal)
+                {
+                    _currSliderIndex = (int)_previewPageTotal - 1;
+                }
+                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex);
             }
 
-            return isPortrait;
+            _maxPreviewPageCount = (int)_previewPageTotal;
+            if (_isBooklet || _isDuplex)
+            {
+                _maxPreviewPageCount = ((int)_previewPageTotal * 2) - 2;
+            }
+
+            Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
+            bool isPortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
+                _currPrintSettings.Orientation, _currPrintSettings.Imposition);
+
+            // Determine page size
+            _previewPageImageSize = PreviewPageImageUtility.GetPreviewPageImageSize(paperSize,
+                isPortrait);
+
+            // Update source page bitmap
+            if (_isBooklet || _isDuplex)
+            {
+                _printPreviewViewModel.LeftPageImage =
+                    new WriteableBitmap((int)_previewPageImageSize.Width,
+                        (int)_previewPageImageSize.Height);
+                _printPreviewViewModel.LeftBackPageImage =
+                    new WriteableBitmap((int)_previewPageImageSize.Width,
+                        (int)_previewPageImageSize.Height);
+            }
+            _printPreviewViewModel.RightPageImage =
+                new WriteableBitmap((int)_previewPageImageSize.Width,
+                    (int)_previewPageImageSize.Height);
+            _printPreviewViewModel.RightBackPageImage =
+                new WriteableBitmap((int)_previewPageImageSize.Width,
+                    (int)_previewPageImageSize.Height);
         }
 
         #endregion Print Preview
@@ -456,233 +479,209 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Event handler for page slider is changed
         /// </summary>
-        /// <param name="rightPageIndex">requested right page index based on slider value</param>
-        public async void GoToPage(int rightPageIndex)
+        /// <param name="sliderIndex">requested right page index based on slider value</param>
+        public void GoToPage(int sliderIndex)
         {
-            _currPreviewPageIndex = (_isDuplex || _isBooklet) ? rightPageIndex * 2 :
-                                                      rightPageIndex;
-            await LoadPage(_currPreviewPageIndex);
+            _printPreviewViewModel.IsLoadLeftPageActive = true;
+            _printPreviewViewModel.IsLoadRightPageActive = true;
+            _printPreviewViewModel.IsLoadLeftBackPageActive = true;
+            _printPreviewViewModel.IsLoadRightBackPageActive = true;
+            _currSliderIndex = sliderIndex;
+            LoadPage(_currSliderIndex);
         }
 
         /// <summary>
         /// Refreshes the preview area based on new print settings
         /// </summary>
-        /// <returns>task</returns>
-        private async Task ReloadCurrentPage()
+        private void ReloadCurrentPage()
         {
-            // Generate PreviewPages again
-            await ClearPreviewPageListAndImages();
+            // Show loading indicators
+            if (_isBooklet || _isDuplex)
+            {
+                _printPreviewViewModel.IsLoadLeftPageActive = true;
+                _printPreviewViewModel.IsLoadLeftBackPageActive = true;
+            }
+            _printPreviewViewModel.IsLoadRightPageActive = true;
+            _printPreviewViewModel.IsLoadRightBackPageActive = true;
+
+            // Cancel other processing if any
+            foreach (CancellationTokenSource token in _cancellationTokenSourceQueue)
+            {
+                token.Cancel();
+            }
+            _cancellationTokenSourceQueue.Clear();
+            _previewPageImages.Clear();
+
             UpdatePreviewInfo();
-            _printPreviewViewModel.UpdatePageIndexes((uint)_currPreviewPageIndex);
             InitializeGestures();
-            await LoadPage(_currPreviewPageIndex);
+            LoadPage(_currSliderIndex);
         }
 
         /// <summary>
         /// Requests for LogicalPages and then applies print setting for the target page only.
         /// Assumes that requested page index is for right side page index
         /// </summary>
-        /// <param name="rightPageIndex">requested right page index based on slider value</param>
-        /// <returns>task</returns>
-        private async Task LoadPage(int rightPageIndex)
+        /// <param name="sliderIndex">requested right page index based on slider value</param>
+        private void LoadPage(int sliderIndex)
         {
-            // TODO: Add current page logic
-            _printPreviewViewModel.IsLoadPageActive = true;
+            LogUtility.BeginTimestamp("LoadPage");
 
-            _printPreviewViewModel.RightPageImage = new BitmapImage();
-            _printPreviewViewModel.LeftPageImage = new BitmapImage();
+            foreach (CancellationTokenSource token in _cancellationTokenSourceQueue)
+            {
+                token.Cancel();
+            }
+            _cancellationTokenSourceQueue.Clear();
+
+            CancellationTokenSource cancellationToken = new CancellationTokenSource();
+            _cancellationTokenSourceQueue.Add(cancellationToken);
+
+            // Determine right front page index
+            int rightPageIndex = sliderIndex;
+            if (_isBooklet || _isDuplex)
+            {
+                rightPageIndex = sliderIndex * 2;
+            }
+
+            // Fill all white
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightBackPageImage,
+                _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightPageImage,
+                _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftBackPageImage,
+                _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftPageImage,
+                _previewPageImageSize, cancellationToken);
+
+            // Determine page indices based on front right page index
+            _currLeftPageIndex = rightPageIndex - 1;
+            _currRightPageIndex = rightPageIndex;
+            _currLeftBackPageIndex = rightPageIndex - 2;
+            _currRightBackPageIndex = rightPageIndex + 1;
+            if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
+                (!_isBooklet && _isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
+            {
+                // Swap page index on reverse
+                _currLeftPageIndex = rightPageIndex;
+                _currRightPageIndex = rightPageIndex - 1;
+                _currLeftBackPageIndex = rightPageIndex + 1;
+                _currRightBackPageIndex = rightPageIndex - 2;
+            }
 
             // Generate pages to send
-            await GenerateSingleSpread(rightPageIndex, true);
+            GenerateSpread(_currLeftPageIndex, _currRightPageIndex, _currLeftBackPageIndex,
+                _currRightBackPageIndex, cancellationToken);
 
-            // TODO: Add current page logic
-            _printPreviewViewModel.IsLoadPageActive = false;
-
-            GenerateNearPreviewPages(rightPageIndex);
+            LogUtility.EndTimestamp("LoadPage");
         }
 
         /// <summary>
         /// Generates PreviewPage images on a single spread
         /// </summary>
-        /// <param name="rightPageIndex">right page index based on slider value</param>
-        /// <param name="enableSend"></param>
-        /// <returns></returns>
-        private async Task GenerateSingleSpread(int rightPageIndex, bool enableSend)
+        /// <param name="leftPageIndex">front left preview page index</param>
+        /// <param name="rightPageIndex">front right preview page index</param>
+        /// <param name="leftBackPageIndex">back left preview page index</param>
+        /// <param name="rightBackPageIndex">back right preview page index</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        private void GenerateSpread(int leftPageIndex, int rightPageIndex,
+            int leftBackPageIndex, int rightBackPageIndex, CancellationTokenSource cancellationToken)
         {
-            // When booklet is on and booklet finishing is off, act like as duplex (short edge)
-            // so no need for left side
-            if (_isBooklet) // && _currPrintSettings.BookletFinishing != (int)BookletFinishing.Off)
-            {
-                // Compute left side page index
-                int leftSidePreviewPageIndex = rightPageIndex - 1;
-                if (leftSidePreviewPageIndex > 0)
-                {
-                    // Generate left side
-                    await GenerateSingleLeaf(leftSidePreviewPageIndex, false, enableSend);
-                }
-            }
+            // Generate front pages
 
-            if (rightPageIndex < _previewPageTotal)
+            if ((_isBooklet || _isDuplex) &&
+                leftPageIndex > -1 && leftPageIndex < _maxPreviewPageCount)
             {
-                // Generate right side
-                await GenerateSingleLeaf(rightPageIndex, true, enableSend);
-            }
-        }
-
-        /// <summary>
-        /// Generates a single leaf page
-        /// </summary>
-        /// <param name="pageIndex">page index</param>
-        /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
-        /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
-        /// <returns>task</returns>
-        private async Task GenerateSingleLeaf(int pageIndex, bool isRightSide, bool enableSend)
-        {
-            // Compute for logical page index based on imposition
-            int logicalPageIndex = pageIndex * _pagesPerSheet;
-            if (_isReversePages)
-            {
-                logicalPageIndex = (int)DocumentController.Instance.PageCount - 1 - logicalPageIndex;
-            }
-
-            if (enableSend)
-            {
-                // Front
-                await SendPreviewPage(pageIndex, logicalPageIndex, isRightSide, false);
+                // Generate left side
+                GeneratePreviewPage(leftPageIndex, leftPageIndex * _pagesPerSheet, false,
+                    false, cancellationToken);
             }
             else
             {
-                await GenerateNearPreviewPage(pageIndex, logicalPageIndex, isRightSide, false);
+                SendPreviewPageImage(leftPageIndex, true, cancellationToken);
             }
 
-            if (_isDuplex || _isBooklet)
+            if (rightPageIndex > -1 && rightPageIndex < _maxPreviewPageCount)
             {
-                int backPreviewPageIndex;
+                // Generate right side
+                GeneratePreviewPage(rightPageIndex, rightPageIndex * _pagesPerSheet, true,
+                    false, cancellationToken);
+            }
+            else
+            {
+                SendPreviewPageImage(rightPageIndex, true, cancellationToken);
+            }
 
-                if (isRightSide) // Back page is next page
-                {
-                    backPreviewPageIndex = pageIndex + 1;
-                }
-                else // Back page is previous page
-                {
-                    backPreviewPageIndex = pageIndex - 1;
-                }
+            // Generate back pages
 
-                if (backPreviewPageIndex > 0 || backPreviewPageIndex < _previewPageTotal)
-                {
-                    // Compute for next logical page index based on imposition
-                    int nextLogicalPageIndex = backPreviewPageIndex * _pagesPerSheet;
+            if ((_isBooklet || _isDuplex) &&
+                leftBackPageIndex > -1 && leftBackPageIndex < _maxPreviewPageCount)
+            {
+                // Generate left side
+                GeneratePreviewPage(leftBackPageIndex, leftBackPageIndex * _pagesPerSheet, false,
+                    true, cancellationToken);
+            }
+            else
+            {
+                SendPreviewPageImage(leftBackPageIndex, true, cancellationToken);
+            }
 
-                    // Back
-                    if (enableSend)
-                    {
-                        await SendPreviewPage(backPreviewPageIndex, nextLogicalPageIndex, isRightSide, true);
-                    }
-                    else
-                    {
-                        await GenerateNearPreviewPage(backPreviewPageIndex, nextLogicalPageIndex, isRightSide, false);
-                    }
-                }
+            if (rightBackPageIndex > -1 && rightBackPageIndex < _maxPreviewPageCount)
+            {
+                // Generate right side
+                GeneratePreviewPage(rightBackPageIndex, rightBackPageIndex * _pagesPerSheet, true,
+                    true, cancellationToken);
+            }
+            else
+            {
+                SendPreviewPageImage(rightBackPageIndex, true, cancellationToken);
             }
         }
 
         /// <summary>
-        /// Sends the PreviewPage image
+        /// Generate a preview page
         /// </summary>
-        /// <param name="previewPageIndex">target preview page image</param>
-        /// <param name="logicalPageIndex">target logical page image</param>
-        /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
-        /// <param name="isBackSide">true when duplex is on and is for back side, false otherwise</param>
-        /// <returns>task</returns>
-        private async Task SendPreviewPage(int previewPageIndex, int logicalPageIndex,
-            bool isRightSide, bool isBackSide)
-        {
-            bool sent = await SendExistingPreviewImage(previewPageIndex, isRightSide, isBackSide);
-            if (!sent)
-            {
-                // Generate pages, apply print settings then send
-                await DocumentController.Instance.GenerateLogicalPages(logicalPageIndex, _pagesPerSheet);
-                List<LogicalPage> logicalPages = await DocumentController.Instance
-                    .GetLogicalPages(logicalPageIndex, _pagesPerSheet);
-                await ApplyPrintSettings(logicalPages, previewPageIndex, isRightSide, isBackSide, true);
-            }
-        }
-
-        /// <summary>
-        /// Checks if a PreviewPage image already exists then opens and sends the page image
-        /// </summary>
-        /// <param name="targetPreviewPageIndex">target page index</param>
+        /// <param name="previewPageIndex">preview page index</param>
+        /// <param name="logicalPageIndex">logical page index</param>
         /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
         /// <param name="isBackSide">true if the requested page is to be displayed at the back, false otherwise</param>
-        /// <returns>task; true if the PreviewPage image already exists, false otherwise</returns>
-        private async Task<bool> SendExistingPreviewImage(int targetPreviewPageIndex, bool isRightSide,
-            bool isBackSide)
+        /// <param name="cancellationToken">cancellation token</param>
+        private async void GeneratePreviewPage(int previewPageIndex, int logicalPageIndex,
+            bool isRightSide, bool isBackSide, CancellationTokenSource cancellationToken)
         {
-            PreviewPage previewPage = null;
-            if (_previewPages.TryGetValue(targetPreviewPageIndex, out previewPage))
+            if (cancellationToken.IsCancellationRequested)
             {
-                // Get existing file from AppData temporary store
-                StorageFile jpegFile = await StorageFileUtility.GetExistingFile(previewPage.Name,
-                    ApplicationData.Current.TemporaryFolder);
-                if (jpegFile != null)
-                {
-                    // Open the bitmap
-                    BitmapImage bitmapImage = new BitmapImage(new Uri(jpegFile.Path));
-
-                    if (isRightSide && !isBackSide)
-                    {
-                        _printPreviewViewModel.RightPageImage = bitmapImage;
-                        _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
-                        return true;
-                    }
-                    if (!isRightSide && !isBackSide)
-                    {
-                        _printPreviewViewModel.LeftPageImage = bitmapImage;
-                        _printPreviewViewModel.LeftPageActualSize = previewPage.ActualSize;
-                        return true;
-                    }
-                    if (isRightSide && isBackSide)
-                    {
-                        // TODO: Send to appropriate page image side
-                        return true;
-                    }
-                    if (!isRightSide && isBackSide)
-                    {
-                        // TODO: Send to appropriate page image side
-                        return true;
-                    }
-                }
+                return;
             }
-            return false;
-        }
 
-        /// <summary>
-        /// Generates next and previous PreviewPage images if not exist
-        /// </summary>
-        /// <param name="rightPageIndex"></param>
-        private async void GenerateNearPreviewPages(int rightPageIndex)
-        {
-            await GenerateSingleSpread(rightPageIndex + 1, false);
-            await GenerateSingleSpread(rightPageIndex - 1, false);
-        }
-
-        /// <summary>
-        /// Generate near pages
-        /// </summary>
-        /// <param name="previewPageIndex">PreviewPage index</param>
-        /// <param name="logicalPageIndex">LogicalPage index</param>
-        /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
-        /// <param name="isBackSide">true if the requested page is to be displayed at the back, false otherwise</param>
-        /// <returns>task</returns>
-        private async Task GenerateNearPreviewPage(int previewPageIndex, int logicalPageIndex,
-            bool isRightSide, bool isBackSide)
-        {
-            if (!_previewPages.ContainsKey(previewPageIndex))
+            if (!_previewPageImages.ContainsKey(previewPageIndex) &&
+                !(isBackSide && !(_isBooklet || _isDuplex)))
             {
-                await DocumentController.Instance.GenerateLogicalPages(logicalPageIndex, _pagesPerSheet);
-                List<LogicalPage> logicalPages = await DocumentController.Instance
-                    .GetLogicalPages(logicalPageIndex, _pagesPerSheet);
-                await ApplyPrintSettings(logicalPages, previewPageIndex, isRightSide, isBackSide, false);
+                List<WriteableBitmap> logicalPageImages = await DocumentController.Instance
+                    .GetLogicalPageImages(logicalPageIndex, _pagesPerSheet, cancellationToken);
+
+                Size logicalPageSize = new Size(0, 0);
+                if (logicalPageImages != null && logicalPageImages.Count > 0)
+                {
+                    logicalPageSize.Width = logicalPageImages[0].PixelWidth;
+                    logicalPageSize.Height = logicalPageImages[0].PixelHeight;
+                }
+
+                WriteableBitmap canvasBitmap = new WriteableBitmap((int)_previewPageImageSize.Width,
+                    (int)_previewPageImageSize.Height);
+
+                await ThreadPool.RunAsync(
+                    (workItem) =>
+                    {
+                        ApplyPrintSettings(canvasBitmap, _previewPageImageSize,
+                            logicalPageImages, logicalPageSize,
+                            previewPageIndex, isRightSide, isBackSide,
+                            cancellationToken);
+
+                        SendPreviewPageImage(previewPageIndex, false, cancellationToken);
+                    });
+            }
+            else
+            {
+                SendPreviewPageImage(previewPageIndex, false, cancellationToken);
             }
         }
 
@@ -691,1080 +690,253 @@ namespace SmartDeviceApp.Controllers
         #region Apply Print Settings
 
         /// <summary>
-        /// Applies print settings to LogicalPage images then creates a PreviewPage
+        /// Applies print settings to logical page images to create a single preview page
         /// </summary>
-        /// <param name="logicalPages">source LogicalPage images</param>
-        /// <param name="previewPageIndex">target preview page index</param>
+        /// <param name="canvasBitmap">preview page image</param>
+        /// <param name="previewPageSize">preview page size</param>
+        /// <param name="logicalPageImages">logical page images</param>
+        /// <param name="logicalPageSize">logical page size</param>
+        /// <param name="previewPageIndex">preview page index</param>
         /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
         /// <param name="isBackSide">true when duplex is on and is for back side, false otherwise</param>
-        /// <param name="enableSend">true when needs to send to preview, false otherwise</param>
-        /// <returns>task</returns>
-        private async Task ApplyPrintSettings(List<LogicalPage> logicalPages, int previewPageIndex,
-            bool isRightSide, bool isBackSide, bool enableSend)
+        /// <param name="cancellationToken">cancellation token</param>
+        private void ApplyPrintSettings(WriteableBitmap canvasBitmap,
+            Size previewPageSize, List<WriteableBitmap> logicalPageImages, Size logicalPageSize,
+            int previewPageIndex, bool isRightSide, bool isBackSide,
+            CancellationTokenSource cancellationToken)
         {
-            if (logicalPages != null && logicalPages.Count > 0)
+            LogUtility.BeginTimestamp("ApplyPrintSettings #" + previewPageIndex);
+
+            Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
+
+            bool isPdfPortait = DocumentController.Instance.IsPdfPortrait;
+            bool isPreviewPagePortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
+                _currPrintSettings.Orientation);
+
+            if (logicalPageImages != null && logicalPageImages.Count > 0)
             {
-                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-
-                WriteableBitmap finalBitmap = new WriteableBitmap(1, 1); // Size does not matter yet
-                List<WriteableBitmap> pageImages = new List<WriteableBitmap>(); // Ordered list
-
-                Size paperSize = GetPaperSize(_currPrintSettings.PaperSize);
-
-                bool isPortrait = IsPortrait(_currPrintSettings.Orientation,
-                    _currPrintSettings.BookletLayout);
-
-                // Loop to each LogicalPage(s) to selected paper size and orientation
-                foreach (LogicalPage logicalPage in logicalPages)
-                {
-                    // Open PreviewPage image from AppData temporary store
-                    string pageImageFileName = logicalPage.Name;
-                    try
-                    {
-                        StorageFile jpgFile = await tempFolder.GetFileAsync(pageImageFileName);
-                        using (IRandomAccessStream raStream = await jpgFile.OpenReadAsync())
-                        {
-                            // Put LogicalPage image to a bitmap
-                            WriteableBitmap pageBitmap = await WriteableBitmapExtensions.FromStream(
-                                null, raStream);
-
-                            if (_pagesPerSheet > 1)
-                            {
-                                pageImages.Add(pageBitmap);
-                            }
-                            else if (_pagesPerSheet == 1)
-                            {
-                                WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize,
-                                    isPortrait);
-                                ApplyPageImageToPaper(_currPrintSettings.ScaleToFit,
-                                    canvasBitmap, pageBitmap);
-                                pageImages.Add(canvasBitmap);
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // Error handling (UnauthorizedAccessException)
-                    }
-                }
-
-                bool isFinalPortrait = isPortrait;
                 // Check imposition value
                 if (_pagesPerSheet > 1)
                 {
-                    finalBitmap = ApplyImposition(paperSize, pageImages, isPortrait,
-                        _currPrintSettings.ImpositionOrder, out isFinalPortrait);
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    PreviewPageImageUtility.OverlayImagesForImposition(canvasBitmap, previewPageSize,
+                        logicalPageImages, logicalPageSize,
+                        _currPrintSettings.Orientation, _currPrintSettings.Imposition,
+                        _currPrintSettings.ImpositionOrder, _currPrintSettings.ScaleToFit,
+                        isPdfPortait, isPreviewPagePortrait, out isPreviewPagePortrait,
+                        cancellationToken);
                 }
                 else if (_pagesPerSheet == 1)
                 {
-                    finalBitmap = WriteableBitmapExtensions.Clone(pageImages[0]);
+                    PreviewPageImageUtility.OverlayImage(canvasBitmap, previewPageSize,
+                        logicalPageImages[0], logicalPageSize, isPdfPortait, isPreviewPagePortrait,
+                        _currPrintSettings.ScaleToFit,
+                        cancellationToken);
                 }
-
-                // Check color mode value
-                if (_currPrintSettings.ColorMode.Equals((int)ColorMode.Mono))
+            }
+            else
+            {
+                // Create white page
+                if (cancellationToken.IsCancellationRequested)
                 {
-                    ApplyMonochrome(finalBitmap);
+                    return;
                 }
 
+                PreviewPageImageUtility.FillWhitePageImage(canvasBitmap, previewPageSize,
+                    cancellationToken);
+            }
+
+            // Check color mode value
+            if (_currPrintSettings.ColorMode.Equals((int)ColorMode.Mono))
+            {
+                PreviewPageImageUtility.GrayscalePageImage(canvasBitmap, cancellationToken);
+            }
+
+#if PREVIEW_STAPLE
+            if (_isBooklet)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                PreviewPageImageUtility.FormatPageImageForBooklet(canvasBitmap, previewPageSize,
+                    _currPrintSettings.BookletFinishing, isPreviewPagePortrait, isRightSide,
+                    isBackSide, cancellationToken);
+            }
+            else if (_isDuplex)
+#else // PREVIEW_STAPLE
+            if (_isDuplex && !_isBooklet)
+#endif // PREVIEW_STAPLE
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                PreviewPageImageUtility.FormatPageImageForDuplex(canvasBitmap,
+                    previewPageSize, _currPrintSettings.Duplex, _currPrintSettings.FinishingSide,
+                    _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
+                    _currPrintSettings.Staple, isPdfPortait, isPreviewPagePortrait,
+                    isRightSide, isBackSide, cancellationToken);
+            }
+            else // Not duplex and not booket
+            {
                 int finishingSide = _currPrintSettings.FinishingSide;
-                int holeCount = GetPunchHoleCount(_currPrintSettings.Punch);
-                int staple = _currPrintSettings.Staple;
-
-                if (_isDuplex) // Also hit when booklet is on and booklet finishing is off
+                // Change finishing side on back pages
+                if (isBackSide)
                 {
-                    await ApplyDuplex(finalBitmap, _currPrintSettings.Duplex,
-                        finishingSide, holeCount, staple, isFinalPortrait, isBackSide);
-                }
-                else if (_isBooklet)
-                {
-                    await ApplyBooklet(finalBitmap, _currPrintSettings.BookletFinishing,
-                        isFinalPortrait, isBackSide, isRightSide);
-                }
-                else // Not duplex and not booket
-                {
-                    // Apply punch
-                    if (holeCount > 0)
+                    if (finishingSide == (int)FinishingSide.Left)
                     {
-                        await ApplyPunch(finalBitmap, holeCount, finishingSide);
+                        finishingSide = (int)FinishingSide.Right;
                     }
-
-                    // Apply staple
-                    if (staple != (int)Staple.Off)
+                    else if (finishingSide == (int)FinishingSide.Right)
                     {
-                        await ApplyStaple(finalBitmap, staple, finishingSide);
+                        finishingSide = (int)FinishingSide.Left;
+                    }
+                    else if (finishingSide == (int)FinishingSide.Top)
+                    {
+                        finishingSide = -1; // Out of range number to denote bottom
                     }
                 }
 
-                try
+#if PREVIEW_PUNCH
+                // Apply punch
+                if (_currPrintSettings.Punch != (int)Punch.Off)
                 {
-                    // Save PreviewPage into AppData temporary store
-                    StorageFile tempPageImage = await tempFolder.CreateFileAsync(
-                        String.Format(FORMAT_FILE_NAME_PREVIEW_PAGE_IMAGE, previewPageIndex, DateTime.UtcNow),
-                        CreationCollisionOption.GenerateUniqueName);
-                    using (var destinationStream =
-                        await tempPageImage.OpenAsync(FileAccessMode.ReadWrite))
+                    if (cancellationToken.IsCancellationRequested)
                     {
-                        BitmapEncoder newEncoder = await BitmapEncoder.CreateAsync(
-                            BitmapEncoder.JpegEncoderId, destinationStream);
-                        byte[] pixels = WriteableBitmapExtensions.ToByteArray(finalBitmap);
-                        newEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
-                            (uint)finalBitmap.PixelWidth, (uint)finalBitmap.PixelHeight,
-                            ImageConstant.BASE_DPI, ImageConstant.BASE_DPI, pixels);
-                        await newEncoder.FlushAsync();
+                        return;
                     }
 
-                    PreviewPage previewPage = new PreviewPage((uint)previewPageIndex,
-                        tempPageImage.Name, new Size(finalBitmap.PixelWidth, finalBitmap.PixelHeight));
+                    PreviewPageImageUtility.OverlayPunch(canvasBitmap, previewPageSize,
+                        _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
+                        finishingSide, cancellationToken);
+                }
+#endif // PREVIEW_PUNCH
 
-                    // Check if needs to send the page image
-                    // Don't bother to send the old requests
-                    if (enableSend &&
-                        ((isRightSide && _currPreviewPageIndex == previewPageIndex) ||
-                         (!isRightSide && _currPreviewPageIndex - 1 == previewPageIndex)))
+#if PREVIEW_STAPLE
+                // Apply staple
+                if (_currPrintSettings.Staple != (int)Staple.Off)
+                {
+                    if (cancellationToken.IsCancellationRequested)
                     {
-                        // Open the bitmap
-                        BitmapImage bitmapImage = new BitmapImage(new Uri(tempPageImage.Path));
+                        return;
+                    }
 
-                        if (isRightSide && !isBackSide)
+                    PreviewPageImageUtility.OverlayStaple(canvasBitmap, previewPageSize,
+                        _currPrintSettings.Staple, finishingSide, false,
+                        cancellationToken);
+                }
+#endif // PREVIEW_STAPLE
+            }
+
+            DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    _previewPageImages.Add(previewPageIndex, canvasBitmap.ToByteArray());
+                });
+
+            LogUtility.EndTimestamp("ApplyPrintSettings #" + previewPageIndex);
+
+            return;
+        }
+
+        /// <summary>
+        /// Puts the preview page image to the image source
+        /// </summary>
+        /// <param name="previewPageIndex">preview page index</param>
+        /// <param name="enableClearPage">true to clear the page image, false otherwise (retains white fill)</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        private void SendPreviewPageImage(int previewPageIndex, bool enableClearPage,
+            CancellationTokenSource cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            if ((_isBooklet || _isDuplex) && previewPageIndex == _currLeftPageIndex)
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        if (_previewPageImages.ContainsKey(_currLeftPageIndex))
                         {
-                            _printPreviewViewModel.RightPageImage = bitmapImage;
-                            _printPreviewViewModel.RightPageActualSize = previewPage.ActualSize;
+                            WriteableBitmapExtensions.FromByteArray(
+                                _printPreviewViewModel.LeftPageImage,
+                                _previewPageImages.GetValue(_currLeftPageIndex));
                         }
-                        else if (!isRightSide && !isBackSide)
+                        else if (enableClearPage)
                         {
-                            _printPreviewViewModel.LeftPageImage = bitmapImage;
-                            _printPreviewViewModel.LeftPageActualSize = previewPage.ActualSize;
+                            _printPreviewViewModel.LeftPageImage.Clear();
                         }
-                        else if (isRightSide && isBackSide)
+                        _printPreviewViewModel.IsLoadLeftPageActive = false;
+                    });
+            }
+            else if (previewPageIndex == _currRightPageIndex)
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    if (_previewPageImages.ContainsKey(_currRightPageIndex))
+                    {
+                        WriteableBitmapExtensions.FromByteArray(
+                            _printPreviewViewModel.RightPageImage,
+                            _previewPageImages.GetValue(_currRightPageIndex));
+                    }
+                    else if (enableClearPage)
+                    {
+                        _printPreviewViewModel.RightPageImage.Clear();
+                    }
+                    _printPreviewViewModel.IsLoadRightPageActive = false;
+                });
+            }
+            else if ((_isBooklet || _isDuplex) && previewPageIndex == _currLeftBackPageIndex)
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        if (_previewPageImages.ContainsKey(_currLeftBackPageIndex))
                         {
-                            // TODO: Send to appropriate side
+                            WriteableBitmapExtensions.FromByteArray(
+                                _printPreviewViewModel.LeftBackPageImage,
+                                _previewPageImages.GetValue(_currLeftBackPageIndex));
                         }
-                        else if (!isRightSide && isBackSide)
+                        else if (enableClearPage)
                         {
-                            // TODO: Send to appropriate side
+                            _printPreviewViewModel.LeftBackPageImage.Clear();
                         }
-                    }
-
-                    // Update PreviewPage list
-                    if (_previewPages.ContainsKey(previewPageIndex))
+                        _printPreviewViewModel.IsLoadLeftBackPageActive = false;
+                    });
+            }
+            else if (previewPageIndex == _currRightBackPageIndex)
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    if (_previewPageImages.ContainsKey(_currRightBackPageIndex))
                     {
-                        // Delete old images
-                        await StorageFileUtility.DeleteFilesExcept(
-                            string.Format(FORMAT_PREFIX_PREVIEW_PAGE_IMAGE_WITH_INDEX, previewPageIndex),
-                            previewPage.Name, tempFolder);
-                        // Overwrite the new entry from the list
-                        _previewPages[previewPageIndex] = previewPage;
+                        WriteableBitmapExtensions.FromByteArray(
+                            _printPreviewViewModel.RightBackPageImage,
+                            _previewPageImages.GetValue(_currRightBackPageIndex));
                     }
-                    else
+                    else if (enableClearPage)
                     {
-                        _previewPages.Add(previewPageIndex, previewPage);
+                        _printPreviewViewModel.RightBackPageImage.Clear();
                     }
-                }
-                catch (Exception)
-                {
-                    // Error handling
-                }
+                    _printPreviewViewModel.IsLoadRightBackPageActive = false;
+                });
             }
-        }
-
-        /// <summary>
-        /// Creates a bitmap based on target paper size and orientation
-        /// </summary>
-        /// <param name="paperSize">target paper size</param>
-        /// <param name="isPortrait">orientation</param>
-        /// <returns>bitmap filled with white</returns>
-        private WriteableBitmap ApplyPaperSizeAndOrientation(Size paperSize, bool isPortrait)
-        {
-            Size pageImageSize = GetPreviewPageImageSize(paperSize, isPortrait);
-
-            // Create canvas based on paper size and orientation
-            WriteableBitmap canvasBitmap = new WriteableBitmap((int)pageImageSize.Width,
-                (int)pageImageSize.Height);
-            // Fill all white
-            WriteableBitmapExtensions.FillRectangle(canvasBitmap, 0, 0, (int)pageImageSize.Width,
-                (int)pageImageSize.Height, Windows.UI.Colors.White);
-
-            return canvasBitmap;
-        }
-
-        /// <summary>
-        /// Retrieves the target PreviewPage image size
-        /// </summary>
-        /// <param name="paperSize">selected paper size</param>
-        /// <param name="isPortrait">true if portrait, false otherwise</param>
-        /// <returns>size of the PreviewPage image</returns>
-        private Size GetPreviewPageImageSize(Size paperSize, bool isPortrait)
-        {
-            // Get paper size and apply DPI
-            double length1 = paperSize.Width * ImageConstant.BASE_DPI;
-            double length2 = paperSize.Height * ImageConstant.BASE_DPI;
-
-            Size pageImageSize = new Size();
-            // Check orientation
-            if (isPortrait)
-            {
-                pageImageSize.Width = length1;
-                pageImageSize.Height = length2;
-            }
-            else
-            {
-                pageImageSize.Width = length2;
-                pageImageSize.Height = length1;
-            }
-
-            return pageImageSize;
-        }
-
-        /// <summary>
-        /// Puts LogicalPage image into the bitmap
-        /// </summary>
-        /// <param name="enableScaleToFit">scale to fit setting</param>
-        /// <param name="canvasBitmap">PreviewPage image</param>
-        /// <param name="pageBitmap">LogicalPage image</param>
-        private void ApplyPageImageToPaper(bool enableScaleToFit, WriteableBitmap canvasBitmap,
-            WriteableBitmap pageBitmap)
-        {
-            if (enableScaleToFit)
-            {
-                ApplyScaleToFit(canvasBitmap, pageBitmap, false);
-            }
-            else
-            {
-                ApplyImageToPaper(canvasBitmap, pageBitmap);
-            }
-        }
-
-        /// <summary>
-        /// Scales the LogicalPage image into the PreviewPage image
-        /// </summary>
-        /// <param name="canvasBitmap">target page image placement</param>
-        /// <param name="pageBitmap">page image to be fitted</param>
-        /// <param name="addBorder">true when border is added to fitted image, false otherwise</param>
-        private void ApplyScaleToFit(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap,
-            bool addBorder)
-        {
-            double scaleX = (double)canvasBitmap.PixelWidth / pageBitmap.PixelWidth;
-            double scaleY = (double)canvasBitmap.PixelHeight / pageBitmap.PixelHeight;
-            double targetScaleFactor = (scaleX < scaleY) ? scaleX : scaleY;
-
-            // Scale the LogicalPage image
-            WriteableBitmap scaledBitmap = WriteableBitmapExtensions.Resize(pageBitmap,
-                (int)(pageBitmap.PixelWidth * targetScaleFactor),
-                (int)(pageBitmap.PixelHeight * targetScaleFactor),
-                WriteableBitmapExtensions.Interpolation.Bilinear);
-            if (addBorder)
-            {
-                ApplyBorder(scaledBitmap, 0, 0, scaledBitmap.PixelWidth,
-                    scaledBitmap.PixelHeight);
-            }
-
-            // Compute position in PreviewPage image
-            Rect srcRect = new Rect(0, 0, scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
-            Rect destRect = new Rect(
-                (canvasBitmap.PixelWidth - scaledBitmap.PixelWidth) / 2,    // Puts the image to the center X
-                (canvasBitmap.PixelHeight - scaledBitmap.PixelHeight) / 2,  // Puts the image to the center Y
-                scaledBitmap.PixelWidth, scaledBitmap.PixelHeight);
-            WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledBitmap, srcRect);
-        }
-
-        /// <summary>
-        /// Applies border to the image
-        /// </summary>
-        /// <param name="canvasBitmap">bitmap image</param>
-        /// <param name="xOrigin">starting position</param>
-        /// <param name="yOrigin">starting position</param>
-        /// <param name="width">length along x-axis</param>
-        /// <param name="height">length along y-axis</param>
-        private void ApplyBorder(WriteableBitmap canvasBitmap, int xOrigin, int yOrigin, int width,
-            int height)
-        {
-            WriteableBitmapExtensions.DrawRectangle(canvasBitmap, xOrigin, xOrigin,
-                    width, height, Windows.UI.Colors.Black);
-        }
-
-        /// <summary>
-        /// Puts the LogicalPage image into PreviewPage as is (cropping the excess area)
-        /// </summary>
-        /// <param name="canvasBitmap">PreviewPage image</param>
-        /// <param name="pageBitmap">LogicalPage image</param>
-        private void ApplyImageToPaper(WriteableBitmap canvasBitmap, WriteableBitmap pageBitmap)
-        {
-            // Determine LogicalPage sizes if cropping is needed
-            // If not cropped, LogicalPage just fits into paper
-            int cropWidth = canvasBitmap.PixelWidth;
-            if (canvasBitmap.PixelWidth > pageBitmap.PixelWidth)
-            {
-                cropWidth = pageBitmap.PixelWidth;
-            }
-            int cropHeight = canvasBitmap.PixelHeight;
-            if (canvasBitmap.PixelHeight > pageBitmap.PixelHeight)
-            {
-                cropHeight = pageBitmap.PixelHeight;
-            }
-
-            // Source and destination rectangle are the same since
-            // LogicalPage is cropped using the rectangle and put as in into the paper
-            Rect rect = new Rect(0, 0, cropWidth, cropHeight);
-
-            // Place image into paper
-            WriteableBitmapExtensions.Blit(canvasBitmap, rect, pageBitmap, rect);
-        }
-
-        /// <summary>
-        /// Applies imposition (uses selected imposition order).
-        /// Imposition images are assumed to be applied with selected paper size and orientation.
-        /// The page images are assumed to be in order based on LogicalPage index.
-        /// </summary>
-        /// <param name="paperSize">selected paper size used in scaling the imposition page images</param>
-        /// <param name="pageImages">imposition page images</param>
-        /// <param name="isPortrait">selected orientation; true if portrait, false otherwise</param>
-        /// <param name="impositionOrder">direction of imposition</param>
-        /// <returns>page image with applied imposition value
-        /// Final output page image is
-        /// * portrait when imposition value is 4-up
-        /// * otherwise landscape</returns>
-        private WriteableBitmap ApplyImposition(Size paperSize, List<WriteableBitmap> pageImages,
-            bool isPortrait, int impositionOrder, out bool isImpositionPortrait)
-        {
-            // Determine final orientation based on imposition
-            bool isPagesPerSheetPerfectSquare = (Math.Sqrt(_pagesPerSheet) % 1) == 0;
-            isImpositionPortrait = (isPagesPerSheetPerfectSquare) ? isPortrait : !isPortrait;
-            // Create target page image based on imposition
-            WriteableBitmap canvasBitmap = ApplyPaperSizeAndOrientation(paperSize, isImpositionPortrait);
-
-            // Compute number of pages per row and column
-            int pagesPerRow = 0;
-            int pagesPerColumn = 0;
-            if (isImpositionPortrait)
-            {
-                pagesPerColumn = (int)Math.Sqrt(_pagesPerSheet);
-                pagesPerRow = _pagesPerSheet / pagesPerColumn;
-            }
-            else
-            {
-                pagesPerRow = (int)Math.Sqrt(_pagesPerSheet);
-                pagesPerColumn = _pagesPerSheet / pagesPerRow;
-            }
-
-            // Compute page area size and margin
-            double marginPaper = PrintSettingConstant.MARGIN_IMPOSITION_EDGE * ImageConstant.BASE_DPI;
-            double marginBetweenPages = PrintSettingConstant.MARGIN_IMPOSITION_BETWEEN_PAGES * ImageConstant.BASE_DPI;
-            Size impositionPageAreaSize = GetImpositionSinglePageAreaSize(canvasBitmap.PixelWidth,
-                canvasBitmap.PixelHeight, pagesPerRow, pagesPerColumn,
-                marginBetweenPages, marginPaper);
-
-            // Set initial positions
-            double initialOffsetX = 0;
-            double initialOffsetY = 0;
-            if (impositionOrder == (int)ImpositionOrder.FourUpUpperRightToBottom ||
-                impositionOrder == (int)ImpositionOrder.FourUpUpperRightToLeft ||
-                impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft)
-            {
-                initialOffsetX = (marginBetweenPages * (pagesPerColumn - 1)) +
-                    (impositionPageAreaSize.Width * (pagesPerColumn - 1));
-            }
-            if (impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft &&
-                isImpositionPortrait)
-            {
-                initialOffsetY = (marginBetweenPages * (pagesPerRow - 1)) +
-                    (impositionPageAreaSize.Height * (pagesPerRow - 1));
-            }
-
-            // Loop each imposition page
-            int impositionPageIndex = 0;
-            double pageImageOffsetX = initialOffsetX;
-            double pageImageOffsetY = initialOffsetY;
-            foreach (WriteableBitmap impositionPageBitmap in pageImages)
-            {
-                // Put imposition page image in center of imposition page area
-                double x = marginPaper + pageImageOffsetX;
-                double y = marginPaper + pageImageOffsetY;
-
-                // Scale imposition page
-                WriteableBitmap scaledImpositionPageBitmap =
-                    new WriteableBitmap((int)impositionPageAreaSize.Width,
-                        (int)impositionPageAreaSize.Height);
-                WriteableBitmapExtensions.FillRectangle(scaledImpositionPageBitmap, 0, 0,
-                    scaledImpositionPageBitmap.PixelWidth, scaledImpositionPageBitmap.PixelHeight,
-                    Windows.UI.Colors.White);
-                ApplyScaleToFit(scaledImpositionPageBitmap, impositionPageBitmap, false); // No border
-
-                // Put imposition page image to target page image
-                Rect destRect = new Rect(x, y, scaledImpositionPageBitmap.PixelWidth,
-                    scaledImpositionPageBitmap.PixelHeight);
-                Rect srcRect = new Rect(0, 0, scaledImpositionPageBitmap.PixelWidth,
-                    scaledImpositionPageBitmap.PixelHeight);
-                WriteableBitmapExtensions.Blit(canvasBitmap, destRect, scaledImpositionPageBitmap,
-                    srcRect);
-
-                // Update offset/postion based on direction
-                if (impositionOrder == (int)ImpositionOrder.TwoUpLeftToRight ||
-                    impositionOrder == (int)ImpositionOrder.FourUpUpperLeftToRight)
-                {
-                    // Upper left to right
-                    pageImageOffsetX += marginBetweenPages + impositionPageAreaSize.Width;
-                    if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
-                    {
-                        pageImageOffsetX = initialOffsetX;
-                        pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
-                    }
-                }
-                else if (impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft &&
-                    isImpositionPortrait)
-                {
-                    // Lower left to right
-                    pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
-                    if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
-                    {
-                        pageImageOffsetX = initialOffsetX;
-                        pageImageOffsetY -= marginBetweenPages + impositionPageAreaSize.Height;
-                    }
-                }
-                else if (impositionOrder == (int)ImpositionOrder.FourUpUpperLeftToBottom)
-                {
-                    // Upper left to bottom
-                    pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
-                    if (((impositionPageIndex + 1) % pagesPerRow) == 0)
-                    {
-                        pageImageOffsetY = initialOffsetY;
-                        pageImageOffsetX += marginBetweenPages + impositionPageAreaSize.Width;
-                    }
-                }
-                else if (impositionOrder == (int)ImpositionOrder.FourUpUpperRightToBottom)
-                {
-                    // Upper right to bottom
-                    pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
-                    if (((impositionPageIndex + 1) % pagesPerRow) == 0)
-                    {
-                        pageImageOffsetY = initialOffsetY;
-                        pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
-                    }
-                }
-                else if ((impositionOrder == (int)ImpositionOrder.TwoUpRightToLeft && !isImpositionPortrait) ||
-                    impositionOrder == (int)ImpositionOrder.FourUpUpperRightToLeft)
-                {
-                    // Upper right to left
-                    pageImageOffsetX -= marginBetweenPages + impositionPageAreaSize.Width;
-                    if (((impositionPageIndex + 1) % pagesPerColumn) == 0)
-                    {
-                        pageImageOffsetX = initialOffsetX;
-                        pageImageOffsetY += marginBetweenPages + impositionPageAreaSize.Height;
-                    }
-                }
-
-                ++impositionPageIndex;
-            }
-
-            return canvasBitmap;
-        }
-
-        /// <summary>
-        /// Computes the page area for imposition
-        /// </summary>
-        /// <param name="width">PreviewPage image width</param>
-        /// <param name="height">PreviewPage image height</param>
-        /// <param name="numRows">number of rows based on imposition</param>
-        /// <param name="numColumns">number of columns based on imposition</param>
-        /// <param name="marginBetween">margin between pages (in pixels)</param>
-        /// <param name="marginOuter">margin of the PreviewPage image (in pixels)</param>
-        /// <returns>size of a page for imposition</returns>
-        private Size GetImpositionSinglePageAreaSize(int width, int height, int numRows, int numColumns,
-            double marginBetween, double marginOuter)
-        {
-            Size pageAreaSize = new Size();
-            if (width > 0 && height > 0 && numRows > 0 && numColumns > 0)
-            {
-                pageAreaSize.Width = (width - (marginBetween * (numColumns - 1)) - (marginOuter * 2))
-                    / numColumns;
-                pageAreaSize.Height = (height - (marginBetween * (numRows - 1)) - (marginOuter * 2))
-                    / numRows;
-            }
-            return pageAreaSize;
-        }
-
-        /// <summary>
-        /// Changes the bitmap to grayscale
-        /// </summary>
-        /// <param name="canvasBitmap">bitmap to change</param>
-        private void ApplyMonochrome(WriteableBitmap canvasBitmap)
-        {
-            byte[] pixelBytes = WriteableBitmapExtensions.ToByteArray(canvasBitmap);
-
-            // From http://social.msdn.microsoft.com/Forums/windowsapps/en-US/5ff10c14-51d4-4760-afe6-091624adc532/sample-code-for-making-a-bitmapimage-grayscale
-            for (int i = 0; i < pixelBytes.Length; i += 4)
-            {
-                double b = (double)pixelBytes[i] / 255.0;
-                double g = (double)pixelBytes[i + 1] / 255.0;
-                double r = (double)pixelBytes[i + 2] / 255.0;
-                byte a = pixelBytes[i + 3];
-
-                // Altered color factor to be equal
-                double bwPixel = (0.3 * r + 0.59 * g + 0.11 * b) * 255;
-                byte bwPixelByte = Convert.ToByte(bwPixel);
-
-                pixelBytes[i] = bwPixelByte;
-                pixelBytes[i + 1] = bwPixelByte;
-                pixelBytes[i + 2] = bwPixelByte;
-                pixelBytes[i + 3] = a;
-            }
-
-            // Copy pixels to bitmap
-            WriteableBitmapExtensions.FromByteArray(canvasBitmap, pixelBytes);
-        }
-
-        /// <summary>
-        /// Applies duplex into image with staple and punch as needed
-        /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="duplexType">duplex setting</param>
-        /// <param name="finishingSide">finishing side</param>
-        /// <param name="holeCount">hole punch count; 0 if punch is off</param>
-        /// <param name="staple">staple type</param>
-        /// <param name="isPortrait">true when portrait, false, otherwise</param>
-        /// <param name="isBackSide">true if for backside (duplex), false otherwise</param>
-        /// <returns>task</returns>
-        private async Task ApplyDuplex(WriteableBitmap canvasBitmap, int duplexType,
-            int finishingSide, int holeCount, int staple, bool isPortrait, bool isBackSide)
-        {
-            bool needsRotate = (duplexType == (int)Duplex.LongEdge && !isPortrait) ||
-                                    (duplexType == (int)Duplex.ShortEdge && isPortrait);
-
-            // Determine actual finishing side based on duplex
-            if (isBackSide && !needsRotate)
-            {
-                // Change the side of the staple if letf or right
-                if (finishingSide == (int)FinishingSide.Left)
-                {
-                    finishingSide = (int)FinishingSide.Right;
-                }
-                else if (finishingSide == (int)FinishingSide.Right)
-                {
-                    finishingSide = (int)FinishingSide.Left;
-                }
-            }
-
-            // Apply punch
-            if (holeCount > 0)
-            {
-                await ApplyPunch(canvasBitmap, holeCount, finishingSide);
-            }
-
-            // Apply staple
-            if (staple != (int)Staple.Off)
-            {
-                await ApplyStaple(canvasBitmap, staple, finishingSide);
-            }
-
-            // Apply duplex as the back page image
-            if (isBackSide && needsRotate)
-            {
-                canvasBitmap = WriteableBitmapExtensions.Rotate(canvasBitmap, 180);
-            }
-        }
-
-        /// <summary>
-        /// Applies booklet settings into a single page image
-        /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="bookletFinishing">booklet finishing</param>
-        /// <param name="isPortrait">true when portrait, false otherwise</param>
-        /// <param name="isBackSide">true if for backside (booklet), false otherwise</param>
-        /// <param name="isRightSide">true when page is on right side, false otherwise</param>
-        /// <returns>task</returns>
-        private async Task ApplyBooklet(WriteableBitmap canvasBitmap, int bookletFinishing,
-            bool isPortrait, bool isBackSide, bool isRightSide)
-        {
-            // Determine finishing side
-            int bindingSide = -1; // Out of range number to denote bottom
-            if (isPortrait && !isBackSide)
-            {
-                bindingSide = (int)FinishingSide.Left;
-            }
-            else if (isPortrait && isBackSide)
-            {
-                bindingSide = (int)FinishingSide.Right;
-            }
-            else if (!isPortrait && !isBackSide)
-            {
-                bindingSide = (int)FinishingSide.Top;
-            }
-
-            // Determine booklet type
-            bool applyStaple = (bookletFinishing == (int)BookletFinishing.FoldAndStaple);
-
-            // Apply staple at the edge based on finishing side
-            if (applyStaple)
-            {
-                await ApplyStaple(canvasBitmap, 0, bindingSide, _isBooklet,
-                    isRightSide);
-            }
-        }
-
-        /// <summary>
-        /// Adds staple wire image into target page image.
-        /// This function ignores the booklet setting.
-        /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="stapleType">type indicating number of staple</param>
-        /// <param name="finishingSide">position of staple</param>
-        /// <returns>task</returns>
-        private async Task ApplyStaple(WriteableBitmap canvasBitmap, int stapleType,
-            int finishingSide)
-        {
-            await ApplyStaple(canvasBitmap, stapleType, finishingSide, false, false);
-        }
-
-        /// <summary>
-        /// Adds staple wire image into target page image specifying the booklet setting.
-        /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="stapleType">type indicating number of staple (not used when booklet is on)</param>
-        /// <param name="finishingSide">position of staple</param>
-        /// <param name="isBooklet">true when booklet is on, false otherwise</param>
-        /// <param name="isRightSide">true when page is on right side, false otherwise</param>
-        /// <returns>true</returns>
-        private async Task ApplyStaple(WriteableBitmap canvasBitmap, int stapleType,
-            int finishingSide, bool isBooklet, bool isRightSide)
-        {
-            // Get staple image
-            WriteableBitmap stapleBitmap = new WriteableBitmap(1, 1); // Size doesn't matter here yet
-            StorageFile stapleFile = await StorageFileUtility.GetFileFromAppResource(FILE_PATH_RES_IMAGE_STAPLE);
-            using (IRandomAccessStream raStream = await stapleFile.OpenReadAsync())
-            {
-                // Put staple image to a bitmap
-                stapleBitmap = await WriteableBitmapExtensions.FromStream(null, raStream);
-            }
-            double targetScaleFactor =
-                (double)(PrintSettingConstant.STAPLE_CROWN_LENGTH * ImageConstant.BASE_DPI)
-                / stapleBitmap.PixelWidth;
-            // Scale the staple image
-            WriteableBitmap scaledStapleBitmap = WriteableBitmapExtensions.Resize(stapleBitmap,
-                (int)(stapleBitmap.PixelWidth * targetScaleFactor),
-                (int)(stapleBitmap.PixelHeight * targetScaleFactor),
-                WriteableBitmapExtensions.Interpolation.Bilinear);
-
-            if (isBooklet)
-            {
-                // Crop staple; only half of the staple is visible to each page
-                Rect region;
-                double halfStapleWidth = (double)scaledStapleBitmap.PixelWidth / 2;
-                double halfStapleHeight = (double)scaledStapleBitmap.PixelHeight / 2;
-                if (isRightSide)
-                {
-                    region = new Rect(halfStapleWidth, halfStapleHeight, halfStapleWidth, halfStapleHeight);
-                }
-                else
-                {
-                    region = new Rect(0, 0, halfStapleWidth, halfStapleHeight);
-                }
-                WriteableBitmap halfStapleBitmap =
-                    WriteableBitmapExtensions.Crop(scaledStapleBitmap, region);
-
-                // Determine finishing side
-                if (finishingSide == (int)FinishingSide.Top)
-                {
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, false, false,
-                        canvasBitmap.PixelWidth, true, 0.25, false);
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, true, false,
-                        canvasBitmap.PixelWidth, true, 0.75, false);
-                }
-                else if (finishingSide == (int)FinishingSide.Left)
-                {
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, false,
-                        canvasBitmap.PixelHeight, false, 0.25, false);
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, true,
-                        canvasBitmap.PixelHeight, false, 0.75, false);
-                }
-                else if (finishingSide == (int)FinishingSide.Right)
-                {
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 270, true, false,
-                            canvasBitmap.PixelHeight, false, 0.25, false);
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 270, true, true,
-                        canvasBitmap.PixelHeight, false, 0.75, false);
-                }
-                else
-                {
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, false, true,
-                        canvasBitmap.PixelWidth, true, 0.25, false);
-                    ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, true, true,
-                        canvasBitmap.PixelWidth, true, 0.75, false);
-                }
-            }
-            else
-            {
-                // Determine finishing side
-                if (finishingSide == (int)FinishingSide.Top)
-                {
-                    if (stapleType == (int)Staple.OneUpperLeft)
-                    {
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 135, false, false);
-                    }
-                    else if (stapleType == (int)Staple.OneUpperRight)
-                    {
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 45, true, false);
-                    }
-                    else if (stapleType == (int)Staple.Two)
-                    {
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, false, false,
-                            canvasBitmap.PixelWidth, true, 0.25);
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 0, true, false,
-                            canvasBitmap.PixelWidth, true, 0.75);
-                    }
-                }
-                else if (finishingSide == (int)FinishingSide.Left)
-                {
-                    if (stapleType == (int)Staple.One)
-                    {
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 135, false, false);
-                    }
-                    else if (stapleType == (int)Staple.Two)
-                    {
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, false,
-                            canvasBitmap.PixelHeight, false, 0.25);
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 90, false, true,
-                            canvasBitmap.PixelHeight, false, 0.75);
-                    }
-                }
-                else if (finishingSide == (int)FinishingSide.Right)
-                {
-                    if (stapleType == (int)Staple.One)
-                    {
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 45, true, false);
-                    }
-                    else if (stapleType == (int)Staple.Two)
-                    {
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 270, true, false,
-                            canvasBitmap.PixelHeight, false, 0.25);
-                        ApplyRotateStaple(canvasBitmap, scaledStapleBitmap, 270, true, true,
-                            canvasBitmap.PixelHeight, false, 0.75);
-                    }
-                }
-            }
-
-        }
-
-        /// <summary>
-        /// Adds a staple image. Requires that the staple image is already scaled.
-        /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
-        /// <param name="angle">angle for rotation</param>
-        /// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
-        /// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
-        private void ApplyRotateStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
-            int angle, bool isXEnd, bool isYEnd)
-        {
-            ApplyRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, 0, false, 0, true);
-        }
-
-        /// <summary>
-        /// Adds a staple image. Requires that the staple image is already scaled.
-        /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
-        /// <param name="angle">angle for rotation</param>
-        /// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
-        /// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
-        /// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
-        /// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
-        /// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
-        private void ApplyRotateStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
-            int angle, bool isXEnd, bool isYEnd, int edgeLength, bool isAlongXAxis,
-            double positionPercentage)
-        {
-            // Right side only when booklet is ON
-            ApplyRotateStaple(canvasBitmap, stapleBitmap, angle, isXEnd, isYEnd, edgeLength, isAlongXAxis,
-                positionPercentage, true);
-        }
-
-        /// <summary>
-        /// Adds a staple image. Requires that the staple image is already scaled.
-        /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="stapleBitmap">staple image; required to be scaled beforehand</param>
-        /// <param name="angle">angle for rotation</param>
-        /// <param name="isXEnd">true when staple is to be placed near the end along X-axis</param>
-        /// <param name="isYEnd">true when staple is to be placed near the end along Y-axis</param>
-        /// <param name="edgeLength">length of page image edge where staples will be placed; used with dual staple</param>
-        /// <param name="isAlongXAxis">location of punch holes; used with dual staple</param>
-        /// <param name="positionPercentage">relative location from edge length; used with dual staple</param>
-        /// <param name="hasStapleMargin">true when staple is put slightly off the edge (with margin), false otherwise</param>
-        private void ApplyRotateStaple(WriteableBitmap canvasBitmap, WriteableBitmap stapleBitmap,
-            int angle, bool isXEnd, bool isYEnd, int edgeLength, bool isAlongXAxis,
-            double positionPercentage, bool hasStapleMargin)
-        {
-            // Rotate
-            WriteableBitmap rotatedStapleBitmap = stapleBitmap;
-            if (angle > 0)
-            {
-                rotatedStapleBitmap = WriteableBitmapExtensions.RotateFree(stapleBitmap, angle, false);
-            }
-
-            // Put into position
-            double marginStaple = (hasStapleMargin) ?
-                PrintSettingConstant.MARGIN_STAPLE * ImageConstant.BASE_DPI : 0;
-            double destXOrigin = marginStaple;
-            if (positionPercentage > 0 && isAlongXAxis)
-            {
-                destXOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelWidth / 2);
-            }
-            else if (isXEnd)
-            {
-                destXOrigin = canvasBitmap.PixelWidth - rotatedStapleBitmap.PixelWidth - marginStaple;
-            }
-            double destYOrigin = marginStaple;
-            if (positionPercentage > 0 && !isAlongXAxis)
-            {
-                destYOrigin = (edgeLength * positionPercentage) - (rotatedStapleBitmap.PixelHeight / 2);
-            }
-            else if (isYEnd)
-            {
-                destYOrigin = canvasBitmap.PixelHeight - rotatedStapleBitmap.PixelHeight - marginStaple;
-            }
-
-            Rect destRect = new Rect(destXOrigin, destYOrigin, rotatedStapleBitmap.PixelWidth,
-                rotatedStapleBitmap.PixelHeight);
-            Rect srcRect = new Rect(0, 0, rotatedStapleBitmap.PixelWidth, rotatedStapleBitmap.PixelHeight);
-            WriteableBitmapExtensions.Blit(canvasBitmap, destRect, rotatedStapleBitmap, srcRect);
-        }
-
-        /// <summary>
-        /// Adds punch hole image into page image
-        /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="holeCount">number of punch holes</param>
-        /// <param name="finishingSide">postion/edge of punch</param>
-        /// <returns>task</returns>
-        private async Task ApplyPunch(WriteableBitmap canvasBitmap, int holeCount, int finishingSide)
-        {
-            // Get punch image
-            WriteableBitmap punchBitmap = new WriteableBitmap(1, 1); // Size doesn't matter here yet
-            StorageFile stapleFile = await StorageFileUtility.GetFileFromAppResource(FILE_PATH_RES_IMAGE_PUNCH);
-            using (IRandomAccessStream raStream = await stapleFile.OpenReadAsync())
-            {
-                // Put staple image to a bitmap
-                punchBitmap = await WriteableBitmapExtensions.FromStream(null, raStream);
-            }
-            double targetScaleFactor =
-                (double)(PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI)
-                / punchBitmap.PixelWidth;
-            // Scale the staple image
-            WriteableBitmap scaledPunchBitmap = WriteableBitmapExtensions.Resize(punchBitmap,
-                (int)(punchBitmap.PixelWidth * targetScaleFactor),
-                (int)(punchBitmap.PixelHeight * targetScaleFactor),
-                WriteableBitmapExtensions.Interpolation.Bilinear);
-
-            // Determine punch
-            double diameterPunch = PrintSettingConstant.PUNCH_HOLE_DIAMETER * ImageConstant.BASE_DPI;
-            double marginPunch = PrintSettingConstant.MARGIN_PUNCH * ImageConstant.BASE_DPI;
-            double distanceBetweenHoles = GetDistanceBetweenHoles(_currPrintSettings.Punch);
-            if (finishingSide == (int)FinishingSide.Top)
-            {
-                double startPos = GetPunchStartPosition(canvasBitmap.PixelWidth, true, holeCount,
-                    diameterPunch, marginPunch, distanceBetweenHoles);
-                ApplyPunch(canvasBitmap, scaledPunchBitmap, holeCount, startPos, false, true,
-                    diameterPunch, marginPunch, distanceBetweenHoles);
-            }
-            else if (finishingSide == (int)FinishingSide.Left)
-            {
-                double startPos = GetPunchStartPosition(canvasBitmap.PixelHeight, false, holeCount,
-                    diameterPunch, marginPunch, distanceBetweenHoles);
-                ApplyPunch(canvasBitmap, scaledPunchBitmap, holeCount, startPos, false, false,
-                    diameterPunch, marginPunch, distanceBetweenHoles);
-            }
-            else if (finishingSide == (int)FinishingSide.Right)
-            {
-                double startPos = GetPunchStartPosition(canvasBitmap.PixelHeight, false, holeCount,
-                    diameterPunch, marginPunch, distanceBetweenHoles);
-                ApplyPunch(canvasBitmap, scaledPunchBitmap, holeCount, startPos, true, false,
-                    diameterPunch, marginPunch, distanceBetweenHoles);
-            }
-        }
-
-        /// <summary>
-        /// Computes the starting position of the punch hole image
-        /// </summary>
-        /// <param name="edgeLength">length of page image edge where punch will be placed</param>
-        /// <param name="isAlongXAxis">direction of punch holes</param>
-        /// <param name="holeCount">number of punch holes</param>
-        /// <param name="diameterPunch">size of punch hole</param>
-        /// <param name="marginPunch">margin of punch hole against edge of page image</param>
-        /// <param name="distanceBetweenHoles">distance between punch holes</param>
-        /// <returns>starting position of the first punch hole</returns>
-        private double GetPunchStartPosition(double edgeLength, bool isAlongXAxis, int holeCount,
-            double diameterPunch, double marginPunch, double distanceBetweenHoles)
-        {
-            double startPos = (edgeLength - (holeCount * diameterPunch) -
-                                ((holeCount - 1) * distanceBetweenHoles)) / 2;
-            return startPos;
-        }
-
-        /// <summary>
-        /// Adds punch hole images
-        /// </summary>
-        /// <param name="canvasBitmap">destination image</param>
-        /// <param name="punchBitmap">punch hole image</param>
-        /// <param name="holeCount">number of punch holes</param>
-        /// <param name="startPos">starting position</param>
-        /// <param name="isXEnd">true when punch holes are to be placed near the end along X-axis</param>
-        /// <param name="isAlongXAxis">true when punch holes are to be placed horizontally</param>
-        /// <param name="diameterPunch">size of punch hole</param>
-        /// <param name="marginPunch">margin of punch hole against edge of page image</param>
-        /// <param name="distanceBetweenHoles">distance between punch holes</param>
-        private void ApplyPunch(WriteableBitmap canvasBitmap, WriteableBitmap punchBitmap,
-            int holeCount, double startPos, bool isXEnd, bool isAlongXAxis, double diameterPunch,
-            double marginPunch, double distanceBetweenHoles)
-        {
-            double endMarginPunch = (isXEnd) ? canvasBitmap.PixelWidth - diameterPunch - marginPunch : marginPunch;
-
-            double currPos = startPos;
-            for (int index = 0; index < holeCount; ++index, currPos += diameterPunch + distanceBetweenHoles)
-            {
-                // Do not put punch hole image when it is outside the page image size
-                if (currPos < 0 || (isAlongXAxis && currPos > canvasBitmap.PixelWidth) ||
-                    (!isAlongXAxis && currPos > canvasBitmap.PixelHeight))
-                {
-                    continue;
-                }
-
-                double destXOrigin = (isAlongXAxis) ? currPos : endMarginPunch;
-                double destYOrigin = (isAlongXAxis) ? marginPunch : currPos;
-                Rect destRect = new Rect(destXOrigin, destYOrigin, punchBitmap.PixelWidth,
-                    punchBitmap.PixelHeight);
-                Rect srcRect = new Rect(0, 0, punchBitmap.PixelWidth, punchBitmap.PixelHeight);
-                WriteableBitmapExtensions.Blit(canvasBitmap, destRect, punchBitmap, srcRect);
-            }
-        }
-
-        /// <summary>
-        /// Gets the target size based on paper size
-        /// </summary>
-        /// <param name="paperSize">paper size</param>
-        /// <returns>size</returns>
-        private Size GetPaperSize(int paperSize)
-        {
-            Size targetSize;
-            switch (paperSize)
-            {
-                case (int)PaperSize.A3:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_A3;
-                    break;
-                case (int)PaperSize.A3W:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_A3W;
-                    break;
-                case (int)PaperSize.A5:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_A5;
-                    break;
-                case (int)PaperSize.A6:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_A6;
-                    break;
-                case (int)PaperSize.B4:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_B4;
-                    break;
-                case (int)PaperSize.B5:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_B5;
-                    break;
-                case (int)PaperSize.B6:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_B6;
-                    break;
-                case (int)PaperSize.Foolscap:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_FOOLSCAP;
-                    break;
-                case (int)PaperSize.Tabloid:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_TABLOID;
-                    break;
-                case (int)PaperSize.Legal:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_LEGAL;
-                    break;
-                case (int)PaperSize.Letter:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_LETTER;
-                    break;
-                case (int)PaperSize.Statement:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_STATEMENT;
-                    break;
-                case (int)PaperSize.A4:
-                default:
-                    targetSize = PrintSettingConstant.PAPER_SIZE_A4;
-                    break;
-            }
-
-            return targetSize;
-        }
-
-        /// <summary>
-        /// Gets the number of punch holes based on punch type
-        /// </summary>
-        /// <param name="punch">punch type</param>
-        /// <returns>number of punch holes</returns>
-        private int GetPunchHoleCount(int punch)
-        {
-            int numberOfHoles = 0;
-            switch (punch)
-            {
-                case (int)Punch.TwoHoles:
-                    numberOfHoles = 2;
-                    break;
-                case (int)Punch.FourHoles:
-                    //numberOfHoles = (GlobalizationUtility.IsJapaneseLocale()) ? 3 : 4;
-                    numberOfHoles = (_selectedPrinter.EnabledPunchFour) ? 4 : 3;
-                    break;
-                case (int)Punch.Off:
-                default:
-                    // Do nothing
-                    break;
-            }
-
-            return numberOfHoles;
-        }
-
-        /// <summary>
-        /// Computes the distance between punch holes based on number of punches
-        /// </summary>
-        /// <param name="punch">punch type</param>
-        /// <returns>distance</returns>
-        private double GetDistanceBetweenHoles(int punch)
-        {
-            double distance = 0;
-            switch (punch)
-            {
-                case (int)Punch.TwoHoles:
-                    distance = PrintSettingConstant.PUNCH_BETWEEN_TWO_HOLES_DISTANCE;
-                    break;
-                case (int)Punch.FourHoles:
-                    //distance = (GlobalizationUtility.IsJapaneseLocale()) ?
-                    distance = (_selectedPrinter.EnabledPunchFour) ?
-                        PrintSettingConstant.PUNCH_BETWEEN_FOUR_HOLES_DISTANCE :
-                        PrintSettingConstant.PUNCH_BETWEEN_THREE_HOLES_DISTANCE;
-                    break;
-                case (int)Punch.Off:
-                default:
-                    // Do nothing
-                    break;
-            }
-
-            return distance * ImageConstant.BASE_DPI;
         }
 
         #endregion Apply Print Settings
 
         #region Print
-
-        /// <summary>
-        /// Event handler for Print button
-        /// </summary>
-        public async void Print()
-        {
-            if (_selectedPrinter.Id > -1)
-            {
-                //// TODO: Check network
-                //NetworkController.Instance.networkControllerPingStatusCallback =
-                //    new Action<string, bool>(GetPrinterStatus);
-                //await NetworkController.Instance.pingDevice(_selectedPrinter.IpAddress);
-
-                // TODO: Remove this when ping is working
-                GetPrinterStatus(null, true);
-            }
-        }
 
         public ICommand CancelPrintingCommand
         {
@@ -1782,51 +954,50 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Checks the printer status before sending print job
+        /// Event handler for Print button
         /// </summary>
-        /// <param name="ipAddress">printer IP address</param>
-        /// <param name="isOnline">true when online, false otherwise</param>
-        public void GetPrinterStatus(string ipAddress, bool isOnline)
+        public async void Print()
         {
-            if (isOnline)
+            if (_selectedPrinter.Id > -1)
             {
-                // Get latest print settings since non-preview related print settings may be updated
-                _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
-
-                // Display progress dialog
-                _printingProgress = new MessageProgressBarControl("IDS_LBL_PRINTING");
-                _printingProgress.CancelCommand = CancelPrintingCommand;
-                _printingPopup = new Popup();
-                _printingPopup.Child = _printingProgress;
-                _printingPopup.IsOpen = true;
-
-                if (_directPrintController != null)
+                if (NetworkController.IsConnectedToNetwork)
                 {
-                    _directPrintController.UnsubscribeEvents();
-                }
-                _directPrintController = new DirectPrintController(
-                    DocumentController.Instance.FileName,
-                    DocumentController.Instance.PdfFile,
-                    _selectedPrinter.IpAddress,
-                    _currPrintSettings,
-                    UpdatePrintJobProgress,
-                    UpdatePrintJobResult);
-                
-                _directPrintController.SendPrintJob();
+                    // Get latest print settings since non-preview related print settings may be updated
+                    _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
-                //// TODO: Remove the following line. This is for testing only.
-                //UpdatePrintJobResult(DocumentController.Instance.FileName, DateTime.Now, 0);
-            }
-            else
-            {
-                DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_APP_NAME", "IDS_LBL_OK", null);
+                    // Display progress dialog
+                    _printingProgress = new MessageProgressBarControl("IDS_INFO_MSG_PRINTING");
+                    _printingProgress.CancelCommand = CancelPrintingCommand;
+                    _printingPopup = new Popup();
+                    _printingPopup.Child = _printingProgress;
+                    _printingPopup.IsOpen = true;
+
+                    if (_directPrintController != null)
+                    {
+                        _directPrintController.UnsubscribeEvents();
+                    }
+                    _directPrintController = new DirectPrintController(
+                        DocumentController.Instance.FileName,
+                        DocumentController.Instance.PdfFile,
+                        _selectedPrinter.IpAddress,
+                        _currPrintSettings,
+                        UpdatePrintJobProgress,
+                        UpdatePrintJobResult);
+                
+                    _directPrintController.SendPrintJob();
+                }
+                else
+                {
+                    await DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR",
+                        "IDS_APP_NAME", "IDS_LBL_OK", null);
+                }
             }
         }
 
         /// <summary>
         /// Event handler for Cancel button
         /// </summary>
-        public void CancelPrint()
+        public async void CancelPrint()
         {
             if (_directPrintController != null)
             {
@@ -1834,71 +1005,69 @@ namespace SmartDeviceApp.Controllers
                 _directPrintController.UnsubscribeEvents();
                 _directPrintController = null;
             }
-            _printingPopup.IsOpen = false;
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal,
+                () =>
+                {
+                    _printingPopup.IsOpen = false;
+                });
         }
 
         /// <summary>
         /// Update progress value
         /// </summary>
         /// <param name="progress">progress value</param>
-        public void UpdatePrintJobProgress(float progress)
+        public async void UpdatePrintJobProgress(float progress)
         {
-            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobProgress:" + progress);
-            //_printingProgress.ProgressValue = progress;
-            
-            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-            () =>
-            {
-                // Your UI update code goes here!
-                _printingProgress.ProgressValue = progress;
-            });
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal,
+                () =>
+                {
+                    _printingProgress.ProgressValue = progress;
+                });
         }
 
         /// <summary>
-        /// Processes print job result and saves the print job item to database.
+        /// Processes print job result and saves the print job item to database
         /// </summary>
         /// <param name="name">print job name</param>
         /// <param name="date">date</param>
         /// <param name="result">result</param>
         public async void UpdatePrintJobResult(string name, DateTime date, int result)
         {
-            System.Diagnostics.Debug.WriteLine("[PrintPreviewController] UpdatePrintJobResult:" + result);
-
-            PrintJob printJob = new PrintJob()
-            {
-                PrinterId = _selectedPrinter.Id,
-                Name = name,
-                Date = date,
-                Result = result
-            };
-
-            JobController.Instance.SavePrintJob(printJob);
-
-
-            //UI processing stuff
-            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-            () => 
-            {
-                _printingPopup.IsOpen = false;
-                if (result == (int)PrintJobResult.Success)
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal,
+                async () =>
                 {
-                    // TODO: Confirm if message for success is needed here
-                    DialogService.Instance.ShowMessage("IDS_LBL_PRINT_JOB_SUCCESSFUL", "IDS_APP_NAME");
-                    //new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
-                    Cleanup();
-                    DocumentController.Instance.Unload();
-                }
-                else if (result == (int)PrintJobResult.Error)
-                {
-                    DialogService.Instance.ShowError("IDS_LBL_PRINT_JOB_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
-                }
+                    PrintJob printJob = new PrintJob()
+                    {
+                        PrinterId = _selectedPrinter.Id,
+                        Name = name,
+                        Date = date,
+                        Result = result
+                    };
 
-                if (_directPrintController != null)
-                {
-                    _directPrintController.UnsubscribeEvents();
-                    _directPrintController = null;
-                }
-            });            
+                    JobController.Instance.SavePrintJob(printJob);
+
+                    _printingPopup.IsOpen = false;
+                    if (result == (int)PrintJobResult.Success)
+                    {
+                        await DialogService.Instance.ShowMessage("IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL",
+                            "IDS_APP_NAME");
+                        new ViewModelLocator().ViewControlViewModel.GoToJobsPage.Execute(null);
+                    }
+                    else if (result == (int)PrintJobResult.Error)
+                    {
+                        await DialogService.Instance.ShowError("IDS_INFO_MSG_PRINT_JOB_FAILED",
+                            "IDS_APP_NAME", "IDS_LBL_OK", null);
+                    }
+
+                    if (_directPrintController != null)
+                    {
+                        _directPrintController.UnsubscribeEvents();
+                        _directPrintController = null;
+                    }
+                });
         }
 
         #endregion Print

@@ -28,117 +28,141 @@
 
 #pragma mark - Data Properties
 
-/** Handler for the Printer data. */
+/**
+ * Reference to the PrinterManager singleton.
+ */
 @property (strong, nonatomic) PrinterManager* printerManager;
 
-/** Flag that will be set to YES when at least one successful printer was added. */
+/**
+ * Flag that will be set to YES when a printer is successfully added.
+ */
 @property (readwrite, assign, nonatomic) BOOL hasAddedPrinters;
 
 #if SORT_SEARCH_RESULTS
 /**
- A list of the names of the printers searched from the network that
- are already saved to the database ("old" printers).
- These printers will be displayed in the UITableView with a checkmark.
+ * A list of the names of the printers searched from the network that
+ * are already saved in the database ("old" printers).
+ * These printers will be displayed in the list with a checkmark.
  */
 @property (strong, nonatomic) NSMutableArray* listOldPrinterNames;
 
 /**
- A list of the names of the printers searched from the network that
- are not yet saved to the database ("new" printers).
- These printers will be displayed in the UITableView with a '+' button.
+ * A list of the names of the printers searched from the network that
+ * are not yet saved in the database ("new" printers).
+ * These printers will be displayed in the list with a '+' button.
  */
 @property (strong, nonatomic) NSMutableArray* listNewPrinterNames;
 
 /**
- A list of the IP addresses of the printers searched from the
- network that are not yet saved to the database.
- This is used for referencing the printer details.
+ * A list of the IP addresses of the printers searched from the
+ * network that are not yet saved in the database ("new" printers).
+ * This is used as keys for the {@link listNewPrinterDetails}.
  */
 @property (strong, nonatomic) NSMutableArray* listNewPrinterIP;
 
 /**
- A key-value listing of the details for each new printer found during
- the search, using the printer IP address as the key.
+ * A key-value listing of the details of each "new" printer found during
+ * the search, using the printer IP address as the key.
+ * "New" here means the printer is not yet saved in the database.
  */
 @property (strong, nonatomic) NSMutableDictionary* listNewPrinterDetails;
 #else
 /**
- A list of the IP addresses of the printers searched from the network.
- This is used for referencing the printer details.
+ * A list of the IP addresses of the printers searched from the network.
+ * This is used as keys for the {@link listPrinterDetails}.
  */
 @property (strong, nonatomic) NSMutableArray* listPrinterIP;
 
 /**
- A key-value listing of the details for each printer found during
- the search, using the printer IP address as the key. The value can
- either be just the printer name (for old printers) or an actual
- PrinterDetails object (for new printers).
+ * A key-value listing of the details of each printer found during
+ * the search, using the printer IP address as the key.
+ * The value can either be just the printer name (for "old" printers)
+ * or an actual PrinterDetails object (for "new" printers).\n
+ * Note that "new" and "old" here refers to whether the printer is already
+ * saved in the database.
  */
 @property (strong, nonatomic) NSMutableDictionary* listPrinterDetails;
 #endif
 
 #pragma mark - UI Properties
 
-/** Implements the pull-to-refresh gesture. */
+/** 
+ * Reference to the animated searching indicator.
+ * This is displayed while the printer search is ongoing.
+ */
 @property (weak, nonatomic) SearchingIndicator* refreshControl;
 
-/** UITableView for the printer search results */
+/**
+ * Reference to the search results list.
+ */
 @property (weak, nonatomic) UITableView* searchResultsTable;
 
-/** Internal flag, YES if currently searching for printers. */
+/** 
+ * Flag that indicates whether a search is currently ongoing.
+ */
 @property (assign, nonatomic) BOOL isSearching;
 
-/** Internal flag, YES if controller is displayed on an iPad. */
+/**
+ * Flag that will be set to YES when the device is a tablet.
+ */
 @property (assign, nonatomic) BOOL isIpad;
 
-/** Displays "No Printers Found" label if there are no printers. */
+/**
+ * Reference to the "No Printers Found" label that is displayed if there are no printers. 
+ */
 @property (weak, nonatomic) IBOutlet UILabel *emptyLabel;
 
 #pragma mark - Internal Methods
 
 /**
- Called when screen loads.
- Sets-up this controller's properties and views.
+ * Sets-up this controller's properties and views.
  */
 - (void)setupScreen;
 
 /**
- Called to initiate printer search (on load and when using pull-to-refresh gesture)
- Searches for printers on the network and updates the display.
+ * Starts the printer search and displays the animated searching indicator.
+ * If the device is not connected to a network, then the search is not started,
+ * the searching indicator is hidden, and an error message is displayed instead.\n\n
+ * The results of the search are handled in the PrinterSearchDelegate methods.
  */
 - (void)refreshScreen;
 
 /**
- Called to close the Printer Search screen. If a search is currently ongoing,
- it is stopped.
+ * Closes the "Printer Search" screen.
  */
 - (void)dismissScreen;
 
 /**
- Called to show the searching indicator and configure other UI properties.
+ * Displays the animated searching indicator and disables the pull-to-refresh gesture.
  */
 - (void)startSearchingAnimation;
 
 /**
- Called to hide the searching indicator and configure other UI properties.
+ * Hides the animated searching indicator and re-enables the pull-to-refresh gesture.
  */
 - (void)stopSearchingAnimation;
 
 /**
- Called when the user taps on printer with a '+' button.
- This method attempts to add the printer to the list of saved
- printers.
- @param row
-        the NSIndexPath.row of the tapped row
+ * Responds to pressing the add (+) button.
+ * The details of the printer is retrieved from {@link listPrinterDetails}
+ * and adds the printer to the database (using PrinterManager).\n
+ *
+ * @param row the index of the printer on the list
  */
 - (void)addPrinter:(NSUInteger)row;
 
+/**
+ * Sets the properties of the SlidingViewController.
+ */
+- (void)initialize;
+
 #pragma mark - IBAction Methods
 
-/** 
- Unwinds back to the Printers screen.
- Cancels any ongoing search operation.
- This is for the iPhone only.
+/**
+ * Responds to pressing the back (<) button in the header (for phones only).
+ * Calls the {@link dismissScreen} method.
+ *
+ * @param sender the button object
  */
 - (IBAction)onBack:(UIButton*)sender;
 

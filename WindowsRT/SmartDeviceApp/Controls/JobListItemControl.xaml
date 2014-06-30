@@ -9,18 +9,102 @@
     d:DesignHeight="60"
     d:DesignWidth="400"
     Text="{Binding Name}"
+    KeyPressedColor="{StaticResource BRUSH_White}"
     ValueText="{Binding Date, Converter={StaticResource DateTimeToStringConverter}}"
     SubTextVisibility="Collapsed"
     RightButtonVisibility="Collapsed"
     SeparatorVisibility="{Binding Converter={StaticResource PrintJobToSeparatorVisibilityConverter}}"
+    IsListItem="True"
     PressedColor="{StaticResource BRUSH_Purple2}"
-    Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}">
+    Loaded="OnLoaded">
+
     <local:KeyValueControl.Resources>
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >
-            <Grid Background="{StaticResource BRUSH_White}" 
-                  Width="{StaticResource SIZE_DeleteButtonWidth_Short}" 
-                  Height="{StaticResource SIZE_DeleteButtonHeight_Short}">
-                <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"/>
+            <Grid>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CustomStates">
+                        <VisualState x:Name="Visible">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="deleteButtonCoverVisible" Storyboard.TargetProperty="(UIElement.Visibility)" >
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Visible</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="deleteButtonCoverCollapsed" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Collapsed</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="deleteButtonGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Visible</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <DoubleAnimation Duration="0:0:0.1" From="1" To="0" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="deleteButtonCoverVisible" d:IsOptimized="True"/>                                
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Collapsed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="deleteButtonCoverVisible" Storyboard.TargetProperty="(UIElement.Visibility)" >
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Collapsed</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="deleteButtonCoverCollapsed" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Visible</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <DoubleAnimation Duration="0:0:0.05" From="0" To="1" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="deleteButtonCoverCollapsed" d:IsOptimized="True"/>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="deleteButtonGrid" BeginTime="0:0:0.1" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Collapsed</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>                               
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <Grid x:Name="deleteButtonGrid"
+                      Visibility="Collapsed"
+                      Background="{StaticResource BRUSH_White}" Grid.Row="0"
+                      Width="{StaticResource SIZE_DeleteButtonWidth_Short}" 
+                      Height="{StaticResource SIZE_DeleteButtonHeight_Short}">
+                    <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"/>
+                </Grid>
+                <Grid x:Name="deleteButtonCoverVisible" Grid.Row="0"
+                      Background="{StaticResource BRUSH_Purple2}" 
+                      Visibility="Collapsed"  
+                      Width="{StaticResource SIZE_DeleteButtonWidth_Short}" 
+                      Height="{StaticResource SIZE_DeleteButtonHeight_Short}"
+                      HorizontalAlignment="Left">                    
+                    <Grid.RenderTransform>
+                        <CompositeTransform/>
+                    </Grid.RenderTransform>
+                </Grid>
+                <Grid x:Name="deleteButtonCoverCollapsed" Grid.Row="0"
+                      Background="{StaticResource BRUSH_Gray2}" 
+                      Width="{StaticResource SIZE_DeleteButtonWidth_Short}" 
+                      Height="{StaticResource SIZE_DeleteButtonHeight_Short}"
+                      Visibility="Collapsed"  
+                      HorizontalAlignment="Left">
+                    <Grid.RenderTransform>
+                        <CompositeTransform>
+                        </CompositeTransform>
+                    </Grid.RenderTransform>
+                </Grid>
             </Grid>
         </ControlTemplate>
     </local:KeyValueControl.Resources>
@@ -28,7 +112,7 @@
         <BitmapImage UriSource="{Binding Result, Converter={StaticResource PrintJobResultToImageSourceConverter}}"/>
     </local:KeyValueControl.IconImage>
     <local:KeyValueControl.ValueContent>
-        <Button x:Name="deleteButton" Grid.Column="1" 
+        <Button x:Name="deleteButton" 
                 Template="{StaticResource TEMPLATE_DeleteButton}"
                 Command="{Binding DeleteJobCommand, ElementName=jobListItemControl}"
                 Visibility="Collapsed"/>

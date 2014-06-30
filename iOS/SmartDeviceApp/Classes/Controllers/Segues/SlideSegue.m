@@ -14,7 +14,20 @@ const float AnimationDuration = 0.3f;
 
 @interface SlideSegue()
 
+/**
+ * Performs a forward sliding animation towards the center of the screen.
+ * This method will be called if isUnwinding is set to NO.
+ *
+ * @see isUnwinding
+ */
 - (void)performSegue;
+
+/**
+ * Performs a backward sliding animation towards the side of the screen.
+ * This method will be called if isUnwinding is set to YES.
+ *
+ * @see isUnwinding
+ */
 - (void)performUnwindSegue;
 
 @end

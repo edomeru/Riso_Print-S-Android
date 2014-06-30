@@ -10,7 +10,18 @@
 #import "UIColor+Theme.h"
 
 @interface PrintSettingsPrinterListViewController ()
+
+/** 
+ * Reference to the header at the top of the PrintSettingsPrinterListViewController.
+ */
 @property (weak, nonatomic) IBOutlet UIView *printerListHeader;
+
+/**
+ * Responds to tapping the {@link printerListHeader}.
+ * Transitions back to "Print Settings" screen.
+ */
+- (IBAction)pressPrinterHeaderCellAction:(id)sender;
+
 @end
 
 @implementation PrintSettingsPrinterListViewController
@@ -23,7 +34,8 @@
     }
     return self;
 }
-- (IBAction)pressPrinterHeaderCellAction:(id)sender {
+- (IBAction)pressPrinterHeaderCellAction:(id)sender
+{
     
     UILongPressGestureRecognizer *press = (UILongPressGestureRecognizer *) sender;
     if(press.state == UIGestureRecognizerStateBegan)

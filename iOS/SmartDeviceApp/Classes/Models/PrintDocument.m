@@ -15,23 +15,34 @@
 #define MAX_PAGE_CACHE 5
 
 /**
- Key-Value Observing Context
+ * Key-Value Observing Context
  */
 static NSString *previewSettingContext = @"PreviewSettingContext";
 
 @interface PrintDocument()
 
 /**
- Add self as observer of Preview Settings object
+ * Adds key-value observers to each preview setting.
+ * This is used for the KVO style of monitoring if a preview setting
+ * was changed in the "Print Settings" screen.
+ * 
+ * @see https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/KeyValueObserving.html
  */
 - (void)addObservers;
 
 /**
- Remove self as observer of Preview Settings object
+ * Removes the key-value observers from each preview setting.
+ * This is used for the KVO style of monitoring if a preview setting
+ * was changed in the "Print Settings" screen.
+ *
+ * @see https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/KeyValueObserving.html
  */
 - (void)removeObservers;
 
 #if GET_ORIENTATION_FROM_PDF_ENABLED
+/**
+ * Sets the preview setting for Orientation to use the orientation of the first page of the PDF.
+ */
 - (void)getOrientationFromPDF;
 #endif
 

@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Data;
 
 namespace SmartDeviceApp.Converters
 {
-    class PrinterSearchItemToSeparatorVisibility : IValueConverter
+    public class PrinterSearchItemToSeparatorVisibility : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -25,6 +25,7 @@ namespace SmartDeviceApp.Converters
                 {
                     index = printerSearchList.IndexOf(searchItem);
                     isLastItem = (index == printerSearchList.Count - 1);
+                    break;
                 }
             }
             return (isLastItem ? Visibility.Collapsed : Visibility.Visible);

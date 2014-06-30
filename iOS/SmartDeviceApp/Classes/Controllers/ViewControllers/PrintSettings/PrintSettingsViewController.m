@@ -17,8 +17,14 @@
 
 @interface PrintSettingsViewController () 
 
+/**
+ * Reference to the label displaying either "Print Settings" or "Default Print Settings".
+ */
 @property (weak, nonatomic) IBOutlet UILabel *printSettingsScreenTitle;
 
+/**
+ * Sets the properties of the SlidingViewController.
+ */
 - (void)initialize;
 
 @end

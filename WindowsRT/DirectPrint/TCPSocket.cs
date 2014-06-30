@@ -10,35 +10,48 @@ using Windows.Storage.Streams;
 
 namespace DirectPrint
 {
-    class TCPSocket
+    public class TCPSocket
     {
 
         private StreamSocket socket = null;
 
-        Windows.Foundation.TypedEventHandler<HostName, byte[]> dataReceivedHandler = null;
-        Windows.Foundation.TypedEventHandler<HostName, byte[]> timeoutHandler = null;
+        private Windows.Foundation.TypedEventHandler<HostName, byte> dataReceivedHandler = null;
+        private Windows.Foundation.TypedEventHandler<HostName, byte> timeoutHandler = null;
 
-        public TCPSocket()
-        {
-            socket = new StreamSocket();
-        }
+        private HostName h = null;
+        private string port = "0";
 
-        public TCPSocket(string host, string port, Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
+        public TCPSocket(string _host, string _port, Windows.Foundation.TypedEventHandler<HostName, byte> d)
         {            
             socket = new StreamSocket();
-            this.connect(host, port);
+            setHost(_host, _port);
             this.dataReceivedHandler = d;
         }
 
-        internal void assignDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
+        //internal void assignDataReceivedDelegate(Windows.Foundation.TypedEventHandler<HostName, byte> d)
+        //{
+        //    dataReceivedHandler = d;
+        //}
+
+        internal void setHost(string _host, string _port)
         {
-            dataReceivedHandler = d;
+           h = new HostName(_host);
+           port = _port;
         }
 
-        internal async void connect(string host, string port)
+        internal async Task connect()
         {
-            HostName h = new HostName(host);
-            await socket.ConnectAsync(h, port);
+            if (socket != null)
+            {
+                try
+                {
+                    await socket.ConnectAsync(h, port);
+                }
+                catch
+                {                    
+                    throw;
+                }
+            }
         }
 
         internal void disconnect()
@@ -50,7 +63,7 @@ namespace DirectPrint
             }
         }
 
-        internal async void read()
+        internal async Task read()
         {
             if (socket != null)
             try
@@ -58,8 +71,8 @@ namespace DirectPrint
                 DataReader reader = new DataReader(socket.InputStream);
                 // Set inputstream options so that we don't have to know the data size
                 await reader.LoadAsync(1);
-                byte[] responseData = new byte[1];
-                reader.ReadBytes(responseData);
+                byte responseData = 0;
+                responseData = reader.ReadByte();
 
                 if (dataReceivedHandler != null)
                 {
@@ -91,28 +104,32 @@ namespace DirectPrint
             }
         }
 
-        internal async void write(byte[] data, int a,int b, bool waitresponse = true)
+        internal async Task write(byte[] data, int a,int b)
         {
-            if (socket != null)
+            try
             {
-                DataWriter writer = new DataWriter(socket.OutputStream);
+                if (socket != null)
+                {
+                    //if (socket.)
 
-                byte[] data2 = new byte[b - a];
-                Array.Copy(data, a, data2, 0, b - a);
+                    DataWriter writer = new DataWriter(socket.OutputStream);
 
-                string test = System.Text.Encoding.UTF8.GetString(data2, 0, data2.Length);
+                    byte[] data2 = new byte[b - a];
+                    Array.Copy(data, a, data2, 0, b - a);
 
-                writer.WriteBytes(data2);
-                //await writer.FlushAsync();
-                await writer.StoreAsync();
-                // detach the stream and close it
-                writer.DetachStream();
-                writer.Dispose();
+                    string test = System.Text.Encoding.UTF8.GetString(data2, 0, data2.Length);
+
+                    writer.WriteBytes(data2);
+                    //await writer.FlushAsync();
+                    await writer.StoreAsync();
+                    // detach the stream and close it
+                    writer.DetachStream();
+                    writer.Dispose();
+                }
             }
-
-            if (waitresponse)
+            catch
             {
-                read();
+                throw;
             }
         }    
     }
