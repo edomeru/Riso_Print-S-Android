@@ -14,6 +14,43 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
 
 @interface DatabaseManager ()
 
+/**
+ * Returns the managed object context for the application.
+ * If the context doesn't exist yet, it is first created and bound to the
+ * persistent store coordinator for the application.\n
+ * The purpose of this method is to have a single instance of the managed
+ * object context that will be used by each of the {@link DatabaseManager}'s
+ * methods, for the entire lifecycle of the application.
+ */
++ (NSManagedObjectContext*)managedObjectContext;
+
+/**
+ * Returns the persistent store coordinator for the application.
+ * If the coordinator doesn't exist yet, it is first created and the 
+ * application's persistent object store is added to it.\n
+ * The purpose of this method is to have single instance of the persistent
+ * store coordinator that will be used for the entire lifecylce of the
+ * application.\n
+ * In the event that the persistent store cannot be added to the coordinator
+ * (ex. incompatible schema), the existing store is first deleted and a new,
+ * one is created (no data migration is performed).
+ */
++ (NSPersistentStoreCoordinator*)persistentStoreCoordinator;
+
+/**
+ * Returns the managed object model for the application.
+ * If the model doesn't exist yet, it is first created from the application's 
+ * Core Data model file (*.xcdatamodeld).\n
+ * The purpose of this method is to have a single instance of the model
+ * that will be used for the entire lifecycle of the application.
+ */
++ (NSManagedObjectModel*)managedObjectModel;
+
+/**
+ * Returns the URL to the application's Documents directory.
+ */
++ (NSURL*)applicationDocumentsDirectory;
+
 @end
 
 @implementation DatabaseManager
@@ -113,11 +150,6 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
 
 #pragma mark - Core Data Stack
 
-/**
- Returns the managed object context for the application.
- If the context doesn't already exist, it is created and bound
- to the persistent store coordinator for the application.
- **/
 + (NSManagedObjectContext*)managedObjectContext
 {
     if (sharedManagedObjectContext != nil)
@@ -135,10 +167,6 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
     return sharedManagedObjectContext;
 }
 
-/**
- Returns the persistent store coordinator for the application.
- If the coordinator doesn't already exist, it is created and the application's store added to it.
- */
 + (NSPersistentStoreCoordinator*)persistentStoreCoordinator
 {
     if (sharedPersistentStoreCoordinator != nil)
@@ -176,10 +204,6 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
     return sharedPersistentStoreCoordinator;
 }
 
-/**
- Returns the managed object model for the application.
- If the model doesn't already exist, it is created from the application's model.
- */
 + (NSManagedObjectModel*)managedObjectModel
 {
     if (sharedManagedObjectModel != nil)
@@ -194,7 +218,6 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
 
 #pragma mark - Application's Documents Directory
 
-/** Returns the URL to the application's Documents directory. **/
 + (NSURL*)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory

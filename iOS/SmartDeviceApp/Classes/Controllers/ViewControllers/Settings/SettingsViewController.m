@@ -17,25 +17,40 @@
 
 @interface SettingsViewController ()
 
-/** Reference outlet to Login ID input textfield */
+/**
+ * Reference to the textfield for the Login ID.
+ */
 @property (weak, nonatomic) IBOutlet UITextField *loginId;
 
-/** Reference outlet to Main Menu button */
+/**
+ * Reference to the main menu button on the header.
+ */
 @property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
 
-/** Reference outlet to view that contains the settings inputs fields */
+/** 
+ * Reference to the container view for the text fields.
+ */
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 
-/** Reference outlet to the width constraint of the contentView */
+/** 
+ * Reference to the width constraint of {@link contentView}.
+ */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewWidthConstraint;
 
 /**
- Main menu button action
+ * Responds to pressing the main menu button in the header.
+ * Displays the Main Menu panel.
+ *
+ * @param sender the button object
  */
 - (IBAction)mainMenuAction:(id)sender;
 
 /**
- Action after menu screen unwinds to settings screen
+ * Unwind segue back to the "Settings" screen.
+ * Called when transitioning back to the "Settings"
+ * screen from the the Main Menu panel.
+ *
+ * @param sender the segue object
  */
 - (IBAction)unwindToSettings:(UIStoryboardSegue *)sender;
 

@@ -19,10 +19,30 @@
 #define PRINTER_ITEM_CELL @"PrinterItem"
 
 @interface PrintSettingsPrinterListTableViewController ()
+
+/**
+ * Reference to the PrinterManager singleton.
+ */
 @property (weak, nonatomic) PrinterManager *printerManager;
+
+/**
+ * Reference to the PDF document object from PDFFileManager.
+ */
 @property (weak, nonatomic) PrintDocument *printDocument;
+
+/**
+ * Reference to the currently selected printer.
+ */
 @property (nonatomic) NSUInteger selectedIndex;
+
+/**
+ * List of PrinterStatusHelper objects monitoring the online/offline status of each printer.
+ * There is one PrinterStatusHelper for each printer on the list.\n
+ * These helpers are allocated during the initialization of the screen
+ * and are deallocated when the screen is unloaded.
+ */
 @property (nonatomic, strong) NSMutableArray *statusHelpers;
+
 @end
 
 @implementation PrintSettingsPrinterListTableViewController

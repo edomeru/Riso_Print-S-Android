@@ -10,12 +10,6 @@
 #import "RootViewController.h"
 #import "SlidingViewController.h"
 
-@interface ReplaceSegue()
-
-- (void)replaceController:(UIViewController *)source withController:(UIViewController *)destination inContainer:(RootViewController *)container;
-
-@end
-
 @implementation ReplaceSegue
 
 - (void)perform
@@ -46,22 +40,6 @@
     [destination didMoveToParentViewController:container];
     
     container.mainController = destination;
-}
-
-- (void)replaceController:(UIViewController *)source withController:(UIViewController *)destination inContainer:(RootViewController *)container
-{
-    [container addChildViewController:destination];
-    destination.view.frame = source.view.frame;
-    [source willMoveToParentViewController:nil];
-    
-    [container transitionFromViewController:source toViewController:destination duration:0.0f options:UIViewAnimationOptionTransitionNone animations:^
-     {
-     }completion:^(BOOL finished)
-     {
-         [source.view removeFromSuperview];
-         [source removeFromParentViewController];
-         [destination didMoveToParentViewController:container];
-     }];
 }
 
 @end

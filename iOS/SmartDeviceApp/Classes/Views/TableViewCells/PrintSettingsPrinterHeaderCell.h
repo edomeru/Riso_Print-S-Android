@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ * PrintSettingsPrinterHeaderCell class is used to display the print button in the print settings screen.
+ */
 @interface PrintSettingsPrinterHeaderCell : UITableViewCell
 
 @end

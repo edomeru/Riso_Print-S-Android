@@ -41,22 +41,212 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 @interface PrintSettingsTableViewController ()
 
+/**
+ * Flag that indicates whether this is for the "Default Print Settings" screen
+ * or the "Print Settings" screen.
+ */
 @property (nonatomic) BOOL isDefaultSettingsMode;
 
+/**
+ * Reference to the set of currently applied preview settings.
+ */
 @property (nonatomic, strong) PreviewSetting *previewSetting;
+
+/**
+ * Reference to the PDF document object from PDFFileManager.
+ */
 @property (nonatomic, strong) PrintDocument *printDocument;
+
+/**
+ * Reference to the selected printer.
+ */
 @property (nonatomic, weak) Printer *printer;
+
+/**
+ * Contains the contents of the printsettings.xml.
+ */
 @property (nonatomic, weak) NSDictionary *printSettingsTree;
+
+/**
+ * Stores the flags indicating which print setting sections are expanded.
+ * The flag is YES if it is expanded, NO if collapsed.
+ */
 @property (nonatomic, strong) NSMutableArray *expandedSections;
+
+/**
+ * Reference to the currently selected print setting.
+ * This is used when transitioning to the PrintSettingsOptionTableViewController.
+ */
 @property (nonatomic, weak) NSDictionary *currentSetting;
+
+/**
+ * Tap gesture recognizer.
+ */
 @property (nonatomic, weak) UITapGestureRecognizer *tapRecognizer;
+
+/**
+ * Indicates which text field corresponds to a particular tag.
+ */
 @property (nonatomic, strong) NSMutableDictionary *textFieldBindings;
+
+/**
+ * Indicates which switch corresponds to a particular tag.
+ */
 @property (nonatomic, strong) NSMutableDictionary *switchBindings;
+
+/**
+ * Indicates the currently supported print settings.
+ */
 @property (nonatomic, strong) NSMutableArray *supportedSettings;
 
+/**
+ * Indicates which print setting corresponds to a particular UITableView index path.
+ */
 @property (nonatomic, strong) NSMutableDictionary *indexPathsForSettings;
+
+/**
+ * Indicates the which print settings need to be updated.
+ */
 @property (nonatomic, strong) NSMutableArray *indexPathsToUpdate;
+
+/**
+ * Flag that indicates whether the entire print settings list needs to be updated.
+ */
 @property (nonatomic) BOOL isRedrawFullSettingsTable;
+
+/**
+ * Adds the specified index path to {@link indexPathsToUpdate}.
+ *
+ * @param indexPath the index path to update
+ */
+- (void)addToIndexToUpdate:(NSIndexPath *)indexPath;
+
+/**
+ * Updates the other print settings based on the Booklet setting.
+ */
+- (void)applyBookletConstraints;
+
+/**
+ * Updates affected print settings based on the Booklet Finishing setting.
+ */
+- (void)applyBookletFinishConstraints;
+
+/**
+ * Updates the Finishing print setting based on the Finishing Side setting.
+ *
+ * @param previousFinishingSide the previous Finishing Side value
+ */
+- (void)applyFinishingConstraintsWithPreviousValue:(NSInteger)previousFinishingSide;
+
+/**
+ * Updates affected print settings based on the Imposition setting.
+ *
+ * @param previousImpositionValue the previous Imposition value
+ */
+- (void)applyImpositionConstraintWithPreviousValue:(NSInteger)previousImpositionValue;
+
+/**
+ * Updates affected print settings based on the Punch setting.
+ */
+- (void)applyPunchConstraint;
+
+/**
+ * Determines which print settings are to be updated because of the specified setting.
+ *
+ * @param key the updated print setting
+ * @param previousValue the previous value of the updated print setting
+ */
+- (void)applySettingsConstraintForKey:(NSString*)key withPreviousValue:(NSInteger)previousValue;
+
+/**
+ * Sets-up the contents of {@link supportedSettings}.
+ */
+- (void)fillSupportedSettings;
+
+/**
+ * Checks if the specified print setting is applicable.
+ *
+ * @param settingKey the string name of the print setting
+ * @return YES if applicable, NO otherwise
+ */
+- (BOOL)isSettingApplicable:(NSString*)settingKey;
+
+/**
+ * Checks if the specified print setting is enabled.
+ *
+ * @param settingKey the string name of the print setting
+ * @return YES if enabled, NO otherwise
+ */
+- (BOOL)isSettingEnabled:(NSString*)settingKey;
+
+/**
+ * Checks if the specified print setting value is supported.
+ *
+ * @param settingKey the string name of the print setting
+ * @return YES if supported, NO otherwise
+ */
+- (BOOL)isSettingOptionSupported:(NSString *)option;
+
+/**
+ * Checks if the specified print setting is supported.
+ *
+ * @param settingKey the string name of the print setting
+ * @return YES if supported, NO otherwise
+ */
+- (BOOL)isSettingSupported:(NSString*)settingKey;
+
+/**
+ * Reloads the print settings as specified in the {@link indexPathsToUpdate}.
+ */
+- (void)reloadRowsForIndexPathsToUpdate;
+
+/**
+ * Reverts the print setting to its default value.
+ *
+ * @param key the string name of the print setting
+ */
+- (void)setOptionSettingToDefaultValue:(NSString*)key;
+
+/**
+ * Sets the print setting to the specified value.
+ *
+ * @param key the string name of the print setting
+ * @param value the print setting value
+ */
+- (void)setOptionSettingWithKey:(NSString*)key toValue:(NSInteger)value;
+
+/**
+ * Sets the print setting to be enabled/disabled.
+ *
+ * @param isEnabled YES if setting is enabled; NO if disabled
+ * @param key the string name of the print setting
+ */
+- (void)setState:(BOOL)isEnabled forSettingKey:(NSString*)key;
+
+/**
+ * Responds to the print setting switches.
+ */
+- (IBAction)switchAction:(id)sender;
+
+/**
+ * Responds to tapping anywhere on the print settings list.
+ */
+- (IBAction)tapAction:(id)sender;
+
+/**
+ * Called when the keypad is shown.
+ *
+ * @param notification the notification object
+ */
+- (void)keyboardDidShow:(NSNotification *)notification;
+
+/**
+ * Called when the keypad is dismissed.
+ *
+ * @param notification the notification object
+ */
+- (void)keyboardDidHide:(NSNotification *)notification;
+
 @end
 
 @implementation PrintSettingsTableViewController

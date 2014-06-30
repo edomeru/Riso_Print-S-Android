@@ -11,7 +11,14 @@
 
 @interface PrintSettingsPrinterHeaderCell ()
 
+/**
+ * Print icon of the button.
+ */
 @property (weak, nonatomic) IBOutlet UIImageView *printIcon;
+
+/**
+ * Print text of the button.
+ */
 @property (weak, nonatomic) IBOutlet UILabel *printText;
 
 @end

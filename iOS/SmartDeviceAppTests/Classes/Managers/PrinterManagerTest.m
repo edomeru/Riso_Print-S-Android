@@ -102,8 +102,13 @@
 // Run after each test method
 - (void)tearDown
 {
+    // Mock
     id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     while (sharedPrinterManager.countSavedPrinters != 0)
     {
@@ -155,6 +160,7 @@
     // Mock
     id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
     [[[mockDatabaseManager stub] andReturn:nil] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -170,6 +176,7 @@
     id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
     [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
     [[[mockDatabaseManager stub] andReturn:nil] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -186,6 +193,7 @@
     [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
     [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -202,7 +210,9 @@
     [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
     [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
-    
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     BOOL result = [sharedPrinterManager registerPrinter:self.testPrinterDetails];
@@ -221,6 +231,8 @@
     [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
     [[[mockDatabaseManager stub] andReturn:nil] addObject:E_DEFAULTPRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:nil] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -238,6 +250,8 @@
     id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
     [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -253,6 +267,8 @@
     id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
     [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -266,6 +282,10 @@
 
 - (void)testGetPrinterAtIndex_IndexOverflow
 {
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     Printer* printer = [sharedPrinterManager getPrinterAtIndex:1];
@@ -331,6 +351,10 @@
 
 - (void)testDeletePrinterAtIndex_IndexOverflow
 {
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     BOOL result = [sharedPrinterManager deletePrinterAtIndex:1];
@@ -348,6 +372,8 @@
     [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] deleteObject:OCMOCK_ANY];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -368,6 +394,8 @@
     [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -388,6 +416,8 @@
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] deleteObject:self.testPrinter];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -406,6 +436,8 @@
     [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] deleteObject:OCMOCK_ANY];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -418,6 +450,10 @@
 
 - (void)testHasDefaultPrinter_NO
 {
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     BOOL result = [sharedPrinterManager hasDefaultPrinter];
@@ -434,6 +470,8 @@
     [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
     [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -447,6 +485,10 @@
 
 - (void)testIsDefaultPrinter_NoDefault
 {
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     BOOL result = [sharedPrinterManager isDefaultPrinter:self.testPrinter];
@@ -463,6 +505,8 @@
     [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
     [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -476,8 +520,11 @@
 
 - (void)testPrinterChanges_OK
 {
+    // Mock
     id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -489,8 +536,11 @@
 
 - (void)testPrinterChanges_NG
 {
+    // Mock
     id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
     [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(NO)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -507,6 +557,8 @@
     [[[mockSNMPManager stub] andDo:^(NSInvocation *invocation) {
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:NO]}];
     }] searchForPrinter:OCMOCK_ANY];
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -526,6 +578,8 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_ADD object:mockSNMPManager userInfo:@{@"printerDetails": self.testPrinterDetails}];
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:YES]}];
     }] searchForPrinter:OCMOCK_ANY];
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -545,6 +599,12 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_ADD object:mockSNMPManager userInfo:@{@"printerDetails": self.testPrinterDetails}];
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:YES]}];
     }] searchForPrinter:OCMOCK_ANY];
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -554,7 +614,7 @@
     
     // Verification
     [self waitForStatus:kGHUnitWaitStatusSuccess timeout:15.0f];
-    GHAssertEquals(self.didFoundOldPrinter, YES, @"Found printer must be already registered.");
+    GHAssertTrue(self.didFoundOldPrinter, @"Found printer must be already registered.");
     [mockSNMPManager stopMocking];
 }
 
@@ -565,6 +625,8 @@
     [[[mockSNMPManager stub] andDo:^(NSInvocation *invocation) {
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:NO]}];
     }] searchForAvailablePrinters];
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -584,6 +646,8 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_ADD object:mockSNMPManager userInfo:@{@"printerDetails": self.testPrinterDetails}];
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_SNMP_END object:mockSNMPManager userInfo:@{@"result": [NSNumber numberWithBool:YES]}];
     }] searchForAvailablePrinters];
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -600,6 +664,8 @@
     // Mock
     id mockSNMPManager = [OCMockObject partialMockForObject:[SNMPManager sharedSNMPManager]];
     [[mockSNMPManager expect] cancelSearch];
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
@@ -613,6 +679,14 @@
 
 - (void)testIsAtMaximumPrinters_YES
 {
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     NSString *ipFormat = @"192.168.1.%d";
@@ -629,6 +703,14 @@
 
 - (void)testIsAtMaximumPrinters_NO
 {
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     NSString *ipFormat = @"192.168.1.%d";
@@ -645,6 +727,14 @@
 
 - (void)testIsIPAlreadyRegistered_YES
 {
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     [sharedPrinterManager registerPrinter:self.testPrinterDetails];
@@ -656,6 +746,14 @@
                    
 - (void)testIsIPAlreadyRegistered_NO
 {
+    // Mock
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:self.testPrintSetting] addObject:E_PRINTSETTING];
+    [[[mockDatabaseManager stub] andReturn:self.testPrinter] addObject:E_PRINTER];
+    [[[mockDatabaseManager stub] andReturnValue:OCMOCK_VALUE(YES)] saveChanges];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    [[[mockDatabaseManager stub] andReturn:self.testDefaultPrinter] addObject:E_DEFAULTPRINTER];
+    
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     [sharedPrinterManager registerPrinter:self.testPrinterDetails];

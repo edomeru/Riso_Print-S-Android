@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ * Custom UISegmentedControl.
+ * Uses flat UI-design and follows the App's color theme.
+ */
+
 @interface CustomSegmentedControl : UISegmentedControl
 
 @end

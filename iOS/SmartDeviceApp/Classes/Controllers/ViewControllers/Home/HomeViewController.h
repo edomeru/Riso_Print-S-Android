@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "SlidingViewController.h"
 
+/**
+ * Controller for the Main Menu panel.
+ */
 @interface HomeViewController : SlidingViewController
 
 @end

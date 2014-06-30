@@ -13,19 +13,74 @@
 
 @interface CustomSegmentedControl()
 
+/**
+ * Tint color for Normal State.
+ */
 @property (nonatomic, strong) UIColor *defaultTintColor;
+
+/**
+ * Tint color for Disabled State.
+ */
 @property (nonatomic, strong) UIColor *defaultDisabledColor;
+
+/**
+ * Tint color for Highligheted State.
+ */
 @property (nonatomic, strong) UIColor *defaultHighlightTextColor;
+
+/**
+ * Dimensions of the background image,
+ */
 @property (nonatomic, assign) CGRect bgImageRect;
+
+/**
+ * Dimensions of the background's inset.
+ */
 @property (nonatomic, assign) CGRect bgInsetRect;
+
+/**
+ * Dimensions of the divider image.
+ */
 @property (nonatomic, assign) CGRect dividerImageRect;
+
+/**
+ * Dimenstion of the divider's inset
+ */
 @property (nonatomic, assign) CGRect dividerInsetRect;
+
+/**
+ * Screen scale.
+ * 2.0 for Retina display.
+ */
 @property (nonatomic, assign) CGFloat scale;
 
+/**
+ * Prepares the values of the control's dimensions, images and texts
+ */
 - (void)initialize;
+
+/**
+ * Creates an image to be used in Selected State.
+ * @return UIImage of selected image.
+ */
 - (UIImage *)createSelectedImage;
+
+/**
+ * Creates an image to be used in Normal State.
+ * @return UIImage of normal image.
+ */
 - (UIImage *)createNormalImage;
+
+/**
+ * Creates an image to be used as left divider.
+ * @return UIImage of divider left image.
+ */
 - (UIImage *)createDividerLeftImage;
+
+/**
+ * Creates an image to be used as right divider.
+ * @return UIImage of divider right image.
+ */
 - (UIImage *)createDividerRightImage;
 
 @end

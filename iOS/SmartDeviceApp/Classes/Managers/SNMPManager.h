@@ -8,50 +8,68 @@
 
 #import <CoreData/CoreData.h>
 
+/**
+ * Handler for all SNMP-related operations.
+ * This class provides the interface to the SNMP common library. \n
+ * It contains the methods for searching for printers on the network
+ * as well as the means for canceling any ongoing search.\n\n
+ * This class is designed to be used as a singleton.\n
+ * It also requires its users to prepare observers for the following notifications:
+ *  - NOTIF_SNMP_ADD
+ *  - NOTIF_SNMP_END
+ */
 @interface SNMPManager : NSObject
 
 #pragma mark - Initialization
 
 /**
- Gets access to the singleton SNMPManager object.
- If the object does not exist yet, then this method creates it.
+ * Returns the singleton SNMPManager object.
+ * If the manager does not exist yet, then this method creates it.\n
+ *
+ * @return the single instance of SNMPManager
  */
 + (SNMPManager*)sharedSNMPManager;
 
 #pragma mark - State
 
 /**
- Checks if the SNMP Common Library is currently performing 
- any operation.
- @return YES if there is an ongoing search, NO otherwise.
+ * Checks if the SNMPManager is currently performing a search operation.
+ *
+ * @return YES if there is no ongoing search, NO otherwise
  */
 + (BOOL)idle;
 
 #pragma mark - Printer Search
 
 /**
- Searches for the Printer in the network using its IP Address.
- Uses the Manual Search function of the SNMP Common Library.
- A notification observer should be prepared beforehand to listen
- for the printer found and search ended notifications.
- @param printerIP
-        IP address of the printer to search
+ * Starts the network search for a printer using its IP address.
+ * This method uses the Manual Search function of the SNMP common library.\n
+ * This method returns immediately. The calling class should prepare observers
+ * for the following notifications beforehand to handle search end and printer
+ * add notifications:
+ *  - NOTIF_SNMP_END
+ *  - NOTIF_SNMP_ADD
+ *
+ * @param printerIP IP address of the printer to search
  */
 - (void)searchForPrinter:(NSString*)printerIP;
 
 /**
- Searches for all available and supported printers in the network.
- Uses the Device Discovery function of the SNMP Common Library.
- A notification observer should be prepared beforehand to listen
- for the printer found and search ended notifications.
+ * Starts network search for all available printers.
+ * This method uses the Device Discovery function of the SNMP common library.\n
+ * This method returns immediately. The calling class should prepare observers
+ * for the following notifications beforehand to handle search end and printer
+ * add notifications:
+ *  - NOTIF_SNMP_END
+ *  - NOTIF_SNMP_ADD
  */
 - (void)searchForAvailablePrinters;
 
 /**
- Cancels an ongoing searchForPrinter or searchForAvailablePrinters
- operation. If a notification observer listening for printer found
- and/or search ended has been previously setup, they should be then
- be removed after canceling search.
+ * Stops an ongoing search operation started by either {@link searchForPrinter}
+ * or {@link searchForAvailablePrinters}. This method waits until all the operations
+ * in the SNMP common library have been terminated before returning. \n
+ * Notification observers in the calling class will not anymore receive its notifications.
  */
 - (void)cancelSearch;
 

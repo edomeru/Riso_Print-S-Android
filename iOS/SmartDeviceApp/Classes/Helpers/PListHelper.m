@@ -15,8 +15,8 @@ static NSDictionary* sharedSettingsDict = nil;
 @interface PListHelper ()
 
 /**
- Sets the shared NSDictionary for the SmartDeviceApp Settings property list.
- This method should be called only once during the lifecycle of this class.
+ * Sets the shared NSDictionary for the SmartDeviceApp Settings property list.
+ * This method should be called only once during the lifecycle of this class.
  */
 + (void)setSharedSettingsDict;
 

@@ -12,6 +12,9 @@
 #import "PrintJobHistoryGroupCell.h"
 #import "PrintJobHistoryLayout.h"
 
+/**
+ * Controller for the "Print Job History" screen (phone and tablet).
+ */
 @interface PrintJobHistoryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, PrintJobHistoryGroupCellDelegate, PrintJobHistoryLayoutDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
 @end
