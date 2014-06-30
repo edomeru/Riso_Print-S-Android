@@ -20,6 +20,7 @@ using GalaSoft.MvvmLight.Threading;
 using SmartDeviceApp.Views;
 using SmartDeviceApp.Controllers;
 using DirectPrint;
+using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp
 {
@@ -37,7 +38,7 @@ namespace SmartDeviceApp
             InitializeComponent();
             Suspending += OnSuspending;
 
-            MainController.Initialize();            
+            MainController.Initialize();
         }
 
         /// <summary>
@@ -129,7 +130,6 @@ namespace SmartDeviceApp
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(PrintPreviewPage));
                 //await MainController.InitializeSamplePdf(); // TODO: For deletion, used for testing
             //}
 

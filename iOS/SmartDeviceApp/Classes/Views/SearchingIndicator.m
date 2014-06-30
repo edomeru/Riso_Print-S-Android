@@ -11,6 +11,9 @@
 
 @interface SearchingIndicator ()
 
+/**
+ * Flag that indicates whether the frame should be resized.
+ */
 @property (assign, nonatomic) BOOL invalidFrame;
 
 @end

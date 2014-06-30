@@ -18,7 +18,7 @@ using GalaSoft.MvvmLight.Command;
 
 namespace SmartDeviceApp.Controls
 {
-    public sealed partial class KeyRadioButtonControl : KeyValueControl
+    public partial class KeyRadioButtonControl : KeyValueControl
     {
         public KeyRadioButtonControl()
         {
@@ -30,12 +30,15 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty IsCheckedProperty =
            DependencyProperty.Register("IsChecked", typeof(bool), typeof(KeyRadioButtonControl), new PropertyMetadata(false, SetIsChecked));
-        
+
         public static new readonly DependencyProperty IsEnabledProperty =
            DependencyProperty.Register("IsEnabled", typeof(bool), typeof(KeyRadioButtonControl), new PropertyMetadata(true, SetIsEnabled));
-        
+
         public static readonly DependencyProperty IndexProperty =
             DependencyProperty.Register("Index", typeof(int), typeof(KeyRadioButtonControl), null);
+
+        public static readonly DependencyProperty SelectOptionCommandProperty =
+            DependencyProperty.Register("SelectOptionCommand", typeof(ICommand), typeof(KeyRadioButtonControl), null);
 
         public string GroupName
         {
@@ -59,6 +62,12 @@ namespace SmartDeviceApp.Controls
         {
             get { return (int)GetValue(IndexProperty); }
             set { SetValue(IndexProperty, value); }
+        }
+
+        public ICommand SelectOptionCommand
+        {
+            get { return (ICommand)GetValue(SelectOptionCommandProperty); }
+            set { SetValue(SelectOptionCommandProperty, value); }
         }
 
         private static void SetIsChecked(DependencyObject obj, DependencyPropertyChangedEventArgs e)
@@ -90,6 +99,21 @@ namespace SmartDeviceApp.Controls
         private void OnTapped(object sender, RoutedEventArgs e)
         {
             radioButton.IsChecked = true;
+            if (SelectOptionCommand != null)
+            {
+                SelectOptionCommand.Execute(Index);
+            }
         }
+
+        private void OnPressed(object sender, PointerRoutedEventArgs e)
+        {
+            ((KeyRadioButtonControl)sender).VisualState = "Pressed";
+        }
+
+        private void OnReleased(object sender, PointerRoutedEventArgs e)
+        {
+            ((KeyRadioButtonControl)sender).VisualState = "Normal";
+        }
+
     }
 }

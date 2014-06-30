@@ -12,20 +12,46 @@
 
 @interface PrintJobHistoryGroup ()
 
+/**
+ * Unique identifier for the group which can be used to associate
+ * a group to its view.
+ */
 @property (readwrite, assign, nonatomic) NSInteger tag;
+
+/**
+ * Name of the Printer object under which all the PrintJob objects this group
+ * holds belong to. This will be displayed in the group's header.
+ */
 @property (readwrite, strong, nonatomic) NSString* groupName;
+
+/**
+ * IP address of the Printer object under which all the PrintJob objects this
+ * group holds belong to. This will be displayed in the group's header.
+ */
 @property (readwrite, strong, nonatomic) NSString* groupIP;
+
+/**
+ * Stores the number of PrintJob objects held by this group.
+ */
 @property (readwrite, assign, nonatomic) NSUInteger countPrintJobs;
+
+/**
+ * If YES, this group will be displayed in collapsed form;
+ * If NO, this group will be displayed as expanded to show the list of print jobs.
+ */
 @property (readwrite, assign, nonatomic) BOOL isCollapsed;
 
 /** 
- Container for the list of PrintJob objects. 
- This container should be abstracted from the view and the controller,
- and all operations/handling on it should be done inside this class.
+ * List of PrintJob objects.
  */
 @property (strong, nonatomic) NSMutableArray* listPrintJobs;
 
-/** Checks if the specified index will not cause an out-of-bounds access. */
+/** 
+ * Checks if the specified index is valid in {@listPrintJobs}.
+ *
+ * @param index the list index
+ * @return YES if the index is valid, NO otherwise
+ */
 - (BOOL)isIndexValid:(NSUInteger)index;
 
 @end

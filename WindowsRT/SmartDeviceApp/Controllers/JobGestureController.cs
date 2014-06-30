@@ -185,7 +185,19 @@ namespace SmartDeviceApp.Controllers
             else if (!isDelete && jobListHeader != null)
             {
                 HideDeleteJobButton();
+                if ((bool)jobListHeader.IsChecked) // Manually set pressed states
+                {
+                    VisualStateManager.GoToState(jobListHeader, "CheckedPressed", true);
+                }
+                else
+                {
+                    VisualStateManager.GoToState(jobListHeader, "Pressed", true);
+                }
                 jobListHeader.IsChecked = !jobListHeader.IsChecked; // Manually toggle the button
+            }
+            else if (jobListHeader != null)
+            {
+                VisualStateManager.GoToState(jobListHeader, "Normal", true);
             }
         }
 

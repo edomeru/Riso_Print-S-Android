@@ -1,4 +1,15 @@
-﻿using SmartDeviceApp.Common.Enum;
+﻿//
+//  TwoPageControl.xaml.cs
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group on 2014/02/25.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +24,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Controls
 {
@@ -23,20 +35,63 @@ namespace SmartDeviceApp.Controls
             this.InitializeComponent();
         }
 
+        public static readonly DependencyProperty RightBackPageImageProperty =
+            DependencyProperty.Register("RightBackPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty LoadRightBackPageActiveProperty =
+            DependencyProperty.Register("IsLoadRightBackPageActive", typeof(bool), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty LeftBackPageImageProperty =
+            DependencyProperty.Register("LeftBackPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty IsLoadLeftBackPageActiveProperty =
+            DependencyProperty.Register("IsLoadLeftBackPageActive", typeof(bool), typeof(TwoPageControl), null);
+
         public static readonly DependencyProperty PageAreaGridProperty =
             DependencyProperty.Register("PageAreaGrid", typeof(Grid), typeof(TwoPageControl), null);
         
         public static readonly DependencyProperty RightPageImageProperty =
-            DependencyProperty.Register("RightPageImage", typeof(ImageSource), typeof(TwoPageControl),
-            new PropertyMetadata(null, new PropertyChangedCallback(SetRightPageImage)));
-        
+            DependencyProperty.Register("RightPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty IsLoadRightPageActiveProperty =
+            DependencyProperty.Register("IsLoadRightPageActive", typeof(bool), typeof(TwoPageControl), null);
+
         public static readonly DependencyProperty LeftPageImageProperty =
-            DependencyProperty.Register("LeftPageImage", typeof(ImageSource), typeof(TwoPageControl),
-            new PropertyMetadata(null, new PropertyChangedCallback(SetLeftPageImage)));
+            DependencyProperty.Register("LeftPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty IsLoadLeftPageActiveProperty =
+            DependencyProperty.Register("IsLoadLeftPageActive", typeof(bool), typeof(TwoPageControl), null);
 
         public static readonly DependencyProperty PageViewModeProperty =
            DependencyProperty.Register("PageViewMode", typeof(PageViewMode), typeof(TwoPageControl),
            new PropertyMetadata(PageViewMode.SinglePageView, new PropertyChangedCallback(SetPageViewMode)));
+
+        public static readonly DependencyProperty PageAreaSizeProperty =
+           DependencyProperty.Register("PageAreaSize", typeof(Size), typeof(TwoPageControl), null);
+
+        public ImageSource RightBackPageImage
+        {
+            get { return (ImageSource)GetValue(RightBackPageImageProperty); }
+            set { SetValue(RightBackPageImageProperty, value); }
+        }
+
+        public bool IsLoadRightBackPageActive
+        {
+            get { return (bool)GetValue(LoadRightBackPageActiveProperty); }
+            set { SetValue(LoadRightBackPageActiveProperty, value); }
+        }
+
+        public ImageSource LeftBackPageImage
+        {
+            get { return (ImageSource)GetValue(LeftBackPageImageProperty); }
+            set { SetValue(LeftBackPageImageProperty, value); }
+        }
+
+        public bool IsLoadLeftBackPageActive
+        {
+            get { return (bool)GetValue(IsLoadLeftBackPageActiveProperty); }
+            set { SetValue(IsLoadLeftBackPageActiveProperty, value); }
+        }
 
         public Grid PageAreaGrid
         {
@@ -49,10 +104,22 @@ namespace SmartDeviceApp.Controls
             set { SetValue(RightPageImageProperty, value); }
         }
 
+        public bool IsLoadRightPageActive
+        {
+            get { return (bool)GetValue(IsLoadRightPageActiveProperty); }
+            set { SetValue(IsLoadRightPageActiveProperty, value); }
+        }
+
         public ImageSource LeftPageImage
         {
             get { return (ImageSource)GetValue(LeftPageImageProperty); }
             set { SetValue(LeftPageImageProperty, value); }
+        }
+
+        public bool IsLoadLeftPageActive
+        {
+            get { return (bool)GetValue(IsLoadLeftPageActiveProperty); }
+            set { SetValue(IsLoadLeftPageActiveProperty, value); }
         }
 
         public PageViewMode PageViewMode
@@ -61,36 +128,65 @@ namespace SmartDeviceApp.Controls
             set { SetValue(PageViewModeProperty, value); }
         }
 
-        private static void SetRightPageImage(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        public Size PageAreaSize
         {
-            if ((ImageSource)e.NewValue != null)
-            {
-                ((TwoPageControl)obj).rightPage.Image = (ImageSource)e.NewValue;
-            }
-        }
-
-        private static void SetLeftPageImage(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            if ((ImageSource)e.NewValue != null)
-            {
-                ((TwoPageControl)obj).leftPage.Image = (ImageSource)e.NewValue;
-            }
+            get { return (Size)GetValue(PageAreaSizeProperty); }
+            set { SetValue(PageAreaSizeProperty, value); }
         }
 
         private static void SetPageViewMode(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            if ((PageViewMode)e.NewValue == PageViewMode.SinglePageView)
+            var control = (TwoPageControl)obj;
+            var gridLengthCollapsed = new GridLength(0);
+            var gridLengthFull = new GridLength(1, GridUnitType.Star);
+
+            switch((PageViewMode)e.NewValue)
             {
-                ((TwoPageControl)obj).leftPage.Visibility = Visibility.Collapsed;
-                ((TwoPageControl)obj).leftPageArea.Width = new GridLength(0);
-                ((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
-                ((TwoPageControl)obj).rightPage.Margin = new Thickness(0,0,0,0);
-            }
-            else if ((PageViewMode)e.NewValue == PageViewMode.TwoPageView)
-            {
-                ((TwoPageControl)obj).leftPage.Visibility = Visibility.Visible;
-                ((TwoPageControl)obj).leftPageArea.Width = new GridLength(1, GridUnitType.Star);
-                ((TwoPageControl)obj).rightPageArea.Width = new GridLength(1, GridUnitType.Star);
+                case PageViewMode.SinglePageView:
+                {
+                    control.leftPage.Visibility = Visibility.Collapsed;
+                    control.leftPageArea.Width = gridLengthCollapsed;
+                    control.rightPageArea.Width = gridLengthFull;
+                    control.topPage.Visibility = Visibility.Collapsed;
+                    control.topPageArea.Height = gridLengthCollapsed;
+                    control.bottomPageArea.Height = gridLengthFull;
+
+                    // Dash lines
+                    control.horizontalSeparator.Visibility = Visibility.Collapsed;
+                    control.verticalSeparator.Visibility = Visibility.Collapsed;
+
+                    break;
+                }
+                case PageViewMode.TwoPageViewHorizontal:
+                {
+                    control.leftPage.Visibility = Visibility.Visible;
+                    control.leftPageArea.Width = gridLengthFull;
+                    control.rightPageArea.Width = gridLengthFull;
+                    control.topPage.Visibility = Visibility.Collapsed;
+                    control.topPageArea.Height = gridLengthCollapsed;
+                    control.bottomPageArea.Height = gridLengthFull;
+
+                    // Dash lines
+                    control.horizontalSeparator.Visibility = Visibility.Collapsed;
+                    control.verticalSeparator.Visibility = Visibility.Visible;
+
+                    break;
+                }
+                case PageViewMode.TwoPageViewVertical:
+                {
+                    control.leftPage.Visibility = Visibility.Collapsed;
+                    control.leftPageArea.Width = gridLengthCollapsed;
+                    control.rightPageArea.Width = gridLengthFull;
+                    control.topPage.Visibility = Visibility.Visible;
+                    control.topPageArea.Height = gridLengthFull;
+                    control.bottomPageArea.Height = gridLengthFull;
+                    
+                    // Dash lines
+                    control.horizontalSeparator.Visibility = Visibility.Visible;
+                    control.verticalSeparator.Visibility = Visibility.Collapsed;
+
+                    break;
+                }
             }
         }
     }

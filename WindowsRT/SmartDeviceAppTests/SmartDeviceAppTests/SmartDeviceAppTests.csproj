@@ -112,19 +112,102 @@
     <SDKReference Include="TestPlatform, Version=11.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Constants\ImageConstantTest.cs" />
+    <Compile Include="Common\Constants\PrintSettingConstantTest.cs" />
     <Compile Include="Common\Utilities\DefaultsUtilityTest.cs" />
-    <Compile Include="Common\Utilities\GlobalizationUtilityTest.cs" />
+    <Compile Include="Common\Utilities\PreviewPageImageUtilityTest.cs" />
+    <Compile Include="Common\Utilities\UnitTestUtility.cs" />
+    <Compile Include="Controllers\DocumentControllerTest.cs" />
+    <Compile Include="Controllers\InitialDataControllerTest.cs" />
+    <Compile Include="Controllers\NetworkControllerTest.cs" />
     <Compile Include="Controllers\PrinterControllerTest.cs" />
+    <Compile Include="Controllers\DatabaseControllerTest.cs" />
+    <Compile Include="Controllers\DirectPrintControllerTest.cs" />
+    <Compile Include="Controllers\MainControllerTest.cs" />
+    <Compile Include="Controllers\SNMPControllerTest.cs" />
+    <Compile Include="Common\Utilities\StorageFileUtilityTest.cs" />
+    <Compile Include="Controllers\JobControllerTest.cs" />
+    <Compile Include="Controllers\PrintSettingsControllerTest.cs" />
+    <Compile Include="Controllers\SettingControllerTest.cs" />
     <Compile Include="Controllers\PrintPreviewControllerTest.cs" />
+    <Compile Include="Converters\StringToVisibilityConverterTest.cs" />
+    <Compile Include="Converters\SidePaneLineGeometryConverterTest.cs" />
+    <Compile Include="Converters\SeparatorLineGeometryConverterTest.cs" />
+    <Compile Include="Converters\SelectPrinterToSeparatorVisibilityConverterTest.cs" />
+    <Compile Include="Converters\SelectedPrinterToBooleanConverterTest.cs" />
+    <Compile Include="Converters\SelectedPrinterIdToTextConverterTest.cs" />
+    <Compile Include="Converters\ResourceStringToTextConverterTest.cs" />
+    <Compile Include="Converters\PrintSettingToValueConverterTest.cs" />
+    <Compile Include="Converters\PrintSettingToSeparatorVisibilityConverterTest.cs" />
+    <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverterTest.cs" />
+    <Compile Include="Converters\PrintSettingOptionToBooleanConverterTest.cs" />
+    <Compile Include="Converters\PrintJobToSeparatorVisibilityConverterTest.cs" />
+    <Compile Include="Converters\PrintJobResultToImageSourceConverterTest.cs" />
+    <Compile Include="Converters\PrintJobListToGroupVisibilityConverterTest.cs" />
+    <Compile Include="Converters\PrinterSearchItemToSeparatorVisibilityTest.cs" />
+    <Compile Include="Converters\PrinterNameToTextConverterTest.cs" />
+    <Compile Include="Converters\PageNumberFormatConverterTest.cs" />
+    <Compile Include="Converters\PageIndexToSliderValueConverterTest.cs" />
+    <Compile Include="Converters\MainMenuItemToSeparatorVisibilityConverterTest.cs" />
+    <Compile Include="Converters\IntToStringConverterTest.cs" />
+    <Compile Include="Converters\DateTimeToStringConverterTest.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverterTest.cs" />
+    <Compile Include="Converters\PrinterStatusToImageSourceConverterTest.cs" />
+    <Compile Include="Converters\WidthHeightConverterTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Models\PrinterTest.cs" />
+    <Compile Include="Models\PrinterSearchItemTest.cs" />
+    <Compile Include="Models\PrintJobTest.cs" />
+    <Compile Include="Models\MainMenuItemTest.cs" />
+    <Compile Include="Models\PageNumberInfoTest.cs" />
+    <Compile Include="Models\PreviewSettingsTest.cs" />
+    <Compile Include="Models\DataItemTest.cs" />
+    <Compile Include="DirectPrint\TCPSocketTest.cs" />
+    <Compile Include="DirectPrint\DirectPrintTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SNMPTest\SNMPDeviceTest.cs" />
+    <Compile Include="SNMPTest\SNMPVariableTest.cs" />
+    <Compile Include="ViewModels\AddPrinterViewModelTest.cs" />
+    <Compile Include="ViewModels\PrintersViewModelTest.cs" />
+    <Compile Include="ViewModels\SearchPrinterViewModelTest.cs" />
+    <Compile Include="Selectors\PrintersRightPaneTemplateSelectorTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Selectors\PrintSettingsListTemplateSelectorTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\SelectPrinterViewModelTest.cs" />
+    <Compile Include="ViewModels\PrintSettingsPaneViewModelTest.cs" />
+    <Compile Include="ViewModels\JobsViewModelTest.cs" />
+    <Compile Include="ViewModels\PrintPreviewViewModelTest.cs" />
+    <Compile Include="ViewModels\ViewModelLocatorTest.cs" />
+    <Compile Include="ViewModels\ViewControlViewModelTest.cs" />
+    <Compile Include="ViewModels\SettingsViewModelTest.cs" />
+    <Compile Include="ViewModels\LegalViewModelTest.cs" />
+    <Compile Include="ViewModels\HelpViewModelTest.cs" />
     <Compile Include="ViewModels\HomeViewModelTest.cs" />
+    <Compile Include="ViewModels\PrintSettingOptionsViewModelTest.cs" />
+    <Compile Include="ViewModels\PrintSettingsViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="TestData\SqlScript\insert_printjob_extra.sql" />
+    <Content Include="TestData\SqlScript\insert_printjob_single.sql" />
+    <Content Include="TestData\SqlScript\insert_printer_single.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_orientation.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_punch.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_imposition.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_finishingside.sql" />
+    <Content Include="TestData\SqlScript\insert_printsettings_booklet.sql" />
+    <Content Include="TestData\SqlScript\SampleData.sql" />
     <None Include="packages.config" />
     <None Include="SmartDeviceAppTests_TemporaryKey.pfx" />
+    <Content Include="TestData\PDF\RZ1070.pdf" />
+    <Content Include="TestData\PDF\128AES_Acrobat.pdf" />
+    <Content Include="TestData\PDF\PDF-lorem.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\UnitTestLogo.scale-100.png">
@@ -139,11 +222,21 @@
     <Content Include="Images\UnitTestStoreLogo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\SqlScript\create_table_printer.sql" />
+    <Content Include="TestData\SqlScript\create_table_printsetting.sql" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DirectPrint\DirectPrint.csproj">
+      <Project>{6506b581-99ad-4244-badd-c87d3a79f11a}</Project>
+      <Name>DirectPrint</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\SmartDeviceApp\SmartDeviceApp.csproj">
       <Project>{75ccce90-11aa-405d-a128-fea952708d15}</Project>
       <Name>SmartDeviceApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SNMP\SNMP.csproj">
+      <Project>{a8792925-8347-4b0e-bd5a-c04fdb0bb5b2}</Project>
+      <Name>SNMP</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -160,7 +253,9 @@
       <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\netcore45\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resources\Images\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

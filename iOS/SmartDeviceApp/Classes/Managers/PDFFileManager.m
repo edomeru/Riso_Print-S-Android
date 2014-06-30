@@ -17,22 +17,35 @@
 @interface PDFFileManager()
 
 /**
- Indicates whether or not a file ready for preview
+ * Flag that indicates whether or not a PDF is available to be displayed in print preview.
+ * This flag is set to YES only when the error status is ({@link kPDFErrorNone}).
+ * Otherwise, it is NO.
  */
 @property (nonatomic) BOOL fileAvailableForPreview;
 
 /**
- Print document object
+ * Reference to the PDF file in the form of a PrintDocument object.
  */
 @property (nonatomic, strong) PrintDocument *printDocument;
 
 /**
- Moves the PDF File (from Open In to Documents)
+ * Copies the PDF file to the application's Documents directory.
+ *
+ * @param documentURL output parameter that will contain the path to the
+ *                    PDF file in the application's Documents directory\n
+ *                    (this will be nil if an error occurs)
+ * @result YES if successful, NO otherwise
  */
 - (BOOL)moveFileToDocuments:(NSURL **)documentURL;
 
 /**
- Verifies if the PDF file is valid
+ * Check if the PDF can be opened, previewed, and printed.
+ * The following checks are performed:
+ *  - Is the document locked with an open password?
+ *  - Is the document encrypted?
+ *  - Is the document's printing allowed permission set?
+ *
+ * @return one of {@link kPDFError} values
  */
 - (kPDFError)verifyDocument:(NSURL *)documentURL;
 

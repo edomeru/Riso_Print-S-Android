@@ -11,6 +11,10 @@
 
 @interface PrintSettingsHeaderCell()
 
+/**
+ * Reference to the expanded indicator of the group.
+ * Label should be - when the group is expanded and + when collapsed.
+ */
 @property (nonatomic, weak) IBOutlet UILabel *expansionLabel;
 
 @end

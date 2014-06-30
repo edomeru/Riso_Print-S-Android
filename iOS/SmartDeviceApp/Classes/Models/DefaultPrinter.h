@@ -10,8 +10,14 @@
 
 @class Printer;
 
+/**
+ * Default printer is the entity that holds the information about the default printer.
+ */
 @interface DefaultPrinter : NSManagedObject
 
+/**
+ * Reference to the printer that is set as default.
+ */
 @property (nonatomic, retain) Printer* printer;
 
 @end

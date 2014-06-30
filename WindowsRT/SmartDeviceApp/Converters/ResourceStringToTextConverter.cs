@@ -16,7 +16,7 @@ namespace SmartDeviceApp.Converters
         {
             try
             {
-                if (value == null || String.IsNullOrEmpty(value.ToString())) return String.Empty;
+                if (value == null || !(value is string) || String.IsNullOrEmpty(value.ToString())) return String.Empty;
                 var textMode = TextMode.None;
                 if (parameter != null && !String.IsNullOrEmpty(parameter.ToString()))
                 {

@@ -29,6 +29,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Converters;
 
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
@@ -52,12 +53,6 @@ namespace SmartDeviceApp.Views
 
         public PrintersPage()
         {
-            Messenger.Default.Register<MessageAlert>(
-             this,
-             msg => ShowDialog(msg));
-
-
-
             this.InitializeComponent();
 
             _gestureController = new PrintersGestureController();
@@ -118,16 +113,15 @@ namespace SmartDeviceApp.Views
 
         #endregion
 
-       
-        private async void ShowDialog(MessageAlert msg)
-        {
-            MessageDialog md = new MessageDialog(msg.Content, msg.Caption);
-            await md.ShowAsync();
-        }
 
         private void printerInfoView_Loaded(object sender, RoutedEventArgs e)
         {
             _gestureController.TargetControl = (AdaptableGridView)sender;
+            var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            var columns = (_viewControlViewModel.ViewOrientation == Common.Enum.ViewOrientation.Landscape) ? 3 : 2;
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            ((AdaptableGridView)_gestureController.TargetControl).ItemWidth = (double)((new PrintersListWidthConverter()).Convert(_viewControlViewModel.ViewMode, null,
+                new ViewItemParameters() { columns = columns, viewOrientation = _viewControlViewModel.ViewOrientation }, null));
             
         }
 
@@ -142,6 +136,17 @@ namespace SmartDeviceApp.Views
         {
             _gestureController.ControlReference = (ScrollViewer)sender;
 
+        }
+
+        private void printerName_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void printerInfoView_LayoutUpdated(object sender, object e)
+        {
+            
+            
         }
 
     }

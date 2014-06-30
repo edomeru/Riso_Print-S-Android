@@ -12,6 +12,7 @@
 
 using Windows.Graphics.Display;
 using SmartDeviceApp.Controls;
+using System;
 
 namespace SmartDeviceApp.Common.Constants
 {
@@ -20,21 +21,39 @@ namespace SmartDeviceApp.Common.Constants
 
         #region Print Preview Page
 
+        public const double FACTOR_MM_TO_IN = 0.0393701;
         public const double BASE_DPI = 96.0;  // 96.0 DPI = 1 DIP
-        public static double DpiScaleFactor =
-            (int)DisplayInformation.GetForCurrentView().LogicalDpi / BASE_DPI;
+
+        public static double GetDpiScaleFactor()
+        {
+            try
+            {
+                return (double)GetLogicalDpi() / BASE_DPI;
+            }
+            catch (Exception)
+            {
+                // Error handling
+            }
+
+            return 1.0;
+        }
+
+        public static int GetLogicalDpi()
+        {
+            return (int)DisplayInformation.GetForCurrentView().LogicalDpi;
+        }
 
         #endregion Print Preview Page
 
         #region Default Image Sizes
 
         private const string JOB_STATUS_IMAGE = "img_btn_job_status";
-        private const int JOB_STATUS_IMAGE_WIDTH_100  = 34;
-        private const int JOB_STATUS_IMAGE_HEIGHT_100 = 34;
-        private const int JOB_STATUS_IMAGE_WIDTH_140  = 48;
-        private const int JOB_STATUS_IMAGE_HEIGHT_140 = 48;
-        private const int JOB_STATUS_IMAGE_WIDTH_180  = 62;
-        private const int JOB_STATUS_IMAGE_HEIGHT_180 = 62;
+        private const int STATUS_IMAGE_WIDTH_100  = 34;
+        private const int STATUS_IMAGE_HEIGHT_100 = 34;
+        private const int STATUS_IMAGE_WIDTH_140  = 48;
+        private const int STATUS_IMAGE_HEIGHT_140 = 48;
+        private const int STATUS_IMAGE_WIDTH_180  = 62;
+        private const int STATUS_IMAGE_HEIGHT_180 = 62;
 
         private const string COLLAPSE_IMAGE = "img_btn_collapse";
         // TODO: Replace when print setting icons become available
@@ -53,23 +72,28 @@ namespace SmartDeviceApp.Common.Constants
         private const int RIGHT_BUTTON_IMAGE_WIDTH_180  = 26;
         private const int RIGHT_BUTTON_IMAGE_HEIGHT_180 = 36;
 
-        public static int GetIconImageWidth(object sender)
+        public static int GetIconImageWidth(object sender, bool? isIgnoreResolution = false)
         {
             int width = 0;
             var resolution = DisplayInformation.GetForCurrentView().ResolutionScale;
+            if (isIgnoreResolution != null && isIgnoreResolution.Value == true)
+            {
+                resolution = ResolutionScale.Scale100Percent;
+            }
             var type = sender.GetType();
-            if (type == typeof(JobListItemControl))
+            if (type == typeof(JobListItemControl) ||
+                type == typeof(SelectPrinterItemControl))
             {
                 switch (resolution)
                 {
                     case ResolutionScale.Scale100Percent:
-                        width = JOB_STATUS_IMAGE_WIDTH_100;
+                        width = STATUS_IMAGE_WIDTH_100;
                         break;
                     case ResolutionScale.Scale140Percent:
-                        width = JOB_STATUS_IMAGE_WIDTH_140;
+                        width = STATUS_IMAGE_WIDTH_140;
                         break;
                     case ResolutionScale.Scale180Percent:
-                        width = JOB_STATUS_IMAGE_WIDTH_180;
+                        width = STATUS_IMAGE_WIDTH_180;
                         break;
                 }
             }
@@ -77,7 +101,8 @@ namespace SmartDeviceApp.Common.Constants
                 type == typeof(KeyValueControl) ||
                 type == typeof(KeyRadioButtonControl) ||
                 type == typeof(KeyTextBoxControl) ||
-                type == typeof(KeyToggleSwitchControl))
+                type == typeof(KeyToggleSwitchControl) ||
+                type == typeof(PrinterNameControl))
             {
                 switch (resolution)
                 {
@@ -92,16 +117,13 @@ namespace SmartDeviceApp.Common.Constants
                         break;
                 }
             }
-            else 
-            {
-            }
             return width;
         }
 
         public static int GetRightButtonImageWidth()
         {
             int width = 0;
-            var resolution = DisplayInformation.GetForCurrentView().ResolutionScale;            
+            var resolution = DisplayInformation.GetForCurrentView().ResolutionScale;
             switch (resolution)
             {
                 case ResolutionScale.Scale100Percent:

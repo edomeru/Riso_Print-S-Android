@@ -20,10 +20,12 @@ using Windows.UI.Xaml;
 using Windows.Storage.Pickers;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
+using Windows.UI.Xaml.Controls;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -37,16 +39,16 @@ namespace SmartDeviceApp.ViewModels
 
         private ICommand _openDocumentCommand;
         private bool _isProgressRingActive;
-        private bool _isOpenDocumentEnabled;
+        private bool _enabledOpenDocumentCommand;
                 
         public HomeViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-            SetViewMode(_viewControlViewModel.ViewMode);
-            IsOpenDocumentButtonEnabled = true;
+            _enabledOpenDocumentCommand = true;
             IsProgressRingActive = false;
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 
         public ICommand OpenDocumentCommand
@@ -57,7 +59,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _openDocumentCommand = new RelayCommand(
                         () => OpenDocumentCommandExecute(),
-                        () => true
+                        () => _enabledOpenDocumentCommand
                     );
                 }
                 return _openDocumentCommand;
@@ -77,21 +79,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public bool IsOpenDocumentButtonEnabled
-        {
-            get { return _isOpenDocumentEnabled; }
-            set
-            {
-                if (_isOpenDocumentEnabled != value)
-                {
-                    _isOpenDocumentEnabled = value;
-                    RaisePropertyChanged("IsOpenDocumentButtonEnabled");
-                }
-            }
-        }
-
         private async void OpenDocumentCommandExecute()
         {
+            _enabledOpenDocumentCommand = false;
             try
             {
                 FileOpenPicker openPicker = new FileOpenPicker();
@@ -110,7 +100,9 @@ namespace SmartDeviceApp.ViewModels
                     await MainController.FileActivationHandler(file);
                     if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
                     {
+                        new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = true;
                         new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
+                        new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = false;
                     }
                     IsProgressRingActive = false;
                 }
@@ -121,31 +113,31 @@ namespace SmartDeviceApp.ViewModels
                 LogUtility.LogError(ex);
                 DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
+            _enabledOpenDocumentCommand = true;
         }
 
-        private void SetViewMode(ViewMode viewMode)
+        private void EnableMode(ViewMode viewMode)
         {
-            if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview) return;
-            switch (viewMode)
+            if (viewMode == ViewMode.FullScreen)
             {
-                case ViewMode.MainMenuPaneVisible:
-                    {
-                        IsOpenDocumentButtonEnabled = false;
-                        break;
-                    }
-
-                case ViewMode.FullScreen:
-                    {
-                        IsOpenDocumentButtonEnabled = true;
-                        break;
-                    }
-                case ViewMode.RightPaneVisible:
-                case ViewMode.RightPaneVisible_ResizedWidth: // NOTE: Technically not possible
-                    {
-                        IsOpenDocumentButtonEnabled = false;
-                        break;
-                    }
+                if (HomeGestureGrid != null)
+                {
+                    HomeGestureGrid.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
             }
+            else
+            {
+                if (HomeGestureGrid != null)
+                {
+                    HomeGestureGrid.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+            }
+        }
+
+        public Grid HomeGestureGrid
+        {
+            get;
+            set;
         }
     }
 }

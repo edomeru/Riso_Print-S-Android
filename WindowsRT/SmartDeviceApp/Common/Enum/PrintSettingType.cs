@@ -9,6 +9,7 @@ namespace SmartDeviceApp.Common.Enum
     public enum PrintSettingType
     {
         numeric,
+        password,
         boolean,
         list,
         unknown

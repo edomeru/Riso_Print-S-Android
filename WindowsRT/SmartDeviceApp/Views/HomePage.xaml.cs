@@ -26,6 +26,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.Controls;
+using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Views
 {
@@ -34,6 +35,21 @@ namespace SmartDeviceApp.Views
         public HomePage()
         {
             this.InitializeComponent();
+        }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            ViewModel.HomeGestureGrid = (Grid)sender;
+
+        }
+
+        public HomeViewModel ViewModel
+        {
+            get
+            {
+                return (HomeViewModel)DataContext;
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace SmartDeviceApp.Common.Enum
         MainMenuPaneVisible,
         FullScreen,
         RightPaneVisible,
-        RightPaneVisible_ResizedWidth
+        RightPaneVisible_ResizedWidth,
+        Unknown
     }
 }

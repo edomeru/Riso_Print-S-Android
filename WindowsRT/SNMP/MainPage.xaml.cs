@@ -22,7 +22,7 @@ namespace SNMP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        SNMP snmp = new SNMP();
+        //SNMP snmp = new SNMP();
 
         public MainPage()
         {

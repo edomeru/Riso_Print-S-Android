@@ -10,6 +10,7 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 using System.Collections.Generic;
@@ -22,6 +23,8 @@ namespace SmartDeviceApp.Controllers
     public sealed class JobController
     {
         static readonly JobController _instance = new JobController();
+
+        private const int MAX_JOBS_PER_GROUP = 100;
 
         public delegate void RemoveJobEventHandler(PrintJob printJob);
         public delegate void RemoveGroupedJobsEventHandler(int printJobId);
@@ -91,14 +94,14 @@ namespace SmartDeviceApp.Controllers
         private async Task FetchJobs()
         {
             List<PrintJob> printJobList = await DatabaseController.Instance.GetPrintJobs();
+
             PrintJobList tempList = new PrintJobList();
             var orderedList = printJobList.OrderBy(pj => pj.PrinterId)
-                                          .ThenBy(pj => pj.Date)
+                                          .ThenByDescending(pj => pj.Date)
                                           .GroupBy(pj => pj.PrinterId).ToList();
             foreach (var group in orderedList)
             {
-                // Get printer name of the first element
-                string printerName = string.Empty;
+                // Get printer first element
                 PrintJob printJobSample = group.FirstOrDefault();
                 if (printJobSample != null)
                 {
@@ -124,18 +127,18 @@ namespace SmartDeviceApp.Controllers
         {
             if (printJob != null && printJob.PrinterId > -1)
             {
-                int added = await DatabaseController.Instance.InsertPrintJob(printJob);
-                if (added == 0)
-                {
-                    // TODO: Notify error?
-                    return;
-                }
+                await DatabaseController.Instance.InsertPrintJob(printJob);
+                // Ignore error
 
                 PrintJobGroup printJobGroup = _jobsViewModel.PrintJobsList
                     .FirstOrDefault(group => group.Jobs[0].PrinterId == printJob.PrinterId);
                 if (printJobGroup != null) // Group already exists
                 {
-                    printJobGroup.Jobs.Add(printJob);
+                    if (printJobGroup.Jobs.Count == MAX_JOBS_PER_GROUP) // Remove last item if needed
+                    {
+                        RemoveJob(printJobGroup.Jobs[MAX_JOBS_PER_GROUP - 1]);
+                    }
+                    printJobGroup.Jobs.Insert(0, printJob); // Insert at top of the list
                 }
                 else // Create new group
                 {
@@ -161,10 +164,11 @@ namespace SmartDeviceApp.Controllers
         {
             if (printJob != null)
             {
-                int deleted = await DatabaseController.Instance.DeletePrintJob(printJob);
-                if (deleted == 0)
+                bool result = await DatabaseController.Instance.DeletePrintJob(printJob);
+                if (!result)
                 {
-                    // TODO: Notify view model to display error message
+                    await DialogService.Instance.ShowError("IDS_ERR_MSG_DB_FAILURE",
+                        "IDS_LBL_PRINT_JOB_HISTORY", "IDS_LBL_OK", null);
                     return;
                 }
 
@@ -173,10 +177,11 @@ namespace SmartDeviceApp.Controllers
                 if (printJobGroup != null)
                 {
                     printJobGroup.Jobs.Remove(printJob);
-                }
-                if (printJobGroup.Jobs.Count == 0)
-                {
-                    _jobsViewModel.PrintJobsList.Remove(printJobGroup);
+                    if (printJobGroup.Jobs.Count == 0)
+                    {
+                        _jobsViewModel.PrintJobsList.Remove(printJobGroup);
+                        _jobsViewModel.RemovePrintJobGroup(printJobGroup); // Update sorting of groups into columns
+                    }
                 }
             }
         }

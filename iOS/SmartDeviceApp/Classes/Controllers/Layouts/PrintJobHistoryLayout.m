@@ -2,9 +2,6 @@
 //  PrintJobHistoryLayout.m
 //  SmartDeviceApp
 //
-//  Reference:
-//  http://skeuo.com/uicollectionview-custom-layout-tutorial
-//
 //  Created by a-LINK Group.
 //  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
@@ -15,134 +12,158 @@
 
 #pragma mark - Properties
 
-/** Spacing between a group and the UICollectionView edges. */
+/**
+ * Spacing between a group and the UICollectionView edges. 
+ */
 @property (assign, nonatomic) UIEdgeInsets groupInsets;
 
-/** Horizontal spacing between groups. */
+/**
+ * Horizontal spacing between groups. 
+ */
 @property (assign, nonatomic) CGFloat interGroupSpacingX;
 
-/** Vertical spacing between groups. */
+/**
+ * Vertical spacing between groups.
+ */
 @property (assign, nonatomic) CGFloat interGroupSpacingY;
 
-/** Stores the fixed frame width of each group */
+/** 
+ * The fixed frame width of each group.
+ */
 @property (assign, nonatomic) CGFloat groupWidth;
 
 /** 
- The number of columns to be displayed.
- This layout assumes a vertical scrolling display, so the
- number of columns must fit the collection view width.
+ * The number of columns to be displayed.
  */
 @property (assign, nonatomic) NSInteger numberOfColumns;
 
 /** 
- Stores the layout attributes for each group.
- This is required for custom UICollectionViewLayout classes.
- The group's index path is used as the key.
+ * Stores the UICollectionViewLayoutAttributes for each group.
  */
 @property (strong, nonatomic) NSDictionary* groupLayoutInfo;
 
 /** 
- Stores the current height of each column taking into account
- whether a group is collapsed or expanded.
- This is used for determining the group's position (origin.y)
+ * Stores the current height of each column taking into account
+ * whether a group is collapsed or expanded.
+ * This is used for determining the group's y-position.
  */
 @property (strong, nonatomic) NSMutableArray* columnCurrentHeights;
 
 /**
- Stores the true height of each column ignoring whether the group
- is collapsed or expanded.
- This is used for determining the shortest column and for
- assigning groups to columns.
+ * Stores the true height of each column ignoring whether the group
+ * is collapsed or expanded.
+ * This is used for determining the shortest column and to determine
+ * to which column a group will be positioned.
  */
 @property (strong, nonatomic) NSMutableArray* columnTrueHeights;
 
 /** 
- Stores the column positions of each group in the portrait orientation.
- This is used for retaining group position during rotation.
+ * Stores the column positions of each group in the portrait orientation.
+ * This is used for retaining group position during rotation.
  */
 @property (strong, nonatomic) NSMutableDictionary* columnAssignmentsPort;
 
 /**
- Stores the column positions of each group in the landscape orientation.
- This is used for retaining group position during rotation.
+ * Stores the column positions of each group in the landscape orientation.
+ * This is used for retaining group position during rotation.
  */
 @property (strong, nonatomic) NSMutableDictionary* columnAssignmentsLand;
 
-/** Reference to the column positions for either the portrait or landscape orientation. */
+/** 
+ * Reference to either {@link columnAssignmentsPort} or {@link columnAssignmentsLand}.
+ */
 @property (strong, nonatomic) NSMutableDictionary* columnAssignments;
 
 /** 
- Flag that a column will be empty when the layout operation finishes.
- This flag is updated when a group is deleted while in landscape orientation.
- This is used when rotating from landscape to portrait.
+ * Flag that a column will be empty when the layout operation finishes.
+ * This flag is updated when a group is to deleted while in portrait orientation.
+ * This is used when rotating from portrait to landscape.
  */
 @property (assign, nonatomic) BOOL columnWillBeEmptyInLand;
 
 /**
- Flag that a column will be empty when the layout operation finishes.
- This flag is updated when a group is deleted while in portrait orientation.
- This is used when rotating from portrait to landscape.
+ * Flag that a column will be empty when the layout operation finishes.
+ * This flag is updated when a group is to deleted while in landscape orientation.
+ * This is used when rotating from landscape to portrait.
  */
 @property (assign, nonatomic) BOOL columnWillBeEmptyInPort;
 
-/** Flag that indicates that the layout should be updated because a group was deleted. */
+/** 
+ * Flag that indicates that the screen should relayout because a column has become empty.
+ */
 @property (assign, nonatomic) BOOL relayoutForDelete;
 
-/** Reference to the deleted group. */
+/**
+ * The index path of the most recently deleted group.
+ */
 @property (strong, nonatomic) NSIndexPath* deletedItem;
 
-/** Reference to the frame height of the deleted group. */
+/** 
+ * The frame height of the most recently deleted group.
+ */
 @property (assign, nonatomic) CGFloat deletedItemHeight;
 
-/** Reference to the column where the deleted group was originally assigned. */
+/**
+ * The column where the most recently deleted group was originally assigned.
+ */
 @property (assign, nonatomic) NSInteger affectedColumn;
 
-/** Stores the current device orientation. */
+/** 
+ * The current device orientation. 
+ */
 @property (assign, nonatomic) UIInterfaceOrientation orientation;
 
-/** Flag that indicates whether or not the view height should be resized. */
+/** 
+ * Flag that indicates whether or not the view height should be resized.
+ */
 @property (assign, nonatomic) BOOL shouldResizeViewHeight;
 
 #pragma mark - Methods
 
 /**
- Calculates the (x,y) origin and the (height,width) size of
- a group at the specified index path based on the number of
- jobs and the current height of each column.
- @param indexPath
+ * Calculates the (x,y) origin and the (height,width) size of 
+ * a group at the specified index path.
+ *
+ * @param indexPath the group's index path in the UICollectionView
+ * @return the group's frame
  */
 - (CGRect)newFrameForGroupAtIndexPath:(NSIndexPath*)indexPath;
 
 /**
- Adjusts the frames of groups below a deleted group in a column.
- For the other groups, returns their current frame.
- @param indexPath
+ * Calculates the adjusted frames of groups below a deleted group in a column;
+ * for the other groups, returns their current frame.
+ *
+ * @param indexPath the group's index path in the UICollectionView
+ * @return the group's frame
  */
 - (CGRect)shiftedFrameForGroupAtIndexPath:(NSIndexPath*)indexPath;
 
 /**
- Removes the deleted group from the column positions tracker (for
- both landscape and portrait). The group indices are also shifted
- to the left to fill the vacated position.
+ * Updates both {@link columnAssignmentsPort} and {@link columnAssignmentsLand}
+ * to remove the deleted group.
  */
 - (void)updateColumnAssignmentsForDeletedItem;
 
 /**
- Assigns the correct tracker for the column positions
- based on the current device orientation.
+ * Initializes and assigns {@link columnAssignments} to either {@link columnAssignmentsPort} 
+ * or {@link columnAssignmentsLand} depending on the current orientation.
  */
 - (void)assignColumnAssignmentsForOrientation;
 
-/** Clears the tracker for the column heights. */
+/**
+ * Resets the contents of {@link columnCurrentHeights} and {@link columnTrueHeights}.
+ */
 - (void)invalidateColumnHeights;
 
 /** 
- Checks the tracker for the column heights and determines
- which column is the shortest. 
+ * Determines which column is currently the shortest.
+ * This is used during population to determine to which column to place a group.
  */
 - (NSUInteger)indexOfShortestColumn;
 
-/** Cancels the relayoutForDelete flag and clears any reference to the deleted group. */
+/** 
+ * Cancels the {@link relayoutForDelete} flag and clears any reference to the deleted group. 
+ */
 - (void)setNotLayoutForDelete;
 
 @end

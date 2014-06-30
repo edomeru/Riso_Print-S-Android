@@ -20,11 +20,42 @@
 
 @interface PrintSettingsOptionTableViewController ()
 
-//@property (nonatomic, weak) PrintDocument* printDocument;
+/**
+ * Stores the currently selected print setting value.
+ */
 @property (nonatomic) NSInteger selectedIndex;
+
+/**
+ * The name of the print setting.
+ * This corresponds to the <name> tag in the printsettings.xml.
+ */
 @property (nonatomic, strong) NSString *key;
-@property (nonatomic,  strong) NSMutableArray *options;
-@property (nonatomic,  strong) NSMutableArray *optionValues;
+
+/**
+ * The defined possible values of the print setting.
+ * This corresponds to the <option> tags in the printsettings.xml.
+ */
+@property (nonatomic, strong) NSMutableArray *options;
+
+/**
+ * The applicable possible values of the print setting.
+ * This depends on the other print settings set in the PreviewSetting object.
+ */
+@property (nonatomic, strong) NSMutableArray *optionValues;
+
+/**
+ * Sets-up the contents of {@link options} and {@link optionValues}.
+ */
+- (void)fillOptions;
+
+/**
+ * Checks if the print setting option is applicable based on the current PreviewSetting set.
+ * 
+ * @param option the print setting option
+ * @return YES if applicable, NO otherwise
+ */
+- (BOOL)isApplicableOption:(NSString *)option;
+
 @end
 
 @implementation PrintSettingsOptionTableViewController

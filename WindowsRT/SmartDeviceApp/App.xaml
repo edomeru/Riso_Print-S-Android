@@ -16,7 +16,6 @@
                 <ResourceDictionary Source="Resources/Styles/AppTheme.xaml" />
                 <ResourceDictionary Source="Resources/Styles/ControlStyles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/TextStyles.xaml" />
-                <ResourceDictionary Source="Resources/Styles/IpAddressStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

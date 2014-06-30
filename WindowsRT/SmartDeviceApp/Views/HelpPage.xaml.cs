@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Base;
+using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Views
 {
@@ -22,6 +23,21 @@ namespace SmartDeviceApp.Views
         public HelpPage()
         {
             this.InitializeComponent();
+        }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            ViewModel.HelpGestureGrid = (Grid)sender;
+
+        }
+
+        public HelpViewModel ViewModel
+        {
+            get
+            {
+                return (HelpViewModel)DataContext;
+            }
         }
     }
 }

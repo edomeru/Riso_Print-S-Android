@@ -12,6 +12,9 @@
 #import "PrinterInfoViewController.h"
 #import "PrinterStatusHelper.h"
 
+/**
+ * Controller for the "Printers" screen (phone).
+ */
 @interface PrintersIphoneViewController : PrintersViewController <UITableViewDataSource, UITableViewDelegate, PrinterInfoDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, PrinterStatusHelperDelegate>
 
 @end

@@ -19,6 +19,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.ViewModels;
+using SmartDeviceApp.Converters;
 
 namespace SmartDeviceApp.Views
 {
@@ -26,10 +27,8 @@ namespace SmartDeviceApp.Views
     {
         public SearchPrinterPane()
         {
-            Messenger.Default.Register<PrinterSearchRefreshState>(this, (refreshState) => OnSetRefreshState(refreshState));
-
             this.InitializeComponent();
-
+            Messenger.Default.Register<PrinterSearchRefreshState>(this, (refreshState) => OnSetRefreshState(refreshState));
         }
 
         public SearchPrinterViewModel ViewModel
@@ -55,8 +54,17 @@ namespace SmartDeviceApp.Views
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var vBar = ((FrameworkElement)VisualTreeHelper.GetChild(printerSearchListView.ElementScrollViewer, 0)).FindName("VerticalScrollBar") as ScrollBar;
+            var vBar2 = ((FrameworkElement)VisualTreeHelper.GetChild(NoPrintersFoundView.ElementScrollViewer, 0)).FindName("VerticalScrollBar") as ScrollBar;
             
             this.printerSearchListView.SetVBar(vBar);
+            this.NoPrintersFoundView.SetVBar(vBar2);
+            ViewModel.Height = (double)((new SidePanesHeightConverter()).Convert(this, null, null, null));
+            if (!ViewModel.WillRefresh)
+            {
+                ViewModel.NoPrintersFound = true;
+                OnSetRefreshState(PrinterSearchRefreshState.NotRefreshingState);
+            }
+            
         }
 
     }

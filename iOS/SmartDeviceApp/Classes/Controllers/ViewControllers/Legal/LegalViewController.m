@@ -20,10 +20,31 @@
 
 @interface LegalViewController ()<UIWebViewDelegate>
 
+/**
+ * Reference to the view for displaying the Legal content.
+ */
 @property (nonatomic, weak) IBOutlet UIWebView *webView;
+
+/**
+ * Reference to the main menu button on the header.
+ */
 @property (nonatomic, weak) IBOutlet UIButton *mainMenuButton;
 
+/**
+ * Responds to pressing the main menu button in the header.
+ * Displays the Main Menu panel.
+ *
+ * @param sender the button object
+ */
 - (IBAction)mainMenuAction:(id)sender;
+
+/**
+ * Unwind segue back to the "Legal" screen.
+ * Called when transitioning back to the "Legal"
+ * screen from the the Main Menu panel.
+ *
+ * @param sender the segue object
+ */
 - (IBAction)unwindToLegal:(UIStoryboardSegue *)segue;
 
 @end

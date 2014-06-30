@@ -12,9 +12,9 @@
     mc:Ignorable="d"
     d:DesignWidth="400"
     x:Name="SearchPrinterPaneControl"
-    Height="{Binding Converter={StaticResource HeightConverter}}"
-    DataContext="{Binding SearchPrinterViewModel, Source={StaticResource Locator}}">
-
+    DataContext="{Binding SearchPrinterViewModel, Source={StaticResource Locator}}"
+    Height="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}">
+    
     <UserControl.Resources>
         <Style x:Key="STYLE_RootGrid" TargetType="Grid">
             <Style.Setters>
@@ -61,7 +61,7 @@
                         <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
                             <ScrollViewer x:Name="ScrollViewer" AutomationProperties.AccessibilityView="Raw" BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}" IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}" IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" TabNavigation="{TemplateBinding TabNavigation}" VerticalScrollBarVisibility="Visible" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}" ManipulationMode="TranslateY">
                                 <Grid x:Name="GridInTemplate" ManipulationMode="All">
-                                    <Rectangle x:Name="ReleaseElement"  Height="80" Margin="0,-80,0,0"  VerticalAlignment="Top" Grid.Row="0" Fill="#FF262626" />
+                                    <Rectangle x:Name="ReleaseElement"  Height="80" Margin="0,-80,0,0"  VerticalAlignment="Top" Grid.Row="0" Fill="{StaticResource BRUSH_Gray4}" />
                                     <ItemsPresenter FooterTransitions="{TemplateBinding FooterTransitions}" FooterTemplate="{TemplateBinding FooterTemplate}" Footer="{TemplateBinding Footer}" HeaderTemplate="{TemplateBinding HeaderTemplate}" Header="{TemplateBinding Header}" HeaderTransitions="{TemplateBinding HeaderTransitions}" Padding="{TemplateBinding Padding}" Grid.Row="1" />
                                 </Grid>
                             </ScrollViewer>
@@ -70,13 +70,19 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
-        <converters:ItemClickedConverter x:Name="ItemClickedConverter" />
-        <converters:BooleanToImageSourceConverter x:Name="BooleanToImageSourceConverter"/>
 
     </UserControl.Resources>
 
     <Grid Style="{StaticResource STYLE_RootGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
         <VisualStateManager.VisualStateGroups>
         <VisualStateGroup x:Name="PrinterSearchRefreshStateGroup">
             <VisualState x:Name="RefreshingState">
@@ -88,8 +94,15 @@
                             </DiscreteObjectKeyFrame.Value>
                         </DiscreteObjectKeyFrame>
                     </ObjectAnimationUsingKeyFrames>
-                </Storyboard>
-            </VisualState>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ProgressGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
             <VisualState x:Name="NotRefreshingState">
                 <Storyboard>
                     <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="PrinterSearchProgressRing">
@@ -99,99 +112,58 @@
                             </DiscreteObjectKeyFrame.Value>
                         </DiscreteObjectKeyFrame>
                     </ObjectAnimationUsingKeyFrames>
-                </Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ProgressGrid">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
             </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <controls:SidePaneTitleControl Title="Printer Search" ButtonVisibility="Collapsed" Loaded="OnLoaded" ProgressRingVisibility="Collapsed"/>
-        <Grid Margin="0,0,0,0" Grid.Row="1" Background="#FF262626">
+        <Path Grid.RowSpan="2" Grid.Column="0" 
+              Style="{StaticResource STYLE_List_Separator}">
+            <Path.Data>
+                <LineGeometry StartPoint="{Binding Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
+                              EndPoint="{Binding Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
+            </Path.Data>
+        </Path>
+        <controls:SidePaneTitleControl Title="{Binding Source=IDS_LBL_SEARCH_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                                       Loaded="OnLoaded" Grid.Row ="0" Grid.Column="1"/>
+        <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource BRUSH_Gray4}" >
             
 
             <!--CONTENTS HERE-->
-            <StackPanel >
-                <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="60" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="#FF262626">
-                <Interactivity:Interaction.Behaviors>
-                        <Core:DataTriggerBehavior Binding="{Binding DataContext.WillRefresh,  ElementName=SearchPrinterPaneControl}" Value="True">
-                            <Core:InvokeCommandAction Command="{Binding DataContext.PrinterSearchRefreshed,  ElementName=SearchPrinterPaneControl}"/>
+            <StackPanel Height="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}" Width="400">
+                <Grid x:Name="ProgressGrid" Height="60" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="40" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="{StaticResource BRUSH_Gray4}">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:DataTriggerBehavior Binding="{Binding DataContext.WillRefresh,  ElementName=SearchPrinterPaneControl}" Value="True">
+                                <Core:InvokeCommandAction Command="{Binding DataContext.PrinterSearchRefreshed,  ElementName=SearchPrinterPaneControl}"/>
                             </Core:DataTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                     </ProgressRing>
-                
-                
+                    
+                </Grid>
+
+                <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="NoPrintersFoundView"
+                                             Visibility="{Binding DataContext.NoPrintersFound, ElementName=SearchPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}"
+				                    	     ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
+                                             Height ="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}"
+                                             IsItemClickEnabled="True" SelectionMode="None" Tag="{Binding}"
+                                              ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
+                    <Grid Height ="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}">
+                    <TextBlock Text="No Printers Found" Style="{StaticResource STYLE_TextBody}" Foreground="{StaticResource BRUSH_Black}"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                </local:PullToRefreshListView>
                 <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="printerSearchListView"
 				                    	     ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
                                              ItemsSource="{Binding DataContext.PrinterSearchList, ElementName=SearchPrinterPaneControl}" 
                                              IsItemClickEnabled="True" SelectionMode="None" Tag="{Binding}"
-                                             Height="719" ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
-
-                    <!--Data Template for list view-->
-                    
-                    <!--Event triggers when item is clicked. Calls PrinterSearchItemSelected in PrintersViewModel ItemsSource="{Binding PrinterSearchList}"-->
-
-                    <!--<Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="ItemClick">
-                            <Core:InvokeCommandAction Command="{Binding DataContext.PrinterSearchItemSelected, ElementName=SearchPrinterPaneControl}" 
-                        			InputConverter="{StaticResource ItemClickedConverter}"/>
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>-->
-
-                    <!--<TextBlock Text="Sample1"/>
-                    <TextBlock Text="Sample2"/>
-                    <TextBlock Text="Sample3"/>
-                    <TextBlock Text="Sample4"/>
-                    <TextBlock Text="Sample5"/>
-                    <TextBlock Text="Sample6"/>
-                    <TextBlock Text="Sample7"/>
-                    <TextBlock Text="Sample8"/>
-                    <TextBlock Text="Sample9"/>
-                    <TextBlock Text="Sample10"/>
-                    <TextBlock Text="Sample11"/>
-                    <TextBlock Text="Sample12"/>
-                    <TextBlock Text="Sample13"/>
-                    <TextBlock Text="Sample14"/>
-                    <TextBlock Text="Sample15"/>
-                    <TextBlock Text="Sample16"/>
-                    <TextBlock Text="Sample17"/>
-                    <TextBlock Text="Sample18"/>
-                    <TextBlock Text="Sample19"/>
-                    <TextBlock Text="Sample20"/>
-                    <TextBlock Text="Sample21"/>
-                    <TextBlock Text="Sample22"/>
-                    <TextBlock Text="Sample23"/>
-                    <TextBlock Text="Sample24"/>
-                    <TextBlock Text="Sample25"/>
-                    <TextBlock Text="Sample26"/>
-                    <TextBlock Text="Sample27"/>
-                    <TextBlock Text="Sample28"/>
-                    <TextBlock Text="Sample29"/>
-                    <TextBlock Text="Sample30"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample"/>
-                    <TextBlock Text="Sample20"/>
-                    <TextBlock Text="Sample21"/>
-                    <TextBlock Text="Sample22"/>
-                    <TextBlock Text="Sample23"/>
-                    <TextBlock Text="Sample24"/>
-                    <TextBlock Text="Sample25"/>
-                    <TextBlock Text="Sample26"/>
-                    <TextBlock Text="Sample27"/>
-                    <TextBlock Text="Sample28"/>
-                    <TextBlock Text="Sample29"/>
-                    <TextBlock Text="Sample30"/>-->
+                                             Height ="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}" ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
                     
                     <local:PullToRefreshListView.ItemTemplate>
                         <DataTemplate>
@@ -199,25 +171,29 @@
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
                                 <controls:KeyValueControl x:Name="printerSearchListItem"
+                                                          Width="{StaticResource SIZE_SidePaneWidth}"
                                                           Command="{Binding DataContext.PrinterSearchItemSelected, ElementName=SearchPrinterPaneControl}"
                                                           CommandParameter="{Binding}"
-                                            			  Text="{Binding Name}"
+                                                          Text="{Binding Name}"
                                                           SubText="{Binding Ip_address}"
                                                           SubTextVisibility="Visible"
-                                            			  RightImage="{Binding ImageSource}"
+                                                          RightImage="{Binding ImageSource}"
                                                           RightButtonVisibility="Visible"
                                                           IconVisibility="Collapsed"
                                                           SeparatorVisibility="{Binding Converter={StaticResource PrinterSearchItemToSeparatorVisibility}}"
+                                                          IsListItem="True"
                                                           PressedColor="{StaticResource BRUSH_Purple1}"
                                                               />
                             </Grid>
                         </DataTemplate>
+                        
                     </local:PullToRefreshListView.ItemTemplate>
+                    
                 </local:PullToRefreshListView>
+                
             </StackPanel>
         </Grid>
     </Grid>

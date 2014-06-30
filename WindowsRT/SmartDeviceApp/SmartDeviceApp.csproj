@@ -108,9 +108,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Behaviors\AlphaNumericTextBoxBehavior.cs" />
+    <Compile Include="Behaviors\NumericPasswordBehavior.cs" />
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
+    <Compile Include="Common\Enum\MessageType.cs" />
     <Compile Include="Common\Enum\PrintJobResult.cs" />
+    <Compile Include="Common\Enum\TextBoxBehavior.cs" />
+    <Compile Include="Common\Enum\ViewOrientation.cs" />
     <Compile Include="Common\Enum\VisibleRightPane.cs" />
     <Compile Include="Common\Enum\ScreenMode.cs" />
     <Compile Include="Common\Enum\LoadDocumentResult.cs" />
@@ -129,23 +134,29 @@
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\LogUtility.cs" />
-    <Compile Include="Common\Utilities\GlobalizationUtility.cs" />
+    <Compile Include="Common\Utilities\LruCacheHelper.cs" />
+    <Compile Include="Common\Utilities\PreviewPageImageUtility.cs" />
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
     <Compile Include="Controllers\DirectPrintController.cs" />
+    <Compile Include="Controllers\InitialDataController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\PrintersGestureController.cs" />
     <Compile Include="Controllers\PrintSettingsController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
-    <Compile Include="Common\Utilities\IPAddressTextBox.cs" />
+    <Compile Include="Behaviors\IPAddressTextBoxBehavior.cs" />
     <Compile Include="Common\Utilities\MessageAlert.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
+    <Compile Include="Controls\DefaultPrintSettingsControl.xaml.cs">
+      <DependentUpon>DefaultPrintSettingsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SelectPrinterItemControl.cs" />
+    <Compile Include="Controls\KeyToggleCheckControl.xaml.cs">
+      <DependentUpon>KeyToggleCheckControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MessageProgressBarControl.xaml.cs">
       <DependentUpon>MessageProgressBarControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PortItemControl.xaml.cs">
-      <DependentUpon>PortItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\KeyImageControl.xaml.cs">
       <DependentUpon>KeyImageControl.xaml</DependentUpon>
@@ -171,7 +182,8 @@
     <Compile Include="Controls\PrinterNameControl.xaml.cs">
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\BooleanToImageSourceConverter.cs" />
+    <Compile Include="Converters\BooleanToColor.cs" />
+    <Compile Include="Converters\PrinterStatusToImageSourceConverter.cs" />
     <Compile Include="Controls\MainMenuKeyControl.xaml.cs">
       <DependentUpon>MainMenuKeyControl.xaml</DependentUpon>
     </Compile>
@@ -179,13 +191,10 @@
       <DependentUpon>SidePaneTitleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
-    <Compile Include="Converters\IntToBooleanConverter.cs" />
-    <Compile Include="Converters\MainMenuItemToIndexConverter.cs" />
     <Compile Include="Converters\PrinterSearchItemToSeparatorVisibility.cs" />
     <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
     <Compile Include="Converters\MainMenuItemToSeparatorVisibilityConverter.cs" />
-    <Compile Include="Converters\MainItemIndexToIsCheckedConverter.cs" />
     <Compile Include="Converters\SelectedPrinterIdToTextConverter.cs" />
     <Compile Include="Converters\SelectedPrinterToBooleanConverter.cs" />
     <Compile Include="Converters\PrintSettingOptionToSeparatorVisibilityConverter.cs" />
@@ -203,11 +212,10 @@
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
+    <Compile Include="Models\ViewItemParameters.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />
     <Compile Include="Selectors\PrintSettingsListTemplateSelector.cs" />
     <Compile Include="Converters\ResourceStringToTextConverter.cs" />
-    <Compile Include="Converters\ItemClickedConverter.cs" />
-    <Compile Include="Converters\ItemSelectedConverter.cs" />
     <Compile Include="Models\PageNumberInfo.cs" />
     <Compile Include="Controllers\JobController.cs" />
     <Compile Include="Controllers\JobGestureController.cs" />
@@ -246,14 +254,11 @@
     <Compile Include="Controllers\PrintPreviewController.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Common\Utilities\OrientationStateBehavior.cs" />
-    <Compile Include="DummyControllers\DummyProvider.cs" />
     <Compile Include="Models\DataItem.cs" />
     <Compile Include="Models\DataService.cs" />
     <Compile Include="Models\DefaultPrinter.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\IDataService.cs" />
-    <Compile Include="Models\LogicalPage.cs" />
-    <Compile Include="Models\PreviewPage.cs" />
     <Compile Include="Models\Printer.cs" />
     <Compile Include="Models\PrinterSearchItem.cs" />
     <Compile Include="Models\PrintJob.cs" />
@@ -328,6 +333,8 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Resources\Images\StoreLogo.scale-140.png" />
+    <Content Include="Resources\Images\StoreLogo.scale-180.png" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -335,10 +342,10 @@
     <Content Include="Assets\en-US\legal.html" />
     <Content Include="Assets\ja-JP\help.html" />
     <Content Include="Assets\ja-JP\legal.html" />
+    <Content Include="Assets\printsettings_authentication.xml" />
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Common\ReadMe.txt" />
-    <Content Include="Resources\Dummy\Logo_Riso_temp.png" />
-    <Content Include="Resources\Dummy\RZ1070.pdf" />
+    <None Include="Resources\Dummy\RZ1070.pdf" />
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
     <PRIResource Include="Resources\Strings\en-US\Resources.resw">
@@ -347,18 +354,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\printsettings.xml" />
-    <Content Include="Resources\Dummy\RZ1070-page1.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page10.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page11.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page12.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page2.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page3.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page4.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page5.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page6.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page7.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page8.jpg" />
-    <Content Include="Resources\Dummy\RZ1070-page9.jpg" />
     <Content Include="Resources\Dummy\SampleData.sql" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-100.png" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-140.png" />
@@ -423,6 +418,12 @@
     <Content Include="Resources\Images\img_btn_printer_status_online.scale-100.png" />
     <Content Include="Resources\Images\img_btn_printer_status_online.scale-140.png" />
     <Content Include="Resources\Images\img_btn_printer_status_online.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_print_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_print_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_print_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_print_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_print_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_print_pressed.scale-180.png" />
     <Content Include="Resources\Images\img_btn_print_settings_normal.scale-100.png" />
     <Content Include="Resources\Images\img_btn_print_settings_normal.scale-140.png" />
     <Content Include="Resources\Images\img_btn_print_settings_normal.scale-180.png" />
@@ -463,6 +464,8 @@
     <Content Include="Resources\Images\img_staple.png" />
     <Content Include="Resources\Images\Logo.scale-100.png" />
     <Content Include="Resources\Images\SmallLogo.scale-100.png" />
+    <Content Include="Resources\Images\SmallLogo.scale-140.png" />
+    <Content Include="Resources\Images\SmallLogo.scale-180.png" />
     <Content Include="Resources\Images\StoreLogo.scale-100.png" />
   </ItemGroup>
   <ItemGroup>
@@ -470,11 +473,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\MessageProgressBarControl.xaml">
+    <Page Include="Controls\DefaultPrintSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PortItemControl.xaml">
+    <Page Include="Controls\KeyToggleCheckControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\MessageProgressBarControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -540,11 +547,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Resources\Styles\ControlStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Page>
-    <Page Include="Resources\Styles\IpAddressStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -652,10 +654,10 @@
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-InitialData|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Remote-Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <OutputPath>bin\Debug-InitialData\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;INITIAL_DATA_ON</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -664,10 +666,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|ARM'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-InitialData|ARM'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\ARM\Remote-Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <OutputPath>bin\ARM\Debug-InitialData\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;INITIAL_DATA_ON</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
@@ -677,10 +679,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-InitialData|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Remote-Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <OutputPath>bin\x64\Debug-InitialData\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;INITIAL_DATA_ON</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
@@ -690,10 +692,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Remote-Debug|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-InitialData|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Remote-Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <OutputPath>bin\x86\Debug-InitialData\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;INITIAL_DATA_ON</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>

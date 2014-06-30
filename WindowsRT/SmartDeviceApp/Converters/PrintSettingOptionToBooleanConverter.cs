@@ -21,7 +21,7 @@ using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Converters
 {
-    public class PrintSettingOptionToBooleanConverter : DependencyObject, IValueConverter
+    public class PrintSettingOptionToBooleanConverter : IValueConverter
     {
         private PrintSettingsViewModel _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
 

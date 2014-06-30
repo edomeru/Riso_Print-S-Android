@@ -8,22 +8,12 @@
     Loaded="OnLoaded"
     mc:Ignorable="d">
     
-    <UserControl.Resources>
-        <ControlTemplate x:Key="TEMPLATE_CancelButton" TargetType="Button">
-            <Grid Background="{StaticResource BRUSH_Gray1}" 
-                  Width="{StaticResource SIZE_CancelButtonWidth_Short}" 
-                  Height="{StaticResource SIZE_CancelButtonHeight_Short}">
-                <TextBlock Text="{Binding Source=IDS_LBL_CANCEL, Converter={StaticResource ResourceStringToTextConverter}}" 
-                           Style="{StaticResource STYLE_TextBody}"></TextBlock>
-            </Grid>
-        </ControlTemplate>
-    </UserControl.Resources>    
     <Grid x:Name="overlay">
         <Grid.Background>
             <SolidColorBrush Color="Black" Opacity="{StaticResource OPACITY_Message}"/>
         </Grid.Background>
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center"
-              Background="{StaticResource BRUSH_White}">
+              Background="{StaticResource BRUSH_Gray4}">
             <StackPanel Width="{StaticResource SIZE_MessageWidth}">
                 <StackPanel.Margin>
                     <Thickness Top="{StaticResource MARGIN_Large}"
@@ -38,27 +28,26 @@
                     <TextBlock.Margin>
                         <Thickness Bottom="{StaticResource MARGIN_Large}"></Thickness>
                     </TextBlock.Margin>
-                </TextBlock>
-                <TextBlock x:Name="content"
-                    Style="{StaticResource STYLE_TextBody}"
-                    Foreground="{StaticResource BRUSH_Black}"
-                    HorizontalAlignment="Center"
-                    Text="{Binding Content, ElementName=messageProgressBarControl}">
-                    <TextBlock.Margin>
-                        <Thickness Bottom="{StaticResource MARGIN_Large}"></Thickness>
-                    </TextBlock.Margin>
-                </TextBlock>
+                </TextBlock>                
                 <ProgressBar x:Name="progressBar"
                                 IsIndeterminate="False"
                                 Maximum="100"
                                 Value="{Binding ProgressValue, ElementName=messageProgressBarControl}">
                     <ProgressBar.Margin>
-                        <Thickness Bottom="{StaticResource MARGIN_Large}"></Thickness>
+                        <Thickness Bottom="{StaticResource MARGIN_Medium}"></Thickness>
                     </ProgressBar.Margin>
                 </ProgressBar>
+                <TextBlock x:Name="content"
+                    Style="{StaticResource STYLE_TextMessageContent}"
+                    HorizontalAlignment="Left"
+                    Text="{Binding Content, ElementName=messageProgressBarControl}">
+                    <TextBlock.Margin>
+                        <Thickness Bottom="{StaticResource MARGIN_Large}"></Thickness>
+                    </TextBlock.Margin>
+                </TextBlock>
                 <Button Command="{Binding CancelCommand, ElementName=messageProgressBarControl}"
                         HorizontalAlignment="Right"
-                        Template="{StaticResource TEMPLATE_CancelButton}"/>
+                        Content="{Binding Source=IDS_LBL_CANCEL, Converter={StaticResource ResourceStringToTextConverter}}"/>
             </StackPanel>
         </Grid>
     </Grid>

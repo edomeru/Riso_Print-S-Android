@@ -10,19 +10,19 @@
 //  ----------------------------------------------------------------------
 //
 
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Windows.ApplicationModel;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Converters;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using Windows.ApplicationModel;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -39,15 +39,16 @@ namespace SmartDeviceApp.Controllers
 
         // Constants
         private const string FILE_PATH_ASSET_PRINT_SETTINGS_XML = "Assets/printsettings.xml";
+        private const string FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML = "Assets/printsettings_authentication.xml";
 
         private PrintSettingsViewModel _printSettingsViewModel;
         private string _activeScreen;
+        private string _prevPinCode;
 
         // Maps (Managed values)
         private Dictionary<string, Printer> _printerMap;
         private Dictionary<string, PrintSettings> _printSettingsMap;
         private Dictionary<string, PrintSettingList> _printSettingListMap;
-        private Dictionary<string, int> _pagesPerSheetMap;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -59,12 +60,12 @@ namespace SmartDeviceApp.Controllers
             _printerMap = new Dictionary<string, Printer>();
             _printSettingsMap = new Dictionary<string, PrintSettings>();
             _printSettingListMap = new Dictionary<string, PrintSettingList>();
-            _pagesPerSheetMap = new Dictionary<string, int>();
 
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
 
-            PrinterController.Instance.DeletePrinterItemsEventHandler += RemovePrintSettings;
+            // Set PrinterList in PrintSettingsViewModel only once (this will be the original list)
+            new ViewModelLocator().PrintSettingsViewModel.PrinterList = PrinterController.Instance.PrinterList;
         }
 
         /// <summary>
@@ -82,14 +83,45 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="screenName">name of active screen</param>
         /// <param name="printer">target printer</param>
-        /// <returns>task; print settings</returns>
-        public async Task<PrintSettings> Initialize(string screenName, Printer printer)
+        /// <returns>task</returns>
+        public async Task Initialize(string screenName, Printer printer)
         {
             PrintSettings currPrintSettings = new PrintSettings();
 
             if (string.IsNullOrEmpty(screenName) || printer == null)
             {
-                return currPrintSettings;
+                return;
+            }
+
+            _printSettingsViewModel.PrinterName = printer.Name;
+            _printSettingsViewModel.PrinterId = printer.Id;
+            _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
+
+            int printSettingId = -1;
+            if (printer.PrintSettingId != null)
+            {
+                printSettingId = printer.PrintSettingId.Value;
+            }
+            currPrintSettings = await GetPrintSettings(printSettingId);
+
+#if !PRINTSETTING_ORIENTATION
+            // Special handling: Set Orientation value based on first page of PDF
+            if (screenName.Equals(ScreenMode.PrintPreview.ToString()))
+            {
+                if (DocumentController.Instance.IsPdfPortrait)
+                {
+                    currPrintSettings.Orientation = (int)Orientation.Portrait;
+                }
+                else
+                {
+                    currPrintSettings.Orientation = (int)Orientation.Landscape;
+                }
+            }
+#endif // !PRINTSETTING_ORIENTATION
+
+            if (screenName.Equals(ScreenMode.PrintPreview.ToString()))
+            {
+                _prevPinCode = null;
             }
 
             RegisterPrintSettingValueChanged(screenName);
@@ -101,11 +133,6 @@ namespace SmartDeviceApp.Controllers
             else
             {
                 _printerMap[screenName] = printer;
-            }
-
-            if (printer != null)
-            {
-                currPrintSettings = await GetPrintSettings(printer.PrintSettingId);
             }
 
             if (!_printSettingsMap.ContainsKey(screenName))
@@ -130,9 +157,6 @@ namespace SmartDeviceApp.Controllers
             {
                 _printSettingListMap[screenName] = _printSettingsViewModel.PrintSettingsList;
             }
-
-            _printSettingsMap.TryGetValue(screenName, out currPrintSettings);
-            return currPrintSettings;
         }
 
         /// <summary>
@@ -167,7 +191,12 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task; print settings</returns>
         private async Task<PrintSettings> GetPrintSettings(int id)
         {
-            PrintSettings currPrintSettings = await DatabaseController.Instance.GetPrintSettings(id);
+            PrintSettings currPrintSettings = null;
+            if (id > -1)
+            {
+                currPrintSettings = await DatabaseController.Instance.GetPrintSettings(id);
+                // Ignore error
+            }
             if (currPrintSettings == null)
             {
                 currPrintSettings = DefaultsUtility.GetDefaultPrintSettings(
@@ -178,47 +207,24 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Deletes print settings
+        /// Create default print settings for the printer.
+        /// Requires that the printer is valid.
         /// </summary>
         /// <param name="printer">printer</param>
-        public async void RemovePrintSettings(Printer printer)
-        {
-            if (printer != null)
-            {
-                PrintSettings printSettings = await DatabaseController.Instance
-                    .GetPrintSettings(printer.PrintSettingId);
-
-                int deleted = 0;
-                if (printSettings != null)
-                {
-                    deleted = await DatabaseController.Instance.DeletePrintSettings(printSettings);
-                }
-
-                if (deleted == 0)
-                {
-                    // TODO: Display error?
-                }
-            }
-        }
-
-        /// <summary>
-        /// Create default print settings for the printer
-        /// </summary>
-        /// <param name="printer"></param>
-        /// <returns></returns>
+        /// <returns>task; print setting ID when successful, -1 otherwise</returns>
         public async Task<int> CreatePrintSettings(Printer printer)
         {
             PrintSettings printSettings = new PrintSettings();
-            int deleted = 0;
-            if (printSettings != null)
-            {
-                deleted = await DatabaseController.Instance.InsertPrintSettings(printSettings);
-            }
 
-            if (deleted == 0)
+            if (printer != null && printer.Id > -1)
             {
-                // TODO: Display error?
-                return -1;
+                printSettings.PrinterId = printer.Id;
+                bool result = await DatabaseController.Instance.InsertPrintSettings(printSettings);
+                // TODO: Check DB error with Add Printer
+                //if (!result)
+                //{
+                //    return -1;
+                //}
             }
 
             return printSettings.Id;
@@ -234,34 +240,31 @@ namespace SmartDeviceApp.Controllers
         /// <param name="screenName">name of active screen</param>
         public void RegisterPrintSettingValueChanged(String screenName)
         {
-            _activeScreen = screenName;
-
-            // Refresh Printer
-            Printer printer = null;
-            if (_printerMap.TryGetValue(screenName, out printer))
+            if (!string.IsNullOrEmpty(screenName))
             {
-                _printSettingsViewModel.PrinterName = printer.Name;
-                _printSettingsViewModel.PrinterId = printer.Id;
-                _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
-            }
+                _activeScreen = screenName;
 
-            // Refresh Print Settings
-            PrintSettingList printSettingList = null;
-            if (_printSettingListMap.TryGetValue(screenName, out printSettingList))
-            {
-                _printSettingsViewModel.PrintSettingsList = printSettingList;
-            }
-            PrintSettings printSettings = null;
-            if (_printSettingsMap.TryGetValue(screenName, out printSettings))
-            {
-                string pinCode = (string.IsNullOrEmpty(printSettings.PinCode)) ? string.Empty : printSettings.PinCode;
-                _printSettingsViewModel.AuthenticationLoginPinCode = pinCode;
-            }
+                // Show/hide other controls
+                _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
 
-            // Show/hide other controls
-            _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
+                // Refresh Printer
+                Printer printer = null;
+                if (_printerMap.TryGetValue(screenName, out printer))
+                {
+                    _printSettingsViewModel.PrinterName = printer.Name;
+                    _printSettingsViewModel.PrinterId = printer.Id;
+                    _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
+                }
 
-            PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+                // Refresh Print Settings
+                PrintSettingList printSettingList = null;
+                if (_printSettingListMap.TryGetValue(screenName, out printSettingList))
+                {
+                    _printSettingsViewModel.PrintSettingsList = printSettingList;
+                }
+
+                PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+            }
         }
 
         /// <summary>
@@ -270,8 +273,11 @@ namespace SmartDeviceApp.Controllers
         /// <param name="screenName">name of active screen</param>
         public void UnregisterPrintSettingValueChanged(String screenName)
         {
-            _activeScreen = null;
-            PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+            if (string.Equals(_activeScreen, screenName))
+            {
+                PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+                _activeScreen = null;
+            }
         }
 
         #endregion Print Settings Events
@@ -281,7 +287,7 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Register for print settings changes to update preview
         /// </summary>
-        /// <param name="handler"></param>
+        /// <param name="handler">update preview event handler</param>
         public void RegisterUpdatePreviewEventHandler(
             SmartDeviceApp.Controllers.PrintPreviewController.UpdatePreviewEventHandler handler)
         {
@@ -291,7 +297,7 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Unregister for print settings changes
         /// </summary>
-        /// <param name="handler"></param>
+        /// <param name="handler">update preview event handler</param>
         public void UnregisterUpdatePreviewEventHandler(
             SmartDeviceApp.Controllers.PrintPreviewController.UpdatePreviewEventHandler handler)
         {
@@ -307,10 +313,41 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void LoadPrintSettingsOptions()
         {
-            PrintSettingToValueConverter valueConverter = new PrintSettingToValueConverter();
+            // Construct the PrintSettingList
+            _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
+            var tempList = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
 
-            string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path,
-                FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+            // Append Authentication group for Print Preview screen
+            if (_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
+            {
+                tempList.AddRange(ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML).AsEnumerable());
+            }
+
+            // Bind list with UI
+            foreach (PrintSettingGroup group in tempList)
+            {
+                _printSettingsViewModel.PrintSettingsList.Add(group);
+            }
+
+#if !PRINTSETTING_ORIENTATION
+            // Remove Orientation in list
+            PrintSetting orientationPrintSetting = GetPrintSetting(PrintSettingConstant.NAME_VALUE_ORIENTATION);
+            if (orientationPrintSetting != null)
+            {
+                RemovePrintSetting(orientationPrintSetting);
+            }
+#endif // !PRINTSETTING_ORIENTATION
+        }
+
+        /// <summary>
+        /// Reads an XML file and creates PrintSettingGroup
+        /// </summary>
+        /// <param name="path">XML file relative path from install location</param>
+        /// <returns>list of print setting groups</returns>
+        private List<PrintSettingGroup> ParseXmlFile(string path)
+        {
+            PrintSettingToValueConverter valueConverter = new PrintSettingToValueConverter();
+            string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path, path);
             XDocument data = XDocument.Load(xmlPath);
 
             var printSettingsData = from groupData in data.Descendants(PrintSettingConstant.KEY_GROUP)
@@ -348,13 +385,7 @@ namespace SmartDeviceApp.Controllers
                                             }).ToList<PrintSetting>()
                                     };
 
-            // Construct the PrintSettingList
-            _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
-            var tempList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
-            foreach (PrintSettingGroup group in tempList)
-            {
-                _printSettingsViewModel.PrintSettingsList.Add(group);
-            }
+            return printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
         }
 
         /// <summary>
@@ -373,22 +404,53 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            if (!printer.EnabledBooklet)
+            // prn_enabled_paper_lw
+            if (!printer.EnabledPaperLW)
             {
-                printSettings.Booklet = false;
+                PrintSetting paperTypePrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
+                if (paperTypePrintSetting != null)
+                {
+                    RemovePrintSettingOption(paperTypePrintSetting, (int)PaperType.LWPaper);
+                }
+            }
 
-                PrintSetting bookletPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET);
-                if (bookletPrintSetting != null)
+            // prn_enabled_feed_tray1
+            if (!printer.EnabledFeedTrayOne)
+            {
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
                 {
-                    RemovePrintSetting(bookletPrintSetting);
+                    RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray1);
                 }
-                PrintSetting bookletLayoutPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
-                if (bookletLayoutPrintSetting != null)
+            }
+
+            // prn_enabled_feed_tray2
+            if (!printer.EnabledFeedTrayTwo)
+            {
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
                 {
-                    RemovePrintSetting(bookletLayoutPrintSetting);
+                    RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray2);
                 }
+            }
+
+            // prn_enabled_feed_tray3
+            if (!printer.EnabledFeedTrayThree)
+            {
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
+                {
+                    RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray3);
+                }
+            }
+
+            // prn_enabled_booklet_finishing
+            if (!printer.EnabledBookletFinishing)
+            {
                 PrintSetting bookletFinishPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
                 if (bookletFinishPrintSetting != null)
@@ -396,6 +458,8 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSetting(bookletFinishPrintSetting);
                 }
             }
+
+            // prn_enabled_stapler
             if (!printer.EnabledStapler)
             {
                 PrintSetting staplePrintSetting =
@@ -403,7 +467,6 @@ namespace SmartDeviceApp.Controllers
                 if (staplePrintSetting != null)
                 {
                     RemovePrintSetting(staplePrintSetting);
-                    printSettings.Staple = (int)Staple.Off;
                 }
                 PrintSetting bookletFinishPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
@@ -411,12 +474,11 @@ namespace SmartDeviceApp.Controllers
                 {
                     RemovePrintSettingOption(bookletFinishPrintSetting, (int)BookletFinishing.FoldAndStaple);
                 }
-
             }
-            if (!printer.EnabledPunchFour) // Meaning punch3
+
+            // prn_enabled_punch3 and prn_enabled_punch4
+            if (printer.EnabledPunchThree && !printer.EnabledPunchFour) // Meaning punch3
             {
-                // TODO: Verify assumption
-                // Assumption that punch4 is the default in print settings xml
                 PrintSetting punchPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
                 if (punchPrintSetting != null)
@@ -429,6 +491,17 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
+            else if (!printer.EnabledPunchThree && !printer.EnabledPunchFour) // No punch
+            {
+                PrintSetting punchPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
+                if (punchPrintSetting != null)
+                {
+                    RemovePrintSetting(punchPrintSetting);
+                }
+            }
+
+            // prn_enabled_tray_facedown
             if (!printer.EnabledTrayFacedown)
             {
                 PrintSetting outputTrayPrintSetting =
@@ -438,15 +511,8 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
                 }
             }
-            if (!printer.EnabledTrayAutostack)
-            {
-                PrintSetting outputTrayPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-                if (outputTrayPrintSetting != null)
-                {
-                    RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Auto);
-                }
-            }
+
+            // prn_enabled_tray_top
             if (!printer.EnabledTrayTop)
             {
                 PrintSetting outputTrayPrintSetting =
@@ -456,6 +522,8 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Top);
                 }
             }
+
+            // prn_enabled_tray_stack
             if (!printer.EnabledTrayStack)
             {
                 PrintSetting outputTrayPrintSetting =
@@ -463,18 +531,6 @@ namespace SmartDeviceApp.Controllers
                 if (outputTrayPrintSetting != null)
                 {
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
-                }
-            }
-            // TODO: Need to create a generic function to remove print settings (type list) with empty options
-            if (!(printer.EnabledTrayFacedown || printer.EnabledTrayAutostack ||
-                  printer.EnabledTrayTop || printer.EnabledTrayStack))
-            {
-                // Remove output tray print setting since all options are off
-                PrintSetting outputTrayPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-                if (outputTrayPrintSetting != null)
-                {
-                    RemovePrintSetting(outputTrayPrintSetting);
                 }
             }
 
@@ -602,13 +658,19 @@ namespace SmartDeviceApp.Controllers
                             case PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY:
                                 printSetting.Value = printSettings.OutputTray;
                                 break;
+                            case PrintSettingConstant.NAME_VALUE_SECURE_PRINT:
+                                printSetting.Value = printSettings.EnabledSecurePrint;
+                                break;
+                            case PrintSettingConstant.NAME_VALUE_PIN_CODE:
+                                printSetting.Value = printSettings.PinCode;
+                                break;
                             default:
                                 // Do nothing
                                 break;
-                        } // switch-case
-                    } // foreach printSetting
-                } // foreach group
-            } // if statement
+                        } // Statement: switch-case
+                    } // Statement: foreach printSetting
+                } // Statement: foreach group
+            } // Statement: if printSettingsMap
         }
 
         /// <summary>
@@ -620,57 +682,136 @@ namespace SmartDeviceApp.Controllers
             PrintSettings printSettings;
             if (_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
             {
-                UpdateConstraintsBasedOnBooklet(printSettings.Booklet);
-                UpdateConstraintsBasedOnImposition(printSettings.Imposition);
-                UpdateConstraintsBasedOnFinishingSide(printSettings.FinishingSide);
-                UpdateConstraintsBasedOnStaple(printSettings.Staple);
-                UpdateConstraintsBasedOnPunch(printSettings.Punch);
+                UpdateConstraintsBasedOnBooklet(printSettings.Booklet, false);
+                UpdateConstraintsBasedOnOrientation(printSettings.Orientation, false);
+                UpdateConstraintsBasedOnImposition(printSettings.Imposition, false);
+                UpdateConstraintsBasedOnFinishingSide(printSettings.FinishingSide, false);
+                UpdateConstraintsBasedOnPunch(printSettings.Punch, false);
+                UpdateConstraintsBasedOnSecurePrint(printSettings.EnabledSecurePrint);
             }
+        }
+
+        /// <summary>
+        /// Updates print settings dependent on orientation constraints
+        /// </summary>
+        /// <param name="value">new imposition value</param>
+        /// <returns>true when dependent values are updated, false otherwise</returns>
+        private bool UpdateConstraintsBasedOnOrientation(int value, bool updateValues)
+        {
+            bool isValueUpdated = false;
+
+            PrintSettings printSettings = null;
+            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            if (printSettings == null)
+            {
+                return isValueUpdated;
+            }
+
+            PrintSetting bookletLayoutPrintSetting =
+                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
+            PrintSetting punchPrintSetting =
+                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
+
+            bool currBooklet = printSettings.Booklet;
+            int currBookletLayout = printSettings.BookletLayout;
+            int currFinishingSide = printSettings.FinishingSide;
+            int currPunch = printSettings.Punch;
+
+            if (value == (int)Orientation.Landscape)
+            {
+                if (currFinishingSide != (int)FinishingSide.Top &&
+                    currPunch == (int)Punch.FourHoles)
+                {
+                    if (punchPrintSetting != null)
+                    {
+                        int newPunch = (int)punchPrintSetting.Default;
+                        if (updateValues)
+                        {
+                            punchPrintSetting.Value = newPunch;
+                            printSettings.Punch = newPunch;
+                        }
+                    }
+                }
+                isValueUpdated = true;
+            }
+            else if (value == (int)Orientation.Portrait)
+            {
+                if (currFinishingSide == (int)FinishingSide.Top &&
+                    currPunch == (int)Punch.FourHoles)
+                {
+                    if (punchPrintSetting != null)
+                    {
+                        int newPunch = (int)punchPrintSetting.Default;
+                        if (updateValues)
+                        {
+                            punchPrintSetting.Value = newPunch;
+                            printSettings.Punch = newPunch;
+                        }
+                    }
+                }
+                isValueUpdated = true;
+            }
+
+            _printSettingsMap[_activeScreen] = printSettings;
+
+            return isValueUpdated;
         }
 
         /// <summary>
         /// Updates print settings dependent on imposition constraints
         /// </summary>
         /// <param name="value">new imposition value</param>
-        /// <returns>true when update is done, false otherwise</returns>
-        private bool UpdateConstraintsBasedOnImposition(int value)
+        /// <returns>true when dependent values are updated, false otherwise</returns>
+        private bool UpdateConstraintsBasedOnImposition(int value, bool updateValues)
         {
-            bool isUpdated = false;
+            bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
             _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
-                return isUpdated;
+                return isValueUpdated;
             }
 
             PrintSetting impositionOrderPrintSetting =
                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER);
-            /* TODO: Delete commented out line if Booklet related settings
-             * does not necessarily required to be updated
-             * since in order to update Imposition, Booklet must be Off.
             PrintSetting bookletPrintSetting =
                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET);
-            PrintSetting bookletFinishPrintSetting =
-                GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
-            PrintSetting bookletLayoutPrintSetting =
-                GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT);
-             */
+
+            bool currBooklet = printSettings.Booklet;
 
             if (value == (int)Imposition.Off)
             {
                 if (impositionOrderPrintSetting != null)
                 {
                     impositionOrderPrintSetting.IsEnabled = false;
-                    impositionOrderPrintSetting.IsValueDisplayed = false;
-                    impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
-                    printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Default;
-
-                    isUpdated = true;
+                    if (currBooklet)
+                    {
+                        impositionOrderPrintSetting.IsValueDisplayed = true;
+                    }
+                    else
+                    {
+                        impositionOrderPrintSetting.IsValueDisplayed = false;
+                    }
+                    if (updateValues)
+                    {
+                        impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
+                        printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Default;
+                    }
                 }
+                isValueUpdated = true;
             }
             else if (value == (int)Imposition.TwoUp)
             {
+                if (bookletPrintSetting != null)
+                {
+                    if (updateValues)
+                    {
+                        bool newBookletValue = false;
+                        bookletPrintSetting.Value = newBookletValue;
+                        printSettings.Booklet = newBookletValue;
+                    }
+                }
                 if (impositionOrderPrintSetting != null)
                 {
                     PrintSettingOption twoUpLR = GetPrintSettingOption(impositionOrderPrintSetting,
@@ -712,53 +853,36 @@ namespace SmartDeviceApp.Controllers
                     impositionOrderPrintSetting.IsEnabled = true;
                     impositionOrderPrintSetting.IsValueDisplayed = true;
 
-                    //impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
-                    if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperLeftToRight ||
-                        (int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperLeftToBottom)
+                    if (updateValues)
                     {
-                        impositionOrderPrintSetting.Value = (int)ImpositionOrder.TwoUpLeftToRight;
+                        if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperLeftToRight ||
+                            (int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperLeftToBottom)
+                        {
+                            impositionOrderPrintSetting.Value = (int)ImpositionOrder.TwoUpLeftToRight;
+                            printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Value;
+                        }
+                        else if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperRightToLeft ||
+                            (int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperRightToBottom)
+                        {
+                            impositionOrderPrintSetting.Value = (int)ImpositionOrder.TwoUpRightToLeft;
+                            printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Value;
+                        }
                     }
-                    else if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperRightToLeft ||
-                        (int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.FourUpUpperRightToBottom)
-                    {
-                        impositionOrderPrintSetting.Value = (int)ImpositionOrder.TwoUpRightToLeft;
-                    }
-                    printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Value;
-
-                    isUpdated = true;
                 }
-                /* TODO: Delete commented out lines if Booklet related settings
-                 * does not necessarily required to be updated
-                 * since in order to update Imposition, Booklet must be Off.
-                if (bookletPrintSetting != null)
-                {
-                    bookletPrintSetting.Value = false;
-                    PrintSettings.Booklet = false;
-
-                    isUpdated = true;
-                }
-                if (bookletFinishPrintSetting != null)
-                {
-                    bookletFinishPrintSetting.IsEnabled = false;
-                    bookletFinishPrintSetting.IsValueDisplayed = false;
-                    bookletFinishPrintSetting.Value = bookletFinishPrintSetting.Default;
-                    PrintSettings.BookletFinishing = (int)bookletFinishPrintSetting.Default;
-
-                    isUpdated = true;
-                }
-                if (bookletLayoutPrintSetting != null)
-                {
-                    bookletLayoutPrintSetting.IsEnabled = false;
-                    bookletLayoutPrintSetting.IsValueDisplayed = false;
-                    bookletLayoutPrintSetting.Value = bookletLayoutPrintSetting.Default;
-                    PrintSettings.BookletLayout = (int)bookletLayoutPrintSetting.Default;
-
-                    isUpdated = true;
-                }
-                 */
+                isValueUpdated = true;
             }
             else if (value == (int)Imposition.FourUp)
             {
+                if (bookletPrintSetting != null)
+                {
+                    if (updateValues)
+                    {
+                        bool newBookletValue = false;
+                        UpdateConstraintsBasedOnBooklet(newBookletValue, true);
+                        bookletPrintSetting.Value = newBookletValue;
+                        printSettings.Booklet = newBookletValue;
+                    }
+                }
                 if (impositionOrderPrintSetting != null)
                 {
                     PrintSettingOption twoUpLR = GetPrintSettingOption(impositionOrderPrintSetting,
@@ -800,69 +924,43 @@ namespace SmartDeviceApp.Controllers
                     impositionOrderPrintSetting.IsEnabled = true;
                     impositionOrderPrintSetting.IsValueDisplayed = true;
 
-                    //impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
-                    if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.TwoUpLeftToRight)
+                    if (updateValues)
                     {
-                        impositionOrderPrintSetting.Value = (int)ImpositionOrder.FourUpUpperLeftToRight;
+                        if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.TwoUpLeftToRight)
+                        {
+                            impositionOrderPrintSetting.Value = (int)ImpositionOrder.FourUpUpperLeftToRight;
+                            printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Value;
+                        }
+                        else if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.TwoUpRightToLeft)
+                        {
+                            impositionOrderPrintSetting.Value = (int)ImpositionOrder.FourUpUpperRightToLeft;
+                            printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Value;
+                        }
                     }
-                    else if ((int)impositionOrderPrintSetting.Value == (int)ImpositionOrder.TwoUpRightToLeft)
-                    {
-                        impositionOrderPrintSetting.Value = (int)ImpositionOrder.FourUpUpperRightToLeft;
-                    }
-                    printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Value;
-
-                    isUpdated = true;
                 }
-                /* TODO: Delete commented out lines if Booklet related settings
-                 * does not necessarily required to be updated
-                 * since in order to update Imposition, Booklet must be Off.
-                if (bookletPrintSetting != null)
-                {
-                    bookletPrintSetting.Value = false;
-                    PrintSettings.Booklet = false;
-
-                    isUpdated = true;
-                }
-                if (bookletFinishPrintSetting != null)
-                {
-                    bookletFinishPrintSetting.IsEnabled = false;
-                    bookletFinishPrintSetting.IsValueDisplayed = false;
-                    bookletFinishPrintSetting.Value = bookletFinishPrintSetting.Default;
-                    PrintSettings.BookletFinishing = (int)bookletFinishPrintSetting.Default;
-
-                    isUpdated = true;
-                }
-                if (bookletLayoutPrintSetting != null)
-                {
-                    bookletLayoutPrintSetting.IsEnabled = false;
-                    bookletLayoutPrintSetting.IsValueDisplayed = false;
-                    bookletLayoutPrintSetting.Value = bookletLayoutPrintSetting.Default;
-                    PrintSettings.BookletLayout = (int)bookletLayoutPrintSetting.Default;
-
-                    isUpdated = true;
-                }
-                 */
+                isValueUpdated = true;
             }
 
-            UpdatePagesPerSheet(value);
+            _printSettingsMap[_activeScreen] = printSettings;
 
-            return isUpdated;
+            return isValueUpdated;
         }
 
         /// <summary>
         /// Updates print settings dependent on booklet constraints
         /// </summary>
         /// <param name="value">new booklet value</param>
-        /// <returns>true when update is done, false otherwise</returns>
-        private bool UpdateConstraintsBasedOnBooklet(bool value)
+        /// <param name="updateValues">true when dependent values should be updated, false otherwise</param>
+        /// <returns>true when dependent values are updated, false otherwise</returns>
+        private bool UpdateConstraintsBasedOnBooklet(bool value, bool updateValues)
         {
-            bool isUpdated = false;
+            bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
             _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
-                return isUpdated;
+                return isValueUpdated;
             }
 
             PrintSetting duplexPrintSetting =
@@ -884,410 +982,458 @@ namespace SmartDeviceApp.Controllers
             PrintSetting outputTrayPrintSetting =
                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
 
+            int currOrientation = printSettings.Orientation;
+            int currImposition = printSettings.Imposition;
+
             if (value)
             {
                 if (duplexPrintSetting != null)
                 {
                     duplexPrintSetting.IsEnabled = false;
-                    duplexPrintSetting.Value = Duplex.ShortEdge;
-                    printSettings.Duplex = (int)Duplex.ShortEdge;
-
-                    isUpdated = true;
+                    if (updateValues)
+                    {
+                        duplexPrintSetting.Value = Duplex.ShortEdge;
+                        printSettings.Duplex = (int)Duplex.ShortEdge;
+                    }
                 }
                 if (impositionPrintSetting != null)
                 {
-                    impositionPrintSetting.IsEnabled = false;
-                    impositionPrintSetting.IsValueDisplayed = false;
-                    impositionPrintSetting.Value = Imposition.Off;
-                    printSettings.Imposition = (int)Imposition.Off;
-
-                    isUpdated = true;
+                    if (updateValues)
+                    {
+                        int newImpositonValue = (int)Imposition.Off;
+                        impositionPrintSetting.Value = newImpositonValue;
+                        printSettings.Imposition = newImpositonValue;
+                    }
                 }
                 if (impositionOrderPrintSetting != null)
                 {
                     impositionOrderPrintSetting.IsEnabled = false;
-                    impositionOrderPrintSetting.IsValueDisplayed = false;
-                    impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
-                    printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Default;
-
-                    isUpdated = true;
+                    impositionOrderPrintSetting.IsValueDisplayed = true;
+                    if (updateValues)
+                    {
+                        impositionOrderPrintSetting.Value = impositionOrderPrintSetting.Default;
+                        printSettings.ImpositionOrder = (int)impositionOrderPrintSetting.Default;
+                    }
                 }
                 if (finishingSidePrintSetting != null)
                 {
                     finishingSidePrintSetting.IsEnabled = false;
-                    finishingSidePrintSetting.IsValueDisplayed = false;
-                    finishingSidePrintSetting.Value = (int)FinishingSide.Left;
-                    printSettings.FinishingSide = (int)FinishingSide.Left;
+                    if (updateValues)
+                    {
+                        finishingSidePrintSetting.Value = (int)FinishingSide.Left;
+                        printSettings.FinishingSide = (int)FinishingSide.Left;
+                    }
                 }
                 if (staplePrintSetting != null)
                 {
                     staplePrintSetting.IsEnabled = false;
-                    staplePrintSetting.IsValueDisplayed = false;
-                    staplePrintSetting.Value = (int)Staple.Off;
-                    printSettings.Staple = (int)Staple.Off;
-
-                    isUpdated = true;
+                    if (updateValues)
+                    {
+                        staplePrintSetting.Value = (int)Staple.Off;
+                        printSettings.Staple = (int)Staple.Off;
+                    }
                 }
                 if (punchPrintSetting != null)
                 {
                     punchPrintSetting.IsEnabled = false;
-                    punchPrintSetting.IsValueDisplayed = false;
-                    punchPrintSetting.Value = (int)Punch.Off;
-                    printSettings.Punch = (int)Punch.Off;
-
-                    isUpdated = true;
+                    if (updateValues)
+                    {
+                        punchPrintSetting.Value = (int)Punch.Off;
+                        printSettings.Punch = (int)Punch.Off;
+                    }
                 }
-                /* Constraints for Output Tray
                 if (outputTrayPrintSetting != null)
                 {
-                    outputTrayPrintSetting.IsEnabled = false;
-                    outputTrayPrintSetting.IsValueDisplayed = false;
-                    outputTrayPrintSetting.Value = (int)OutputTray.Auto;
-                    PrintSettings.OutputTray = (int)OutputTray.Auto;
-
-                    isUpdated = true;
+                    PrintSettingOption faceDownTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
+                    if (faceDownTray != null)
+                    {
+                        faceDownTray.IsEnabled = false;
+                    }
+                    PrintSettingOption stackingTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
+                    if (stackingTray != null)
+                    {
+                        stackingTray.IsEnabled = false;
+                    }
+                    PrintSettingOption topTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Top);
+                    if (topTray != null)
+                    {
+                        topTray.IsEnabled = false;
+                    }
+                    if (updateValues)
+                    {
+                        outputTrayPrintSetting.Value = (int)OutputTray.Auto;
+                        printSettings.OutputTray = (int)OutputTray.Auto;
+                    }
                 }
-                 */
                 if (bookletFinishPrintSetting != null)
                 {
                     bookletFinishPrintSetting.IsEnabled = true;
-                    bookletFinishPrintSetting.IsValueDisplayed = true;
-
-                    isUpdated = true;
                 }
                 if (bookletLayoutPrintSetting != null)
                 {
                     bookletLayoutPrintSetting.IsEnabled = true;
-                    bookletLayoutPrintSetting.IsValueDisplayed = true;
-
-                    isUpdated = true;
                 }
+                isValueUpdated = true;
             }
             else
             {
                 if (duplexPrintSetting != null)
                 {
                     duplexPrintSetting.IsEnabled = true;
-                    duplexPrintSetting.Value = (int)Duplex.Off; // TODO: Verify if needs to set to Off since this is not indicated in specifications
-                    printSettings.Duplex = (int)Duplex.Off;
-
-                    isUpdated = true;
-                }
-                if (impositionPrintSetting != null)
-                {
-                    impositionPrintSetting.IsEnabled = true;
-                    impositionPrintSetting.IsValueDisplayed = true;
-
-                    isUpdated = true;
+                    if (updateValues)
+                    {
+                        duplexPrintSetting.Value = (int)Duplex.Off;
+                        printSettings.Duplex = (int)Duplex.Off;
+                    }
                 }
                 if (impositionOrderPrintSetting != null)
                 {
-                    // impositionOrderPrintSetting.IsEnabled and impositionOrderPrintSetting.IsValueDisplayed
-                    // are not set to true since Imposition is Off
-
-                    isUpdated = true;
+                    if (currImposition == (int)Imposition.Off)
+                    {
+                        impositionOrderPrintSetting.IsValueDisplayed = false;
+                    }
+                    else
+                    {
+                        impositionOrderPrintSetting.IsValueDisplayed = true;
+                    }
                 }
                 if (finishingSidePrintSetting != null)
                 {
                     finishingSidePrintSetting.IsEnabled = true;
-                    finishingSidePrintSetting.IsValueDisplayed = true;
-
-                    isUpdated = true;
                 }
                 if (staplePrintSetting != null)
                 {
                     staplePrintSetting.IsEnabled = true;
-                    staplePrintSetting.IsValueDisplayed = true;
-
-                    isUpdated = true;
                 }
                 if (punchPrintSetting != null)
                 {
                     punchPrintSetting.IsEnabled = true;
-                    punchPrintSetting.IsValueDisplayed = true;
-
-                    isUpdated = true;
                 }
                 if (outputTrayPrintSetting != null)
                 {
-                    outputTrayPrintSetting.IsEnabled = true;
-                    outputTrayPrintSetting.IsValueDisplayed = true;
-
-                    isUpdated = true;
+                    PrintSettingOption faceDownTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
+                    if (faceDownTray != null)
+                    {
+                        faceDownTray.IsEnabled = true;
+                    }
+                    PrintSettingOption stackingTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
+                    if (stackingTray != null)
+                    {
+                        stackingTray.IsEnabled = true;
+                    }
+                    PrintSettingOption topTray =
+                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Top);
+                    if (topTray != null)
+                    {
+                        topTray.IsEnabled = true;
+                    }
                 }
                 if (bookletFinishPrintSetting != null)
                 {
                     bookletFinishPrintSetting.IsEnabled = false;
-                    bookletFinishPrintSetting.IsValueDisplayed = false;
-                    bookletFinishPrintSetting.Value = bookletFinishPrintSetting.Default;
-                    printSettings.BookletFinishing = (int)bookletFinishPrintSetting.Default;
-
-                    isUpdated = true;
+                    if (updateValues)
+                    {
+                        bookletFinishPrintSetting.Value = bookletFinishPrintSetting.Default;
+                        printSettings.BookletFinishing = (int)bookletFinishPrintSetting.Default;
+                    }
                 }
                 if (bookletLayoutPrintSetting != null)
                 {
                     bookletLayoutPrintSetting.IsEnabled = false;
-                    bookletLayoutPrintSetting.IsValueDisplayed = false;
-                    bookletLayoutPrintSetting.Value = bookletLayoutPrintSetting.Default;
-                    printSettings.BookletLayout = (int)bookletLayoutPrintSetting.Default;
-
-                    isUpdated = true;
+                    if (updateValues)
+                    {
+                        bookletLayoutPrintSetting.Value = bookletLayoutPrintSetting.Default;
+                        printSettings.BookletLayout = (int)bookletLayoutPrintSetting.Default;
+                    }
                 }
+                isValueUpdated = true;
             }
 
             _printSettingsMap[_activeScreen] = printSettings;
 
-            return isUpdated;
+            return isValueUpdated;
         }
 
         /// <summary>
         /// Updates print settings dependent on finishing side constraints
         /// </summary>
         /// <param name="value">new finishing side value</param>
-        /// <returns>true when update is done, false otherwise</returns>
-        private bool UpdateConstraintsBasedOnFinishingSide(int value)
+        /// <returns>true when dependent values are updated, false otherwise</returns>
+        private bool UpdateConstraintsBasedOnFinishingSide(int value, bool updateValues)
         {
-            bool isUpdated = false;
+            bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
             _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
-                return isUpdated;
+                return isValueUpdated;
             }
 
             PrintSetting staplePrintSetting =
                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
+            PrintSetting punchPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
 
-            if (staplePrintSetting == null)
-            {
-                return isUpdated;
-            }
-
+            int currOrientation = printSettings.Orientation;
             int currFinishingSide = printSettings.FinishingSide;
             int currStaple = printSettings.Staple;
+            int currPunch = printSettings.Punch;
 
             if (value == (int)FinishingSide.Left || value == (int)FinishingSide.Right)
             {
-                if (currStaple == (int)Staple.OneUpperLeft || currStaple == (int)Staple.OneUpperLeft)
+                if (currOrientation == (int)Orientation.Landscape && currPunch == (int)Punch.FourHoles)
                 {
-                    staplePrintSetting.Value = (int)Staple.One;
-                    printSettings.Staple = (int)Staple.One;
-
-                    isUpdated = true;
+                    if (punchPrintSetting != null)
+                    {
+                        int newPunch = (int)punchPrintSetting.Default;
+                        if (updateValues)
+                        {
+                            punchPrintSetting.Value = newPunch;
+                            printSettings.Punch = newPunch;
+                        }
+                    }
                 }
 
-                PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
-                if (oneUL != null)
+                if (staplePrintSetting != null)
                 {
-                    oneUL.IsEnabled = false;
+                    if (updateValues && (currStaple == (int)Staple.OneUpperLeft || currStaple == (int)Staple.OneUpperRight))
+                    {
+                        staplePrintSetting.Value = (int)Staple.One;
+                        printSettings.Staple = (int)Staple.One;
+                    }
 
-                    isUpdated = true;
+                    PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
+                    if (oneUL != null)
+                    {
+                        oneUL.IsEnabled = false;
+                    }
+                    PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
+                    if (oneUR != null)
+                    {
+                        oneUR.IsEnabled = false;
+                    }
+                    PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
+                    if (one != null)
+                    {
+                        one.IsEnabled = true;
+                    }
                 }
-                PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
-                if (oneUR != null)
-                {
-                    oneUR.IsEnabled = false;
 
-                    isUpdated = true;
-                }
-                PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
-                if (one != null)
-                {
-                    one.IsEnabled = true;
-
-                    isUpdated = true;
-                }
+                isValueUpdated = true;
             }
             else if (value == (int)FinishingSide.Top)
             {
-                // Change selected value
-                if (currFinishingSide == (int)FinishingSide.Left && currStaple == (int)Staple.One)
+                if (currOrientation == (int)Orientation.Portrait && currPunch == (int)Punch.FourHoles)
                 {
-                    staplePrintSetting.Value = (int)Staple.OneUpperLeft;
-                    printSettings.Staple = (int)Staple.OneUpperLeft;
-                }
-                else if (currFinishingSide == (int)FinishingSide.Right && currStaple == (int)Staple.One)
-                {
-                    staplePrintSetting.Value = (int)Staple.OneUpperRight;
-                    printSettings.Staple = (int)Staple.OneUpperRight;
-                }
-
-                PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
-                if (oneUL != null)
-                {
-                    oneUL.IsEnabled = true;
-
-                    isUpdated = true;
-                }
-                PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
-                if (oneUR != null)
-                {
-                    oneUR.IsEnabled = true;
-
-                    isUpdated = true;
-                }
-                PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
-                if (one != null)
-                {
-                    one.IsEnabled = false;
-
-                    isUpdated = true;
-                }
-
-            }
-
-            _printSettingsMap[_activeScreen] = printSettings;
-
-            return isUpdated;
-        }
-
-        /// <summary>
-        /// Updates print settings dependent on staple constraints
-        /// </summary>
-        /// <param name="value">new staple value</param>
-        /// <returns>true when update is done, false otherwise</returns>
-        private bool UpdateConstraintsBasedOnStaple(int value)
-        {
-            bool isUpdated = false;
-
-            PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
-            if (printSettings == null)
-            {
-                return isUpdated;
-            }
-
-            PrintSetting outputTrayPrintSetting =
-                GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-
-            if (outputTrayPrintSetting == null)
-            {
-                return isUpdated;
-            }
-
-            int currOutputTray = printSettings.OutputTray;
-
-            if (value == (int)Staple.OneUpperLeft || value == (int)Staple.OneUpperRight ||
-                value == (int)Staple.One || value == (int)Staple.Two)
-            {
-                /* Constraints for Output Tray
-                if (currOutputTray == (int)OutputTray.FaceUp)
-                {
-                    int newOutputTray = (int)outputTrayPrintSetting.Default;
-                    outputTrayPrintSetting.Value = newOutputTray;
-                    PrintSettings.OutputTray = newOutputTray;
-
-                    PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                    if (faceUp != null)
+                    if (punchPrintSetting != null)
                     {
-                        faceUp.IsEnabled = false;
+                        int newPunch = (int)punchPrintSetting.Default;
+                        if (updateValues)
+                        {
+                            punchPrintSetting.Value = newPunch;
+                            printSettings.Punch = newPunch;
+                        }
+                    }
+                }
+
+                if (staplePrintSetting != null)
+                {
+                    if (updateValues)
+                    {
+                        if (currFinishingSide == (int)FinishingSide.Left && currStaple == (int)Staple.One)
+                        {
+                            staplePrintSetting.Value = (int)Staple.OneUpperLeft;
+                            printSettings.Staple = (int)Staple.OneUpperLeft;
+                        }
+                        else if (currFinishingSide == (int)FinishingSide.Right && currStaple == (int)Staple.One)
+                        {
+                            staplePrintSetting.Value = (int)Staple.OneUpperRight;
+                            printSettings.Staple = (int)Staple.OneUpperRight;
+                        }
                     }
 
-                    isUpdated = true;
+                    PrintSettingOption oneUL = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperLeft);
+                    if (oneUL != null)
+                    {
+                        oneUL.IsEnabled = true;
+                    }
+                    PrintSettingOption oneUR = GetPrintSettingOption(staplePrintSetting, (int)Staple.OneUpperRight);
+                    if (oneUR != null)
+                    {
+                        oneUR.IsEnabled = true;
+                    }
+                    PrintSettingOption one = GetPrintSettingOption(staplePrintSetting, (int)Staple.One);
+                    if (one != null)
+                    {
+                        one.IsEnabled = false;
+                    }
                 }
-                 */
-            }
-            else if (value == (int)Staple.Off)
-            {
-                /* Constraints for Output Tray
-                PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                if (faceUp != null)
-                {
-                    faceUp.IsEnabled = true;
 
-                    isUpdated = true;
-                }
-                 */
+                isValueUpdated = true;
             }
 
             _printSettingsMap[_activeScreen] = printSettings;
 
-            return isUpdated;
+            return isValueUpdated;
         }
 
         /// <summary>
         /// Updates print settings dependent on punch constraints
         /// </summary>
         /// <param name="value">new punch value</param>
-        /// <returns>true when update is done, false otherwise</returns>
-        private bool UpdateConstraintsBasedOnPunch(int value)
+        /// <returns>true when dependent values are updated, false otherwise</returns>
+        private bool UpdateConstraintsBasedOnPunch(int value, bool updateValues)
         {
-            bool isUpdated = false;
+            bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
             _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
-                return isUpdated;
+                return isValueUpdated;
             }
 
+            PrintSetting finishingSidePrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE);
             PrintSetting outputTrayPrintSetting =
                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
 
-            if (outputTrayPrintSetting == null)
-            {
-                return isUpdated;
-            }
-
+            int currOrientation = printSettings.Orientation;
+            int currFinishingSide = printSettings.FinishingSide;
             int currOutputTray = printSettings.OutputTray;
 
-            if (value == (int)Punch.TwoHoles || value == (int)Punch.FourHoles)
+            if (value == (int)Punch.FourHoles)
             {
-                if (currOutputTray == (int)OutputTray.FaceDown) // ||
-                //currOutputTray == (int)OutputTray.FaceUp)
+                if (currOrientation == (int)Orientation.Portrait &&
+                currFinishingSide == (int)FinishingSide.Top)
                 {
-                    int newOutputTray = (int)outputTrayPrintSetting.Default;
-                    outputTrayPrintSetting.Value = newOutputTray;
-                    printSettings.OutputTray = newOutputTray;
-
-                    isUpdated = true;
+                    if (finishingSidePrintSetting != null)
+                    {
+                        int newFinishingSide = (int)finishingSidePrintSetting.Default; // Left
+                        if (updateValues)
+                        {
+                            finishingSidePrintSetting.Value = newFinishingSide;
+                            printSettings.FinishingSide = newFinishingSide;
+                        }
+                    }
+                }
+                else if (currOrientation == (int)Orientation.Landscape &&
+                    currFinishingSide != (int)FinishingSide.Top)
+                {
+                    if (finishingSidePrintSetting != null)
+                    {
+                        int newFinishingSide = (int)FinishingSide.Top;
+                        if (updateValues)
+                        {
+                            finishingSidePrintSetting.Value = newFinishingSide;
+                            printSettings.FinishingSide = newFinishingSide;
+                        }
+                    }
                 }
 
-                PrintSettingOption faceDown = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
+                if (currOutputTray == (int)OutputTray.FaceDown)
+                {
+                    if (outputTrayPrintSetting != null)
+                    {
+                        int newOutputTray = (int)outputTrayPrintSetting.Default;
+                        if (updateValues)
+                        {
+                            outputTrayPrintSetting.Value = newOutputTray;
+                            printSettings.OutputTray = newOutputTray;
+                        }
+                    }
+                }
+
+                PrintSettingOption faceDown = GetPrintSettingOption(outputTrayPrintSetting,
+                    (int)OutputTray.FaceDown);
                 if (faceDown != null)
                 {
                     faceDown.IsEnabled = false;
-
-                    isUpdated = true;
                 }
-                /* Constraints for Output Tray
-                PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                if (faceUp != null)
+                isValueUpdated = true;
+            }
+            else if (value == (int)Punch.TwoHoles)
+            {
+                if (currOutputTray == (int)OutputTray.FaceDown)
                 {
-                    faceUp.IsEnabled = false;
-
-                    isUpdated = true;
+                    if (outputTrayPrintSetting != null)
+                    {
+                        int newOutputTray = (int)outputTrayPrintSetting.Default;
+                        if (updateValues)
+                        {
+                            outputTrayPrintSetting.Value = newOutputTray;
+                            printSettings.OutputTray = newOutputTray;
+                        }
+                    }
                 }
-                 */
 
-                isUpdated = true;
+                PrintSettingOption faceDown = GetPrintSettingOption(outputTrayPrintSetting,
+                    (int)OutputTray.FaceDown);
+                if (faceDown != null)
+                {
+                    faceDown.IsEnabled = false;
+                }
+                isValueUpdated = true;
             }
             else if (value == (int)Punch.Off)
             {
-                PrintSettingOption faceDown = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
+                PrintSettingOption faceDown = GetPrintSettingOption(outputTrayPrintSetting,
+                    (int)OutputTray.FaceDown);
                 if (faceDown != null)
                 {
                     faceDown.IsEnabled = true;
-
-                    isUpdated = true;
                 }
-                /* Constraints for Output Tray
-                PrintSettingOption faceUp = GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceUp);
-                if (faceUp != null)
-                {
-                    faceUp.IsEnabled = true;
-
-                    isUpdated = true;
-                }
-                 */
-
-                isUpdated = true;
+                isValueUpdated = true;
             }
 
             _printSettingsMap[_activeScreen] = printSettings;
 
-            return isUpdated;
+            return isValueUpdated;
+        }
+
+        /// <summary>
+        /// Updates print settings dependent on secure print constraints
+        /// </summary>
+        /// <param name="value">new scure print value</param>
+        private void UpdateConstraintsBasedOnSecurePrint(bool value)
+        {
+            PrintSettings printSettings = null;
+            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            if (printSettings == null)
+            {
+                return;
+            }
+
+            PrintSetting pinCodePrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_PIN_CODE);
+
+            if (value)
+            {
+                if (pinCodePrintSetting != null)
+                {
+                    pinCodePrintSetting.IsEnabled = true;
+                    printSettings.PinCode = _prevPinCode;
+                    pinCodePrintSetting.Value = _prevPinCode;
+                }
+            }
+            else
+            {
+                if (pinCodePrintSetting != null)
+                {
+                    pinCodePrintSetting.IsEnabled = false;
+                    _prevPinCode = printSettings.PinCode;
+                    printSettings.PinCode = null;
+                    pinCodePrintSetting.Value = string.Empty;
+                }
+            }
+
+            _printSettingsMap[_activeScreen] = printSettings;
         }
 
         /// <summary>
@@ -1309,13 +1455,12 @@ namespace SmartDeviceApp.Controllers
         /// <param name="value">updated value</param>
         public async void PrintSettingValueChanged(PrintSetting printSetting, object value)
         {
-            if (printSetting == null || value == null)
+            if (printSetting == null || value == null || string.IsNullOrEmpty(_activeScreen))
             {
                 return;
             }
 
             bool isPreviewAffected = false;
-
             switch (printSetting.Type)
             {
                 case PrintSettingType.boolean:
@@ -1324,6 +1469,9 @@ namespace SmartDeviceApp.Controllers
                 case PrintSettingType.list:
                 case PrintSettingType.numeric:
                     isPreviewAffected = await UpdatePrintSettings(printSetting, (int)value);
+                    break;
+                case PrintSettingType.password:
+                    UpdatePrintSettings(printSetting, value.ToString());
                     break;
                 case PrintSettingType.unknown:
                 default:
@@ -1340,13 +1488,12 @@ namespace SmartDeviceApp.Controllers
 
         /// <summary>
         /// Updates the print settings list (PrintSettingList) and cache (PrintSettings),
-        /// updates value and enabled options based on constraints, and applies
-        /// changes to the PreviewPage image.
+        /// updates value and enabled options based on constraints.
         /// </summary>
         /// <param name="printSetting">source print setting</param>
         /// <param name="value">updated value</param>
         /// <returns>task; true if print preview needs to be refreshed, false otherwise</returns>
-        public async Task<bool> UpdatePrintSettings(PrintSetting printSetting, int value)
+        private async Task<bool> UpdatePrintSettings(PrintSetting printSetting, int value)
         {
             bool isPreviewAffected = false;
 
@@ -1364,13 +1511,9 @@ namespace SmartDeviceApp.Controllers
                 int prevColorMode = printSettings.ColorMode;
                 if (printSettings.ColorMode != value)
                 {
+                    isPreviewAffected = ((prevColorMode == (int)ColorMode.Mono) ||
+                                         (value == (int)ColorMode.Mono));
                     printSettings.ColorMode = value;
-                    // Matters only if changed to/from Black
-                    if (prevColorMode == (int)ColorMode.Mono ||
-                        value == (int)ColorMode.Mono)
-                    {
-                        isPreviewAffected = true;
-                    }
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_COPIES))
@@ -1390,25 +1533,24 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.Orientation != value)
                 {
-                    // isConstraintAffected = UpdateConstraintBookletLayoutUsingOrientation(value);
+                    isPreviewAffected = UpdateConstraintsBasedOnOrientation(value, true);
                     printSettings.Orientation = value;
-                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_DUPLEX))
             {
                 if (printSettings.Duplex != value)
                 {
-                    printSettings.Duplex = value;
                     isPreviewAffected = true;
+                    printSettings.Duplex = value;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_SIZE))
             {
                 if (printSettings.PaperSize != value)
                 {
-                    printSettings.PaperSize = value;
                     isPreviewAffected = true;
+                    printSettings.PaperSize = value;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PAPER_TYPE))
@@ -1429,20 +1571,16 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.Imposition != value)
                 {
-                    isPreviewAffected = UpdateConstraintsBasedOnImposition(value);
+                    isPreviewAffected = UpdateConstraintsBasedOnImposition(value, true);
                     printSettings.Imposition = value;
-                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_IMPOSITION_ORDER))
             {
                 if (printSettings.ImpositionOrder != value)
                 {
+                    isPreviewAffected = (printSettings.Imposition != (int)Imposition.Off);
                     printSettings.ImpositionOrder = value;
-                    if (GetPagesPerSheet(_activeScreen) > 1) // Matters only if pages per sheet is more than 1
-                    {
-                        isPreviewAffected = true;
-                    }
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_SORT))
@@ -1456,56 +1594,53 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.BookletFinishing != value)
                 {
+#if PREVIEW_STAPLE
+                    isPreviewAffected = (printSettings.Booklet == true) &&
+                        ((printSettings.BookletFinishing == (int)BookletFinishing.FoldAndStaple && value != (int)BookletFinishing.FoldAndStaple) ||
+                        (printSettings.BookletFinishing != (int)BookletFinishing.FoldAndStaple && value == (int)BookletFinishing.FoldAndStaple));
+#endif // PREVIEW_STAPLE
                     printSettings.BookletFinishing = value;
-                    // Matters only when booklet is ON
-                    if (printSettings.Booklet == true)
-                    {
-                        isPreviewAffected = true;
-                    }
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
             {
                 if (printSettings.BookletLayout != value)
                 {
+                    isPreviewAffected = (printSettings.Booklet == true);
                     printSettings.BookletLayout = value;
-                    // Matters only when booklet is ON
-                    if (printSettings.Booklet == true)
-                    {
-                        isPreviewAffected = true;
-                    }
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_FINISHING_SIDE))
             {
                 if (printSettings.FinishingSide != value)
                 {
-                    isPreviewAffected = UpdateConstraintsBasedOnFinishingSide(value);
+                    isPreviewAffected = UpdateConstraintsBasedOnFinishingSide(value, true);
                     printSettings.FinishingSide = value;
-                    // Matters only when staple or punch is ON
-                    if (printSettings.Staple != (int)Staple.Off ||
-                        printSettings.Punch != (int)Punch.Off)
-                    {
-                        isPreviewAffected = true;
-                    }
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_STAPLE))
             {
                 if (printSettings.Staple != value)
                 {
-                    isPreviewAffected = UpdateConstraintsBasedOnStaple(value);
+#if PREVIEW_STAPLE
+                    isPreviewAffected = (value == (int)Staple.Off) ||
+                        (value == (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.One) ||
+                        (value == (int)Staple.OneUpperRight && printSettings.Staple != (int)Staple.One) ||
+                        (value == (int)Staple.One && (printSettings.Staple != (int)Staple.OneUpperLeft && printSettings.Staple != (int)Staple.OneUpperRight)) ||
+                        (value == (int)Staple.Two);
+#endif // PREVIEW_STAPLE
                     printSettings.Staple = value;
-                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_PUNCH))
             {
                 if (printSettings.Punch != value)
                 {
-                    isPreviewAffected = UpdateConstraintsBasedOnPunch(value);
+#if PREVIEW_PUNCH
+                    isPreviewAffected =
+#endif // PREVIEW_PUNCH
+                        UpdateConstraintsBasedOnPunch(value, true);
                     printSettings.Punch = value;
-                    isPreviewAffected = true;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY))
@@ -1519,9 +1654,13 @@ namespace SmartDeviceApp.Controllers
             if (!_printSettingsViewModel.IsPrintPreview)
             {
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                // Ignore error
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            {
+                _printSettingsMap[_activeScreen] = printSettings;
+            }
 
             return isPreviewAffected;
         }
@@ -1529,12 +1668,12 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Updates the print settings list (PrintSettingList) and cache (PrintSettings),
         /// updates value and enabled options based on constraints, and applies
-        /// changes to the PreviewPage image.
+        /// changes to the preview page image.
         /// </summary>
         /// <param name="printSetting">source print setting</param>
         /// <param name="state">updated value</param>
-        /// <returns>task; true </returns>
-        public async Task<bool> UpdatePrintSettings(PrintSetting printSetting, bool state)
+        /// <returns>task; true if print preview needs to be refreshed, false otherwise</returns>
+        private async Task<bool> UpdatePrintSettings(PrintSetting printSetting, bool state)
         {
             bool isPreviewAffected = false;
 
@@ -1551,28 +1690,78 @@ namespace SmartDeviceApp.Controllers
             {
                 if (printSettings.ScaleToFit != state)
                 {
-                    printSettings.ScaleToFit = state;
                     isPreviewAffected = true;
+                    printSettings.ScaleToFit = state;
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET))
             {
                 if (printSettings.Booklet != state)
                 {
-                    isPreviewAffected = UpdateConstraintsBasedOnBooklet(state);
+                    isPreviewAffected = UpdateConstraintsBasedOnBooklet(state, true);
                     printSettings.Booklet = state;
-                    isPreviewAffected = true;
+                }
+            }
+            else if (name.Equals(PrintSettingConstant.NAME_VALUE_SECURE_PRINT))
+            {
+                if (printSettings.EnabledSecurePrint != state)
+                {
+                    UpdateConstraintsBasedOnSecurePrint(state);
+                    printSettings.EnabledSecurePrint = state;
                 }
             }
 
             if (!_printSettingsViewModel.IsPrintPreview)
             {
                 await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+                // Ignore error
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            {
+                _printSettingsMap[_activeScreen] = printSettings;
+            }
 
             return isPreviewAffected;
+        }
+
+        /// <summary>
+        /// Updates the print settings list (PrintSettingList) and cache (PrintSettings),
+        /// updates value and enabled options based on constraints.
+        /// </summary>
+        /// <param name="printSetting">source print setting</param>
+        /// <param name="value">updated value</param>
+        private void UpdatePrintSettings(PrintSetting printSetting, string value)
+        {
+            //bool isPreviewAffected = false;
+
+            PrintSettings printSettings = null;
+            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            if (printSettings == null)
+            {
+                //return isPreviewAffected;
+                return;
+            }
+
+            string name = printSetting.Name;
+
+            if (name.Equals(PrintSettingConstant.NAME_VALUE_PIN_CODE))
+            {
+                printSettings.PinCode = (string)value;
+            }
+
+            // Note: Enable when needed
+            //if (!_printSettingsViewModel.IsPrintPreview)
+            //{
+            //    await DatabaseController.Instance.UpdatePrintSettings(printSettings);
+            //}
+
+            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            {
+                _printSettingsMap[_activeScreen] = printSettings;
+            }
+
+            //return isPreviewAffected;
         }
 
         #endregion PrintSettingList Operations
@@ -1595,39 +1784,7 @@ namespace SmartDeviceApp.Controllers
             return printSettings;
         }
 
-        /// <summary>
-        /// Retrives the number of pages per sheet
-        /// </summary>
-        /// <param name="screenName">name of active screen</param>
-        /// <returns>number of pages per sheet</returns>
-        public int GetPagesPerSheet(string screenName)
-        {
-            int pagesPerSheet = 1;
-            if (!string.IsNullOrEmpty(screenName) && _pagesPerSheetMap.ContainsKey(screenName))
-            {
-                pagesPerSheet = _pagesPerSheetMap[screenName];
-            }
-            return pagesPerSheet;
-        }
-
         #endregion Get PrintSettings Properties
-
-        #region Set PrintSettings Properties
-
-        /// <summary>
-        /// Set PIN code
-        /// </summary>
-        /// <param name="screenName">name of active screen</param>
-        /// <param name="pinCode">PIN code</param>
-        public void SetPinCode(string screenName, string pinCode)
-        {
-            if (_printSettingsMap.ContainsKey(screenName))
-            {
-                _printSettingsMap[screenName].PinCode = string.IsNullOrEmpty(pinCode) ? null : pinCode;
-            }
-        }
-
-        #endregion Set PrintSettings Properties
 
         #region Utilities
 
@@ -1654,34 +1811,6 @@ namespace SmartDeviceApp.Controllers
             }
 
             return value;
-        }
-
-        /// <summary>
-        /// Computes the number of pages based on imposition
-        /// </summary>
-        /// <param name="imposition">imposition type</param>
-        /// <returns>number of pages per sheet</returns>
-        private void UpdatePagesPerSheet(int imposition)
-        {
-            int pagesPerSheet = 1;
-            switch (imposition)
-            {
-                case (int)Imposition.TwoUp:
-                    pagesPerSheet = 2;
-                    break;
-                case (int)Imposition.FourUp:
-                    pagesPerSheet = 4;
-                    break;
-                case (int)Imposition.Off:
-                default:
-                    // Do nothing
-                    break;
-            }
-
-            if (_pagesPerSheetMap.ContainsKey(_activeScreen))
-            {
-                _pagesPerSheetMap[_activeScreen] = pagesPerSheet;
-            }
         }
 
         #endregion Utilities

@@ -8,11 +8,14 @@
 
 #import "PrintSetting.h"
 
+/**
+ * Extension of the PrintSetting model that provides debugging methods.
+ */
 @interface PrintSetting (Log)
 
 /**
- Logs the Print Settings.
- This is used for debugging only.
+ * Logs the PrintSetting object.
+ * This is used for debugging only.
  */
 - (void)log;
 

@@ -1,9 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//
+//  PreviewGestureController.cs
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group on 2014/02/25.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
+using System;
 using Windows.Foundation;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -14,7 +21,8 @@ namespace SmartDeviceApp.Controllers
 {
     public class PreviewGestureController : IDisposable
     {
-        private const int SWIPE_THRESHOLD = 500;
+        private const int SWIPE_THRESHOLD = 100;
+        private const int MAX_ZOOM_LEVEL_FACTOR = 4;
 
         private GestureRecognizer _gestureRecognizer;
         private UIElement _control;
@@ -28,6 +36,9 @@ namespace SmartDeviceApp.Controllers
 
         private SwipeRightDelegate _swipeRightHandler;
         private SwipeLeftDelegate _swipeLeftHandler;
+        private SwipeTopDelegate _swipeTopHandler;
+        private SwipeBottomDelegate _swipeBottomHandler;
+        private bool _isHorizontalSwipeEnabled;
 
         private Size _targetSize;
         private Size _controlSize;
@@ -35,6 +46,8 @@ namespace SmartDeviceApp.Controllers
         private double _originalScale;
         private bool _isScaled;
         private Point _startPoint;
+        private double _currentZoomLength; // based on width
+        private double _maxZoomLength; // based on width * max zoom level factor
 
         private bool _isEnabled;
         private bool _isDisposed;
@@ -52,12 +65,29 @@ namespace SmartDeviceApp.Controllers
             _swipeRightHandler = swipeRightHandler;
             _swipeLeftHandler = swipeLeftHandler;
             Initialize();
+            _currentZoomLength = _targetSize.Width;
+            _maxZoomLength = _targetSize.Width * MAX_ZOOM_LEVEL_FACTOR;
 
             ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
+        }
+
+        public void InitializeSwipe(bool isHorizontalSwipeEnabled,
+            SwipeLeftDelegate swipeLeftHandler,
+            SwipeRightDelegate swipeRightHandler,
+            SwipeTopDelegate swipeTopHandler,
+            SwipeBottomDelegate swipeBottomHandler)
+        {
+            _isHorizontalSwipeEnabled = isHorizontalSwipeEnabled;
+            _swipeLeftHandler = swipeLeftHandler;
+            _swipeRightHandler = swipeRightHandler;
+            _swipeTopHandler = swipeTopHandler;
+            _swipeBottomHandler = swipeBottomHandler;
         }
         
         public delegate void SwipeRightDelegate();
         public delegate void SwipeLeftDelegate();
+        public delegate void SwipeTopDelegate();
+        public delegate void SwipeBottomDelegate();
 
         private void Initialize()
         {
@@ -145,7 +175,7 @@ namespace SmartDeviceApp.Controllers
             Normalize();
         }
 
-        public void ResetTransforms() // TODO: Set to private after debug!!
+        private void ResetTransforms()
         {
             _cumulativeTransform = new TransformGroup();
             _deltaTransform = new CompositeTransform();
@@ -163,8 +193,10 @@ namespace SmartDeviceApp.Controllers
 
             // Set original scale
             _deltaTransform.CenterX = _center.X;
-            _deltaTransform.CenterY = _center.Y;            
+            _deltaTransform.CenterY = _center.Y;
             _deltaTransform.ScaleX = _deltaTransform.ScaleY = _originalScale;
+
+            _currentZoomLength = _targetSize.Width;
 
             Normalize();
             // Reset scale
@@ -222,21 +254,43 @@ namespace SmartDeviceApp.Controllers
         {
             var isSwipe = false;
             if (!_isScaled && _gestureRecognizer.IsInertial)
-            {
-                // Swipe right;
+            {                
                 Point currentPosition = e.Position;
-                if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
+                // Horizontal Swipe
+                if (_isHorizontalSwipeEnabled) 
                 {
-                    _gestureRecognizer.CompleteGesture();
-                    _swipeRightHandler();
-                    isSwipe = true;
+                    // Swipe right;
+                    if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
+                    {
+                        _gestureRecognizer.CompleteGesture();
+                        _swipeRightHandler();
+                        isSwipe = true;
+                    }
+                    // Swipe left
+                    else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
+                    {
+                        _gestureRecognizer.CompleteGesture();
+                        _swipeLeftHandler();
+                        isSwipe = true;
+                    }
                 }
-                // Swipe left
-                else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
+                // Vertical swipe
+                else 
                 {
-                    _gestureRecognizer.CompleteGesture();
-                    _swipeLeftHandler();
-                    isSwipe = true;
+                    // Swipe bottom
+                    if (currentPosition.Y - _startPoint.Y >= SWIPE_THRESHOLD)
+                    {
+                        _gestureRecognizer.CompleteGesture();
+                        _swipeBottomHandler();
+                        isSwipe = true;
+                    }
+                    // Swipe top
+                    else if (_startPoint.Y - currentPosition.Y >= SWIPE_THRESHOLD)
+                    {
+                        _gestureRecognizer.CompleteGesture();
+                        _swipeTopHandler();
+                        isSwipe = true;
+                    }
                 }
             }
             return isSwipe;
@@ -245,11 +299,21 @@ namespace SmartDeviceApp.Controllers
         private bool DetectScale(ManipulationUpdatedEventArgs e)
         {
             var isScale = false; // Currently scaling
-            if (e.Delta.Scale == 1)
+            float scale = e.Delta.Scale;
+
+            if (scale == 1 || // No scale change
+                (_currentZoomLength > _maxZoomLength && scale > 1)) // Prevent scale up on maximum
             {
                 return isScale;
             }
-            
+
+            double tempWidth = _currentZoomLength * scale;
+            if (tempWidth > _maxZoomLength)
+            {
+                scale = (float)_maxZoomLength / (float)_currentZoomLength; // Change scale to maximum
+                tempWidth = _currentZoomLength * scale;
+            }
+
             _tempPreviousTransform.Matrix = _tempCumulativeTransform.Value;
 
             // Get scale center
@@ -258,7 +322,7 @@ namespace SmartDeviceApp.Controllers
             _tempDeltaTransform.CenterY = center.Y;
 
             // Apply scaling on temp transforms first
-            _tempDeltaTransform.ScaleX = _tempDeltaTransform.ScaleY = e.Delta.Scale;
+            _tempDeltaTransform.ScaleX = _tempDeltaTransform.ScaleY = scale;
             
             // Check if scale is valid, do not scale less than original size
             if (_tempCumulativeTransform.Value.M11 > 1)
@@ -269,13 +333,15 @@ namespace SmartDeviceApp.Controllers
                     _previousTransform.Matrix = _cumulativeTransform.Value;
                     _deltaTransform.CenterX = center.X;
                     _deltaTransform.CenterY = center.Y;
-                    _deltaTransform.ScaleX = _deltaTransform.ScaleY = e.Delta.Scale;
+                    _deltaTransform.ScaleX = _deltaTransform.ScaleY = scale;
                     _deltaTransform.TranslateX = _deltaTransform.TranslateY = 0;
 
                     _isScaled = true; // not original size
                     isScale = true;
                     _isTranslateXEnabled = true;
                     _isTranslateYEnabled = true;
+
+                    _currentZoomLength = tempWidth;
                 }
             }
             else

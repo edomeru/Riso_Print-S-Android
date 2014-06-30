@@ -20,7 +20,6 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private string _cardId;
-        private string _readCommunityName;
         
         public SettingsViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -38,19 +37,6 @@ namespace SmartDeviceApp.ViewModels
                     _cardId = value;
                     RaisePropertyChanged("CardId");
                     CardIdValueChanged();
-                }
-            }
-        }
-
-        public string ReadCommunityName
-        {
-            get { return _readCommunityName; }
-            set
-            {
-                if (_readCommunityName != value)
-                {
-                    _readCommunityName = value;
-                    RaisePropertyChanged("ReadCommunityName");
                 }
             }
         }

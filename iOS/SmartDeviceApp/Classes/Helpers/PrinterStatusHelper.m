@@ -13,13 +13,40 @@
 
 @interface PrinterStatusHelper ()
 
+/**
+ * The timer that determines if the class needs to poll for printer status.
+ */
 @property (nonatomic) NSTimer *pollingTimer;
 
+/**
+ * Instance of SimplePing class that handles ping methods for IPv4 and IPv6.
+ */
 @property (strong, nonatomic) SimplePing* pinger;
+
+/**
+ * Flag if the printer responds to the ping or not.
+ */
 @property (assign, nonatomic) BOOL respondedToPing;
+
+/**
+ * Flag if the app goes to background.
+ */
 @property (assign, nonatomic) BOOL cancelledToBackground;
 
+/**
+ * Updates the UI for printer status.
+ */
 - (void)getPrinterStatus;
+
+/**
+ * Called when app goes to background.
+ */
+- (void)didEnterBackground;
+
+/**
+ * Called when app is resumed from background.
+ */
+- (void)willEnterForeground;
 
 @end
 
@@ -160,9 +187,6 @@
     }
 }
 
-/**
- Called when app is resumed from background.
- */
 - (void)willEnterForeground
 {
     if (self.cancelledToBackground == YES)

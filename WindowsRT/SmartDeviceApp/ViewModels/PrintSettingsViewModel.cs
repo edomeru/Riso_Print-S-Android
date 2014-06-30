@@ -42,7 +42,6 @@ namespace SmartDeviceApp.ViewModels
     public class PrintSettingsViewModel : ViewModelBase
     {
         public event SmartDeviceApp.Controllers.PrintPreviewController.PrintEventHandler ExecutePrintEventHandler;
-        public event SmartDeviceApp.Controllers.PrintPreviewController.PinCodeValueChangedEventHandler PinCodeValueChangedEventHandler;
 
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
@@ -57,8 +56,6 @@ namespace SmartDeviceApp.ViewModels
         private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
         private PrintSetting _selectedPrintSetting;
-
-        private string _authenticationPinCode;
 
         public PrintSettingsViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -126,7 +123,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _printCommand = new RelayCommand(
                         () => PrintExecute(),
-                        () => true
+                        () => _isPrintPreview
                     );
                 }
                 return _printCommand;
@@ -141,12 +138,14 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _listPrintersCommand = new RelayCommand(
                         () => ListPrintersCommandExecute(),
-                        () => true
+                        () => _isPrintPreview
                     );
                 }
                 return _listPrintersCommand;
             }
         }
+
+        public ObservableCollection<Printer> PrinterList { get; set; }
 
         public PrintSettingList PrintSettingsList
         {
@@ -182,32 +181,10 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _selectPrintSetting = new RelayCommand<PrintSetting>(
                         (printSetting) => SelectPrintSettingExecute(printSetting),
-                        (printSetting) => true
+                        (printSetting) => printSetting != null
                     );
                 }
                 return _selectPrintSetting;
-            }
-        }
-
-        public string AuthenticationLoginPinCode
-        {
-            get { return _authenticationPinCode; }
-            set
-            {
-                if (_authenticationPinCode != value)
-                {
-                    _authenticationPinCode = value;
-                    RaisePropertyChanged("AuthenticationLoginPinCode");
-                    AuthenticationLoginPinCodeValueChanged();
-                }
-            }
-        }
-
-        private void AuthenticationLoginPinCodeValueChanged()
-        {
-            if (PinCodeValueChangedEventHandler != null)
-            {
-                PinCodeValueChangedEventHandler(_authenticationPinCode);
             }
         }
 
@@ -226,11 +203,10 @@ namespace SmartDeviceApp.ViewModels
 
         private void ListPrintersCommandExecute()
         {
-            if (_isPrintPreview)
-            {
-                new ViewModelLocator().SelectPrinterViewModel.SelectedPrinterId = PrinterId;
-                new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
-            }
+            new ViewModelLocator().SelectPrinterViewModel.PrinterList = PrinterList; // Set printer list
+            new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.SelectPrinter;
+
+            Messenger.Default.Send<PrintSettingsPaneMode>(PrintSettingsPaneMode.SelectPrinter);
         }
 
         private void SelectPrintSettingExecute(PrintSetting printSetting)
@@ -238,11 +214,11 @@ namespace SmartDeviceApp.ViewModels
             switch (printSetting.Type)
             {
                 case PrintSettingType.boolean:
-
                     break;
                 case PrintSettingType.numeric:
                     break;
-
+                case PrintSettingType.password:
+                    break;
                 case PrintSettingType.list:
                     new ViewModelLocator().PrintSettingOptionsViewModel.PrintSetting = printSetting;
                     new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettingOptions;

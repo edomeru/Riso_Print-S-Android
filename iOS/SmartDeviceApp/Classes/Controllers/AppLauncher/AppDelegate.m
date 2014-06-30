@@ -19,6 +19,11 @@
 
 @interface AppDelegate()
 
+/**
+ * Determines whether or not the the application is launched/activated
+ * from background.
+ * Used to determine open-in from background.
+ */
 @property (nonatomic) BOOL isFromBackground;
 
 @end

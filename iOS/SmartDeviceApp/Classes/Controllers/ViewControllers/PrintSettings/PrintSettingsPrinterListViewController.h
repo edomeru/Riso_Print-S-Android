@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ * Controller for the screen container for the PrintSettingsPrinterListTableViewController.
+ * This screen mainly contains the header for returning to main "Print Settings" screen.
+ */
 @interface PrintSettingsPrinterListViewController : UIViewController
 
 @end
