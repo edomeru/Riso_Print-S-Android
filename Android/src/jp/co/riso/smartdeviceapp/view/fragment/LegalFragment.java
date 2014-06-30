@@ -33,8 +33,9 @@ import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment;
  */
 public class LegalFragment extends BaseWebFragment {
     /// String Format for Javascript replace statement 
-    public static final String JS_REPLACE_FORMAT = "javascript:document.getElementById('%s').innerHTML='%s';";
+    public static final String JS_REPLACE_FORMAT = "javascript:document.getElementById('%s').innerHTML='%s'; javascript:document.getElementById('%s').innerHTML='%s';";
     /// HTML ID for app version name
+    public static final String APPNAME_HTML_ID = "localize_appname";
     public static final String VERSION_HTML_ID = "localize_version";
     
     @Override
@@ -69,9 +70,11 @@ public class LegalFragment extends BaseWebFragment {
                 try {
                     if (getActivity() != null && getActivity() instanceof MainActivity) {
                         PackageManager packageManager = getActivity().getPackageManager();
+                        String appName = getActivity().getString(R.string.ids_app_name);
                         String versionName = packageManager.getPackageInfo(getActivity().getPackageName(), 0).versionName;
                         
-                        String javascript = String.format(Locale.getDefault(), JS_REPLACE_FORMAT, VERSION_HTML_ID, versionName);
+                        String javascript = String.format(Locale.getDefault(), JS_REPLACE_FORMAT, VERSION_HTML_ID,
+                                versionName, APPNAME_HTML_ID, appName);
                         
                         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                             view.evaluateJavascript(javascript, null);
