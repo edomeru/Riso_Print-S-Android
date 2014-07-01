@@ -178,9 +178,6 @@
     <Compile Include="Controls\GroupListControl.xaml.cs">
       <DependentUpon>GroupListControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PageCurlControl.xaml.cs">
-      <DependentUpon>PageCurlControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\PrinterNameControl.xaml.cs">
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
@@ -525,10 +522,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\GroupListControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\PageCurlControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

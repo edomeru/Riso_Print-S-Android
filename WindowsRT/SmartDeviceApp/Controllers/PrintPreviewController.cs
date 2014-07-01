@@ -469,11 +469,17 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.LeftBackPageImage =
                     new WriteableBitmap((int)_previewPageImageSize.Width,
                         (int)_previewPageImageSize.Height);
+                _printPreviewViewModel.LeftNextPageImage =
+                    new WriteableBitmap((int)_previewPageImageSize.Width,
+                        (int)_previewPageImageSize.Height);
             }
             _printPreviewViewModel.RightPageImage =
                 new WriteableBitmap((int)_previewPageImageSize.Width,
                     (int)_previewPageImageSize.Height);
             _printPreviewViewModel.RightBackPageImage =
+                new WriteableBitmap((int)_previewPageImageSize.Width,
+                    (int)_previewPageImageSize.Height);
+            _printPreviewViewModel.RightNextPageImage =
                 new WriteableBitmap((int)_previewPageImageSize.Width,
                     (int)_previewPageImageSize.Height);
         }
@@ -488,10 +494,15 @@ namespace SmartDeviceApp.Controllers
         /// <param name="sliderIndex">requested right page index based on slider value</param>
         public void GoToPage(int sliderIndex)
         {
-            _printPreviewViewModel.IsLoadLeftPageActive = true;
+            if (_isBooklet || _isDuplex)
+            {
+                _printPreviewViewModel.IsLoadLeftPageActive = true;
+                _printPreviewViewModel.IsLoadLeftBackPageActive = true;
+                _printPreviewViewModel.IsLoadLeftNextPageActive = true;
+            }
             _printPreviewViewModel.IsLoadRightPageActive = true;
-            _printPreviewViewModel.IsLoadLeftBackPageActive = true;
             _printPreviewViewModel.IsLoadRightBackPageActive = true;
+            _printPreviewViewModel.IsLoadRightNextPageActive = true;
             _currSliderIndex = sliderIndex;
             LoadPage(_currSliderIndex);
         }
@@ -506,9 +517,11 @@ namespace SmartDeviceApp.Controllers
             {
                 _printPreviewViewModel.IsLoadLeftPageActive = true;
                 _printPreviewViewModel.IsLoadLeftBackPageActive = true;
+                _printPreviewViewModel.IsLoadLeftNextPageActive = true;
             }
             _printPreviewViewModel.IsLoadRightPageActive = true;
             _printPreviewViewModel.IsLoadRightBackPageActive = true;
+            _printPreviewViewModel.IsLoadRightNextPageActive = true;
 
             // Cancel other processing if any
             foreach (CancellationTokenSource token in _cancellationTokenSourceQueue)
@@ -547,31 +560,40 @@ namespace SmartDeviceApp.Controllers
             {
                 rightPageIndex = sliderIndex * 2;
             }
-            rightPageIndex = sliderIndex * 2;
 
             // Fill all white
             PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightBackPageImage,
+                _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightNextPageImage,
                 _previewPageImageSize, cancellationToken);
             PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightPageImage,
                 _previewPageImageSize, cancellationToken);
             PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftBackPageImage,
                 _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftNextPageImage,
+                _previewPageImageSize, cancellationToken);
             PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftPageImage,
                 _previewPageImageSize, cancellationToken);
 
             // Determine page indices based on front right page index
-            _currLeftPageIndex = rightPageIndex - 1;
             _currRightPageIndex = rightPageIndex;
-            _currLeftBackPageIndex = rightPageIndex - 2;
+            _currLeftPageIndex = -1;
+            _currLeftBackPageIndex = -1;
             _currRightBackPageIndex = rightPageIndex + 1;
-            if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
-                (!_isBooklet && _isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
+            if (_isBooklet || _isDuplex)
             {
-                // Swap page index on reverse
-                _currLeftPageIndex = rightPageIndex;
-                _currRightPageIndex = rightPageIndex - 1;
+                _currLeftPageIndex = rightPageIndex - 1;
                 _currLeftBackPageIndex = rightPageIndex + 1;
-                _currRightBackPageIndex = rightPageIndex - 2;
+                _currRightBackPageIndex = rightPageIndex + 2;
+                if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
+                    (!_isBooklet && _isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
+                {
+                    // Swap page index on reverse
+                    _currRightPageIndex = rightPageIndex - 1;
+                    _currLeftPageIndex = rightPageIndex;
+                    _currLeftBackPageIndex = rightPageIndex + 2;
+                    _currRightBackPageIndex = rightPageIndex + 1;
+                }
             }
 
             // Generate pages to send
@@ -662,7 +684,7 @@ namespace SmartDeviceApp.Controllers
             if (!_previewPageImages.ContainsKey(previewPageIndex))
             {
                 List<WriteableBitmap> logicalPageImages = null;
-                if (!(isBackSide && !(_isBooklet || _isDuplex)))
+                //if (!(isBackSide && !(_isBooklet || _isDuplex)))
                 {
                     // Get logical pages only when not for backside of single-page view
                     logicalPageImages = await DocumentController.Instance
@@ -917,12 +939,17 @@ namespace SmartDeviceApp.Controllers
                             WriteableBitmapExtensions.FromByteArray(
                                 _printPreviewViewModel.LeftBackPageImage,
                                 _previewPageImages.GetValue(_currLeftBackPageIndex));
+                            WriteableBitmapExtensions.FromByteArray(
+                                _printPreviewViewModel.LeftNextPageImage,
+                                _previewPageImages.GetValue(_currLeftBackPageIndex));
                         }
                         else if (enableClearPage)
                         {
                             _printPreviewViewModel.LeftBackPageImage.Clear();
+                            _printPreviewViewModel.LeftNextPageImage.Clear();
                         }
                         _printPreviewViewModel.IsLoadLeftBackPageActive = false;
+                        _printPreviewViewModel.IsLoadLeftNextPageActive = false;
                     });
             }
             else if (previewPageIndex == _currRightBackPageIndex)
@@ -935,12 +962,20 @@ namespace SmartDeviceApp.Controllers
                         WriteableBitmapExtensions.FromByteArray(
                             _printPreviewViewModel.RightBackPageImage,
                             _previewPageImages.GetValue(_currRightBackPageIndex));
+                        if (_isBooklet || _isDuplex)
+                        {
+                            WriteableBitmapExtensions.FromByteArray(
+                                _printPreviewViewModel.RightNextPageImage,
+                                _previewPageImages.GetValue(_currRightBackPageIndex));
+                        }
                     }
                     else if (enableClearPage)
                     {
                         _printPreviewViewModel.RightBackPageImage.Clear();
+                        _printPreviewViewModel.RightNextPageImage.Clear();
                     }
                     _printPreviewViewModel.IsLoadRightBackPageActive = false;
+                    _printPreviewViewModel.IsLoadRightNextPageActive = false;
                 });
             }
         }

@@ -71,16 +71,7 @@ namespace SmartDeviceApp.Views
         private void OnPageAreaLoaded(object sender, RoutedEventArgs e)
         {
             // Initialize gesture controller
-            var twoPageControl = (TwoPageControl)sender;
-            var pageAreaGrid = twoPageControl.PageAreaGrid;
-
-            //TODO: Remove unnecessary items
-            ViewModel.TwoPageControl = twoPageControl;
-            ViewModel.SetPageAreaGrid(twoPageControl);
-            ViewModel.DisplayAreaGrid = twoPageControl.DisplayAreaGrid;
-            ViewModel.TransitionGrid = twoPageControl.TransitionGrid;
-            ViewModel.ManipulationGrid = twoPageControl.ManipulationGrid;
-            ViewModel.IsDuplex = twoPageControl.IsDuplex;
+            ViewModel.SetPageAreaGrid((TwoPageControl)sender);
         }
     }
 }
