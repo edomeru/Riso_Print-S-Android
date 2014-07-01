@@ -31,6 +31,12 @@ namespace SmartDeviceApp.Controllers
         private const int MAX_ZOOM_LEVEL_FACTOR = 4;
         private const int RECT_BOUND = 80000; // This is defined in TwoPageControl.xaml (see RectangleGeometry)
 
+        private const string TRANSFORMPROP_X = "X";
+        private const string TRANSFORMPROP_CENTER_X = "CenterX";
+        private const string TRANSFORMPROP_ANGLE = "Angle";
+        private const string TRANSFORMPROP_TRANSLATE_X = "TranslateX";
+        private const string TRANSFORMPROP_ROTATION = "Rotation";
+
         private GestureRecognizer _gestureRecognizer;
         private UIElement _control;
         private UIElement _controlReference;
@@ -535,18 +541,12 @@ namespace SmartDeviceApp.Controllers
             if (_isHorizontalSwipeEnabled)
             {
                 _backCurl = false;
-                //var startOfBackCurlPosition = 0.0;
-                var startOfBackCurlPosition = _scaledSize.Width * 0.5;
-                //if (_twoPageControl.PageAreaGrid.ActualWidth > _rightPageWidth)
-                //{
-                //    IsDuplex = true;
-                //    startOfBackCurlPosition = _manipulationGrid.ActualWidth * 0.5;
-                //}
-                //else
-                //{
-                //    IsDuplex = false;
-                //    startOfBackCurlPosition = _manipulationGrid.ActualWidth * 0.25;
-                //}
+
+                var startOfBackCurlPosition = _scaledSize.Width * 0.25;
+                if (_isDuplex)
+                {
+                    startOfBackCurlPosition = _scaledSize.Width * 0.5;
+                }
 
                 if (_startPoint.X < startOfBackCurlPosition)
                 {
@@ -568,18 +568,12 @@ namespace SmartDeviceApp.Controllers
             else
             {
                 _backCurl = false;
-                //var startOfBackCurlPosition = 0.0;
-                var startOfBackCurlPosition = _scaledSize.Height * 0.5;
-                //if (_twoPageControl.PageAreaGrid.ActualHeight > _targetSize.Height)
-                //{
-                //    IsDuplex = true;
-                //    startOfBackCurlPosition = _manipulationGrid.ActualHeight * 0.5;
-                //}
-                //else
-                //{
-                //    IsDuplex = false;
-                //    startOfBackCurlPosition = _manipulationGrid.ActualHeight * 0.25;
-                //}
+
+                var startOfBackCurlPosition = _scaledSize.Height * 0.25;
+                if (_isDuplex)
+                {
+                    startOfBackCurlPosition = _scaledSize.Height * 0.5;
+                }
 
                 if (_startPoint.Y < startOfBackCurlPosition)
                 {
@@ -706,7 +700,7 @@ namespace SmartDeviceApp.Controllers
                 _twoPageControl.Page2RotateTransform.Angle = angle;
 
                 _twoPageControl.TransitionTranslateTransform.Y = -RECT_BOUND - (cy / 2);
-                _twoPageControl.TransitionTranslateTransform.X = -(RECT_BOUND / 2) + w / 2;
+                _twoPageControl.TransitionTranslateTransform.X = -(RECT_BOUND / 2) + w;
                 _twoPageControl.TransitionRotateTransform.CenterY = -cy / 2;
                 _twoPageControl.TransitionRotateTransform.CenterX = _rotationCenterX;
                 _twoPageControl.TransitionRotateTransform.Angle = -angle;
@@ -761,9 +755,9 @@ namespace SmartDeviceApp.Controllers
                     {
                         to = (int)w;
                     }
-                    AddAnimation(sb, _twoPageControl.Page2TranslateTransform, "X", to);
-                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, "CenterX", 0);
-                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, "Angle", 0);
+                    AddAnimation(sb, _twoPageControl.Page2TranslateTransform, TRANSFORMPROP_X, to);
+                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, TRANSFORMPROP_CENTER_X, 0);
+                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, TRANSFORMPROP_ANGLE, 0);
 
                     if (_willContinue)
                     {
@@ -773,9 +767,9 @@ namespace SmartDeviceApp.Controllers
                     {
                         to = (int)-RECT_BOUND;
                     }
-                    AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, "X", to);
-                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, "CenterX", 0);
-                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, "Angle", 0);
+                    AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, TRANSFORMPROP_X, to);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_CENTER_X, 0);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_ANGLE, 0);
                     if (_willContinue)
                     {
                         if (_isDuplex)
@@ -791,9 +785,9 @@ namespace SmartDeviceApp.Controllers
                     {
                         to = (int)w;
                     }
-                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "TranslateX", to);
-                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "CenterX", 0);
-                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "Rotation", 0);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_TRANSLATE_X, to);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_CENTER_X, 0);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
                     sb.Begin();
 
                     _transitionGrid.Opacity = 0;
@@ -805,9 +799,9 @@ namespace SmartDeviceApp.Controllers
                 }
                 else
                 {
-                    AddAnimation(sb, _twoPageControl.Page1TranslateTransform, "X", 0);
-                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, "CenterX", w / 2);
-                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, "Angle", 0);
+                    AddAnimation(sb, _twoPageControl.Page1TranslateTransform, TRANSFORMPROP_X, 0);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_CENTER_X, w / 2);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_ANGLE, 0);
 
                     var to = 0;
                     if (_willContinue)
@@ -818,13 +812,13 @@ namespace SmartDeviceApp.Controllers
                     {
                         to = (int)0;
                     }
-                    AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, "X", to);
-                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, "CenterX", w / 2);
-                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, "Angle", 0);
+                    AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, TRANSFORMPROP_X, to);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_CENTER_X, w / 2);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_ANGLE, 0);
 
-                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "TranslateX", to);
-                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "CenterX", w / 2);
-                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "Rotation", 0);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_TRANSLATE_X, to);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_CENTER_X, w / 2);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
                     sb.Begin();
                 }
             }
@@ -852,7 +846,7 @@ namespace SmartDeviceApp.Controllers
                     }
                     AddAnimation(sb, _twoPageControl.Page2TranslateTransform, "Y", to);
                     AddAnimation(sb, _twoPageControl.Page2RotateTransform, "CenterY", 0);
-                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, "Angle", 0);
+                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, TRANSFORMPROP_ANGLE, 0);
 
                     if (_willContinue)
                     {
@@ -864,7 +858,7 @@ namespace SmartDeviceApp.Controllers
                     }
                     AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, "Y", to);
                     AddAnimation(sb, _twoPageControl.TransitionRotateTransform, "CenterY", 0);
-                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, "Angle", 0);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_ANGLE, 0);
                     if (_willContinue)
                     {
                         if (_isDuplex)
@@ -878,7 +872,7 @@ namespace SmartDeviceApp.Controllers
                     }
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "TranslateY", to);
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "CenterY", 0);
-                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "Rotation", 0);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
                     sb.Begin();
 
                     _transitionGrid.Opacity = 0;
@@ -892,7 +886,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     AddAnimation(sb, _twoPageControl.Page1TranslateTransform, "Y", 0);
                     AddAnimation(sb, _twoPageControl.Page1RotateTransform, "CenterY", h / 2);
-                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, "Angle", 0);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_ANGLE, 0);
 
                     var to = 0;
                     if (_willContinue)
@@ -905,11 +899,11 @@ namespace SmartDeviceApp.Controllers
                     }
                     AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, "Y", to);
                     AddAnimation(sb, _twoPageControl.TransitionRotateTransform, "CenterY", h / 2);
-                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, "Angle", 0);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_ANGLE, 0);
 
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "TranslateY", to);
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "CenterY", h / 2);
-                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, "Rotation", 0);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
                     sb.Begin();
                 }
             }
