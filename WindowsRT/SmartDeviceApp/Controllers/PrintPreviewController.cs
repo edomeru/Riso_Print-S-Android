@@ -49,6 +49,10 @@ namespace SmartDeviceApp.Controllers
         public delegate void GoToPageEventHandler(int pageIndex);
         private GoToPageEventHandler _goToPageEventHandler;
 
+        // Determine which page is to be displayed at the back
+        public delegate void TurnPageEventHandler(bool isForward);
+        private TurnPageEventHandler _turnPageEventHandler;
+
         // Choose printer
         public delegate void SelectedPrinterChangedEventHandler(int printerId);
         private SelectedPrinterChangedEventHandler _selectedPrinterChangedEventHandler;
@@ -116,6 +120,7 @@ namespace SmartDeviceApp.Controllers
 
             _updatePreviewEventHandler = new UpdatePreviewEventHandler(UpdatePreview);
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
+            _turnPageEventHandler = new TurnPageEventHandler(GenerateBackPreviewPages);
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
             _printEventHandler = new PrintEventHandler(Print);
             _cancelPrintEventHandler = new CancelPrintEventHandler(CancelPrint);
@@ -164,6 +169,7 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
                 _printPreviewViewModel.OnNavigateToEventHandler += _onNavigateToEventHandler;
                 _printPreviewViewModel.PageAreaGridLoadedEventHandler += _pageAreaGridLoadedEventHandler;
+                _printPreviewViewModel.TurnPageEventHandler += _turnPageEventHandler;
 
                 PrinterController.Instance.DeletePrinterItemsEventHandler += PrinterDeleted;
             }
@@ -187,6 +193,7 @@ namespace SmartDeviceApp.Controllers
         public void Cleanup()
         {
             _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
+            _printPreviewViewModel.TurnPageEventHandler -= _turnPageEventHandler;
             _printPreviewViewModel.PageAreaGridLoadedEventHandler -= _pageAreaGridLoadedEventHandler;
             PrintSettingsController.Instance.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
@@ -578,41 +585,32 @@ namespace SmartDeviceApp.Controllers
             // Determine page indices based on front right page index
             _currRightPageIndex = rightPageIndex;
             _currLeftPageIndex = -1;
-            _currLeftBackPageIndex = -1;
-            _currRightBackPageIndex = rightPageIndex + 1;
             if (_isBooklet || _isDuplex)
             {
                 _currLeftPageIndex = rightPageIndex - 1;
-                _currLeftBackPageIndex = rightPageIndex + 1;
-                _currRightBackPageIndex = rightPageIndex + 2;
                 if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
                     (!_isBooklet && _isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
                 {
                     // Swap page index on reverse
                     _currRightPageIndex = rightPageIndex - 1;
                     _currLeftPageIndex = rightPageIndex;
-                    _currLeftBackPageIndex = rightPageIndex + 2;
-                    _currRightBackPageIndex = rightPageIndex + 1;
                 }
             }
 
             // Generate pages to send
-            GenerateSpread(_currLeftPageIndex, _currRightPageIndex, _currLeftBackPageIndex,
-                _currRightBackPageIndex, cancellationToken);
+            GenerateFrontPreviewPages(_currLeftPageIndex, _currRightPageIndex, cancellationToken);
 
             LogUtility.EndTimestamp("LoadPage");
         }
 
         /// <summary>
-        /// Generates PreviewPage images on a single spread
+        /// Generates the front PreviewPage images on a single spread
         /// </summary>
         /// <param name="leftPageIndex">front left preview page index</param>
         /// <param name="rightPageIndex">front right preview page index</param>
-        /// <param name="leftBackPageIndex">back left preview page index</param>
-        /// <param name="rightBackPageIndex">back right preview page index</param>
         /// <param name="cancellationToken">cancellation token</param>
-        private void GenerateSpread(int leftPageIndex, int rightPageIndex,
-            int leftBackPageIndex, int rightBackPageIndex, CancellationTokenSource cancellationToken)
+        private void GenerateFrontPreviewPages(int leftPageIndex, int rightPageIndex,
+            CancellationTokenSource cancellationToken)
         {
             // Generate front pages
 
@@ -638,6 +636,56 @@ namespace SmartDeviceApp.Controllers
             {
                 SendPreviewPageImage(rightPageIndex, true, cancellationToken);
             }
+        }
+
+        /// <summary>
+        /// Generates the back PreviewPage images on a single spread
+        /// </summary>
+        /// <param name="isForward">true when forward, false otherwise</param>
+        public void GenerateBackPreviewPages(bool isForward)
+        {
+            // Determine page indices based on front right page index
+            int rightPageIndex = _currRightPageIndex;
+            if (isForward)
+            {
+                _currLeftBackPageIndex = -1;
+                _currRightBackPageIndex = rightPageIndex + 1;
+                if (_isBooklet || _isDuplex)
+                {
+                    _currLeftBackPageIndex = rightPageIndex + 1;
+                    _currRightBackPageIndex = rightPageIndex + 2;
+                    if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
+                        (!_isBooklet && _isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
+                    {
+                        // Swap page index on reverse
+                        _currLeftBackPageIndex = rightPageIndex + 2;
+                        _currRightBackPageIndex = rightPageIndex + 1;
+                    }
+                }
+            }
+            else
+            {
+                _currLeftBackPageIndex = -1;
+                _currRightBackPageIndex = rightPageIndex - 1;
+                if (_isBooklet || _isDuplex)
+                {
+                    _currLeftBackPageIndex = rightPageIndex - 1;
+                    _currRightBackPageIndex = rightPageIndex - 2;
+                    if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
+                        (!_isBooklet && _isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
+                    {
+                        // Swap page index on reverse
+                        _currLeftBackPageIndex = rightPageIndex - 2;
+                        _currRightBackPageIndex = rightPageIndex - 1;
+                    }
+                }
+            }
+
+            CancellationTokenSource cancellationToken = new CancellationTokenSource();
+            _cancellationTokenSourceQueue.Add(cancellationToken);
+
+            int leftBackPageIndex = _currLeftBackPageIndex;
+            int rightBackPageIndex = _currRightBackPageIndex;
 
             // Generate back pages
 

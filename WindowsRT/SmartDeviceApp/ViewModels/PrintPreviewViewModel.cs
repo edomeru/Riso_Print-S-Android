@@ -41,6 +41,7 @@ namespace SmartDeviceApp.ViewModels
         private const double PREVIEW_VIEW_RATIO = 5;
 
         public event SmartDeviceApp.Controllers.PrintPreviewController.GoToPageEventHandler GoToPageEventHandler;
+        public event SmartDeviceApp.Controllers.PrintPreviewController.TurnPageEventHandler TurnPageEventHandler;
         public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateToEventHandler OnNavigateToEventHandler;
         public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateFromEventHandler OnNavigateFromEventHandler;
         public event SmartDeviceApp.Controllers.PrintPreviewController.PageAreaGridLoadedEventHandler PageAreaGridLoadedEventHandler;
@@ -191,6 +192,8 @@ namespace SmartDeviceApp.ViewModels
                 PreviewGestureController.SwipeLeftDelegate swipeLeft = null;
                 PreviewGestureController.SwipeTopDelegate swipeTop = null;
                 PreviewGestureController.SwipeBottomDelegate swipeBottom = null;
+                PreviewGestureController.SwipeDirectionDelegate swipeDirection =
+                    new PreviewGestureController.SwipeDirectionDelegate(SwipeDirection);
 
                 if (IsHorizontalSwipeEnabled)
                 {                
@@ -233,7 +236,7 @@ namespace SmartDeviceApp.ViewModels
                     _gestureController = new PreviewGestureController(_twoPageControl, _controlReference,
                            targetSize, scalingFactor, swipeRight, swipeLeft);
                     _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
-                        swipeTop, swipeBottom);
+                        swipeTop, swipeBottom, swipeDirection);
                 }
                 else
                 {
@@ -241,7 +244,7 @@ namespace SmartDeviceApp.ViewModels
                         IsHorizontalSwipeEnabled != _isHorizontalSwipeEnabledPrevious)
                     {
                         _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
-                            swipeTop, swipeBottom);
+                            swipeTop, swipeBottom, swipeDirection);
                     }
                 }
                 _previousPageViewMode = PageViewMode;
@@ -333,6 +336,14 @@ namespace SmartDeviceApp.ViewModels
         private void SwipeBottomReverse()
         {
             GoToNextPage.Execute(null);
+        }
+
+        private void SwipeDirection(bool isForward)
+        {
+            if (TurnPageEventHandler != null)
+            {
+                TurnPageEventHandler(isForward);
+            }
         }
 
         public ContentControl DrawingSurface

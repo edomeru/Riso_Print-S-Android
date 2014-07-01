@@ -50,6 +50,7 @@ namespace SmartDeviceApp.Controllers
         private SwipeLeftDelegate _swipeLeftHandler;
         private SwipeTopDelegate _swipeTopHandler;
         private SwipeBottomDelegate _swipeBottomHandler;
+        private SwipeDirectionDelegate _swipeDirectionHandler;
         private bool _isHorizontalSwipeEnabled;
 
         private Size _scaledSize;
@@ -61,6 +62,7 @@ namespace SmartDeviceApp.Controllers
         private Point _startPoint;
         private double _currentZoomLength; // based on width
         private double _maxZoomLength; // based on width * max zoom level factor
+        private bool _isDirectionSet;
 
         private bool _isEnabled;
         private bool _isDisposed;
@@ -95,19 +97,22 @@ namespace SmartDeviceApp.Controllers
             SwipeLeftDelegate swipeLeftHandler,
             SwipeRightDelegate swipeRightHandler,
             SwipeTopDelegate swipeTopHandler,
-            SwipeBottomDelegate swipeBottomHandler)
+            SwipeBottomDelegate swipeBottomHandler,
+            SwipeDirectionDelegate swipeDirectionHandler)
         {
             _isHorizontalSwipeEnabled = isHorizontalSwipeEnabled;
             _swipeLeftHandler = swipeLeftHandler;
             _swipeRightHandler = swipeRightHandler;
             _swipeTopHandler = swipeTopHandler;
             _swipeBottomHandler = swipeBottomHandler;
+            _swipeDirectionHandler = swipeDirectionHandler;
         }
         
         public delegate void SwipeRightDelegate();
         public delegate void SwipeLeftDelegate();
         public delegate void SwipeTopDelegate();
         public delegate void SwipeBottomDelegate();
+        public delegate void SwipeDirectionDelegate(bool isForward);
 
         private void Initialize()
         {
@@ -229,6 +234,7 @@ namespace SmartDeviceApp.Controllers
         }
         private uint pointerCount = 0;
         private bool _multipleFingersDetected = false;
+
         void OnPointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
             _gestureRecognizer.ProcessDownEvent(args.GetCurrentPoint(_controlReference));
@@ -242,6 +248,7 @@ namespace SmartDeviceApp.Controllers
             args.Handled = true;
             
         }
+
         void OnPointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
             pointerCount--;
@@ -249,6 +256,7 @@ namespace SmartDeviceApp.Controllers
             _gestureRecognizer.ProcessUpEvent(args.GetCurrentPoint(_controlReference));
             args.Handled = true;
         }
+
         void OnPointerCanceled(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
             _gestureRecognizer.CompleteGesture();
@@ -516,8 +524,6 @@ namespace SmartDeviceApp.Controllers
                 ManipulationGrid_ManipulationCompleted(e);
         }
 
-
-        private Point _manipulationStartPosition;
         private double _rotationCenterX;
         private double _rotationCenterY;
         private bool _backCurl;
@@ -525,23 +531,13 @@ namespace SmartDeviceApp.Controllers
 
         private void ManipulationGrid_ManipulationStarted(ManipulationStartedEventArgs e)
         {
-
-            //if (_twoPageControl.Image.Source == null)
-            //{
-            //    //CancelManipulation(e);
-            //    return;
-            //}
-            
-            //
-            
-            //getScreenShot();
-            _manipulationStartPosition = e.Position;
+            //_manipulationStartPosition = e.Position;
             
             if (_isHorizontalSwipeEnabled)
             {
                 _backCurl = false;
                 //var startOfBackCurlPosition = 0.0;
-                //var startOfBackCurlPosition = _scaledSize.Width * 0.5;
+                var startOfBackCurlPosition = _scaledSize.Width * 0.5;
                 //if (_twoPageControl.PageAreaGrid.ActualWidth > _rightPageWidth)
                 //{
                 //    IsDuplex = true;
@@ -553,21 +549,21 @@ namespace SmartDeviceApp.Controllers
                 //    startOfBackCurlPosition = _manipulationGrid.ActualWidth * 0.25;
                 //}
 
-                //if (manipulationStartPosition.X < startOfBackCurlPosition)
-                //{
-                //    //use page1 clip transition
-                //    _backCurl = true;
+                if (_startPoint.X < startOfBackCurlPosition)
+                {
+                    //use page1 clip transition
+                    _backCurl = true;
 
-                //}
+                }
 
                 //flipDirection = FlipDirections.Left;
                 //_twoPageControl.Page2TranslateTransform.X = _manipulationGrid.ActualWidth; //get Page2ClipTranslateTransform and put in XAML.
-                _twoPageControl.Page2TranslateTransform.X = _targetSize.Width;
+                _twoPageControl.Page2TranslateTransform.X = _scaledSize.Width;
                 //Page2.Opacity = 1;
                 //_twoPageControl.PageAreaGrid.Opacity = 1;
                 _twoPageControl.TransitionTranslateTransform.X = -SOME_W;
                 //_twoPageControl.TransitionContainerTransform.TranslateX = _manipulationGrid.ActualWidth;
-                _twoPageControl.TransitionContainerTransform.TranslateX = _targetSize.Width;
+                _twoPageControl.TransitionContainerTransform.TranslateX = _scaledSize.Width;
                 _transitionGrid.Opacity = 1;
             }
             else
@@ -586,12 +582,12 @@ namespace SmartDeviceApp.Controllers
                 //    startOfBackCurlPosition = _manipulationGrid.ActualHeight * 0.25;
                 //}
 
-                //if (_manipulationStartPosition.Y < startOfBackCurlPosition)
-                //{
-                //    //use page1 clip transition
-                //    _backCurl = true;
+                if (_startPoint.Y < startOfBackCurlPosition)
+                {
+                    //use page1 clip transition
+                    _backCurl = true;
 
-                //}
+                }
 
                 _twoPageControl.Page2TranslateTransform.Y = _scaledSize.Height;
                 _twoPageControl.TransitionTranslateTransform.Y = -SOME_H;
@@ -605,6 +601,41 @@ namespace SmartDeviceApp.Controllers
         {
             var w = _targetSize.Width;
             var h = _targetSize.Height;
+
+            var currentPosition = e.Position;
+
+            if (!_isDirectionSet)
+            {
+                if (_isHorizontalSwipeEnabled)
+                {
+                    if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
+                    {
+                        _swipeDirectionHandler(false);
+                        _isDirectionSet = true;
+                    }
+                    // Swipe left
+                    else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
+                    {
+                        _swipeDirectionHandler(true);
+                        _isDirectionSet = true;
+                    }
+                }
+                else
+                {
+                    // Swipe bottom
+                    if (currentPosition.Y - _startPoint.Y >= SWIPE_THRESHOLD)
+                    {
+                        _swipeDirectionHandler(false);
+                        _isDirectionSet = true;
+                    }
+                    // Swipe top
+                    else if (_startPoint.Y - currentPosition.Y >= SWIPE_THRESHOLD)
+                    {
+                        _swipeDirectionHandler(true);
+                        _isDirectionSet = true;
+                    }
+                }
+            }
 
             if (_isHorizontalSwipeEnabled)
             {
@@ -622,7 +653,7 @@ namespace SmartDeviceApp.Controllers
 
                 var cx = Math.Min(0, Math.Max(e.Position.X - w, -w));
                 var cy = e.Cumulative.Translation.Y;
-                var angle = (Math.Atan2(cx + _manipulationStartPosition.Y - w, -cy) * 180 / Math.PI + 90) % 360;
+                var angle = (Math.Atan2(cx + _startPoint.Y - w, -cy) * 180 / Math.PI + 90) % 360;
 
                 _rotationCenterX = w + cx / 2;
 
@@ -667,7 +698,7 @@ namespace SmartDeviceApp.Controllers
 
                 var cy = Math.Min(0, Math.Max(e.Position.Y - h, -h));
                 var cx = e.Cumulative.Translation.X;
-                var angle = (Math.Atan2(cx - _manipulationStartPosition.X - h, cx) * 180 / Math.PI + 90) % 360;
+                var angle = (Math.Atan2(cx - _startPoint.X - h, cx) * 180 / Math.PI + 90) % 360;
 
                 _rotationCenterY = h + cy / 2;
 
@@ -893,6 +924,8 @@ namespace SmartDeviceApp.Controllers
                     sb.Begin();
                 }
             }
+
+            _isDirectionSet = false;
             
         }
 
