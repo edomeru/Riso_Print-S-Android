@@ -120,7 +120,7 @@ namespace SmartDeviceApp.Controllers
 
             _updatePreviewEventHandler = new UpdatePreviewEventHandler(UpdatePreview);
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
-            _turnPageEventHandler = new TurnPageEventHandler(GenerateBackPreviewPages);
+            _turnPageEventHandler = new TurnPageEventHandler(LoadBackPage);
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
             _printEventHandler = new PrintEventHandler(Print);
             _cancelPrintEventHandler = new CancelPrintEventHandler(CancelPrint);
@@ -504,12 +504,8 @@ namespace SmartDeviceApp.Controllers
             if (_isBooklet || _isDuplex)
             {
                 _printPreviewViewModel.IsLoadLeftPageActive = true;
-                _printPreviewViewModel.IsLoadLeftBackPageActive = true;
-                _printPreviewViewModel.IsLoadLeftNextPageActive = true;
             }
             _printPreviewViewModel.IsLoadRightPageActive = true;
-            _printPreviewViewModel.IsLoadRightBackPageActive = true;
-            _printPreviewViewModel.IsLoadRightNextPageActive = true;
             _currSliderIndex = sliderIndex;
             LoadPage(_currSliderIndex);
         }
@@ -523,12 +519,8 @@ namespace SmartDeviceApp.Controllers
             if (_isBooklet || _isDuplex)
             {
                 _printPreviewViewModel.IsLoadLeftPageActive = true;
-                _printPreviewViewModel.IsLoadLeftBackPageActive = true;
-                _printPreviewViewModel.IsLoadLeftNextPageActive = true;
             }
             _printPreviewViewModel.IsLoadRightPageActive = true;
-            _printPreviewViewModel.IsLoadRightBackPageActive = true;
-            _printPreviewViewModel.IsLoadRightNextPageActive = true;
 
             // Cancel other processing if any
             foreach (CancellationTokenSource token in _cancellationTokenSourceQueue)
@@ -639,11 +631,22 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Generates the back PreviewPage images on a single spread
+        /// Requests for LogicalPages and then applies print setting for the target pages only.
+        /// Assumes that page index is relative from right side page index
         /// </summary>
         /// <param name="isForward">true when forward, false otherwise</param>
-        public void GenerateBackPreviewPages(bool isForward)
+        public void LoadBackPage(bool isForward)
         {
+            LogUtility.BeginTimestamp("LoadBackPage");
+
+            if (_isBooklet || _isDuplex)
+            {
+                _printPreviewViewModel.IsLoadLeftBackPageActive = true;
+                _printPreviewViewModel.IsLoadLeftNextPageActive = true;
+                _printPreviewViewModel.IsLoadRightNextPageActive = true;
+            }
+            _printPreviewViewModel.IsLoadRightBackPageActive = true;
+
             // Determine page indices based on front right page index
             int rightPageIndex = _currRightPageIndex;
             if (isForward)
@@ -684,9 +687,31 @@ namespace SmartDeviceApp.Controllers
             CancellationTokenSource cancellationToken = new CancellationTokenSource();
             _cancellationTokenSourceQueue.Add(cancellationToken);
 
-            int leftBackPageIndex = _currLeftBackPageIndex;
-            int rightBackPageIndex = _currRightBackPageIndex;
+            // Fill white all back pages
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightBackPageImage,
+                _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightNextPageImage,
+                _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftBackPageImage,
+                _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftNextPageImage,
+                _previewPageImageSize, cancellationToken);
 
+            GenerateBackPreviewPages(_currLeftBackPageIndex, _currRightBackPageIndex, isForward,
+                cancellationToken);
+
+            LogUtility.EndTimestamp("LoadBackPage");
+        }
+
+        /// <summary>
+        /// Generates the back PreviewPage images on a single spread
+        /// </summary>
+        /// <param name="leftBackPageIndex">back left preview page index</param>
+        /// <param name="rightBackPageIndex">back left preview page index</param>
+        /// <param name="isForward">true when forward, false otherwise</param>
+        public void GenerateBackPreviewPages(int leftBackPageIndex, int rightBackPageIndex,
+            bool isForward, CancellationTokenSource cancellationToken)
+        {
             // Generate back pages
 
             if ((_isBooklet || _isDuplex) &&

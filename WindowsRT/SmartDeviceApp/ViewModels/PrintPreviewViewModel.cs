@@ -156,6 +156,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 // Save page height to be used in resizing page images
                 double scalingFactor = 1;
+                bool isDuplex = false;
                 Size targetSize;
                 Size pageAreaGridSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);
                 switch (PageViewMode)
@@ -170,13 +171,14 @@ namespace SmartDeviceApp.ViewModels
                         scalingFactor = Math.Min(_pageAreaGridMaxHeight / RightPageActualSize.Height,
                             _pageAreaGridMaxWidth / (LeftPageActualSize.Width + RightPageActualSize.Width));
                         targetSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);
+                        isDuplex = true;
                         break;
 
                     case PageViewMode.TwoPageViewVertical:
                         scalingFactor = Math.Min(_pageAreaGridMaxHeight / (RightPageActualSize.Height + LeftPageActualSize.Height),
                             _pageAreaGridMaxWidth / RightPageActualSize.Width);
                         targetSize = new Size(RightPageActualSize.Width, RightPageActualSize.Height + LeftPageActualSize.Height);
-                        //IsDuplex = true;
+                        isDuplex = true;
                         break;
                 }
 
@@ -234,7 +236,7 @@ namespace SmartDeviceApp.ViewModels
                         _gestureController = null;
                     }
                     _gestureController = new PreviewGestureController(_twoPageControl, _controlReference,
-                           targetSize, scalingFactor, swipeRight, swipeLeft);
+                           targetSize, scalingFactor, swipeRight, swipeLeft, isDuplex);
                     _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
                         swipeTop, swipeBottom, swipeDirection);
                 }
