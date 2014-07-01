@@ -48,6 +48,13 @@
                                         PressedColor="{StaticResource BRUSH_Purple2}"
                                         KeyPressedColor="{StaticResource BRUSH_White}"/>
         </StackPanel>
+        <Grid 
+            x:Name="SettingsGestureGrid"
+            Loaded="Grid_Loaded"
+            Width="Auto"
+            Height="Auto"
+            Background="Transparent"
+            ManipulationMode="All"/>
     </controls:ViewControl>
 </base:PageBase>
 
