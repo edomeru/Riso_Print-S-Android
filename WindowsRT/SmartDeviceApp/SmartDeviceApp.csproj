@@ -183,6 +183,7 @@
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToColor.cs" />
+    <Compile Include="Converters\PrinterSearchItemButtonImageConverter.cs" />
     <Compile Include="Converters\PrinterStatusToImageSourceConverter.cs" />
     <Compile Include="Controls\MainMenuKeyControl.xaml.cs">
       <DependentUpon>MainMenuKeyControl.xaml</DependentUpon>
@@ -191,7 +192,6 @@
       <DependentUpon>SidePaneTitleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
-    <Compile Include="Converters\PrinterSearchItemToSeparatorVisibility.cs" />
     <Compile Include="Converters\PrintJobListToGroupVisibilityConverter.cs" />
     <Compile Include="Converters\PrintJobResultToImageSourceConverter.cs" />
     <Compile Include="Converters\MainMenuItemToSeparatorVisibilityConverter.cs" />

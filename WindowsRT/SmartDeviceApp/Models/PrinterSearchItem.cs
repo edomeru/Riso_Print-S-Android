@@ -14,12 +14,7 @@ namespace SmartDeviceApp.Models
         private string _name;
         private string _ip_address;
         private bool _isInPrinterList;
-        private ImageSource _imageSource;
-
-        private readonly string _AddImageNormal = "ms-appx:///Resources/Images/img_btn_add_printer_normal.scale-100.png";
-        private readonly string _AddPrinterOkImagePressed = "ms-appx:///Resources/Images/img_btn_add_printer_search_ok.scale-100.png";
-
-
+        
         public string Name
         {
             get { return _name; }
@@ -47,18 +42,7 @@ namespace SmartDeviceApp.Models
             {
                 this._isInPrinterList = value;
 
-                setImageSource();
                 OnPropertyChanged("IsInPrinterList");
-            }
-        }
-
-        public ImageSource ImageSource
-        {
-            get { return _imageSource; }
-            set
-            {
-                this._imageSource = value;
-                OnPropertyChanged("ImageSource");
             }
         }
 
@@ -67,32 +51,6 @@ namespace SmartDeviceApp.Models
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private async void setImageSource()
-        {
-            if (IsInPrinterList)
-            {
-                ImageSource = await convertImageSource(_AddPrinterOkImagePressed);
-            } 
-            else
-            {
-                ImageSource = await convertImageSource(_AddImageNormal);
-            }
-        }
-
-        private async Task<ImageSource> convertImageSource(string src)
-        {
-            ImageSource imgSrc = null;
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-            {
-                BitmapImage image = new BitmapImage(new Uri(src));
-                imgSrc = image;
-
-               
-            });
-            return imgSrc;
         }
     }
 }
