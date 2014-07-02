@@ -596,8 +596,10 @@ namespace SmartDeviceApp.Controllers
 
         private void ManipulationGrid_ManipulationDelta(ManipulationUpdatedEventArgs e)
         {
-            var w = _targetSize.Width;
-            var h = _targetSize.Height;
+            //var w = _targetSize.Width;
+            //var h = _targetSize.Height;
+            var w = _twoPageControl.PageAreaGrid.ActualWidth;
+            var h = _twoPageControl.PageAreaGrid.ActualHeight;
 
             var currentPosition = e.Position;
 
@@ -607,12 +609,14 @@ namespace SmartDeviceApp.Controllers
                 {
                     if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
                     {
+                        //turn page backward
                         _swipeDirectionHandler(false);
                         _isDirectionSet = true;
                     }
                     // Swipe left
                     else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
                     {
+                        //turn page forward
                         _swipeDirectionHandler(true);
                         _isDirectionSet = true;
                     }
@@ -641,6 +645,10 @@ namespace SmartDeviceApp.Controllers
                 {
                     tempW = -w;
                 }
+                else
+                {
+                    tempW = -w * 2;
+                }
 
                 var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
                 var cy = e.Cumulative.Translation.Y;
@@ -667,7 +675,7 @@ namespace SmartDeviceApp.Controllers
                 _twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
                 _twoPageControl.TransitionRotateTransform.CenterX = -cx / 2;
                 _twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
-                _twoPageControl.TransitionRotateTransform.Angle = angle;
+                _twoPageControl.TransitionRotateTransform.Angle = -angle;
 
                 _twoPageControl.TransitionContainerTransform.TranslateX = w + cx;
                 _twoPageControl.TransitionContainerTransform.CenterX = -cx / 2;
@@ -824,9 +832,12 @@ namespace SmartDeviceApp.Controllers
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_CENTER_X, w / 2);
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
                     sb.Begin();
-                }
 
-                // TODO: Call _swipeRightHandler() for back curl
+                    if (_willContinue)
+                    {
+                        _swipeRightHandler();
+                    }
+                }
             }
             else
             {
@@ -911,9 +922,9 @@ namespace SmartDeviceApp.Controllers
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_CENTER_Y, h / 2);
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
                     sb.Begin();
-                }
 
-                // TODO: Call _swipeBottomHandler() for back curl
+                    _swipeBottomHandler();
+                }
             }
 
             _isDirectionSet = false;

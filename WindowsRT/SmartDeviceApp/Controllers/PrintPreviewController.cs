@@ -712,29 +712,57 @@ namespace SmartDeviceApp.Controllers
         public void GenerateBackPreviewPages(int leftBackPageIndex, int rightBackPageIndex,
             bool isForward, CancellationTokenSource cancellationToken)
         {
-            // Generate back pages
-
-            if ((_isBooklet || _isDuplex) &&
-                leftBackPageIndex > -1 && leftBackPageIndex < _maxPreviewPageCount)
+            if (isForward)
             {
-                // Generate left side
-                GeneratePreviewPage(leftBackPageIndex, leftBackPageIndex * _pagesPerSheet, false,
-                    true, cancellationToken);
-            }
+                // Generate back pages
+                if ((_isBooklet || _isDuplex) &&
+                    leftBackPageIndex > -1 && leftBackPageIndex < _maxPreviewPageCount)
+                {
+                    // Generate left side
+                    GeneratePreviewPage(leftBackPageIndex, leftBackPageIndex * _pagesPerSheet, false,
+                        true, cancellationToken);
+                }
+                else
+                {
+                    SendPreviewPageImage(leftBackPageIndex, true, cancellationToken);
+                }
+
+                if (rightBackPageIndex > -1 && rightBackPageIndex < _maxPreviewPageCount)
+                {
+                    // Generate right side
+                    GeneratePreviewPage(rightBackPageIndex, rightBackPageIndex * _pagesPerSheet, true,
+                        true, cancellationToken);
+                }
+                else
+                {
+                    SendPreviewPageImage(rightBackPageIndex, true, cancellationToken);
+                }
+            } 
             else
             {
-                SendPreviewPageImage(leftBackPageIndex, true, cancellationToken);
-            }
+                // Generate back pages
+                if ((_isBooklet || _isDuplex) &&
+                    leftBackPageIndex > -1 && leftBackPageIndex < _maxPreviewPageCount)
+                {
+                    // Generate left side
+                    GeneratePreviewPage(leftBackPageIndex, leftBackPageIndex * _pagesPerSheet, false,
+                        true, cancellationToken);
+                }
+                else
+                {
+                    SendPreviewPageImage(leftBackPageIndex, true, cancellationToken);
+                }
 
-            if (rightBackPageIndex > -1 && rightBackPageIndex < _maxPreviewPageCount)
-            {
-                // Generate right side
-                GeneratePreviewPage(rightBackPageIndex, rightBackPageIndex * _pagesPerSheet, true,
-                    true, cancellationToken);
-            }
-            else
-            {
-                SendPreviewPageImage(rightBackPageIndex, true, cancellationToken);
+                if (rightBackPageIndex > -1 && rightBackPageIndex < _maxPreviewPageCount)
+                {
+                    // Generate right side
+                    GeneratePreviewPage(rightBackPageIndex, rightBackPageIndex * _pagesPerSheet, true,
+                        true, cancellationToken);
+                }
+                else
+                {
+                    SendPreviewPageImage(rightBackPageIndex, true, cancellationToken);
+                }
             }
         }
 
