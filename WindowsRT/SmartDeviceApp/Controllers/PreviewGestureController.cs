@@ -608,6 +608,7 @@ namespace SmartDeviceApp.Controllers
             {
                 if (_isHorizontalSwipeEnabled)
                 {
+                    // Swipe rigth
                     if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
                     {
                         //turn page backward
