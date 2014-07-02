@@ -608,6 +608,7 @@ namespace SmartDeviceApp.Controllers
             {
                 if (_isHorizontalSwipeEnabled)
                 {
+                    // Swipe right
                     if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
                     {
                         //turn page backward
@@ -641,47 +642,94 @@ namespace SmartDeviceApp.Controllers
 
             if (_isHorizontalSwipeEnabled)
             {
-                var tempW = -w * 2;
-                if (_isDuplex)
+                if (!_backCurl)
                 {
-                    tempW = -w;
+                    var tempW = -w * 2;
+                    if (_isDuplex)
+                    {
+                        tempW = -w;
+                    }
+                    else
+                    {
+                        tempW = -w * 2;
+                    }
+
+                    var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
+                    var cy = e.Cumulative.Translation.Y;
+                    var angle = (Math.Atan2(cx + _startPoint.Y - w, -cy) * 180 / Math.PI + 90) % 360;
+
+                    _rotationCenterX = w + cx / 2;
+
+                    if (cy < 0)
+                    {
+                        _rotationCenterY = h;
+                    }
+                    else
+                    {
+                        _rotationCenterY = 0;
+                    }
+
+                    _twoPageControl.Page2TranslateTransform.X = w + cx / 2;
+                    _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                    _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
+                    _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
+                    _twoPageControl.Page2RotateTransform.Angle = angle;
+
+                    _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND - (cx / 2);
+                    _twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                    _twoPageControl.TransitionRotateTransform.CenterX = -cx / 2;
+                    _twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
+                    _twoPageControl.TransitionRotateTransform.Angle = -angle;
+
+                    _twoPageControl.TransitionContainerTransform.TranslateX = w + cx;
+                    _twoPageControl.TransitionContainerTransform.CenterX = -cx / 2;
+                    _twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
+                    _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
                 }
                 else
                 {
-                    tempW = -w * 2;
+                    var tempW = -w * 2;
+                    if (_isDuplex)
+                    {
+                        tempW = -w;
+                    }
+                    else
+                    {
+                        tempW = -w * 2;
+                    }
+
+                    var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
+                    var cy = e.Cumulative.Translation.Y;
+                    var angle = (Math.Atan2(cx + _startPoint.Y - w, -cy) * 180 / Math.PI + 90) % 360;
+
+                    _rotationCenterX = w + cx / 2;
+
+                    if (cy < 0)
+                    {
+                        _rotationCenterY = h;
+                    }
+                    else
+                    {
+                        _rotationCenterY = 0;
+                    }
+
+                    _twoPageControl.Page2TranslateTransform.X = w + cx / 2;
+                    _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                    _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
+                    _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
+                    _twoPageControl.Page2RotateTransform.Angle = angle;
+
+                    _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND - (cx / 2);
+                    _twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                    _twoPageControl.TransitionRotateTransform.CenterX = -cx / 2;
+                    _twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
+                    _twoPageControl.TransitionRotateTransform.Angle = -angle;
+
+                    _twoPageControl.TransitionContainerTransform.TranslateX = w + cx;
+                    _twoPageControl.TransitionContainerTransform.CenterX = -cx / 2;
+                    _twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
+                    _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
                 }
-
-                var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
-                var cy = e.Cumulative.Translation.Y;
-                var angle = (Math.Atan2(cx + _startPoint.Y - w, -cy) * 180 / Math.PI + 90) % 360;
-
-                _rotationCenterX = w + cx / 2;
-
-                if (cy < 0)
-                {
-                    _rotationCenterY = h;
-                }
-                else
-                {
-                    _rotationCenterY = 0;
-                }
-
-                _twoPageControl.Page2TranslateTransform.X = w + cx / 2;
-                _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
-                _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
-                _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
-                _twoPageControl.Page2RotateTransform.Angle = angle;
-
-                _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND - (cx / 2);
-                _twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
-                _twoPageControl.TransitionRotateTransform.CenterX = -cx / 2;
-                _twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
-                _twoPageControl.TransitionRotateTransform.Angle = -angle;
-
-                _twoPageControl.TransitionContainerTransform.TranslateX = w + cx;
-                _twoPageControl.TransitionContainerTransform.CenterX = -cx / 2;
-                _twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
-                _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
             }
             else
             {
