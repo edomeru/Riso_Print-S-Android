@@ -22,7 +22,7 @@ namespace SmartDeviceApp.Common.Constants
         #region Print Preview Page
 
         public const double FACTOR_MM_TO_IN = 0.0393701;
-        public const double BASE_DPI = 96.0;  // 96.0 DPI = 1 DIP
+        public const double BASE_DPI = 48;//96.0;  // 96.0 DPI = 1 DIP
 
         public static double GetDpiScaleFactor()
         {
