@@ -584,6 +584,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     //use page1 clip transition
                     _backCurl = true;
+                    _swipeBottomHandler();
                 }
 
                 _twoPageControl.Page2TranslateTransform.Y = h;
@@ -833,13 +834,7 @@ namespace SmartDeviceApp.Controllers
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
                     sb.Begin();
 
-                    /* 
                     //already handled at the start
-                    if (_willContinue)
-                    {
-                        _swipeRightHandler();
-                    }
-                    */
                     if (!_willContinue)
                     {
                         _swipeLeftHandler();
@@ -930,7 +925,10 @@ namespace SmartDeviceApp.Controllers
                     AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
                     sb.Begin();
 
-                    _swipeBottomHandler();
+                    if (!_willContinue)
+                    {
+                        _swipeTopHandler();
+                    }
                 }
             }
 
