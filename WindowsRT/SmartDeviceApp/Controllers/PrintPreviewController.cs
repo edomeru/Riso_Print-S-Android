@@ -669,17 +669,17 @@ namespace SmartDeviceApp.Controllers
             else
             {
                 _currLeftBackPageIndex = -1;
-                _currRightBackPageIndex = rightPageIndex - 1;
+                _currRightBackPageIndex = rightPageIndex + 1;
                 if (_isBooklet || _isDuplex)
                 {
-                    _currLeftBackPageIndex = rightPageIndex - 1;
-                    _currRightBackPageIndex = rightPageIndex - 2;
+                    _currLeftBackPageIndex = rightPageIndex + 1;
+                    _currRightBackPageIndex = rightPageIndex + 2;
                     if ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
                         (!_isBooklet && _isDuplex && _currPrintSettings.FinishingSide == (int)FinishingSide.Right))
                     {
                         // Swap page index on reverse
-                        _currLeftBackPageIndex = rightPageIndex - 2;
-                        _currRightBackPageIndex = rightPageIndex - 1;
+                        _currLeftBackPageIndex = rightPageIndex + 2;
+                        _currRightBackPageIndex = rightPageIndex + 1;
                     }
                 }
             }
