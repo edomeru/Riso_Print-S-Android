@@ -733,16 +733,36 @@ namespace SmartDeviceApp.Controllers
             _willContinue = false;
             if (_backCurl)
             {
-                if (e.Position.X > w * 0.25)
+                if (_isHorizontalSwipeEnabled)
                 {
-                    _willContinue = true;
+                    if (e.Position.X > w * 0.25)
+                    {
+                        _willContinue = true;
+                    }
+                }
+                else
+                {
+                    if (e.Position.Y > h * 0.25)
+                    {
+                        _willContinue = true;
+                    }
                 }
             }
             else
             {
-                if (e.Position.X < w * 0.75)
+                if (_isHorizontalSwipeEnabled)
                 {
-                    _willContinue = true;
+                    if (e.Position.X < w * 0.75)
+                    {
+                        _willContinue = true;
+                    }
+                }
+                else
+                {
+                    if (e.Position.Y < h * 0.25)
+                    {
+                        _willContinue = true;
+                    }
                 }
             }
 
