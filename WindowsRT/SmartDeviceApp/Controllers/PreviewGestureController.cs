@@ -27,7 +27,7 @@ namespace SmartDeviceApp.Controllers
 {
     public class PreviewGestureController : IDisposable
     {
-        private const int SWIPE_THRESHOLD = 100;
+        private const int SWIPE_THRESHOLD = 10;
         private const int MAX_ZOOM_LEVEL_FACTOR = 4;
         private const int RECT_BOUND = 80000; // This is defined in TwoPageControl.xaml (see RectangleGeometry)
 
