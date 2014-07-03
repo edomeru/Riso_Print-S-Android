@@ -80,9 +80,13 @@ namespace SmartDeviceApp.Controllers
 
         private TwoPageControl _twoPageControl;
 
+        private uint _currPageIndex;
+        private uint _totalPages;
+        private bool _manipulationCancel;
+
         public PreviewGestureController(TwoPageControl twoPageControl, UIElement controlReference,
             Size targetSize, double originalScale, SwipeRightDelegate swipeRightHandler,
-            SwipeLeftDelegate swipeLeftHandler, bool isDuplex)
+            SwipeLeftDelegate swipeLeftHandler, bool isDuplex, uint totalPages)
         {
             _twoPageControl = twoPageControl;
             _control = twoPageControl.ManipulationGrid;
@@ -95,6 +99,7 @@ namespace SmartDeviceApp.Controllers
             _pageAreaGrid = twoPageControl.PageAreaGrid;
             _transitionGrid = twoPageControl.TransitionGrid;
             _isDuplex = isDuplex;
+            _totalPages = totalPages;
 
             Initialize();
             _currentZoomLength = _targetSize.Width;
@@ -536,11 +541,14 @@ namespace SmartDeviceApp.Controllers
         private double _rotationCenterY;
         private bool _backCurl;
         private bool _willContinue;
+        private bool _goToBackCalled;
 
         private void ManipulationGrid_ManipulationStarted(ManipulationStartedEventArgs e)
         {
             var w = _targetSize.Width;
             var h = _targetSize.Height;
+
+            _manipulationCancel = false;
             
             if (_isHorizontalSwipeEnabled)
             {
@@ -556,7 +564,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     //use page1 clip transition
                     _backCurl = true;
-                    _swipeRightHandler();
+                    _goToBackCalled = false;
 
                 }
 
@@ -568,7 +576,7 @@ namespace SmartDeviceApp.Controllers
                 _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND;
                 //_twoPageControl.TransitionContainerTransform.TranslateX = _manipulationGrid.ActualWidth;
                 _twoPageControl.TransitionContainerTransform.TranslateX = w;
-                _transitionGrid.Opacity = 1;
+                
             }
             else
             {
@@ -597,6 +605,7 @@ namespace SmartDeviceApp.Controllers
 
         private void ManipulationGrid_ManipulationDelta(ManipulationUpdatedEventArgs e)
         {
+
             //var w = _targetSize.Width;
             //var h = _targetSize.Height;
             var w = _twoPageControl.PageAreaGrid.ActualWidth;
@@ -608,7 +617,31 @@ namespace SmartDeviceApp.Controllers
             {
                 if (_isHorizontalSwipeEnabled)
                 {
-                    // Swipe rigth
+                    if (currentPosition.X - _startPoint.X == 0)
+                    {
+                        return;
+                    }
+                    //forward
+                    if (currentPosition.X - _startPoint.X < 0)
+                    {
+                        if (_currPageIndex == _totalPages - 1)
+                        {
+                            ManipulationGrid_ManipulationCancel();
+                            return;
+                        }
+                    }
+                    //back
+                    if (currentPosition.X - _startPoint.X > 0)
+                    {
+                        if (_currPageIndex == 0)
+                        {
+                            ManipulationGrid_ManipulationCancel();
+                            return;
+                        }
+                    }
+
+
+                    // Swipe right
                     if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
                     {
                         //turn page backward
@@ -625,20 +658,46 @@ namespace SmartDeviceApp.Controllers
                 }
                 else
                 {
-                    // Swipe bottom
+                    if (currentPosition.Y - _startPoint.Y == 0)
+                    {
+                        return;
+                    }
+                    //upward
+                    if (currentPosition.Y - _startPoint.Y < 0)
+                    {
+                        if (_currPageIndex == _totalPages - 1)
+                        {
+                            ManipulationGrid_ManipulationCancel();
+                            return;
+                        }
+                    }
+                    //back
+                    if (currentPosition.Y - _startPoint.Y > 0)
+                    {
+                        if (_currPageIndex == 0)
+                        {
+                            ManipulationGrid_ManipulationCancel();
+                            return;
+                        }
+                    }
+                    
                     if (currentPosition.Y - _startPoint.Y >= SWIPE_THRESHOLD)
                     {
+                        // Swipe bottom
                         _swipeDirectionHandler(false);
                         _isDirectionSet = true;
                     }
-                    // Swipe top
+                    
                     else if (_startPoint.Y - currentPosition.Y >= SWIPE_THRESHOLD)
                     {
+                        // Swipe top
                         _swipeDirectionHandler(true);
                         _isDirectionSet = true;
                     }
                 }
             }
+
+            _transitionGrid.Opacity = 1;
 
             if (_isHorizontalSwipeEnabled)
             {
@@ -688,6 +747,11 @@ namespace SmartDeviceApp.Controllers
                 }
                 else
                 {
+                    if (!_goToBackCalled)
+                    {
+                        _swipeRightHandler();
+                        _goToBackCalled = true;
+                    }
                     // TODO: keith: implement correct back curl 
                     var tempW = -w * 2;
                     if (_isDuplex)
@@ -776,6 +840,10 @@ namespace SmartDeviceApp.Controllers
 
         private void ManipulationGrid_ManipulationCompleted(ManipulationCompletedEventArgs e)
         {
+            if (_manipulationCancel)
+            {
+                return;
+            }
             var w = _targetSize.Width;
             var h = _targetSize.Height;
 
@@ -1020,6 +1088,16 @@ namespace SmartDeviceApp.Controllers
             da.To = to;
             da.Duration = TimeSpan.FromSeconds(.2);
             sb.Children.Add(da);
+        }
+
+        private void ManipulationGrid_ManipulationCancel()
+        {
+            _manipulationCancel = true;
+        }
+
+        public void SetPageIndex(uint index)
+        {
+            _currPageIndex = index;
         }
 
     }
