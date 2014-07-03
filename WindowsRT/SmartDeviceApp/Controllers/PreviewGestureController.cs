@@ -703,7 +703,7 @@ namespace SmartDeviceApp.Controllers
                     var cy = e.Cumulative.Translation.Y;
                     var angle = (Math.Atan2(cx + _startPoint.Y - w, -cy) * 180 / Math.PI + 90) % 360;
 
-                    _rotationCenterX = w + cx / 2;
+                    _rotationCenterX = 0;// w + cx / 2;
 
                     if (cy < 0)
                     {
@@ -722,12 +722,12 @@ namespace SmartDeviceApp.Controllers
 
                     _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND - (cx / 2);
                     _twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
-                    _twoPageControl.TransitionRotateTransform.CenterX = -cx / 2;
+                    _twoPageControl.TransitionRotateTransform.CenterX = 0;// -cx / 2;
                     _twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
                     _twoPageControl.TransitionRotateTransform.Angle = -angle;
 
                     _twoPageControl.TransitionContainerTransform.TranslateX = w + cx;
-                    _twoPageControl.TransitionContainerTransform.CenterX = -cx / 2;
+                    _twoPageControl.TransitionContainerTransform.CenterX = 0;// -cx / 2;
                     _twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
                     _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
                 }
