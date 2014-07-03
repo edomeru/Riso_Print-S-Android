@@ -656,7 +656,7 @@ namespace SmartDeviceApp.Controllers
 
                     var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
                     var cy = e.Cumulative.Translation.Y;
-                    var angle = (Math.Atan2(cx + _startPoint.Y - w, -cy) * 180 / Math.PI + 90) % 360;
+                    var angle = (Math.Atan2(cx /*+ _startPoint.Y*/ - w, -cy) * 180 / Math.PI + 90) % 360;
 
                     _rotationCenterX = w + cx / 2;
 
@@ -701,7 +701,7 @@ namespace SmartDeviceApp.Controllers
 
                     var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
                     var cy = e.Cumulative.Translation.Y;
-                    var angle = (Math.Atan2(cx + _startPoint.Y - w, -cy) * 180 / Math.PI + 90) % 360;
+                    var angle = (Math.Atan2(cx /*+ _startPoint.Y*/ - w, -cy) * 180 / Math.PI + 90) % 360;
 
                     _rotationCenterX = w + cx / 2;
 
