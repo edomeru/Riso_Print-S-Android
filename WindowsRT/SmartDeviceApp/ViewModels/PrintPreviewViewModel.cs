@@ -237,7 +237,7 @@ namespace SmartDeviceApp.ViewModels
                     }
                     _gestureController = new PreviewGestureController(_twoPageControl, _controlReference,
                            targetSize, scalingFactor, swipeRight, swipeLeft, isDuplex, _pageTotal);
-                    _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
+                    _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,
                         swipeTop, swipeBottom, swipeDirection);
                 }
                 else
@@ -245,7 +245,7 @@ namespace SmartDeviceApp.ViewModels
                     if (IsReverseSwipe != _isReverseSwipePrevious ||
                         IsHorizontalSwipeEnabled != _isHorizontalSwipeEnabledPrevious)
                     {
-                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, swipeLeft, swipeRight,
+                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,
                             swipeTop, swipeBottom, swipeDirection);
                     }
                 }
@@ -340,11 +340,11 @@ namespace SmartDeviceApp.ViewModels
             GoToNextPage.Execute(null);
         }
 
-        private void SwipeDirection(bool isForward)
+        private void SwipeDirection(bool isSwipeLeft)
         {
             if (TurnPageEventHandler != null)
             {
-                TurnPageEventHandler(isForward);
+                TurnPageEventHandler(isSwipeLeft);
             }
         }
 
