@@ -769,6 +769,10 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _pageTotal = value;
                     RaisePropertyChanged("PageTotal");
+                    if (_gestureController != null)
+                    {
+                        _gestureController.SetPageTotal(_pageTotal);
+                    }
                 }
             }
         }

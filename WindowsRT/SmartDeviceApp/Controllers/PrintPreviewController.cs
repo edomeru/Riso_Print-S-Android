@@ -81,7 +81,8 @@ namespace SmartDeviceApp.Controllers
         private Printer _selectedPrinter;
         private PrintSettings _currPrintSettings;
         private int _pagesPerSheet = 1;
-        private bool _isReverse;
+        private bool _isReverseOrder;
+        //private bool _isSwipeLeft;
         private bool _isDuplex;
         private bool _isBooklet;
         private uint _previewPageTotal;
@@ -343,7 +344,7 @@ namespace SmartDeviceApp.Controllers
                     _currPrintSettings.Orientation, _currPrintSettings.Imposition);
 
                 // Update swipe direction/flow
-                if (_isReverse)
+                if (_isReverseOrder)
                 {
                     _printPreviewViewModel.IsReverseSwipe = true;
                 }
@@ -403,7 +404,7 @@ namespace SmartDeviceApp.Controllers
         private void UpdatePreviewInfo()
         {
             // Determine direction
-            _isReverse = ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
+            _isReverseOrder = ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
                           (!_isBooklet && _currPrintSettings.FinishingSide == (int)FinishingSide.Right));
 
             // Determine view mode
@@ -564,32 +565,39 @@ namespace SmartDeviceApp.Controllers
                 rightPageIndex = sliderIndex * 2;
             }
 
-            // Fill all white
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightBackPageImage,
-                _previewPageImageSize, cancellationToken);
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightNextPageImage,
-                _previewPageImageSize, cancellationToken);
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightPageImage,
-                _previewPageImageSize, cancellationToken);
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftBackPageImage,
-                _previewPageImageSize, cancellationToken);
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftNextPageImage,
-                _previewPageImageSize, cancellationToken);
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftPageImage,
-                _previewPageImageSize, cancellationToken);
-
             // Determine page indices based on front right page index
             _currRightPageIndex = rightPageIndex;
             _currLeftPageIndex = -1;
             if (_isBooklet || _isDuplex)
             {
                 _currLeftPageIndex = rightPageIndex - 1;
-                if (_isReverse)
+                if (_isReverseOrder)
                 {
                     // Swap page index on reverse
                     _currRightPageIndex = rightPageIndex - 1;
                     _currLeftPageIndex = rightPageIndex;
                 }
+            }
+
+            // Fill all white
+            if (!_previewPageImages.ContainsKey(_currRightPageIndex))
+            {
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightBackPageImage,
+                _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightNextPageImage,
+                _previewPageImageSize, cancellationToken);
+                PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightPageImage,
+                    _previewPageImageSize, cancellationToken);
+            }
+            if (!_previewPageImages.ContainsKey(_currLeftPageIndex))
+            {
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftBackPageImage,
+                _previewPageImageSize, cancellationToken);
+            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftNextPageImage,
+                _previewPageImageSize, cancellationToken);
+
+                PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftPageImage,
+                    _previewPageImageSize, cancellationToken);
             }
 
             // Generate pages to send
@@ -637,12 +645,12 @@ namespace SmartDeviceApp.Controllers
         /// Requests for LogicalPages and then applies print setting for the target pages only.
         /// Assumes that page index is relative from right side page index
         /// </summary>
-        /// <param name="isSwipeLeft">true when swipe to left/top, false otherwise</param>
-        public void LoadBackPage(bool isSwipeLeft)
+        /// <param name="isPageTurnNext">true when swipe to left/top, false otherwise</param>
+        public void LoadBackPage(bool isPageTurnNext)
         {
             LogUtility.BeginTimestamp("LoadBackPage");
 
-            bool isForward = (_isReverse) ? !isSwipeLeft : isSwipeLeft;
+            //_isSwipeLeft = (_isReverseOrder) ? !isPageTurnNext : isPageTurnNext;
 
             if (_isBooklet || _isDuplex)
             {
@@ -653,36 +661,36 @@ namespace SmartDeviceApp.Controllers
             _printPreviewViewModel.IsLoadRightBackPageActive = true;
 
             // Determine page indices based on front right page index
-            int rightPageIndex = _currRightPageIndex;
-            if (isForward)
+            int basePageIndex = (_isReverseOrder && (_isBooklet || _isDuplex)) ? _currLeftPageIndex : _currRightPageIndex;
+            if (isPageTurnNext)
             {
                 _currLeftBackPageIndex = -1;
-                _currRightBackPageIndex = rightPageIndex + 1;
+                _currRightBackPageIndex = basePageIndex + 1;
                 if (_isBooklet || _isDuplex)
                 {
-                    _currLeftBackPageIndex = rightPageIndex + 1;
-                    _currRightBackPageIndex = rightPageIndex + 2;
-                    if (_isReverse)
+                    _currLeftBackPageIndex = basePageIndex + 1;
+                    _currRightBackPageIndex = basePageIndex + 2;
+                    if (_isReverseOrder)
                     {
                         // Swap page index on reverse
-                        _currLeftBackPageIndex = rightPageIndex + 2;
-                        _currRightBackPageIndex = rightPageIndex + 1;
+                        _currLeftBackPageIndex = basePageIndex + 2;
+                        _currRightBackPageIndex = basePageIndex + 1;
                     }
                 }
             }
             else
             {
                 _currLeftBackPageIndex = -1;
-                _currRightBackPageIndex = rightPageIndex - 1;
+                _currRightBackPageIndex = basePageIndex - 1;
                 if (_isBooklet || _isDuplex)
                 {
-                    _currLeftBackPageIndex = rightPageIndex - 2;
-                    _currRightBackPageIndex = rightPageIndex - 1;
-                    if (_isReverse)
+                    _currLeftBackPageIndex = basePageIndex - 3;
+                    _currRightBackPageIndex = basePageIndex - 2;
+                    if (_isReverseOrder)
                     {
                         // Swap page index on reverse
-                        _currLeftBackPageIndex = rightPageIndex - 1;
-                        _currRightBackPageIndex = rightPageIndex - 2;
+                        _currLeftBackPageIndex = basePageIndex - 2;
+                        _currRightBackPageIndex = basePageIndex - 3;
                     }
                 }
             }
@@ -691,16 +699,28 @@ namespace SmartDeviceApp.Controllers
             _cancellationTokenSourceQueue.Add(cancellationToken);
 
             // Fill white all back pages
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightBackPageImage,
-                _previewPageImageSize, cancellationToken);
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightNextPageImage,
-                _previewPageImageSize, cancellationToken);
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftBackPageImage,
-                _previewPageImageSize, cancellationToken);
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftNextPageImage,
-                _previewPageImageSize, cancellationToken);
+            if (!_previewPageImages.ContainsKey(_currRightBackPageIndex))
+            {
+                PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightBackPageImage,
+                    _previewPageImageSize, cancellationToken);
+            }
+            if (!_previewPageImages.ContainsKey(_currRightBackPageIndex))
+            {
+                PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightNextPageImage,
+                    _previewPageImageSize, cancellationToken);
+            }
+            if (!_previewPageImages.ContainsKey(_currLeftBackPageIndex))
+            {
+                PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftBackPageImage,
+                    _previewPageImageSize, cancellationToken);
+            }
+            if (!_previewPageImages.ContainsKey(_currLeftBackPageIndex))
+            {
+                PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftNextPageImage,
+                    _previewPageImageSize, cancellationToken);
+            }
 
-            GenerateBackPreviewPages(_currLeftBackPageIndex, _currRightBackPageIndex, isForward,
+            GenerateBackPreviewPages(_currLeftBackPageIndex, _currRightBackPageIndex,
                 cancellationToken);
 
             LogUtility.EndTimestamp("LoadBackPage");
@@ -713,7 +733,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="rightBackPageIndex">back left preview page index</param>
         /// <param name="isForward">true when forward, false otherwise</param>
         public void GenerateBackPreviewPages(int leftBackPageIndex, int rightBackPageIndex,
-            bool isForward, CancellationTokenSource cancellationToken)
+            CancellationTokenSource cancellationToken)
         {
             // Generate back pages
             if ((_isBooklet || _isDuplex) &&
@@ -759,12 +779,9 @@ namespace SmartDeviceApp.Controllers
             if (!_previewPageImages.ContainsKey(previewPageIndex))
             {
                 List<WriteableBitmap> logicalPageImages = null;
-                //if (!(isBackSide && !(_isBooklet || _isDuplex)))
-                {
-                    // Get logical pages only when not for backside of single-page view
-                    logicalPageImages = await DocumentController.Instance
-                        .GetLogicalPageImages(logicalPageIndex, _pagesPerSheet, cancellationToken);
-                }
+                // Get logical pages only when not for backside of single-page view
+                logicalPageImages = await DocumentController.Instance
+                    .GetLogicalPageImages(logicalPageIndex, _pagesPerSheet, cancellationToken);
 
                 Size logicalPageSize = new Size(0, 0);
                 if (logicalPageImages != null && logicalPageImages.Count > 0)
@@ -1014,13 +1031,27 @@ namespace SmartDeviceApp.Controllers
                             WriteableBitmapExtensions.FromByteArray(
                                 _printPreviewViewModel.LeftBackPageImage,
                                 _previewPageImages.GetValue(_currLeftBackPageIndex));
-                            WriteableBitmapExtensions.FromByteArray(
-                                _printPreviewViewModel.LeftNextPageImage,
-                                _previewPageImages.GetValue(_currLeftBackPageIndex));
+                            //if (_isSwipeLeft && !_isReverseOrder) // NOTE: This condition is a workaround until back curl is properly implemented
+                            {
+                                WriteableBitmapExtensions.FromByteArray(
+                                            _printPreviewViewModel.LeftNextPageImage,
+                                            _previewPageImages.GetValue(_currLeftBackPageIndex));
+                            }
                         }
+                        //else if (!_isSwipeLeft && _currLeftBackPageIndex < 0) // NOTE: This block is a workaround until back curl is properly implemented
+                        //{
+                        //    if (!_isReverseOrder)
+                        //    {
+                        //        WriteableBitmapExtensions.FromByteArray(
+                        //            _printPreviewViewModel.LeftNextPageImage,
+                        //            _previewPageImages.GetValue(_currLeftBackPageIndex + 2));  // NG for reverse booklet
+                        //    }
+                        //    _printPreviewViewModel.LeftBackPageImage.Clear();
+                        //}
                         else if (enableClearPage)
                         {
                             _printPreviewViewModel.LeftBackPageImage.Clear();
+                            //if (_isSwipeLeft)
                             _printPreviewViewModel.LeftNextPageImage.Clear();
                         }
                         _printPreviewViewModel.IsLoadLeftBackPageActive = false;
