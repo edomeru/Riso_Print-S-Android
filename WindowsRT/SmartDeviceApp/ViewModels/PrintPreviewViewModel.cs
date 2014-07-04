@@ -236,7 +236,7 @@ namespace SmartDeviceApp.ViewModels
                         _gestureController = null;
                     }
                     _gestureController = new PreviewGestureController(_twoPageControl, _controlReference,
-                           targetSize, scalingFactor, swipeRight, swipeLeft, isDuplex, _pageTotal);
+                           targetSize, scalingFactor, swipeRight, swipeLeft, isDuplex, _currentPageIndex,_pageTotal);
                     _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,
                         swipeTop, swipeBottom, swipeDirection);
                 }
@@ -786,14 +786,14 @@ namespace SmartDeviceApp.ViewModels
             }
             set
             {
+                if (_gestureController != null)
+                {
+                    _gestureController.SetPageIndex(_currentPageIndex);
+                }
                 if (_currentPageIndex != value)
                 {
                     _currentPageIndex = value;
                     RaisePropertyChanged("CurrentPageIndex");
-                    if (_gestureController != null)
-                    {
-                        _gestureController.SetPageIndex(_currentPageIndex);
-                    }
                 }
             }
         }

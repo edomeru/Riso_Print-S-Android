@@ -95,7 +95,7 @@ namespace SmartDeviceApp.Controllers
 
         public PreviewGestureController(TwoPageControl twoPageControl, UIElement controlReference,
             Size targetSize, double originalScale, SwipeRightDelegate swipeRightHandler,
-            SwipeLeftDelegate swipeLeftHandler, bool isDuplex, uint totalPages)
+            SwipeLeftDelegate swipeLeftHandler, bool isDuplex, uint currPageIndex, uint totalPages)
         {
             _twoPageControl = twoPageControl;
             _control = twoPageControl.ManipulationGrid;
@@ -108,6 +108,7 @@ namespace SmartDeviceApp.Controllers
             _pageAreaGrid = twoPageControl.PageAreaGrid;
             _transitionGrid = twoPageControl.TransitionGrid;
             _isDuplex = isDuplex;
+            _currPageIndex = currPageIndex;
             _totalPages = totalPages;
 
             Initialize();
@@ -777,6 +778,52 @@ namespace SmartDeviceApp.Controllers
 
             if (_isHorizontalSwipeEnabled)
             {
+                if (currentPosition.X - _startPoint.X == 0)
+                {
+                    return;
+                }
+                //forward
+                if (currentPosition.X - _startPoint.X < 0)
+                {
+                    if (!_isReverse)
+                    {
+                        if (_currPageIndex == _totalPages - 1)
+                        {
+                            ManipulationGrid_ManipulationCancel();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (_currPageIndex == 0)
+                        {
+                            ManipulationGrid_ManipulationCancel();
+                            return;
+                        }
+                    }
+                }
+                //back
+                if (currentPosition.X - _startPoint.X > 0)
+                {
+                    if (!_isReverse)
+                    {
+                        if (_currPageIndex == 0)
+                        {
+                            ManipulationGrid_ManipulationCancel();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (_currPageIndex == _totalPages - 1)
+                        {
+                            ManipulationGrid_ManipulationCancel();
+                            return;
+                        }
+                    }
+                }
+
+
                 if (_isOnGridFirstHalf)
                 {
                     if (_isDuplex) // Horizontal two-page view and back curl
@@ -966,13 +1013,13 @@ namespace SmartDeviceApp.Controllers
                 }
                 else // Second half
                 {
-                    if (!_isDuplex && _isReverse) // Horizontal forward curl; right bind
-                    {
-                        // Scenarios:
-                        // single right bind (turn back)
-                    }
-                    else // Horizontal forward curl; left bind =========================================> OK
-                    {
+                    //if (!_isDuplex && _isReverse) // Horizontal forward curl; right bind
+                    //{
+                    //    // Scenarios:
+                    //    // single right bind (turn back)
+                    //}
+                    //else // Horizontal forward curl; left bind =========================================> OK
+                    //{
                         // Scenarios:
                         // single left bind (turn next)
                         // duplex left bind (turn next)
@@ -1018,7 +1065,7 @@ namespace SmartDeviceApp.Controllers
                         _twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
                         _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
                     }
-                }
+                //}
             }
             else // Vertical swipe
             {
