@@ -27,6 +27,8 @@ namespace SmartDeviceApp.Controllers
 
         private const string KEY_SETTINGS_CARD_READER_CARD_ID = "key_card_reader_card_id";
 
+        public string CardId { get; private set; }
+        
         private SettingsViewModel _settingsViewModel;
 
         // Explicit static constructor to tell C# compiler
@@ -50,12 +52,12 @@ namespace SmartDeviceApp.Controllers
         {
             var localSettings = ApplicationData.Current.LocalSettings;
 
-            string cardId = string.Empty;
+            CardId = string.Empty;
             if (localSettings.Values.ContainsKey(KEY_SETTINGS_CARD_READER_CARD_ID))
             {
-                cardId = localSettings.Values[KEY_SETTINGS_CARD_READER_CARD_ID].ToString();
+                CardId = localSettings.Values[KEY_SETTINGS_CARD_READER_CARD_ID].ToString();
             }
-            _settingsViewModel.CardId = cardId;
+            _settingsViewModel.CardId = CardId;
 
             _settingsViewModel.CardIdValueChangedEventHandler += _cardIdValueChangedEventHandler;
         }
@@ -82,6 +84,7 @@ namespace SmartDeviceApp.Controllers
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values[key] = Convert.ChangeType(value, type);
+            CardId = (string)value;
         }
 
     }
