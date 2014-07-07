@@ -51,6 +51,11 @@ namespace SmartDeviceApp.Common.Utilities
             if (e.Key == VirtualKey.Enter)
             {
                 Messenger.Default.Send<MessageType>(MessageType.AddPrinter);
+
+                //workaround to hide softkeyboard after printer search
+                //since we don't have direct control over the keyboard
+                ((TextBox)sender).IsEnabled = false;
+                ((TextBox)sender).IsEnabled = true;
             }
         }
 
