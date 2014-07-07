@@ -11,6 +11,7 @@
     Background="{StaticResource BRUSH_Gray2}"
     mc:Ignorable="d"
     d:DesignWidth="400"
+    x:Name="printSettingsPaneControl"
     Height="{Binding Converter={StaticResource HeightConverter}}"
     Width="{StaticResource SIZE_SidePaneWidthWithBorder}"
     DataContext="{Binding PrintSettingsPaneViewModel, Source={StaticResource Locator}}">
@@ -115,7 +116,7 @@
             </Path.Data>
         </Path>
         <controls:SidePaneTitleControl Grid.Row="0" Grid.Column="1"
-                                       Title="{Binding Source=IDS_LBL_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}" />
+                                       Title="{Binding DataContext.PaneTitle, ElementName=printSettingsPaneControl}" />
         <Grid x:Name="printSettingsRootGrid" Grid.Row="1" Grid.Column="1">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>

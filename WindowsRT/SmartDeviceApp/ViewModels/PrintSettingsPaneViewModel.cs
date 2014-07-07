@@ -26,6 +26,7 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
 using GalaSoft.MvvmLight.Messaging;
+using Windows.ApplicationModel.Resources;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -36,11 +37,17 @@ namespace SmartDeviceApp.ViewModels
 
         private PrintSettingsPaneMode _printSettingsPaneMode;
 
+        private ResourceLoader _resourceLoader;
+
+        private String _paneTitle;
+
         public PrintSettingsPaneViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
+             _resourceLoader = new ResourceLoader();
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetPrintSettingsPaneMode(viewMode));
+            SetPaneTitle();
         }
 
         public PrintSettingsPaneMode PrintSettingsPaneMode
@@ -68,6 +75,31 @@ namespace SmartDeviceApp.ViewModels
             if (viewMode == ViewMode.FullScreen && PrintSettingsPaneMode != PrintSettingsPaneMode.PrintSettings)
             {
                 PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
+            }
+            SetPaneTitle();
+        }
+
+        private void SetPaneTitle()
+        {
+            var screenMode = new ViewModelLocator().ViewControlViewModel.ScreenMode;
+            if (screenMode == ScreenMode.Printers)
+            {
+                PaneTitle = _resourceLoader.GetString("IDS_LBL_DEFAULT_PRINT_SETTINGS");
+            }
+
+            if (screenMode == ScreenMode.PrintPreview)
+            {
+                PaneTitle = _resourceLoader.GetString("IDS_LBL_PRINT_SETTINGS");
+            }
+        }
+        
+        public String PaneTitle
+        {
+            get { return _paneTitle; }
+            set
+            {
+                _paneTitle = value;
+                RaisePropertyChanged("PaneTitle");
             }
         }
     }
