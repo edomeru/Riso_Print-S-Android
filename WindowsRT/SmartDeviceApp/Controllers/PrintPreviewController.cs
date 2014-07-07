@@ -582,17 +582,24 @@ namespace SmartDeviceApp.Controllers
             // Fill all white
             if (!_previewPageImages.ContainsKey(_currRightPageIndex))
             {
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightBackPageImage,
-                _previewPageImageSize, cancellationToken);
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightNextPageImage,
-                _previewPageImageSize, cancellationToken);
+                if ((!_isReverseOrder && _currRightPageIndex > 0) && (_isReverseOrder && _currRightPageIndex < _previewPageTotal)) // added to prevent white pages appearing when it is the first or last page
+                {
+                    PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightBackPageImage,
+                        _previewPageImageSize, cancellationToken);
+
+                    PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightNextPageImage,
+                        _previewPageImageSize, cancellationToken);
+                }
+    
                 PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.RightPageImage,
                     _previewPageImageSize, cancellationToken);
             }
             if (!_previewPageImages.ContainsKey(_currLeftPageIndex))
             {
-            PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftBackPageImage,
-                _previewPageImageSize, cancellationToken);
+
+                if ((_isReverseOrder && _currLeftPageIndex > 0) && (!_isReverseOrder && _currLeftPageIndex < _previewPageTotal)) // added to prevent white pages appearing when it is the first or last page
+                    PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftBackPageImage,
+                        _previewPageImageSize, cancellationToken);
             PreviewPageImageUtility.FillWhitePageImage(_printPreviewViewModel.LeftNextPageImage,
                 _previewPageImageSize, cancellationToken);
 
@@ -1036,6 +1043,7 @@ namespace SmartDeviceApp.Controllers
                                 WriteableBitmapExtensions.FromByteArray(
                                             _printPreviewViewModel.LeftNextPageImage,
                                             _previewPageImages.GetValue(_currLeftBackPageIndex));
+                                
                             }
                             else if (!_isSwipeLeft && !_isReverseOrder) 
                             {
@@ -1058,19 +1066,25 @@ namespace SmartDeviceApp.Controllers
                         }
                         else if (!_isSwipeLeft && _currLeftBackPageIndex < 0) // NOTE: This block is a workaround until back curl is properly implemented
                         {
-                            //if (!_isReverseOrder)
-                            //{
-                            //    WriteableBitmapExtensions.FromByteArray(
-                            //        _printPreviewViewModel.LeftNextPageImage,
-                            //        _previewPageImages.GetValue(_currLeftBackPageIndex + 2));  // NG for reverse booklet
-                            //}
+
                             _printPreviewViewModel.LeftBackPageImage.Clear();
+                            if (_currLeftBackPageIndex == -1)
+                            {
+                            WriteableBitmapExtensions.FromByteArray(
+                                _printPreviewViewModel.LeftNextPageImage,
+                                _previewPageImages.GetValue(_currLeftBackPageIndex + 2));  // NG for reverse booklet
+                            }
                         }
                         else if (enableClearPage)
                         {
                             _printPreviewViewModel.LeftBackPageImage.Clear();
                             //if (_isSwipeLeft)
-                            _printPreviewViewModel.LeftNextPageImage.Clear();
+                            if (_isSwipeLeft && _currLeftBackPageIndex < 0)
+                                _printPreviewViewModel.LeftNextPageImage.Clear();
+                            else if (_currLeftBackPageIndex > 0)
+                                WriteableBitmapExtensions.FromByteArray(
+                                            _printPreviewViewModel.LeftNextPageImage,
+                                            _previewPageImages.GetValue(_currLeftBackPageIndex - 2));
                         }
                         _printPreviewViewModel.IsLoadLeftBackPageActive = false;
                         _printPreviewViewModel.IsLoadLeftNextPageActive = false;
