@@ -133,7 +133,7 @@ namespace SmartDeviceApp.Controls
             {
                 var value = ((TextBox)sender).Text;
                 int intValue;
-                if (int.TryParse(value, out intValue))
+                if (int.TryParse(value, out intValue) || string.IsNullOrEmpty(value))
                 {
                     if (intValue == 0) ValueText = "1"; // Set value to 1 instead of 0
                     else ValueText = ((TextBox)sender).Text;
