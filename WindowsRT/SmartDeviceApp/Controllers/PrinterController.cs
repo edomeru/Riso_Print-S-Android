@@ -461,7 +461,8 @@ namespace SmartDeviceApp.Controllers
                     if (capabilitesList.Count > 0)
                     {
                         printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true");
-                        printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true");
+                        // multifunction finisher 2/3 and 2/4 also has staple, so enable stapler when the multifunction finisher is available
+                        printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") || (capabilitesList.ElementAt(2) == "true") || (capabilitesList.ElementAt(3) == "true");
                         printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true");
                         printer.EnabledPunchThree = (capabilitesList.ElementAt(3) == "true");
                         printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true");
