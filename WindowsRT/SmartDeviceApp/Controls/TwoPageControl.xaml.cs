@@ -25,6 +25,15 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Common.Enum;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Popups;
+using Windows.UI.Xaml.Media.Animation;
+using SmartDeviceApp.ViewModels;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.Graphics.Imaging;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace SmartDeviceApp.Controls
 {
@@ -68,6 +77,26 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty PageAreaSizeProperty =
            DependencyProperty.Register("PageAreaSize", typeof(Size), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty DrawingSurfaceProperty =
+            DependencyProperty.Register("DrawingSurface", typeof(ContentControl), typeof(TwoPageControl), null);
+        public static readonly DependencyProperty LeftPageImage2Property =
+            DependencyProperty.Register("LeftPageImage2", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty IsDuplexProperty =
+            DependencyProperty.Register("IsDuplex", typeof(bool), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty RightNextPageImageProperty =
+            DependencyProperty.Register("RightNextPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty IsLoadRightNextPageActiveProperty =
+            DependencyProperty.Register("IsLoadRightNextPageActive", typeof(bool), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty LeftNextPageImageProperty =
+            DependencyProperty.Register("LeftNextPageImage", typeof(ImageSource), typeof(TwoPageControl), null);
+
+        public static readonly DependencyProperty IsLoadLeftNextPageActiveProperty =
+            DependencyProperty.Register("IsLoadLeftNextPageActive", typeof(bool), typeof(TwoPageControl), null);
 
         public ImageSource RightBackPageImage
         {
@@ -134,6 +163,42 @@ namespace SmartDeviceApp.Controls
             set { SetValue(PageAreaSizeProperty, value); }
         }
 
+        public ImageSource LeftPageImage2
+        {
+            get { return (ImageSource)GetValue(LeftPageImage2Property); }
+            set { SetValue(LeftPageImage2Property, value); }
+        }
+
+        public bool IsDuplex
+        {
+            get { return (bool)GetValue(IsDuplexProperty); }
+            set { SetValue(IsDuplexProperty, value); }
+        }
+
+        public ImageSource RightNextPageImage
+        {
+            get { return (ImageSource)GetValue(RightNextPageImageProperty); }
+            set { SetValue(RightNextPageImageProperty, value); }
+        }
+
+        public bool IsLoadRightNextPageActive
+        {
+            get { return (bool)GetValue(IsLoadRightNextPageActiveProperty); }
+            set { SetValue(IsLoadRightNextPageActiveProperty, value); }
+        }
+
+        public ImageSource LeftNextPageImage
+        {
+            get { return (ImageSource)GetValue(LeftNextPageImageProperty); }
+            set { SetValue(LeftNextPageImageProperty, value); }
+        }
+
+        public bool IsLoadLeftNextPageActive
+        {
+            get { return (bool)GetValue(IsLoadLeftNextPageActiveProperty); }
+            set { SetValue(IsLoadLeftNextPageActiveProperty, value); }
+        }
+
         private static void SetPageViewMode(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             var control = (TwoPageControl)obj;
@@ -144,12 +209,26 @@ namespace SmartDeviceApp.Controls
             {
                 case PageViewMode.SinglePageView:
                 {
+                    control.leftDisplay.Visibility = Visibility.Collapsed;
+                    control.leftDisplayArea.Width = gridLengthCollapsed;
+                    control.rightDisplayArea.Width = gridLengthFull;
+                    control.topDisplay.Visibility = Visibility.Collapsed;
+                    control.topDisplayArea.Height = gridLengthCollapsed;
+                    control.bottomDisplayArea.Height = gridLengthFull;
+
                     control.leftPage.Visibility = Visibility.Collapsed;
                     control.leftPageArea.Width = gridLengthCollapsed;
                     control.rightPageArea.Width = gridLengthFull;
                     control.topPage.Visibility = Visibility.Collapsed;
                     control.topPageArea.Height = gridLengthCollapsed;
                     control.bottomPageArea.Height = gridLengthFull;
+
+                    control.leftTrans.Visibility = Visibility.Collapsed;
+                    control.leftTransitionArea.Width = gridLengthCollapsed;
+                    control.rightTransitionArea.Width = gridLengthFull;
+                    control.topTrans.Visibility = Visibility.Collapsed;
+                    control.topTransitionArea.Height = gridLengthCollapsed;
+                    control.bottomTransitionArea.Height = gridLengthFull;
 
                     // Dash lines
                     control.horizontalSeparator.Visibility = Visibility.Collapsed;
@@ -166,6 +245,20 @@ namespace SmartDeviceApp.Controls
                     control.topPageArea.Height = gridLengthCollapsed;
                     control.bottomPageArea.Height = gridLengthFull;
 
+                    control.leftDisplay.Visibility = Visibility.Visible;
+                    control.leftDisplayArea.Width = gridLengthFull;
+                    control.rightDisplayArea.Width = gridLengthFull;
+                    control.topDisplay.Visibility = Visibility.Collapsed;
+                    control.topDisplayArea.Height = gridLengthCollapsed;
+                    control.bottomDisplayArea.Height = gridLengthFull;
+
+                    control.leftTrans.Visibility = Visibility.Visible;
+                    control.leftTransitionArea.Width = gridLengthFull;
+                    control.rightTransitionArea.Width = gridLengthFull;
+                    control.topTrans.Visibility = Visibility.Collapsed;
+                    control.topTransitionArea.Height = gridLengthCollapsed;
+                    control.bottomTransitionArea.Height = gridLengthFull;
+
                     // Dash lines
                     control.horizontalSeparator.Visibility = Visibility.Collapsed;
                     control.verticalSeparator.Visibility = Visibility.Visible;
@@ -180,6 +273,20 @@ namespace SmartDeviceApp.Controls
                     control.topPage.Visibility = Visibility.Visible;
                     control.topPageArea.Height = gridLengthFull;
                     control.bottomPageArea.Height = gridLengthFull;
+
+                    control.leftDisplay.Visibility = Visibility.Collapsed;
+                    control.leftDisplayArea.Width = gridLengthCollapsed;
+                    control.rightDisplayArea.Width = gridLengthFull;
+                    control.topDisplay.Visibility = Visibility.Visible;
+                    control.topDisplayArea.Height = gridLengthFull;
+                    control.bottomDisplayArea.Height = gridLengthFull;
+
+                    control.leftTrans.Visibility = Visibility.Collapsed;
+                    control.leftTransitionArea.Width = gridLengthCollapsed;
+                    control.rightTransitionArea.Width = gridLengthFull;
+                    control.topTrans.Visibility = Visibility.Visible;
+                    control.topTransitionArea.Height = gridLengthFull;
+                    control.bottomTransitionArea.Height = gridLengthFull;
                     
                     // Dash lines
                     control.horizontalSeparator.Visibility = Visibility.Visible;
@@ -189,5 +296,56 @@ namespace SmartDeviceApp.Controls
                 }
             }
         }
+
+        public Grid DisplayAreaGrid
+        {
+            get { return displayAreaGrid; }
+        }
+
+        public Grid TransitionGrid
+        {
+            get { return transitionGrid; }
+        }
+
+        public Grid ManipulationGrid
+        {
+            get { return manipulationGrid; }
+        }
+
+        public TranslateTransform Page1TranslateTransform
+        {
+            get { return Page1ClipTranslateTransform; }
+        }
+
+        public RotateTransform Page1RotateTransform
+        {
+            get { return Page1ClipRotateTransform; }
+        }
+
+        public TranslateTransform Page2TranslateTransform
+        {
+            get { return Page2ClipTranslateTransform; }
+        }
+
+        public RotateTransform Page2RotateTransform
+        {
+            get { return Page2ClipRotateTransform; }
+        }
+
+        public TranslateTransform TransitionTranslateTransform
+        {
+            get { return TransitionGridClipTranslateTransform; }
+        }
+
+        public RotateTransform TransitionRotateTransform
+        {
+            get { return TransitionGridClipRotateTransform; }
+        }
+
+        public CompositeTransform TransitionContainerTransform
+        {
+            get { return TransitionGridContainerTransform; }
+        }
+
     }
 }

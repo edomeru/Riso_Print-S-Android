@@ -211,6 +211,7 @@
     <Compile Include="Converters\SidePaneLineGeometryConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
+    <Compile Include="Models\CurlParameters.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
     <Compile Include="Models\ViewItemParameters.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />

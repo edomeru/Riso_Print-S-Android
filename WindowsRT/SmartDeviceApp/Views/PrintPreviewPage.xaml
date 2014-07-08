@@ -415,6 +415,10 @@
                                      LeftBackPageImage="{Binding LeftBackPageImage}"
                                      IsLoadLeftBackPageActive="{Binding IsLoadLeftBackPageActive}"
                                      IsLoadRightBackPageActive="{Binding IsLoadRightBackPageActive}"
+                                     RightNextPageImage="{Binding RightNextPageImage}"
+                                     LeftNextPageImage="{Binding LeftNextPageImage}"
+                                     IsLoadLeftNextPageActive="{Binding IsLoadLeftNextPageActive}"
+                                     IsLoadRightNextPageActive="{Binding IsLoadRightNextPageActive}"
                                      RightPageImage="{Binding RightPageImage}"
                                      LeftPageImage="{Binding LeftPageImage}"
                                      PageViewMode="{Binding PageViewMode}"
@@ -422,6 +426,7 @@
                                      Loaded="OnPageAreaLoaded"
                                      IsLoadLeftPageActive="{Binding IsLoadLeftPageActive}"
                                      IsLoadRightPageActive="{Binding IsLoadRightPageActive}"/>
+            
             <Slider x:Name="pageNumberSlider" Grid.Row="1" 
                     IsEnabled="{Binding IsPageNumberSliderEnabled}" 
                     Maximum="{Binding PageTotal, Mode=TwoWay}" 
@@ -441,6 +446,7 @@
             <TextBlock x:Name="pageNumberText" Grid.Row="2" 
                        Text="{Binding PageNumber, Converter={StaticResource PageNumberFormatConverter}}" 
                        Style="{StaticResource STYLE_TextBody}" />
+            
         </Grid>
     </controls:ViewControl>
 </base:PageBase>
