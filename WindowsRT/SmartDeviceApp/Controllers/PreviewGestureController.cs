@@ -10,23 +10,42 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Controls;
+using SmartDeviceApp.ViewModels;
 using System;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Controllers
 {
     public class PreviewGestureController : IDisposable
     {
-        private const int SWIPE_THRESHOLD = 100;
+        private const int SWIPE_THRESHOLD = 10;
         private const int MAX_ZOOM_LEVEL_FACTOR = 4;
+        private const int RECT_BOUND = 80000; // This is defined in TwoPageControl.xaml (see RectangleGeometry)
+
+        private const string TRANSFORMPROP_X = "X";
+        private const string TRANSFORMPROP_Y = "Y";
+        private const string TRANSFORMPROP_CENTER_X = "CenterX";
+        private const string TRANSFORMPROP_CENTER_Y = "CenterY";
+        private const string TRANSFORMPROP_ANGLE = "Angle";
+        private const string TRANSFORMPROP_TRANSLATE_X = "TranslateX";
+        private const string TRANSFORMPROP_TRANSLATE_Y = "TranslateY";
+        private const string TRANSFORMPROP_ROTATION = "Rotation";
 
         private GestureRecognizer _gestureRecognizer;
         private UIElement _control;
         private UIElement _controlReference;
+        private UIElement _pageAreaGrid;
+        private UIElement _transitionGrid;
+        private UIElement _displayAreaGrid;
         private TransformGroup _cumulativeTransform;
         private MatrixTransform _previousTransform;
         private CompositeTransform _deltaTransform;
@@ -38,7 +57,9 @@ namespace SmartDeviceApp.Controllers
         private SwipeLeftDelegate _swipeLeftHandler;
         private SwipeTopDelegate _swipeTopHandler;
         private SwipeBottomDelegate _swipeBottomHandler;
+        private SwipeDirectionDelegate _swipeDirectionHandler;
         private bool _isHorizontalSwipeEnabled;
+        private bool _isReverse;
 
         private Size _targetSize;
         private Size _controlSize;
@@ -48,6 +69,8 @@ namespace SmartDeviceApp.Controllers
         private Point _startPoint;
         private double _currentZoomLength; // based on width
         private double _maxZoomLength; // based on width * max zoom level factor
+        //private bool _isDirectionSet;
+        private bool _isDuplex;
 
         private bool _isEnabled;
         private bool _isDisposed;
@@ -55,15 +78,39 @@ namespace SmartDeviceApp.Controllers
         private bool _isTranslateXEnabled;
         private bool _isTranslateYEnabled;
 
-        public PreviewGestureController(UIElement control, UIElement controlReference, Size targetSize,
-            double originalScale, SwipeRightDelegate swipeRightHandler, SwipeLeftDelegate swipeLeftHandler)
+        private TwoPageControl _twoPageControl;
+
+        private uint pointerCount = 0;
+        private bool _multipleFingersDetected = false;
+
+        private double _rotationCenterX;
+        private double _rotationCenterY;
+        private bool _isOnGridFirstHalf; // Flag for back curl, if going to previous page
+        private bool _isPageTurnNext;
+        //private bool _willContinue;
+
+        private uint _currPageIndex;
+        private uint _totalPages;
+        private bool _manipulationCancel;
+
+        public PreviewGestureController(TwoPageControl twoPageControl, UIElement controlReference,
+            Size targetSize, double originalScale, SwipeRightDelegate swipeRightHandler,
+            SwipeLeftDelegate swipeLeftHandler, bool isDuplex, uint currPageIndex, uint totalPages)
         {
-            _control = control;
+            _twoPageControl = twoPageControl;
+            _control = twoPageControl.ManipulationGrid;
             _controlReference = controlReference;
             _targetSize = targetSize;
             _originalScale = originalScale;
             _swipeRightHandler = swipeRightHandler;
             _swipeLeftHandler = swipeLeftHandler;
+            _displayAreaGrid = twoPageControl.DisplayAreaGrid;
+            _pageAreaGrid = twoPageControl.PageAreaGrid;
+            _transitionGrid = twoPageControl.TransitionGrid;
+            _isDuplex = isDuplex;
+            _currPageIndex = currPageIndex;
+            _totalPages = totalPages;
+
             Initialize();
             _currentZoomLength = _targetSize.Width;
             _maxZoomLength = _targetSize.Width * MAX_ZOOM_LEVEL_FACTOR;
@@ -71,23 +118,29 @@ namespace SmartDeviceApp.Controllers
             ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
         }
 
-        public void InitializeSwipe(bool isHorizontalSwipeEnabled,
+        public void InitializeSwipe(bool isHorizontalSwipeEnabled, bool isReverse,
             SwipeLeftDelegate swipeLeftHandler,
             SwipeRightDelegate swipeRightHandler,
             SwipeTopDelegate swipeTopHandler,
-            SwipeBottomDelegate swipeBottomHandler)
+            SwipeBottomDelegate swipeBottomHandler,
+            SwipeDirectionDelegate swipeDirectionHandler)
         {
             _isHorizontalSwipeEnabled = isHorizontalSwipeEnabled;
+            _isReverse = isReverse;
             _swipeLeftHandler = swipeLeftHandler;
             _swipeRightHandler = swipeRightHandler;
             _swipeTopHandler = swipeTopHandler;
             _swipeBottomHandler = swipeBottomHandler;
+            _swipeDirectionHandler = swipeDirectionHandler;
+
+            ResetClipTransforms();
         }
         
         public delegate void SwipeRightDelegate();
         public delegate void SwipeLeftDelegate();
         public delegate void SwipeTopDelegate();
         public delegate void SwipeBottomDelegate();
+        public delegate void SwipeDirectionDelegate(bool isSwipeLeft);
 
         private void Initialize()
         {
@@ -120,6 +173,7 @@ namespace SmartDeviceApp.Controllers
                 _control.PointerPressed += OnPointerPressed;
                 _control.PointerReleased += OnPointerReleased;
                 _control.PointerMoved += OnPointerMoved;
+                _control.PointerCaptureLost += OnPointerCaptureLost;
 
                 // Gesture recognizer outputs
                 _gestureRecognizer.Tapped += OnTapped;
@@ -131,6 +185,12 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        private void OnPointerCaptureLost(object sender, PointerRoutedEventArgs e)
+        {
+            if (pointerCount > 0)
+                pointerCount--;
+        }
+
         public void DisableGestures()
         {
             if (_isEnabled)
@@ -139,6 +199,7 @@ namespace SmartDeviceApp.Controllers
                 _control.PointerPressed -= OnPointerPressed;
                 _control.PointerReleased -= OnPointerReleased;
                 _control.PointerMoved -= OnPointerMoved;
+                _control.PointerCaptureLost -= OnPointerCaptureLost;
 
                 // Gesture recognizer outputs
                 _gestureRecognizer.Tapped -= OnTapped;
@@ -182,6 +243,7 @@ namespace SmartDeviceApp.Controllers
             _previousTransform = new MatrixTransform() { Matrix = Matrix.Identity };
             _cumulativeTransform.Children.Add(_previousTransform);
             _cumulativeTransform.Children.Add(_deltaTransform);
+
             _control.RenderTransform = _cumulativeTransform;
 
             // Temp transforms for checking validity of transforms before applying
@@ -203,24 +265,86 @@ namespace SmartDeviceApp.Controllers
             _isScaled = false;
         }
 
+        private void ResetClipTransforms()
+        {
+            var w = _targetSize.Width;
+            var h = _targetSize.Height;
+
+            if (_isHorizontalSwipeEnabled)
+            {
+                _twoPageControl.Page2TranslateTransform.X = w;
+                _twoPageControl.Page2TranslateTransform.Y = 0;
+                _twoPageControl.Page2RotateTransform.CenterX = 0;
+                _twoPageControl.Page2RotateTransform.CenterY = 0;
+                _twoPageControl.Page2RotateTransform.Angle = 0;
+
+                _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND;
+                _twoPageControl.TransitionTranslateTransform.Y = 0;
+                _twoPageControl.TransitionRotateTransform.CenterX = 0;
+                _twoPageControl.TransitionRotateTransform.CenterY = 0;
+                _twoPageControl.TransitionRotateTransform.Angle = 0;
+
+                _twoPageControl.TransitionContainerTransform.TranslateX = w;
+                _twoPageControl.TransitionContainerTransform.TranslateY = 0;
+                _twoPageControl.TransitionContainerTransform.CenterX = 0;
+                _twoPageControl.TransitionContainerTransform.CenterY = 0;
+                _twoPageControl.TransitionContainerTransform.Rotation = 0;
+            }
+            else
+            {
+                _twoPageControl.Page2TranslateTransform.Y = h;
+                _twoPageControl.Page2TranslateTransform.X = 0;
+                _twoPageControl.Page2RotateTransform.CenterX = 0;
+                _twoPageControl.Page2RotateTransform.CenterY = 0;
+                _twoPageControl.Page2RotateTransform.Angle = 0;
+
+                _twoPageControl.TransitionTranslateTransform.Y = -RECT_BOUND;
+                _twoPageControl.TransitionTranslateTransform.X = 0;
+                _twoPageControl.TransitionRotateTransform.CenterX = 0;
+                _twoPageControl.TransitionRotateTransform.CenterY = 0;
+                _twoPageControl.TransitionRotateTransform.Angle = 0;
+
+                _twoPageControl.TransitionContainerTransform.TranslateY = h;
+                _twoPageControl.TransitionContainerTransform.TranslateX = 0;
+                _twoPageControl.TransitionContainerTransform.CenterX = 0;
+                _twoPageControl.TransitionContainerTransform.CenterY = 0;
+                _twoPageControl.TransitionContainerTransform.Rotation = 0;
+            }
+
+        }
+
         void OnPointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
             _gestureRecognizer.ProcessDownEvent(args.GetCurrentPoint(_controlReference));
+            pointerCount++;
+            _startPoint = args.GetCurrentPoint((Grid)sender).Position;
             _control.CapturePointer(args.Pointer);
             args.Handled = true;
+            
         }
+
         void OnPointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
+            if(pointerCount > 0)
+                pointerCount--;
+            _control.ReleasePointerCapture(args.Pointer);
             _gestureRecognizer.ProcessUpEvent(args.GetCurrentPoint(_controlReference));
             args.Handled = true;
         }
+
         void OnPointerCanceled(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
+            pointerCount--;
             _gestureRecognizer.CompleteGesture();
             args.Handled = true;
         }
         void OnPointerMoved(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
+            if (pointerCount > 1)
+                _multipleFingersDetected = true;
+            else
+                _multipleFingersDetected = false;
+
             _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
             args.Handled = true;
         }
@@ -239,62 +363,86 @@ namespace SmartDeviceApp.Controllers
 
         private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
         {
-            _startPoint = e.Position;
+            if (!_multipleFingersDetected)
+                ManipulationGrid_ManipulationStarted(e);
         }
 
         private void OnManipulationUpdated(object sender, ManipulationUpdatedEventArgs e)
         {
-            var isSwipe = DetectSwipe(e);
-            if (isSwipe) return;
-            var isScale = DetectScale(e);
-            DetectTranslate(e, isScale);
+            //var isSwipe = DetectSwipe(e);
+            //if (isSwipe) return;
+            if (_multipleFingersDetected || _isScaled)
+            {
+                var isScale = DetectScale(e);
+
+                DetectTranslate(e, isScale);
+
+                ManipulationGrid_ManipulationCancel();
+            }
+            else 
+            {
+                if (!_isScaled)
+                {
+                    if (e.Delta.Scale != 1.0f)
+                    {
+                        Normalize();
+                    }
+                    ManipulationGrid_ManipulationDelta(e);
+                }
+                else
+                {
+                    ManipulationGrid_ManipulationCancel();
+                }
+                
+            }
+
         }
 
-        private bool DetectSwipe(ManipulationUpdatedEventArgs e)
-        {
-            var isSwipe = false;
-            if (!_isScaled && _gestureRecognizer.IsInertial)
-            {                
-                Point currentPosition = e.Position;
-                // Horizontal Swipe
-                if (_isHorizontalSwipeEnabled) 
-                {
-                    // Swipe right;
-                    if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
-                    {
-                        _gestureRecognizer.CompleteGesture();
-                        _swipeRightHandler();
-                        isSwipe = true;
-                    }
-                    // Swipe left
-                    else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
-                    {
-                        _gestureRecognizer.CompleteGesture();
-                        _swipeLeftHandler();
-                        isSwipe = true;
-                    }
-                }
-                // Vertical swipe
-                else 
-                {
-                    // Swipe bottom
-                    if (currentPosition.Y - _startPoint.Y >= SWIPE_THRESHOLD)
-                    {
-                        _gestureRecognizer.CompleteGesture();
-                        _swipeBottomHandler();
-                        isSwipe = true;
-                    }
-                    // Swipe top
-                    else if (_startPoint.Y - currentPosition.Y >= SWIPE_THRESHOLD)
-                    {
-                        _gestureRecognizer.CompleteGesture();
-                        _swipeTopHandler();
-                        isSwipe = true;
-                    }
-                }
-            }
-            return isSwipe;
-        }
+        //private bool DetectSwipe(ManipulationUpdatedEventArgs e)
+        //{
+        //    var isSwipe = false;
+        //    if (!_isScaled && _gestureRecognizer.IsInertial)
+        //    {                
+        //        Point currentPosition = e.Position;
+        //        // Horizontal Swipe
+        //        if (_isHorizontalSwipeEnabled) 
+        //        {
+        //            // Swipe right;
+        //            if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
+        //            {
+        //                _gestureRecognizer.CompleteGesture();
+        //                _swipeRightHandler();
+        //                isSwipe = true;
+        //            }
+        //            // Swipe left
+        //            else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
+        //            {
+        //                _gestureRecognizer.CompleteGesture();
+        //                _swipeLeftHandler();
+        //                isSwipe = true;
+        //            }
+        //        }
+        //        // Vertical swipe
+        //        else 
+        //        {
+        //            // Swipe bottom
+        //            if (currentPosition.Y - _startPoint.Y >= SWIPE_THRESHOLD)
+        //            {
+        //                _gestureRecognizer.CompleteGesture();
+        //                _swipeBottomHandler();
+        //                isSwipe = true;
+        //            }
+        //            // Swipe top
+        //            else if (_startPoint.Y - currentPosition.Y >= SWIPE_THRESHOLD)
+        //            {
+        //                _gestureRecognizer.CompleteGesture();
+        //                _swipeTopHandler();
+        //                isSwipe = true;
+        //            }
+        //        }
+        //    }
+        //    return isSwipe;
+        //}
 
         private bool DetectScale(ManipulationUpdatedEventArgs e)
         {
@@ -419,6 +567,9 @@ namespace SmartDeviceApp.Controllers
 
         private void FitToCenter()
         {
+            //get pageview mode
+            var viewModel = new ViewModelLocator().PrintPreviewViewModel;
+ 
             // t1 = target top-left point, t2 = target bottom-right point
             var t1 = new Point(_cumulativeTransform.Value.OffsetX, _cumulativeTransform.Value.OffsetY);
             var t2 = new Point(_cumulativeTransform.Value.OffsetX + _targetSize.Width * _cumulativeTransform.Value.M11,
@@ -452,6 +603,7 @@ namespace SmartDeviceApp.Controllers
                 if (_isTranslateXEnabled) _deltaTransform.TranslateX = e.Delta.Translation.X;
                 if (_isTranslateYEnabled) _deltaTransform.TranslateY = e.Delta.Translation.Y;
                 Normalize();
+                isTranslate = true;
             }
             return isTranslate;
         }
@@ -459,6 +611,806 @@ namespace SmartDeviceApp.Controllers
         private void OnManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
         {
             Normalize();
+            if (!_multipleFingersDetected)
+                ManipulationGrid_ManipulationCompleted(e);
         }
+
+        private void ManipulationGrid_ManipulationStarted(ManipulationStartedEventArgs e)
+        {
+            var w = _targetSize.Width;
+            var h = _targetSize.Height;
+
+            _manipulationCancel = false;
+
+            if (!DetectPageBounds())
+            {
+                ManipulationGrid_ManipulationCancel();
+                return;
+            }
+
+            DetectPageTurnDirection(_startPoint);
+
+            ResetClipTransforms();
+
+            _transitionGrid.Opacity = 1;
+            _pageAreaGrid.Opacity = 1;
+            
+        }
+
+        private void ManipulationGrid_ManipulationDelta(ManipulationUpdatedEventArgs e)
+        {
+            var w = _targetSize.Width;
+            var h = _targetSize.Height;
+
+            var currentPosition = e.Position;
+
+            if (_isHorizontalSwipeEnabled)
+            {
+                if (!DetectCanTurnPage(currentPosition))
+                {
+                    ManipulationGrid_ManipulationCancel();
+                    return;
+                }
+
+                if (currentPosition.X - _startPoint.X == 0)
+                {
+                    return;
+                }
+
+
+                if (_isOnGridFirstHalf)
+                {
+                    if (_isDuplex) // Horizontal two-page view and back curl
+                    {
+                        // Scenarios:
+                        // duplex left bind (turn back)
+                        // duplex right bind (turn back)
+                        // booklet portrait forward (turn back)
+                        // booklet portrait reverse (turn back)
+                        var tempW = -w * 2;
+                        if (_isDuplex)
+                        {
+                            tempW = -w;
+                        }
+
+                        var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
+                        var cy = e.Cumulative.Translation.Y;
+                        var angle = (Math.Atan2(cx - w, -cy) * 180 / Math.PI + 90) % 360;
+
+                        _rotationCenterX = w + cx / 2;
+
+                        if (cy < 0)
+                        {
+                            _rotationCenterY = h;
+                        }
+                        else
+                        {
+                            _rotationCenterY = 0;
+                        }
+
+                        _twoPageControl.Page2TranslateTransform.X = -RECT_BOUND + Math.Abs(w + cx / 2);
+                        _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                        _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
+                        _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
+                        _twoPageControl.Page2RotateTransform.Angle = angle;
+
+                        _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND - (cx / 2);
+                        _twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                        _twoPageControl.TransitionRotateTransform.CenterX = -cx / 2;
+                        _twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
+                        _twoPageControl.TransitionRotateTransform.Angle = -angle;
+
+                        _twoPageControl.TransitionContainerTransform.TranslateX = w + cx;
+                        _twoPageControl.TransitionContainerTransform.CenterX = -cx / 2;
+                        _twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
+                        _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
+
+                    }
+                    else // Horizontal single page view and back curl
+                    {
+                        if (_isReverse)
+                        {
+                            // Scenarios:
+                            // single right bind (turn next)
+
+                            // Scenarios:
+                            // single left bind (turn back)
+
+                            var tempW = -w * 2;
+                            if (_isDuplex)
+                            {
+                                tempW = -w;
+                            }
+
+                            var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
+                            var cy = e.Cumulative.Translation.Y;
+                            var angle = (Math.Atan2(cx - w, -cy) * 180 / Math.PI + 90) % 360;
+
+                            _rotationCenterX = w + cx / 2;
+
+                            if (cy < 0)
+                            {
+                                _rotationCenterY = h;
+                            }
+                            else
+                            {
+                                _rotationCenterY = 0;
+                            }
+
+                            _twoPageControl.Page2TranslateTransform.X = -RECT_BOUND + Math.Abs(w + cx / 2);
+                            _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                            _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
+                            _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
+                            _twoPageControl.Page2RotateTransform.Angle = angle;
+
+                            _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND - (cx / 2);
+                            _twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                            _twoPageControl.TransitionRotateTransform.CenterX = -cx / 2;
+                            _twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
+                            _twoPageControl.TransitionRotateTransform.Angle = -angle;
+
+                            _twoPageControl.TransitionContainerTransform.TranslateX = w + cx;
+                            _twoPageControl.TransitionContainerTransform.CenterX = -cx / 2;
+                            _twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
+                            _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
+
+                            /*
+                            // ON GOING
+
+                            var tempW = -w * 2;
+                            if (_isDuplex)
+                            {
+                                tempW = -w;
+                            }
+
+                            var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
+                            var cy = e.Cumulative.Translation.Y;
+                            var angle = (Math.Atan2(cx - w, -cy) * 180 / Math.PI + 90) % 360;
+
+                            _rotationCenterX = w + cx / 2;
+
+                            if (cy < 0)
+                            {
+                                _rotationCenterY = h;
+                            }
+                            else
+                            {
+                                _rotationCenterY = 0;
+                            }
+
+                            var cx2 = w - e.Position.X;
+                            var _rotationCenterX2 = cx2 / 2;
+                            var angle2 = (Math.Atan2(cx2, -cy) * 180 / Math.PI + 90) % 360;
+
+                            _twoPageControl.Page2TranslateTransform.X = -RECT_BOUND + (w / 2) + (cx2 / 2);
+                            _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                            _twoPageControl.Page2RotateTransform.CenterX = -cx / 2;
+                            _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
+                            _twoPageControl.Page2RotateTransform.Angle = angle2;
+
+                            //_twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND - (cx2 / 2);
+                            //_twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                            //_twoPageControl.TransitionRotateTransform.CenterX = -_rotationCenterX2;
+                            //_twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
+                            //_twoPageControl.TransitionRotateTransform.Angle = -angle2;
+
+                            //_twoPageControl.TransitionContainerTransform.TranslateX = w - cx2;
+                            //_twoPageControl.TransitionContainerTransform.CenterX = cx2 / 2;
+                            //_twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
+                            //_twoPageControl.TransitionContainerTransform.Rotation = 2 * angle2;
+                             * */
+                        }
+                        else
+                        {
+                            // Scenarios:
+                            // single left bind (turn back)
+
+                            var tempW = -w * 2;
+                            if (_isDuplex)
+                            {
+                                tempW = -w;
+                            }
+
+                            var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
+                            var cy = e.Cumulative.Translation.Y;
+                            var angle = (Math.Atan2(cx - w, -cy) * 180 / Math.PI + 90) % 360;
+
+                            _rotationCenterX = w + cx / 2;
+
+                            if (cy < 0)
+                            {
+                                _rotationCenterY = h;
+                            }
+                            else
+                            {
+                                _rotationCenterY = 0;
+                            }
+
+                            _twoPageControl.Page2TranslateTransform.X = -RECT_BOUND + Math.Abs(w + cx / 2);
+                            _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                            _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
+                            _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
+                            _twoPageControl.Page2RotateTransform.Angle = angle;
+
+                            _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND - (cx / 2);
+                            _twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                            _twoPageControl.TransitionRotateTransform.CenterX = -cx / 2;
+                            _twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
+                            _twoPageControl.TransitionRotateTransform.Angle = -angle;
+
+                            _twoPageControl.TransitionContainerTransform.TranslateX = w + cx;
+                            _twoPageControl.TransitionContainerTransform.CenterX = -cx / 2;
+                            _twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
+                            _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
+                        }
+                    }
+                }
+                else // Second half
+                {
+                    //if (!_isDuplex && _isReverse) // Horizontal forward curl; right bind
+                    //{
+                    //    // Scenarios:
+                    //    // single right bind (turn back)
+                    //}
+                    //else // Horizontal forward curl; left bind =========================================> OK
+                    //{
+                        // Scenarios:
+                        // single left bind (turn next)
+                        // duplex left bind (turn next)
+                        // duplex right bind (turn next)
+                        // booklet portrait forward (turn next)
+                        // booklet portrait reverse (turn next)
+
+                        var tempW = -w * 2;
+                        if (_isDuplex)
+                        {
+                            tempW = -w;
+                        }
+
+                        var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
+                        var cy = e.Cumulative.Translation.Y;
+                        var angle = (Math.Atan2(cx - w, -cy) * 180 / Math.PI + 90) % 360;
+
+                        _rotationCenterX = w + cx / 2;
+
+                        if (cy < 0)
+                        {
+                            _rotationCenterY = h;
+                        }
+                        else
+                        {
+                            _rotationCenterY = 0;
+                        }
+
+                        _twoPageControl.Page2TranslateTransform.X = w + cx / 2;
+                        _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                        _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
+                        _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
+                        _twoPageControl.Page2RotateTransform.Angle = angle;
+
+                        _twoPageControl.TransitionTranslateTransform.X = -RECT_BOUND - (cx / 2);
+                        _twoPageControl.TransitionTranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                        _twoPageControl.TransitionRotateTransform.CenterX = -cx / 2;
+                        _twoPageControl.TransitionRotateTransform.CenterY = _rotationCenterY;
+                        _twoPageControl.TransitionRotateTransform.Angle = -angle;
+
+                        _twoPageControl.TransitionContainerTransform.TranslateX = w + cx;
+                        _twoPageControl.TransitionContainerTransform.CenterX = -cx / 2;
+                        _twoPageControl.TransitionContainerTransform.CenterY = _rotationCenterY;
+                        _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
+                    }
+                //}
+            }
+            else // Vertical swipe
+            {
+
+                if (!DetectCanTurnPage(currentPosition))
+                {
+                    ManipulationGrid_ManipulationCancel();
+                    return;
+                }
+
+                if (currentPosition.Y - _startPoint.Y == 0)
+                {
+                    return;
+                }
+                
+                if (_isOnGridFirstHalf)
+                {
+                    //if (_isDuplex) // Vertical two-page view and back curl
+                    //{
+                    //    // Scenarios:
+                    //    // duplex top bind (turn back)
+                    //    // booklet landscape forward (turn back)
+                    //    // booklet landscape reverse (turn back)
+                    //}
+                    //else // Vertical single page view and back curl =========================================> OK
+                    //{
+                        // Scenarios:
+                        // single top bind (turn back)
+
+                        var tempH = -h * 2;
+
+                        var cy = Math.Min(0, Math.Max(e.Position.Y - h, tempH));
+                        var cx = e.Cumulative.Translation.Y;
+                        var angle = (Math.Atan2(cy - h, cx) * 180 / Math.PI + 90) % 360;
+
+                        _rotationCenterY = h + cy / 2;
+
+                        if (cx < 0)
+                        {
+                            _rotationCenterX = w;
+                        }
+                        else
+                        {
+                            _rotationCenterX = 0;
+                        }
+
+                        _twoPageControl.Page2TranslateTransform.Y = -RECT_BOUND + Math.Abs(h + cy / 2);
+                        _twoPageControl.Page2TranslateTransform.X = -(RECT_BOUND / 2) + w / 2;
+                        _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
+                        _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
+                        _twoPageControl.Page2RotateTransform.Angle = angle;
+
+                        _twoPageControl.TransitionTranslateTransform.Y = -RECT_BOUND - (cy / 2);
+                        _twoPageControl.TransitionTranslateTransform.X = -(RECT_BOUND / 2) + w / 2;
+                        _twoPageControl.TransitionRotateTransform.CenterY = -cy / 2;
+                        _twoPageControl.TransitionRotateTransform.CenterX = _rotationCenterX;
+                        _twoPageControl.TransitionRotateTransform.Angle = -angle;
+
+                        _twoPageControl.TransitionContainerTransform.TranslateY = h + cy;
+                        _twoPageControl.TransitionContainerTransform.CenterY = -cy / 2;
+                        _twoPageControl.TransitionContainerTransform.CenterX = _rotationCenterX;
+                        _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
+                    //}
+                }
+                else // Vertical forward curl =========================================> OK
+                {
+                    // Scenarios:
+                    // single top bind (turn next)
+                    // duplex top bind (turn next)
+                    // booklet landscape forward (turn next)
+                    // booklet landscape reverse (turn next)
+
+                    var tempH = -h * 2;
+                    if (_isDuplex)
+                    {
+                        tempH = -h;
+                    }
+
+                    var cy = Math.Min(0, Math.Max(e.Position.Y - h, tempH));
+                    var cx = e.Cumulative.Translation.X;
+                    var angle = (Math.Atan2(cy - h, cx) * 180 / Math.PI + 90) % 360;
+
+                    _rotationCenterY = h + cy / 2;
+
+                    if (cx < 0)
+                    {
+                        _rotationCenterX = w;
+                    }
+                    else
+                    {
+                        _rotationCenterX = 0;
+                    }
+
+                    _twoPageControl.Page2TranslateTransform.Y = h + cy / 2;
+                    _twoPageControl.Page2TranslateTransform.X = -(RECT_BOUND / 2) - w / 2;
+                    _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
+                    _twoPageControl.Page2RotateTransform.CenterY = _rotationCenterY;
+                    _twoPageControl.Page2RotateTransform.Angle = angle;
+
+                    _twoPageControl.TransitionTranslateTransform.Y = -RECT_BOUND - (cy / 2);
+                    _twoPageControl.TransitionTranslateTransform.X = -(RECT_BOUND / 2) + w / 2;
+                    _twoPageControl.TransitionRotateTransform.CenterY = -cy / 2;
+                    _twoPageControl.TransitionRotateTransform.CenterX = _rotationCenterX;
+                    _twoPageControl.TransitionRotateTransform.Angle = -angle;
+
+                    _twoPageControl.TransitionContainerTransform.TranslateY = h + cy;
+                    _twoPageControl.TransitionContainerTransform.CenterY = -cy / 2;
+                    _twoPageControl.TransitionContainerTransform.CenterX = _rotationCenterX;
+                    _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
+                }
+            }
+        }
+
+        private void ManipulationGrid_ManipulationCompleted(ManipulationCompletedEventArgs e)
+        {
+            if (_manipulationCancel)
+            {
+                return;
+            }
+
+            var w = _targetSize.Width;
+            var h = _targetSize.Height;
+
+            var _willContinue = false;
+            if (_isOnGridFirstHalf)
+            {
+                if (_isHorizontalSwipeEnabled)
+                {
+                    if (e.Position.X > w * 0.5)
+                    {
+                        _willContinue = true;
+                    }
+                }
+                else
+                {
+                    if (e.Position.Y > h * 0.5)
+                    {
+                        _willContinue = true;
+                    }
+                }
+            }
+            else
+            {
+                if (_isHorizontalSwipeEnabled)
+                {
+                    if (e.Position.X < w * 0.5)
+                    {
+                        _willContinue = true;
+                    }
+                }
+                else
+                {
+                    if (e.Position.Y < h * 0.5)
+                    {
+                        _willContinue = true;
+                    }
+                }
+            }
+
+            var sb = new Storyboard();
+            if (_isHorizontalSwipeEnabled)
+            {
+                //var sb = new Storyboard();
+                sb.Completed += StoryBoardAnimationCompleted;
+                if (!_isOnGridFirstHalf)
+                {
+                    var to = 0;
+                    if (_willContinue)
+                    {
+                        if (_isDuplex)
+                        {
+                            to = (int)(0);
+                        }
+                        else
+                        {
+                            to = (int)-w;
+                        }
+                    }
+                    else
+                    {
+                        to = (int)w;
+                    }
+                    AddAnimation(sb, _twoPageControl.Page2TranslateTransform, TRANSFORMPROP_X, to);
+                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, TRANSFORMPROP_CENTER_X, 0);
+                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, TRANSFORMPROP_ANGLE, 0);
+
+                    if (_willContinue)
+                    {
+                        to = (int)(-RECT_BOUND + (w));
+                    }
+                    else
+                    {
+                        to = (int)-RECT_BOUND;
+                    }
+                    AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, TRANSFORMPROP_X, to);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_CENTER_X, 0);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_ANGLE, 0);
+                    if (_willContinue)
+                    {
+                        if (_isDuplex)
+                        {
+                            to = 0;
+                        }
+                        else
+                        {
+                            to = (int)-w;
+                        }
+                    }
+                    else
+                    {
+                        to = (int)w;
+                    }
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_TRANSLATE_X, to);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_CENTER_X, 0);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
+                    sb.Begin();
+
+                    //_transitionGrid.Opacity = 0;
+
+                    if (_willContinue)
+                    {
+                        _swipeLeftHandler();
+                    }
+                }
+                else
+                {
+                    AddAnimation(sb, _twoPageControl.Page1TranslateTransform, TRANSFORMPROP_X, 0);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_CENTER_X, w / 2);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_ANGLE, 0);
+
+                    var to = 0;
+                    if (_willContinue)
+                    {
+                        to = (int)(-RECT_BOUND);
+                    }
+                    else
+                    {
+                        to = (int)0;
+                    }
+                    AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, TRANSFORMPROP_X, to);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_CENTER_X, w / 2);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_ANGLE, 0);
+
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_TRANSLATE_X, to);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_CENTER_X, w / 2);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
+                    sb.Begin();
+
+                    if (_willContinue)
+                    {
+                        _swipeRightHandler();
+                    }
+                }
+            }
+            else
+            {
+                //var sb = new Storyboard();
+                sb.Completed += StoryBoardAnimationCompleted;
+                if (!_isOnGridFirstHalf)
+                {
+                    var to = 0;
+                    if (_willContinue)
+                    {
+                        if (_isDuplex)
+                        {
+                            to = (int)(0);
+                        }
+                        else
+                        {
+                            to = (int)-h;
+                        }
+                    }
+                    else
+                    {
+                        to = (int)h;
+                    }
+                    AddAnimation(sb, _twoPageControl.Page2TranslateTransform, TRANSFORMPROP_Y, to);
+                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, TRANSFORMPROP_CENTER_Y, 0);
+                    AddAnimation(sb, _twoPageControl.Page2RotateTransform, TRANSFORMPROP_ANGLE, 0);
+
+                    if (_willContinue)
+                    {
+                        to = (int)(-RECT_BOUND + (h));
+                    }
+                    else
+                    {
+                        to = (int)-RECT_BOUND;
+                    }
+                    AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, TRANSFORMPROP_Y, to);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_CENTER_Y, 0);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_ANGLE, 0);
+                    if (_willContinue)
+                    {
+                        if (_isDuplex)
+                            to = 0;
+                        else
+                            to = (int)-h;
+                    }
+                    else
+                    {
+                        to = (int)h;
+                    }
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_TRANSLATE_Y, to);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_CENTER_Y, 0);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
+                    sb.Begin();
+
+                    //_transitionGrid.Opacity = 0;
+
+                    if (_willContinue)
+                    {
+                        _swipeTopHandler();
+                    }
+                }
+                else
+                {
+                    AddAnimation(sb, _twoPageControl.Page1TranslateTransform, TRANSFORMPROP_Y, 0);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_CENTER_Y, h / 2);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_ANGLE, 0);
+
+                    var to = 0;
+                    if (_willContinue)
+                    {
+                        to = (int)(-RECT_BOUND);
+                    }
+                    else
+                    {
+                        to = (int)0;
+                    }
+                    AddAnimation(sb, _twoPageControl.TransitionTranslateTransform, TRANSFORMPROP_Y, to);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_CENTER_Y, h / 2);
+                    AddAnimation(sb, _twoPageControl.TransitionRotateTransform, TRANSFORMPROP_ANGLE, 0);
+
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_TRANSLATE_Y, to);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_CENTER_Y, h / 2);
+                    AddAnimation(sb, _twoPageControl.TransitionContainerTransform, TRANSFORMPROP_ROTATION, 0);
+                    sb.Begin();
+
+                    if (_willContinue)
+                    {
+                        _swipeBottomHandler();
+                    }
+                }
+            }
+
+            //_isDirectionSet = false;
+            
+        }
+
+        private void StoryBoardAnimationCompleted(object sender, object e)
+        {
+            // Reset
+            _twoPageControl.Page2TranslateTransform.X = 0;
+            _twoPageControl.PageAreaGrid.Opacity = 0;
+            _twoPageControl.TransitionGrid.Opacity = 0;
+        }
+
+        private static void AddAnimation(Storyboard sb, DependencyObject dob, string path, double to)
+        {
+            var da = new DoubleAnimation();
+            Storyboard.SetTarget(da, dob);
+            Storyboard.SetTargetProperty(da, path);
+            da.To = to;
+            da.Duration = TimeSpan.FromSeconds(.2);
+            sb.Children.Add(da);
+        }
+
+        private void ManipulationGrid_ManipulationCancel()
+        {
+            _manipulationCancel = true;
+        }
+
+        public void SetPageIndex(uint index)
+        {
+            _currPageIndex = index;
+        }
+        
+        public void SetPageTotal(uint pageTotal)
+        {
+            _totalPages = pageTotal;
+        }
+
+        private void DetectPageTurnDirection(Point position)
+        {
+            bool isPageTurnNext = true;
+
+            if (_isHorizontalSwipeEnabled)
+            {
+                var midpoint = _targetSize.Width * 0.5;
+
+                if (position.X < midpoint)
+                {
+                    // Turn page backwards
+                    isPageTurnNext = false;
+                }
+                // else, Turn page forward
+            }
+            else
+            {
+                var midpoint = _targetSize.Height * 0.5;
+
+                if (position.Y < midpoint)
+                {
+                    // Turn page backwards
+                    isPageTurnNext = false;
+                }
+            }
+
+            _isOnGridFirstHalf = !isPageTurnNext;
+
+            if (_isReverse)
+            {
+                isPageTurnNext = !isPageTurnNext;
+            }
+
+            _swipeDirectionHandler(isPageTurnNext);
+        }
+
+        private bool DetectCanTurnPage(Point currentPosition)
+        {
+            bool canTurnPage = true;
+            if (_isHorizontalSwipeEnabled)
+            {
+                //forward
+                var midpoint = _targetSize.Width * 0.5;
+                if (_startPoint.X > midpoint)
+                {
+                    if (!_isReverse)
+                    {
+                        if (_currPageIndex == _totalPages - 1)
+                        {
+                            canTurnPage = false;
+                        }
+                    }
+                    else
+                    {
+                        if (_currPageIndex == 0)
+                        {
+                            canTurnPage = false;
+                        }
+                    }
+                }
+                //back
+                else
+                {
+                    if (!_isReverse)
+                    {
+                        if (_currPageIndex == 0)
+                        {
+                            canTurnPage = false;
+                        }
+                    }
+                    else
+                    {
+                        if (_currPageIndex == _totalPages - 1)
+                        {
+                            canTurnPage = false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var midpoint = _targetSize.Height * 0.5;
+                //upward
+                if (_startPoint.Y > midpoint)
+                {
+                    if (!_isReverse)
+                    {
+                        if (_currPageIndex == _totalPages - 1)
+                        {
+                            canTurnPage = false;
+                        }
+                    }
+                    else
+                    {
+                        if (_currPageIndex == 0)
+                        {
+                            canTurnPage = false;
+                        }
+                    }
+                }
+                //back
+                else
+                {
+                    if (!_isReverse)
+                    {
+                        if (_currPageIndex == 0)
+                        {
+                            canTurnPage = false;
+                        }
+                    }
+                    else
+                    {
+                        if (_currPageIndex == _totalPages - 1)
+                        {
+                            canTurnPage = false;
+                        }
+                    }
+                }
+            }
+
+            return canTurnPage;
+        }
+
+        private bool DetectPageBounds()
+        {
+            // TODO:
+
+            return true;
+        }
+
     }
 }

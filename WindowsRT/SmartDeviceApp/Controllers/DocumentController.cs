@@ -255,6 +255,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     PdfPageRenderOptions options = new PdfPageRenderOptions();
                     double dpiScaleFactor = ImageConstant.GetDpiScaleFactor();
+
                     if (dpiScaleFactor > 1.0)
                     {
                         options.DestinationWidth = (uint)(pdfPage.Size.Width / dpiScaleFactor);
