@@ -878,7 +878,7 @@ namespace SmartDeviceApp.Controllers
                     if (updateValues)
                     {
                         bool newBookletValue = false;
-                        UpdateConstraintsBasedOnBooklet(newBookletValue, true);
+                        //UpdateConstraintsBasedOnBooklet(newBookletValue, true);
                         bookletPrintSetting.Value = newBookletValue;
                         printSettings.Booklet = newBookletValue;
                     }
