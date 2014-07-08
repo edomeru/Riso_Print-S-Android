@@ -878,7 +878,7 @@ namespace SmartDeviceApp.Controllers
                     if (updateValues)
                     {
                         bool newBookletValue = false;
-                        UpdateConstraintsBasedOnBooklet(newBookletValue, true);
+                        //UpdateConstraintsBasedOnBooklet(newBookletValue, true);
                         bookletPrintSetting.Value = newBookletValue;
                         printSettings.Booklet = newBookletValue;
                     }
@@ -1187,18 +1187,18 @@ namespace SmartDeviceApp.Controllers
 
             if (value == (int)FinishingSide.Left || value == (int)FinishingSide.Right)
             {
-                if (currOrientation == (int)Orientation.Landscape && currPunch == (int)Punch.FourHoles)
-                {
-                    if (punchPrintSetting != null)
-                    {
-                        int newPunch = (int)punchPrintSetting.Default;
-                        if (updateValues)
-                        {
-                            punchPrintSetting.Value = newPunch;
-                            printSettings.Punch = newPunch;
-                        }
-                    }
-                }
+                //if (currOrientation == (int)Orientation.Landscape && currPunch == (int)Punch.FourHoles)
+                //{
+                //    if (punchPrintSetting != null)
+                //    {
+                //        int newPunch = (int)punchPrintSetting.Default;
+                //        if (updateValues)
+                //        {
+                //            punchPrintSetting.Value = newPunch;
+                //            printSettings.Punch = newPunch;
+                //        }
+                //    }
+                //}
 
                 if (staplePrintSetting != null)
                 {
@@ -1229,18 +1229,18 @@ namespace SmartDeviceApp.Controllers
             }
             else if (value == (int)FinishingSide.Top)
             {
-                if (currOrientation == (int)Orientation.Portrait && currPunch == (int)Punch.FourHoles)
-                {
-                    if (punchPrintSetting != null)
-                    {
-                        int newPunch = (int)punchPrintSetting.Default;
-                        if (updateValues)
-                        {
-                            punchPrintSetting.Value = newPunch;
-                            printSettings.Punch = newPunch;
-                        }
-                    }
-                }
+                //if (currOrientation == (int)Orientation.Portrait && currPunch == (int)Punch.FourHoles)
+                //{
+                //    if (punchPrintSetting != null)
+                //    {
+                //        int newPunch = (int)punchPrintSetting.Default;
+                //        if (updateValues)
+                //        {
+                //            punchPrintSetting.Value = newPunch;
+                //            printSettings.Punch = newPunch;
+                //        }
+                //    }
+                //}
 
                 if (staplePrintSetting != null)
                 {
@@ -1310,32 +1310,32 @@ namespace SmartDeviceApp.Controllers
 
             if (value == (int)Punch.FourHoles)
             {
-                if (currOrientation == (int)Orientation.Portrait &&
-                currFinishingSide == (int)FinishingSide.Top)
-                {
-                    if (finishingSidePrintSetting != null)
-                    {
-                        int newFinishingSide = (int)finishingSidePrintSetting.Default; // Left
-                        if (updateValues)
-                        {
-                            finishingSidePrintSetting.Value = newFinishingSide;
-                            printSettings.FinishingSide = newFinishingSide;
-                        }
-                    }
-                }
-                else if (currOrientation == (int)Orientation.Landscape &&
-                    currFinishingSide != (int)FinishingSide.Top)
-                {
-                    if (finishingSidePrintSetting != null)
-                    {
-                        int newFinishingSide = (int)FinishingSide.Top;
-                        if (updateValues)
-                        {
-                            finishingSidePrintSetting.Value = newFinishingSide;
-                            printSettings.FinishingSide = newFinishingSide;
-                        }
-                    }
-                }
+                //if (currOrientation == (int)Orientation.Portrait &&
+                //currFinishingSide == (int)FinishingSide.Top)
+                //{
+                //    if (finishingSidePrintSetting != null)
+                //    {
+                //        int newFinishingSide = (int)finishingSidePrintSetting.Default; // Left
+                //        if (updateValues)
+                //        {
+                //            finishingSidePrintSetting.Value = newFinishingSide;
+                //            printSettings.FinishingSide = newFinishingSide;
+                //        }
+                //    }
+                //}
+                //else if (currOrientation == (int)Orientation.Landscape &&
+                //    currFinishingSide != (int)FinishingSide.Top)
+                //{
+                //    if (finishingSidePrintSetting != null)
+                //    {
+                //        int newFinishingSide = (int)FinishingSide.Top;
+                //        if (updateValues)
+                //        {
+                //            finishingSidePrintSetting.Value = newFinishingSide;
+                //            printSettings.FinishingSide = newFinishingSide;
+                //        }
+                //    }
+                //}
 
                 if (currOutputTray == (int)OutputTray.FaceDown)
                 {
