@@ -198,8 +198,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 if (NetworkController.IsConnectedToNetwork)
                 {
-                    content = loader.GetString("IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER") + "\n" + IpAddress + " " +
-                        loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
+                    content = loader.GetString("IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER");
                 }
                 else
                 {
