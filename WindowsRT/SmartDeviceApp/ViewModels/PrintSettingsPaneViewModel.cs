@@ -35,6 +35,7 @@ namespace SmartDeviceApp.ViewModels
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
+        private bool _isEnabled = true;
         private PrintSettingsPaneMode _printSettingsPaneMode;
 
         private ResourceLoader _resourceLoader;
@@ -48,6 +49,18 @@ namespace SmartDeviceApp.ViewModels
              _resourceLoader = new ResourceLoader();
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetPrintSettingsPaneMode(viewMode));
             SetPaneTitle();
+        }
+        
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                }
+            }
         }
 
         public PrintSettingsPaneMode PrintSettingsPaneMode
