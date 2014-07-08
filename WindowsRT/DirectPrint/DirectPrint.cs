@@ -40,6 +40,7 @@ namespace DirectPrint
     {
         public const int PRINT_STATUS_OK = 0;
         public const int PRINT_STATUS_ERROR = 1;
+        public const int PRINT_STATUS_CANCELLED = 2;
 
         private const string PORT_LPR = "515";
         private const string PORT_RAW = "9100";
@@ -198,7 +199,7 @@ namespace DirectPrint
             if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
             if (print_job.cancel_print == 1)
             {
-                triggerCallback(PRINT_STATUS_ERROR);
+                triggerCallback(PRINT_STATUS_CANCELLED);
                 if (socket != null) socket.disconnect();
                 return;
             }
@@ -274,7 +275,7 @@ namespace DirectPrint
 
             if (print_job.cancel_print == 1)
             {
-                triggerCallback(PRINT_STATUS_ERROR);
+                triggerCallback(PRINT_STATUS_CANCELLED);
                 if (socket != null) socket.disconnect();
                 return;
             }
@@ -341,6 +342,12 @@ namespace DirectPrint
                 if (socket != null) socket.disconnect();
                 return;
             }
+            if (print_job.cancel_print == 1)
+            {
+                triggerCallback(PRINT_STATUS_CANCELLED);
+                if (socket != null) socket.disconnect();
+                return;
+            }
 
             //send file data in chunks            
             ulong totalbytes = 0;
@@ -386,6 +393,12 @@ namespace DirectPrint
             if (waitForAck() != 0)
             {
                 triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
+                return;
+            }
+            if (print_job.cancel_print == 1)
+            {
+                triggerCallback(PRINT_STATUS_CANCELLED);
                 if (socket != null) socket.disconnect();
                 return;
             }

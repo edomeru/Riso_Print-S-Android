@@ -102,6 +102,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 OnNavigateToEventHandler();
             }
+            new ViewModelLocator().PrintSettingsViewModel.SetPrintSettingsPaneEnable();
         }
 
         public void OnNavigatedFrom()
@@ -110,6 +111,9 @@ namespace SmartDeviceApp.ViewModels
             {
                 OnNavigateFromEventHandler();
             }
+
+            // Execute select printer box reset tasks
+            new ViewModelLocator().SelectPrinterViewModel.BackToPrintSettings.Execute(null);
         }
 
         public void SetPageAreaGrid(SmartDeviceApp.Controls.TwoPageControl twoPageControl)

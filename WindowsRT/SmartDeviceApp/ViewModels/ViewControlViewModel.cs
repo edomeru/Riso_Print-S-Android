@@ -170,6 +170,8 @@ namespace SmartDeviceApp.ViewModels
 
         private void TogglePane1Execute()
         {
+            var printSettingsPaneViewModel = new ViewModelLocator().PrintSettingsPaneViewModel;
+
             switch (ViewMode)
             {
                 case ViewMode.MainMenuPaneVisible:
@@ -177,7 +179,18 @@ namespace SmartDeviceApp.ViewModels
                         // NOTE: Technically, this is not possible
                         // Close main menu pane first then open right pane
                         ViewMode = ViewMode.FullScreen;
-                        if (ScreenMode == ScreenMode.PrintPreview) ViewMode = ViewMode.RightPaneVisible_ResizedWidth;
+                        if (ScreenMode == ScreenMode.PrintPreview)
+                        {
+                            if (printSettingsPaneViewModel.IsEnabled)
+                            {
+                                ViewMode = ViewMode.RightPaneVisible_ResizedWidth;
+                            }
+                            else
+                            {
+                                DialogService.Instance.ShowError("IDS_ERR_MSG_NO_SELECTED_PRINTER", "IDS_LBL_PRINT_SETTINGS", "IDS_LBL_OK", null);
+                                break;
+                            }
+                        }
                         else ViewMode = ViewMode.RightPaneVisible;
                         _isPane1Visible = true;
                         Messenger.Default.Send<VisibleRightPane>(VisibleRightPane.Pane1);
@@ -186,7 +199,18 @@ namespace SmartDeviceApp.ViewModels
 
                 case ViewMode.FullScreen:
                     {
-                        if (ScreenMode == ScreenMode.PrintPreview) ViewMode = ViewMode.RightPaneVisible_ResizedWidth;
+                        if (ScreenMode == ScreenMode.PrintPreview)
+                        {
+                            if (printSettingsPaneViewModel.IsEnabled)
+                            {
+                                ViewMode = ViewMode.RightPaneVisible_ResizedWidth;
+                            }
+                            else
+                            {
+                                DialogService.Instance.ShowError("IDS_ERR_MSG_NO_SELECTED_PRINTER", "IDS_LBL_PRINT_SETTINGS", "IDS_LBL_OK", null);
+                                break;
+                            }
+                        }
                         else ViewMode = ViewMode.RightPaneVisible;
                         _isPane1Visible = true;
                         Messenger.Default.Send<VisibleRightPane>(VisibleRightPane.Pane1);
