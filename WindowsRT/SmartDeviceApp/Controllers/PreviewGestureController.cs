@@ -173,6 +173,7 @@ namespace SmartDeviceApp.Controllers
                 _control.PointerPressed += OnPointerPressed;
                 _control.PointerReleased += OnPointerReleased;
                 _control.PointerMoved += OnPointerMoved;
+                _control.PointerCaptureLost += OnPointerCaptureLost;
 
                 // Gesture recognizer outputs
                 _gestureRecognizer.Tapped += OnTapped;
@@ -184,6 +185,12 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        private void OnPointerCaptureLost(object sender, PointerRoutedEventArgs e)
+        {
+            if (pointerCount > 0)
+                pointerCount--;
+        }
+
         public void DisableGestures()
         {
             if (_isEnabled)
@@ -192,6 +199,7 @@ namespace SmartDeviceApp.Controllers
                 _control.PointerPressed -= OnPointerPressed;
                 _control.PointerReleased -= OnPointerReleased;
                 _control.PointerMoved -= OnPointerMoved;
+                _control.PointerCaptureLost -= OnPointerCaptureLost;
 
                 // Gesture recognizer outputs
                 _gestureRecognizer.Tapped -= OnTapped;
@@ -309,11 +317,7 @@ namespace SmartDeviceApp.Controllers
         {
             _gestureRecognizer.ProcessDownEvent(args.GetCurrentPoint(_controlReference));
             pointerCount++;
-
-            if (pointerCount > 1)
-                _multipleFingersDetected = true;
-            else
-                _multipleFingersDetected = false;
+            _startPoint = args.GetCurrentPoint((Grid)sender).Position;
             _control.CapturePointer(args.Pointer);
             args.Handled = true;
             
@@ -321,14 +325,16 @@ namespace SmartDeviceApp.Controllers
 
         void OnPointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
-            pointerCount--;
-
+            if(pointerCount > 0)
+                pointerCount--;
+            _control.ReleasePointerCapture(args.Pointer);
             _gestureRecognizer.ProcessUpEvent(args.GetCurrentPoint(_controlReference));
             args.Handled = true;
         }
 
         void OnPointerCanceled(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
+            pointerCount--;
             _gestureRecognizer.CompleteGesture();
             args.Handled = true;
         }
@@ -357,9 +363,6 @@ namespace SmartDeviceApp.Controllers
 
         private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
         {
-            //_twoPageControl.PageAreaGrid.Opacity = 1;
-            //_pageAreaGrid.Opacity = 1;
-            _startPoint = e.Position;
             if (!_multipleFingersDetected)
                 ManipulationGrid_ManipulationStarted(e);
         }
@@ -368,13 +371,31 @@ namespace SmartDeviceApp.Controllers
         {
             //var isSwipe = DetectSwipe(e);
             //if (isSwipe) return;
-            //if (e.)
-            var isScale = DetectScale(e);
+            if (_multipleFingersDetected || _isScaled)
+            {
+                var isScale = DetectScale(e);
 
-            if (DetectTranslate(e, isScale)) return;
+                DetectTranslate(e, isScale);
 
-            if (!_multipleFingersDetected)
-                ManipulationGrid_ManipulationDelta(e);
+                ManipulationGrid_ManipulationCancel();
+            }
+            else 
+            {
+                if (!_isScaled)
+                {
+                    if (e.Delta.Scale != 1.0f)
+                    {
+                        Normalize();
+                    }
+                    ManipulationGrid_ManipulationDelta(e);
+                }
+                else
+                {
+                    ManipulationGrid_ManipulationCancel();
+                }
+                
+            }
+
         }
 
         //private bool DetectSwipe(ManipulationUpdatedEventArgs e)
@@ -1303,7 +1324,8 @@ namespace SmartDeviceApp.Controllers
             if (_isHorizontalSwipeEnabled)
             {
                 //forward
-                if (currentPosition.X - _startPoint.X < 0)
+                var midpoint = _targetSize.Width * 0.5;
+                if (_startPoint.X > midpoint)
                 {
                     if (!_isReverse)
                     {
@@ -1321,7 +1343,7 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
                 //back
-                if (currentPosition.X - _startPoint.X > 0)
+                else
                 {
                     if (!_isReverse)
                     {
@@ -1341,8 +1363,9 @@ namespace SmartDeviceApp.Controllers
             }
             else
             {
+                var midpoint = _targetSize.Height * 0.5;
                 //upward
-                if (currentPosition.Y - _startPoint.Y < 0)
+                if (_startPoint.Y > midpoint)
                 {
                     if (!_isReverse)
                     {
@@ -1360,7 +1383,7 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
                 //back
-                if (currentPosition.Y - _startPoint.Y > 0)
+                else
                 {
                     if (!_isReverse)
                     {

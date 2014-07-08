@@ -1110,7 +1110,8 @@ namespace SmartDeviceApp.Controllers
                     else if (enableClearPage)
                     {
                         _printPreviewViewModel.RightBackPageImage.Clear();
-                        _printPreviewViewModel.RightNextPageImage.Clear();
+                        if(_isDuplex)
+                            _printPreviewViewModel.RightNextPageImage.Clear();
                     }
                     _printPreviewViewModel.IsLoadRightBackPageActive = false;
                     _printPreviewViewModel.IsLoadRightNextPageActive = false;
