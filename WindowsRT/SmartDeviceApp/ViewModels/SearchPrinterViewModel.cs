@@ -103,7 +103,7 @@ namespace SmartDeviceApp.ViewModels
                         System.Diagnostics.Debug.WriteLine("No printers found = true");
                         Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
                         System.Diagnostics.Debug.WriteLine("Notrefreshing state");
-                        await DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", ClosePane);
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
                     }
                 }
             }
