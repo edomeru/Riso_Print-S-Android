@@ -5,8 +5,8 @@
     xmlns:local="using:SmartDeviceApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-    
+    mc:Ignorable="d" >
+
     <UserControl.Resources>
         <Style x:Key="STYLE_PageAreaScrollViewer" TargetType="ScrollViewer">
             <Style.Setters>
@@ -40,42 +40,187 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}">
-        <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}"
+    <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}" >
+        <Grid x:Name="manipulationGrid"  ManipulationMode="All"
               HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Grid.RowDefinitions>
-                <RowDefinition x:Name="topPageArea"/>
-                <RowDefinition x:Name="bottomPageArea"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="leftPageArea"/>
-                <ColumnDefinition x:Name="rightPageArea"/>
-            </Grid.ColumnDefinitions>
-            <local:PageControl x:Name="topPage" Grid.Row="0" Grid.Column="1"
-                                Image="{Binding LeftPageImage, ElementName=twoPageControl}"
-                                IsLoadPageActive="{Binding IsLoadLeftPageActive, ElementName=twoPageControl}"/>
-            <local:PageControl x:Name="leftPage" Grid.Row="1" Grid.Column="0"
-                                Image="{Binding LeftPageImage, ElementName=twoPageControl}"
-                                IsLoadPageActive="{Binding IsLoadLeftPageActive, ElementName=twoPageControl}"/>
-            <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
-                                Image="{Binding RightPageImage, ElementName=twoPageControl}"
-                                IsLoadPageActive="{Binding IsLoadRightPageActive, ElementName=twoPageControl}"/>
-            <Line x:Name="horizontalSeparator"
+
+            <!--
+            Background="Salmon"
+            displayAreaGrid - contains FRONT visible pages
+            Background="Blue"
+            -->
+            <Grid x:Name="displayAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}"  Background="{StaticResource BRUSH_Gray1}"
+                  Grid.Row="0" Grid.Column="0">
+                <Grid.Clip>
+                    <RectangleGeometry Rect="0,0,80000,80000">
+                        <RectangleGeometry.Transform>
+                            <TransformGroup>
+                                <TranslateTransform
+                                x:Name="Page1ClipTranslateTransform" />
+                                <RotateTransform
+                                x:Name="Page1ClipRotateTransform" />
+                            </TransformGroup>
+                        </RectangleGeometry.Transform>
+                    </RectangleGeometry>
+                </Grid.Clip>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="topDisplayArea"/>
+                    <RowDefinition x:Name="bottomDisplayArea"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="leftDisplayArea"/>
+                    <ColumnDefinition x:Name="rightDisplayArea"/>
+                </Grid.ColumnDefinitions>
+
+                <local:PageControl x:Name="topDisplay" Grid.Row="0" Grid.Column="1"
+                                   Image="{Binding LeftPageImage, ElementName=twoPageControl}"
+                                   IsLoadPageActive="{Binding IsLoadLeftPageActive, ElementName=twoPageControl}" />
+                <local:PageControl x:Name="leftDisplay"  Grid.Row="1" Grid.Column="0"
+                                   Image="{Binding LeftPageImage, ElementName=twoPageControl}"
+                                   IsLoadPageActive="{Binding IsLoadLeftPageActive, ElementName=twoPageControl}" />
+                <local:PageControl x:Name="rightDisplay" Grid.Row="1" Grid.Column="1"
+                                   Image="{Binding RightPageImage, ElementName=twoPageControl}"
+                                   IsLoadPageActive="{Binding IsLoadRightPageActive, ElementName=twoPageControl}" />
+                                   
+                <Line x:Name="horizontalSeparator"
+                      Grid.Row="0" Grid.Column="0"
+                      Grid.RowSpan="2" Grid.ColumnSpan="2"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      StrokeDashArray="7,5"
+                      X2="{Binding MaxWidth, ElementName=pageAreaGrid}"
+                      Style="{StaticResource STYLE_PageSeparator}" />
+                <Line x:Name="verticalSeparator"
+                      Grid.Row="0" Grid.Column="0"
+                      Grid.RowSpan="2" Grid.ColumnSpan="2"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      StrokeDashArray="7,5"
+                      Y2="{Binding MaxHeight, ElementName=pageAreaGrid}"
+                      Style="{StaticResource STYLE_PageSeparator}" />
+
+                <!--<Border Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.RowSpan="2"
+                        Grid.ColumnSpan="2"
+                        BorderThickness="5"
+                        BorderBrush="DarkBlue"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" />-->
+            </Grid>
+            <!-- displayAreaGrid -->
+
+            <!--
+            pageAreaGrid - contains BACK visible pages (will be full display after transition). will be hidden after transition
+            Background="Yellow"
+            -->
+            <Grid x:Name="pageAreaGrid" Style="{StaticResource STYLE_PageAreaGrid}" Background="{StaticResource BRUSH_Gray1}"
                   Grid.Row="0" Grid.Column="0"
-                  Grid.RowSpan="2" Grid.ColumnSpan="2"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"
-                  StrokeDashArray="7,5"
-                  X2="{Binding MaxWidth, ElementName=pageAreaGrid}"
-                  Style="{StaticResource STYLE_PageSeparator}" />
-            <Line x:Name="verticalSeparator"
+                 Opacity="0">
+                <Grid.Clip>
+                    <RectangleGeometry Rect="0,0,80000,80000">
+                        <RectangleGeometry.Transform>
+                            <TransformGroup>
+                                <TranslateTransform
+                                x:Name="Page2ClipTranslateTransform" />
+                                <RotateTransform
+                                x:Name="Page2ClipRotateTransform" />
+                            </TransformGroup>
+                        </RectangleGeometry.Transform>
+                    </RectangleGeometry>
+                </Grid.Clip>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="topPageArea"/>
+                    <RowDefinition x:Name="bottomPageArea"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="leftPageArea"/>
+                    <ColumnDefinition x:Name="rightPageArea"/>
+                </Grid.ColumnDefinitions>
+
+                <local:PageControl x:Name="topPage" Grid.Row="0" Grid.Column="1"
+                                   Image="{Binding LeftBackPageImage, ElementName=twoPageControl}"
+                                   IsLoadPageActive="{Binding IsLoadLeftBackPageActive, ElementName=twoPageControl}" />
+                <local:PageControl x:Name="leftPage" Grid.Row="1" Grid.Column="0"
+                                   Image="{Binding LeftBackPageImage, ElementName=twoPageControl}"
+                                   IsLoadPageActive="{Binding IsLoadLeftBackPageActive, ElementName=twoPageControl}" />
+                <local:PageControl x:Name="rightPage" Grid.Row="1" Grid.Column="1"
+                                   Image="{Binding RightBackPageImage, ElementName=twoPageControl}"
+                                   IsLoadPageActive="{Binding IsLoadRightBackPageActive, ElementName=twoPageControl}" />
+
+                <!--<Border Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.RowSpan="2"
+                        Grid.ColumnSpan="2"
+                        BorderThickness="5"
+                        BorderBrush="DarkGoldenrod"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" />-->
+            </Grid>
+            <!-- pageAreaGrid -->
+
+            <!--
+            transitionGrid - contains the curling area (which are the next pages)
+             Background="Red"
+            -->
+            <Grid x:Name="transitionGrid" Style="{StaticResource STYLE_PageAreaGrid}" Background="{StaticResource BRUSH_Gray1}"
                   Grid.Row="0" Grid.Column="0"
-                  Grid.RowSpan="2" Grid.ColumnSpan="2"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"
-                  StrokeDashArray="7,5"
-                  Y2="{Binding MaxHeight, ElementName=pageAreaGrid}"
-                  Style="{StaticResource STYLE_PageSeparator}" />
+                  Opacity="0">
+                <Grid.RenderTransform>
+                    <CompositeTransform
+                        x:Name="TransitionGridContainerTransform" />
+                </Grid.RenderTransform>
+
+                
+
+                <Grid.Clip>
+                    <RectangleGeometry Rect="0,0,80000,80000">
+                        <RectangleGeometry.Transform>
+                            <TransformGroup>
+                                <TranslateTransform
+                                    x:Name="TransitionGridClipTranslateTransform" />
+                                <RotateTransform
+                                    x:Name="TransitionGridClipRotateTransform" />
+                            </TransformGroup>
+                        </RectangleGeometry.Transform>
+                    </RectangleGeometry>
+                </Grid.Clip>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="topTransitionArea"/>
+                    <RowDefinition x:Name="bottomTransitionArea"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="leftTransitionArea"/>
+                    <ColumnDefinition x:Name="rightTransitionArea"/>
+                </Grid.ColumnDefinitions>
+
+                <local:PageControl x:Name="topTrans" Grid.Row="0" Grid.Column="1"
+                                   Image="{Binding LeftNextPageImage, ElementName=twoPageControl}"
+                                   IsLoadPageActive="{Binding IsLoadLeftNextPageActive, ElementName=twoPageControl}" />
+                <local:PageControl x:Name="leftTrans" Grid.Row="1" Grid.Column="0"
+                                   Image="{Binding LeftNextPageImage, ElementName=twoPageControl}"
+                                   IsLoadPageActive="{Binding IsLoadLeftNextPageActive, ElementName=twoPageControl}" />
+                <local:PageControl x:Name="rightTrans" Grid.Row="1" Grid.Column="1"
+                                   Image="{Binding RightNextPageImage, ElementName=twoPageControl}"
+                                   IsLoadPageActive="{Binding IsLoadRightNextPageActive, ElementName=twoPageControl}" />
+
+                <!--<Border Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.RowSpan="2"
+                        Grid.ColumnSpan="2"
+                        BorderThickness="5"
+                        BorderBrush="DarkRed"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" />-->
+            </Grid>
+            <!-- transitionGrid -->
+            
         </Grid>
+        <!-- manipulationGrid -->
+
     </ScrollViewer>
+
 </UserControl>

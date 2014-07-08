@@ -180,13 +180,12 @@
                                                           Text="{Binding Name}"
                                                           SubText="{Binding Ip_address}"
                                                           SubTextVisibility="Visible"
-                                                          RightImage="{Binding ImageSource}"
+                                                          RightImage="{Binding IsInPrinterList, Converter={StaticResource PrinterSearchItemButtonImageConverter}}"
                                                           RightButtonVisibility="Visible"
                                                           IconVisibility="Collapsed"
-                                                          SeparatorVisibility="{Binding Converter={StaticResource PrinterSearchItemToSeparatorVisibility}}"
+                                                          SeparatorVisibility="Visible"
                                                           IsListItem="True"
-                                                          PressedColor="{StaticResource BRUSH_Purple1}"
-                                                              />
+                                                          PressedColor="{StaticResource BRUSH_Purple1}"/>                                
                             </Grid>
                         </DataTemplate>
                         

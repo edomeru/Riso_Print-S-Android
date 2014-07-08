@@ -71,6 +71,7 @@
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>
     <conv:PrinterNameToTextConverter x:Key="PrinterNameToTextConverter"/>
+    <conv:PrinterSearchItemButtonImageConverter x:Key="PrinterSearchItemButtonImageConverter"/>
     <conv:PrintJobListToGroupVisibilityConverter x:Key="PrintJobListToGroupVisibilityConverter"/>
     <conv:PrintJobListWidthConverter x:Key="PrintJobListWidthConverter"/>
     <conv:PrintJobResultToImageSourceConverter x:Key="PrintJobResultToImageSourceConverter"/>
@@ -90,7 +91,6 @@
     <conv:SidePaneLineGeometryStartPointConverter x:Key="SidePaneLineGeometryStartPointConverter"/>
     <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     <conv:WidthConverter x:Key="WidthConverter"/>
-    <conv:PrinterSearchItemToSeparatorVisibility x:Key="PrinterSearchItemToSeparatorVisibility"/>
     <conv:BooleanToColor x:Key="BooleanToColor"/>
     <conv:PrintersListWidthConverter x:Key="PrintersListWidthConverter"/>
     <conv:SidePanesHeightConverter x:Key="SidePanesHeightConverter"/>

@@ -261,6 +261,24 @@ namespace SmartDeviceApp.Controllers
                                              printSettings.OutputTray));
             }
 
+            //login id
+            builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
+                                             PrintSettingConstant.NAME_VALUE_LOGIN_ID,
+                                             SettingController.Instance.CardId));
+
+            //Secure Print
+            builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO, 
+                                             PrintSettingConstant.NAME_VALUE_SECURE_PRINT,
+                                             printSettings.EnabledSecurePrint ? 1 : 0));
+
+            //Authentication
+            if (printSettings.EnabledSecurePrint)
+            {
+                builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
+                                             PrintSettingConstant.NAME_VALUE_PIN_CODE,
+                                             printSettings.PinCode));
+            }
+
             return builder.ToString();
         }
 

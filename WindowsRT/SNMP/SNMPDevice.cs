@@ -183,8 +183,18 @@ namespace SNMP
                 SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_NEXT_REQUEST, 1, dataMIB);
 
                 byte[] data = message.generateDataForTransmission();
-
-                udpSocket.sendData(data, _ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
+                try
+                {
+                    udpSocket.sendData(data, _ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
+                }
+                catch (Exception e)
+                {
+                    if (snmpControllerDeviceTimeOut != null)
+                    {
+                        snmpControllerDeviceTimeOut(this);
+                    }
+                }
+                
             }
             
         }

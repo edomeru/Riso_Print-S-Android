@@ -50,6 +50,7 @@ namespace SmartDeviceApp.Common.Constants
         // printsettings_authentication.xml Name values
         public const string NAME_VALUE_SECURE_PRINT      = "securePrint";
         public const string NAME_VALUE_PIN_CODE          = "pinCode";
+        public const string NAME_VALUE_LOGIN_ID          = "loginId";
 
         // Paper sizes in portrait mode; in millimeters
         public static Size PAPER_SIZE_A3         = new Size(297.0, 420.0);

@@ -144,10 +144,10 @@ namespace SmartDeviceApp.ViewModels
             PrinterSearchList.Clear();
 
             //check if has data
-            if (IpAddress.Equals("") )
+            if (IpAddress.Equals(""))
             {
-                //error please input data
-                //display error message TODO
+                //display error message
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 return;
             }
 
@@ -198,8 +198,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 if (NetworkController.IsConnectedToNetwork)
                 {
-                    content = loader.GetString("IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER") + "\n" + IpAddress + " " +
-                        loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
+                    content = loader.GetString("IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER");
                 }
                 else
                 {
@@ -219,6 +218,11 @@ namespace SmartDeviceApp.ViewModels
         {
             IsButtonVisible = true;
             IsProgressRingVisible = false;
+        }
+
+        public void handleAddError()
+        {
+            setVisibilities();
         }
 
         public void DisplayMessage(string caption, string content, string buttonText)

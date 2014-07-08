@@ -559,8 +559,8 @@ namespace SmartDeviceApp.Common.Utilities
             CancellationTokenSource cancellationToken)
         {
             // Rotate image if needed
-            if ((finishingSide != (int)FinishingSide.Right) && ((!isRightSide && !isBackSide) || (isRightSide && isBackSide)) ||
-                (finishingSide == (int)FinishingSide.Right) && ((isRightSide && !isBackSide) || (!isRightSide && isBackSide)))
+            if ((finishingSide != (int)FinishingSide.Right) && (!isRightSide) ||
+                (finishingSide == (int)FinishingSide.Right) && (isRightSide))
             {
                 if ((duplexType == (int)Duplex.LongEdge && !isPortrait) ||
                     (duplexType == (int)Duplex.ShortEdge && isPortrait))

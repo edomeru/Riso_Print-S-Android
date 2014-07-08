@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
@@ -25,6 +27,7 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
+            Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 
         public string CardId
@@ -47,6 +50,30 @@ namespace SmartDeviceApp.ViewModels
             {
                 CardIdValueChangedEventHandler(_cardId);
             }
+        }
+
+        private void EnableMode(ViewMode viewMode)
+        {
+            if (viewMode == ViewMode.FullScreen)
+            {
+                if (SettingsGestureGrid != null)
+                {
+                    SettingsGestureGrid.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                if (SettingsGestureGrid != null)
+                {
+                    SettingsGestureGrid.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+            }
+        }
+
+        public Grid SettingsGestureGrid
+        {
+            get;
+            set;
         }
     }
 }

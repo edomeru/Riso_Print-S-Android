@@ -8,6 +8,7 @@ namespace SmartDeviceApp.Common.Enum
 {
     public enum MessageType
     {
-        AddPrinter
+        AddPrinter,
+        RightPageImageUpdated
     }
 }

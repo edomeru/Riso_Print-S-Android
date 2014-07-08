@@ -32,12 +32,14 @@ using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Common.Enum;
+using Windows.Graphics.Display;
 
 
 namespace SmartDeviceApp.Views
 {
     public sealed partial class PrintPreviewPage : PageBase
     {
+        
         public PrintPreviewPage()
         {
             this.InitializeComponent();
@@ -69,8 +71,7 @@ namespace SmartDeviceApp.Views
         private void OnPageAreaLoaded(object sender, RoutedEventArgs e)
         {
             // Initialize gesture controller
-            var twoPageControl = (TwoPageControl)sender;
-            ViewModel.SetPageAreaGrid(twoPageControl);
+            ViewModel.SetPageAreaGrid((TwoPageControl)sender);
         }
     }
 }

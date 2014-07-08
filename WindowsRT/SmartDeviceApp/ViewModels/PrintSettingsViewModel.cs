@@ -188,6 +188,17 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public void SetPrintSettingsPaneEnable()
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            var printSettingsPaneViewModel = new ViewModelLocator().PrintSettingsPaneViewModel;
+            if (PrinterList == null || PrinterList.Count == 0)
+            {
+                printSettingsPaneViewModel.IsEnabled = false;
+            }
+            else printSettingsPaneViewModel.IsEnabled = true;
+        }
+
         private void PrintExecute()
         {
             if (_printerId == -1)
