@@ -53,6 +53,9 @@ namespace SmartDeviceApp.Controllers
         public delegate void SelectedPrinterChangedEventHandler(int printerId);
         private SelectedPrinterChangedEventHandler _selectedPrinterChangedEventHandler;
 
+        public delegate void AddFirstPrinterEventHandler();
+        private AddFirstPrinterEventHandler _addFirstPrinterEventHandler;
+
         // Print button
         public delegate void PrintEventHandler();
         private PrintEventHandler _printEventHandler;
@@ -117,6 +120,7 @@ namespace SmartDeviceApp.Controllers
             _updatePreviewEventHandler = new UpdatePreviewEventHandler(UpdatePreview);
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
+            _addFirstPrinterEventHandler = new AddFirstPrinterEventHandler(FirstPrinterAdded);
             _printEventHandler = new PrintEventHandler(Print);
             _cancelPrintEventHandler = new CancelPrintEventHandler(CancelPrint);
             _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
@@ -158,7 +162,8 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
                 _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
-
+                PrinterController.Instance.AddFirstPrinterEvent += _addFirstPrinterEventHandler;
+                
                 _printSettingsViewModel.ExecutePrintEventHandler += _printEventHandler;
 
                 _printPreviewViewModel.OnNavigateFromEventHandler += _onNavigateFromEventHandler;
@@ -190,9 +195,11 @@ namespace SmartDeviceApp.Controllers
             _printPreviewViewModel.PageAreaGridLoadedEventHandler -= _pageAreaGridLoadedEventHandler;
             PrintSettingsController.Instance.UnregisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             _selectPrinterViewModel.SelectPrinterEvent -= _selectedPrinterChangedEventHandler;
+            PrinterController.Instance.AddFirstPrinterEvent -= _addFirstPrinterEventHandler;
+            
             _printSettingsViewModel.ExecutePrintEventHandler -= _printEventHandler;
             PrinterController.Instance.DeletePrinterItemsEventHandler -= PrinterDeleted;
-
+            
             foreach (CancellationTokenSource token in _cancellationTokenSourceQueue)
             {
                 token.Cancel();
@@ -265,6 +272,15 @@ namespace SmartDeviceApp.Controllers
             {
                 await SetSelectedPrinterAndPrintSettings(printerId);
             }
+        }
+
+        /// <summary>
+        /// Event handler for first printer added
+        /// </summary>
+        public async void FirstPrinterAdded()
+        {
+            await GetDefaultPrinter();
+            if (_resetPrintSettings) _resetPrintSettings = false;
         }
 
         /// <summary>

@@ -221,6 +221,11 @@ namespace SmartDeviceApp.ViewModels
             IsProgressRingVisible = false;
         }
 
+        public void handleAddError()
+        {
+            setVisibilities();
+        }
+
         public void DisplayMessage(string caption, string content, string buttonText)
         {
             DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, new Action(ClosePane));

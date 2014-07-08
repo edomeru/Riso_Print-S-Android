@@ -202,6 +202,10 @@ namespace SmartDeviceApp.Controls
         private void OnButton1Tapped(object sender, TappedRoutedEventArgs e)
         {
             e.Handled = true;
+            if (ViewModel.ScreenMode == ScreenMode.PrintPreview && !(new ViewModelLocator().PrintSettingsPaneViewModel.IsEnabled))
+            {
+                ((ToggleButton)sender).IsChecked = false;
+            }
         }
 
         private void OnButton2Tapped(object sender, TappedRoutedEventArgs e)
