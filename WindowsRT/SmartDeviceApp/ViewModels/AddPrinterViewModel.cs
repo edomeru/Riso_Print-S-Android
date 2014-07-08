@@ -144,10 +144,10 @@ namespace SmartDeviceApp.ViewModels
             PrinterSearchList.Clear();
 
             //check if has data
-            if (IpAddress.Equals("") )
+            if (IpAddress.Equals(""))
             {
-                //error please input data
-                //display error message TODO
+                //display error message
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 return;
             }
 
