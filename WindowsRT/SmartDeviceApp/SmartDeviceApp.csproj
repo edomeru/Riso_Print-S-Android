@@ -128,7 +128,6 @@
     <Compile Include="Common\Enum\PrintSettingType.cs" />
     <Compile Include="Common\Enum\PrintSettingsPaneMode.cs" />
     <Compile Include="Common\Enum\PrintersRightPaneMode.cs" />
-    <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
