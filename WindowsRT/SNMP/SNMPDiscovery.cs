@@ -43,11 +43,10 @@ namespace SNMP
                 communityName = readCommunityName;
                 broadcastAddress = address;
                 requestMIB = new string[]{
-                              SNMPConstants.MIB_GETNEXTOID_LOC,
-                              SNMPConstants.MIB_GETNEXTOID_DESC,
-                              SNMPConstants.MIB_GETNEXTOID_MACADDRESS,
-                              SNMPConstants.MIB_GETNEXTOID_PRINTERMIB, 
-                              SNMPConstants.MIB_GETNEXTOID_NAME};
+                              SNMPConstants.MIB_GETNEXTOID_4HOLES,//ijHardwareConnectStatus should be supported
+                              SNMPConstants.MIB_GETNEXTOID_DESC, //value should be "RISO IS1000C-J" "RISO IS1000C-G" "RISO IS950C-G" to Consider as AZA
+                              SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY//value should be 54 (langPDF)
+                };
             }
         }
 
@@ -89,7 +88,7 @@ namespace SNMP
                     string printerMibOid = printerMibDict[SNMPConstants.KEY_OID];
                     if (printerMibOid != null)
                     {
-                        if (printerMibOid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERMIB))
+                        if (printerMibOid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
                         { 
                             string host = sender.ToString();
                     
@@ -101,10 +100,7 @@ namespace SNMP
                             }
                     
                             snmpDevice.IpAddress = host;
-                            snmpDevice.Location = locDict[SNMPConstants.KEY_VAL];
                             snmpDevice.Description = descDict[SNMPConstants.KEY_VAL];
-                            snmpDevice.MacAddress = macAddressDict[SNMPConstants.KEY_VAL];
-                            snmpDevice.SysName = sysNameDict[SNMPConstants.KEY_VAL];
                             snmpDevice.CommunityName = this.communityName;
                     
                             snmpDevices.Add(snmpDevice);

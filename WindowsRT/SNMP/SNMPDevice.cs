@@ -15,11 +15,8 @@ namespace SNMP
 
 
         private string _ipAddress;
-        private string _sysId;
-        private string _location;
+        private string _langfamily;
         private string _description;
-        private string _macAddress;
-        private string _sysName;
     
         UDPSocket udpSocket;
     
@@ -36,69 +33,65 @@ namespace SNMP
         string[] requestMIBs;
 
         bool callbackCalled = false;
-    
+        bool isSupportedDevice = false;
 	
         private List<string> _capabilitiesList;
         private List<string> capabilityLevelsList;
 
         public SNMPDevice(string host)
         {
+            _ipAddress = host;
+            _capabilitiesList = new List<string>();
+            capabilityLevelsList = new List<string>();
+            tempCapabilities = new List<string>();
+            tempCapabilyLevels = new List<string>();
+        
+            _communityName = null;
+            _communityName = SNMPConstants.DEFAULT_COMMUNITY_NAME; //temp communityName
+        
+            _description = null;
+
+            isSupportedDevice = false;
+
+
+            MIBList = new List<string>()
             {
-                _ipAddress = host;
-                _capabilitiesList = new List<string>();
-                capabilityLevelsList = new List<string>();
-                tempCapabilities = new List<string>();
-                tempCapabilyLevels = new List<string>();
-        
-                _communityName = null;
-                _communityName = SNMPConstants.DEFAULT_COMMUNITY_NAME; //temp communityName
-        
-                _sysId = null;
-                _description = null;
-                _location = null;
-                _macAddress = null;
-                _sysName = null;
-
-
-                MIBList = new List<string>()
-                {
-                    SNMPConstants.MIB_GETNEXTOID_BOOKLET,
-                    SNMPConstants.MIB_GETNEXTOID_STAPLER,
-                    SNMPConstants.MIB_GETNEXTOID_4HOLES,
-                    SNMPConstants.MIB_GETNEXTOID_3HOLES,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
-                    SNMPConstants.MIB_GETNEXTOID_LWPAPER,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
-                };
-                nextMIBIndex = 0;
-                requestMIBs = new string[]
-                {
-                    SNMPConstants.MIB_GETNEXTOID_BOOKLET,
-                    SNMPConstants.MIB_GETNEXTOID_STAPLER,
-                    SNMPConstants.MIB_GETNEXTOID_4HOLES,
-                    SNMPConstants.MIB_GETNEXTOID_3HOLES,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
-                    SNMPConstants.MIB_GETNEXTOID_LWPAPER,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
-                };
+                SNMPConstants.MIB_GETNEXTOID_BOOKLET,
+                SNMPConstants.MIB_GETNEXTOID_STAPLER,
+                SNMPConstants.MIB_GETNEXTOID_4HOLES,
+                SNMPConstants.MIB_GETNEXTOID_3HOLES,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
+                SNMPConstants.MIB_GETNEXTOID_LWPAPER,
+                SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
+                SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
+                SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
+            };
+            nextMIBIndex = 0;
+            requestMIBs = new string[]
+            {
+                SNMPConstants.MIB_GETNEXTOID_BOOKLET,
+                SNMPConstants.MIB_GETNEXTOID_STAPLER,
+                SNMPConstants.MIB_GETNEXTOID_4HOLES,
+                SNMPConstants.MIB_GETNEXTOID_3HOLES,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
+                SNMPConstants.MIB_GETNEXTOID_LWPAPER,
+                SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
+                SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
+                SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
+            };
 
                 
-                udpSocket = new UDPSocket();
-                udpSocket.assignDelegate(receiveData);
+            udpSocket = new UDPSocket();
+            udpSocket.assignDelegate(receiveData);
 
-                udpSocket.assignTimeoutDelegate(timeout);
+            udpSocket.assignTimeoutDelegate(timeout);
         
-            }
         }
 
         ~SNMPDevice()
@@ -117,18 +110,12 @@ namespace SNMP
             tempCapabilities.Clear();
             tempCapabilyLevels.Clear();
     
-
-            if (this._sysName == null)
-                MIBList.Add(SNMPConstants.MIB_GETNEXTOID_NAME);
-
-            if (this._macAddress == null)
-                MIBList.Add(SNMPConstants.MIB_GETNEXTOID_MACADDRESS);
-
-            if (this._location == null)
-                MIBList.Add(SNMPConstants.MIB_GETNEXTOID_LOC);
+            //first, check if device is a supported RISO Printer
 
             if (this._description == null)
                 MIBList.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
+            if (this._langfamily == null)
+                MIBList.Add(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY);
 
             sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT);
         }
@@ -217,17 +204,10 @@ namespace SNMP
                     string oid = dictionary[SNMPConstants.KEY_OID];
                     string val = dictionary[SNMPConstants.KEY_VAL];
 
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_NAME))
-                        this._sysName = val;
-
                     if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
                         this._description = val;
-
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_LOC))
-                        this._location = val;
-
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_MACADDRESS))
-                        this._macAddress = val;
+                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
+                        this._description = val;
 
                     for (int i = 0; i < requestMIBs.Length; i++)
                     {
@@ -296,34 +276,10 @@ namespace SNMP
             set { _ipAddress = value;  }
         }
 
-        public string SysId
-        {
-            get { return _sysId; }
-            set { _sysId = value;  }
-        }
-
-        public string Location
-        {
-            get { return _location; }
-            set { _location = value; }
-        }
-
         public string Description
         {
             get { return _description; }
             set { _description = value; }
-        }
-
-        public string MacAddress
-        {
-            get { return _macAddress; }
-            set { _macAddress = value; }
-        }
-
-        public string SysName
-        {
-            get { return _sysName; }
-            set { _sysName = value; }
         }
 
         public string CommunityName

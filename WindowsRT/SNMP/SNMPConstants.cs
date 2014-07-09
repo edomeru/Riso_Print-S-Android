@@ -49,15 +49,22 @@ namespace SNMP
 
         //create varbind list
         // public const byte MIB_GETNEXTOID_SYSID        "1.3.6.1.2.1.1.2"
-        public const string MIB_RICOH_SYS_PRODUCT_OID   = "1.3.6.1.4.1.367.3.2.1.1.1.5";
-        public const string MIB_GETNEXTOID_LOC          = "1.3.6.1.2.1.1.6";
-        public const string MIB_GETNEXTOID_DESC         = "1.3.6.1.2.1.1.1";
-        public const string MIB_GETNEXTOID_MACADDRESS   = "1.3.6.1.2.1.2.2.1.6";
-        public const string MIB_GETNEXTOID_PRINTERMIB   = "1.3.6.1.2.1.43";
-        public const string MIB_GETNEXTOID_NAME         = "1.3.6.1.2.1.1.5";
+        //public const string MIB_RICOH_SYS_PRODUCT_OID   = "1.3.6.1.4.1.367.3.2.1.1.1.5";
+        //public const string MIB_GETNEXTOID_LOC          = "1.3.6.1.2.1.1.6";        
+        //public const string MIB_GETNEXTOID_MACADDRESS   = "1.3.6.1.2.1.2.2.1.6";
+        //public const string MIB_GETNEXTOID_PRINTERMIB   = "1.3.6.1.2.1.43";
+        //public const string MIB_GETNEXTOID_NAME         = "1.3.6.1.2.1.1.5";
 
-        public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANG       = "1.3.6.1.2.1.43.15.1.1.2";
-        public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANGLEVEL  = "1.3.6.1.2.1.43.15.1.1.3";
+        //check interpreter family, accepted value is 54 (langPDF)
+        public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY = "1.3.6.1.2.1.43.15.1.1.2";
+
+        //hrDeviceDescr check for supported AZA Devices. 
+        //if hrDeviceDescr is not RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G, device is DIO
+        public const string MIB_GETNEXTOID_DESC         = "1.3.6.1.2.1.25.3.2.1.3.1";
+
+
+        //public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANG       = "1.3.6.1.2.1.43.15.1.1.2";
+        //public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANGLEVEL  = "1.3.6.1.2.1.43.15.1.1.3";
 
         //Capabilities
         public const string MIB_GETNEXTOID_SYSID = "1.3.6.1.2.1.1.2"; // sysObjectId
