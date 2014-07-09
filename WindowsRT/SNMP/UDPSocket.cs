@@ -33,6 +33,7 @@ namespace SNMP
 
         private void socket_MessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
+            stopTimer();
             datacounter++;
 
             var r = args.GetDataReader();
@@ -120,10 +121,9 @@ namespace SNMP
         {
             this.isTimerRunning = true;
 
-            //while (this.isTimerRunning)
+            await Task.Delay(timeout * 1000);
+            if (this.isTimerRunning)
             {
-                await Task.Delay(timeout * 1000);
-
                 //HostName host = udpSocket.Information.RemoteAddress;
                 if (writer != null) writer.Dispose();
                 if (outputStream != null) outputStream.Dispose();

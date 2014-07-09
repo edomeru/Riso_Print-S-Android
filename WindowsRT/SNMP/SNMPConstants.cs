@@ -60,7 +60,7 @@ namespace SNMP
 
         //hrDeviceDescr check for supported AZA Devices. 
         //if hrDeviceDescr is not RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G, device is DIO
-        public const string MIB_GETNEXTOID_DESC         = "1.3.6.1.2.1.25.3.2.1.3.1";
+        public const string MIB_GETNEXTOID_DESC = "1.3.6.1.2.1.25.3.2.1.3.1";//1.3.6.1.2.1.25.3.2.1.3.1
 
 
         //public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANG       = "1.3.6.1.2.1.43.15.1.1.2";
