@@ -165,7 +165,7 @@ namespace SmartDeviceApp.Controllers
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();
 
-                _printPreviewViewModel.SetInitialPageIndex(0);
+                _printPreviewViewModel.SetInitialPageIndex(0, _isBooklet);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
                 _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
@@ -385,9 +385,6 @@ namespace SmartDeviceApp.Controllers
                     _printPreviewViewModel.LeftPageActualSize = new Size();
                 }
 
-                // Update page view mode
-                _printPreviewViewModel.PageViewMode = _pageViewMode;
-
                 _printPreviewViewModel.InitializeGestures();
             }
         }
@@ -443,6 +440,8 @@ namespace SmartDeviceApp.Controllers
             {
                 _pageViewMode = PageViewMode.SinglePageView;
             }
+            // Update page view mode
+            _printPreviewViewModel.PageViewMode = _pageViewMode;
 
             // Update page count and page number
             _pagesPerSheet = PreviewPageImageUtility.GetPagesPerSheet(_currPrintSettings.Imposition);
@@ -465,7 +464,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     _currSliderIndex = (int)_previewPageTotal - 1;
                 }
-                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex);
+                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet);
             }
 
             _maxPreviewPageCount = (int)_previewPageTotal;

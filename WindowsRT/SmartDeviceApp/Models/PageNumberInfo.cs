@@ -32,11 +32,59 @@ namespace SmartDeviceApp.Models
         }
 
         public PageNumberInfo(uint rightPageIndex, 
-            uint pageTotal, PageViewMode pageViewMode)
+            uint pageTotal, PageViewMode pageViewMode, bool isBooklet)
         {
             _pageIndex = rightPageIndex;
             _pageTotal = pageTotal;
             _pageViewMode = pageViewMode;
+
+            _pageTotal = getPageCount(isBooklet);
+            getPageIndex();
+        }
+
+        private uint getPageCount(bool isBooklet)
+        {
+            uint count = _pageTotal;
+
+            if (_pageViewMode != Common.Enum.PageViewMode.SinglePageView)
+            {
+                count = getNextIntegerMultiple(_pageTotal, 2);
+
+                if (isBooklet)
+                {
+                    count = getNextIntegerMultiple(_pageTotal, 4);
+                }
+            }
+            
+
+            return count;
+        }
+
+        private uint getNextIntegerMultiple(uint n, int m)
+        {
+            if (m == 0)
+            {
+                return n;
+            }
+
+            if (n % m != 0)
+            {
+                return (uint)(n + (m - n % m));
+            }
+            return n;
+        }
+
+        private void getPageIndex()
+        {
+            if (_pageViewMode != Common.Enum.PageViewMode.SinglePageView)
+            {
+                if (_pageIndex > 1)
+                {
+                    _pageIndex *= 2;
+                    _pageIndex--;
+                }
+                    
+            }
         }
     }
 }
