@@ -114,6 +114,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _isPrintJobsListEmpty = value;
                     RaisePropertyChanged("IsPrintJobsListEmpty");
+                    if (_isPrintJobsListEmpty) IsProgressRingActive = false;
                 }
             }
         }
@@ -252,7 +253,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetViewOrientation(ViewOrientation viewOrientation)
         {
-            IsProgressRingActive = true;
+            if (!IsPrintJobsListEmpty) IsProgressRingActive = true;
             if (viewOrientation == ViewOrientation.Landscape)
             {
                 MaxColumns = MAX_COLUMNS_LANDSCAPE;
