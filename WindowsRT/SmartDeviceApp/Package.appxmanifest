@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="b3cbc7ac-25e8-4dda-a091-231a51997222" Publisher="CN=RISO KAGAKU CORPORATION" Version="1.0.0.0" />
+  <Identity Name="b3cbc7ac-25e8-4dda-a091-231a51997222" Publisher="CN=RISO KAGAKU CORPORATION" Version="0.1.2014.0711" />
   <Properties>
     <DisplayName>SmartDeviceApp</DisplayName>
     <PublisherDisplayName>RISO KAGAKU CORPORATION</PublisherDisplayName>
