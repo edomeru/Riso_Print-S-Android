@@ -284,6 +284,10 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public bool GetPdfOrientation(uint index)
         {
+            if (index >= PageCount)
+            {
+                index = 0;
+            }
             using (PdfPage pdfPage = _document.PdfDocument.GetPage(index))
             {
                 return pdfPage.Size.Width <= pdfPage.Size.Height;
