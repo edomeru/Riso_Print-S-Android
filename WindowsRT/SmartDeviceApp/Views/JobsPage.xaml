@@ -22,7 +22,8 @@
                                        SubTextVisibility="Visible"
                                        Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
                                        Visibility="{Binding Jobs.Count, Converter={StaticResource PrintJobListToGroupVisibilityConverter}}"
-                                       PressedHeaderColor="{StaticResource BRUSH_Purple2}">
+                                       PressedHeaderColor="{StaticResource BRUSH_Purple2}"
+                                       SizeChanged="OnGroupListLoaded">
                 <controls:GroupListControl.Margin>
                     <Thickness Bottom="{StaticResource MARGIN_Default}" Right="{StaticResource MARGIN_Default}"></Thickness>
                 </controls:GroupListControl.Margin>
@@ -37,7 +38,9 @@
                               SelectionMode="None">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <controls:JobListItemControl Width="{Binding Width, ElementName=jobsGroupListControl}"/>
+                                <controls:JobListItemControl Width="{Binding Width, ElementName=jobsGroupListControl}"
+                                                             KeyTextWidth="{Binding Converter={StaticResource JobListItemKeyTextWidthConverter}}"
+                                                             ValueTextWidth="{StaticResource SIZE_JobListValueTextWidth}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -113,5 +116,10 @@
                     ManipulationMode="All"/>
             </Grid>
         </ScrollViewer>
+        <ProgressRing IsActive="{Binding IsProgressRingActive}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Visibility="{Binding IsProgressRingActive, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Style="{StaticResource STYLE_ProgressRing}"/>
     </controls:ViewControl>
 </base:PageBase>

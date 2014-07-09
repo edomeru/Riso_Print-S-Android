@@ -15,24 +15,19 @@ using SmartDeviceApp.Common.Enum;
 namespace SmartDeviceApp.Converters
 {
     public class PrintJobResultToImageSourceConverter : IValueConverter
-    {
-        private const string RESOURCE_IMAGES_LOCATION = "ms-appx:///Resources/Images/";
-        private const string IMAGE_JOB_STATUS_OK = "img_btn_job_status_ok.png";
-        private const string IMAGE_JOB_STATUS_NG = "img_btn_job_status_ng.png";
-        
+    {        
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null || !(value is int)) return null;
             if ((int)value == (int)PrintJobResult.Success) // OK
             {
-                return new Uri(RESOURCE_IMAGES_LOCATION + IMAGE_JOB_STATUS_OK);
+                return "ms-appx:///Resources/Images/img_btn_job_status_ok.png";
             }
             else if ((int)value == (int)PrintJobResult.Error) // NG
             {
-                return new Uri(RESOURCE_IMAGES_LOCATION + IMAGE_JOB_STATUS_NG);
+                return "ms-appx:///Resources/Images/img_btn_job_status_ng.png";
             }
             return null;
-
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

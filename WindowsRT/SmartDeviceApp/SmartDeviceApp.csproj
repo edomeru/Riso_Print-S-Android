@@ -183,6 +183,7 @@
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToColor.cs" />
+    <Compile Include="Converters\JobListItemKeyTextWidthConverter.cs" />
     <Compile Include="Converters\PrinterSearchItemButtonImageConverter.cs" />
     <Compile Include="Converters\PrinterStatusToImageSourceConverter.cs" />
     <Compile Include="Controls\MainMenuKeyControl.xaml.cs">
