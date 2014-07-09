@@ -45,8 +45,8 @@ namespace DirectPrint
         private const string PORT_LPR = "515";
         private const string PORT_RAW = "9100";
 
-        private const int TIMEOUT_CONNECT = 10;
-        private const int TIMEOUT_RECEIVE = 30;
+        private const int TIMEOUT_CONNECT = 10000;
+        private const int TIMEOUT_RECEIVE = 10000;
 
         private const int BUFFER_SIZE = 4096;
 
