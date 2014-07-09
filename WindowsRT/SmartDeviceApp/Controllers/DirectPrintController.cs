@@ -52,6 +52,7 @@ namespace SmartDeviceApp.Controllers
             _printJob.progress_callback = new DirectPrint.progress_callback(UpdateProgress);
             _printJob.progress = 0;
             _printJob.cancel_print = 0;
+            _printJob.username = CreateLoginStringFromPrintSettings(printSettings);
         }
 
         /// <summary>
@@ -282,5 +283,18 @@ namespace SmartDeviceApp.Controllers
             return builder.ToString();
         }
 
+
+        /// <summary>
+        /// Extracts the Login ID from print settings for use as the LPR owner
+        /// </summary>
+        /// <param name="printSettings">print settings</param>
+        /// <returns>converted login ID</returns>
+        private string CreateLoginStringFromPrintSettings(PrintSettings printSettings)
+        {
+            if (SettingController.Instance.CardId != null)
+                return SettingController.Instance.CardId;
+            else
+                return "";
+        }
     }
 }

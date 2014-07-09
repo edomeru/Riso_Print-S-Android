@@ -22,6 +22,7 @@ namespace DirectPrint
         public string job_name;
         //public string filename; // TODO: to be deleted. replaced by file
         public StorageFile file;
+        public string username;
         public string print_settings;
         public string ip_address;
         public directprint_callback callback;
@@ -206,7 +207,7 @@ namespace DirectPrint
 
 
             // CONTROL FILE : Prepare
-            string username = "WinRTユーザ";//"SDA WinRT User";
+            string username = print_job.username;
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
             string cname = String.Format("cfA{0}{1}", 1, HOST_NAME);
             string controlfile = String.Format("H{0}\nP{1}\nJ{2}\nf{3}\nU{4}\nN{5}\n",
