@@ -793,8 +793,7 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            if (!_previewPageImages.ContainsKey(previewPageIndex) &&
-                !(isBackSide && !(_isBooklet || _isDuplex)))
+            if (!_previewPageImages.ContainsKey(previewPageIndex))
             {
                 List<WriteableBitmap> logicalPageImages = null;
                 // Get logical pages only when not for backside of single-page view
