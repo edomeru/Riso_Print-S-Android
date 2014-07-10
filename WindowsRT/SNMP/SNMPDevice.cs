@@ -43,7 +43,7 @@ namespace SNMP
             _communityName = null;
             _communityName = SNMPConstants.DEFAULT_COMMUNITY_NAME; //temp communityName
         
-            _description = null;
+            _description = "";
 
             isSupportedDevice = false;
 
@@ -181,7 +181,7 @@ namespace SNMP
             }
         }
 
-
+        bool supportsMultiFunctionFinisher = false;
         private void receiveData(HostName sender, byte[] responsedata)
         {
             System.Diagnostics.Debug.WriteLine("SNMPDeviice Receive Data for ip: ");
@@ -190,8 +190,7 @@ namespace SNMP
     
             if (response != null)
             {
-                List<Dictionary<string,string>> values = response.extractOidAndValues();
-                bool supportsMultiFunctionFinisher = false;
+                List<Dictionary<string,string>> values = response.extractOidAndValues();               
 
                 //individually send snmp requests
                 if (values.Count == 1)
@@ -201,79 +200,42 @@ namespace SNMP
                     string val = dictionary[SNMPConstants.KEY_VAL];
 
                     if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
+                    {
                         supportsMultiFunctionFinisher = true;
+                    }
+                    else
                     if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
-                        this._description = val;
+                    {
+                        this.Description = val;
+                    }
+                    else
                     if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
-                        this._langfamily = (byte)val[0];
+                    {
+                        this._langfamily = 54;// (byte)val[0];
+                    }
+
 
                     if (supportsMultiFunctionFinisher && this._langfamily == 54)
                     {
                         //supported RISO printer
-                        //endRetrieveCapabilitiesSuccess();
+                        //AZA: RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G
+                        if (this.Description.Equals("RISO IS1000C-J") ||
+                            this.Description.Equals("RISO IS1000C-G") ||
+                            this.Description.Equals("RISO IS950C-G"))
+                        {
+                            endRetrieveCapabilitiesSuccess();
+                        }
+                        
                         return;
                     }
-                }
-                else
-                //expect 3 values for confirm mib
-                if (values.Count == RISODeviceMIB.Count())//
-                {
-                    for (int i = 0; i < RISODeviceMIB.Count(); i++)
-                    {
-                        Dictionary<string, string> dictionary = values[i];
-                        string oid = dictionary[SNMPConstants.KEY_OID];
-                        string val = dictionary[SNMPConstants.KEY_VAL];
-
-                        if (i == 0)
-                            supportsMultiFunctionFinisher = true;
-                        //if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
-                        if (i == 1)
-                            this._description = val;
-                        //if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
-                        if (i == 2)
-                            this._langfamily = (byte)val[0];
-                    }
-
-                    //verify RISO device
-                    if (supportsMultiFunctionFinisher && this._langfamily == 54)
-                    {
-                        //desc value should be "RISO IS1000C-J" "RISO IS1000C-G" "RISO IS950C-G" to Consider as AZA
-                        if (this._description != null &&
-                            (this._description == "RISO IS1000C-J" || 
-                            this._description == "RISO IS1000C-JG" ||
-                            this._description == "RISO IS950C-G"))
-                        {
-                            //AZA PRINTER
-                        }
-                        else
-                        {
-                            //DIO PRINTER
-                        }
-                        isSupportedDevice = true;
-
-                        //from here, confirm capabilities
-                        //sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, capabilityMIB.ToArray());
-                    }
-
-                    endRetrieveCapabilitiesSuccess();
                 }
                 else if (values.Count == capabilityMIB.Count()) //retrieve capabilities
                 {
 
-
-
-                    endRetrieveCapabilitiesSuccess();
                 }
-                else
-                {
-                    endRetrieveCapabilitiesFailed();
-                }
+  
+            }
 
-                               
-            }
-            else {
-                this.endRetrieveCapabilitiesFailed();
-            }
         }
 
         private void timeout(HostName sender, byte[] responsedata)
@@ -286,14 +248,6 @@ namespace SNMP
                 if (snmpControllerDeviceCallBack != null)
                 {
                     //for testing
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
                     snmpControllerDeviceCallBack(this);
                 } 
                 if (nextMIBIndex >= RISODeviceMIB.Count && !callbackCalled)
