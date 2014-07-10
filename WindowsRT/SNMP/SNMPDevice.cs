@@ -89,10 +89,15 @@ namespace SNMP
             System.Diagnostics.Debug.WriteLine(_ipAddress);
     
             //first, check if device is a supported RISO Printer
+            /*
+            RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
+            RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
+            RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
+             */
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_4HOLES);
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY);
-
+ 
             //check if supported printer
             sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, RISODeviceMIB.ToArray());
         }
@@ -136,18 +141,42 @@ namespace SNMP
 
         private void sendData(byte timeout, string[] dataMIB)
         {
-            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_NEXT_REQUEST, 1, dataMIB);
-
-            byte[] data = message.generateDataForTransmission();
-            try
+            bool bulk = false;
+            if (!bulk)
             {
-                udpSocket.sendData(data, _ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
-            }
-            catch (Exception e)
-            {
-                if (snmpControllerDeviceTimeOut != null)
+                for (int i = 0; i < dataMIB.Length; i++)
                 {
-                    snmpControllerDeviceTimeOut(this);
+                    string[] strdata = { dataMIB[i] };
+                    SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_REQUEST, 1, strdata);
+
+                    byte[] data = message.generateDataForTransmission();
+                    try
+                    {
+                        udpSocket.sendData(data, _ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
+                    }
+                    catch (Exception e)
+                    {
+                        if (snmpControllerDeviceTimeOut != null)
+                        {
+                            snmpControllerDeviceTimeOut(this);
+                        }
+                    }
+                }
+            }  else { 
+                //TODO: not working
+                SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_REQUEST, 1, dataMIB);
+
+                byte[] data = message.generateDataForTransmission();
+                try
+                {
+                    udpSocket.sendData(data, _ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
+                }
+                catch (Exception e)
+                {
+                    if (snmpControllerDeviceTimeOut != null)
+                    {
+                        snmpControllerDeviceTimeOut(this);
+                    }
                 }
             }
         }
@@ -164,6 +193,28 @@ namespace SNMP
                 List<Dictionary<string,string>> values = response.extractOidAndValues();
                 bool supportsMultiFunctionFinisher = false;
 
+                //individually send snmp requests
+                if (values.Count == 1)
+                {
+                    Dictionary<string, string> dictionary = values[0];
+                    string oid = dictionary[SNMPConstants.KEY_OID];
+                    string val = dictionary[SNMPConstants.KEY_VAL];
+
+                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
+                        supportsMultiFunctionFinisher = true;
+                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
+                        this._description = val;
+                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
+                        this._langfamily = (byte)val[0];
+
+                    if (supportsMultiFunctionFinisher && this._langfamily == 54)
+                    {
+                        //supported RISO printer
+                        //endRetrieveCapabilitiesSuccess();
+                        return;
+                    }
+                }
+                else
                 //expect 3 values for confirm mib
                 if (values.Count == RISODeviceMIB.Count())//
                 {
@@ -184,12 +235,13 @@ namespace SNMP
                     }
 
                     //verify RISO device
-                    //if (supportsMultiFunctionFinisher && this._langfamily == 54)
+                    if (supportsMultiFunctionFinisher && this._langfamily == 54)
                     {
                         //desc value should be "RISO IS1000C-J" "RISO IS1000C-G" "RISO IS950C-G" to Consider as AZA
-                        if (this._description == "RISO IS1000C-J" || 
+                        if (this._description != null &&
+                            (this._description == "RISO IS1000C-J" || 
                             this._description == "RISO IS1000C-JG" ||
-                            this._description == "RISO IS950C-G")
+                            this._description == "RISO IS950C-G"))
                         {
                             //AZA PRINTER
                         }
@@ -200,8 +252,10 @@ namespace SNMP
                         isSupportedDevice = true;
 
                         //from here, confirm capabilities
-                        sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, capabilityMIB.ToArray());
+                        //sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, capabilityMIB.ToArray());
                     }
+
+                    endRetrieveCapabilitiesSuccess();
                 }
                 else if (values.Count == capabilityMIB.Count()) //retrieve capabilities
                 {

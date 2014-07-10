@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace SNMP
                     //SNMPVariable *varValue = [SNMPVariable snmpVariableNilofType:SNMP_NULL];
                     SNMPVariable varValue = new SNMPVariable(SNMPConstants.SNMP_NULL);
                     //SNMPVariable *var = [SNMPVariable snmpVariableofType:SNMP_SEQUENCE withSNMPObjects:varOid, varValue, nil];
-                    SNMPVariable var = new SNMPVariable(SNMPConstants.SNMP_SEQUENCE,varOid,varValue);
+                    SNMPVariable var = new SNMPVariable(SNMPConstants.SNMP_SEQUENCE, varOid, varValue);
                     //[_varbindSequences addObject:var];
                     _varbindSequences.Add(var);
                 }
@@ -362,44 +363,53 @@ namespace SNMP
         public byte[] convertOidToNSdata(string oid)
         {
             //NSMutableData *data = [[NSMutableData alloc] init];
-            MemoryStream data = new MemoryStream();
+            MemoryStream stream = new MemoryStream();
+            using (BinaryWriter data = new BinaryWriter(stream)){    
+                //NSArray *elemList = [oid componentsSeparatedByString:SNMP_DOTTERMINATOR_VALUE];
+                string[] elemList = oid.Split(SNMPConstants.SNMP_DOTTERMINATOR_VALUE);//Regex.Split(oid, "("+SNMPConstants.SNMP_DOTTERMINATOR_VALUE+")");
     
-            //NSArray *elemList = [oid componentsSeparatedByString:SNMP_DOTTERMINATOR_VALUE];
-            string[] elemList = oid.Split(SNMPConstants.SNMP_DOTTERMINATOR_VALUE);//Regex.Split(oid, "("+SNMPConstants.SNMP_DOTTERMINATOR_VALUE+")");
+                //int firstElement = [[elemList objectAtIndex:0] intValue];
+                int firstElement = int.Parse(elemList[0]);
     
-            //int firstElement = [[elemList objectAtIndex:0] intValue];
-            int firstElement = int.Parse(elemList[0]);
+                //int firstByte = 40 * firstElement + [[elemList objectAtIndex:1] intValue];
+                int firstByte = 40 * firstElement + int.Parse(elemList[1]);
     
-            //int firstByte = 40 * firstElement + [[elemList objectAtIndex:1] intValue];
-            int firstByte = 40 * firstElement + int.Parse(elemList[1]);
+                //[data appendBytes:&firstByte length:1];
+                data.Write((byte)firstByte);
     
-            //[data appendBytes:&firstByte length:1];
-            data.WriteByte((byte)firstByte);
-    
-            //for (int i = 2; i < [elemList count]; i++)
-            for (int i = 2; i < elemList.Length; i++)
-            {
-                //int value = [[elemList objectAtIndex:i] intValue];
-                int value = int.Parse(elemList[i]);
+                //for (int i = 2; i < [elemList count]; i++)
+                for (int i = 2; i < elemList.Length; i++)
+                {
+                    //int value = [[elemList objectAtIndex:i] intValue];
+                    int value = int.Parse(elemList[i]);
         
-                if (value < 0x80)
-                {
-                    //[data appendBytes:&value length:1];
-                    data.WriteByte((byte)value);
+                    byte[] tempbyte = BEREncode(value);
+                    data.Write(tempbyte);
+
                 }
-                else
-                {
-                    int first = 0x80 + (value / 0x80);
-                    int second = (value % 0x80);
-                    //[data appendBytes:&first length:1];
-                    data.WriteByte((byte)first);
-                    //[data appendBytes:&second length:1];
-                    data.WriteByte((byte)second);
-                }
+                data.Flush();
             }
     
 	        //return data;
-            return data.ToArray();
+            return stream.ToArray();
+        }
+
+        private byte[] BEREncode(int value)
+        {
+            List<byte> buffer = new List<byte>();
+            while (value != 0)
+            {
+                byte[] b = BitConverter.GetBytes(value);
+                // set high bit on each byte we are processing
+                if ((b[0] & 0x80) == 0) b[0] |= 0x80;
+                buffer.Insert(0, b[0]);
+                value >>= 7; // shift value by 7 bits to the right
+            }
+            // Almost done. Clear high bit in the last byte
+            buffer[buffer.Count - 1] = (byte)(buffer[buffer.Count - 1] & ~0x80);
+            byte[] result = buffer.ToArray();
+
+            return result;
         }
 
         //- (NSString *) convertNSDataToOid:(NSData *)data
