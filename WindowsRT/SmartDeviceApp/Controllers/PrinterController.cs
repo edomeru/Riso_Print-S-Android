@@ -428,7 +428,7 @@ namespace SmartDeviceApp.Controllers
             return true;
         }
 
-        private async void handleAddPrinterStatus(string ip, string name, bool isOnline, List<string> capabilitesList)
+        private async void handleAddPrinterStatus(string ip, string name, bool isOnline, bool isSupported, List<string> capabilitesList)
         {
             //check if viewmode is rightpanevisible
             var viewControl = new ViewModelLocator().ViewControlViewModel;
@@ -530,7 +530,7 @@ namespace SmartDeviceApp.Controllers
                             }
 
                             _printerListTemp = _printerList;
-                            _addPrinterViewModel.handleAddIsSuccessful(true);
+                            _addPrinterViewModel.handleAddIsSuccessful(isSupported);
 
                             //if added from printer search
                             if (PrinterSearchList.Count > 0)

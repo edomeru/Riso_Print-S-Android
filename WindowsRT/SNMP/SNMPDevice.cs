@@ -29,7 +29,7 @@ namespace SNMP
         string[] capabilityMIB;//MIB for device capabilities
 
         bool callbackCalled = false;
-        bool isSupportedDevice = false;
+        public bool isSupportedDevice = false;
 	
         private List<string> _capabilitiesList;
         private List<string> capabilityLevelsList;
@@ -89,11 +89,6 @@ namespace SNMP
             System.Diagnostics.Debug.WriteLine(_ipAddress);
     
             //first, check if device is a supported RISO Printer
-            /*
-            RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
-            RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
-            RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
-             */
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_4HOLES);
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY);
@@ -134,10 +129,6 @@ namespace SNMP
                 callbackCalled = true;
             }
         }
-
-        //void didNotReceiveData()
-        //{
-        //}
 
         private void sendData(byte timeout, string[] dataMIB)
         {
@@ -223,11 +214,12 @@ namespace SNMP
                             this.Description.Equals("RISO IS1000C-G") ||
                             this.Description.Equals("RISO IS950C-G"))
                         {
-                            //endRetrieveCapabilitiesSuccess();
-                            endRetrieveCapabilitiesFailed();
+                            isSupportedDevice = true;
+                            //
+                            //endRetrieveCapabilitiesFailed();
                         }
-                        
-                        return;
+
+                        endRetrieveCapabilitiesSuccess();
                     }
                 }
                 else if (values.Count == capabilityMIB.Count()) //retrieve capabilities
@@ -258,17 +250,11 @@ namespace SNMP
                 }
                 else
                 {
-                    /*
                     if (!callbackCalled)
                     {
-                        nextMIBIndex++;
-                        if (nextMIBIndex < RISODeviceMIB.Count)
-                            sendData((byte)(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT/RISODeviceMIB.Count));
-                        else
-                            if (snmpControllerDeviceTimeOut != null)
-                                snmpControllerDeviceTimeOut(this);
+                        if (snmpControllerDeviceTimeOut != null)
+                            snmpControllerDeviceTimeOut(this);
                     }
-                     * */
                 }
             }
         }

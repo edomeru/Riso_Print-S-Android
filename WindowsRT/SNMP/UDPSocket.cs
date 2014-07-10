@@ -112,7 +112,8 @@ namespace SNMP
                 writer.WriteBytes(data);
                 await writer.StoreAsync();
             }
-            //startTimer(timeout, host);
+            
+            startTimer(timeout, host);
         }
 
 
@@ -121,7 +122,7 @@ namespace SNMP
         {
             this.isTimerRunning = true;
 
-            await Task.Delay(timeout * 20000);
+            await Task.Delay(timeout * 1000);
             if (this.isTimerRunning)
             {
                 //HostName host = udpSocket.Information.RemoteAddress;
