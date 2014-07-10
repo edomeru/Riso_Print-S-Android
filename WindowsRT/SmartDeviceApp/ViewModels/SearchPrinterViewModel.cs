@@ -143,8 +143,12 @@ namespace SmartDeviceApp.ViewModels
             get { return this._willRefresh; }
             set
             {
-                _willRefresh = value;
-                OnPropertyChanged("WillRefresh");
+                if (_willRefresh != value)
+                {
+                    _willRefresh = value;
+                    if (_willRefresh) PrinterSearchRefresh();
+                    OnPropertyChanged("WillRefresh");                    
+                }
             }
         }
 
@@ -196,28 +200,12 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public ICommand PrinterSearchRefreshed
-        {
-            get
-            {
-                if (_printerSearchRefreshed == null)
-                {
-                    _printerSearchRefreshed = new RelayCommand(
-                        () => PrinterSearchRefreshedExecute(),
-                        () => true
-                    );
-                }
-                return _printerSearchRefreshed;
-            }
-        }
-
-        private void PrinterSearchRefreshedExecute()
+        private void PrinterSearchRefresh()
         {
             if (NetworkController.IsConnectedToNetwork)
             {
                 NoPrintersFound = false;
-                SearchPrinterHandler();
-
+                SearchPrinterHandler();                
             }
             else
             {
