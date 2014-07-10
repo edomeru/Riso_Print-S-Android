@@ -223,7 +223,8 @@ namespace SNMP
                             this.Description.Equals("RISO IS1000C-G") ||
                             this.Description.Equals("RISO IS950C-G"))
                         {
-                            endRetrieveCapabilitiesSuccess();
+                            //endRetrieveCapabilitiesSuccess();
+                            endRetrieveCapabilitiesFailed();
                         }
                         
                         return;

@@ -112,7 +112,7 @@ namespace SNMP
                 writer.WriteBytes(data);
                 await writer.StoreAsync();
             }
-            startTimer(timeout, host);
+            //startTimer(timeout, host);
         }
 
 

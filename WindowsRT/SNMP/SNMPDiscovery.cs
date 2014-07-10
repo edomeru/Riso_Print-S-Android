@@ -43,9 +43,9 @@ namespace SNMP
                 communityName = readCommunityName;
                 broadcastAddress = address;
                 requestMIB = new string[]{
-                              SNMPConstants.MIB_GETNEXTOID_4HOLES,//ijHardwareConnectStatus should be supported
+                              //SNMPConstants.MIB_GETNEXTOID_4HOLES,//ijHardwareConnectStatus should be supported
                               SNMPConstants.MIB_GETNEXTOID_DESC, //value should be "RISO IS1000C-J" "RISO IS1000C-G" "RISO IS950C-G" to Consider as AZA
-                              SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY//value should be 54 (langPDF)
+                              //SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY//value should be 54 (langPDF)
                 };
             }
         }
@@ -53,7 +53,7 @@ namespace SNMP
         public void startDiscover()
         {
             snmpDevices.Clear();
-            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1,communityName,SNMPConstants.SNMP_GET_NEXT_REQUEST,1,requestMIB);
+            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1,communityName,SNMPConstants.SNMP_GET_REQUEST,1,requestMIB);
     
             byte[] data = message.generateDataForTransmission();
     
@@ -79,16 +79,11 @@ namespace SNMP
                 if (values.Count() == requestMIB.Count())
                 {
                      
-                    Dictionary<string,string> locDict = values[0];   
-                    Dictionary<string,string> descDict = values[1];
-                    Dictionary<string,string> macAddressDict = values[2];
-                    Dictionary<string,string> printerMibDict = values[3];
-                    Dictionary<string,string> sysNameDict = values[4];
-            
-                    string printerMibOid = printerMibDict[SNMPConstants.KEY_OID];
+                    Dictionary<string,string> identifier = values[0];
+
+                    string printerMibOid = identifier[SNMPConstants.KEY_OID];
                     if (printerMibOid != null)
                     {
-                        if (printerMibOid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
                         { 
                             string host = sender.ToString();
                     
@@ -100,8 +95,8 @@ namespace SNMP
                             }
                     
                             snmpDevice.IpAddress = host;
-                            snmpDevice.Description = descDict[SNMPConstants.KEY_VAL];
                             snmpDevice.CommunityName = this.communityName;
+                            snmpDevice.Description = identifier[SNMPConstants.KEY_VAL];
                     
                             snmpDevices.Add(snmpDevice);
 
