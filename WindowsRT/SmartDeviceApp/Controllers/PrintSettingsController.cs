@@ -1042,32 +1042,7 @@ namespace SmartDeviceApp.Controllers
                         printSettings.Punch = (int)Punch.Off;
                     }
                 }
-                if (outputTrayPrintSetting != null)
-                {
-                    PrintSettingOption faceDownTray =
-                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
-                    if (faceDownTray != null)
-                    {
-                        faceDownTray.IsEnabled = false;
-                    }
-                    PrintSettingOption stackingTray =
-                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
-                    if (stackingTray != null)
-                    {
-                        stackingTray.IsEnabled = false;
-                    }
-                    PrintSettingOption topTray =
-                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Top);
-                    if (topTray != null)
-                    {
-                        topTray.IsEnabled = false;
-                    }
-                    if (updateValues)
-                    {
-                        outputTrayPrintSetting.Value = (int)OutputTray.Auto;
-                        printSettings.OutputTray = (int)OutputTray.Auto;
-                    }
-                }
+                
                 if (bookletFinishPrintSetting != null)
                 {
                     bookletFinishPrintSetting.IsEnabled = true;
@@ -1112,27 +1087,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     punchPrintSetting.IsEnabled = true;
                 }
-                if (outputTrayPrintSetting != null)
-                {
-                    PrintSettingOption faceDownTray =
-                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
-                    if (faceDownTray != null)
-                    {
-                        faceDownTray.IsEnabled = true;
-                    }
-                    PrintSettingOption stackingTray =
-                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
-                    if (stackingTray != null)
-                    {
-                        stackingTray.IsEnabled = true;
-                    }
-                    PrintSettingOption topTray =
-                        GetPrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Top);
-                    if (topTray != null)
-                    {
-                        topTray.IsEnabled = true;
-                    }
-                }
+                
                 if (bookletFinishPrintSetting != null)
                 {
                     bookletFinishPrintSetting.IsEnabled = false;
