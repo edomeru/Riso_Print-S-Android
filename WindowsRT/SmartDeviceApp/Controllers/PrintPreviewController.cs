@@ -815,7 +815,7 @@ namespace SmartDeviceApp.Controllers
                     {
                         ApplyPrintSettings(canvasBitmap, _previewPageImageSize,
                             logicalPageImages, logicalPageSize,
-                            previewPageIndex, isRightSide, isBackSide,
+                            previewPageIndex, logicalPageIndex, isRightSide, isBackSide,
                             cancellationToken);
 
                         SendPreviewPageImage(previewPageIndex, false, cancellationToken);
@@ -844,14 +844,15 @@ namespace SmartDeviceApp.Controllers
         /// <param name="cancellationToken">cancellation token</param>
         private void ApplyPrintSettings(WriteableBitmap canvasBitmap,
             Size previewPageSize, List<WriteableBitmap> logicalPageImages, Size logicalPageSize,
-            int previewPageIndex, bool isRightSide, bool isBackSide,
+            int previewPageIndex, int logicalPageIndex, bool isRightSide, bool isBackSide,
             CancellationTokenSource cancellationToken)
         {
             LogUtility.BeginTimestamp("ApplyPrintSettings #" + previewPageIndex);
 
             Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
 
-            bool isPdfPortait = DocumentController.Instance.IsPdfPortrait;
+            bool isPdfPortait = DocumentController.Instance.GetPdfOrientation((uint)logicalPageIndex); 
+
             bool isPreviewPagePortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
                 _currPrintSettings.Orientation);
 
@@ -866,7 +867,7 @@ namespace SmartDeviceApp.Controllers
                     }
 
                     PreviewPageImageUtility.OverlayImagesForImposition(canvasBitmap, previewPageSize,
-                        logicalPageImages, logicalPageSize,
+                        logicalPageImages, logicalPageSize, logicalPageIndex,
                         _currPrintSettings.Orientation, _currPrintSettings.Imposition,
                         _currPrintSettings.ImpositionOrder, _currPrintSettings.ScaleToFit,
                         isPdfPortait, isPreviewPagePortrait, out isPreviewPagePortrait,

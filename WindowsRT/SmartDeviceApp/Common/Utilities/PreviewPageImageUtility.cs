@@ -13,6 +13,7 @@
 using GalaSoft.MvvmLight.Threading;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -321,20 +322,17 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="rotateLeft">true when rotate left is enabled, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
         public static void OverlayImagesForImposition(WriteableBitmap canvasBitmap, Size canvasSize,
-            List<WriteableBitmap> overlayImages, Size overlaySize, int orientation, int imposition,
+            List<WriteableBitmap> overlayImages, Size overlaySize, int logicalPageIndex, int orientation, int imposition,
             int impositionOrder, bool scaleToFit, bool isPdfPortrait, bool isPortrait,
             out bool isImpositionPortrait, CancellationTokenSource cancellationToken)
         {
             // Determine final orientation based on imposition
             int pagesPerSheet = GetPagesPerSheet(imposition);
-            bool rotateLeft = (isPdfPortrait != isPortrait);
+            
+            
             isImpositionPortrait = IsPreviewPagePortrait(orientation, imposition);
 
-            if (rotateLeft)
-            {
-                overlaySize = new Size(overlaySize.Height, overlaySize.Width); // Swap dimensions
-            }
-
+            
             // Compute number of pages per row and column
             int pagesPerRow = 0;
             int pagesPerColumn = 0;
@@ -359,7 +357,7 @@ namespace SmartDeviceApp.Common.Utilities
             double marginBetweenPages = PrintSettingConstant.MARGIN_IMPOSITION_BETWEEN_PAGES * ImageConstant.BASE_DPI;
             Size impositionPageAreaSize = GetImpositionSinglePageAreaSize(canvasSize,
                 pagesPerRow, pagesPerColumn, marginBetweenPages, marginPaper);
-            Size scaledSize = GetScaledSize(impositionPageAreaSize, overlaySize);
+            
 
             // Set initial positions
             double initialOffsetX = 0;
@@ -384,12 +382,20 @@ namespace SmartDeviceApp.Common.Utilities
             int impositionPageIndex = 0;
             double pageImageOffsetX = initialOffsetX;
             double pageImageOffsetY = initialOffsetY;
+            int pageIndex = logicalPageIndex;
             foreach (WriteableBitmap impositionPageBitmap in overlayImages)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
                     return;
                 }
+
+                bool rotateLeft = (DocumentController.Instance.GetPdfOrientation((uint)pageIndex) != isPortrait);
+                pageIndex++;
+
+                
+                Size scaledSize = GetScaledSize(impositionPageAreaSize, overlaySize);
+                
 
                 // Put imposition page image in center of imposition page area
                 double x = marginPaper + pageImageOffsetX;
