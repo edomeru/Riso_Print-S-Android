@@ -460,19 +460,25 @@ namespace SmartDeviceApp.Controllers
                     //get capabilities
                     if (capabilitesList.Count > 0)
                     {
-                        printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true");
-                        // multifunction finisher 2/3 and 2/4 also has staple, so enable stapler when the multifunction finisher is available
-                        printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") || (capabilitesList.ElementAt(2) == "true") || (capabilitesList.ElementAt(3) == "true");
-                        printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true");
-                        printer.EnabledPunchThree = (capabilitesList.ElementAt(3) == "true");
-                        printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true");
-                        //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
-                        printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true");
-                        printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true");
-                        printer.EnabledPaperLW = (capabilitesList.ElementAt(8) == "true");
-                        printer.EnabledFeedTrayOne = (capabilitesList.ElementAt(9) == "true");
-                        printer.EnabledFeedTrayTwo = (capabilitesList.ElementAt(10) == "true");
-                        printer.EnabledFeedTrayThree = (capabilitesList.ElementAt(11) == "true");
+                        try
+                        {
+                            printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true");
+                            // multifunction finisher 2/3 and 2/4 also has staple, so enable stapler when the multifunction finisher is available
+                            printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") || (capabilitesList.ElementAt(2) == "true") || (capabilitesList.ElementAt(3) == "true");
+                            printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true");
+                            printer.EnabledPunchThree = (capabilitesList.ElementAt(3) == "true");
+                            printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true");
+                            //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
+                            printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true");
+                            printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true");
+                            printer.EnabledPaperLW = (capabilitesList.ElementAt(8) == "true");
+                            printer.EnabledFeedTrayOne = (capabilitesList.ElementAt(9) == "true");
+                            printer.EnabledFeedTrayTwo = (capabilitesList.ElementAt(10) == "true");
+                            printer.EnabledFeedTrayThree = (capabilitesList.ElementAt(11) == "true");
+                        } catch (Exception e)
+                        {
+                            LogUtility.LogError(e);
+                        }
                     }
 
                     bool result = await DatabaseController.Instance.InsertPrinter(printer);

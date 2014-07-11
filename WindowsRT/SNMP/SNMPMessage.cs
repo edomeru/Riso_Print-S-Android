@@ -397,18 +397,33 @@ namespace SNMP
         private byte[] BEREncode(int value)
         {
             List<byte> buffer = new List<byte>();
-            while (value != 0)
-            {
-                byte[] b = BitConverter.GetBytes(value);
-                // set high bit on each byte we are processing
-                if ((b[0] & 0x80) == 0) b[0] |= 0x80;
-                buffer.Insert(0, b[0]);
-                value >>= 7; // shift value by 7 bits to the right
-            }
-            // Almost done. Clear high bit in the last byte
-            buffer[buffer.Count - 1] = (byte)(buffer[buffer.Count - 1] & ~0x80);
-            byte[] result = buffer.ToArray();
 
+            if (value < 127)
+            {
+                return new byte[]{(byte)value};
+            }
+
+            try
+            {
+                
+                while (value != 0)
+                {
+                    byte[] b = BitConverter.GetBytes(value);
+                    // set high bit on each byte we are processing
+                    if ((b[0] & 0x80) == 0) b[0] |= 0x80;
+                    buffer.Insert(0, b[0]);
+                    value >>= 7; // shift value by 7 bits to the right
+                }
+                // Almost done. Clear high bit in the last byte
+                buffer[buffer.Count - 1] = (byte)(buffer[buffer.Count - 1] & ~0x80);                
+
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+            byte[] result = buffer.ToArray();
             return result;
         }
 

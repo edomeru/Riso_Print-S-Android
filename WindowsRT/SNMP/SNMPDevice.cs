@@ -92,6 +92,9 @@ namespace SNMP
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_4HOLES);
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY);
+            _capabilitiesList = new List<string>();
+            _capabilitiesList.Clear();
+            capabilityCheckStarted = false;
  
             //check if supported printer
             sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, RISODeviceMIB.ToArray());
@@ -135,23 +138,30 @@ namespace SNMP
             bool bulk = false;
             if (!bulk)
             {
-                for (int i = 0; i < dataMIB.Length; i++)
+                try
                 {
-                    string[] strdata = { dataMIB[i] };
-                    SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_REQUEST, 1, strdata);
+                    for (int i = 0; i < dataMIB.Length; i++)
+                    {
+                        string[] strdata = { dataMIB[i] };
+                        SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_REQUEST, 1, strdata);
 
-                    byte[] data = message.generateDataForTransmission();
-                    try
-                    {
-                        udpSocket.sendData(data, _ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
-                    }
-                    catch (Exception e)
-                    {
-                        if (snmpControllerDeviceTimeOut != null)
+                        byte[] data = message.generateDataForTransmission();
+                        try
                         {
-                            snmpControllerDeviceTimeOut(this);
+                            udpSocket.sendData(data, _ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
+                        }
+                        catch (Exception e)
+                        {
+                            if (snmpControllerDeviceTimeOut != null)
+                            {
+                                snmpControllerDeviceTimeOut(this);
+                            }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    return;
                 }
             }  else { 
                 //TODO: not working
@@ -172,7 +182,8 @@ namespace SNMP
             }
         }
 
-        bool supportsMultiFunctionFinisher = false;
+        private bool capabilityCheckStarted = false;
+        private bool supportsMultiFunctionFinisher = false;
         private void receiveData(HostName sender, byte[] responsedata)
         {
             System.Diagnostics.Debug.WriteLine("SNMPDeviice Receive Data for ip: ");
@@ -190,36 +201,63 @@ namespace SNMP
                     string oid = dictionary[SNMPConstants.KEY_OID];
                     string val = dictionary[SNMPConstants.KEY_VAL];
 
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
+                    if (capabilityCheckStarted)
                     {
-                        supportsMultiFunctionFinisher = true;
-                    }
-                    else
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
-                    {
-                        this.Description = val;
-                    }
-                    else
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
-                    {
-                        this._langfamily = 54;// (byte)val[0];
-                    }
-
-
-                    if (supportsMultiFunctionFinisher && this._langfamily == 54)
-                    {
-                        //supported RISO printer
-                        //AZA: RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G
-                        if (this.Description.Equals("RISO IS1000C-J") ||
-                            this.Description.Equals("RISO IS1000C-G") ||
-                            this.Description.Equals("RISO IS950C-G"))
+                        //check if oid is in capability list
+                        if (oid.StartsWith(capabilityMIB[_capabilitiesList.Count()]))
                         {
-                            isSupportedDevice = true;
-                            //
-                            //endRetrieveCapabilitiesFailed();
+                            //capability is supported
+                            if (val == "1")
+                                this._capabilitiesList.Add("true");
+                            else
+                                this._capabilitiesList.Add("false");
+                        }
+                        else
+                        {
+                            //capability is not supported
+                            this._capabilitiesList.Add("false");
                         }
 
-                        endRetrieveCapabilitiesSuccess();
+                        checkNextCapability();  
+                        //endRetrieveCapabilitiesSuccess();
+
+                    } else {
+                        if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
+                        {
+                            supportsMultiFunctionFinisher = true;
+                        }
+                        else
+                        if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
+                        {
+                            this.Description = val;
+                        }
+                        else
+                        if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
+                        {
+                            this._langfamily = 54;// (byte)val[0];
+                        }
+
+                        if (supportsMultiFunctionFinisher && this._langfamily == 54)
+                        {
+                            //supported RISO printer
+                            //AZA: RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G
+                            if (this.Description.Equals("RISO IS1000C-J") ||
+                                this.Description.Equals("RISO IS1000C-G") ||
+                                this.Description.Equals("RISO IS950C-G"))
+                            {
+                                isSupportedDevice = true;
+
+                                //start actual check capabilities from here
+                                _capabilitiesList = new List<string>();
+                                //check the first one
+                                capabilityCheckStarted = true;
+                                sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, new string[] { capabilityMIB[_capabilitiesList.Count()] });
+                            } 
+                            else
+                            {
+                                //endRetrieveCapabilitiesSuccess();
+                            }                        
+                        }
                     }
                 }
                 else if (values.Count == capabilityMIB.Count()) //retrieve capabilities
@@ -229,6 +267,20 @@ namespace SNMP
   
             }
 
+        }
+
+        private void checkNextCapability()
+        {
+
+            if (_capabilitiesList.Count() < capabilityMIB.Count())
+            {
+                //check the next capability
+                sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, new string[] { capabilityMIB[_capabilitiesList.Count()] });
+            }
+            else
+            {
+                endRetrieveCapabilitiesSuccess();
+            }
         }
 
         private void timeout(HostName sender, byte[] responsedata)
@@ -242,19 +294,16 @@ namespace SNMP
                 {
                     //for testing
                     snmpControllerDeviceCallBack(this);
-                } 
-                if (nextMIBIndex >= RISODeviceMIB.Count && !callbackCalled)
-                {
-                    if (snmpControllerDeviceTimeOut != null)
-                        snmpControllerDeviceTimeOut(this);
                 }
-                else
+
+                if (capabilityCheckStarted && _capabilitiesList.Count() < capabilityMIB.Count())
                 {
-                    if (!callbackCalled)
-                    {
-                        if (snmpControllerDeviceTimeOut != null)
-                            snmpControllerDeviceTimeOut(this);
-                    }
+                    this._capabilitiesList.Add("false");
+                    checkNextCapability();
+                }
+                else if (snmpControllerDeviceTimeOut != null)
+                {
+                    snmpControllerDeviceTimeOut(this);
                 }
             }
         }
