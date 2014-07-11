@@ -84,33 +84,37 @@ namespace SNMP
                     string printerMibOid = identifier[SNMPConstants.KEY_OID];
                     if (printerMibOid != null)
                     {
-                        { 
-                            string host = sender.ToString();
-                    
-                            SNMPDevice snmpDevice = new SNMPDevice(host);
 
-                            if (!FromPrinterSearch) // addition of printer, pass the handlers.
-                            {
-                                snmpDevice.snmpControllerDeviceCallBack = snmpControllerDiscoverCallback;
-                            }
+                        string host = sender.ToString();
                     
-                            snmpDevice.IpAddress = host;
-                            snmpDevice.CommunityName = this.communityName;
-                            snmpDevice.Description = identifier[SNMPConstants.KEY_VAL];
-                    
-                            snmpDevices.Add(snmpDevice);
+                        SNMPDevice snmpDevice = new SNMPDevice(host);
 
-                            snmpDevice.beginRetrieveCapabilities();
-                            if (!FromPrinterSearch)
-                            {
-                                snmpControllerDiscoverTimeOut = null;
-                            }
-                            else // if printer search
+                        if (!FromPrinterSearch) // addition of printer, pass the handlers.
+                        {
+                            snmpDevice.snmpControllerDeviceCallBack = snmpControllerDiscoverCallback;
+                        }
+                    
+                        snmpDevice.IpAddress = host;
+                        snmpDevice.CommunityName = this.communityName;
+                        snmpDevice.Description = identifier[SNMPConstants.KEY_VAL];
+                    
+                        snmpDevices.Add(snmpDevice);
+                        snmpDevice.beginRetrieveCapabilities();
+                        //snmpControllerDiscoverCallback(snmpDevice);
+                        
+                        if (!FromPrinterSearch)
+                        {
+                            snmpControllerDiscoverTimeOut = null;
+                        }
+                        else // if printer search
+                        {
+                            if (snmpDevice.isRISOAZADevice())
                             {
                                 snmpControllerDiscoverCallback(snmpDevice);
                             }
-                            //call callback
                         }
+                        //call callback
+
                     }
 
                  }

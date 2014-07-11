@@ -238,9 +238,7 @@ namespace SNMP
                         {
                             //supported RISO printer
                             //AZA: RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G
-                            if (this.Description.Equals("RISO IS1000C-J") ||
-                                this.Description.Equals("RISO IS1000C-G") ||
-                                this.Description.Equals("RISO IS950C-G"))
+                            if (isRISOAZADevice())
                             {
                                 isSupportedDevice = true;
 
@@ -278,6 +276,13 @@ namespace SNMP
             {
                 endRetrieveCapabilitiesSuccess();
             }
+        }
+
+        public bool isRISOAZADevice()
+        {
+            return this.Description.Equals("RISO IS1000C-J") ||
+                   this.Description.Equals("RISO IS1000C-G") ||
+                   this.Description.Equals("RISO IS950C-G");
         }
 
         private void timeout(HostName sender, byte[] responsedata)
