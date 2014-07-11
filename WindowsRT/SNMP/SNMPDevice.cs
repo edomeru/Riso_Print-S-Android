@@ -15,90 +15,63 @@ namespace SNMP
 
 
         private string _ipAddress;
-        private string _sysId;
-        private string _location;
+        private int _langfamily;
         private string _description;
-        private string _macAddress;
-        private string _sysName;
     
         UDPSocket udpSocket;
-    
-        List<string> tempCapabilities;
-
-        List<string> tempCapabilyLevels;
     
         private string _communityName;
     
         Timer receiveTimeoutTimer;
 
-        List<string> MIBList;
+        List<string> RISODeviceMIB;//MIB for confirming supported devices
         int nextMIBIndex;
-        string[] requestMIBs;
+        string[] capabilityMIB;//MIB for device capabilities
 
         bool callbackCalled = false;
-    
+        public bool isSupportedDevice = false;
 	
         private List<string> _capabilitiesList;
         private List<string> capabilityLevelsList;
 
         public SNMPDevice(string host)
         {
+            _ipAddress = host;
+            _capabilitiesList = new List<string>();
+            capabilityLevelsList = new List<string>();
+        
+            _communityName = null;
+            _communityName = SNMPConstants.DEFAULT_COMMUNITY_NAME; //temp communityName
+        
+            _description = "";
+
+            isSupportedDevice = false;
+
+
+            RISODeviceMIB = new List<string>(){};
+            nextMIBIndex = 0;
+            capabilityMIB = new string[]
             {
-                _ipAddress = host;
-                _capabilitiesList = new List<string>();
-                capabilityLevelsList = new List<string>();
-                tempCapabilities = new List<string>();
-                tempCapabilyLevels = new List<string>();
-        
-                _communityName = null;
-                _communityName = SNMPConstants.DEFAULT_COMMUNITY_NAME; //temp communityName
-        
-                _sysId = null;
-                _description = null;
-                _location = null;
-                _macAddress = null;
-                _sysName = null;
-
-
-                MIBList = new List<string>()
-                {
-                    SNMPConstants.MIB_GETNEXTOID_BOOKLET,
-                    SNMPConstants.MIB_GETNEXTOID_STAPLER,
-                    SNMPConstants.MIB_GETNEXTOID_4HOLES,
-                    SNMPConstants.MIB_GETNEXTOID_3HOLES,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
-                    SNMPConstants.MIB_GETNEXTOID_LWPAPER,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
-                };
-                nextMIBIndex = 0;
-                requestMIBs = new string[]
-                {
-                    SNMPConstants.MIB_GETNEXTOID_BOOKLET,
-                    SNMPConstants.MIB_GETNEXTOID_STAPLER,
-                    SNMPConstants.MIB_GETNEXTOID_4HOLES,
-                    SNMPConstants.MIB_GETNEXTOID_3HOLES,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
-                    SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
-                    SNMPConstants.MIB_GETNEXTOID_LWPAPER,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
-                    SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
-                };
+                SNMPConstants.MIB_GETNEXTOID_BOOKLET,
+                SNMPConstants.MIB_GETNEXTOID_STAPLER,
+                SNMPConstants.MIB_GETNEXTOID_4HOLES,
+                SNMPConstants.MIB_GETNEXTOID_3HOLES,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_FACEDOWN,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_AUTO,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_TOP,
+                SNMPConstants.MIB_GETNEXTOID_TRAY_STACK,
+                SNMPConstants.MIB_GETNEXTOID_LWPAPER,
+                SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_1,
+                SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_2,
+                SNMPConstants.MIB_GETNEXTOID_INPUT_TRAY_3
+            };
 
                 
-                udpSocket = new UDPSocket();
-                udpSocket.assignDelegate(receiveData);
+            udpSocket = new UDPSocket();
+            udpSocket.assignDelegate(receiveData);
 
-                udpSocket.assignTimeoutDelegate(timeout);
+            udpSocket.assignTimeoutDelegate(timeout);
         
-            }
         }
 
         ~SNMPDevice()
@@ -114,35 +87,23 @@ namespace SNMP
         {
             System.Diagnostics.Debug.WriteLine("SNMPDeviice Begin Capability Retrieval for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
-            tempCapabilities.Clear();
-            tempCapabilyLevels.Clear();
     
+            //first, check if device is a supported RISO Printer
+            RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_4HOLES);
+            RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
+            RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY);
 
-            if (this._sysName == null)
-                MIBList.Add(SNMPConstants.MIB_GETNEXTOID_NAME);
-
-            if (this._macAddress == null)
-                MIBList.Add(SNMPConstants.MIB_GETNEXTOID_MACADDRESS);
-
-            if (this._location == null)
-                MIBList.Add(SNMPConstants.MIB_GETNEXTOID_LOC);
-
-            if (this._description == null)
-                MIBList.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
-
-            sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT);
+            //reset previous capabilities
+            _capabilitiesList = new List<string>();
+            _capabilitiesList.Clear();
+            capabilityCheckStarted = false;
+ 
+            //check if supported printer
+            sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, RISODeviceMIB.ToArray());
         }
 
         void endRetrieveCapabilitiesSuccess()
-        {
-            _capabilitiesList.Clear();
-            capabilityLevelsList.Clear();
-            for (int i = 0; i < tempCapabilities.Count(); i++)
-            {
-                _capabilitiesList.Add(tempCapabilities[i]);
-                capabilityLevelsList.Add(tempCapabilyLevels[i]);
-            }
-        
+        {        
             //callback to SNMPController
             System.Diagnostics.Debug.WriteLine("SNMPDeviice success for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
@@ -171,16 +132,39 @@ namespace SNMP
             }
         }
 
-        //void didNotReceiveData()
-        //{
-        //}
-
-        private void sendData(byte timeout)
+        private void sendData(byte timeout, string[] dataMIB)
         {
-            if (nextMIBIndex < MIBList.Count)
+            bool bulk = false;
+            if (!bulk)
             {
-                string[] dataMIB = new string[] { MIBList.ElementAt(nextMIBIndex) };
-                SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_NEXT_REQUEST, 1, dataMIB);
+                try
+                {
+                    for (int i = 0; i < dataMIB.Length; i++)
+                    {
+                        string[] strdata = { dataMIB[i] };
+                        SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_REQUEST, 1, strdata);
+
+                        byte[] data = message.generateDataForTransmission();
+                        try
+                        {
+                            udpSocket.sendData(data, _ipAddress, SNMPConstants.SNMP_PORT, timeout, 0);
+                        }
+                        catch (Exception e)
+                        {
+                            if (snmpControllerDeviceTimeOut != null)
+                            {
+                                snmpControllerDeviceTimeOut(this);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    return;
+                }
+            }  else { 
+                //TODO: not working
+                SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, _communityName, SNMPConstants.SNMP_GET_REQUEST, 1, dataMIB);
 
                 byte[] data = message.generateDataForTransmission();
                 try
@@ -194,60 +178,117 @@ namespace SNMP
                         snmpControllerDeviceTimeOut(this);
                     }
                 }
-                
             }
-            
         }
 
-
+        private bool capabilityCheckStarted = false;
+        private bool supportsMultiFunctionFinisher = false;
         private void receiveData(HostName sender, byte[] responsedata)
         {
             System.Diagnostics.Debug.WriteLine("SNMPDeviice Receive Data for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
             SNMPMessage response = new SNMPMessage(responsedata);
-    
+
             if (response != null)
             {
-                List<Dictionary<string,string>> values = response.extractOidAndValues();
-        
+                List<Dictionary<string, string>> values = response.extractOidAndValues();
+
+                //individually send snmp requests
                 if (values.Count == 1)
                 {
-                    Dictionary<string, string> dictionary = values[0];
+                    try {
+                        Dictionary<string, string> dictionary = values[0];
+                        string oid = dictionary[SNMPConstants.KEY_OID];
+                        string val = dictionary[SNMPConstants.KEY_VAL];
 
-                    string oid = dictionary[SNMPConstants.KEY_OID];
-                    string val = dictionary[SNMPConstants.KEY_VAL];
-
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_NAME))
-                        this._sysName = val;
-
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
-                        this._description = val;
-
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_LOC))
-                        this._location = val;
-
-                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_MACADDRESS))
-                        this._macAddress = val;
-
-                    for (int i = 0; i < requestMIBs.Length; i++)
-                    {
-                        if (oid.StartsWith(requestMIBs[i]))
+                        if (capabilityCheckStarted)
                         {
-                            tempCapabilities.Add(val);
-                            break;
-                        }
-                    }
+                            //check if oid is in capability list
+                            if (oid.StartsWith(capabilityMIB[_capabilitiesList.Count()]))
+                            {
+                                //capability is supported
+                                if (val == "1")
+                                    this._capabilitiesList.Add("true");
+                                else
+                                    this._capabilitiesList.Add("false");
+                            }
+                            else
+                            {
+                                //capability is not supported
+                                this._capabilitiesList.Add("false");
+                            }
 
-                    if (++nextMIBIndex < MIBList.Count)
-                        sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT);
-                    else
-                        endRetrieveCapabilitiesSuccess();
+                            checkNextCapability();
+                            //endRetrieveCapabilitiesSuccess();
+
+                        }
+                        else
+                        {
+                            if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
+                            {
+                                supportsMultiFunctionFinisher = true;
+                            }
+                            else
+                                if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
+                                {
+                                    this.Description = val;
+                                }
+                                else
+                                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
+                                    {
+                                        this._langfamily = 54;// (byte)val[0];
+                                    }
+
+                            if (supportsMultiFunctionFinisher && this._langfamily == 54)
+                            {
+                                //supported RISO printer
+                                //AZA: RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G
+                                if (isRISOAZADevice())
+                                {
+                                    isSupportedDevice = true;
+
+                                    //start actual check capabilities from here
+                                    _capabilitiesList = new List<string>();
+                                    //check the first one
+                                    capabilityCheckStarted = true;
+                                    sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, new string[] { capabilityMIB[_capabilitiesList.Count()] });
+                                }
+                                else
+                                {
+                                    //endRetrieveCapabilitiesSuccess();
+                                }
+                            }
+                        }
+                    } catch (Exception e){
+                        return;
+                    }
                 }
-                
+
             }
-            else {
-                this.endRetrieveCapabilitiesFailed();
+
+        }
+
+        private void checkNextCapability()
+        {
+
+            if (_capabilitiesList.Count() < capabilityMIB.Count())
+            {
+                //check the next capability
+                sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, new string[] { capabilityMIB[_capabilitiesList.Count()] });
             }
+            else
+            {
+                //end capability check
+                capabilityCheckStarted = false;
+                endRetrieveCapabilitiesSuccess();
+            }
+        }
+
+        public bool isRISOAZADevice()
+        {
+            return this.Description.Equals("RISO IS1000C-J") ||
+                   this.Description.Equals("RISO IS1000C-G") ||
+                   this.Description.Equals("RISO IS950C-G");
         }
 
         private void timeout(HostName sender, byte[] responsedata)
@@ -260,32 +301,17 @@ namespace SNMP
                 if (snmpControllerDeviceCallBack != null)
                 {
                     //for testing
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
-                    //capabilitiesList.Add("false");
                     snmpControllerDeviceCallBack(this);
-                } 
-                if (nextMIBIndex >= MIBList.Count && !callbackCalled)
-                {
-                    if (snmpControllerDeviceTimeOut != null)
-                        snmpControllerDeviceTimeOut(this);
                 }
-                else
+
+                if (capabilityCheckStarted && _capabilitiesList.Count() < capabilityMIB.Count())
                 {
-                    if (!callbackCalled)
-                    {
-                        nextMIBIndex++;
-                        if (nextMIBIndex < MIBList.Count)
-                            sendData((byte)(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT/MIBList.Count));
-                        else
-                            if (snmpControllerDeviceTimeOut != null)
-                                snmpControllerDeviceTimeOut(this);
-                    }
+                    this._capabilitiesList.Add("false");
+                    checkNextCapability();
+                }
+                else if (snmpControllerDeviceTimeOut != null)
+                {
+                    snmpControllerDeviceTimeOut(this);
                 }
             }
         }
@@ -296,34 +322,10 @@ namespace SNMP
             set { _ipAddress = value;  }
         }
 
-        public string SysId
-        {
-            get { return _sysId; }
-            set { _sysId = value;  }
-        }
-
-        public string Location
-        {
-            get { return _location; }
-            set { _location = value; }
-        }
-
         public string Description
         {
             get { return _description; }
             set { _description = value; }
-        }
-
-        public string MacAddress
-        {
-            get { return _macAddress; }
-            set { _macAddress = value; }
-        }
-
-        public string SysName
-        {
-            get { return _sysName; }
-            set { _sysName = value; }
         }
 
         public string CommunityName

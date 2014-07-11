@@ -12,7 +12,7 @@ namespace SmartDeviceApp.Controllers
     public class SNMPController
     {
         public Action<string, bool> printerControllerGetStatusCallback { get; set; } //PrintersModule
-        public Action<string, string, bool, List<string>> printerControllerAddPrinterCallback { get; set; }
+        public Action<string, string, bool, bool, List<string>> printerControllerAddPrinterCallback { get; set; }
         public Action<PrinterSearchItem> printerControllerDiscoverCallback { get; set; }
         public Action<string> printerControllerTimeout { get; set; }
         public Action<string, string, List<string>> printerControllerAddTimeout { get; set; }
@@ -64,8 +64,8 @@ namespace SmartDeviceApp.Controllers
         private void handleGetDevice(SNMPDevice device)
         {
             System.Diagnostics.Debug.WriteLine("Name(in SNMPController): ");
-            System.Diagnostics.Debug.WriteLine(device.SysName);
-            printerControllerAddPrinterCallback(device.IpAddress, device.SysName, true, device.CapabilitiesList);
+            System.Diagnostics.Debug.WriteLine(device.Description);
+            printerControllerAddPrinterCallback(device.IpAddress, device.Description, true, device.isSupportedDevice, device.CapabilitiesList);
         }
 
         
@@ -88,7 +88,7 @@ namespace SmartDeviceApp.Controllers
             PrinterSearchItem printer = new PrinterSearchItem();
 
             printer.Ip_address = device.IpAddress;
-            printer.Name = device.SysName;
+            printer.Name = device.Description;
             //call callback function to PrinterController
             printerControllerDiscoverCallback(printer);
         }
@@ -101,7 +101,7 @@ namespace SmartDeviceApp.Controllers
 
                 Printer printer = new Printer();
                 printer.IpAddress = ip;
-                printer.Name = device.SysName;
+                printer.Name = device.Description;
                 printer.IsOnline = true;
                 if (device.CapabilitiesList.Count > 0)
                 {
@@ -134,7 +134,7 @@ namespace SmartDeviceApp.Controllers
          * */
         private void handleAddTimeout(SNMPDevice device)
         {
-            printerControllerAddTimeout(device.IpAddress, device.SysName, device.CapabilitiesList);
+            printerControllerAddTimeout(device.IpAddress, device.Description, device.CapabilitiesList);
         }
 
         private void handleTimeout(string ip)

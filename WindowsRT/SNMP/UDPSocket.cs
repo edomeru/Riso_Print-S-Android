@@ -33,6 +33,7 @@ namespace SNMP
 
         private void socket_MessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
+            stopTimer();
             datacounter++;
 
             var r = args.GetDataReader();
@@ -65,7 +66,7 @@ namespace SNMP
             {
                 host = new HostName(ipAddress);
             }
-             catch (Exception e)
+            catch (Exception e)
             {
                 if (timeoutHandler != null) timeoutHandler(host, null);
                 return;
@@ -78,13 +79,13 @@ namespace SNMP
 
             udpSocket = new DatagramSocket();
             udpSocket.MessageReceived += socket_MessageReceived;
-            
+
 
             string p = port.ToString();
             //await udpSocket.BindServiceNameAsync("", connectionProfile.NetworkAdapter);
 
 
-            
+
             if (true)
             {
                 //EndpointPair endpoint = new EndpointPair(null, "", host, p);
@@ -97,7 +98,7 @@ namespace SNMP
                     if (timeoutHandler != null) timeoutHandler(host, null);
                     return;
                 }
-                
+
                 //outputStream = await udpSocket.GetOutputStreamAsync(endpoint);
                 writer = new DataWriter(outputStream);
                 writer.WriteBytes(data);
@@ -111,6 +112,7 @@ namespace SNMP
                 writer.WriteBytes(data);
                 await writer.StoreAsync();
             }
+            
             startTimer(timeout, host);
         }
 
@@ -120,14 +122,13 @@ namespace SNMP
         {
             this.isTimerRunning = true;
 
-            //while (this.isTimerRunning)
+            await Task.Delay(timeout * 1000);
+            if (this.isTimerRunning)
             {
-                await Task.Delay(timeout * 1000);
-
                 //HostName host = udpSocket.Information.RemoteAddress;
-                if (writer != null) writer.Dispose();
-                if (outputStream != null) outputStream.Dispose();
-                if (udpSocket != null) udpSocket.Dispose();
+                //if (writer != null) writer.Dispose();
+                //if (outputStream != null) outputStream.Dispose();
+                //if (udpSocket != null) udpSocket.Dispose();
                 stopTimer();
 
                 if (timeoutHandler != null) timeoutHandler(host, null);
@@ -138,110 +139,5 @@ namespace SNMP
         {
             this.isTimerRunning = false;
         }
-
-
-        //public byte[] getSNMPPacket(string request, string community, string mibstring)
-        //{
-        //    byte[] packet = new byte[1024];
-        //    byte[] mib = new byte[1024];
-        //    int snmplen;
-        //    int comlen = community.Length;
-        //    string[] mibvals = mibstring.Split('.');
-        //    int miblen = mibvals.Length;
-        //    int cnt = 0, temp, i;
-        //    int orgmiblen = miblen;
-        //    int pos = 0;
-
-        //    // Convert the string MIB into a byte array of integer values
-        //    // Unfortunately, values over 128 require multiple bytes
-        //    // which also increases the MIB length
-        //    for (i = 0; i < orgmiblen; i++)
-        //    {
-        //        temp = Convert.ToInt16(mibvals[i]);
-        //        if (temp > 127)
-        //        {
-        //            mib[cnt] = Convert.ToByte(128 + (temp / 128));
-        //            mib[cnt + 1] = Convert.ToByte(temp - ((temp / 128) * 128));
-        //            cnt += 2;
-        //            miblen++;
-        //        }
-        //        else
-        //        {
-        //            mib[cnt] = Convert.ToByte(temp);
-        //            cnt++;
-        //        }
-        //    }
-        //    snmplen = 29 + comlen + miblen - 1;  //Length of entire SNMP packet
-
-        //    //The SNMP sequence start
-        //    packet[pos++] = 0x30; //Sequence start
-        //    packet[pos++] = Convert.ToByte(snmplen - 2);  //sequence size
-
-        //    //SNMP version
-        //    packet[pos++] = 0x02; //Integer type
-        //    packet[pos++] = 0x01; //length
-        //    packet[pos++] = 0x00; //SNMP version 1
-
-        //    //Community name
-        //    packet[pos++] = 0x04; // String type
-        //    packet[pos++] = Convert.ToByte(comlen); //length
-        //    //Convert community name to byte array
-        //    byte[] data = Encoding.UTF8.GetBytes(community);
-        //    for (i = 0; i < data.Length; i++)
-        //    {
-        //        packet[pos++] = data[i];
-        //    }
-
-        //    //Add GetRequest or GetNextRequest value
-        //    if (request == "get")
-        //        packet[pos++] = 0xA0;
-        //    else
-        //        packet[pos++] = 0xA1;
-
-        //    packet[pos++] = Convert.ToByte(20 + miblen - 1); //Size of total MIB
-
-        //    //Request ID
-        //    packet[pos++] = 0x02; //Integer type
-        //    packet[pos++] = 0x04; //length
-        //    packet[pos++] = 0x00; //SNMP request ID
-        //    packet[pos++] = 0x00;
-        //    packet[pos++] = 0x00;
-        //    packet[pos++] = 0x01;
-
-        //    //Error status
-        //    packet[pos++] = 0x02; //Integer type
-        //    packet[pos++] = 0x01; //length
-        //    packet[pos++] = 0x00; //SNMP error status
-
-        //    //Error index
-        //    packet[pos++] = 0x02; //Integer type
-        //    packet[pos++] = 0x01; //length
-        //    packet[pos++] = 0x00; //SNMP error index
-
-        //    //Start of variable bindings
-        //    packet[pos++] = 0x30; //Start of variable bindings sequence
-
-        //    packet[pos++] = Convert.ToByte(6 + miblen - 1); // Size of variable binding
-
-        //    packet[pos++] = 0x30; //Start of first variable bindings sequence
-        //    packet[pos++] = Convert.ToByte(6 + miblen - 1 - 2); // size
-        //    packet[pos++] = 0x06; //Object type
-        //    packet[pos++] = Convert.ToByte(miblen - 1); //length
-
-        //    //Start of MIB
-        //    packet[pos++] = 0x2b;
-        //    //Place MIB array in packet
-        //    for (i = 2; i < miblen; i++)
-        //        packet[pos++] = Convert.ToByte(mib[i]);
-        //    packet[pos++] = 0x05; //Null object value
-        //    packet[pos++] = 0x00; //Null
-
-
-        //    //Send packet to destination
-        //    //
-        //    ///
-
-        //    return packet;
-        //}
     }
 }

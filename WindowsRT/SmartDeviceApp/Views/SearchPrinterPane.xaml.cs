@@ -39,16 +39,20 @@ namespace SmartDeviceApp.Views
             }
         }
 
-        private void OnSetRefreshState(PrinterSearchRefreshState refreshState)
+        private async void OnSetRefreshState(PrinterSearchRefreshState refreshState)
         {
-            if (refreshState == PrinterSearchRefreshState.RefreshingState)
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                VisualStateManager.GoToState(this, "RefreshingState", true);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, "NotRefreshingState", true);
-            }
+                if (refreshState == PrinterSearchRefreshState.RefreshingState)
+                {
+                    VisualStateManager.GoToState(this, "RefreshingState", true);
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, "NotRefreshingState", true);
+                }
+            });
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

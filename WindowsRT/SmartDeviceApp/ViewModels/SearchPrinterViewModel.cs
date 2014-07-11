@@ -215,15 +215,19 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public void SearchTimeout()
+        public async void SearchTimeout()
         {
-            WillRefresh = false;
-            if (PrinterSearchList.Count > 0)
-                NoPrintersFound = false;
-            else
-                NoPrintersFound = true;
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                WillRefresh = false;
+                if (PrinterSearchList.Count > 0)
+                    NoPrintersFound = false;
+                else
+                    NoPrintersFound = true;
+                Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
+            });
 
-            Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
         }
 
         public void SetStateRefreshState()

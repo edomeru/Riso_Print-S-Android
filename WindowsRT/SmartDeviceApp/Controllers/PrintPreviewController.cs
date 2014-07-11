@@ -1255,6 +1255,11 @@ namespace SmartDeviceApp.Controllers
                         await DialogService.Instance.ShowError("IDS_INFO_MSG_PRINT_JOB_FAILED",
                             "IDS_APP_NAME", "IDS_LBL_OK", null);
                     }
+                    else if (result == (int)PrintJobResult.NoNetwork)
+                    {
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR",
+                            "IDS_APP_NAME", "IDS_LBL_OK", null);
+                    }
 
                     if (_directPrintController != null)
                     {
