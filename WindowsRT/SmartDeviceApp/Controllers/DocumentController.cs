@@ -111,7 +111,7 @@ namespace SmartDeviceApp.Controllers
                 PageCount = pdfDocument.PageCount;
                 FileName = file.Name;
                 Result = LoadDocumentResult.Successful;
-                GetPdfOrientation();
+                IsPdfPortrait = GetPdfOrientation(0);
 
                 GenerateLogicalPageImages(0, MAX_LOGICAL_PAGE_IMAGE_CACHE, new CancellationTokenSource());
             }
@@ -282,11 +282,15 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Determines the orientation of the PDF document based on its initial page
         /// </summary>
-        private void GetPdfOrientation()
+        public bool GetPdfOrientation(uint index)
         {
-            using (PdfPage pdfPage = _document.PdfDocument.GetPage(0))
+            if (index >= PageCount)
             {
-                IsPdfPortrait = pdfPage.Size.Width <= pdfPage.Size.Height;
+                index = 0;
+            }
+            using (PdfPage pdfPage = _document.PdfDocument.GetPage(index))
+            {
+                return pdfPage.Size.Width <= pdfPage.Size.Height;
             }
         }
 
