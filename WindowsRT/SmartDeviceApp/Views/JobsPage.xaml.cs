@@ -29,7 +29,6 @@ namespace SmartDeviceApp.Views
         private bool _isJobsGridLoaded;
         private bool _isJobGesturesGridLoaded;
         private bool _isJobsScrollViewerLoaded;
-        private bool _isJobsListLoaded;
 
         public JobsPage()
         {
@@ -37,8 +36,7 @@ namespace SmartDeviceApp.Views
             _gestureController = new JobGestureController();
             ViewModel.GestureController = _gestureController;
 
-            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) =>
-                { _isJobsListLoaded = false; });
+            if (!ViewModel.IsPrintJobsListEmpty) ViewModel.IsProgressRingActive = true;
         }
 
         public JobsViewModel ViewModel
@@ -102,14 +100,10 @@ namespace SmartDeviceApp.Views
         // size is initialized.
         private void OnGroupListLoaded(object sender, RoutedEventArgs e)
         {
-            if (!_isJobsListLoaded)
+            // Check if last group
+            if (((GroupListControl)sender).Text == ViewModel.PrintJobsList[ViewModel.PrintJobsList.Count - 1].PrinterName)
             {
-                // Check if last group
-                if (((GroupListControl)sender).Text == ViewModel.PrintJobsList[ViewModel.PrintJobsList.Count - 1].PrinterName)
-                {
-                    ViewModel.IsProgressRingActive = false;
-                    _isJobsListLoaded = true;
-                }
+                ViewModel.IsProgressRingActive = false;
             }
         }
     }
