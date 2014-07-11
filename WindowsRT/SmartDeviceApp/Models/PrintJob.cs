@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
+using Windows.UI.Xaml;
 
 namespace SmartDeviceApp.Models
 {
@@ -52,6 +53,19 @@ namespace SmartDeviceApp.Models
         [SQLite.Column("pjb_result")]
         public int Result { get; set; }
 
+        
+        private Visibility _deleteButtonVisibility;
+        [SQLite.Ignore]
+        public Visibility DeleteButtonVisibility
+        {
+            get { return _deleteButtonVisibility; }
+            set
+            {
+                _deleteButtonVisibility = value;
+                RaisePropertyChanged("DeleteButtonVisibility");
+            }
+        }
+
         #endregion Properties
 
         /// <summary>
@@ -64,6 +78,7 @@ namespace SmartDeviceApp.Models
             Name = null;
             Date = DateTime.MinValue;
             Result = -1;
+            _deleteButtonVisibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -82,6 +97,7 @@ namespace SmartDeviceApp.Models
             Name = name;
             Date = date;
             Result = result;
+            _deleteButtonVisibility = Visibility.Collapsed;
         }
 
         public override bool Equals(System.Object obj)
