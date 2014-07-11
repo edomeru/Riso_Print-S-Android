@@ -215,7 +215,7 @@ namespace SmartDeviceApp.Controllers
 
         private void OnManipulationUpdated(object sender, ManipulationUpdatedEventArgs e)
         {
-            var isVerticalSwipe = DetectVerticalSwipe(e.Delta.Translation);
+            var isVerticalSwipe = DetectVerticalSwipe(e.Position, e.Delta.Translation);
             if (isVerticalSwipe)
             {
                 return;
@@ -293,15 +293,22 @@ namespace SmartDeviceApp.Controllers
             return null;
         }
 
-        private bool DetectVerticalSwipe(Point delta)
+        private bool DetectVerticalSwipe(Point currentPosition, Point delta)
         {
             var isTranslate = false;
             if (Math.Abs(delta.Y) > 0)
             {
                 isTranslate = true;
                 var scrollViewer = (ScrollViewer)_controlReference;
-                scrollViewer.ChangeView(null, scrollViewer.VerticalOffset - delta.Y, null);                
-                HideDeleteJobButton();
+                scrollViewer.ChangeView(null, scrollViewer.VerticalOffset - delta.Y, null);
+
+                // Hide delete button only on outside of containing row
+                var jobListItem = GetJobListItemControl(currentPosition, isTranslate);
+                if (_isDeleteJobButtonVisible &&
+                    _lastJobListItem != null && _lastJobListItem != jobListItem)
+                {
+                    HideDeleteJobButton();
+                }
             }
             return isTranslate;
         }
