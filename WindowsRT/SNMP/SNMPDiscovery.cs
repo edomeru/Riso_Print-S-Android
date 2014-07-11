@@ -37,7 +37,6 @@ namespace SNMP
             {
                 udpSocket = new UDPSocket();
                 udpSocket.assignDelegate(receiveData);
-                udpSocket.assignTimeoutDelegate(timeout);
         
                 snmpDevices = new List<SNMPDevice>();
                 communityName = readCommunityName;
@@ -58,7 +57,8 @@ namespace SNMP
             byte[] data = message.generateDataForTransmission();
     
             udpSocket.sendData(data,broadcastAddress,SNMPConstants.SNMP_PORT,SNMPConstants.SNMP_BROADCAST_SEND_TIMEOUT,0);
-    
+
+            startDiscoveryTimer(SNMPConstants.SNMP_BROADCAST_SEND_TIMEOUT);
         }
 
 
@@ -68,83 +68,80 @@ namespace SNMP
             {
                 return;
             }
-    
-            SNMPMessage response = new SNMPMessage(responsedata);
-    
-            if (response != null)
-            {
-                List<Dictionary<string,string>> values = response.extractOidAndValues();
-        
-                //sysid, loc and desc, etc
-                if (values.Count() == requestMIB.Count())
-                {
-                     
-                    Dictionary<string,string> identifier = values[0];
 
-                    string printerMibOid = identifier[SNMPConstants.KEY_OID];
-                    if (printerMibOid != null)
+            try { 
+                SNMPMessage response = new SNMPMessage(responsedata);
+
+                if (response != null)
+                {
+                    List<Dictionary<string, string>> values = response.extractOidAndValues();
+
+                    //sysid, loc and desc, etc
+                    if (values.Count() == requestMIB.Count())
                     {
 
-                        string host = sender.ToString();
-                    
-                        SNMPDevice snmpDevice = new SNMPDevice(host);
+                        Dictionary<string, string> identifier = values[0];
 
-                        if (!FromPrinterSearch) // addition of printer, pass the handlers.
+                        string printerMibOid = identifier[SNMPConstants.KEY_OID];
+                        if (printerMibOid != null)
                         {
-                            snmpDevice.snmpControllerDeviceCallBack = snmpControllerDiscoverCallback;
-                        }
-                    
-                        snmpDevice.IpAddress = host;
-                        snmpDevice.CommunityName = this.communityName;
-                        snmpDevice.Description = identifier[SNMPConstants.KEY_VAL];
-                    
-                        snmpDevices.Add(snmpDevice);
-                        snmpDevice.beginRetrieveCapabilities();
-                        //snmpControllerDiscoverCallback(snmpDevice);
-                        
-                        if (!FromPrinterSearch)
-                        {
-                            snmpControllerDiscoverTimeOut = null;
-                        }
-                        else // if printer search
-                        {
-                            if (snmpDevice.isRISOAZADevice())
+
+                            string host = sender.ToString();
+
+                            SNMPDevice snmpDevice = new SNMPDevice(host);
+
+                            if (!FromPrinterSearch) // addition of printer, pass the handlers.
                             {
-                                snmpControllerDiscoverCallback(snmpDevice);
-                                if (snmpControllerDiscoverTimeOut != null)
+                                snmpDevice.snmpControllerDeviceCallBack = snmpControllerDiscoverCallback;
+                            }
+
+                            snmpDevice.IpAddress = host;
+                            snmpDevice.CommunityName = this.communityName;
+                            snmpDevice.Description = identifier[SNMPConstants.KEY_VAL];
+
+                            snmpDevices.Add(snmpDevice);
+                            snmpDevice.beginRetrieveCapabilities();
+                            //snmpControllerDiscoverCallback(snmpDevice);
+
+                            if (!FromPrinterSearch)
+                            {
+                                snmpControllerDiscoverTimeOut = null;
+                            }
+                            else // if printer search
+                            {
+                                if (snmpDevice.isRISOAZADevice())//comment out to remove RISO filter
                                 {
-                                    snmpControllerDiscoverTimeOut(sender.ToString());
+                                    snmpControllerDiscoverCallback(snmpDevice);
+
                                 }
                             }
+                            //call callback
+
                         }
-                        //call callback
 
                     }
-
-                 }
+                }
+            }
+            catch (Exception e)
+            {
+                return;
             }
 
             return;
 
         }
 
-        private void timeout(HostName sender, byte[] responsedata)
+        private async void startDiscoveryTimer(byte timeout)
         {
-            if (udpSocket != null)
+            await Task.Delay(timeout * 1000);
             {
-
-
-
-                System.Diagnostics.Debug.WriteLine("Closing udpSocket");
                 udpSocket.close();
-                //call callback if timedout during search or add
-                
                 if (snmpControllerDiscoverTimeOut != null)
                 {
-                    snmpControllerDiscoverTimeOut(sender.ToString());
+                    snmpControllerDiscoverTimeOut("255.255.255.255");
                 }
-
             }
         }
+
     }
 }

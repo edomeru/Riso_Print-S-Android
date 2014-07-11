@@ -92,6 +92,8 @@ namespace SNMP
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_4HOLES);
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_DESC);
             RISODeviceMIB.Add(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY);
+
+            //reset previous capabilities
             _capabilitiesList = new List<string>();
             _capabilitiesList.Clear();
             capabilityCheckStarted = false;
@@ -186,76 +188,82 @@ namespace SNMP
             System.Diagnostics.Debug.WriteLine("SNMPDeviice Receive Data for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
             SNMPMessage response = new SNMPMessage(responsedata);
-    
+
             if (response != null)
             {
-                List<Dictionary<string,string>> values = response.extractOidAndValues();               
+                List<Dictionary<string, string>> values = response.extractOidAndValues();
 
                 //individually send snmp requests
                 if (values.Count == 1)
                 {
-                    Dictionary<string, string> dictionary = values[0];
-                    string oid = dictionary[SNMPConstants.KEY_OID];
-                    string val = dictionary[SNMPConstants.KEY_VAL];
+                    try {
+                        Dictionary<string, string> dictionary = values[0];
+                        string oid = dictionary[SNMPConstants.KEY_OID];
+                        string val = dictionary[SNMPConstants.KEY_VAL];
 
-                    if (capabilityCheckStarted)
-                    {
-                        //check if oid is in capability list
-                        if (oid.StartsWith(capabilityMIB[_capabilitiesList.Count()]))
+                        if (capabilityCheckStarted)
                         {
-                            //capability is supported
-                            if (val == "1")
-                                this._capabilitiesList.Add("true");
+                            //check if oid is in capability list
+                            if (oid.StartsWith(capabilityMIB[_capabilitiesList.Count()]))
+                            {
+                                //capability is supported
+                                if (val == "1")
+                                    this._capabilitiesList.Add("true");
+                                else
+                                    this._capabilitiesList.Add("false");
+                            }
                             else
+                            {
+                                //capability is not supported
                                 this._capabilitiesList.Add("false");
+                            }
+
+                            checkNextCapability();
+                            //endRetrieveCapabilitiesSuccess();
+
                         }
                         else
                         {
-                            //capability is not supported
-                            this._capabilitiesList.Add("false");
-                        }
-
-                        checkNextCapability();  
-                        //endRetrieveCapabilitiesSuccess();
-
-                    } else {
-                        if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
-                        {
-                            supportsMultiFunctionFinisher = true;
-                        }
-                        else
-                        if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
-                        {
-                            this.Description = val;
-                        }
-                        else
-                        if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
-                        {
-                            this._langfamily = 54;// (byte)val[0];
-                        }
-
-                        if (supportsMultiFunctionFinisher && this._langfamily == 54)
-                        {
-                            //supported RISO printer
-                            //AZA: RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G
-                            if (isRISOAZADevice())
+                            if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
                             {
-                                isSupportedDevice = true;
-
-                                //start actual check capabilities from here
-                                _capabilitiesList = new List<string>();
-                                //check the first one
-                                capabilityCheckStarted = true;
-                                sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, new string[] { capabilityMIB[_capabilitiesList.Count()] });
-                            } 
+                                supportsMultiFunctionFinisher = true;
+                            }
                             else
+                                if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
+                                {
+                                    this.Description = val;
+                                }
+                                else
+                                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
+                                    {
+                                        this._langfamily = 54;// (byte)val[0];
+                                    }
+
+                            if (supportsMultiFunctionFinisher && this._langfamily == 54)
                             {
-                                //endRetrieveCapabilitiesSuccess();
-                            }                        
+                                //supported RISO printer
+                                //AZA: RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G
+                                if (isRISOAZADevice())
+                                {
+                                    isSupportedDevice = true;
+
+                                    //start actual check capabilities from here
+                                    _capabilitiesList = new List<string>();
+                                    //check the first one
+                                    capabilityCheckStarted = true;
+                                    sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, new string[] { capabilityMIB[_capabilitiesList.Count()] });
+                                }
+                                else
+                                {
+                                    //endRetrieveCapabilitiesSuccess();
+                                }
+                            }
                         }
+                    } catch (Exception e){
+                        return;
                     }
                 }
-  
+
             }
 
         }
@@ -270,6 +278,8 @@ namespace SNMP
             }
             else
             {
+                //end capability check
+                capabilityCheckStarted = false;
                 endRetrieveCapabilitiesSuccess();
             }
         }
