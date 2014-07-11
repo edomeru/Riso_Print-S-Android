@@ -188,7 +188,6 @@
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock x:Name="key"
                                    Text="{Binding Text, ElementName=defaultPrintSettingsControl}"
-                                   Width="{Binding KeyTextWidth, ElementName=defaultPrintSettingsControl}"
                                    Style="{StaticResource STYLE_TextKey}"
                                    VerticalAlignment="Center">
                         </TextBlock>

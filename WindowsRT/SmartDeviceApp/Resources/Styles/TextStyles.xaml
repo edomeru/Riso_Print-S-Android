@@ -24,7 +24,8 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
+        <Setter Property="TextLineBounds" Value="Full"/>
     </Style>
 
     <Style x:Key="STYLE_TextKey" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextBody}" >        
@@ -43,7 +44,7 @@
         <Setter Property="Foreground" Value="{StaticResource BRUSH_White}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="MaxLines" Value="2"/>
-        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
     </Style>
 
     <Style x:Key="STYLE_TextValueWithSubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValue}" >
