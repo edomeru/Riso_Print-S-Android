@@ -139,14 +139,7 @@
             <!--CONTENTS HERE-->
             <StackPanel Height="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}" Width="400">
                 <Grid x:Name="ProgressGrid" Height="60" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="40" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="{StaticResource BRUSH_Gray4}">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:DataTriggerBehavior Binding="{Binding DataContext.WillRefresh,  ElementName=SearchPrinterPaneControl}" Value="True">
-                                <Core:InvokeCommandAction Command="{Binding DataContext.PrinterSearchRefreshed,  ElementName=SearchPrinterPaneControl}"/>
-                            </Core:DataTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                    </ProgressRing>
-                    
+                    <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="40" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="{StaticResource BRUSH_Gray4}"/>
                 </Grid>
 
                 <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="NoPrintersFoundView"
