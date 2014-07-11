@@ -101,10 +101,7 @@ namespace SNMP
         }
 
         void endRetrieveCapabilitiesSuccess()
-        {
-            _capabilitiesList.Clear();
-            capabilityLevelsList.Clear();
-        
+        {        
             //callback to SNMPController
             System.Diagnostics.Debug.WriteLine("SNMPDeviice success for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
