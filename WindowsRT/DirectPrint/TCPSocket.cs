@@ -21,11 +21,12 @@ namespace DirectPrint
         private HostName h = null;
         private string port = "0";
 
-        public TCPSocket(string _host, string _port, Windows.Foundation.TypedEventHandler<HostName, byte> d)
+        public TCPSocket(string _host, string _port, Windows.Foundation.TypedEventHandler<HostName, byte> d, Windows.Foundation.TypedEventHandler<HostName, byte> t)
         {            
             socket = new StreamSocket();
             setHost(_host, _port);
             this.dataReceivedHandler = d;
+            this.timeoutHandler = t;
         }
 
         //internal void assignDataReceivedDelegate(Windows.Foundation.TypedEventHandler<HostName, byte> d)
@@ -100,6 +101,8 @@ namespace DirectPrint
                 clientSocket = null;
                 connected = false;
                 */
+                
+
                 return;
             }
         }
@@ -129,7 +132,10 @@ namespace DirectPrint
             }
             catch
             {
-                throw;
+                if (timeoutHandler != null)
+                {
+                    timeoutHandler(h, 0);
+                }
             }
         }    
     }

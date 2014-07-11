@@ -16,6 +16,8 @@ namespace SmartDeviceApp.Common.Enum
     public enum PrintJobResult
     {
         Success,
-        Error
+        Error,
+        Cancelled,
+        NoNetwork
     }
 }

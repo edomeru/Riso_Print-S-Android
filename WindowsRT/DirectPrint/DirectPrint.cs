@@ -42,6 +42,7 @@ namespace DirectPrint
         public const int PRINT_STATUS_OK = 0;
         public const int PRINT_STATUS_ERROR = 1;
         public const int PRINT_STATUS_CANCELLED = 2;
+        public const int PRINT_STATUS_NO_NETWORK = 3;
 
         private const string PORT_LPR = "515";
         private const string PORT_RAW = "9100";
@@ -119,6 +120,7 @@ namespace DirectPrint
 
         public async Task _startLPRPrint(directprint_job parameter)
         {
+            callbackTriggered = false;
 
             if (parameter == null)
             {
@@ -130,7 +132,7 @@ namespace DirectPrint
             print_job = parameter;
 
             //start socket
-            socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData);
+            socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData, timeout);
             int connectretries = 0;
             int maxretries = 4;
             while (connectretries < maxretries)
@@ -439,6 +441,9 @@ namespace DirectPrint
 
         private void triggerCallback(int status)
         {
+            if (callbackTriggered) return;
+            callbackTriggered = true;
+
             if (print_job.callback != null)
             {
                 print_job.callback(status);
@@ -452,9 +457,11 @@ namespace DirectPrint
             socket.read();
             while (!datareceived)
             {
+                if (callbackTriggered) return -1;
+
                 if (Environment.TickCount - start > TIMEOUT_RECEIVE)
                 {
-                    //operation timeout
+                    triggerCallback(PRINT_STATUS_ERROR);
                     return -1;
                 }
             }
@@ -467,6 +474,13 @@ namespace DirectPrint
         {
             datareceived = true;
             ack = data;
+        }
+
+        private bool callbackTriggered = false;
+        public void timeout(HostName hostname, byte data)
+        {
+            if (print_job != null) print_job.cancel_print = 1;
+            triggerCallback(PRINT_STATUS_NO_NETWORK);
         }
     }
 }
