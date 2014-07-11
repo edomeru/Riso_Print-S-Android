@@ -401,31 +401,25 @@ namespace SmartDeviceApp.Controllers
 
         public bool isValidIpAddress(string ip)
         {
-            //  Split string by ".", check that array length is 3
-            char chrFullStop = '.';
-            string[] arrOctets = ip.Split(chrFullStop);
-            if (arrOctets.Length != 4)
+            try
             {
+                HostName h = new HostName(ip);
+                String type = h.Type.ToString();
+                //valid ipv4 or ipv6
+                if (type.Equals("Ipv4") || type.Equals("Ipv6"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                //invalid hostname or ip
                 return false;
             }
-            //  Check each substring checking that the int value is less than 255 and that is char[] length is !> 2
-            Int16 MAXVALUE = 255;
-            Int32 temp; // Parse returns Int32
-            foreach (String strOctet in arrOctets)
-            {
-                if (strOctet.Length > 3)
-                {
-                    return false;
-                }
-
-                temp = int.Parse(strOctet);
-                if (temp > MAXVALUE)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         private async void handleAddPrinterStatus(string ip, string name, bool isOnline, List<string> capabilitesList)
