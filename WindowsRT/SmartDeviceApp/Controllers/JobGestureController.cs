@@ -33,6 +33,7 @@ namespace SmartDeviceApp.Controllers
 
         private bool _isDeleteJobButtonVisible;
         private JobListItemControl _lastJobListItem;
+        private PrintJob _lastPrintJob;
 
         private Point _startPoint;
         private bool _isEnabled;
@@ -251,9 +252,11 @@ namespace SmartDeviceApp.Controllers
                 }
                 if (jobListItem.DeleteButtonVisibility != Visibility.Visible)
                 {
-                    jobListItem.DeleteButtonVisibility = Visibility.Visible;
+                    PrintJob printJob = (PrintJob)jobListItem.DataContext;
+                    printJob.DeleteButtonVisibility = Visibility.Visible;
                     jobListItem.VisualState = "Pressed";
                     _lastJobListItem = jobListItem;
+                    _lastPrintJob = printJob;
                     _isDeleteJobButtonVisible = true;
                 }
             }
@@ -263,7 +266,8 @@ namespace SmartDeviceApp.Controllers
         private void HideDeleteJobButton()
         {
             if (_lastJobListItem == null || !_isDeleteJobButtonVisible) return;
-            _lastJobListItem.DeleteButtonVisibility = Visibility.Collapsed;
+            //PrintJob printJob = (PrintJob)_lastJobListItem.DataContext;
+            _lastPrintJob.DeleteButtonVisibility = Visibility.Collapsed;
             _lastJobListItem.VisualState = "Normal";
             _isDeleteJobButtonVisible = false;
         }

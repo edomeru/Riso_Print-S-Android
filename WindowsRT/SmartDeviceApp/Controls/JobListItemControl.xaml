@@ -116,6 +116,6 @@
         <Button x:Name="deleteButton" 
                 Template="{StaticResource TEMPLATE_DeleteButton}"
                 Command="{Binding DeleteJobCommand, ElementName=jobListItemControl}"
-                Visibility="Collapsed"/>
+                Visibility="Visible"/>
     </local:KeyValueControl.ValueContent>
 </local:KeyValueControl>

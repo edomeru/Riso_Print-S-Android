@@ -40,7 +40,8 @@
                             <DataTemplate>
                                 <controls:JobListItemControl Width="{Binding Width, ElementName=jobsGroupListControl}"
                                                              KeyTextWidth="{Binding Converter={StaticResource JobListItemKeyTextWidthConverter}}"
-                                                             ValueTextWidth="{StaticResource SIZE_JobListValueTextWidth}"/>
+                                                             ValueTextWidth="{StaticResource SIZE_JobListValueTextWidth}"
+                                                             DeleteButtonState="{Binding DeleteButtonVisibility}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
