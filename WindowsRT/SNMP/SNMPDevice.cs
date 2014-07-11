@@ -255,10 +255,6 @@ namespace SNMP
                         }
                     }
                 }
-                else if (values.Count == capabilityMIB.Count()) //retrieve capabilities
-                {
-
-                }
   
             }
 

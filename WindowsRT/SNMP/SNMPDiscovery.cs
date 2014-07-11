@@ -111,6 +111,10 @@ namespace SNMP
                             if (snmpDevice.isRISOAZADevice())
                             {
                                 snmpControllerDiscoverCallback(snmpDevice);
+                                if (snmpControllerDiscoverTimeOut != null)
+                                {
+                                    snmpControllerDiscoverTimeOut(sender.ToString());
+                                }
                             }
                         }
                         //call callback
