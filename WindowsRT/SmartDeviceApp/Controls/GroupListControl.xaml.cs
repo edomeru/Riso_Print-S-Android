@@ -21,7 +21,7 @@ using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Controls
 {
-    public sealed partial class GroupListControl : UserControl
+    public partial class GroupListControl : UserControl
     {
         private bool _isLoaded;
         private bool _isOrientationChanged;
@@ -112,6 +112,11 @@ namespace SmartDeviceApp.Controls
         {
             get { return (SolidColorBrush)GetValue(PressedHeaderColorProperty); }
             set { SetValue(PressedHeaderColorProperty, value); }
+        }
+
+        public ToggleButton Header
+        {
+            get { return header; }
         }
 
         private void ViewOrientationChanged()
