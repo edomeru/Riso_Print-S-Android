@@ -149,7 +149,8 @@
                                              IsItemClickEnabled="True" SelectionMode="None" Tag="{Binding}"
                                               ManipulationMode="All" Background="{StaticResource BRUSH_Gray2}" Style="{StaticResource PrinterSearchListViewStyle}">
                     <Grid Height ="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}">
-                    <TextBlock Text="No Printers Found" Style="{StaticResource STYLE_TextBody}" Foreground="{StaticResource BRUSH_Black}"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Source=IDS_LBL_PRINTER_SEARCH_EMPTY, Converter={StaticResource ResourceStringToTextConverter}}" 
+                                   Style="{StaticResource STYLE_TextBody}" Foreground="{StaticResource BRUSH_Black}"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Grid>
                 </local:PullToRefreshListView>
                 <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="printerSearchListView"
