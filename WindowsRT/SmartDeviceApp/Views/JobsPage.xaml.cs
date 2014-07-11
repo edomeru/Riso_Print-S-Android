@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Input;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -12,11 +13,13 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using System.Windows.Input;
+using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.ViewModels;
+using SmartDeviceApp.Converters;
+using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Views
 {
@@ -32,6 +35,8 @@ namespace SmartDeviceApp.Views
             this.InitializeComponent();
             _gestureController = new JobGestureController();
             ViewModel.GestureController = _gestureController;
+
+            if (!ViewModel.IsPrintJobsListEmpty) ViewModel.IsProgressRingActive = true;
         }
 
         public JobsViewModel ViewModel
@@ -84,6 +89,21 @@ namespace SmartDeviceApp.Views
             {
                 _gestureController.ControlReference = (ScrollViewer)sender;
                 _isJobsScrollViewerLoaded = true;
+            }
+        }
+
+        // Workaround to check if jobs list has finished rendering in UI.
+        // Note that loaded event fires even if UI is not finised rendering.
+        // This event is triggered for all job groups per printer,
+        // whenever the size is changed from 0 to the correct size.
+        // Progress ring is set to inactive if the last job group
+        // size is initialized.
+        private void OnGroupListLoaded(object sender, RoutedEventArgs e)
+        {
+            // Check if last group
+            if (((GroupListControl)sender).Text == ViewModel.PrintJobsList[ViewModel.PrintJobsList.Count - 1].PrinterName)
+            {
+                ViewModel.IsProgressRingActive = false;
             }
         }
     }

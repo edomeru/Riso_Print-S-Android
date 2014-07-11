@@ -14,9 +14,12 @@
     SubTextVisibility="Collapsed"
     RightButtonVisibility="Collapsed"
     SeparatorVisibility="{Binding Converter={StaticResource PrintJobToSeparatorVisibilityConverter}}"
+    SeparatorStartPoint="{StaticResource MARGIN_Default}"
     IsListItem="True"
     PressedColor="{StaticResource BRUSH_Purple2}"
-    Loaded="OnLoaded">
+    Loaded="OnLoaded"
+    IsOnLoadedEnabled="False"
+    IconImage="{Binding Result, Converter={StaticResource PrintJobResultToImageSourceConverter}}">
 
     <local:KeyValueControl.Resources>
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >
@@ -108,13 +111,11 @@
             </Grid>
         </ControlTemplate>
     </local:KeyValueControl.Resources>
-	<local:KeyValueControl.IconImage>
-        <BitmapImage UriSource="{Binding Result, Converter={StaticResource PrintJobResultToImageSourceConverter}}"/>
-    </local:KeyValueControl.IconImage>
+	
     <local:KeyValueControl.ValueContent>
         <Button x:Name="deleteButton" 
                 Template="{StaticResource TEMPLATE_DeleteButton}"
                 Command="{Binding DeleteJobCommand, ElementName=jobListItemControl}"
-                Visibility="Collapsed"/>
+                Visibility="Visible"/>
     </local:KeyValueControl.ValueContent>
 </local:KeyValueControl>

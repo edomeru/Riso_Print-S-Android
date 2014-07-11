@@ -37,29 +37,28 @@ namespace SNMP
             {
                 udpSocket = new UDPSocket();
                 udpSocket.assignDelegate(receiveData);
-                udpSocket.assignTimeoutDelegate(timeout);
         
                 snmpDevices = new List<SNMPDevice>();
                 communityName = readCommunityName;
                 broadcastAddress = address;
                 requestMIB = new string[]{
-                              SNMPConstants.MIB_GETNEXTOID_LOC,
-                              SNMPConstants.MIB_GETNEXTOID_DESC,
-                              SNMPConstants.MIB_GETNEXTOID_MACADDRESS,
-                              SNMPConstants.MIB_GETNEXTOID_PRINTERMIB, 
-                              SNMPConstants.MIB_GETNEXTOID_NAME};
+                              //SNMPConstants.MIB_GETNEXTOID_4HOLES,//ijHardwareConnectStatus should be supported
+                              SNMPConstants.MIB_GETNEXTOID_DESC, //value should be "RISO IS1000C-J" "RISO IS1000C-G" "RISO IS950C-G" to Consider as AZA
+                              //SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY//value should be 54 (langPDF)
+                };
             }
         }
 
         public void startDiscover()
         {
             snmpDevices.Clear();
-            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1,communityName,SNMPConstants.SNMP_GET_NEXT_REQUEST,1,requestMIB);
+            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1,communityName,SNMPConstants.SNMP_GET_REQUEST,1,requestMIB);
     
             byte[] data = message.generateDataForTransmission();
     
             udpSocket.sendData(data,broadcastAddress,SNMPConstants.SNMP_PORT,SNMPConstants.SNMP_BROADCAST_SEND_TIMEOUT,0);
-    
+
+            startDiscoveryTimer(SNMPConstants.SNMP_BROADCAST_SEND_TIMEOUT);
         }
 
 
@@ -69,83 +68,80 @@ namespace SNMP
             {
                 return;
             }
-    
-            SNMPMessage response = new SNMPMessage(responsedata);
-    
-            if (response != null)
-            {
-                List<Dictionary<string,string>> values = response.extractOidAndValues();
-        
-                //sysid, loc and desc, etc
-                if (values.Count() == requestMIB.Count())
+
+            try { 
+                SNMPMessage response = new SNMPMessage(responsedata);
+
+                if (response != null)
                 {
-                     
-                    Dictionary<string,string> locDict = values[0];   
-                    Dictionary<string,string> descDict = values[1];
-                    Dictionary<string,string> macAddressDict = values[2];
-                    Dictionary<string,string> printerMibDict = values[3];
-                    Dictionary<string,string> sysNameDict = values[4];
-            
-                    string printerMibOid = printerMibDict[SNMPConstants.KEY_OID];
-                    if (printerMibOid != null)
+                    List<Dictionary<string, string>> values = response.extractOidAndValues();
+
+                    //sysid, loc and desc, etc
+                    if (values.Count() == requestMIB.Count())
                     {
-                        if (printerMibOid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERMIB))
-                        { 
+
+                        Dictionary<string, string> identifier = values[0];
+
+                        string printerMibOid = identifier[SNMPConstants.KEY_OID];
+                        if (printerMibOid != null)
+                        {
+
                             string host = sender.ToString();
-                    
+
                             SNMPDevice snmpDevice = new SNMPDevice(host);
 
                             if (!FromPrinterSearch) // addition of printer, pass the handlers.
                             {
                                 snmpDevice.snmpControllerDeviceCallBack = snmpControllerDiscoverCallback;
                             }
-                    
-                            snmpDevice.IpAddress = host;
-                            snmpDevice.Location = locDict[SNMPConstants.KEY_VAL];
-                            snmpDevice.Description = descDict[SNMPConstants.KEY_VAL];
-                            snmpDevice.MacAddress = macAddressDict[SNMPConstants.KEY_VAL];
-                            snmpDevice.SysName = sysNameDict[SNMPConstants.KEY_VAL];
-                            snmpDevice.CommunityName = this.communityName;
-                    
-                            snmpDevices.Add(snmpDevice);
 
+                            snmpDevice.IpAddress = host;
+                            snmpDevice.CommunityName = this.communityName;
+                            snmpDevice.Description = identifier[SNMPConstants.KEY_VAL];
+
+                            snmpDevices.Add(snmpDevice);
                             snmpDevice.beginRetrieveCapabilities();
+                            //snmpControllerDiscoverCallback(snmpDevice);
+
                             if (!FromPrinterSearch)
                             {
                                 snmpControllerDiscoverTimeOut = null;
                             }
                             else // if printer search
                             {
-                                snmpControllerDiscoverCallback(snmpDevice);
+                                if (snmpDevice.isRISOAZADevice())//comment out to remove RISO filter
+                                {
+                                    snmpControllerDiscoverCallback(snmpDevice);
+
+                                }
                             }
                             //call callback
-                        }
-                    }
 
-                 }
+                        }
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return;
             }
 
             return;
 
         }
 
-        private void timeout(HostName sender, byte[] responsedata)
+        private async void startDiscoveryTimer(byte timeout)
         {
-            if (udpSocket != null)
+            await Task.Delay(timeout * 1000);
             {
-
-
-
-                System.Diagnostics.Debug.WriteLine("Closing udpSocket");
                 udpSocket.close();
-                //call callback if timedout during search or add
-                
                 if (snmpControllerDiscoverTimeOut != null)
                 {
-                    snmpControllerDiscoverTimeOut(sender.ToString());
+                    snmpControllerDiscoverTimeOut("255.255.255.255");
                 }
-
             }
         }
+
     }
 }

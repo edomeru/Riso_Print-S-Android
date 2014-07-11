@@ -85,7 +85,8 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("ValueTextWidth", typeof(double), typeof(KeyValueControl), null);
 
         public static readonly DependencyProperty ValueTextStyleProperty =
-            DependencyProperty.Register("ValueTextStyle", typeof(Style), typeof(KeyValueControl), null);
+            DependencyProperty.Register("ValueTextStyle", typeof(Style), typeof(KeyValueControl), 
+            new PropertyMetadata((Style)Application.Current.Resources["STYLE_TextValue"]));
 
         public static readonly DependencyProperty ValueSubTextProperty =
             DependencyProperty.Register("ValueSubText", typeof(string), typeof(KeyValueControl), null);
@@ -108,6 +109,10 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty VisualStateProperty =
             DependencyProperty.Register("VisualState", typeof(string), typeof(KeyValueControl),
             new PropertyMetadata("Normal", SetVisualState));
+
+        public static readonly DependencyProperty IsOnLoadedEnabledProperty =
+            DependencyProperty.Register("IsOnLoadedEnabled", typeof(bool), typeof(KeyValueControl),
+            new PropertyMetadata(true));
 
         public ICommand Command
         {
@@ -259,6 +264,12 @@ namespace SmartDeviceApp.Controls
             set { SetValue(VisualStateProperty, value); }
         }
 
+        public bool IsOnLoadedEnabled
+        {
+            get { return (bool)GetValue(IsOnLoadedEnabledProperty); }
+            set { SetValue(IsOnLoadedEnabledProperty, value); }
+        }
+
         private static void SetIsEnabled(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue == null || !(e.NewValue is bool)) return;
@@ -279,7 +290,7 @@ namespace SmartDeviceApp.Controls
         {
             try
             {
-                if (_isLoaded || Visibility == Visibility.Collapsed) return;
+                if (!IsOnLoadedEnabled || _isLoaded || Visibility == Visibility.Collapsed) return;
 
                 // Set value styles
                 if (ValueSubTextVisibility == Visibility.Visible) 

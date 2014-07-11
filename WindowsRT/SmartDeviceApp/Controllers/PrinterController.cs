@@ -401,34 +401,28 @@ namespace SmartDeviceApp.Controllers
 
         public bool isValidIpAddress(string ip)
         {
-            //  Split string by ".", check that array length is 3
-            char chrFullStop = '.';
-            string[] arrOctets = ip.Split(chrFullStop);
-            if (arrOctets.Length != 4)
+            try
             {
+                HostName h = new HostName(ip);
+                String type = h.Type.ToString();
+                //valid ipv4 or ipv6
+                if (type.Equals("Ipv4") || type.Equals("Ipv6"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                //invalid hostname or ip
                 return false;
             }
-            //  Check each substring checking that the int value is less than 255 and that is char[] length is !> 2
-            Int16 MAXVALUE = 255;
-            Int32 temp; // Parse returns Int32
-            foreach (String strOctet in arrOctets)
-            {
-                if (strOctet.Length > 3)
-                {
-                    return false;
-                }
-
-                temp = int.Parse(strOctet);
-                if (temp > MAXVALUE)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
-        private async void handleAddPrinterStatus(string ip, string name, bool isOnline, List<string> capabilitesList)
+        private async void handleAddPrinterStatus(string ip, string name, bool isOnline, bool isSupported, List<string> capabilitesList)
         {
             //check if viewmode is rightpanevisible
             var viewControl = new ViewModelLocator().ViewControlViewModel;
@@ -460,19 +454,25 @@ namespace SmartDeviceApp.Controllers
                     //get capabilities
                     if (capabilitesList.Count > 0)
                     {
-                        printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true");
-                        // multifunction finisher 2/3 and 2/4 also has staple, so enable stapler when the multifunction finisher is available
-                        printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") || (capabilitesList.ElementAt(2) == "true") || (capabilitesList.ElementAt(3) == "true");
-                        printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true");
-                        printer.EnabledPunchThree = (capabilitesList.ElementAt(3) == "true");
-                        printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true");
-                        //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
-                        printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true");
-                        printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true");
-                        printer.EnabledPaperLW = (capabilitesList.ElementAt(8) == "true");
-                        printer.EnabledFeedTrayOne = (capabilitesList.ElementAt(9) == "true");
-                        printer.EnabledFeedTrayTwo = (capabilitesList.ElementAt(10) == "true");
-                        printer.EnabledFeedTrayThree = (capabilitesList.ElementAt(11) == "true");
+                        try
+                        {
+                            printer.EnabledBookletFinishing = (capabilitesList.ElementAt(0) == "true");
+                            // multifunction finisher 2/3 and 2/4 also has staple, so enable stapler when the multifunction finisher is available
+                            printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") || (capabilitesList.ElementAt(2) == "true") || (capabilitesList.ElementAt(3) == "true");
+                            printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true");
+                            printer.EnabledPunchThree = (capabilitesList.ElementAt(3) == "true");
+                            printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true");
+                            //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
+                            printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true");
+                            printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true");
+                            printer.EnabledPaperLW = (capabilitesList.ElementAt(8) == "true");
+                            printer.EnabledFeedTrayOne = (capabilitesList.ElementAt(9) == "true");
+                            printer.EnabledFeedTrayTwo = (capabilitesList.ElementAt(10) == "true");
+                            printer.EnabledFeedTrayThree = (capabilitesList.ElementAt(11) == "true");
+                        } catch (Exception e)
+                        {
+                            LogUtility.LogError(e);
+                        }
                     }
 
                     bool result = await DatabaseController.Instance.InsertPrinter(printer);
@@ -530,7 +530,7 @@ namespace SmartDeviceApp.Controllers
                             }
 
                             _printerListTemp = _printerList;
-                            _addPrinterViewModel.handleAddIsSuccessful(true);
+                            _addPrinterViewModel.handleAddIsSuccessful(isSupported);
 
                             //if added from printer search
                             if (PrinterSearchList.Count > 0)

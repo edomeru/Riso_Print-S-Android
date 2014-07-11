@@ -21,16 +21,13 @@ using SmartDeviceApp.Common.Enum;
 
 namespace SmartDeviceApp.Controls
 {
-    public sealed partial class GroupListControl : UserControl
+    public partial class GroupListControl : UserControl
     {
         private bool _isLoaded;
-        private bool _isOrientationChanged;
 
         public GroupListControl()
         {
             this.InitializeComponent();
-            if (!_isLoaded) Loaded += new RoutedEventHandler(OnLoaded);
-            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ViewOrientationChanged());
         }
 
         public static readonly DependencyProperty TextProperty =
@@ -114,17 +111,15 @@ namespace SmartDeviceApp.Controls
             set { SetValue(PressedHeaderColorProperty, value); }
         }
 
-        private void ViewOrientationChanged()
+        public ToggleButton Header
         {
-            _isOrientationChanged = true;
-            OnLoaded(this, null);
+            get { return header; }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             try
             {
-                if (_isLoaded && !_isOrientationChanged) return;
                 var defaultMargin = (int)((double)Application.Current.Resources["MARGIN_Default"]);
 
                 // Get text width by subtracting widths and margins of visible components
@@ -139,12 +134,12 @@ namespace SmartDeviceApp.Controls
                         groupControlWidth = ((int)parent.Width > 0) ? (int)parent.Width : (int)parent.ActualWidth;
                         if (groupControlWidth <= 0)
                         {
-                            throw new ArgumentException("Zero width element");
+                            return;
                         }
                     }
                     else
                     {
-                        throw new ArgumentException("Zero width element");
+                        return;
                     }
                 }
                 int maxTextWidth = groupControlWidth;
@@ -170,12 +165,10 @@ namespace SmartDeviceApp.Controls
                 {
                     TextWidth = maxTextWidth;
                 }
-                _isOrientationChanged = false;
             }
             catch (Exception ex)
             {
                 LogUtility.LogError(ex);
-                _isOrientationChanged = false;
             }
         }
     }

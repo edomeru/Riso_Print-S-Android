@@ -16,6 +16,9 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Converters;
+using SmartDeviceApp.Controls;
+using SmartDeviceApp.Common.Constants;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -35,7 +38,7 @@ namespace SmartDeviceApp.ViewModels
         private PrintJobList _printJobsColumn2;
         private PrintJobList _printJobsColumn3;
         private int _maxColumns;
-
+        
         private const int MAX_COLUMNS_LANDSCAPE = 3;
         private const int MAX_COLUMNS_PORTRAIT = 2;
 
@@ -43,6 +46,10 @@ namespace SmartDeviceApp.ViewModels
         private ViewControlViewModel _viewControlViewModel;
 
         private bool _isPrintJobsListEmpty;
+        private bool _isProgressRingActive;
+
+        private double _columnWidth;
+        private double _keyTextWidth;
 
         public JobsViewModel(IDataService dataService, INavigationService navigationService)
         {
@@ -107,6 +114,8 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _isPrintJobsListEmpty = value;
                     RaisePropertyChanged("IsPrintJobsListEmpty");
+                    if (_isPrintJobsListEmpty) IsProgressRingActive = false;
+                    else IsProgressRingActive = true;
                 }
             }
         }
@@ -164,6 +173,45 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public double ColumnWidth
+        {
+            get { return _columnWidth; }
+            set
+            {
+                if (_columnWidth != value)
+                {
+                    _columnWidth = value;
+                    SetMaxTextWidth();
+                }
+            }
+        }
+
+        public double KeyTextWidth
+        {
+            get { return _keyTextWidth; }
+            set
+            {
+                if (_keyTextWidth != value)
+                {
+                    _keyTextWidth = value;
+                    RaisePropertyChanged("KeyTextWidth");
+                }
+            }
+        }
+
+        public bool IsProgressRingActive
+        {
+            get { return _isProgressRingActive; }
+            set
+            {
+                if (_isProgressRingActive != value)
+                {
+                    _isProgressRingActive = value;
+                    RaisePropertyChanged("IsProgressRingActive");
+                }
+            }
+        }
+
         public JobGestureController GestureController
         {
             get { return _gestureController; }
@@ -206,6 +254,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetViewOrientation(ViewOrientation viewOrientation)
         {
+            if (!IsPrintJobsListEmpty) IsProgressRingActive = true;
             if (viewOrientation == ViewOrientation.Landscape)
             {
                 MaxColumns = MAX_COLUMNS_LANDSCAPE;
@@ -439,6 +488,29 @@ namespace SmartDeviceApp.ViewModels
                     return;
                 }
             }            
+        }
+
+        public void SetMaxTextWidth()
+        {
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            var smallMargin = (double)Application.Current.Resources["MARGIN_Small"];
+
+            double maxTextWidth = ColumnWidth;
+
+            // Left and right margins
+            maxTextWidth -= (defaultMargin * 2);
+
+            // Status icon width
+            var tempControl = new JobListItemControl();
+            var imageWidth = ImageConstant.GetIconImageWidth(tempControl);
+            maxTextWidth -= imageWidth;
+            maxTextWidth -= defaultMargin;
+            tempControl = null;
+
+            // Value text width
+            maxTextWidth -= (double)Application.Current.Resources["SIZE_JobListValueTextWidth"];
+            maxTextWidth -= smallMargin; // Space between key and value texts
+            KeyTextWidth = maxTextWidth;
         }
     }
 }

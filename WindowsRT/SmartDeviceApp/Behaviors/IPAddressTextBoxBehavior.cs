@@ -67,19 +67,9 @@ namespace SmartDeviceApp.Common.Utilities
             if (e.Key == VirtualKey.Shift)
                 IsShiftPressed = true;
 
-
-            if (((e.Key >= VirtualKey.Number0 && e.Key <= VirtualKey.Number9) // numbers
-             || (e.Key >= VirtualKey.NumberPad0 && e.Key <= VirtualKey.NumberPad9) // numpad             
-                || (e.Key == VirtualKey.Decimal) || (keyValue == 190)) /*period*/&& !IsShiftPressed)
-            {
-                // do something
-                e.Handled = false;
-                System.Diagnostics.Debug.WriteLine("Accepted");
-            }
-            else
-            {
-                e.Handled = true;
-            }
+            // do something
+            e.Handled = false;
+            System.Diagnostics.Debug.WriteLine("Accepted");
         }
 
         public bool IsShiftPressed

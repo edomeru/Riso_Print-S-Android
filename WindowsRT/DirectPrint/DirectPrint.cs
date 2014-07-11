@@ -22,6 +22,7 @@ namespace DirectPrint
         public string job_name;
         //public string filename; // TODO: to be deleted. replaced by file
         public StorageFile file;
+        public string username;
         public string print_settings;
         public string ip_address;
         public directprint_callback callback;
@@ -41,12 +42,13 @@ namespace DirectPrint
         public const int PRINT_STATUS_OK = 0;
         public const int PRINT_STATUS_ERROR = 1;
         public const int PRINT_STATUS_CANCELLED = 2;
+        public const int PRINT_STATUS_NO_NETWORK = 3;
 
         private const string PORT_LPR = "515";
         private const string PORT_RAW = "9100";
 
-        private const int TIMEOUT_CONNECT = 10;
-        private const int TIMEOUT_RECEIVE = 30;
+        private const int TIMEOUT_CONNECT = 10000;
+        private const int TIMEOUT_RECEIVE = 10000;
 
         private const int BUFFER_SIZE = 4096;
 
@@ -68,6 +70,10 @@ namespace DirectPrint
 
         TCPSocket socket;
 
+#if DEBUG
+        private Stream printJobStream;
+        private const string PDF_DATA = "**** PDF DATA ****\x0d\x0a";
+#endif
 
         private void nullCallBack(int val)
         {
@@ -88,7 +94,7 @@ namespace DirectPrint
             }
         }
 
-        public void startLPRPrint(directprint_job parameter)
+        public async void startLPRPrint(directprint_job parameter)
         {
             /*
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
@@ -97,11 +103,24 @@ namespace DirectPrint
                 _startLPRPrint(parameter);
             });
             */
-            Task.Run(() => _startLPRPrint(parameter));
+
+#if DEBUG
+            // Dump print job to temp file
+            using (printJobStream = await ApplicationData.Current.TemporaryFolder.OpenStreamForWriteAsync(
+                String.Format("{0}.txt", DateTime.Now.ToString("yyyyMMddHHmmss")),
+                CreationCollisionOption.ReplaceExisting))
+            {
+                printJobStream.Seek(0, SeekOrigin.End);
+#endif
+                await Task.Run(() => _startLPRPrint(parameter));                        
+#if DEBUG
+            }
+#endif
         }
 
         public async Task _startLPRPrint(directprint_job parameter)
         {
+            callbackTriggered = false;
 
             if (parameter == null)
             {
@@ -113,7 +132,7 @@ namespace DirectPrint
             print_job = parameter;
 
             //start socket
-            socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData);
+            socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData, timeout);
             int connectretries = 0;
             int maxretries = 4;
             while (connectretries < maxretries)
@@ -206,7 +225,7 @@ namespace DirectPrint
 
 
             // CONTROL FILE : Prepare
-            string username = "WinRTユーザ";//"SDA WinRT User";
+            string username = print_job.username;
             string dname = String.Format("dfA{0}{1}", 1, HOST_NAME);
             string cname = String.Format("cfA{0}{1}", 1, HOST_NAME);
             string controlfile = String.Format("H{0}\nP{1}\nJ{2}\nf{3}\nU{4}\nN{5}\n",
@@ -354,6 +373,10 @@ namespace DirectPrint
             int bytesRead = 0;
 
             await socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length);
+#if DEBUG
+            await printJobStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length);
+            await printJobStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(PDF_DATA), 0, PDF_DATA.Length);
+#endif
             totalbytes += (ulong)pjl_header.Length;
 
             MemoryStream fstream = new MemoryStream(filebuffer);
@@ -372,6 +395,9 @@ namespace DirectPrint
                 }
             }
             await socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
+#if DEBUG
+            await printJobStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
+#endif
             totalbytes += (ulong)pjl_footer.Length;
 
             if (total_data_size != totalbytes)
@@ -415,6 +441,9 @@ namespace DirectPrint
 
         private void triggerCallback(int status)
         {
+            if (callbackTriggered) return;
+            callbackTriggered = true;
+
             if (print_job.callback != null)
             {
                 print_job.callback(status);
@@ -428,9 +457,11 @@ namespace DirectPrint
             socket.read();
             while (!datareceived)
             {
+                if (callbackTriggered) return -1;
+
                 if (Environment.TickCount - start > TIMEOUT_RECEIVE)
                 {
-                    //operation timeout
+                    triggerCallback(PRINT_STATUS_ERROR);
                     return -1;
                 }
             }
@@ -443,6 +474,13 @@ namespace DirectPrint
         {
             datareceived = true;
             ack = data;
+        }
+
+        private bool callbackTriggered = false;
+        public void timeout(HostName hostname, byte data)
+        {
+            if (print_job != null) print_job.cancel_print = 1;
+            triggerCallback(PRINT_STATUS_NO_NETWORK);
         }
     }
 }

@@ -128,9 +128,7 @@
     <Compile Include="Common\Enum\PrintSettingType.cs" />
     <Compile Include="Common\Enum\PrintSettingsPaneMode.cs" />
     <Compile Include="Common\Enum\PrintersRightPaneMode.cs" />
-    <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
-    <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\LogUtility.cs" />
@@ -151,6 +149,7 @@
     <Compile Include="Controls\DefaultPrintSettingsControl.xaml.cs">
       <DependentUpon>DefaultPrintSettingsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\JobGroupListControl.cs" />
     <Compile Include="Controls\SelectPrinterItemControl.cs" />
     <Compile Include="Controls\KeyToggleCheckControl.xaml.cs">
       <DependentUpon>KeyToggleCheckControl.xaml</DependentUpon>
@@ -183,6 +182,7 @@
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToColor.cs" />
+    <Compile Include="Converters\JobListItemKeyTextWidthConverter.cs" />
     <Compile Include="Converters\PrinterSearchItemButtonImageConverter.cs" />
     <Compile Include="Converters\PrinterStatusToImageSourceConverter.cs" />
     <Compile Include="Controls\MainMenuKeyControl.xaml.cs">

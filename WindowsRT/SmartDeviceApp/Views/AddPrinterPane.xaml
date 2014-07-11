@@ -196,7 +196,7 @@
                 <RowDefinition Height="80" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <TextBox x:Name="ipTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" IsTabStop="{Binding IsButtonVisible}"
+                <TextBox x:Name="ipTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTabStop="{Binding IsButtonVisible}"
                                    PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" Style="{StaticResource IPAddressTextBoxStyle1}"
                          Loaded="ipTextBox_Loaded" IsReadOnly="{Binding IsProgressRingVisible}" Margin="30,20,10,10" Width="300"/>
                 <StackPanel Style="{StaticResource STYLE_StackRight}" Orientation="Horizontal">

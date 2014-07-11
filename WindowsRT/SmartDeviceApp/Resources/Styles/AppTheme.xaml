@@ -58,6 +58,7 @@
     <x:Double x:Key="SIZE_DeleteButtonHeight_Long">60</x:Double>
     <x:Double x:Key="SIZE_DeleteButtonWidth_Short">110</x:Double>
     <x:Double x:Key="SIZE_DeleteButtonHeight_Short">50</x:Double>
+    <x:Double x:Key="SIZE_JobListValueTextWidth">146</x:Double>
 
     <x:Double x:Key="OPACITY_Message">0.3</x:Double>
     <!-- APP THEME CONSTANTS END-->
@@ -67,6 +68,7 @@
     <conv:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
     <conv:HeightConverter x:Key="HeightConverter"/>
     <conv:IntToStringConverter x:Key="IntToStringConverter"/>
+    <conv:JobListItemKeyTextWidthConverter x:Key="JobListItemKeyTextWidthConverter"/>    
     <conv:MainMenuItemToSeparatorVisibilityConverter x:Key="MainMenuItemToSeparatorVisibilityConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>

@@ -675,10 +675,11 @@ namespace SmartDeviceApp.ViewModels
                 }
             }
         }
-        
-        public void SetInitialPageIndex(uint index)
+        private bool _isBooklet;
+        public void SetInitialPageIndex(uint index, bool isBooklet)
         {
             _pageIndex = index;
+            _isBooklet = isBooklet;
             SetPageIndexes();
         }
 
@@ -690,9 +691,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public void UpdatePageIndexes(uint index)
+        public void UpdatePageIndexes(uint index, bool isBooklet)
         {
             _pageIndex = index;
+            _isBooklet = isBooklet;
             SetPageIndexes();
         }
 
@@ -726,7 +728,7 @@ namespace SmartDeviceApp.ViewModels
         
         private void SetPageIndexes()
         {
-            PageNumber = new PageNumberInfo(_pageIndex, _pageTotal, _pageViewMode);
+            PageNumber = new PageNumberInfo(_pageIndex, DocumentController.Instance.PageCount, _pageViewMode, _isBooklet);
             CurrentPageIndex = _pageIndex;
         }
 
@@ -818,7 +820,7 @@ namespace SmartDeviceApp.ViewModels
         private void PageNumberSliderValueChangeExecute()
         {
             var newValue = CurrentPageIndex;
-            UpdatePageIndexes(newValue);
+            UpdatePageIndexes(newValue, _isBooklet);
         }
 
         private void PageNumberSliderPointerCaptureLostExecute()

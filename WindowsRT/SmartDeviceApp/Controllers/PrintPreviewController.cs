@@ -165,7 +165,7 @@ namespace SmartDeviceApp.Controllers
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();
 
-                _printPreviewViewModel.SetInitialPageIndex(0);
+                _printPreviewViewModel.SetInitialPageIndex(0, _isBooklet);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
                 _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
@@ -385,9 +385,6 @@ namespace SmartDeviceApp.Controllers
                     _printPreviewViewModel.LeftPageActualSize = new Size();
                 }
 
-                // Update page view mode
-                _printPreviewViewModel.PageViewMode = _pageViewMode;
-
                 _printPreviewViewModel.InitializeGestures();
             }
         }
@@ -443,6 +440,8 @@ namespace SmartDeviceApp.Controllers
             {
                 _pageViewMode = PageViewMode.SinglePageView;
             }
+            // Update page view mode
+            _printPreviewViewModel.PageViewMode = _pageViewMode;
 
             // Update page count and page number
             _pagesPerSheet = PreviewPageImageUtility.GetPagesPerSheet(_currPrintSettings.Imposition);
@@ -465,7 +464,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     _currSliderIndex = (int)_previewPageTotal - 1;
                 }
-                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex);
+                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet);
             }
 
             _maxPreviewPageCount = (int)_previewPageTotal;
@@ -793,8 +792,7 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            if (!_previewPageImages.ContainsKey(previewPageIndex) &&
-                !(isBackSide && !(_isBooklet || _isDuplex)))
+            if (!_previewPageImages.ContainsKey(previewPageIndex))
             {
                 List<WriteableBitmap> logicalPageImages = null;
                 // Get logical pages only when not for backside of single-page view
@@ -816,7 +814,7 @@ namespace SmartDeviceApp.Controllers
                     {
                         ApplyPrintSettings(canvasBitmap, _previewPageImageSize,
                             logicalPageImages, logicalPageSize,
-                            previewPageIndex, isRightSide, isBackSide,
+                            previewPageIndex, logicalPageIndex, isRightSide, isBackSide,
                             cancellationToken);
 
                         SendPreviewPageImage(previewPageIndex, false, cancellationToken);
@@ -845,14 +843,15 @@ namespace SmartDeviceApp.Controllers
         /// <param name="cancellationToken">cancellation token</param>
         private void ApplyPrintSettings(WriteableBitmap canvasBitmap,
             Size previewPageSize, List<WriteableBitmap> logicalPageImages, Size logicalPageSize,
-            int previewPageIndex, bool isRightSide, bool isBackSide,
+            int previewPageIndex, int logicalPageIndex, bool isRightSide, bool isBackSide,
             CancellationTokenSource cancellationToken)
         {
             LogUtility.BeginTimestamp("ApplyPrintSettings #" + previewPageIndex);
 
             Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
 
-            bool isPdfPortait = DocumentController.Instance.IsPdfPortrait;
+            bool isPdfPortait = DocumentController.Instance.GetPdfOrientation((uint)logicalPageIndex); 
+
             bool isPreviewPagePortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
                 _currPrintSettings.Orientation);
 
@@ -867,7 +866,7 @@ namespace SmartDeviceApp.Controllers
                     }
 
                     PreviewPageImageUtility.OverlayImagesForImposition(canvasBitmap, previewPageSize,
-                        logicalPageImages, logicalPageSize,
+                        logicalPageImages, logicalPageSize, logicalPageIndex,
                         _currPrintSettings.Orientation, _currPrintSettings.Imposition,
                         _currPrintSettings.ImpositionOrder, _currPrintSettings.ScaleToFit,
                         isPdfPortait, isPreviewPagePortrait, out isPreviewPagePortrait,
@@ -1254,6 +1253,11 @@ namespace SmartDeviceApp.Controllers
                     else if (result == (int)PrintJobResult.Error)
                     {
                         await DialogService.Instance.ShowError("IDS_INFO_MSG_PRINT_JOB_FAILED",
+                            "IDS_APP_NAME", "IDS_LBL_OK", null);
+                    }
+                    else if (result == (int)PrintJobResult.NoNetwork)
+                    {
+                        await DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR",
                             "IDS_APP_NAME", "IDS_LBL_OK", null);
                     }
 

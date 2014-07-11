@@ -35,6 +35,32 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("DeleteButtonVisibility", typeof(Visibility), typeof(JobListItemControl),
             new PropertyMetadata(Visibility.Collapsed, SetDeleteButtonVisibility));
 
+        public static readonly DependencyProperty DeleteButtonStateProperty =
+            DependencyProperty.Register("DeleteButtonState", typeof(Visibility), typeof(JobListItemControl),
+            new PropertyMetadata(Visibility.Collapsed, SetVisibility));
+        private bool _isVisibilitySet;
+        private bool _isLoaded;
+        private static void SetVisibility(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            
+            if (e.NewValue == null || !(e.NewValue is Visibility)) return;
+            var control = (JobListItemControl)obj;
+            control._isVisibilitySet = false;
+            if (control._isLoaded)
+            { 
+                control.DeleteButtonVisibility = control.DeleteButtonState;
+                if (control.DeleteButtonVisibility == Visibility.Visible)
+                {
+                    control.VisualState = "Pressed";
+                }
+                else
+                {
+                    control.VisualState = "Normal";
+                }
+                control._isVisibilitySet = true;
+            }
+        }
+
         public ICommand DeleteJobCommand
         {
             get { return (ICommand)GetValue(DeleteJobCommandProperty); }
@@ -53,6 +79,14 @@ namespace SmartDeviceApp.Controls
             set { SetValue(DeleteButtonVisibilityProperty, value); }
         }
 
+        public Visibility DeleteButtonState
+        {
+            get { return (Visibility)GetValue(DeleteButtonStateProperty); }
+            set { 
+                SetValue(DeleteButtonStateProperty, (Visibility)value); 
+            }
+        }
+
         private static void SetDeleteButtonVisibility(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue == null || !(e.NewValue is Visibility)) return;
@@ -66,6 +100,7 @@ namespace SmartDeviceApp.Controls
             }
             else
             {
+                control.deleteButton.Visibility = Visibility.Visible;
                 control.SetValue(ValueVisibilityProperty, Visibility.Collapsed);
                 VisualStateManager.GoToState(deleteButton, "Visible", true);                
             }            
@@ -73,8 +108,15 @@ namespace SmartDeviceApp.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // Need to calculate widths for text lengths first before adding delete button
             deleteButton.Visibility = Visibility.Visible;
+            var control = (JobListItemControl)sender;
+            control._isLoaded = true;
+            if (!control._isVisibilitySet)
+            {
+                //Set visibility
+                if (control.DataContext != null)
+                    ((PrintJob)(control.DataContext)).DeleteButtonVisibility = ((PrintJob)(control.DataContext)).DeleteButtonVisibility;
+            }
         }
     }
 }

@@ -75,7 +75,8 @@ namespace SmartDeviceApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var columns = new ViewModelLocator().JobsViewModel.MaxColumns;
+            var viewModel = new ViewModelLocator().JobsViewModel;
+            var columns = viewModel.MaxColumns;
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
             // Need this workaround because OrientationChange event is fired before 
             // window bounds are updated
@@ -92,6 +93,7 @@ namespace SmartDeviceApp.Converters
                     Window.Current.Bounds.Width : Window.Current.Bounds.Height;
             }
             var columnWidth = (width - (defaultMargin * 2) - (defaultMargin * (columns - 1))) / columns;
+            viewModel.ColumnWidth = columnWidth;
             return columnWidth;
         }
 

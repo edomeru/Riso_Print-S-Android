@@ -33,6 +33,7 @@ namespace SmartDeviceApp.Controllers
 
         private bool _isDeleteJobButtonVisible;
         private JobListItemControl _lastJobListItem;
+        private PrintJob _lastPrintJob;
 
         private Point _startPoint;
         private bool _isEnabled;
@@ -194,6 +195,7 @@ namespace SmartDeviceApp.Controllers
                     VisualStateManager.GoToState(jobListHeader, "Pressed", true);
                 }
                 jobListHeader.IsChecked = !jobListHeader.IsChecked; // Manually toggle the button
+                ((PrintJobGroup)jobListHeader.DataContext).IsCollapsed = jobListHeader.IsChecked.Value;
             }
             else if (jobListHeader != null)
             {
@@ -213,7 +215,7 @@ namespace SmartDeviceApp.Controllers
 
         private void OnManipulationUpdated(object sender, ManipulationUpdatedEventArgs e)
         {
-            var isVerticalSwipe = DetectVerticalSwipe(e.Delta.Translation);
+            var isVerticalSwipe = DetectVerticalSwipe(e.Position, e.Delta.Translation);
             if (isVerticalSwipe)
             {
                 return;
@@ -251,9 +253,11 @@ namespace SmartDeviceApp.Controllers
                 }
                 if (jobListItem.DeleteButtonVisibility != Visibility.Visible)
                 {
-                    jobListItem.DeleteButtonVisibility = Visibility.Visible;
+                    PrintJob printJob = (PrintJob)jobListItem.DataContext;
+                    printJob.DeleteButtonVisibility = Visibility.Visible;
                     jobListItem.VisualState = "Pressed";
                     _lastJobListItem = jobListItem;
+                    _lastPrintJob = printJob;
                     _isDeleteJobButtonVisible = true;
                 }
             }
@@ -263,7 +267,8 @@ namespace SmartDeviceApp.Controllers
         private void HideDeleteJobButton()
         {
             if (_lastJobListItem == null || !_isDeleteJobButtonVisible) return;
-            _lastJobListItem.DeleteButtonVisibility = Visibility.Collapsed;
+            //PrintJob printJob = (PrintJob)_lastJobListItem.DataContext;
+            _lastPrintJob.DeleteButtonVisibility = Visibility.Collapsed;
             _lastJobListItem.VisualState = "Normal";
             _isDeleteJobButtonVisible = false;
         }
@@ -288,15 +293,22 @@ namespace SmartDeviceApp.Controllers
             return null;
         }
 
-        private bool DetectVerticalSwipe(Point delta)
+        private bool DetectVerticalSwipe(Point currentPosition, Point delta)
         {
             var isTranslate = false;
             if (Math.Abs(delta.Y) > 0)
             {
                 isTranslate = true;
                 var scrollViewer = (ScrollViewer)_controlReference;
-                scrollViewer.ChangeView(null, scrollViewer.VerticalOffset - delta.Y, null);                
-                HideDeleteJobButton();
+                scrollViewer.ChangeView(null, scrollViewer.VerticalOffset - delta.Y, null);
+
+                // Hide delete button only on outside of containing row
+                var jobListItem = GetJobListItemControl(currentPosition, isTranslate);
+                if (_isDeleteJobButtonVisible &&
+                    _lastJobListItem != null && _lastJobListItem != jobListItem)
+                {
+                    HideDeleteJobButton();
+                }
             }
             return isTranslate;
         }

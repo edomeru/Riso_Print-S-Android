@@ -200,7 +200,8 @@ namespace SmartDeviceApp.Controls
 
         private void button_Loaded(object sender, RoutedEventArgs e)
         {
-            resizeTextWidth();
+            if (sender != null && sender is PrinterNameControl)
+                resizeTextWidth();
         }
 
         private void resizeTextWidth()
@@ -257,7 +258,8 @@ namespace SmartDeviceApp.Controls
 
         private void printerNameControl_LayoutUpdated(object sender, object e)
         {
-            resizeTextWidth();
+            if (sender != null)
+                resizeTextWidth();
         }
 
     }
