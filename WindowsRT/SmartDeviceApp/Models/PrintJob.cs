@@ -133,6 +133,7 @@ namespace SmartDeviceApp.Models
     public class PrintJobGroup : ObservableObject
     {
         private ObservableCollection<PrintJob> _jobs;
+        private bool _isCollapsed;
         public string PrinterName { get; set; }
         public string IpAddress { get; set; }
         public ObservableCollection<PrintJob> Jobs
@@ -144,6 +145,19 @@ namespace SmartDeviceApp.Models
                 {
                     _jobs = value;
                     RaisePropertyChanged("Jobs");
+                }
+            }
+        }
+
+        public bool IsCollapsed
+        {
+            get { return _isCollapsed; }
+            set
+            {
+                if (_isCollapsed != value)
+                {
+                    _isCollapsed = value;
+                    RaisePropertyChanged("IsCollapsed");
                 }
             }
         }
