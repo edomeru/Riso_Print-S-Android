@@ -134,8 +134,8 @@ namespace DirectPrint
             //start socket
             socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData, timeout);
             int connectretries = 0;
-            int maxretries = 4;
-            while (connectretries < maxretries)
+            int maxretries = 0;
+            while (connectretries <= maxretries)
             {
                 try
                 {
