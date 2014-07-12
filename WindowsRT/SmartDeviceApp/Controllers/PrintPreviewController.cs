@@ -1194,18 +1194,18 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public async void CancelPrint()
         {
-            if (_directPrintController != null)
-            {
-                _directPrintController.CancelPrintJob();
-                _directPrintController.UnsubscribeEvents();
-                _directPrintController = null;
-            }
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal,
                 () =>
                 {
                     _printingPopup.IsOpen = false;
                 });
+            if (_directPrintController != null)
+            {
+                _directPrintController.UnsubscribeEvents();
+                _directPrintController.CancelPrintJob();                
+                _directPrintController = null;
+            }            
         }
 
         /// <summary>
@@ -1215,7 +1215,7 @@ namespace SmartDeviceApp.Controllers
         public async void UpdatePrintJobProgress(float progress)
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal,
+                Windows.UI.Core.CoreDispatcherPriority.Low,
                 () =>
                 {
                     _printingProgress.ProgressValue = progress;
