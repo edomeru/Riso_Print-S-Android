@@ -101,7 +101,7 @@ namespace SmartDeviceApp.Views
         private void OnGroupListLoaded(object sender, RoutedEventArgs e)
         {
             // Check if last group
-            if (((GroupListControl)sender).Text == ViewModel.PrintJobsList[ViewModel.PrintJobsList.Count - 1].PrinterName)
+            if (((GroupListControl)sender).SubText == ViewModel.PrintJobsList[ViewModel.PrintJobsList.Count - 1].IpAddress)
             {
                 ViewModel.IsProgressRingActive = false;
             }
