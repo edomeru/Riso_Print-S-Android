@@ -172,12 +172,19 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Associated object to this behavior
+        /// </summary>
         public DependencyObject AssociatedObject
         {
             get;
             protected set;
         }
 
+        /// <summary>
+        /// Attaches this behavior to an object
+        /// </summary>
+        /// <param name="associatedObject">Object to be associated with this behavior</param>
         public virtual void Attach(DependencyObject associatedObject)
         {
             AssociatedObject = associatedObject;
@@ -194,6 +201,9 @@ namespace SmartDeviceApp.Common.Utilities
                 HandleOrientationMessage);
         }
 
+        /// <summary>
+        /// Unregisters the Messenger.
+        /// </summary>
         public virtual void Detach()
         {
             Messenger.Default.Unregister<OrientationStateMessage>(

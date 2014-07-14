@@ -54,6 +54,10 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Attaches this behavior to an object
+        /// </summary>
+        /// <param name="associatedObject">Object to be associated with this behavior</param>
         public override void Attach(DependencyObject associatedObject)
         {
             AssociatedObject = associatedObject;
@@ -68,6 +72,9 @@ namespace SmartDeviceApp.Common.Utilities
             _associatedPage.Loaded += AssociatedPageLoaded;
         }
 
+        /// <summary>
+        /// Detaches this behavior to the object
+        /// </summary>
         public override void Detach()
         {
             if (_associatedPage != null)
@@ -77,6 +84,10 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Sends messages that the orientation has been changed.
+        /// </summary>
+        /// <param name="orientation">new orientation</param>
         protected override void SendMessage(PageOrientations orientation)
         {
             Messenger.Default.Send(new OrientationStateMessage(orientation));

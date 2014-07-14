@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumeration of view modes of screens
+    /// </summary>
     public enum ViewMode
     {
         MainMenuPaneVisible,

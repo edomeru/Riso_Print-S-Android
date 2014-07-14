@@ -20,11 +20,17 @@ namespace SmartDeviceApp.Common.Base
 {
     public abstract class UserControlBase : UserControl
     {
+        /// <summary>
+        /// Maximum width for snap view.
+        /// </summary>
         public abstract double SnapViewMaximumWidth
         {
             get;
         }
 
+        /// <summary>
+        /// Constructor for UserControlBase
+        /// </summary>
         public UserControlBase()
         {
             if (!ViewModelBase.IsInDesignModeStatic)

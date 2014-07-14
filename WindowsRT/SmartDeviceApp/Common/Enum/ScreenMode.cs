@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumeration of modes of Screens
+    /// </summary>
     public enum ScreenMode
     {
         Home,

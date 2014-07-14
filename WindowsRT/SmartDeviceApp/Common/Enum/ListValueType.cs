@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumaration for the List Value type
+    /// </summary>
     public enum ListValueType
     {
         String,

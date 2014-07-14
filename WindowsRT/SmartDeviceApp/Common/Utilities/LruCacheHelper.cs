@@ -25,6 +25,10 @@ namespace SmartDeviceApp.Common.Utilities
         private object _cacheLock = new object();
         private int _max;
 
+        /// <summary>
+        /// Constructor of LruCacheHelper
+        /// </summary>
+        /// <param name="capacity">Capacity of the hash map</param>
         public LruCacheHelper(int capacity)
         {
             _hashMap = new Dictionary<K, V>(capacity);

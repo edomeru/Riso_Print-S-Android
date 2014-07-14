@@ -16,6 +16,11 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public static class DisplayOrientationsHelper
     {
+        /// <summary>
+        /// Determines the orientation of the page.
+        /// </summary>
+        /// <param name="orientation">The orientation of the monitor/display</param>
+        /// <returns>PageOrientations</returns>
         public static PageOrientations GetPageOrientation(this DisplayOrientations orientation)
         {
             switch (orientation)

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumeration of panes visible on the right
+    /// </summary>
     public enum VisibleRightPane
     {
         Pane1,

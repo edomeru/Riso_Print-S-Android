@@ -14,6 +14,9 @@ using System;
 
 namespace SmartDeviceApp.Common.Utilities
 {
+    /// <summary>
+    /// Interface for the Navigation Service class
+    /// </summary>
     public interface INavigationService
     {
         bool CanGoBack

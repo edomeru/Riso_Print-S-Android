@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumeration of modes for the Print Settings Pane
+    /// </summary>
     public enum PrintSettingsPaneMode
     {
         PrintSettings,
