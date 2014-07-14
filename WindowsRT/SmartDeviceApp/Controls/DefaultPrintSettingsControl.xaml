@@ -142,7 +142,7 @@
         </Style>
 
         <ControlTemplate x:Key="Template_ToggleButton"  TargetType="ToggleButton">
-            <Grid x:Name="defaultPrintSettingsControlGrid" Style="{StaticResource STYLE_ListItemGrid}" PointerPressed="defaultPrintSettingsControlGrid_PointerPressed" PointerReleased="defaultPrintSettingsControlGrid_PointerReleased">
+            <Grid x:Name="defaultPrintSettingsControlGrid" Style="{StaticResource STYLE_ListItemGrid}">
                 <!--<Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="PointerPressed">
                         <Core:GoToStateAction StateName="Pressed"/>

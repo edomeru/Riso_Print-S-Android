@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumeration for the Right Pane mode of Printers Screen
+    /// </summary>
     public enum PrintersRightPaneMode
     {
         AddPrinter,

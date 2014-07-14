@@ -41,6 +41,11 @@ namespace SmartDeviceApp.ViewModels
         private ObservableCollection<Printer> _printerList;
 
         private ViewControlViewModel _viewControlViewModel;
+        /// <summary>
+        /// Constructor for AddPrinterViewModel.
+        /// </summary>
+        /// <param name="dataService"></param>
+        /// <param name="navigationService"></param>
         public AddPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -57,12 +62,17 @@ namespace SmartDeviceApp.ViewModels
             
         }
 
-        private void ResetAddPane(ViewOrientation viewOrientation)
-        {
-            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
-            Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
-        }
 
+        /// <summary>
+        /// Event handler for property change.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #region Properties
+
+        /// <summary>
+        /// Holds the value for the height of the Add Printer pane.
+        /// </summary>
         public double Height
         {
             get { return this._height; }
@@ -74,21 +84,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private async Task HandleStringMessage(MessageType strMsg)
-        {
-            if (strMsg == MessageType.AddPrinter)
-            {
-                await AddPrinterExecute();
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(String propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
+        /// <summary>
+        /// Holds the value of the ip address of the printer to be added
+        /// </summary>
         public string IpAddress
         {
             get { return _ipAddress; }
@@ -99,6 +97,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Contains the printers searched. This is used to clear the search list if a search is conducted before manual addition.
+        /// </summary>
         public ObservableCollection<PrinterSearchItem> PrinterSearchList
         {
             get { return this._printerSearchList; }
@@ -109,6 +110,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Contains the printers already added.
+        /// </summary>
         public ObservableCollection<Printer> PrinterList
         {
             get { return this._printerList; }
@@ -120,6 +124,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to be executed when Add button is tapped
+        /// </summary>
         public ICommand AddPrinter
         {
             get
@@ -132,6 +139,124 @@ namespace SmartDeviceApp.ViewModels
                     );
                 }
                 return _addPrinter;
+            }
+        }
+
+        /// <summary>
+        /// Flag to check if progress ring is visible or not. Progress ring will be displayed while the printer is being added.
+        /// </summary>
+        public bool IsProgressRingVisible
+        {
+            get { return _isProgressRingVisible; }
+            set
+            {
+                this._isProgressRingVisible = value;
+                OnPropertyChanged("IsProgressRingVisible");
+            }
+        }
+
+        /// <summary>
+        /// Flag to check if add button is visible or not. Add button will be replaced by a progress ring while the printer is being added.
+        /// </summary>
+        public bool IsButtonVisible
+        {
+            get { return _isButtonVisible; }
+            set
+            {
+                this._isButtonVisible = value;
+                OnPropertyChanged("IsButtonVisible");
+            }
+        }
+
+        #endregion Properties
+
+        #region Public Methods
+        /// <summary>
+        /// Handles the result of the addition of printer. Displays the necessary result.
+        /// </summary>
+        /// <param name="isSuccessful">Flag to check if addition of printer is successful or not.</param>
+        public void handleAddIsSuccessful(bool isSuccessful)
+        {
+            string caption = "";
+            string content = "";
+            string buttonText = "";
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            if (isSuccessful)
+            {
+                content = loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
+            }
+            else
+            {
+                if (NetworkController.IsConnectedToNetwork)
+                {
+                    content = loader.GetString("IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER");
+                }
+                else
+                {
+
+                    content = loader.GetString("IDS_ERR_MSG_NETWORK_ERROR");
+                }
+            }
+            caption = loader.GetString("IDS_LBL_ADD_PRINTER");
+            buttonText = loader.GetString("IDS_LBL_OK");
+
+
+            setVisibilities();
+            DisplayMessage(caption, content, buttonText);
+        }
+
+        /// <summary>
+        /// Sets the visibilities of the Add button and the Progress ring
+        /// </summary>
+        public void setVisibilities()
+        {
+            IsButtonVisible = true;
+            IsProgressRingVisible = false;
+        }
+
+        /// <summary>
+        /// Handles addition errors and sets the visibilities of the button and progress ring.
+        /// </summary>
+        public void handleAddError()
+        {
+            setVisibilities();
+        }
+
+        /// <summary>
+        /// Displays the message result.
+        /// </summary>
+        /// <param name="caption">Title of the dialog</param>
+        /// <param name="content">Message result</param>
+        /// <param name="buttonText">Text for the button</param>
+        public void DisplayMessage(string caption, string content, string buttonText)
+        {
+            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, new Action(ClosePane));
+        }
+
+        /// <summary>
+        /// Notifies classes that a property has been changed.
+        /// </summary>
+        public void OnPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private void ResetAddPane(ViewOrientation viewOrientation)
+        {
+            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+            Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
+        }
+
+        private async Task HandleStringMessage(MessageType strMsg)
+        {
+            if (strMsg == MessageType.AddPrinter)
+            {
+                await AddPrinterExecute();
             }
         }
 
@@ -160,74 +285,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 setVisibilities();
             }
-            
-        }
 
-        public bool IsProgressRingVisible
-        {
-            get { return _isProgressRingVisible; }
-            set
-            {
-                this._isProgressRingVisible = value;
-                OnPropertyChanged("IsProgressRingVisible");
-            }
-        }
-
-        public bool IsButtonVisible
-        {
-            get { return _isButtonVisible; }
-            set
-            {
-                this._isButtonVisible = value;
-                OnPropertyChanged("IsButtonVisible");
-            }
-        }
-
-        public void handleAddIsSuccessful(bool isSuccessful)
-        {
-            string caption = "";
-            string content = "";
-            string buttonText = "";
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
-            if (isSuccessful)
-            {
-                content = loader.GetString("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL");
-            }
-            else
-            {
-                if (NetworkController.IsConnectedToNetwork)
-                {
-                    content = loader.GetString("IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER");
-                }
-                else
-                {
-                    
-                    content = loader.GetString("IDS_ERR_MSG_NETWORK_ERROR");
-                }
-            }
-            caption = loader.GetString("IDS_LBL_ADD_PRINTER");
-            buttonText = loader.GetString("IDS_LBL_OK");
-            
-
-            setVisibilities();
-            DisplayMessage(caption, content, buttonText);
-        }
-
-        public void setVisibilities()
-        {
-            IsButtonVisible = true;
-            IsProgressRingVisible = false;
-        }
-
-        public void handleAddError()
-        {
-            setVisibilities();
-        }
-
-        public void DisplayMessage(string caption, string content, string buttonText)
-        {
-            DialogService.Instance.ShowCustomMessageBox(content, caption, buttonText, new Action(ClosePane));
         }
 
         private void ClosePane()
@@ -252,7 +310,7 @@ namespace SmartDeviceApp.ViewModels
                         return;
                     }
                 }
-                
+
             }
         }
 
@@ -265,5 +323,8 @@ namespace SmartDeviceApp.ViewModels
                 ClearIpAddressToAddHandler();
             }
         }
+
+        #endregion Private Methods
+
     }
 }

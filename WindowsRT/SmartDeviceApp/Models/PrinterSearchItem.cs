@@ -15,6 +15,9 @@ namespace SmartDeviceApp.Models
         private string _ip_address;
         private bool _isInPrinterList;
         
+        /// <summary>
+        /// Printer Name, used to display name of printer searched.
+        /// </summary>
         public string Name
         {
             get { return _name; }
@@ -25,6 +28,9 @@ namespace SmartDeviceApp.Models
             }
         }
 
+        /// <summary>
+        /// Printer IP Address, displays the ip address of the printer searched.
+        /// </summary>
         public string Ip_address
         {
             get { return _ip_address; }
@@ -35,6 +41,9 @@ namespace SmartDeviceApp.Models
             }
         }
 
+        /// <summary>
+        /// Flag used to determine if the printer searched is already added.
+        /// </summary>
         public bool IsInPrinterList
         {
             get { return _isInPrinterList; }
@@ -46,7 +55,14 @@ namespace SmartDeviceApp.Models
             }
         }
 
+        /// <summary>
+        /// Event handler for property change.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Notifies classes that a property has been changed.
+        /// </summary>
         public void OnPropertyChanged(String propertyName)
         {
             if (PropertyChanged != null)

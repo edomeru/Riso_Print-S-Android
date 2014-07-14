@@ -199,17 +199,19 @@ namespace SmartDeviceApp.Models
             }
         }
 
-
-        [SQLite.Ignore]
-        public bool WillBeDeleted
-        {
-            get { return this._willBeDeleted; }
-            set
-            {
-                _willBeDeleted = value;
-                OnPropertyChanged("WillBeDeleted");
-            }
-        }
+        /// <summary>
+        /// Flag that denotes that the printer will be deleted
+        /// </summary>
+        //[SQLite.Ignore]
+        //public bool WillBeDeleted
+        //{
+        //    get { return this._willBeDeleted; }
+        //    set
+        //    {
+        //        _willBeDeleted = value;
+        //        OnPropertyChanged("WillBeDeleted");
+        //    }
+        //}
 
         [SQLite.Ignore]
         public string VisualState
@@ -224,8 +226,15 @@ namespace SmartDeviceApp.Models
 
         #endregion Properties
 
-
+        
+        /// <summary>
+        /// Event handler for property change.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Notifies classes that a property has been changed.
+        /// </summary>
         public void OnPropertyChanged(String propertyName)
         {
             if (PropertyChanged != null)

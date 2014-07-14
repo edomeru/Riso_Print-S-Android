@@ -25,12 +25,18 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class SearchPrinterPane : UserControl
     {
+        /// <summary>
+        /// Constructor for SearchPrinterPane class.
+        /// </summary>
         public SearchPrinterPane()
         {
             this.InitializeComponent();
             Messenger.Default.Register<PrinterSearchRefreshState>(this, (refreshState) => OnSetRefreshState(refreshState));
         }
 
+        /// <summary>
+        /// Holds the data context of this xaml.
+        /// </summary>
         public SearchPrinterViewModel ViewModel
         {
             get

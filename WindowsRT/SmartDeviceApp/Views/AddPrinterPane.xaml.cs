@@ -25,6 +25,9 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class AddPrinterPane : UserControl
     {
+        /// <summary>
+        /// Constructor of AddPrinterPane.
+        /// </summary>
         public AddPrinterPane()
         {
             this.InitializeComponent();
@@ -38,6 +41,9 @@ namespace SmartDeviceApp.Views
             behavior.Attach((TextBox)sender);
         }
 
+        /// <summary>
+        /// Holds the data context for this xaml.
+        /// </summary>
         public AddPrinterViewModel ViewModel
         {
             get

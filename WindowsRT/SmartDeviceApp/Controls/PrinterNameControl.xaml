@@ -213,7 +213,7 @@
         		Visibility="Visible"
         		Command="{Binding DeleteCommand, ElementName=printerNameControl}"
         		CommandParameter="{Binding PrinterIp, ElementName=printerNameControl}"
-        		Loaded="deleteButton_Loaded"  BorderThickness="0" Padding="0" />
+        		BorderThickness="0" Padding="0" />
         </StackPanel>
     </Grid>
 </UserControl>

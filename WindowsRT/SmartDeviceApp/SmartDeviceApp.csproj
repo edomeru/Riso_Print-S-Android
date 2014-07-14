@@ -122,7 +122,6 @@
     <Compile Include="Common\Enum\PageViewMode.cs" />
     <Compile Include="Common\Enum\ViewMode.cs" />
     <Compile Include="Common\Enum\PrinterSearchRefreshState.cs" />
-    <Compile Include="Common\Enum\PrintersViewMode.cs" />
     <Compile Include="Common\Enum\ListValueType.cs" />
     <Compile Include="Common\Enum\PrintSettingsOptions.cs" />
     <Compile Include="Common\Enum\PrintSettingType.cs" />
@@ -211,7 +210,6 @@
     <Compile Include="Converters\SidePaneLineGeometryConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthHeightConverter.cs" />
-    <Compile Include="Models\CurlParameters.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
     <Compile Include="Models\ViewItemParameters.cs" />
     <Compile Include="Selectors\PrintersRightPaneTemplateSelector.cs" />

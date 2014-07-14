@@ -19,6 +19,9 @@ namespace SmartDeviceApp.Controls
 {
     public partial class KeyImageControl : UserControl
     {
+        /// <summary>
+        /// Constructor for KeyImageControl
+        /// </summary>
         public KeyImageControl()
         {
             this.InitializeComponent();
@@ -28,6 +31,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty PrinterImageProperty =
             DependencyProperty.Register("PrinterImage", typeof(ImageSource), typeof(KeyImageControl), null);
 
+        /// <summary>
+        /// ImageSource property for the image to be displayed in this control
+        /// </summary>
         public ImageSource PrinterImage
         {
             get { return (ImageSource)GetValue(PrinterImageProperty); }

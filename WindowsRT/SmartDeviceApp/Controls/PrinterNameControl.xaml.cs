@@ -25,6 +25,9 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class PrinterNameControl : UserControl
     {
+        /// <summary>
+        /// Constructor for PrinterNameControl
+        /// </summary>
         public PrinterNameControl()
         {
             this.InitializeComponent();
@@ -76,67 +79,99 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TextWidthProperty =
             DependencyProperty.Register("TextWidth", typeof(double), typeof(PrinterNameControl), null);
 
+        /// <summary>
+        /// Determines the visibility of the left button
+        /// </summary>
         public string LeftButtonVisibility
         {
             get { return (string)GetValue(LeftButtonVisibilityProperty); }
             set { SetValue(LeftButtonVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Determines the visibility of the right button
+        /// </summary>
         public string RightButtonVisibility
         {
             get { return (string)GetValue(RightButtonVisibilityProperty); }
             set { SetValue(RightButtonVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Determines the visibility of the icon
+        /// </summary>
         public string IconVisibility
         {
             get { return (string)GetValue(IconVisibilityProperty); }
             set { SetValue(IconVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Determines the visibility of the Value text
+        /// </summary>
         public string ValueVisibility
         {
             get { return (string)GetValue(ValueVisibilityProperty); }
             set { SetValue(ValueVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Holds the content to be displayed in this control
+        /// </summary>
         public object ValueContent
         {
             get { return (object)GetValue(ValueContentProperty); }
             set { SetValue(ValueContentProperty, value); }
         }
 
+        /// <summary>
+        /// ImageSource for the Icon
+        /// </summary>
         public ImageSource IconImage
         {
             get { return (ImageSource)GetValue(IconImageProperty); }
             set { SetValue(IconImageProperty, value); }
         }
 
+        /// <summary>
+        /// Text property for the control
+        /// </summary>
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
 
+        /// <summary>
+        /// Text property that will be displayed as value for this control.
+        /// </summary>
         public string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }
             set { SetValue(ValueTextProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check the focus state of the control
+        /// </summary>
         public bool SetFocus
         {
             get { return (bool)GetValue(SetFocusProperty); }
             set { SetValue(SetFocusProperty, value); }
         }
 
-
+        /// <summary>
+        /// Flag to check if the printer in the control is default printer
+        /// </summary>
         public bool IsDefault
         {
             get { return (bool)GetValue(IsDefaultProperty); }
             set { SetValue(IsDefaultProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check if the printer in the control is online
+        /// </summary>
         public bool IsOnline
         {
             get { return (bool)GetValue(IsOnlineProperty); }
@@ -154,6 +189,9 @@ namespace SmartDeviceApp.Controls
             obj.SetValue(SetFocusProperty, false);
         }
 
+        /// <summary>
+        /// Delete command that will be executed when the delete button is tapped.
+        /// </summary>
         public ICommand DeleteCommand
         {
             get { return (ICommand)GetValue(DeleteCommandProperty); }
@@ -162,41 +200,33 @@ namespace SmartDeviceApp.Controls
             }
         }
        
+        /// <summary>
+        /// Ip address of the printer in this control.
+        /// </summary>
         public string PrinterIp
         {
             get { return (string)GetValue(PrinterIpProperty); }
             set { SetValue(PrinterIpProperty, value); }
         }
 
-        public bool WillBeDeleted
-        {
-            get { return (bool)GetValue(WillBeDeletedProperty); }
-            set { SetValue(WillBeDeletedProperty, value); }
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //public bool WillBeDeleted
+        //{
+        //    get { return (bool)GetValue(WillBeDeletedProperty); }
+        //    set { SetValue(WillBeDeletedProperty, value); }
+        //}
 
+        /// <summary>
+        /// This determines if the text will be truncated
+        /// </summary>
         public double TextWidth
         {
             get { return (double)GetValue(TextWidthProperty); }
             set { SetValue(TextWidthProperty, value); }
         }
 
-        private void deleteButton_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.deleteButton.AddHandler(PointerPressedEvent, new PointerEventHandler(deleteButton_PointerPressed), true);
-            this.deleteButton.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(deleteButton_PointerLost), true);
-        }
-
-        private void deleteButton_PointerLost(object sender, PointerRoutedEventArgs e)
-        {
-            ((ToggleButton)sender).ReleasePointerCapture(e.Pointer);
-                WillBeDeleted = !WillBeDeleted;
-        }
-
-        private void deleteButton_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            ((ToggleButton)sender).CapturePointer(e.Pointer);
-            WillBeDeleted = !WillBeDeleted;
-        }
 
         private void button_Loaded(object sender, RoutedEventArgs e)
         {

@@ -40,6 +40,12 @@ namespace SmartDeviceApp.ViewModels
         private double _height;
 
         private ViewControlViewModel _viewControlViewModel;
+
+        /// <summary>
+        /// Constructor for SearchPrinterViewModel.
+        /// </summary>
+        /// <param name="dataService"></param>
+        /// <param name="navigationService"></param>
         public SearchPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -62,7 +68,9 @@ namespace SmartDeviceApp.ViewModels
             Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
         }
 
-
+        /// <summary>
+        /// Holds the value for the height of the Add Printer pane.
+        /// </summary>
         public double Height
         {
             get { return this._height; }
@@ -110,13 +118,23 @@ namespace SmartDeviceApp.ViewModels
             
         }
 
+        /// <summary>
+        /// Event handler for property change.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Notifies classes that a property has been changed.
+        /// </summary>
         public void OnPropertyChanged(String propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Contains the printers searched.
+        /// </summary>
         public ObservableCollection<PrinterSearchItem> PrinterSearchList
         {
             get { return this._printerSearchList; }
@@ -127,6 +145,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// contains the printers added
+        /// </summary>
         public ObservableCollection<Printer> PrinterList
         {
             get { return this._printerList; }
@@ -138,6 +159,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Flag for refreshing printer search
+        /// </summary>
         public bool WillRefresh
         {
             get { return this._willRefresh; }
@@ -152,6 +176,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Flag whether there are printers found.
+        /// </summary>
         public bool NoPrintersFound
         {
             get { return this._noPrintersFound; }
@@ -162,6 +189,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command executed when a printer in the search list is saved to the printer list.
+        /// </summary>
         public ICommand PrinterSearchItemSelected
         {
             get
@@ -215,6 +245,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Handles search time out.
+        /// </summary>
         public async void SearchTimeout()
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
@@ -230,6 +263,9 @@ namespace SmartDeviceApp.ViewModels
 
         }
 
+        /// <summary>
+        /// Sets the visual state of Search Printer Pane.
+        /// </summary>
         public void SetStateRefreshState()
         {
             NoPrintersFound = false;

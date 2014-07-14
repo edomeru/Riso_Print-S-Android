@@ -38,9 +38,12 @@ namespace SmartDeviceApp.ViewModels
 
         private ICommand _deletePrinter;
         private ICommand _openDefaultPrinterSettings;
+        private string _printerToBeDeleted;
 
         private ObservableCollection<Printer> _printerList;
         private bool _isPrinterListEmpty;
+
+        private PrintersGestureController _gestureController;
 
         /**
          * 
@@ -53,6 +56,12 @@ namespace SmartDeviceApp.ViewModels
 
         public event SmartDeviceApp.Controllers.PrinterController.DeletePrinterHandler DeletePrinterHandler;
 
+        public event SmartDeviceApp.Controllers.PrinterController.OpenDefaultPrintSettingsHandler OpenDefaultPrintSettingsHandler;
+
+        #region Properties
+        /// <summary>
+        /// Navigation handler.
+        /// </summary>
         public void OnNavigatedTo()
         {
             if (OnNavigateToEventHandler != null)
@@ -61,6 +70,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Navigation handler.
+        /// </summary>
         public void OnNavigatedFrom()
         {
             if (OnNavigateFromEventHandler != null)
@@ -69,6 +81,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Contains the list of saved printers.
+        /// </summary>
         public ObservableCollection<Printer> PrinterList
         {
             get{ return this._printerList; }
@@ -80,6 +95,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Flag for checking if the list of printers is empty
+        /// </summary>
         public bool IsPrinterListEmpty
         {
             get { return _isPrinterListEmpty; }
@@ -93,16 +111,89 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        
+        /// <summary>
+        /// Gesture controller for Printers screen.
+        /// </summary>
+        public PrintersGestureController GestureController
+        {
+            get { return _gestureController; }
+            set { _gestureController = value; }
+        }
 
+        /// <summary>
+        /// Command to be executed when default print settings button is tapped.
+        /// </summary>
+        public ICommand OpenDefaultPrinterSettings
+        {
+            get
+            {
+                if (_openDefaultPrinterSettings == null)
+                {
+                    _openDefaultPrinterSettings = new RelayCommand<Printer>(
+                        (printer) => OpenDefaultPrinterSettingsExecute(printer),
+                        (printer) => true
+                        );
+                }
+                return _openDefaultPrinterSettings;
+            }
+        }
+
+        /// <summary>
+        /// Command that will be executed when a printer will be deleted.
+        /// </summary>
+        public ICommand DeletePrinter
+        {
+            get
+            {
+                if (_deletePrinter == null)
+                {
+                    _deletePrinter = new RelayCommand<string>(
+                        (ip) => DeletePrinterExecute(ip),
+                        (ip) => true
+                    );
+                }
+                return _deletePrinter;
+            }
+        }
+
+        /// <summary>
+        /// Holds the mode of the right pane: Add Printer/Search Printer/Default Print Settings mode.
+        /// </summary>
+        public PrintersRightPaneMode RightPaneMode
+        {
+            get { return _rightPaneMode; }
+            set
+            {
+                if (_rightPaneMode != value)
+                {
+                    _rightPaneMode = value;
+                    OnPropertyChanged("RightPaneMode");
+
+                }
+            }
+        }
+
+        #endregion Properties
+
+        /// <summary>
+        /// Event handler for property change.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Notifies classes that a property has been changed.
+        /// </summary>
         public void OnPropertyChanged(String propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
+        /// <summary>
+        /// Constructor for PrintersViewModel. Registers Messenger event handlers.
+        /// </summary>
+        /// <param name="dataService"></param>
+        /// <param name="navigationService"></param>
         public PrintersViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -113,6 +204,8 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ScreenMode>(this, (screenMode) => ScreenModeChanged(screenMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPrinterInfoGrid(viewOrientation));            
         }
+
+        #region Private Methods
 
         private void ResetPrinterInfoGrid(ViewOrientation viewOrientation)
         {
@@ -167,20 +260,7 @@ namespace SmartDeviceApp.ViewModels
             }
             
         }
-
-        public PrintersRightPaneMode RightPaneMode
-        {
-            get { return _rightPaneMode; }
-            set
-            {
-                if (_rightPaneMode != value)
-                {
-                    _rightPaneMode = value;
-                    OnPropertyChanged("RightPaneMode");
-
-                }
-            }
-        }
+        
 
         private void SetRightPaneMode(VisibleRightPane visibleRightPane)
         {
@@ -199,21 +279,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public ICommand DeletePrinter
-        {
-            get
-            {
-                if (_deletePrinter == null)
-                {
-                    _deletePrinter = new RelayCommand<string>(
-                        (ip) => DeletePrinterExecute(ip),
-                        (ip) => true
-                    );
-                }
-                return _deletePrinter;
-            }
-        }
-        private string _printerToBeDeleted;
         private async Task DeletePrinterExecute(string ipAddress)
         {
             _printerToBeDeleted = ipAddress;
@@ -234,28 +299,8 @@ namespace SmartDeviceApp.ViewModels
             else
             {
                 Printer printer = PrinterList.FirstOrDefault(x => x.IpAddress == _printerToBeDeleted);
-                if (printer != null)
-                    printer.WillBeDeleted = false;
-            }
-            
+            }   
         }
-
-        public ICommand OpenDefaultPrinterSettings
-        {
-            get
-            {
-                if (_openDefaultPrinterSettings == null)
-                {
-                    _openDefaultPrinterSettings = new RelayCommand<Printer>(
-                        (printer) => OpenDefaultPrinterSettingsExecute(printer),
-                        (printer) => true
-                        );
-                }
-                return _openDefaultPrinterSettings;
-            }
-        }
-
-        public event SmartDeviceApp.Controllers.PrinterController.OpenDefaultPrintSettingsHandler OpenDefaultPrintSettingsHandler;
 
         private void OpenDefaultPrinterSettingsExecute(Printer printer)
         {
@@ -273,15 +318,11 @@ namespace SmartDeviceApp.ViewModels
             _gestureController.DisableGestures();
             
             OpenDefaultPrintSettingsHandler(printer);
-            
+
         }
 
-        private PrintersGestureController _gestureController;
-        public PrintersGestureController GestureController
-        {
-            get { return _gestureController; }
-            set { _gestureController = value; }
-        }
+        #endregion Private Methods
+
     }
 
 }
