@@ -17,6 +17,9 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class PrintSettingsBox : Grid
     {
+        /// <summary>
+        /// Constructor. Initializes UI components.
+        /// </summary>
         public PrintSettingsBox()
         {
             this.InitializeComponent();

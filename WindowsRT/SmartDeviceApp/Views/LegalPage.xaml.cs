@@ -23,6 +23,9 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class LegalPage : PageBase
     {
+        /// <summary>
+        /// Constructor. Initializes UI components.
+        /// </summary>
         public LegalPage()
         {
             this.InitializeComponent();
@@ -51,6 +54,9 @@ namespace SmartDeviceApp.Views
 
         }
 
+        /// <summary>
+        /// Gets the data context of this xaml
+        /// </summary>
         public LegalViewModel ViewModel
         {
             get

@@ -29,6 +29,9 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class SelectPrinterBox : Grid
     {
+        /// <summary>
+        /// Constructor. Initializes UI components.
+        /// </summary>
         public SelectPrinterBox()
         {
             this.InitializeComponent();

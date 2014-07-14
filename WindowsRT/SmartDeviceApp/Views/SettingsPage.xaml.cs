@@ -20,11 +20,17 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class SettingsPage : PageBase
     {
+        /// <summary>
+        /// Constructor. Initializes UI components.
+        /// </summary>
         public SettingsPage()
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Gets the data context of this xaml
+        /// </summary>
         public SettingsViewModel ViewModel
         {
             get

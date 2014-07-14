@@ -39,12 +39,17 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class PrintPreviewPage : PageBase
     {
-        
+        /// <summary>
+        /// Constructor. Initializes UI components.
+        /// </summary>
         public PrintPreviewPage()
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Gets the data context of this xaml
+        /// </summary>
         public PrintPreviewViewModel ViewModel
         {
             get

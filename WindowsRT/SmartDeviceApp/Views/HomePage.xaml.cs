@@ -32,6 +32,9 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class HomePage : PageBase
     {
+        /// <summary>
+        /// Constructor. Initializes UI components.
+        /// </summary>
         public HomePage()
         {
             this.InitializeComponent();
@@ -43,7 +46,9 @@ namespace SmartDeviceApp.Views
             ViewModel.HomeGestureGrid = (Grid)sender;
 
         }
-
+        /// <summary>
+        /// Gets the data context of this xaml
+        /// </summary>
         public HomeViewModel ViewModel
         {
             get

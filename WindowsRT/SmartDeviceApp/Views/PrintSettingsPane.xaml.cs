@@ -21,6 +21,9 @@ namespace SmartDeviceApp.Views
     /// </summary>
     public sealed partial class PrintSettingsPane : UserControl
     {
+        /// <summary>
+        /// Constructor. Initializes UI components.
+        /// </summary>
         public PrintSettingsPane()
         {
             this.InitializeComponent();
