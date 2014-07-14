@@ -92,8 +92,17 @@ namespace DirectPrint
             {
                 print_job.cancel_print = 1;
             }
+            /*
+            if (t != null)
+            {
+                tokenSource.Cancel();
+            }
+            */
+
         }
 
+        //CancellationTokenSource tokenSource = new CancellationTokenSource();
+        //Task t = null;
         public async void startLPRPrint(directprint_job parameter)
         {
             /*
@@ -112,6 +121,16 @@ namespace DirectPrint
             {
                 printJobStream.Seek(0, SeekOrigin.End);
 #endif
+                /*
+                //TODO: partial implementation of cancellation token method.
+                {
+
+                    t = Task.Factory.StartNew(async () =>
+                    {
+                        await _startLPRPrint(parameter);
+                    },tokenSource);
+                }
+                */
                 await Task.Run(() => _startLPRPrint(parameter));                        
 #if DEBUG
             }
@@ -134,8 +153,8 @@ namespace DirectPrint
             //start socket
             socket = new TCPSocket(print_job.ip_address, PORT_LPR, receiveData, timeout);
             int connectretries = 0;
-            int maxretries = 4;
-            while (connectretries < maxretries)
+            int maxretries = 0;
+            //while (connectretries <= maxretries)
             {
                 try
                 {
@@ -144,7 +163,7 @@ namespace DirectPrint
                 }
                 catch (Exception)
                 {
-                    if (connectretries++ >= maxretries)
+                    //if (connectretries++ >= maxretries)
                     {
                         triggerCallback(PRINT_STATUS_ERROR);
                         if (socket != null) socket.disconnect();
