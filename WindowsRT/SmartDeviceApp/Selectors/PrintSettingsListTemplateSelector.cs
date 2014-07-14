@@ -12,9 +12,21 @@ namespace SmartDeviceApp.Selectors
 {
     public class PrintSettingsListTemplateSelector : DataTemplateSelector
     {
+        /// <summary>
+        /// Gets and sets the data template for print setting with toggle switch
+        /// </summary>
         public DataTemplate ListViewItemToggleSwitchTemplate { get; set; }
+        /// <summary>
+        /// Gets and sets the data template for print setting with textbox
+        /// </summary>
         public DataTemplate ListViewItemTextBoxTemplate { get; set; }
+        /// <summary>
+        /// Gets and sets the data template for print setting with password text box
+        /// </summary>
         public DataTemplate ListViewItemPasswordBoxTemplate { get; set; }
+        /// <summary>
+        /// Gets and sets the data template for print setting
+        /// </summary>
         public DataTemplate ListViewItemListTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore (object item, DependencyObject container)

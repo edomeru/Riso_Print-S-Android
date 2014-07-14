@@ -12,8 +12,17 @@ namespace SmartDeviceApp.Selectors
 {
     public class PrintersRightPaneTemplateSelector : DataTemplateSelector
     {
+        /// <summary>
+        /// Gets and sets the data template for Add Printer Pane
+        /// </summary>
         public DataTemplate AddPrinterPaneTemplate { get; set; }
+        /// <summary>
+        /// Gets and sets the data template for Search Printer Pane
+        /// </summary>
         public DataTemplate SearchPrinterPaneTemplate { get; set; }
+        /// <summary>
+        /// Gets and sets the data template for Default Print Settings Pane
+        /// </summary>
         public DataTemplate PrintSettingsPaneTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
