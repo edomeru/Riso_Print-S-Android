@@ -141,6 +141,8 @@ namespace SmartDeviceApp.ViewModels
 
             System.Diagnostics.Debug.WriteLine(IpAddress);
 
+            IpAddress = System.Text.RegularExpressions.Regex.Replace(IpAddress, "0*([0-9]+)", "${1}");
+
             PrinterSearchList.Clear();
 
             //check if has data
