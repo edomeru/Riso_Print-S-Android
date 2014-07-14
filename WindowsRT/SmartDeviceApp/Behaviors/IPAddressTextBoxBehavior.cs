@@ -19,7 +19,15 @@ namespace SmartDeviceApp.Common.Utilities
 
         private string lastValidText;
 
+        /// <summary>
+        /// Object which this behavior is associated to.
+        /// </summary>
         public DependencyObject AssociatedObject { get; private set; }
+
+        /// <summary>
+        /// Attaches this behavior to an object.
+        /// </summary>
+        /// <param name="associatedObject">Object to be associated with this behavior</param>
         public void Attach(DependencyObject associatedObject)
         {
             var textBox = associatedObject as TextBox;
@@ -39,8 +47,17 @@ namespace SmartDeviceApp.Common.Utilities
             textBox.InputScope = inputScope;
         }
 
+        /// <summary>
+        /// Detaches the object associated with this behavior.
+        /// </summary>
         public void Detach()
         {
+            var textBox = AssociatedObject as TextBox;
+            if (textBox != null)
+            {
+                textBox.KeyDown -= OnKeyDown;
+                textBox.KeyUp -= OnKeyUp;
+            }
         }
 
         private void OnKeyUp(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
@@ -72,27 +89,13 @@ namespace SmartDeviceApp.Common.Utilities
             System.Diagnostics.Debug.WriteLine("Accepted");
         }
 
+        /// <summary>
+        /// Flag to check whether Shift key is pressed
+        /// </summary>
         public bool IsShiftPressed
         {
             get;
             set;
         }
-
-
-        //private void OnKeyDown(Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
-        //{
-        //    //base.OnKeyDown(e);
-
-            
-        //}
-
-        //protected override void OnKeyUp(Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
-        //{
-        //    //base.OnKeyUp(e);
-
-            
-        //}
-
-        
     }
 }
