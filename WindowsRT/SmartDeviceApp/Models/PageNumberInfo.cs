@@ -13,24 +13,40 @@ namespace SmartDeviceApp.Models
         private uint _pageTotal;
         private PageViewMode _pageViewMode;
         
+        /// <summary>
+        /// Page index (zero-based)
+        /// </summary>
         public uint PageIndex
         {
             get { return _pageIndex; }
             set { _pageIndex = value; }
         }
 
+        /// <summary>
+        /// Page total
+        /// </summary>
         public uint PageTotal
         {
             get { return _pageTotal; }
             set { _pageTotal = value; }
         }
 
+        /// <summary>
+        /// Page view mode
+        /// </summary>
         public PageViewMode PageViewMode
         {
             get { return _pageViewMode; }
             set { _pageViewMode = value; }
         }
 
+        /// <summary>
+        /// Constructor of PageNumberInfo
+        /// </summary>
+        /// <param name="rightPageIndex">right page index</param>
+        /// <param name="pageTotal">page total</param>
+        /// <param name="pageViewMode">page view mode</param>
+        /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
         public PageNumberInfo(uint rightPageIndex, 
             uint pageTotal, PageViewMode pageViewMode, bool isBooklet)
         {

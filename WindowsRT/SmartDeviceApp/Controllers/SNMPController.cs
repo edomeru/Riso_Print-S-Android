@@ -11,17 +11,43 @@ namespace SmartDeviceApp.Controllers
 {
     public class SNMPController
     {
+        /// <summary>
+        /// Status callback
+        /// </summary>
         public Action<string, bool> printerControllerGetStatusCallback { get; set; } //PrintersModule
+
+        /// <summary>
+        /// Add printer callback
+        /// </summary>
         public Action<string, string, bool, bool, List<string>> printerControllerAddPrinterCallback { get; set; }
+
+        /// <summary>
+        /// Printer search discovery callback
+        /// </summary>
         public Action<PrinterSearchItem> printerControllerDiscoverCallback { get; set; }
+
+        /// <summary>
+        /// Timeout callback
+        /// </summary>
         public Action<string> printerControllerTimeout { get; set; }
+
+        /// <summary>
+        /// Add printer timeout callback
+        /// </summary>
         public Action<string, string, List<string>> printerControllerAddTimeout { get; set; }
 
+        /// <summary>
+        /// Printer list
+        /// </summary>
         public List<Printer> printerList {get; set;}
+
         private bool waiting;
 
         SNMPDiscovery _discovery;
 
+        /// <summary>
+        /// Gets/sets the printer Discovery object
+        /// </summary>
         public SNMPDiscovery Discovery
         {
             get { return _discovery;}
@@ -33,13 +59,16 @@ namespace SmartDeviceApp.Controllers
         static readonly SNMPController _instance = new SNMPController();
 
         /// <summary>
-        /// Singleton instance
+        /// SNMPController singleton instance
         /// </summary>
         public static SNMPController Instance
         {
             get { return _instance; }
         }
 
+        /// <summary>
+        /// Initialize
+        /// </summary>
         public void Initialize()
         {
             Discovery = new SNMPDiscovery("public", SNMPConstants.BROADCAST_ADDRESS);
@@ -52,6 +81,10 @@ namespace SmartDeviceApp.Controllers
          * 
          * */
 
+        /// <summary>
+        /// Starts retrival of device capabilities
+        /// </summary>
+        /// <param name="ip"></param>
         public void getDevice(string ip)
         {
             SNMPDevice device = new SNMPDevice(ip);
@@ -68,14 +101,14 @@ namespace SmartDeviceApp.Controllers
             printerControllerAddPrinterCallback(device.IpAddress, device.Description, true, device.isSupportedDevice, device.CapabilitiesList);
         }
 
-        
-
-
         /**
          * Scan functions
          * 
          * */
 
+        /// <summary>
+        /// Starts device discovery
+        /// </summary>
         public void  startDiscover()
         {
             Discovery.FromPrinterSearch = true;
@@ -93,6 +126,11 @@ namespace SmartDeviceApp.Controllers
             printerControllerDiscoverCallback(printer);
         }
 
+        /// <summary>
+        /// Retrieves the printer from the list of devices
+        /// </summary>
+        /// <param name="ip">IP address</param>
+        /// <returns>Printer object if found, null otherwise</returns>
         public Printer getPrinterFromSNMPDevice(string ip)
         {
             if (Discovery.SnmpDevices.Count > 0)
@@ -133,6 +171,7 @@ namespace SmartDeviceApp.Controllers
          * Timeout
          * 
          * */
+
         private void handleAddTimeout(SNMPDevice device)
         {
             printerControllerAddTimeout(device.IpAddress, device.Description, device.CapabilitiesList);

@@ -26,8 +26,13 @@ namespace SmartDeviceApp.Controllers
 
         private const int MAX_JOBS_PER_GROUP = 100;
 
+        /// <summary>
+        /// Remove print job delegate
+        /// </summary>
+        /// <param name="printJob"></param>
         public delegate void RemoveJobEventHandler(PrintJob printJob);
         public delegate void RemoveGroupedJobsEventHandler(int printJobId);
+
         private RemoveJobEventHandler _removeJobEventHandler;
         private RemoveGroupedJobsEventHandler _removeGroupedJobsEventHandler;
 
@@ -57,7 +62,7 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Initialize
         /// </summary>
-        /// <returns></returns>
+        /// <returns>task</returns>
         public async Task Initialize()
         {
             _jobsViewModel = new ViewModelLocator().JobsViewModel;

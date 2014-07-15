@@ -100,6 +100,11 @@ namespace SmartDeviceApp.Models
             _deleteButtonVisibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj">object</param>
+        /// <returns>true when equal, false otherwise</returns>
         public override bool Equals(System.Object obj)
         {
             if (obj == null)
@@ -115,6 +120,11 @@ namespace SmartDeviceApp.Models
             return Id == otherOption.Id;
         }
 
+        /// <summary>
+        /// Determines whether the specified PrintJob object is equal to the current PrintJob object
+        /// </summary>
+        /// <param name="otherOption">print job</param>
+        /// <returns>true when equal, false otherwise</returns>
         public bool Equals(PrintJob otherOption)
         {
             if ((object)otherOption == null)
@@ -124,6 +134,10 @@ namespace SmartDeviceApp.Models
             return (Id == otherOption.Id);
         }
 
+        /// <summary>
+        /// Hash function
+        /// </summary>
+        /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return Id.GetHashCode();
@@ -134,8 +148,20 @@ namespace SmartDeviceApp.Models
     {
         private ObservableCollection<PrintJob> _jobs;
         private bool _isCollapsed;
+
+        /// <summary>
+        /// Printer name as text label of a print job group
+        /// </summary>
         public string PrinterName { get; set; }
+
+        /// <summary>
+        /// IP Address as a sub-text label of a print job group
+        /// </summary>
         public string IpAddress { get; set; }
+
+        /// <summary>
+        /// Collection of PrintJob objects in a group
+        /// </summary>
         public ObservableCollection<PrintJob> Jobs
         {
             get { return _jobs; }
@@ -149,6 +175,9 @@ namespace SmartDeviceApp.Models
             }
         }
 
+        /// <summary>
+        /// True when a group is collapsed, false otherwise
+        /// </summary>
         public bool IsCollapsed
         {
             get { return _isCollapsed; }
@@ -162,6 +191,12 @@ namespace SmartDeviceApp.Models
             }
         }
 
+        /// <summary>
+        /// PrintJobGroup class constructor
+        /// </summary>
+        /// <param name="printerName">printer name</param>
+        /// <param name="ipAddress">IP address</param>
+        /// <param name="jobs">print job items</param>
         public PrintJobGroup(string printerName, string ipAddress, ObservableCollection<PrintJob> jobs)
         {
             PrinterName = printerName;
@@ -169,6 +204,11 @@ namespace SmartDeviceApp.Models
             Jobs = jobs;
         }
 
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj">object</param>
+        /// <returns>true when equal, false otherwise</returns>
         public override bool Equals(System.Object obj)
         {
             if (obj == null)
@@ -185,6 +225,11 @@ namespace SmartDeviceApp.Models
                 IpAddress == otherOption.IpAddress);
         }
 
+        /// <summary>
+        /// Determines whether the specified PrintJobGroup object is equal to the current PrintJobGroup object
+        /// </summary>
+        /// <param name="otherOption">print job group</param>
+        /// <returns>true when equal, false otherwise</returns>
         public bool Equals(PrintJobGroup otherOption)
         {
             if ((object)otherOption == null)
@@ -195,6 +240,10 @@ namespace SmartDeviceApp.Models
                 IpAddress == otherOption.IpAddress);
         }
 
+        /// <summary>
+        /// Hash function
+        /// </summary>
+        /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return IpAddress.GetHashCode();
@@ -203,6 +252,9 @@ namespace SmartDeviceApp.Models
 
     public class PrintJobList : ObservableCollection<PrintJobGroup>
     {
+        /// <summary>
+        /// Collection of print job groups
+        /// </summary>
         public List<PrintJobGroup> Groups { get; set; }
     }
 }

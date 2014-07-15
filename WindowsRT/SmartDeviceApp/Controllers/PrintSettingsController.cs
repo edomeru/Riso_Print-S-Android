@@ -32,7 +32,11 @@ namespace SmartDeviceApp.Controllers
 
         SmartDeviceApp.Controllers.PrintPreviewController.UpdatePreviewEventHandler UpdatePreviewEventHandler;
 
-        // Print setting value changed
+        /// <summary>
+        /// Print setting value changed delegate
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
+        /// <param name="value">value</param>
         public delegate void PrintSettingValueChangedEventHandler(PrintSetting printSetting,
             object value);
         private PrintSettingValueChangedEventHandler _printSettingValueChangedEventHandler;
@@ -69,7 +73,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Singleton instance
+        /// PrintSettingsController singleton instance
         /// </summary>
         public static PrintSettingsController Instance
         {

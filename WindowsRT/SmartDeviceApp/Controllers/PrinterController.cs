@@ -21,38 +21,84 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrinterController _instance = new PrinterController();
 
+        /// <summary>
+        /// Printer status polling delegate
+        /// </summary>
+        /// <param name="willPoll"></param>
         public delegate void PollingHandler(bool willPoll);
         private PollingHandler _pollingHandler;
 
+        /// <summary>
+        /// Add printer delegate
+        /// </summary>
+        /// <param name="ip">IP address</param>
+        /// <returns>true when printer is added, false otherwise</returns>
         public delegate Task<bool> AddPrinterHandler(string ip);
         private AddPrinterHandler _addPrinterHandler;
 
+        /// <summary>
+        /// Automatic printer search delegate
+        /// </summary>
         public delegate void SearchPrinterHandler();
         private SearchPrinterHandler _searchPrinterHandler;
 
+        /// <summary>
+        /// Add printer from automatic printer search delegate
+        /// </summary>
+        /// <param name="ip">IP address</param>
+        /// <returns>true when printer is added, false otherwise</returns>
         public delegate Task<bool> AddPrinterFromSearchHandler(string ip);
         private AddPrinterFromSearchHandler _addPrinterFromSearchHandler;
 
+        /// <summary>
+        /// Event when the first printer is added
+        /// </summary>
         public event PrintPreviewController.AddFirstPrinterEventHandler AddFirstPrinterEvent;
 
+        /// <summary>
+        /// Automatic printer search timeout delegate
+        /// </summary>
+        /// <param name="ipAddress">IP address</param>
         public delegate void SearchPrinterTimeoutHandler(string ipAddress);
         private SearchPrinterTimeoutHandler _searchPrinterTimeoutHandler;
 
+        /// <summary>
+        /// Delete printer delegate
+        /// </summary>
+        /// <param name="ipAddress">IP address</param>
+        /// <returns>true when printer is deleted, false otherwise</returns>
         public delegate Task<bool> DeletePrinterHandler(string ipAddress);
         private DeletePrinterHandler _deletePrinterHandler;
 
+        /// <summary>
+        /// Open default print settings delegate
+        /// </summary>
+        /// <param name="printer">printer</param>
         public delegate void OpenDefaultPrintSettingsHandler(Printer printer);
         private OpenDefaultPrintSettingsHandler _openDefaultPrintSettingsHandler;
 
+        /// <summary>
+        /// Navigate to Printer screen delegate
+        /// </summary>
         public delegate void OnNavigateToEventHandler();
         private OnNavigateToEventHandler _onNavigateToEventHandler;
 
+        /// <summary>
+        /// Navigate from Printer screen delegate
+        /// </summary>
         public delegate void OnNavigateFromEventHandler();
         private OnNavigateFromEventHandler _onNavigateFromEventHandler;
 
+        /// <summary>
+        /// Delete Printer-related items delegate
+        /// </summary>
+        /// <param name="printer"></param>
         public delegate void DeletePrinterItemsHandler(Printer printer);
         public event DeletePrinterItemsHandler DeletePrinterItemsEventHandler;
 
+        /// <summary>
+        /// Clear IP address text field delegate
+        /// </summary>
         public delegate void ClearIpAddressToAddHandler();
         private ClearIpAddressToAddHandler _clearIpAddressToAddHandler;
         
@@ -73,6 +119,9 @@ namespace SmartDeviceApp.Controllers
 
         private string _manualAddIP = "";
 
+        /// <summary>
+        /// PropertyChanged event
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         //SNMPController snmpController = new SNMPController();

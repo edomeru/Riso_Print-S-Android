@@ -16,6 +16,10 @@ namespace SmartDeviceApp.Models
 {
     public class DataService : IDataService
     {
+        /// <summary>
+        /// Retrieves a data from data service
+        /// </summary>
+        /// <returns></returns>
         public async Task<DataItem> GetData()
         {
             // Use this to connect to the actual data service
