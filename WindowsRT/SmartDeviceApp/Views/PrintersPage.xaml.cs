@@ -128,7 +128,8 @@ namespace SmartDeviceApp.Views
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
             ((AdaptableGridView)_gestureController.TargetControl).ItemWidth = (double)((new PrintersListWidthConverter()).Convert(_viewControlViewModel.ViewMode, null,
                 new ViewItemParameters() { columns = columns, viewOrientation = _viewControlViewModel.ViewOrientation }, null));
-            
+
+            ViewModel.SetIpAddressTextWidths(((AdaptableGridView)sender).ItemWidth);
         }
 
         private void PrintersGestureGrid_Loaded(object sender, RoutedEventArgs e)
