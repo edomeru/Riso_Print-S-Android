@@ -21,12 +21,18 @@ namespace SmartDeviceApp.Controllers
 
         static readonly SettingController _instance = new SettingController();
 
-        // Event: Card ID
+        /// <summary>
+        /// Log-in ID value changed delegate
+        /// </summary>
+        /// <param name="pinCode"></param>
         public delegate void CardIdValueChangedEventHandler(string pinCode);
         private CardIdValueChangedEventHandler _cardIdValueChangedEventHandler;
 
         private const string KEY_SETTINGS_CARD_READER_CARD_ID = "key_card_reader_card_id";
 
+        /// <summary>
+        /// Log-in ID value
+        /// </summary>
         public string CardId { get; private set; }
         
         private SettingsViewModel _settingsViewModel;
@@ -43,11 +49,17 @@ namespace SmartDeviceApp.Controllers
             _cardIdValueChangedEventHandler = new CardIdValueChangedEventHandler(CardIdTextChanged);
         }
 
+        /// <summary>
+        /// SettingController singleton instance
+        /// </summary>
         public static SettingController Instance
         {
             get { return _instance; }
         }
 
+        /// <summary>
+        /// Initialize SettingController. Fetches values from App Data local store.
+        /// </summary>
         public void Initialize()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -63,7 +75,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Event handler for card ID text
+        /// Event handler for Log-in ID text
         /// </summary>
         /// <param name="cardId"></param>
         public void CardIdTextChanged(string cardId)

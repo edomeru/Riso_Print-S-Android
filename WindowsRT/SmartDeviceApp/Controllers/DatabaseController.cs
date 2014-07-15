@@ -45,6 +45,9 @@ namespace SmartDeviceApp.Controllers
             _dbConnection = new SQLite.SQLiteAsyncConnection(_databasePath);
         }
 
+        /// <summary>
+        /// DatabaseController singleton instance
+        /// </summary>
         public static DatabaseController Instance
         {
             get { return _instance; }
