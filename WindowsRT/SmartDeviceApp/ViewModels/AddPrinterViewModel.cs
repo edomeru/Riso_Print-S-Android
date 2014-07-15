@@ -149,9 +149,8 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// Flag to check if progress ring is visible or not. Progress ring will be displayed while the printer is being added.
-        /// </summary>
+			IpAddress = System.Text.RegularExpressions.Regex.Replace(IpAddress, "0*([0-9]+)", "${1}");
+
         public bool IsProgressRingVisible
         {
             get { return _isProgressRingVisible; }
