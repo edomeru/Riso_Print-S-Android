@@ -20,10 +20,26 @@ namespace SmartDeviceApp.Models
 {
     public class PrintSettingOption
     {
+        /// <summary>
+        /// Print setting option text label
+        /// </summary>
         public string Text { get; set; }
+
+        /// <summary>
+        /// Print setting option index/identifier
+        /// </summary>
         public int Index { get; set; } // Note: Index here refers to index from original options (not with respect to some options removed due to constraints)
+
+        /// <summary>
+        /// True when option is enabled, false otherwise
+        /// </summary>
         public bool IsEnabled { get; set; }
 
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj">object</param>
+        /// <returns>true when equal, false otherwise</returns>
         public override bool Equals(System.Object obj)
         {
             if (obj == null)
@@ -39,6 +55,11 @@ namespace SmartDeviceApp.Models
             return Text == otherOption.Text;
         }
 
+        /// <summary>
+        /// Determines whether the specified PrintSettingOption object is equal to the current PrintSettingOption object
+        /// </summary>
+        /// <param name="otherOption">print setting option</param>
+        /// <returns>true when equal, false otherwise</returns>
         public bool Equals(PrintSettingOption otherOption)
         {
             if ((object)otherOption == null)
@@ -48,6 +69,10 @@ namespace SmartDeviceApp.Models
             return (Text == otherOption.Text);
         }
 
+        /// <summary>
+        /// Hash function
+        /// </summary>
+        /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return Text.GetHashCode();
@@ -60,10 +85,30 @@ namespace SmartDeviceApp.Models
         private PrintSettingOption _selectedOption;
         private bool _isEnabled;
         private bool _isValueDisplayed;
+
+        /// <summary>
+        /// Print setting name/identifier
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Print setting text label
+        /// </summary>
         public string Text { get; set; }
+
+        /// <summary>
+        /// Print setting icon
+        /// </summary>
         public string Icon { get; set; }
+
+        /// <summary>
+        /// Print setting type
+        /// </summary>
         public PrintSettingType Type { get; set; }
+
+        /// <summary>
+        /// Print setting current value
+        /// </summary>
         public object Value
         {
             get { return _value; }
@@ -78,7 +123,10 @@ namespace SmartDeviceApp.Models
             }
         }
 
-        // Should be used only if PrintSettingType = list
+        /// <summary>
+        /// Print setting current value
+        /// Should be used only if PrintSettingType = list
+        /// </summary>
         public PrintSettingOption SelectedOption
         {
             get 
@@ -95,8 +143,21 @@ namespace SmartDeviceApp.Models
                 }
             }
         }
+
+        /// <summary>
+        /// Print setting default value
+        /// </summary>
         public object Default { get; set; }
+
+        /// <summary>
+        /// Print setting options
+        /// Should be used only if PrintSettingType = list
+        /// </summary>
         public List<PrintSettingOption> Options { get; set; }
+
+        /// <summary>
+        /// True when print setting should be enabled, false otherwise
+        /// </summary>
         public bool IsEnabled
         {
             get { return _isEnabled; }
@@ -109,6 +170,10 @@ namespace SmartDeviceApp.Models
                 }
             }
         }
+
+        /// <summary>
+        /// True when print setting value should be displayed, false otherwise
+        /// </summary>
         public bool IsValueDisplayed
         {
             get { return _isValueDisplayed; }
@@ -122,6 +187,11 @@ namespace SmartDeviceApp.Models
             }
         }
 
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj">object</param>
+        /// <returns>true when equal, false otherwise</returns>
         public override bool Equals(System.Object obj)
         {
             if (obj == null)
@@ -137,6 +207,11 @@ namespace SmartDeviceApp.Models
             return Text == otherPrintSetting.Text;
         }
 
+        /// <summary>
+        /// Determines whether the specified PrintSetting object is equal to the current PrintSetting object
+        /// </summary>
+        /// <param name="otherPrintSetting">print setting</param>
+        /// <returns>true when equal, false otherwise</returns>
         public bool Equals(PrintSetting otherPrintSetting)
         {
             if ((object)otherPrintSetting == null)
@@ -146,6 +221,10 @@ namespace SmartDeviceApp.Models
             return (Text == otherPrintSetting.Text);
         }
 
+        /// <summary>
+        /// Hash function
+        /// </summary>
+        /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return Text.GetHashCode();
@@ -154,13 +233,27 @@ namespace SmartDeviceApp.Models
 
     public class PrintSettingGroup
     {
+        /// <summary>
+        /// Print setting group name/identifier
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Print setting group text label
+        /// </summary>
         public string Text { get; set; }
+
+        /// <summary>
+        /// Collection of print settings in a group
+        /// </summary>
         public List<PrintSetting> PrintSettings { get; set; }
     }
 
     public class PrintSettingList : ObservableCollection<PrintSettingGroup>
     {
+        /// <summary>
+        /// Collection of print setting groups
+        /// </summary>
         public List<PrintSettingGroup> Groups { get; set; }
     }
 

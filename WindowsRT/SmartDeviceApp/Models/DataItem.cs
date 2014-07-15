@@ -14,12 +14,19 @@ namespace SmartDeviceApp.Models
 {
     public class DataItem
     {
+        /// <summary>
+        /// Gets/sets the title of a data item
+        /// </summary>
         public string Title
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// DataItem class constructor
+        /// </summary>
+        /// <param name="title">title</param>
         public DataItem(string title)
         {
             Title = title;

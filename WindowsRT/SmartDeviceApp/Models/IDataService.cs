@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Models
 {
+    /// <summary>
+    /// Interface for data service
+    /// </summary>
     public interface IDataService
     {
         Task<DataItem> GetData();
