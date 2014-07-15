@@ -1115,6 +1115,61 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
+        /// Updates print settings dependent on booklet constraints
+        /// </summary>
+        /// <param name="value">new booklet value</param>
+        /// <param name="updateValues">true when dependent values should be updated, false otherwise</param>
+        /// <returns>true when dependent values are updated, false otherwise</returns>
+        private bool UpdateConstraintsBasedOnBookletFinishing(int value, bool updateValues)
+        {
+            bool isValueUpdated = false;
+
+            PrintSettings printSettings = null;
+            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            if (printSettings == null)
+            {
+                return isValueUpdated;
+            }
+
+            if (value != (int)BookletFinishing.Off)
+            {
+                printSettings.OutputTray = (int)OutputTray.Auto;
+                isValueUpdated = true;
+
+                PrintSetting outputTrayPrintSettings =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+                PrintSettingOption outputTrayFaceDown = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.FaceDown);
+                if (outputTrayFaceDown != null) outputTrayFaceDown.IsEnabled = false;
+                
+                PrintSettingOption outputTrayTop = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Top);
+                if (outputTrayTop != null) outputTrayTop.IsEnabled = false;
+
+                PrintSettingOption outputTrayStacking = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Stacking);
+                if (outputTrayStacking != null) outputTrayStacking.IsEnabled = false;
+            }
+            else
+            {
+                isValueUpdated = true;
+
+                PrintSetting outputTrayPrintSettings =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+                PrintSettingOption outputTrayFaceDown = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.FaceDown);
+                if (outputTrayFaceDown != null) outputTrayFaceDown.IsEnabled = true;
+
+                PrintSettingOption outputTrayTop = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Top);
+                if (outputTrayTop != null) outputTrayTop.IsEnabled = true;
+
+                PrintSettingOption outputTrayStacking = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Stacking);
+                if (outputTrayStacking != null) outputTrayStacking.IsEnabled = true;
+            }
+
+
+
+            return isValueUpdated;
+        }
+
+
+        /// <summary>
         /// Updates print settings dependent on finishing side constraints
         /// </summary>
         /// <param name="value">new finishing side value</param>
@@ -1555,6 +1610,7 @@ namespace SmartDeviceApp.Controllers
                         (printSettings.BookletFinishing != (int)BookletFinishing.FoldAndStaple && value == (int)BookletFinishing.FoldAndStaple));
 #endif // PREVIEW_STAPLE
                     printSettings.BookletFinishing = value;
+                    UpdateConstraintsBasedOnBookletFinishing(value, true);
                 }
             }
             else if (name.Equals(PrintSettingConstant.NAME_VALUE_BOOKLET_LAYOUT))
