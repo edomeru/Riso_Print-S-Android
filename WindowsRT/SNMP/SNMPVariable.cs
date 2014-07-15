@@ -11,13 +11,19 @@ namespace SNMP
     {
         byte _type;
         byte[] _data = null;
-
+        /// <summary>
+        /// Default constructor for SNMPVariable.
+        /// </summary>
         public SNMPVariable()
         {
 
         }
 
-        //+ (id) snmpVariableofType:(uint8_t)type withIntValue:(int)value
+        /// <summary>
+        /// Constructor for SNMPVariable.
+        /// </summary>
+        /// <param name="type">type</param>
+        /// <param name="value">value</param>
         public SNMPVariable(byte type, int value) : this(type)
         {
             //SNMPVariable *snmpVar;
@@ -27,7 +33,10 @@ namespace SNMP
             _data[0] = (byte)value;
         }
 
-        //+ (id) snmpVariableNilofType:(uint8_t)type
+        /// <summary>
+        /// Constructor for SNMPVariable.
+        /// </summary>
+        /// <param name="type">type</param>
         public SNMPVariable(byte type)
         {
             //SNMPVariable *snmpVar;
@@ -37,7 +46,11 @@ namespace SNMP
             _type = type;
         }
 
-        //+ (id) snmpVariableofType:(uint8_t)type withStringValue:(NSString *)value
+        /// <summary>
+        /// Constructor for SNMP Variable.
+        /// </summary>
+        /// <param name="type">type</param>
+        /// <param name="value">value</param>
         public SNMPVariable(byte type, string value) : this(type)
         {
             //SNMPVariable *snmpVar;
@@ -67,7 +80,11 @@ namespace SNMP
         }
         */
 
-        //+ (id) snmpVariableofType:(uint8_t)type withSNMPObjects:(id)firstSnmpVar, ...
+        /// <summary>
+        /// Constructor for SNMPVariable.
+        /// </summary>
+        /// <param name="type">type</param>
+        /// <param name="SNMPvars">SNMP variables</param>
         public SNMPVariable(byte type, params SNMPVariable[] SNMPvars) : this(type)
         {
             //SNMPVariable *snmpVar;
@@ -124,7 +141,11 @@ namespace SNMP
         }
         */
 
-        //- (id) initWithType:(uint8_t)type withData:(NSData *)data
+        /// <summary>
+        /// Constructor for SNMPVariable.
+        /// </summary>
+        /// <param name="type">type</param>
+        /// <param name="data">data</param>
         public SNMPVariable(byte type, byte[] data) : this(type)
         {
             //if (self = [super init])            
@@ -145,7 +166,11 @@ namespace SNMP
             //return self;
         }
 
-        //- (int) extractSNMPInformation:(NSData *)data
+        /// <summary>
+        /// Extracts SNMP information.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public int extractSNMPInformation(byte[] data)
         {
            int ret = -1;
@@ -237,7 +262,10 @@ namespace SNMP
         }
 
 
-        //- (NSData *) getFormattedData
+        /// <summary>
+        /// Gets the formatted data.
+        /// </summary>
+        /// <returns>formatted data in byte array</returns>
         public byte[] getFormattedData()
         {
 
@@ -307,13 +335,19 @@ namespace SNMP
             return mutableData.ToArray();
         }
 
-        //- (uint8_t) getType
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <returns>Byte</returns>
         public byte getType()
         {
             return _type;
         }
 
-        //- (NSData *) getData
+        /// <summary>
+        /// Gets the data.
+        /// </summary>
+        /// <returns>byte array</returns>
         public byte[] getData()
         {
             return _data;
