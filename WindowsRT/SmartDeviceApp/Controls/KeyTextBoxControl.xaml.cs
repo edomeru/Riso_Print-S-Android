@@ -27,6 +27,9 @@ namespace SmartDeviceApp.Controls
         private ICommand _setFocus;
         private TextBox _textBox;
 
+        /// <summary>
+        /// Constructor for KeyTextBoxControl.
+        /// </summary>
         public KeyTextBoxControl()
         {
             this.InitializeComponent();
@@ -48,38 +51,55 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty TextBoxBehaviorProperty =
             DependencyProperty.Register("TextBoxBehavior", typeof(TextBoxBehavior), typeof(KeyTextBoxControl), new PropertyMetadata(TextBoxBehavior.Alphanumeric, SetTextBoxBehavior));
-        
+
+        /// <summary>
+        /// Text property of the Value element of the control.
+        /// </summary>
         public new string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }
             set { SetValue(ValueTextProperty, value); }
         }
 
+        /// <summary>
+        /// Width of the Textbox.
+        /// </summary>
         public double TextBoxWidth
         {
             get { return (double)GetValue(TextBoxWidthProperty); }
             set { SetValue(TextBoxWidthProperty, value); }
         }
 
+        /// <summary>
+        /// Alignment for the Textbox.
+        /// </summary>
         public TextAlignment TextBoxAlignment
         {
             get { return (TextAlignment)GetValue(TextBoxAlignmentProperty); }
             set { SetValue(TextBoxAlignmentProperty, value); }
         }
 
+        /// <summary>
+        /// Max length of the text in Textbox.
+        /// </summary>
         public int TextBoxMaxLength
         {
             get { return (int)GetValue(TextBoxMaxLengthProperty); }
             set { SetValue(TextBoxMaxLengthProperty, value); }
         }
 
+        /// <summary>
+        /// Behavior of the Textbox.
+        /// </summary>
         public TextBoxBehavior TextBoxBehavior
         {
             get { return (TextBoxBehavior)GetValue(TextBoxBehaviorProperty); }
             set { SetValue(TextBoxBehaviorProperty, value); }
         }
 
-        // Sets the focus to the textbox when any part of the button is tapped
+        /// <summary>
+        /// Sets the focus to the textbox when any part of the button is tapped
+        /// </summary>
         public ICommand SetFocus
         {
             get

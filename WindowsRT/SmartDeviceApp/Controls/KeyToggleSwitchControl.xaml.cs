@@ -21,7 +21,9 @@ namespace SmartDeviceApp.Controls
     {
         private bool _isToggleSwitchLoaded;
         private ICommand _toggleSwitchCommand;
-
+        /// <summary>
+        /// Constructor for KeyToggleSwitchControl.
+        /// </summary>
         public KeyToggleSwitchControl()
         {
             this.InitializeComponent();
@@ -33,7 +35,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty IsOnProperty =
             DependencyProperty.Register("IsOn", typeof(bool), typeof(KeyToggleSwitchControl), new PropertyMetadata(false, SetIsOn));
 
-        // Toggles the switch when any part of the button is tapped
+        /// <summary>
+        /// Toggles the switch when any part of the button is tapped
+        /// </summary>
         public ICommand ToggleSwitchCommand
         {
             get
@@ -49,6 +53,9 @@ namespace SmartDeviceApp.Controls
             }
         }
 
+        /// <summary>
+        /// Flag to check whether the toggle is on.
+        /// </summary>
         public bool IsOn
         {
             get { return (bool)GetValue(IsOnProperty); }

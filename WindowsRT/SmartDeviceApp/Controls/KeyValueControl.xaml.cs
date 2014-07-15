@@ -26,6 +26,9 @@ namespace SmartDeviceApp.Controls
     {
         private bool _isLoaded;
 
+        /// <summary>
+        /// Constructor for KeyValueControl.
+        /// </summary>
         public KeyValueControl()
         {
             this.InitializeComponent();
@@ -114,156 +117,234 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("IsOnLoadedEnabled", typeof(bool), typeof(KeyValueControl),
             new PropertyMetadata(true));
 
+        /// <summary>
+        /// Command property of the KeyValueControl.
+        /// </summary>
         public ICommand Command
         {
             get { return (ICommand)GetValue(CommandProperty); }
             set { SetValue(CommandProperty, value); }
         }
 
+        /// <summary>
+        /// Command parameter for the KeyValueControl.
+        /// </summary>
         public object CommandParameter
         {
             get { return (object)GetValue(CommandParameterProperty); }
             set { SetValue(CommandParameterProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the control is a list item.
+        /// </summary>
         public bool IsListItem
         {
             get { return (bool)GetValue(IsListItemProperty); }
             set { SetValue(IsListItemProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the right button.
+        /// </summary>
         public Visibility RightButtonVisibility
         {
             get { return (Visibility)GetValue(RightButtonVisibilityProperty); }
             set { SetValue(RightButtonVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the icon.
+        /// </summary>
         public Visibility IconVisibility
         {
             get { return (Visibility)GetValue(IconVisibilityProperty); }
             set { SetValue(IconVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the Value element.
+        /// </summary>
         public Visibility ValueVisibility
         {
             get { return (Visibility)GetValue(ValueVisibilityProperty); }
             set { SetValue(ValueVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the subtext.
+        /// </summary>
         public Visibility ValueSubTextVisibility
         {
             get { return (Visibility)GetValue(ValueSubTextVisibilityProperty); }
             set { SetValue(ValueSubTextVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Content of the control.
+        /// </summary>
         public object ValueContent
         {
             get { return (object)GetValue(ValueContentProperty); }
             set { SetValue(ValueContentProperty, value); }
         }
 
+        /// <summary>
+        /// Text style for the text of the control.
+        /// </summary>
         public Style ValueTextStyle
         {
             get { return (Style)GetValue(ValueTextStyleProperty); }
             set { SetValue(ValueTextStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Imagesource for the icon.
+        /// </summary>
         public ImageSource IconImage
         {
             get { return (ImageSource)GetValue(IconImageProperty); }
             set { SetValue(IconImageProperty, value); }
         }
 
+        /// <summary>
+        /// Imagesource for the right image.
+        /// </summary>
         public ImageSource RightImage
         {
             get { return (ImageSource)GetValue(RightImageProperty); }
             set { SetValue(RightImageProperty, value); }
         }
 
+        /// <summary>
+        /// Imagesource for the right image when it is disabled.
+        /// </summary>
         public ImageSource RightDisabledImage
         {
             get { return (ImageSource)GetValue(RightDisabledImageProperty); }
             set { SetValue(RightDisabledImageProperty, value); }
         }
 
+        /// <summary>
+        /// Key text property of the control.
+        /// </summary>
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
 
+        /// <summary>
+        /// Color property used for the "pressed" state of the control.
+        /// </summary>
         public SolidColorBrush KeyPressedColor
         {
             get { return (SolidColorBrush)GetValue(KeyPressedColorProperty); }
             set { SetValue(KeyPressedColorProperty, value); }
         }
 
+        /// <summary>
+        /// Subtext property displayed under the Text property.
+        /// </summary>
         public string SubText
         {
             get { return (string)GetValue(SubTextProperty); }
             set { SetValue(SubTextProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the subtext.
+        /// </summary>
         public Visibility SubTextVisibility
         {
             get { return (Visibility)GetValue(SubTextVisibilityProperty); }
             set { SetValue(SubTextVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Text displaying the value of the key text.
+        /// </summary>
         public string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }
             set { SetValue(ValueTextProperty, value); }
         }
 
+        /// <summary>
+        /// Subtext for the ValueText.
+        /// </summary>
         public string ValueSubText
         {
             get { return (string)GetValue(ValueSubTextProperty); }
             set { SetValue(ValueSubTextProperty, value); }
         }
 
+        /// <summary>
+        /// Width of the Key Text.
+        /// </summary>
         public double KeyTextWidth
         {
             get { return (double)GetValue(KeyTextWidthProperty); }
             set { SetValue(KeyTextWidthProperty, value); }
         }
 
+        /// <summary>
+        /// Width of the Value Text.
+        /// </summary>
         public double ValueTextWidth
         {
             get { return (double)GetValue(ValueTextWidthProperty); }
             set { SetValue(ValueTextWidthProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility for the separator.
+        /// </summary>
         public Visibility SeparatorVisibility
         {
             get { return (Visibility)GetValue(SeparatorVisibilityProperty); }
             set { SetValue(SeparatorVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Start point of the separator line.
+        /// </summary>
         public double SeparatorStartPoint
         {
             get { return (double)GetValue(SeparatorStartPointProperty); }
             set { SetValue(SeparatorStartPointProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the control is enabled.
+        /// </summary>
         public new bool IsEnabled
         {
             get { return (bool)GetValue(IsEnabledProperty); }
             set { SetValue(IsEnabledProperty, value); }
         }
 
+        /// <summary>
+        /// Color for the "pressed" state of the control.
+        /// </summary>
         public SolidColorBrush PressedColor
         {
             get { return (SolidColorBrush)GetValue(PressedColorProperty); }
             set { SetValue(PressedColorProperty, value); }
         }
 
+        /// <summary>
+        /// Visual state of the control.
+        /// </summary>
         public string VisualState
         {
             get { return (string)GetValue(VisualStateProperty); }
             set { SetValue(VisualStateProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the function OnLoaded is enabled.
+        /// </summary>
         public bool IsOnLoadedEnabled
         {
             get { return (bool)GetValue(IsOnLoadedEnabledProperty); }

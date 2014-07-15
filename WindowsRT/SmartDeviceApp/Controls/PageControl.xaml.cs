@@ -21,6 +21,9 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class PageControl : UserControl
     {
+        /// <summary>
+        /// Constructor for PageControl.
+        /// </summary>
         public PageControl()
         {
             this.InitializeComponent();
@@ -41,42 +44,63 @@ namespace SmartDeviceApp.Controls
         public static new readonly DependencyProperty MarginProperty =
             DependencyProperty.Register("Margin", typeof(Thickness), typeof(PageControl), null);
 
+        /// <summary>
+        /// Visibility property for the control.
+        /// </summary>
         public new Visibility Visibility
         {
             get { return (Visibility)GetValue(VisibilityProperty); }
             set { SetValue(VisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Image displayed as the page.
+        /// </summary>
         public ImageSource Image
         {
             get { return (ImageSource)GetValue(ImageProperty); }
             set { SetValue(ImageProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether to the progress ring is active or not.
+        /// </summary>
         public bool IsLoadPageActive
         {
             get { return (bool)GetValue(IsLoadPageActiveProperty); }
             set { SetValue(IsLoadPageActiveProperty, value); }
         }
 
+        /// <summary>
+        /// Horizontal alignment of the control.
+        /// </summary>
         public new HorizontalAlignment HorizontalAlignment
         {
             get { return (HorizontalAlignment)GetValue(HorizontalAlignmentProperty); }
             set { SetValue(HorizontalAlignmentProperty, value); }
         }
 
+        /// <summary>
+        /// Margin property of the control.
+        /// </summary>
         public new Thickness Margin
         {
             get { return (Thickness)GetValue(MarginProperty); }
             set { SetValue(MarginProperty, value); }
         }
 
+        /// <summary>
+        /// Height of the control.
+        /// </summary>
         public new double Height
         {
             get { return (double)GetValue(HeightProperty); }
             set { SetValue(HeightProperty, value); }
         }
 
+        /// <summary>
+        /// Image element of the control.
+        /// </summary>
         public Image ImageElement
         {
             get { return pageImage; }

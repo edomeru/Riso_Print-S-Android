@@ -27,6 +27,9 @@ namespace SmartDeviceApp.Controls
         private ICommand _setFocus;
         private PasswordBox _passwordBox;
 
+        /// <summary>
+        /// Constructor for KeyPasswordBoxControl.
+        /// </summary>
         public KeyPasswordBoxControl()
         {
             this.InitializeComponent();
@@ -46,31 +49,45 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty PasswordBoxBehaviorProperty =
             DependencyProperty.Register("PasswordBoxBehavior", typeof(TextBoxBehavior), typeof(KeyTextBoxControl), new PropertyMetadata(TextBoxBehavior.Alphanumeric, SetPasswordBoxBehavior));
 
+        /// <summary>
+        /// Text property of the Value element of the control.
+        /// </summary>
         public new string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }
             set { SetValue(ValueTextProperty, value); }
         }
 
+        /// <summary>
+        /// Holds the max length of the password.
+        /// </summary>
         public int PasswordMaxLength
         {
             get { return (int)GetValue(PasswordMaxLengthProperty); }
             set { SetValue(PasswordMaxLengthProperty, value); }
         }
 
+        /// <summary>
+        /// Holds the width of the PasswordBox.
+        /// </summary>
         public double PasswordBoxWidth
         {
             get { return (double)GetValue(PasswordBoxWidthProperty); }
             set { SetValue(PasswordBoxWidthProperty, value); }
         }
 
+        /// <summary>
+        /// Behavior for the PasswordBox.
+        /// </summary>
         public TextBoxBehavior PasswordBoxBehavior
         {
             get { return (TextBoxBehavior)GetValue(PasswordBoxBehaviorProperty); }
             set { SetValue(PasswordBoxBehaviorProperty, value); }
         }
 
-        // Sets the focus to the textbox when any part of the button is tapped
+        /// <summary>
+        /// Sets the focus to the textbox when any part of the button is tapped
+        /// </summary>
         public ICommand SetFocus
         {
             get

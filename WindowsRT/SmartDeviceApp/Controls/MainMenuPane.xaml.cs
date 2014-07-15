@@ -17,6 +17,9 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class MainMenuPane : Grid
     {
+        /// <summary>
+        /// Constructor for the MainMenuPane.
+        /// </summary>
         public MainMenuPane()
         {
             this.InitializeComponent();

@@ -25,6 +25,9 @@ namespace SmartDeviceApp.Controls
     {
         private bool _isLoaded;
 
+        /// <summary>
+        /// Constructor. Initializes component.
+        /// </summary>
         public GroupListControl()
         {
             this.InitializeComponent();
@@ -57,60 +60,90 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty PressedHeaderColorProperty =
             DependencyProperty.Register("PressedHeaderColor", typeof(SolidColorBrush), typeof(GroupListControl), null);
 
+        /// <summary>
+        /// Text property. This is displayed in the control next to the +/- button.
+        /// </summary>
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
 
+        /// <summary>
+        /// Width of the text displayed in the control.
+        /// </summary>
         public double TextWidth
         {
             get { return (double)GetValue(TextWidthProperty); }
             set { SetValue(TextWidthProperty, value); }
         }
 
+        /// <summary>
+        /// Subtext property displayed below the Text property.
+        /// </summary>
         public string SubText
         {
             get { return (string)GetValue(SubTextProperty); }
             set { SetValue(SubTextProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for Subtext.
+        /// </summary>
         public Visibility SubTextVisibility
         {
             get { return (Visibility)GetValue(SubTextVisibilityProperty); }
             set { SetValue(SubTextVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Content property of the control.
+        /// </summary>
         public new object Content
         {
             get { return (object)GetValue(ContentProperty); }
             set { SetValue(ContentProperty, value); }
         }
 
+        /// <summary>
+        /// Command to be executed when Delete button is tapped.
+        /// </summary>
         public ICommand DeleteCommand
         {
             get { return (ICommand)GetValue(DeleteCommandProperty); }
             set { SetValue(DeleteCommandProperty, value); }
         }
 
+        /// <summary>
+        /// Command parameter for the Delete command.
+        /// </summary>
         public object DeleteCommandParameter
         {
             get { return (object)GetValue(DeleteCommandParameterProperty); }
             set { SetValue(DeleteCommandParameterProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the Delete button.
+        /// </summary>
         public Visibility DeleteButtonVisibility
         {
             get { return (Visibility)GetValue(DeleteButtonVisibilityProperty); }
             set { SetValue(DeleteButtonVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Color property for the "pressed" state of the control.
+        /// </summary>
         public SolidColorBrush PressedHeaderColor
         {
             get { return (SolidColorBrush)GetValue(PressedHeaderColorProperty); }
             set { SetValue(PressedHeaderColorProperty, value); }
         }
 
+        /// <summary>
+        /// ToggleButton element of the control.
+        /// </summary>
         public ToggleButton Header
         {
             get { return header; }
