@@ -20,6 +20,9 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class JobListItemControl : KeyValueControl
     {
+        /// <summary>
+        /// Constructor of JobListItemControl.
+        /// </summary>
         public JobListItemControl()
         {
             this.InitializeComponent();
@@ -61,24 +64,36 @@ namespace SmartDeviceApp.Controls
             }
         }
 
+        /// <summary>
+        /// Command to be executed when the delete button is tapped.
+        /// </summary>
         public ICommand DeleteJobCommand
         {
             get { return (ICommand)GetValue(DeleteJobCommandProperty); }
             set { SetValue(DeleteJobCommandProperty, value); }
         }
 
+        /// <summary>
+        /// Command parameter for the delete command.
+        /// </summary>
         public PrintJob DeleteJobCommandParameter
         {
             get { return (PrintJob)GetValue(DeleteJobCommandParameterProperty); }
             set { SetValue(DeleteJobCommandParameterProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the delete button.
+        /// </summary>
         public Visibility DeleteButtonVisibility
         {
             get { return (Visibility)GetValue(DeleteButtonVisibilityProperty); }
             set { SetValue(DeleteButtonVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility for the delete button. This saves the state of the button. It is checked on orientation change.
+        /// </summary>
         public Visibility DeleteButtonState
         {
             get { return (Visibility)GetValue(DeleteButtonStateProperty); }

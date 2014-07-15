@@ -3,27 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SmartDeviceApp.Models;
-using SmartDeviceApp.Common.Utilities;
-using SmartDeviceApp.Common.Enum;
-using SmartDeviceApp.Controllers;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using SmartDeviceApp.Common;
-using GalaSoft.MvvmLight.Messaging;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using System.ComponentModel;
 using System.Diagnostics;
-using GalaSoft.MvvmLight.Command;
 using Windows.UI.Xaml;
-using System.Windows.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Controls;
+using Windows.Foundation;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight;
+using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Models;
-using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Views;
 using SmartDeviceApp.Converters;
+
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -42,6 +41,9 @@ namespace SmartDeviceApp.ViewModels
 
         private ObservableCollection<Printer> _printerList;
         private bool _isPrinterListEmpty;
+
+        private double _ipAddressKeyTextWidth;
+        private double _ipAddressValueTextWidth;
 
         private PrintersGestureController _gestureController;
 
@@ -191,6 +193,32 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        public double IpAddressKeyTextWidth
+        {
+            get { return _ipAddressKeyTextWidth; }
+            set
+            {
+                if (_ipAddressKeyTextWidth != value)
+                {
+                    _ipAddressKeyTextWidth = value;
+                    OnPropertyChanged("IpAddressKeyTextWidth");
+                }
+            }
+        }
+
+        public double IpAddressValueTextWidth
+        {
+            get { return _ipAddressValueTextWidth; }
+            set
+            {
+                if (_ipAddressValueTextWidth != value)
+                {
+                    _ipAddressValueTextWidth = value;
+                    OnPropertyChanged("IpAddressValueTextWidth");
+                }
+            }
+        }
+
         #endregion Properties
 
         /// <summary>
@@ -221,6 +249,21 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
             Messenger.Default.Register<ScreenMode>(this, (screenMode) => ScreenModeChanged(screenMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPrinterInfoGrid(viewOrientation));            
+        }
+
+        public void SetIpAddressTextWidths(double controlWidth)
+        {
+            var tempControl = new TextBlock();
+            tempControl.Style = (Style)Application.Current.Resources["STYLE_TextKey"];
+            tempControl.Text = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("IDS_LBL_IP_ADDRESS");
+            var tempControlSize = new Size(controlWidth, (double)Application.Current.Resources["SIZE_ListItemHeight"]);
+            tempControl.Measure(tempControlSize);
+            tempControl.Arrange(new Rect(0, 0, tempControlSize.Width, tempControlSize.Height));
+            var smallMargin = (double)Application.Current.Resources["MARGIN_Small"];
+            IpAddressKeyTextWidth = tempControl.ActualWidth + smallMargin;
+            tempControl = null;
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            IpAddressValueTextWidth = controlWidth - IpAddressKeyTextWidth - defaultMargin * 2;
         }
 
         #region Private Methods

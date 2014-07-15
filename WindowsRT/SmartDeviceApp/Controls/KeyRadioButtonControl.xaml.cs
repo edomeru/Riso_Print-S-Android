@@ -20,6 +20,9 @@ namespace SmartDeviceApp.Controls
 {
     public partial class KeyRadioButtonControl : KeyValueControl
     {
+        /// <summary>
+        /// Constructor for KeyRadioButtonControl.
+        /// </summary>
         public KeyRadioButtonControl()
         {
             this.InitializeComponent();
@@ -40,30 +43,45 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty SelectOptionCommandProperty =
             DependencyProperty.Register("SelectOptionCommand", typeof(ICommand), typeof(KeyRadioButtonControl), null);
 
+        /// <summary>
+        /// Name of the radio button group.
+        /// </summary>
         public string GroupName
         {
             get { return (string)GetValue(GroupNameProperty); }
             set { SetValue(GroupNameProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the radio button is checked.
+        /// </summary>
         public bool IsChecked
         {
             get { return (bool)GetValue(IsCheckedProperty); }
             set { SetValue(IsCheckedProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the radio button is enabled.
+        /// </summary>
         public new bool IsEnabled
         {
             get { return (bool)GetValue(IsEnabledProperty); }
             set { SetValue(IsEnabledProperty, value); }
         }
 
+        /// <summary>
+        /// Index of the radio button.
+        /// </summary>
         public int Index
         {
             get { return (int)GetValue(IndexProperty); }
             set { SetValue(IndexProperty, value); }
         }
 
+        /// <summary>
+        /// Command to be executed when an option is selected.
+        /// </summary>
         public ICommand SelectOptionCommand
         {
             get { return (ICommand)GetValue(SelectOptionCommandProperty); }

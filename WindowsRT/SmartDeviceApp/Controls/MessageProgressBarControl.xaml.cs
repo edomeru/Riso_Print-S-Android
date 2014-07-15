@@ -19,6 +19,11 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class MessageProgressBarControl : UserControl
     {
+        /// <summary>
+        /// Constructor for the MessageProgressBarControl.
+        /// </summary>
+        /// <param name="content">Content of the control.</param>
+        /// <param name="title">Title of the control.</param>
         public MessageProgressBarControl(string content, string title = default(string))
         {
             this.InitializeComponent();
@@ -52,30 +57,45 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty CancelCommandProperty =
            DependencyProperty.Register("CancelCommand", typeof(ICommand), typeof(MessageProgressBarControl), null);
 
+        /// <summary>
+        /// Title of the control.
+        /// </summary>
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the Title.
+        /// </summary>
         public Visibility TitleVisibility
         {
             get { return (Visibility)GetValue(TitleVisibilityProperty); }
             set { SetValue(TitleVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Content of the control.
+        /// </summary>
         public string Content
         {
             get { return (string)GetValue(ContentProperty); }
             set { SetValue(ContentProperty, value); }
         }
 
+        /// <summary>
+        /// Progress value of the progress bar.
+        /// </summary>
         public double ProgressValue
         {
             get { return (double)GetValue(ProgressValueProperty); }
             set { SetValue(ProgressValueProperty, value); }
         }
 
+        /// <summary>
+        /// Cancels the current progress.
+        /// </summary>
         public ICommand CancelCommand
         {
             get { return (ICommand)GetValue(CancelCommandProperty); }

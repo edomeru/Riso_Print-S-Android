@@ -22,6 +22,9 @@ namespace SmartDeviceApp.Controls
         private bool _isToggleSwitchLoaded;
         private ICommand _toggleSwitchCommand;
 
+        /// <summary>
+        /// Constructor of KeyToggleCheckControl.
+        /// </summary>
         public KeyToggleCheckControl()
         {
             this.InitializeComponent();
@@ -36,7 +39,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty ToggleVisibilityProperty =
             DependencyProperty.Register("ToggleVisibility", typeof(Visibility), typeof(KeyToggleCheckControl), null);
 
-        // Toggles the switch when any part of the button is tapped
+        /// <summary>
+        /// Toggles the switch when any part of the button is tapped
+        /// </summary>
         public ICommand ToggleSwitchCommand
         {
             get
@@ -52,12 +57,18 @@ namespace SmartDeviceApp.Controls
             }
         }
 
+        /// <summary>
+        /// Flag to check whether the toggle is on.
+        /// </summary>
         public bool IsOn
         {
             get { return (bool)GetValue(IsOnProperty); }
             set { SetValue(IsOnProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the toggle switch.
+        /// </summary>
         public Visibility ToggleVisibility
         {
             get { return (Visibility)GetValue(ToggleVisibilityProperty); }
