@@ -8,9 +8,17 @@ namespace SNMP
 {
     public class SNMPDevice
     {
-        
-        public Action<SNMPDevice> snmpControllerDeviceCallBack { get; set; } //PrintersModule
+        /// <summary>
+        /// Call back when snmp device is done.
+        /// </summary>
+        public Action<SNMPDevice> snmpControllerDeviceCallBack { get; set; } 
+        /// <summary>
+        /// Call back when retrieving capabilities is done.
+        /// </summary>
         public Action<SNMPDevice> snmpControllerCallBackGetCapability { get; set; }
+        /// <summary>
+        /// Call back when retrieving capabilities has timed out.
+        /// </summary>
         public Action<SNMPDevice> snmpControllerDeviceTimeOut { get; set; }
 
 
@@ -29,11 +37,18 @@ namespace SNMP
         string[] capabilityMIB;//MIB for device capabilities
 
         bool callbackCalled = false;
+        /// <summary>
+        /// Flag to check if the current snmp device is supported.
+        /// </summary>
         public bool isSupportedDevice = false;
 	
         private List<string> _capabilitiesList;
         private List<string> capabilityLevelsList;
 
+        /// <summary>
+        /// Constructor for SNMPDevice.
+        /// </summary>
+        /// <param name="host"></param>
         public SNMPDevice(string host)
         {
             _ipAddress = host;
@@ -83,6 +98,9 @@ namespace SNMP
             udpSocket.close();
         }
 
+        /// <summary>
+        /// Begins retrieving capabilities of the SNMP device.
+        /// </summary>
         public void beginRetrieveCapabilities()
         {
             System.Diagnostics.Debug.WriteLine("SNMPDeviice Begin Capability Retrieval for ip: ");
@@ -284,6 +302,10 @@ namespace SNMP
             }
         }
 
+        /// <summary>
+        /// Checks if the device is a RISO AZA device.
+        /// </summary>
+        /// <returns></returns>
         public bool isRISOAZADevice()
         {
             return this.Description.Equals("RISO IS1000C-J") ||
@@ -316,24 +338,36 @@ namespace SNMP
             }
         }
 
+        /// <summary>
+        /// Ip address of the SNMP Device.
+        /// </summary>
         public string IpAddress
         {
             get { return _ipAddress; }
             set { _ipAddress = value;  }
         }
 
+        /// <summary>
+        /// Description of the SNMP Device.
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { _description = value; }
         }
 
+        /// <summary>
+        /// Community name of the SNMP Device.
+        /// </summary>
         public string CommunityName
         {
             get { return _communityName; }
             set { _communityName = value; }
         }
 
+        /// <summary>
+        /// List of capabilities of the SNMP Device.
+        /// </summary>
         public List<string> CapabilitiesList
         {
             get { return _capabilitiesList; }

@@ -20,11 +20,23 @@ namespace SNMP
 
         ThreadPoolTimer timer;
 
+        /// <summary>
+        /// Call back when the discovery is done.
+        /// </summary>
         public Action<SNMPDevice> snmpControllerDiscoverCallback { get; set; }
+        /// <summary>
+        /// Call back when the discovery has timed out.
+        /// </summary>
         public Action<string> snmpControllerDiscoverTimeOut { get; set; }
 
+        /// <summary>
+        /// Flag to check if discovery is from printer search.
+        /// </summary>
         public bool FromPrinterSearch{ get; set; }
 
+        /// <summary>
+        /// List of SNMP Devices discovered.
+        /// </summary>
         public List<SNMPDevice> SnmpDevices { 
             get {
                 return snmpDevices;
@@ -32,6 +44,11 @@ namespace SNMP
 
         }
 
+        /// <summary>
+        /// Constructor for SNMPDiscovery
+        /// </summary>
+        /// <param name="readCommunityName">community name</param>
+        /// <param name="address">broadcast address</param>
         public SNMPDiscovery(string readCommunityName,string address)
         {
             {
@@ -49,6 +66,9 @@ namespace SNMP
             }
         }
 
+        /// <summary>
+        /// Starts discovering SNMP devices in the network.
+        /// </summary>
         public void startDiscover()
         {
             snmpDevices.Clear();

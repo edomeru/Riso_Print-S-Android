@@ -23,11 +23,14 @@ namespace SNMP
         //NSMutableArray *_varbindSequences;
         List<SNMPVariable> _varbindSequences;
 
-        //- (id) initRequestWithVersion:(uint8_t)version 
-        //      withCommunityString:(NSString *)community
-        //       withRequestPDUType:(uint16_t)requestType
-        //            withRequestId:(uint16_t)requestId
-        //              varbindOids:(NSArray *)varbindOids
+        /// <summary>
+        /// Constructor for SNMPMessage.
+        /// </summary>
+        /// <param name="version">SNMP Version</param>
+        /// <param name="community">community name</param>
+        /// <param name="requestType">request type</param>
+        /// <param name="requestID">request ID</param>
+        /// <param name="varbindOids">OIDs</param>
         public SNMPMessage(byte version,
                     string community,
                     UInt16 requestType,
@@ -67,7 +70,10 @@ namespace SNMP
             //return self;
         }
 
-        //- (id) initWithResponse:(NSData *)data
+        /// <summary>
+        /// Another constructor for SNMPMessage.
+        /// </summary>
+        /// <param name="data">Data for the message.</param>
         public SNMPMessage(byte[] data)
         {
             //if (self = [super init])
@@ -85,7 +91,10 @@ namespace SNMP
             //return self;
         }
 
-        //- (NSData *) generateDataForTransmission
+        /// <summary>
+        /// Generates data that will be transmitted.
+        /// </summary>
+        /// <returns></returns>
         public byte[] generateDataForTransmission()
         {
             //SNMPVariable *snmpMessage;
@@ -107,7 +116,11 @@ namespace SNMP
             return snmpMessage.getFormattedData();
         }
 
-        //- (BOOL) parseSNMPMessageFromData:(NSData *)data
+        /// <summary>
+        /// Parses SNMP message from data.
+        /// </summary>
+        /// <param name="data">data to be parsed</param>
+        /// <returns>True if message is valid, else false.</returns>
         public bool parseSNMPMessageFromData(byte[] data)
         {
                
@@ -214,7 +227,10 @@ namespace SNMP
             return  arr.ToArray();            
         }
 
-        //- (NSMutableArray *) extractOidAndValues
+        /// <summary>
+        /// Extracts OIDs and their values.
+        /// </summary>
+        /// <returns></returns>
         public List<Dictionary<string,string>> extractOidAndValues()
         {
             //NSMutableArray *arr = [[NSMutableArray alloc] init];
@@ -358,8 +374,11 @@ namespace SNMP
             return str;
         }
 
-        // returns length of oid in bytes
-        //- (NSData *) convertOidToNSData:(NSString *)oid
+        /// <summary>
+        /// returns length of oid in bytes 
+        /// </summary>
+        /// <param name="oid">OID</param>
+        /// <returns>returns length of oid in bytes</returns>
         public byte[] convertOidToNSdata(string oid)
         {
             //NSMutableData *data = [[NSMutableData alloc] init];
