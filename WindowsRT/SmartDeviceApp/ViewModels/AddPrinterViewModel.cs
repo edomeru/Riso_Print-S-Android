@@ -147,9 +147,7 @@ namespace SmartDeviceApp.ViewModels
                 }
                 return _addPrinter;
             }
-        }
-
-			IpAddress = System.Text.RegularExpressions.Regex.Replace(IpAddress, "0*([0-9]+)", "${1}");
+        }			
 
         public bool IsProgressRingVisible
         {
@@ -271,6 +269,8 @@ namespace SmartDeviceApp.ViewModels
             //Messenger.Default.Send<string>("HideKeyboard");
 
             System.Diagnostics.Debug.WriteLine(IpAddress);
+
+            IpAddress = System.Text.RegularExpressions.Regex.Replace(IpAddress, "0*([0-9]+)", "${1}");
 
             PrinterSearchList.Clear();
 
