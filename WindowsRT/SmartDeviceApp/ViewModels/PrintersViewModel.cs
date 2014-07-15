@@ -50,12 +50,30 @@ namespace SmartDeviceApp.ViewModels
          * Delegates for controllers
          * 
          * */
+
+        /// <summary>
+        /// Transition to Printers Screen event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.OnNavigateToEventHandler OnNavigateToEventHandler;
+
+        /// <summary>
+        /// Transition from Printers Screen event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.OnNavigateFromEventHandler OnNavigateFromEventHandler;
+
+        /// <summary>
+        /// Printer status polling event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.PollingHandler PollingHandler;
 
+        /// <summary>
+        /// Delete printer event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.DeletePrinterHandler DeletePrinterHandler;
 
+        /// <summary>
+        /// Open Default Print Settings Screen event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.OpenDefaultPrintSettingsHandler OpenDefaultPrintSettingsHandler;
 
         #region Properties

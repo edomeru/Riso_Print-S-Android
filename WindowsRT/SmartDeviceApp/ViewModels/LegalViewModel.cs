@@ -18,7 +18,12 @@ namespace SmartDeviceApp.ViewModels
     {
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
-        
+
+        /// <summary>
+        /// LegalViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public LegalViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -26,6 +31,10 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 
+        /// <summary>
+        /// Enables/disables gestures in Legal Screen
+        /// </summary>
+        /// <param name="viewMode"></param>
         private void EnableMode(ViewMode viewMode)
         {
             if (viewMode == ViewMode.FullScreen)
@@ -44,6 +53,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Grid control for enabling/disabling gestures on Home Screen
+        /// </summary>
         public Grid LegalGestureGrid
         {
             get;

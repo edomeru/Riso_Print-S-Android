@@ -28,7 +28,14 @@ namespace SmartDeviceApp.ViewModels
 
         private bool _willRefresh;
 
+        /// <summary>
+        /// Add printer from automatic printer search event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.AddPrinterFromSearchHandler AddPrinterFromSearchHandler;
+
+        /// <summary>
+        /// Automatic printer search event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.SearchPrinterHandler SearchPrinterHandler;
 
         private ICommand _printerSearchItemSelected;
@@ -44,8 +51,8 @@ namespace SmartDeviceApp.ViewModels
         /// <summary>
         /// Constructor for SearchPrinterViewModel.
         /// </summary>
-        /// <param name="dataService"></param>
-        /// <param name="navigationService"></param>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public SearchPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;

@@ -24,7 +24,14 @@ namespace SmartDeviceApp.ViewModels
 {
     public class JobsViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Remove job event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.JobController.RemoveJobEventHandler RemoveJobEventHandler;
+
+        /// <summary>
+        /// Remove grouped jobs event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.JobController.RemoveGroupedJobsEventHandler RemoveGroupedJobsEventHandler;
 
         private readonly IDataService _dataService;
@@ -51,6 +58,11 @@ namespace SmartDeviceApp.ViewModels
         private double _columnWidth;
         private double _keyTextWidth;
 
+        /// <summary>
+        /// JobsViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public JobsViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -61,7 +73,10 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => SetViewOrientation(viewOrientation));
             SetViewOrientation(_viewControlViewModel.ViewOrientation); // Initialize MaxColumns
         }
-        
+
+        /// <summary>
+        /// Command for Delete All button
+        /// </summary>
         public ICommand DeleteAllJobsCommand
         {
             get
@@ -77,6 +92,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for Delete button (print job item)
+        /// </summary>
         public ICommand DeleteJobCommand
         {
             get
@@ -92,6 +110,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// All print jobs list
+        /// </summary>
         public PrintJobList PrintJobsList
         {
             get { return _printJobsList; }
@@ -105,6 +126,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// True when print job list is empty, false otherwise
+        /// </summary>
         public bool IsPrintJobsListEmpty
         {
             get { return _isPrintJobsListEmpty; }
@@ -120,6 +144,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sorted print job list for the first column
+        /// </summary>
         public PrintJobList PrintJobsColumn1
         {
             get { return _printJobsColumn1; }
@@ -133,6 +160,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sorted print job list for the second column
+        /// </summary>
         public PrintJobList PrintJobsColumn2
         {
             get { return _printJobsColumn2; }
@@ -146,6 +176,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sorted print job list for the third column
+        /// </summary>
         public PrintJobList PrintJobsColumn3
         {
             get { return _printJobsColumn3; }
@@ -159,6 +192,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the maximum number of columns in Print Job History Screen
+        /// </summary>
         public int MaxColumns
         {
             get { return _maxColumns; }
@@ -173,6 +209,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the width of the columns
+        /// </summary>
         public double ColumnWidth
         {
             get { return _columnWidth; }
@@ -186,6 +225,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the width of the key text
+        /// </summary>
         public double KeyTextWidth
         {
             get { return _keyTextWidth; }
@@ -199,6 +241,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// True when loading indicator is active, false otherwise
+        /// </summary>
         public bool IsProgressRingActive
         {
             get { return _isProgressRingActive; }
@@ -212,6 +257,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the GestureController object
+        /// </summary>
         public JobGestureController GestureController
         {
             get { return _gestureController; }
@@ -295,6 +343,9 @@ namespace SmartDeviceApp.ViewModels
                 }));
         }
 
+        /// <summary>
+        /// Sorts the print job list into columns (based on size)
+        /// </summary>
         public void SortPrintJobsListToColumns()
         {
             if (PrintJobsList == null || PrintJobsList.Count == 0)
@@ -456,6 +507,10 @@ namespace SmartDeviceApp.ViewModels
         //}
         #endregion
 
+        /// <summary>
+        /// Removes a print job group and sorts the columns if needed
+        /// </summary>
+        /// <param name="deletedGroup">print job group to be deleted</param>
         public void RemovePrintJobGroup(PrintJobGroup deletedGroup)
         {
             if (PrintJobsColumn1.Contains(deletedGroup))
@@ -490,6 +545,9 @@ namespace SmartDeviceApp.ViewModels
             }            
         }
 
+        /// <summary>
+        /// Sets the maximum width of the text view
+        /// </summary>
         public void SetMaxTextWidth()
         {
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];

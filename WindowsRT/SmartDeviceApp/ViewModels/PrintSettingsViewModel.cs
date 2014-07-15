@@ -41,6 +41,9 @@ namespace SmartDeviceApp.ViewModels
 {
     public class PrintSettingsViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Print button event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrintPreviewController.PrintEventHandler ExecutePrintEventHandler;
 
         private readonly IDataService _dataService;
@@ -57,12 +60,20 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _selectPrintSetting;
         private PrintSetting _selectedPrintSetting;
 
+        /// <summary>
+        /// PrintSettingsViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public PrintSettingsViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
         }
 
+        /// <summary>
+        /// Gets/sets the printer ID of the currently selected printer
+        /// </summary>
         public int PrinterId
         {
             get { return _printerId; }
@@ -76,6 +87,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the text label based on the selected printer
+        /// </summary>
         public string PrinterName
         {
             get { return _printerName; }
@@ -89,6 +103,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the sub-text label based on the IP address of the selected printer
+        /// </summary>
         public string PrinterIpAddress
         {
             get { return _printerIpAddress; }
@@ -102,6 +119,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets if the currently displayed view is associated with Print Preview Screen.
+        /// True when Print Preview Screen is active, false otherwise (should be Default Print Settings)
+        /// </summary>
         public bool IsPrintPreview
         {
             get { return _isPrintPreview; }
@@ -115,6 +136,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for Print button
+        /// </summary>
         public ICommand PrintCommand
         {
             get
@@ -130,6 +154,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for printers list
+        /// </summary>
         public ICommand ListPrintersCommand
         {
             get
@@ -145,8 +172,14 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the printer list
+        /// </summary>
         public ObservableCollection<Printer> PrinterList { get; set; }
 
+        /// <summary>
+        /// Gets/sets the print settings list
+        /// </summary>
         public PrintSettingList PrintSettingsList
         {
             get { return _printSettingsList; }
@@ -160,6 +193,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the selected print setting
+        /// </summary>
         public PrintSetting SelectedPrintSetting
         {
             get { return _selectedPrintSetting; }
@@ -173,6 +209,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for the selected print setting
+        /// </summary>
         public ICommand SelectPrintSetting
         {
             get
@@ -188,6 +227,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Enables the PrintSettingsPane
+        /// </summary>
         public void SetPrintSettingsPaneEnable()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();

@@ -34,18 +34,26 @@ namespace SmartDeviceApp.ViewModels
 
         private double _height;
 
+        /// <summary>
+        /// Add printer event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.AddPrinterHandler AddPrinterHandler;
+
+        /// <summary>
+        /// Clear IP address text field event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.ClearIpAddressToAddHandler ClearIpAddressToAddHandler;
 
         private ObservableCollection<PrinterSearchItem> _printerSearchList;
         private ObservableCollection<Printer> _printerList;
 
         private ViewControlViewModel _viewControlViewModel;
+
         /// <summary>
         /// Constructor for AddPrinterViewModel.
         /// </summary>
-        /// <param name="dataService"></param>
-        /// <param name="navigationService"></param>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public AddPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -59,7 +67,6 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<MessageType>(this, (strMsg) => HandleStringMessage(strMsg));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetAddPane(viewOrientation));
-            
         }
 
 

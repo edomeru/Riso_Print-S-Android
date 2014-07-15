@@ -29,13 +29,13 @@ namespace SmartDeviceApp.ViewModels
     /// </summary>
     public class ViewModelLocator
     {
+
         /// <summary>
-        /// Gets the Main property.
+        /// Gets the Main property
         /// </summary>
         [SuppressMessage("Microsoft.Performance",
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
-
         public ViewControlViewModel ViewControlViewModel
         {
             get
@@ -44,6 +44,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the HomeViewModel instance
+        /// </summary>
         public HomeViewModel HomeViewModel
         {
             get
@@ -52,6 +55,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the PrintPreviewViewModel instance
+        /// </summary>
         public PrintPreviewViewModel PrintPreviewViewModel
         {
             get
@@ -60,6 +66,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the PrintersViewModel instance
+        /// </summary>
         public PrintersViewModel PrintersViewModel
         {
             get
@@ -68,6 +77,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the JobsViewModel instance
+        /// </summary>
         public JobsViewModel JobsViewModel
         {
             get
@@ -76,6 +88,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the SettingsViewModel instance
+        /// </summary>
         public SettingsViewModel SettingsViewModel
         {
             get
@@ -84,6 +99,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the HelpViewModel instance
+        /// </summary>
         public HelpViewModel HelpViewModel
         {
             get
@@ -92,6 +110,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the LegalViewModel instance
+        /// </summary>
         public LegalViewModel LegalViewModel
         {
             get
@@ -100,6 +121,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the PrintSettingsPaneViewModel instance
+        /// </summary>
         public PrintSettingsPaneViewModel PrintSettingsPaneViewModel
         {
             get
@@ -108,6 +132,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the PrintSettingsViewModel instance
+        /// </summary>
         public PrintSettingsViewModel PrintSettingsViewModel
         {
             get
@@ -116,6 +143,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the SelectPrinterViewModel instance
+        /// </summary>
         public SelectPrinterViewModel SelectPrinterViewModel
         {
             get
@@ -124,6 +154,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the PrintSettingOptionsViewModel instance
+        /// </summary>
         public PrintSettingOptionsViewModel PrintSettingOptionsViewModel
         {
             get
@@ -132,6 +165,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the SearchPrinterViewModel instance
+        /// </summary>
         public SearchPrinterViewModel SearchPrinterViewModel
         {
             get
@@ -140,6 +176,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the AddPrinterViewModel instance
+        /// </summary>
         public AddPrinterViewModel AddPrinterViewModel
         {
             get

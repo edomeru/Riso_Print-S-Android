@@ -33,6 +33,11 @@ namespace SmartDeviceApp.ViewModels
         private bool _isPane2Visible = false;
         private bool _tapHandled = false;
 
+        /// <summary>
+        /// ViewControlViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public ViewControlViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -42,6 +47,9 @@ namespace SmartDeviceApp.ViewModels
             InitializeMainMenu();
         }
 
+        /// <summary>
+        /// Gets/sets the current view mode
+        /// </summary>
         public ViewMode ViewMode
         {
             get { return _viewMode; }
@@ -56,6 +64,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the current view orientation
+        /// </summary>
         public ViewOrientation ViewOrientation
         {
             get { return _viewOrientation; }
@@ -70,6 +81,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the current screen mode
+        /// </summary>
         public ScreenMode ScreenMode
         {
             get { return _screenMode; }
@@ -84,6 +98,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for toggle main menu pane
+        /// </summary>
         public ICommand ToggleMainMenuPane
         {
             get
@@ -99,6 +116,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for toggle first right pane
+        /// </summary>
         public ICommand TogglePane1
         {
             get
@@ -114,6 +134,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for toggle second right pane
+        /// </summary>
         public ICommand TogglePane2
         {
             get
@@ -129,12 +152,20 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the visibility state of the first right pane.
+        /// True when visible, false otherwise.
+        /// </summary>
         public bool IsPane1Visible
         {
             get { return _isPane1Visible; }
             set { _isPane1Visible = value; }
         }
 
+        /// <summary>
+        /// Gets/sets the visibility state of the second right pane.
+        /// True when visible, false otherwise.
+        /// </summary>
         public bool IsPane2Visible
         {
             get { return _isPane2Visible; }
@@ -280,6 +311,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the flag when tap gesture is already handled.
+        /// True when event is handled, false otherwise.
+        /// </summary>
         public bool TapHandled
         {
             get { return _tapHandled; }
@@ -297,8 +332,15 @@ namespace SmartDeviceApp.ViewModels
 
         private MainMenuItemList _mainMenuItems;
 
+        /// <summary>
+        /// Gets/sets the flag when go to home command will be executed.
+        /// True when allowed to execute, false otherwise.
+        /// </summary>
         public bool EnabledGoToHomeExecute { get; set; } // Enables the GoToHomePage command
 
+        /// <summary>
+        /// Gets/sets the main menu items
+        /// </summary>
         public MainMenuItemList MainMenuItems
         {
             get { return _mainMenuItems; }
@@ -312,6 +354,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate to Home Screen or Print Preview Screen
+        /// </summary>
         public ICommand GoToHomePage
         {
             get
@@ -327,6 +372,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate to Printers Screen
+        /// </summary>
         public ICommand GoToPrintersPage
         {
             get
@@ -342,6 +390,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate to Print Job History Screen
+        /// </summary>
         public ICommand GoToJobsPage
         {
             get
@@ -357,6 +408,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate to Settings Screen
+        /// </summary>
         public ICommand GoToSettingsPage
         {
             get
@@ -372,6 +426,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate to Help Screen
+        /// </summary>
         public ICommand GoToHelpPage
         {
             get
@@ -387,6 +444,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate to Legal Screen
+        /// </summary>
         public ICommand GoToLegalPage
         {
             get

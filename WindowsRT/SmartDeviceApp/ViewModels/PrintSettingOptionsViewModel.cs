@@ -23,12 +23,21 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _backToPrintSettings;
         private PrintSetting _printSetting;
 
+        /// <summary>
+        /// PrintSettingOptionsViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public PrintSettingOptionsViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
             _navigationService = navigationService;
         }
 
+        /// <summary>
+        /// PrintSetting property.
+        /// Denotes the currently active print setting
+        /// </summary>
         public PrintSetting PrintSetting
         {
             get { return _printSetting; }
@@ -42,6 +51,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for selected print setting option
+        /// </summary>
         public ICommand SelectPrintSettingOption
         {
             get
@@ -57,6 +69,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate back to Print Settings Screen
+        /// </summary>
         public ICommand BackToPrintSettings
         {
             get
@@ -72,11 +87,18 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Select print setting option handler
+        /// </summary>
+        /// <param name="index">print setting index/identifier</param>
         private void SelectPrintSettingOptionExecute(int index)
         {
             PrintSetting.Value = index;
         }
 
+        /// <summary>
+        /// Navigate back to Print Settings Screen handler
+        /// </summary>
         private void BackToPrintSettingsExecute()
         {
             new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
