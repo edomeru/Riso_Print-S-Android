@@ -81,11 +81,18 @@ namespace DirectPrint
         }
 
         private directprint_job print_job = null;
+
+        /// <summary>
+        /// Constructor for DirectPrint.
+        /// </summary>
         public DirectPrint()
         {
 
         }
 
+        /// <summary>
+        /// Cancels the printing.
+        /// </summary>
         public void cancelPrint()
         {
             if (print_job != null)
@@ -103,6 +110,11 @@ namespace DirectPrint
 
         //CancellationTokenSource tokenSource = new CancellationTokenSource();
         //Task t = null;
+
+        /// <summary>
+        /// Starts LPR printing.
+        /// </summary>
+        /// <param name="parameter">direct print job parameters</param>
         public async void startLPRPrint(directprint_job parameter)
         {
             /*
@@ -137,6 +149,11 @@ namespace DirectPrint
 #endif
         }
 
+        /// <summary>
+        /// Starts LPR printing.
+        /// </summary>
+        /// <param name="parameter">direct print job parameter</param>
+        /// <returns></returns>
         public async Task _startLPRPrint(directprint_job parameter)
         {
             callbackTriggered = false;
@@ -489,6 +506,11 @@ namespace DirectPrint
             return ack;
         }
 
+        /// <summary>
+        /// Receives data from host.
+        /// </summary>
+        /// <param name="hostname">Hostname where data came from.</param>
+        /// <param name="data">data</param>
         public void receiveData(HostName hostname, byte data)
         {
             datareceived = true;
@@ -496,6 +518,11 @@ namespace DirectPrint
         }
 
         private bool callbackTriggered = false;
+        /// <summary>
+        /// Handles time out.
+        /// </summary>
+        /// <param name="hostname">Hostname where time out occurred.</param>
+        /// <param name="data">data</param>
         public void timeout(HostName hostname, byte data)
         {
             if (print_job != null) print_job.cancel_print = 1;

@@ -21,6 +21,13 @@ namespace DirectPrint
         private HostName h = null;
         private string port = "0";
 
+        /// <summary>
+        /// Constructor for TCPSocket.
+        /// </summary>
+        /// <param name="_host">host to be connected to.</param>
+        /// <param name="_port">port used</param>
+        /// <param name="d">data receive event handler</param>
+        /// <param name="t">timeout event handler</param>
         public TCPSocket(string _host, string _port, Windows.Foundation.TypedEventHandler<HostName, byte> d, Windows.Foundation.TypedEventHandler<HostName, byte> t)
         {            
             socket = new StreamSocket();
