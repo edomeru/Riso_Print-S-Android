@@ -17,6 +17,10 @@ namespace SmartDeviceApp.Design
 {
     public class DesignDataService : IDataService
     {
+        /// <summary>
+        /// Gets data item.
+        /// </summary>
+        /// <returns>Task<DataItem></returns>
         public Task<DataItem> GetData()
         {
             // Use this to create design time data
