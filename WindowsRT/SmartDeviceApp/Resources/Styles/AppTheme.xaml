@@ -20,7 +20,7 @@
 
     <!-- PRINT SETTING CONSTANTS START -->
     <x:Int32 x:Key="MAXLENGTH_Copies">4</x:Int32>
-    <x:Int32 x:Key="MAXLENGTH_AuthenticationLoginId">31</x:Int32>
+    <x:Int32 x:Key="MAXLENGTH_AuthenticationLoginId">20</x:Int32>
     <x:Int32 x:Key="MAXLENGTH_SecurePrintPinCode">8</x:Int32>
     <!-- PRINT SETTING CONSTANTS END -->
 
