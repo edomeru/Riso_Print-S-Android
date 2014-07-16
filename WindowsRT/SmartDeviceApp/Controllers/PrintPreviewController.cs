@@ -33,42 +33,67 @@ namespace SmartDeviceApp.Controllers
     {
         static readonly PrintPreviewController _instance = new PrintPreviewController();
 
-        // Transition to Print Preview Screen
+        /// <summary>
+        /// Transition to Print Preview Screen delegate
+        /// </summary>
         public delegate void OnNavigateToEventHandler();
         private OnNavigateFromEventHandler _onNavigateFromEventHandler;
 
-        // Transition from Print Preview Screen
+        /// <summary>
+        /// Transition from Print Preview Screen delegate
+        /// </summary>
         public delegate void OnNavigateFromEventHandler();
         private OnNavigateToEventHandler _onNavigateToEventHandler;
 
-        // Update preview area based on updated print settings
+        /// <summary>
+        /// Update preview area based on updated print settings delegate
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
         public delegate void UpdatePreviewEventHandler(PrintSetting printSetting);
         private UpdatePreviewEventHandler _updatePreviewEventHandler;
 
-        // Slider value and turn page
+        /// <summary>
+        /// Slider value and turn page delegate
+        /// </summary>
+        /// <param name="pageIndex">page index</param>
         public delegate void GoToPageEventHandler(int pageIndex);
         private GoToPageEventHandler _goToPageEventHandler;
 
-        // Determine which page is to be displayed at the back
+        /// <summary>
+        /// Determine which page is to be displayed at the back
+        /// </summary>
+        /// <param name="isForward">true when forward direction is enabled, false otherwise</param>
         public delegate void TurnPageEventHandler(bool isForward);
         private TurnPageEventHandler _turnPageEventHandler;
 
-        // Choose printer
+        /// <summary>
+        /// Choose printer delegate
+        /// </summary>
+        /// <param name="printerId">printer ID</param>
         public delegate void SelectedPrinterChangedEventHandler(int printerId);
         private SelectedPrinterChangedEventHandler _selectedPrinterChangedEventHandler;
 
+        /// <summary>
+        /// First printer added delegate
+        /// </summary>
         public delegate void AddFirstPrinterEventHandler();
         private AddFirstPrinterEventHandler _addFirstPrinterEventHandler;
 
-        // Print button
+        /// <summary>
+        /// Print button delegate
+        /// </summary>
         public delegate void PrintEventHandler();
         private PrintEventHandler _printEventHandler;
 
-        // Cancel print
+        /// <summary>
+        /// Cancel print delegate
+        /// </summary>
         public delegate void CancelPrintEventHandler();
         private CancelPrintEventHandler _cancelPrintEventHandler;
 
-        // PageAreaGrid loaded
+        /// <summary>
+        /// PageAreaGrid loaded delegate
+        /// </summary>
         public delegate void PageAreaGridLoadedEventHandler();
         private PageAreaGridLoadedEventHandler _pageAreaGridLoadedEventHandler;
 
@@ -136,7 +161,7 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Singleton instance
+        /// PrintPreviewController singleton instance
         /// </summary>
         public static PrintPreviewController Instance
         {

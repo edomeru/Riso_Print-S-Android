@@ -42,6 +42,11 @@ namespace SmartDeviceApp.ViewModels
 
         private String _paneTitle;
 
+        /// <summary>
+        /// PrintSettingsPaneViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public PrintSettingsPaneViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -50,7 +55,10 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetPrintSettingsPaneMode(viewMode));
             SetPaneTitle();
         }
-        
+
+        /// <summary>
+        /// Gets/sets the enabled state of this view
+        /// </summary>
         public bool IsEnabled
         {
             get { return _isEnabled; }
@@ -63,6 +71,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the currently active PrintSettingsPaneMode
+        /// </summary>
         public PrintSettingsPaneMode PrintSettingsPaneMode
         {
             get { return _printSettingsPaneMode; }
@@ -105,7 +116,10 @@ namespace SmartDeviceApp.ViewModels
                 PaneTitle = _resourceLoader.GetString("IDS_LBL_PRINT_SETTINGS");
             }
         }
-        
+
+        /// <summary>
+        /// Gets/sets the title text of the view
+        /// </summary>
         public String PaneTitle
         {
             get { return _paneTitle; }

@@ -8,6 +8,9 @@ namespace SmartDeviceApp.Controls
 {
     public sealed class SelectPrinterItemControl : KeyRadioButtonControl
     {
+        /// <summary>
+        /// Constructor for SelectPrinterItemControl.
+        /// </summary>
         public SelectPrinterItemControl()
         {
             this.InitializeComponent();

@@ -20,11 +20,21 @@ namespace SmartDeviceApp.Common.Utilities
             DependencyProperty.RegisterAttached("ViewState", typeof(ViewMode), typeof(VisualStateUtility),
             new PropertyMetadata(null, GoToViewState));
 
+        /// <summary>
+        /// Sets the view state
+        /// </summary>
+        /// <param name="obj">Control</param>
+        /// <param name="value">new state</param>
         public static void SetViewState(DependencyObject obj, ViewMode value)
         {
             obj.SetValue(ViewStateProperty, value);
         }
 
+        /// <summary>
+        /// Gets the view state
+        /// </summary>
+        /// <param name="obj">Control</param>
+        /// <returns>ViewMode</returns>
         public static ViewMode GetViewState(DependencyObject obj)
         {
             return (ViewMode)obj.GetValue(ViewStateProperty);
@@ -67,11 +77,21 @@ namespace SmartDeviceApp.Common.Utilities
             DependencyProperty.RegisterAttached("PrintSettingsPaneState", typeof(PrintSettingsPaneMode), typeof(VisualStateUtility),
             new PropertyMetadata(null, GoToPrintSettingsPaneState));
 
+        /// <summary>
+        /// Sets the print settings pane mode
+        /// </summary>
+        /// <param name="obj">Control</param>
+        /// <param name="value">new print settings pane mode</param>
         public static void SetPrintSettingsPaneState(DependencyObject obj, PrintSettingsPaneMode value)
         {
             obj.SetValue(PrintSettingsPaneStateProperty, value);
         }
 
+        /// <summary>
+        /// Gets the print settings pane mode
+        /// </summary>
+        /// <param name="obj">Control</param>
+        /// <returns>PrintSettingsPaneMode</returns>
         public static PrintSettingsPaneMode GetPrintSettingsPaneState(DependencyObject obj)
         {
             return (PrintSettingsPaneMode)obj.GetValue(PrintSettingsPaneStateProperty);

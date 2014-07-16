@@ -40,7 +40,12 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _openDocumentCommand;
         private bool _isProgressRingActive;
         private bool _enabledOpenDocumentCommand;
-                
+
+        /// <summary>
+        /// HomeViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public HomeViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -51,6 +56,9 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 
+        /// <summary>
+        /// Command for open document
+        /// </summary>
         public ICommand OpenDocumentCommand
         {
             get
@@ -66,6 +74,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// True when loading indicator is active, false otherwise
+        /// </summary>
         public bool IsProgressRingActive
         {
             get { return _isProgressRingActive; }
@@ -134,6 +145,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Grid control for enabling/disabling gestures on Home Screen
+        /// </summary>
         public Grid HomeGestureGrid
         {
             get;

@@ -93,6 +93,18 @@ namespace SmartDeviceApp.Controllers
         private uint _totalPages;
         private bool _manipulationCancel;
 
+        /// <summary>
+        /// PreviewGestureController class constructor
+        /// </summary>
+        /// <param name="twoPageControl">two-page control</param>
+        /// <param name="controlReference">control reference</param>
+        /// <param name="targetSize">target size</param>
+        /// <param name="originalScale">original scale</param>
+        /// <param name="swipeRightHandler">swipe right handler</param>
+        /// <param name="swipeLeftHandler">swipe left handler</param>
+        /// <param name="isDuplex">true when duplex is enabled, false otherwise</param>
+        /// <param name="currPageIndex">current page index</param>
+        /// <param name="totalPages">total page count</param>
         public PreviewGestureController(TwoPageControl twoPageControl, UIElement controlReference,
             Size targetSize, double originalScale, SwipeRightDelegate swipeRightHandler,
             SwipeLeftDelegate swipeLeftHandler, bool isDuplex, uint currPageIndex, uint totalPages)
@@ -118,6 +130,16 @@ namespace SmartDeviceApp.Controllers
             ((ScrollViewer)_controlReference).SizeChanged += ControlReferenceSizeChanged;
         }
 
+        /// <summary>
+        /// Initializes swipe event handlers
+        /// </summary>
+        /// <param name="isHorizontalSwipeEnabled">true when horizontal swipe is enabled, false otherwise</param>
+        /// <param name="isReverse">true when reverse (for handling of swipe) is enabled, false otherwise</param>
+        /// <param name="swipeLeftHandler">swipe left handler</param>
+        /// <param name="swipeRightHandler">swipe right handler</param>
+        /// <param name="swipeTopHandler">swipe top handler</param>
+        /// <param name="swipeBottomHandler">swipe bottom handler</param>
+        /// <param name="swipeDirectionHandler">swipe direction handler</param>
         public void InitializeSwipe(bool isHorizontalSwipeEnabled, bool isReverse,
             SwipeLeftDelegate swipeLeftHandler,
             SwipeRightDelegate swipeRightHandler,
@@ -135,11 +157,31 @@ namespace SmartDeviceApp.Controllers
 
             ResetClipTransforms();
         }
-        
+
+        /// <summary>
+        /// Swipe right delegate
+        /// </summary>
         public delegate void SwipeRightDelegate();
+
+        /// <summary>
+        /// Swipe left delegate
+        /// </summary>
         public delegate void SwipeLeftDelegate();
+
+        /// <summary>
+        /// Swipe top delegate
+        /// </summary>
         public delegate void SwipeTopDelegate();
+
+        /// <summary>
+        /// Swipe bottom delegate
+        /// </summary>
         public delegate void SwipeBottomDelegate();
+
+        /// <summary>
+        /// Swipe direction delegate
+        /// </summary>
+        /// <param name="isSwipeLeft"></param>
         public delegate void SwipeDirectionDelegate(bool isSwipeLeft);
 
         private void Initialize()
@@ -165,6 +207,9 @@ namespace SmartDeviceApp.Controllers
             ResetTransforms();
         }
 
+        /// <summary>
+        /// Enables handling of gestures
+        /// </summary>
         public void EnableGestures()
         {
             if (!_isEnabled)
@@ -191,6 +236,9 @@ namespace SmartDeviceApp.Controllers
                 pointerCount--;
         }
 
+        /// <summary>
+        /// Disables handling of gestures
+        /// </summary>
         public void DisableGestures()
         {
             if (_isEnabled)
@@ -211,6 +259,9 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Disposes this object
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -1272,11 +1323,19 @@ namespace SmartDeviceApp.Controllers
             _manipulationCancel = true;
         }
 
+        /// <summary>
+        /// Updates the current page index
+        /// </summary>
+        /// <param name="index">page index</param>
         public void SetPageIndex(uint index)
         {
             _currPageIndex = index;
         }
-        
+
+        /// <summary>
+        /// Updates the current page total
+        /// </summary>
+        /// <param name="pageTotal">page total</param>
         public void SetPageTotal(uint pageTotal)
         {
             _totalPages = pageTotal;

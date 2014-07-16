@@ -12,6 +12,9 @@
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumeration for the result of loading a document
+    /// </summary>
     public enum LoadDocumentResult
     {
         NotStarted,

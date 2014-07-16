@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Utilities
 {
+    /// <summary>
+    /// Interface for the DialogService class
+    /// </summary>
     public interface IDialogService
     {
         Task ShowError(

@@ -13,11 +13,27 @@ namespace SmartDeviceApp.Converters
 {
     public class WidthConverter : IValueConverter
     {
+        /// <summary>
+        /// Returns the current width of the Window.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             return Window.Current.Bounds.Width;
         }
 
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
@@ -26,6 +42,14 @@ namespace SmartDeviceApp.Converters
 
     public class ResizedViewWidthConverter : IValueConverter
     {
+        /// <summary>
+        /// Computes for the new width of the View.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             double width = 0.0;
@@ -65,6 +89,14 @@ namespace SmartDeviceApp.Converters
             return width;
         }
 
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
@@ -73,6 +105,14 @@ namespace SmartDeviceApp.Converters
 
     public class PrintJobListWidthConverter : IValueConverter
     {
+        /// <summary>
+        /// Computes for the width of Print Job List.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var viewModel = new ViewModelLocator().JobsViewModel;
@@ -97,6 +137,14 @@ namespace SmartDeviceApp.Converters
             return columnWidth;
         }
 
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
@@ -105,6 +153,14 @@ namespace SmartDeviceApp.Converters
 
     public class PrintersListWidthConverter : IValueConverter
     {
+        /// <summary>
+        /// Computes for the printer list's width based on the orientation.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var columns = 3;
@@ -136,6 +192,14 @@ namespace SmartDeviceApp.Converters
             return columnWidth ;
         }
 
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
@@ -144,6 +208,14 @@ namespace SmartDeviceApp.Converters
 
     public class HeightConverter : IValueConverter
     {
+        /// <summary>
+        /// Returns the current height of the window.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null || !(value is ViewOrientation)) return null;
@@ -160,6 +232,14 @@ namespace SmartDeviceApp.Converters
                 Window.Current.Bounds.Height : Window.Current.Bounds.Width;
         }
 
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
@@ -168,6 +248,14 @@ namespace SmartDeviceApp.Converters
 
     public class SidePanesHeightConverter : IValueConverter
     {
+        /// <summary>
+        /// Returns the height of the side pane.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null) return null;
@@ -175,6 +263,14 @@ namespace SmartDeviceApp.Converters
             
         }
 
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();

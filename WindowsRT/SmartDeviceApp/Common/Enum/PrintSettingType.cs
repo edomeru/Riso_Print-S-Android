@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumeration of types of Print Setting
+    /// </summary>
     public enum PrintSettingType
     {
         numeric,

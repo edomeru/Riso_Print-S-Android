@@ -18,6 +18,9 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class PrintSettingOptionsBox : Grid
     {
+        /// <summary>
+        /// Constructor. Initializes UI components.
+        /// </summary>
         public PrintSettingOptionsBox()
         {
             this.InitializeComponent();
@@ -26,6 +29,9 @@ namespace SmartDeviceApp.Views
         public static readonly DependencyProperty PrintSettingTextProperty =
             DependencyProperty.Register("PrintSettingText", typeof(string), typeof(PrintSettingOptionsBox), null);
 
+        /// <summary>
+        /// Gets and sets the print setting text property
+        /// </summary>
         public string PrintSettingText
         {
             get { return (string)GetValue(PrintSettingTextProperty); }

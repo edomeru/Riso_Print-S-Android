@@ -1,4 +1,15 @@
-﻿// Class1.cpp
+﻿//
+//  DirectPrintSettingsWrapper.cpp
+//  SmartDeviceApp
+//
+//  Created by a-LINK Group.
+//  Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.
+//
+//  Revision History :
+//  Date            Author/ID           Ver.
+//  ----------------------------------------------------------------------
+//
+
 #include "pch.h"
 #include "DirectPrintSettingsWrapper.h"
 extern "C"
@@ -16,6 +27,9 @@ DirectPrintSettingsWrapper::DirectPrintSettingsWrapper()
 
 };
 
+/*
+ * Converts a wchar string to character array string
+ */
 void convertWCharToCharArray(char** output, const wchar_t* input)
 {
     size_t length = wcslen(input) + 1;
@@ -23,6 +37,9 @@ void convertWCharToCharArray(char** output, const wchar_t* input)
     wcstombs_s(&convertedChars, *output, length, input, _TRUNCATE);
 }
 
+/*
+ * Converts a character array string to wchar string
+ */
 void convertCharArrayToWChar(wchar_t** output, const char* input)
 {
     size_t length = strlen(input) + 1;
@@ -30,6 +47,9 @@ void convertCharArrayToWChar(wchar_t** output, const char* input)
     mbstowcs_s(&convertedChars, *output, length, input, _TRUNCATE);
 }
 
+/*
+ * Creates a string of PJL command based from print settings
+ */
 String^ DirectPrintSettingsWrapper::create_pjl_wrapper(String^ settings)
 {
     char pjl[BUFFER_SIZE];

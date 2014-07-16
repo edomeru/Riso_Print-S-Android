@@ -135,7 +135,7 @@
                 </Grid.Projection>
                 <local:SelectPrinterBox />
             </Grid>
-            <Grid Grid.Row="0" x:Name="printSettingOptionsGrid" Style="{StaticResource STYLE_RightGrid}">
+            <Grid Grid.Row="0" x:Name="printSettingOptionsGrid" Style="{StaticResource STYLE_RightGrid}" Height="{Binding ElementName=LayoutRoot, Path=ActualHeight}">
                 <Grid.Projection>
                     <PlaneProjection/>
                 </Grid.Projection>

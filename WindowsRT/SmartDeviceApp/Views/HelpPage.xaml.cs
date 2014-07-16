@@ -20,6 +20,9 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class HelpPage : PageBase
     {
+        /// <summary>
+        /// Constructor for the HelpPage class
+        /// </summary>
         public HelpPage()
         {
             this.InitializeComponent();
@@ -32,6 +35,9 @@ namespace SmartDeviceApp.Views
 
         }
 
+        /// <summary>
+        /// Gets the data context of this xaml
+        /// </summary>
         public HelpViewModel ViewModel
         {
             get

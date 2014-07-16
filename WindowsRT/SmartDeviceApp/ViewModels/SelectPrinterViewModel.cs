@@ -29,7 +29,14 @@ namespace SmartDeviceApp.ViewModels
 {
     public class SelectPrinterViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Select printer event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrintPreviewController.SelectedPrinterChangedEventHandler SelectPrinterEvent;
+
+        /// <summary>
+        /// Printer status polling event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrinterController.PollingHandler PollingHandler;
 
         private readonly IDataService _dataService;
@@ -41,6 +48,11 @@ namespace SmartDeviceApp.ViewModels
         private ObservableCollection<Printer> _printerList;
         private bool _isPrinterListEmpty;
 
+        /// <summary>
+        /// SelectPrinterViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public SelectPrinterViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -49,6 +61,9 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<PrintSettingsPaneMode>(this, (printSettingsPaneMode) => StartPolling(printSettingsPaneMode));
         }
 
+        /// <summary>
+        /// Gets/sets the printer list
+        /// </summary>
         public ObservableCollection<Printer> PrinterList
         {
             get { return _printerList; }
@@ -63,6 +78,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the flag when the printer list is empty.
+        /// True when printer list is empty, false otherwise.
+        /// </summary>
         public bool IsPrinterListEmpty
         {
             get { return _isPrinterListEmpty; }
@@ -76,6 +95,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for select printer
+        /// </summary>
         public ICommand SelectPrinter
         {
             get
@@ -91,6 +113,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate back to Print Settings Screen
+        /// </summary>
         public ICommand BackToPrintSettings
         {
             get

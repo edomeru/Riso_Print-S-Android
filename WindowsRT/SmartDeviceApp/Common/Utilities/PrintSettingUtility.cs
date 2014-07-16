@@ -25,11 +25,21 @@ namespace SmartDeviceApp.Common.Utilities
             DependencyProperty.RegisterAttached("PrintSettingValueChanged", typeof(object),
             typeof(PrintSettingUtility), new PropertyMetadata(null, NotifyPrintSettingValueChanged));
 
+        /// <summary>
+        /// Sets the print setting value.
+        /// </summary>
+        /// <param name="obj">print setting</param>
+        /// <param name="value">new value</param>
         public static void SetPrintSettingValueChanged(DependencyObject obj, object value)
         {
             obj.SetValue(PrintSettingValueChangedProperty, value);
         }
 
+        /// <summary>
+        /// Gets the print setting value
+        /// </summary>
+        /// <param name="obj">print setting</param>
+        /// <returns>value of print setting</returns>
         public static object GetPrintSettingValueChanged(DependencyObject obj)
         {
             return (object)obj.GetValue(PrintSettingValueChangedProperty);

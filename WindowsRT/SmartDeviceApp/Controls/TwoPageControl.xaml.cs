@@ -39,6 +39,9 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class TwoPageControl : UserControl
     {
+        /// <summary>
+        /// Constructor for TwoPageControl.
+        /// </summary>
         public TwoPageControl()
         {
             this.InitializeComponent();
@@ -98,101 +101,143 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty IsLoadLeftNextPageActiveProperty =
             DependencyProperty.Register("IsLoadLeftNextPageActive", typeof(bool), typeof(TwoPageControl), null);
 
+        /// <summary>
+        /// Right back page of the booklet image.
+        /// </summary>
         public ImageSource RightBackPageImage
         {
             get { return (ImageSource)GetValue(RightBackPageImageProperty); }
             set { SetValue(RightBackPageImageProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the progress ring for the right back page is active.
+        /// </summary>
         public bool IsLoadRightBackPageActive
         {
             get { return (bool)GetValue(LoadRightBackPageActiveProperty); }
             set { SetValue(LoadRightBackPageActiveProperty, value); }
         }
 
+        /// <summary>
+        /// Left back page of the booklet image.
+        /// </summary>
         public ImageSource LeftBackPageImage
         {
             get { return (ImageSource)GetValue(LeftBackPageImageProperty); }
             set { SetValue(LeftBackPageImageProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the progress ring for the left back page is active.
+        /// </summary>
         public bool IsLoadLeftBackPageActive
         {
             get { return (bool)GetValue(IsLoadLeftBackPageActiveProperty); }
             set { SetValue(IsLoadLeftBackPageActiveProperty, value); }
         }
 
+        /// <summary>
+        /// Page Area element of the control.
+        /// </summary>
         public Grid PageAreaGrid
         {
             get { return pageAreaGrid; }
         }
 
+        /// <summary>
+        /// Right page image of the booklet view.
+        /// </summary>
         public ImageSource RightPageImage
         {
             get { return (ImageSource)GetValue(RightPageImageProperty); }
             set { SetValue(RightPageImageProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the progress ring for the right page is active.
+        /// </summary>
         public bool IsLoadRightPageActive
         {
             get { return (bool)GetValue(IsLoadRightPageActiveProperty); }
             set { SetValue(IsLoadRightPageActiveProperty, value); }
         }
 
+        /// <summary>
+        /// Left page image of the booklet view.
+        /// </summary>
         public ImageSource LeftPageImage
         {
             get { return (ImageSource)GetValue(LeftPageImageProperty); }
             set { SetValue(LeftPageImageProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the progress ring for the left page is active.
+        /// </summary>
         public bool IsLoadLeftPageActive
         {
             get { return (bool)GetValue(IsLoadLeftPageActiveProperty); }
             set { SetValue(IsLoadLeftPageActiveProperty, value); }
         }
 
+        /// <summary>
+        /// View mode of the view.
+        /// </summary>
         public PageViewMode PageViewMode
         {
             get { return (PageViewMode)GetValue(PageViewModeProperty); }
             set { SetValue(PageViewModeProperty, value); }
         }
 
+        /// <summary>
+        /// Size of the page area.
+        /// </summary>
         public Size PageAreaSize
         {
             get { return (Size)GetValue(PageAreaSizeProperty); }
             set { SetValue(PageAreaSizeProperty, value); }
         }
 
-        public ImageSource LeftPageImage2
-        {
-            get { return (ImageSource)GetValue(LeftPageImage2Property); }
-            set { SetValue(LeftPageImage2Property, value); }
-        }
-
+        /// <summary>
+        /// Flag to check whether the view is in Duplex.
+        /// </summary>
         public bool IsDuplex
         {
             get { return (bool)GetValue(IsDuplexProperty); }
             set { SetValue(IsDuplexProperty, value); }
         }
 
+        /// <summary>
+        /// Next page image of the booklet view.
+        /// </summary>
         public ImageSource RightNextPageImage
         {
             get { return (ImageSource)GetValue(RightNextPageImageProperty); }
             set { SetValue(RightNextPageImageProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the progress ring for the right next page is active.
+        /// </summary>
         public bool IsLoadRightNextPageActive
         {
             get { return (bool)GetValue(IsLoadRightNextPageActiveProperty); }
             set { SetValue(IsLoadRightNextPageActiveProperty, value); }
         }
 
+        /// <summary>
+        /// Left next page of the booklet view.
+        /// </summary>
         public ImageSource LeftNextPageImage
         {
             get { return (ImageSource)GetValue(LeftNextPageImageProperty); }
             set { SetValue(LeftNextPageImageProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the progress ring for the left next page is active.
+        /// </summary>
         public bool IsLoadLeftNextPageActive
         {
             get { return (bool)GetValue(IsLoadLeftNextPageActiveProperty); }
@@ -297,51 +342,81 @@ namespace SmartDeviceApp.Controls
             }
         }
 
+        /// <summary>
+        /// Display Area grid element of the control.
+        /// </summary>
         public Grid DisplayAreaGrid
         {
             get { return displayAreaGrid; }
         }
 
+        /// <summary>
+        /// Transition grid element of the control.
+        /// </summary>
         public Grid TransitionGrid
         {
             get { return transitionGrid; }
         }
 
+        /// <summary>
+        /// Manipulation grid element of the control.
+        /// </summary>
         public Grid ManipulationGrid
         {
             get { return manipulationGrid; }
         }
 
+        /// <summary>
+        /// Translate transform element of the control.
+        /// </summary>
         public TranslateTransform Page1TranslateTransform
         {
             get { return Page1ClipTranslateTransform; }
         }
 
+        /// <summary>
+        /// Rotate transform element of the control.
+        /// </summary>
         public RotateTransform Page1RotateTransform
         {
             get { return Page1ClipRotateTransform; }
         }
 
+        /// <summary>
+        /// Translate transform element of the control.
+        /// </summary>
         public TranslateTransform Page2TranslateTransform
         {
             get { return Page2ClipTranslateTransform; }
         }
 
+        /// <summary>
+        /// Rotate transform element of the control.
+        /// </summary>
         public RotateTransform Page2RotateTransform
         {
             get { return Page2ClipRotateTransform; }
         }
 
+        /// <summary>
+        /// Translate transform element of the control.
+        /// </summary>
         public TranslateTransform TransitionTranslateTransform
         {
             get { return TransitionGridClipTranslateTransform; }
         }
 
+        /// <summary>
+        /// Rotate transform element of the control.
+        /// </summary>
         public RotateTransform TransitionRotateTransform
         {
             get { return TransitionGridClipRotateTransform; }
         }
 
+        /// <summary>
+        /// Composite transform element of the control.
+        /// </summary>
         public CompositeTransform TransitionContainerTransform
         {
             get { return TransitionGridContainerTransform; }

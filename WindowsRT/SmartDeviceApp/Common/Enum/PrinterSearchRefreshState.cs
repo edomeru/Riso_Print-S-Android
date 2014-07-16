@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumeration for the visual state of Printer Search Pane.
+    /// </summary>
     public enum PrinterSearchRefreshState
     {
         RefreshingState,

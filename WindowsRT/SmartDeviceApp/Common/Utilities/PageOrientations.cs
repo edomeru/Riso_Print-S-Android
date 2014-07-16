@@ -12,6 +12,9 @@
 
 namespace SmartDeviceApp.Common.Utilities
 {
+    /// <summary>
+    /// Enumeration of Page Orientations
+    /// </summary>
     public enum PageOrientations
     {
         // Summary:

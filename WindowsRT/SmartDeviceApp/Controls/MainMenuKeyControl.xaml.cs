@@ -18,6 +18,9 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class MainMenuKeyControl : UserControl
     {
+        /// <summary>
+        /// Constructor for MainMenuKeyControl.
+        /// </summary>
         public MainMenuKeyControl()
         {
             this.InitializeComponent();
@@ -38,30 +41,45 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty IsCheckedProperty =
            DependencyProperty.Register("IsChecked", typeof(bool), typeof(MainMenuKeyControl), null);
 
+        /// <summary>
+        /// Name of the group property.
+        /// </summary>
         public string GroupName
         {
             get { return (string)GetValue(GroupNameProperty); }
             set { SetValue(GroupNameProperty, value); }
         }
 
+        /// <summary>
+        /// Key Text property of the control.
+        /// </summary>
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for the separator line.
+        /// </summary>
         public Visibility SeparatorVisibility
         {
             get { return (Visibility)GetValue(SeparatorVisibilityProperty); }
             set { SetValue(SeparatorVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Command to be executed when the control is pressed.
+        /// </summary>
         public ICommand Command
         {
             get { return (ICommand)GetValue(CommandProperty); }
             set { SetValue(CommandProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether the control is checked.
+        /// </summary>
         public bool IsChecked
         {
             get { return (bool)GetValue(IsCheckedProperty); }

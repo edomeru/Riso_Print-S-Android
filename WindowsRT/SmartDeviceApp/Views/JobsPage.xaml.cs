@@ -30,6 +30,9 @@ namespace SmartDeviceApp.Views
         private bool _isJobGesturesGridLoaded;
         private bool _isJobsScrollViewerLoaded;
 
+        /// <summary>
+        /// Constructor. Initializes UI components and gesture controller.
+        /// </summary>
         public JobsPage()
         {
             this.InitializeComponent();
@@ -39,6 +42,9 @@ namespace SmartDeviceApp.Views
             if (!ViewModel.IsPrintJobsListEmpty) ViewModel.IsProgressRingActive = true;
         }
 
+        /// <summary>
+        /// Gets the data context of this xaml
+        /// </summary>
         public JobsViewModel ViewModel
         {
             get
@@ -53,12 +59,18 @@ namespace SmartDeviceApp.Views
         public static readonly DependencyProperty DeleteJobCommandProperty =
             DependencyProperty.Register("DeleteJobCommand", typeof(ICommand), typeof(JobsPage), null);
 
+        /// <summary>
+        /// Command property to be executed when Delete All button is tapped
+        /// </summary>
         public ICommand DeleteAllJobsCommand
         {
             get { return (ICommand)GetValue(DeleteAllJobsCommandProperty); }
             set { SetValue(DeleteAllJobsCommandProperty, value); }
         }
 
+        /// <summary>
+        /// Command property to be executed when Delete Job button is tapped
+        /// </summary>
         public ICommand DeleteJobCommand
         {
             get { return (ICommand)GetValue(DeleteJobCommandProperty); }

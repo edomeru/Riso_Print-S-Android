@@ -60,19 +60,30 @@ namespace SmartDeviceApp.Controls
 
         private SimpleOrientationSensor _orientationSensor;
         
+        /// <summary>
+        /// Constructor of ViewControl.
+        /// </summary>
         public ViewControl()
         {
             this.InitializeComponent();
             Children = contentGrid.Children;
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Window.Current.SizeChanged += WindowSizeChanged;
+          
             _orientationSensor = SimpleOrientationSensor.GetDefault();
-            _orientationSensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
+            if (_orientationSensor != null)
+            {
+                _orientationSensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
+            }
+
             // Get initial orientation
             ViewModel.ViewOrientation = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
                 ViewOrientation.Landscape : ViewOrientation.Portrait;
         }
 
+        /// <summary>
+        /// Data context of the control.
+        /// </summary>
         public ViewControlViewModel ViewModel
         {
             get
@@ -81,66 +92,99 @@ namespace SmartDeviceApp.Controls
             }
         }
 
+        /// <summary>
+        /// Text property of the control.
+        /// </summary>
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
 
+        /// <summary>
+        /// Children of the control.
+        /// </summary>
         public UIElementCollection Children
         {
             get { return (UIElementCollection)GetValue(ChildrenProperty); }
             private set { SetValue(ChildrenProperty, value); }
         }
 
+        /// <summary>
+        /// Data context of the children of the control.
+        /// </summary>
         public object ChildrenDataContext
         {
             get { return (object)GetValue(ChildrenDataContextProperty); }
             set { SetValue(ChildrenDataContextProperty, value); }
         }
 
+        /// <summary>
+        /// Content of the right pane.
+        /// </summary>
         public object RightPaneContent
         {
             get { return (object)GetValue(RightPaneContentProperty); }
             set { SetValue(RightPaneContentProperty, value); }
         }
 
+        /// <summary>
+        /// Right pane template selector.
+        /// </summary>
         public DataTemplateSelector RightPaneContentTemplateSelector
         {
             get { return (DataTemplateSelector)GetValue(RightPaneContentTemplateSelectorProperty); }
             set { SetValue(RightPaneContentTemplateSelectorProperty, value); }
         }
 
+        /// <summary>
+        /// Imagesource for button1.
+        /// </summary>
         public ImageSource Button1Image
         {
             get { return (ImageSource)GetValue(Button1ImageProperty); }
             set { SetValue(Button1ImageProperty, value); }
         }
 
+        /// <summary>
+        /// Imagesource for the pressed state of button1.
+        /// </summary>
         public ImageSource Button1PressedImage
         {
             get { return (ImageSource)GetValue(Button1PressedImageProperty); }
             set { SetValue(Button1PressedImageProperty, value); }
         }
 
+        /// <summary>
+        /// Imagesource for button2.
+        /// </summary>
         public ImageSource Button2Image
         {
             get { return (ImageSource)GetValue(Button2ImageProperty); }
             set { SetValue(Button2ImageProperty, value); }
         }
 
+        /// <summary>
+        /// Imagesource for the pressed state of button2.
+        /// </summary>
         public ImageSource Button2PressedImage
         {
             get { return (ImageSource)GetValue(Button2PressedImageProperty); }
             set { SetValue(Button2PressedImageProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for button1.
+        /// </summary>
         public Visibility Button1Visibility
         {
             get { return (Visibility)GetValue(Button1VisibilityProperty); }
             set { SetValue(Button1VisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property for button2.
+        /// </summary>
         public Visibility Button2Visibility
         {
             get { return (Visibility)GetValue(Button2VisibilityProperty); }

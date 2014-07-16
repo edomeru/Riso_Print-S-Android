@@ -16,13 +16,21 @@ namespace SmartDeviceApp.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Log-in ID value changed event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.SettingController.CardIdValueChangedEventHandler CardIdValueChangedEventHandler;
 
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
         private string _cardId;
-        
+
+        /// <summary>
+        /// SettingsViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public SettingsViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -30,6 +38,9 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 
+        /// <summary>
+        /// Gets/sets the Log-in ID value
+        /// </summary>
         public string CardId
         {
             get { return _cardId; }
@@ -44,6 +55,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Log-in ID value changed event handler
+        /// </summary>
         private void CardIdValueChanged()
         {
             if (CardIdValueChangedEventHandler != null)
@@ -52,6 +66,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sets the enabled mode of this view
+        /// </summary>
+        /// <param name="viewMode">view mode</param>
         private void EnableMode(ViewMode viewMode)
         {
             if (viewMode == ViewMode.FullScreen)
@@ -70,6 +88,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Grid control for enabling/disabling gestures in Settings Screen
+        /// </summary>
         public Grid SettingsGestureGrid
         {
             get;

@@ -60,6 +60,10 @@ namespace SmartDeviceApp.Views
         }
 
         //Sets the VerticalScrollBar of this listview. Taken when the pane is loaded. Called from the code behind of SearchPrinterPane.
+        /// <summary>
+        /// Holds the vertical scrollbar of this listview.
+        /// </summary>
+        /// <param name="vBar"></param>
         public void SetVBar(ScrollBar vBar)
         {
             if (vBar != null)

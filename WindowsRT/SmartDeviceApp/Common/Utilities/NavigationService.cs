@@ -18,6 +18,9 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class NavigationService : INavigationService
     {
+        /// <summary>
+        /// Determines if a page can navigate back.
+        /// </summary>
         public virtual bool CanGoBack
         {
             get
@@ -27,6 +30,9 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Determines the current page type
+        /// </summary>
         public Type CurrentPageType
         {
             get
@@ -36,6 +42,9 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Navigates the page back.
+        /// </summary>
         public virtual void GoBack()
         {
             var frame = ((Frame)Window.Current.Content);
@@ -46,6 +55,9 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Navigates the page forward
+        /// </summary>
         public virtual void GoForward()
         {
             var frame = ((Frame)Window.Current.Content);
@@ -56,6 +68,9 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Navigates the page to Home page
+        /// </summary>
         public virtual void GoHome()
         {
             var frame = ((Frame)Window.Current.Content);
@@ -66,11 +81,20 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Navigates the page to a certain page
+        /// </summary>
+        /// <param name="sourcePageType">type of source page</param>
         public virtual void Navigate(Type sourcePageType)
         {
             ((Frame)Window.Current.Content).Navigate(sourcePageType);
         }
 
+        /// <summary>
+        /// Navigates the page to a certain page
+        /// </summary>
+        /// <param name="sourcePageType">type of source page</param>
+        /// <param name="parameter">parameter to be interpreted by the target of the navigation</param>
         public virtual void Navigate(Type sourcePageType, object parameter)
         {
             ((Frame)Window.Current.Content).Navigate(sourcePageType, parameter);

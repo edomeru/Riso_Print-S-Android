@@ -13,6 +13,9 @@
 namespace SmartDeviceApp.Common.Enum
 {
     // Note: Should be mapped with DirectPrint class
+    /// <summary>
+    /// Enumeration of results when printing a job
+    /// </summary>
     public enum PrintJobResult
     {
         Success,

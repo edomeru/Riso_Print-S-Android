@@ -15,7 +15,9 @@ namespace SmartDeviceApp.Common.Enum
     /*
      * Items in this class must match the options in Assets/printsettings.xml
      */
-
+    /// <summary>
+    /// Enumeration of options for Color setting
+    /// </summary>
     public enum ColorMode
     {
         Auto,
@@ -23,12 +25,18 @@ namespace SmartDeviceApp.Common.Enum
         Mono
     }
 
+    /// <summary>
+    /// Enumeration of options for Orientation setting
+    /// </summary>
     public enum Orientation
     {
         Portrait,
         Landscape
     }
 
+    /// <summary>
+    /// Enumeration of options for Duplex setting
+    /// </summary>
     public enum Duplex
     {
         Off,
@@ -36,6 +44,9 @@ namespace SmartDeviceApp.Common.Enum
         ShortEdge
     }
 
+    /// <summary>
+    /// Enumeration of options for Paper Size setting
+    /// </summary>
     public enum PaperSize
     {
         A3,
@@ -53,6 +64,9 @@ namespace SmartDeviceApp.Common.Enum
         Statement
     }
 
+    /// <summary>
+    /// Enumeration of options for Paper Type setting
+    /// </summary>
     public enum PaperType
     {
         Any,
@@ -64,6 +78,9 @@ namespace SmartDeviceApp.Common.Enum
         LWPaper
     }
 
+    /// <summary>
+    /// Enumeration of options for Input Tray setting
+    /// </summary>
     public enum InputTray
     {
         Auto,
@@ -73,6 +90,9 @@ namespace SmartDeviceApp.Common.Enum
         Tray3
     }
 
+    /// <summary>
+    /// Enumeration of options for Imposition setting
+    /// </summary>
     public enum Imposition
     {
         Off,
@@ -80,6 +100,9 @@ namespace SmartDeviceApp.Common.Enum
         FourUp
     }
 
+    /// <summary>
+    /// Enumeration of options for Imposition Order setting
+    /// </summary>
     public enum ImpositionOrder
     {
         TwoUpLeftToRight,
@@ -90,12 +113,18 @@ namespace SmartDeviceApp.Common.Enum
         FourUpUpperRightToBottom
     }
 
+    /// <summary>
+    /// Enumeration of options for Sort setting
+    /// </summary>
     public enum Sort
     {
         PerPage,
         PerCopy
     }
 
+    /// <summary>
+    /// Enumeration of options for Booklet Finishing setting
+    /// </summary>
     public enum BookletFinishing
     {
         Off,
@@ -103,12 +132,18 @@ namespace SmartDeviceApp.Common.Enum
         FoldAndStaple
     }
 
+    /// <summary>
+    /// Enumeration of options for Booklet Layout setting
+    /// </summary>
     public enum BookletLayout
     {
         Forward,
         Reverse
     }
 
+    /// <summary>
+    /// Enumeration of options for Finishing Side setting
+    /// </summary>
     public enum FinishingSide
     {
         Left,
@@ -116,6 +151,9 @@ namespace SmartDeviceApp.Common.Enum
         Right
     }
 
+    /// <summary>
+    /// Enumeration of options for Staple setting
+    /// </summary>
     public enum Staple
     {
         Off,
@@ -125,6 +163,9 @@ namespace SmartDeviceApp.Common.Enum
         Two
     }
 
+    /// <summary>
+    /// Enumeration of options for Punch setting
+    /// </summary>
     public enum Punch
     {
         Off,
@@ -132,6 +173,9 @@ namespace SmartDeviceApp.Common.Enum
         FourHoles
     }
 
+    /// <summary>
+    /// Enumeration of options for Output Tray setting
+    /// </summary>
     public enum OutputTray
     {
         Auto,

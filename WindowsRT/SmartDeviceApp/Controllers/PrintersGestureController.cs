@@ -30,6 +30,9 @@ namespace SmartDeviceApp.Controllers
         private Point _startPoint;
         private bool _isEnabled;
 
+        /// <summary>
+        /// PrintersGestureController class constructor
+        /// </summary>
         public PrintersGestureController()
         {
             _gestureRecognizer = new GestureRecognizer();
@@ -45,6 +48,9 @@ namespace SmartDeviceApp.Controllers
                 GestureSettings.ManipulationScaleInertia;
         }
 
+        /// <summary>
+        /// UI control
+        /// </summary>
         public UIElement Control
         {
             set
@@ -54,12 +60,18 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Target UI control
+        /// </summary>
         public UIElement TargetControl
         {
             get { return _targetControl; }
             set { _targetControl = value; }
         }
 
+        /// <summary>
+        /// UI control reference (scroll view)
+        /// </summary>
         public UIElement ControlReference
         {
             set { _controlReference = value; }
@@ -73,6 +85,9 @@ namespace SmartDeviceApp.Controllers
             _controlPosition = transform.TransformPoint(new Point());
         }
 
+        /// <summary>
+        /// Enables handling of gestures
+        /// </summary>
         public void EnableGestures()
         {
             if (_control == null) return;
@@ -94,6 +109,9 @@ namespace SmartDeviceApp.Controllers
             //}
         }
 
+        /// <summary>
+        /// Disables handling of gestures
+        /// </summary>
         public void DisableGestures()
         {
             if (_control == null) return;

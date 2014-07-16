@@ -21,6 +21,9 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class DefaultPrintSettingsControl : UserControl
     {
+        /// <summary>
+        /// Constructor for DefaultPrintSettingsControl
+        /// </summary>
         public DefaultPrintSettingsControl()
         {
             this.InitializeComponent();
@@ -62,8 +65,6 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty SubTextVisibilityProperty =
             DependencyProperty.Register("SubTextVisibility", typeof(Visibility), typeof(DefaultPrintSettingsControl), new PropertyMetadata(Visibility.Collapsed));
 
-        
-
         public static readonly DependencyProperty PressedColorProperty =
             DependencyProperty.Register("PressedColor", typeof(SolidColorBrush), typeof(DefaultPrintSettingsControl), null);
 
@@ -74,6 +75,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty IsPressedProperty =
             DependencyProperty.Register("IsPressed", typeof(bool), typeof(DefaultPrintSettingsControl), null);
 
+        /// <summary>
+        /// Command property that will be executed when this control is tapped.
+        /// </summary>
         public ICommand Command
         {
             get { 
@@ -84,55 +88,81 @@ namespace SmartDeviceApp.Controls
             }
         }
 
+        /// <summary>
+        /// Command parameter for the command to be executed.
+        /// </summary>
         public object CommandParameter
         {
             get { return (object)GetValue(CommandParameterProperty); }
             set { SetValue(CommandParameterProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property of the right button
+        /// </summary>
         public Visibility RightButtonVisibility
         {
             get { return (Visibility)GetValue(RightButtonVisibilityProperty); }
             set { SetValue(RightButtonVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// Visibility property of the icon
+        /// </summary>
         public Visibility IconVisibility
         {
             get { return (Visibility)GetValue(IconVisibilityProperty); }
             set { SetValue(IconVisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// ImageSource property for the icon of the control
+        /// </summary>
         public ImageSource IconImage
         {
             get { return (ImageSource)GetValue(IconImageProperty); }
             set { SetValue(IconImageProperty, value); }
         }
 
+        /// <summary>
+        /// ImageSource property for the right image.
+        /// </summary>
         public ImageSource RightImage
         {
             get { return (ImageSource)GetValue(RightImageProperty); }
             set { SetValue(RightImageProperty, value); }
         }
 
+        /// <summary>
+        /// String property for the text displayed in the control
+        /// </summary>
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
 
-
+        /// <summary>
+        /// Color property for the "Pressed" visual state of this control
+        /// </summary>
         public SolidColorBrush PressedColor
         {
             get { return (SolidColorBrush)GetValue(PressedColorProperty); }
             set { SetValue(PressedColorProperty, value); }
         }
 
+        /// <summary>
+        /// String property that sets the visual state of this control
+        /// </summary>
         public string VisualState
         {
             get { return (string)GetValue(VisualStateProperty); }
             set { SetValue(VisualStateProperty, value); }
         }
 
+        /// <summary>
+        /// Flag to check whether this control is in Pressed state
+        /// </summary>
         public bool IsPressed
         {
             get { return (bool)GetValue(IsPressedProperty); }
@@ -160,21 +190,6 @@ namespace SmartDeviceApp.Controls
                     ((DefaultPrintSettingsControl)obj).IsPressed = false;
                     break;
             }
-        }
-
-        private void defaultPrintSettingsControlGrid_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            //((Grid)sender).CapturePointer(e.Pointer);
-            
-            //IsPressed = true;
-        }
-
-        private void defaultPrintSettingsControlGrid_PointerReleased(object sender, PointerRoutedEventArgs e)
-        {
-            //((Grid)sender).ReleasePointerCapture(e.Pointer);
-            //IsPressed = false;
-
-            //Command.Execute(CommandParameter);
         }
     }
 }

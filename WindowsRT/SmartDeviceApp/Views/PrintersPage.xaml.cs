@@ -41,6 +41,9 @@ namespace SmartDeviceApp.Views
     /// </summary>
     public sealed partial class PrintersPage : PageBase
     {
+        /// <summary>
+        /// Holds the data context of this xaml.
+        /// </summary>
         public PrintersViewModel ViewModel
         {
             get
@@ -51,6 +54,9 @@ namespace SmartDeviceApp.Views
 
         private PrintersGestureController _gestureController;
 
+        /// <summary>
+        /// Constructor for PrintersPage class.
+        /// </summary>
         public PrintersPage()
         {
             this.InitializeComponent();
@@ -122,7 +128,8 @@ namespace SmartDeviceApp.Views
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
             ((AdaptableGridView)_gestureController.TargetControl).ItemWidth = (double)((new PrintersListWidthConverter()).Convert(_viewControlViewModel.ViewMode, null,
                 new ViewItemParameters() { columns = columns, viewOrientation = _viewControlViewModel.ViewOrientation }, null));
-            
+
+            ViewModel.SetIpAddressTextWidths(((AdaptableGridView)sender).ItemWidth);
         }
 
         private void PrintersGestureGrid_Loaded(object sender, RoutedEventArgs e)
@@ -135,18 +142,6 @@ namespace SmartDeviceApp.Views
         private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
         {
             _gestureController.ControlReference = (ScrollViewer)sender;
-
-        }
-
-        private void printerName_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void printerInfoView_LayoutUpdated(object sender, object e)
-        {
-            
-            
         }
 
     }

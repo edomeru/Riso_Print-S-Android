@@ -13,6 +13,9 @@ namespace SmartDeviceApp.Views
     {
         // default itemWidth
         private const double itemWidth = 1000.00;
+        /// <summary>
+        /// Holds the width of the griditem without margins.
+        /// </summary>
         public double ItemWidth
         {
             get { return (double)GetValue(ItemWidthProperty); }
@@ -20,11 +23,17 @@ namespace SmartDeviceApp.Views
             ItemWidthWithMargin = ItemWidth + 20;
             }
         }
+
+        /// <summary>
+        /// Holds the width of the griditem plus margins.
+        /// </summary>
         public double ItemWidthWithMargin
         {
             get { return (double)GetValue(ItemWidthWithMarginProperty); }
             set { SetValue(ItemWidthWithMarginProperty, value); }
         }
+
+
         public static readonly DependencyProperty ItemWidthProperty =
             DependencyProperty.Register("ItemWidth", typeof(double), typeof(AdaptableGridView), null); //new PropertyMetadata(itemWidth)
 
@@ -33,6 +42,10 @@ namespace SmartDeviceApp.Views
 
         // default max number of rows or columns
         private const int maxRowsOrColumns = 3;
+
+        /// <summary>
+        /// Holds the Maximum number of rows and/or columns. 
+        /// </summary>
         public int MaxRowsOrColumns
         {
             get { return (int)GetValue(MaxRowColProperty); }
@@ -42,10 +55,12 @@ namespace SmartDeviceApp.Views
             DependencyProperty.Register("MaxRowsOrColumns", typeof(int), typeof(AdaptableGridView), new PropertyMetadata(maxRowsOrColumns));
 
 
+        /// <summary>
+        /// Default constructor of AdaptableGridView.
+        /// </summary>
         public AdaptableGridView()
         {
             this.SizeChanged += MyGridViewSizeChanged;
-            
         }
 
         private void MyGridViewSizeChanged(object sender, SizeChangedEventArgs e)

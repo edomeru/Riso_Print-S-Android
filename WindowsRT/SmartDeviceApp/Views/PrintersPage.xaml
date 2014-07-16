@@ -124,7 +124,7 @@
 						SelectionMode="None"
 						IsItemClickEnabled="False"  
                         ItemsSource="{Binding PrinterList}"  ScrollViewer.HorizontalScrollMode="Disabled"
-                              Loaded="printerInfoView_Loaded"   LayoutUpdated="printerInfoView_LayoutUpdated"    Style="{StaticResource AdaptableGridViewStyle1}" IsSwipeEnabled="False" IsHoldingEnabled="False" IsTapEnabled="False" ItemContainerStyle="{StaticResource GridViewItemStyle1}">
+                              Loaded="printerInfoView_Loaded" Style="{StaticResource AdaptableGridViewStyle1}" IsSwipeEnabled="False" IsHoldingEnabled="False" IsTapEnabled="False" ItemContainerStyle="{StaticResource GridViewItemStyle1}">
                 <!--<local:AdaptableGridView.Margin>
                     <Thickness Top="{StaticResource MARGIN_Default}"
                                    Bottom="{StaticResource MARGIN_Default}"
@@ -165,22 +165,24 @@
                                                                      IconVisibility="Visible"
                                                                      LeftButtonVisibility="Collapsed"
                                                                      PrinterIp="{Binding IpAddress}"
-                                                                     WillBeDeleted ="{Binding WillBeDeleted, Mode=TwoWay}"
-                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printerInfoView}"
-                                                         Loaded="printerName_Loaded"/>
+                                                                     DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printerInfoView}"/>
 
                             <controls:KeyImageControl x:Name="printerImage" 
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                          PrinterImage="ms-appx:///Resources/Dummy/RZ1070-page1.jpg"/>
+                                                          PrinterImage=""/>
                             <!--TODO: bind this to image data-->
 
                             <controls:KeyValueControl x:Name="ipAddress" 
                                                       IconVisibility="Collapsed"
+                                                      IsOnLoadedEnabled="False"
                                                       Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
+                                                      KeyTextWidth="{Binding DataContext.IpAddressKeyTextWidth, ElementName=printerInfoView}"
                                                       ValueText="{Binding IpAddress}"
+                                                      ValueTextWidth="{Binding DataContext.IpAddressValueTextWidth, ElementName=printerInfoView}"
                                                       RightButtonVisibility="Collapsed"
                                                       ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
+                                                      SeparatorStartPoint="{StaticResource MARGIN_Default}"
                                                       IsListItem="True"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                       PressedColor="{StaticResource BRUSH_Gray2}"

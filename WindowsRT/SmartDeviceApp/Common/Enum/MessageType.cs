@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Common.Enum
 {
+    /// <summary>
+    /// Enumeration of type of message used when sending strings thru Messenger.
+    /// </summary>
     public enum MessageType
     {
         AddPrinter,

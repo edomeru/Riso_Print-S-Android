@@ -22,6 +22,9 @@ namespace SmartDeviceApp.Common.Utilities
         private static DialogService _instance;
         private static ResourceLoader _resourceLoader;
 
+        /// <summary>
+        /// Singleton instance
+        /// </summary>
         public static DialogService Instance
         {
             get 
@@ -35,6 +38,14 @@ namespace SmartDeviceApp.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Displays the error message
+        /// </summary>
+        /// <param name="message">Resource id of the message to be extracted from the resources.</param>
+        /// <param name="title">Resource id of the title of the dialog</param>
+        /// <param name="buttonText">Resource id of the text of the button</param>
+        /// <param name="afterHideCallback">Function call back after dialog is dismissed</param>
+        /// <returns>Task</returns>
         public async Task ShowError(string message, string title, string buttonText, Action afterHideCallback)
         {
             message = _resourceLoader.GetString(message);
@@ -58,6 +69,14 @@ namespace SmartDeviceApp.Common.Utilities
             await dialog.ShowAsync();
         }
 
+        /// <summary>
+        /// Displays the error message
+        /// </summary>
+        /// <param name="error">Resource id of the message to be extracted from the resources.</param>
+        /// <param name="title">Resource id of the title of the dialog</param>
+        /// <param name="buttonText">Resource id of the text of the button</param>
+        /// <param name="afterHideCallback">Function call back after dialog is dismissed</param>
+        /// <returns>Task</returns>
         public async Task ShowError(Exception error, string title, string buttonText, Action afterHideCallback)
         {
             var message = _resourceLoader.GetString(error.Message);
@@ -67,6 +86,12 @@ namespace SmartDeviceApp.Common.Utilities
             await ShowError(message, title ?? string.Empty, buttonText, afterHideCallback);
         }
 
+        /// <summary>
+        /// Displays a dialog with the message.
+        /// </summary>
+        /// <param name="message">Resource id of the message to be extracted from the resources.</param>
+        /// <param name="title">Resource id of the title of the dialog</param>
+        /// <returns>Task</returns>
         public async Task ShowMessage(string message, string title)
         {
             message = _resourceLoader.GetString(message);
@@ -76,6 +101,14 @@ namespace SmartDeviceApp.Common.Utilities
             await dialog.ShowAsync();
         }
 
+        /// <summary>
+        /// Displays a dialog with the message
+        /// </summary>
+        /// <param name="message">Resource id of the message to be extracted from the resources.</param>
+        /// <param name="title">Resource id of the title of the dialog</param>
+        /// <param name="buttonText">Resource id of the text of the button</param>
+        /// <param name="afterHideCallback">Function call after dialog is dismissed</param>
+        /// <returns>Task</returns>
         public async Task ShowMessage(string message, string title, string buttonText, Action afterHideCallback)
         {
             message = _resourceLoader.GetString(message);
@@ -97,6 +130,15 @@ namespace SmartDeviceApp.Common.Utilities
             await dialog.ShowAsync();
         }
 
+        /// <summary>
+        /// Displays a dialog with Confirm and Cancel button
+        /// </summary>
+        /// <param name="message">Resource id of the message to be extracted from the resources.</param>
+        /// <param name="title">Resource id of the title of the dialog</param>
+        /// <param name="buttonConfirmText">Resource id of the text of the confirm button</param>
+        /// <param name="buttonCancelText">Resource id of the text of the cancel button</param>
+        /// <param name="afterHideCallback">Function called after dialog is dismissed</param>
+        /// <returns>Task</returns>
         public async Task ShowMessage(
             string message,
             string title,
@@ -116,6 +158,12 @@ namespace SmartDeviceApp.Common.Utilities
             await dialog.ShowAsync();
         }
 
+        /// <summary>
+        /// Displays a dialog.
+        /// </summary>
+        /// <param name="message">Resource id of the message to be extracted from the resources.</param>
+        /// <param name="title">Resource id of the title of the dialog</param>
+        /// <returns>Task</returns>
         public async Task ShowMessageBox(string message, string title)
         {
             message = _resourceLoader.GetString(message);
@@ -125,6 +173,14 @@ namespace SmartDeviceApp.Common.Utilities
             await dialog.ShowAsync();
         }
 
+        /// <summary>
+        /// Displays a dialog with custom message.
+        /// </summary>
+        /// <param name="message">Message to be displayed.</param>
+        /// <param name="title">Title of the dialog</param>
+        /// <param name="buttonText">Resource id of the text of the button</param>
+        /// <param name="afterHideCallback">Function called after dialog is dismissed</param>
+        /// <returns></returns>
         public async Task ShowCustomMessageBox(string message, string title,  string buttonText, Action afterHideCallback)
         {
             var dialog = new MessageDialog(message, title ?? string.Empty);

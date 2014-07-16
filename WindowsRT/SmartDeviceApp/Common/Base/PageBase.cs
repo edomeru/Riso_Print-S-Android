@@ -23,6 +23,9 @@ namespace SmartDeviceApp.Common.Base
 
         private readonly NavigationHelper _navigationHelper;
 
+        /// <summary>
+        /// Aids in navigation between pages.
+        /// </summary>
         public NavigationHelper NavigationHelper
         {
             get

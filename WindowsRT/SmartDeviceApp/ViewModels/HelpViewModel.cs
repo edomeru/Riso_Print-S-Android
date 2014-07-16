@@ -19,6 +19,11 @@ namespace SmartDeviceApp.ViewModels
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
         
+        /// <summary>
+        /// HelpViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService"></param>
         public HelpViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -44,6 +49,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Grid control for enabling/disabling gestures on Help Screen
+        /// </summary>
         public Grid HelpGestureGrid
         {
             get;

@@ -40,10 +40,27 @@ namespace SmartDeviceApp.ViewModels
         private const double SIDE_PANE_RATIO = 2;
         private const double PREVIEW_VIEW_RATIO = 5;
 
+        /// <summary>
+        /// Go to page event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrintPreviewController.GoToPageEventHandler GoToPageEventHandler;
+
+        /// <summary>
+        /// Turn page (for swipe direction) event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrintPreviewController.TurnPageEventHandler TurnPageEventHandler;
+
+        /// <summary>
+        /// Transition to Print Preview Screen event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateToEventHandler OnNavigateToEventHandler;
+
+        // Transition from Print Preview Screen event handler
         public event SmartDeviceApp.Controllers.PrintPreviewController.OnNavigateFromEventHandler OnNavigateFromEventHandler;
+
+        /// <summary>
+        /// PageAreaGrid loaded event handler
+        /// </summary>
         public event SmartDeviceApp.Controllers.PrintPreviewController.PageAreaGridLoadedEventHandler PageAreaGridLoadedEventHandler;
 
         private readonly IDataService _dataService;
@@ -83,6 +100,11 @@ namespace SmartDeviceApp.ViewModels
 
         private ViewControlViewModel _viewControlViewModel;
 
+        /// <summary>
+        /// PrintPreviewViewModel class constructor
+        /// </summary>
+        /// <param name="dataService">data service</param>
+        /// <param name="navigationService">navigation service</param>
         public PrintPreviewViewModel(IDataService dataService, INavigationService navigationService)
         {
             _dataService = dataService;
@@ -103,6 +125,9 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));
         }
 
+        /// <summary>
+        /// Transition to Print Preview Screen event handler
+        /// </summary>
         public void OnNavigatedTo()
         {
             if (OnNavigateToEventHandler != null)
@@ -112,6 +137,9 @@ namespace SmartDeviceApp.ViewModels
             new ViewModelLocator().PrintSettingsViewModel.SetPrintSettingsPaneEnable();
         }
 
+        /// <summary>
+        /// Transition from Print Preview Screen event handler
+        /// </summary>
         public void OnNavigatedFrom()
         {
             if (OnNavigateFromEventHandler != null)
@@ -123,6 +151,10 @@ namespace SmartDeviceApp.ViewModels
             new ViewModelLocator().SelectPrinterViewModel.BackToPrintSettings.Execute(null);
         }
 
+        /// <summary>
+        /// Sets the page area gird
+        /// </summary>
+        /// <param name="twoPageControl">two-page control</param>
         public void SetPageAreaGrid(SmartDeviceApp.Controls.TwoPageControl twoPageControl)
         {
             if (!IsPageAreaGridLoaded)
@@ -140,7 +172,11 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        // Should be reset everytime the view orientation is changed
+        /// <summary>
+        /// Resets the page area grid dimensions.
+        /// Should be reset everytime the view orientation is changed.
+        /// </summary>
+        /// <param name="viewOrientation">view orientation</param>
         private void ResetPageAreaGrid(ViewOrientation viewOrientation)
         {
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
@@ -154,6 +190,9 @@ namespace SmartDeviceApp.ViewModels
 
         }
 
+        /// <summary>
+        /// Initializes the gestures (event handlers and GestureController)
+        /// </summary>
         public void InitializeGestures()
         {
             if (IsPageAreaGridLoaded)
@@ -259,6 +298,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Clean-up
+        /// </summary>
         new public void Cleanup()
         {
             if (_gestureController != null)
@@ -292,12 +334,20 @@ namespace SmartDeviceApp.ViewModels
             _scalingFactor = 1;
         }
 
+        /// <summary>
+        /// Gets/sets the reverse state of swipe direction.
+        /// True when reverse swipe is enabled, false otherwise.
+        /// </summary>
         public bool IsReverseSwipe
         {
             get { return _isReverseSwipe; }
             set { _isReverseSwipe = value; }
         }
 
+        /// <summary>
+        /// Gets/sets the swipe direction state.
+        /// True when horizontal swipe is enabled, false otherwise (vertical swipe is enabled)
+        /// </summary>
         public bool IsHorizontalSwipeEnabled
         {
             get { return _isHorizontalSwipeEnabled; }
@@ -352,11 +402,11 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public ContentControl DrawingSurface
-        {
-            get;
-            set;
-        }
+        //public ContentControl DrawingSurface
+        //{
+        //    get;
+        //    set;
+        //}
 
         #region PANE VISIBILITY
 
@@ -367,6 +417,10 @@ namespace SmartDeviceApp.ViewModels
         private bool _isLoadLeftNextPageActive;
         private bool _isLoadRightNextPageActive;
 
+        /// <summary>
+        /// Gets/sets the loading indicator active state for the left back page.
+        /// True when loading indicator for the left back page is active, false otherwise.
+        /// </summary>
         public bool IsLoadLeftBackPageActive
         {
             get { return _isLoadLeftBackPageActive; }
@@ -380,6 +434,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the loading indicator active state for the right back page.
+        /// True when loading indicator for the right back page is active, false otherwise
+        /// </summary>
         public bool IsLoadRightBackPageActive
         {
             get { return _isLoadRightBackPageActive; }
@@ -393,6 +451,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the loading indicator active state for the left next page.
+        /// True when loading indicator for the left next page is active, false otherwise
+        /// </summary>
         public bool IsLoadLeftNextPageActive
         {
             get { return _isLoadLeftNextPageActive; }
@@ -406,6 +468,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the loading indicator active state for the right next page.
+        /// True when loading indicator for the right next page is active, false otherwise
+        /// </summary>
         public bool IsLoadRightNextPageActive
         {
             get { return _isLoadRightNextPageActive; }
@@ -419,6 +485,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the loading indicator active state for the left page.
+        /// True when loading indicator for the left page is active, false otherwise
+        /// </summary>
         public bool IsLoadLeftPageActive
         {
             get { return _isLoadLeftPageActive; }
@@ -432,6 +502,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the loading indicator active state for the left page.
+        /// True when loading indicator for right page is active, false otherwise
+        /// </summary>
         public bool IsLoadRightPageActive
         {
             get { return _isLoadRightPageActive; }
@@ -494,6 +568,9 @@ namespace SmartDeviceApp.ViewModels
 
         #region PAGE DISPLAY
 
+        /// <summary>
+        /// Text label for the Print Preview Screen based on the document name
+        /// </summary>
         public string DocumentTitleText
         {
             get { return _documentTitleText; }
@@ -507,6 +584,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Right back page image
+        /// </summary>
         public WriteableBitmap RightBackPageImage
         {
             get { return _rightBackPageImage; }
@@ -520,6 +600,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Left back page image
+        /// </summary>
         public WriteableBitmap LeftBackPageImage
         {
             get { return _leftBackPageImage; }
@@ -533,6 +616,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Right page image
+        /// </summary>
         public WriteableBitmap RightPageImage
         {
             get { return _rightPageImage; }
@@ -548,6 +634,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Left page image
+        /// </summary>
         public WriteableBitmap LeftPageImage
         {
             get { return _leftPageImage; }
@@ -561,6 +650,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Right next page image
+        /// </summary>
         public WriteableBitmap RightNextPageImage
         {
             get { return _rightNextPageImage; }
@@ -574,6 +666,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Left next page image
+        /// </summary>
         public WriteableBitmap LeftNextPageImage
         {
             get { return _leftNextPageImage; }
@@ -587,6 +682,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Right page image actual size
+        /// </summary>
         public Size RightPageActualSize
         {
             get { return _rightPageActualSize; }
@@ -601,6 +699,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Left page image actual size
+        /// </summary>
         public Size LeftPageActualSize
         {
             get { return _leftPageActualSize; }
@@ -613,7 +714,10 @@ namespace SmartDeviceApp.ViewModels
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Gets/sets the current page view mode
+        /// </summary>
         public PageViewMode PageViewMode
         {
             get { return _pageViewMode; }
@@ -627,12 +731,18 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// True when page area grid is already loaded, false otherwise
+        /// </summary>
         public bool IsPageAreaGridLoaded { get; private set; }
 
         #endregion
 
         #region SINGLE-PAGE NAVIGATION
 
+        /// <summary>
+        /// Command for turn to previous page
+        /// </summary>
         public ICommand GoToPreviousPage
         {
             get
@@ -648,6 +758,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for turn to next page
+        /// </summary>
         public ICommand GoToNextPage
         {
             get
@@ -663,6 +776,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Page number information
+        /// </summary>
         public PageNumberInfo PageNumber
         {
             get { return _pageNumber; }
@@ -675,7 +791,14 @@ namespace SmartDeviceApp.ViewModels
                 }
             }
         }
+
         private bool _isBooklet;
+
+        /// <summary>
+        /// Sets the initial page index
+        /// </summary>
+        /// <param name="index">page index</param>
+        /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
         public void SetInitialPageIndex(uint index, bool isBooklet)
         {
             _pageIndex = index;
@@ -683,6 +806,10 @@ namespace SmartDeviceApp.ViewModels
             SetPageIndexes();
         }
 
+        /// <summary>
+        /// Go to page event handler
+        /// </summary>
+        /// <param name="index"></param>
         public void GoToPage(uint index)
         {
             if (GoToPageEventHandler != null)
@@ -691,6 +818,11 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Updates the page index
+        /// </summary>
+        /// <param name="index">page index</param>
+        /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
         public void UpdatePageIndexes(uint index, bool isBooklet)
         {
             _pageIndex = index;
@@ -698,6 +830,9 @@ namespace SmartDeviceApp.ViewModels
             SetPageIndexes();
         }
 
+        /// <summary>
+        /// Turn to previous page handler
+        /// </summary>
         private void GoToPreviousPageExecute()
         {
             --_pageIndex;
@@ -705,6 +840,10 @@ namespace SmartDeviceApp.ViewModels
             GoToPage(_pageIndex);
         }
 
+        /// <summary>
+        /// Checks if can turn to previous page
+        /// </summary>
+        /// <returns>true if allowed, false otherwise</returns>
         private bool CanGoToPreviousPage()
         {
             // Check if at least second page
@@ -712,6 +851,9 @@ namespace SmartDeviceApp.ViewModels
             return false;
         }
 
+        /// <summary>
+        /// Turn to next page handler
+        /// </summary>
         private void GoToNextPageExecute()
         {
             ++_pageIndex;
@@ -719,6 +861,10 @@ namespace SmartDeviceApp.ViewModels
             GoToPage(_pageIndex);
         }
 
+        /// <summary>
+        /// Checks if can turn to next page
+        /// </summary>
+        /// <returns>true when allowed, false otherwise</returns>
         private bool CanGoToNextPage()
         {
             // Check if at least second to the last page
@@ -736,6 +882,9 @@ namespace SmartDeviceApp.ViewModels
 
         #region MULTI-PAGE NAVIGATION
 
+        /// <summary>
+        /// Command for page slider value changed
+        /// </summary>
         public ICommand PageNumberSliderValueChange
         {
             get
@@ -751,6 +900,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command for pointer capture lost of page slider
+        /// </summary>
         public ICommand PageNumberSliderPointerCaptureLost
         {
             get
@@ -766,6 +918,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Page total
+        /// </summary>
         public uint PageTotal
         {
             get { return _pageTotal; }
@@ -783,7 +938,9 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        // Different handling depending on view mode
+        /// <summary>
+        /// Current page index
+        /// </summary>
         public uint CurrentPageIndex
         {
             get 
@@ -804,6 +961,10 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the enabled state of page slider.
+        /// True when enabled, false otherwise.
+        /// </summary>
         public bool IsPageNumberSliderEnabled
         {
             get { return _isPageNumberSliderEnabled; }

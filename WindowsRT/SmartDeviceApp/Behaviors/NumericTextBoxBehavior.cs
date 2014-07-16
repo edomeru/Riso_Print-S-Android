@@ -19,8 +19,15 @@ namespace SmartDeviceApp.Behaviors
 
         private string lastValidText;
 
+        /// <summary>
+        /// Object which this behavior is associated to.
+        /// </summary>
         public DependencyObject AssociatedObject { get; private set; }
 
+        /// <summary>
+        /// Attaches this behavior to an object.
+        /// </summary>
+        /// <param name="associatedObject">Object to be associated with this behavior</param>
         public void Attach(DependencyObject associatedObject)
         {
             var textBox = associatedObject as TextBox;
@@ -76,6 +83,9 @@ namespace SmartDeviceApp.Behaviors
             }
         }
 
+        /// <summary>
+        /// Detaches the object associated with this behavior.
+        /// </summary>
         public void Detach()
         {
             var textBox = AssociatedObject as TextBox;

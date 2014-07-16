@@ -18,6 +18,9 @@ namespace SmartDeviceApp.Controls
 {
     public sealed partial class SidePaneTitleControl : UserControl
     {
+        /// <summary>
+        /// Constructor for SidePaneTitleControl.
+        /// </summary>
         public SidePaneTitleControl()
         {
             this.InitializeComponent();
@@ -26,6 +29,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof(string), typeof(SidePaneTitleControl), null);
 
+        /// <summary>
+        /// Title of the side pane.
+        /// </summary>
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }

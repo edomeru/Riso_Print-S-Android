@@ -19,6 +19,9 @@ namespace SmartDeviceApp.Controls
     public partial class JobGroupListControl : GroupListControl
     {
 
+        /// <summary>
+        /// Constructor of JobGroupListControl.
+        /// </summary>
         public JobGroupListControl()
         {
             this.InitializeComponent();
@@ -32,6 +35,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty IsCollapsedProperty =
             DependencyProperty.Register("IsCollapsed", typeof(bool), typeof(JobGroupListControl), null);
 
+        /// <summary>
+        /// Flag for checking whether the Group List is collapsed or not.
+        /// </summary>
         public bool IsCollapsed
         {
             get { return (bool)GetValue(IsCollapsedProperty); }

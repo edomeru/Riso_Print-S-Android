@@ -21,10 +21,19 @@ namespace SmartDeviceApp.Controllers
 {
     public class DirectPrintController
     {
-
+        /// <summary>
+        /// Print job progress delegate
+        /// </summary>
+        /// <param name="progress"></param>
         public delegate void UpdatePrintJobProgress(float progress);
         public event UpdatePrintJobProgress UpdatePrintJobProgressEventHandler;
 
+        /// <summary>
+        /// Print job result delegate
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="date"></param>
+        /// <param name="result"></param>
         public delegate void SetPrintJobResult(string name, DateTime date, int result);
         public event SetPrintJobResult SetPrintJobResultEventHandler;
 
@@ -34,6 +43,15 @@ namespace SmartDeviceApp.Controllers
 
         private const string FORMAT_PRINT_SETTING_KVO = "{0}={1}\n";
 
+        /// <summary>
+        /// DirectPrintController class controller
+        /// </summary>
+        /// <param name="name">print job name</param>
+        /// <param name="file">PDF file</param>
+        /// <param name="ipAddress">IP address</param>
+        /// <param name="printSettings">print settings</param>
+        /// <param name="progressEvent">progress event callback</param>
+        /// <param name="resultEvent">print job event callback</param>
         public DirectPrintController(string name, StorageFile file, string ipAddress,
             PrintSettings printSettings, UpdatePrintJobProgress progressEvent,
             SetPrintJobResult resultEvent)

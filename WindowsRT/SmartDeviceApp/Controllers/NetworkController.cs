@@ -17,6 +17,9 @@ namespace SmartDeviceApp.Controllers
     {
         private const string port = "80";
 
+        /// <summary>
+        /// Ping status callback
+        /// </summary>
         public Action<string, bool> networkControllerPingStatusCallback { get; set; } //PrintersModule
 
         static readonly NetworkController _instance = new NetworkController();
@@ -25,6 +28,9 @@ namespace SmartDeviceApp.Controllers
 
         private NetworkController() { }
 
+        /// <summary>
+        /// NetworkController singleton instance
+        /// </summary>
         public static NetworkController Instance
         {
             get { return _instance; }
@@ -32,6 +38,11 @@ namespace SmartDeviceApp.Controllers
 
         StreamSocket tcpClient;
 
+        /// <summary>
+        /// Pings a host
+        /// </summary>
+        /// <param name="ip">target IP address</param>
+        /// <returns>task</returns>
         public async Task pingDevice(string ip)
         {
            try
@@ -48,7 +59,10 @@ namespace SmartDeviceApp.Controllers
                networkControllerPingStatusCallback(ip, false);
            }
         }
-       
+
+        /// <summary>
+        /// True when self is connected to the network (i.e. internet), false otherwise
+        /// </summary>
         public static bool IsConnectedToNetwork
         {
             get
