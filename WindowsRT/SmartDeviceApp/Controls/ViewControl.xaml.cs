@@ -69,8 +69,13 @@ namespace SmartDeviceApp.Controls
             Children = contentGrid.Children;
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Window.Current.SizeChanged += WindowSizeChanged;
+          
             _orientationSensor = SimpleOrientationSensor.GetDefault();
-            _orientationSensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
+            if (_orientationSensor != null)
+            {
+                _orientationSensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
+            }
+
             // Get initial orientation
             ViewModel.ViewOrientation = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
                 ViewOrientation.Landscape : ViewOrientation.Portrait;
