@@ -77,6 +77,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _pageNumberSliderValueChange;
         private ICommand _pageNumberSliderPointerCaptureLost;
         private uint _pageTotal;
+        private uint _pagesPerSheet;
         private uint _currentPageIndex;
         private uint _pageIndex;
         private PageNumberInfo _pageNumber;
@@ -799,10 +800,11 @@ namespace SmartDeviceApp.ViewModels
         /// </summary>
         /// <param name="index">page index</param>
         /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
-        public void SetInitialPageIndex(uint index, bool isBooklet)
+        public void SetInitialPageIndex(uint index, bool isBooklet, uint pagesPerSheet)
         {
             _pageIndex = index;
             _isBooklet = isBooklet;
+            _pagesPerSheet = pagesPerSheet;
             SetPageIndexes();
         }
 
@@ -823,10 +825,11 @@ namespace SmartDeviceApp.ViewModels
         /// </summary>
         /// <param name="index">page index</param>
         /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
-        public void UpdatePageIndexes(uint index, bool isBooklet)
+        public void UpdatePageIndexes(uint index, bool isBooklet, uint pagesPerSheet)
         {
             _pageIndex = index;
             _isBooklet = isBooklet;
+            _pagesPerSheet = pagesPerSheet;
             SetPageIndexes();
         }
 
@@ -874,7 +877,7 @@ namespace SmartDeviceApp.ViewModels
         
         private void SetPageIndexes()
         {
-            PageNumber = new PageNumberInfo(_pageIndex, DocumentController.Instance.PageCount, _pageViewMode, _isBooklet);
+            PageNumber = new PageNumberInfo(_pageIndex, DocumentController.Instance.PageCount, _pageViewMode, _isBooklet, _pagesPerSheet);
             CurrentPageIndex = _pageIndex;
         }
 
@@ -981,7 +984,7 @@ namespace SmartDeviceApp.ViewModels
         private void PageNumberSliderValueChangeExecute()
         {
             var newValue = CurrentPageIndex;
-            UpdatePageIndexes(newValue, _isBooklet);
+            UpdatePageIndexes(newValue, _isBooklet, _pagesPerSheet);
         }
 
         private void PageNumberSliderPointerCaptureLostExecute()
