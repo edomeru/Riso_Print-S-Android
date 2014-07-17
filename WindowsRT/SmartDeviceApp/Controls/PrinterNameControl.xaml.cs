@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -288,7 +289,8 @@ namespace SmartDeviceApp.Controls
 
         private void printerNameControl_LayoutUpdated(object sender, object e)
         {
-            if (sender != null)
+            var viewModel = new ViewModelLocator().ViewControlViewModel;
+            if (viewModel.ScreenMode == ScreenMode.Printers)
                 resizeTextWidth();
         }
 
