@@ -568,8 +568,10 @@ namespace SmartDeviceApp.Common.Utilities
             if ((finishingSide != (int)FinishingSide.Right) && (!isRightSide) ||
                 (finishingSide == (int)FinishingSide.Right) && (isRightSide))
             {
-                if ((duplexType == (int)Duplex.LongEdge && !isPortrait) ||
-                    (duplexType == (int)Duplex.ShortEdge && isPortrait))
+                if ((duplexType == (int)Duplex.LongEdge && (finishingSide == (int)FinishingSide.Top) && isPortrait) ||
+                    ((duplexType == (int)Duplex.LongEdge && (finishingSide != (int)FinishingSide.Top) && !isPortrait)) ||
+                    (duplexType == (int)Duplex.ShortEdge && (finishingSide != (int)FinishingSide.Top) && isPortrait) ||
+                    (duplexType == (int)Duplex.ShortEdge && (finishingSide == (int)FinishingSide.Top) && !isPortrait))
                 {
                     DispatcherHelper.CheckBeginInvokeOnUI(
                     () =>
