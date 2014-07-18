@@ -401,11 +401,16 @@ namespace SmartDeviceApp.Common.Utilities
                 double x = marginPaper + pageImageOffsetX;
                 double y = marginPaper + pageImageOffsetY;
 
+                Rect srcRect = new Rect();
+                srcRect.X = 0;
+                srcRect.Y = 0;
                 Rect destRect = new Rect();
                 destRect.X = x;
                 destRect.Y = y;
                 if (scaleToFit)
                 {
+                    srcRect.Width = overlaySize.Width;
+                    srcRect.Height = overlaySize.Height;
                     destRect.X += (impositionPageAreaSize.Width - scaledSize.Width) / 2;
                     destRect.Y += (impositionPageAreaSize.Height - scaledSize.Height) / 2;
                     destRect.Width = scaledSize.Width;
@@ -413,18 +418,20 @@ namespace SmartDeviceApp.Common.Utilities
                 }
                 else
                 {
+                    double factor = 1.0;
                     if (imposition == (int)Imposition.FourUp)
                     {
-                        destRect.Width = overlaySize.Width * 0.5;
-                        destRect.Height = overlaySize.Height * 0.5;
+                        factor = 0.5;
                     }
                     else if (imposition == (int)Imposition.TwoUp)
                     {
-                        destRect.Width = overlaySize.Width * 0.75;
-                        destRect.Height = overlaySize.Height * 0.75;
+                        factor = 0.75;
                     }
+                    srcRect.Width = overlaySize.Width * factor;
+                    srcRect.Height = overlaySize.Height * factor;
+                    destRect.Width = canvasSize.Width * factor;
+                    destRect.Height = canvasSize.Height * factor;
                 }
-                Rect srcRect = new Rect(0, 0, overlaySize.Width, overlaySize.Height);
 
                 if (rotateLeft)
                 {
