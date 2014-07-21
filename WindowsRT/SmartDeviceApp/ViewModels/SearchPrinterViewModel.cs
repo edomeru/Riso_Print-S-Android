@@ -46,7 +46,6 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
 
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-            //NoPrintersFound = true;
             WillRefresh = false;
             NoPrintersFound = false;
             //Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
