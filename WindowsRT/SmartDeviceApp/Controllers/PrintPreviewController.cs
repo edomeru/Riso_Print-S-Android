@@ -1116,11 +1116,15 @@ namespace SmartDeviceApp.Controllers
                             //if (_isSwipeLeft)
                             if (_isSwipeLeft && _currLeftBackPageIndex < 0)
                                 _printPreviewViewModel.LeftNextPageImage.Clear();
-                            else if (_currLeftBackPageIndex > 0 )
+                            else if (_currLeftBackPageIndex > 0)
+                            {
                                 if (_isReverseOrder && _currRightPageIndex < _maxPreviewPageCount - 1) //Check if it is in right bind and not last page
-                                WriteableBitmapExtensions.FromByteArray(
+                                {
+                                    WriteableBitmapExtensions.FromByteArray(
                                             _printPreviewViewModel.LeftNextPageImage,
                                             _previewPageImages.GetValue(_currLeftBackPageIndex - 2));
+                                }
+                            }
                         }
                         _printPreviewViewModel.IsLoadLeftBackPageActive = false;
                         _printPreviewViewModel.IsLoadLeftNextPageActive = false;
