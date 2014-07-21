@@ -61,7 +61,6 @@ namespace SmartDeviceApp.Views
             ViewModel.Height = (double)((new SidePanesHeightConverter()).Convert(this, null, null, null));
             if (!ViewModel.WillRefresh)
             {
-                ViewModel.NoPrintersFound = true;
                 OnSetRefreshState(PrinterSearchRefreshState.NotRefreshingState);
             }
             
