@@ -47,7 +47,7 @@ namespace SmartDeviceApp.Models
         /// <param name="pageTotal">page total</param>
         /// <param name="pageViewMode">page view mode</param>
         /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
-        /// /// <param name="pagesPerSheet">imposition setting</param>
+        /// <param name="pagesPerSheet">imposition setting</param>
         public PageNumberInfo(uint rightPageIndex, 
             uint pageTotal, PageViewMode pageViewMode, bool isBooklet, uint pagesPerSheet)
         {

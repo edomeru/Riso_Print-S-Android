@@ -800,6 +800,7 @@ namespace SmartDeviceApp.ViewModels
         /// </summary>
         /// <param name="index">page index</param>
         /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
+        /// <param name="pagesPerSheet">Pages printed per sheet</param>
         public void SetInitialPageIndex(uint index, bool isBooklet, uint pagesPerSheet)
         {
             _pageIndex = index;
@@ -825,6 +826,7 @@ namespace SmartDeviceApp.ViewModels
         /// </summary>
         /// <param name="index">page index</param>
         /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
+        /// <param name="pagesPerSheet">Pages printed per sheet</param>
         public void UpdatePageIndexes(uint index, bool isBooklet, uint pagesPerSheet)
         {
             _pageIndex = index;
