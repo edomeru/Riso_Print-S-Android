@@ -209,14 +209,14 @@ namespace SmartDeviceApp.Controls
             set { SetValue(PrinterIpProperty, value); }
         }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //public bool WillBeDeleted
-        //{
-        //    get { return (bool)GetValue(WillBeDeletedProperty); }
-        //    set { SetValue(WillBeDeletedProperty, value); }
-        //}
+        /// <summary>
+        /// Flag to check if current printer selected will be deleted.
+        /// </summary>
+        public bool WillBeDeleted
+        {
+            get { return (bool)GetValue(WillBeDeletedProperty); }
+            set { SetValue(WillBeDeletedProperty, value); }
+        }
 
         /// <summary>
         /// This determines if the text will be truncated

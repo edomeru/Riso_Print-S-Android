@@ -202,16 +202,16 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Flag that denotes that the printer will be deleted
         /// </summary>
-        //[SQLite.Ignore]
-        //public bool WillBeDeleted
-        //{
-        //    get { return this._willBeDeleted; }
-        //    set
-        //    {
-        //        _willBeDeleted = value;
-        //        OnPropertyChanged("WillBeDeleted");
-        //    }
-        //}
+        [SQLite.Ignore]
+        public bool WillBeDeleted
+        {
+            get { return this._willBeDeleted; }
+            set
+            {
+                _willBeDeleted = value;
+                OnPropertyChanged("WillBeDeleted");
+            }
+        }
 
         [SQLite.Ignore]
         public string VisualState

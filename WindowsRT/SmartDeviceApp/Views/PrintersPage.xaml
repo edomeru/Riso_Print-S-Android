@@ -165,6 +165,7 @@
                                                                      IconVisibility="Visible"
                                                                      LeftButtonVisibility="Collapsed"
                                                                      PrinterIp="{Binding IpAddress}"
+                                                                     WillBeDeleted="{Binding WillBeDeleted, Mode=TwoWay}"
                                                                      DeleteCommand="{Binding DataContext.DeletePrinter, ElementName=printerInfoView}"/>
 
                             <controls:KeyImageControl x:Name="printerImage" 
