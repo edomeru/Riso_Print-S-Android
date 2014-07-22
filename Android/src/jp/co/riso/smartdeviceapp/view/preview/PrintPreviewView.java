@@ -1428,6 +1428,14 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 leftToRight = mPrintSettings.getImpositionOrder().isLeftToRight();
                 topToBottom = mPrintSettings.getImpositionOrder().isTopToBottom();
                 horizontalFlow = mPrintSettings.getImpositionOrder().isHorizontalFlow();
+                
+                // Flip when rendering back page.
+                if (flipX) {
+                    leftToRight = !leftToRight;
+                }
+                if (flipY) {
+                    topToBottom = !topToBottom;
+                }                
             }
             
             // start from right
