@@ -1,0 +1,12 @@
+To compile:
+
+./configure
+make
+
+To run unit test:
+
+make check
+
+To run unit test with coverage:
+
+./unittester.sh

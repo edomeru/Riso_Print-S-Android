@@ -1,4 +1,4 @@
-<jp.co.riso.smartdeviceapp.view.printers.PortTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/printerInfoPortItem"
     android:layout_width="match_parent"
     android:layout_height="@dimen/printers_row_height"
@@ -7,5 +7,4 @@
     android:gravity="left|center_vertical"
     android:paddingLeft="@dimen/printers_row_left_icon_margin"
     android:singleLine="true"
-    android:textColor="@color/selector_printers_text"
-    android:textSize="@dimen/printers_name_font_size" />
+    android:textColor="@color/selector_printers_text" />

@@ -12,25 +12,46 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.webkit.WebView;
 
+/**
+ * @class SDAWebView
+ * 
+ * @brief Subclass of WebView class. Sets the standard functionalities of the WebView.
+ */
 public class SDAWebView extends WebView {
     
+    /**
+     * @brief Constructs a new WebView with a Context object
+     * 
+     * @param context A Context object used to access application assets 
+     */
     public SDAWebView(Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
     
+    /**
+     * @brief Constructs a new WebView with layout parameters.
+     * 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
+     */
     public SDAWebView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
     
+    /**
+     * @brief Constructs a new WebView with layout parameters and a default style.
+     * 
+     * @param context A Context object used to access application assets
+     * @param attrs An AttributeSet passed to our parent 
+     * @param defStyle The default style resource ID  
+     */
     public SDAWebView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
     
     /**
-     * Initializes the custom web view
+     * @brief Initializes the WebView with the standard settings
      */
     public void init() {
         if (!isInEditMode()) {
@@ -38,9 +59,9 @@ public class SDAWebView extends WebView {
             setLook();
         }
     }
-
+    
     /**
-     * Sets the settings of the WebView
+     * @brief Sets the settings of the WebView to match the default android webview.
      */
     @SuppressLint("SetJavaScriptEnabled") // Javascript is enabled
     private void setSettings() {
@@ -55,7 +76,7 @@ public class SDAWebView extends WebView {
     }
     
     /**
-     * Sets the visible style of the WebView
+     * @brief Sets the visible style of the WebView
      */
     private void setLook() {
         setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);

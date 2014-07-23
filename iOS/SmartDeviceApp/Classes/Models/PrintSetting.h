@@ -2,32 +2,181 @@
 //  PrintSetting.h
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/5/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 @class Printer;
 
+/**
+ * Model for the print setting entity saved in the database.
+ * This is used to define the print settings capabilities of a printer.\n
+ * There is one PrintSetting for each Printer in the database, and 
+ * a PrintSetting cannot exist without an attached printer.
+ *
+ * @see Printer
+ * @see PreviewSetting
+ */
 @interface PrintSetting : NSManagedObject
 
-@property (nonatomic, retain) NSNumber* bind;
-@property (nonatomic, retain) NSNumber* booklet_binding;
-@property (nonatomic, retain) NSNumber* booklet_tray;
-@property (nonatomic, retain) NSNumber* catch_tray;
-@property (nonatomic, retain) NSNumber* color_mode;
-@property (nonatomic, retain) NSNumber* copies;
-@property (nonatomic, retain) NSNumber* duplex;
-@property (nonatomic, retain) NSNumber* image_quality;
-@property (nonatomic, retain) NSNumber* pagination;
-@property (nonatomic, retain) NSNumber* paper_size;
-@property (nonatomic, retain) NSNumber* paper_type;
-@property (nonatomic, retain) NSNumber* punch;
-@property (nonatomic, retain) NSNumber* sort;
-@property (nonatomic, retain) NSNumber* staple;
-@property (nonatomic, retain) NSNumber* zoom;
-@property (nonatomic, retain) NSNumber* zoom_rate;
-@property (nonatomic, retain) Printer* printer;
+/**
+ * Color Mode print setting.
+ * Defines the color mode of the print job.
+ *
+ * @see kColorMode
+ */
+@property (nonatomic, retain) NSNumber * colorMode;
+
+/**
+ * Orientation print setting.
+ * Defines the page orientation (will depend on the first page of the PDF).
+ *
+ * @see kOrientation
+ */
+@property (nonatomic, retain) NSNumber * orientation;
+
+/**
+ * Copies print setting.
+ * Number of copies to be printed.
+ *  - range: 1 to 9999
+ *  - default: 1
+ */
+@property (nonatomic, retain) NSNumber * copies;
+
+/**
+ * Duplex print setting.
+ * Determines the duplex printing mode.
+ *
+ * @see kDuplexSetting
+ */
+@property (nonatomic, retain) NSNumber * duplex;
+
+/**
+ * Paper Size print setting.
+ * Sets the paper type to be used during print.
+ *
+ * @see kPaperSize
+ */
+@property (nonatomic, retain) NSNumber * paperSize;
+
+/**
+ * Scale-to-Fit print setting.
+ * Whether the PDF page will be scaled to fit the whole page.
+ *  - Off
+ *  - On [DEFAULT]
+ */
+@property (nonatomic, retain) NSNumber * scaleToFit;
+
+/**
+ * Paper Type print setting.
+ * Determines the type of paper during print (depends on the machine configuration).
+ *  - Any [DEFAULT]
+ *  - Plain
+ *  - IJ Paper
+ *  - Matt Coated
+ *  - High Quality
+ *  - Card-IJ
+ *  - LW Paper
+ */
+@property (nonatomic, retain) NSNumber * paperType;
+
+/**
+ * Input Tray print setting
+ * Selects the tray location of the paper input.
+ *  - Auto [DEFAULT]
+ *  - Standard
+ *  - Tray 1
+ *  - Tray 2
+ *  - Tray 3
+ */
+@property (nonatomic, retain) NSNumber * inputTray;
+
+/**
+ * Imposition print setting
+ * Number of pages to print per sheet.
+ *
+ * @see kImposition
+ */
+@property (nonatomic, retain) NSNumber * imposition;
+
+/**
+ * Imposition Order print setting
+ * Direction of the PDF pages printed in one sheet.
+ *
+ * @see kImpositionOrder
+ */
+@property (nonatomic, retain) NSNumber * impositionOrder;
+
+/**
+ * Sort print setting
+ * Defines how the print output will be sorted.
+ *  - Group [DEFAULT]
+ *  - Sort
+ */
+@property (nonatomic, retain) NSNumber * sort;
+
+/**
+ * Booklet print setting
+ * Print the pages in booklet format.
+ *  - Off [DEFAULT]
+ *  - On
+ */
+@property (nonatomic, retain) NSNumber * booklet;
+
+/**
+ * Booklet Binding print setting
+ * Finishing options for when booklet is on.
+ *
+ * @see kBookletType
+ */
+@property (nonatomic, retain) NSNumber * bookletFinish;
+
+/**
+ * Booklet Layout print setting
+ * Direction of pages when booklet is on.
+ *
+ * @see kBookletLayout
+ */
+@property (nonatomic, retain) NSNumber * bookletLayout;
+
+/**
+ * Binding Side print setting
+ * Refers to the edge where the document will be bound.
+ *
+ * @see kFinishingSide
+ */
+@property (nonatomic, retain) NSNumber * finishingSide;
+
+/**
+ * Staple print setting
+ * The print job will be stapled on the specified position.
+ *
+ * @see kStapleType
+ */
+@property (nonatomic, retain) NSNumber * staple;
+
+/**
+ * Punch print setting
+ * The printer will make a punch in the print output.
+ *
+ * @see kPunchType
+ */
+@property (nonatomic, retain) NSNumber * punch;
+
+/**
+ * Output Tray print setting
+ * Selects the tray location of the finished copies (depends on the machine configuration).
+ *
+ * @see kOutputTray
+ */
+@property (nonatomic, retain) NSNumber * outputTray;
+
+/**
+ * Reference to the Printer object.
+ */
+@property (nonatomic, retain) Printer *printer;
 
 @end

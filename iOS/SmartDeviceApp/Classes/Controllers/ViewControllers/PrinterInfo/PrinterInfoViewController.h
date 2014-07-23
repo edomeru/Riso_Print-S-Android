@@ -1,22 +1,53 @@
 //
-//  PrinterInfoScreenController.h
+//  PrinterInfoInfoController.h
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/6/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "SlidingViewController.h"
-#import "PrinterStatusHelper.h"
 
 @class Printer;
 @class PrinterManager;
 
-@interface PrinterInfoViewController : SlidingViewController <PrinterStatusHelperDelegate>
-/*NSIndexPath of the printer of which info was shown*/
+/**
+ * Allows the "Printer Info" screen to coordinate with the "Printers" screen.
+ */
+@protocol PrinterInfoDelegate <NSObject>
+
+@required
+
+/** 
+ * Requests the "Printers" screen to display the "Default Print Settings" screen.
+ */
+- (void)segueToPrintSettings;
+
+@end
+
+/**
+ * Controller for the "Printer Info" screen (phone only).
+ */
+@interface PrinterInfoViewController : SlidingViewController
+
+/** 
+ * Index path of the printer in the list displayed in PrintersIphoneViewController.
+ */
 @property (weak, nonatomic) NSIndexPath* indexPath;
-/*Default printer indicator*/
+
+/**
+ * Flag that is set to YES if the printer being displayed is the default printer.
+ */
 @property BOOL isDefaultPrinter;
-/*Online status of printer*/
-@property BOOL onlineStatus;
+
+/**
+ * Reference to the PrintersIphoneViewController.
+ */
+@property (weak, nonatomic) id <PrinterInfoDelegate> delegate;
+
+/**
+ * Reference to the default print settings button.
+ */
+@property (weak, nonatomic) IBOutlet UIButton *printSettingsButton;
+
 @end

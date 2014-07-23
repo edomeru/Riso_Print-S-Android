@@ -10,8 +10,7 @@ package jp.co.riso.smartdeviceapp.view.printers;
 
 import java.util.List;
 
-import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
@@ -24,15 +23,25 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * @class PrinterSearchAdapter
+ * 
+ * @brief Array Adapter used for Printers Search Screen
+ */
 public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {
     private PrinterSearchAdapterInterface mSearchAdapterInterface = null;
-    private Context mContext;
     private int layoutId;
     private PrinterManager mPrinterManager = null;
     
+    /**
+     * @brief Constructor.
+     * 
+     * @param context Application context
+     * @param resource Resource ID to be used as Searched printer row
+     * @param values Searched printers list
+     */
     public PrinterSearchAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
-        this.mContext = context;
         this.layoutId = resource;
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
     }
@@ -41,28 +50,44 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     public View getView(int position, View convertView, ViewGroup parent) {
         Printer printer = getItem(position);
         ViewHolder viewHolder;
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View separator = null;
         
         if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            
             convertView = inflater.inflate(layoutId, parent, false);
-            AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
-            
+            // AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
             viewHolder = new ViewHolder();
-            viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.printerText);
-            viewHolder.mAddedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
-            viewHolder.mPrinterName.setText(printer.getName());
-            viewHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_addprinter);
-            viewHolder.mAddedIndicator.setTag(position);
-            
-            // Set listener for Add Button
-            viewHolder.mAddedIndicator.setOnClickListener(this);
-            convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
-            viewHolder.mPrinterName.setText(printer.getName());
-            viewHolder.mAddedIndicator.setTag(position);
         }
+        initializeView(viewHolder, convertView, printer, position);
+
+        return convertView;
+    }
+    
+    /**
+     * @brief Initialize the view of the printer.
+     * 
+     * @param viewHolder View Holder of the printer object
+     * @param convertView Row view
+     * @param printer Printer object
+     * @param position Position or index of the printer object
+     */
+    public void initializeView(ViewHolder viewHolder, View convertView, Printer printer, int position) {
+        if (viewHolder == null || convertView == null || printer == null) {
+            return;
+        }
+        View separator = null;
+        String printerName = printer.getName();
+        
+        viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.printerText);
+        viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.ipAddressText);
+        viewHolder.mAddedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
+        viewHolder.mPrinterName.setText(printer.getName());
+        viewHolder.mIpAddress.setText(printer.getIpAddress());
+        viewHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_addprinter);
+        viewHolder.mAddedIndicator.setTag(position);
+        viewHolder.mAddedIndicator.setClickable(false);
         
         separator = convertView.findViewById(R.id.printers_separator);
         if (position == getCount() - 1) {
@@ -71,13 +96,25 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
             separator.setVisibility(View.VISIBLE);
         }
         if (mPrinterManager.isExists(printer)) {
+            convertView.setClickable(false);
             viewHolder.mAddedIndicator.setActivated(true);
         } else {
             viewHolder.mAddedIndicator.setActivated(false);
         }
-        return convertView;
+        
+        if (printerName.isEmpty()) {
+            viewHolder.mPrinterName.setText(getContext().getResources().getString(R.string.ids_lbl_no_name));
+        }
+        
+        convertView.setOnClickListener(this);
+        convertView.setTag(viewHolder);
     }
     
+    /**
+     * @brief Set Printer Search Screen Adapter Interface.
+     * 
+     * @param searchAdapterInterface Printer search adapter interface
+     */
     public void setSearchAdapterInterface(PrinterSearchAdapterInterface searchAdapterInterface) {
         mSearchAdapterInterface = searchAdapterInterface;
     }
@@ -86,18 +123,38 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     // Internal Classes
     // ================================================================================
     
+    /**
+     * @class ViewHolder
+     * 
+     * @brief Printer Search Screen view holder.
+     */
     public class ViewHolder {
         public ImageView mAddedIndicator;
         public TextView mPrinterName;
+        public TextView mIpAddress;
     }
     
     // ================================================================================
     // Interface
     // ================================================================================
     
+    /**
+     * @interface PrinterSearchAdapterInterface
+     * 
+     * @brief Printer Search Screen interface.
+     */
     public interface PrinterSearchAdapterInterface {
+        /**
+         * @brief On add printer callback. <br>
+         *
+         * Callback called to add a searched printer to the Printers Screen.
+         * 
+         * @param printer Searched printer
+         * 
+         * @retval 0 Success
+         * @retval -1 Error
+         */
         public int onAddPrinter(Printer printer);
-        public boolean isMaxPrinterCountReached();
     }
     
     // ================================================================================
@@ -106,11 +163,13 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.addPrinterButton) {
-            if (mSearchAdapterInterface.isMaxPrinterCountReached()) {
+        if (v.getId() == R.id.printer_search_row) {
+            ViewHolder viewHolder = (ViewHolder) v.getTag();
+            Printer printer = getItem((Integer) viewHolder.mAddedIndicator.getTag());
+            
+            if (viewHolder.mAddedIndicator.isActivated()) {
                 return;
             }
-            Printer printer = getItem((Integer) v.getTag());
             if (mSearchAdapterInterface.onAddPrinter(printer) != -1) {
                 v.setActivated(true);
             }

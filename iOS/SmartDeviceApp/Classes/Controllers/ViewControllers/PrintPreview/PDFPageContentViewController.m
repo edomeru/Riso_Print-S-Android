@@ -2,58 +2,64 @@
 //  PDFPageViewController.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/11/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PDFPageContentViewController.h"
-#import "PrintPreviewHelper.h"
 
 @interface PDFPageContentViewController ()
-@property (weak, nonatomic) IBOutlet PDFPageView *pageView;
+
+/**
+ * Reference to the animated loading indicator.
+ * This is displayed while the rendered image is not yet available for display.
+ */
+@property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicatorView;
+
 @end
 
 @implementation PDFPageContentViewController
 
+#pragma mark - Public Methods
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
     return self;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-   	// Do any additional setup after loading the view.
-    self.pageView.datasource = self;
+    
+    // Show activity indicator if an image is not available
+    if (self.image == nil && self.isBookendPage == NO)
+    {
+        [self.activityIndicatorView startAnimating];
+    }
+    else
+    {
+        self.view.layer.contents = (id)self.image.CGImage;
+        [self.view setNeedsDisplay];
+    }
+    
+    //The bookend page is not part of the actual pages of the pdf.
+    //It is a transparent page (invisible) that is used as the other half of the first page/last page in a 2 page view
+    if(self.isBookendPage == YES)
+    {
+        [self.view setBackgroundColor:[UIColor clearColor]];
+    }
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+#pragma mark - Getter/Setter Methods
 
-#pragma mark - PDFPageViewDatasource methods
-
--(CGPDFPageRef) pageForPageNum:(NSUInteger)pageNum
+- (void)setImage:(UIImage *)image
 {
-    return [self.datasource pdfPageForPageIndex:self.pageIndex withPageOffset:pageNum];
-}
-
--(NSUInteger) numberOfPagesToDraw
-{
-    PreviewSetting *previewSetting = [self.datasource getPreviewSetting];
-    return [PrintPreviewHelper numberOfPagesPerSheetForPaginationSetting:previewSetting.pagination];
-}
-
--(BOOL) isGrayScale
-{
-    PreviewSetting *previewSetting = [self.datasource getPreviewSetting];
-    return [PrintPreviewHelper isGrayScaleColorForColorModeSetting:previewSetting.colorMode];
+    // Hide Activity indicator when image is available
+    [self.activityIndicatorView stopAnimating];
+    _image = image;
+    self.view.layer.contents = (id)_image.CGImage;
+    [self.view setNeedsDisplay];
 }
 
 @end

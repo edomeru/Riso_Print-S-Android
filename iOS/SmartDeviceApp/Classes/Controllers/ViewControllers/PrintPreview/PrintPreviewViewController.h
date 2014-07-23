@@ -1,22 +1,20 @@
 //
 //  PrintPreviewViewController.h
-//  SmartDeviceApp
+//  Tester
 //
-//  Created by Seph on 3/3/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "PDFPageContentViewController.h"
-
-@interface PrintPreviewViewController : UIViewController <PDFPageContentViewControllerDatasource, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+#import "PDFRenderOperation.h"
+#import "PrintDocument.h"
+#import "PreviewView.h"
+#import "RenderCache.h"
 
 /**
- Method to invoke loading of print preview elements in the screen
- **/
-- (void) loadPrintPreview;
-
-@property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
-@property (weak, nonatomic) IBOutlet UIButton *printSettingsButton;
+ * Controller for the "Print Preview" screen (phone and tablet).
+ */
+@interface PrintPreviewViewController : UIViewController<UIPageViewControllerDataSource, UIPageViewControllerDelegate, PreviewViewDelegate, PrintDocumentDelegate, PDFRenderOperationDelegate, RenderCacheDelegate>
 
 @end

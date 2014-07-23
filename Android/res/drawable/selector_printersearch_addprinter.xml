@@ -2,7 +2,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/img_btn_add_printer_search_ok" android:state_activated="true"/>
-    <item android:drawable="@drawable/img_btn_add_printer_pressed" android:state_pressed="true"/>
     <item android:drawable="@drawable/img_btn_add_printer_normal"/>
 
 </selector>

@@ -2,8 +2,8 @@
 //  SlidingViewController.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "SlidingViewController.h"
@@ -19,10 +19,49 @@ const CGFloat _AnimationDuration = 0.3f;
 
 @interface SlidingViewController ()
 
+/**
+ * Gesture recognizer for tap gesture.
+ * Captures gestures on the area oocupied by the center view.
+ *
+ * @see - (IBAction)handleTap:(UITapGestureRecognizer *)gestureRecognizer
+ */
 @property (nonatomic, weak) UITapGestureRecognizer *tapRecognizer;
+
+/**
+ * Gesture recognizer for pan gesture.
+ * Captures gestures on the area oocupied by the center view.
+ *
+ * @see - (IBAction)handlePan:(UITapGestureRecognizer *)gestureRecognizer
+ */
 @property (nonatomic, weak) UIPanGestureRecognizer *panRecognizer;
+
+/**
+ * Instance of the RootViewController.
+ */
 @property (nonatomic, weak) RootViewController *container;
+
+/**
+ * Determines whether or not the view is animating.
+ */
 @property (atomic) BOOL isAnimating;
+
+/**
+ * Handles tap gestures.
+ * Performs unwinding action on tap.
+ *
+ * @param gestureRecognizer Gesture recognizer that triggered the action.
+ */
+- (IBAction)handleTap:(UITapGestureRecognizer *)gestureRecognizer;
+
+/**
+ * Handles pan gestures.
+ * Performs sliding animation while the view is being dragged.
+ * Depending on the current position, the views will snap back to
+ * either side upon release.
+ *
+ * @param gestureRecognizer Gesture recognizer that triggered the action.
+ */
+- (IBAction)handlePan:(UIPanGestureRecognizer *)gestureRecognizer;
 
 @end
 
@@ -175,7 +214,7 @@ const CGFloat _AnimationDuration = 0.3f;
                 self.container.rightSlidingConstraint.constant = 0;
             }
             
-            [UIView animateWithDuration:_AnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^
+            [UIView animateWithDuration:_AnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction animations:^
              {
                  [self.container.view layoutIfNeeded];
                  self.isAnimating = YES;

@@ -12,12 +12,14 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsLayoutListener;
+import jp.co.riso.smartprint.R;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -27,12 +29,19 @@ import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
+/**
+ * @class PrintJobsView
+ * 
+ * @brief Custom view for the Print Job History view
+ */
 public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListener {
     private static final int SWIPE_THRESHOLD = 50;
+    private static final int MIN_COLUMNS = 2;
+    
     private WeakReference<PrintJobsViewListener> mListenerRef;
-    private List<PrintJob> mPrintJobs;
-    private List<Printer> mPrinters;
-    private List<Printer> mCollapsedPrinters;
+    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
+    private List<Printer> mPrinters = new ArrayList<Printer>();
+    private List<Printer> mCollapsedPrinters = new ArrayList<Printer>();
     private List<LinearLayout> mColumns = new ArrayList<LinearLayout>();
     private List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<PrintJobsGroupView>();
     private PrintJobsGroupView mPrintGroupWithDelete;
@@ -47,35 +56,64 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private View mDeleteView = null;
     private Point mDownPoint;
     private int[] mColumnsHeight;
+    private ViewCreationThread mThread;
     
+    /**
+     * @brief Default Constructor
+     * 
+     * @param context Activity context
+     * @param attrs AttributeSet
+     * @param defStyle Default Style
+     */
     public PrintJobsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
     
+    /**
+     * @brief Default Constructor
+     * 
+     * @param context Activity context
+     * @param attrs AttributeSet
+     */
     public PrintJobsView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
     
+    /**
+     * @brief Default Constructor
+     * 
+     * @param context Activity context
+     */
     public PrintJobsView(Context context) {
         super(context);
         init();
     }
     
-    public void setData(List<PrintJob> printJobs, List<Printer> printers, PrintJobsGroupListener delListener, PrintJobsViewListener listener,
-            List<Printer> collapsedPrinters, PrintJob printJobToDelete, Printer printerToDelete) {
+    /**
+     * @brief Sets Data for PrintJobsView and resets view according to this data.
+     * 
+     * @param printJobs List of print jobs
+     * @param printers List of printer objects
+     * @param groupListener PrintJobsGroupListener
+     * @param viewListener PrintJobsViewListener
+     */
+    public void setData(List<PrintJob> printJobs, List<Printer> printers, PrintJobsGroupListener groupListener, PrintJobsViewListener viewListener) {
         this.mPrintJobs = new ArrayList<PrintJob>(printJobs);
         this.mPrinters = new ArrayList<Printer>(printers);
-        this.mGroupListener = delListener;
-        this.mListenerRef = new WeakReference<PrintJobsViewListener>(listener);
-        this.mCollapsedPrinters = collapsedPrinters;
-        this.mPrintJobToDelete = printJobToDelete;
-        this.mPrinterToDelete = printerToDelete;
-        
+        this.mGroupListener = groupListener;
+        this.mListenerRef = new WeakReference<PrintJobsViewListener>(viewListener);
         reset();
     }
     
+    /**
+     * @brief Begins delete mode, i.e. displays the delete button.
+     * 
+     * @param pj Print jobs group view containing the delete button to be displayed
+     * @param view Job row layout view containing the delete button to be displayed
+     * @param animate If true, delete button is displayed with animation 
+     */
     public void beginDelete(PrintJobsGroupView pj, View view, boolean animate) {
         if (!mDeleteMode) {
             mDeleteMode = true;
@@ -86,6 +124,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /**
+     * @brief Ends delete mode, i.e. hides the delete button.
+     * 
+     * @param animate If true, delete button is hidden with animation 
+     */
     public void endDelete(boolean animate) {
         if (mDeleteMode) {
             mDeleteMode = false;
@@ -95,55 +138,97 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
-    private void init() {
-        if (!isInEditMode()) {
-            setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-            setOrientation(HORIZONTAL);
-            mDeleteAnimation = new DisplayDeleteAnimation();
-            mRunnable = new AddViewRunnable();
-        }
-    }
-    
-    private void reset() {
+    /**
+     * @brief Resets the PrintJobsView.
+     */
+    public void reset() {
+        mDeleteMode = false;
         mGroupViewCtr = 0;
+        mPrintGroupViews.clear();
+
         mInitialFlag = true;
         removeAllViews();
         mColumns.clear();
-        mPrintGroupViews.clear();
+        
         groupPrintJobs();
     }
     
-    private void groupPrintJobs() {
-        int jobCtr = 0;
-        List<PrintJob> jobs = new ArrayList<PrintJob>();
-        for (int j = 0; j < mPrinters.size(); j++) {
-            Printer printer = mPrinters.get(j);
-            int pid = printer.getId();
-            // get printer's jobs list with printerid==pid
-            // printJobs is ordered according to prn_id in query
-            for (int i = jobCtr; i < mPrintJobs.size(); i++) {
-                
-                PrintJob pj = mPrintJobs.get(i);
-                int id = pj.getPrinterId();
-                
-                if (id == pid) {
-                    jobs.add(pj);
-                    // if current printer id is different from printer id of next print job in the list
-                    if (i == mPrintJobs.size() - 1 || pid != mPrintJobs.get(i + 1).getPrinterId()) {
-                        break;
-                    }
-                }
-                jobCtr = i;
-            }
-            
-            // use jobs list to add view to smallest column
-            if (!jobs.isEmpty()) {
-                createPrintJobsView(jobs, printer);
-                jobs.clear();
-            }
+    /**
+     * @brief Sets print job to be deleted.
+     * 
+     * @param job PrintJob to be deleted
+     */
+    public void setJobToDelete(PrintJob job) {
+        mPrintJobToDelete = job;
+    }
+    
+    /**
+     * @brief Set print job group to be deleted.
+     * 
+     * @param printer Printer of the job group to be deleted
+     */
+    public void setPrinterToDelete(Printer printer) {
+        mPrinterToDelete = printer;
+    }
+    
+    /**
+     * @brief Set collapse state of the print job group.
+     * 
+     * @param printer Printer object of the print job group to be collapsed/expanded
+     * @param isCollapsed Collapse state
+     */
+    public void setCollapsedPrinters(Printer printer, boolean isCollapsed) {
+        if (isCollapsed) {
+            mCollapsedPrinters.add(printer);
+        } else {
+            mCollapsedPrinters.remove(printer);
         }
     }
     
+    /**
+     * @brief Deletes PrintJob from list.
+     * 
+     * @param job PrintJob to be deleted
+     */
+    public void deleteJobFromList(PrintJob job) {
+        mPrintJobs.remove(job);
+    }
+    
+    /**
+     * @brief Deletes printer from list
+     * 
+     * @param printer Printer to be deleted
+     */
+    public void deletePrinterFromList(Printer printer) {
+        mPrinters.remove(printer);
+    }
+    
+    /**
+     * @brief Initializes PrintJobsView.
+     */
+    private void init() {
+        mDeleteAnimation = new DisplayDeleteAnimation();
+        mRunnable = new AddViewRunnable();
+    }
+   
+    /**
+     * @brief Creates a thread for grouping print jobs and creating views for each group
+     */
+    private void groupPrintJobs() {
+        if (mThread != null && mThread.isAlive()) {
+            mThread.interrupt();
+            mThread.setIsRunning(false);
+        }
+        
+        mThread = new ViewCreationThread();
+        mThread.start();
+    }
+    
+    /**
+     * @brief Gets the column with the least height.
+     * 
+     * @return Index of the smallest column
+     */
     private int getSmallestColumn() {
         // initially assign to 1st column
         int smallestColumn = 0;
@@ -158,49 +243,77 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         return smallestColumn;
     }
     
-    private void createPrintJobsView(List<PrintJob> jobsList, Printer printer) {
+    /**
+     * @brief Creates PrintJobsGroupView using printer and print jobs.
+     * 
+     * @param jobsList List of the PrintJobs as the items of the print job group
+     * @param printer Printer object as the header of the print job group
+     */
+    private PrintJobsGroupView createPrintJobsView(List<PrintJob> jobsList, Printer printer) {
         PrintJobsGroupView pjView = new PrintJobsGroupView(getContext());
-        pjView.setData(jobsList, printer, mGroupListener, this);
+        pjView.setData(jobsList, printer, mGroupListener, PrintJobsView.this);
         restoreUIstate(pjView, printer);
-        
-        mPrintGroupViews.add(pjView);
+        return pjView;
     }
     
+    /**
+     * @brief Restores the UI state of a PrintJobsGroupView.
+     * 
+     * @param pj PrintJobsGroupView to be restored
+     * @param printer Printer to be restored
+     */
     private void restoreUIstate(PrintJobsGroupView pj, Printer printer) {
         boolean isCollapsed = mCollapsedPrinters.contains(printer);
         boolean isDeleteShown = mPrintJobToDelete != null && mPrintJobs.contains(mPrintJobToDelete);
-        
+
         if (isDeleteShown) {
             View v = pj.findViewWithTag(mPrintJobToDelete);
             if (v != null) {
                 beginDelete(pj, v, false);
+                pj.restoreState(isCollapsed, mPrinterToDelete, mPrintJobToDelete);
+            } else {
+                pj.restoreState(isCollapsed, mPrinterToDelete, null);
             }
+        } else {
+            pj.restoreState(isCollapsed, mPrinterToDelete, null);
         }
-        
-        pj.restoreState(isCollapsed, mPrintJobToDelete, mPrinterToDelete);
     }
     
-    private void placeInColumns() {
-        PrintJobsGroupView pjView = mPrintGroupViews.get(mGroupViewCtr);
-        LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    /**
+     * @brief Adds PrintJobsGroupView in columns.
+     * 
+     * @param pjView PrintJobsGroupView to be added
+     */
+    private void placeInColumns(PrintJobsGroupView pjView) {
+        int padding = getResources().getDimensionPixelSize(R.dimen.printjob_padding_side);
+        
+        LayoutParams groupParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         if (getResources().getBoolean(R.bool.is_tablet)) {
-            lp.leftMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
-            lp.rightMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_side);
-            lp.topMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_top);
+            groupParams.topMargin = getResources().getDimensionPixelSize(R.dimen.printjob_margin_top);
+            pjView.setPadding(padding, 0, padding, 0);
         }
         pjView.setOrientation(VERTICAL);
         
         int col = getSmallestColumn();
-        mColumns.get(col).addView(pjView, lp);
-        mColumnsHeight[col] += pjView.getGroupHeight() + lp.topMargin; // update column height
+        mColumns.get(col).addView(pjView, groupParams);
+        mColumnsHeight[col] += pjView.getGroupHeight() + groupParams.topMargin; // update column height
     }
     
+    /**
+     * @brief Adds PrintJobsGroupView in columns.
+     */
     private void addViewsToColumns() {
-        placeInColumns();
-        mGroupViewCtr++;
+        for (int i = 0; i < mPrintGroupViews.size(); i++) {
+            placeInColumns(mPrintGroupViews.get(i));
+        }
+        
+        mGroupViewCtr = mPrinters.size() - 1;
         post(mRunnable);
     }
     
+    /**
+     * @brief Re-layouts PrintJobsGroupViews in columns.
+     */
     private void relayoutColumns() {
         if (checkIfNeedsRelayout()) {
             for (int i = 0; i < mColumns.size(); i++) {
@@ -212,6 +325,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         }
     }
     
+    /**
+     * @brief Checks if there is a need to re-layout after deletion of a PrintJobsGroupView.
+     */
     private boolean checkIfNeedsRelayout() {
         boolean isColumnCleared = false;
         boolean isLeftCleared = false;
@@ -234,28 +350,58 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         return isColumnCleared && (childNumExceeds || isLeftCleared);
     }
     
-    private void createColumns() {
-        int colNum = getResources().getBoolean(R.bool.is_tablet) ? getResources().getBoolean(R.bool.is_tablet_land) ? 3 : 2 : 1;
-        LayoutParams param = (LayoutParams) getLayoutParams();
+    /**
+     * @brief Creates column layouts as containers of PrintJobsGroupView.
+     * 
+     * @param width Size of width available for Print Jobs View
+     */
+    private void createColumns(int width) {
+        int colNum = 1;
+        int columnWidth = getContext().getResources().getDimensionPixelSize(R.dimen.printers_view_width);
         
-        if (colNum > 1) {
-            param.leftMargin = getResources().getDimensionPixelSize(R.dimen.printjob_column_margin_side);
-            param.rightMargin = getResources().getDimensionPixelSize(R.dimen.printjob_column_margin_side);
+        if (getResources().getBoolean(R.bool.is_tablet)) {
+            // if tablet get number of columns based on whole width
+            colNum = Math.max(width / columnWidth, MIN_COLUMNS);
+            
+            if (colNum == MIN_COLUMNS) {
+                // adjust column width depending on whole width
+                columnWidth = Math.min(width / MIN_COLUMNS, columnWidth);
+            }
         }
         
         mColumnsHeight = new int[colNum];
         
         for (int i = 0; i < colNum; i++) {
-            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
+            LayoutParams columnParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             mColumns.add(new LinearLayout(getContext()));
             mColumns.get(i).setOrientation(VERTICAL);
-            addView(mColumns.get(i), lp);
+            
+            // if tablet set column width
+            if (colNum > 1) {
+                columnParams.width = columnWidth;
+            }
+            
+            addView(mColumns.get(i), columnParams);
         }
     }
     
+    /**
+     * @brief Checks for a valid swipe.
+     * 
+     * @param ev MotionEvent with action = ACTION_MOVE
+     * 
+     * @retval true if valid swipe
+     * @retval false if not a valid swipe
+     */
     private boolean checkSwipe(MotionEvent ev) {
+        // if swipe to right end delete mode
+        if ((ev.getRawX() - mDownPoint.x) > SWIPE_THRESHOLD) {
+            endDelete(true);
+            return false;
+        }
+        
         int coords[] = new int[2];
-        boolean dragged = Math.abs(mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
+        boolean dragged = (mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
         boolean contains1 = false;
         boolean contains2 = false;
         // check self, if valid swipe don't redisplay nor remove delete button
@@ -283,7 +429,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
                     for (int j = 0; j < column.getChildCount(); j++) {
                         View view = ((PrintJobsGroupView) column.getChildAt(j)).getJobViewSwiped(mDownPoint, ev);
                         if (view != null) {
-                            beginDelete(mPrintGroupViews.get(i), view, true);
+                            beginDelete((PrintJobsGroupView) column.getChildAt(j), view, true);
                             return true;
                         }
                     }
@@ -294,6 +440,14 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         return false;
     }
     
+    /**
+     * @brief Process motion events to detect swipe.
+     * 
+     * @param ev MotionEvent 
+     * 
+     * @retval true if valid swipe
+     * @retval false if not a valid swipe
+     */
     private boolean processSwipe(MotionEvent ev) {
         boolean ret = false;
         int action = ev.getActionMasked();
@@ -315,12 +469,14 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         super.onLayout(changed, l, t, r, b);
         
         if (mInitialFlag) {
-            createColumns();
+            Point screenSize = AppUtils.getScreenDimensions((Activity) getContext());
+            createColumns(screenSize.x);
             mInitialFlag = false;
         }
-        if (mGroupViewCtr < mPrintGroupViews.size()) {
-            addViewsToColumns();
-        } else if (mColumns.size() > 1 && mGroupViewCtr > mPrintGroupViews.size()) {
+//        if (mGroupViewCtr < mPrintGroupViews.size()) {
+//            addViewsToColumns();
+//        } else 
+        if (mColumns.size() > 1 && (mGroupViewCtr > mPrinters.size() - 1)) {
             // if multiple columns and after deletion of a PrintJobsGroupView
             relayoutColumns();
         }
@@ -392,7 +548,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     }
     
     @Override
-    public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean isCollapsed) {
+    public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean down) {
         int idx = mPrintGroupViews.indexOf(printJobsGroupView);
         int column = 0;
         
@@ -408,20 +564,20 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         
         TranslateAnimation animation = null;
         for (int i = idx + 1; i < mColumns.get(column).getChildCount(); i++) {
-            if (isCollapsed) {
+            if (down) {
                 animation = new TranslateAnimation(0, 0, -totalHeight, 0);
                 animation.setStartOffset((int) (getResources().getDimensionPixelSize(R.dimen.printjob_row_height) * durationMultiplier));
             } else {
                 animation = new TranslateAnimation(0, 0, 0, -totalHeight);
             }
-            animation.setDuration((int) (totalHeight * durationMultiplier));
+            animation.setDuration(printJobsGroupView.getAnimationDuration(totalHeight));
             mColumns.get(column).getChildAt(i).clearAnimation();
             mColumns.get(column).getChildAt(i).startAnimation(animation);
         }
     }
     
     @Override
-    public void onDeleteJob(){
+    public void onDeleteJob() {
         endDelete(false);
     }
     
@@ -429,20 +585,91 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     // Internal Classes
     // ================================================================================
     
-    // http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
+    /**
+     * @class AddViewRunnable 
+     * 
+     * @brief Requests layout after adding views during onLayout
+     * 
+     * Based on: http://stackoverflow.com/questions/5852758/views-inside-a-custom-viewgroup-not-rendering-after-a-size-change
+     */
     private class AddViewRunnable implements Runnable {
         @Override
         public void run() {
             requestLayout();
-            if (mGroupViewCtr >= mPrintGroupViews.size()) {
-                if (mListenerRef != null && mListenerRef.get() != null) {
-                    mListenerRef.get().hideLoading();
-                }
-            }
         }
     }
     
+    /**
+     * @interface PrintJobsViewListener
+     * 
+     * @brief Interface for PrintJobsGroupView events
+     */
     public interface PrintJobsViewListener {
-        public void hideLoading();
+        /**
+         * @brief Called after loading initial views
+         */
+        public void onLoadFinished();
+    }
+    
+    /**
+     * @class ViewCreationThread
+     * 
+     * @brief Background Thread for creating PrintJobsGroupViews
+     */
+    private class ViewCreationThread extends Thread {
+        private volatile boolean mIsRunning = true;
+        
+        public ViewCreationThread() {
+            setPriority(Thread.MIN_PRIORITY);
+        }
+        
+        public synchronized void setIsRunning(boolean b) {
+            mIsRunning = b;
+        }
+        
+        @Override
+        public void run() {
+            int jobCtr = 0;
+            int start = 0;
+            for (int j = 0; j < mPrinters.size(); j++) {
+                if (!mIsRunning) {
+                    return;  
+                } 
+ 
+                Printer printer = mPrinters.get(j);
+                int pid = printer.getId();
+                // get printer's jobs list with printerid==pid
+                // printJobs is ordered according to prn_id in query
+                for (int i = start; i < mPrintJobs.size(); i++) {
+                    int id = mPrintJobs.get(i).getPrinterId();
+                    jobCtr = i;
+                    if (id == pid) {
+                        // if current printer id is different from printer id of next print job in the list
+                        if (i == mPrintJobs.size() - 1 || pid != mPrintJobs.get(i + 1).getPrinterId()) {
+                            break;
+                        }
+                    }
+                }
+                final PrintJobsGroupView pjView = createPrintJobsView(mPrintJobs.subList(start, jobCtr + 1), printer);
+                start = jobCtr + 1;
+                if (!mIsRunning) {
+                    return;  
+                  } 
+                
+                mPrintGroupViews.add(pjView);
+                mGroupViewCtr = j;
+                PrintJobsView.this.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        placeInColumns(pjView);
+                        if (mGroupViewCtr == mPrinters.size()-1) {
+                            if (mListenerRef != null && mListenerRef.get() != null) {
+                                mListenerRef.get().onLoadFinished();
+                            }
+                        }
+                    }
+                });
+            }
+        }
     }
 }

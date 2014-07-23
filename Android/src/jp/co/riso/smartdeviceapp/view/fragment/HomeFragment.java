@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.Fragment;
@@ -17,18 +17,30 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
 
+/**
+ * @class HomeFragment
+ * 
+ * @brief Web fragment class for Home Screen.
+ */
 public class HomeFragment extends BaseFragment implements View.OnClickListener {
     
+    /// Print Preview Screen
     public static final int STATE_PRINTPREVIEW = 0;
+    /// Printers Screen
     public static final int STATE_PRINTERS = 1;
+    /// Print Jobs Screen
     public static final int STATE_PRINTJOBS = 2;
+    /// Settings Screen
     public static final int STATE_SETTINGS = 3;
+    /// Help Screen
     public static final int STATE_HELP = 4;
+    /// Legal Screen
     public static final int STATE_LEGAL = 5;
     
+    /// Home Fragment key state
     public static final String KEY_STATE = "HomeFragment_State";
     
-    private static int MENU_ITEMS[] = {
+    public static int MENU_ITEMS[] = {
         R.id.printPreviewButton,
         R.id.printersButton,
         R.id.printJobsButton,
@@ -37,7 +49,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         R.id.legalButton
     };
     
-    private static String FRAGMENT_TAGS[] = {
+    public static String FRAGMENT_TAGS[] = {
         "fragment_printpreview",
         "fragment_printers",
         "fragment_printjobs",
@@ -91,19 +103,15 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     }
     
     // ================================================================================
-    // Public Methods
-    // ================================================================================
-    
-    /**
-     * This method updates the selected state fragment to "Print Job History" (STATE_PRINTJOBS)
-     */
-    public void goToJobsFragment(){
-        setCurrentState(STATE_PRINTJOBS);
-    }
-    // ================================================================================
     // Private Methods
     // ================================================================================
     
+    /**
+     * @brief This method sets the state of the selected button.
+     * 
+     * @param view Parent view
+     * @param state Fragment state
+     */
     private void setSelectedButton(View view, int state) {
         if (view == null) {
             return;
@@ -114,15 +122,28 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         
         for (int i = 0; i < MENU_ITEMS.length; i++) {
             view.findViewById(MENU_ITEMS[i]).setSelected(false);
+            view.findViewById(MENU_ITEMS[i]).setClickable(true);
         }
         
         view.findViewById(MENU_ITEMS[state]).setSelected(true);
+        view.findViewById(MENU_ITEMS[state]).setClickable(false);
     }
     
+    /**
+     * @brief This method sets the state of the Home Fragment.
+     * 
+     * @param state Fragment state
+     */
     private void setCurrentState(int state) {
         setCurrentState(state, true);
     }
     
+    /**
+     * @brief This method sets the state of the Home Fragment.
+     * 
+     * @param state Fragment state
+     * @param animate Animate changes in layout
+     */
     private void setCurrentState(int state, boolean animate) {
         if (mState != state) {
             setSelectedButton(getView(), state);
@@ -136,8 +157,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         }
     }
     
+    /**
+     * @brief Switch to fragment.
+     * 
+     * @param state Fragment state
+     * @param animate Animate changes in layout
+     */
     private void switchToFragment(int state, boolean animate) {
         FragmentManager fm = getFragmentManager();
+        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        
         FragmentTransaction ft = fm.beginTransaction();
         
         Fragment container = fm.findFragmentById(R.id.mainLayout);
@@ -152,7 +181,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         String tag = FRAGMENT_TAGS[state];
         
         // Check retained fragments
-        Fragment fragment = fm.findFragmentByTag(tag);
+        BaseFragment fragment = (BaseFragment) fm.findFragmentByTag(tag);
         if (fragment == null) {
             switch (state) {
                 case STATE_PRINTPREVIEW:
@@ -178,6 +207,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             ft.add(R.id.mainLayout, fragment, tag);
         } else {
             ft.attach(fragment);
+        }
+        
+        if (fragment instanceof BaseFragment) {
+            setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, true);
         }
         
         ft.commit();

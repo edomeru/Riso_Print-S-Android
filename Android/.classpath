@@ -10,7 +10,7 @@
 			<attribute name="ignore_optional_problems" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="3rdparty/pdfviewer2.9.7/src">
+	<classpathentry kind="src" path="3rdparty/pdfviewer/src">
 		<attributes>
 			<attribute name="ignore_optional_problems" value="true"/>
 		</attributes>

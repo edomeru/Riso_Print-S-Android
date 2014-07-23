@@ -2,15 +2,18 @@
 //  main.m
 //  SmartDeviceAppTests
 //
-//  Created by Seph on 12/17/13.
-//  Copyright (c) 2013 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import <objc/runtime.h>
+#import "MagicalRecord.h"
 
 int main(int argc, char * argv[])
 {
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, @"GHUnitIOSAppDelegate");
+        [MagicalRecord setLoggingMask:MagicalRecordLogMaskOff];
+        return UIApplicationMain(argc, argv, nil, @"TestAppDelegate");
     }
 }

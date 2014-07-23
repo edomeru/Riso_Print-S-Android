@@ -12,7 +12,7 @@ import android.widget.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
 
 /**
  * A generic, customizable Android ListView implementation that has 'Pull to Refresh' functionality.
@@ -58,6 +58,17 @@ public class PullToRefreshListView extends ListView{
          * Method to be called when a refresh is requested
          */
         public void onRefresh();
+        
+        /**
+         * Method to be called when the header margin is adjusted
+         */
+        public void onHeaderAdjusted(int margin);
+        
+        /**
+         * Method to be called on bounce back header animation
+         */
+        public void onBounceBackHeader(int duration);
+        
     }
 
     private static int measuredHeaderHeight;
@@ -235,10 +246,10 @@ public class PullToRefreshListView extends ListView{
         image = (ImageView) header.findViewById(R.id.ptr_id_image);
         spinner = (ProgressBar) header.findViewById(R.id.ptr_id_spinner);
 
-        pullToRefreshText = getContext().getString(R.string.ids_lbl_pull_to_refresh);
-        releaseToRefreshText = getContext().getString(R.string.ids_lbl_release_to_refresh);
-        refreshingText = getContext().getString(R.string.ids_lbl_refreshing);
-        lastUpdatedText = getContext().getString(R.string.ids_lbl_last_updated);
+        pullToRefreshText = "";// getContext().getString(R.string.ids_lbl_pull_to_refresh);
+        releaseToRefreshText = "";// getContext().getString(R.string.ids_lbl_release_to_refresh);
+        refreshingText = "";// getContext().getString(R.string.ids_lbl_refreshing);
+        lastUpdatedText = "";// getContext().getString(R.string.ids_lbl_last_updated);
 
         flipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         flipAnimation.setInterpolator(new LinearInterpolator());
@@ -267,6 +278,8 @@ public class PullToRefreshListView extends ListView{
         MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) header.getLayoutParams();
         mlp.setMargins(0, Math.round(padding), 0, 0);
         header.setLayoutParams(mlp);
+        
+        onRefreshListener.onHeaderAdjusted(Math.max(padding, 0));
     }
 
     @Override
@@ -296,7 +309,6 @@ public class PullToRefreshListView extends ListView{
                         case RELEASE_TO_REFRESH:
                             setState(State.REFRESHING);
                             bounceBackHeader();
-
                             break;
 
                         case PULL_TO_REFRESH:
@@ -359,6 +371,7 @@ public class PullToRefreshListView extends ListView{
         bounceAnimation.setAnimationListener(new HeaderAnimationListener(yTranslate));
 
         startAnimation(bounceAnimation);
+        onRefreshListener.onBounceBackHeader(BOUNCE_ANIMATION_DURATION);
     }
 
     private void resetHeader(){

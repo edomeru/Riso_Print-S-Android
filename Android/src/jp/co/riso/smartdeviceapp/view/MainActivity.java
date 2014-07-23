@@ -8,31 +8,53 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
-import com.radaee.pdf.Global;
-
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.Logger;
+import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.HelpFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.LegalFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
+import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
+import jp.co.riso.smartprint.R;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import jp.co.riso.smartdeviceapp.R;
-import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
-import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
-import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
-import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
 
-public class MainActivity extends BaseActivity {
-    
-    public static final String KEY_TRANSLATION = "translate";
+import com.radaee.pdf.Global;
+
+/**
+ * @class MainActivity
+ * 
+ * @brief Main activity class.
+ */
+public class MainActivity extends BaseActivity implements PauseableHandlerCallback {
+
+    /// Key for right drawer
     public static final String KEY_RIGHT_OPEN = "right_drawer_open";
+    /// Key for left drawer
+    public static final String KEY_LEFT_OPEN = "left_drawer_open";
+    /// Key for view resize
     public static final String KEY_RESIZE_VIEW = "resize_view";
+    //public static final String KEY_TRANSLATION = "translate";
+    
+    private static final int MSG_OPEN_DRAWER = 0;
+    private static final int MSG_CLOSE_DRAWER = 1;
+    private static final int MSG_CLEAR_ICON_STATES = 2;
     
     private SDADrawerLayout mDrawerLayout = null;
     private ViewGroup mMainLayout = null;
@@ -41,9 +63,19 @@ public class MainActivity extends BaseActivity {
     private ActionBarDrawerToggle mDrawerToggle = null;
     private boolean mResizeView = false;
     
+    private PauseableHandler mHandler = null;
+    
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
+        if (getIntent() != null && getIntent().getData() != null) {
+            Logger.logStartTime(this, this.getClass(), "Open-in");
+        } else {
+            Logger.logStartTime(this, this.getClass(), "AppLaunch");
+        }
+        
         Global.Init(this);
+
+        mHandler = new PauseableHandler(this);
         
         setContentView(R.layout.activity_main);
         
@@ -54,8 +86,8 @@ public class MainActivity extends BaseActivity {
         mLeftLayout = (ViewGroup) findViewById(R.id.leftLayout);
         mRightLayout = (ViewGroup) findViewById(R.id.rightLayout);
         
-        mLeftLayout.getLayoutParams().width = (int)getDrawerWidth();
-        mRightLayout.getLayoutParams().width = (int)getDrawerWidth();
+        mLeftLayout.getLayoutParams().width = getDrawerWidth();
+        mRightLayout.getLayoutParams().width = getDrawerWidth();
         
         mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.drawable.img_btn_main_menu_normal, R.string.default_content_description,
                 R.string.default_content_description);
@@ -74,18 +106,22 @@ public class MainActivity extends BaseActivity {
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             
-            ft.add(R.id.mainLayout, new PrintPreviewFragment());
+            ft.add(R.id.mainLayout, new PrintPreviewFragment(), HomeFragment.FRAGMENT_TAGS[HomeFragment.STATE_PRINTPREVIEW]);
             ft.add(R.id.leftLayout, new HomeFragment());
             
             ft.commit();
         } else {
             mResizeView = savedInstanceState.getBoolean(KEY_RESIZE_VIEW, false);
-            float translate = savedInstanceState.getFloat(KEY_TRANSLATION, 0.0f);
-            if (mResizeView && savedInstanceState.getBoolean(KEY_RIGHT_OPEN, true)) {
-                mMainLayout.setPadding(0, 0, (int)Math.abs(translate), 0);
-                mMainLayout.requestLayout();
+            
+            if (savedInstanceState.getBoolean(KEY_LEFT_OPEN, false)) {
+                mMainLayout.setTranslationX(getDrawerWidth());                    
+            } else if (savedInstanceState.getBoolean(KEY_RIGHT_OPEN, false)) {
+                if (!mResizeView) { 
+                    mMainLayout.setTranslationX(-getDrawerWidth());
+                }
             } else {
-                mMainLayout.setTranslationX(translate);
+                Message msg = Message.obtain(mHandler, MSG_CLEAR_ICON_STATES);
+                mHandler.sendMessage(msg);
             }
         }
     }
@@ -95,15 +131,21 @@ public class MainActivity extends BaseActivity {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
+
+        if (getIntent() != null && getIntent().getData() != null) {
+            Logger.logStopTime(this, this.getClass(), "Open-in");
+        } else {
+            Logger.logStopTime(this, this.getClass(), "AppLaunch");
+        }
     }
     
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         
-        outState.putBoolean(KEY_RESIZE_VIEW, mResizeView);
-        outState.putFloat(KEY_TRANSLATION, mMainLayout.getTranslationX());
+        outState.putBoolean(KEY_LEFT_OPEN, mDrawerLayout.isDrawerOpen(Gravity.LEFT));
         outState.putBoolean(KEY_RIGHT_OPEN, mDrawerLayout.isDrawerOpen(Gravity.RIGHT));
+        outState.putBoolean(KEY_RESIZE_VIEW, mResizeView);
     }
     
     @Override
@@ -115,43 +157,144 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
     
+    @Override
+    protected void onPause() {
+        super.onPause();
+        
+        mHandler.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        mHandler.resume();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
+        mDrawerToggle.onConfigurationChanged(newConfig);
+        
+        BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
+        if (!mDrawerLayout.isDrawerOpen(Gravity.RIGHT) && !mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            fragment.clearIconStates();
+        }
+    }
+    
     // ================================================================================
     // Public Functions
     // ================================================================================
 
+    /**
+     * @brief Open Drawer.
+     * 
+     * @param gravity Drawer gravity
+     */
     public void openDrawer(int gravity) {
-        closeDrawers();
         openDrawer(gravity, false);
     }
-        
-    public void openDrawer(int gravity, boolean preventIntercept) {
+    
+    /**
+     * @brief Open Drawer.
+     * 
+     * @param gravity Drawer gravity
+     * @param resizeView Prevent layout from touches
+     */
+    public void openDrawer(int gravity, boolean resizeView) {
+        Message msg = Message.obtain(mHandler, MSG_OPEN_DRAWER);
+        msg.arg1 = gravity;
+        msg.arg2 = 0;
         if (gravity == Gravity.RIGHT) {
-            mResizeView = preventIntercept;
+            msg.arg2 = resizeView ? 1 : 0;
         }
-        mDrawerLayout.setPreventInterceptTouches(preventIntercept);
-        mDrawerLayout.openDrawer(gravity);
+        mHandler.sendMessage(msg);
     }
     
+    /**
+     * @brief Close drawers.
+     */
     public void closeDrawers() {
-        mDrawerLayout.setPreventInterceptTouches(false);
-        mDrawerLayout.closeDrawers();
+        Message msg = Message.obtain(mHandler, MSG_CLOSE_DRAWER);
+        mHandler.sendMessage(msg);
     }
     
+    /**
+     * @brief Determines if the drawer indicated by gravity is open.
+     * 
+     * @param gravity Drawer gravity
+     * 
+     * @retval true The drawer is open
+     * @retval false The drawer is close
+     */
     public boolean isDrawerOpen(int gravity) {
         return mDrawerLayout.isDrawerOpen(gravity);
+    }
+    
+    // ================================================================================
+    // INTERFACE - PauseableHandlerCallback 
+    // ================================================================================
+    
+    @Override
+    public boolean storeMessage(Message message) {
+        return (message.what == MSG_OPEN_DRAWER
+                || message.what == MSG_CLOSE_DRAWER
+                || message.what == MSG_CLEAR_ICON_STATES);
+    }
+
+    @Override
+    public void processMessage(Message msg) {
+        BaseFragment fragment = ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout));
+        boolean gravityLeft = (msg.arg1 == Gravity.LEFT);
+        
+        switch (msg.what){
+            case MSG_OPEN_DRAWER:
+                mDrawerLayout.closeDrawers();
+                
+                if (fragment != null) {
+                    fragment.setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, gravityLeft);
+                }
+
+                mResizeView = (msg.arg2 == 1);
+                
+                mDrawerLayout.openDrawer(msg.arg1);
+                break;
+            case MSG_CLOSE_DRAWER:
+                mDrawerLayout.closeDrawers();
+                break;
+            case MSG_CLEAR_ICON_STATES:
+                if (fragment != null) {
+                    fragment.clearIconStates();
+                }
+                break;
+        }
     }
     
     // ================================================================================
     // Internal Classes
     // ================================================================================
     
+    /**
+     * @class SDAActionBarDrawerToggle
+     * 
+     * @brief Class for Action Bar Drawer toggle.
+     */
     private class SDAActionBarDrawerToggle extends ActionBarDrawerToggle {
         
+        /**
+         * @brief Constructor.
+         * 
+         * @param activity Activity
+         * @param drawerLayout Drawer layout
+         * @param drawerImageRes Drawer image resource
+         * @param openDrawerContentDescRes Drawer content description resource
+         * @param closeDrawerContentDescRes Drawer content description resource
+         */
         public SDAActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, int drawerImageRes, int openDrawerContentDescRes,
                 int closeDrawerContentDescRes) {
             super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
         }
-        
         
         @Override
         public void syncState() {
@@ -175,9 +318,12 @@ public class MainActivity extends BaseActivity {
             } else {
                 mMainLayout.setTranslationX(moveFactor);
                 
-                // #3614 fix
-                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN) {
-                    mMainLayout.requestLayout();
+                // #3614 and #3734 fix
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    Fragment f = getFragmentManager().findFragmentById(R.id.mainLayout);
+                    if (f instanceof PrintPreviewFragment || f instanceof HelpFragment || f instanceof LegalFragment) {
+                        mMainLayout.requestLayout();
+                    }
                 }
             }
         }
@@ -187,36 +333,43 @@ public class MainActivity extends BaseActivity {
             
             super.onDrawerStateChanged(newState);
             
-            if (newState == DrawerLayout.STATE_IDLE) {
-                if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.START);
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-                } else if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.START);
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END);
-                } else {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            final int layoutState = newState;
+            
+            // https://code.google.com/p/android/issues/detail?id=60671
+            mDrawerLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (layoutState == DrawerLayout.STATE_IDLE) {
+                        if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.START);
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
+                        } else if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.START);
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END);
+                        } else {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                        }
+                    }
                 }
-            }
+            });
             
         }
         
-        /**
-         * Called when a drawer has settled in a completely closed state.
-         */
+        @Override
         public void onDrawerClosed(View view) {
             super.onDrawerClosed(view);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            
+
+            BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
+            fragment.clearIconStates();
             if (mDrawerLayout.findViewById(R.id.rightLayout) == view) {
                 getFragmentManager().findFragmentById(R.id.rightLayout).onPause();
             }
             getFragmentManager().findFragmentById(R.id.mainLayout).onResume();
+            
         }
         
-        /**
-         * Called when a drawer has settled in a completely opened state.
-         */
+        @Override
         public void onDrawerOpened(View drawerView) {
             super.onDrawerOpened(drawerView);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -224,7 +377,9 @@ public class MainActivity extends BaseActivity {
             if (mDrawerLayout.findViewById(R.id.rightLayout) == drawerView) {
                 getFragmentManager().findFragmentById(R.id.rightLayout).onResume();
             }
-            getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
+            if (!mResizeView) {
+                getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
+            }
         }
     }
 }

@@ -43,8 +43,7 @@
         android:maxLines="1"
         android:text="@string/default_textview"
         android:textAllCaps="true"
-        android:textColor="@color/theme_light_1"
-        android:textSize="@dimen/home_text_size" />
+        android:textColor="@color/theme_light_1" />
 
     <ImageView
         android:id="@+id/disclosureView"

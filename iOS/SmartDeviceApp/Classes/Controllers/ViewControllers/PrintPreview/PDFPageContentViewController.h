@@ -2,30 +2,42 @@
 //  PDFPageViewController.h
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/11/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "PDFPageView.h"
 
-@protocol PDFPageContentViewControllerDatasource
 /**
- Get the actual PDF Page based on the page index and the offset
- @param pageIndex - index of the page in the page view controller
- @param pageOffset - the Nth PDF page to show in the view
- 
- @return PDF page
- **/
--(CGPDFPageRef) pdfPageForPageIndex: (NSUInteger) pageIndex withPageOffset:(NSUInteger) pageOffset;
-/**
- Get the PreviewSetting object
- @return PreviewSetting object
- **/
--(PreviewSetting *) getPreviewSetting;
-@end
+ * Controller for the rendered page.
+ * This is the content loaded by the PrintPreviewViewController into
+ * its preview area (UIPageViewController).\n
+ * The content is essentially an image from the PDF file with the
+ * preview settings applied.
+ *
+ * @see PrintPreviewViewController
+ * @see PDFRenderOperation
+ */
+@interface PDFPageContentViewController : UIViewController
 
-@interface PDFPageContentViewController : UIViewController <PDFPageViewDatasource>
-@property(weak, nonatomic) id <PDFPageContentViewControllerDatasource> datasource;
-@property (nonatomic, assign) NSUInteger pageIndex;
+/**
+ * Page number.
+ * This refers to the page number with the preview settings applied
+ * (i.e. Booklet, Imposition,..) rather than the page in the actual
+ * PDF file.
+ */
+@property (nonatomic) NSInteger pageIndex;
+
+/**
+ * Rendered image of the PDF page.
+ * 
+ * @see PDFRenderOperation
+ */
+@property (nonatomic) UIImage *image;
+
+/**
+ * Flag to indicate that the page is used as a bookend.
+ */
+@property (nonatomic) BOOL isBookendPage;
+
 @end

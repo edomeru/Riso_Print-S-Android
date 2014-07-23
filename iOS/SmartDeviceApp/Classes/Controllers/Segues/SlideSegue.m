@@ -2,8 +2,8 @@
 //  SlidingSegue.m
 //  SmartDeviceApp
 //
-//  Created by Seph on 3/3/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "SlideSegue.h"
@@ -14,7 +14,20 @@ const float AnimationDuration = 0.3f;
 
 @interface SlideSegue()
 
+/**
+ * Performs a forward sliding animation towards the center of the screen.
+ * This method will be called if isUnwinding is set to NO.
+ *
+ * @see isUnwinding
+ */
 - (void)performSegue;
+
+/**
+ * Performs a backward sliding animation towards the side of the screen.
+ * This method will be called if isUnwinding is set to YES.
+ *
+ * @see isUnwinding
+ */
 - (void)performUnwindSegue;
 
 @end

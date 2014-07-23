@@ -14,15 +14,21 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 
 /**
- * Generic confirmation dialog. To use do the ff:
+ * @class ConfirmDialogFragment
+ * 
+ * @brief Custom Dialog Fragment class for confirmation dialog
+ * 
+ * @note Generic confirmation dialog. To use do the ff:
  * 1. Target Fragment must implement the ConfirmDialogListener
  * 2. In the target fragment, add these snippet:
- *      ConfirmDialogFragment dialog = new ConfirmDialogFragment(<parameters>):
+ *      @code 
+ *      ConfirmDialogFragment dialog = ConfirmDialogFragment.newInstance(<parameters>):
  *      dialog.setTargetFragment(this, requestCode);
- *      DialogUtils.showdisplayDialog(activity, tag, dialog);
- * 3. To dismiss, simply call: dialog.dismiss();
+ *      DialogUtils.showdisplayDialog(activity, tag, dialog); 
+ *      @endcode
  */
 public class ConfirmDialogFragment extends DialogFragment implements OnClickListener {
     
@@ -31,10 +37,29 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     private static final String KEY_POS_BUTTON = "posButton";
     private static final String KEY_NEG_BUTTON = "negButton";
     
+    /**
+     * @brief Creates a ConfirmDialogFragment instance.
+     *      
+     * @param message The text displayed as the message in the dialog
+     * @param buttonPosTitle The text displayed in the positive button of the dialog
+     * @param buttonNegTitle The text displayed in the negative button of the dialog
+     * 
+     * @return ConfirmDialogFragment instance
+     */
     public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
         return ConfirmDialogFragment.newInstance(null, message, buttonPosTitle, buttonNegTitle);
     }
     
+    /**
+     * @brief Creates a ConfirmDialogFragment instance.
+     * 
+     * @param title The text displayed as the title in the dialog
+     * @param message The text displayed as the message in the dialog
+     * @param buttonPosTitle The text displayed in the positive button of the dialog
+     * @param buttonNegTitle The text displayed in the negative button of the dialog
+     * 
+     * @return ConfirmDialogFragment instance
+     */
     public static ConfirmDialogFragment newInstance(String title, String message, String buttonPosTitle, String buttonNegTitle) {
         ConfirmDialogFragment dialog = new ConfirmDialogFragment();
         
@@ -46,7 +71,6 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         args.putString(KEY_NEG_BUTTON, buttonNegTitle);
         
         dialog.setArguments(args);
-        dialog.setCancelable(false);
         
         return dialog;
     }
@@ -63,7 +87,8 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         String buttonPosTitle = getArguments().getString(KEY_POS_BUTTON);
         String buttonNegTitle = getArguments().getString(KEY_NEG_BUTTON);
         
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        ContextThemeWrapper newContext = new ContextThemeWrapper(getActivity(), android.R.style.TextAppearance_Holo_DialogWindowTitle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
         
         if (title != null) {
             builder.setTitle(title);
@@ -102,13 +127,33 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         }
     }
     
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if (getTargetFragment() instanceof ConfirmDialogListener) {
+            ConfirmDialogListener listener = (ConfirmDialogListener) getTargetFragment();
+            listener.onCancel();
+        }
+    }
+    
     // ================================================================================
     // Internal Classes
     // ================================================================================
     
+    /**
+     * @interface ConfirmDialogListener
+     * 
+     * @brief Interface ConfirmDialogFragment events
+     */
     public interface ConfirmDialogListener {
+        /**
+         * @brief Called when positive button is clicked
+         */
         public void onConfirm();
         
+        /**
+         * @brief Called when negative button is clicked
+         */
         public void onCancel();
     }
 }

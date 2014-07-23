@@ -15,9 +15,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * @class FileUtils
+ * 
+ * @brief Utility class for file operations
+ */
 public class FileUtils {
     
+    /**
+     * @brief Copy a file.
+     * 
+     * @param src Source file
+     * @param dst Destination file
+     */
     public static void copy(File src, File dst) throws IOException {
+        if(src == null || dst == null) {
+            return;
+        }
         InputStream in = new FileInputStream(src);
         OutputStream out = new FileOutputStream(dst);
         

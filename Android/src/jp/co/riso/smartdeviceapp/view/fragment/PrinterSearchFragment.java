@@ -10,10 +10,13 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.ArrayList;
 
+import jp.co.riso.android.dialog.ConfirmDialogFragment;
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
-import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback;
@@ -22,18 +25,27 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface;
+import jp.co.riso.smartprint.R;
+import android.animation.ValueAnimator;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Handler.Callback;
 import android.os.Message;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
-public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface, Callback {
+/**
+ * @class PrinterSearchFragment
+ * 
+ * @brief Fragment for Printer Search Screen
+ */
+public class PrinterSearchFragment extends BaseFragment implements OnRefreshListener, PrinterSearchCallback, PrinterSearchAdapterInterface,
+        ConfirmDialogListener, PauseableHandlerCallback {
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
@@ -45,7 +57,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private ArrayList<Printer> mPrinter = null;
     private PrinterSearchAdapter mPrinterSearchAdapter = null;
     private PrinterManager mPrinterManager = null;
-    private Handler mHandler = null;
+    private PauseableHandler mPauseableHandler = null;
+    private TextView mEmptySearchText;
+    private boolean mNoNetwork;
     
     @Override
     public int getViewLayout() {
@@ -59,20 +73,29 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         } else {
             mPrinter = new ArrayList<Printer>();
         }
+        if (mPauseableHandler == null) {
+            mPauseableHandler = new PauseableHandler(this);
+        }
         mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(), R.layout.printersearch_container_item, mPrinter);
         mPrinterSearchAdapter.setSearchAdapterInterface(this);
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mPrinterManager.setPrinterSearchCallback(this);
-        mHandler = new Handler(this);
     }
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mListView = (PullToRefreshListView) view.findViewById(R.id.printer_list);
         mListView.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
-        mListView.setLockScrollWhileRefreshing(false);
         mListView.setAdapter(mPrinterSearchAdapter);
         mListView.setOnRefreshListener(this);
+        
+        mEmptySearchText = (TextView) view.findViewById(R.id.emptySearchText);
+        
+        RelativeLayout.LayoutParams progressLayoutParams = (RelativeLayout.LayoutParams) mListView.findViewById(R.id.ptr_id_spinner).getLayoutParams();
+        progressLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        
+        RelativeLayout.LayoutParams arrowLayoutParams = (RelativeLayout.LayoutParams) mListView.findViewById(R.id.ptr_id_image).getLayoutParams();
+        arrowLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
     }
     
     @Override
@@ -109,14 +132,58 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         super.onSaveInstanceState(savedInstanceState);
     }
     
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPauseableHandler.pause();
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPauseableHandler.resume();
+    }
+    
     // ================================================================================
     // Private Methods
     // ================================================================================
     
-    public void updateRefreshBar() {
-        Message newMessage = Message.obtain(mHandler, MSG_UPDATE_REFRESH_BAR);
+    /**
+     * @brief Updates the status of the refresh bar.
+     */
+    private void updateRefreshBar() {
+        Message newMessage = Message.obtain(mPauseableHandler, MSG_UPDATE_REFRESH_BAR);
         
-        mHandler.sendMessage(newMessage);
+        mPauseableHandler.sendMessage(newMessage);
+    }
+    
+    /**
+     * @brief Display error dialog during failed printer search
+     */
+    private void dialogErrCb() {
+        String title = getResources().getString(R.string.ids_lbl_search_printers);
+        String errMsg = null;
+        errMsg = getResources().getString(R.string.ids_err_msg_network_error);
+        DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
+
+        DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
+    }
+    
+    /**
+     * @brief Closes the PrinterSearch Screen.
+     */
+    private void closeScreen() {
+        if (isTablet()) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.closeDrawers();
+        } else {
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            if (fm.getBackStackEntryCount() > 0) {
+                fm.popBackStack();
+                ft.commit();
+            }
+        }
     }
     
     // ================================================================================
@@ -126,9 +193,43 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void onRefresh() {
         mPrinter.clear();
+        mEmptySearchText.setVisibility(View.GONE);
+        mNoNetwork = false;
+        if (!NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
+            mNoNetwork = true;
+            dialogErrCb();
+            updateRefreshBar();
+            return;
+        }
+
         mPrinterManager.startPrinterSearch();
     }
     
+    @Override
+    public void onHeaderAdjusted(int margin) {
+        if (mEmptySearchText != null) {
+            final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mEmptySearchText.getLayoutParams();
+            params.topMargin = margin;
+            mEmptySearchText.setLayoutParams(params);
+        }
+    }
+    
+    @Override
+    public void onBounceBackHeader(int duration) {
+        // http://stackoverflow.com/questions/13881419/android-change-left-margin-using-animation
+        final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mEmptySearchText.getLayoutParams();
+        ValueAnimator animation = ValueAnimator.ofInt(params.topMargin, 0);
+        animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                params.topMargin = (Integer) valueAnimator.getAnimatedValue();
+                mEmptySearchText.requestLayout();
+            }
+        });
+        animation.setDuration(duration);
+        animation.start();
+    }
+
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -138,17 +239,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         // Back Button
         if (v.getId() == ID_MENU_BACK_BUTTON) {
             mPrinterManager.cancelPrinterSearch();
-            if (isTablet()) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.closeDrawers();
-            } else {
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                if (fm.getBackStackEntryCount() > 0) {
-                    fm.popBackStack();
-                    ft.commit();
-                }
-            }
+            closeScreen();
         }
     }
     
@@ -165,6 +256,9 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             @Override
             public void run() {
                 if (!mPrinterManager.isSearching()) {
+                    return;
+                }
+                if(mPrinter.contains(printer)) {
                     return;
                 }
                 mPrinter.add(printer);
@@ -186,48 +280,62 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     public int onAddPrinter(Printer printer) {
         int ret = 0;
         
-        if (printer == null || mPrinterManager.isSearching()) {
+        if (printer == null) {
             return -1;
         }
-        
+        DialogFragment info = null;
+
         String title = getResources().getString(R.string.ids_lbl_search_printers);
         String msg = null;
-        if (!mPrinterManager.savePrinterToDB(printer)) {
+        if (!mPrinterManager.savePrinterToDB(printer, true)) {
             ret = -1;
-            msg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
+            msg = getResources().getString(R.string.ids_err_msg_db_failure);
+            info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));
         } else {
-            msg = printer.getName() + " " + getResources().getString(R.string.ids_lbl_add_successful);
+            msg = getResources().getString(R.string.ids_info_msg_printer_add_successful);
+            info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
+            info.setTargetFragment(this, 0);
         }
         
-        InfoDialogFragment info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
         return ret;
     }
+
+    // ================================================================================
+    // INTERFACE - ConfirmDialogListener
+    // ================================================================================
     
     @Override
-    public boolean handleMessage(Message msg) {
+    public void onConfirm() {
+        closeScreen();
+    }
+    
+    @Override
+    public void onCancel() {
+        closeScreen();
+    }
+
+    // ================================================================================
+    // INTERFACE - PauseableHandlerCallback
+    // ================================================================================
+    
+    @Override
+    public boolean storeMessage(Message message) {
+        return message.what == MSG_UPDATE_REFRESH_BAR;
+    }
+    
+    @Override
+    public void processMessage(Message msg) {
         switch (msg.what) {
             case MSG_UPDATE_REFRESH_BAR:
                 if (mPrinterManager.isSearching()) {
                     mListView.setRefreshing();
                 } else {
                     mListView.onRefreshComplete();
+                    if (mPrinter.isEmpty() && !mNoNetwork) {
+                        mEmptySearchText.setVisibility(View.VISIBLE);
+                    }
                 }
-                return true;
         }
-        return false;
-    }
-    
-    @Override
-    public boolean isMaxPrinterCountReached() {
-        if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
-            String title = getResources().getString(R.string.ids_lbl_printer_info);
-            String errMsg = null;
-            errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
-            InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
-            DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
-            return true;
-        }
-        return false;
     }
 }

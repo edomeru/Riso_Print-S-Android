@@ -19,34 +19,40 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.util.AndroidRuntimeException;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.Display;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
+/**
+ * @class AppUtils
+ * 
+ * @brief Utility class for application operations
+ */
 public final class AppUtils {
-    public static final String TAG = "AppUtils";
     
+    /// Path to asset files
     public static final String CONST_ASSET_PATH = "file:///android_asset/";
     
     /**
-     * Creates an activity intent launcher
+     * @brief Creates an activity intent launcher.
      * 
-     * @param context
-     *            Application Context
-     * @param cls
-     *            Activity class
+     * @param context Application Context
+     * @param cls Activity class
+     * 
      * @return Intent generated
      */
     public static Intent createActivityIntent(Context context, Class<?> cls) {
@@ -61,31 +67,7 @@ public final class AppUtils {
     }
     
     /**
-     * Starts an Activity
-     * 
-     * @param context
-     *            Application Context
-     * @param cls
-     *            Activity class
-     */
-    public static void startActivityIntent(Context context, Class<?> cls) throws ActivityNotFoundException, NullPointerException, AndroidRuntimeException {
-        Intent intent = createActivityIntent(context, cls);
-        
-        if (intent == null) {
-            throw new NullPointerException("Cannot create intent");
-        } else {
-            try {
-                context.startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                throw e;
-            } catch (AndroidRuntimeException e) {
-                throw e;
-            }
-        }
-    }
-    
-    /**
-     * Gets the 2 character locale code based on the current Locale. (e.g., en, ja, etc)
+     * @brief Gets the 2 character locale code based on the current Locale. (e.g., en, ja, etc)
      * 
      * @return Locale Code String
      */
@@ -97,10 +79,10 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the Application package name
+     * @brief Gets the Application package name.
      * 
-     * @param context
-     *            Application Context
+     * @param context Application Context
+     * 
      * @return Package name of the application
      */
     public static String getApplicationPackageName(Context context) {
@@ -112,12 +94,12 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the Application install date using the package manager
+     * @brief Gets the Application install date using the package manager.
      * 
-     * @param context
-     *            Application Context
+     * @param context Application Context
+     * @param packageName Package name
      * 
-     * @return Time in millis of the the last install date
+     * @return Time in millisecond of the the last install date
      */
     public static long getApplicationLastInstallDate(Context context, String packageName) throws NameNotFoundException {
         if (context == null) {
@@ -140,10 +122,9 @@ public final class AppUtils {
     }
     
     /**
-     * Forcibly dismisses the Softkeyboard
+     * @brief Forcibly dismisses the Softkeyboard.
      * 
-     * @param activity
-     *            Valid activity
+     * @param activity Valid activity
      */
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -153,12 +134,11 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the Screen Dimensions of the Device
+     * @brief Gets the Screen Dimensions of the Device.
      * 
-     * @param activity
-     *            Valid activity
+     * @param activity Valid activity
      * 
-     * @return Screen size
+     * @return Screen dimensions
      */
     public static Point getScreenDimensions(Activity activity) {
         if (activity == null) {
@@ -174,14 +154,13 @@ public final class AppUtils {
     }
     
     /**
-     * Checks whether the asset exists
+     * @brief Get file contents from assets.
      * 
-     * @param context
-     *            Valid Context
-     * @param assetFile
-     *            Relative path of the asset (from assets/)
+     * @param context Valid Context
+     * @param assetFile Relative path of the asset file (from assets/)
      * 
-     * @return Whether the asset exists or not
+     * @return File contents
+     * @retval null Error in reading asset file
      */
     public static String getFileContentsFromAssets(Context context, String assetFile) {
         if (context == null) {
@@ -209,14 +188,13 @@ public final class AppUtils {
     }
     
     /**
-     * Checks whether the asset exists
+     * @brief Checks whether the asset exists.
      * 
-     * @param context
-     *            Valid Context
-     * @param assetFile
-     *            Relative path of the asset (from assets/)
+     * @param context Valid Context
+     * @param assetFile Relative path of the asset (from assets/)
      * 
-     * @return Whether the asset exists or not
+     * @retval true The asset exists
+     * @retval false The asset does not exist
      */
     public static boolean assetExists(Context context, String assetFile) {
         if (context == null || assetFile == null) {
@@ -229,22 +207,19 @@ public final class AppUtils {
             stream.close();
             assetOk = true;
         } catch (FileNotFoundException e) {
-            Log.w(TAG, "assetExists failed: " + e.toString());
+            Logger.logWarn(AppUtils.class, "assetExists failed: " + e.toString());
         } catch (IOException e) {
-            Log.w(TAG, "assetExists failed: " + e.toString());
+            Logger.logWarn(AppUtils.class, "assetExists failed: " + e.toString());
         }
         return assetOk;
     }
     
     /**
-     * Gets the relative localized path
+     * @brief Gets the relative localized path.
      * 
-     * @param context
-     *            Valid Context
-     * @param folder
-     *            Directory of the file for localization
-     * @param resource
-     *            File to be opened
+     * @param context Valid Context
+     * @param folder Directory of the file for localization
+     * @param resource File to be opened
      * 
      * @return Localized relative path of the asset file
      */
@@ -269,14 +244,11 @@ public final class AppUtils {
     }
     
     /**
-     * Gets the full localized path
+     * @brief Gets the full localized path.
      * 
-     * @param context
-     *            Valid Context
-     * @param folder
-     *            Directory of the file for localization
-     * @param resource
-     *            File to be opened
+     * @param context Valid Context
+     * @param folder Directory of the file for localization
+     * @param resource File to be opened
      * 
      * @return Localized full path of the asset file
      */
@@ -290,9 +262,17 @@ public final class AppUtils {
         return null;
     }
     
-    // http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
-    public static void changeChildrenFont(ViewGroup v, Typeface font) {
-        if (font == null) {
+    /**
+     * @brief Change children font <br>
+     * 
+     * Note: Known issue on Jellybean ellipsize="middle" when using custom font.
+     * Based on: http://stackoverflow.com/questions/2711858/is-it-possible-to-set-font-for-entire-application
+     * 
+     * @param v ViewGroup to be changed
+     * @param font Font to be set
+     */
+    protected static void changeChildrenFont(ViewGroup v, Typeface font) {
+        if (font == null || v == null) {
             return;
         }
         
@@ -315,21 +295,31 @@ public final class AppUtils {
                 }
                 // Will catch the view with no such methods (listview...)
                 catch (NoSuchMethodException e) {
-                    Log.w(TAG, "NoSuchMethodException (setTypeface and getTypeface)");
+                    Logger.logWarn(AppUtils.class, "NoSuchMethodException (setTypeface and getTypeface)");
                 } catch (IllegalAccessException e) {
-                    Log.w(TAG, "IllegalAccessException, on invoke");
+                    Logger.logWarn(AppUtils.class, "IllegalAccessException, on invoke");
                 } catch (IllegalArgumentException e) {
-                    Log.w(TAG, "IllegalArgumentException on invoke");
+                    Logger.logWarn(AppUtils.class, "IllegalArgumentException on invoke");
                 } catch (InvocationTargetException e) {
-                    Log.w(TAG, "InvocationTargetException on invoke");
+                    Logger.logWarn(AppUtils.class, "InvocationTargetException on invoke");
                 }
             }
         }
     }
     
-    // http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
+    /**
+     * @brief Dynamically retrieve resource Id.
+     * 
+     * Based on: http://daniel-codes.blogspot.jp/2009/12/dynamically-retrieving-resources-in.html
+     * 
+     * @param variableName Variable name
+     * @param c Resource class
+     * @param defaultId Default resource ID
+     * 
+     * @return Resource ID
+     */
     public static int getResourseId(String variableName, Class<?> c, int defaultId) {
-        if (variableName == null) {
+        if (variableName == null || c == null) {
             return defaultId;
         }
         
@@ -338,22 +328,129 @@ public final class AppUtils {
             Field idField = c.getDeclaredField(variableName);
             id = idField.getInt(idField);
         } catch (NoSuchFieldException e) {
-            Log.w(TAG, "No id on class");
+            Logger.logWarn(AppUtils.class, "No id on class");
         } catch (IllegalAccessException e) {
-            Log.w(TAG, "IllegalAccessException on getInt");
+            Logger.logWarn(AppUtils.class, "IllegalAccessException on getInt");
         } catch (IllegalArgumentException e) {
-            Log.w(TAG, "IllegalArgumentException on getInt");
+            Logger.logWarn(AppUtils.class, "IllegalArgumentException on getInt");
         }
         
         return id;
     }
     
-    public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
-        ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
+    /**
+     * @brief Get fit to aspect ratio size
+     * 
+     * @param srcWidth Source width
+     * @param srcHeight Source height
+     * @param destWidth Destination width
+     * @param destHeight Destination height
+     * 
+     * @return New width and height
+     */
+    public static int[] getFitToAspectRatioSize(float srcWidth, float srcHeight, int destWidth, int destHeight) {
+        float ratioSrc = srcWidth / srcHeight;
+        float ratioDest = (float) destWidth / destHeight;
         
-        // Get memory class of this device, exceeding this amount will throw an OutOfMemory exception.
-        final int memClass = manager.getMemoryClass();
+        int newWidth = 0;
+        int newHeight = 0;
         
-        return 1024 * 1024 * memClass;
+        if (ratioDest > ratioSrc) {
+            newHeight = destHeight;
+            newWidth = (int) (destHeight * ratioSrc);
+            
+        } else {
+            newWidth = destWidth;
+            newHeight = (int) (destWidth / ratioSrc);
+        }
+        
+        return new int[] { newWidth, newHeight };
+    }
+    
+    /**
+     * @brief Gets the next integer multiple
+     * 
+     * @param n First Factor
+     * @param m Second Factor
+     * 
+     * @return Next multiple of m and n 
+     */
+    public static int getNextIntegerMultiple(int n, int m) {
+        if (m == 0) {
+            Logger.logWarn(AppUtils.class, "Cannot divide by 0");
+            return n;
+        }
+        
+        if (n % m != 0) {
+            return n + (m - n % m);
+        }
+        
+        return n;
+    }
+    
+    /**
+     * @brief Checks if x and y is inside the view coordinates
+     * 
+     * @param view View to check
+     * @param x MotionEvent.getRawX();
+     * @param y MotionEvent.getRawY();
+     * 
+     * @retval true x and y is inside the View.
+     * @retval false x and y is outside the View.
+     */
+    public static boolean checkViewHitTest(View view, int x, int y) {
+        if (view == null) {
+            return false;
+        }
+        
+        Rect r = new Rect();
+        int[] coords = new int[2];
+        view.getHitRect(r);
+        view.getLocationOnScreen(coords);
+        r.offset(coords[0] - view.getLeft(), coords[1] - view.getTop());
+        if (r.contains(x, y)) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * @brief Gets Secure Print, Login ID and PIN Code from preferences and returns formatted string
+     * 
+     * @return Authentication String
+     */
+    public static String getAuthenticationString() {
+        StringBuffer strBuf = new StringBuffer();
+        final String pinCodeFormat = "%s=%s\n";
+        final String loginIdFormat = "%s=%s\n";
+        final String securePrintFormat = "%s=%d\n";
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+        String loginId = prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
+        String pinCode = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
+        
+        strBuf.append(String.format(Locale.getDefault(), securePrintFormat, AppConstants.KEY_SECURE_PRINT, isSecurePrint ? 1 : 0));
+        strBuf.append(String.format(Locale.getDefault(), loginIdFormat, AppConstants.KEY_LOGINID, loginId));
+        if (isSecurePrint) {
+            strBuf.append(String.format(Locale.getDefault(), pinCodeFormat, AppConstants.KEY_PINCODE, pinCode));
+        } else {
+            strBuf.append(String.format(Locale.getDefault(), pinCodeFormat, AppConstants.KEY_PINCODE, ""));
+        }
+        
+        return strBuf.toString();
+    }
+    
+    /**
+     * @brief Get the owner name based on the Log-in ID as seen from the Settings screen.
+     * 
+     * The Log-in ID is retrieved from the shared preferences.
+     * 
+     * @return Owner name
+     */
+    public static String getOwnerName() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        return prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID);
     }
 }

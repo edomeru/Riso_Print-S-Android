@@ -23,48 +23,63 @@ public class PrintJobTest extends AndroidTestCase {
     }
 
     public void testGetId() {
-        assertEquals(1,pj.getId());
+        assertEquals(1, pj.getId());
     }
 
     public void testSetId() {
         pj.setId(2);
-        assertEquals(2,pj.getId());
+        assertEquals(2, pj.getId());
     }
 
     public void testGetPrinterId() {
-        assertEquals(1,pj.getPrinterId());
+        assertEquals(1, pj.getPrinterId());
     }
 
     public void testSetPrinterId() {
         pj.setPrinterId(3);
-        assertEquals(3,pj.getPrinterId());
+        assertEquals(3, pj.getPrinterId());
     }
 
     public void testGetName() {
-        assertEquals("print job name.pdf",pj.getName());
+        assertEquals("print job name.pdf", pj.getName());
     }
 
     public void testSetName() {
         pj.setName("new name.pdf");
-        assertEquals("new name.pdf",pj.getName());
+        assertEquals("new name.pdf", pj.getName());
+    }
+    
+    public void testSetName_Null() {
+        pj.setName(null);
+        assertNull(pj.getName());
     }
 
     public void testGetDate() {
-        assertEquals(date,pj.getDate());
+        assertEquals(date, pj.getDate());
     }
 
     public void testSetDate() {
         Date dateNew = new Date();
         pj.setDate(dateNew);
-        assertEquals(dateNew,pj.getDate());
+        assertEquals(dateNew, pj.getDate());
+    }
+    
+    public void testSetDate_Null() {
+        pj.setDate(null);
+        assertNull(pj.getDate());
     }
 
     public void testGetResult() {
-        assertEquals(JobResult.SUCCESSFUL,pj.getResult());
+        assertEquals(JobResult.SUCCESSFUL, pj.getResult());
     }
 
     public void testSetResult() {
         pj.setResult(JobResult.ERROR);
-        assertEquals(JobResult.ERROR,pj.getResult());
+        assertEquals(JobResult.ERROR, pj.getResult());
+    }
+    
+    public void testJobResult() {
+        assertEquals(JobResult.ERROR, JobResult.valueOf("ERROR"));
+        assertEquals(JobResult.SUCCESSFUL, JobResult.valueOf("SUCCESSFUL"));
     }
 }

@@ -2,17 +2,33 @@
 //  PrinterCell.m
 //  SmartDeviceApp
 //
-//  Created by Amor Corazon Rio on 3/5/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrinterCell.h"
+#import "UIColor+Theme.h"
 
 @interface PrinterCell()
-@property BOOL isDefaultPrinterCell;
-@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
+
+@property (assign, nonatomic) BOOL isDefaultPrinterCell;
+@property (weak, nonatomic) IBOutlet DeleteButton *deleteButton;
 @property (weak, nonatomic) IBOutlet UIImageView *disclosureImage;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *spacePrinterNameToDisclosureButton;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *spaceDeleteButtonToSuperview;
+
+/**
+ * Shows the delete button.
+ */
+- (void)putDeleteButton;
+
+/**
+ * Removes the delete button.
+ */
+- (void)cancelDeleteButton;
+
 @end
+
 @implementation PrinterCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -24,7 +40,32 @@
     return self;
 }
 
--(void) setCellToBeDeletedState:(BOOL) isCellForDelete
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    [super setHighlighted:highlighted animated:animated];
+    
+    if (highlighted)
+    {
+        self.contentView.backgroundColor = [UIColor purple2ThemeColor];
+        [self.printerName setTextColor:[UIColor whiteThemeColor]];
+        [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
+        [self.separator setBackgroundColor:[UIColor purple2ThemeColor]];
+    }
+    else
+    {
+        if(self.isDefaultPrinterCell)
+        {
+            [self setCellStyleForDefaultCell];
+        }
+        else
+        {
+             [self setCellStyleForNormalCell];
+        }
+    }
+    
+}
+
+- (void)setCellToBeDeletedState:(BOOL)isCellForDelete
 {
     if(isCellForDelete == YES)
     {
@@ -43,45 +84,83 @@
     }
 }
 
-- (void) setCellStyleForToDeleteCell
+- (void)setCellStyleForToDeleteCell
 {
-    //TODO: this only works for iOS7
-    UIColor *bgColor = [UIColor colorWithRed:82.0/255.0 green:7.0/255.0 blue:182.0/255.0 alpha:1.0];
-    [self setBackgroundColor:bgColor];
-    [self.printerName setTextColor:[UIColor whiteColor]];
-    [self.deleteButton setHidden: NO];
+    UIColor *bgColor = [UIColor purple2ThemeColor];
+    [self.contentView setBackgroundColor:bgColor];
+    [self.printerName setTextColor:[UIColor whiteThemeColor]];
+    [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
     [self.disclosureImage setHidden: YES];
-    [self.separator setBackgroundColor:[UIColor colorWithRed:82.0/255.0
-                                                       green:7.0/255.0
-                                                        blue:182.0/255.0
-                                                       alpha:1.0]];
+    [self.separator setBackgroundColor:[UIColor purple2ThemeColor]];
+    [self putDeleteButton];
 }
 
-- (void) setCellStyleForDefaultCell
+- (void)setCellStyleForDefaultCell
 {
     self.isDefaultPrinterCell = YES;
-    [self setBackgroundColor:[UIColor colorWithRed:36.0/255.0 green:36.0/255.0 blue:36.0/255.0 alpha:1.0]];
-    [self.printerName setTextColor:[UIColor whiteColor]];
-    [self.deleteButton setHidden: YES];
+    [self.contentView setBackgroundColor:[UIColor gray4ThemeColor]];
+    [self.printerName setTextColor:[UIColor whiteThemeColor]];
+    [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
     [self.disclosureImage setHidden: NO];
-    [self.separator setBackgroundColor:[UIColor colorWithRed:36.0/255.0
-                                                       green:36.0/255.0
-                                                        blue:36.0/255.0
-                                                       alpha:1.0]];
+    [self.separator setBackgroundColor:[UIColor gray4ThemeColor]];
+    [self cancelDeleteButton];
 }
 
--(void) setCellStyleForNormalCell
+- (void)setCellStyleForNormalCell
 {
     self.isDefaultPrinterCell = NO;
-    UIColor *bgColor = [UIColor colorWithRed:205.0/255.0 green:205.0/255.0 blue:205.0/255.0 alpha:1.0];
-    [self setBackgroundColor:bgColor];
-    [self.printerName setTextColor:[UIColor blackColor]];
-    [self.deleteButton setHidden: YES];
+    UIColor *bgColor = [UIColor gray1ThemeColor];
+    [self.contentView setBackgroundColor:bgColor];
+    [self.printerName setTextColor:[UIColor blackThemeColor]];
+    [self.ipAddress setTextColor:[UIColor blackThemeColor]];
     [self.disclosureImage setHidden: NO];
-    [self.separator setBackgroundColor:[UIColor colorWithRed:255.0/255.0
-                                                       green:255.0/255.0
-                                                        blue:255.0/255.0
-                                                       alpha:1.0]];
+    [self.separator setBackgroundColor:[UIColor whiteThemeColor]];
+    [self cancelDeleteButton];
+}
+
+#pragma mark - Delete Button
+
+- (void)setDeleteButtonLayout
+{
+    [self.deleteButton setTitle:[NSLocalizedString(IDS_LBL_DELETE, @"Delete") uppercaseString]
+                       forState:UIControlStateNormal];
+    
+    self.deleteButton.highlightedColor = [UIColor purple1ThemeColor];
+    self.deleteButton.highlightedTextColor = [UIColor whiteThemeColor];
+}
+
+- (void)putDeleteButton
+{
+    self.spacePrinterNameToDisclosureButton.constant += self.deleteButton.frame.size.width;
+    self.spaceDeleteButtonToSuperview.constant = 16.0f;
+    
+    [self.printerName setNeedsUpdateConstraints];
+    [self.deleteButton setNeedsUpdateConstraints];
+    
+    [UIView animateWithDuration:0.2f animations:^{
+        [self layoutIfNeeded];
+    }];
+}
+
+- (void)cancelDeleteButton
+{
+    if (self.spaceDeleteButtonToSuperview.constant < 0) //already hidden
+    {
+        return;
+    }
+    else
+    {
+        self.spacePrinterNameToDisclosureButton.constant = 16.0f; //from storyboard
+        self.spaceDeleteButtonToSuperview.constant = -self.deleteButton.frame.size.width;
+        
+        [self.printerName setNeedsUpdateConstraints];
+        [self.deleteButton setNeedsUpdateConstraints];
+        
+        [UIView animateWithDuration:0.2f animations:^{
+            [self layoutIfNeeded];
+            
+        }];
+    }
 }
 
 @end

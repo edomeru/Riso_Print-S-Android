@@ -12,17 +12,49 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 
+/**
+ * @class InfoDialogFragment
+ * 
+ * @brief Custom Dialog Fragment class for information display dialog
+ * 
+ * @note Generic information dialog. To use do the ff:
+ * 1. Target Fragment must implement the WaitingDialogFragment
+ * 2. In the target fragment, add these snippet:
+ *      @code
+ *      InfoDialogFragment dialog = new InfoDialogFragment(<parameters>):
+ *      InfoDialogFragment.showdisplayDialog(activity, tag, dialog);
+ *      @endcode
+ */
 public class InfoDialogFragment extends DialogFragment {
     
-    public static final String KEY_TITLE = "title";
-    public static final String KEY_MESSAGE = "message";
-    public static final String KEY_BUTTON = "button";
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_BUTTON = "button";
     
+    
+    /**
+     * @brief Creates an InfoDialogFragment instance.
+     *
+     * @param message The text displayed as the message in the dialog
+     * @param buttonTitle The text displayed in the button of the dialog
+     * 
+     * @return InfoDialogFragment instance
+     */
     public static InfoDialogFragment newInstance(String message, String buttonTitle) {
         return InfoDialogFragment.newInstance(null, message, buttonTitle);
     }
     
+    /**
+     * @brief Creates an InfoDialogFragment instance.
+     * 
+     * @param title The text displayed as the title in the dialog
+     * @param message The text displayed as the message in the dialog
+     * @param buttonTitle The text displayed in the button of the dialog
+     * 
+     * @return InfoDialogFragment instance
+     */
     public static InfoDialogFragment newInstance(String title, String message, String buttonTitle) {
         InfoDialogFragment dialog = new InfoDialogFragment();
         
@@ -47,8 +79,9 @@ public class InfoDialogFragment extends DialogFragment {
         String title = getArguments().getString(KEY_TITLE);
         String message = getArguments().getString(KEY_MESSAGE);
         String buttonTitle = getArguments().getString(KEY_BUTTON);
-        
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        ContextThemeWrapper newContext = new ContextThemeWrapper(getActivity(), android.R.style.TextAppearance_Holo_DialogWindowTitle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
         
         if (title != null) {
             builder.setTitle(title);

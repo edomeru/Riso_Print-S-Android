@@ -15,25 +15,28 @@ import android.text.InputFilter;
 import android.text.Spanned;
 
 /**
- * EditText filter for Invalid characters characters
+ * @class InvalidCharacterFilter
+ * 
+ * @brief EditText filter for Invalid characters
  */
 public class InvalidCharacterFilter implements InputFilter {
     private Set<Character> mCharSet;
     
     /**
-     * Constructor
+     * @brief Constructor for invalid characters input filter
      * 
-     * @param invalidChars
-     *            invalid characters in string format
+     * @param invalidChars Invalid characters in string format
      */
     public InvalidCharacterFilter(String invalidChars) {
         mCharSet = new HashSet<Character>();
+        if (invalidChars == null) {
+            return;
+        }
         for (int i = 0; i < invalidChars.length(); i++) {
             mCharSet.add(invalidChars.charAt(i));
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         for (int i = start; i < end; i++) { 

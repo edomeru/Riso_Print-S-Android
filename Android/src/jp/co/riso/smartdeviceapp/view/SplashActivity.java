@@ -11,11 +11,12 @@ package jp.co.riso.smartdeviceapp.view;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.smartprint.R;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -26,12 +27,15 @@ import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.AndroidRuntimeException;
-import android.util.Log;
 
+/**
+ * @class SplashActivity
+ * 
+ * @brief Splash activity class.
+ */
 public class SplashActivity extends BaseActivity implements PauseableHandlerCallback {
-    public static final String TAG = "SplashActivity";
     
-    // Messages
+    /// Message ID for running main activity
     public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
     
     public static final String KEY_DB_INITIALIZED = "database_initialized";
@@ -40,6 +44,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     private DBInitTask mInitTask = null;
     private boolean mDatabaseInitialized;
     
+    @SuppressWarnings("unused") // AppConstant.APP_SHOW_SPLASH is a config setting
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
 
@@ -53,20 +58,24 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
         
         if (isTaskRoot()) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
+            boolean dbIsOK = prefs.contains(AppConstants.PREF_KEY_DB_VERSION);
+            
             if (!mDatabaseInitialized) {
-                if (mInitTask == null) {
-                    mInitTask = new DBInitTask();
-                    mInitTask.execute();
+                if (!dbIsOK) {
+                    if (mInitTask == null) {
+                        mInitTask = new DBInitTask();
+                        mInitTask.execute();
+                    }
+                } else {
+                    mDatabaseInitialized = true;
                 }
             }
             
             setContentView(R.layout.activity_splash);
             
             if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
-                boolean dbIsOK = prefs.contains(AppConstants.PREF_KEY_DB_VERSION);
-                
-                if (dbIsOK && !AppConstants.APP_SHOW_SPLASH) {
+                if (!AppConstants.APP_SHOW_SPLASH && dbIsOK) {
                     runMainActivity();
                 } else {
                     mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);                    
@@ -78,7 +87,8 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             if (getIntent() != null) {
                 String action = getIntent().getAction();
                 
-                if (Intent.ACTION_VIEW.equals(action)) {
+                if (Intent.ACTION_VIEW.equals(action) ||
+                        Intent.ACTION_SEND.equals(action)) {
                     runMainActivity();
                     return;
                 }
@@ -132,11 +142,14 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     // Private Functions
     // ================================================================================
 
+    /**
+     * @brief Run the main activity.
+     */
     private void runMainActivity() {
         Intent launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         
         if (launchIntent == null) {
-            Log.e(TAG, "Cannot create Intent");
+            Logger.logError(SplashActivity.class, "Cannot create Intent");
             throw new NullPointerException("Cannot create Intent");
         }
         
@@ -146,21 +159,20 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             
             if (Intent.ACTION_VIEW.equals(action)) {
                 data = getIntent().getData();
+            } else if (Intent.ACTION_SEND.equals(action)) {
+                data = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());
             }
         }
         
+
         // Notify PDF File Data that there is a new PDF
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, false);
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), data != null);
         
         if (data != null) {
-            edit.putBoolean(PDFFileManager.KEY_NEW_PDF_DATA, true);
             launchIntent.setData(data);
         }
         
-        edit.commit();
-
         int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
         
         if (isTaskRoot()) {
@@ -172,10 +184,10 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         try {
             startActivity(launchIntent);
         } catch (ActivityNotFoundException e) {
-            Log.e(TAG, "Fatal Error: Intent MainActivity Not Found is not defined");
+            Logger.logError(SplashActivity.class, "Fatal Error: Intent MainActivity Not Found is not defined");
             throw e;
         } catch (AndroidRuntimeException e) {
-            Log.e(TAG, "Fatal Error: Android runtime");
+            Logger.logError(SplashActivity.class, "Fatal Error: Android runtime");
             throw e;
         }
         
@@ -205,6 +217,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     // Internal Classes
     // ================================================================================
     
+    /**
+     * @class DBInitTask
+     * 
+     * @brief Async task for initializing database.
+     */
     private class DBInitTask extends AsyncTask<Void, Void, Void> {
         
         @Override
@@ -231,12 +248,15 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             }
         }
         
+        /**
+         * @brief Save database version to shared preference.
+         */
         private void saveToPrefs() {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
             SharedPreferences.Editor editor = prefs.edit();
 
             editor.putInt(AppConstants.PREF_KEY_DB_VERSION, DatabaseManager.DATABASE_VERSION);
-            editor.commit();
+            editor.apply();
         }
     }
 }

@@ -4,6 +4,8 @@
     <style name="AppTheme" parent="android:Theme.Holo.NoActionBar">
         <item name="android:actionBarStyle">@style/SDAActionBar</item>
         <item name="android:windowBackground">@color/theme_light_2</item>
+        <item name="android:textSize">@dimen/font_size_normal</item>
+        <item name="android:seekBarStyle">@style/SeekBarWidgetTheme</item>
     </style>
     
     <style name="SplashTheme" parent="android:Theme.NoTitleBar">
@@ -28,13 +30,12 @@
 　　　　    <item name="android:layout_height">match_parent</item>
 　　　　    <item name="android:gravity">left|center_vertical</item>
 　　　　    <item name="android:textColor">@color/selector_home_text</item>
-　　　　    <item name="android:textSize">@dimen/home_text_size</item>
 　　　　    <item name="android:duplicateParentState">true</item>
 　　　　    <item name="android:textAllCaps">true</item>
 　　　</style>
 
 	<style name="BorderedEditText" parent="@android:style/Widget.EditText">
-　　　         <item name="android:background">@drawable/border_printsettings_input</item>
+　　　         <item name="android:background">@drawable/selector_printsettings_input</item>
 　　　         <item name="android:gravity">center_vertical|center_horizontal</item>
 　　　         <item name="android:paddingBottom">@dimen/printsettings_input_padding_tb</item>
 　　　         <item name="android:paddingLeft">@dimen/printsettings_input_padding_lr</item>
@@ -42,7 +43,19 @@
 　　　         <item name="android:paddingTop">@dimen/printsettings_input_padding_tb</item>
 　　　         <item name="android:textColor">@color/theme_dark_1</item>
 　　　         <item name="android:textCursorDrawable">@null</item>
-　　　         <item name="android:textSize">@dimen/printsettings_input_text_size</item>
+ 　　　         <item name="android:imeOptions">flagNoExtractUi|actionDone</item>
     </style>
+    
+    <style name="SeekBarWidgetTheme" parent="android:Widget.Holo.Light.SeekBar">
+        <item name="android:progressDrawable">@drawable/widgettheme_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/widgettheme_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:thumb">@drawable/widgettheme_scrubber_control_selector_holo_light</item>
+    </style>
+    
+	<style name="EllipsizeText" parent="android:Widget.TextView">
+	    <item name="android:ellipsize">middle</item>
+	    <item name="android:maxLines">1</item>
+	    <item name="android:singleLine">true</item>
+	</style>
 
 </resources>

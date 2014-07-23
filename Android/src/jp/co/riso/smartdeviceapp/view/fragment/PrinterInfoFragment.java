@@ -9,20 +9,25 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.R;
+import jp.co.riso.android.dialog.DialogUtils;
+import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartprint.R;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,29 +35,36 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener, OnItemSelectedListener {
+/**
+ * @class PrinterInfo
+ * 
+ * @brief Fragment for Printer Info Screen
+ */
+public class PrinterInfoFragment extends BaseFragment implements OnCheckedChangeListener, OnItemSelectedListener, PauseableHandlerCallback {
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
-    public static final String KEY_PRINTER_INFO = "fragment_printer_info";
-    public static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
+    private static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
     private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
     private static final int ID_MENU_BACK_BUTTON = 0x11000005;
+    
+    private static final String KEY_PRINTER_INFO_ERR_DIALOG = "printer_info_err_dialog";
     
     private Printer mPrinter = null;
     
     private TextView mPrinterName = null;
     private TextView mIpAddress = null;
-    private TextView mStatus = null;
     private Switch mDefaultPrinter = null;
+    private ImageView mDefaultView = null;
     private Spinner mPort = null;
     
     private PrinterManager mPrinterManager = null;
     private PrintSettingsFragment mPrintSettingsFragment = null;
-    Timer mUpdateStatusTimer = null;
-    
+    private PauseableHandler mPauseableHandler = null;
+
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printerinfo;
@@ -61,24 +73,33 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mPauseableHandler = new PauseableHandler(this);
     }
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
+        mDefaultView = (ImageView) view.findViewById(R.id.img_default);
         mDefaultPrinter = (Switch) view.findViewById(R.id.default_printer_switch);
         mDefaultPrinter.setOnCheckedChangeListener(this);
         
         mPrinterName = (TextView) view.findViewById(R.id.inputPrinterName);
         mIpAddress = (TextView) view.findViewById(R.id.inputIpAddress);
-        mStatus = (TextView) view.findViewById(R.id.inputStatus);
         mPort = (Spinner) view.findViewById(R.id.inputPort);
         mPort.setOnItemSelectedListener(this);
         
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getActivity(), R.layout.printerinfo_port_item);
-        portAdapter.add(getString(R.string.ids_lbl_port_raw));
+        // Assumption is that LPR is always available
         portAdapter.add(getString(R.string.ids_lbl_port_lpr));
-        portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
+        if (mPrinter.getConfig().isRawAvailable()) {
+            portAdapter.add(getString(R.string.ids_lbl_port_raw));
+            portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
+        } else {
+            mPort.setVisibility(View.GONE);
+            // Port setting is always displayed as LPR
+            view.findViewById(R.id.defaultPort).setVisibility(View.VISIBLE);
+        }
         mPort.setAdapter(portAdapter);
+        mPort.setSelection(mPrinter.getPortSetting().ordinal());
     }
     
     @Override
@@ -104,12 +125,17 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                 }
             }
         }
-        mPrinterName.setText(mPrinter.getName());
+        String printerName = mPrinter.getName();
+        if(printerName == null || printerName.isEmpty()) {
+            printerName = getActivity().getResources().getString(R.string.ids_lbl_no_name);
+        }
+        mPrinterName.setText(printerName);
         mIpAddress.setText(mPrinter.getIpAddress());
         if (mPrinterManager.getDefaultPrinter() == mPrinter.getId()) {
-            mDefaultPrinter.setChecked(true);
-        }        
-        mPort.setSelection(mPrinter.getPortSetting());
+            mDefaultPrinter.setVisibility(View.GONE);
+            mDefaultView.setVisibility(View.VISIBLE);
+        }
+        mPort.setSelection(mPrinter.getPortSetting().ordinal());
     }
     
     @Override
@@ -117,68 +143,62 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
         savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter.getId());
         super.onSaveInstanceState(savedInstanceState);
     }
-    
+
     @Override
-    public void onPause() {
-        super.onPause();
-        mUpdateStatusTimer.cancel();
-        mUpdateStatusTimer = null;
+    public void clearIconStates() {
+        super.clearIconStates();
+        setIconState(ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, false);
     }
-    
+  
     @Override
     public void onResume() {
         super.onResume();
-        updateOnlineStatus();
+        mPauseableHandler.resume();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
+        if (mPauseableHandler != null) {
+            mPauseableHandler.resume();
+        }
     }
     
     // ================================================================================
     // Public Methods
     // ================================================================================
     
+    /**
+     * @brief Sets the printer object to be displayed by the Printer Info Screen.
+     * 
+     * @param printer Printer object
+     */
     public void setPrinter(Printer printer) {
         mPrinter = printer;
     }
-    
+
     // ================================================================================
-    // Private Methods
-    // ================================================================================
-    
-    public void updateOnlineStatus() {
-        
-        if (mUpdateStatusTimer != null) {
-            return;
-        }
-        
-        mUpdateStatusTimer = new Timer();
-        mUpdateStatusTimer.schedule(new TimerTask() {
-            
-            @Override
-            public void run() {
-                try {
-                    if (mPrinterManager.isOnline(mPrinter.getIpAddress())) {
-                        mStatus.setText(getString(R.string.ids_lbl_printer_status_online));
-                    }
-                } catch (Exception e) {
-                    mStatus.setText(getString(R.string.ids_lbl_printer_status_offline));
-                }
-            }
-        }, 0, AppConstants.CONST_UPDATE_INTERVAL);
-    }
-    
-    // ================================================================================
-    // INTERFACE - View.OnClickListener
+    // INTERFACE - PauseableHandlerCallback
     // ================================================================================
     
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    public boolean storeMessage(Message msg) {
+        return false;
+    }
+
+    @Override
+    public void processMessage(Message msg) {
+        switch (msg.what) {
             case ID_MENU_ACTION_PRINT_SETTINGS_BUTTON:
+                mPauseableHandler.pause();
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getActivity();
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                        View v = (View) msg.obj;
                         FragmentManager fm = getFragmentManager();
-                        
+                        setIconState(v.getId(), true);
                         mPrintSettingsFragment = null;
                         
                         if (mPrintSettingsFragment == null) {
@@ -200,6 +220,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                 }
                 break;
             case ID_MENU_BACK_BUTTON:
+                mPauseableHandler.pause();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 
@@ -207,6 +228,24 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
                     fm.popBackStack();
                     ft.commit();
                 }
+                break;
+        }        
+    }
+    
+    // ================================================================================
+    // INTERFACE - View.OnClickListener
+    // ================================================================================
+    
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case ID_MENU_ACTION_PRINT_SETTINGS_BUTTON:
+                Message newMessage = Message.obtain(mPauseableHandler, ID_MENU_ACTION_PRINT_SETTINGS_BUTTON);
+                newMessage.obj = v;
+                mPauseableHandler.sendMessage(newMessage);
+                break;
+            case ID_MENU_BACK_BUTTON:
+                mPauseableHandler.sendEmptyMessage(ID_MENU_BACK_BUTTON);
                 break;
         }
     }
@@ -218,19 +257,38 @@ public class PrinterInfoFragment extends BaseFragment implements OnCheckedChange
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
-            mPrinterManager.setDefaultPrinter(mPrinter);
-        } else {
-            mPrinterManager.clearDefaultPrinter();
+            if (mPrinterManager.setDefaultPrinter(mPrinter)) {
+                mDefaultPrinter.setVisibility(View.GONE);
+                mDefaultView.setVisibility(View.VISIBLE);
+            } else {
+                InfoDialogFragment info = InfoDialogFragment.newInstance(getActivity().getString(R.string.ids_lbl_printer_info),
+                        getActivity().getString(R.string.ids_err_msg_db_failure), getActivity().getString(R.string.ids_lbl_ok));
+                DialogUtils.displayDialog(getActivity(), KEY_PRINTER_INFO_ERR_DIALOG, info);
+                buttonView.setChecked(false);
+                // For versions below JELLY BEAN (4.2), the switch fails to return to its initial position
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    buttonView.requestLayout();
+                }
+            }
         }
     }
     
     // ================================================================================
-    // INTERFACE - onCheckedChanged
+    // INTERFACE - OnItemSelectedListener
     // ================================================================================
     
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-        mPrinter.setPortSetting(position);
+        PortSetting port = PortSetting.LPR;
+        switch (position) {
+            case 1:
+                port = PortSetting.RAW;
+                break;
+            default:
+                break;
+        }
+        mPrinter.setPortSetting(port);
+        mPrinterManager.updatePortSettings(mPrinter.getId(), port);
     }
     
     @Override

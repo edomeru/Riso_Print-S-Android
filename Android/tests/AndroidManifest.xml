@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="jp.co.riso.smartdeviceapp.test"
+    package="jp.co.riso.smartprint.test"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
-
+    
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> 
+    
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="jp.co.riso.smartdeviceapp" />
+        android:targetPackage="jp.co.riso.smartprint" />
     
     <instrumentation android:name="pl.polidea.instrumentation.PolideaInstrumentationTestRunner"
-        android:targetPackage="jp.co.riso.smartdeviceapp"/>
+        android:targetPackage="jp.co.riso.smartprint"/>
 
     <application
         android:allowBackup="true"

@@ -31,7 +31,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.util.Log;
 
 /**
  * Actual renderer class.
@@ -76,7 +75,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	private float mMaxPanY = 0.0f;
 
 	// Set to true to enable the border.
-	private static final boolean RENDER_DROP_SHADOW = true;
+	private static final boolean RENDER_DROP_SHADOW = false;
 
 	/*
 	 * Associated rectangle:
@@ -164,7 +163,11 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	}
 
 	protected void drawBackgroundShadow(GL10 gl) {
-		RectF rect = mObserver.getDropShadowRect();//new RectF(mPageRectRight);
+		if (!mObserver.onePageDrawnNotCurling()) {
+			return;
+		}
+
+		RectF rect = mObserver.getBorderRect();//new RectF(mPageRectRight);
 
 		if (rect != null) {
 			gl.glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
@@ -290,11 +293,17 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 	public void setBackgroundColor(int color) {
 		mBackgroundColor = color;
 	}
-	
+
+	/**
+	 * Sets the bind position
+	 */
 	public void setBindPosition(int bindPosition) {
 		mBindPosition = bindPosition;
 	}
-
+	
+	/**
+	 * Try to adjust the pan, set to limits if cannot adjust
+	 */
 	public void tryAdjustPan(float deltaX, float deltaY) {
 		float tempPanX = mPanX - (deltaX);
 		float tempPanY = mPanY - (deltaY);
@@ -315,7 +324,34 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		mPanX = tempPanX;
 		mPanY = tempPanY;
 	}
+	
+	/**
+	 * Sets the current pan of the view
+	 */
+	public void setPans(float panX, float panY) {
+		mPanX = panX;
+		mPanY = panY;
+		
+		tryAdjustPan(0, 0);
+	}
 
+	/**
+	 * Gets the current horizontal pan value.
+	 */
+	public float getPanX() {
+		return mPanX;
+	}
+
+	/**
+	 * Gets the current vertical pan value.
+	 */
+	public float getPanY() {
+		return mPanY;
+	}
+
+	/**
+	 * Sets the zoom level of the view
+	 */
 	public void setZoomLevel(float zoomLevel) {
 		mPanX = (mPanX * mZoomLevel) / zoomLevel;
 		mPanY = (mPanY * mZoomLevel) / zoomLevel;
@@ -326,7 +362,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		minMargin = Math.min(minMargin, mMargins.top);
 		minMargin = Math.min(minMargin, mMargins.bottom);
 
-		RectF rect = mObserver.getDropShadowRect();
+		RectF rect = mObserver.getBorderRect();
 
 		rect.left -= minMargin;
 		rect.right += minMargin;
@@ -401,6 +437,8 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 				mPageRectLeft.offset(mPageRectRight.width(), 0);
 			} else if (mBindPosition == CurlView.BIND_TOP) {
 				mPageRectLeft.offset(0, -mPageRectRight.height());
+			} else if (mBindPosition == CurlView.BIND_BOTTOM) {
+				mPageRectLeft.offset(0, mPageRectRight.height());
 			}
 
 			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
@@ -425,6 +463,9 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 			} else if (mBindPosition == CurlView.BIND_TOP) {
 				mPageRectLeft.bottom = (mPageRectLeft.bottom + mPageRectLeft.top) / 2;
 				mPageRectRight.top = mPageRectLeft.bottom;
+			} else if (mBindPosition == CurlView.BIND_BOTTOM) {
+				mPageRectLeft.top = (mPageRectLeft.bottom + mPageRectLeft.top) / 2;
+				mPageRectRight.bottom = mPageRectLeft.top;
 			}
 
 			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
@@ -456,7 +497,15 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 		 * what needs to be done when this happens.
 		 */
 		public void onSurfaceCreated();
-		
-		public RectF getDropShadowRect();
+
+		/**
+		 * Gets the curlview border rectangle
+		 */
+		public RectF getBorderRect();
+
+		/**
+		 * Check whether there is a single page and it is currently animation
+		 */
+		public boolean onePageDrawnNotCurling();
 	}
 }

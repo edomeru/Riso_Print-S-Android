@@ -2,37 +2,84 @@
 //  PrinterDetails.h
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/12/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
+/** 
+ * This is a non-NSManagedObject version of the Printer class.
+ * This is used as a temporary container for the printer info
+ * and capabilities when passing it around (i.e. between the
+ * SNMPManager and the PrinterManager) before finally adding
+ * it to the database.
+ */
 @interface PrinterDetails : NSObject
 
-// This is a non-NSManagedObject version of the Printer class.
-// This is used as a temporary container for the printer info
-// and capabilities when passing it around (i.e. between the
-// SNMPManager and the PrinterManager).
-// ..
-// WHAT IS THIS FOR?
-// Creating a Printer object also inserts an NSManagedObject
-// into the database. For temporary use, this object has to
-// be discarded before adding a new one, which presents a
-// problem for screens such as the Printer Search.
-// ..
-//TODO: find an alternative for this
-//TODO: NSDictionary? setting NSManagedObjectContext to nil?
-
+/**
+ * Printer name.
+ */
 @property (strong, nonatomic) NSString* name;
+
+/**
+ * Printer IP address.
+ */
 @property (strong, nonatomic) NSString* ip;
+
+/**
+ * Printer port (LPR or Raw).
+ */
 @property (strong, nonatomic) NSNumber* port;
-@property (assign, nonatomic) BOOL enBind;
-@property (assign, nonatomic) BOOL enBookletBind;
-@property (assign, nonatomic) BOOL enDuplex;
-@property (assign, nonatomic) BOOL enPagination;
+
+/**
+ * Printer capability (Booklet-Finishing).
+ */
+@property (assign, nonatomic) BOOL enBookletFinishing;
+
+/**
+ * Printer capability (3-hole Punch).
+ */
+@property (assign, nonatomic) BOOL enFinisher23Holes;
+
+/**
+ * Printer capability (4-hole Punch).
+ */
+@property (assign, nonatomic) BOOL enFinisher24Holes;
+
+/**
+ * Printer capability (Support for LPR).
+ */
+@property (assign, nonatomic) BOOL enLpr;
+
+/**
+ * Printer capability (Support for Raw).
+ */
+@property (assign, nonatomic) BOOL enRaw;
+
+/**
+ * Printer capability (Staple).
+ */
 @property (assign, nonatomic) BOOL enStaple;
-@property (assign, nonatomic) BOOL enLPR;
-@property (assign, nonatomic) BOOL enRAW;
+
+/**
+ * Printer capability (Face-down Output Tray).
+ */
+@property (assign, nonatomic) BOOL enTrayFaceDown;
+
+/**
+ * Printer capability (Stacking Output Tray).
+ */
+@property (assign, nonatomic) BOOL enTrayStacking;
+
+/**
+ * Printer capability (Top Output Tray).
+ */
+@property (assign, nonatomic) BOOL enTrayTop;
+
+/**
+ * Flag whether the printer was found during search (SNMP).
+ */
+@property (assign, nonatomic) BOOL isPrinterFound;
 
 @end

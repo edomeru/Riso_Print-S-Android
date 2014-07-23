@@ -2,8 +2,8 @@
 //  PrinterManager.m
 //  SmartDeviceApp
 //
-//  Created by Gino Mempin on 3/4/14.
-//  Copyright (c) 2014 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import "PrinterManager.h"
@@ -14,37 +14,49 @@
 #import "DefaultPrinter.h"
 #import "DatabaseManager.h"
 #import "SNMPManager.h"
-#import "PListUtils.h"
+#import "PListHelper.h"
+#import "NotificationNames.h"
+#import "PrintSettingsHelper.h"
 
 static PrinterManager* sharedPrinterManager = nil;
 
 @interface PrinterManager ()
 
-/** Stores the Printer objects currently existing in the DB */
+/** 
+ * Reference to all the Printer objects currently saved in the database.
+ * This list is auto-initialized at the start during the call to {@link sharedPrinterManager}.\n
+ * It is then auto-updated when add or delete operations are performed.
+ */
 @property (strong, nonatomic) NSMutableArray* listSavedPrinters;
 
-/** Stores a reference to the DefaultPrinter object in DB */
+/**
+ * Reference to the DefaultPrinter object.
+ * This property is not nil if there is a printer set as the default printer.
+ */
 @property (strong, nonatomic) DefaultPrinter* defaultPrinter;
 
-/** Number of Printer objects in the list of saved printers */
-@property (readwrite, assign, nonatomic) NSUInteger countSavedPrinters; //redeclare to modify
+/** 
+ * Number of Printer objects in {@link listSavedPrinters}.
+ * This counter is auto-updated when add or delete operations are performed.
+ */
+@property (readwrite, assign, nonatomic) NSUInteger countSavedPrinters;
 
-/** Maximum number of printers that are allowed to be added to the DB. */
+/**
+ * Maximum number of printers that are allowed to be added to the database.
+ */
 @property (assign, nonatomic) NSUInteger maxPrinterCount;
 
 /**
- Gets the list of Printers stored in DB.
- If the list is non-empty, this PrinterManager will keep
- a reference to this list as its list of saved printers.
+ * Gets the list of Printer objects saved in the database.
+ * This list is stored in the {@link listSavedPrinters} property.
  */
 - (void)getListOfSavedPrinters;
 
 /**
- Gets the DefaultPrinter object stored in DB.
- If this object exists, this PrinterManager will keep a
- reference to this DefaultPrinter object.
+ * Gets the DefaultPrinter object saved in the database.
+ * The DefaultPrinter object is stored in the {@link defaultPrinter} property.
  */
-- (void)getDefaultPrinter;
+- (void)retrieveDefaultPrinter;
 
 @end
 
@@ -59,7 +71,7 @@ static PrinterManager* sharedPrinterManager = nil;
     if (self)
     {
         self.searchDelegate = nil;
-        self.maxPrinterCount = [PListUtils readUint:PL_UINT_MAX_PRINTERS];
+        self.maxPrinterCount = [PListHelper readUint:kPlistUintValMaxPrinters];
         
 #if DEBUG_LOG_PRINTER_MANAGER
         NSLog(@"[INFO][PM] getting printers from DB");
@@ -69,7 +81,7 @@ static PrinterManager* sharedPrinterManager = nil;
 #if DEBUG_LOG_PRINTER_MANAGER
         NSLog(@"[INFO][PM] getting default printer from DB");
 #endif
-        [self getDefaultPrinter];
+        [self retrieveDefaultPrinter];
     }
     return self;
 }
@@ -91,8 +103,10 @@ static PrinterManager* sharedPrinterManager = nil;
     // create a PrintSetting object
     PrintSetting* defaultPrintSettings = (PrintSetting*)[DatabaseManager addObject:E_PRINTSETTING];
     if (defaultPrintSettings == nil)
+    {
         return NO;
-    [self copyDefaultPrintSettings:&defaultPrintSettings];
+    }
+    [PrintSettingsHelper copyDefaultPrintSettings:&defaultPrintSettings];
     
     // create a Printer object
     Printer* newPrinter = (Printer*)[DatabaseManager addObject:E_PRINTER];
@@ -104,20 +118,21 @@ static PrinterManager* sharedPrinterManager = nil;
     newPrinter.name = printerDetails.name;
     newPrinter.ip_address = printerDetails.ip;
     newPrinter.port = printerDetails.port;
-    newPrinter.enabled_bind = [NSNumber numberWithBool:printerDetails.enBind];
-    newPrinter.enabled_booklet_binding = [NSNumber numberWithBool:printerDetails.enBookletBind];
-    newPrinter.enabled_duplex = [NSNumber numberWithBool:printerDetails.enDuplex];
-    newPrinter.enabled_pagination = [NSNumber numberWithBool:printerDetails.enPagination];
+    newPrinter.enabled_booklet_finishing = [NSNumber numberWithBool:printerDetails.enBookletFinishing];
+    newPrinter.enabled_finisher_2_3_holes = [NSNumber numberWithBool:printerDetails.enFinisher23Holes];
+    newPrinter.enabled_finisher_2_4_holes = [NSNumber numberWithBool:printerDetails.enFinisher24Holes];
+    newPrinter.enabled_lpr = [NSNumber numberWithBool:printerDetails.enLpr];
+    newPrinter.enabled_raw = [NSNumber numberWithBool:printerDetails.enRaw];
     newPrinter.enabled_staple = [NSNumber numberWithBool:printerDetails.enStaple];
-    newPrinter.enabled_lpr = [NSNumber numberWithBool:printerDetails.enLPR];
-    newPrinter.enabled_raw = [NSNumber numberWithBool:printerDetails.enRAW];
+    newPrinter.enabled_tray_face_down = [NSNumber numberWithBool:printerDetails.enTrayFaceDown];
+    newPrinter.enabled_tray_stacking = [NSNumber numberWithBool:printerDetails.enTrayStacking];
+    newPrinter.enabled_tray_top = [NSNumber numberWithBool:printerDetails.enTrayTop];
     
     // attach the PrintSetting to the Printer
     newPrinter.printsetting = defaultPrintSettings;
     
     // set the online status
-    // since the printer will only be added if online, initial setting is YES
-    newPrinter.onlineStatus = [NSNumber numberWithBool:YES];
+    newPrinter.onlineStatus = [NSNumber numberWithBool:printerDetails.isPrinterFound];
     
     // save the Printer and PrintSetting objects to DB
     if ([DatabaseManager saveChanges])
@@ -127,6 +142,11 @@ static PrinterManager* sharedPrinterManager = nil;
 #endif
         [self.listSavedPrinters addObject:newPrinter];
         self.countSavedPrinters++;
+        if (self.countSavedPrinters == 1)
+        {
+            // if this is the only printer, also set it as the default printer
+            [self registerDefaultPrinter:newPrinter];
+        }
         return YES;
     }
     else
@@ -165,7 +185,7 @@ static PrinterManager* sharedPrinterManager = nil;
     self.countSavedPrinters = [self.listSavedPrinters count];
 }
 
-- (void)getDefaultPrinter
+- (void)retrieveDefaultPrinter
 {
     NSArray* results = [DatabaseManager getObjects:E_DEFAULTPRINTER];
     if ((results != nil) && [results count] > 0)
@@ -209,14 +229,40 @@ static PrinterManager* sharedPrinterManager = nil;
     Printer* printerToDelete = [self.listSavedPrinters objectAtIndex:index];
     
     // check if this printer is the default printer
-    if ([self.defaultPrinter.printer isEqual:printerToDelete])
+    if ([self isDefaultPrinter:printerToDelete])
     {
-        // delete the default printer first
-#if DEBUG_LOG_PRINTER_MANAGER
-        NSLog(@"[INFO][PM] this is the default printer, remove default printer object first");
-#endif
-        if (![self deleteDefaultPrinter])
-            return NO;
+        // check if this is NOT the last printer
+        if (self.countSavedPrinters > 1)
+        {
+            NSUInteger indexOfNext;
+            if (index == 0)
+            {
+                // mark the next printer as the default
+                indexOfNext = 1;
+            }
+            else
+            {
+                // mark the first printer as the default
+                indexOfNext = 0;
+            }
+            
+            if (![self registerDefaultPrinter:[self.listSavedPrinters objectAtIndex:indexOfNext]])
+                return NO;
+        }
+        else
+        {
+            // last printer
+            // just delete the default printer object
+            self.defaultPrinter.printer = nil;
+            if ([DatabaseManager deleteObject:self.defaultPrinter])
+            {
+                self.defaultPrinter = nil;
+            }
+            else
+            {
+                return NO;
+            }
+        }
     }
     
     // delete the printer
@@ -230,25 +276,9 @@ static PrinterManager* sharedPrinterManager = nil;
         return YES;
     }
     else
-        return NO;
-}
-
-- (BOOL)deleteDefaultPrinter
-{
-    if(self.defaultPrinter == nil)
-    {
-        return YES;
-    }
-    self.defaultPrinter.printer = nil;
-    if ([DatabaseManager deleteObject:self.defaultPrinter] == YES)
-    {
-        self.defaultPrinter = nil;
-    }
-    else
     {
         return NO;
     }
-    return YES;
 }
 
 - (BOOL)hasDefaultPrinter
@@ -266,6 +296,16 @@ static PrinterManager* sharedPrinterManager = nil;
         return YES;
     else
         return NO;
+}
+
+- (Printer*)getDefaultPrinter
+{
+    return self.defaultPrinter.printer;
+}
+
+- (BOOL)savePrinterChanges
+{
+    return [DatabaseManager saveChanges];
 }
 
 #pragma mark - Printers in Network (SNMP)
@@ -288,7 +328,8 @@ static PrinterManager* sharedPrinterManager = nil;
     NSLog(@"[INFO][PM] waiting for notifications from SNMP");
 #endif
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [SNMPManager searchForPrinter:printerIP];
+        SNMPManager* snmpManager = [SNMPManager sharedSNMPManager];
+        [snmpManager searchForPrinter:printerIP];
     });
     // after starting the search, control will immediately return to the screen controller
     // results of the search should be handled by the notification observers
@@ -312,7 +353,8 @@ static PrinterManager* sharedPrinterManager = nil;
     NSLog(@"[INFO][PM] waiting for notifications from SNMP");
 #endif
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [SNMPManager searchForAvailablePrinters];
+        SNMPManager* snmpManager = [SNMPManager sharedSNMPManager];
+        [snmpManager searchForAvailablePrinters];
     });
     // after starting the search, control will immediately return to the screen controller
     // results of the search should be handled by the notification observers
@@ -324,7 +366,9 @@ static PrinterManager* sharedPrinterManager = nil;
     NSLog(@"[INFO][PM] stop waiting for notifications");
 #endif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    //TODO: cascade the command to the SNMPManager
+    
+    SNMPManager* snmpManager = [SNMPManager sharedSNMPManager];
+    [snmpManager cancelSearch];
 }
 
 #pragma mark - SNMP Printer Search Notifications
@@ -336,18 +380,22 @@ static PrinterManager* sharedPrinterManager = nil;
 #endif
     
     // get the printer details
-    PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[notif object];
+    NSDictionary *userInfo = [notif userInfo];
+    PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[userInfo objectForKey:@"printerDetails"];
     
     // check if this is a new printer
     __weak PrinterManager* weakSelf = self;
     if ([self isIPAlreadyRegistered:printerInfoCapabilities.ip])
     {
-        // this is an old printer
-        // update the UI (UI thread)
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.searchDelegate printerSearchDidFoundOldPrinter:printerInfoCapabilities.ip
-                                                            withName:printerInfoCapabilities.name];
-        });
+        if ([self.searchDelegate respondsToSelector:@selector(printerSearchDidFoundOldPrinter:withName:)])
+        {
+            // this is an old printer
+            // update the UI (UI thread)
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.searchDelegate printerSearchDidFoundOldPrinter:printerInfoCapabilities.ip
+                                                                withName:printerInfoCapabilities.name];
+            });
+        }
     }
     else
     {
@@ -367,34 +415,17 @@ static PrinterManager* sharedPrinterManager = nil;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
+    //get the search result
+    NSDictionary *userInfo = [notif userInfo];
+    BOOL result = [(NSNumber*)[userInfo objectForKey:@"result"] boolValue];
+    
     __weak PrinterManager* weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.searchDelegate searchEnded];
+        [weakSelf.searchDelegate printerSearchEndedwithResult:result];
     });
 }
 
 #pragma mark - Printer Utilities
-
-- (void)copyDefaultPrintSettings:(PrintSetting**)printSetting;
-{
-    NSDictionary* defaultPrintSettings = [PListUtils readDefaultPrintSettings];
-    (*printSetting).bind = [defaultPrintSettings objectForKey:PS_BIND];
-    (*printSetting).booklet_binding = [defaultPrintSettings objectForKey:PS_BOOKLET_BINDING];
-    (*printSetting).booklet_tray = [defaultPrintSettings objectForKey:PS_BOOKLET_TRAY];
-    (*printSetting).catch_tray = [defaultPrintSettings objectForKey:PS_CATCH_TRAY];
-    (*printSetting).color_mode = [defaultPrintSettings objectForKey:PS_COLOR_MODE];
-    (*printSetting).copies = [defaultPrintSettings objectForKey:PS_COPIES];
-    (*printSetting).duplex = [defaultPrintSettings objectForKey:PS_DUPLEX];
-    (*printSetting).image_quality = [defaultPrintSettings objectForKey:PS_IMAGE_QUALITY];
-    (*printSetting).pagination = [defaultPrintSettings objectForKey:PS_PAGINATION];
-    (*printSetting).paper_size = [defaultPrintSettings objectForKey:PS_PAPER_SIZE];
-    (*printSetting).paper_type = [defaultPrintSettings objectForKey:PS_PAPER_TYPE];
-    (*printSetting).punch = [defaultPrintSettings objectForKey:PS_PUNCH];
-    (*printSetting).sort = [defaultPrintSettings objectForKey:PS_SORT];
-    (*printSetting).staple = [defaultPrintSettings objectForKey:PS_STAPLE];
-    (*printSetting).zoom = [defaultPrintSettings objectForKey:PS_ZOOM];
-    (*printSetting).zoom_rate = [defaultPrintSettings objectForKey:PS_ZOOM_RATE];
-}
 
 - (BOOL)isAtMaximumPrinters
 {

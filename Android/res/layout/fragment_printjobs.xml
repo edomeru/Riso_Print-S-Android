@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_printjobs_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,11 +7,20 @@
 
     <include layout="@layout/actionbar_main" />
 
-<!--     <FrameLayout
-        android:id="@+id/rootView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
- -->
+
+        <TextView
+            android:id="@+id/emptyJobsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/ids_lbl_printjobhistory_empty"
+            android:textColor="@color/theme_dark_1"
+            android:textSize="@dimen/font_size_large"
+            android:visibility="gone" />
+ 
         <ScrollView
             android:id="@+id/printJobScrollView"
             android:layout_width="match_parent"
@@ -28,19 +36,14 @@
                 <jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView
                     android:id="@+id/printJobsView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content" 
+                    android:orientation="horizontal" 
+                    android:gravity="center_horizontal"
+                    >
                 </jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView>
                 
             </LinearLayout>
         </ScrollView>
-
-<!--         <ProgressBar
-            android:id="@+id/printJobsLoadIndicator"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" 
-            android:visibility="gone" /> 
-    </FrameLayout>-->
+    </FrameLayout>
 
 </LinearLayout>
