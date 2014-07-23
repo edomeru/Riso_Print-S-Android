@@ -435,13 +435,14 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void UpdatePreviewInfo()
         {
+            _isBooklet = _currPrintSettings.Booklet;
+            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
+
             // Determine direction
             _isReverseOrder = ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
                           (!_isBooklet && _currPrintSettings.FinishingSide == (int)FinishingSide.Right));
 
             // Determine view mode
-            _isBooklet = _currPrintSettings.Booklet;
-            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
             if (_isBooklet)
             {
                 if (_currPrintSettings.Orientation == (int)Orientation.Landscape)
