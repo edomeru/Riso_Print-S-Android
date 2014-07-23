@@ -160,20 +160,10 @@ namespace SmartDeviceApp.Views
 
         private void viewer_ManipulationCompleted(object sender, Windows.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs e)
         {
-            this.Margin = new Thickness(0, 0, 0, 0);   
+            this.Margin = new Thickness(0, 0, 0, 0);
             if (isPulling)
             {
-                if (NetworkController.IsConnectedToNetwork)
-                {
-                    Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.RefreshingState);
-                }
-                else
-                {
-                    new ViewModelLocator().SearchPrinterViewModel.NoPrintersFound = true;
-                    Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
-                    var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                    DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
-                }
+                Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.RefreshingState);
             }
         }
 
