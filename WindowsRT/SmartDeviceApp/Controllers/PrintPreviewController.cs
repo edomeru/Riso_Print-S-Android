@@ -190,7 +190,7 @@ namespace SmartDeviceApp.Controllers
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();
 
-                _printPreviewViewModel.SetInitialPageIndex(0, _isBooklet);
+                _printPreviewViewModel.SetInitialPageIndex(0, _isBooklet, (uint)_pagesPerSheet);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
                 _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
@@ -490,7 +490,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     _currSliderIndex = (int)_previewPageTotal - 1;
                 }
-                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet);
+                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet,(uint) _pagesPerSheet);
             }
 
             _maxPreviewPageCount = (int)_previewPageTotal;
