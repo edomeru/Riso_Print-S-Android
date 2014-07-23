@@ -190,7 +190,7 @@ namespace SmartDeviceApp.Controllers
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();
 
-                _printPreviewViewModel.SetInitialPageIndex(0, _isBooklet);
+                _printPreviewViewModel.SetInitialPageIndex(0, _isBooklet, (uint)_pagesPerSheet);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
                 _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
@@ -435,13 +435,14 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void UpdatePreviewInfo()
         {
+            _isBooklet = _currPrintSettings.Booklet;
+            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
+
             // Determine direction
             _isReverseOrder = ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
                           (!_isBooklet && _currPrintSettings.FinishingSide == (int)FinishingSide.Right));
 
             // Determine view mode
-            _isBooklet = _currPrintSettings.Booklet;
-            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
             if (_isBooklet)
             {
                 if (_currPrintSettings.Orientation == (int)Orientation.Landscape)
@@ -489,7 +490,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     _currSliderIndex = (int)_previewPageTotal - 1;
                 }
-                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet);
+                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet,(uint) _pagesPerSheet);
             }
 
             _maxPreviewPageCount = (int)_previewPageTotal;
@@ -1117,9 +1118,14 @@ namespace SmartDeviceApp.Controllers
                             if (_isSwipeLeft && _currLeftBackPageIndex < 0)
                                 _printPreviewViewModel.LeftNextPageImage.Clear();
                             else if (_currLeftBackPageIndex > 0)
-                                WriteableBitmapExtensions.FromByteArray(
+                            {
+                                if (_isReverseOrder && _currRightPageIndex < _maxPreviewPageCount - 1) //Check if it is in right bind and not last page
+                                {
+                                    WriteableBitmapExtensions.FromByteArray(
                                             _printPreviewViewModel.LeftNextPageImage,
                                             _previewPageImages.GetValue(_currLeftBackPageIndex - 2));
+                                }
+                            }
                         }
                         _printPreviewViewModel.IsLoadLeftBackPageActive = false;
                         _printPreviewViewModel.IsLoadLeftNextPageActive = false;
