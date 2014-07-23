@@ -20,6 +20,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Data.Pdf;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media.Imaging;
@@ -36,8 +37,8 @@ namespace SmartDeviceApp.Controllers
         private const string TEMP_PDF_NAME = "tempDoc.pdf";
         private const string PDF_PASSWORD_EMPTY = "";
 
-        private LruCacheHelper<int, WriteableBitmap> _logicalPageImages =
-            new LruCacheHelper<int, WriteableBitmap>(MAX_LOGICAL_PAGE_IMAGE_CACHE);
+        private LruCacheHelper<int, LogicalPage> _logicalPages =
+            new LruCacheHelper<int, LogicalPage>(MAX_LOGICAL_PAGE_IMAGE_CACHE);
 
         private Document _document;
 
@@ -113,7 +114,7 @@ namespace SmartDeviceApp.Controllers
                 Result = LoadDocumentResult.Successful;
                 IsPdfPortrait = GetPdfOrientation(0);
 
-                GenerateLogicalPageImages(0, MAX_LOGICAL_PAGE_IMAGE_CACHE, new CancellationTokenSource());
+                GenerateLogicalPages(0, MAX_LOGICAL_PAGE_IMAGE_CACHE, new CancellationTokenSource());
             }
             catch (Exception ex)
             {
@@ -140,7 +141,7 @@ namespace SmartDeviceApp.Controllers
         public async Task Unload()
         {
             await StorageFileUtility.DeleteAllTempFiles();
-            _logicalPageImages.Clear();
+            _logicalPages.Clear();
             _document = null;
             PageCount = 0;
             PdfFile = null;
@@ -149,18 +150,18 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Fetches generated logical page images
+        /// Fetches generated logical pages
         /// </summary>
         /// <param name="basePageIndex">start page index</param>
         /// <param name="numPages">number of pages needed</param>
         /// <param name="cancellationToken">cancellation token</param>
-        /// <returns>task; list of logical page images</returns>
-        public async Task<List<WriteableBitmap>> GetLogicalPageImages(int basePageIndex,
+        /// <returns>task; list of logical pages</returns>
+        public async Task<List<LogicalPage>> GetLogicalPages(int basePageIndex,
             int numPages, CancellationTokenSource cancellationToken)
         {
             LogUtility.BeginTimestamp("GetLogicalPages #" + basePageIndex);
 
-            List<WriteableBitmap> logicalPages = new List<WriteableBitmap>();
+            List<LogicalPage> logicalPages = new List<LogicalPage>();
 
             if (basePageIndex < 0 || basePageIndex > PageCount - 1)
             {
@@ -176,13 +177,13 @@ namespace SmartDeviceApp.Controllers
                     return logicalPages;
                 }
 
-                if (_logicalPageImages.ContainsKey(pageIndex))
+                if (_logicalPages.ContainsKey(pageIndex))
                 {
-                    logicalPages.Add(_logicalPageImages.GetValue(pageIndex));
+                    logicalPages.Add(_logicalPages.GetValue(pageIndex));
                 }
                 else
                 {
-                    WriteableBitmap pageBitmap = await GenerateLogicalPageImage(pageIndex, cancellationToken);
+                    LogicalPage logicalPage = await GenerateLogicalPage(pageIndex, cancellationToken);
 
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -190,12 +191,12 @@ namespace SmartDeviceApp.Controllers
                         return logicalPages;
                     }
 
-                    logicalPages.Add(pageBitmap);
-                    _logicalPageImages.Add(pageIndex, pageBitmap);
+                    logicalPages.Add(logicalPage);
+                    _logicalPages.Add(pageIndex, logicalPage);
                 }
             }
 
-            GenerateLogicalPageImages(pageIndex, MAX_LOGICAL_PAGE_IMAGE_CACHE, cancellationToken);
+            GenerateLogicalPages(pageIndex, MAX_LOGICAL_PAGE_IMAGE_CACHE, cancellationToken);
 
             LogUtility.EndTimestamp("GetLogicalPages #" + basePageIndex);
 
@@ -203,12 +204,12 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Generates logical page images and adds them to cache
+        /// Generates logical pages and adds them to cache
         /// </summary>
         /// <param name="basePageIndex">start page index</param>
         /// <param name="numPages">number of pages needed</param>
         /// <param name="cancellationToken">cancellation token</param>
-        private async void GenerateLogicalPageImages(int basePageIndex, int numPages,
+        private async void GenerateLogicalPages(int basePageIndex, int numPages,
             CancellationTokenSource cancellationToken)
         {
             LogUtility.BeginTimestamp("GenerateLogicalPageImages #" + basePageIndex);
@@ -229,8 +230,8 @@ namespace SmartDeviceApp.Controllers
                     return;
                 }
 
-                _logicalPageImages.Add(pageIndex,
-                    await GenerateLogicalPageImage(pageIndex, cancellationToken));
+                _logicalPages.Add(pageIndex,
+                    await GenerateLogicalPage(pageIndex, cancellationToken));
             }
 
             LogUtility.EndTimestamp("GenerateLogicalPageImages #" + basePageIndex);
@@ -239,12 +240,12 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Generates a single logical page image
+        /// Generates a single logical page
         /// </summary>
         /// <param name="pageIndex">page index</param>
         /// <param name="cancellationToken">cancellation token</param>
-        /// <returns>task; logical page image</returns>
-        private async Task<WriteableBitmap> GenerateLogicalPageImage(int pageIndex,
+        /// <returns>task; logical page</returns>
+        private async Task<LogicalPage> GenerateLogicalPage(int pageIndex,
             CancellationTokenSource cancellationToken)
         {
             using (PdfPage pdfPage = _document.PdfDocument.GetPage((uint)(pageIndex)))
@@ -274,7 +275,11 @@ namespace SmartDeviceApp.Controllers
 
                     await raStream.FlushAsync();
 
-                    return pageBitmap;
+                    LogicalPage logicalPage = new LogicalPage(pageBitmap,
+                        new Size(pageBitmap.PixelWidth, pageBitmap.PixelHeight),
+                        pdfPage.Size.Width <= pdfPage.Size.Height);
+
+                    return logicalPage;
                 }
             }
         }
@@ -282,7 +287,7 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Determines the orientation of the PDF document based on its initial page
         /// </summary>
-        public bool GetPdfOrientation(uint index)
+        private bool GetPdfOrientation(uint index)
         {
             if (index >= PageCount)
             {

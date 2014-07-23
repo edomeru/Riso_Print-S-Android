@@ -11,9 +11,14 @@
 //
 
 using Windows.Data.Pdf;
+using Windows.Foundation;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SmartDeviceApp.Models
 {
+    /// <summary>
+    /// Represents the PDF file
+    /// </summary>
     public class Document
     {
 
@@ -44,6 +49,43 @@ namespace SmartDeviceApp.Models
             OrigSource = sourceFilePath;
             TempSource = tempSource;
             PdfDocument = pdfDocument;
+        }
+
+    }
+
+    /// <summary>
+    /// Represents a single page from the PDF
+    /// </summary>
+    public class LogicalPage
+    {
+
+        /// <summary>
+        /// Page image
+        /// </summary>
+        public WriteableBitmap Image { get; private set; }
+
+        /// <summary>
+        /// Actual image size in pixels
+        /// </summary>
+        public Size ActualSize { get; private set; }
+
+        /// <summary>
+        /// Flag to determine the orientation of the page.
+        /// True when portrait, false otherwise (landscape).
+        /// </summary>
+        public bool IsPortrait { get; private set; }
+
+        /// <summary>
+        /// LogicalPage class constructor
+        /// </summary>
+        /// <param name="image">page image</param>
+        /// <param name="actualSize">actual image size</param>
+        /// <param name="isPortrait">true when portrait, false otherwise</param>
+        public LogicalPage(WriteableBitmap image, Size actualSize, bool isPortrait)
+        {
+            Image = image;
+            ActualSize = actualSize;
+            IsPortrait = isPortrait;
         }
 
     }

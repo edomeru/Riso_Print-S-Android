@@ -14,6 +14,7 @@ using GalaSoft.MvvmLight.Threading;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -235,7 +236,7 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="canvasSize">canvas size</param>
         /// <param name="overlayBitmap">overlay image</param>
         /// <param name="overlaySize">overlay size</param>
-        /// <param name="isPdfPortrait">true when first logical page is portrait, false otherwise</param>
+        /// <param name="isPdfPortrait">true when logical page is portrait, false otherwise</param>
         /// <param name="isPortrait">true when selected orientation is portrait, false otherwise</param>
         /// <param name="enableScaleToFit">true when fit to scale, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
@@ -261,20 +262,27 @@ namespace SmartDeviceApp.Common.Utilities
 
                 // Determine logical page size if cropping is needed
                 // If not cropped, logical page just fits into paper
-                int cropWidth = (int)canvasSize.Width;
+                double cropWidth = canvasSize.Width;
                 if (canvasSize.Width > overlaySize.Width)
                 {
-                    cropWidth = (int)overlaySize.Width;
+                    cropWidth = overlaySize.Width;
                 }
-                int cropHeight = (int)canvasSize.Height;
+                double cropHeight = canvasSize.Height;
                 if (canvasSize.Height > overlaySize.Height)
                 {
-                    cropHeight = (int)overlaySize.Height;
+                    cropHeight = overlaySize.Height;
                 }
 
                 // Source and destination rectangle are the same since
                 // logical page is cropped using the rectangle and put as in into the paper
-                Rect rect = new Rect(0, 0, cropWidth, cropHeight);
+                Rect srcRect = new Rect(0, 0, cropWidth, cropHeight);
+                Rect destRect = srcRect;
+                if (rotateLeft)
+                {
+                    // Adjust start position to anchor on bottom-left of the canvas
+                    srcRect.Y = overlaySize.Height - cropHeight;
+                    destRect.Y = canvasSize.Height - cropHeight;
+                }
 
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -287,8 +295,8 @@ namespace SmartDeviceApp.Common.Utilities
                     DispatcherHelper.CheckBeginInvokeOnUI(
                         () =>
                         {
-                            WriteableBitmapExtensions.Blit(canvasBitmap, rect,
-                                WriteableBitmapExtensions.Rotate(overlayBitmap, 270), rect);
+                            WriteableBitmapExtensions.Blit(canvasBitmap, destRect,
+                                WriteableBitmapExtensions.Rotate(overlayBitmap, 270), srcRect);
                         });
                 }
                 else
@@ -296,7 +304,8 @@ namespace SmartDeviceApp.Common.Utilities
                     DispatcherHelper.CheckBeginInvokeOnUI(
                         () =>
                         {
-                            WriteableBitmapExtensions.Blit(canvasBitmap, rect, overlayBitmap, rect);
+                            WriteableBitmapExtensions.Blit(canvasBitmap, destRect, overlayBitmap,
+                                srcRect);
                         });
                 }
 
@@ -306,33 +315,27 @@ namespace SmartDeviceApp.Common.Utilities
         /// <summary>
         /// Applies imposition (uses selected imposition order).
         /// Imposition images are assumed to be applied with selected paper size and orientation.
-        /// The page images are assumed to be in order based on logical page index.
+        /// The overlay images are assumed to be in order based on logical page index.
         /// </summary>
         /// <param name="canvasBitmap">canvas</param>
         /// <param name="canvasSize">canvas size</param>
-        /// <param name="overlayImages">overlay image</param>
-        /// <param name="overlaySize">overlay size</param>
+        /// <param name="overlayList">list of logical pages</param>
         /// <param name="orientation">orientation</param>
         /// <param name="imposition">imposition</param>
         /// <param name="impositionOrder">imposition order</param>
         /// <param name="scaleToFit">scaleToFit</param>
-        /// <param name="isPdfPortrait">true when first logical page is portrait, false otherwise</param>
         /// <param name="isPortrait">true when selected orientation is portrait, false otherwise</param>
         /// <param name="isImpositionPortrait">sets the new orientation based on imposition; true if portrait, false otherwise</param>
-        /// <param name="rotateLeft">true when rotate left is enabled, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
         public static void OverlayImagesForImposition(WriteableBitmap canvasBitmap, Size canvasSize,
-            List<WriteableBitmap> overlayImages, Size overlaySize, int logicalPageIndex, int orientation, int imposition,
-            int impositionOrder, bool scaleToFit, bool isPdfPortrait, bool isPortrait,
+            List<LogicalPage> overlayList, int orientation, int imposition,
+            int impositionOrder, bool scaleToFit, bool isPortrait,
             out bool isImpositionPortrait, CancellationTokenSource cancellationToken)
         {
             // Determine final orientation based on imposition
             int pagesPerSheet = GetPagesPerSheet(imposition);
-            
-            
             isImpositionPortrait = IsPreviewPagePortrait(orientation, imposition);
 
-            
             // Compute number of pages per row and column
             int pagesPerRow = 0;
             int pagesPerColumn = 0;
@@ -357,7 +360,6 @@ namespace SmartDeviceApp.Common.Utilities
             double marginBetweenPages = PrintSettingConstant.MARGIN_IMPOSITION_BETWEEN_PAGES * ImageConstant.BASE_DPI;
             Size impositionPageAreaSize = GetImpositionSinglePageAreaSize(canvasSize,
                 pagesPerRow, pagesPerColumn, marginBetweenPages, marginPaper);
-            
 
             // Set initial positions
             double initialOffsetX = 0;
@@ -382,25 +384,26 @@ namespace SmartDeviceApp.Common.Utilities
             int impositionPageIndex = 0;
             double pageImageOffsetX = initialOffsetX;
             double pageImageOffsetY = initialOffsetY;
-            int pageIndex = logicalPageIndex;
-            foreach (WriteableBitmap impositionPageBitmap in overlayImages)
+            foreach (LogicalPage logicalPage in overlayList)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
                     return;
                 }
 
-                bool rotateLeft = (DocumentController.Instance.GetPdfOrientation((uint)pageIndex) != isPortrait);
-                pageIndex++;
+                Size overlaySize = logicalPage.ActualSize;
+                bool rotateLeft = (logicalPage.IsPortrait != isPortrait);
 
-                
-                Size scaledSize = GetScaledSize(impositionPageAreaSize, overlaySize);
-                
+                if (rotateLeft)
+                {
+                    overlaySize = new Size(overlaySize.Height, overlaySize.Width); // Swap dimensions
+                }
 
                 // Put imposition page image in center of imposition page area
                 double x = marginPaper + pageImageOffsetX;
                 double y = marginPaper + pageImageOffsetY;
 
+                // Determine source and destination rectangles
                 Rect srcRect = new Rect();
                 srcRect.X = 0;
                 srcRect.Y = 0;
@@ -409,6 +412,8 @@ namespace SmartDeviceApp.Common.Utilities
                 destRect.Y = y;
                 if (scaleToFit)
                 {
+                    Size scaledSize = GetScaledSize(impositionPageAreaSize, overlaySize);
+
                     srcRect.Width = overlaySize.Width;
                     srcRect.Height = overlaySize.Height;
                     destRect.X += (impositionPageAreaSize.Width - scaledSize.Width) / 2;
@@ -421,16 +426,42 @@ namespace SmartDeviceApp.Common.Utilities
                     double factor = 1.0;
                     if (imposition == (int)Imposition.FourUp)
                     {
-                        factor = 0.5;
+                        factor = 0.50;
                     }
                     else if (imposition == (int)Imposition.TwoUp)
                     {
-                        factor = 0.75;
+                        factor = 0.705; // Approximation
                     }
-                    srcRect.Width = overlaySize.Width * factor;
-                    srcRect.Height = overlaySize.Height * factor;
-                    destRect.Width = canvasSize.Width * factor;
-                    destRect.Height = canvasSize.Height * factor;
+
+                    Size scaledOverlaySize = new Size(overlaySize.Width * factor,
+                                                      overlaySize.Height * factor);
+
+                    // Determine size of each rectangle (to crop or not)
+                    double srcWidth = impositionPageAreaSize.Width / factor;
+                    double destWidth = impositionPageAreaSize.Width;
+                    if (impositionPageAreaSize.Width > scaledOverlaySize.Width)
+                    {
+                        srcWidth = overlaySize.Width;
+                        destWidth = scaledOverlaySize.Width;
+                    }
+                    double srcHeight = impositionPageAreaSize.Height / factor;
+                    double destHeight = impositionPageAreaSize.Height;
+                    if (impositionPageAreaSize.Height > scaledOverlaySize.Height)
+                    {
+                        srcHeight = overlaySize.Height;
+                        destHeight = scaledOverlaySize.Height;
+                    }
+
+                    srcRect.Width = srcWidth;
+                    srcRect.Height = srcHeight;
+                    destRect.Width = destWidth;
+                    destRect.Height = destHeight;
+                    if (rotateLeft)
+                    {
+                        // Adjust start position to anchor on bottom-left of each imposition area
+                        srcRect.Y = overlaySize.Height - srcHeight;
+                        destRect.Y = y + impositionPageAreaSize.Height - destHeight;
+                    }
                 }
 
                 if (rotateLeft)
@@ -439,7 +470,7 @@ namespace SmartDeviceApp.Common.Utilities
                         () =>
                         {
                             WriteableBitmapExtensions.Blit(canvasBitmap, destRect,
-                                WriteableBitmapExtensions.Rotate(impositionPageBitmap, 270), srcRect);
+                                WriteableBitmapExtensions.Rotate(logicalPage.Image, 270), srcRect);
                         });
                 }
                 else
@@ -448,7 +479,7 @@ namespace SmartDeviceApp.Common.Utilities
                         () =>
                         {
                             WriteableBitmapExtensions.Blit(canvasBitmap, destRect,
-                                impositionPageBitmap, srcRect);
+                                logicalPage.Image, srcRect);
                         });
                 }
 
@@ -562,13 +593,13 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="punch">punch</param>
         /// <param name="enabledPunchFour">true when punch4 is enabled, false when punch3 is enabled</param>
         /// <param name="staple">staple</param>
-        /// <param name="isPortrait">true when portrait, false, otherwise</param>
+        /// <param name="isPortrait">true when portrait, false otherwise</param>
         /// <param name="isRightSide">true when page is on right side, false otherwise</param>
         /// <param name="isBackSide">true if for backside (duplex), false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
         public static void FormatPageImageForDuplex(WriteableBitmap canvasBitmap, Size canvasSize,
             int duplexType, int finishingSide, int punch, bool enabledPunchFour, int staple,
-            bool isPdfPortrait, bool isPortrait, bool isRightSide, bool isBackSide,
+            bool isPortrait, bool isRightSide, bool isBackSide,
             CancellationTokenSource cancellationToken)
         {
             // Rotate image if needed
