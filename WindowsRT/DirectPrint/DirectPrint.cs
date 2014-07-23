@@ -127,7 +127,7 @@ namespace DirectPrint
 
 #if DEBUG
             // Dump print job to temp file
-            using (printJobStream = await ApplicationData.Current.TemporaryFolder.OpenStreamForWriteAsync(
+            using (printJobStream = await ApplicationData.Current.LocalFolder.OpenStreamForWriteAsync(
                 String.Format("{0}.txt", DateTime.Now.ToString("yyyyMMddHHmmss")),
                 CreationCollisionOption.ReplaceExisting))
             {
