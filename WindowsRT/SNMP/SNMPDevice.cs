@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Networking;
 
 namespace SNMP
@@ -85,7 +86,7 @@ namespace SNMP
             udpSocket = new UDPSocket();
             udpSocket.assignDelegate(receiveData);
 
-            udpSocket.assignTimeoutDelegate(timeout);
+            //udpSocket.assignTimeoutDelegate(timeout); // BTS#14788 - Do not use socket timeout. Use own timer, see startTimer().
         
         }
 
@@ -118,6 +119,8 @@ namespace SNMP
  
             //check if supported printer
             sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, RISODeviceMIB.ToArray());
+
+            startTimer(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT);
         }
 
         void endRetrieveCapabilitiesSuccess()
@@ -313,7 +316,7 @@ namespace SNMP
                    this.Description.Equals("RISO IS950C-G");
         }
 
-        private void timeout(HostName sender, byte[] responsedata)
+        private void timeoutHandler() //HostName sender, byte[] responsedata)
         {
             if (udpSocket != null)
             {
@@ -335,6 +338,17 @@ namespace SNMP
                 {
                     snmpControllerDeviceTimeOut(this);
                 }
+            }
+        }
+
+        private async void startTimer(byte timeout)
+        {
+            await Task.Delay(timeout * 1000);
+
+            if (!callbackCalled)
+            {
+                udpSocket.close();
+                timeoutHandler();
             }
         }
 
