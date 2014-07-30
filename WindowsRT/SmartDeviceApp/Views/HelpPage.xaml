@@ -12,7 +12,9 @@
     DataContext="{Binding HelpViewModel, Source={StaticResource Locator}}">
 
     <controls:ViewControl 
-        Text="{Binding Source=IDS_LBL_HELP, Converter={StaticResource ResourceStringToTextConverter}}" >
+        Text="{Binding Source=IDS_LBL_HELP, Converter={StaticResource ResourceStringToTextConverter}}"
+        Button1Visibility="Collapsed"
+        Button2Visibility="Collapsed">
         <WebView Source="ms-appx-web:///Assets/help.html" DefaultBackgroundColor="Transparent">
             <WebView.Margin>
                 <Thickness Top="{StaticResource MARGIN_Default}"

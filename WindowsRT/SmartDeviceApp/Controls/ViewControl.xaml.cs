@@ -19,6 +19,9 @@ using Windows.UI.Core;
 using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Converters;
 
 namespace SmartDeviceApp.Controls
 {
@@ -191,6 +194,20 @@ namespace SmartDeviceApp.Controls
             set { SetValue(Button2VisibilityProperty, value); }
         }
 
+        /// <summary>
+        /// On loaded event
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">event argument</param>
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            ResizeTitleTextWidth(ViewModel.ViewMode);
+        }
+
+        /// <summary>
+        /// Handle view mode updates
+        /// </summary>
+        /// <param name="viewMode">current view mode</param>
         private void SetViewMode(ViewMode viewMode)
         {
             if (viewMode == ViewMode.FullScreen)
@@ -199,6 +216,62 @@ namespace SmartDeviceApp.Controls
                 if (button1.Visibility == Visibility.Visible) button1.IsChecked = false;
                 if (button2.Visibility == Visibility.Visible) button2.IsChecked = false;
             }
+
+            if (viewMode != ViewMode.Unknown)
+            {
+                ResizeTitleTextWidth(viewMode);
+            }
+        }
+
+        /// <summary>
+        /// Resizes the title text width based on screen size
+        /// </summary>
+        /// <param name="viewMode">current view mode</param>
+        private void ResizeTitleTextWidth(ViewMode viewMode)
+        {
+            if (Visibility == Visibility.Collapsed) return;
+
+            // Adjust widths
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            var rightPaneWidth = (double)Application.Current.Resources["SIZE_SidePaneWidthWithBorder"];
+
+            var maxTextWidth = (int)Window.Current.Bounds.Width;
+
+            // Left and right margins
+            maxTextWidth -= ((int)defaultMargin * 2);
+
+            // Main menu button is always visible
+            {
+                var imageWidth = (int)mainMenuButton.ActualWidth;
+                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(this, true);
+                maxTextWidth -= imageWidth;
+                maxTextWidth -= (int)defaultMargin;
+            }
+            // Button1 is visible
+            if (Button1Visibility == Visibility.Visible)
+            {
+                var imageWidth = (int)button1.ActualWidth;
+                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(this, true);
+                maxTextWidth -= imageWidth;
+                maxTextWidth -= (int)defaultMargin;
+            }
+            // Button2 is visible
+            if (Button2Visibility == Visibility.Visible)
+            {
+                var imageWidth = (int)button2.ActualWidth;
+                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(this, true);
+                maxTextWidth -= imageWidth;
+                maxTextWidth -= (int)defaultMargin;
+            }
+
+            // RightPaneVisible_ResizeWidth view mode
+            if (viewMode == ViewMode.RightPaneVisible_ResizedWidth)
+            {
+                maxTextWidth -= (int)rightPaneWidth;
+            }
+
+            viewTitle.Width = maxTextWidth;
+            viewTitle.MaxWidth = maxTextWidth;
         }
 
         /// <summary>
