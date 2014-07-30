@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Constants;
 
 namespace SmartDeviceApp.Controls
 {
@@ -112,13 +113,13 @@ namespace SmartDeviceApp.Controls
             if ((Visibility)e.NewValue == Visibility.Collapsed)
             {
                 VisualStateManager.GoToState(deleteButton, "Collapsed", true);
-                control.SetValue(ValueVisibilityProperty, Visibility.Visible);                
+                control.SetValue(ValueVisibilityProperty, Visibility.Visible);
             }
             else
             {
                 control.deleteButton.Visibility = Visibility.Visible;
                 control.SetValue(ValueVisibilityProperty, Visibility.Collapsed);
-                VisualStateManager.GoToState(deleteButton, "Visible", true);                
+                VisualStateManager.GoToState(deleteButton, "Visible", true);
             }            
         }
 
@@ -137,6 +138,13 @@ namespace SmartDeviceApp.Controls
             // Change style of KeyText to No Text Trimming
             TextBlock keyTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "key"); // "key" as defined in KeyValueControl.xaml
             keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeyNoTextTrim"];
+
+            // Set separator start point
+            if (SeparatorVisibility == Visibility.Visible)
+            {
+                SeparatorStartPoint = ViewControlUtility.GetSeparatorStartPoint(sender,
+                                                                    IsListItem, IconVisibility);
+            }
         }
     }
 }

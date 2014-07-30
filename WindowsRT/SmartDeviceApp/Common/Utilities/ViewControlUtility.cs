@@ -10,6 +10,7 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Constants;
 using System;
 using System.Text;
 using Windows.Foundation;
@@ -23,6 +24,10 @@ namespace SmartDeviceApp.Common.Utilities
     {
 
         private const string STR_ELLIPSIS = "...";
+
+        private static double SIZE_MARGIN_NONE = (double)Application.Current.Resources["MARGIN_None"];
+        private static double SIZE_MARGIN_DEFAULT = (double)Application.Current.Resources["MARGIN_Default"];
+        private static double SIZE_MARGIN_SMALL = (double)Application.Current.Resources["MARGIN_Small"];
 
         /// <summary>
         /// Retrieves the TextBlock control from a parent based on its key
@@ -144,6 +149,33 @@ namespace SmartDeviceApp.Common.Utilities
             };
 
             return trimmedText;
+        }
+
+        /// <summary>
+        /// Computes the separator start point based on control type and left icon visibility
+        /// </summary>
+        /// <param name="sender">target control</param>
+        /// <param name="isListItem">true when is a list item, false otherwise</param>
+        /// <param name="iconVisibility">left icon visibility</param>
+        /// <returns>separator start point</returns>
+        public static double GetSeparatorStartPoint(object sender, bool isListItem, Visibility iconVisibility)
+        {
+            double separatorStartPoint = SIZE_MARGIN_NONE;
+
+            if (isListItem)
+            {
+                if (iconVisibility == Visibility.Visible)
+                {
+                    var imageWidth = ImageConstant.GetIconImageWidth(sender, true);
+                    separatorStartPoint = imageWidth + (SIZE_MARGIN_DEFAULT * 2);
+                }
+                else
+                {
+                    separatorStartPoint = SIZE_MARGIN_DEFAULT;
+                }
+            }
+
+            return separatorStartPoint;
         }
 
     }
