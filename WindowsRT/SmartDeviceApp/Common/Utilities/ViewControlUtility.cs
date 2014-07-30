@@ -37,20 +37,19 @@ namespace SmartDeviceApp.Common.Utilities
                 return (TextBlock)parent;
             }
 
-            TextBlock result = null;
             int count = VisualTreeHelper.GetChildrenCount(parent);
             for (int i = 0; i < count; ++i)
             {
                 UIElement child = (UIElement)VisualTreeHelper.GetChild(parent, i);
 
-                TextBlock result2 = GetTextBlockFromParent(child, key);
-                if (result2 != null)
+                TextBlock result = GetTextBlockFromParent(child, key);
+                if (result != null)
                 {
-                    result = result2;
-                    break;
+                    return result;
                 }
             }
-            return result;
+
+            return null;
         }
 
         /// <summary>
