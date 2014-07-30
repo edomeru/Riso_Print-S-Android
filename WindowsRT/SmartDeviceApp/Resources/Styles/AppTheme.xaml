@@ -68,7 +68,8 @@
     <conv:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
     <conv:HeightConverter x:Key="HeightConverter"/>
     <conv:IntToStringConverter x:Key="IntToStringConverter"/>
-    <conv:JobListItemKeyTextWidthConverter x:Key="JobListItemKeyTextWidthConverter"/>    
+    <conv:JobListItemKeyTextConverter x:Key="JobListItemKeyTextConverter"/>
+    <conv:JobListItemKeyTextWidthConverter x:Key="JobListItemKeyTextWidthConverter"/>
     <conv:MainMenuItemToSeparatorVisibilityConverter x:Key="MainMenuItemToSeparatorVisibilityConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>
     <conv:PageNumberFormatConverter x:Key="PageNumberFormatConverter"/>

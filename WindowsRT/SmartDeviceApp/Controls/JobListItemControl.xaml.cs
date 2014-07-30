@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Models;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Controls
 {
@@ -132,6 +133,10 @@ namespace SmartDeviceApp.Controls
                 if (control.DataContext != null)
                     ((PrintJob)(control.DataContext)).DeleteButtonVisibility = ((PrintJob)(control.DataContext)).DeleteButtonVisibility;
             }
+
+            // Change style of KeyText to No Text Trimming
+            TextBlock keyTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "key"); // "key" as defined in KeyValueControl.xaml
+            keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeyNoTextTrim"];
         }
     }
 }
