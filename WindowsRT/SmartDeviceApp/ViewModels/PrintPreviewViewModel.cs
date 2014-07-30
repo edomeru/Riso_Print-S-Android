@@ -161,7 +161,7 @@ namespace SmartDeviceApp.ViewModels
             if (!IsPageAreaGridLoaded)
             {
                 _twoPageControl = twoPageControl;
-                _controlReference = (UIElement)((Grid)twoPageControl.PageAreaGrid.Parent).Parent;
+                _controlReference = (UIElement)((Grid)twoPageControl.DisplayAreaGrid.Parent).Parent;
                 ResetPageAreaGrid(_viewControlViewModel.ViewOrientation);
 
                 IsPageAreaGridLoaded = true;

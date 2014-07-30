@@ -323,6 +323,10 @@ namespace SmartDeviceApp.Controllers
 
             if (_isHorizontalSwipeEnabled)
             {
+                _twoPageControl.Page1TranslateTransform.X = 0;
+                _twoPageControl.Page1TranslateTransform.Y = 0;
+
+
                 _twoPageControl.Page2TranslateTransform.X = w;
                 _twoPageControl.Page2TranslateTransform.Y = 0;
                 _twoPageControl.Page2RotateTransform.CenterX = 0;
@@ -343,6 +347,9 @@ namespace SmartDeviceApp.Controllers
             }
             else
             {
+                _twoPageControl.Page1TranslateTransform.X = 0;
+                _twoPageControl.Page1TranslateTransform.Y = 0;
+
                 _twoPageControl.Page2TranslateTransform.Y = h;
                 _twoPageControl.Page2TranslateTransform.X = 0;
                 _twoPageControl.Page2RotateTransform.CenterX = 0;
@@ -693,7 +700,10 @@ namespace SmartDeviceApp.Controllers
             var w = _targetSize.Width;
             var h = _targetSize.Height;
 
-            var currentPosition = e.Position;
+            var ttv2 = _twoPageControl.DisplayAreaGrid.TransformToVisual(_control);
+            var pagePoint = ttv2.TransformPoint(e.Position);
+
+            var currentPosition = pagePoint;
 
             if (_isHorizontalSwipeEnabled)
             {
@@ -738,6 +748,9 @@ namespace SmartDeviceApp.Controllers
                         {
                             _rotationCenterY = 0;
                         }
+                        
+                        _twoPageControl.Page1TranslateTransform.X = w / 2;
+                        _twoPageControl.Page1TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
 
                         _twoPageControl.Page2TranslateTransform.X = -RECT_BOUND + Math.Abs(w + cx / 2);
                         _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
@@ -902,6 +915,12 @@ namespace SmartDeviceApp.Controllers
                             _rotationCenterY = 0;
                         }
 
+                        _twoPageControl.Page1TranslateTransform.X = -RECT_BOUND + Math.Abs(w + cx / 2);
+                        _twoPageControl.Page1TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
+                        _twoPageControl.Page1RotateTransform.CenterX = _rotationCenterX;
+                        _twoPageControl.Page1RotateTransform.CenterY = _rotationCenterY;
+                        _twoPageControl.Page1RotateTransform.Angle = angle;
+
                         _twoPageControl.Page2TranslateTransform.X = w + cx / 2;
                         _twoPageControl.Page2TranslateTransform.Y = -(RECT_BOUND / 2) + h / 2;
                         _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
@@ -967,6 +986,9 @@ namespace SmartDeviceApp.Controllers
                             _rotationCenterX = 0;
                         }
 
+                        _twoPageControl.Page1TranslateTransform.Y = h / 2;
+                        _twoPageControl.Page1TranslateTransform.X = -(RECT_BOUND / 2) + w / 2;
+
                         _twoPageControl.Page2TranslateTransform.Y = -RECT_BOUND + Math.Abs(h + cy / 2);
                         _twoPageControl.Page2TranslateTransform.X = -(RECT_BOUND / 2) + w / 2;
                         _twoPageControl.Page2RotateTransform.CenterX = _rotationCenterX;
@@ -1013,6 +1035,12 @@ namespace SmartDeviceApp.Controllers
                     {
                         _rotationCenterX = 0;
                     }
+
+                    _twoPageControl.Page1TranslateTransform.Y = -(RECT_BOUND) + Math.Abs(h + cy / 2);
+                    _twoPageControl.Page1TranslateTransform.X = -(RECT_BOUND / 2) + w / 2;
+                    _twoPageControl.Page1RotateTransform.CenterX = _rotationCenterX;
+                    _twoPageControl.Page1RotateTransform.CenterY = _rotationCenterY;
+                    _twoPageControl.Page1RotateTransform.Angle = angle;
 
                     _twoPageControl.Page2TranslateTransform.Y = h + cy / 2;
                     _twoPageControl.Page2TranslateTransform.X = -(RECT_BOUND / 2) - w / 2;
@@ -1106,6 +1134,11 @@ namespace SmartDeviceApp.Controllers
                     {
                         to = (int)w;
                     }
+                    AddAnimation(sb, _twoPageControl.Page1TranslateTransform, TRANSFORMPROP_X, 0);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_CENTER_X, 0);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_ANGLE, 0);
+
+
                     if (_isDuplex)
                     {
                         AddAnimation(sb, _twoPageControl.Page2TranslateTransform, TRANSFORMPROP_X, to);
@@ -1252,6 +1285,10 @@ namespace SmartDeviceApp.Controllers
                     {
                         to = (int)h;
                     }
+                    AddAnimation(sb, _twoPageControl.Page1TranslateTransform, TRANSFORMPROP_Y, 0);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_CENTER_Y, 0);
+                    AddAnimation(sb, _twoPageControl.Page1RotateTransform, TRANSFORMPROP_ANGLE, 0);
+
                     AddAnimation(sb, _twoPageControl.Page2TranslateTransform, TRANSFORMPROP_Y, to);
                     AddAnimation(sb, _twoPageControl.Page2RotateTransform, TRANSFORMPROP_CENTER_Y, 0);
                     AddAnimation(sb, _twoPageControl.Page2RotateTransform, TRANSFORMPROP_ANGLE, 0);
