@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     d:DesignWidth="400"
     x:Name="printSettingsPaneControl"
-    Height="{Binding Converter={StaticResource HeightConverter}}"
+    Height="{Binding DataContext.Height, ElementName=printSettingsPaneControl}"
     Width="{StaticResource SIZE_SidePaneWidthWithBorder}"
     DataContext="{Binding PrintSettingsPaneViewModel, Source={StaticResource Locator}}">
    

@@ -11,6 +11,8 @@ using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.Controllers;
+using Windows.UI.Xaml;
+using SmartDeviceApp.Converters;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -23,6 +25,8 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _backToPrintSettings;
         private PrintSetting _printSetting;
 
+        private double _height;
+
         /// <summary>
         /// PrintSettingOptionsViewModel class constructor
         /// </summary>
@@ -32,6 +36,7 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPrinSettingsPane(viewOrientation));
         }
 
         /// <summary>
@@ -103,6 +108,27 @@ namespace SmartDeviceApp.ViewModels
         {
             new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
             PrintSetting = null; // Reset PrintSetting on back so that bindings will refresh on re-open
+        }
+
+        /// <summary>
+        /// Holds the value for the height of the PrintSettings pane.
+        /// </summary>
+        public double Height
+        {
+            get { return this._height; }
+            set
+            {
+                _height = value;
+                RaisePropertyChanged("Height");
+
+            }
+        }
+
+
+        private void ResetPrinSettingsPane(ViewOrientation viewOrientation)
+        {
+            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+            Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
         }
     }
 
