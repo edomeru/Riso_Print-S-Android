@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SmartDeviceApp.Common.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -51,7 +52,21 @@ namespace SmartDeviceApp.Converters
         /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var endPoint = new Point(0, Window.Current.Bounds.Height);
+            
+            var viewOrientation = (ViewOrientation)value;
+            var height = Window.Current.Bounds.Height;
+            if (viewOrientation == ViewOrientation.Landscape)
+            {
+                height = (Window.Current.Bounds.Height <= Window.Current.Bounds.Width) ?
+                    Window.Current.Bounds.Height : Window.Current.Bounds.Width;
+            }
+            else if (viewOrientation == ViewOrientation.Portrait)
+            { 
+                height = (Window.Current.Bounds.Height >= Window.Current.Bounds.Width) ?
+                Window.Current.Bounds.Height : Window.Current.Bounds.Width;
+            }
+            var endPoint = new Point(0, height);
+
             return endPoint;
         }
 

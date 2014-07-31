@@ -111,8 +111,8 @@
         <Path Grid.RowSpan="2" Grid.Column="0" 
               Style="{StaticResource STYLE_List_Separator}">
             <Path.Data>
-                <LineGeometry StartPoint="{Binding Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
-                              EndPoint="{Binding Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
+                <LineGeometry StartPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
+                              EndPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
             </Path.Data>
         </Path>
         <controls:SidePaneTitleControl Grid.Row="0" Grid.Column="1"
