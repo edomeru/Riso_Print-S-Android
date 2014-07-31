@@ -32,8 +32,9 @@
     <x:Double x:Key="MARGIN_Small">5</x:Double>
     <x:Double x:Key="MARGIN_Tiny">2</x:Double>
     <x:Double x:Key="MARGIN_LeftSidePane">401</x:Double>
-    <x:Double x:Key="MARGIN_RightSidePane">-401</x:Double> 
-    
+    <x:Double x:Key="MARGIN_RightSidePane">-401</x:Double>
+    <x:Double x:Key="MARGIN_RightSidePaneOutsideBorder">-402</x:Double>
+
     <GridLength x:Key="SIZE_TitleBarHeight">50</GridLength>
     <GridLength x:Key="SIZE_PageNumberSliderHeight">50</GridLength>
     <GridLength x:Key="SIZE_PageNumberTextHeight">20</GridLength>

@@ -57,7 +57,7 @@
                                 <DiscreteObjectKeyFrame.Value>
                                     <Thickness Top="0"
                                                Bottom="0"
-                                               Left="{StaticResource MARGIN_RightSidePane}"
+                                               Left="{StaticResource MARGIN_RightSidePaneOutsideBorder}"
                                                Right="0">
                                     </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
@@ -81,7 +81,7 @@
                     			<DiscreteObjectKeyFrame.Value>
                                     <Thickness Top="0"
                                                Bottom="0"
-                                               Left="{StaticResource MARGIN_RightSidePane}"
+                                               Left="{StaticResource MARGIN_RightSidePaneOutsideBorder}"
                                                Right="0">
                                     </Thickness>
                     			</DiscreteObjectKeyFrame.Value>
