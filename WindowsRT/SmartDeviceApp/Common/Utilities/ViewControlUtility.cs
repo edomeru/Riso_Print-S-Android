@@ -37,6 +37,11 @@ namespace SmartDeviceApp.Common.Utilities
         /// <returns>TextBlock if found, null otherwise</returns>
         public static TextBlock GetTextBlockFromParent(UIElement parent, string key)
         {
+            if (parent == null || string.IsNullOrEmpty(key))
+            {
+                return null;
+            }
+
             if (parent.GetType() == typeof(TextBlock) && ((TextBlock)parent).Name == key)
             {
                 return (TextBlock)parent;
@@ -67,7 +72,7 @@ namespace SmartDeviceApp.Common.Utilities
         {
             double width = 0;
 
-            if (style != null)
+            if (style != null && !string.IsNullOrEmpty(text))
             {
                 TextBlock tempTextBlock = new TextBlock(); // Create dummy TextBlock to simulate size
                 tempTextBlock.Text = text;
@@ -95,7 +100,7 @@ namespace SmartDeviceApp.Common.Utilities
         public static String GetMiddleTrimmedTextFromTextBlockWithStyleAndWidth(string text,
             Style style, double width)
         {
-            if (text == null || style == null || width == 0)
+            if (string.IsNullOrEmpty(text) || style == null || width <= 0)
             {
                 return String.Empty;
             }
@@ -110,8 +115,11 @@ namespace SmartDeviceApp.Common.Utilities
             String trimmedText = trimmedStrBuilder.ToString();
             String tempText = trimmedText;
 
-            while (leftIndex < text.Length - rightIndex &&  // Both ends don't meet
-                    counter < text.Length)  // All characters are traversed
+            currTextWidth = GetTextWidthFromTextBlockWithStyle(trimmedStrBuilder.ToString(), style);
+
+            while (leftIndex < text.Length - rightIndex - 1 &&  // Both ends don't meet
+                   counter < text.Length && // All characters are traversed
+                   currTextWidth < width)   // Currently trimmed text is within desired width
             {
                 trimmedText = tempText;
 
@@ -125,12 +133,18 @@ namespace SmartDeviceApp.Common.Utilities
                 }
                 else
                 {
-                    // Revert insert
-                    trimmedStrBuilder.Remove(destIndex, 1);
+                    trimmedStrBuilder.Remove(destIndex, 1);  // Revert insert
                 }
 
                 // Traverse text Right to Left
-                destIndex = trimmedText.Length - rightIndex + 1;
+                if (trimmedStrBuilder.ToString().StartsWith(STR_ELLIPSIS))
+                {
+                    destIndex = trimmedText.Length - rightIndex - 1; // There are no characters added on the left side
+                }
+                else
+                {
+                    destIndex = trimmedText.Length - rightIndex + 1;
+                }
                 trimmedStrBuilder.Insert(destIndex, text[text.Length - rightIndex - 1]);
                 currTextWidth = GetTextWidthFromTextBlockWithStyle(trimmedStrBuilder.ToString(), style);
                 if (currTextWidth < width)
@@ -139,13 +153,13 @@ namespace SmartDeviceApp.Common.Utilities
                 }
                 else
                 {
-                    // Revert insert
-                    trimmedStrBuilder.Remove(destIndex, 1);
+                    trimmedStrBuilder.Remove(destIndex, 1);  // Revert insert
                 }
 
                 ++counter;
 
                 tempText = trimmedStrBuilder.ToString();
+                currTextWidth = GetTextWidthFromTextBlockWithStyle(tempText, style);
             };
 
             return trimmedText;
@@ -162,7 +176,7 @@ namespace SmartDeviceApp.Common.Utilities
         {
             double separatorStartPoint = SIZE_MARGIN_NONE;
 
-            if (isListItem)
+            if (sender != null && isListItem)
             {
                 if (iconVisibility == Visibility.Visible)
                 {
