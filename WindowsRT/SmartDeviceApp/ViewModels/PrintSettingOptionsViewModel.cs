@@ -36,7 +36,7 @@ namespace SmartDeviceApp.ViewModels
         {
             _dataService = dataService;
             _navigationService = navigationService;
-            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPrinSettingsPane(viewOrientation));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPrintSettingsPane(viewOrientation));
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace SmartDeviceApp.ViewModels
         }
 
 
-        private void ResetPrinSettingsPane(ViewOrientation viewOrientation)
+        private void ResetPrintSettingsPane(ViewOrientation viewOrientation)
         {
             var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
             Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
