@@ -347,7 +347,6 @@ namespace SNMP
 
             if (!callbackCalled)
             {
-                udpSocket.close();
                 timeoutHandler();
             }
         }
