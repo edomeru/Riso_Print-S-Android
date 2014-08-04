@@ -135,6 +135,7 @@
     <Compile Include="Common\Utilities\PreviewPageImageUtility.cs" />
     <Compile Include="Common\Utilities\StorageFileUtility.cs" />
     <Compile Include="Common\Utilities\PrintSettingUtility.cs" />
+    <Compile Include="Common\Utilities\ViewControlUtility.cs" />
     <Compile Include="Common\Utilities\VisualStateUtility.cs" />
     <Compile Include="Controllers\DirectPrintController.cs" />
     <Compile Include="Controllers\InitialDataController.cs" />
@@ -180,6 +181,7 @@
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToColor.cs" />
+    <Compile Include="Converters\JobListItemKeyTextConverter.cs" />
     <Compile Include="Converters\JobListItemKeyTextWidthConverter.cs" />
     <Compile Include="Converters\PrinterSearchItemButtonImageConverter.cs" />
     <Compile Include="Converters\PrinterStatusToImageSourceConverter.cs" />
