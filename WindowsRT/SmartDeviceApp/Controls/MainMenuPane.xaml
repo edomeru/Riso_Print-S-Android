@@ -7,7 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Width="{StaticResource SIZE_SidePaneWidthWithBorder}"
-    Background="{StaticResource BRUSH_Gray4}">
+    Background="{StaticResource BRUSH_Gray4}"
+    DataContext="{Binding ViewControlViewModel, Source={StaticResource Locator}}"
+      >
         
     <Grid.ChildrenTransitions>
         <TransitionCollection>
@@ -42,8 +44,8 @@
     <Path Grid.RowSpan="2" Grid.Column="1" 
               Style="{StaticResource STYLE_List_Separator}">
         <Path.Data>
-            <LineGeometry StartPoint="{Binding Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
-                              EndPoint="{Binding Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
+            <LineGeometry StartPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
+                              EndPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
         </Path.Data>
     </Path>
 </Grid>

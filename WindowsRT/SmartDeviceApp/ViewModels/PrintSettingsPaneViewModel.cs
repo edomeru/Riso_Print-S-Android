@@ -45,6 +45,7 @@ namespace SmartDeviceApp.ViewModels
         private String _paneTitle;
 
         private double _height;
+        private ViewOrientation _viewOrientation;
 
         /// <summary>
         /// PrintSettingsPaneViewModel class constructor
@@ -153,7 +154,25 @@ namespace SmartDeviceApp.ViewModels
         private void ResetPrintSettingsPane(ViewOrientation viewOrientation)
         {
             var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
-            Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
+            //Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
+
+            ViewOrientation = viewOrientation;
+        }
+
+        /// <summary>
+        /// Gets/sets the current view orientation
+        /// </summary>
+        public ViewOrientation ViewOrientation
+        {
+            get { return _viewOrientation; }
+            set
+            {
+                if (_viewOrientation != value)
+                {
+                    _viewOrientation = value;
+                    RaisePropertyChanged("ViewOrientation");
+                }
+            }
         }
     }
 }
