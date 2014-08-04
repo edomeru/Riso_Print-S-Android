@@ -10,6 +10,8 @@
     mc:Ignorable="d"
     d:DesignWidth="400"
     x:Name="AddPrinterPaneControl"
+    Width="{StaticResource SIZE_SidePaneWidthWithBorder}"
+    Background="{StaticResource BRUSH_Gray2}"
     DataContext="{Binding AddPrinterViewModel, Source={StaticResource Locator}}"
     >
 
@@ -188,7 +190,7 @@
         <!--<Grid Margin="0,0,0,10" >-->
         <!--CONTENTS HERE-->
         <!--<Grid Margin="0,0,0,0">-->
-        <Grid  Width="400" Grid.Row="1" Grid.Column="1" Height="{Binding DataContext.Height, ElementName=AddPrinterPaneControl}" VerticalAlignment="Top">
+        <Grid  Grid.Row="1" Grid.Column="1"  VerticalAlignment="Top" Height="{Binding DataContext.Height, ElementName=AddPrinterPaneControl}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" />
             </Grid.RowDefinitions>

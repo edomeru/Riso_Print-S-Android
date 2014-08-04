@@ -76,7 +76,7 @@
     <Grid Style="{StaticResource STYLE_RootGrid}">
         <Grid.RowDefinitions>
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1"/>
