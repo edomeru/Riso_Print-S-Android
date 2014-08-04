@@ -18,6 +18,8 @@
 
 #define DOC_REPLACE_STRING @"document.getElementById('%@').innerHTML = '%@'"
 
+#define USE_INFO_PLIST_COPYRIGHT 0
+
 @interface LegalViewController ()<UIWebViewDelegate>
 
 /**
@@ -93,11 +95,14 @@
 {
     NSString *appName = NSLocalizedString(IDS_APP_NAME, "");
     NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-    NSString *copyright = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSHumanReadableCopyright"];
     
     [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:DOC_REPLACE_STRING, DOC_APP_NAME_ID, appName]];
     [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:DOC_REPLACE_STRING, DOC_VERSION_ID, version]];
+    
+#if USE_INFO_PLIST_COPYRIGHT
+    NSString *copyright = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSHumanReadableCopyright"];
     [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:DOC_REPLACE_STRING, DOC_COPYRIGHT_ID, copyright]];
+#endif
 }
 
 @end
