@@ -107,7 +107,8 @@
                           
                           Button1PressedImage="ms-appx:///Resources/Images/img_btn_search_printer_pressed.scale-100.png"
                           Button2PressedImage="ms-appx:///Resources/Images/img_btn_add_printer_pressed.scale-100.png"
-                          
+                          Button1Visibility="Visible"
+                          Button2Visibility="Visible"
                           RightPaneContent="{Binding DataContext.RightPaneMode, ElementName=printersPage}"
                           RightPaneContentTemplateSelector="{StaticResource PrintersRightPaneTemplateSelector}" Grid.Row="0" Tag="{Binding}">
         <Grid Tag="{Binding}">

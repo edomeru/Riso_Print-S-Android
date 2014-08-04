@@ -46,7 +46,9 @@
         
     <controls:ViewControl 
         ChildrenDataContext="{Binding DataContext, ElementName=homePage}"
-        Text="{Binding Source=IDS_LBL_HOME, Converter={StaticResource ResourceStringToTextConverter}}" >
+        Text="{Binding Source=IDS_LBL_HOME, Converter={StaticResource ResourceStringToTextConverter}}"
+        Button1Visibility="Collapsed"
+        Button2Visibility="Collapsed">
         <StackPanel Orientation="Vertical"
                     HorizontalAlignment="Center" 
                     VerticalAlignment="Center">
