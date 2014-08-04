@@ -807,6 +807,8 @@ namespace SmartDeviceApp.ViewModels
             _isBooklet = isBooklet;
             _pagesPerSheet = pagesPerSheet;
             SetPageIndexes();
+
+            IsPageNumberSliderEnabled = true;
         }
 
         /// <summary>
