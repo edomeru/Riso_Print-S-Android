@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Controls;
+using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Views
 {
@@ -27,6 +28,22 @@ namespace SmartDeviceApp.Views
         public PrintSettingsPane()
         {
             this.InitializeComponent();
+        }
+
+        /// <summary>
+        /// Holds the data context for this xaml.
+        /// </summary>
+        public PrintSettingsPaneViewModel ViewModel
+        {
+            get
+            {
+                return (PrintSettingsPaneViewModel)DataContext;
+            }
+        }
+
+        private void printSettingsPaneLoaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Height = Window.Current.Bounds.Height;
         }
     }
 }

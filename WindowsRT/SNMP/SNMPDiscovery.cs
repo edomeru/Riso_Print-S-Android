@@ -129,7 +129,9 @@ namespace SNMP
                             }
                             else // if printer search
                             {
-                                //if (snmpDevice.isRISOAZADevice())//comment out to remove RISO filter
+#if !DEBUG
+                                if (snmpDevice.isRISOAZADevice())//comment out to remove RISO filter
+#endif
                                 {
                                     snmpControllerDiscoverCallback(snmpDevice);
 

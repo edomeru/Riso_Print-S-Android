@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SmartDeviceApp.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -36,6 +37,22 @@ namespace SmartDeviceApp.Views
         {
             get { return (string)GetValue(PrintSettingTextProperty); }
             set { SetValue(PrintSettingTextProperty, value); }
+        }
+
+        /// <summary>
+        /// Holds the data context for this xaml.
+        /// </summary>
+        public PrintSettingOptionsViewModel ViewModel
+        {
+            get
+            {
+                return (PrintSettingOptionsViewModel)DataContext;
+            }
+        }
+
+        private void printSettingsOptionsBoxLoaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Height = Window.Current.Bounds.Height;
         }
     }
 }

@@ -680,17 +680,20 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Updates constraints (value/enable state) on print settings list (PrintSettingList)
         /// and cache (PrintSettings)
+        /// This function is called on first display of Print Settings pane
         /// </summary>
         private void ApplyPrintSettingConstraints()
         {
             PrintSettings printSettings;
             if (_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
             {
+                // Note: The following order must be checked when constraints specifications is updated
                 UpdateConstraintsBasedOnBooklet(printSettings.Booklet, false);
                 UpdateConstraintsBasedOnOrientation(printSettings.Orientation, false);
                 UpdateConstraintsBasedOnImposition(printSettings.Imposition, false);
                 UpdateConstraintsBasedOnFinishingSide(printSettings.FinishingSide, false);
                 UpdateConstraintsBasedOnPunch(printSettings.Punch, false);
+                UpdateConstraintsBasedOnBookletFinishing(printSettings.BookletFinishing, false);
                 UpdateConstraintsBasedOnSecurePrint(printSettings.EnabledSecurePrint);
             }
         }
@@ -1119,9 +1122,9 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
-        /// Updates print settings dependent on booklet constraints
+        /// Updates print settings dependent on booklet finishing constraints
         /// </summary>
-        /// <param name="value">new booklet value</param>
+        /// <param name="value">new booklet finishing value</param>
         /// <param name="updateValues">true when dependent values should be updated, false otherwise</param>
         /// <returns>true when dependent values are updated, false otherwise</returns>
         private bool UpdateConstraintsBasedOnBookletFinishing(int value, bool updateValues)
@@ -1135,36 +1138,64 @@ namespace SmartDeviceApp.Controllers
                 return isValueUpdated;
             }
 
+            PrintSetting outputTrayPrintSettings =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+
             if (value != (int)BookletFinishing.Off)
             {
-                printSettings.OutputTray = (int)OutputTray.Auto;
+                if (outputTrayPrintSettings != null)
+                {
+                    if (updateValues)
+                    {
+                        outputTrayPrintSettings.Value = (int)OutputTray.Auto;
+                        printSettings.OutputTray = (int)OutputTray.Auto;
+                    }
+
+                    PrintSettingOption outputTrayFaceDown = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.FaceDown);
+                    if (outputTrayFaceDown != null)
+                    {
+                        outputTrayFaceDown.IsEnabled = false;
+                    }
+
+                    PrintSettingOption outputTrayTop = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Top);
+                    if (outputTrayTop != null)
+                    {
+                        outputTrayTop.IsEnabled = false;
+                    }
+
+                    PrintSettingOption outputTrayStacking = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Stacking);
+                    if (outputTrayStacking != null)
+                    {
+                        outputTrayStacking.IsEnabled = false;
+                    }
+                }
+
                 isValueUpdated = true;
-
-                PrintSetting outputTrayPrintSettings =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-                PrintSettingOption outputTrayFaceDown = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.FaceDown);
-                if (outputTrayFaceDown != null) outputTrayFaceDown.IsEnabled = false;
-                
-                PrintSettingOption outputTrayTop = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Top);
-                if (outputTrayTop != null) outputTrayTop.IsEnabled = false;
-
-                PrintSettingOption outputTrayStacking = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Stacking);
-                if (outputTrayStacking != null) outputTrayStacking.IsEnabled = false;
             }
             else
             {
+                if (outputTrayPrintSettings != null)
+                {
+                    PrintSettingOption outputTrayFaceDown = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.FaceDown);
+                    if (outputTrayFaceDown != null)
+                    {
+                        outputTrayFaceDown.IsEnabled = true;
+                    }
+
+                    PrintSettingOption outputTrayTop = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Top);
+                    if (outputTrayTop != null)
+                    {
+                        outputTrayTop.IsEnabled = true;
+                    }
+
+                    PrintSettingOption outputTrayStacking = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Stacking);
+                    if (outputTrayStacking != null)
+                    {
+                        outputTrayStacking.IsEnabled = true;
+                    }
+                }
+
                 isValueUpdated = true;
-
-                PrintSetting outputTrayPrintSettings =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-                PrintSettingOption outputTrayFaceDown = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.FaceDown);
-                if (outputTrayFaceDown != null) outputTrayFaceDown.IsEnabled = true;
-
-                PrintSettingOption outputTrayTop = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Top);
-                if (outputTrayTop != null) outputTrayTop.IsEnabled = true;
-
-                PrintSettingOption outputTrayStacking = GetPrintSettingOption(outputTrayPrintSettings, (int)OutputTray.Stacking);
-                if (outputTrayStacking != null) outputTrayStacking.IsEnabled = true;
             }
 
 

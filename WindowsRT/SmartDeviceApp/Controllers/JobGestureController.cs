@@ -162,18 +162,33 @@ namespace SmartDeviceApp.Controllers
 
         void OnTapped(object sender, TappedEventArgs e)
         {
-            if (_isDeleteJobButtonVisible)
+
+            var jobListItem = GetJobListItemControl(e.Position, false);
+            if (jobListItem != null)
             {
-                HideDeleteJobButton();
-                // Check if tap is for jobListControl which has the visible delete button
-                var jobListItem = GetJobListItemControl(e.Position, false);
-                if (jobListItem != null && jobListItem == _lastJobListItem)
+                PrintJob printJob = (PrintJob)jobListItem.DataContext;
+
+                if (printJob.DeleteButtonVisibility == Visibility.Visible)
                 {
-                    var printJob = jobListItem.DataContext;
+                    //HideDeleteJobButton();
                     (new ViewModelLocator().JobsViewModel).DeleteJobCommand.Execute(printJob);
+
+                    return;
                 }
-                return;
             }
+
+            //if (_isDeleteJobButtonVisible)
+            //{
+                
+            //    // Check if tap is for jobListControl which has the visible delete button
+            //    var jobListItem = GetJobListItemControl(e.Position, false);
+            //    if (jobListItem != null && jobListItem == _lastJobListItem)
+            //    {
+            //        var printJob = jobListItem.DataContext;
+            //        (new ViewModelLocator().JobsViewModel).DeleteJobCommand.Execute(printJob);
+            //    }
+            //    return;
+            //}
 
             var point = TransformPointToGlobalCoordinates(e.Position, false);
             var elements = VisualTreeHelper.FindElementsInHostCoordinates(point, _targetControl);
@@ -282,7 +297,10 @@ namespace SmartDeviceApp.Controllers
             return isSwipe;
         }
 
-        private void HideDeleteJobButton()
+        /// <summary>
+        /// Hides the delete button.
+        /// </summary>
+        public void HideDeleteJobButton()
         {
             if (_lastJobListItem == null || !_isDeleteJobButtonVisible) return;
             //PrintJob printJob = (PrintJob)_lastJobListItem.DataContext;
