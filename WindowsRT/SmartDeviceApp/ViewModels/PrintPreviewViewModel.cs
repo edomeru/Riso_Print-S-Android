@@ -180,15 +180,17 @@ namespace SmartDeviceApp.ViewModels
         /// <param name="viewOrientation">view orientation</param>
         private void ResetPageAreaGrid(ViewOrientation viewOrientation)
         {
-            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-            _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(_viewControlViewModel.ViewMode, null, viewOrientation, null)) - defaultMargin * 2;
-            ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
-            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
-            var sliderHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberSliderHeight"]).Value;
-            var sliderTextHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberTextHeight"]).Value;
-            _pageAreaGridMaxHeight = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null))
-                - defaultMargin * 2 - titleHeight - sliderHeight - sliderTextHeight;
-
+            if (_controlReference != null)
+            {
+                var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+                _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(_viewControlViewModel.ViewMode, null, viewOrientation, null)) - defaultMargin * 2;
+                ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
+                var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+                var sliderHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberSliderHeight"]).Value;
+                var sliderTextHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberTextHeight"]).Value;
+                _pageAreaGridMaxHeight = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null))
+                    - defaultMargin * 2 - titleHeight - sliderHeight - sliderTextHeight;
+            }
         }
 
         /// <summary>
