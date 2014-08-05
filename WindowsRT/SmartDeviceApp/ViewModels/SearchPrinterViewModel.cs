@@ -50,6 +50,8 @@ namespace SmartDeviceApp.ViewModels
 
         private ViewOrientation _viewOrientation;
 
+        private bool _isAdding;
+
         /// <summary>
         /// Constructor for SearchPrinterViewModel.
         /// </summary>
@@ -63,6 +65,7 @@ namespace SmartDeviceApp.ViewModels
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
             WillRefresh = false;
             NoPrintersFound = false;
+            _isAdding = false;
             //Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetSearchPane(viewOrientation));
@@ -236,14 +239,15 @@ namespace SmartDeviceApp.ViewModels
         private async Task PrinterSearchItemSelectedExecute(PrinterSearchItem item)
         {
             //Check if already added
-            if (!item.IsInPrinterList)
+            if (!item.IsInPrinterList && !_isAdding)
             {
+                _isAdding = true;
                 //add to printer
                 bool isSuccessful = await AddPrinterFromSearchHandler(item.Ip_address);
                 if (!isSuccessful)
                 {
                     //display error message TODO
-
+                    _isAdding = false;
                     return;
                 }
 
@@ -251,6 +255,7 @@ namespace SmartDeviceApp.ViewModels
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
                     await DialogService.Instance.ShowMessage("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", ClosePane);
+                    _isAdding = false;
                 });
             }
         }
