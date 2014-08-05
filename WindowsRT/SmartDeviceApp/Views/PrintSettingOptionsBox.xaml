@@ -12,7 +12,8 @@
     mc:Ignorable="d"
     Width="{StaticResource SIZE_SidePaneWidth}"
     Height="{Binding DataContext.Height, ElementName=printSettingOptionsBox}"
-    DataContext="{Binding PrintSettingOptionsViewModel, Source={StaticResource Locator}}">
+    DataContext="{Binding PrintSettingOptionsViewModel, Source={StaticResource Locator}}"
+      >
 
     <Grid.Resources>
         <ControlTemplate x:Key="TEMPLATE_HeaderButton" TargetType="Button">
@@ -54,7 +55,7 @@
             Content="{Binding PrintSetting.Text}"
             Command="{Binding BackToPrintSettings}" 
             Template="{StaticResource TEMPLATE_HeaderButton}"
-            Width="{Binding Width, ElementName=printSettingOptionsBox}"/>
+            Width="{Binding Width, ElementName=printSettingOptionsBox}" Loaded="printSettingsOptionsBoxLoaded"/>
     <ListView x:Name="printSettingOptionsListView" Grid.Row="1"  
               ItemsSource="{Binding PrintSetting.Options}" 
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 

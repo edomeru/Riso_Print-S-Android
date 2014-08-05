@@ -60,6 +60,7 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetPrintSettingsPaneMode(viewMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPrintSettingsPane(viewOrientation));
             SetPaneTitle();
+            
         }
 
         /// <summary>
@@ -154,7 +155,7 @@ namespace SmartDeviceApp.ViewModels
         private void ResetPrintSettingsPane(ViewOrientation viewOrientation)
         {
             var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
-            //Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
+            Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
 
             ViewOrientation = viewOrientation;
         }
