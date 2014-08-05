@@ -227,11 +227,15 @@ namespace SmartDeviceApp.ViewModels
 
         public void SearchTimeout()
         {
-            WillRefresh = false;
-            if (PrinterSearchList.Count > 0)
-                NoPrintersFound = false;
-            else
-                NoPrintersFound = true;
+            if (WillRefresh) // BTS#14537 - Handle timeout only on refreshed state
+            {
+                if (PrinterSearchList.Count > 0)
+                    NoPrintersFound = false;
+                else
+                    NoPrintersFound = true;
+
+                WillRefresh = false;
+            }
 
             Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
         }
