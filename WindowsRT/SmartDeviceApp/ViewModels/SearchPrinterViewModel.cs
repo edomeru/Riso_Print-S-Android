@@ -280,17 +280,21 @@ namespace SmartDeviceApp.ViewModels
         /// </summary>
         public async void SearchTimeout()
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-            Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            if (WillRefresh) // BTS#14537 - Handle timeout only on refreshed state
             {
-                WillRefresh = false;
-                if (PrinterSearchList.Count > 0)
-                    NoPrintersFound = false;
-                else
-                    NoPrintersFound = true;
-                Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
-            });
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    if (PrinterSearchList.Count > 0)
+                        NoPrintersFound = false;
+                    else
+                        NoPrintersFound = true;
 
+                    WillRefresh = false;
+
+                    Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
+                });
+            }
         }
 
         /// <summary>
