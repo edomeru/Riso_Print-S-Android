@@ -340,6 +340,10 @@ namespace SmartDeviceApp.ViewModels
                     {
                         RemoveJobEventHandler(printJob);
                     }
+                    else if (!isDelete)
+                    {
+                        GestureController.HideDeleteJobButton();
+                    }
                 }));
         }
 
