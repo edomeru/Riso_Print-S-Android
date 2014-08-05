@@ -263,10 +263,10 @@ namespace SmartDeviceApp.ViewModels
         private void PrinterSearchRefresh()
         {
             PrinterSearchList.Clear();
+            NoPrintersFound = false;
             if (NetworkController.IsConnectedToNetwork)
             {
-                NoPrintersFound = false;
-                SearchPrinterHandler();                
+                SearchPrinterHandler();
             }
             else
             {
