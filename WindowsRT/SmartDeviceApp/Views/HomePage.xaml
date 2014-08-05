@@ -27,6 +27,7 @@
         </Style>
         <Style x:Key="STYLE_TextOpenDocument" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextHeader}">
             <Setter Property="Foreground" Value="{StaticResource BRUSH_Purple2}"/>
+            <Setter Property="TextLineBounds" Value="Tight"/>
         </Style>
         <ControlTemplate x:Key="TEMPLATE_OpenDocumentButton" TargetType="Button">
             <Grid Background="Transparent" Height="160">
