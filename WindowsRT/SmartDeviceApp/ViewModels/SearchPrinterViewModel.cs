@@ -50,6 +50,8 @@ namespace SmartDeviceApp.ViewModels
 
         private ViewOrientation _viewOrientation;
 
+        private bool _isAdding;
+
         /// <summary>
         /// Constructor for SearchPrinterViewModel.
         /// </summary>
@@ -63,6 +65,7 @@ namespace SmartDeviceApp.ViewModels
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
             WillRefresh = false;
             NoPrintersFound = false;
+            _isAdding = false;
             //Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetSearchPane(viewOrientation));
@@ -236,14 +239,15 @@ namespace SmartDeviceApp.ViewModels
         private async Task PrinterSearchItemSelectedExecute(PrinterSearchItem item)
         {
             //Check if already added
-            if (!item.IsInPrinterList)
+            if (!item.IsInPrinterList && !_isAdding)
             {
+                _isAdding = true;
                 //add to printer
                 bool isSuccessful = await AddPrinterFromSearchHandler(item.Ip_address);
                 if (!isSuccessful)
                 {
                     //display error message TODO
-
+                    _isAdding = false;
                     return;
                 }
 
@@ -251,6 +255,7 @@ namespace SmartDeviceApp.ViewModels
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
                     await DialogService.Instance.ShowMessage("IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", ClosePane);
+                    _isAdding = false;
                 });
             }
         }
@@ -275,17 +280,21 @@ namespace SmartDeviceApp.ViewModels
         /// </summary>
         public async void SearchTimeout()
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-            Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            if (WillRefresh) // BTS#14537 - Handle timeout only on refreshed state
             {
-                WillRefresh = false;
-                if (PrinterSearchList.Count > 0)
-                    NoPrintersFound = false;
-                else
-                    NoPrintersFound = true;
-                Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
-            });
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    if (PrinterSearchList.Count > 0)
+                        NoPrintersFound = false;
+                    else
+                        NoPrintersFound = true;
 
+                    WillRefresh = false;
+
+                    Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
+                });
+            }
         }
 
         /// <summary>
