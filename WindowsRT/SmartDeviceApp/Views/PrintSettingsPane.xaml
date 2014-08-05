@@ -116,7 +116,7 @@
             </Path.Data>
         </Path>
         <controls:SidePaneTitleControl Grid.Row="0" Grid.Column="1"
-                                       Title="{Binding DataContext.PaneTitle, ElementName=printSettingsPaneControl}" />
+                                       Title="{Binding DataContext.PaneTitle, ElementName=printSettingsPaneControl}" Loaded="printSettingsPaneLoaded"/>
         <Grid x:Name="printSettingsRootGrid" Grid.Row="1" Grid.Column="1">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
