@@ -54,7 +54,8 @@ namespace SmartDeviceApp.Views
 
         private void AddSidePane_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Height = (double)((new SidePanesHeightConverter()).Convert(this, null, null, null));
+            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+            ViewModel.Height = (double)((new SidePanesHeightConverter()).Convert(this, null, null, null)) - titleHeight;
         }
     }
 }

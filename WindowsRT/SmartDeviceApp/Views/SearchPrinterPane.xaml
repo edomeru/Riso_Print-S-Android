@@ -76,7 +76,7 @@
     <Grid Style="{StaticResource STYLE_RootGrid}">
         <Grid.RowDefinitions>
             <RowDefinition Height="{StaticResource SIZE_TitleBarHeight}"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1"/>
@@ -127,8 +127,8 @@
         <Path Grid.RowSpan="2" Grid.Column="0" 
               Style="{StaticResource STYLE_List_Separator}">
             <Path.Data>
-                <LineGeometry StartPoint="{Binding Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
-                              EndPoint="{Binding Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
+                <LineGeometry StartPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
+                              EndPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
             </Path.Data>
         </Path>
         <controls:SidePaneTitleControl Title="{Binding Source=IDS_LBL_SEARCH_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 

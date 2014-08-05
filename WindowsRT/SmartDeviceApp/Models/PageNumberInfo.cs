@@ -47,28 +47,32 @@ namespace SmartDeviceApp.Models
         /// <param name="pageTotal">page total</param>
         /// <param name="pageViewMode">page view mode</param>
         /// <param name="isBooklet">true when booklet is enabled, false otherwise</param>
+        /// <param name="pagesPerSheet">imposition setting</param>
         public PageNumberInfo(uint rightPageIndex, 
-            uint pageTotal, PageViewMode pageViewMode, bool isBooklet)
+            uint pageTotal, PageViewMode pageViewMode, bool isBooklet, uint pagesPerSheet)
         {
             _pageIndex = rightPageIndex;
             _pageTotal = pageTotal;
             _pageViewMode = pageViewMode;
-
-            _pageTotal = getPageCount(isBooklet);
+            _pageTotal = getPageCount(isBooklet, pagesPerSheet);
             getPageIndex();
         }
 
-        private uint getPageCount(bool isBooklet)
+        private uint getPageCount(bool isBooklet, uint pagesPerSheet)
         {
-            uint count = _pageTotal;
+            uint count = _pageTotal / pagesPerSheet;
+            if ((_pageTotal % pagesPerSheet) > 0)
+            {
+                count++;
+            }
 
             if (_pageViewMode != Common.Enum.PageViewMode.SinglePageView)
             {
-                count = getNextIntegerMultiple(_pageTotal, 2);
+                count = getNextIntegerMultiple(count, 2);
 
                 if (isBooklet)
                 {
-                    count = getNextIntegerMultiple(_pageTotal, 4);
+                    count = getNextIntegerMultiple(count, 4);
                 }
             }
             

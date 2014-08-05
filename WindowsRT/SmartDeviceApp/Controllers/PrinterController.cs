@@ -984,24 +984,23 @@ namespace SmartDeviceApp.Controllers
                 }
 
             }
-            //to be deleted TODO
-            //if (e.PropertyName == "WillBeDeleted" && printer.WillBeDeleted == true)
-            //{
-            //    foreach(var printerInList in PrinterList)
-            //    {
-            //        if (printer.IpAddress == printerInList.IpAddress)
-            //        {
-            //            if (printerInList.WillBeDeleted != true)
-            //            {
-            //                printerInList.WillBeDeleted = true;
-            //            }
-            //        }
-            //        else
-            //        {
-            //            printerInList.WillBeDeleted = false;
-            //        }
-            //     }
-            //}
+            if (e.PropertyName == "WillBeDeleted" && printer.WillBeDeleted == true)
+            {
+                foreach (var printerInList in PrinterList)
+                {
+                    if (printer.IpAddress == printerInList.IpAddress)
+                    {
+                        if (printerInList.WillBeDeleted != true)
+                        {
+                            printerInList.WillBeDeleted = true;
+                        }
+                    }
+                    else
+                    {
+                        printerInList.WillBeDeleted = false;
+                    }
+                }
+            }
             //if (e.PropertyName == "VisualState")
             //{
             //    if (printer.VisualState == "Pressed")

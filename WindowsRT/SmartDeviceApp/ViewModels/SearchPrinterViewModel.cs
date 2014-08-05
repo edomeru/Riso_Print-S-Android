@@ -48,6 +48,8 @@ namespace SmartDeviceApp.ViewModels
 
         private ViewControlViewModel _viewControlViewModel;
 
+        private ViewOrientation _viewOrientation;
+
         /// <summary>
         /// Constructor for SearchPrinterViewModel.
         /// </summary>
@@ -59,9 +61,8 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
 
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-            //NoPrintersFound = true;
             WillRefresh = false;
-            NoPrintersFound = true;
+            NoPrintersFound = false;
             //Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetSearchPane(viewOrientation));
@@ -73,6 +74,8 @@ namespace SmartDeviceApp.ViewModels
         {
             var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
             Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
+
+            ViewOrientation = viewOrientation;
         }
 
         /// <summary>
@@ -95,7 +98,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 if (viewMode == VisibleRightPane.Pane1)
                 {
-                    
+                    WillRefresh = false;
                     if (PrinterList.Count >= 10)
                     {
                         ClosePane();
@@ -107,6 +110,7 @@ namespace SmartDeviceApp.ViewModels
                         return;
                     }
 
+                    PrinterSearchList.Clear();
                     if (NetworkController.IsConnectedToNetwork)
                     {
                         SetStateRefreshState();
@@ -114,8 +118,6 @@ namespace SmartDeviceApp.ViewModels
                     else
                     {
                         System.Diagnostics.Debug.WriteLine("No network");
-                        NoPrintersFound = true;
-                        System.Diagnostics.Debug.WriteLine("No printers found = true");
                         Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
                         System.Diagnostics.Debug.WriteLine("Notrefreshing state");
                         await DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
@@ -197,6 +199,22 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
+        /// Gets/sets the current view orientation
+        /// </summary>
+        public ViewOrientation ViewOrientation
+        {
+            get { return _viewOrientation; }
+            set
+            {
+                if (_viewOrientation != value)
+                {
+                    _viewOrientation = value;
+                    OnPropertyChanged("ViewOrientation");
+                }
+            }
+        }
+
+        /// <summary>
         /// Command executed when a printer in the search list is saved to the printer list.
         /// </summary>
         public ICommand PrinterSearchItemSelected
@@ -239,6 +257,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void PrinterSearchRefresh()
         {
+            PrinterSearchList.Clear();
             if (NetworkController.IsConnectedToNetwork)
             {
                 NoPrintersFound = false;
@@ -246,9 +265,8 @@ namespace SmartDeviceApp.ViewModels
             }
             else
             {
-                NoPrintersFound = true;
                 Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.NotRefreshingState);
-                DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", ClosePane);
+                DialogService.Instance.ShowError("IDS_ERR_MSG_NETWORK_ERROR", "IDS_LBL_SEARCH_PRINTERS", "IDS_LBL_OK", null);
             }
         }
 

@@ -10,11 +10,10 @@
     mc:Ignorable="d"
     d:DesignWidth="400"
     x:Name="AddPrinterPaneControl"
-    
+    Width="{StaticResource SIZE_SidePaneWidthWithBorder}"
+    Background="{StaticResource BRUSH_Gray2}"
     DataContext="{Binding AddPrinterViewModel, Source={StaticResource Locator}}"
     >
-
-    <!--TODO: Localize title!!-->
 
     <UserControl.Resources>
         <Style x:Key="STYLE_RootGrid" TargetType="Grid">
@@ -181,8 +180,8 @@
         <Path Grid.RowSpan="2" Grid.Column="0" 
               Style="{StaticResource STYLE_List_Separator}">
             <Path.Data>
-                <LineGeometry StartPoint="{Binding Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
-                              EndPoint="{Binding Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
+                <LineGeometry StartPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
+                              EndPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
             </Path.Data>
         </Path>
         <controls:SidePaneTitleControl x:Name="AddSidePane" Grid.Row="0" Grid.Column="1"  Loaded="AddSidePane_Loaded"
@@ -191,19 +190,21 @@
         <!--<Grid Margin="0,0,0,10" >-->
         <!--CONTENTS HERE-->
         <!--<Grid Margin="0,0,0,0">-->
-        <Grid  Width="400" Grid.Row="1" Grid.Column="1" Height="{Binding DataContext.Height, ElementName=AddPrinterPaneControl}" VerticalAlignment="Top">
+        <Grid  Grid.Row="1" Grid.Column="1"  VerticalAlignment="Top" Height="{Binding DataContext.Height, ElementName=AddPrinterPaneControl}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <TextBox x:Name="ipTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTabStop="{Binding IsButtonVisible}"
-                                   PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" Style="{StaticResource IPAddressTextBoxStyle1}"
-                         Loaded="ipTextBox_Loaded" IsReadOnly="{Binding IsProgressRingVisible}" Margin="30,20,10,10" Width="300"/>
+                         VerticalAlignment="Center"
+                         PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" Style="{StaticResource IPAddressTextBoxStyle1}"
+                         Loaded="ipTextBox_Loaded" IsReadOnly="{Binding IsProgressRingVisible}" Margin="20,20,10,20" Width="320"/>
                 <StackPanel Style="{StaticResource STYLE_StackRight}" Orientation="Horizontal">
-                    <ProgressRing x:Name="progressRing" Foreground="White" IsActive="True" Visibility="{Binding DataContext.IsProgressRingVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}" Width="34" Height="34"/>
+                    <ProgressRing x:Name="progressRing" Foreground="White" IsActive="True" Visibility="{Binding DataContext.IsProgressRingVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}" Width="34" Height="34"
+                                  VerticalAlignment="Center"/>
                     <Button x:Name="button" Visibility="{Binding DataContext.IsButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=AddPrinterPaneControl}"
-                		Template="{StaticResource TEMPLATE_Button}" Command="{Binding DataContext.AddPrinter, ElementName=AddPrinterPaneControl}" />
-
+                            Template="{StaticResource TEMPLATE_Button}" Command="{Binding DataContext.AddPrinter, ElementName=AddPrinterPaneControl}"
+                            VerticalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

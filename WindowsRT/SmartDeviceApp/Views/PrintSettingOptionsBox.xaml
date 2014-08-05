@@ -11,6 +11,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Width="{StaticResource SIZE_SidePaneWidth}"
+    Height="{Binding DataContext.Height, ElementName=printSettingOptionsBox}"
     DataContext="{Binding PrintSettingOptionsViewModel, Source={StaticResource Locator}}">
 
     <Grid.Resources>

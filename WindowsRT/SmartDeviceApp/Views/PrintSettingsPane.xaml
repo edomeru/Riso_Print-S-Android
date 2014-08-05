@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     d:DesignWidth="400"
     x:Name="printSettingsPaneControl"
-    Height="{Binding Converter={StaticResource HeightConverter}}"
+    Height="{Binding DataContext.Height, ElementName=printSettingsPaneControl}"
     Width="{StaticResource SIZE_SidePaneWidthWithBorder}"
     DataContext="{Binding PrintSettingsPaneViewModel, Source={StaticResource Locator}}">
    
@@ -57,7 +57,7 @@
                                 <DiscreteObjectKeyFrame.Value>
                                     <Thickness Top="0"
                                                Bottom="0"
-                                               Left="{StaticResource MARGIN_RightSidePane}"
+                                               Left="{StaticResource MARGIN_RightSidePaneOutsideBorder}"
                                                Right="0">
                                     </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
@@ -81,7 +81,7 @@
                     			<DiscreteObjectKeyFrame.Value>
                                     <Thickness Top="0"
                                                Bottom="0"
-                                               Left="{StaticResource MARGIN_RightSidePane}"
+                                               Left="{StaticResource MARGIN_RightSidePaneOutsideBorder}"
                                                Right="0">
                                     </Thickness>
                     			</DiscreteObjectKeyFrame.Value>
@@ -111,8 +111,8 @@
         <Path Grid.RowSpan="2" Grid.Column="0" 
               Style="{StaticResource STYLE_List_Separator}">
             <Path.Data>
-                <LineGeometry StartPoint="{Binding Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
-                              EndPoint="{Binding Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
+                <LineGeometry StartPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryStartPointConverter}}"
+                              EndPoint="{Binding ViewOrientation, Converter={StaticResource SidePaneLineGeometryEndPointConverter}}"/>
             </Path.Data>
         </Path>
         <controls:SidePaneTitleControl Grid.Row="0" Grid.Column="1"

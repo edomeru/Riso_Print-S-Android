@@ -82,7 +82,8 @@ namespace SmartDeviceApp.Common.Constants
             }
             var type = sender.GetType();
             if (type == typeof(JobListItemControl) ||
-                type == typeof(SelectPrinterItemControl))
+                type == typeof(SelectPrinterItemControl) ||
+                type == typeof(ViewControl))
             {
                 switch (resolution)
                 {

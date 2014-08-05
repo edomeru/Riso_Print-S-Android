@@ -455,22 +455,8 @@ namespace SmartDeviceApp.Controls
                 // Set separator start point
                 if (SeparatorVisibility == Visibility.Visible)
                 {
-                    if (IsListItem)
-                    {
-                        if (IconVisibility == Visibility.Visible)
-                        {
-                            var imageWidth = ImageConstant.GetIconImageWidth(sender, true);
-                            SeparatorStartPoint = imageWidth + (defaultMargin * 2);
-                        }
-                        else
-                        {
-                            SeparatorStartPoint = defaultMargin;
-                        }
-                    }
-                    else
-                    {
-                        SeparatorStartPoint = noMargin;
-                    }
+                    SeparatorStartPoint = ViewControlUtility.GetSeparatorStartPoint(sender,
+                                                                    IsListItem, IconVisibility);
                 }
 
                 _isLoaded = true;

@@ -190,7 +190,7 @@ namespace SmartDeviceApp.Controllers
                 // Get initialize printer and print settings
                 await GetDefaultPrinter();
 
-                _printPreviewViewModel.SetInitialPageIndex(0, _isBooklet);
+                _printPreviewViewModel.SetInitialPageIndex(0, _isBooklet, (uint)_pagesPerSheet);
                 _printPreviewViewModel.DocumentTitleText = DocumentController.Instance.FileName;
 
                 _selectPrinterViewModel.SelectPrinterEvent += _selectedPrinterChangedEventHandler;
@@ -435,13 +435,14 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void UpdatePreviewInfo()
         {
+            _isBooklet = _currPrintSettings.Booklet;
+            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
+
             // Determine direction
             _isReverseOrder = ((_isBooklet && _currPrintSettings.BookletLayout == (int)BookletLayout.Reverse) ||
                           (!_isBooklet && _currPrintSettings.FinishingSide == (int)FinishingSide.Right));
 
             // Determine view mode
-            _isBooklet = _currPrintSettings.Booklet;
-            _isDuplex = (_currPrintSettings.Duplex != (int)Duplex.Off);
             if (_isBooklet)
             {
                 if (_currPrintSettings.Orientation == (int)Orientation.Landscape)
@@ -489,7 +490,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     _currSliderIndex = (int)_previewPageTotal - 1;
                 }
-                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet);
+                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet,(uint) _pagesPerSheet);
             }
 
             _maxPreviewPageCount = (int)_previewPageTotal;
@@ -819,17 +820,8 @@ namespace SmartDeviceApp.Controllers
 
             if (!_previewPageImages.ContainsKey(previewPageIndex))
             {
-                List<WriteableBitmap> logicalPageImages = null;
-                // Get logical pages only when not for backside of single-page view
-                logicalPageImages = await DocumentController.Instance
-                    .GetLogicalPageImages(logicalPageIndex, _pagesPerSheet, cancellationToken);
-
-                Size logicalPageSize = new Size(0, 0);
-                if (logicalPageImages != null && logicalPageImages.Count > 0)
-                {
-                    logicalPageSize.Width = logicalPageImages[0].PixelWidth;
-                    logicalPageSize.Height = logicalPageImages[0].PixelHeight;
-                }
+                List<LogicalPage> logicalPages = await DocumentController.Instance
+                    .GetLogicalPages(logicalPageIndex, _pagesPerSheet, cancellationToken);
 
                 WriteableBitmap canvasBitmap = new WriteableBitmap((int)_previewPageImageSize.Width,
                     (int)_previewPageImageSize.Height);
@@ -837,10 +829,8 @@ namespace SmartDeviceApp.Controllers
                 await ThreadPool.RunAsync(
                     (workItem) =>
                     {
-                        ApplyPrintSettings(canvasBitmap, _previewPageImageSize,
-                            logicalPageImages, logicalPageSize,
-                            previewPageIndex, logicalPageIndex, isRightSide, isBackSide,
-                            cancellationToken);
+                        ApplyPrintSettings(canvasBitmap, _previewPageImageSize, logicalPages,
+                            previewPageIndex, isRightSide, isBackSide, cancellationToken);
 
                         SendPreviewPageImage(previewPageIndex, false, cancellationToken);
                     });
@@ -860,27 +850,23 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="canvasBitmap">preview page image</param>
         /// <param name="previewPageSize">preview page size</param>
-        /// <param name="logicalPageImages">logical page images</param>
-        /// <param name="logicalPageSize">logical page size</param>
+        /// <param name="logicalPages">logical pages</param>
         /// <param name="previewPageIndex">preview page index</param>
         /// <param name="isRightSide">true when image requested is for right side, false otherwise</param>
         /// <param name="isBackSide">true when duplex is on and is for back side, false otherwise</param>
         /// <param name="cancellationToken">cancellation token</param>
-        private void ApplyPrintSettings(WriteableBitmap canvasBitmap,
-            Size previewPageSize, List<WriteableBitmap> logicalPageImages, Size logicalPageSize,
-            int previewPageIndex, int logicalPageIndex, bool isRightSide, bool isBackSide,
+        private void ApplyPrintSettings(WriteableBitmap canvasBitmap, Size previewPageSize,
+            List<LogicalPage> logicalPages, int previewPageIndex, bool isRightSide, bool isBackSide,
             CancellationTokenSource cancellationToken)
         {
             LogUtility.BeginTimestamp("ApplyPrintSettings #" + previewPageIndex);
 
             Size paperSize = PreviewPageImageUtility.GetPaperSize(_currPrintSettings.PaperSize);
 
-            bool isPdfPortait = DocumentController.Instance.GetPdfOrientation((uint)logicalPageIndex); 
-
             bool isPreviewPagePortrait = PreviewPageImageUtility.IsPreviewPagePortrait(
                 _currPrintSettings.Orientation);
 
-            if (logicalPageImages != null && logicalPageImages.Count > 0)
+            if (logicalPages != null && logicalPages.Count > 0)
             {
                 // Check imposition value
                 if (_pagesPerSheet > 1)
@@ -891,17 +877,16 @@ namespace SmartDeviceApp.Controllers
                     }
 
                     PreviewPageImageUtility.OverlayImagesForImposition(canvasBitmap, previewPageSize,
-                        logicalPageImages, logicalPageSize, logicalPageIndex,
-                        _currPrintSettings.Orientation, _currPrintSettings.Imposition,
+                        logicalPages, _currPrintSettings.Orientation, _currPrintSettings.Imposition,
                         _currPrintSettings.ImpositionOrder, _currPrintSettings.ScaleToFit,
-                        isPdfPortait, isPreviewPagePortrait, out isPreviewPagePortrait,
+                        isPreviewPagePortrait, out isPreviewPagePortrait,
                         cancellationToken);
                 }
                 else if (_pagesPerSheet == 1)
                 {
                     PreviewPageImageUtility.OverlayImage(canvasBitmap, previewPageSize,
-                        logicalPageImages[0], logicalPageSize, isPdfPortait, isPreviewPagePortrait,
-                        _currPrintSettings.ScaleToFit,
+                        logicalPages[0].Image, logicalPages[0].ActualSize, logicalPages[0].IsPortrait,
+                        isPreviewPagePortrait, _currPrintSettings.ScaleToFit,
                         cancellationToken);
                 }
             }
@@ -948,7 +933,7 @@ namespace SmartDeviceApp.Controllers
                 PreviewPageImageUtility.FormatPageImageForDuplex(canvasBitmap,
                     previewPageSize, _currPrintSettings.Duplex, _currPrintSettings.FinishingSide,
                     _currPrintSettings.Punch, _selectedPrinter.EnabledPunchFour,
-                    _currPrintSettings.Staple, isPdfPortait, isPreviewPagePortrait,
+                    _currPrintSettings.Staple, isPreviewPagePortrait,
                     isRightSide, isBackSide, cancellationToken);
             }
             else // Not duplex and not booket
@@ -1117,9 +1102,14 @@ namespace SmartDeviceApp.Controllers
                             if (_isSwipeLeft && _currLeftBackPageIndex < 0)
                                 _printPreviewViewModel.LeftNextPageImage.Clear();
                             else if (_currLeftBackPageIndex > 0)
-                                WriteableBitmapExtensions.FromByteArray(
+                            {
+                                if (_isReverseOrder && _currRightPageIndex < _maxPreviewPageCount - 1) //Check if it is in right bind and not last page
+                                {
+                                    WriteableBitmapExtensions.FromByteArray(
                                             _printPreviewViewModel.LeftNextPageImage,
                                             _previewPageImages.GetValue(_currLeftBackPageIndex - 2));
+                                }
+                            }
                         }
                         _printPreviewViewModel.IsLoadLeftBackPageActive = false;
                         _printPreviewViewModel.IsLoadLeftNextPageActive = false;

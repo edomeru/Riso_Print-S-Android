@@ -9,6 +9,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    Loaded="OnLoaded"
     DataContext="{Binding ViewControlViewModel, Source={StaticResource Locator}}">
 
     <UserControl.Resources>
@@ -274,7 +275,7 @@
                             Template="{StaticResource TEMPLATE_MainMenuButton}" 
                             Style="{StaticResource STYLE_AlignLeft}"
                             Tapped="OnMainMenuButtonTapped"/>
-                    <TextBlock x:Name="viewTitle" Grid.Column="1" Text="{Binding Text, ElementName=viewControl}" Style="{StaticResource STYLE_TextHeader}"/>
+                    <TextBlock x:Name="viewTitle" Grid.Column="1" Text="{Binding Text, ElementName=viewControl}" Style="{StaticResource STYLE_TextHeader}" TextTrimming="CharacterEllipsis" LineStackingStrategy="MaxHeight"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
                     <ToggleButton x:Name="button2" 

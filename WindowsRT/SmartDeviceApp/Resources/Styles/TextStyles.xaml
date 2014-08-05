@@ -12,6 +12,7 @@
         <Setter Property="IsHitTestVisible" Value="False"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextLineBounds" Value="Full"/>
     </Style>
 
     <Style x:Key="STYLE_TextBody" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" >
@@ -28,8 +29,12 @@
         <Setter Property="TextLineBounds" Value="Full"/>
     </Style>
 
-    <Style x:Key="STYLE_TextKey" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextBody}" >        
+    <Style x:Key="STYLE_TextKey" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextBody}" >
         <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextKeyNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >
+        <Setter Property="TextTrimming" Value="None"/>
     </Style>
 
     <Style x:Key="STYLE_TextKeySubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >

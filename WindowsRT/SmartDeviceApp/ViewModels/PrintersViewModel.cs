@@ -360,6 +360,8 @@ namespace SmartDeviceApp.ViewModels
             else
             {
                 Printer printer = PrinterList.FirstOrDefault(x => x.IpAddress == _printerToBeDeleted);
+                if (printer != null)
+                    printer.WillBeDeleted = false;
             }   
         }
 

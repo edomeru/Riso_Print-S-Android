@@ -400,6 +400,7 @@
                           Text="{Binding DataContext.DocumentTitleText, ElementName=printPreviewPage}" 
                           Button1Image="ms-appx:///Resources/Images/img_btn_print_settings_normal.png"
                           Button1PressedImage="ms-appx:///Resources/Images/img_btn_print_settings_pressed.png"
+                          Button1Visibility="Visible"
                           Button2Visibility="Collapsed">
         <controls:ViewControl.RightPaneContent>
             <local:PrintSettingsPane/>

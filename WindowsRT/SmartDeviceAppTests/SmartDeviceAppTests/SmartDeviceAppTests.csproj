@@ -117,6 +117,7 @@
     <Compile Include="Common\Utilities\DefaultsUtilityTest.cs" />
     <Compile Include="Common\Utilities\PreviewPageImageUtilityTest.cs" />
     <Compile Include="Common\Utilities\UnitTestUtility.cs" />
+    <Compile Include="Common\Utilities\ViewControlUtilityTest.cs" />
     <Compile Include="Controllers\DocumentControllerTest.cs" />
     <Compile Include="Controllers\InitialDataControllerTest.cs" />
     <Compile Include="Controllers\NetworkControllerTest.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Controllers\PrintSettingsControllerTest.cs" />
     <Compile Include="Controllers\SettingControllerTest.cs" />
     <Compile Include="Controllers\PrintPreviewControllerTest.cs" />
+    <Compile Include="Converters\JobListItemKeyTextConverterTest.cs" />
     <Compile Include="Converters\StringToVisibilityConverterTest.cs" />
     <Compile Include="Converters\SidePaneLineGeometryConverterTest.cs" />
     <Compile Include="Converters\SeparatorLineGeometryConverterTest.cs" />

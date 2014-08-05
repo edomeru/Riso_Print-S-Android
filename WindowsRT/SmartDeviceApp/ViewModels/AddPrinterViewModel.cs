@@ -49,6 +49,8 @@ namespace SmartDeviceApp.ViewModels
 
         private ViewControlViewModel _viewControlViewModel;
 
+        private ViewOrientation _viewOrientation;
+
         /// <summary>
         /// Constructor for AddPrinterViewModel.
         /// </summary>
@@ -172,6 +174,22 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets/sets the current view orientation
+        /// </summary>
+        public ViewOrientation ViewOrientation
+        {
+            get { return _viewOrientation; }
+            set
+            {
+                if (_viewOrientation != value)
+                {
+                    _viewOrientation = value;
+                    OnPropertyChanged("ViewOrientation");
+                }
+            }
+        }
+
         #endregion Properties
 
         #region Public Methods
@@ -254,6 +272,8 @@ namespace SmartDeviceApp.ViewModels
         {
             var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
             Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)) - titleHeight;
+
+            ViewOrientation = viewOrientation;
         }
 
         private async Task HandleStringMessage(MessageType strMsg)
