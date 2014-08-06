@@ -1,4 +1,6 @@
-﻿using SmartDeviceApp.Converters;
+﻿using GalaSoft.MvvmLight.Messaging;
+using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +42,14 @@ namespace SmartDeviceApp.Controls
                 Title = conv.Convert(title, null, null, null).ToString();
             }
             Content = conv.Convert(content, null, null, null).ToString();
+
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetControlSize(viewOrientation));
+        }
+
+        private void ResetControlSize(ViewOrientation viewOrientation)
+        {
+            overlay.Width = (double)((new ResizedViewWidthConverter()).Convert(null, null, viewOrientation, null));
+            overlay.Height = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null)); 
         }
 
         public static readonly DependencyProperty TitleProperty =
