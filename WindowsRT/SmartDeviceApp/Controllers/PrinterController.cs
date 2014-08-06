@@ -320,17 +320,8 @@ namespace SmartDeviceApp.Controllers
         {
 
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            //check if valid ip address
-            if (!isValidIpAddress(ip))
-            {
-                //display error theat ip is invalid
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                {
-                    await DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-                });
-                return false;
-            }
+
+            // No checking for valid IP format here. This is assumed to be checked from ViewModel before using this method.
 
             //check if _printerList is already full
             if (_printerList.Count() >= 10)//TODO: Change to CONSTANTS
@@ -374,34 +365,6 @@ namespace SmartDeviceApp.Controllers
 
             return true;
 
-        }
-
-        /// <summary>
-        /// Checks if the given string is a valid IP Address.
-        /// </summary>
-        /// <param name="ip">Ip address to be checked</param>
-        /// <returns>true if string is a valid ip, else false</returns>
-        public bool isValidIpAddress(string ip)
-        {
-            try
-            {
-                HostName h = new HostName(ip);
-                String type = h.Type.ToString();
-                //valid ipv4 or ipv6
-                if (type.Equals("Ipv4") || type.Equals("Ipv6"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                //invalid hostname or ip
-                return false;
-            }
         }
 
         /// <summary>

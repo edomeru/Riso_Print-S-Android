@@ -25,6 +25,8 @@ namespace SmartDeviceApp.ViewModels
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
+        private const string REGEX_IP_ADDRESS_TRIM_LEADING_ZEROS = "0*([a-fA-F0-9]+)";
+
         private string _ipAddress;
 
         private ICommand _addPrinter;
@@ -290,20 +292,24 @@ namespace SmartDeviceApp.ViewModels
 
             System.Diagnostics.Debug.WriteLine(IpAddress);
 
-            IpAddress = System.Text.RegularExpressions.Regex.Replace(IpAddress, "0*([0-9]+)", "${1}");
+            // Remove leading zeros per group
+            string ipAddress = System.Text.RegularExpressions.Regex.Replace(IpAddress, REGEX_IP_ADDRESS_TRIM_LEADING_ZEROS, "${1}");
 
-            PrinterSearchList.Clear();
+            // Validate IP address, get the shortened IP address
+            var isValidIp = InputValidationUtility.IsValidIpAddress(ipAddress, out ipAddress);
 
-            //check if has data
-            if (IpAddress.Equals(""))
+            IpAddress = ipAddress; // Display shortened IP address
+
+            if (!isValidIp)
             {
                 //display error message
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 return;
             }
 
-            //add to printer controller
+            PrinterSearchList.Clear();
 
+            // Add to printer controller
             IsButtonVisible = false;
             IsProgressRingVisible = true;
             bool result = await AddPrinterHandler(IpAddress);

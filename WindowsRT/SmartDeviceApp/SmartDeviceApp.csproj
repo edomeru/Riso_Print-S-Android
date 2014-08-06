@@ -130,6 +130,7 @@
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
+    <Compile Include="Common\Utilities\InputValidationUtility.cs" />
     <Compile Include="Common\Utilities\LogUtility.cs" />
     <Compile Include="Common\Utilities\LruCacheHelper.cs" />
     <Compile Include="Common\Utilities\PreviewPageImageUtility.cs" />
