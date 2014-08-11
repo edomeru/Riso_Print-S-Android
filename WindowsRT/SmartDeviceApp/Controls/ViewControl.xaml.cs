@@ -195,6 +195,24 @@ namespace SmartDeviceApp.Controls
         }
 
         /// <summary>
+        /// Title textblock
+        /// </summary>
+        public TextBlock ViewTitle
+        {
+            get { return viewTitle; }
+        }
+
+        /// <summary>
+        /// Width property for button1.
+        /// </summary>
+        public double Button1Width { get; private set; }
+
+        /// <summary>
+        /// Width property for mainMenuButton
+        /// </summary>
+        public double MainMenuButtonWidth { get; private set; }
+
+        /// <summary>
         /// On loaded event
         /// </summary>
         /// <param name="sender">sender</param>
@@ -242,17 +260,17 @@ namespace SmartDeviceApp.Controls
 
             // Main menu button is always visible
             {
-                var imageWidth = (int)mainMenuButton.ActualWidth;
-                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(this, true);
-                maxTextWidth -= imageWidth;
+                MainMenuButtonWidth = (int)mainMenuButton.ActualWidth;
+                if (MainMenuButtonWidth == 0) MainMenuButtonWidth = ImageConstant.GetIconImageWidth(this, true);
+                maxTextWidth -= (int)MainMenuButtonWidth;
                 maxTextWidth -= (int)defaultMargin;
             }
             // Button1 is visible
             if (Button1Visibility == Visibility.Visible)
             {
-                var imageWidth = (int)button1.ActualWidth;
-                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(this, true);
-                maxTextWidth -= imageWidth;
+                Button1Width = (int)button1.ActualWidth;
+                if (Button1Width == 0) Button1Width = ImageConstant.GetIconImageWidth(this, true);
+                maxTextWidth -= (int)Button1Width;
                 maxTextWidth -= (int)defaultMargin;
             }
             // Button2 is visible
