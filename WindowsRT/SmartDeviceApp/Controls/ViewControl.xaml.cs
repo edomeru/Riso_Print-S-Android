@@ -195,14 +195,6 @@ namespace SmartDeviceApp.Controls
         }
 
         /// <summary>
-        /// Title textblock
-        /// </summary>
-        public TextBlock ViewTitle
-        {
-            get { return viewTitle; }
-        }
-
-        /// <summary>
         /// Width property for button1.
         /// </summary>
         public double Button1Width { get; private set; }
