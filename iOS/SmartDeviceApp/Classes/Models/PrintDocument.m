@@ -159,6 +159,13 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
     CGPDFDocumentRef docRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef)self.url);
     CGPDFPageRef pageRef = CGPDFDocumentGetPage(docRef, 1);
     CGRect pageRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
+    int rotation = CGPDFPageGetRotationAngle(pageRef);
+    if ((rotation % 180) > 0)
+    {
+        CGFloat temp = pageRect.size.width;
+        pageRect.size.width = pageRect.size.height;
+        pageRect.size.height = temp;
+    }
     
     kOrientation orientation = kOrientationPortrait;
     if (pageRect.size.width > pageRect.size.height)
