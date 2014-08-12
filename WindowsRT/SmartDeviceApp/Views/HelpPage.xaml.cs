@@ -15,6 +15,8 @@ using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.ViewModels;
+using Windows.Storage;
+using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Views
 {
@@ -44,6 +46,13 @@ namespace SmartDeviceApp.Views
             {
                 return (HelpViewModel)DataContext;
             }
+        }
+
+        private async void WebView_Loaded(object sender, RoutedEventArgs e)
+        {
+            StorageFile MyWebPageFile = await StorageFileUtility.GetFileFromAppResource("Assets/help.html");
+            string MyWebPageString = await FileIO.ReadTextAsync(MyWebPageFile);
+            ((WebView)sender).NavigateToString(MyWebPageString);
         }
     }
 }
