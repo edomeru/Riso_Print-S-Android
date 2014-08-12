@@ -47,6 +47,13 @@
                                         TextBoxAlignment="Left"
                                         PressedColor="{StaticResource BRUSH_Purple2}"
                                         KeyPressedColor="{StaticResource BRUSH_White}"/>
+            
+            <!--
+            The button below is just a dummy UI element.
+            This is added to dismiss the keyboard on lost focus of Log-in text box.
+            This can be deleted when there are other UI elements, where focus can go next, in Settings Screen.
+            -->
+            <Button Visibility="Visible" Width="0" Height="0" BorderBrush="Transparent" Background="Transparent" />
         </StackPanel>
         <Grid 
             x:Name="SettingsGestureGrid"
