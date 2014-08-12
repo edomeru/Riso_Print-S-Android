@@ -213,7 +213,7 @@
                                                       />-->
 
 
-                            <controls:KeyToggleCheckControl x:Name="defaultPrinterSwitch"  
+                            <!--<controls:KeyToggleCheckControl x:Name="defaultPrinterSwitch"  
                                                              Text="{Binding Source=IDS_LBL_SET_DEFAULT_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
                                                              IconVisibility="Collapsed"
                                                              RightButtonVisibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -223,7 +223,18 @@
                                                              Width="{Binding ItemWidth, ElementName=printerInfoView}"
                                                              PressedColor="{StaticResource BRUSH_Purple2}"
                                                              KeyPressedColor="{StaticResource BRUSH_White}"
-                                                            ToggleVisibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
+                                                            ToggleVisibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>-->
+                            <controls:KeyToggleButtonControl x:Name="defaultPrinterSwitch"
+                                                             Text="{Binding Source=IDS_LBL_SET_DEFAULT_PRINTER, Converter={StaticResource ResourceStringToTextConverter}}"
+                                                             IconVisibility="Collapsed"
+                                                             ValueVisibility="Collapsed"
+                                                             IsDefault="{Binding IsDefault, Mode=TwoWay}"
+                                                             RightButtonVisibility="Collapsed"
+                                                             SeparatorVisibility="Visible"
+                                                             IsListItem="True"
+                                                             Width="{Binding ItemWidth, ElementName=printerInfoView}"
+                                                             PressedColor="{StaticResource BRUSH_Purple2}"
+                                                             KeyPressedColor="{StaticResource BRUSH_White}"/>
                             <controls:DefaultPrintSettingsControl x:Name="settings" 
                                                                   IconVisibility="Collapsed"
                                                           Text="{Binding Source=IDS_LBL_DEFAULT_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}"

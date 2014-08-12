@@ -544,5 +544,10 @@ Cannot find Printer.</value>
   <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
     <value>Database failure. Please restart the application. If the problem persists, please reinstall the application.</value>
   </data>
-
+  <data name="IDS_LBL_NO" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="IDS_LBL_YES" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>

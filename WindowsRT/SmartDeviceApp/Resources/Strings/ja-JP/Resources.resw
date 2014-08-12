@@ -546,5 +546,10 @@
 再起動してみてください。
 再起動しても解消されない場合は、再インストールしてください。</value>
   </data>
-
+  <data name="IDS_LBL_NO" xml:space="preserve">
+    <value />
+  </data>
+  <data name="IDS_LBL_YES" xml:space="preserve">
+    <value />
+  </data>
 </root>

@@ -149,6 +149,9 @@
       <DependentUpon>DefaultPrintSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\JobGroupListControl.cs" />
+    <Compile Include="Controls\KeyToggleButtonControl.xaml.cs">
+      <DependentUpon>KeyToggleButtonControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SelectPrinterItemControl.cs" />
     <Compile Include="Controls\KeyToggleCheckControl.xaml.cs">
       <DependentUpon>KeyToggleCheckControl.xaml</DependentUpon>
@@ -524,6 +527,10 @@
     <Page Include="Controls\GroupListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyToggleButtonControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\PrinterNameControl.xaml">
       <SubType>Designer</SubType>
