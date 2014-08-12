@@ -171,15 +171,16 @@
                                                           Width="{StaticResource SIZE_SidePaneWidth}"
                                                           Command="{Binding DataContext.PrinterSearchItemSelected, ElementName=SearchPrinterPaneControl}"
                                                           CommandParameter="{Binding}"
-                                                          Text="{Binding Name}"
+                                                          Text="{Binding Name, Converter={StaticResource PrinterNameToTextConverter}}"
                                                           SubText="{Binding Ip_address}"
-                                                          SubTextVisibility="Visible"
+                                                          SubTextVisibility="{Binding Ip_address, Converter={StaticResource StringToVisibilityConverter}}"
                                                           RightImage="{Binding IsInPrinterList, Converter={StaticResource PrinterSearchItemButtonImageConverter}}"
                                                           RightButtonVisibility="Visible"
                                                           IconVisibility="Collapsed"
                                                           SeparatorVisibility="Visible"
+                                                          ValueVisibility="Collapsed"
                                                           IsListItem="True"
-                                                          PressedColor="{StaticResource BRUSH_Purple1}"/>                                
+                                                          PressedColor="{StaticResource BRUSH_Purple1}"/>
                             </Grid>
                         </DataTemplate>
                         
