@@ -461,7 +461,7 @@
         
         //add two pages for the book ends
         self.layoutPageNum = self.totalPageNum + 2;
-        [self.pageScroll setMaximumValue:self.totalPageNum - 1]; //the last page that can be visited for the slider should be the second to the last page  which is the front page of the last sheet
+        [self.pageScroll setMaximumValue:self.totalPageNum]; //the last page that can be visited for the slider should be the second to the last page  which is the front page of the last sheet
     }
     else
     {
@@ -477,12 +477,13 @@
         {
             //if duplex and the number of pages is odd, still include the back of the last page, then add 2 pages for book ends
             self.layoutPageNum = self.totalPageNum + self.totalPageNum % 2 + 2;
+            [self.pageScroll setMaximumValue:self.layoutPageNum - 2];
         }
         else
         {
             self.layoutPageNum = self.totalPageNum; //on other cases, the total page number is the total pages needed for the layout
+            [self.pageScroll setMaximumValue:self.totalPageNum];
         }
-        [self.pageScroll setMaximumValue:self.totalPageNum];
     }
     //reset current page if it is now way past the computed total page number
     if(self.printDocument.currentPage >= self.totalPageNum)
@@ -495,11 +496,11 @@
 {
     NSInteger totalSheets = self.totalPageNum;
     NSInteger currentSheet = self.printDocument.currentPage + 1;
-    if(self.printDocument.previewSetting.booklet == YES || self.printDocument.previewSetting.duplex != kDuplexSettingOff)
-    {
-        currentSheet = self.printDocument.currentPage/2 + 1;
-        totalSheets = self.totalPageNum/2 + self.totalPageNum % 2;
+    if((self.totalPageNum % 2) >  0 &&
+       (self.printDocument.previewSetting.booklet == YES || self.printDocument.previewSetting.duplex != kDuplexSettingOff)) {
+        totalSheets++;
     }
+
     self.pageLabel.text = [NSString stringWithFormat:NSLocalizedString(IDS_LBL_PAGE_DISPLAYED, @""), (long)currentSheet, (long)totalSheets];
 }
 
@@ -859,20 +860,10 @@
     if(completed == YES)
     {
         PDFPageContentViewController *viewController = (PDFPageContentViewController *)[pageViewController.viewControllers lastObject];
-        if(viewController.pageIndex < self.totalPageNum - 1)
-        {
-            self.printDocument.currentPage = viewController.pageIndex;
-        }
-        else
-        {
-            if(viewController.pageIndex == self.layoutPageNum - 1 && self.layoutPageNum != self.totalPageNum)
-            {
-                self.printDocument.currentPage = 0;
-            }
-            else
-            {
-                self.printDocument.currentPage = self.totalPageNum - 1;
-            }
+        if (self.pageViewController.isDoubleSided) {
+            self.printDocument.currentPage = MAX(viewController.pageIndex - 1, 0);
+        } else {
+            self.printDocument.currentPage =  viewController.pageIndex;
         }
         [self setupPageLabel];
         [self.pageScroll setValue:self.printDocument.currentPage + 1];
@@ -1023,15 +1014,9 @@
     
     //update the current page  and page number label
     // if double sided and page is at the back (even pages)  - always navigate to the next front page
-    if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2) == 0)
+    if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2) > 0)
     {
-        //go to the next front page
-        if(pageNumber < self.totalPageNum)
-        {
-            pageNumber++;
-        }
-        else //if there are no more front pages, go the previous front page
-        {
+        if (pageNumber != slider.maximumValue && pageNumber != 1) {
             pageNumber--;
         }
     }
@@ -1050,6 +1035,7 @@
 - (IBAction)tapPageScrollAction:(id)sender
 {
     UIGestureRecognizer *tap =  (UIGestureRecognizer *)sender;
+    UISlider *slider =(UISlider *)tap.view;
     //get point in slider where it is tapped
     CGPoint point = [tap locationInView:self.pageScroll];
     //Get how many percent of the total slider length is the distance of the tapped point from the start point of the slider
@@ -1059,31 +1045,10 @@
     NSInteger pageNumber = (self.totalPageNum * scrollPercentage + 1.5f);
    
     // if double sided and page is at the back (even pages) - always navigate to the next front page
-    if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2)== 0)
+    if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2) > 0)
     {
-        if(pageNumber < self.totalPageNum)
-        {
-            pageNumber++;
-        }
-        else
-        {
+        if (pageNumber != slider.maximumValue && pageNumber != 1) {
             pageNumber--;
-        }
-    }
-    
-    if(pageNumber <= 0)
-    {
-        pageNumber = 1;
-    }
-    else if(pageNumber > self.totalPageNum)
-    {
-        if(self.pageViewController.isDoubleSided == YES && (self.totalPageNum % 2 == 0)) // double sided with even number of pages, give the front page of the last sheet
-        {
-            pageNumber = self.totalPageNum - 1;
-        }
-        else
-        {
-           pageNumber =  self.totalPageNum; // give the last page
         }
     }
     
