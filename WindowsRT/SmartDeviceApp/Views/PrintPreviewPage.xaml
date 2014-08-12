@@ -397,11 +397,12 @@
         </Style>
     </base:PageBase.Resources>
     <controls:ViewControl ChildrenDataContext="{Binding DataContext, ElementName=printPreviewPage}"
-                          Text="{Binding DataContext.DocumentTitleText, ElementName=printPreviewPage}" 
+                          Text="{Binding DataContext.TrimmedTitleText, ElementName=printPreviewPage}"
                           Button1Image="ms-appx:///Resources/Images/img_btn_print_settings_normal.png"
                           Button1PressedImage="ms-appx:///Resources/Images/img_btn_print_settings_pressed.png"
                           Button1Visibility="Visible"
-                          Button2Visibility="Collapsed">
+                          Button2Visibility="Collapsed"
+                          Loaded="OnViewControlLoaded">
         <controls:ViewControl.RightPaneContent>
             <local:PrintSettingsPane/>
         </controls:ViewControl.RightPaneContent>

@@ -87,7 +87,10 @@ namespace SmartDeviceApp.ViewModels
         private bool _isHorizontalSwipeEnabledPrevious;
         private double _scalingFactor = 1;
 
-        private string _documentTitleText;
+        private string _trimmedTitleText;
+        private double _mainMenuButtonWidth;
+        private double _printSettingsButtonWidth;
+
         private WriteableBitmap _rightPageImage;
         private WriteableBitmap _leftPageImage;
         private WriteableBitmap _rightBackPageImage;
@@ -521,15 +524,20 @@ namespace SmartDeviceApp.ViewModels
                 }
             }
         }
-                
+
         private void SetViewMode(ViewMode viewMode)
         {
             if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview &&
-                _viewControlViewModel.ScreenMode != ScreenMode.Home) return;
+                _viewControlViewModel.ScreenMode != ScreenMode.Home)
+            {
+                return;
+            }
+
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
             _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(viewMode, null, null, null)) - defaultMargin * 2;
             if (_controlReference != null) ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
             InitializeGestures();
+
             switch (viewMode)
             {
                 case ViewMode.MainMenuPaneVisible:
@@ -541,12 +549,14 @@ namespace SmartDeviceApp.ViewModels
                 case ViewMode.FullScreen:
                     {
                         EnablePreviewGestures();
+                        TrimTitleText(viewMode); // Update title text on resize
                         break;
                     }
                 case ViewMode.RightPaneVisible: // NOTE: Technically not possible
                 case ViewMode.RightPaneVisible_ResizedWidth:
                     {
                         DisablePreviewGestures();
+                        TrimTitleText(viewMode); // Update title text on resize
                         break;
                     }
             }
@@ -572,19 +582,69 @@ namespace SmartDeviceApp.ViewModels
         #region PAGE DISPLAY
 
         /// <summary>
+        /// Document name
+        /// </summary>
+        public string DocumentTitleText { get; set; }
+
+        /// <summary>
         /// Text label for the Print Preview Screen based on the document name
         /// </summary>
-        public string DocumentTitleText
+        public string TrimmedTitleText
         {
-            get { return _documentTitleText; }
+            get { return _trimmedTitleText; }
             set
             {
-                if (_documentTitleText != value)
+                if (_trimmedTitleText != value)
                 {
-                    _documentTitleText = value;
-                    RaisePropertyChanged("DocumentTitleText");
+                    _trimmedTitleText = value;
+                    RaisePropertyChanged("TrimmedTitleText");
                 }
             }
+        }
+
+        /// <summary>
+        /// Handler when view control is loaded.
+        /// </summary>
+        /// <param name="viewControl">view control</param>
+        public void SetViewControl(ViewControl viewControl)
+        {
+            // Update title text
+            _mainMenuButtonWidth = viewControl.MainMenuButtonWidth;
+            _printSettingsButtonWidth = viewControl.Button1Width;
+            TrimTitleText(new ViewModelLocator().ViewControlViewModel.ViewMode);
+        }
+
+        /// <summary>
+        /// Updates the title text of the screen. Performs middle trim if needed.
+        /// </summary>
+        /// <param name="viewMode">current view mode</param>
+        private void TrimTitleText(ViewMode viewMode)
+        {
+            // Adjust widths
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            var rightPaneWidth = (double)Application.Current.Resources["SIZE_SidePaneWidthWithBorder"];
+
+            var maxTextWidth = (int)Window.Current.Bounds.Width;
+
+            // Left and right margins
+            maxTextWidth -= ((int)defaultMargin * 2);
+
+            // Main menu button is always visible
+            maxTextWidth -= (int)_mainMenuButtonWidth;
+            maxTextWidth -= (int)defaultMargin;
+
+            // Print Settings button is always visible
+            maxTextWidth -= (int)_printSettingsButtonWidth;
+            maxTextWidth -= (int)defaultMargin;
+
+            // RightPaneVisible_ResizeWidth view mode
+            if (viewMode == ViewMode.RightPaneVisible_ResizedWidth)
+            {
+                maxTextWidth -= (int)rightPaneWidth;
+            }
+
+            TrimmedTitleText = (string)new TitleToMiddleTrimmedTextConverter().Convert(
+                DocumentTitleText, null, (double)maxTextWidth, null);
         }
 
         /// <summary>
