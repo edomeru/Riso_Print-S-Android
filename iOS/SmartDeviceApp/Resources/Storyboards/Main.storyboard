@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -852,7 +852,7 @@
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <subviews>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set as Default Printer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PUd-7S-JJi" userLabel="Label - Default Printer">
-                                                            <rect key="frame" x="20" y="11" width="203" height="18"/>
+                                                            <rect key="frame" x="20" y="11" width="146" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                             <nil key="highlightedColor"/>
@@ -860,32 +860,26 @@
                                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SET_DEFAULT_PRINTER"/>
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
-                                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xs2-X2-H9b" userLabel="Default Printer">
-                                                            <rect key="frame" x="233" y="7" width="79" height="27"/>
+                                                        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="ihJ-Cf-YAs" userLabel="Default Printer Selection" customClass="CustomSegmentedControl">
+                                                            <rect key="frame" x="154" y="5" width="156" height="31"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <color key="onTintColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <segments>
+                                                                <segment title="First"/>
+                                                                <segment title="Second"/>
+                                                            </segments>
+                                                            <color key="tintColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
                                                             <connections>
-                                                                <action selector="defaultPrinterSwitchAction:" destination="ZEw-b3-LhF" eventType="valueChanged" id="C2g-gX-t2i"/>
+                                                                <action selector="defaultPrinterSelectionAction:" destination="ZEw-b3-LhF" eventType="valueChanged" id="A47-0P-JDE"/>
                                                             </connections>
-                                                        </switch>
-                                                        <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_set_as_default_printer" translatesAutoresizingMaskIntoConstraints="NO" id="ezf-52-fiQ">
-                                                            <rect key="frame" x="275" y="0.0" width="40" height="40"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="40" id="evT-fJ-ABy"/>
-                                                                <constraint firstAttribute="height" constant="40" id="ftW-ud-li1"/>
-                                                            </constraints>
-                                                        </imageView>
+                                                        </segmentedControl>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstAttribute="centerY" secondItem="PUd-7S-JJi" secondAttribute="centerY" id="0TN-Bh-y6V"/>
-                                                        <constraint firstAttribute="trailing" secondItem="ezf-52-fiQ" secondAttribute="trailing" constant="5" id="9no-ON-pXC"/>
-                                                        <constraint firstAttribute="trailing" secondItem="Xs2-X2-H9b" secondAttribute="trailing" constant="10" id="NsK-2T-22T"/>
+                                                        <constraint firstAttribute="trailing" secondItem="ihJ-Cf-YAs" secondAttribute="trailing" constant="10" id="Auq-Oo-TWP"/>
                                                         <constraint firstAttribute="height" constant="40" id="RwX-Ao-dtc"/>
-                                                        <constraint firstItem="Xs2-X2-H9b" firstAttribute="leading" secondItem="PUd-7S-JJi" secondAttribute="trailing" constant="10" id="Un1-ql-ucr"/>
                                                         <constraint firstItem="PUd-7S-JJi" firstAttribute="leading" secondItem="dXr-Bg-3bc" secondAttribute="leading" constant="20" id="d1l-ik-FQ1"/>
-                                                        <constraint firstAttribute="centerY" secondItem="ezf-52-fiQ" secondAttribute="centerY" id="g0z-nA-9Ca"/>
-                                                        <constraint firstAttribute="centerY" secondItem="Xs2-X2-H9b" secondAttribute="centerY" id="uFA-5D-m41"/>
+                                                        <constraint firstItem="ihJ-Cf-YAs" firstAttribute="top" secondItem="dXr-Bg-3bc" secondAttribute="top" constant="5" id="qU7-eY-QgX"/>
+                                                        <constraint firstAttribute="bottom" secondItem="ihJ-Cf-YAs" secondAttribute="bottom" constant="5" id="swQ-07-pqH"/>
                                                     </constraints>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DUX-Tp-Hyn" userLabel="Separator">
@@ -965,11 +959,10 @@
                                         <size key="customSize" width="320" height="270"/>
                                         <connections>
                                             <outlet property="cellHeader" destination="vc7-tr-dlt" id="0Ep-8R-3gh"/>
-                                            <outlet property="defaultSetIcon" destination="ezf-52-fiQ" id="eQo-Hy-wpp"/>
+                                            <outlet property="defaultPrinterSelection" destination="ihJ-Cf-YAs" id="Lc8-Fe-8fW"/>
                                             <outlet property="defaultSettingsButton" destination="hEi-x2-OHw" id="H69-Iy-BLY"/>
                                             <outlet property="defaultSettingsRow" destination="SjP-Aq-fJU" id="6Sp-dP-miI"/>
                                             <outlet property="defaultSettingsRowLabel" destination="eY3-b2-Jeq" id="L6r-Ia-gVE"/>
-                                            <outlet property="defaultSwitch" destination="Xs2-X2-H9b" id="7kt-b4-tsC"/>
                                             <outlet property="deleteButton" destination="tCl-QS-N9c" id="Cpq-DW-TyL"/>
                                             <outlet property="ipAddressLabel" destination="OZW-Av-tl1" id="MbF-Pc-nqp"/>
                                             <outlet property="nameLabel" destination="OLl-rF-Cku" id="2wp-TI-eY3"/>
@@ -2583,30 +2576,25 @@
                                                     <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SET_DEFAULT_PRINTER"/>
                                                 </userDefinedRuntimeAttributes>
                                             </label>
-                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="V7Y-Ut-ufD">
-                                                <rect key="frame" x="233" y="9" width="79" height="27"/>
+                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Mpm-YS-ffl" userLabel="Default Printer Selection" customClass="CustomSegmentedControl">
+                                                <rect key="frame" x="154" y="5" width="156" height="36"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <color key="onTintColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
+                                                <segments>
+                                                    <segment title="First"/>
+                                                    <segment title="Second"/>
+                                                </segments>
+                                                <color key="tintColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
                                                 <connections>
-                                                    <action selector="defaultPrinterSwitchAction:" destination="qXF-RA-AFJ" eventType="valueChanged" id="sIr-ve-ueq"/>
+                                                    <action selector="defaultPrinterSelectionAction:" destination="qXF-RA-AFJ" eventType="valueChanged" id="LlU-dU-BYS"/>
                                                 </connections>
-                                            </switch>
-                                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="img_set_as_default_printer" translatesAutoresizingMaskIntoConstraints="NO" id="DoY-TP-6hF">
-                                                <rect key="frame" x="275" y="3" width="40" height="40"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="40" id="dsN-Rh-SJo"/>
-                                                    <constraint firstAttribute="height" constant="40" id="vnU-2J-uKD"/>
-                                                </constraints>
-                                            </imageView>
+                                            </segmentedControl>
                                         </subviews>
                                         <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="Mpm-YS-ffl" secondAttribute="bottom" constant="5" id="5wC-y0-U28"/>
                                             <constraint firstAttribute="height" constant="45" id="HNe-cn-JGw"/>
-                                            <constraint firstAttribute="centerY" secondItem="DoY-TP-6hF" secondAttribute="centerY" id="Iql-1B-HWy"/>
                                             <constraint firstItem="kRb-dB-sEY" firstAttribute="leading" secondItem="3po-Ej-HzX" secondAttribute="leading" constant="20" id="J26-F4-AUs"/>
-                                            <constraint firstAttribute="trailing" secondItem="V7Y-Ut-ufD" secondAttribute="trailing" constant="10" id="Jgg-3u-aIk"/>
-                                            <constraint firstAttribute="trailing" secondItem="DoY-TP-6hF" secondAttribute="trailing" constant="5" id="ZIl-6q-VBV"/>
-                                            <constraint firstAttribute="centerY" secondItem="V7Y-Ut-ufD" secondAttribute="centerY" id="w2O-oc-8AE"/>
+                                            <constraint firstAttribute="trailing" secondItem="Mpm-YS-ffl" secondAttribute="trailing" constant="10" id="iij-QY-g45"/>
+                                            <constraint firstItem="Mpm-YS-ffl" firstAttribute="top" secondItem="3po-Ej-HzX" secondAttribute="top" constant="5" id="jFL-xQ-iEd"/>
                                             <constraint firstAttribute="centerY" secondItem="kRb-dB-sEY" secondAttribute="centerY" id="zqv-f9-TWf"/>
                                         </constraints>
                                     </view>
@@ -2645,8 +2633,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="548"/>
                     <connections>
-                        <outlet property="defaultPrinterSwitch" destination="V7Y-Ut-ufD" id="PGa-hq-szW"/>
-                        <outlet property="defaultSetIcon" destination="DoY-TP-6hF" id="Tgu-dN-Gwi"/>
+                        <outlet property="defaultPrinterSelection" destination="Mpm-YS-ffl" id="7NU-Fp-qFM"/>
                         <outlet property="ipAddress" destination="Lo0-Ur-PYK" id="t1g-AK-VrO"/>
                         <outlet property="portSelection" destination="kUh-T9-Pqa" id="3R4-3Z-0jS"/>
                         <outlet property="printSettingsButton" destination="K5Y-yN-Wg9" id="jhy-7C-BMD"/>
@@ -3785,7 +3772,6 @@
         <image name="img_btn_search_printer_pressed" width="64" height="64"/>
         <image name="img_btn_submenu" width="64" height="64"/>
         <image name="img_home_icon" width="160" height="20"/>
-        <image name="img_set_as_default_printer" width="64" height="64"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
@@ -3793,10 +3779,10 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="5pT-ga-236"/>
+        <segue reference="Ysc-8g-iB4"/>
         <segue reference="ax2-Mn-NH0"/>
-        <segue reference="oE4-lZ-OOf"/>
         <segue reference="gRW-en-vNy"/>
         <segue reference="h8r-TR-IcV"/>
+        <segue reference="CWW-vD-UgO"/>
     </inferredMetricsTieBreakers>
 </document>

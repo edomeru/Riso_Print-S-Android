@@ -122,6 +122,8 @@
 "IDS_LBL_PRINTERS_EMPTY" = "No Printers";
 "IDS_LBL_PRINTJOBHISTORY_EMPTY" = "No Print Job History";
 "IDS_LBL_PRINTER_SEARCH_EMPTY" = "No Printers Found";
+"IDS_LBL_YES" = "Yes";
+"IDS_LBL_NO" = "No";
 "IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" = "Added Successfully";
 "IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" = "Warning\nCannot find Printer.";
 "IDS_INFO_MSG_PRINTING" = "Printing…";

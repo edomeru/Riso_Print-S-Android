@@ -27,26 +27,14 @@
 @property (weak, nonatomic) IBOutlet UILabel *ipAddress;
 
 /**
- * Reference to the "Set as Default Printer" switch.
- * If this is the default printer, the {@link defaultSetIcon} is displayed instead.
- */
-@property (weak, nonatomic) IBOutlet UISwitch *defaultPrinterSwitch;
-
-/**
- * Reference to the icon indicating that this printer is the default printer.
- * If this is not the default printer, the {@link defaultPrinterSwitch} is displayed instead.
- */
-@property (weak, nonatomic) IBOutlet UIImageView *defaultSetIcon;
-
-/**
  * Reference to the port selection switch.
  */
 @property (weak, nonatomic) IBOutlet UISegmentedControl *portSelection;
 
 /**
- * Stores the previous state of {@link defaultPrinterSwitch} (on/off).
+ * Reference to the default printer switch.
  */
-@property (assign, nonatomic) BOOL switchPreviousState;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *defaultPrinterSelection;
 
 /**
  * Reference to the Printer object being displayed.
@@ -60,13 +48,13 @@
 
 /**
  * Responds to the "Set as Default Printer" switch action.
- * If the switch is set to on, updates the Printer object to be set
+ * If the selection is set to Yes, updates the Printer object to be set
  * as the default printer (using PrinterManager), then
  * updates the display ({@link hideDefaultSwitch}).
  *
  * @param sender the switch object
  */
-- (IBAction)defaultPrinterSwitchAction:(id)sender;
+- (IBAction)defaultPrinterSelectionAction:(id)sender;
 
 /**
  * Responds to the default print settings button press.
@@ -83,14 +71,6 @@
  * @param sender the port selection object
  */
 - (IBAction)selectPortAction:(id)sender;
-
-/**
- * Toggles the display of the {@link defaultSetIcon} and the {@link defaultPrinterSwitch} views.
- *
- * @param hidden if YES, hides {@link defaultPrinterSwitch} then shows {@link defaultSetIcon}\n
- *               if NO, hides {@link defaultSetIcon} then shows {@link defaultPrinterSwitch}
- */
-- (void)hideDefaultSwitch:(BOOL)hidden;
 
 @end
 
@@ -111,6 +91,9 @@
     
     [self.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_LPR, @"LPR") forSegmentAtIndex:0];
     [self.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_RAW, @"RAW") forSegmentAtIndex:1];
+    
+    [self.defaultPrinterSelection setTitle:NSLocalizedString(IDS_LBL_YES, @"YES") forSegmentAtIndex:0];
+    [self.defaultPrinterSelection setTitle:NSLocalizedString(IDS_LBL_NO, @"NO") forSegmentAtIndex:1];
     
     self.printerManager = [PrinterManager sharedPrinterManager];
     
@@ -134,17 +117,13 @@
         
         if(self.isDefaultPrinter == YES)
         {
-            self.defaultPrinterSwitch.on = YES;
-            [self hideDefaultSwitch:YES];
+            [self.defaultPrinterSelection setEnabled:NO forSegmentAtIndex:1];
         }
         else
         {
-            self.defaultPrinterSwitch.on = NO;
-            [self hideDefaultSwitch:NO];
+            [self.defaultPrinterSelection setSelectedSegmentIndex:1];
         }
     }
-    
-    self.switchPreviousState = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -163,27 +142,16 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)hideDefaultSwitch:(BOOL)hidden
-{
-    self.defaultPrinterSwitch.hidden = hidden;
-    self.defaultSetIcon.hidden = !hidden;
-}
-
 #pragma mark - IBActions
 
-- (IBAction)defaultPrinterSwitchAction:(id)sender
+- (IBAction)defaultPrinterSelectionAction:(id)sender
 {
-    //if setting of printer as default failed, show alert message and turn off switch.
-    if(self.switchPreviousState != [self.defaultPrinterSwitch isOn] && [self.defaultPrinterSwitch isOn])
+    if(self.defaultPrinterSelection.selectedSegmentIndex == 0) //yes
     {
-        self.switchPreviousState = YES;
         if([self.printerManager registerDefaultPrinter:self.printer])
         {
-            self.isDefaultPrinter = self.defaultPrinterSwitch.on;
-            if (self.isDefaultPrinter)
-            {
-                [self hideDefaultSwitch:YES];
-            }
+            self.isDefaultPrinter = true;
+            [self.defaultPrinterSelection setEnabled:NO forSegmentAtIndex:1];
         }
         else
         {
@@ -191,13 +159,10 @@
                              withTitle:kAlertTitlePrinters
                            withDetails:nil
                     withDismissHandler:^(CXAlertView *alertView) {
-                        [self.defaultPrinterSwitch setOn:NO animated:YES];
-                        self.switchPreviousState = NO;
+                        [self.defaultPrinterSelection setSelectedSegmentIndex:1];
                     }];
         }
-
     }
-    //switch is automatically turned off when a new default printer is selected
 }
 
 - (IBAction)onBack:(UIButton *)sender
