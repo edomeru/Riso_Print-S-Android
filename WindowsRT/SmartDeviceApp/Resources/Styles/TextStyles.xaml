@@ -44,6 +44,10 @@
         <Setter Property="LineHeight" Value="16"/>
     </Style>
 
+    <Style x:Key="STYLE_TextKeySubTextNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKeySubText}" >
+        <Setter Property="TextTrimming" Value="None"/>
+    </Style>
+
     <Style x:Key="STYLE_TextValue" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >
         <Setter Property="TextAlignment" Value="Right"/>
         <Setter Property="Foreground" Value="{StaticResource BRUSH_White}"/>
@@ -73,6 +77,10 @@
 
     <Style x:Key="STYLE_TextListHeader" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >
         <Setter Property="Foreground" Value="{StaticResource BRUSH_White}"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextListHeaderNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextListHeader}" >
+        <Setter Property="TextTrimming" Value="None"/>
     </Style>
 
 

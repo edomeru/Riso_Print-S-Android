@@ -85,6 +85,7 @@ namespace SmartDeviceApp.Common.Utilities
                 tempTextBlock.Arrange(new Rect(tempLocation, tempSize));
 
                 width = tempTextBlock.ActualWidth; // ActualWidth is updated after calls from Measure() and Arrange()
+                tempTextBlock = null;
             }
 
             return width;

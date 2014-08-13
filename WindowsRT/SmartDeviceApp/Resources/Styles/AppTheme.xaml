@@ -70,6 +70,7 @@
     <conv:HeightConverter x:Key="HeightConverter"/>
     <conv:IntToStringConverter x:Key="IntToStringConverter"/>
     <conv:JobListItemKeyTextConverter x:Key="JobListItemKeyTextConverter"/>
+    <conv:JobGroupListTextWidthConverter x:Key="JobGroupListTextWidthConverter"/>
     <conv:JobListItemKeyTextWidthConverter x:Key="JobListItemKeyTextWidthConverter"/>
     <conv:MainMenuItemToSeparatorVisibilityConverter x:Key="MainMenuItemToSeparatorVisibilityConverter"/>
     <conv:PageIndexToSliderValueConverter x:Key="PageIndexToSliderValueConverter"/>

@@ -99,6 +99,7 @@ namespace SmartDeviceApp.Common.Constants
                 }
             }
             else if (type == typeof(GroupListControl) ||
+                type == typeof(JobGroupListControl) ||
                 type == typeof(KeyValueControl) ||
                 type == typeof(KeyRadioButtonControl) ||
                 type == typeof(KeyTextBoxControl) ||

@@ -17,9 +17,10 @@
         </Style>        
         <DataTemplate x:Key="TEMPLATE_PrintJobItem">  
             <controls:JobGroupListControl x:Name="jobsGroupListControl"
-                                       Text="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}}" 
+                                       Text="{Binding PrinterName}"
+                                       TextWidth="{Binding Converter={StaticResource JobGroupListTextWidthConverter}}"
                                        SubText="{Binding IpAddress}"
-                                       SubTextVisibility="Visible"
+                                       SubTextVisibility="{Binding IpAddress, Converter={StaticResource StringToVisibilityConverter}}"
                                        Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
                                        Visibility="{Binding Jobs.Count, Converter={StaticResource PrintJobListToGroupVisibilityConverter}}"
                                        PressedHeaderColor="{StaticResource BRUSH_Purple2}"
