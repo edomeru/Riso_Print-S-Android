@@ -28,7 +28,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
@@ -42,12 +41,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 /**
@@ -55,7 +51,7 @@ import android.widget.TextView;
  * 
  * @brief View for Printers Screen of tablet.
  */
-public class PrintersScreenTabletView extends ViewGroup implements View.OnClickListener, OnCheckedChangeListener, Callback, OnItemSelectedListener {
+public class PrintersScreenTabletView extends ViewGroup implements View.OnClickListener, Callback, OnItemSelectedListener {
     private static final int MSG_ADD_PRINTER = 0x01;
     private static final int MSG_SET_UPDATE_VIEWS = 0x02;
     private static final int MIN_COLUMN = 2;
@@ -74,7 +70,6 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     private int mSettingItem = PrinterManager.EMPTY_ID;
     private WeakReference<PrintersViewCallback> mCallbackRef = null;
     private PauseableHandler mPauseableHandler = null;
-
     /**
      * @brief Constructor. <br>
      *
@@ -371,9 +366,9 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
         
         if (printerItem.getDefault()) {
             printerItem.setDefault(false);
-            viewHolder.mDefaultPrinter.setChecked(false);
-            viewHolder.mDefaultPrinter.setVisibility(View.VISIBLE);
-            viewHolder.mDefaultView.setVisibility(View.GONE);
+            
+            viewHolder.mDefaultPrinter.setSelection(1, true);
+            viewHolder.mDefaultPrinterAdapter.isNoDisabled = false;
         }
         resetDeletePrinterView();
     }
@@ -398,13 +393,17 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
         if (printerItem.getDefault()) {
             return;
         }
+        
         if (mDefaultViewHolder != null) {
             setPrinterViewToNormal(mDefaultViewHolder);
             mDefaultViewHolder = null;
         }
+        
         printerItem.setDefault(true);
-        viewHolder.mDefaultPrinter.setVisibility(View.GONE);
-        viewHolder.mDefaultView.setVisibility(View.VISIBLE);
+        
+        viewHolder.mDefaultPrinter.setSelection(0, true);
+        viewHolder.mDefaultPrinterAdapter.isNoDisabled = true;
+                
         mDefaultViewHolder = viewHolder;
     }
     
@@ -451,11 +450,21 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
         viewHolder.mDeleteButton = (Button) pView.findViewById(R.id.btn_delete);
         viewHolder.mOnlineIndcator = (ImageView) pView.findViewById(R.id.img_onOff);
         viewHolder.mIpAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
-        viewHolder.mDefaultPrinter = (Switch) pView.findViewById(R.id.default_printer_switch);
-        viewHolder.mDefaultView = (ImageView) pView.findViewById(R.id.img_default);
+        
         viewHolder.mPrintSettings = (LinearLayout) pView.findViewById(R.id.default_print_settings);
         viewHolder.mPort = (Spinner) pView.findViewById(R.id.input_port);
+        viewHolder.mDefaultPrinter = (Spinner) pView.findViewById(R.id.default_printer_spinner);
         
+        viewHolder.mDefaultPrinterAdapter = new DefaultPrinterArrayAdapter(getContext(), R.layout.printerinfo_port_item);
+        viewHolder.mDefaultPrinterAdapter.add(getContext().getString(R.string.ids_lbl_yes));
+        viewHolder.mDefaultPrinterAdapter.add(getContext().getString(R.string.ids_lbl_no));
+        viewHolder.mDefaultPrinterAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem);
+        viewHolder.mDefaultPrinter.setAdapter(viewHolder.mDefaultPrinterAdapter);    
+        if (mPrinterManager.getDefaultPrinter() == printer.getId())
+            viewHolder.mDefaultPrinter.setSelection(0,  true);//yes
+        else
+            viewHolder.mDefaultPrinter.setSelection(1,  true);//no
+                
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getContext(), R.layout.printerinfo_port_item);
         // Assumption is that LPR is always available
         portAdapter.add(getContext().getString(R.string.ids_lbl_port_lpr));
@@ -468,26 +477,26 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
             pView.findViewById(R.id.defaultPort).setVisibility(View.VISIBLE);
         }
         viewHolder.mPort.setAdapter(portAdapter);
-        viewHolder.mPort.setSelection(printer.getPortSetting().ordinal());
+        viewHolder.mPort.setSelection(printer.getPortSetting().ordinal());     
         
         viewHolder.mPrinterName.setText(printerName);
         viewHolder.mIpAddress.setText(printer.getIpAddress());
         
         viewHolder.mDeleteButton.setOnClickListener(this);
         viewHolder.mPrintSettings.setOnClickListener(this);
-        viewHolder.mDefaultPrinter.setOnCheckedChangeListener(this);
         viewHolder.mPrintSettings.findViewById(R.id.print_settings).setClickable(false);
         viewHolder.mPort.setOnItemSelectedListener(this);
+        viewHolder.mDefaultPrinter.setOnItemSelectedListener(this);
         
         pView.setTag(viewHolder);
         viewHolder.mPrinterName.setTag(viewHolder);
-        viewHolder.mDefaultPrinter.setTag(viewHolder);
         viewHolder.mDeleteButton.setTag(viewHolder);
         viewHolder.mIpAddress.setTag(printer);
         viewHolder.mPrintSettings.setTag(printer);
         viewHolder.mPrintSettings.setTag(ID_TAG_DEFAULTSETTINGS, viewHolder);
         viewHolder.mOnlineIndcator.setTag(pView);
         viewHolder.mPort.setTag(printer);
+        viewHolder.mDefaultPrinter.setTag(viewHolder);
         
         if (isOnline) {
             viewHolder.mOnlineIndcator.setImageResource(R.drawable.img_btn_printer_status_online);
@@ -540,34 +549,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
                 }
                 break;
         }
-    }
-    
-    // ================================================================================
-    // INTERFACE - onCheckedChanged
-    // ================================================================================
-    
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        ViewHolder viewHolder = (ViewHolder) buttonView.getTag();
-        Printer printer = (Printer) viewHolder.mIpAddress.getTag();
-        if (isChecked) {
-            if (mPrinterManager.setDefaultPrinter(printer)) {
-                setPrinterViewToDefault(viewHolder);
-            } else {
-                InfoDialogFragment info = InfoDialogFragment.newInstance(getContext().getString(R.string.ids_lbl_printers),
-                        getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
-                DialogUtils.displayDialog((Activity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
-                buttonView.setChecked(false);
-                // For versions below JELLY BEAN (4.2), the switch fails to return to its initial position
-                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    buttonView.requestLayout();
-                }
-            }
-        } else {
-            setPrinterViewToNormal(viewHolder);
-        }
-    }
-    
+    }    
     // ================================================================================
     // INTERFACE - Callback
     // ================================================================================
@@ -576,7 +558,6 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
             case MSG_SET_UPDATE_VIEWS:
-                setPrinterViewToDefault(mDefaultViewHolder);
                 if (mDeleteItem != -1) {
                     View view = getChildAt(mDeleteItem);
                     if (view != null) {
@@ -601,17 +582,53 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-        Printer printer = (Printer) parentView.getTag();
-        PortSetting port = PortSetting.LPR;
-        switch (position) {
-            case 1:
-                port = PortSetting.RAW;
-                break;
+    
+        switch(parentView.getId())
+        {
+            case R.id.input_port:
+            {
+                Printer printer = (Printer) parentView.getTag();
+                PortSetting port = PortSetting.LPR;
+                switch (position) {
+                    case 1:
+                        port = PortSetting.RAW;
+                        break;
+                    default:
+                        break;
+                }
+                printer.setPortSetting(port);
+                mPrinterManager.updatePortSettings(printer.getId(), port);                
+            }
+            break;
+            case R.id.default_printer_spinner:
+            {
+                switch (position) {
+                    case 0://
+                        {
+                            ViewHolder viewHolder = (ViewHolder) parentView.getTag();
+                            Printer printer = (Printer) viewHolder.mIpAddress.getTag();
+                                                        
+                            if (mPrinterManager.getDefaultPrinter() == printer.getId())                            {
+                                return;
+                            }
+                            if (mPrinterManager.setDefaultPrinter(printer)) {
+                                setPrinterViewToDefault(viewHolder);
+                            } else {
+                                InfoDialogFragment info = InfoDialogFragment.newInstance(getContext().getString(R.string.ids_lbl_printers),
+                                        getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
+                                DialogUtils.displayDialog((Activity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                
+            }
+            break;
             default:
                 break;
         }
-        printer.setPortSetting(port);
-        mPrinterManager.updatePortSettings(printer.getId(), port);
     }
     
     @Override
@@ -652,9 +669,9 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
         private TextView mPrinterName;
         private Button mDeleteButton;
         private TextView mIpAddress;
-        private Switch mDefaultPrinter;
-        private ImageView mDefaultView;
         private Spinner mPort;
+        private Spinner mDefaultPrinter;
+        private DefaultPrinterArrayAdapter mDefaultPrinterAdapter;
         private LinearLayout mPrintSettings;
     }
 }

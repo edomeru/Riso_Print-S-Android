@@ -133,23 +133,14 @@
             android:text="@string/ids_lbl_set_default_printer"
             android:textColor="@color/theme_dark_1" />
 
-        <Switch
-            android:id="@+id/default_printer_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <Spinner
+            android:id="@+id/defaultPrinter"
+            android:layout_width="@dimen/printers_port_spinner_size"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_weight="0"
-            android:thumb="@drawable/widgettheme_switch_inner_holo_dark" />
-        
-        <ImageView
-            android:id="@+id/img_default"
-            android:layout_width="@dimen/printers_row_right_icon_size"
-            android:layout_height="@dimen/printers_row_right_icon_size"
-            android:layout_gravity="right|center_vertical"
-            android:contentDescription="@string/default_content_description"
-            android:paddingRight="@dimen/printers_row_right_padding"
-            android:src="@drawable/img_set_as_default_printer"
-            android:visibility="gone" />
+            android:background="@drawable/widgettheme_spinner_background_holo_dark_1"
+            android:gravity="right|center_vertical" />
 
     </LinearLayout>
 

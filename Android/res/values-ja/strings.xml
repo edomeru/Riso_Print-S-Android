@@ -148,5 +148,7 @@
     <string name="ids_err_msg_not_enough_space">デバイスの空き容量が不足しています。</string>
     <string name="ids_err_msg_network_error">ネットワークに接続できません。</string>
     <string name="ids_err_msg_db_failure">内部データにアクセスできません。\n再起動してみてください。\n再起動しても解消されない場合は、再インストールしてください。</string>
+    <string name="ids_lbl_yes">Yes</string>
+    <string name="ids_lbl_no">No</string>
 
 </resources>
