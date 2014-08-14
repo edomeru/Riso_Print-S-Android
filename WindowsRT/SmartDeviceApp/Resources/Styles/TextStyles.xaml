@@ -56,9 +56,17 @@
         <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
     </Style>
 
+    <Style x:Key="STYLE_TextValueNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValue}" >
+        <Setter Property="TextTrimming" Value="None"/>
+    </Style>
+
     <Style x:Key="STYLE_TextValueWithSubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValue}" >
         <Setter Property="TextWrapping" Value="NoWrap"/>
         <Setter Property="MaxLines" Value="1"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextValueWithSubTextNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValueWithSubText}" >
+        <Setter Property="TextTrimming" Value="None"/>
     </Style>
 
     <Style x:Key="STYLE_TextValueSubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValue}" >
@@ -67,6 +75,10 @@
         <Setter Property="TextWrapping" Value="NoWrap"/>
         <Setter Property="MaxLines" Value="1"/>
         <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextValueSubTextNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValueSubText}" >
+        <Setter Property="TextTrimming" Value="None"/>
     </Style>
 
     <Style x:Key="STYLE_TextMessageContent" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValueSubText}" >

@@ -85,6 +85,8 @@
     <conv:PrintSettingOptionToSeparatorVisibilityConverter x:Key="PrintSettingOptionToSeparatorVisibilityConverter"/>
     <conv:PrintSettingToSeparatorVisibilityConverter x:Key="PrintSettingToSeparatorVisibilityConverter"/>
     <conv:PrinterStatusToImageSourceConverter x:Key="PrinterStatusToImageSourceConverter"/>
+    <conv:PrinterValueSubTextMiddleTrimmedTextConverter x:Key="PrinterValueSubTextMiddleTrimmedTextConverter"/>
+    <conv:PrinterValueTextMiddleTrimmedTextConverter x:Key="PrinterValueTextMiddleTrimmedTextConverter"/>
     <conv:ResizedViewWidthConverter x:Key="ResizedViewWidthConverter"/>
     <conv:ResourceStringToTextConverter x:Key="ResourceStringToTextConverter"/>
     <conv:SelectedPrinterIdToTextConverter x:Key="SelectedPrinterIdToTextConverter"/>

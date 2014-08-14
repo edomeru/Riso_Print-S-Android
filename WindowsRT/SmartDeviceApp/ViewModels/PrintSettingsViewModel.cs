@@ -36,6 +36,7 @@ using GalaSoft.MvvmLight.Messaging;
 using SmartDeviceApp.Common.Enum;
 using Windows.UI.Xaml.Data;
 using System.ComponentModel;
+using SmartDeviceApp.Common.Constants;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -55,6 +56,7 @@ namespace SmartDeviceApp.ViewModels
         private bool _isPrintPreview;
         private ICommand _printCommand;
         private ICommand _listPrintersCommand;
+        private double _printerValueTextWidth;
 
         private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
@@ -132,6 +134,25 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _isPrintPreview = value;
                     RaisePropertyChanged("IsPrintPreview");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets/sets the computed width of the value field for Printer item control
+        /// </summary>
+        public double PrinterValueTextWidth
+        {
+            get { return _printerValueTextWidth; }
+            set
+            {
+                if (_printerValueTextWidth != value)
+                {
+                    _printerValueTextWidth = value;
+                    RaisePropertyChanged("PrinterId");
+                    RaisePropertyChanged("PrinterName");
+                    RaisePropertyChanged("PrinterIpAddress");
+                    RaisePropertyChanged("PrinterValueTextWidth");
                 }
             }
         }
@@ -280,6 +301,91 @@ namespace SmartDeviceApp.ViewModels
                 case PrintSettingType.unknown:
                     break;
             }
+        }
+
+        /// <summary>
+        /// Update the properties (value width, style) of Printer item control
+        /// </summary>
+        /// <param name="keyValueControl">Printer item control</param>
+        public void OnPrinterControlSizeChanged(KeyValueControl keyValueControl)
+        {
+            // Adjust widths
+            var noMargin = (double)Application.Current.Resources["MARGIN_None"];
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            var smallMargin = (double)Application.Current.Resources["MARGIN_Small"];
+
+            // Get text width by subtracting widths and margins of visible components
+            var keyValueControlWidth = (int)keyValueControl.ActualWidth;
+            if (keyValueControlWidth <= 0)
+            {
+                var parent = (FrameworkElement)keyValueControl.Parent;
+                if (parent != null)
+                {
+                    keyValueControlWidth = (int)parent.ActualWidth;
+                    if (keyValueControlWidth <= 0)
+                    {
+                        throw new ArgumentException("Zero width element");
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Zero width element");
+                }
+            }
+            int maxTextWidth = keyValueControlWidth;
+
+            // Left and right margins
+            maxTextWidth -= ((int)defaultMargin * 2);
+
+            // Icon is visible
+            if (keyValueControl.IconVisibility == Visibility.Visible)
+            {
+                var imageWidth = ((BitmapImage)keyValueControl.IconImage).PixelWidth;
+                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(keyValueControl);
+                maxTextWidth -= imageWidth;
+                maxTextWidth -= (int)defaultMargin;
+            }
+            // RightButton is visible
+            if (keyValueControl.RightButtonVisibility == Visibility.Visible)
+            {
+                var rightButtonImageWidth = ((BitmapImage)keyValueControl.RightImage).PixelWidth;
+                if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth();
+                maxTextWidth -= rightButtonImageWidth;
+                maxTextWidth -= (int)defaultMargin;
+            }
+
+            // ValueContent is visible
+            var valueContent = keyValueControl.ValueContent as FrameworkElement;
+            if (valueContent != null && valueContent.Visibility == Visibility.Visible)
+            {
+                maxTextWidth -= (int)valueContent.ActualWidth;
+                maxTextWidth -= (int)defaultMargin;
+            }
+
+            // Value is visible
+            if (keyValueControl.ValueVisibility == Visibility.Visible && keyValueControl.IsEnabled) // Note: If disabled, value is not visible
+            {
+                // Space between key and value texts
+                maxTextWidth -= (int)smallMargin;
+                maxTextWidth /= 2;
+
+                PrinterValueTextWidth = maxTextWidth;
+            }
+
+            // Change style of ValueText to No Text Trimming
+            var valueTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)keyValueControl, "value"); // "value" as defined in KeyValueControl.xaml
+            if (keyValueControl.ValueSubTextVisibility == Visibility.Visible)
+            {
+                valueTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextValueWithSubTextNoTextTrim"];
+            }
+            else
+            {
+                valueTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextValueNoTextTrim"];
+            }
+
+            // Change style of ValueSubText to No Text Trimming
+            var valueSubTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)keyValueControl, "valueSubText"); // "valueSubText" as defined in KeyValueControl.xaml
+            valueSubTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextValueSubTextNoTextTrim"];
         }
     }
 }

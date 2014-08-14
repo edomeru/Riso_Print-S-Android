@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Data;
 
 namespace SmartDeviceApp.Converters
 {
+
     public class TitleToMiddleTrimmedTextConverter : IValueConverter
     {
         /// <summary>
@@ -109,6 +110,7 @@ namespace SmartDeviceApp.Converters
             throw new NotImplementedException();
         }
     }
+
 
     public class JobGroupListTextConverter : IValueConverter
     {
@@ -202,4 +204,119 @@ namespace SmartDeviceApp.Converters
         }
     }
 
+
+    public class PrinterValueTextMiddleTrimmedTextConverter : IValueConverter
+    {
+        /// <summary>
+        /// Returns the trimmed text of a Value text
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null)
+            {
+                return String.Empty;
+            }
+
+            bool isSelectPrinter = false;
+            if (parameter != null)
+            {
+                isSelectPrinter = System.Convert.ToBoolean(parameter);
+            }
+
+            String text;
+            if (isSelectPrinter)
+            {
+                if (!(value is int))
+                {
+                    return String.Empty;
+                }
+
+                text = (string)new SelectedPrinterIdToTextConverter().Convert(value, null, null, null);
+            }
+            else
+            {
+                if (!(value is string))
+                {
+                    return String.Empty;
+                }
+
+                text = (string)new PrinterNameToTextConverter().Convert(value, null, null, null);
+            }
+
+            Style style = (Style)Application.Current.Resources["STYLE_TextValueWithSubTextNoTextTrim"];
+
+            double actualWidth = ViewControlUtility.GetTextWidthFromTextBlockWithStyle(text, style);
+            double desiredWidth = new ViewModelLocator().PrintSettingsViewModel.PrinterValueTextWidth;
+            if (actualWidth <= desiredWidth)
+            {
+                return text; // No text trimming
+            }
+
+            text = ViewControlUtility.GetMiddleTrimmedTextFromTextBlockWithStyleAndWidth(text, style, desiredWidth);
+            return text;
+        }
+
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PrinterValueSubTextMiddleTrimmedTextConverter : IValueConverter
+    {
+        /// <summary>
+        /// Returns the trimmed text of a ValueSubText
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null || !(value is string) || String.IsNullOrEmpty(value.ToString()))
+            {
+                return String.Empty;
+            }
+
+            String text = value as string;
+            Style style = (Style)Application.Current.Resources["STYLE_TextValueSubTextNoTextTrim"];
+
+            double actualWidth = ViewControlUtility.GetTextWidthFromTextBlockWithStyle(text, style);
+            double desiredWidth = new ViewModelLocator().PrintSettingsViewModel.PrinterValueTextWidth;
+            if (actualWidth <= desiredWidth)
+            {
+                return text; // No text trimming
+            }
+
+            text = ViewControlUtility.GetMiddleTrimmedTextFromTextBlockWithStyleAndWidth(text, style, desiredWidth);
+            return text;
+        }
+
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="language">The culture to use in the converter.</param>
+        /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
