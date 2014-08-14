@@ -345,6 +345,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
                     SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
+                    SNMPController.Instance.printerControllerErrorCallBack = new Action(handleAddError);
                     SNMPController.Instance.getDevice(ip);
                 }
                 else
@@ -365,6 +366,17 @@ namespace SmartDeviceApp.Controllers
 
             return true;
 
+        }
+
+        private async void handleAddError()
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                {
+                    DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                    _addPrinterViewModel.setVisibilities();
+                });
+            return;
         }
 
         /// <summary>

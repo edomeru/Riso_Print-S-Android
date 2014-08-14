@@ -22,6 +22,8 @@ namespace SNMP
         /// </summary>
         public Action<SNMPDevice> snmpControllerDeviceTimeOut { get; set; }
 
+        public Action snmpControllerErrorCallbBack { get; set; }
+
 
         private string _ipAddress;
         private int _langfamily;
@@ -38,6 +40,7 @@ namespace SNMP
         string[] capabilityMIB;//MIB for device capabilities
 
         bool callbackCalled = false;
+        bool errorOccurred = false;
         /// <summary>
         /// Flag to check if the current snmp device is supported.
         /// </summary>
@@ -85,9 +88,23 @@ namespace SNMP
                 
             udpSocket = new UDPSocket();
             udpSocket.assignDelegate(receiveData);
+            udpSocket.assignErrorDelegate(handleError);
 
             //udpSocket.assignTimeoutDelegate(timeout); // BTS#14788 - Do not use socket timeout. Use own timer, see startTimer().
         
+        }
+
+        private void handleError(HostName sender, byte[] args)
+        {
+            if (snmpControllerErrorCallbBack != null)
+            {
+                if (udpSocket != null)
+                { 
+                    udpSocket.close();
+                }
+                errorOccurred = true;
+                snmpControllerErrorCallbBack();
+            }
         }
 
         ~SNMPDevice()
@@ -345,7 +362,7 @@ namespace SNMP
         {
             await Task.Delay(timeout * 1000);
 
-            if (!callbackCalled)
+            if (!callbackCalled && !errorOccurred)
             {
                 timeoutHandler();
             }
