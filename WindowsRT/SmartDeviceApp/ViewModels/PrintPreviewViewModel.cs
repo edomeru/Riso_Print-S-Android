@@ -126,7 +126,7 @@ namespace SmartDeviceApp.ViewModels
 
             SetViewMode(_viewControlViewModel.ViewMode); 
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
-            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => SetViewOrientation(viewOrientation));
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 _twoPageControl = twoPageControl;
                 _controlReference = (UIElement)((Grid)twoPageControl.DisplayAreaGrid.Parent).Parent;
-                ResetPageAreaGrid(_viewControlViewModel.ViewOrientation);
+                ResetPageAreaGrid(_viewControlViewModel.ViewMode, _viewControlViewModel.ViewOrientation);
 
                 IsPageAreaGridLoaded = true;
 
@@ -178,21 +178,27 @@ namespace SmartDeviceApp.ViewModels
 
         /// <summary>
         /// Resets the page area grid dimensions.
-        /// Should be reset everytime the view orientation is changed.
+        /// Should be reset everytime the view mode or view orientation is changed.
         /// </summary>
+        /// <param name="viewMode">view mode</param>
         /// <param name="viewOrientation">view orientation</param>
-        private void ResetPageAreaGrid(ViewOrientation viewOrientation)
+        private void ResetPageAreaGrid(ViewMode viewMode, ViewOrientation viewOrientation)
         {
             if (_controlReference != null)
             {
                 var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-                _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(_viewControlViewModel.ViewMode, null, viewOrientation, null)) - defaultMargin * 2;
+
+                // Update desired controlReference's width
+                _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(viewMode, null, viewOrientation, null)) - defaultMargin * 2;
                 ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
+
+                // Update desired controlReference's height
                 var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
                 var sliderHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberSliderHeight"]).Value;
                 var sliderTextHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberTextHeight"]).Value;
                 _pageAreaGridMaxHeight = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null))
                     - defaultMargin * 2 - titleHeight - sliderHeight - sliderTextHeight;
+                ((ScrollViewer)_controlReference).Height = _pageAreaGridMaxHeight;
             }
         }
 
@@ -533,9 +539,13 @@ namespace SmartDeviceApp.ViewModels
                 return;
             }
 
-            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-            _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(viewMode, null, null, null)) - defaultMargin * 2;
-            if (_controlReference != null) ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
+
+            if (viewMode != ViewMode.Unknown)
+            {
+                // BTS#14894 - Determine controlReference size only when view mode is valid
+                ResetPageAreaGrid(viewMode, _viewControlViewModel.ViewOrientation);
+            }
+
             InitializeGestures();
 
             switch (viewMode)
@@ -560,6 +570,11 @@ namespace SmartDeviceApp.ViewModels
                         break;
                     }
             }
+        }
+
+        private void SetViewOrientation(ViewOrientation viewOrientation)
+        {
+            ResetPageAreaGrid(_viewControlViewModel.ViewMode, viewOrientation);
         }
 
         private void EnablePreviewGestures()
