@@ -152,6 +152,7 @@
     <Compile Include="Controls\DefaultPrintSettingsControl.xaml.cs">
       <DependentUpon>DefaultPrintSettingsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\IpAddressControl.cs" />
     <Compile Include="Controls\JobGroupListControl.cs" />
     <Compile Include="Controls\SelectPrinterItemControl.cs" />
     <Compile Include="Controls\KeyToggleCheckControl.xaml.cs">
