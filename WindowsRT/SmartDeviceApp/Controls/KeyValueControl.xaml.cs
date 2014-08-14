@@ -423,7 +423,7 @@ namespace SmartDeviceApp.Controls
                 if (RightButtonVisibility == Visibility.Visible)
                 {
                     var rightButtonImageWidth = ((BitmapImage)RightImage).PixelWidth;
-                    if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth();
+                    if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth(sender);
                     maxTextWidth -= rightButtonImageWidth;
                     maxTextWidth -= (int)defaultMargin;
                 }

@@ -349,7 +349,7 @@ namespace SmartDeviceApp.ViewModels
             if (keyValueControl.RightButtonVisibility == Visibility.Visible)
             {
                 var rightButtonImageWidth = ((BitmapImage)keyValueControl.RightImage).PixelWidth;
-                if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth();
+                if (rightButtonImageWidth == 0) rightButtonImageWidth = ImageConstant.GetRightButtonImageWidth(keyValueControl);
                 maxTextWidth -= rightButtonImageWidth;
                 maxTextWidth -= (int)defaultMargin;
             }
