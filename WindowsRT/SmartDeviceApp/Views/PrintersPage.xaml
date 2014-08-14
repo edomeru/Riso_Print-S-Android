@@ -179,6 +179,8 @@
                                                       IsOnLoadedEnabled="False"
                                                       Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
                                                       ValueText="{Binding IpAddress}"
+                                                      KeyTextStyle="{StaticResource STYLE_TextKeyWithSubText}"
+                                                      ValueTextStyle="{StaticResource STYLE_TextValueNoTextTrim}"
                                                       RightButtonVisibility="Collapsed"
                                                       ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"

@@ -89,7 +89,7 @@ namespace SmartDeviceApp.Controls
 
             // Change style of KeyText and KeySubText to No Text Trimming
             TextBlock keyTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "key"); // "key" as defined in KeyValueControl.xaml
-            keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeyNoTextTrim"];
+            keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeyWithSubTextNoTextTrim"];
             TextBlock keySubTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "keySubText"); // "keySubText" as defined in KeyValueControl.xaml
             keySubTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeySubTextNoTextTrim"];
 

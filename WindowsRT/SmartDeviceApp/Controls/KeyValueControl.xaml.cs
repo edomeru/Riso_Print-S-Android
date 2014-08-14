@@ -81,6 +81,10 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty KeyTextWidthProperty =
             DependencyProperty.Register("KeyTextWidth", typeof(double), typeof(KeyValueControl), null);
 
+        public static readonly DependencyProperty KeyTextStyleProperty =
+            DependencyProperty.Register("KeyTextStyle", typeof(Style), typeof(KeyValueControl),
+            new PropertyMetadata((Style)Application.Current.Resources["STYLE_TextKey"]));
+
         public static readonly DependencyProperty ValueTextProperty =
             DependencyProperty.Register("ValueText", typeof(string), typeof(KeyValueControl), null);
 
@@ -187,6 +191,15 @@ namespace SmartDeviceApp.Controls
         {
             get { return (object)GetValue(ValueContentProperty); }
             set { SetValue(ValueContentProperty, value); }
+        }
+
+        /// <summary>
+        /// Text style for the text of the control.
+        /// </summary>
+        public Style KeyTextStyle
+        {
+            get { return (Style)GetValue(KeyTextStyleProperty); }
+            set { SetValue(KeyTextStyleProperty, value); }
         }
 
         /// <summary>
@@ -373,12 +386,22 @@ namespace SmartDeviceApp.Controls
             {
                 if (!IsOnLoadedEnabled || _isLoaded || Visibility == Visibility.Collapsed) return;
 
+                // Set key styles
+                if (SubTextVisibility == Visibility.Visible)
+                {
+                    KeyTextStyle = (Style)Application.Current.Resources["STYLE_TextKeyWithSubText"];
+                }
+                else
+                {
+                    KeyTextStyle = (Style)Application.Current.Resources["STYLE_TextKey"];
+                }
+
                 // Set value styles
-                if (ValueSubTextVisibility == Visibility.Visible) 
+                if (ValueSubTextVisibility == Visibility.Visible)
                 {
                     ValueTextStyle = (Style)Application.Current.Resources["STYLE_TextValueWithSubText"];
                 }
-                else 
+                else
                 {
                     ValueTextStyle = (Style)Application.Current.Resources["STYLE_TextValue"];
                 }

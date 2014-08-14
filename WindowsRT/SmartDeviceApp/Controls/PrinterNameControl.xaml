@@ -202,7 +202,7 @@
             </Image>
             <TextBlock x:Name="key" 
 				Text="{Binding Text, ElementName=printerNameControl}" 
-				Style="{StaticResource STYLE_TextKeyNoTextTrim}"
+				Style="{StaticResource STYLE_TextPrinterName}"
 				Width="{Binding TextWidth, ElementName=printerNameControl}"/>
         </StackPanel>
         <StackPanel x:Name="stackPanel" Grid.Row="0" Grid.Column="1"  Grid.ColumnSpan="2" Style="{StaticResource STYLE_StackRight}" Margin="15,0,0,0" >

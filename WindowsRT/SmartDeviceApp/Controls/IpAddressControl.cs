@@ -35,9 +35,7 @@ namespace SmartDeviceApp.Controls
             var ipAddressControl = (IpAddressControl)sender;
             var ipAddressControlWidth = e.NewSize.Width;
 
-            // Change style of KeyText to No Text Trimming
             TextBlock valueTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "value"); // "key" as defined in KeyValueControl.xaml
-            valueTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextValueNoTextTrim"];
 
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
             var smallMargin = (double)Application.Current.Resources["MARGIN_Small"];

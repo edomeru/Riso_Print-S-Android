@@ -130,7 +130,7 @@ namespace SmartDeviceApp.Converters
             }
 
             String text = (string)new PrinterNameToTextConverter().Convert(value, null, null, null);
-            Style style = (Style)Application.Current.Resources["STYLE_TextListHeaderNoTextTrim"];
+            Style style = (Style)Application.Current.Resources["STYLE_TextListHeaderWithSubTextNoTextTrim"];
 
             double actualWidth = ViewControlUtility.GetTextWidthFromTextBlockWithStyle(text, style);
             double desiredWidth = (double)parameter;

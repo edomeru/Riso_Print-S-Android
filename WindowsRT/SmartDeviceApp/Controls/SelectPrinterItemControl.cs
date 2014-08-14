@@ -31,10 +31,18 @@ namespace SmartDeviceApp.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // Change style of KeyText and KeySubText to No Text Trimming
             TextBlock keyTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "key"); // "key" as defined in KeyValueControl.xaml
-            keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeyNoTextTrim"];
             TextBlock keySubTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "keySubText"); // "keySubText" as defined in KeyValueControl.xaml
+
+            // Change style of KeyText and KeySubText to No Text Trim
+            if (SubTextVisibility == Visibility.Visible)
+            {
+                keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeyWithSubTextNoTextTrim"];
+            }
+            else
+            {
+                keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeyNoTextTrim"];
+            }
             keySubTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeySubTextNoTextTrim"];
 
             // Update displayed texts, not source properties

@@ -53,7 +53,7 @@ namespace SmartDeviceApp.Controls
         {
             // Change style of KeyText to No Text Trimming
             var keyTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "key"); // "key" as defined in GroupListControl.xaml
-            keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextListHeaderNoTextTrim"];
+            keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextListHeaderWithSubTextNoTextTrim"];
 
             // Change style of KeySubText to No Text Trimming
             var keySubTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "keySubText"); // "keySubText" as defined in GroupListControl.xaml
