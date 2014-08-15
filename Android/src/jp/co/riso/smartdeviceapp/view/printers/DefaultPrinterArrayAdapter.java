@@ -1,7 +1,12 @@
 package jp.co.riso.smartdeviceapp.view.printers;
 
+import jp.co.riso.smartprint.R;
+import android.app.Activity;
 import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 /**
  * @class DefaultPrinterArrayAdapter
@@ -10,6 +15,7 @@ import android.widget.ArrayAdapter;
  */
 public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
 
+    private Activity activity;
     
     public boolean isNoDisabled;
     
@@ -21,7 +27,7 @@ public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
      */
     public DefaultPrinterArrayAdapter(Context context, int resource) {
         super(context, resource);
-        
+        this.activity = (Activity)context;
         this.isNoDisabled = false;
     }
 
@@ -39,5 +45,23 @@ public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
             return false;
         
         return true;
+    }
+
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        View view = (TextView)super.getDropDownView(position, convertView, parent);
+        
+        if(isNoDisabled && position == 1)//No
+        {
+            view.setBackgroundColor(activity.getResources().getColor(R.color.theme_light_3));
+            ((TextView)view).setTextColor(activity.getResources().getColor(R.color.theme_light_4));
+        }
+        else
+        {
+            view.setBackgroundResource(R.drawable.selector_printerinfo_port);
+            ((TextView)view).setTextColor(activity.getResources().getColorStateList(R.color.selector_printers_text));
+        }
+        
+        return view;
     }
 }
