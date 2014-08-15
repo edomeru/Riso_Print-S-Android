@@ -408,7 +408,9 @@ namespace SmartDeviceApp.Controllers
             else
                 _multipleFingersDetected = false;
 
-            _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
+            if (pointerCount < 3)
+                _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
+
             args.Handled = true;
         }
 
