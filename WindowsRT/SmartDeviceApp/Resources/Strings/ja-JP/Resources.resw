@@ -547,9 +547,9 @@
 再起動しても解消されない場合は、再インストールしてください。</value>
   </data>
   <data name="IDS_LBL_NO" xml:space="preserve">
-    <value />
+    <value>No</value>
   </data>
   <data name="IDS_LBL_YES" xml:space="preserve">
-    <value />
+    <value>Yes</value>
   </data>
 </root>
