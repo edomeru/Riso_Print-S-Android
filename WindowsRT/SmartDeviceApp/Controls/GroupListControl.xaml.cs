@@ -64,7 +64,7 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty DeleteButtonVisualStateProperty =
             DependencyProperty.Register("DeleteButtonVisualState", typeof(string), typeof(GroupListControl),
-            new PropertyMetadata("Normal", SetDeleteButtonVisualState));
+            new PropertyMetadata("DeleteNormal", SetDeleteButtonVisualState));
 
         /// <summary>
         /// Text property. This is displayed in the control next to the +/- button.
@@ -253,12 +253,12 @@ namespace SmartDeviceApp.Controls
             {
                 switch (state)
                 {
-                    case "Normal":
-                    case "Pressed":
+                    case "DeleteNormal":
+                    case "DeletePressed":
                         VisualStateManager.GoToState(deleteButton, state, true);
                         break;
                     default:
-                        VisualStateManager.GoToState(deleteButton, "Normal", true);
+                        VisualStateManager.GoToState(deleteButton, "DeleteNormal", true);
                         break;
                 }
             }

@@ -219,7 +219,7 @@ namespace SmartDeviceApp.Controllers
                 var printerId = printJobGroup.Jobs[0].PrinterId;
                 _lastDeleteAllButton = deleteButton;
                 _lastPrintJobGroup = printJobGroup;
-                printJobGroup.DeleteButtonVisualState = "Pressed";
+                printJobGroup.DeleteButtonVisualState = "DeletePressed";
                 (new ViewModelLocator().JobsViewModel).DeleteAllJobsCommand.Execute(printerId);
             }
             else if (!isDelete && jobListHeader != null)
@@ -321,7 +321,7 @@ namespace SmartDeviceApp.Controllers
         public void HideDeleteAllJobsButton()
         {
             if (_lastDeleteAllButton == null || _lastPrintJobGroup == null) return;
-            _lastPrintJobGroup.DeleteButtonVisualState = "Normal";
+            _lastPrintJobGroup.DeleteButtonVisualState = "DeleteNormal";
             _lastDeleteAllButton = null;
             _lastPrintJobGroup = null;
         }

@@ -32,8 +32,8 @@
                   Height="{StaticResource SIZE_DeleteButtonHeight_Long}">
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Normal"/>
-                        <VisualState x:Name="Pressed">
+                        <VisualState x:Name="DeleteNormal"/>
+                        <VisualState x:Name="DeletePressed">
                             <Storyboard>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="deleteButtonGrid">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Purple2}"/>
