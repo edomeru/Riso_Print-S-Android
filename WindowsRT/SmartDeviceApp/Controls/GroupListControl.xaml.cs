@@ -23,7 +23,6 @@ namespace SmartDeviceApp.Controls
 {
     public partial class GroupListControl : UserControl
     {
-        private bool _isLoaded;
 
         /// <summary>
         /// Constructor. Initializes component.
@@ -59,6 +58,13 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty PressedHeaderColorProperty =
             DependencyProperty.Register("PressedHeaderColor", typeof(SolidColorBrush), typeof(GroupListControl), null);
+
+        public static readonly DependencyProperty IsCollapsedProperty =
+            DependencyProperty.Register("IsCollapsed", typeof(bool), typeof(GroupListControl), null);
+
+        public static readonly DependencyProperty DeleteButtonVisualStateProperty =
+            DependencyProperty.Register("DeleteButtonVisualState", typeof(string), typeof(GroupListControl),
+            new PropertyMetadata("Normal", SetDeleteButtonVisualState));
 
         /// <summary>
         /// Text property. This is displayed in the control next to the +/- button.
@@ -142,11 +148,37 @@ namespace SmartDeviceApp.Controls
         }
 
         /// <summary>
+        /// Flag for checking whether the Group List is collapsed or not.
+        /// </summary>
+        public bool IsCollapsed
+        {
+            get { return (bool)GetValue(IsCollapsedProperty); }
+            set { SetValue(IsCollapsedProperty, value); }
+        }
+
+        /// <summary>
+        /// Visual state of the delete control.
+        /// </summary>
+        public string DeleteButtonVisualState
+        {
+            get { return (string)GetValue(DeleteButtonVisualStateProperty); }
+            set { SetValue(DeleteButtonVisualStateProperty, value); }
+        }
+
+        /// <summary>
         /// ToggleButton element of the control.
         /// </summary>
         public ToggleButton Header
         {
             get { return header; }
+        }
+
+        /// <summary>
+        /// Delete button element of the control.
+        /// </summary>
+        public Button DeleteButton
+        {
+            get { return (Button)ViewControlUtility.GetControlFromParent<Button>((UIElement)header, "deleteButton"); }
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -157,7 +189,7 @@ namespace SmartDeviceApp.Controls
 
                 // Get text width by subtracting widths and margins of visible components
                 // Workaround because sometimes (when view orientation is changed) 
-				// Width != ActualWidth, need to get value of Width when possible
+                // Width != ActualWidth, need to get value of Width when possible
                 var groupControlWidth = ((int)groupListControl.Width > 0) ? (int)groupListControl.Width : (int)groupListControl.ActualWidth;
                 if (groupControlWidth <= 0)
                 {
@@ -198,11 +230,39 @@ namespace SmartDeviceApp.Controls
                 {
                     TextWidth = maxTextWidth;
                 }
+
+                // Update delete button's VisualState
+                UpdateDeleteButtonVisualState((GroupListControl)sender, DeleteButtonVisualState);
             }
             catch (Exception ex)
             {
                 LogUtility.LogError(ex);
             }
         }
+
+        private static void SetDeleteButtonVisualState(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateDeleteButtonVisualState((GroupListControl)obj, e.NewValue.ToString());
+        }
+
+        private static void UpdateDeleteButtonVisualState(GroupListControl groupListControl, string state)
+        {
+            var deleteButton = (Button)ViewControlUtility.GetControlFromParent<Button>(
+                (UIElement)groupListControl.Header, "deleteButton"); // "deleteButton" as defined in GroupListControl.xaml
+            if (deleteButton != null)
+            {
+                switch (state)
+                {
+                    case "Normal":
+                    case "Pressed":
+                        VisualStateManager.GoToState(deleteButton, state, true);
+                        break;
+                    default:
+                        VisualStateManager.GoToState(deleteButton, "Normal", true);
+                        break;
+                }
+            }
+        }
+
     }
 }

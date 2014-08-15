@@ -30,21 +30,22 @@ namespace SmartDeviceApp.Common.Utilities
         private static double SIZE_MARGIN_SMALL = (double)Application.Current.Resources["MARGIN_Small"];
 
         /// <summary>
-        /// Retrieves the TextBlock control from a parent based on its key
+        /// Retrieves a control from a parent based on its key
         /// </summary>
+        /// <typeparam name="T">target control type</typeparam>
         /// <param name="parent">reference control</param>
-        /// <param name="key">TextBlock key (from xaml)</param>
-        /// <returns>TextBlock if found, null otherwise</returns>
-        public static TextBlock GetTextBlockFromParent(UIElement parent, string key)
+        /// <param name="key">key (from xaml)</param>
+        /// <returns>the control if found, null otherwise</returns>
+        public static object GetControlFromParent<T>(UIElement parent, string key)
         {
             if (parent == null || string.IsNullOrEmpty(key))
             {
                 return null;
             }
 
-            if (parent.GetType() == typeof(TextBlock) && ((TextBlock)parent).Name == key)
+            if (parent.GetType() == typeof(T) && ((FrameworkElement)parent).Name == key)
             {
-                return (TextBlock)parent;
+                return parent;
             }
 
             int count = VisualTreeHelper.GetChildrenCount(parent);
@@ -52,7 +53,7 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 UIElement child = (UIElement)VisualTreeHelper.GetChild(parent, i);
 
-                TextBlock result = GetTextBlockFromParent(child, key);
+                object result = GetControlFromParent<T>(child, key);
                 if (result != null)
                 {
                     return result;

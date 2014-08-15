@@ -325,6 +325,10 @@ namespace SmartDeviceApp.ViewModels
                         {
                             RemoveGroupedJobsEventHandler(printerId);
                         }
+                        else if (!isDelete)
+                        {
+                            GestureController.HideDeleteAllJobsButton();
+                        }
                     }));
         }
 

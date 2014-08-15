@@ -16,7 +16,7 @@
             <Setter Property="Width" Value="{Binding Converter={StaticResource PrintJobListWidthConverter}}"/>            
         </Style>        
         <DataTemplate x:Key="TEMPLATE_PrintJobItem">  
-            <controls:JobGroupListControl x:Name="jobsGroupListControl"
+            <controls:GroupListControl x:Name="jobsGroupListControl"
                                        Text="{Binding PrinterName, Converter={StaticResource PrinterNameToTextConverter}}" 
                                        SubText="{Binding IpAddress}"
                                        SubTextVisibility="Visible"
@@ -24,11 +24,12 @@
                                        Visibility="{Binding Jobs.Count, Converter={StaticResource PrintJobListToGroupVisibilityConverter}}"
                                        PressedHeaderColor="{StaticResource BRUSH_Purple2}"
                                        IsCollapsed="{Binding IsCollapsed}"
+                                       DeleteButtonVisualState="{Binding DeleteButtonVisualState}"
                                        SizeChanged="OnGroupListLoaded">
-                <controls:JobGroupListControl.Margin>
+                <controls:GroupListControl.Margin>
                     <Thickness Bottom="{StaticResource MARGIN_Default}" Right="{StaticResource MARGIN_Default}"></Thickness>
-                </controls:JobGroupListControl.Margin>
-                <controls:JobGroupListControl.Content>
+                </controls:GroupListControl.Margin>
+                <controls:GroupListControl.Content>
                     <ListView x:Name="jobsGroupListView"
                               ItemsSource="{Binding Jobs}"
                               ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
@@ -46,8 +47,8 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                </controls:JobGroupListControl.Content>
-            </controls:JobGroupListControl>
+                </controls:GroupListControl.Content>
+            </controls:GroupListControl>
         </DataTemplate>
         <Style x:Name="STYLE_PrintJobsListView" TargetType="ListView">
             <Setter Property="Width" Value="{Binding Converter={StaticResource PrintJobListWidthConverter}}"/>

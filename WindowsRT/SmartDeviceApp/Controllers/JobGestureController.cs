@@ -34,6 +34,8 @@ namespace SmartDeviceApp.Controllers
         private bool _isDeleteJobButtonVisible;
         private JobListItemControl _lastJobListItem;
         private PrintJob _lastPrintJob;
+        private Button _lastDeleteAllButton;
+        private PrintJobGroup _lastPrintJobGroup;
 
         private Point _startPoint;
         private bool _isEnabled;
@@ -193,7 +195,7 @@ namespace SmartDeviceApp.Controllers
             var point = TransformPointToGlobalCoordinates(e.Position, false);
             var elements = VisualTreeHelper.FindElementsInHostCoordinates(point, _targetControl);
             bool isDelete = false;
-            Button deleteButton;
+            Button deleteButton = null;
             ToggleButton jobListHeader = null;
             foreach (UIElement element in elements)
             {
@@ -213,7 +215,11 @@ namespace SmartDeviceApp.Controllers
             if (isDelete && jobListHeader != null)
             {
                 HideDeleteJobButton();
-                var printerId = ((PrintJobGroup)jobListHeader.DataContext).Jobs[0].PrinterId;
+                PrintJobGroup printJobGroup = ((PrintJobGroup)jobListHeader.DataContext);
+                var printerId = printJobGroup.Jobs[0].PrinterId;
+                _lastDeleteAllButton = deleteButton;
+                _lastPrintJobGroup = printJobGroup;
+                printJobGroup.DeleteButtonVisualState = "Pressed";
                 (new ViewModelLocator().JobsViewModel).DeleteAllJobsCommand.Execute(printerId);
             }
             else if (!isDelete && jobListHeader != null)
@@ -307,6 +313,17 @@ namespace SmartDeviceApp.Controllers
             _lastPrintJob.DeleteButtonVisibility = Visibility.Collapsed;
             _lastJobListItem.VisualState = "Normal";
             _isDeleteJobButtonVisible = false;
+        }
+
+        /// <summary>
+        /// Hides the Delete All button.
+        /// </summary>
+        public void HideDeleteAllJobsButton()
+        {
+            if (_lastDeleteAllButton == null || _lastPrintJobGroup == null) return;
+            _lastPrintJobGroup.DeleteButtonVisualState = "Normal";
+            _lastDeleteAllButton = null;
+            _lastPrintJobGroup = null;
         }
 
         /// <param name="isScrolled">True if from ManipulationUpdatedEventArgs,
