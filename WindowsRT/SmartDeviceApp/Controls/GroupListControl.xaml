@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     SizeChanged="OnSizeChanged"
+    Unloaded="OnUnloaded"
     d:DesignWidth="400">
 
     <UserControl.Resources>

@@ -264,5 +264,11 @@ namespace SmartDeviceApp.Controls
             }
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            // Fix for multiple callback firing for DependencyPropertyChanged - http://stackoverflow.com/a/19305798
+            this.ClearValue(GroupListControl.DeleteButtonVisualStateProperty);
+        }
+
     }
 }
