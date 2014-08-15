@@ -287,7 +287,7 @@
         <Setter Property="Padding" Value="6"/>
     </Style>
 
-    <Style x:Key="STYLE_ListValue_PasswordBox" TargetType="PasswordBox">
+    <Style x:Key="STYLE_ListValue_PasswordBox" TargetType="TextBox">
         <Setter Property="Margin">
             <Setter.Value>
                 <Thickness Top="{StaticResource MARGIN_Medium}"

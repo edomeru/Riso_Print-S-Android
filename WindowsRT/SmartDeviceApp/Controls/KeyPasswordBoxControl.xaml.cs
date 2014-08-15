@@ -7,10 +7,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,7 +27,7 @@ namespace SmartDeviceApp.Controls
     {
         private bool _isPasswordBoxLoaded;
         private ICommand _setFocus;
-        private PasswordBox _passwordBox;
+        private PasswordTextbox _passwordBox;
 
         /// <summary>
         /// Constructor for KeyPasswordBoxControl.
@@ -108,11 +110,12 @@ namespace SmartDeviceApp.Controls
             if (!_isPasswordBoxLoaded)
             {
                 KeyPasswordBoxControl context = this;
-                var passwordBox = ((PasswordBox)obj);
+                var passwordBox = ((PasswordTextbox)obj);
                 passwordBox.KeyUp += OnFinalizePasswordBox;
                 passwordBox.LostFocus += OnLostFocus;
                 passwordBox.Width = PasswordBoxWidth;
                 passwordBox.MaxLength = PasswordMaxLength;
+                passwordBox.OriginalText = "";
                 var behavior = new NumericPasswordBehavior();
                 behavior.Attach(passwordBox);
                 _isPasswordBoxLoaded = true;
@@ -121,7 +124,7 @@ namespace SmartDeviceApp.Controls
 
         private static void SetValueText(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            ((KeyPasswordBoxControl)obj).passwordBox.Password = e.NewValue.ToString();
+            ((KeyPasswordBoxControl)obj).passwordBox.Text = Regex.Replace(e.NewValue.ToString(), @".", "*"); 
         }
         
         private void SetFocusExecute()
@@ -131,8 +134,10 @@ namespace SmartDeviceApp.Controls
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
         {
-            ValueText = ((PasswordBox)sender).Password;
-            var scope = FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+            ValueText = ((PasswordTextbox)sender).OriginalText;
+            
+            //hide the virtual keyboard by setting the focus to the control.
+            this.Focus(FocusState.Programmatic);
         }
 
         private void OnFinalizePasswordBox(object sender, KeyRoutedEventArgs e)

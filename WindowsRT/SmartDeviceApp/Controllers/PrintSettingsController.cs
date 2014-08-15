@@ -1472,7 +1472,7 @@ namespace SmartDeviceApp.Controllers
                 if (pinCodePrintSetting != null)
                 {
                     pinCodePrintSetting.IsEnabled = false;
-                    _prevPinCode = printSettings.PinCode;
+                    _prevPinCode = (string.IsNullOrEmpty(printSettings.PinCode) ? string.Empty : printSettings.PinCode);
                     printSettings.PinCode = null;
                     pinCodePrintSetting.Value = string.Empty;
                 }

@@ -153,6 +153,7 @@
       <DependentUpon>DefaultPrintSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\JobGroupListControl.cs" />
+    <Compile Include="Controls\PasswordTextbox.cs" />
     <Compile Include="Controls\SelectPrinterItemControl.cs" />
     <Compile Include="Controls\KeyToggleCheckControl.xaml.cs">
       <DependentUpon>KeyToggleCheckControl.xaml</DependentUpon>
