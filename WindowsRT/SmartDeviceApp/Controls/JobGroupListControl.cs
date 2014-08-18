@@ -29,24 +29,7 @@ namespace SmartDeviceApp.Controls
         {
             this.InitializeComponent();
 
-            // Override binding
-            Binding binding = new Binding();
-            binding.Path = new PropertyPath("IsCollapsed");
-            Header.SetBinding(ToggleButton.IsCheckedProperty, binding);
-
             this.Loaded += OnLoaded;
-        }
-
-        public static readonly DependencyProperty IsCollapsedProperty =
-            DependencyProperty.Register("IsCollapsed", typeof(bool), typeof(JobGroupListControl), null);
-
-        /// <summary>
-        /// Flag for checking whether the Group List is collapsed or not.
-        /// </summary>
-        public bool IsCollapsed
-        {
-            get { return (bool)GetValue(IsCollapsedProperty); }
-            set { SetValue(IsCollapsedProperty, value); }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
