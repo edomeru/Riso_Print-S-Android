@@ -36,6 +36,8 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public Action<string, string, List<string>> printerControllerAddTimeout { get; set; }
 
+        public Action printerControllerErrorCallBack { get; set; }
+
         /// <summary>
         /// Printer list
         /// </summary>
@@ -91,7 +93,16 @@ namespace SmartDeviceApp.Controllers
             //waiting = true;
             device.snmpControllerCallBackGetCapability = new Action<SNMPDevice>(handleGetDevice);
             device.snmpControllerDeviceTimeOut = new Action<SNMPDevice>(handleAddTimeout);
+            device.snmpControllerErrorCallbBack = new Action(handleError);
             device.beginRetrieveCapabilities();
+        }
+
+        private void handleError()
+        {
+            if (printerControllerErrorCallBack != null)
+            {
+                printerControllerErrorCallBack();
+            }
         }
 
         private void handleGetDevice(SNMPDevice device)

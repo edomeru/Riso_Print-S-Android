@@ -18,8 +18,12 @@ namespace SNMP
 
         private DatagramSocket udpSocket;
 
+        private bool errorOccurred = false;
+
         Windows.Foundation.TypedEventHandler<HostName, byte[]> dataReceivedHandler = null;
         Windows.Foundation.TypedEventHandler<HostName, byte[]> timeoutHandler = null;
+        Windows.Foundation.TypedEventHandler<HostName, byte[]> errorHandler = null;
+
 
         internal void assignDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> d)
         {
@@ -31,25 +35,53 @@ namespace SNMP
             timeoutHandler = t;
         }
 
+        internal void assignErrorDelegate(Windows.Foundation.TypedEventHandler<HostName, byte[]> e)
+        {
+            errorHandler = e;
+        }
+
         private void socket_MessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
-            stopTimer();
             datacounter++;
-
-            var r = args.GetDataReader();
-            uint l = r.UnconsumedBufferLength;
-            var buff = new byte[l];
-            r.ReadBytes(buff);
-            //NotifyUserFromAsyncThread("received : " + l + " bytes");            
-
-            if (dataReceivedHandler != null) dataReceivedHandler(args.RemoteAddress, buff);
+            try
+            {
+                var r = args.GetDataReader();
+                uint l = r.UnconsumedBufferLength;
+                var buff = new byte[l];
+                r.ReadBytes(buff);
+                
+                if (dataReceivedHandler != null) 
+                    dataReceivedHandler(args.RemoteAddress, buff);
+            }
+            catch(Exception e)
+            {
+                if (errorHandler != null)
+                {
+                    var host = sender.Information.RemoteAddress;
+                    errorOccurred = true;
+                    errorHandler(host, null);
+                }
+            }
+            
         }
 
         internal void close()
         {
+            if (outputStream != null)
+            {
+                outputStream.Dispose();
+                outputStream = null;
+            }
+                
+
+            if (writer != null)
+            {
+                writer.Dispose();
+                writer = null;
+            }
+
             if (udpSocket != null)
                 udpSocket.Dispose();
-            //throw new NotImplementedException();
         }
 
         internal void beginReceiving()
@@ -71,73 +103,33 @@ namespace SNMP
                 if (timeoutHandler != null) timeoutHandler(host, null);
                 return;
             }
-            //HostName host = new HostName("255.255.255.255");
-            //HostName host = new HostName("224.0.0.1");            
-            //byte[] msg = getSNMPPacket("GET", "public", "1.3.6.1.2.1.1.1.0");//desc 1.3.6.1.2.1.1.1.0 get desc
-            //byte[] msg = getSNMPPacket("GET", "public", "1.3.6.1.2.1.43.15.1.1.2");
-
 
             udpSocket = new DatagramSocket();
             udpSocket.MessageReceived += socket_MessageReceived;
-
-
+            
             string p = port.ToString();
-            //await udpSocket.BindServiceNameAsync("", connectionProfile.NetworkAdapter);
 
-
-
-            if (true)
+            try
             {
-                //EndpointPair endpoint = new EndpointPair(null, "", host, p);
-                try
-                {
-                    outputStream = await udpSocket.GetOutputStreamAsync(host, p);
-                }
-                catch (Exception e)
-                {
-                    if (timeoutHandler != null) timeoutHandler(host, null);
-                    return;
-                }
+                outputStream = await udpSocket.GetOutputStreamAsync(host, p);
+            }
+            catch (Exception e)
+            {
+                if (timeoutHandler != null) timeoutHandler(host, null);
+                return;
+            }
 
-                //outputStream = await udpSocket.GetOutputStreamAsync(endpoint);
+            try
+            {
                 writer = new DataWriter(outputStream);
                 writer.WriteBytes(data);
                 await writer.StoreAsync();
             }
-            else
-            {
-                //await udpSocket.BindEndpointAsync(new HostName("127.0.0.1"), "0");
-                await udpSocket.ConnectAsync(host, p);
-                writer = new DataWriter(udpSocket.OutputStream);
-                writer.WriteBytes(data);
-                await writer.StoreAsync();
+            catch (Exception e)
+            { 
+                //When adding self, sendData is called even before a message is received, which will call errorHandler.
+                //Thus this exception will be called when close() is called and sendData is still writing to the outputStream.
             }
-            
-            startTimer(timeout, host);
-        }
-
-
-        private bool isTimerRunning;
-        private async void startTimer(byte timeout, HostName host)
-        {
-            this.isTimerRunning = true;
-
-            await Task.Delay(timeout * 1000);
-            if (this.isTimerRunning)
-            {
-                //HostName host = udpSocket.Information.RemoteAddress;
-                //if (writer != null) writer.Dispose();
-                //if (outputStream != null) outputStream.Dispose();
-                //if (udpSocket != null) udpSocket.Dispose();
-                stopTimer();
-
-                if (timeoutHandler != null) timeoutHandler(host, null);
-            }
-        }
-
-        private void stopTimer()
-        {
-            this.isTimerRunning = false;
         }
     }
 }
