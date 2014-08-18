@@ -57,6 +57,7 @@ typedef enum {
     if(isDefaultPrinterCell == YES)
     {
         [self.defaultPrinterSelection setEnabled:NO forSegmentAtIndex:1];
+        [self.defaultPrinterSelection setSelectedSegmentIndex:0];
         [self setCellHeaderFormat:kPrinterCollectionCellTypeDefault];
     }
     else
