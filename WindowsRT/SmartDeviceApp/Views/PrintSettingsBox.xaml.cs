@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SmartDeviceApp.Controls;
+using SmartDeviceApp.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,6 +25,22 @@ namespace SmartDeviceApp.Views
         public PrintSettingsBox()
         {
             this.InitializeComponent();
+        }
+
+        /// <summary>
+        /// Holds the data context for this xaml.
+        /// </summary>
+        public PrintSettingsViewModel ViewModel
+        {
+            get
+            {
+                return (PrintSettingsViewModel)DataContext;
+            }
+        }
+
+        private void OnPrinterButtonSizeChanged(object sender, RoutedEventArgs e)
+        {
+            ViewModel.OnPrinterControlSizeChanged((KeyValueControl)sender);
         }
     }
 }

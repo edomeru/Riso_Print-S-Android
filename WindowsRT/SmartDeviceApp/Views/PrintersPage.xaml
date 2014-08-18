@@ -174,13 +174,13 @@
                                                           PrinterImage=""/>
                             <!--TODO: bind this to image data-->
 
-                            <controls:KeyValueControl x:Name="ipAddress" 
+                            <controls:IpAddressControl x:Name="ipAddress" 
                                                       IconVisibility="Collapsed"
                                                       IsOnLoadedEnabled="False"
                                                       Text="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" 
-                                                      KeyTextWidth="{Binding DataContext.IpAddressKeyTextWidth, ElementName=printerInfoView}"
                                                       ValueText="{Binding IpAddress}"
-                                                      ValueTextWidth="{Binding DataContext.IpAddressValueTextWidth, ElementName=printerInfoView}"
+                                                      KeyTextStyle="{StaticResource STYLE_TextKeyWithSubText}"
+                                                      ValueTextStyle="{StaticResource STYLE_TextValueNoTextTrim}"
                                                       RightButtonVisibility="Collapsed"
                                                       ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
@@ -191,14 +191,13 @@
                                                       />
                             <controls:KeyValueControl x:Name="port" 
                                                       IconVisibility="Collapsed"
-                                                          Text="{Binding Source=IDS_LBL_PORT, Converter={StaticResource ResourceStringToTextConverter}}" 
+                                                      Text="{Binding Source=IDS_LBL_PORT, Converter={StaticResource ResourceStringToTextConverter}}" 
                                                       ValueText="{Binding Source=IDS_LBL_PORT_LPR, Converter={StaticResource ResourceStringToTextConverter}}"
-                                                          RightButtonVisibility="Collapsed"
-                                                          ValueVisibility="Visible"
+                                                      RightButtonVisibility="Collapsed"
+                                                      ValueVisibility="Visible"
                                                       SeparatorVisibility="Visible"
                                                       IsListItem="True"
                                                       Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                      
                                                       PressedColor="{StaticResource BRUSH_Gray2}"
                                                       />
                             <!--<controls:PortItemControl x:Name="port"
