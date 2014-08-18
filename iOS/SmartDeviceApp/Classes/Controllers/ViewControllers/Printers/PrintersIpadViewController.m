@@ -120,7 +120,7 @@
  *
  * @param sender the switch object
  */
-- (IBAction)deafultPrinterSelectionAction:(id)sender;
+- (IBAction)defaultPrinterSelectionAction:(id)sender;
 
 /**
  * Shifts the tags of the UICollectionView cells.
