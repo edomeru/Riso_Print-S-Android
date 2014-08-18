@@ -32,14 +32,9 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *portSelection;
 
 /**
- * Switch to set the printer as deafult.
+ * A UISegmentControl to set the printer as default.
  */
-@property (weak, nonatomic) IBOutlet UISwitch *defaultSwitch;
-
-/**
- * Indicator that the printer is set as default.
- */
-@property (weak, nonatomic) IBOutlet UIImageView *defaultSetIcon;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *defaultPrinterSelection;
 
 /**
  * Connectivity status of the printer.

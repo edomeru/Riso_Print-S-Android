@@ -50,19 +50,19 @@ typedef enum {
 
 - (void)setAsDefaultPrinterCell:(BOOL)isDefaultPrinterCell
 {
+    [self.defaultPrinterSelection setTitle:NSLocalizedString(IDS_LBL_YES, @"YES") forSegmentAtIndex:0];
+    [self.defaultPrinterSelection setTitle:NSLocalizedString(IDS_LBL_NO, @"NO") forSegmentAtIndex:1];
+    
     self.isDefaultPrinterCell = isDefaultPrinterCell;
     if(isDefaultPrinterCell == YES)
     {
-        self.defaultSwitch.on = YES;
-        self.defaultSwitch.hidden = YES;
-        self.defaultSetIcon.hidden = NO;
+        [self.defaultPrinterSelection setEnabled:NO forSegmentAtIndex:1];
         [self setCellHeaderFormat:kPrinterCollectionCellTypeDefault];
     }
     else
     {
-        self.defaultSwitch.on = NO;
-        self.defaultSwitch.hidden = NO;
-        self.defaultSetIcon.hidden = YES;
+        [self.defaultPrinterSelection setEnabled:YES forSegmentAtIndex:1];
+        [self.defaultPrinterSelection setSelectedSegmentIndex:1];
         [self setCellHeaderFormat:kPrinterCollectionCellTypeNormal];
 
     }

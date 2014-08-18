@@ -122,6 +122,8 @@
 "IDS_LBL_PRINTERS_EMPTY" = "プリンターがありません。";
 "IDS_LBL_PRINTJOBHISTORY_EMPTY" = "印刷履歴がありません。";
 "IDS_LBL_PRINTER_SEARCH_EMPTY" = "プリンターが見つかりません。";
+"IDS_LBL_YES" = "Yes";
+"IDS_LBL_NO" = "No";
 "IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" = "追加しました。";
 "IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" = "警告\nプリンターが見つかりません。";
 "IDS_INFO_MSG_PRINTING" = "印刷中…";
