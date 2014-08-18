@@ -148,5 +148,7 @@
     <string name="ids_err_msg_not_enough_space">Not enough free space on device</string>
     <string name="ids_err_msg_network_error">No network available.</string>
     <string name="ids_err_msg_db_failure">Database failure. Please restart the application. If the problem persists, please reinstall the application.</string>
+    <string name="ids_lbl_yes">Yes</string>
+    <string name="ids_lbl_no">No</string>
 
 </resources>
