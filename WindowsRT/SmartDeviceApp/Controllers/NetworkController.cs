@@ -15,7 +15,7 @@ namespace SmartDeviceApp.Controllers
 {
     public class NetworkController
     {
-        private const string port = "80";
+        private const string port = "515";
 
         /// <summary>
         /// Ping status callback

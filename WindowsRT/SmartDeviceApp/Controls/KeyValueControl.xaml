@@ -77,7 +77,7 @@
                         <TextBlock x:Name="key"
                                    Text="{Binding Text, ElementName=keyValueControl}"
                                    Width="{Binding KeyTextWidth, ElementName=keyValueControl}"
-                                   Style="{StaticResource STYLE_TextKey}"
+                                   Style="{Binding KeyTextStyle, ElementName=keyValueControl}"
                                    VerticalAlignment="Center">
                         </TextBlock>
                         <TextBlock x:Name="keySubText"

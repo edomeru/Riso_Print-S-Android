@@ -1,24 +1,11 @@
-﻿using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using SmartDeviceApp.Common.Constants;
-using SmartDeviceApp.Common.Enum;
+﻿using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Utilities;
-using SmartDeviceApp.ViewModels;
+using SmartDeviceApp.Converters;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -228,11 +215,15 @@ namespace SmartDeviceApp.Controls
             set { SetValue(TextWidthProperty, value); }
         }
 
-
-        private void button_Loaded(object sender, RoutedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (sender != null && sender is PrinterNameControl)
+            {
                 resizeTextWidth();
+
+                // Update the displayed text based on new width, not the Text property
+                key.Text = (string)new PrinterNameMiddleTrimmedTextConverter().Convert(Text, null, TextWidth, null);
+            }
         }
 
         private void resizeTextWidth()
@@ -267,7 +258,6 @@ namespace SmartDeviceApp.Controls
 
                 var deleteButtonWidth = (int)((double)Application.Current.Resources["SIZE_DeleteButtonWidth_Long"]);
                 maxTextWidth -= deleteButtonWidth;
-                
 
                 // Image
                 maxTextWidth -= ImageConstant.GetIconImageWidth(this);
@@ -285,13 +275,6 @@ namespace SmartDeviceApp.Controls
             {
                 LogUtility.LogError(ex);
             }
-        }
-
-        private void printerNameControl_LayoutUpdated(object sender, object e)
-        {
-            var viewModel = new ViewModelLocator().ViewControlViewModel;
-            if (viewModel.ScreenMode == ScreenMode.Printers)
-                resizeTextWidth();
         }
 
     }

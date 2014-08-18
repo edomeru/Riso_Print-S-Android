@@ -447,8 +447,7 @@
             </Slider>
             <TextBlock x:Name="pageNumberText" Grid.Row="2" 
                        Text="{Binding PageNumber, Converter={StaticResource PageNumberFormatConverter}}" 
-                       Style="{StaticResource STYLE_TextBody}" />
-            
+                       Style="{StaticResource STYLE_TextPageNumber}" />
         </Grid>
     </controls:ViewControl>
 </base:PageBase>

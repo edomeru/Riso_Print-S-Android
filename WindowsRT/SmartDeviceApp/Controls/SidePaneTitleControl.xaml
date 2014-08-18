@@ -28,7 +28,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" Style="{StaticResource STYLE_StackLeft}">
-            <TextBlock x:Name="rightPaneTitle" Grid.Column="1" Text="{Binding Title, ElementName=sidepaneTitle}" Style="{StaticResource STYLE_TextHeader}"/>
+            <TextBlock x:Name="rightPaneTitle" Grid.Column="1" Text="{Binding Title, ElementName=sidepaneTitle}" Style="{StaticResource STYLE_TextTitle}"/>
         </StackPanel>
     </Grid>
 </UserControl>

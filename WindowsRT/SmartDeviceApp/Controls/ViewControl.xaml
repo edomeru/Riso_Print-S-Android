@@ -275,7 +275,7 @@
                             Template="{StaticResource TEMPLATE_MainMenuButton}" 
                             Style="{StaticResource STYLE_AlignLeft}"
                             Tapped="OnMainMenuButtonTapped"/>
-                    <TextBlock x:Name="viewTitle" Grid.Column="1" Text="{Binding Text, ElementName=viewControl}" Style="{StaticResource STYLE_TextHeader}" TextTrimming="CharacterEllipsis" LineStackingStrategy="MaxHeight"/>
+                    <TextBlock x:Name="viewTitle" Grid.Column="1" Text="{Binding Text, ElementName=viewControl}" Style="{StaticResource STYLE_TextTitle}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
                     <ToggleButton x:Name="button2" 

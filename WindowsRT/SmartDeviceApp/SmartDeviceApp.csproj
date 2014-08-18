@@ -152,7 +152,13 @@
     <Compile Include="Controls\DefaultPrintSettingsControl.xaml.cs">
       <DependentUpon>DefaultPrintSettingsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\IpAddressControl.cs" />
+    <Compile Include="Controls\JobGroupListControl.cs" />
     <Compile Include="Controls\PasswordTextbox.cs" />
+    <Compile Include="Controls\PrinterSearchListItemControl.cs" />
+    <Compile Include="Controls\KeyToggleButtonControl.xaml.cs">
+      <DependentUpon>KeyToggleButtonControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SelectPrinterItemControl.cs" />
     <Compile Include="Controls\KeyToggleCheckControl.xaml.cs">
       <DependentUpon>KeyToggleCheckControl.xaml</DependentUpon>
@@ -185,9 +191,8 @@
       <DependentUpon>PrinterNameControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToColor.cs" />
-    <Compile Include="Converters\TitleToMiddleTrimmedTextConverter.cs" />
-    <Compile Include="Converters\JobListItemKeyTextConverter.cs" />
-    <Compile Include="Converters\JobListItemKeyTextWidthConverter.cs" />
+    <Compile Include="Converters\MiddleTrimmedTextConverter.cs" />
+    <Compile Include="Converters\TextWidthConverter.cs" />
     <Compile Include="Converters\PrinterSearchItemButtonImageConverter.cs" />
     <Compile Include="Converters\PrinterStatusToImageSourceConverter.cs" />
     <Compile Include="Controls\MainMenuKeyControl.xaml.cs">
@@ -529,6 +534,10 @@
     <Page Include="Controls\GroupListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\KeyToggleButtonControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\PrinterNameControl.xaml">
       <SubType>Designer</SubType>

@@ -167,7 +167,8 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <controls:KeyValueControl x:Name="printerSearchListItem"
+                                <controls:PrinterSearchListItemControl x:Name="printerSearchListItem"
+                                                          IsOnLoadedEnabled="False"
                                                           Width="{StaticResource SIZE_SidePaneWidth}"
                                                           Command="{Binding DataContext.PrinterSearchItemSelected, ElementName=SearchPrinterPaneControl}"
                                                           CommandParameter="{Binding}"
