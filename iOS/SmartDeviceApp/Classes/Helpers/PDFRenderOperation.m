@@ -90,6 +90,11 @@
  */
 - (BOOL) isSizeLandscape:(CGSize)rect;
 
+/**
+ * Gets the rect of the pdf page with applied rotation angle
+ */
+- (CGRect)getRectForPdfPage:(CGPDFPageRef)pageRef box:(CGPDFBox)box rotation:(int)rotation;
+
 @end
 
 @implementation PDFRenderOperation
@@ -427,17 +432,22 @@
     // Get PDF rects
     CGRect pdfRect = CGPDFPageGetBoxRect(pageRef, kCGPDFMediaBox);
     CGRect cropRect = CGPDFPageGetBoxRect(pageRef, kCGPDFCropBox);
+    int rotation = CGPDFPageGetRotationAngle(pageRef);
+    CGRect rotatedPdfPrect = [self getRectForPdfPage:pageRef box:kCGPDFMediaBox rotation:rotation];
     
     CGContextSaveGState(contextRef);
    
     // Rotate page depending on PDF orientation
     BOOL isPageLandscape = [self isSizeLandscape:size];
-    BOOL isPDFLandscape = [self isSizeLandscape:pdfRect.size];
+    BOOL isPDFLandscape = [self isSizeLandscape:rotatedPdfPrect.size];
+    if (isPageLandscape != isPDFLandscape) {
+        rotation -= 90;
+    }
     
-    if (isPageLandscape != isPDFLandscape)
+    if (rotation != 0)
     {
         CGContextTranslateCTM(contextRef, size.width / 2.0f, size.height / 2.0f);
-        CGContextRotateCTM(contextRef, -M_PI_2);
+        CGContextRotateCTM(contextRef, (rotation * M_PI / 180.0f));
         CGContextTranslateCTM(contextRef, -size.height / 2.0f, -size.width / 2.0f);
         size = CGSizeMake(size.height, size.width);
     }
@@ -590,6 +600,19 @@
 - (BOOL) isSizeLandscape:(CGSize)size
 {
     return (size.width > size.height);
+}
+
+- (CGRect)getRectForPdfPage:(CGPDFPageRef)pageRef box:(CGPDFBox)box rotation:(int)rotation
+{
+    CGRect pageRect = CGPDFPageGetBoxRect(pageRef, box);
+    if ((rotation % 180) > 0)
+    {
+        CGFloat temp = pageRect.size.width;
+        pageRect.size.width = pageRect.size.height;
+        pageRect.size.height = temp;
+    }
+    
+    return pageRect;
 }
 
 @end
