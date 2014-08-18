@@ -35,7 +35,7 @@ namespace SmartDeviceApp.Controls
             var ipAddressControl = (IpAddressControl)sender;
             var ipAddressControlWidth = e.NewSize.Width;
 
-            TextBlock valueTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "value"); // "key" as defined in KeyValueControl.xaml
+            TextBlock valueTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "value"); // "key" as defined in KeyValueControl.xaml
 
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
             var smallMargin = (double)Application.Current.Resources["MARGIN_Small"];

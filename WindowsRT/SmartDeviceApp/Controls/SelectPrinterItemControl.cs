@@ -31,8 +31,8 @@ namespace SmartDeviceApp.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            TextBlock keyTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "key"); // "key" as defined in KeyValueControl.xaml
-            TextBlock keySubTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "keySubText"); // "keySubText" as defined in KeyValueControl.xaml
+            TextBlock keyTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "key"); // "key" as defined in KeyValueControl.xaml
+            TextBlock keySubTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "keySubText"); // "keySubText" as defined in KeyValueControl.xaml
 
             // Change style of KeyText and KeySubText to No Text Trim
             if (SubTextVisibility == Visibility.Visible)

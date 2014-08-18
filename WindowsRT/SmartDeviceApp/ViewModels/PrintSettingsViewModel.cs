@@ -373,7 +373,7 @@ namespace SmartDeviceApp.ViewModels
             }
 
             // Change style of ValueText to No Text Trimming
-            var valueTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)keyValueControl, "value"); // "value" as defined in KeyValueControl.xaml
+            var valueTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)keyValueControl, "value"); // "value" as defined in KeyValueControl.xaml
             if (keyValueControl.ValueSubTextVisibility == Visibility.Visible)
             {
                 valueTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextValueWithSubTextNoTextTrim"];
@@ -384,7 +384,7 @@ namespace SmartDeviceApp.ViewModels
             }
 
             // Change style of ValueSubText to No Text Trimming
-            var valueSubTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)keyValueControl, "valueSubText"); // "valueSubText" as defined in KeyValueControl.xaml
+            var valueSubTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)keyValueControl, "valueSubText"); // "valueSubText" as defined in KeyValueControl.xaml
             valueSubTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextValueSubTextNoTextTrim"];
         }
     }
