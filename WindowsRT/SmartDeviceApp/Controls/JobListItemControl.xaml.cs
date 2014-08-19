@@ -136,7 +136,7 @@ namespace SmartDeviceApp.Controls
             }
 
             // Change style of KeyText to No Text Trimming
-            TextBlock keyTextBlock = ViewControlUtility.GetTextBlockFromParent((UIElement)sender, "key"); // "key" as defined in KeyValueControl.xaml
+            TextBlock keyTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "key"); // "key" as defined in KeyValueControl.xaml
             keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeyNoTextTrim"];
 
             // Set separator start point

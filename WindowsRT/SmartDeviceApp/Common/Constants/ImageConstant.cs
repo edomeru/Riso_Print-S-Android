@@ -72,6 +72,12 @@ namespace SmartDeviceApp.Common.Constants
         private const int RIGHT_BUTTON_IMAGE_WIDTH_180  = 26;
         private const int RIGHT_BUTTON_IMAGE_HEIGHT_180 = 36;
 
+        /// <summary>
+        /// Gets the width of an IconImage
+        /// </summary>
+        /// <param name="sender">target control</param>
+        /// <param name="isIgnoreResolution">true when screen resolution is ignored; false otherwise</param>
+        /// <returns>width of an IconImage</returns>
         public static int GetIconImageWidth(object sender, bool? isIgnoreResolution = false)
         {
             int width = 0;
@@ -99,6 +105,7 @@ namespace SmartDeviceApp.Common.Constants
                 }
             }
             else if (type == typeof(GroupListControl) ||
+                type == typeof(JobGroupListControl) ||
                 type == typeof(KeyValueControl) ||
                 type == typeof(KeyRadioButtonControl) ||
                 type == typeof(KeyTextBoxControl) ||
@@ -121,21 +128,45 @@ namespace SmartDeviceApp.Common.Constants
             return width;
         }
 
-        public static int GetRightButtonImageWidth()
+        /// <summary>
+        /// Gets the width of a RightButtonImage
+        /// </summary>
+        /// <param name="sender">target control</param>
+        /// <returns>width of a RightButtonImage</returns>
+        public static int GetRightButtonImageWidth(object sender)
         {
             int width = 0;
             var resolution = DisplayInformation.GetForCurrentView().ResolutionScale;
-            switch (resolution)
+            var type = sender.GetType();
+            if (type == typeof(PrinterSearchListItemControl))
             {
-                case ResolutionScale.Scale100Percent:
-                    width = RIGHT_BUTTON_IMAGE_WIDTH_100;
-                    break;
-                case ResolutionScale.Scale140Percent:
-                    width = RIGHT_BUTTON_IMAGE_WIDTH_140;
-                    break;
-                case ResolutionScale.Scale180Percent:
-                    width = RIGHT_BUTTON_IMAGE_WIDTH_180;
-                    break;
+                switch (resolution)
+                {
+                    case ResolutionScale.Scale100Percent:
+                        width = STATUS_IMAGE_WIDTH_100;
+                        break;
+                    case ResolutionScale.Scale140Percent:
+                        width = STATUS_IMAGE_WIDTH_140;
+                        break;
+                    case ResolutionScale.Scale180Percent:
+                        width = STATUS_IMAGE_WIDTH_180;
+                        break;
+                }
+            }
+            else
+            {
+                switch (resolution)
+                {
+                    case ResolutionScale.Scale100Percent:
+                        width = RIGHT_BUTTON_IMAGE_WIDTH_100;
+                        break;
+                    case ResolutionScale.Scale140Percent:
+                        width = RIGHT_BUTTON_IMAGE_WIDTH_140;
+                        break;
+                    case ResolutionScale.Scale180Percent:
+                        width = RIGHT_BUTTON_IMAGE_WIDTH_180;
+                        break;
+                }
             }
             return width;
         }

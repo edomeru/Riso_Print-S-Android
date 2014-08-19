@@ -175,11 +175,8 @@ namespace SmartDeviceApp.Models
             get { return this._isDefault; }
             set
             {
-                if (_isDefault != value)
-                {
-                    _isDefault = value;
-                    OnPropertyChanged("IsDefault");
-                }
+                _isDefault = value;
+                OnPropertyChanged("IsDefault");
             }
         }
 

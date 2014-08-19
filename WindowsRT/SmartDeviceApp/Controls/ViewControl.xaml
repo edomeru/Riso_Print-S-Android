@@ -178,19 +178,19 @@
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
                         </ObjectAnimationUsingKeyFrames>
-                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="viewRoot">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="viewRoot">
                             <DiscreteObjectKeyFrame KeyTime="0">
                                 <DiscreteObjectKeyFrame.Value>
                                     <Thickness Top="0"
                                                Bottom="0"
-                                               Left="0"
+                                               Left="{StaticResource MARGIN_RightSidePane}"
                                                Right="{StaticResource SIZE_SidePaneWidthWithBorder}">
                                     </Thickness>
                                 </DiscreteObjectKeyFrame.Value>
                             </DiscreteObjectKeyFrame>
-                        </ObjectAnimationUsingKeyFrames>-->
+                        </ObjectAnimationUsingKeyFrames>
                         <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="sidePanesGrid" d:IsOptimized="True"/>-->
-                        <DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>
+                        <!--<DoubleAnimation Duration="0" To="{StaticResource MARGIN_RightSidePane}" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.GlobalOffsetX)" Storyboard.TargetName="viewRoot" d:IsOptimized="True"/>-->
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="RightPaneVisible_ResizedViewState">
@@ -275,7 +275,7 @@
                             Template="{StaticResource TEMPLATE_MainMenuButton}" 
                             Style="{StaticResource STYLE_AlignLeft}"
                             Tapped="OnMainMenuButtonTapped"/>
-                    <TextBlock x:Name="viewTitle" Grid.Column="1" Text="{Binding Text, ElementName=viewControl}" Style="{StaticResource STYLE_TextHeader}" TextTrimming="CharacterEllipsis" LineStackingStrategy="MaxHeight"/>
+                    <TextBlock x:Name="viewTitle" Grid.Column="1" Text="{Binding Text, ElementName=viewControl}" Style="{StaticResource STYLE_TextTitle}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Style="{StaticResource STYLE_StackRight}">
                     <ToggleButton x:Name="button2" 

@@ -242,6 +242,11 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
+        /// Gets/sets the width of the group text
+        /// </summary>
+        public double GroupTextWidth { get; set; }
+
+        /// <summary>
         /// True when loading indicator is active, false otherwise
         /// </summary>
         public bool IsProgressRingActive
@@ -324,6 +329,10 @@ namespace SmartDeviceApp.ViewModels
                         if (isDelete && RemoveGroupedJobsEventHandler != null)
                         {
                             RemoveGroupedJobsEventHandler(printerId);
+                        }
+                        else if (!isDelete)
+                        {
+                            GestureController.HideDeleteAllJobsButton();
                         }
                     }));
         }
@@ -573,6 +582,24 @@ namespace SmartDeviceApp.ViewModels
             maxTextWidth -= (double)Application.Current.Resources["SIZE_JobListValueTextWidth"];
             maxTextWidth -= smallMargin; // Space between key and value texts
             KeyTextWidth = maxTextWidth;
+
+            double maxGroupTextWidth = ColumnWidth;
+
+            // Left and right margins
+            maxGroupTextWidth -= (defaultMargin * 2);
+
+            // Delete All button width
+            var deleteAllButtonWidth = (double)Application.Current.Resources["SIZE_DeleteButtonWidth_Long"];
+
+            // Collapse/Expand button width
+            var tempJobGroupListControl = new JobGroupListControl();
+            imageWidth = ImageConstant.GetIconImageWidth(tempJobGroupListControl);
+            maxGroupTextWidth -= imageWidth;
+            maxGroupTextWidth -= defaultMargin;
+            tempJobGroupListControl = null;
+
+            // Group text width
+            GroupTextWidth = maxGroupTextWidth;
         }
     }
 }

@@ -86,7 +86,7 @@ namespace SmartDeviceApp.Controllers
         private double _rotationCenterX;
         private double _rotationCenterY;
         private bool _isOnGridFirstHalf; // Flag for back curl, if going to previous page
-        private bool _isPageTurnNext;
+        //private bool _isPageTurnNext;
         //private bool _willContinue;
 
         private uint _currPageIndex;
@@ -202,7 +202,7 @@ namespace SmartDeviceApp.Controllers
             EnableGestures();
             
             // InitializeTransforms
-            _controlSize = new Size(((ScrollViewer)_controlReference).ActualWidth, ((ScrollViewer)_controlReference).ActualHeight);
+            _controlSize = new Size(((ScrollViewer)_controlReference).Width, ((ScrollViewer)_controlReference).Height);  // BTS#14894 - Use size set programmatically from caller class. Actual size will be retrieved on SizeChanged event.
             _center = new Point(_controlSize.Width / 2, _controlSize.Height / 2);
             ResetTransforms();
         }
@@ -275,6 +275,11 @@ namespace SmartDeviceApp.Controllers
             if (disposing)
             {
                 DisableGestures();
+
+                // Unregister SizeChanged event since gesture controller will be disposed.
+                // This is to avoid multiple (unnecessary) calls to SizeChanged event.
+                ((ScrollViewer)_controlReference).SizeChanged -= ControlReferenceSizeChanged;
+
                 _gestureRecognizer = null; 
             }
             _isDisposed = true;
@@ -403,7 +408,9 @@ namespace SmartDeviceApp.Controllers
             else
                 _multipleFingersDetected = false;
 
-            _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
+            if (pointerCount < 3)
+                _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
+
             args.Handled = true;
         }
 

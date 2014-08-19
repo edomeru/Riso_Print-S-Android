@@ -78,5 +78,11 @@ namespace SmartDeviceApp.Views
             // Initialize gesture controller
             ViewModel.SetPageAreaGrid((TwoPageControl)sender);
         }
+
+        // Note: This is needed to access Title text of the view
+        private void OnViewControlLoaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SetViewControl((ViewControl)sender);
+        }
     }
 }

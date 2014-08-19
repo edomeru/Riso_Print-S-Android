@@ -87,7 +87,10 @@ namespace SmartDeviceApp.ViewModels
         private bool _isHorizontalSwipeEnabledPrevious;
         private double _scalingFactor = 1;
 
-        private string _documentTitleText;
+        private string _trimmedTitleText;
+        private double _mainMenuButtonWidth;
+        private double _printSettingsButtonWidth;
+
         private WriteableBitmap _rightPageImage;
         private WriteableBitmap _leftPageImage;
         private WriteableBitmap _rightBackPageImage;
@@ -123,7 +126,7 @@ namespace SmartDeviceApp.ViewModels
 
             SetViewMode(_viewControlViewModel.ViewMode); 
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
-            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPageAreaGrid(viewOrientation));
+            Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => SetViewOrientation(viewOrientation));
         }
 
         /// <summary>
@@ -162,7 +165,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 _twoPageControl = twoPageControl;
                 _controlReference = (UIElement)((Grid)twoPageControl.DisplayAreaGrid.Parent).Parent;
-                ResetPageAreaGrid(_viewControlViewModel.ViewOrientation);
+                ResetPageAreaGrid(_viewControlViewModel.ViewMode, _viewControlViewModel.ViewOrientation);
 
                 IsPageAreaGridLoaded = true;
 
@@ -175,21 +178,27 @@ namespace SmartDeviceApp.ViewModels
 
         /// <summary>
         /// Resets the page area grid dimensions.
-        /// Should be reset everytime the view orientation is changed.
+        /// Should be reset everytime the view mode or view orientation is changed.
         /// </summary>
+        /// <param name="viewMode">view mode</param>
         /// <param name="viewOrientation">view orientation</param>
-        private void ResetPageAreaGrid(ViewOrientation viewOrientation)
+        private void ResetPageAreaGrid(ViewMode viewMode, ViewOrientation viewOrientation)
         {
             if (_controlReference != null)
             {
                 var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-                _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(_viewControlViewModel.ViewMode, null, viewOrientation, null)) - defaultMargin * 2;
+
+                // Update desired controlReference's width
+                _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(viewMode, null, viewOrientation, null)) - defaultMargin * 2;
                 ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
+
+                // Update desired controlReference's height
                 var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
                 var sliderHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberSliderHeight"]).Value;
                 var sliderTextHeight = ((GridLength)Application.Current.Resources["SIZE_PageNumberTextHeight"]).Value;
                 _pageAreaGridMaxHeight = (double)((new HeightConverter()).Convert(viewOrientation, null, null, null))
                     - defaultMargin * 2 - titleHeight - sliderHeight - sliderTextHeight;
+                ((ScrollViewer)_controlReference).Height = _pageAreaGridMaxHeight;
             }
         }
 
@@ -521,15 +530,24 @@ namespace SmartDeviceApp.ViewModels
                 }
             }
         }
-                
+
         private void SetViewMode(ViewMode viewMode)
         {
             if (_viewControlViewModel.ScreenMode != ScreenMode.PrintPreview &&
-                _viewControlViewModel.ScreenMode != ScreenMode.Home) return;
-            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-            _pageAreaGridMaxWidth = (double)((new ResizedViewWidthConverter()).Convert(viewMode, null, null, null)) - defaultMargin * 2;
-            if (_controlReference != null) ((ScrollViewer)_controlReference).Width = _pageAreaGridMaxWidth;
+                _viewControlViewModel.ScreenMode != ScreenMode.Home)
+            {
+                return;
+            }
+
+
+            if (viewMode != ViewMode.Unknown)
+            {
+                // BTS#14894 - Determine controlReference size only when view mode is valid
+                ResetPageAreaGrid(viewMode, _viewControlViewModel.ViewOrientation);
+            }
+
             InitializeGestures();
+
             switch (viewMode)
             {
                 case ViewMode.MainMenuPaneVisible:
@@ -541,15 +559,22 @@ namespace SmartDeviceApp.ViewModels
                 case ViewMode.FullScreen:
                     {
                         EnablePreviewGestures();
+                        TrimTitleText(viewMode); // Update title text on resize
                         break;
                     }
                 case ViewMode.RightPaneVisible: // NOTE: Technically not possible
                 case ViewMode.RightPaneVisible_ResizedWidth:
                     {
                         DisablePreviewGestures();
+                        TrimTitleText(viewMode); // Update title text on resize
                         break;
                     }
             }
+        }
+
+        private void SetViewOrientation(ViewOrientation viewOrientation)
+        {
+            ResetPageAreaGrid(_viewControlViewModel.ViewMode, viewOrientation);
         }
 
         private void EnablePreviewGestures()
@@ -572,19 +597,69 @@ namespace SmartDeviceApp.ViewModels
         #region PAGE DISPLAY
 
         /// <summary>
+        /// Document name
+        /// </summary>
+        public string DocumentTitleText { get; set; }
+
+        /// <summary>
         /// Text label for the Print Preview Screen based on the document name
         /// </summary>
-        public string DocumentTitleText
+        public string TrimmedTitleText
         {
-            get { return _documentTitleText; }
+            get { return _trimmedTitleText; }
             set
             {
-                if (_documentTitleText != value)
+                if (_trimmedTitleText != value)
                 {
-                    _documentTitleText = value;
-                    RaisePropertyChanged("DocumentTitleText");
+                    _trimmedTitleText = value;
+                    RaisePropertyChanged("TrimmedTitleText");
                 }
             }
+        }
+
+        /// <summary>
+        /// Handler when view control is loaded.
+        /// </summary>
+        /// <param name="viewControl">view control</param>
+        public void SetViewControl(ViewControl viewControl)
+        {
+            // Update title text
+            _mainMenuButtonWidth = viewControl.MainMenuButtonWidth;
+            _printSettingsButtonWidth = viewControl.Button1Width;
+            TrimTitleText(new ViewModelLocator().ViewControlViewModel.ViewMode);
+        }
+
+        /// <summary>
+        /// Updates the title text of the screen. Performs middle trim if needed.
+        /// </summary>
+        /// <param name="viewMode">current view mode</param>
+        private void TrimTitleText(ViewMode viewMode)
+        {
+            // Adjust widths
+            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+            var rightPaneWidth = (double)Application.Current.Resources["SIZE_SidePaneWidthWithBorder"];
+
+            var maxTextWidth = (int)Window.Current.Bounds.Width;
+
+            // Left and right margins
+            maxTextWidth -= ((int)defaultMargin * 2);
+
+            // Main menu button is always visible
+            maxTextWidth -= (int)_mainMenuButtonWidth;
+            maxTextWidth -= (int)defaultMargin;
+
+            // Print Settings button is always visible
+            maxTextWidth -= (int)_printSettingsButtonWidth;
+            maxTextWidth -= (int)defaultMargin;
+
+            // RightPaneVisible_ResizeWidth view mode
+            if (viewMode == ViewMode.RightPaneVisible_ResizedWidth)
+            {
+                maxTextWidth -= (int)rightPaneWidth;
+            }
+
+            TrimmedTitleText = (string)new TitleToMiddleTrimmedTextConverter().Convert(
+                DocumentTitleText, null, (double)maxTextWidth, null);
         }
 
         /// <summary>

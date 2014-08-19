@@ -30,18 +30,34 @@
     </Style>
 
     <Style x:Key="STYLE_TextKey" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextBody}" >
+        <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="MaxLines" Value="2"/>
     </Style>
 
     <Style x:Key="STYLE_TextKeyNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >
         <Setter Property="TextTrimming" Value="None"/>
     </Style>
 
-    <Style x:Key="STYLE_TextKeySubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >
+    <Style x:Key="STYLE_TextKeyWithSubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="MaxLines" Value="1"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextKeyWithSubTextNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKeyWithSubText}" >
+        <Setter Property="TextTrimming" Value="None"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextKeySubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKeyWithSubText}" >
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="Foreground" Value="{StaticResource BRUSH_White}"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="LineHeight" Value="16"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextKeySubTextNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKeySubText}" >
+        <Setter Property="TextTrimming" Value="None"/>
     </Style>
 
     <Style x:Key="STYLE_TextValue" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >
@@ -49,20 +65,31 @@
         <Setter Property="Foreground" Value="{StaticResource BRUSH_White}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="MaxLines" Value="2"/>
-        <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextValueNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValue}" >
+        <Setter Property="TextTrimming" Value="None"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="MaxLines" Value="1"/>
     </Style>
 
     <Style x:Key="STYLE_TextValueWithSubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValue}" >
         <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
         <Setter Property="MaxLines" Value="1"/>
     </Style>
 
-    <Style x:Key="STYLE_TextValueSubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValue}" >
+    <Style x:Key="STYLE_TextValueWithSubTextNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValueWithSubText}" >
+        <Setter Property="TextTrimming" Value="None"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextValueSubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValueWithSubText}" >
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="LineHeight" Value="16"/>
-        <Setter Property="TextWrapping" Value="NoWrap"/>
-        <Setter Property="MaxLines" Value="1"/>
-        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextValueSubTextNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValueSubText}" >
+        <Setter Property="TextTrimming" Value="None"/>
     </Style>
 
     <Style x:Key="STYLE_TextMessageContent" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextValueSubText}" >
@@ -75,5 +102,33 @@
         <Setter Property="Foreground" Value="{StaticResource BRUSH_White}"/>
     </Style>
 
+    <Style x:Key="STYLE_TextListHeaderNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextListHeader}" >
+        <Setter Property="TextTrimming" Value="None"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextListHeaderWithSubText" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextListHeader}" >
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="MaxLines" Value="1"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextListHeaderWithSubTextNoTextTrim" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextListHeaderWithSubText}" >
+        <Setter Property="TextTrimming" Value="None"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextPrinterName" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextKey}" >
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
+        <Setter Property="MaxLines" Value="1"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextPageNumber" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextBody}" >
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+    </Style>
+
+    <Style x:Key="STYLE_TextTitle" TargetType="TextBlock" BasedOn="{StaticResource STYLE_TextHeader}" >
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
+    </Style>
 
 </ResourceDictionary>

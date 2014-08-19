@@ -397,11 +397,12 @@
         </Style>
     </base:PageBase.Resources>
     <controls:ViewControl ChildrenDataContext="{Binding DataContext, ElementName=printPreviewPage}"
-                          Text="{Binding DataContext.DocumentTitleText, ElementName=printPreviewPage}" 
+                          Text="{Binding DataContext.TrimmedTitleText, ElementName=printPreviewPage}"
                           Button1Image="ms-appx:///Resources/Images/img_btn_print_settings_normal.png"
                           Button1PressedImage="ms-appx:///Resources/Images/img_btn_print_settings_pressed.png"
                           Button1Visibility="Visible"
-                          Button2Visibility="Collapsed">
+                          Button2Visibility="Collapsed"
+                          Loaded="OnViewControlLoaded">
         <controls:ViewControl.RightPaneContent>
             <local:PrintSettingsPane/>
         </controls:ViewControl.RightPaneContent>
@@ -428,7 +429,8 @@
                                      IsLoadLeftPageActive="{Binding IsLoadLeftPageActive}"
                                      IsLoadRightPageActive="{Binding IsLoadRightPageActive}"/>
             
-            <Slider x:Name="pageNumberSlider" Grid.Row="1" 
+            <Slider x:Name="pageNumberSlider" Grid.Row="1"
+                    IsThumbToolTipEnabled="False"
                     IsEnabled="{Binding IsPageNumberSliderEnabled}" 
                     Maximum="{Binding PageTotal, Mode=TwoWay}" 
                     Value="{Binding CurrentPageIndex, Mode=TwoWay, Converter={StaticResource PageIndexToSliderValueConverter}}"
@@ -446,8 +448,7 @@
             </Slider>
             <TextBlock x:Name="pageNumberText" Grid.Row="2" 
                        Text="{Binding PageNumber, Converter={StaticResource PageNumberFormatConverter}}" 
-                       Style="{StaticResource STYLE_TextBody}" />
-            
+                       Style="{StaticResource STYLE_TextPageNumber}" />
         </Grid>
     </controls:ViewControl>
 </base:PageBase>

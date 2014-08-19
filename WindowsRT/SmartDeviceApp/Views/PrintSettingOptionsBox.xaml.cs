@@ -52,7 +52,8 @@ namespace SmartDeviceApp.Views
 
         private void printSettingsOptionsBoxLoaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Height = Window.Current.Bounds.Height;
+            var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
+            ViewModel.Height = Window.Current.Bounds.Height - titleHeight;
         }
     }
 }

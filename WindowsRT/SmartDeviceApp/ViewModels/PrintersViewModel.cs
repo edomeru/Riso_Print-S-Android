@@ -42,9 +42,6 @@ namespace SmartDeviceApp.ViewModels
         private ObservableCollection<Printer> _printerList;
         private bool _isPrinterListEmpty;
 
-        private double _ipAddressKeyTextWidth;
-        private double _ipAddressValueTextWidth;
-
         private PrintersGestureController _gestureController;
 
         /**
@@ -193,32 +190,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        public double IpAddressKeyTextWidth
-        {
-            get { return _ipAddressKeyTextWidth; }
-            set
-            {
-                if (_ipAddressKeyTextWidth != value)
-                {
-                    _ipAddressKeyTextWidth = value;
-                    OnPropertyChanged("IpAddressKeyTextWidth");
-                }
-            }
-        }
-
-        public double IpAddressValueTextWidth
-        {
-            get { return _ipAddressValueTextWidth; }
-            set
-            {
-                if (_ipAddressValueTextWidth != value)
-                {
-                    _ipAddressValueTextWidth = value;
-                    OnPropertyChanged("IpAddressValueTextWidth");
-                }
-            }
-        }
-
         #endregion Properties
 
         /// <summary>
@@ -249,21 +220,6 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
             Messenger.Default.Register<ScreenMode>(this, (screenMode) => ScreenModeChanged(screenMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetPrinterInfoGrid(viewOrientation));            
-        }
-
-        public void SetIpAddressTextWidths(double controlWidth)
-        {
-            var tempControl = new TextBlock();
-            tempControl.Style = (Style)Application.Current.Resources["STYLE_TextKey"];
-            tempControl.Text = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("IDS_LBL_IP_ADDRESS");
-            var tempControlSize = new Size(controlWidth, (double)Application.Current.Resources["SIZE_ListItemHeight"]);
-            tempControl.Measure(tempControlSize);
-            tempControl.Arrange(new Rect(0, 0, tempControlSize.Width, tempControlSize.Height));
-            var smallMargin = (double)Application.Current.Resources["MARGIN_Small"];
-            IpAddressKeyTextWidth = tempControl.ActualWidth + smallMargin;
-            tempControl = null;
-            var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-            IpAddressValueTextWidth = controlWidth - IpAddressKeyTextWidth - defaultMargin * 2;
         }
 
         #region Private Methods

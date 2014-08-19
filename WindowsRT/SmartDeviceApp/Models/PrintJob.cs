@@ -148,6 +148,7 @@ namespace SmartDeviceApp.Models
     {
         private ObservableCollection<PrintJob> _jobs;
         private bool _isCollapsed;
+        private string _deleteButtonVisualState;
 
         /// <summary>
         /// Printer name as text label of a print job group
@@ -187,6 +188,22 @@ namespace SmartDeviceApp.Models
                 {
                     _isCollapsed = value;
                     RaisePropertyChanged("IsCollapsed");
+                }
+            }
+        }
+
+        /// <summary>
+        /// True when a delete all button is pressed, false otherwise
+        /// </summary>
+        public string DeleteButtonVisualState
+        {
+            get { return _deleteButtonVisualState; }
+            set
+            {
+                if (_deleteButtonVisualState != value)
+                {
+                    _deleteButtonVisualState = value;
+                    RaisePropertyChanged("DeleteButtonVisualState");
                 }
             }
         }

@@ -10,7 +10,10 @@
 //  ----------------------------------------------------------------------
 //
 
+using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Converters;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 
@@ -26,22 +29,24 @@ namespace SmartDeviceApp.Controls
         {
             this.InitializeComponent();
 
-            // Override binding
-            Binding binding = new Binding();
-            binding.Path = new PropertyPath("IsCollapsed");
-            Header.SetBinding(ToggleButton.IsCheckedProperty, binding);
+            this.Loaded += OnLoaded;
         }
 
-        public static readonly DependencyProperty IsCollapsedProperty =
-            DependencyProperty.Register("IsCollapsed", typeof(bool), typeof(JobGroupListControl), null);
-
-        /// <summary>
-        /// Flag for checking whether the Group List is collapsed or not.
-        /// </summary>
-        public bool IsCollapsed
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            get { return (bool)GetValue(IsCollapsedProperty); }
-            set { SetValue(IsCollapsedProperty, value); }
+            // Change style of KeyText to No Text Trimming
+            var keyTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "key"); // "key" as defined in GroupListControl.xaml
+            keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextListHeaderWithSubTextNoTextTrim"];
+
+            // Change style of KeySubText to No Text Trimming
+            var keySubTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "keySubText"); // "keySubText" as defined in GroupListControl.xaml
+            keySubTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeySubTextNoTextTrim"];
+
+            // Trim texts
+            keyTextBlock.Text = (string)new JobGroupListTextConverter().Convert(Text,
+                null, TextWidth, null);
+            keySubTextBlock.Text = (string)new JobGroupListSubTextConverter().Convert(SubText,
+                null, TextWidth, null);
         }
 
     }

@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     SizeChanged="OnSizeChanged"
+    Unloaded="OnUnloaded"
     d:DesignWidth="400">
 
     <UserControl.Resources>
@@ -26,25 +27,40 @@
             </Style.Setters>
         </Style>
         <ControlTemplate x:Key="TEMPLATE_DeleteButton" TargetType="Button" >
-            <Grid Background="{StaticResource BRUSH_White}" 
+            <Grid x:Name="deleteButtonGrid" Background="{StaticResource BRUSH_White}" 
                   Width="{StaticResource SIZE_DeleteButtonWidth_Long}" 
                   Height="{StaticResource SIZE_DeleteButtonHeight_Long}">
-                <TextBlock Text="{Binding Source=IDS_LBL_DELETE_ALL, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"></TextBlock>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="DeleteNormal"/>
+                        <VisualState x:Name="DeletePressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background)" Storyboard.TargetName="deleteButtonGrid">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_Purple2}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="deleteButtonLabel">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BRUSH_White}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <TextBlock x:Name="deleteButtonLabel" Text="{Binding Source=IDS_LBL_DELETE_ALL, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"></TextBlock>
             </Grid>
         </ControlTemplate>
         <ControlTemplate x:Key="TEMPLATE_ToggleButton" TargetType="ToggleButton">
             <Grid x:Name="listHeaderGrid" Style="{StaticResource STYLE_ListHeaderGrid}">
-        		<VisualStateManager.VisualStateGroups>
-        			<VisualStateGroup x:Name="CommonStates">
-        				<VisualState x:Name="Normal">
-        					<Storyboard>
-        						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="expandImage">
-        							<DiscreteObjectKeyFrame KeyTime="0">
-        								<DiscreteObjectKeyFrame.Value>
-        									<Visibility>Collapsed</Visibility>
-        								</DiscreteObjectKeyFrame.Value>
-        							</DiscreteObjectKeyFrame>
-        						</ObjectAnimationUsingKeyFrames>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="expandImage">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <Visibility>Collapsed</Visibility>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="collapseImage">
                                     <DiscreteObjectKeyFrame KeyTime="0">
                                         <DiscreteObjectKeyFrame.Value>
@@ -53,7 +69,7 @@
                                     </DiscreteObjectKeyFrame>
                                 </ObjectAnimationUsingKeyFrames>
                             </Storyboard>
-        				</VisualState>
+                        </VisualState>
                         <VisualState x:Name="Checked">
                             <Storyboard>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="expandImage">
@@ -115,7 +131,7 @@
                             </Storyboard>
                         </VisualState>
                     </VisualStateGroup>
-        		</VisualStateManager.VisualStateGroups>   
+                </VisualStateManager.VisualStateGroups>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -158,7 +174,9 @@
         <ToggleButton x:Name="header" Grid.Row="0" 
                       Width="{Binding Width, ElementName=groupListControl}"
                       Template="{StaticResource TEMPLATE_ToggleButton}" 
-                      Style="{StaticResource STYLE_ListToggleButton}"/>
+                      Style="{StaticResource STYLE_ListToggleButton}"
+                      IsChecked="{Binding IsCollapsed, ElementName=groupListControl}"
+                      />
         <ContentPresenter Grid.Row="2" 
                           Content="{Binding Content, ElementName=groupListControl}" 
                           Visibility="{Binding IsChecked, ElementName=header, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>

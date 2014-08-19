@@ -320,17 +320,8 @@ namespace SmartDeviceApp.Controllers
         {
 
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            //check if valid ip address
-            if (!isValidIpAddress(ip))
-            {
-                //display error theat ip is invalid
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                {
-                    await DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
-                });
-                return false;
-            }
+
+            // No checking for valid IP format here. This is assumed to be checked from ViewModel before using this method.
 
             //check if _printerList is already full
             if (_printerList.Count() >= 10)//TODO: Change to CONSTANTS
@@ -354,6 +345,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
                     SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
+                    SNMPController.Instance.printerControllerErrorCallBack = new Action(handleAddError);
                     SNMPController.Instance.getDevice(ip);
                 }
                 else
@@ -376,32 +368,15 @@ namespace SmartDeviceApp.Controllers
 
         }
 
-        /// <summary>
-        /// Checks if the given string is a valid IP Address.
-        /// </summary>
-        /// <param name="ip">Ip address to be checked</param>
-        /// <returns>true if string is a valid ip, else false</returns>
-        public bool isValidIpAddress(string ip)
+        private async void handleAddError()
         {
-            try
-            {
-                HostName h = new HostName(ip);
-                String type = h.Type.ToString();
-                //valid ipv4 or ipv6
-                if (type.Equals("Ipv4") || type.Equals("Ipv6"))
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                //invalid hostname or ip
-                return false;
-            }
+                    DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
+                    _addPrinterViewModel.setVisibilities();
+                });
+            return;
         }
 
         /// <summary>
