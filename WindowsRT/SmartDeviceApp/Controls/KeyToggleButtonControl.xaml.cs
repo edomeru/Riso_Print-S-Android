@@ -104,21 +104,36 @@ namespace SmartDeviceApp.Controls
         private static void SetDefault(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((KeyToggleButtonControl)d).IsDefault = bool.Parse(e.NewValue.ToString());
-            ((KeyToggleButtonControl)d).IsYes = bool.Parse(e.NewValue.ToString());
-            ((KeyToggleButtonControl)d).IsNo = !bool.Parse(e.NewValue.ToString());
-
-            ((KeyToggleButtonControl)d).YesToggle.IsChecked = bool.Parse(e.NewValue.ToString());
-            ((KeyToggleButtonControl)d).NoToggle.IsChecked = !bool.Parse(e.NewValue.ToString());
-
+            
             if (((KeyToggleButtonControl)d).IsDefault == true)
             {
+                if (((KeyToggleButtonControl)d).IsYes == false)
+                {
+                    ((KeyToggleButtonControl)d).IsYes = true;
+                    ((KeyToggleButtonControl)d).IsNo = false;
+                }
+
+                ((KeyToggleButtonControl)d).YesToggle.IsChecked = true;
+                ((KeyToggleButtonControl)d).NoToggle.IsChecked = false;
+
                 ((KeyToggleButtonControl)d).YesToggle.IsEnabled = false;
                 ((KeyToggleButtonControl)d).NoToggle.IsEnabled = false;
             }
             else
             {
+
+                if (((KeyToggleButtonControl)d).IsYes == true)
+                {
+                    ((KeyToggleButtonControl)d).IsYes = false;
+                    ((KeyToggleButtonControl)d).IsNo = true;
+                }
+                
+
                 ((KeyToggleButtonControl)d).YesToggle.IsEnabled = true;
                 ((KeyToggleButtonControl)d).NoToggle.IsEnabled = true;
+
+                ((KeyToggleButtonControl)d).YesToggle.IsChecked = false;
+                ((KeyToggleButtonControl)d).NoToggle.IsChecked = true;
             }
         }
 
@@ -134,14 +149,15 @@ namespace SmartDeviceApp.Controls
         {
             KeyToggleButtonControl context = this;
 
-            ((ToggleButton)obj).Tapped += (sender, e) => NoToggled(sender, context);
+            ((ToggleButton)obj).Unchecked += (sender, e) => NoToggled(sender, context);
         }
+
 
         private void OnYesToggleLoaded(object obj, RoutedEventArgs args)
         {
             KeyToggleButtonControl context = this;
 
-            ((ToggleButton)obj).Tapped += (sender, e) => YesToggled(sender, context);
+            ((ToggleButton)obj).Checked += (sender, e) => YesToggled(sender, context);
         }
 
         private void YesToggled(object sender, KeyToggleButtonControl control)
