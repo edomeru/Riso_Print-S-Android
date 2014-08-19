@@ -29,24 +29,27 @@ namespace SmartDeviceApp.Controls
         {
             this.InitializeComponent();
 
-            this.Loaded += OnLoaded;
+            this.SizeChanged += OnSizeChanged;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // Change style of KeyText to No Text Trimming
-            var keyTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "key"); // "key" as defined in GroupListControl.xaml
-            keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextListHeaderWithSubTextNoTextTrim"];
+            if (e.PreviousSize != e.NewSize) // Workaround to avoid layout cycle (cause not found, maybe on base class OnSizeChanged)
+            {
+                // Change style of KeyText to No Text Trimming
+                var keyTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "key"); // "key" as defined in GroupListControl.xaml
+                keyTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextListHeaderWithSubTextNoTextTrim"];
 
-            // Change style of KeySubText to No Text Trimming
-            var keySubTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "keySubText"); // "keySubText" as defined in GroupListControl.xaml
-            keySubTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeySubTextNoTextTrim"];
+                // Change style of KeySubText to No Text Trimming
+                var keySubTextBlock = (TextBlock)ViewControlUtility.GetControlFromParent<TextBlock>((UIElement)sender, "keySubText"); // "keySubText" as defined in GroupListControl.xaml
+                keySubTextBlock.Style = (Style)Application.Current.Resources["STYLE_TextKeySubTextNoTextTrim"];
 
-            // Trim texts
-            keyTextBlock.Text = (string)new JobGroupListTextConverter().Convert(Text,
-                null, TextWidth, null);
-            keySubTextBlock.Text = (string)new JobGroupListSubTextConverter().Convert(SubText,
-                null, TextWidth, null);
+                // Trim texts
+                keyTextBlock.Text = (string)new JobGroupListTextConverter().Convert(Text,
+                    null, TextWidth, null);
+                keySubTextBlock.Text = (string)new JobGroupListSubTextConverter().Convert(SubText,
+                    null, TextWidth, null);
+            }
         }
 
     }
