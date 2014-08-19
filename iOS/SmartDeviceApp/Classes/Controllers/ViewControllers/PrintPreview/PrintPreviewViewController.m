@@ -1038,11 +1038,14 @@
     UISlider *slider =(UISlider *)tap.view;
     //get point in slider where it is tapped
     CGPoint point = [tap locationInView:self.pageScroll];
+    point.x = MAX(0.0f, point.x);
+    point.x = MIN(self.pageScroll.bounds.size.width, point.x);
     //Get how many percent of the total slider length is the distance of the tapped point from the start point of the slider
     CGFloat scrollPercentage = point.x/self.pageScroll.bounds.size.width;
     
     //multiply the the percentage with the total number of pages in view to get the current page index;
     NSInteger pageNumber = (self.totalPageNum * scrollPercentage + 1.5f);
+    pageNumber = MIN(self.totalPageNum, pageNumber);
    
     // if double sided and page is at the back (even pages) - always navigate to the next front page
     if(self.pageViewController.isDoubleSided == YES && (pageNumber % 2) > 0)
