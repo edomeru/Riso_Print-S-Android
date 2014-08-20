@@ -24,7 +24,7 @@
                 <Setter Property="Height" Value="Auto"/>
                 <Setter Property="HorizontalAlignment" Value="Left"/>
                 <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="ManipulationMode" Value="All"/>
+                <Setter Property="ManipulationMode" Value="System"/>
             </Style.Setters>
         </Style>
         <Style x:Key="STYLE_PageSeparator" TargetType="Line">
@@ -41,9 +41,10 @@
     </UserControl.Resources>
 
     <ScrollViewer x:Name="pageAreaScrollViewer" Style="{StaticResource STYLE_PageAreaScrollViewer}" >
+        
         <Grid x:Name="manipulationGrid"  ManipulationMode="All"
               HorizontalAlignment="Left" VerticalAlignment="Top">
-
+            
             <!--
             Background="Salmon"
             displayAreaGrid - contains FRONT visible pages
@@ -217,10 +218,9 @@
                         VerticalAlignment="Stretch" />-->
             </Grid>
             <!-- transitionGrid -->
-            
         </Grid>
         <!-- manipulationGrid -->
-
+        
     </ScrollViewer>
 
 </UserControl>

@@ -93,6 +93,8 @@ namespace SmartDeviceApp.Controllers
         private uint _totalPages;
         private bool _manipulationCancel;
 
+        private bool _deltaCalled;
+
         /// <summary>
         /// PreviewGestureController class constructor
         /// </summary>
@@ -220,12 +222,12 @@ namespace SmartDeviceApp.Controllers
                 _control.PointerMoved += OnPointerMoved;
                 _control.PointerCaptureLost += OnPointerCaptureLost;
 
+                _control.ManipulationStarted += ManipulationGrid_ManipulationStarted;
+                _control.ManipulationDelta += ManipulationGrid_ManipulationDelta;
+                _control.ManipulationCompleted += ManipulationGrid_ManipulationCompleted;
+                
                 // Gesture recognizer outputs
                 _gestureRecognizer.Tapped += OnTapped;
-                _gestureRecognizer.RightTapped += OnRightTapped;
-                _gestureRecognizer.ManipulationStarted += OnManipulationStarted;
-                _gestureRecognizer.ManipulationUpdated += OnManipulationUpdated;
-                _gestureRecognizer.ManipulationCompleted += OnManipulationCompleted;
                 _isEnabled = true;
             }
         }
@@ -249,12 +251,12 @@ namespace SmartDeviceApp.Controllers
                 _control.PointerMoved -= OnPointerMoved;
                 _control.PointerCaptureLost -= OnPointerCaptureLost;
 
+                _control.ManipulationStarted -= ManipulationGrid_ManipulationStarted;
+                _control.ManipulationDelta -= ManipulationGrid_ManipulationDelta;
+                _control.ManipulationCompleted -= ManipulationGrid_ManipulationCompleted;
+
                 // Gesture recognizer outputs
                 _gestureRecognizer.Tapped -= OnTapped;
-                _gestureRecognizer.RightTapped -= OnRightTapped;
-                _gestureRecognizer.ManipulationStarted -= OnManipulationStarted;
-                _gestureRecognizer.ManipulationUpdated -= OnManipulationUpdated;
-                _gestureRecognizer.ManipulationCompleted -= OnManipulationCompleted;
                 _isEnabled = false;
             }
         }
@@ -408,9 +410,6 @@ namespace SmartDeviceApp.Controllers
             else
                 _multipleFingersDetected = false;
 
-            if (pointerCount < 3)
-                _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
-
             args.Handled = true;
         }
 
@@ -422,94 +421,8 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
-        void OnRightTapped(object sender, RightTappedEventArgs e)
-        {
-        }
-
-        private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
-        {
-            if (!_multipleFingersDetected)
-                ManipulationGrid_ManipulationStarted(e);
-        }
-
-        private void OnManipulationUpdated(object sender, ManipulationUpdatedEventArgs e)
-        {
-            //var isSwipe = DetectSwipe(e);
-            //if (isSwipe) return;
-            if (_multipleFingersDetected || _isScaled)
-            {
-                var isScale = DetectScale(e);
-
-                DetectTranslate(e, isScale);
-
-                ManipulationGrid_ManipulationCancel();
-            }
-            else 
-            {
-                if (!_isScaled)
-                {
-                    if (e.Delta.Scale != 1.0f)
-                    {
-                        Normalize();
-                    }
-                    ManipulationGrid_ManipulationDelta(e);
-                }
-                else
-                {
-                    ManipulationGrid_ManipulationCancel();
-                }
-                
-            }
-
-        }
-
-        //private bool DetectSwipe(ManipulationUpdatedEventArgs e)
-        //{
-        //    var isSwipe = false;
-        //    if (!_isScaled && _gestureRecognizer.IsInertial)
-        //    {                
-        //        Point currentPosition = e.Position;
-        //        // Horizontal Swipe
-        //        if (_isHorizontalSwipeEnabled) 
-        //        {
-        //            // Swipe right;
-        //            if (currentPosition.X - _startPoint.X >= SWIPE_THRESHOLD)
-        //            {
-        //                _gestureRecognizer.CompleteGesture();
-        //                _swipeRightHandler();
-        //                isSwipe = true;
-        //            }
-        //            // Swipe left
-        //            else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
-        //            {
-        //                _gestureRecognizer.CompleteGesture();
-        //                _swipeLeftHandler();
-        //                isSwipe = true;
-        //            }
-        //        }
-        //        // Vertical swipe
-        //        else 
-        //        {
-        //            // Swipe bottom
-        //            if (currentPosition.Y - _startPoint.Y >= SWIPE_THRESHOLD)
-        //            {
-        //                _gestureRecognizer.CompleteGesture();
-        //                _swipeBottomHandler();
-        //                isSwipe = true;
-        //            }
-        //            // Swipe top
-        //            else if (_startPoint.Y - currentPosition.Y >= SWIPE_THRESHOLD)
-        //            {
-        //                _gestureRecognizer.CompleteGesture();
-        //                _swipeTopHandler();
-        //                isSwipe = true;
-        //            }
-        //        }
-        //    }
-        //    return isSwipe;
-        //}
-
-        private bool DetectScale(ManipulationUpdatedEventArgs e)
+        
+        private bool DetectScale(ManipulationDeltaRoutedEventArgs e)
         {
             var isScale = false; // Currently scaling
             float scale = e.Delta.Scale;
@@ -530,7 +443,7 @@ namespace SmartDeviceApp.Controllers
             _tempPreviousTransform.Matrix = _tempCumulativeTransform.Value;
 
             // Get scale center
-            Point center = new Point(e.Position.X, e.Position.Y);
+            Point center = new Point(Math.Abs(e.Position.X * scale), Math.Abs(e.Position.Y * scale));
             _tempDeltaTransform.CenterX = center.X;
             _tempDeltaTransform.CenterY = center.Y;
 
@@ -546,8 +459,10 @@ namespace SmartDeviceApp.Controllers
                     _previousTransform.Matrix = _cumulativeTransform.Value;
                     _deltaTransform.CenterX = center.X;
                     _deltaTransform.CenterY = center.Y;
+                    //e.Delta.
                     _deltaTransform.ScaleX = _deltaTransform.ScaleY = scale;
-                    _deltaTransform.TranslateX = _deltaTransform.TranslateY = 0;
+                    _deltaTransform.TranslateX = e.Delta.Translation.X;
+                    _deltaTransform.TranslateY = e.Delta.Translation.Y; //0;
 
                     _isScaled = true; // not original size
                     isScale = true;
@@ -555,6 +470,8 @@ namespace SmartDeviceApp.Controllers
                     _isTranslateYEnabled = true;
 
                     _currentZoomLength = tempWidth;
+
+                    Normalize();
                 }
             }
             else
@@ -658,7 +575,7 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
-        private bool DetectTranslate(ManipulationUpdatedEventArgs e, bool isScale)
+        private bool DetectTranslate(ManipulationDeltaRoutedEventArgs e, bool isScale)
         {
             var isTranslate = false;
             if (_isScaled && !isScale && (_isTranslateXEnabled || _isTranslateYEnabled))
@@ -677,11 +594,17 @@ namespace SmartDeviceApp.Controllers
         {
             Normalize();
             if (!_multipleFingersDetected)
-                ManipulationGrid_ManipulationCompleted(e);
+            { }
+                //ManipulationGrid_ManipulationCompleted(e);
         }
 
-        private void ManipulationGrid_ManipulationStarted(ManipulationStartedEventArgs e)
+        private void ManipulationGrid_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
+            if (_multipleFingersDetected)
+            {
+                ManipulationGrid_ManipulationCancel();
+                return;
+            }
             var w = _targetSize.Width;
             var h = _targetSize.Height;
 
@@ -699,18 +622,49 @@ namespace SmartDeviceApp.Controllers
 
             _transitionGrid.Opacity = 1;
             _pageAreaGrid.Opacity = 1;
+
+            _deltaCalled = false;
             
         }
 
-        private void ManipulationGrid_ManipulationDelta(ManipulationUpdatedEventArgs e)
+        private void ManipulationGrid_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
+
+
+            if (_multipleFingersDetected || _isScaled)
+            {
+                var isScale = DetectScale(e);
+
+                DetectTranslate(e, isScale);
+
+                ManipulationGrid_ManipulationCancel();
+
+                return;
+            }
+            else
+            {
+                if (!_isScaled)
+                {
+                    if (e.Delta.Scale != 1.0f)
+                    {
+                        Normalize();
+                    }
+                }
+            }
+
+            if (_manipulationCancel)
+            {
+                return;
+            }
+
+
             var w = _targetSize.Width;
             var h = _targetSize.Height;
 
             var ttv2 = _twoPageControl.DisplayAreaGrid.TransformToVisual(_control);
             var pagePoint = ttv2.TransformPoint(e.Position);
 
-            var currentPosition = pagePoint;
+            var currentPosition = e.Position;
 
             if (_isHorizontalSwipeEnabled)
             {
@@ -741,7 +695,7 @@ namespace SmartDeviceApp.Controllers
                             tempW = -w;
                         }
 
-                        var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
+                        var cx = Math.Min(0, Math.Max(currentPosition.X - w, tempW));
                         var cy = e.Cumulative.Translation.Y;
                         var angle = (Math.Atan2(cx - w, -cy) * 180 / Math.PI + 90) % 360;
 
@@ -907,7 +861,7 @@ namespace SmartDeviceApp.Controllers
                             tempW = -w;
                         }
 
-                        var cx = Math.Min(0, Math.Max(e.Position.X - w, tempW));
+                        var cx = Math.Min(0, Math.Max(currentPosition.X - w, tempW));
                         var cy = e.Cumulative.Translation.Y;
                         var angle = (Math.Atan2(cx - w, -cy) * 180 / Math.PI + 90) % 360;
 
@@ -1067,14 +1021,17 @@ namespace SmartDeviceApp.Controllers
                     _twoPageControl.TransitionContainerTransform.Rotation = 2 * angle;
                 }
             }
+
+            _deltaCalled = true;
         }
 
-        private void ManipulationGrid_ManipulationCompleted(ManipulationCompletedEventArgs e)
+        private void ManipulationGrid_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
-            if (_manipulationCancel)
+            if (_manipulationCancel || !_deltaCalled)
             {
                 return;
             }
+            _deltaCalled = false;
 
             var w = _targetSize.Width;
             var h = _targetSize.Height;
