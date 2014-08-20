@@ -125,6 +125,8 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 trimmedText = tempText;
 
+                bool isAddedCharToLeft = false;
+
                 // Traverse text Left to Right
                 destIndex = leftIndex;
                 trimmedStrBuilder.Insert(destIndex, text[leftIndex]);
@@ -132,6 +134,7 @@ namespace SmartDeviceApp.Common.Utilities
                 if (currTextWidth < width)
                 {
                     ++leftIndex;
+                    isAddedCharToLeft = true;
                 }
                 else
                 {
@@ -145,7 +148,8 @@ namespace SmartDeviceApp.Common.Utilities
                 }
                 else
                 {
-                    destIndex = trimmedText.Length - rightIndex + 1;
+                    destIndex = trimmedText.Length - rightIndex +
+                        ((isAddedCharToLeft) ? 1 : 0); // Update position depending when a character is added on the left
                 }
                 trimmedStrBuilder.Insert(destIndex, text[text.Length - rightIndex - 1]);
                 currTextWidth = GetTextWidthFromTextBlockWithStyle(trimmedStrBuilder.ToString(), style);
