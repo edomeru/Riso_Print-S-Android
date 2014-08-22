@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="RISOSmartPrint" Publisher="CN=RISO KAGAKU CORPORATION" Version="0.1.2014.820" />
+  <Identity Name="RISOSmartPrint" Publisher="CN=RISO KAGAKU CORPORATION" Version="1.0.0.0" />
   <Properties>
     <DisplayName>RISO Smart Print</DisplayName>
     <PublisherDisplayName>RISO KAGAKU CORPORATION</PublisherDisplayName>
