@@ -123,31 +123,18 @@
 
 #pragma mark - UITextFieldDelegate methods
 
-/*Checks the keyboard input if should be accepted in textfield*/
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-    if((textField.text.length - range.length) == LOGIN_ID_MAX_INPUT)
-    {
-        return NO;
-    }
-    
-    NSMutableString *newString = [NSMutableString stringWithString:textField.text];
-    BOOL shouldAccept = YES;
-    [newString deleteCharactersInRange:range];
-    if(newString.length + string.length > LOGIN_ID_MAX_INPUT)
-    {
-        [newString insertString:[string substringToIndex:LOGIN_ID_MAX_INPUT - newString.length]
-                        atIndex:range.location];
-        textField.text = newString;
-        shouldAccept = NO;
-    }
-    return shouldAccept;
-}
-
 /*Called when editing in a textfield ends*/
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    // validation is done during text input
+    //check if input length is greater than the max input
+    //if yes, truncate
+    if(textField.text.length > LOGIN_ID_MAX_INPUT)
+    {
+        NSMutableString *newString = [NSMutableString stringWithString:textField.text];
+        [newString deleteCharactersInRange:NSMakeRange(LOGIN_ID_MAX_INPUT, newString.length - LOGIN_ID_MAX_INPUT)];
+        textField.text = newString;
+    }
+    
     // save the input login ID
     NSUserDefaults *appSettings = [NSUserDefaults standardUserDefaults];
     [appSettings setValue:textField.text forKey:KEY_APPSETTINGS_LOGIN_ID];
