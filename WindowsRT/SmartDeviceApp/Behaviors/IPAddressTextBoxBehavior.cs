@@ -18,6 +18,7 @@ namespace SmartDeviceApp.Common.Utilities
     {
         private const string REGEX_IPADRESS_CHARS = "[^a-fA-F0-9:.]";
         private const string REGEX_JAPANESE = "/[一-龠]+[ぁ-ゔ]+[ァ-ヴー]+[々〆〤]+/u";
+        private const string REGEX_CONSONANTS = "([bcdf][bcdf])";
         private const string REGEX_NUMERIC = "[0-9]";
         private const string REGEX_COLON_ALPHA = "[:]";
 
@@ -189,7 +190,7 @@ namespace SmartDeviceApp.Common.Utilities
                     if (newText.Equals("bb") || newText.Equals("cc") || newText.Equals("dd")  // case handling the event when IME replaces the text in the textbox with these characters.
                         || newText.Equals("ff") || newText.Equals("::") 
                         || (newText.Length == 2 && (Regex.IsMatch(newText, REGEX_NUMERIC) 
-                        || Regex.IsMatch(newText, REGEX_COLON_ALPHA))))
+                        || Regex.IsMatch(newText, REGEX_COLON_ALPHA) || Regex.IsMatch(newText, REGEX_CONSONANTS))))
                     
                     {
                         if (!Regex.IsMatch(newText, REGEX_JAPANESE))
@@ -201,11 +202,12 @@ namespace SmartDeviceApp.Common.Utilities
                         if (lastCaretPosition >= lastValidText.Length)
                         {
                             newText = lastValidText + newText;
-                            lastCaretPosition += newText.Length;
+                            lastCaretPosition = newText.Length;
                         }
                         else
                         {
                             newText = lastValidText.Insert(lastCaretPosition, newText);
+                            lastCaretPosition += newText.Length;
                         }
                         textBox.Text = newText;
                         textBox.SelectionStart = lastCaretPosition + 1;
