@@ -8,6 +8,8 @@
 
 #import "PrintSettingsPrinterListViewController.h"
 #import "UIColor+Theme.h"
+#import "PDFFileManager.h"
+#import "PrintDocument.h"
 
 @interface PrintSettingsPrinterListViewController ()
 
@@ -52,6 +54,8 @@
         {
             [self.navigationController popToRootViewControllerAnimated:YES];
             [self.printerListHeader setBackgroundColor: [UIColor blackThemeColor]];
+            PrintDocument *printDocument = [[PDFFileManager sharedManager] printDocument];
+            printDocument.disableContraints = NO;
         }
     }
 

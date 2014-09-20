@@ -150,6 +150,7 @@
     NSUInteger index = indexPath.row;
     if (index != self.selectedIndex || self.printDocument.printer == nil)
     {
+        self.printDocument.disableContraints = YES;
         self.selectedIndex = index;
         Printer *printer = [self.printerManager getPrinterAtIndex:index];
         self.printDocument.printer = printer;
