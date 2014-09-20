@@ -60,6 +60,7 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
         _url = url;
         _name = name;
         _currentPage = 0;
+        _disableContraints = NO;
     }
     return self;
 }

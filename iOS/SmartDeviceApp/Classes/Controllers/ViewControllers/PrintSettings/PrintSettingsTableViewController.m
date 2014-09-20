@@ -803,6 +803,11 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 - (void)applySettingsConstraintForKey:(NSString*)key withPreviousValue:(NSInteger)previousValue
 {
+    if (self.printDocument.disableContraints == YES)
+    {
+        return;
+    }
+    
     if([key isEqualToString:KEY_BOOKLET] == YES)
     {
         [self applyBookletConstraints];

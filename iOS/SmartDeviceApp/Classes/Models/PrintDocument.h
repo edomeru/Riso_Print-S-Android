@@ -59,6 +59,11 @@
 @property (nonatomic) NSInteger currentPage;
 
 /**
+ * Whether or not constraints are to be handled.
+ */
+@property (nonatomic) BOOL disableContraints;
+
+/**
  * Returns an instance of a PrintDocument object.
  *
  * @param url URL of the PDF file
