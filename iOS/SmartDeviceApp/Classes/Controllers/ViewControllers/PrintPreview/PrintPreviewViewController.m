@@ -861,7 +861,16 @@
     {
         PDFPageContentViewController *viewController = (PDFPageContentViewController *)[pageViewController.viewControllers lastObject];
         if (self.pageViewController.isDoubleSided) {
-            self.printDocument.currentPage = MAX(viewController.pageIndex - 1, 0);
+            if (viewController.pageIndex == (self.layoutPageNum - 1))
+            {
+                self.printDocument.currentPage = 0;
+            } else {
+                if (self.printDocument.previewSetting.finishingSide == kFinishingSideRight) {
+                    self.printDocument.currentPage = MAX(viewController.pageIndex, 0);
+                } else {
+                    self.printDocument.currentPage = MAX(viewController.pageIndex - 1, 0);
+                }
+            }
         } else {
             self.printDocument.currentPage =  viewController.pageIndex;
         }
