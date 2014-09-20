@@ -386,7 +386,8 @@
         return NO;
     }
     
-    return YES;
+    textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    return NO;
 }
 
 @end
