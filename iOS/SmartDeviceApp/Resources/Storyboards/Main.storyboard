@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--Root View Controller-->
@@ -333,7 +333,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="270" height="548"/>
                     <connections>
                         <outlet property="helpButton" destination="OmG-Fw-HSu" id="Plr-0e-iuJ"/>
                         <outlet property="homeButton" destination="poM-vX-7aa" id="Ee1-ru-pIs"/>
@@ -462,7 +461,7 @@
                                         <rect key="frame" x="0.0" y="450" width="320" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
-                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
+                                            <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="k35-as-6xb">
                                                 <rect key="frame" x="18" y="2" width="284" height="31"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <gestureRecognizers/>
@@ -574,7 +573,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="activityIndicator" destination="Tfn-V2-BUp" id="COZ-vn-opT"/>
                         <outlet property="mainMenuButton" destination="31J-j4-hVx" id="bkC-U2-PZp"/>
@@ -999,7 +997,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="600" height="784"/>
                     <connections>
                         <outlet property="addPrinterButton" destination="A02-B0-54s" id="AVy-O4-DD4"/>
                         <outlet property="collectionView" destination="wgF-aL-OIc" id="8OG-GL-x70"/>
@@ -1123,7 +1120,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="270" height="784"/>
                     <connections>
                         <outlet property="progressIndicator" destination="TyO-Rg-RpP" id="Iy1-A3-Fxa"/>
                         <outlet property="saveButton" destination="kAx-cM-pCZ" id="5CN-pT-L9P"/>
@@ -1317,7 +1313,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="mainMenuButton" destination="FUI-6T-A5e" id="mph-Gh-c6S"/>
                         <outlet property="webView" destination="9XV-Rp-02s" id="lxk-nh-PJo"/>
@@ -1406,7 +1401,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="mainMenuButton" destination="GNk-12-Xr8" id="RIc-My-kl2"/>
                         <outlet property="webView" destination="JWb-Bs-Kp2" id="XJz-lG-qXC"/>
@@ -1506,7 +1500,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="270" height="784"/>
                     <connections>
                         <outlet property="emptyLabel" destination="YzF-oR-uCS" id="lEb-f7-IAg"/>
                         <segue destination="lDn-gr-Ojb" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="Cfi-aZ-cpN"/>
@@ -1592,7 +1585,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="270" height="548"/>
                     <connections>
                         <outlet property="printSettingsScreenTitle" destination="7VB-SO-uD9" id="tgH-Ss-VSM"/>
                         <segue destination="SC0-5X-vge" kind="unwind" identifier="UnwindToPrintPreview" unwindAction="unwindToPrintPreview:" id="W5A-uc-DU4"/>
@@ -1709,7 +1701,7 @@
                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <nil key="highlightedColor"/>
                                                         <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="uppercaseLocalizationId" value="IDS_LBL_AUTHENTICATION"/>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="uppercaseLocalizationId" value="IDS_LBL_OWNER_NAME"/>
                                                         </userDefinedRuntimeAttributes>
                                                     </label>
                                                 </subviews>
@@ -1927,7 +1919,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="progressIndicator" destination="g0d-xd-vqb" id="DYM-Vl-dGh"/>
                         <outlet property="saveButton" destination="ydC-sb-GhE" id="YK4-g5-xR4"/>
@@ -2346,7 +2337,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="480"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="FZ9-iZ-vyS">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -2632,7 +2622,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="defaultPrinterSelection" destination="Mpm-YS-ffl" id="7NU-Fp-qFM"/>
                         <outlet property="ipAddress" destination="Lo0-Ur-PYK" id="t1g-AK-VrO"/>
@@ -2885,7 +2874,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="addPrinterButton" destination="vao-bW-C6W" id="Mae-lQ-Gd2"/>
                         <outlet property="emptyLabel" destination="dOk-xR-7Ro" id="KJp-ar-g7e"/>
@@ -3013,7 +3001,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="270" height="548"/>
                     <connections>
                         <outlet property="emptyLabel" destination="95f-Zp-9Cm" id="cla-Ar-KI3"/>
                         <segue destination="5BY-kL-11l" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindToPrinters:" id="Lua-LL-PLr"/>
@@ -3104,7 +3091,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="460"/>
                     <connections>
                         <outlet property="printerListHeader" destination="0jn-TH-TiD" id="m2l-6K-9xP"/>
                     </connections>
@@ -3488,7 +3474,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="600" height="784"/>
                     <connections>
                         <outlet property="bottomConstraint" destination="ygk-1C-L9k" id="Mt1-Si-qrS"/>
                         <outlet property="emptyLabel" destination="xwM-rE-jVT" id="BDY-1l-gwo"/>
@@ -3730,7 +3715,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="270" height="548"/>
                     <connections>
                         <outlet property="printerTableView" destination="hdY-tn-chQ" id="AS1-AA-gyh"/>
                         <outlet property="tableViewHeight" destination="L2n-BW-hqn" id="kXO-iI-lsP"/>
@@ -3780,11 +3764,10 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="c8V-UF-iWe"/>
-        <segue reference="ax2-Mn-NH0"/>
-        <segue reference="5pT-ga-236"/>
-        <segue reference="gRW-en-vNy"/>
-        <segue reference="h8r-TR-IcV"/>
         <segue reference="CWW-vD-UgO"/>
+        <segue reference="4Gn-3V-oTg"/>
+        <segue reference="gRW-en-vNy"/>
+        <segue reference="ax2-Mn-NH0"/>
+        <segue reference="h8r-TR-IcV"/>
     </inferredMetricsTieBreakers>
 </document>
