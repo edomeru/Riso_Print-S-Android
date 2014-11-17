@@ -309,7 +309,11 @@
         CGRect topRect = CGRectMake(0.0f, 0.0f, layerSize.width, layerSize.height);
         CGRect bottomRect = CGRectMake(0.0f, self.size.height / 2.0f, layerSize.width, layerSize.height);
         
-        rects = @[[NSValue valueWithCGRect:topRect], [NSValue valueWithCGRect:bottomRect]];
+        if (self.previewSetting.impositionOrder == kImpositionOrderLeftToRight) {
+            rects = @[[NSValue valueWithCGRect:topRect], [NSValue valueWithCGRect:bottomRect]];
+        } else {
+            rects = @[[NSValue valueWithCGRect:bottomRect], [NSValue valueWithCGRect:topRect]];
+        }
     }
     
     CGFloat scale = layerSize.width / paperSize.width;
