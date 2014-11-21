@@ -424,7 +424,7 @@
     [self setupDisplayAspectRatio];
 
     [self setupPageviewControllerWithBindSetting];
-    [self.pageScroll setValue:self.printDocument.currentPage animated:NO];
+    [self.pageScroll setValue:self.printDocument.currentPage + 1 animated:NO];
     [self goToPage:self.printDocument.currentPage];
 }
 
