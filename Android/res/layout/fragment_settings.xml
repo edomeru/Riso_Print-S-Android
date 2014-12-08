@@ -9,7 +9,7 @@
 
     <ScrollView
         android:id="@+id/rootView"
-        android:layout_width="@dimen/settings_width"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:background="@color/theme_light_3" >
@@ -26,7 +26,8 @@
                 android:background="@drawable/selector_printsettings_title"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/home_title_padding"
-                android:text="@string/ids_lbl_authentication"
+                
+                android:text="@string/ids_lbl_owner_name" 
                 android:textAllCaps="true"
                 android:textColor="@color/theme_light_1" />
 

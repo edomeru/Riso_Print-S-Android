@@ -20,8 +20,8 @@
     <dimen name="home_title_padding">24dp</dimen>
     <dimen name="home_menu_height">48dp</dimen>
     
-    <integer name="match_parent_value">-1</integer>  
-    <dimen name="settings_width">@integer/match_parent_value</dimen>
+    <integer name="match_parent_value">-1</integer>
+    <!-- <dimen name="settings_width">@integer/match_parent_value</dimen> -->
     
     <dimen name="printsettings_option_with_sub_height">56dp</dimen>
     

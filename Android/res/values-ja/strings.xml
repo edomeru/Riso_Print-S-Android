@@ -6,8 +6,8 @@
     <string name="default_content_description">Content Description</string>
 
     <!-- WordingList -->
-    <string name="ids_app_name">RISO Smart Print</string>
-    <string name="ids_app_launcher_name">Smart Print</string>
+    <string name="ids_app_name">RISO PRINT-S</string>
+    <string name="ids_app_launcher_name">RISO PRINT-S</string>
     <string name="ids_lbl_save">保存</string>
     <string name="ids_lbl_ok">OK</string>
     <string name="ids_lbl_cancel">キャンセル</string>
@@ -32,8 +32,9 @@
     <string name="ids_lbl_port_raw">Raw</string>
     <string name="ids_lbl_port_lpr">LPR</string>
     <string name="ids_lbl_default_print_settings">デフォルト印刷設定</string>
+    <string name="ids_lbl_owner_name">オーナー名</string>   
     <string name="ids_lbl_authentication">認証</string>
-    <string name="ids_lbl_login_id">ログインID</string>
+    <string name="ids_lbl_login_id"></string>
     <string name="ids_lbl_print_settings">印刷設定</string>
     <string name="ids_lbl_page_displayed" formatted="false">ページ %d / %d</string>
     <string name="ids_lbl_print">印刷</string>
