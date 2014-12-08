@@ -118,13 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_APP_NAME" xml:space="preserve">
-    <value>RISO Smart Print</value>
+    <value>RISO PRINT-S</value>
   </data>
   <data name="IDS_APP_LAUNCHER_NAME" xml:space="preserve">
-    <value>Smart Print</value>
-  </data>
-  <data name="IDS_LBL_SAVE" xml:space="preserve">
-    <value>Save</value>
+    <value>RISO PRINT-S</value>
   </data>
   <data name="IDS_LBL_OK" xml:space="preserve">
     <value>OK</value>
@@ -150,9 +147,6 @@
   <data name="IDS_LBL_HOME" xml:space="preserve">
     <value>Home</value>
   </data>
-  <data name="IDS_LBL_PRINT_PREVIEW" xml:space="preserve">
-    <value>Print Preview</value>
-  </data>
   <data name="IDS_LBL_PRINTERS" xml:space="preserve">
     <value>Printers</value>
   </data>
@@ -163,10 +157,10 @@
     <value>Settings</value>
   </data>
   <data name="IDS_LBL_ADD_PRINTER" xml:space="preserve">
-    <value>Add Printer</value>
+    <value>Add</value>
   </data>
   <data name="IDS_LBL_SEARCH_PRINTERS" xml:space="preserve">
-    <value>Printer Search</value>
+    <value>Search</value>
   </data>
   <data name="IDS_LBL_SET_DEFAULT_PRINTER" xml:space="preserve">
     <value>Set as Default Printer</value>
@@ -195,11 +189,15 @@
   <data name="IDS_LBL_DEFAULT_PRINT_SETTINGS" xml:space="preserve">
     <value>Default Print Settings</value>
   </data>
+  <data name="IDS_LBL_OWNER_NAME" xml:space="preserve">
+    <value>Owner</value>
+  </data>
   <data name="IDS_LBL_AUTHENTICATION" xml:space="preserve">
-    <value>Authentication</value>
+
+    <value>Authentification</value>
   </data>
   <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
-    <value>Log-in ID</value>
+    <value />
   </data>
   <data name="IDS_LBL_PRINT_SETTINGS" xml:space="preserve">
     <value>Print Settings</value>
@@ -231,20 +229,11 @@
   <data name="IDS_LBL_COLORMODE_BLACK" xml:space="preserve">
     <value>Black</value>
   </data>
-  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
-    <value>Orientation</value>
-  </data>
-  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
-    <value>Portrait</value>
-  </data>
-  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
-    <value>Landscape</value>
-  </data>
   <data name="IDS_LBL_NUMBER_OF_COPIES" xml:space="preserve">
     <value>Copies</value>
   </data>
   <data name="IDS_LBL_DUPLEX" xml:space="preserve">
-    <value>Duplex</value>
+    <value>Duplex print</value>
   </data>
   <data name="IDS_LBL_DUPLEX_LONG_EDGE" xml:space="preserve">
     <value>Long Edge</value>
@@ -397,13 +386,13 @@
     <value>Fold + Staple</value>
   </data>
   <data name="IDS_LBL_BOOKLET_LAYOUT" xml:space="preserve">
-    <value>Booklet Layout</value>
+    <value>Imposition direction</value>
   </data>
   <data name="IDS_LBL_BOOKLET_LAYOUT_FORWARD" xml:space="preserve">
-    <value>Forward</value>
+    <value>Left to right</value>
   </data>
   <data name="IDS_LBL_BOOKLET_LAYOUT_REVERSE" xml:space="preserve">
-    <value>Reverse</value>
+    <value>Right to left</value>
   </data>
   <data name="IDS_LBL_FINISHINGSIDE" xml:space="preserve">
     <value>Binding side</value>
@@ -490,11 +479,10 @@
     <value>Added Successfully</value>
   </data>
   <data name="IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" xml:space="preserve">
-    <value>Warning
-Cannot find Printer.</value>
+    <value>Warning, Cannot find Printer.</value>
   </data>
   <data name="IDS_INFO_MSG_PRINTING" xml:space="preserve">
-    <value>Printing…</value>
+    <value>Printing...</value>
   </data>
   <data name="IDS_INFO_MSG_DELETE_JOBS_TITLE" xml:space="preserve">
     <value>Delete Print Job History</value>
@@ -503,10 +491,10 @@ Cannot find Printer.</value>
     <value>Are you sure you want to delete?</value>
   </data>
   <data name="IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL" xml:space="preserve">
-    <value>Successful</value>
+    <value>Successful.</value>
   </data>
   <data name="IDS_INFO_MSG_PRINT_JOB_FAILED" xml:space="preserve">
-    <value>Failed</value>
+    <value>Failed.</value>
   </data>
   <data name="IDS_ERR_MSG_CANNOT_ADD_PRINTER" xml:space="preserve">
     <value>Printer already exists in saved printers list.</value>
@@ -518,25 +506,16 @@ Cannot find Printer.</value>
     <value>Saved Printer reached maximum count.</value>
   </data>
   <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
-    <value>Please register a printer</value>
-  </data>
-  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
-    <value>Please check the password you entered</value>
+    <value>Please register a printer.</value>
   </data>
   <data name="IDS_ERR_MSG_OPEN_FAILED" xml:space="preserve">
     <value>Please select a valid file.</value>
   </data>
   <data name="IDS_ERR_MSG_PDF_ENCRYPTED" xml:space="preserve">
-    <value>PDF Encryption is not supported</value>
+    <value>PDF Encryption is not supported.</value>
   </data>
   <data name="IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" xml:space="preserve">
     <value>File does not allow printing.</value>
-  </data>
-  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
-    <value>File size is too large</value>
-  </data>
-  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
-    <value>Not enough free space on device</value>
   </data>
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>No network available.</value>
@@ -544,10 +523,34 @@ Cannot find Printer.</value>
   <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
     <value>Database failure. Please restart the application. If the problem persists, please reinstall the application.</value>
   </data>
+  <data name="IDS_LBL_YES" xml:space="preserve">
+    <value>Yes</value>
+  </data>
   <data name="IDS_LBL_NO" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="IDS_LBL_YES" xml:space="preserve">
-    <value>Yes</value>
+  <data name="IDS_LBL_SAVE" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
+    <value></value>
   </data>
 </root>

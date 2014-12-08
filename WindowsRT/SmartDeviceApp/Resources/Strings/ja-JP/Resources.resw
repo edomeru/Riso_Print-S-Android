@@ -118,13 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_APP_NAME" xml:space="preserve">
-    <value>RISO Smart Print</value>
+    <value>RISO PRINT-S</value>
   </data>
   <data name="IDS_APP_LAUNCHER_NAME" xml:space="preserve">
-    <value>Smart Print</value>
-  </data>
-  <data name="IDS_LBL_SAVE" xml:space="preserve">
-    <value>保存</value>
+    <value>RISO PRINT-S</value>
   </data>
   <data name="IDS_LBL_OK" xml:space="preserve">
     <value>OK</value>
@@ -133,7 +130,7 @@
     <value>キャンセル</value>
   </data>
   <data name="IDS_LBL_NO_NAME" xml:space="preserve">
-    <value>名前無し</value>
+    <value>No Name</value>
   </data>
   <data name="IDS_LBL_DELETE" xml:space="preserve">
     <value>削除</value>
@@ -150,9 +147,6 @@
   <data name="IDS_LBL_HOME" xml:space="preserve">
     <value>ホーム</value>
   </data>
-  <data name="IDS_LBL_PRINT_PREVIEW" xml:space="preserve">
-    <value>印刷プレビュー</value>
-  </data>
   <data name="IDS_LBL_PRINTERS" xml:space="preserve">
     <value>プリンター</value>
   </data>
@@ -163,10 +157,10 @@
     <value>設定</value>
   </data>
   <data name="IDS_LBL_ADD_PRINTER" xml:space="preserve">
-    <value>プリンターの追加</value>
+    <value>追加</value>
   </data>
   <data name="IDS_LBL_SEARCH_PRINTERS" xml:space="preserve">
-    <value>プリンター検索</value>
+    <value>検索</value>
   </data>
   <data name="IDS_LBL_SET_DEFAULT_PRINTER" xml:space="preserve">
     <value>デフォルトプリンターに指定</value>
@@ -195,11 +189,11 @@
   <data name="IDS_LBL_DEFAULT_PRINT_SETTINGS" xml:space="preserve">
     <value>デフォルト印刷設定</value>
   </data>
+  <data name="IDS_LBL_OWNER_NAME" xml:space="preserve">
+    <value>オーナー名</value>
+  </data>
   <data name="IDS_LBL_AUTHENTICATION" xml:space="preserve">
     <value>認証</value>
-  </data>
-  <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
-    <value>ログインID</value>
   </data>
   <data name="IDS_LBL_PRINT_SETTINGS" xml:space="preserve">
     <value>印刷設定</value>
@@ -208,13 +202,13 @@
     <value>ページ {0} / {1}</value>
   </data>
   <data name="IDS_LBL_PRINT" xml:space="preserve">
-    <value>印刷</value>
+    <value>プリント</value>
   </data>
   <data name="IDS_LBL_PRINTER" xml:space="preserve">
     <value>プリンター</value>
   </data>
   <data name="IDS_LBL_CHOOSE_PRINTER" xml:space="preserve">
-    <value>プリンターの選択</value>
+    <value>プリンタを選択してください</value>
   </data>
   <data name="IDS_LBL_BASIC" xml:space="preserve">
     <value>基本</value>
@@ -231,17 +225,8 @@
   <data name="IDS_LBL_COLORMODE_BLACK" xml:space="preserve">
     <value>白黒</value>
   </data>
-  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
-    <value>向き</value>
-  </data>
-  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
-    <value>縦</value>
-  </data>
-  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
-    <value>横</value>
-  </data>
   <data name="IDS_LBL_NUMBER_OF_COPIES" xml:space="preserve">
-    <value>印刷部数</value>
+    <value>部数</value>
   </data>
   <data name="IDS_LBL_DUPLEX" xml:space="preserve">
     <value>両面印刷</value>
@@ -253,7 +238,7 @@
     <value>短辺とじ</value>
   </data>
   <data name="IDS_LBL_PAPERSIZE" xml:space="preserve">
-    <value>出力用紙</value>
+    <value>出力用紙サイズ</value>
   </data>
   <data name="IDS_LBL_PAPERSIZE_A3" xml:space="preserve">
     <value>A3</value>
@@ -310,7 +295,7 @@
     <value>ＩＪ用紙</value>
   </data>
   <data name="IDS_LBL_PAPERTYPE_MATTCOATED" xml:space="preserve">
-    <value>ＩＪマット用</value>
+    <value>ＩＪマット用紙</value>
   </data>
   <data name="IDS_LBL_PAPERTYPE_HIGHQUALITY" xml:space="preserve">
     <value>高品位紙</value>
@@ -397,13 +382,13 @@
     <value>折り＋ステープル</value>
   </data>
   <data name="IDS_LBL_BOOKLET_LAYOUT" xml:space="preserve">
-    <value>小冊子レイアウト</value>
+    <value>面付け順</value>
   </data>
   <data name="IDS_LBL_BOOKLET_LAYOUT_FORWARD" xml:space="preserve">
-    <value>順方向</value>
+    <value>左開き</value>
   </data>
   <data name="IDS_LBL_BOOKLET_LAYOUT_REVERSE" xml:space="preserve">
-    <value>逆方向</value>
+    <value>右開き</value>
   </data>
   <data name="IDS_LBL_FINISHINGSIDE" xml:space="preserve">
     <value>とじ位置</value>
@@ -463,7 +448,7 @@
     <value>暗証番号をつける</value>
   </data>
   <data name="IDS_LBL_PIN_CODE" xml:space="preserve">
-    <value>PINコード</value>
+    <value>ジョブ暗証番号</value>
   </data>
   <data name="IDS_LBL_OFF" xml:space="preserve">
     <value>Off</value>
@@ -487,14 +472,13 @@
     <value>プリンターが見つかりません。</value>
   </data>
   <data name="IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" xml:space="preserve">
-    <value>追加しました。</value>
+    <value>追加に成功しました。</value>
   </data>
   <data name="IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" xml:space="preserve">
-    <value>警告
-プリンターが見つかりません。</value>
+    <value>プリンターが見つかりません。</value>
   </data>
   <data name="IDS_INFO_MSG_PRINTING" xml:space="preserve">
-    <value>印刷中…</value>
+    <value>プリント中…</value>
   </data>
   <data name="IDS_INFO_MSG_DELETE_JOBS_TITLE" xml:space="preserve">
     <value>履歴を削除</value>
@@ -515,13 +499,10 @@
     <value>IPアドレスを確認してください。</value>
   </data>
   <data name="IDS_ERR_MSG_MAX_PRINTER_COUNT" xml:space="preserve">
-    <value>プリンターの最大登録数を超えています。</value>
+    <value>プリンター数が上限に達しました。</value>
   </data>
   <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
     <value>プリンターを登録してください。</value>
-  </data>
-  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
-    <value>パスワードが正しくありません。確認してください。</value>
   </data>
   <data name="IDS_ERR_MSG_OPEN_FAILED" xml:space="preserve">
     <value>ファイルが開けません。</value>
@@ -532,24 +513,43 @@
   <data name="IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" xml:space="preserve">
     <value>印刷が許可されていません。</value>
   </data>
-  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
-    <value>ファイルサイズが大きすぎます。</value>
-  </data>
-  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
-    <value>デバイスの空き容量が不足しています。</value>
-  </data>
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>ネットワークに接続できません。</value>
   </data>
   <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
-    <value>内部データにアクセスできません。
-再起動してみてください。
-再起動しても解消されない場合は、再インストールしてください。</value>
+    <value>内部データにアクセスできません。\n再起動してみてください。\n再起動しても解消されない場合は、再インストールしてください。</value>
+  </data>
+  <data name="IDS_LBL_YES" xml:space="preserve">
+    <value>Yes</value>
   </data>
   <data name="IDS_LBL_NO" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="IDS_LBL_YES" xml:space="preserve">
-    <value>Yes</value>
+  <data name="IDS_LBL_SAVE" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_PRINT_PREVIEW" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
+    <value></value>
   </data>
 </root>

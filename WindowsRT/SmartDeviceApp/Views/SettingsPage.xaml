@@ -33,7 +33,7 @@
         <StackPanel x:Name="settingsPane" Style="{StaticResource STYLE_SettingsPane}">
             <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
                 <StackPanel Style="{StaticResource STYLE_StackLeft}">
-                    <TextBlock Text="{Binding Source=IDS_LBL_AUTHENTICATION, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                    <TextBlock Text="{Binding Source=IDS_LBL_OWNER_NAME, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
                                Style="{StaticResource STYLE_TextListHeader}" />
                 </StackPanel>
             </Grid>

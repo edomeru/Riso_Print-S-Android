@@ -9,13 +9,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SmartDeviceApp</RootNamespace>
     <AssemblyName>SmartDeviceApp</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
+    <DefaultLanguage>ja-JP</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>SmartDeviceApp_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>AF37E8FC259B97D5557A3E086E2C0C812B0F6CBE</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>3729EDB931A1A3285860CCC3C1109C59ECABABB1</PackageCertificateThumbprint>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
@@ -343,8 +343,8 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <Content Include="Resources\Images\StoreLogo.scale-140.png" />
-    <Content Include="Resources\Images\StoreLogo.scale-180.png" />
+    <Content Include="Assets\fr-FR\Help.html" />
+    <Content Include="Assets\fr-FR\legal.html" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -356,6 +356,9 @@
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Common\ReadMe.txt" />
     <None Include="Resources\Dummy\RZ1070.pdf" />
+    <PRIResource Include="Resources\Strings\fr-FR\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
     <PRIResource Include="Resources\Strings\en-US\Resources.resw">
@@ -474,8 +477,6 @@
     <Content Include="Resources\Images\img_staple.png" />
     <Content Include="Resources\Images\Logo.scale-100.png" />
     <Content Include="Resources\Images\SmallLogo.scale-100.png" />
-    <Content Include="Resources\Images\SmallLogo.scale-140.png" />
-    <Content Include="Resources\Images\SmallLogo.scale-180.png" />
     <Content Include="Resources\Images\StoreLogo.scale-100.png" />
   </ItemGroup>
   <ItemGroup>
@@ -648,9 +649,6 @@
     <SDKReference Include="Microsoft.VCLibs, Version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT81, Version=3.8.4.1">
-      <Name>SQLite for Windows Runtime %28Windows 8.1%29</Name>
-    </SDKReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
@@ -718,6 +716,12 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>SmartDeviceApp_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
