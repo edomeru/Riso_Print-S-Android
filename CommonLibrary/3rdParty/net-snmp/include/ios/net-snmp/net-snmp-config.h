@@ -29,15 +29,6 @@
  */
 #ifndef NETSNMP_NO_AUTOCONF_DEFINITIONS
 
-
-#if defined (WIN32) || defined (mingw32) || defined (cygwin)
-#define ENV_SEPARATOR ";"
-#define ENV_SEPARATOR_CHAR ';'
-#else
-#define ENV_SEPARATOR ":"
-#define ENV_SEPARATOR_CHAR ':'
-#endif
-
 /* definitions added by configure on-the-fly */
 
 #define config_belongs_in(x)
@@ -74,6 +65,12 @@
 
 /* Define if you want local DNSSEC validation support */
 /* #undef DNSSEC_LOCAL_VALIDATION */
+
+/* Environment separator character surrounded by double quotes. */
+#define ENV_SEPARATOR ":"
+
+/* Environment separator character surrounded by single quotes. */
+#define ENV_SEPARATOR_CHAR ':'
 
 /* location of mount table list */
 #define ETC_MNTTAB "unknown"
@@ -112,8 +109,14 @@
 /* Define to 1 if you have the `closedir' function. */
 #define HAVE_CLOSEDIR 1
 
+/* Define to 1 if you have the <com_err.h> header file. */
+/* #undef HAVE_COM_ERR_H */
+
 /* Define to 1 if the system has the type `Counter64'. */
 /* #undef HAVE_COUNTER64 */
+
+/* Define to 1 if you have the <curses.h> header file. */
+/* #undef HAVE_CURSES_H */
 
 /* Define to 1 if you have the declaration of `sensors_get_all_subfeatures',
    and to 0 if you don't. */
@@ -143,6 +146,9 @@
 
 /* Define to 1 if you have the <err.h> header file. */
 #define HAVE_ERR_H 1
+
+/* Define to 1 if you have the <et/com_err.h> header file. */
+/* #undef HAVE_ET_COM_ERR_H */
 
 /* Define to 1 if you have the `eval_pv' function. */
 /* #undef HAVE_EVAL_PV */
@@ -297,6 +303,12 @@
 /* Define to 1 if you have the <iphlpapi.h> header file. */
 /* #undef HAVE_IPHLPAPI_H */
 
+/* Set if IP_PKTINFO is usable */
+/* #undef HAVE_IP_PKTINFO */
+
+/* Set if IP_RECVDSTADDR is usable */
+/* #undef HAVE_IP_RECVDSTADDR */
+
 /* Define to 1 if you have the `kinfo_get_cpus' function. */
 /* #undef HAVE_KINFO_GET_CPUS */
 
@@ -306,6 +318,9 @@
 /* Define to 1 if you have the `knlist' function. */
 /* #undef HAVE_KNLIST */
 
+/* Define to 1 if you have the `krb5_auth_con_getsendsubkey' function. */
+/* #undef HAVE_KRB5_AUTH_CON_GETSENDSUBKEY */
+
 /* Define to 1 if you have the <kstat.h> header file. */
 /* #undef HAVE_KSTAT_H */
 
@@ -313,7 +328,7 @@
 /* #undef HAVE_KVM_GETPROC2 */
 
 /* Define to 1 if you have the `kvm_getprocs' function. */
-#define HAVE_KVM_GETPROCS 1
+/* #undef HAVE_KVM_GETPROCS */
 
 /* Define to 1 if you have the `kvm_getswapinfo' function. */
 /* #undef HAVE_KVM_GETSWAPINFO */
@@ -322,7 +337,7 @@
 /* #undef HAVE_KVM_H */
 
 /* Define to 1 if you have the `kvm_openfiles' function. */
-#define HAVE_KVM_OPENFILES 1
+/* #undef HAVE_KVM_OPENFILES */
 
 /* Define to 1 if you have the OpenSSL library (-lcrypto or -leay32). */
 /* #undef HAVE_LIBCRYPTO */
@@ -335,6 +350,9 @@
 
 /* Define to 1 if you have the `mld' library (-lmld). */
 /* #undef HAVE_LIBMLD */
+
+/* Define to 1 if <netlink/netlink.h> provides the libnl3 API */
+/* #undef HAVE_LIBNL3 */
 
 /* define if you have libnm */
 /* #undef HAVE_LIBNM */
@@ -437,9 +455,6 @@
 
 /* Define to 1 if you have the <mtab.h> header file. */
 /* #undef HAVE_MTAB_H */
-
-/* Define to 1 if you have the <mysql/mysql.h> header file. */
-/* #undef HAVE_MYSQL_MYSQL_H */
 
 /* Define to 1 if you have the <nbutil.h> header file. */
 /* #undef HAVE_NBUTIL_H */
@@ -559,7 +574,7 @@
 #define HAVE_NFDS_T 1
 
 /* Define to 1 if you have the `nlist' function. */
-#define HAVE_NLIST 1
+/* #undef HAVE_NLIST */
 
 /* Define to 1 if you have the `nlist64' function. */
 /* #undef HAVE_NLIST64 */
@@ -596,6 +611,9 @@
 
 /* Define to 1 if you have the <pci/pci.h> header file. */
 /* #undef HAVE_PCI_PCI_H */
+
+/* Define to 1 if you have <pcre.h>. */
+/* #undef HAVE_PCRE_H */
 
 /* on aix, if you have perfstat */
 /* #undef HAVE_PERFSTAT */
@@ -852,6 +870,9 @@
 /* Define to 1 if `if_xname' is a member of `struct ifnet'. */
 /* #undef HAVE_STRUCT_IFNET_IF_XNAME */
 
+/* Define to 1 if `ip6s_exthdrtoolong ' is a member of `struct ip6stat'. */
+/* #undef HAVE_STRUCT_IP6STAT_IP6S_EXTHDRTOOLONG_ */
+
 /* Define to 1 if `ips_cantforward' is a member of `struct ipstat'. */
 /* #undef HAVE_STRUCT_IPSTAT_IPS_CANTFORWARD */
 
@@ -896,12 +917,6 @@
 
 /* Define to 1 if `m_mbufs' is a member of `struct mbstat'. */
 /* #undef HAVE_STRUCT_MBSTAT_M_MBUFS */
-
-/* Define to 1 if `msg_control' is a member of `struct msghdr'. */
-#define HAVE_STRUCT_MSGHDR_MSG_CONTROL 1
-
-/* Define to 1 if `msg_flags' is a member of `struct msghdr'. */
-#define HAVE_STRUCT_MSGHDR_MSG_FLAGS 1
 
 /* Define to 1 if `n_value' is a member of `struct nlist64'. */
 /* #undef HAVE_STRUCT_NLIST64_N_VALUE */
@@ -988,6 +1003,9 @@
 /* Define to 1 if `udps_fullsock' is a member of `struct udpstat'. */
 /* #undef HAVE_STRUCT_UDPSTAT_UDPS_FULLSOCK */
 
+/* Define to 1 if `udps_ipackets' is a member of `struct udpstat'. */
+/* #undef HAVE_STRUCT_UDPSTAT_UDPS_IPACKETS */
+
 /* Define to 1 if `udps_noport' is a member of `struct udpstat'. */
 /* #undef HAVE_STRUCT_UDPSTAT_UDPS_NOPORT */
 
@@ -996,6 +1014,9 @@
 
 /* Define to 1 if `udps_opackets' is a member of `struct udpstat'. */
 /* #undef HAVE_STRUCT_UDPSTAT_UDPS_OPACKETS */
+
+/* Define to 1 if `pgswapin' is a member of `struct uvmexp'. */
+/* #undef HAVE_STRUCT_UVMEXP_PGSWAPIN */
 
 /* Define to 1 if you have the `sysconf' function. */
 #define HAVE_SYSCONF 1
@@ -1306,6 +1327,13 @@
 /* sysctl works to get boottime, etc... */
 /* #undef NETSNMP_CAN_USE_SYSCTL */
 
+/* configure options specified */
+#define NETSNMP_CONFIGURE_OPTIONS " '--prefix=/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64' '--build=x86_64-apple-darwin13.4.0' '--host=arm-apple-darwin' '--target=arm-apple-darwin' '--with-sysroot=/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk' '--with-defaults' '--with-cc=/Applications/Xcode/Xcode5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang' '--with-ld=/Applications/Xcode/Xcode5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld' '--with-openssl=internal' '--enable-reentrant' '--disable-embedded-perl' '--disable-perl-cc-checks' '--disable-shared' '--disable-agent' '--disable-applications' '--disable-manuals' '--disable-scripts' '--disable-mibs' '--disable-snmptrapd-subagent' 'build_alias=x86_64-apple-darwin13.4.0' 'host_alias=arm-apple-darwin' 'target_alias=arm-apple-darwin' 'CFLAGS=-arch arm64 -pipe -no-cpp-precomp -mios-version-min=7.0 -I/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/include -DPEDANTIC' 'LDFLAGS=-L/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/lib -L/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/lib/system -L/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/lib/system/host -Bstatic'"
+
+/* default location to look for mibs to load using the above tokens and/or
+   those in the MIBS envrionment variable */
+#define NETSNMP_DEFAULT_MIBDIRS "$HOME/.snmp/mibs:/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/share/snmp/mibs"
+
 /* default mib files to load, specified by path. */
 /* #undef NETSNMP_DEFAULT_MIBFILES */
 
@@ -1322,7 +1350,7 @@
 /* #undef NETSNMP_DISABLE_MD5 */
 
 /* Define if mib loading and parsing code should not be included */
-#define NETSNMP_DISABLE_MIB_LOADING 1
+/* #undef NETSNMP_DISABLE_MIB_LOADING */
 
 /* Define if SNMP SET support should be disabled */
 /* #undef NETSNMP_DISABLE_SET_SUPPORT */
@@ -1337,7 +1365,7 @@
 /* #undef NETSNMP_EMBEDDED_PERL */
 
 /* define if you want to enable IPv6 support */
-#define NETSNMP_ENABLE_IPV6 1
+/* #undef NETSNMP_ENABLE_IPV6 */
 
 /* define if you want to restrict SMUX connections to localhost by default */
 /* #undef NETSNMP_ENABLE_LOCAL_SMUX */
@@ -1383,8 +1411,11 @@
 /* If you don't have root access don't exit upon kmem errors */
 /* #undef NETSNMP_NO_ROOT_ACCESS */
 
+/* If you don't want to integrate with systemd. */
+#define NETSNMP_NO_SYSTEMD 1
+
 /* Define if you want to remove all SET/write access from the code */
-#define NETSNMP_NO_WRITE_SUPPORT 1
+/* #undef NETSNMP_NO_WRITE_SUPPORT */
 
 /* umask permissions to set up persistent files with */
 #define NETSNMP_PERSISTENT_MASK 077
@@ -1397,10 +1428,10 @@
 
 /* Define to 1 if you want to build with reentrant/threaded code (incomplete).
    */
-/* #undef NETSNMP_REENTRANT */
+#define NETSNMP_REENTRANT 1
 
 /* define if you do not want snmptrapd to register as an AgentX subagent */
-/* #undef NETSNMP_SNMPTRAPD_DISABLE_AGENTX */
+#define NETSNMP_SNMPTRAPD_DISABLE_AGENTX 1
 
 /* Pattern of temporary files */
 #define NETSNMP_TEMP_FILE_PATTERN "/tmp/snmpdXXXXXX"
@@ -1442,7 +1473,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef PACKAGE_STRING
-#define PACKAGE_STRING "Net-SNMP 5.7.2.1"
+#define PACKAGE_STRING "Net-SNMP 5.8.dev"
 #endif
 
 /* Define to the one symbol short name of this package. */
@@ -1455,7 +1486,7 @@
 
 /* Define to the version of this package. */
 #ifndef PACKAGE_VERSION
-#define PACKAGE_VERSION "5.7.2.1"
+#define PACKAGE_VERSION "5.8.dev"
 #endif
 
 /* Command to generate ps output, the final column must be the process name
@@ -1478,7 +1509,7 @@
 #define SIZEOF_INTMAX_T 8
 
 /* The size of `long', as computed by sizeof. */
-#define SIZEOF_LONG 4
+#define SIZEOF_LONG 8
 
 /* The size of `long long', as computed by sizeof. */
 #define SIZEOF_LONG_LONG 8
@@ -1502,7 +1533,7 @@
 /* #undef STAT_STATFS_FS_DATA */
 
 /* Define to 1 if you have the ANSI C header files. */
-#define STDC_HEADERS 1
+/* #undef STDC_HEADERS */
 
 /* define if SIOCGIFADDR exists in sys/ioctl.h */
 #define SYS_IOCTL_H_HAS_SIOCGIFADDR 1
@@ -1701,7 +1732,7 @@
 #define NETSNMP_SNMPV2AUTH  0x8000       /* V2 Authenticated requests only */
 
 /* default list of mibs to load */
-#define NETSNMP_DEFAULT_MIBS "SNMPv2-MIB:IF-MIB:IP-MIB:TCP-MIB:UDP-MIB"
+#define NETSNMP_DEFAULT_MIBS ""
 
 /* debugging stuff */
 /* if defined, we optimize the code to exclude all debugging calls. */
@@ -1743,12 +1774,18 @@
 /* #undef NETSNMP_DEFAULT_CLIENT_SEND_BUF */
 /* #undef NETSNMP_DEFAULT_CLIENT_RECV_BUF */
 
+/* net-snmp's major path names */
+#define SNMPLIBPATH "/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/lib/snmp"
+#define SNMPSHAREPATH "/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/share/snmp"
+#define SNMPCONFPATH "/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/etc/snmp"
+#define SNMPDLMODPATH "/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/lib/snmp/dlmod"
+
 /* NETSNMP_LOGFILE:  If defined it closes stdout/err/in and opens this in 
    out/err's place.  (stdin is closed so that sh scripts won't wait for it) */
-/* #undef NETSNMP_LOGFILE */
+#define NETSNMP_LOGFILE "/var/log/snmpd.log"
 
 /* default system contact */
-#define NETSNMP_SYS_CONTACT "@@.no.where"
+#define NETSNMP_SYS_CONTACT "@@no.where"
 
 /* system location */
 #define NETSNMP_SYS_LOC "Unknown"
@@ -1978,11 +2015,11 @@
 
 /*  This is defined if support for the UDP/IPv6 transport domain is
     available.  */
-#define NETSNMP_TRANSPORT_UDPIPV6_DOMAIN 1
+/* #undef NETSNMP_TRANSPORT_UDPIPV6_DOMAIN */
 
 /*  This is defined if support for the TCP/IPv6 transport domain is
     available.  */
-#define NETSNMP_TRANSPORT_TCPIPV6_DOMAIN 1
+/* #undef NETSNMP_TRANSPORT_TCPIPV6_DOMAIN */
 
 /*  This is defined if support for the TLS transport domain is
     available.   */
