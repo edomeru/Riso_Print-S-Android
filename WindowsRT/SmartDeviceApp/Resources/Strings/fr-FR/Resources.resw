@@ -1,0 +1,555 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IDS_APP_NAME" xml:space="preserve">
+    <value>RISO RRINT-S</value>
+  </data>
+  <data name="IDS_APP_LAUNCHER_NAME" xml:space="preserve">
+    <value>RISO RRINT-S</value>
+  </data>
+  <data name="IDS_LBL_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="IDS_LBL_CANCEL" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="IDS_LBL_NO_NAME" xml:space="preserve">
+    <value>Pas de nom</value>
+  </data>
+  <data name="IDS_LBL_DELETE" xml:space="preserve">
+    <value>Effacer</value>
+  </data>
+  <data name="IDS_LBL_OPEN_IN_IOS" xml:space="preserve">
+    <value>Ouvrez le document Ici</value>
+  </data>
+  <data name="IDS_LBL_OPEN_IN_ANDROID" xml:space="preserve">
+    <value>Ouvrir un document</value>
+  </data>
+  <data name="IDS_LBL_OPEN_IN_WINRT" xml:space="preserve">
+    <value>Ouvrir un document</value>
+  </data>
+  <data name="IDS_LBL_HOME" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="IDS_LBL_PRINTERS" xml:space="preserve">
+    <value>imprimantes</value>
+  </data>
+  <data name="IDS_LBL_PRINT_JOB_HISTORY" xml:space="preserve">
+    <value>Impr hist travail</value>
+  </data>
+  <data name="IDS_LBL_SETTINGS" xml:space="preserve">
+    <value>Réglages</value>
+  </data>
+  <data name="IDS_LBL_ADD_PRINTER" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="IDS_LBL_SEARCH_PRINTERS" xml:space="preserve">
+    <value>Chercher</value>
+  </data>
+  <data name="IDS_LBL_SET_DEFAULT_PRINTER" xml:space="preserve">
+    <value>Définir par défaut</value>
+  </data>
+  <data name="IDS_LBL_DELETE_ALL" xml:space="preserve">
+    <value>Tout supprimer</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_INFO" xml:space="preserve">
+    <value>Info sur l'impr</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_NAME" xml:space="preserve">
+    <value>Nom imprimante</value>
+  </data>
+  <data name="IDS_LBL_IP_ADDRESS" xml:space="preserve">
+    <value>Adresse IP</value>
+  </data>
+  <data name="IDS_LBL_PORT" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="IDS_LBL_PORT_RAW" xml:space="preserve">
+    <value>Raw</value>
+  </data>
+  <data name="IDS_LBL_PORT_LPR" xml:space="preserve">
+    <value>LPR</value>
+  </data>
+  <data name="IDS_LBL_DEFAULT_PRINT_SETTINGS" xml:space="preserve">
+    <value>Prm d'impress par déf</value>
+  </data>
+  <data name="IDS_LBL_OWNER_NAME" xml:space="preserve">
+    <value>Propriétaire</value>
+  </data>
+  <data name="IDS_LBL_AUTHENTICATION" xml:space="preserve">
+    <value>Authentification</value>
+  </data>
+  <data name="IDS_LBL_PRINT_SETTINGS" xml:space="preserve">
+    <value>Param. impress.</value>
+  </data>
+  <data name="IDS_LBL_PAGE_DISPLAYED" xml:space="preserve">
+    <value>Page {0} / {1}</value>
+  </data>
+  <data name="IDS_LBL_PRINT" xml:space="preserve">
+    <value>Imprimer</value>
+  </data>
+  <data name="IDS_LBL_PRINTER" xml:space="preserve">
+    <value>Imprimante</value>
+  </data>
+  <data name="IDS_LBL_CHOOSE_PRINTER" xml:space="preserve">
+    <value>Choisir imprimante</value>
+  </data>
+  <data name="IDS_LBL_BASIC" xml:space="preserve">
+    <value>Basique</value>
+  </data>
+  <data name="IDS_LBL_COLORMODE" xml:space="preserve">
+    <value>Mode couleur</value>
+  </data>
+  <data name="IDS_LBL_COLORMODE_AUTO" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="IDS_LBL_COLORMODE_FULLCOLOR" xml:space="preserve">
+    <value>Couleur</value>
+  </data>
+  <data name="IDS_LBL_COLORMODE_BLACK" xml:space="preserve">
+    <value>Noir</value>
+  </data>
+  <data name="IDS_LBL_NUMBER_OF_COPIES" xml:space="preserve">
+    <value>Copies</value>
+  </data>
+  <data name="IDS_LBL_DUPLEX" xml:space="preserve">
+    <value>Recto/verso</value>
+  </data>
+  <data name="IDS_LBL_DUPLEX_LONG_EDGE" xml:space="preserve">
+    <value>Bord long</value>
+  </data>
+  <data name="IDS_LBL_DUPLEX_SHORT_EDGE" xml:space="preserve">
+    <value>Bord court</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE" xml:space="preserve">
+    <value>Format papier</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A3" xml:space="preserve">
+    <value>A3</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A3W" xml:space="preserve">
+    <value>A3W</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A4" xml:space="preserve">
+    <value>A4</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A5" xml:space="preserve">
+    <value>A5</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_A6" xml:space="preserve">
+    <value>A6</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_B4" xml:space="preserve">
+    <value>B4</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_B5" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_B6" xml:space="preserve">
+    <value>B6</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_FOOLSCAP" xml:space="preserve">
+    <value>Foolscap</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_TABLOID" xml:space="preserve">
+    <value>Tabloid</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_LEGAL" xml:space="preserve">
+    <value>Legal</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_LETTER" xml:space="preserve">
+    <value>Letter</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_STATEMENT" xml:space="preserve">
+    <value>Statement</value>
+  </data>
+  <data name="IDS_LBL_SCALETOFIT" xml:space="preserve">
+    <value>Ajuster au papier</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE" xml:space="preserve">
+    <value>Type papier</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_ANY" xml:space="preserve">
+    <value>au choix</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_PLAIN" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_IJPAPER" xml:space="preserve">
+    <value>Papier IJ</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_MATTCOATED" xml:space="preserve">
+    <value>Couché mat</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_HIGHQUALITY" xml:space="preserve">
+    <value>Hte qualité</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_CARDIJ" xml:space="preserve">
+    <value>Carte IJ</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_LWPAPER" xml:space="preserve">
+    <value>Papier LW</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY" xml:space="preserve">
+    <value>Bac d'entrée</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_AUTO" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_STANDARD" xml:space="preserve">
+    <value>Bac standard</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_TRAY1" xml:space="preserve">
+    <value>Bac d'alimentation1</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_TRAY2" xml:space="preserve">
+    <value>Bac d'alimentation2</value>
+  </data>
+  <data name="IDS_LBL_INPUTTRAY_TRAY3" xml:space="preserve">
+    <value>Bac d'alimentation3</value>
+  </data>
+  <data name="IDS_LBL_LAYOUT" xml:space="preserve">
+    <value>Sens de l'imposition</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION" xml:space="preserve">
+    <value>Imposition</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_2UP" xml:space="preserve">
+    <value>2 pages</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_4UP" xml:space="preserve">
+    <value>4 pages</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER" xml:space="preserve">
+    <value>Ordre mise en page</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_2UP_RL" xml:space="preserve">
+    <value>Droite à gauche </value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_2UP_LR" xml:space="preserve">
+    <value>Gauche à droite </value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_4UP_ULB" xml:space="preserve">
+    <value>Haut gauche vers bas</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_4UP_ULR" xml:space="preserve">
+    <value>Haut gauche v droite</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_4UP_URB" xml:space="preserve">
+    <value>Haut droite vers bas</value>
+  </data>
+  <data name="IDS_LBL_IMPOSITION_ORDER_4UP_URL" xml:space="preserve">
+     <value>Haut droite v gauche</value>
+  </data>
+  <data name="IDS_LBL_FINISHING" xml:space="preserve">
+    <value>Finition</value>
+  </data>
+  <data name="IDS_LBL_SORT" xml:space="preserve">
+    <value>Assembler</value>
+  </data>
+  <data name="IDS_LBL_SORT_PERPAGE" xml:space="preserve">
+    <value>Grouper</value>
+  </data>
+  <data name="IDS_LBL_SORT_PERCOPY" xml:space="preserve">
+    <value>Trier</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET" xml:space="preserve">
+    <value>Livret</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_FINISHING" xml:space="preserve">
+    <value>Reliure livret</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_FINISHING_FOLD" xml:space="preserve">
+    <value>Pliage papier</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_FINISHING_FOLDSTAPLE" xml:space="preserve">
+    <value>Pli + Agrafe</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT" xml:space="preserve">
+    <value>Sens de l'imposition</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_FORWARD" xml:space="preserve">
+    <value>Gauche à droite</value>
+  </data>
+  <data name="IDS_LBL_BOOKLET_LAYOUT_REVERSE" xml:space="preserve">
+    <value>Droite à gauche</value>
+  </data>
+  <data name="IDS_LBL_FINISHINGSIDE" xml:space="preserve">
+    <value>Côté reliure</value>
+  </data>
+  <data name="IDS_LBL_FINISHINGSIDE_LEFT" xml:space="preserve">
+    <value>Gauche</value>
+  </data>
+  <data name="IDS_LBL_FINISHINGSIDE_TOP" xml:space="preserve">
+    <value>Haut</value>
+  </data>
+  <data name="IDS_LBL_FINISHINGSIDE_RIGHT" xml:space="preserve">
+    <value>Droite</value>
+  </data>
+  <data name="IDS_LBL_STAPLE" xml:space="preserve">
+    <value>Agrafe</value>
+  </data>
+  <data name="IDS_LBL_STAPLE_UPPERLEFT" xml:space="preserve">
+    <value>Gauche 1</value>
+  </data>
+  <data name="IDS_LBL_STAPLE_UPPERRIGHT" xml:space="preserve">
+    <value>Droite 1</value>
+  </data>
+  <data name="IDS_LBL_STAPLE_2" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="IDS_LBL_STAPLE_1" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="IDS_LBL_PUNCH" xml:space="preserve">
+    <value>Perforation</value>
+  </data>
+  <data name="IDS_LBL_PUNCH_2HOLES" xml:space="preserve">
+    <value>2 trous</value>
+  </data>
+  <data name="IDS_LBL_PUNCH_3HOLES" xml:space="preserve">
+    <value>3 trous</value>
+  </data>
+  <data name="IDS_LBL_PUNCH_4HOLES" xml:space="preserve">
+    <value>4 trous</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY" xml:space="preserve">
+    <value>Bac de sortie</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY_AUTO" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY_FACEDOWN" xml:space="preserve">
+    <value>Bac recto dessous</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY_TOP" xml:space="preserve">
+    <value>Bac supérieur</value>
+  </data>
+  <data name="IDS_LBL_OUTPUTTRAY_STACKING" xml:space="preserve">
+     <value>Bac de réception</value>
+  </data>
+  <data name="IDS_LBL_SECURE_PRINT" xml:space="preserve">
+     <value>Impression sécurisée</value>
+  </data>
+  <data name="IDS_LBL_PIN_CODE" xml:space="preserve">
+    <value>Code NIP</value>
+  </data>
+  <data name="IDS_LBL_OFF" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="IDS_LBL_ON" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="IDS_LBL_HELP" xml:space="preserve">
+    <value>Aide</value>
+  </data>
+  <data name="IDS_LBL_LEGAL" xml:space="preserve">
+    <value>Ment Légale</value>
+  </data>
+  <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
+    <value>Pas trouvé</value>
+  </data>
+  <data name="IDS_LBL_PRINTJOBHISTORY_EMPTY" xml:space="preserve">
+    <value>Pas trouvé</value>
+  </data>
+  <data name="IDS_LBL_PRINTER_SEARCH_EMPTY" xml:space="preserve">
+    <value>Pas trouvé</value>
+  </data>
+  <data name="IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" xml:space="preserve">
+    <value>Ajouté avec succès</value>
+  </data>
+  <data name="IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" xml:space="preserve">
+    <value>Avertissement ! Impossible de trouver une imprimante.</value>
+  </data>
+  <data name="IDS_INFO_MSG_PRINTING" xml:space="preserve">
+    <value>Impression</value>
+  </data>
+  <data name="IDS_INFO_MSG_DELETE_JOBS_TITLE" xml:space="preserve">
+    <value>Supprimer impr hist travail</value>
+  </data>
+  <data name="IDS_INFO_MSG_DELETE_JOBS" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir supprimer?</value>
+  </data>
+  <data name="IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL" xml:space="preserve">
+    <value>Suppr succ</value>
+  </data>
+  <data name="IDS_INFO_MSG_PRINT_JOB_FAILED" xml:space="preserve">
+    <value>Échec</value>
+  </data>
+  <data name="IDS_ERR_MSG_CANNOT_ADD_PRINTER" xml:space="preserve">
+    <value>L'imprimante existe déjà dans la liste enregistrée.</value>
+  </data>
+  <data name="IDS_ERR_MSG_INVALID_IP_ADDRESS" xml:space="preserve">
+    <value>Veuillez entrer une adresse IP valide</value>
+  </data>
+  <data name="IDS_ERR_MSG_MAX_PRINTER_COUNT" xml:space="preserve">
+    <value>Le nombre d'imprimantes enregistrées a atteint le maximum</value>
+  </data>
+  <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
+    <value>Veuillez enregistrer une imprimante</value>
+  </data>
+  <data name="IDS_ERR_MSG_OPEN_FAILED" xml:space="preserve">
+    <value>Veuillez sélectionner un fichier valide</value>
+  </data>
+  <data name="IDS_ERR_MSG_PDF_ENCRYPTED" xml:space="preserve">
+    <value>Le chiffrement PDF n'est pas pris en charge.</value>
+  </data>
+  <data name="IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" xml:space="preserve">
+    <value>File does not allow printing.</value>
+  </data>
+  <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
+    <value>Aucun réseau disponible</value>
+  </data>
+  <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
+    <value>Database failure. Please restart the application. If the problem persists, please reinstall the application.</value>
+  </data>
+  <data name="IDS_LBL_YES" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="IDS_LBL_NO" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="IDS_LBL_SAVE" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_PRINT_PREVIEW" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
+    <value></value>
+  </data>
+</root>
