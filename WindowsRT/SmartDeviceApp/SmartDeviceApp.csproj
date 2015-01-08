@@ -356,7 +356,6 @@
     <Content Include="Assets\printsettings_authentication.xml" />
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Common\ReadMe.txt" />
-    <None Include="Resources\Dummy\RZ1070.pdf" />
     <PRIResource Include="Resources\Strings\fr-FR\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
