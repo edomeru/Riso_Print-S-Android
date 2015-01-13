@@ -190,14 +190,14 @@ SOFTWARE.
                               int skiplast);
     NETSNMP_IMPORT
     const char     *netsnmp_mktemp(void);
-#ifndef HAVE_STRLCPY
+//#ifndef HAVE_STRLCPY
     NETSNMP_IMPORT
     size_t            strlcpy(char *, const char *, size_t);
-#endif
-#ifndef HAVE_STRLCAT
+//#endif
+//#ifndef HAVE_STRLCAT
     NETSNMP_IMPORT
     size_t            strlcat(char *, const char *, size_t);
-#endif
+//#endif
 
     int             netsnmp_os_prematch(const char *ospmname,
                                         const char *ospmrelprefix);

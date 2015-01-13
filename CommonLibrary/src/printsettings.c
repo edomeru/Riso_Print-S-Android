@@ -331,7 +331,7 @@ void parse(char *settings, setting_value values[])
     char *next = strchr(current_line, '\n');
     while (next != 0)
     {
-        int line_length = next - current_line + 1;
+        long line_length = next - current_line + 1;
         char *line = (char *)calloc(line_length, sizeof(char));
         strncpy(line, current_line, line_length - 1);
         
@@ -369,8 +369,8 @@ void parse_line(char *line, char *name, char *value)
     {
         return;
     }
-    int name_length = eq - line + 1;
-    int value_length = strlen(eq + 1) + 1;
+    long name_length = eq - line + 1;
+    unsigned long value_length = strlen(eq + 1) + 1;
     
     memset(name, 0, 64);
     strncpy(name, line, name_length - 1);

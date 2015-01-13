@@ -10,12 +10,6 @@ extern          "C" {
 #endif
 
 /*
- * "Constructor" for transport domain object.  
- */
-
-    void netsnmp_udp_base_ctor(void);
-
-/*
  * Prototypes
  */
     void _netsnmp_udp_sockopt_set(int fd, int local);

@@ -110,13 +110,13 @@
 #define HAVE_CLOSEDIR 1
 
 /* Define to 1 if you have the <com_err.h> header file. */
-/* #undef HAVE_COM_ERR_H */
+#define HAVE_COM_ERR_H 1
 
 /* Define to 1 if the system has the type `Counter64'. */
 /* #undef HAVE_COUNTER64 */
 
 /* Define to 1 if you have the <curses.h> header file. */
-/* #undef HAVE_CURSES_H */
+#define HAVE_CURSES_H 1
 
 /* Define to 1 if you have the declaration of `sensors_get_all_subfeatures',
    and to 0 if you don't. */
@@ -351,9 +351,6 @@
 /* Define to 1 if you have the `mld' library (-lmld). */
 /* #undef HAVE_LIBMLD */
 
-/* Define to 1 if <netlink/netlink.h> provides the libnl3 API */
-/* #undef HAVE_LIBNL3 */
-
 /* define if you have libnm */
 /* #undef HAVE_LIBNM */
 
@@ -469,7 +466,7 @@
 /* #undef HAVE_NETINET6_IN6_PCB_H */
 
 /* Define to 1 if you have the <netinet6/in6_var.h> header file. */
-/* #undef HAVE_NETINET6_IN6_VAR_H */
+#define HAVE_NETINET6_IN6_VAR_H 1
 
 /* Define to 1 if you have the <netinet6/ip6_var.h> header file. */
 /* #undef HAVE_NETINET6_IP6_VAR_H */
@@ -490,58 +487,58 @@
 /* #undef HAVE_NETINET6_TCP6_VAR_H */
 
 /* Define to 1 if you have the <netinet/icmp6.h> header file. */
-/* #undef HAVE_NETINET_ICMP6_H */
+#define HAVE_NETINET_ICMP6_H 1
 
 /* Define to 1 if you have the <netinet/icmp_var.h> header file. */
-/* #undef HAVE_NETINET_ICMP_VAR_H */
+#define HAVE_NETINET_ICMP_VAR_H 1
 
 /* Define to 1 if you have the <netinet/if_ether.h> header file. */
-/* #undef HAVE_NETINET_IF_ETHER_H */
+#define HAVE_NETINET_IF_ETHER_H 1
 
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #define HAVE_NETINET_IN_H 1
 
 /* Define to 1 if you have the <netinet/in_pcb.h> header file. */
-/* #undef HAVE_NETINET_IN_PCB_H */
+#define HAVE_NETINET_IN_PCB_H 1
 
 /* Define to 1 if you have the <netinet/in_systm.h> header file. */
 #define HAVE_NETINET_IN_SYSTM_H 1
 
 /* Define to 1 if you have the <netinet/in_var.h> header file. */
-/* #undef HAVE_NETINET_IN_VAR_H */
+#define HAVE_NETINET_IN_VAR_H 1
 
 /* Define to 1 if you have the <netinet/ip6.h> header file. */
-/* #undef HAVE_NETINET_IP6_H */
+#define HAVE_NETINET_IP6_H 1
 
 /* Define to 1 if you have the <netinet/ip.h> header file. */
 #define HAVE_NETINET_IP_H 1
 
 /* Define to 1 if you have the <netinet/ip_icmp.h> header file. */
-/* #undef HAVE_NETINET_IP_ICMP_H */
+#define HAVE_NETINET_IP_ICMP_H 1
 
 /* Define to 1 if you have the <netinet/ip_var.h> header file. */
-/* #undef HAVE_NETINET_IP_VAR_H */
+#define HAVE_NETINET_IP_VAR_H 1
 
 /* Define to 1 if you have the <netinet/tcpip.h> header file. */
-/* #undef HAVE_NETINET_TCPIP_H */
+#define HAVE_NETINET_TCPIP_H 1
 
 /* Define to 1 if you have the <netinet/tcp_fsm.h> header file. */
-/* #undef HAVE_NETINET_TCP_FSM_H */
+#define HAVE_NETINET_TCP_FSM_H 1
 
 /* Define to 1 if you have the <netinet/tcp.h> header file. */
 #define HAVE_NETINET_TCP_H 1
 
 /* Define to 1 if you have the <netinet/tcp_timer.h> header file. */
-/* #undef HAVE_NETINET_TCP_TIMER_H */
+#define HAVE_NETINET_TCP_TIMER_H 1
 
 /* Define to 1 if you have the <netinet/tcp_var.h> header file. */
-/* #undef HAVE_NETINET_TCP_VAR_H */
+#define HAVE_NETINET_TCP_VAR_H 1
 
 /* Define to 1 if you have the <netinet/udp.h> header file. */
-/* #undef HAVE_NETINET_UDP_H */
+#define HAVE_NETINET_UDP_H 1
 
 /* Define to 1 if you have the <netinet/udp_var.h> header file. */
-/* #undef HAVE_NETINET_UDP_VAR_H */
+#define HAVE_NETINET_UDP_VAR_H 1
 
 /* Define to 1 if you have the <netipx/ipx.h> header file. */
 /* #undef HAVE_NETIPX_IPX_H */
@@ -550,7 +547,7 @@
 /* #undef HAVE_NETLINK_NETLINK_H */
 
 /* Define to 1 if you have the <net/if_arp.h> header file. */
-/* #undef HAVE_NET_IF_ARP_H */
+#define HAVE_NET_IF_ARP_H 1
 
 /* Define to 1 if you have the <net/if_dl.h> header file. */
 #define HAVE_NET_IF_DL_H 1
@@ -559,16 +556,16 @@
 #define HAVE_NET_IF_H 1
 
 /* Define to 1 if you have the <net/if_mib.h> header file. */
-/* #undef HAVE_NET_IF_MIB_H */
+#define HAVE_NET_IF_MIB_H 1
 
 /* Define to 1 if you have the <net/if_types.h> header file. */
-/* #undef HAVE_NET_IF_TYPES_H */
+#define HAVE_NET_IF_TYPES_H 1
 
 /* Define to 1 if you have the <net/if_var.h> header file. */
 #define HAVE_NET_IF_VAR_H 1
 
 /* Define to 1 if you have the <net/route.h> header file. */
-/* #undef HAVE_NET_ROUTE_H */
+#define HAVE_NET_ROUTE_H 1
 
 /* Define to 1 if the system has the type `nfds_t'. */
 #define HAVE_NFDS_T 1
@@ -580,7 +577,7 @@
 /* #undef HAVE_NLIST64 */
 
 /* Define to 1 if you have the <nlist.h> header file. */
-/* #undef HAVE_NLIST_H */
+#define HAVE_NLIST_H 1
 
 /* Define to 1 if the system has the type `off64_t'. */
 /* #undef HAVE_OFF64_T */
@@ -589,19 +586,19 @@
 #define HAVE_OPENDIR 1
 
 /* Define to 1 if you have the <openssl/aes.h> header file. */
-/* #undef HAVE_OPENSSL_AES_H */
+#define HAVE_OPENSSL_AES_H 1
 
 /* Define to 1 if you have the <openssl/des.h> header file. */
-/* #undef HAVE_OPENSSL_DES_H */
+#define HAVE_OPENSSL_DES_H 1
 
 /* Define to 1 if you have the <openssl/dh.h> header file. */
-/* #undef HAVE_OPENSSL_DH_H */
+#define HAVE_OPENSSL_DH_H 1
 
 /* Define to 1 if you have the <openssl/evp.h> header file. */
-/* #undef HAVE_OPENSSL_EVP_H */
+#define HAVE_OPENSSL_EVP_H 1
 
 /* Define to 1 if you have the <openssl/hmac.h> header file. */
-/* #undef HAVE_OPENSSL_HMAC_H */
+#define HAVE_OPENSSL_HMAC_H 1
 
 /* Define to 1 if you have the <osreldate.h> header file. */
 /* #undef HAVE_OSRELDATE_H */
@@ -718,7 +715,7 @@
 #define HAVE_SETUID 1
 
 /* Define to 1 if you have the <sgtty.h> header file. */
-/* #undef HAVE_SGTTY_H */
+#define HAVE_SGTTY_H 1
 
 /* Define to 1 if you have the `sigaction' function. */
 #define HAVE_SIGACTION 1
@@ -874,55 +871,55 @@
 /* #undef HAVE_STRUCT_IP6STAT_IP6S_EXTHDRTOOLONG_ */
 
 /* Define to 1 if `ips_cantforward' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_CANTFORWARD */
+#define HAVE_STRUCT_IPSTAT_IPS_CANTFORWARD 1
 
 /* Define to 1 if `ips_cantfrag' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_CANTFRAG */
+#define HAVE_STRUCT_IPSTAT_IPS_CANTFRAG 1
 
 /* Define to 1 if `ips_delivered' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_DELIVERED */
+#define HAVE_STRUCT_IPSTAT_IPS_DELIVERED 1
 
 /* Define to 1 if `ips_fragdropped' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_FRAGDROPPED */
+#define HAVE_STRUCT_IPSTAT_IPS_FRAGDROPPED 1
 
 /* Define to 1 if `ips_fragmented' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_FRAGMENTED */
+#define HAVE_STRUCT_IPSTAT_IPS_FRAGMENTED 1
 
 /* Define to 1 if `ips_fragtimeout' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_FRAGTIMEOUT */
+#define HAVE_STRUCT_IPSTAT_IPS_FRAGTIMEOUT 1
 
 /* Define to 1 if `ips_localout' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_LOCALOUT */
+#define HAVE_STRUCT_IPSTAT_IPS_LOCALOUT 1
 
 /* Define to 1 if `ips_noproto' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_NOPROTO */
+#define HAVE_STRUCT_IPSTAT_IPS_NOPROTO 1
 
 /* Define to 1 if `ips_noroute' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_NOROUTE */
+#define HAVE_STRUCT_IPSTAT_IPS_NOROUTE 1
 
 /* Define to 1 if `ips_odropped' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_ODROPPED */
+#define HAVE_STRUCT_IPSTAT_IPS_ODROPPED 1
 
 /* Define to 1 if `ips_ofragments' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_OFRAGMENTS */
+#define HAVE_STRUCT_IPSTAT_IPS_OFRAGMENTS 1
 
 /* Define to 1 if `ips_reassembled' is a member of `struct ipstat'. */
-/* #undef HAVE_STRUCT_IPSTAT_IPS_REASSEMBLED */
+#define HAVE_STRUCT_IPSTAT_IPS_REASSEMBLED 1
 
 /* Define to 1 if `m_clfree' is a member of `struct mbstat'. */
-/* #undef HAVE_STRUCT_MBSTAT_M_CLFREE */
+#define HAVE_STRUCT_MBSTAT_M_CLFREE 1
 
 /* Define to 1 if `m_clusters' is a member of `struct mbstat'. */
-/* #undef HAVE_STRUCT_MBSTAT_M_CLUSTERS */
+#define HAVE_STRUCT_MBSTAT_M_CLUSTERS 1
 
 /* Define to 1 if `m_mbufs' is a member of `struct mbstat'. */
-/* #undef HAVE_STRUCT_MBSTAT_M_MBUFS */
+#define HAVE_STRUCT_MBSTAT_M_MBUFS 1
 
 /* Define to 1 if `n_value' is a member of `struct nlist64'. */
 /* #undef HAVE_STRUCT_NLIST64_N_VALUE */
 
 /* Define to 1 if `n_value' is a member of `struct nlist'. */
-/* #undef HAVE_STRUCT_NLIST_N_VALUE */
+#define HAVE_STRUCT_NLIST_N_VALUE 1
 
 /* Define to 1 if `rt_dst' is a member of `struct rtentry'. */
 /* #undef HAVE_STRUCT_RTENTRY_RT_DST */
@@ -1001,22 +998,19 @@
 /* #undef HAVE_STRUCT_UDPSTAT_UDPS_DISCARD */
 
 /* Define to 1 if `udps_fullsock' is a member of `struct udpstat'. */
-/* #undef HAVE_STRUCT_UDPSTAT_UDPS_FULLSOCK */
+#define HAVE_STRUCT_UDPSTAT_UDPS_FULLSOCK 1
 
 /* Define to 1 if `udps_ipackets' is a member of `struct udpstat'. */
-/* #undef HAVE_STRUCT_UDPSTAT_UDPS_IPACKETS */
+#define HAVE_STRUCT_UDPSTAT_UDPS_IPACKETS 1
 
 /* Define to 1 if `udps_noport' is a member of `struct udpstat'. */
-/* #undef HAVE_STRUCT_UDPSTAT_UDPS_NOPORT */
+#define HAVE_STRUCT_UDPSTAT_UDPS_NOPORT 1
 
 /* Define to 1 if `udps_noportbcast' is a member of `struct udpstat'. */
-/* #undef HAVE_STRUCT_UDPSTAT_UDPS_NOPORTBCAST */
+#define HAVE_STRUCT_UDPSTAT_UDPS_NOPORTBCAST 1
 
 /* Define to 1 if `udps_opackets' is a member of `struct udpstat'. */
-/* #undef HAVE_STRUCT_UDPSTAT_UDPS_OPACKETS */
-
-/* Define to 1 if `pgswapin' is a member of `struct uvmexp'. */
-/* #undef HAVE_STRUCT_UVMEXP_PGSWAPIN */
+#define HAVE_STRUCT_UDPSTAT_UDPS_OPACKETS 1
 
 /* Define to 1 if you have the `sysconf' function. */
 #define HAVE_SYSCONF 1
@@ -1031,7 +1025,7 @@
 #define HAVE_SYS_CDEFS_H 1
 
 /* Define to 1 if you have the <sys/conf.h> header file. */
-/* #undef HAVE_SYS_CONF_H */
+#define HAVE_SYS_CONF_H 1
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
@@ -1047,7 +1041,7 @@
 /* #undef HAVE_SYS_DKIO_H */
 
 /* Define to 1 if you have the <sys/dkstat.h> header file. */
-/* #undef HAVE_SYS_DKSTAT_H */
+#define HAVE_SYS_DKSTAT_H 1
 
 /* Define to 1 if you have the <sys/dmap.h> header file. */
 /* #undef HAVE_SYS_DMAP_H */
@@ -1074,7 +1068,7 @@
 /* #undef HAVE_SYS_LOADAVG_H */
 
 /* Define to 1 if you have the <sys/mbuf.h> header file. */
-/* #undef HAVE_SYS_MBUF_H */
+#define HAVE_SYS_MBUF_H 1
 
 /* Define to 1 if you have the <sys/mntent.h> header file. */
 /* #undef HAVE_SYS_MNTENT_H */
@@ -1102,7 +1096,7 @@
 /* #undef HAVE_SYS_PROC_H */
 
 /* Define to 1 if you have the <sys/protosw.h> header file. */
-/* #undef HAVE_SYS_PROTOSW_H */
+#define HAVE_SYS_PROTOSW_H 1
 
 /* Define to 1 if you have the <sys/pstat.h> header file. */
 /* #undef HAVE_SYS_PSTAT_H */
@@ -1117,7 +1111,7 @@
 /* #undef HAVE_SYS_SEMA_H */
 
 /* Define to 1 if you have the <sys/socketvar.h> header file. */
-/* #undef HAVE_SYS_SOCKETVAR_H */
+#define HAVE_SYS_SOCKETVAR_H 1
 
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #define HAVE_SYS_SOCKET_H 1
@@ -1180,7 +1174,7 @@
 #define HAVE_SYS_UN_H 1
 
 /* Define to 1 if you have the <sys/user.h> header file. */
-/* #undef HAVE_SYS_USER_H */
+#define HAVE_SYS_USER_H 1
 
 /* Define to 1 if you have the <sys/utsname.h> header file. */
 #define HAVE_SYS_UTSNAME_H 1
@@ -1192,10 +1186,10 @@
 /* #undef HAVE_SYS_VMMAC_H */
 
 /* Define to 1 if you have the <sys/vmmeter.h> header file. */
-/* #undef HAVE_SYS_VMMETER_H */
+#define HAVE_SYS_VMMETER_H 1
 
 /* Define to 1 if you have the <sys/vmparam.h> header file. */
-/* #undef HAVE_SYS_VMPARAM_H */
+#define HAVE_SYS_VMPARAM_H 1
 
 /* Define to 1 if you have the <sys/vmsystm.h> header file. */
 /* #undef HAVE_SYS_VMSYSTM_H */
@@ -1204,7 +1198,7 @@
 #define HAVE_SYS_VM_H 1
 
 /* Define to 1 if you have the <sys/vnode.h> header file. */
-/* #undef HAVE_SYS_VNODE_H */
+#define HAVE_SYS_VNODE_H 1
 
 /* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
 #define HAVE_SYS_WAIT_H 1
@@ -1325,14 +1319,14 @@
 #define NETSNMP_CAN_DO_CRYPTO 1
 
 /* sysctl works to get boottime, etc... */
-/* #undef NETSNMP_CAN_USE_SYSCTL */
+#define NETSNMP_CAN_USE_SYSCTL 1
 
 /* configure options specified */
-#define NETSNMP_CONFIGURE_OPTIONS " '--prefix=/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64' '--build=x86_64-apple-darwin13.4.0' '--host=arm-apple-darwin' '--target=arm-apple-darwin' '--with-sysroot=/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk' '--with-defaults' '--with-cc=/Applications/Xcode/Xcode5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang' '--with-ld=/Applications/Xcode/Xcode5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld' '--with-openssl=internal' '--enable-reentrant' '--disable-embedded-perl' '--disable-perl-cc-checks' '--disable-shared' '--disable-agent' '--disable-applications' '--disable-manuals' '--disable-scripts' '--disable-mibs' '--disable-snmptrapd-subagent' 'build_alias=x86_64-apple-darwin13.4.0' 'host_alias=arm-apple-darwin' 'target_alias=arm-apple-darwin' 'CFLAGS=-arch arm64 -pipe -no-cpp-precomp -mios-version-min=7.0 -I/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/include -DPEDANTIC' 'LDFLAGS=-L/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/lib -L/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/lib/system -L/Applications/Xcode/Xcode5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/lib/system/host -Bstatic'"
+#define NETSNMP_CONFIGURE_OPTIONS " '--prefix=/Users/Seph/Desktop/net-snmp-master/Build/iPhoneSimulator8.1.sdk-x86_64' '--build=x86_64-apple-darwin13.4.0' '--host=x86_64-apple-darwin13.4.0' '--target=x86_64-apple-darwin13.4.0' '--with-sysroot=/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.1.sdk' '--with-defaults' '--with-cc=/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/usr/bin/gcc' '--with-linkcc=/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/usr/bin/gcc' '--with-ar=/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar' '--with-gnu-ld' '--enable-reentrant' '--disable-embedded-perl' '--disable-perl-cc-checks' '--disable-shared' '--disable-agent' '--disable-applications' '--disable-manuals' '--disable-scripts' '--disable-mibs' '--disable-snmptrapd-subagent' '--with-openssl=internal' 'build_alias=x86_64-apple-darwin13.4.0' 'host_alias=x86_64-apple-darwin13.4.0' 'target_alias=x86_64-apple-darwin13.4.0' 'CFLAGS=-arch x86_64 -pipe -no-cpp-precomp -mios-version-min=8.1 -I/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.1.sdk/usr/include -D_FORTIFY_SOURCE=0 -DPEDANTIC' 'LDFLAGS=-L/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.1.sdk/usr/lib -L/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.1.sdk/usr/lib/system -L/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.1.sdk/usr/lib/system/host -F/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.1.sdk/System/Library/Frameworks -F/Applications/Xcode/Xcode6.1.1.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.1.sdk/System/Library/Frameworks/CoreServices'"
 
 /* default location to look for mibs to load using the above tokens and/or
    those in the MIBS envrionment variable */
-#define NETSNMP_DEFAULT_MIBDIRS "$HOME/.snmp/mibs:/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/share/snmp/mibs"
+#define NETSNMP_DEFAULT_MIBDIRS "$HOME/.snmp/mibs:/Users/Seph/Desktop/net-snmp-master/Build/iPhoneSimulator8.1.sdk-x86_64/share/snmp/mibs"
 
 /* default mib files to load, specified by path. */
 /* #undef NETSNMP_DEFAULT_MIBFILES */
@@ -1533,7 +1527,7 @@
 /* #undef STAT_STATFS_FS_DATA */
 
 /* Define to 1 if you have the ANSI C header files. */
-/* #undef STDC_HEADERS */
+#define STDC_HEADERS 1
 
 /* define if SIOCGIFADDR exists in sys/ioctl.h */
 #define SYS_IOCTL_H_HAS_SIOCGIFADDR 1
@@ -1775,10 +1769,10 @@
 /* #undef NETSNMP_DEFAULT_CLIENT_RECV_BUF */
 
 /* net-snmp's major path names */
-#define SNMPLIBPATH "/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/lib/snmp"
-#define SNMPSHAREPATH "/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/share/snmp"
-#define SNMPCONFPATH "/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/etc/snmp"
-#define SNMPDLMODPATH "/Users/Seph/Desktop/net-snmp-code/Build/iPhoneOS7.0.sdk-arm64/lib/snmp/dlmod"
+#define SNMPLIBPATH "/Users/Seph/Desktop/net-snmp-master/Build/iPhoneSimulator8.1.sdk-x86_64/lib/snmp"
+#define SNMPSHAREPATH "/Users/Seph/Desktop/net-snmp-master/Build/iPhoneSimulator8.1.sdk-x86_64/share/snmp"
+#define SNMPCONFPATH "/Users/Seph/Desktop/net-snmp-master/Build/iPhoneSimulator8.1.sdk-x86_64/etc/snmp"
+#define SNMPDLMODPATH "/Users/Seph/Desktop/net-snmp-master/Build/iPhoneSimulator8.1.sdk-x86_64/lib/snmp/dlmod"
 
 /* NETSNMP_LOGFILE:  If defined it closes stdout/err/in and opens this in 
    out/err's place.  (stdin is closed so that sh scripts won't wait for it) */

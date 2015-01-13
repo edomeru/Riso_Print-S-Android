@@ -210,7 +210,7 @@ void *do_discovery(void *parameter)
         session.securityAuthProtoLen = USM_AUTH_PROTO_MD5_LEN;
         session.securityAuthKeyLen = USM_AUTH_KU_LEN;
         char *password = strdup(SNMPV3_PASS);
-        if (generate_Ku(session.securityAuthProto, session.securityAuthProtoLen, (u_char *)password, strlen(SNMPV3_PASS), session.securityAuthKey, &session.securityAuthKeyLen) != SNMPERR_SUCCESS)
+        if (generate_Ku(session.securityAuthProto, (u_int)session.securityAuthProtoLen, (u_char *)password, strlen(SNMPV3_PASS), session.securityAuthKey, &session.securityAuthKeyLen) != SNMPERR_SUCCESS)
         {
             free(session.peername);
             free(session.community);
