@@ -13,6 +13,8 @@
 #import "AlertHelper.h"
 #import "InputHelper.h"
 
+NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
+
 @interface AddPrinterViewController ()
 
 #pragma mark - Data Properties
@@ -235,7 +237,7 @@
     
     NSString *formattedIP = self.textIP.text;
     bool isValid = [InputHelper isIPValid:&formattedIP];
-    if (!isValid)
+    if (!isValid || [formattedIP isEqualToString:BROADCAST_ADDRESS])
     {
         [AlertHelper displayResult:kAlertResultErrInvalidIP
                          withTitle:kAlertTitlePrintersAdd

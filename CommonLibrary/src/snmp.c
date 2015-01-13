@@ -44,6 +44,7 @@ struct snmp_context_s
     snmp_printer_added_callback printer_added_callback;
     snmp_device *device_list;
     char ip_address[IP_ADDRESS_LENGTH];
+    int is_broadcast;
     
     caps_queue device_queue;
     
@@ -138,6 +139,7 @@ void snmp_call_end_callback(snmp_context *context, int count);
 void snmp_device_discovery(snmp_context *context)
 {
     strncpy(context->ip_address, BROADCAST_ADDRESS, IP_ADDRESS_LENGTH - 1);
+    context->is_broadcast = 1;
 
     pthread_create(&context->main_thread, 0, do_discovery, (void *)context);
 }
@@ -162,7 +164,7 @@ void snmp_manual_discovery(snmp_context *context, const char *ip_address)
     {
         strncpy(context->ip_address, ip_address, IP_ADDRESS_LENGTH - 1);
     }
-    
+    context->is_broadcast = 0;
     
     pthread_create(&context->main_thread, 0, do_discovery, (void *)context);
 }
@@ -199,7 +201,7 @@ void *do_discovery(void *parameter)
     session.retries = 0;
     session.securityName = 0;
     
-    if (strcmp(context->ip_address, BROADCAST_ADDRESS) != 0)
+    if (context->is_broadcast == 0)
     {
         // Use V3 for Unicast
         session.version = SNMP_VERSION_3;
@@ -425,6 +427,7 @@ snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_cal
     context->device_list = 0;
     context->device_queue.first = 0;
     context->device_queue.current = 0;
+    context->is_broadcast = 0;
     pthread_mutex_init(&context->mutex, 0);
     pthread_mutex_init(&context->queue_mutex, 0);
     
