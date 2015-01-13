@@ -160,6 +160,8 @@
     [self.tableView addGestureRecognizer:pan];
     
     self.statusHelpers = [[NSMutableArray alloc] init];
+    
+    self.tableView.rowHeight = 44;
 }
 
 - (void)didReceiveMemoryWarning

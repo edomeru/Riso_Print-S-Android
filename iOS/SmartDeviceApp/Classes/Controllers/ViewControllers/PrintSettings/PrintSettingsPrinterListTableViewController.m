@@ -74,6 +74,8 @@
             break;
         }
     }
+    
+    self.tableView.rowHeight = 44;
 }
 
 -(void) dealloc
