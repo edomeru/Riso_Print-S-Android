@@ -54,6 +54,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     private static final int ERR_DB_FAILURE = -4;
     private static final int MSG_ERROR = 0;
     private static final int MSG_ADD_SUCCESS = 1;
+    private static final String BROADCAST_ADDRESS = "255.255.255.255";
     
     private ViewHolder mAddPrinterView = null;
     private PrinterManager mPrinterManager = null;
@@ -281,7 +282,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
         
         ipAddress = JniUtils.validateIpAddress(ipAddress);
-        if (ipAddress == null) {
+        if (ipAddress == null || ipAddress.contentEquals(BROADCAST_ADDRESS)) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS);
             return;
         }

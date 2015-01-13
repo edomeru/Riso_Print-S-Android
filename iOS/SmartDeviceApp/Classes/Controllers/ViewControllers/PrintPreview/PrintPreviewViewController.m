@@ -865,7 +865,8 @@
             {
                 self.printDocument.currentPage = 0;
             } else {
-                if (self.printDocument.previewSetting.finishingSide == kFinishingSideRight) {
+                if (self.printDocument.previewSetting.finishingSide == kFinishingSideRight ||
+                        self.printDocument.previewSetting.bookletLayout == kBookletLayoutReverse) {
                     self.printDocument.currentPage = MAX(viewController.pageIndex, 0);
                 } else {
                     self.printDocument.currentPage = MAX(viewController.pageIndex - 1, 0);

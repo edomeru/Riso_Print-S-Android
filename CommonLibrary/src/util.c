@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
 #include "common.h"
 
 int util_validate_ip(const char *input_ip, char *formatted_ip, size_t max_len)
@@ -23,7 +24,7 @@ int util_validate_ip(const char *input_ip, char *formatted_ip, size_t max_len)
         result = inet_pton(AF_INET6, input_ip, &ipv6);
         if (result == 1)
         {
-            const char *ip_string = inet_ntop(AF_INET6, &ipv6, formatted_ip, max_len);
+            const char *ip_string = inet_ntop(AF_INET6, &ipv6, formatted_ip, (socklen_t)max_len);
             if (ip_string == 0)
             {
                 strcpy(formatted_ip, "");
@@ -32,7 +33,7 @@ int util_validate_ip(const char *input_ip, char *formatted_ip, size_t max_len)
     }
     else
     {
-        const char * ip_string = inet_ntop(AF_INET, &ipv4, formatted_ip, max_len);
+        const char * ip_string = inet_ntop(AF_INET, &ipv4, formatted_ip, (socklen_t)max_len);
         if (ip_string == 0)
         {
             strcpy(formatted_ip, "");

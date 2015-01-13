@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="RISOSmartPrint" Publisher="CN=RISO KAGAKU CORPORATION" Version="1.0.1.0" />
+  <Identity Name="RISORRINT-S" Publisher="CN=RISO KAGAKU CORPORATION" Version="1.0.2.0" />
   <Properties>
-    <DisplayName>RISO Smart Print</DisplayName>
+    <DisplayName>RISO RRINT-S</DisplayName>
     <PublisherDisplayName>RISO KAGAKU CORPORATION</PublisherDisplayName>
     <Logo>Resources\Images\StoreLogo.png</Logo>
   </Properties>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="SmartDeviceApp.App">
-      <m2:VisualElements DisplayName="ms-resource:IDS_APP_NAME" Square150x150Logo="Resources\Images\Logo.png" Square30x30Logo="Resources\Images\SmallLogo.png" Description="SmartDeviceApp" ForegroundText="dark" BackgroundColor="#CDCDCD">
+      <m2:VisualElements DisplayName="ms-resource:IDS_APP_NAME" Square150x150Logo="Resources\Images\Logo.png" Square30x30Logo="Resources\Images\SmallLogo.png" Description="RISO PRINT-S" ForegroundText="dark" BackgroundColor="#CDCDCD">
         <m2:DefaultTile DefaultSize="square150x150Logo" ShortName="ms-resource:IDS_APP_LAUNCHER_NAME">
           <m2:ShowNameOnTiles>
             <m2:ShowOn Tile="square150x150Logo" />

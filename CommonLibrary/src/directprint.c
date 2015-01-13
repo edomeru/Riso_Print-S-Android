@@ -370,7 +370,7 @@ void *do_lpr_print(void *parameter)
     strcat(pjl_header, PJL_ESCAPE);
     create_pjl(pjl_header, print_job->print_settings);
     strcat(pjl_header, PJL_LANGUAGE);
-    int pjl_header_size = strlen(pjl_header);
+    long pjl_header_size = strlen(pjl_header);
     
     // Prepare PJL footer
     char pjl_footer[256];
@@ -378,7 +378,7 @@ void *do_lpr_print(void *parameter)
     strcat(pjl_footer, PJL_ESCAPE);
     strcat(pjl_footer, PJL_EOJ);
     strcat(pjl_footer, PJL_ESCAPE);
-    int pjl_footer_size = strlen(pjl_footer);
+    long pjl_footer_size = strlen(pjl_footer);
     
     if (is_cancelled(print_job) == 1)
     {
@@ -424,11 +424,11 @@ void *do_lpr_print(void *parameter)
         }
         
         // Prepare flags
-        int send_size;
-        int recv_size;
+        ssize_t send_size;
+        ssize_t recv_size;
         int response;
         int pos;
-        int len;
+        unsigned long len;
         int i;
         
         notify_callback(print_job, kJobStatusSending);
@@ -593,7 +593,7 @@ void *do_lpr_print(void *parameter)
         }
         
         // Calculate progress step
-        int step_count = file_size / BUFFER_SIZE + 1;
+        unsigned long step_count = file_size / BUFFER_SIZE + 1;
         float data_step = (99.0f / (float)step_count);
     
         // DATA FILE : Send
@@ -729,7 +729,7 @@ void *do_raw_print(void *parameter)
         dp_fseek(fd, 0L, SEEK_SET);
         
         // Calculate progress step
-        int step_count = file_size / BUFFER_SIZE + 1;
+        unsigned long step_count = file_size / BUFFER_SIZE + 1;
         float data_step = (99.0f / (float)step_count);
         
         // Send header

@@ -160,6 +160,8 @@
     [self.tableView addGestureRecognizer:pan];
     
     self.statusHelpers = [[NSMutableArray alloc] init];
+    
+    self.tableView.rowHeight = 44;
 }
 
 - (void)didReceiveMemoryWarning
@@ -398,7 +400,7 @@
         if(self.selectedPrinterIndexPath != nil)
         {
             [self performSegueTo:[PrinterInfoViewController class]];
-            [cell performSelector:@selector(setHighlighted:) withObject:NO afterDelay:0.1f];//make the highlight linger
+            [cell performSelector:@selector(setHighlighted:) withObject:nil afterDelay:0.1f];//make the highlight linger
         }
     }
     else
