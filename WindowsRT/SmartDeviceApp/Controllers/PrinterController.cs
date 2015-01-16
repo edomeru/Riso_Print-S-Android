@@ -647,13 +647,18 @@ namespace SmartDeviceApp.Controllers
 
         private async void handlePrinterStatus(string ip, bool isOnline)
         {
-            //find the printer TODO: error handling here when the printer is deleted while handling status
             try
             {
                 if (isPolling)
                 {
                     Printer printer = _printerList.FirstOrDefault(x => x.IpAddress == ip);
-                    int index = _printerList.IndexOf(printer);
+
+                    if (printer == null)
+                    {
+                        //printer might have been deleted already, so ignore the null printer
+                        return;
+                    }
+
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                         Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                         {
