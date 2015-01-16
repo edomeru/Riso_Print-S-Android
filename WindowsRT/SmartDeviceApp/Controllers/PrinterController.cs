@@ -343,10 +343,18 @@ namespace SmartDeviceApp.Controllers
                 //get MIB
                 if (NetworkController.IsConnectedToNetwork)
                 {
-                    SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
-                    SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
-                    SNMPController.Instance.printerControllerErrorCallBack = new Action(handleAddError);
-                    SNMPController.Instance.getDevice(ip);
+                    //check invalid ip
+                    if (ip.Equals("255.255.255.255"))
+                    {
+                        handleAddError();
+                    }
+                    else
+                    {
+                        SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
+                        SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
+                        SNMPController.Instance.printerControllerErrorCallBack = new Action(handleAddError);
+                        SNMPController.Instance.getDevice(ip);
+                    }
                 }
                 else
                 {
