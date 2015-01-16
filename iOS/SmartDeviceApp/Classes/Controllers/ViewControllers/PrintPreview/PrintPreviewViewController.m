@@ -343,10 +343,11 @@
         }
         else
         {
-            CGFloat screenHeight = [[UIScreen mainScreen] bounds].size.height;
+            CGFloat screenWidth = self.view.frame.size.width;
+            
             self.pageNavAreaHeightConstraint.constant = 30;
-            self.pageScrollLeftConstraint.constant = screenHeight * 0.25f;
-            self.pageLabelRightConstraint.constant = screenHeight * 0.75f;
+            self.pageScrollLeftConstraint.constant = screenWidth * 0.25f;
+            self.pageLabelRightConstraint.constant = screenWidth * 0.75f;
             self.pageLabelTopConstraint.constant = 10;
             self.pageScrollVerticalCenterConstraint.constant = 0;
         }
