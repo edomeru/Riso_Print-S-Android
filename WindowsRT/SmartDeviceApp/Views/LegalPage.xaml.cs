@@ -40,7 +40,7 @@ namespace SmartDeviceApp.Views
             int LengthOfScriptTag = ScriptTagString.Length - 1;
 
             PackageVersion version = Package.Current.Id.Version;
-            string versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Revision, version.Build);
+            string versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
             MyWebPageString = MyWebPageString.Insert(IndexOfScriptTag + LengthOfScriptTag + 1, versionString);
             ((WebView)sender).NavigateToString(MyWebPageString);
