@@ -642,10 +642,11 @@ namespace SmartDeviceApp.Controllers
                 {
                     Printer printer = _printerListTemp.ElementAt(i);
                     //request for eachs printer's printer status
-
-                    NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(handlePrinterStatus);
-                    await NetworkController.Instance.pingDevice(printer.IpAddress);
-
+                    if (printer != null)
+                    {
+                        NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(handlePrinterStatus);
+                        await NetworkController.Instance.pingDevice(printer.IpAddress);
+                    }
                     i++;
 
                 }
