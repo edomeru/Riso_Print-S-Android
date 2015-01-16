@@ -1017,17 +1017,25 @@ namespace SmartDeviceApp.Controllers
                 DispatcherHelper.CheckBeginInvokeOnUI(
                     () =>
                     {
-                        if (_previewPageImages.ContainsKey(_currLeftPageIndex))
+                        try
                         {
-                            WriteableBitmapExtensions.FromByteArray(
-                                _printPreviewViewModel.LeftPageImage,
-                                _previewPageImages.GetValue(_currLeftPageIndex));
+                            if (_previewPageImages.ContainsKey(_currLeftPageIndex))
+                            {
+                                WriteableBitmapExtensions.FromByteArray(
+                                    _printPreviewViewModel.LeftPageImage,
+                                    _previewPageImages.GetValue(_currLeftPageIndex));
+                            }
+                            else if (enableClearPage)
+                            {
+                                _printPreviewViewModel.LeftPageImage.Clear();
+                            }
+                            _printPreviewViewModel.IsLoadLeftPageActive = false;
                         }
-                        else if (enableClearPage)
+                        catch (Exception e)
                         {
-                            _printPreviewViewModel.LeftPageImage.Clear();
+                            LogUtility.LogError(e);
+                            return;
                         }
-                        _printPreviewViewModel.IsLoadLeftPageActive = false;
                     });
             }
             else if (previewPageIndex == _currRightPageIndex)
@@ -1053,66 +1061,74 @@ namespace SmartDeviceApp.Controllers
                 DispatcherHelper.CheckBeginInvokeOnUI(
                     () =>
                     {
-                        if (_previewPageImages.ContainsKey(_currLeftBackPageIndex))
+                        try
                         {
-                            WriteableBitmapExtensions.FromByteArray(
-                                _printPreviewViewModel.LeftBackPageImage,
-                                _previewPageImages.GetValue(_currLeftBackPageIndex));
-                            if (_isSwipeLeft && !_isReverseOrder) // NOTE: This condition is a workaround until back curl is properly implemented
+                            if (_previewPageImages.ContainsKey(_currLeftBackPageIndex))
                             {
                                 WriteableBitmapExtensions.FromByteArray(
-                                            _printPreviewViewModel.LeftNextPageImage,
-                                            _previewPageImages.GetValue(_currLeftBackPageIndex));
-                                
-                            }
-                            else if (!_isSwipeLeft && !_isReverseOrder) 
-                            {
-                                WriteableBitmapExtensions.FromByteArray(
-                                            _printPreviewViewModel.LeftNextPageImage,
-                                            _previewPageImages.GetValue(_currLeftBackPageIndex + 2));
-                            }
-                            else if (!_isSwipeLeft && _isReverseOrder)
-                            {
-                                WriteableBitmapExtensions.FromByteArray(
-                                            _printPreviewViewModel.LeftNextPageImage,
-                                            _previewPageImages.GetValue(_currLeftBackPageIndex - 2));
-                            }
-                            else if (_isSwipeLeft && _isReverseOrder)
-                            {
-                                WriteableBitmapExtensions.FromByteArray(
-                                            _printPreviewViewModel.LeftNextPageImage,
-                                            _previewPageImages.GetValue(_currLeftBackPageIndex ));
-                            }
-                        }
-                        else if (!_isSwipeLeft && _currLeftBackPageIndex < 0) // NOTE: This block is a workaround until back curl is properly implemented
-                        {
-
-                            _printPreviewViewModel.LeftBackPageImage.Clear();
-                            if (_currLeftBackPageIndex == -1)
-                            {
-                            WriteableBitmapExtensions.FromByteArray(
-                                _printPreviewViewModel.LeftNextPageImage,
-                                _previewPageImages.GetValue(_currLeftBackPageIndex + 2));  // NG for reverse booklet
-                            }
-                        }
-                        else if (enableClearPage)
-                        {
-                            _printPreviewViewModel.LeftBackPageImage.Clear();
-                            //if (_isSwipeLeft)
-                            if (_isSwipeLeft && _currLeftBackPageIndex < 0)
-                                _printPreviewViewModel.LeftNextPageImage.Clear();
-                            else if (_currLeftBackPageIndex > 0)
-                            {
-                                if (_isReverseOrder && _currRightPageIndex < _maxPreviewPageCount - 1) //Check if it is in right bind and not last page
+                                    _printPreviewViewModel.LeftBackPageImage,
+                                    _previewPageImages.GetValue(_currLeftBackPageIndex));
+                                if (_isSwipeLeft && !_isReverseOrder) // NOTE: This condition is a workaround until back curl is properly implemented
                                 {
                                     WriteableBitmapExtensions.FromByteArray(
-                                            _printPreviewViewModel.LeftNextPageImage,
-                                            _previewPageImages.GetValue(_currLeftBackPageIndex - 2));
+                                                _printPreviewViewModel.LeftNextPageImage,
+                                                _previewPageImages.GetValue(_currLeftBackPageIndex));
+
+                                }
+                                else if (!_isSwipeLeft && !_isReverseOrder)
+                                {
+                                    WriteableBitmapExtensions.FromByteArray(
+                                                _printPreviewViewModel.LeftNextPageImage,
+                                                _previewPageImages.GetValue(_currLeftBackPageIndex + 2));
+                                }
+                                else if (!_isSwipeLeft && _isReverseOrder)
+                                {
+                                    WriteableBitmapExtensions.FromByteArray(
+                                                _printPreviewViewModel.LeftNextPageImage,
+                                                _previewPageImages.GetValue(_currLeftBackPageIndex - 2));
+                                }
+                                else if (_isSwipeLeft && _isReverseOrder)
+                                {
+                                    WriteableBitmapExtensions.FromByteArray(
+                                                _printPreviewViewModel.LeftNextPageImage,
+                                                _previewPageImages.GetValue(_currLeftBackPageIndex));
                                 }
                             }
+                            else if (!_isSwipeLeft && _currLeftBackPageIndex < 0) // NOTE: This block is a workaround until back curl is properly implemented
+                            {
+
+                                _printPreviewViewModel.LeftBackPageImage.Clear();
+                                if (_currLeftBackPageIndex == -1)
+                                {
+                                    WriteableBitmapExtensions.FromByteArray(
+                                        _printPreviewViewModel.LeftNextPageImage,
+                                        _previewPageImages.GetValue(_currLeftBackPageIndex + 2));  // NG for reverse booklet
+                                }
+                            }
+                            else if (enableClearPage)
+                            {
+                                _printPreviewViewModel.LeftBackPageImage.Clear();
+                                //if (_isSwipeLeft)
+                                if (_isSwipeLeft && _currLeftBackPageIndex < 0)
+                                    _printPreviewViewModel.LeftNextPageImage.Clear();
+                                else if (_currLeftBackPageIndex > 0)
+                                {
+                                    if (_isReverseOrder && _currRightPageIndex < _maxPreviewPageCount - 1) //Check if it is in right bind and not last page
+                                    {
+                                        WriteableBitmapExtensions.FromByteArray(
+                                                _printPreviewViewModel.LeftNextPageImage,
+                                                _previewPageImages.GetValue(_currLeftBackPageIndex - 2));
+                                    }
+                                }
+                            }
+                            _printPreviewViewModel.IsLoadLeftBackPageActive = false;
+                            _printPreviewViewModel.IsLoadLeftNextPageActive = false;
                         }
-                        _printPreviewViewModel.IsLoadLeftBackPageActive = false;
-                        _printPreviewViewModel.IsLoadLeftNextPageActive = false;
+                        catch (Exception e)
+                        {
+                            LogUtility.LogError(e);
+                            return;
+                        }
                     });
             }
             else if (previewPageIndex == _currRightBackPageIndex)

@@ -343,10 +343,18 @@ namespace SmartDeviceApp.Controllers
                 //get MIB
                 if (NetworkController.IsConnectedToNetwork)
                 {
-                    SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
-                    SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
-                    SNMPController.Instance.printerControllerErrorCallBack = new Action(handleAddError);
-                    SNMPController.Instance.getDevice(ip);
+                    //check invalid ip
+                    if (ip.Equals("255.255.255.255"))
+                    {
+                        handleAddError();
+                    }
+                    else
+                    {
+                        SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
+                        SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
+                        SNMPController.Instance.printerControllerErrorCallBack = new Action(handleAddError);
+                        SNMPController.Instance.getDevice(ip);
+                    }
                 }
                 else
                 {
@@ -634,10 +642,11 @@ namespace SmartDeviceApp.Controllers
                 {
                     Printer printer = _printerListTemp.ElementAt(i);
                     //request for eachs printer's printer status
-
-                    NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(handlePrinterStatus);
-                    await NetworkController.Instance.pingDevice(printer.IpAddress);
-
+                    if (printer != null)
+                    {
+                        NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(handlePrinterStatus);
+                        await NetworkController.Instance.pingDevice(printer.IpAddress);
+                    }
                     i++;
 
                 }
@@ -647,13 +656,18 @@ namespace SmartDeviceApp.Controllers
 
         private async void handlePrinterStatus(string ip, bool isOnline)
         {
-            //find the printer TODO: error handling here when the printer is deleted while handling status
             try
             {
                 if (isPolling)
                 {
                     Printer printer = _printerList.FirstOrDefault(x => x.IpAddress == ip);
-                    int index = _printerList.IndexOf(printer);
+
+                    if (printer == null)
+                    {
+                        //printer might have been deleted already, so ignore the null printer
+                        return;
+                    }
+
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                         Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                         {
