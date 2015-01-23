@@ -12,7 +12,7 @@ namespace SmartDeviceApp.Views
     public class AdaptableGridView : GridView
     {
         // default itemWidth
-        private const double itemWidth = 1000.00;
+        private const double itemWidth = 100.00;
         /// <summary>
         /// Holds the width of the griditem without margins.
         /// </summary>
@@ -65,8 +65,18 @@ namespace SmartDeviceApp.Views
 
         private void MyGridViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            //guess the default max rows and columns based on current window height/width
+            if (Window.Current.Bounds.Width > Window.Current.Bounds.Height)
+            {
+                this.MaxRowsOrColumns = 3;
+            }
+            else
+            {
+                this.MaxRowsOrColumns = 2;
+            }
+
             // Calculate the proper max rows or columns based on new size 
-            this.MaxRowsOrColumns = this.ItemWidth > 0 ? Convert.ToInt32(Math.Floor(e.NewSize.Width / this.ItemWidth)) : maxRowsOrColumns;
+            this.MaxRowsOrColumns = this.ItemWidth > 0 ? Convert.ToInt32(Math.Floor(e.NewSize.Width / this.ItemWidth)) : this.MaxRowsOrColumns;
         }
     }
 }
