@@ -54,7 +54,11 @@ typedef enum
     kAlertResultPrintSuccessful, /**< Message when printing succeed. */
     
     // db-related errors
-    kAlertResultErrDB /**< Message when a database related error occurs. */
+    kAlertResultErrDB, /**< Message when a database related error occurs. */
+    
+    // license agreement errors
+    kAlertResultErrorLicenseAgreementDisagree //when user doesnt accept license agreement
+    
     
 } kAlertResult;
 

@@ -144,4 +144,6 @@
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "デバイスの空き容量が不足しています。";
 "IDS_ERR_MSG_NETWORK_ERROR" = "ネットワークに接続できません。";
 "IDS_ERR_MSG_DB_FAILURE" = "内部データにアクセスできません。\n再起動してみてください。\n再起動しても解消されない場合は、再インストールしてください。";
-
+"IDS_ERR_MSG_DISAGREE_TO_LICENSE_AGREEMENT" = "User must agree to License Agreement to continue using the app";
+"IDS_LBL_AGREE_TO_LICENSE" = "Agree";
+"IDS_LBL_DISAGREE_TO_LICENSE" = "Disagree";

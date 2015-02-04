@@ -117,6 +117,8 @@
 		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
 		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
 		31F5B69719248DDB002A29AD /* PrintSettingsPrinterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */; };
+		348165FC1A81F0DB00C37570 /* LicenceAgreementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 348165FB1A81F0DB00C37570 /* LicenceAgreementViewController.m */; };
+		34E9CFA91A820E7F00FDB545 /* LicenseAgreementViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E9CFA81A820E7F00FDB545 /* LicenseAgreementViewControllerTest.m */; };
 		5F3145861A30734D00F482A8 /* I000.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145421A30734D00F482A8 /* I000.png */; };
 		5F3145871A30734D00F482A8 /* I001.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145441A30734D00F482A8 /* I001.png */; };
 		5F3145881A30734D00F482A8 /* I002.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145461A30734D00F482A8 /* I002.png */; };
@@ -508,6 +510,9 @@
 		31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListTableViewController.m; sourceTree = "<group>"; };
 		31F5B69519248DDB002A29AD /* PrintSettingsPrinterListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterListViewController.h; sourceTree = "<group>"; };
 		31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListViewController.m; sourceTree = "<group>"; };
+		348165FA1A81F0DB00C37570 /* LicenceAgreementViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LicenceAgreementViewController.h; sourceTree = "<group>"; };
+		348165FB1A81F0DB00C37570 /* LicenceAgreementViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LicenceAgreementViewController.m; sourceTree = "<group>"; };
+		34E9CFA81A820E7F00FDB545 /* LicenseAgreementViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LicenseAgreementViewControllerTest.m; sourceTree = "<group>"; };
 		5F3145431A30734D00F482A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/I000.png; sourceTree = "<group>"; };
 		5F3145451A30734D00F482A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/I001.png; sourceTree = "<group>"; };
 		5F3145471A30734D00F482A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/I002.png; sourceTree = "<group>"; };
@@ -689,6 +694,7 @@
 			isa = PBXGroup;
 			children = (
 				28C9181C1911E2F800CB582C /* LegalViewControllerTest.m */,
+				34E9CFA81A820E7F00FDB545 /* LicenseAgreementViewControllerTest.m */,
 			);
 			path = Legal;
 			sourceTree = "<group>";
@@ -1049,6 +1055,8 @@
 			children = (
 				2D1F23BF1901049C00301D1E /* LegalViewController.h */,
 				2D1F23C01901049C00301D1E /* LegalViewController.m */,
+				348165FA1A81F0DB00C37570 /* LicenceAgreementViewController.h */,
+				348165FB1A81F0DB00C37570 /* LicenceAgreementViewController.m */,
 			);
 			path = Legal;
 			sourceTree = "<group>";
@@ -1770,7 +1778,9 @@
 			files = (
 				2DA1AF6718E2F08900085F27 /* InputHelper.m in Sources */,
 				2D1F23AB1900FF5800301D1E /* CXAlertButtonItem.m in Sources */,
+				348165FC1A81F0DB00C37570 /* LicenceAgreementViewController.m in Sources */,
 				2D232D9318E56E45008D06C8 /* PrintSettingsOptionsHeaderCell.m in Sources */,
+				34E9CFA91A820E7F00FDB545 /* LicenseAgreementViewControllerTest.m in Sources */,
 				2D1F23241900D57300301D1E /* SettingsViewController.m in Sources */,
 				2800D043193567BD002FA1D4 /* SearchingIndicator.m in Sources */,
 				2D1F231D1900D3C700301D1E /* SimplePing.m in Sources */,
