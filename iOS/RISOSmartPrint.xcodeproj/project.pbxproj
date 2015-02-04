@@ -118,7 +118,6 @@
 		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
 		31F5B69719248DDB002A29AD /* PrintSettingsPrinterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */; };
 		348165FC1A81F0DB00C37570 /* LicenceAgreementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 348165FB1A81F0DB00C37570 /* LicenceAgreementViewController.m */; };
-		34E9CFA91A820E7F00FDB545 /* LicenseAgreementViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E9CFA81A820E7F00FDB545 /* LicenseAgreementViewControllerTest.m */; };
 		5F3145861A30734D00F482A8 /* I000.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145421A30734D00F482A8 /* I000.png */; };
 		5F3145871A30734D00F482A8 /* I001.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145441A30734D00F482A8 /* I001.png */; };
 		5F3145881A30734D00F482A8 /* I002.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145461A30734D00F482A8 /* I002.png */; };
@@ -1780,7 +1779,6 @@
 				2D1F23AB1900FF5800301D1E /* CXAlertButtonItem.m in Sources */,
 				348165FC1A81F0DB00C37570 /* LicenceAgreementViewController.m in Sources */,
 				2D232D9318E56E45008D06C8 /* PrintSettingsOptionsHeaderCell.m in Sources */,
-				34E9CFA91A820E7F00FDB545 /* LicenseAgreementViewControllerTest.m in Sources */,
 				2D1F23241900D57300301D1E /* SettingsViewController.m in Sources */,
 				2800D043193567BD002FA1D4 /* SearchingIndicator.m in Sources */,
 				2D1F231D1900D3C700301D1E /* SimplePing.m in Sources */,
