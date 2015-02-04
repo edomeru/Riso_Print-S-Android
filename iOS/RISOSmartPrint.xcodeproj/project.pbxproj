@@ -118,6 +118,7 @@
 		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
 		31F5B69719248DDB002A29AD /* PrintSettingsPrinterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */; };
 		348165FC1A81F0DB00C37570 /* LicenceAgreementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 348165FB1A81F0DB00C37570 /* LicenceAgreementViewController.m */; };
+		34BA4BBF1A821F780043A1BA /* license.html in Resources */ = {isa = PBXBuildFile; fileRef = 34BA4BC11A821F780043A1BA /* license.html */; };
 		5F3145861A30734D00F482A8 /* I000.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145421A30734D00F482A8 /* I000.png */; };
 		5F3145871A30734D00F482A8 /* I001.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145441A30734D00F482A8 /* I001.png */; };
 		5F3145881A30734D00F482A8 /* I002.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145461A30734D00F482A8 /* I002.png */; };
@@ -511,6 +512,9 @@
 		31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListViewController.m; sourceTree = "<group>"; };
 		348165FA1A81F0DB00C37570 /* LicenceAgreementViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LicenceAgreementViewController.h; sourceTree = "<group>"; };
 		348165FB1A81F0DB00C37570 /* LicenceAgreementViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LicenceAgreementViewController.m; sourceTree = "<group>"; };
+		34BA4BC21A821F7B0043A1BA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/license.html; sourceTree = "<group>"; };
+		34BA4BC31A821F7C0043A1BA /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = ja; path = ja.lproj/license.html; sourceTree = "<group>"; };
+		34BA4BC41A821F7E0043A1BA /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = fr; path = fr.lproj/license.html; sourceTree = "<group>"; };
 		34E9CFA81A820E7F00FDB545 /* LicenseAgreementViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LicenseAgreementViewControllerTest.m; sourceTree = "<group>"; };
 		5F3145431A30734D00F482A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/I000.png; sourceTree = "<group>"; };
 		5F3145451A30734D00F482A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/I001.png; sourceTree = "<group>"; };
@@ -1099,6 +1103,7 @@
 				5F3145841A30734D00F482A8 /* W016.png */,
 				2D1F23C4190104D900301D1E /* help.html */,
 				2D1F23C6190104D900301D1E /* legal.html */,
+				34BA4BC11A821F780043A1BA /* license.html */,
 			);
 			path = HTML;
 			sourceTree = "<group>";
@@ -1746,6 +1751,7 @@
 				5F31459B1A30734D00F482A8 /* W006.png in Resources */,
 				5F3145A71A30734D00F482A8 /* W016.png in Resources */,
 				5F3145931A30734D00F482A8 /* title.png in Resources */,
+				34BA4BBF1A821F780043A1BA /* license.html in Resources */,
 				2D1F23CA190104D900301D1E /* help.html in Resources */,
 				5F3145991A30734D00F482A8 /* W004.png in Resources */,
 				5F31459C1A30734D00F482A8 /* W007.png in Resources */,
@@ -1938,6 +1944,16 @@
 				5F3145EF1A307B4200F482A8 /* fr */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		34BA4BC11A821F780043A1BA /* license.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34BA4BC21A821F7B0043A1BA /* en */,
+				34BA4BC31A821F7C0043A1BA /* ja */,
+				34BA4BC41A821F7E0043A1BA /* fr */,
+			);
+			name = license.html;
 			sourceTree = "<group>";
 		};
 		5F3145421A30734D00F482A8 /* I000.png */ = {
@@ -2299,7 +2315,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;

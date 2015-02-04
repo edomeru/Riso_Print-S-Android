@@ -9,8 +9,9 @@
 #import "LicenceAgreementViewController.h"
 #import "PrintPreviewViewController.h"
 #import "AlertHelper.h"
-#define LICENCE_AGREEMENT_KEY @"licence_agreement"
 
+#define LICENCE_AGREEMENT_KEY @"licence_agreement"
+#define LICENSE_HTML @"license"
 @interface LicenceAgreementViewController()
 
 /**
@@ -79,7 +80,7 @@
 
 -(void) setup
 {
-    NSURL *licenseAgreementUrl = [[NSBundle mainBundle] URLForResource:@"legal" withExtension:@"html"];
+    NSURL *licenseAgreementUrl = [[NSBundle mainBundle] URLForResource:LICENSE_HTML withExtension:@"html"];
     [self.contentWebView loadRequest:[NSURLRequest requestWithURL:licenseAgreementUrl]];
     
     [self.okBtn     setTitle:NSLocalizedString(@"IDS_LBL_AGREE_TO_LICENSE", @"") forState:UIControlStateNormal];
