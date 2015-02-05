@@ -83,8 +83,8 @@
     NSURL *licenseAgreementUrl = [[NSBundle mainBundle] URLForResource:LICENSE_HTML withExtension:@"html"];
     [self.contentWebView loadRequest:[NSURLRequest requestWithURL:licenseAgreementUrl]];
     
-    [self.okBtn     setTitle:NSLocalizedString(@"IDS_LBL_AGREE_TO_LICENSE", @"") forState:UIControlStateNormal];
-    [self.cancelBtn setTitle:NSLocalizedString(@"IDS_LBL_DISAGREE_TO_LICENSE", @"") forState:UIControlStateNormal];
+    [self.okBtn     setTitle:NSLocalizedString(@"IDS_LBL_AGREE", @"") forState:UIControlStateNormal];
+    [self.cancelBtn setTitle:NSLocalizedString(@"IDS_LBL_DISAGREE", @"") forState:UIControlStateNormal];
     
 }
 

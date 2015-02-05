@@ -144,6 +144,7 @@
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "Not enough free space on device.";
 "IDS_ERR_MSG_NETWORK_ERROR" = "No network available.";
 "IDS_ERR_MSG_DB_FAILURE" = "Database failure. Please restart the application. If the problem persists, please reinstall the application.";
-"IDS_ERR_MSG_DISAGREE_TO_LICENSE_AGREEMENT" = "User must agree to License Agreement to continue using the app";
-"IDS_LBL_AGREE_TO_LICENSE" = "Agree";
-"IDS_LBL_DISAGREE_TO_LICENSE" = "Disagree";
+"IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "User must agree to License Agreement to continue using the app";
+"IDS_LBL_AGREE" = "Agree";
+"IDS_LBL_DISAGREE" = "Disagree";
+"IDS_LBL_LICENSE" = "End User License Agreement";
