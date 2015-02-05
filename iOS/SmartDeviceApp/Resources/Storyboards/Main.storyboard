@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14A361p" targetRuntime="iOS.CocoaTouch" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Root View Controller-->
@@ -1097,7 +1098,7 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <view contentMode="right" translatesAutoresizingMaskIntoConstraints="NO" id="Ipo-OE-nZQ" userLabel="Separator">
+                                        <view contentMode="right" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ipo-OE-nZQ" userLabel="Separator">
                                             <rect key="frame" x="20" y="57" width="300" height="3"/>
                                             <color key="backgroundColor" red="0.80392156859999997" green="0.80392156859999997" blue="0.80392156859999997" alpha="1" colorSpace="calibratedRGB"/>
                                         </view>
@@ -1472,20 +1473,50 @@
                                 </connections>
                             </button>
                             <webView contentMode="scaleToFill" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="80k-dg-om7">
-                                <rect key="frame" x="16" y="8" width="288" height="413"/>
+                                <rect key="frame" x="16" y="49" width="288" height="372"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </webView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6so-vM-kBP" userLabel="Header">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="End User License Agreement" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bXn-wb-WF8">
+                                        <rect key="frame" x="15" y="-1" width="295" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="xKi-pS-mDl"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_LICENSE"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="bXn-wb-WF8" secondAttribute="centerY" id="QuI-d0-u1I"/>
+                                    <constraint firstItem="bXn-wb-WF8" firstAttribute="leading" secondItem="6so-vM-kBP" secondAttribute="leading" constant="15" id="k7n-WF-7Cs"/>
+                                    <constraint firstAttribute="height" constant="48" id="t0J-iH-3yM"/>
+                                    <constraint firstAttribute="trailing" secondItem="bXn-wb-WF8" secondAttribute="trailing" constant="10" id="t2Q-uy-3BC"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="6so-vM-kBP" firstAttribute="top" secondItem="J6c-bs-qcr" secondAttribute="bottom" id="10s-7j-fED"/>
                             <constraint firstItem="4Ud-xr-1He" firstAttribute="top" secondItem="zmQ-Cz-CmV" secondAttribute="bottom" constant="8" id="3Z3-jG-jOw"/>
+                            <constraint firstItem="6so-vM-kBP" firstAttribute="leading" secondItem="LUH-QZ-LJc" secondAttribute="leadingMargin" constant="-16" id="3lp-u1-NGb"/>
                             <constraint firstItem="4Ud-xr-1He" firstAttribute="top" secondItem="Ki8-Ka-kTT" secondAttribute="bottom" constant="8" id="3x4-Xc-823"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="6so-vM-kBP" secondAttribute="trailing" constant="-16" id="4Yy-sD-Ngn"/>
                             <constraint firstItem="80k-dg-om7" firstAttribute="trailing" secondItem="LUH-QZ-LJc" secondAttribute="trailingMargin" id="DKQ-om-GG8"/>
-                            <constraint firstItem="80k-dg-om7" firstAttribute="top" secondItem="J6c-bs-qcr" secondAttribute="bottom" constant="8" id="SFg-SZ-hfh"/>
+                            <constraint firstItem="6so-vM-kBP" firstAttribute="top" secondItem="J6c-bs-qcr" secondAttribute="bottom" id="Hld-7k-9cp"/>
+                            <constraint firstItem="80k-dg-om7" firstAttribute="top" secondItem="bXn-wb-WF8" secondAttribute="bottom" id="USB-TO-kC2"/>
                             <constraint firstItem="zmQ-Cz-CmV" firstAttribute="width" secondItem="Ki8-Ka-kTT" secondAttribute="width" id="VRR-2Y-XYb"/>
                             <constraint firstItem="zmQ-Cz-CmV" firstAttribute="leading" secondItem="LUH-QZ-LJc" secondAttribute="leadingMargin" id="Yph-u9-zpk"/>
                             <constraint firstItem="80k-dg-om7" firstAttribute="leading" secondItem="LUH-QZ-LJc" secondAttribute="leadingMargin" id="evS-dB-PmA"/>
+                            <constraint firstItem="6so-vM-kBP" firstAttribute="leading" secondItem="LUH-QZ-LJc" secondAttribute="leading" id="oQv-y2-Ky1"/>
                             <constraint firstItem="Ki8-Ka-kTT" firstAttribute="trailing" secondItem="LUH-QZ-LJc" secondAttribute="trailingMargin" id="qWR-8L-G9A"/>
+                            <constraint firstAttribute="trailing" secondItem="6so-vM-kBP" secondAttribute="trailing" id="slb-58-R8u"/>
                             <constraint firstItem="zmQ-Cz-CmV" firstAttribute="top" secondItem="80k-dg-om7" secondAttribute="bottom" constant="8" id="sng-si-k9B"/>
                             <constraint firstItem="zmQ-Cz-CmV" firstAttribute="height" secondItem="Ki8-Ka-kTT" secondAttribute="height" id="vU4-L2-hZY"/>
                             <constraint firstItem="Ki8-Ka-kTT" firstAttribute="leading" secondItem="zmQ-Cz-CmV" secondAttribute="trailing" constant="8" id="xeb-DC-y2A"/>
@@ -1673,10 +1704,10 @@
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Mc-ty-cvj" userLabel="Content Parent View">
-                                <rect key="frame" x="0.0" y="48" width="320" height="432"/>
+                                <rect key="frame" x="0.0" y="48" width="320" height="452"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dM2-UF-FWF" userLabel="Content" customClass="DefaultView">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="412"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="432"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ApG-zv-C5a" userLabel="Row Header - Card Reader">
                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
