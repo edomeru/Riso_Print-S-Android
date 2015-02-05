@@ -87,7 +87,7 @@
     [self.cancelBtn setTitle:NSLocalizedString(@"IDS_LBL_DISAGREE", @"") forState:UIControlStateNormal];
     
 }
-
+#pragma mark - IBActions
 -(IBAction) okAction:(id)sender
 {
     [self setLicenseAgreement:YES];
@@ -103,6 +103,8 @@
            ];
 }
 
+#pragma mark - public functions 
+
 +(BOOL) hasConfirmedToLicenseAgreement
 {
     
@@ -111,6 +113,8 @@
     
 }
 
+
+#pragma mark - helper functions
 -(void) setLicenseAgreement:(BOOL) doesAgree
 {
     NSUserDefaults *defaultSettings = [NSUserDefaults standardUserDefaults];
