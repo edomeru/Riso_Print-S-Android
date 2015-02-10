@@ -1,5 +1,5 @@
 //
-//  LegalViewController.h
+//  LicenseAgreementViewController.m
 //  SmartDeviceApp
 //
 //  Created by a-LINK Group.
