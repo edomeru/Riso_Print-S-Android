@@ -1738,7 +1738,7 @@
                                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                         <nil key="highlightedColor"/>
                                                         <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_LOGIN_ID"/>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_OWNER_NAME"/>
                                                         </userDefinedRuntimeAttributes>
                                                     </label>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Log-in ID" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="sIG-C9-aXG">

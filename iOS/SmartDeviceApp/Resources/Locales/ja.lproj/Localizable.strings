@@ -1,4 +1,4 @@
-/*WordingList*/
+/*WordingList_Alpha1*/
 "IDS_APP_NAME" = "RISO PRINT-S";
 "IDS_APP_LAUNCHER_NAME" = "RISO PRINT-S";
 "IDS_LBL_SAVE" = "保存";
@@ -27,7 +27,6 @@
 "IDS_LBL_DEFAULT_PRINT_SETTINGS" = "デフォルト印刷設定";
 "IDS_LBL_OWNER_NAME" = "オーナー名";
 "IDS_LBL_AUTHENTICATION" = "認証";
-"IDS_LBL_LOGIN_ID" = "";
 "IDS_LBL_PRINT_SETTINGS" = "印刷設定";
 "IDS_LBL_PAGE_DISPLAYED" = "ページ %d / %d";
 "IDS_LBL_PRINT" = "プリント";
@@ -64,7 +63,7 @@
 "IDS_LBL_PAPERTYPE_ANY" = "指定しない";
 "IDS_LBL_PAPERTYPE_PLAIN" = "普通紙";
 "IDS_LBL_PAPERTYPE_IJPAPER" = "ＩＪ用紙";
-"IDS_LBL_PAPERTYPE_MATTCOATED" = "ＩＪマット用";
+"IDS_LBL_PAPERTYPE_MATTCOATED" = "ＩＪマット用紙";
 "IDS_LBL_PAPERTYPE_HIGHQUALITY" = "高品位紙";
 "IDS_LBL_PAPERTYPE_CARDIJ" = "ＩＪハガキ";
 "IDS_LBL_PAPERTYPE_LWPAPER" = "軽量紙";
@@ -123,9 +122,7 @@
 "IDS_LBL_PRINTERS_EMPTY" = "プリンターがありません。";
 "IDS_LBL_PRINTJOBHISTORY_EMPTY" = "印刷履歴がありません。";
 "IDS_LBL_PRINTER_SEARCH_EMPTY" = "プリンターが見つかりません。";
-"IDS_LBL_YES" = "Yes";
-"IDS_LBL_NO" = "No";
-"IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" = "追加に成功しました";
+"IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" = "追加に成功しました。";
 "IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" = "プリンターが見つかりません。";
 "IDS_INFO_MSG_PRINTING" = "プリント中…";
 "IDS_INFO_MSG_DELETE_JOBS_TITLE" = "履歴を削除";
@@ -144,7 +141,9 @@
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "デバイスの空き容量が不足しています。";
 "IDS_ERR_MSG_NETWORK_ERROR" = "ネットワークに接続できません。";
 "IDS_ERR_MSG_DB_FAILURE" = "内部データにアクセスできません。\n再起動してみてください。\n再起動しても解消されない場合は、再インストールしてください。";
-"IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "User must agree to License Agreement to continue using the app";
-"IDS_LBL_AGREE" = "同意する";
-"IDS_LBL_DISAGREE" = "Disagree";
+"IDS_LBL_YES" = "Yes";
+"IDS_LBL_NO" = "No";
 "IDS_LBL_LICENSE" = "使用許諾契約";
+"IDS_LBL_PAPERTYPE_ROUGHPAPER" = "更紙";
+"IDS_LBL_Agree" = "同意する";
+

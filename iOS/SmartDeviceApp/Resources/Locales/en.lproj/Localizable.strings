@@ -26,8 +26,7 @@
 "IDS_LBL_PORT_LPR" = "LPR";
 "IDS_LBL_DEFAULT_PRINT_SETTINGS" = "Default Print Settings";
 "IDS_LBL_OWNER_NAME" = "Owner";
-"IDS_LBL_AUTHENTICATION" = "Authentication";
-"IDS_LBL_LOGIN_ID" = "";
+"IDS_LBL_AUTHENTICATION" = "Authentification";
 "IDS_LBL_PRINT_SETTINGS" = "Print Settings";
 "IDS_LBL_PAGE_DISPLAYED" = "Page %d / %d";
 "IDS_LBL_PRINT" = "Print";
@@ -123,8 +122,6 @@
 "IDS_LBL_PRINTERS_EMPTY" = "No Printers";
 "IDS_LBL_PRINTJOBHISTORY_EMPTY" = "No Print Job History";
 "IDS_LBL_PRINTER_SEARCH_EMPTY" = "No Printers Found";
-"IDS_LBL_YES" = "Yes";
-"IDS_LBL_NO" = "No";
 "IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL" = "Added Successfully";
 "IDS_INFO_MSG_WARNING_CANNOT_FIND_PRINTER" = "Warning, Cannot find Printer.";
 "IDS_INFO_MSG_PRINTING" = "Printing...";
@@ -136,7 +133,7 @@
 "IDS_ERR_MSG_INVALID_IP_ADDRESS" = "Please enter a valid IP Address.";
 "IDS_ERR_MSG_MAX_PRINTER_COUNT" = "Saved Printer reached maximum count.";
 "IDS_ERR_MSG_NO_SELECTED_PRINTER" = "Please register a printer.";
-"IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "Please check the password you entered";
+"IDS_ERR_MSG_PDF_WRONG_PASSWORD" = "Please check the password you entered.";
 "IDS_ERR_MSG_OPEN_FAILED" = "Please select a valid file.";
 "IDS_ERR_MSG_PDF_ENCRYPTED" = "PDF Encryption is not supported.";
 "IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" = "File does not allow printing.";
@@ -144,7 +141,9 @@
 "IDS_ERR_MSG_NOT_ENOUGH_SPACE" = "Not enough free space on device.";
 "IDS_ERR_MSG_NETWORK_ERROR" = "No network available.";
 "IDS_ERR_MSG_DB_FAILURE" = "Database failure. Please restart the application. If the problem persists, please reinstall the application.";
-"IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "User must agree to License Agreement to continue using the app";
-"IDS_LBL_AGREE" = "Agree";
-"IDS_LBL_DISAGREE" = "Disagree";
+"IDS_LBL_YES" = "Yes";
+"IDS_LBL_NO" = "No";
 "IDS_LBL_LICENSE" = "End User License Agreement";
+"IDS_LBL_PAPERTYPE_ROUGHPAPER" = "Rough Paper";
+"IDS_LBL_Agree" = "Agree";
+
