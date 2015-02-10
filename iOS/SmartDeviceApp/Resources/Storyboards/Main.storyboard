@@ -1447,13 +1447,10 @@
                         <viewControllerLayoutGuide type="top" id="J6c-bs-qcr"/>
                         <viewControllerLayoutGuide type="bottom" id="4Ud-xr-1He"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="LUH-QZ-LJc" customClass="Licen">
+                    <view key="view" contentMode="scaleToFill" id="LUH-QZ-LJc">
                         <rect key="frame" x="0.0" y="20" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <webView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="spG-V5-Bm7">
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </webView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ki8-Ka-kTT">
                                 <rect key="frame" x="164" y="429" width="140" height="44"/>
                                 <state key="normal" title="Button">
