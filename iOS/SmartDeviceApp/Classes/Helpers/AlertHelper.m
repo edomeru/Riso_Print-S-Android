@@ -103,7 +103,7 @@
             alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @"");
             break;
         case kAlertResultErrorLicenseAgreementDisagree:
-            alertMsg = NSLocalizedString(IDS_ERR_MSG_DISAGREE_TO_LICENSE_AGREEMENT, @"");
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_DISAGREE_TO_LICENSE, @"");
             break;
             
         case kAlertResultErrDB:
