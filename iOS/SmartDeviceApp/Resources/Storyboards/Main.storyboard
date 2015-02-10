@@ -1439,10 +1439,10 @@
             </objects>
             <point key="canvasLocation" x="651" y="2188"/>
         </scene>
-        <!--Licence Agreement View Controller-->
+        <!--License Agreement View Controller-->
         <scene sceneID="5EL-vG-WM6">
             <objects>
-                <viewController storyboardIdentifier="LicenceAgreementViewController" id="X93-Uc-G1K" customClass="LicenceAgreementViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LicenceAgreementViewController" id="X93-Uc-G1K" customClass="LicenseAgreementViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="J6c-bs-qcr"/>
                         <viewControllerLayoutGuide type="bottom" id="4Ud-xr-1He"/>
@@ -1469,11 +1469,6 @@
                                     <action selector="okAction:" destination="X93-Uc-G1K" eventType="touchUpInside" id="tvn-qd-wQZ"/>
                                 </connections>
                             </button>
-                            <webView contentMode="scaleToFill" scalesPageToFit="YES" allowsInlineMediaPlayback="NO" mediaPlaybackRequiresUserAction="NO" mediaPlaybackAllowsAirPlay="NO" keyboardDisplayRequiresUserAction="NO" translatesAutoresizingMaskIntoConstraints="NO" id="80k-dg-om7">
-                                <rect key="frame" x="16" y="49" width="288" height="372"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <dataDetectorType key="dataDetectorTypes"/>
-                            </webView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6so-vM-kBP" userLabel="Header">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
                                 <subviews>
@@ -1498,17 +1493,20 @@
                                     <constraint firstAttribute="trailing" secondItem="bXn-wb-WF8" secondAttribute="trailing" constant="10" id="t2Q-uy-3BC"/>
                                 </constraints>
                             </view>
+                            <webView contentMode="scaleToFill" scalesPageToFit="YES" allowsInlineMediaPlayback="NO" mediaPlaybackRequiresUserAction="NO" mediaPlaybackAllowsAirPlay="NO" keyboardDisplayRequiresUserAction="NO" translatesAutoresizingMaskIntoConstraints="NO" id="80k-dg-om7">
+                                <rect key="frame" x="16" y="56" width="288" height="365"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <dataDetectorType key="dataDetectorTypes"/>
+                            </webView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="6so-vM-kBP" firstAttribute="top" secondItem="J6c-bs-qcr" secondAttribute="bottom" id="10s-7j-fED"/>
                             <constraint firstItem="4Ud-xr-1He" firstAttribute="top" secondItem="zmQ-Cz-CmV" secondAttribute="bottom" constant="8" id="3Z3-jG-jOw"/>
-                            <constraint firstItem="6so-vM-kBP" firstAttribute="leading" secondItem="LUH-QZ-LJc" secondAttribute="leadingMargin" constant="-16" id="3lp-u1-NGb"/>
                             <constraint firstItem="4Ud-xr-1He" firstAttribute="top" secondItem="Ki8-Ka-kTT" secondAttribute="bottom" constant="8" id="3x4-Xc-823"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="6so-vM-kBP" secondAttribute="trailing" constant="-16" id="4Yy-sD-Ngn"/>
                             <constraint firstItem="80k-dg-om7" firstAttribute="trailing" secondItem="LUH-QZ-LJc" secondAttribute="trailingMargin" id="DKQ-om-GG8"/>
                             <constraint firstItem="6so-vM-kBP" firstAttribute="top" secondItem="J6c-bs-qcr" secondAttribute="bottom" id="Hld-7k-9cp"/>
-                            <constraint firstItem="80k-dg-om7" firstAttribute="top" secondItem="bXn-wb-WF8" secondAttribute="bottom" id="USB-TO-kC2"/>
+                            <constraint firstItem="80k-dg-om7" firstAttribute="top" secondItem="6so-vM-kBP" secondAttribute="bottom" constant="8" id="RLg-qU-lxD"/>
                             <constraint firstItem="zmQ-Cz-CmV" firstAttribute="width" secondItem="Ki8-Ka-kTT" secondAttribute="width" id="VRR-2Y-XYb"/>
                             <constraint firstItem="zmQ-Cz-CmV" firstAttribute="leading" secondItem="LUH-QZ-LJc" secondAttribute="leadingMargin" id="Yph-u9-zpk"/>
                             <constraint firstItem="80k-dg-om7" firstAttribute="leading" secondItem="LUH-QZ-LJc" secondAttribute="leadingMargin" id="evS-dB-PmA"/>
@@ -1529,7 +1527,7 @@
                         <outlet property="cancelBtn" destination="Ki8-Ka-kTT" id="tqe-zM-HI6"/>
                         <outlet property="contentWebView" destination="80k-dg-om7" id="LEC-jW-dko"/>
                         <outlet property="okBtn" destination="zmQ-Cz-CmV" id="pXb-VH-MT7"/>
-                        <segue destination="3J8-E3-ZCb" kind="custom" identifier="LicenseAgreement_PrintPreview" customClass="ReplaceSegue" id="eWD-cA-0HX"/>
+                        <segue destination="3J8-E3-ZCb" kind="custom" identifier="LicenseAgreement-PrintPreview" customClass="ReplaceSegue" id="eWD-cA-0HX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="42B-7c-gs6" userLabel="First Responder" sceneMemberID="firstResponder"/>

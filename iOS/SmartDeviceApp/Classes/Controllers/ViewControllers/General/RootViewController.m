@@ -13,7 +13,7 @@
 #import "UIViewController+Segue.h"
 #import "PDFFileManager.h"
 
-#import "LicenceAgreementViewController.h"
+#import "LicenseAgreementViewController.h"
 
 @interface RootViewController ()
 
@@ -47,12 +47,11 @@ static RootViewController *container;
     [super viewDidLoad];
     
     
-    if(![LicenceAgreementViewController hasConfirmedToLicenseAgreement])
+    if(![LicenseAgreementViewController hasConfirmedToLicenseAgreement])
     {
         // if user has not confirmed to license agreement yet
         // open license agreement
-        
-        [self performSegueWithIdentifier:@"Root-LicenseAgreement" sender:self];
+        [self performSegueTo:[LicenseAgreementViewController class]];
     }
     else
     {

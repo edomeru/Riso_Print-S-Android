@@ -1,18 +1,19 @@
 //
-//  LicenceAgreementViewController.m
-//  RISOSmartPrint
+//  LegalViewController.h
+//  SmartDeviceApp
 //
-//  Created by Gino on 2/4/15.
-//  Copyright (c) 2015 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
-#import "LicenceAgreementViewController.h"
+#import "UIViewController+Segue.h"
+#import "LicenseAgreementViewController.h"
 #import "PrintPreviewViewController.h"
 #import "AlertHelper.h"
 
-#define LICENCE_AGREEMENT_KEY @"licence_agreement"
+#define LICENCE_AGREEMENT_KEY @"license_agreement"
 #define LICENSE_HTML @"license"
-@interface LicenceAgreementViewController()
+@interface LicenseAgreementViewController()
 
 /**
  * Reference to the view for displaying the License agreement content.
@@ -59,7 +60,7 @@
 
 @end
 
-@implementation LicenceAgreementViewController
+@implementation LicenseAgreementViewController
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -91,7 +92,7 @@
 -(IBAction) okAction:(id)sender
 {
     [self setLicenseAgreement:YES];
-    [self performSegueWithIdentifier:@"LicenseAgreement_PrintPreview" sender:self];
+    [self performSegueTo:[PrintPreviewViewController class]];
 
 }
 

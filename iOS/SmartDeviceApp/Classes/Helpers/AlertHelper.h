@@ -57,7 +57,7 @@ typedef enum
     kAlertResultErrDB, /**< Message when a database related error occurs. */
     
     // license agreement errors
-    kAlertResultErrorLicenseAgreementDisagree //when user doesnt accept license agreement
+    kAlertResultErrorLicenseAgreementDisagree /**< Message when user doesnt accept license agreement. */
     
     
 } kAlertResult;
