@@ -75,7 +75,7 @@
     [super viewDidLoad];
     
     // Set placeholder
-    self.loginId.placeholder = NSLocalizedString(IDS_LBL_LOGIN_ID, @"");
+    self.loginId.placeholder = NSLocalizedString(IDS_LBL_OWNER_NAME, @"");
     
     //init text fields from values in plist
     //get current value of settings user defaults
