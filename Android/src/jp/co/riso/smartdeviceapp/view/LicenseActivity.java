@@ -27,11 +27,10 @@ import jp.co.riso.smartprint.R;
 
 public class LicenseActivity extends BaseActivity implements OnTouchListener {
     
-    protected SDAWebView mWebView = null;
+    private SDAWebView mWebView = null;
     
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         setContentView(R.layout.fragment_helplegal);
         
         TextView textView = (TextView) this.findViewById(R.id.actionBarTitle);
@@ -78,7 +77,7 @@ public class LicenseActivity extends BaseActivity implements OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN){
+        if (event.getAction() == MotionEvent.ACTION_UP){
             if (v.getId() == R.id.licenseAgreeButton){
              
                 // save to shared preferences
