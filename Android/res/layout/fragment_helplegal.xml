@@ -5,18 +5,40 @@
     android:orientation="vertical"
     android:splitMotionEvents="false" >
 
-    <include layout="@layout/actionbar_main" />
-    
+    <include
+        layout="@layout/actionbar_main" />
+
     <FrameLayout
         android:id="@+id/rootView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="318dp"
+        android:layout_weight="0.33" >
 
         <jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
             android:id="@+id/contentWebView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        
+            android:layout_height="fill_parent" />
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/LicenseButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" >
+
+        <Button
+            android:id="@+id/licenseAgreeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/licenseDisagreeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Button" />
+    </LinearLayout>
 
 </LinearLayout>
