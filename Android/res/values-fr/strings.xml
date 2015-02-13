@@ -34,7 +34,6 @@
     <string name="ids_lbl_default_print_settings">Prm d\'impress par déf</string>
     <string name="ids_lbl_owner_name">Propriétaire</string>
     <string name="ids_lbl_authentication">Authentification</string>
-    <string name="ids_lbl_login_id"></string>    
     <string name="ids_lbl_print_settings">Param. impress.</string>
     <string name="ids_lbl_page_displayed" formatted="false">Page %d / %d</string>
     <string name="ids_lbl_print">Imprimer</string>
@@ -85,13 +84,13 @@
     <string name="ids_lbl_imposition">Imposition</string>
     <string name="ids_lbl_imposition_2up">2 pages</string>
     <string name="ids_lbl_imposition_4up">4 pages</string>
-    <string name="ids_lbl_imposition_order">Ordre mise en page</string>
+    <string name="ids_lbl_imposition_order">Ordre</string>
     <string name="ids_lbl_imposition_order_2up_rl">Droite à gauche </string>
     <string name="ids_lbl_imposition_order_2up_lr">Gauche à droite </string>
     <string name="ids_lbl_imposition_order_4up_ulb">Haut gauche vers bas</string>
-    <string name="ids_lbl_imposition_order_4up_ulr">Haut gauche v droite</string>
+    <string name="ids_lbl_imposition_order_4up_ulr">Haut gauche à droite</string>
     <string name="ids_lbl_imposition_order_4up_urb">Haut droite vers bas</string>
-    <string name="ids_lbl_imposition_order_4up_url">Haut droite v gauche</string>
+    <string name="ids_lbl_imposition_order_4up_url">Haut droite à gauche</string>
     <string name="ids_lbl_finishing">Finition</string>
     <string name="ids_lbl_sort">Assembler</string>
     <string name="ids_lbl_sort_perpage">Grouper</string>
@@ -103,7 +102,6 @@
     <string name="ids_lbl_booklet_layout">Sens de l\'imposition</string>
     <string name="ids_lbl_booklet_layout_forward">Gauche à droite</string>
     <string name="ids_lbl_booklet_layout_reverse">Droite à gauche</string>
-    <string name="ids_lbl_booklet_layout_tb">Haut vers bas</string>
     <string name="ids_lbl_finishingside">Côté reliure</string>
     <string name="ids_lbl_finishingside_left">Gauche</string>
     <string name="ids_lbl_finishingside_top">Haut</string>
@@ -141,7 +139,6 @@
     <string name="ids_err_msg_cannot_add_printer">L\'imprimante existe déjà dans la liste enregistrée.</string>
     <string name="ids_err_msg_invalid_ip_address">Veuillez entrer une adresse IP valide</string>
     <string name="ids_err_msg_max_printer_count">Le nombre d\'imprimantes enregistrées a atteint le maximum</string>
-    <string name="ids_err_msg_delete_failed">Impossible de supprimer</string>
     <string name="ids_err_msg_no_selected_printer">Veuillez enregistrer une imprimante</string>
     <string name="ids_err_msg_pdf_wrong_password">Veuillez vérifier le mot de passe que vous avez saisi</string>
     <string name="ids_err_msg_open_failed">Veuillez sélectionner un fichier valide</string>
@@ -153,5 +150,10 @@
     <string name="ids_err_msg_db_failure">Database failure. Please restart the application. If the problem persists, please reinstall the application.</string>
     <string name="ids_lbl_yes">Yes</string>
     <string name="ids_lbl_no">No</string>
+    <string name="ids_lbl_license">End User License Agreement</string>
+    <string name="ids_lbl_papertype_roughpaper"></string>
+    <string name="ids_lbl_agree">Agree</string>
+    <string name="ids_lbl_disagree">Disagree</string>
+    <string name="ids_err_msg_disagree_to_license">User must agree to License Agreement to continue using the app</string>
 
 </resources>
