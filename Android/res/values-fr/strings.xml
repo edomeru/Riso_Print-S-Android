@@ -85,13 +85,13 @@
     <string name="ids_lbl_imposition">Imposition</string>
     <string name="ids_lbl_imposition_2up">2 pages</string>
     <string name="ids_lbl_imposition_4up">4 pages</string>
-    <string name="ids_lbl_imposition_order">Ordre mise en page</string>
+    <string name="ids_lbl_imposition_order">Ordre</string>
     <string name="ids_lbl_imposition_order_2up_rl">Droite à gauche </string>
     <string name="ids_lbl_imposition_order_2up_lr">Gauche à droite </string>
     <string name="ids_lbl_imposition_order_4up_ulb">Haut gauche vers bas</string>
-    <string name="ids_lbl_imposition_order_4up_ulr">Haut gauche v droite</string>
+    <string name="ids_lbl_imposition_order_4up_ulr">Haut gauche à droite</string>
     <string name="ids_lbl_imposition_order_4up_urb">Haut droite vers bas</string>
-    <string name="ids_lbl_imposition_order_4up_url">Haut droite v gauche</string>
+    <string name="ids_lbl_imposition_order_4up_url">Haut droite à gauche</string>
     <string name="ids_lbl_finishing">Finition</string>
     <string name="ids_lbl_sort">Assembler</string>
     <string name="ids_lbl_sort_perpage">Grouper</string>

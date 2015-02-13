@@ -71,7 +71,7 @@
     <string name="ids_lbl_papertype_any">指定しない</string>
     <string name="ids_lbl_papertype_plain">普通紙</string>
     <string name="ids_lbl_papertype_ijpaper">ＩＪ用紙</string>
-    <string name="ids_lbl_papertype_mattcoated">ＩＪマット用</string>
+    <string name="ids_lbl_papertype_mattcoated">ＩＪマット用紙</string>
     <string name="ids_lbl_papertype_highquality">高品位紙</string>
     <string name="ids_lbl_papertype_cardij">ＩＪハガキ</string>
     <string name="ids_lbl_papertype_lwpaper">軽量紙</string>
