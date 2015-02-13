@@ -95,10 +95,10 @@ public class LicenseActivity extends BaseActivity implements OnTouchListener {
                 try {
                     startActivity(launchIntent);
                 } catch (ActivityNotFoundException e) {
-                    Logger.logError(SplashActivity.class, "Fatal Error: Intent MainActivity Not Found is not defined");
+                    Logger.logError(LicenseActivity.class, "Fatal Error: Intent MainActivity Not Found is not defined");
                     throw e;
                 } catch (AndroidRuntimeException e) {
-                    Logger.logError(SplashActivity.class, "Fatal Error: Android runtime");
+                    Logger.logError(LicenseActivity.class, "Fatal Error: Android runtime");
                     throw e;
                 }
                 
