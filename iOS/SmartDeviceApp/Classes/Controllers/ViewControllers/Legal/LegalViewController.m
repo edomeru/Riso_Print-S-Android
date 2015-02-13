@@ -18,7 +18,7 @@
 
 #define DOC_REPLACE_STRING @"document.getElementById('%@').innerHTML = '%@'"
 
-#define USE_INFO_PLIST_COPYRIGHT 0
+#define USE_INFO_PLIST_COPYRIGHT 1
 
 @interface LegalViewController ()<UIWebViewDelegate>
 
