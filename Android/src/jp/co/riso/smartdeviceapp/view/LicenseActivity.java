@@ -35,6 +35,7 @@ public class LicenseActivity extends BaseActivity implements OnTouchListener {
         
         TextView textView = (TextView) this.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_license);
+        textView.setPadding(18, 0, 0, 0);
         
         mWebView = (SDAWebView) this.findViewById(R.id.contentWebView);              
         
