@@ -17,7 +17,7 @@
 #import "PrintPreviewHelper.h"
 #import "AlertHelper.h"
 #import "PrinterManager.h"
-
+#import "Printer.h"
 #define PREVIEW_MARGIN 10.0f
 
 @interface PrintPreviewViewController ()
@@ -320,7 +320,8 @@
         [self setupPreview];
         
         // Printer check
-        if (self.printDocument.printer == nil)
+        //check if printer of the printdocument has already been deleted from DB
+        if (self.printDocument.printer == nil || self.printDocument.printer.managedObjectContext == nil)
         {
             self.printDocument.printer = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
         }

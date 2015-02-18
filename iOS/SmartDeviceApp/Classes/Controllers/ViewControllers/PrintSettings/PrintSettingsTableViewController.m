@@ -270,14 +270,12 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         // Launched from preview - load current print settings and selected printer
         self.printDocument = [[PDFFileManager sharedManager] printDocument];
         //check if printer of the printdocument has already been deleted from DB
-        if(self.printDocument.printer.managedObjectContext != nil)
+        if(self.printDocument.printer.managedObjectContext == nil)
         {
-            self.printer = self.printDocument.printer;
+            self.printDocument.printer = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
         }
-        else
-        {
-            self.printDocument.printer = nil;
-        }
+        self.printer = self.printDocument.printer;
+        
         self.previewSetting = self.printDocument.previewSetting;
         [self.printDocument addObserver:self forKeyPath:@"printer" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:&printSettingsPrinterContext];
         self.isDefaultSettingsMode = NO;
