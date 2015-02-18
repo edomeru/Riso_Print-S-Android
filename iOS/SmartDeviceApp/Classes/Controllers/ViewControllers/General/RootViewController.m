@@ -13,6 +13,8 @@
 #import "UIViewController+Segue.h"
 #import "PDFFileManager.h"
 
+#import "LicenseAgreementViewController.h"
+
 @interface RootViewController ()
 
 @end
@@ -44,8 +46,21 @@ static RootViewController *container;
 {
     [super viewDidLoad];
     
-    // Show Print Preview Screen
-    [self performSegueTo:[PrintPreviewViewController class]];
+    
+    if(![LicenseAgreementViewController hasConfirmedToLicenseAgreement])
+    {
+        // if user has not confirmed to license agreement yet
+        // open license agreement
+        [self performSegueTo:[LicenseAgreementViewController class]];
+    }
+    else
+    {
+        // Show Print Preview Screen
+        [self performSegueTo:[PrintPreviewViewController class]];
+    }
+    
+    
+    
 }
 
 - (void)didReceiveMemoryWarning

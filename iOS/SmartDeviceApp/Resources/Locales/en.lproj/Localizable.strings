@@ -1,4 +1,4 @@
-/*WordingList*/
+/*WordingList_Alpha1*/
 "IDS_APP_NAME" = "RISO PRINT-S";
 "IDS_APP_LAUNCHER_NAME" = "RISO PRINT-S";
 "IDS_LBL_SAVE" = "Save";
@@ -145,5 +145,7 @@
 "IDS_LBL_NO" = "No";
 "IDS_LBL_LICENSE" = "End User License Agreement";
 "IDS_LBL_PAPERTYPE_ROUGHPAPER" = "Rough Paper";
-"IDS_LBL_Agree" = "Agree";
+"IDS_LBL_AGREE" = "Agree";
+"IDS_LBL_DISAGREE" = "Disagree";
+"IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "User must agree to License Agreement to continue using the app";
 

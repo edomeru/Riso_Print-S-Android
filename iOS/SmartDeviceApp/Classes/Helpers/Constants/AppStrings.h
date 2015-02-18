@@ -1,6 +1,6 @@
 //
 // AppStrings.h
-// WordingList
+// WordingList_Alpha1
 //
 
 #ifndef _APPSTRINGS_H_
@@ -152,7 +152,9 @@
 #define IDS_LBL_NO @"IDS_LBL_NO"
 #define IDS_LBL_LICENSE @"IDS_LBL_LICENSE"
 #define IDS_LBL_PAPERTYPE_ROUGHPAPER @"IDS_LBL_PAPERTYPE_ROUGHPAPER"
-#define IDS_LBL_Agree @"IDS_LBL_Agree"
+#define IDS_LBL_AGREE @"IDS_LBL_AGREE"
+#define IDS_LBL_DISAGREE @"IDS_LBL_DISAGREE"
+#define IDS_ERR_MSG_DISAGREE_TO_LICENSE @"IDS_ERR_MSG_DISAGREE_TO_LICENSE"
 
 
 #endif

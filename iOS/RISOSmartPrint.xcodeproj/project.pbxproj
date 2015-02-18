@@ -149,6 +149,8 @@
 		5F3145A61A30734D00F482A8 /* W015.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145821A30734D00F482A8 /* W015.png */; };
 		5F3145A71A30734D00F482A8 /* W016.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145841A30734D00F482A8 /* W016.png */; };
 		9459106B1A84AC0B00E69056 /* CXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9459106A1A84AC0B00E69056 /* CXBlurView.m */; };
+		94D0C05D1A89AF3A00451EFD /* license.html in Resources */ = {isa = PBXBuildFile; fileRef = 94D0C05B1A89AF3A00451EFD /* license.html */; };
+		94D9805A1A89DB49004B8B37 /* LicenseAgreementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 94D980591A89DB49004B8B37 /* LicenseAgreementViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -489,6 +491,11 @@
 		5F3145EF1A307B4200F482A8 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		945910691A84AC0B00E69056 /* CXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXBlurView.h; sourceTree = "<group>"; };
 		9459106A1A84AC0B00E69056 /* CXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXBlurView.m; sourceTree = "<group>"; };
+		94D0C05C1A89AF3A00451EFD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/license.html; sourceTree = "<group>"; };
+		94D0C05E1A89AF4C00451EFD /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = ja; path = ja.lproj/license.html; sourceTree = "<group>"; };
+		94D0C05F1A89AF4E00451EFD /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = fr; path = fr.lproj/license.html; sourceTree = "<group>"; };
+		94D980581A89DB49004B8B37 /* LicenseAgreementViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LicenseAgreementViewController.h; sourceTree = "<group>"; };
+		94D980591A89DB49004B8B37 /* LicenseAgreementViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LicenseAgreementViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -709,6 +716,8 @@
 		2D1F23BE1901049C00301D1E /* Legal */ = {
 			isa = PBXGroup;
 			children = (
+				94D980581A89DB49004B8B37 /* LicenseAgreementViewController.h */,
+				94D980591A89DB49004B8B37 /* LicenseAgreementViewController.m */,
 				2D1F23BF1901049C00301D1E /* LegalViewController.h */,
 				2D1F23C01901049C00301D1E /* LegalViewController.m */,
 			);
@@ -718,6 +727,7 @@
 		2D1F23C3190104D900301D1E /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				94D0C05B1A89AF3A00451EFD /* license.html */,
 				5F3145421A30734D00F482A8 /* I000.png */,
 				5F3145441A30734D00F482A8 /* I001.png */,
 				5F3145461A30734D00F482A8 /* I002.png */,
@@ -1227,6 +1237,7 @@
 				5F31459B1A30734D00F482A8 /* W006.png in Resources */,
 				5F3145A71A30734D00F482A8 /* W016.png in Resources */,
 				5F3145931A30734D00F482A8 /* title.png in Resources */,
+				94D0C05D1A89AF3A00451EFD /* license.html in Resources */,
 				2D1F23CA190104D900301D1E /* help.html in Resources */,
 				5F3145991A30734D00F482A8 /* W004.png in Resources */,
 				5F31459C1A30734D00F482A8 /* W007.png in Resources */,
@@ -1316,6 +1327,7 @@
 				2DA1AF2018E2EF9600085F27 /* PrinterInfoViewController.m in Sources */,
 				2DA1AF3518E2EF9C00085F27 /* PDFFileManager.m in Sources */,
 				28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */,
+				94D9805A1A89DB49004B8B37 /* LicenseAgreementViewController.m in Sources */,
 				2DA1AF2218E2EF9600085F27 /* PrintersIphoneViewController.m in Sources */,
 				31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */,
 				2D0DE96318E3E9C8002DB0B4 /* PrintDocument.m in Sources */,
@@ -1748,6 +1760,16 @@
 				5F3145EB1A307B2F00F482A8 /* fr */,
 			);
 			name = W016.png;
+			sourceTree = "<group>";
+		};
+		94D0C05B1A89AF3A00451EFD /* license.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				94D0C05C1A89AF3A00451EFD /* en */,
+				94D0C05E1A89AF4C00451EFD /* ja */,
+				94D0C05F1A89AF4E00451EFD /* fr */,
+			);
+			name = license.html;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

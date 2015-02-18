@@ -145,5 +145,7 @@
 "IDS_LBL_NO" = "No";
 "IDS_LBL_LICENSE" = "End User License Agreement";
 "IDS_LBL_PAPERTYPE_ROUGHPAPER" = "";
-"IDS_LBL_Agree" = "Agree";
+"IDS_LBL_AGREE" = "Agree";
+"IDS_LBL_DISAGREE" = "Disagree";
+"IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "User must agree to License Agreement to continue using the app";
 
