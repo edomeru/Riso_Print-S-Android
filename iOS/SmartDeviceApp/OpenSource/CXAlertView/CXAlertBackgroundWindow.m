@@ -15,6 +15,9 @@ const UIWindowLevel UIWindowLevelCXAlertBackground = 1998.0;
 
 - (id)initWithFrame:(CGRect)frame
 {
+    CGFloat biggestSquare = frame.size.height >frame.size.width ? frame.size.height:frame.size.width;
+    frame.size.height = biggestSquare;
+    frame.size.width = biggestSquare;
     self = [super initWithFrame:frame];
     if (self) {
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
