@@ -55,9 +55,6 @@
     [super layoutSubviews];
 }
 
-- (BOOL)touchesShouldCancelInContentView:(UIView *)view {
-    return YES;
-}
 #pragma mark - PB
 - (void)addButtonWithTitle:(NSString *)title type:(CXAlertViewButtonType)type handler:(CXAlertButtonHandler)handler
 {
