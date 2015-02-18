@@ -407,7 +407,7 @@
     [self findGroupWithTag:groupTag outIndex:&groupIndex outGroup:&group];
     NSIndexPath* groupIndexPath = [NSIndexPath indexPathForItem:groupIndex inSection:0];
     
-    if ((self.groupWithDelete != nil) && (self.groupWithDelete != groupIndexPath))
+    if (self.groupWithDelete != nil)
     {
         [self removeDeleteButton];
         return NO;
