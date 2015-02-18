@@ -42,6 +42,22 @@
 {
     [super viewDidLoad];
     [self.alertView setup];
+    
+    [UIApplication sharedApplication].statusBarHidden = _rootViewControllerPrefersStatusBarHidden;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [UIApplication sharedApplication].statusBarHidden = _rootViewControllerPrefersStatusBarHidden;
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    [UIApplication sharedApplication].statusBarHidden = _rootViewControllerPrefersStatusBarHidden;
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
@@ -68,11 +84,4 @@
 {
     return _rootViewControllerPrefersStatusBarHidden;
 }
-
-//SDA Fix: Added method override to keep status bar style when alert is shown
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
-}
-
 @end
