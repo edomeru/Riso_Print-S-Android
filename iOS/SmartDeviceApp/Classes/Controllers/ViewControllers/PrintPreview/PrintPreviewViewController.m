@@ -321,7 +321,7 @@
         
         // Printer check
         //check if printer of the printdocument has already been deleted from DB
-        if (self.printDocument.printer   == nil ||self.printDocument.printer.managedObjectContext==nil)
+        if (self.printDocument.printer == nil || self.printDocument.printer.managedObjectContext == nil)
         {
             self.printDocument.printer = [[PrinterManager sharedPrinterManager] getDefaultPrinter];
         }
