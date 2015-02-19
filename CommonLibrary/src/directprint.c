@@ -60,7 +60,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define PORT_RAW "9100"
 
 #define TIMEOUT_CONNECT 10
-#define TIMEOUT_SEND_RECV 30
+#define TIMEOUT_SEND_RECV 10
 
 #define BUFFER_SIZE 4096
 
@@ -409,6 +409,7 @@ void *do_lpr_print(void *parameter)
         tv.tv_sec = TIMEOUT_SEND_RECV;
         tv.tv_usec = 0;
         setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
+        setsockopt(sock_fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(struct timeval));
         
         if (is_cancelled(print_job) == 1)
         {
@@ -426,6 +427,7 @@ void *do_lpr_print(void *parameter)
         // Prepare flags
         ssize_t send_size;
         ssize_t recv_size;
+        int has_error = 0;
         int response;
         int pos;
         unsigned long len;
@@ -610,12 +612,21 @@ void *do_lpr_print(void *parameter)
                 break;
             }
     
-            send(sock_fd, buffer, read, 0);
+            send_size = send(sock_fd, buffer, read, 0);
 #if ENABLE_JOB_DUMP
             job_dump_write(dump_fd, buffer, read);
 #endif
+            if (send_size != read) {
+                notify_callback(print_job, kJobStatusErrorSending);
+                has_error = 1;
+                break;
+            }
             print_job->progress += data_step;
             notify_callback(print_job, kJobStatusSending);
+        }
+        
+        if (has_error == 1) {
+            break;
         }
         
         if (is_cancelled(print_job) == 1)
@@ -623,10 +634,14 @@ void *do_lpr_print(void *parameter)
             break;
         }
         
-        send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
+        send_size = send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
 #if ENABLE_JOB_DUMP
         job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
 #endif
+        if (send_size != strlen(pjl_footer)) {
+            notify_callback(print_job, kJobStatusErrorSending);
+            break;
+        }
         notify_callback(print_job, kJobStatusSending);
         
         pos = 0;
@@ -709,6 +724,7 @@ void *do_raw_print(void *parameter)
         tv.tv_sec = TIMEOUT_SEND_RECV;
         tv.tv_usec = 0;
         setsockopt(sock_fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(struct timeval));
+        setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
         
         if (is_cancelled(print_job) == 1)
         {
