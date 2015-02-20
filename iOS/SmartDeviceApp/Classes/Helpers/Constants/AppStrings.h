@@ -1,6 +1,7 @@
 //
 // AppStrings.h
 // WordingList_Alpha1
+// THIS IS A GENERATED FILE , ANY CHANGES MADE TO THIS FILE WILL BE ERASED
 //
 
 #ifndef _APPSTRINGS_H_
@@ -157,4 +158,4 @@
 #define IDS_ERR_MSG_DISAGREE_TO_LICENSE @"IDS_ERR_MSG_DISAGREE_TO_LICENSE"
 
 
-#endif
+#endif //_APPSTRINGS_H_
