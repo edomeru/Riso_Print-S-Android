@@ -1493,8 +1493,8 @@
                                     <constraint firstAttribute="trailing" secondItem="bXn-wb-WF8" secondAttribute="trailing" constant="10" id="t2Q-uy-3BC"/>
                                 </constraints>
                             </view>
-                            <webView contentMode="scaleToFill" scalesPageToFit="YES" allowsInlineMediaPlayback="NO" mediaPlaybackRequiresUserAction="NO" mediaPlaybackAllowsAirPlay="NO" keyboardDisplayRequiresUserAction="NO" translatesAutoresizingMaskIntoConstraints="NO" id="80k-dg-om7">
-                                <rect key="frame" x="0.0" y="48" width="320" height="381"/>
+                            <webView opaque="NO" contentMode="scaleToFill" misplaced="YES" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="80k-dg-om7">
+                                <rect key="frame" x="0.0" y="49" width="320" height="381"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <dataDetectorType key="dataDetectorTypes"/>
                             </webView>
