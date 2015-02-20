@@ -1899,7 +1899,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../CommonLibrary/3rdParty/net-snmp/lib/ios\"",
 				);
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = RISOSmartPrint;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -1939,6 +1939,7 @@
 					"../CommonLibrary/3rdParty/net-snmp/include/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
