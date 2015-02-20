@@ -1,4 +1,5 @@
 /*WordingList_Alpha1*/
+/* THIS IS A GENERATED FILE , ANY CHANGES MADE TO THIS FILE WILL BE ERASED */
 "IDS_APP_NAME" = "RISO PRINT-S";
 "IDS_APP_LAUNCHER_NAME" = "RISO PRINT-S";
 "IDS_LBL_SAVE" = "保存";
@@ -146,6 +147,6 @@
 "IDS_LBL_LICENSE" = "使用許諾契約";
 "IDS_LBL_PAPERTYPE_ROUGHPAPER" = "更紙";
 "IDS_LBL_AGREE" = "同意する";
-"IDS_LBL_DISAGREE" = "Disagree";
-"IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "User must agree to License Agreement to continue using the app";
+"IDS_LBL_DISAGREE" = "同意しない";
+"IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "このアプリを使用するには、仕様許諾への同意が必要です。";
 
