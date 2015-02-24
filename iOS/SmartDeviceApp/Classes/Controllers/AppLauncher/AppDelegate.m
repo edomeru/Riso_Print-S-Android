@@ -11,6 +11,7 @@
 #import "RootViewController.h"
 #import "DirectPrintManager.h"
 #import "SNMPManager.h"
+#import "AlertHelper.h"
 
 #define PREVIEW_DEBUG_MODE 0
 #define PDF_END_PROCESSING_NOTIFICATION @"jp.alink-group.smartdeviceapp.endpdfprocessing"
@@ -25,6 +26,7 @@
  * Used to determine open-in from background.
  */
 @property (nonatomic) BOOL isFromBackground;
+@property (nonatomic) UIBackgroundTaskIdentifier bgTask;
 
 @end
 
@@ -74,27 +76,16 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    __block UIBackgroundTaskIdentifier bgTask;
-    bgTask = [application beginBackgroundTaskWithExpirationHandler:^{
-        [application endBackgroundTask:bgTask];
-        bgTask = UIBackgroundTaskInvalid;
-    }];
+    if ([DirectPrintManager idle])
+    {
+        return;
+    }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // Allow async task to finish first before deactivating
-        while ((application.applicationState == UIApplicationStateBackground || application.applicationState == UIApplicationStateInactive) && (![DirectPrintManager idle] || ![SNMPManager idle]) && application.backgroundTimeRemaining > 15.0f)
-        {
-            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
-        }
-        
-        if (application.applicationState == UIApplicationStateBackground)
-        {
-            [DirectPrintManager cancelAll];
-        }
-        
-        [application endBackgroundTask:bgTask];
-        bgTask = UIBackgroundTaskInvalid;
-    });
+    self.bgTask = [application beginBackgroundTaskWithExpirationHandler:^{
+        [DirectPrintManager cancelAll];
+        [self endBgTask];
+        [AlertHelper displayResult:kAlertResultPrintFailed withTitle:kAlertTitleDefault withDetails:nil];
+    }];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -110,6 +101,15 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+}
+
+- (void)endBgTask
+{
+    if (self.bgTask != UIBackgroundTaskInvalid)
+    {
+        [[UIApplication sharedApplication] endBackgroundTask:self.bgTask];
+        self.bgTask = UIBackgroundTaskInvalid;
+    }
 }
 
 @end

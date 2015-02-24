@@ -16,6 +16,7 @@
 #import "AlertHelper.h"
 #import "PrintJobHistoryHelper.h"
 #import "AppSettings.h"
+#import "AppDelegate.h"
 #include "common.h"
 
 #define PROGRESS_WIDTH 280.0f
@@ -283,6 +284,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 - (void)updateSuccess
 {
     self.isPrinting = NO;
+    [self updateBgTask];
     
     [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:1];
     
@@ -300,6 +302,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 - (void)updateError
 {
     self.isPrinting = NO;
+    [self updateBgTask];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [PrintJobHistoryHelper createPrintJobFromDocument:self.printDocument withResult:0];
@@ -321,6 +324,11 @@ void printProgressCallback(directprint_job *job, int status, float progress);
         directprint_job_cancel(self.job);
         directprint_job_free(self.job);
     }
+}
+
+- (void)updateBgTask {
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [appDelegate endBgTask];
 }
 
 @end
