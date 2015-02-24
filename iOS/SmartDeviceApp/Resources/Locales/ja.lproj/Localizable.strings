@@ -148,5 +148,5 @@
 "IDS_LBL_PAPERTYPE_ROUGHPAPER" = "更紙";
 "IDS_LBL_AGREE" = "同意する";
 "IDS_LBL_DISAGREE" = "同意しない";
-"IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "このアプリを使用するには、仕様許諾への同意が必要です。";
+"IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "このアプリを使用するには、使用許諾への同意が必要です。";
 
