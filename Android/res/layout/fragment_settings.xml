@@ -46,7 +46,7 @@
                     android:layout_gravity="center_vertical"
                     android:duplicateParentState="true"
                     android:paddingRight="@dimen/printsettings_menu_padding"
-                    android:text="@string/ids_lbl_login_id"
+                    android:text="@string/ids_lbl_owner_name"
                     android:textColor="@color/theme_dark_1" />
 
                 <EditText

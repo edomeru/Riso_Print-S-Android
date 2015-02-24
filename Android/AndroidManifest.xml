@@ -45,6 +45,10 @@
             android:name="jp.co.riso.smartdeviceapp.view.MainActivity" 
             android:configChanges="orientation|screenSize" >
         </activity>
+		<activity
+            android:name="jp.co.riso.smartdeviceapp.view.LicenseActivity" 
+            android:configChanges="orientation|screenSize" >
+        </activity>
     </application>
 
 </manifest>

@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.AndroidRuntimeException;
 
@@ -146,7 +147,16 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
      * @brief Run the main activity.
      */
     private void runMainActivity() {
-        Intent launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
+        Intent launchIntent;
+        
+        SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs",MODE_PRIVATE);
+        if (preferences.getBoolean("licenseAgreementDone",false)){
+            //if user has already agreed to the license agreement
+            launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);   
+        } else {
+            //if user has not yet agreed to the license agreement
+            launchIntent = AppUtils.createActivityIntent(this, LicenseActivity.class);    
+        }
         
         if (launchIntent == null) {
             Logger.logError(SplashActivity.class, "Cannot create Intent");
@@ -182,6 +192,16 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         launchIntent.setFlags(flags);
         
         try {
+            startActivity(launchIntent);
+        } catch (ActivityNotFoundException e) {
+            Logger.logError(SplashActivity.class, "Fatal Error: Intent MainActivity Not Found is not defined");
+            throw e;
+        } catch (AndroidRuntimeException e) {
+            Logger.logError(SplashActivity.class, "Fatal Error: Android runtime");
+            throw e;
+        }
+        
+        finish();try {
             startActivity(launchIntent);
         } catch (ActivityNotFoundException e) {
             Logger.logError(SplashActivity.class, "Fatal Error: Intent MainActivity Not Found is not defined");
