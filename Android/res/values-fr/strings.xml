@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- THIS IS A GENERATED FILE , ANY CHANGES MADE TO THIS FILE WILL BE ERASED  -->
 <resources>
 
     <!-- Android default values -->
     <string name="default_textview">&#8230;</string>
     <string name="default_content_description">Content Description</string>
 
-    <!-- WordingList -->
+    <!-- WordingList_Alpha1 -->
     <string name="ids_app_name">RISO PRINT-S</string>
     <string name="ids_app_launcher_name">RISO PRINT-S</string>
     <string name="ids_lbl_save">Enregistrer</string>
