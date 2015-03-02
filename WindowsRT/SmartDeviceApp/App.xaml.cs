@@ -89,6 +89,8 @@ namespace SmartDeviceApp
             // Ensure the current window is active
             Window.Current.Activate();
 
+            SettingController.ShowLicenseAgreement();
+
             //temp
             //DirectPrint.DirectPrint p = new DirectPrint.DirectPrint();
         }
@@ -129,12 +131,13 @@ namespace SmartDeviceApp
                 // parameter
                 rootFrame.Navigate(typeof(HomePage), e.Files);
             }
-            
 
             // Ensure the current window is active
             Window.Current.Activate();
 
             await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);
+
+            SettingController.ShowLicenseAgreement();
         }
 
         /// <summary>

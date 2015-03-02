@@ -150,6 +150,9 @@
     <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Behaviors\IPAddressTextBoxBehavior.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
+    <Compile Include="Controls\ButtonControl.xaml.cs">
+      <DependentUpon>ButtonControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DefaultPrintSettingsControl.xaml.cs">
       <DependentUpon>DefaultPrintSettingsControl.xaml</DependentUpon>
     </Compile>
@@ -277,6 +280,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AddPrinterViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\LicenseViewModel.cs" />
     <Compile Include="ViewModels\SearchPrinterViewModel.cs" />
     <Compile Include="ViewModels\SelectPrinterViewModel.cs" />
     <Compile Include="ViewModels\ViewControlViewModel.cs" />
@@ -304,6 +308,9 @@
     </Compile>
     <Compile Include="Controls\MainMenuPane.xaml.cs">
       <DependentUpon>MainMenuPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LicensePage.xaml.cs">
+      <DependentUpon>LicensePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PrintersPage.xaml.cs">
       <DependentUpon>PrintersPage.xaml</DependentUpon>
@@ -344,6 +351,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Assets\en-US\license.html" />
     <Content Include="Assets\fr-FR\Help.html" />
     <Content Include="Assets\fr-FR\legal.html" />
     <None Include="packages.config">
@@ -351,8 +359,10 @@
     </None>
     <Content Include="Assets\en-US\help.html" />
     <Content Include="Assets\en-US\legal.html" />
+    <Content Include="Assets\fr-FR\license.html" />
     <Content Include="Assets\ja-JP\help.html" />
     <Content Include="Assets\ja-JP\legal.html" />
+    <Content Include="Assets\ja-JP\license.html" />
     <Content Include="Assets\printsettings_authentication.xml" />
     <Content Include="Assets\SmartDeviceAppDB.sql" />
     <Content Include="Common\ReadMe.txt" />
@@ -360,7 +370,9 @@
       <SubType>Designer</SubType>
     </PRIResource>
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
-    <PRIResource Include="Resources\Strings\ja-JP\Resources.resw" />
+    <PRIResource Include="Resources\Strings\ja-JP\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <PRIResource Include="Resources\Strings\en-US\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
@@ -484,6 +496,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\ButtonControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\DefaultPrintSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -588,6 +604,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\MainMenuPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LicensePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

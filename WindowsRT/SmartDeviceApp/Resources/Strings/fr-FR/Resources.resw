@@ -462,6 +462,15 @@
   <data name="IDS_LBL_LEGAL" xml:space="preserve">
     <value>Ment Légale</value>
   </data>
+  <data name="IDS_LBL_LICENSE" xml:space="preserve">
+    <value>End User License Agreement</value>
+  </data>
+  <data name="IDS_LBL_LICENSE_AGREE" xml:space="preserve">
+    <value>Agree</value>
+  </data>
+  <data name="IDS_LBL_LICENSE_DISAGREE" xml:space="preserve">
+    <value>Disagree</value>
+  </data>
   <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
     <value>Pas trouvé</value>
   </data>
@@ -518,6 +527,9 @@
   </data>
   <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
     <value>Database failure. Please restart the application. If the problem persists, please reinstall the application.</value>
+  </data>
+  <data name="IDS_ERR_MSG_LICENSE_DISAGREE" xml:space="preserve">
+    <value>User must agree to License Agreement to continue using the app</value>
   </data>
   <data name="IDS_LBL_YES" xml:space="preserve">
     <value>Yes</value>

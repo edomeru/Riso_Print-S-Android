@@ -60,6 +60,8 @@
     <x:Double x:Key="SIZE_DeleteButtonWidth_Short">110</x:Double>
     <x:Double x:Key="SIZE_DeleteButtonHeight_Short">50</x:Double>
     <x:Double x:Key="SIZE_JobListValueTextWidth">146</x:Double>
+    <x:Double x:Key="SIZE_LicenseButtonWidth">250</x:Double>
+    <x:Double x:Key="SIZE_LicenseButtonHeight">50</x:Double>
 
     <x:Double x:Key="OPACITY_Message">0.3</x:Double>
     <!-- APP THEME CONSTANTS END-->

@@ -462,6 +462,15 @@
   <data name="IDS_LBL_LEGAL" xml:space="preserve">
     <value>リーガル情報</value>
   </data>
+  <data name="IDS_LBL_LICENSE" xml:space="preserve">
+    <value>使用許諾契約</value>
+  </data>
+  <data name="IDS_LBL_LICENSE_AGREE" xml:space="preserve">
+    <value>同意する</value>
+  </data>
+  <data name="IDS_LBL_LICENSE_DISAGREE" xml:space="preserve">
+    <value>同意しない</value>
+  </data>
   <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
     <value>プリンターがありません。</value>
   </data>
@@ -518,6 +527,9 @@
   </data>
   <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
     <value>内部データにアクセスできません。\n再起動してみてください。\n再起動しても解消されない場合は、再インストールしてください。</value>
+  </data>
+  <data name="IDS_ERR_MSG_LICENSE_DISAGREE" xml:space="preserve">
+    <value>このアプリを使用するには、使用許諾への同意が必要です。</value>
   </data>
   <data name="IDS_LBL_YES" xml:space="preserve">
     <value>Yes</value>
