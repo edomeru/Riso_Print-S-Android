@@ -22,12 +22,20 @@ namespace SmartDeviceApp.Controllers
         static readonly SettingController _instance = new SettingController();
 
         /// <summary>
+        /// License agreement status delegate
+        /// </summary>
+        /// <param name="isAgreed"></param>
+        public delegate void SetLicenseAgreedEventHandler();
+        private SetLicenseAgreedEventHandler _setLicenseAgreedEventHandler;
+
+        /// <summary>
         /// Log-in ID value changed delegate
         /// </summary>
         /// <param name="pinCode"></param>
         public delegate void CardIdValueChangedEventHandler(string pinCode);
         private CardIdValueChangedEventHandler _cardIdValueChangedEventHandler;
 
+        private const string KEY_SETTINGS_LICENSE_AGREEMENT_STATUS = "key_license_agreement_status";
         private const string KEY_SETTINGS_CARD_READER_CARD_ID = "key_card_reader_card_id";
 
         /// <summary>
@@ -46,6 +54,7 @@ namespace SmartDeviceApp.Controllers
         {
             _settingsViewModel = new ViewModelLocator().SettingsViewModel;
 
+            _setLicenseAgreedEventHandler = new SetLicenseAgreedEventHandler(SetLicenseAgreed);
             _cardIdValueChangedEventHandler = new CardIdValueChangedEventHandler(CardIdTextChanged);
         }
 
@@ -72,6 +81,49 @@ namespace SmartDeviceApp.Controllers
             _settingsViewModel.CardId = CardId;
 
             _settingsViewModel.CardIdValueChangedEventHandler += _cardIdValueChangedEventHandler;
+
+            new ViewModelLocator().LicenseViewModel.SetLicenseAgreedEventHandler += _setLicenseAgreedEventHandler;
+        }
+
+        /// <summary>
+        /// Shows the license agreement if the user has not yet agreed
+        /// </summary>
+        public static void ShowLicenseAgreement()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            bool isAgreed = false;
+            string key = KEY_SETTINGS_LICENSE_AGREEMENT_STATUS;
+            if (localSettings.Values.ContainsKey(key))
+            {
+                try
+                {
+                    isAgreed = Convert.ToBoolean(localSettings.Values[key]);
+                }
+                catch
+                {
+                    isAgreed = false;                    
+                }
+            }
+            else
+            {
+                // First time to show license agreement, set to false
+                isAgreed = false;
+                localSettings.Values[key] = Convert.ChangeType(isAgreed, isAgreed.GetType());
+            }
+            if (!isAgreed)
+            {
+                new ViewModelLocator().ViewControlViewModel.GoToLicensePage.Execute(null);
+            }
+        }
+
+        /// <summary>
+        /// Event handler for license agreement
+        /// </summary>
+        /// <param name="cardId"></param>
+        public void SetLicenseAgreed()
+        {
+            bool isAgreed = true;
+            UpdateLocalSettings(KEY_SETTINGS_LICENSE_AGREEMENT_STATUS, isAgreed, isAgreed.GetType());
         }
 
         /// <summary>
@@ -83,6 +135,7 @@ namespace SmartDeviceApp.Controllers
             if (cardId != null)
             {
                 UpdateLocalSettings(KEY_SETTINGS_CARD_READER_CARD_ID, cardId.Trim(), cardId.GetType());
+                CardId = cardId;
             }
         }
 
@@ -96,7 +149,6 @@ namespace SmartDeviceApp.Controllers
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values[key] = Convert.ChangeType(value, type);
-            CardId = (string)value;
         }
 
     }

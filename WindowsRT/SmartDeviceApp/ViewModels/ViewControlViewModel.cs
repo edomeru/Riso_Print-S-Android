@@ -329,6 +329,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _goToSettingsPage;
         private ICommand _goToHelpPage;
         private ICommand _goToLegalPage;
+        private ICommand _goToLicensePage;
 
         private MainMenuItemList _mainMenuItems;
 
@@ -462,6 +463,24 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to navigate to License Screen
+        /// </summary>
+        public ICommand GoToLicensePage
+        {
+            get
+            {
+                if (_goToLicensePage == null)
+                {
+                    _goToLicensePage = new RelayCommand(
+                        () => GoToLicensePageExecute(),
+                        () => true 
+                    );
+                }
+                return _goToLicensePage;
+            }
+        }
+
         private void InitializeMainMenu()
         {
             MainMenuItems = new MainMenuItemList();
@@ -591,6 +610,13 @@ namespace SmartDeviceApp.ViewModels
             ScreenMode = ScreenMode.Legal;
             ViewMode = ViewMode.FullScreen;
             MainMenuItems[5].IsChecked = true;
+        }
+
+        private void GoToLicensePageExecute()
+        {
+            _navigationService.Navigate(typeof(LicensePage));
+            ScreenMode = ScreenMode.License;
+            ViewMode = ViewMode.FullScreen;
         }
 
         #endregion

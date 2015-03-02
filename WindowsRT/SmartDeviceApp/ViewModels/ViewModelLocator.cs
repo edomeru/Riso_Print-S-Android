@@ -122,6 +122,17 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
+        /// Gets the LicenseViewModel instance
+        /// </summary>
+        public LicenseViewModel LicenseViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<LicenseViewModel>();
+            }
+        }
+
+        /// <summary>
         /// Gets the PrintSettingsPaneViewModel instance
         /// </summary>
         public PrintSettingsPaneViewModel PrintSettingsPaneViewModel
@@ -210,6 +221,7 @@ namespace SmartDeviceApp.ViewModels
             SimpleIoc.Default.Register<SettingsViewModel>();
             SimpleIoc.Default.Register<HelpViewModel>();
             SimpleIoc.Default.Register<LegalViewModel>();
+            SimpleIoc.Default.Register<LicenseViewModel>();
             SimpleIoc.Default.Register<PrintSettingsPaneViewModel>();
             SimpleIoc.Default.Register<PrintSettingsViewModel>();
             SimpleIoc.Default.Register<SelectPrinterViewModel>();

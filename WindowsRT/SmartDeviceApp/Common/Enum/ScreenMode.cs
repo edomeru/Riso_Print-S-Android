@@ -17,6 +17,7 @@ namespace SmartDeviceApp.Common.Enum
         Jobs,
         Settings,
         Help,
-        Legal
+        Legal,
+        License
     }
 }
