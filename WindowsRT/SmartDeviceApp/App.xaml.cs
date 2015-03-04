@@ -35,7 +35,9 @@ namespace SmartDeviceApp
         /// </summary>
         public App()
         {
-            InitializeComponent();
+            this.UnhandledException += this.Application_UnhandledException;
+
+            InitializeComponent();            
             Suspending += OnSuspending;
 
             MainController.Initialize();
@@ -164,5 +166,13 @@ namespace SmartDeviceApp
             deferral.Complete();
             MainController.Cleanup();
         }
+
+        private void Application_UnhandledException(object sender,
+            UnhandledExceptionEventArgs e)
+        {
+            // Handle xaml exceptions manually, do not exit app unexpectedly
+            e.Handled = true;
+        }
+
     }
 }
