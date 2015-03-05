@@ -99,6 +99,15 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
+        /// License agreement status
+        /// </summary>
+        public bool IsLicenseAgreed
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Command for toggle main menu pane
         /// </summary>
         public ICommand ToggleMainMenuPane
@@ -494,7 +503,7 @@ namespace SmartDeviceApp.ViewModels
 
         private bool CanGoToHomePage()
         {
-            if (!SettingController.Instance.IsLicenseAgreed) return false;
+            if (!IsLicenseAgreed) return false;
             if (!EnabledGoToHomeExecute &&
                 (ScreenMode == ScreenMode.Home || ScreenMode == ScreenMode.PrintPreview))
             {
