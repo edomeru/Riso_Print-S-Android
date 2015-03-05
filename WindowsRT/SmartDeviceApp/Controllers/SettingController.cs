@@ -18,7 +18,6 @@ namespace SmartDeviceApp.Controllers
 {
     public sealed class SettingController
     {
-
         static readonly SettingController _instance = new SettingController();
 
         /// <summary>
@@ -42,6 +41,11 @@ namespace SmartDeviceApp.Controllers
         /// Log-in ID value
         /// </summary>
         public string CardId { get; private set; }
+
+        /// <summary>
+        /// License Agreement status
+        /// </summary>
+        public bool IsLicenseAgreed { get; private set; }
         
         private SettingsViewModel _settingsViewModel;
 
@@ -53,9 +57,10 @@ namespace SmartDeviceApp.Controllers
         private SettingController()
         {
             _settingsViewModel = new ViewModelLocator().SettingsViewModel;
-
+            
+            InitializeLicenseAgreementStatus();
             _setLicenseAgreedEventHandler = new SetLicenseAgreedEventHandler(SetLicenseAgreed);
-            _cardIdValueChangedEventHandler = new CardIdValueChangedEventHandler(CardIdTextChanged);
+            _cardIdValueChangedEventHandler = new CardIdValueChangedEventHandler(CardIdTextChanged);            
         }
 
         /// <summary>
@@ -90,27 +95,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public static void ShowLicenseAgreement()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            bool isAgreed = false;
-            string key = KEY_SETTINGS_LICENSE_AGREEMENT_STATUS;
-            if (localSettings.Values.ContainsKey(key))
-            {
-                try
-                {
-                    isAgreed = Convert.ToBoolean(localSettings.Values[key]);
-                }
-                catch
-                {
-                    isAgreed = false;                    
-                }
-            }
-            else
-            {
-                // First time to show license agreement, set to false
-                isAgreed = false;
-                localSettings.Values[key] = Convert.ChangeType(isAgreed, isAgreed.GetType());
-            }
-            if (!isAgreed)
+            if (!Instance.IsLicenseAgreed)
             {
                 new ViewModelLocator().ViewControlViewModel.GoToLicensePage.Execute(null);
             }
@@ -122,8 +107,9 @@ namespace SmartDeviceApp.Controllers
         /// <param name="cardId"></param>
         public void SetLicenseAgreed()
         {
-            bool isAgreed = true;
-            UpdateLocalSettings(KEY_SETTINGS_LICENSE_AGREEMENT_STATUS, isAgreed, isAgreed.GetType());
+            IsLicenseAgreed = true;
+            UpdateLocalSettings(KEY_SETTINGS_LICENSE_AGREEMENT_STATUS, IsLicenseAgreed, IsLicenseAgreed.GetType());
+            
         }
 
         /// <summary>
@@ -151,5 +137,30 @@ namespace SmartDeviceApp.Controllers
             localSettings.Values[key] = Convert.ChangeType(value, type);
         }
 
+        /// <summary>
+        /// Gets the license agreement status
+        /// </summary>
+        private void InitializeLicenseAgreementStatus()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;            
+            string key = KEY_SETTINGS_LICENSE_AGREEMENT_STATUS;
+            if (localSettings.Values.ContainsKey(key))
+            {
+                try
+                {
+                    IsLicenseAgreed = Convert.ToBoolean(localSettings.Values[key]);
+                }
+                catch
+                {
+                    IsLicenseAgreed = false;
+                }
+            }
+            else
+            {
+                // First time to show license agreement, set to false
+                IsLicenseAgreed = false;
+                localSettings.Values[key] = Convert.ChangeType(IsLicenseAgreed, IsLicenseAgreed.GetType());
+            }            
+        }
     }
 }
