@@ -51,7 +51,7 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-            _enabledOpenDocumentCommand = true;
+            EnabledOpenDocumentCommand = true;
             IsProgressRingActive = false;
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
@@ -67,7 +67,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _openDocumentCommand = new RelayCommand(
                         () => OpenDocumentCommandExecute(),
-                        () => _enabledOpenDocumentCommand
+                        () => EnabledOpenDocumentCommand
                     );
                 }
                 return _openDocumentCommand;
@@ -90,9 +90,29 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Enables/disables open document command from Home Screen
+        /// Should be disabled when loading document from open-in function
+        /// </summary>
+        public bool EnabledOpenDocumentCommand
+        {
+            get 
+            { 
+                return _enabledOpenDocumentCommand; 
+            }
+            set
+            {
+                if (_enabledOpenDocumentCommand != value)
+                {
+                    _enabledOpenDocumentCommand = value;
+                    RaisePropertyChanged("EnabledOpenDocumentCommand");
+                }
+            }
+        }
+
         private async void OpenDocumentCommandExecute()
         {
-            _enabledOpenDocumentCommand = false;
+            EnabledOpenDocumentCommand = false;
             try
             {
                 FileOpenPicker openPicker = new FileOpenPicker();
@@ -124,7 +144,7 @@ namespace SmartDeviceApp.ViewModels
                 LogUtility.LogError(ex);
                 DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
-            _enabledOpenDocumentCommand = true;
+            EnabledOpenDocumentCommand = true;
         }
 
         private void EnableMode(ViewMode viewMode)
