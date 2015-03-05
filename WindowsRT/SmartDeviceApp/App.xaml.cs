@@ -140,9 +140,9 @@ namespace SmartDeviceApp
             // Ensure the current window is active
             Window.Current.Activate();
 
-            await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);
-
             SettingController.ShowLicenseAgreement();
+
+            await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);            
         }
 
         /// <summary>

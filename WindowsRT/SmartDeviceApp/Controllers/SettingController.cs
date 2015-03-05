@@ -45,7 +45,20 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// License Agreement status
         /// </summary>
-        public bool IsLicenseAgreed { get; private set; }
+        public bool IsLicenseAgreed
+        {
+            get
+            {
+                return _isLicenseAgreed;
+            }
+            set
+            {
+                _isLicenseAgreed = value;
+                (new ViewModelLocator().ViewControlViewModel).IsLicenseAgreed = _isLicenseAgreed;
+            }
+        }
+             
+        private bool _isLicenseAgreed;
         
         private SettingsViewModel _settingsViewModel;
 
@@ -57,8 +70,8 @@ namespace SmartDeviceApp.Controllers
         private SettingController()
         {
             _settingsViewModel = new ViewModelLocator().SettingsViewModel;
-            
-            InitializeLicenseAgreementStatus();
+
+            IsLicenseAgreed = GetLicenseAgreementStatus();
             _setLicenseAgreedEventHandler = new SetLicenseAgreedEventHandler(SetLicenseAgreed);
             _cardIdValueChangedEventHandler = new CardIdValueChangedEventHandler(CardIdTextChanged);            
         }
@@ -95,7 +108,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public static void ShowLicenseAgreement()
         {
-            if (!Instance.IsLicenseAgreed)
+            if (!GetLicenseAgreementStatus())
             {
                 new ViewModelLocator().ViewControlViewModel.GoToLicensePage.Execute(null);
             }
@@ -109,7 +122,6 @@ namespace SmartDeviceApp.Controllers
         {
             IsLicenseAgreed = true;
             UpdateLocalSettings(KEY_SETTINGS_LICENSE_AGREEMENT_STATUS, IsLicenseAgreed, IsLicenseAgreed.GetType());
-            
         }
 
         /// <summary>
@@ -140,27 +152,29 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Gets the license agreement status
         /// </summary>
-        private void InitializeLicenseAgreementStatus()
+        private static bool GetLicenseAgreementStatus()
         {
+            bool isLicenseAgreed;
             var localSettings = ApplicationData.Current.LocalSettings;            
             string key = KEY_SETTINGS_LICENSE_AGREEMENT_STATUS;
             if (localSettings.Values.ContainsKey(key))
             {
                 try
                 {
-                    IsLicenseAgreed = Convert.ToBoolean(localSettings.Values[key]);
+                    isLicenseAgreed = Convert.ToBoolean(localSettings.Values[key]);
                 }
                 catch
                 {
-                    IsLicenseAgreed = false;
+                    isLicenseAgreed = false;
                 }
             }
             else
             {
                 // First time to show license agreement, set to false
-                IsLicenseAgreed = false;
-                localSettings.Values[key] = Convert.ChangeType(IsLicenseAgreed, IsLicenseAgreed.GetType());
-            }            
+                isLicenseAgreed = false;
+                localSettings.Values[key] = Convert.ChangeType(isLicenseAgreed, isLicenseAgreed.GetType());
+            }
+            return isLicenseAgreed;
         }
     }
 }
