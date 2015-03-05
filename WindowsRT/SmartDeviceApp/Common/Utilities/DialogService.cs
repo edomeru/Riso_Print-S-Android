@@ -66,7 +66,16 @@ namespace SmartDeviceApp.Common.Utilities
                     }));
 
             dialog.CancelCommandIndex = 0;
-            await dialog.ShowAsync();
+            try
+            {
+                await dialog.ShowAsync();
+            }
+            catch (Exception)
+            {
+                // Do not show message dialog if error occurs
+                // E.g. UnauthorizedAccessException: Another dialog is currently shown
+                // May occur if sender control is tapped repeatedly
+            }
         }
 
         /// <summary>
