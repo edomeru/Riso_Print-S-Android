@@ -494,6 +494,7 @@ namespace SmartDeviceApp.ViewModels
 
         private bool CanGoToHomePage()
         {
+            if (!SettingController.Instance.IsLicenseAgreed) return false;
             if (!EnabledGoToHomeExecute &&
                 (ScreenMode == ScreenMode.Home || ScreenMode == ScreenMode.PrintPreview))
             {
