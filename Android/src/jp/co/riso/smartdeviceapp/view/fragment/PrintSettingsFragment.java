@@ -137,7 +137,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         //update strings in case locale has changed         
         mPrintMsg = getString(R.string.ids_info_msg_printing);
         if (mWaitingDialog != null){
-            mWaitingDialog.setButton(getString(R.string.ids_lbl_cancel));
+            mWaitingDialog.setButtonText(getString(R.string.ids_lbl_cancel));
         }
     }
     
