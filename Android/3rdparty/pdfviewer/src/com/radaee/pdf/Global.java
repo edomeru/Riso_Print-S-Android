@@ -3,10 +3,8 @@ package com.radaee.pdf;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import com.radaee.pdfex.PDFRecent;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -28,6 +26,7 @@ public class Global {
 	 */
 	private static native String getVersion();
 	private static native void setCMapsPath(String cmaps, String umaps);
+	private static native boolean setCMYKICCPath(String path);
 	private static native void fontfileListStart();
 	private static native void fontfileListAdd(String font_file);
 	private static native void fontfileListEnd();
@@ -196,119 +195,25 @@ public class Global {
 	 */
 	private static native void hideAnnots(boolean hide);
 
-	/**
-	 * lock Bitmap object, and get a handle.
-	 * 
-	 * @param bitmap
-	 *            Bitmap object.
-	 * @return hand handle value.
-	 */
-	public static native int lockBitmap(Bitmap bitmap);
-
-	/**
-	 * unlock Bitmap object, and free the handle.
-	 * 
-	 * @param bitmap
-	 *            Bitmap object that passed to lockBitmap.
-	 * @param bmp
-	 *            handle value, that returned by lockBitmap.
-	 */
-	public static native void unlockBitmap(Bitmap bitmap, int bmp);
-	/**
-	 * draw Bitmap object to a dib
-	 * @param dib
-	 * @param bmp handle value, that returned by lockBitmap.
-	 * @param x
-	 * @param y
-	 */
-	public static native void drawBmpToDIB( int dib, int bmp, int x, int y );
-	/**
-	 * draw a dib to another dib
-	 * @param dst_dib
-	 * @param src_dib
-	 * @param x
-	 * @param y
-	 */
-	public static native void drawToDIB( int dst_dib, int src_dib, int x, int y );
-	/**
-	 * draw dib to bmp.
-	 * 
-	 * @param bmp
-	 *            handle value, that returned by lockBitmap.
-	 * @param dib
-	 * @param x
-	 *            origin position in bmp.
-	 * @param y
-	 *            origin position in bmp.
-	 */
-	public static native void drawToBmp(int bmp, int dib, int x, int y);
-	/**
-	 * draw dib to bmp, with scale
-	 * @param bmp
-	 * @param dib
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	public static native void drawToBmp2(int bmp, int dib, int x, int y, int w, int h);
-
-	/**
-	 * fill solid rectangle to bmp.
-	 * 
-	 * @param bmp
-	 *            handle value, that returned by lockBitmap.
-	 * @param color
-	 *            the color to fill, formatted: 0xAARRGGBB, AA: alpha value.
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param mode
-	 * <br/>
-	 *            0: mix color by source pixels with alpha channel. <br/>
-	 *            1: replace pixels.
-	 */
-	public static native void drawRect(int bmp, int color, int x, int y,
-			int width, int height, int mode);
-	public static native void drawRectToDIB( int dib, int color, int x, int y, int width, int height, int mode );
-
-	/**
-	 * invert all colors for locked bmp.
-	 * 
-	 * @param bmp
-	 *            handle value, that returned by lockBitmap.
-	 */
-	public static native void invertBmp(int bmp);
-
+	private static native void drawScroll(Bitmap bmp, long dib1, long dib2, int x, int y, int style);
 	/**
 	 * not used for developer
 	 */
-	public static native void drawScroll(Bitmap bmp, int dib1, int dib2, int x,
-			int y, int style);
+	public static void DrawScroll(Bitmap bmp, DIB dib1, DIB dib2, int x, int y, int style)
+	{
+		drawScroll(bmp, dib1.hand, dib2.hand, x, y, style);
+	}
 
-	/**
-	 * create or resize dib, and reset all pixels in dib.<br/>
-	 * if dib is 0, function create a new dib object.<br/>
-	 * otherwise function resize the dib object.
-	 */
-	public static native int dibGet(int dib, int width, int height);
-
-	/**
-	 * free dib object.
-	 */
-	public static native int dibFree(int dib);
-
-	private static native void toDIBPoint(int matrix, float[] ppoint,
+	private static native void toDIBPoint(long matrix, float[] ppoint,
 			float[] dpoint);
 
-	private static native void toPDFPoint(int matrix, float[] dpoint,
+	private static native void toPDFPoint(long matrix, float[] dpoint,
 			float[] ppoint);
 
-	private static native void toDIBRect(int matrix, float[] prect,
+	private static native void toDIBRect(long matrix, float[] prect,
 			float[] drect);
 
-	private static native void toPDFRect(int matrix, float[] drect,
+	private static native void toPDFRect(long matrix, float[] drect,
 			float[] prect);
 
 	/**
@@ -319,11 +224,6 @@ public class Global {
 	 *            formated as 0xAARRGGBB
 	 */
 	private static native void setAnnotTransparency(int color);
-
-	/**
-	 * not used for developer
-	 */
-	public static PDFRecent recentFiles = null;
 
 	/**
 	 * color for ink annotation
@@ -383,7 +283,7 @@ public class Global {
 	public static String tmp_path = null;
 	public static boolean need_time_span = true;
 
-	static private void load_std_font(String asset_name, AssetManager assets, File dir)
+	static private void load_std_font(String asset_name, int index, AssetManager assets, File dir)
 	{
         String fonts_path = dir.getAbsolutePath() + "/" + asset_name;
         int read;
@@ -407,7 +307,33 @@ public class Global {
 			}
 		}
 		sub = null;
-		loadStdFont( 13, fonts_path );
+		loadStdFont( index, fonts_path );
+	}
+	static private boolean load_cmyk_icc(String asset_name, AssetManager assets, File dir)
+	{
+        String path = dir.getAbsolutePath() + "/" + asset_name;
+        int read;
+		File sub = new File(path);
+		byte buf[] = new byte[4096];
+		if( !sub.exists() )
+		{
+			try
+	    	{
+				InputStream src = assets.open(asset_name);
+    			FileOutputStream dst = new FileOutputStream( new File(path) );
+   				while( (read = src.read( buf )) > 0 )
+   					dst.write( buf, 0, read );
+   				dst.close();
+   				src.close();
+   				dst = null;
+   				src = null;
+	    	}
+			catch(Exception e)
+			{
+			}
+		}
+		sub = null;
+		return setCMYKICCPath(path);
 	}
 	/**
 	 * global initialize function. it load JNI library and write some data to
@@ -443,8 +369,10 @@ public class Global {
 																// umaps file
 																// path
 
-		load_std_font( "pdfviewer/rdf013", assets, files );
-
+		load_std_font( "rdf013", 13, assets, files );
+		load_std_font( "rdf008", 8, assets, files );
+		load_cmyk_icc( "cmyk_rgb.dat", assets, files );
+		
 		// create temporary dictionary, to save media or attachment data.
 		File sdDir = Environment.getExternalStorageDirectory();
 		if (Environment.getExternalStorageState().equals(
@@ -474,12 +402,12 @@ public class Global {
 				FileOutputStream dst = new FileOutputStream(
 						new File(cmaps_path));
 
-				src = assets.open("pdfviewer/cmaps1");
+				src = assets.open("cmaps1");
 				while ((read = src.read(buf)) > 0)
 					dst.write(buf, 0, read);
 				src.close();
 				src = null;
-				src = assets.open("pdfviewer/cmaps2");
+				src = assets.open("cmaps2");
 				while ((read = src.read(buf)) > 0)
 					dst.write(buf, 0, read);
 				src.close();
@@ -502,12 +430,12 @@ public class Global {
 				FileOutputStream dst = new FileOutputStream(
 						new File(umaps_path));
 
-				src = assets.open("pdfviewer/umaps1");
+				src = assets.open("umaps1");
 				while ((read = src.read(buf)) > 0)
 					dst.write(buf, 0, read);
 				src.close();
 				src = null;
-				src = assets.open("pdfviewer/umaps2");
+				src = assets.open("umaps2");
 				while ((read = src.read(buf)) > 0)
 					dst.write(buf, 0, read);
 				src.close();
@@ -525,15 +453,10 @@ public class Global {
 		assets = null;
 
 		// active library, or WaterMark will displayed on each page.
-		// boolean succeeded = activeStandard(act, "radaee",
-		// "radaee_com@yahoo.cn", "HV8A19-WOT9YC-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
-		// boolean succeeded = activeProfessional( act, "radaee",
-		// "radaee_com@yahoo.cn", "Z5A7JV-5WQAJY-9ZOU9E-OQ31K2-FADG6Z-XEBCAO" );
-		//boolean succeeded = activePremium(act, "radaee", "radaee_com@yahoo.cn",
-		//		"LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
-		boolean succeeded = activeProfessional(act, "RISO KAGAKU CORPORATION",
-				"zhang@riso.co.jp", "J7GEIT-JYKWMH-NRHUWW-T0WD5S-GH0FFJ-GT61BP");
-
+		// boolean succeeded = activeStandard(act, "radaee", "radaee_com@yahoo.cn", "HV8A19-WOT9YC-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
+		// boolean succeeded = activeProfessional( act, "radaee", "radaee_com@yahoo.cn", "Z5A7JV-5WQAJY-9ZOU9E-OQ31K2-FADG6Z-XEBCAO" );
+		boolean succeeded = activePremium(act, "radaee", "radaee_com@yahoo.cn", "LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
+		
 		// active library, or WaterMark will displayed on each page.
 		// these active function is binding to version string "201401".
 		//String ver = getVersion();

@@ -4,37 +4,37 @@ import com.radaee.pdf.Page.*;
 
 public class PageContent
 {
-	static private native int create();
-	static private native void gsSave(int hand);
-	static private native void gsRestore(int hand);
-	static private native void gsSetMatrix(int hand, int mat);
-	static private native void gsSet( int hand, int gs );
-	static private native void drawImage(int hand, int image);
-	static private native void fillPath(int hand, int path, boolean winding);
-	static private native void clipPath(int hand, int path, boolean winding);
-	static private native void strokePath(int hand, int path);
-	static private native void setFillColor(int hand, int color);
-	static private native void setStrokeColor(int hand, int color);
-	static private native void setStrokeCap(int hand, int cap);
-	static private native void setStrokeJoin(int hand, int join);
-	static private native void setStrokeWidth(int hand, float w);
-	static private native void setStrokeMiter(int hand, float miter);
+	static private native long create();
+	static private native void gsSave(long hand);
+	static private native void gsRestore(long hand);
+	static private native void gsSetMatrix(long hand, long mat);
+	static private native void gsSet( long hand, long gs );
+	static private native void drawImage(long hand, long image);
+	static private native void fillPath(long hand, long path, boolean winding);
+	static private native void clipPath(long hand, long path, boolean winding);
+	static private native void strokePath(long hand, long path);
+	static private native void setFillColor(long hand, int color);
+	static private native void setStrokeColor(long hand, int color);
+	static private native void setStrokeCap(long hand, int cap);
+	static private native void setStrokeJoin(long hand, int join);
+	static private native void setStrokeWidth(long hand, float w);
+	static private native void setStrokeMiter(long hand, float miter);
 	
-	static private native void drawText( int hand, String text );
-	static private native void textBegin(int hand);
-	static private native void textEnd(int hand);
-	static private native void textSetCharSpace(int hand, float space);
-	static private native void textSetWordSpace(int hand, float space);
-	static private native void textSetLeading(int hand, float leading);
-	static private native void textSetRise(int hand, float rise);
-	static private native void textSetHScale(int hand, int scale);
-	static private native void textNextLine(int hand);
-	static private native void textMove(int hand, float x, float y);
-	static private native void textSetRenderMode(int hand, int mode);
-	static private native void textSetFont(int hand, int font, float size);
-	static private native float[] textGetSize( int hand, int font, String text, float width, float height, float char_space, float word_space );
-	static private native void destroy(int hand);
-	protected int hand = 0;
+	static private native void drawText( long hand, String text );
+	static private native void textBegin(long hand);
+	static private native void textEnd(long hand);
+	static private native void textSetCharSpace(long hand, float space);
+	static private native void textSetWordSpace(long hand, float space);
+	static private native void textSetLeading(long hand, float leading);
+	static private native void textSetRise(long hand, float rise);
+	static private native void textSetHScale(long hand, int scale);
+	static private native void textNextLine(long hand);
+	static private native void textMove(long hand, float x, float y);
+	static private native void textSetRenderMode(long hand, int mode);
+	static private native void textSetFont(long hand, long font, float size);
+	static private native float[] textGetSize( long hand, long font, String text, float width, float height, float char_space, float word_space );
+	static private native void destroy(long hand);
+	protected long hand = 0;
 	/**
 	 * create it.
 	 */

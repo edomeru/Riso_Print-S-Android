@@ -13,19 +13,19 @@ public class Page
 {
 	public class ResFont
 	{
-		protected int hand;
+		protected long hand;
 	}
 	public class ResGState
 	{
-		protected int hand;
+		protected long hand;
 	}
 	public class ResImage
 	{
-		protected int hand;
+		protected long hand;
 	}
 	public class Annotation
 	{
-		protected int hand;
+		protected long hand;
 		protected Page page;
 		/**
 		 * get this annotation index in page.
@@ -35,10 +35,10 @@ public class Page
 		{
 			if( page == null || page.hand == 0 || hand == 0 ) return -1;
 			int index = 0;
-			int cnt = page.getAnnotCount(page.hand);
+			int cnt = Page.getAnnotCount(page.hand);
 			while( index < cnt )
 			{
-				int hand_check = page.getAnnot(page.hand, index);
+				long hand_check = Page.getAnnot(page.hand, index);
 				if( hand == hand_check ) return index;
 				index++;
 			}
@@ -160,7 +160,7 @@ public class Page
 		 * set annotation lock status.<br/>
 		 * @param lock true if lock, otherwise false.
 		 */
-		public void setLocked(boolean lock)
+		public void SetLocked(boolean lock)
 		{
 			Page.setAnnotLock(page.hand, hand, lock);
 		}
@@ -275,6 +275,25 @@ public class Page
 			return Page.getAnnotDest(page.hand, hand);
 		}
 		/**
+		 * get annotation's name("NM" entry).<br/>
+		 * this method valid in professional or premium version
+		 * @return name string.
+		 */
+		public String GetName()
+		{
+			return Page.getAnnotName(page.hand, hand);
+		}
+		/**
+		 * set annotation's name("NM" entry).<br/>
+		 * this method valid in professional or premium version
+		 * @param name name string to be set.
+		 * @return true or false.
+		 */
+		public boolean SetName(String name)
+		{
+			return Page.setAnnotName(page.hand, hand, name);
+		}
+		/**
 		 * get annotation's URL link string.<br/>
 		 * this method valid in professional or premium version
 		 * @return string of URL, or null
@@ -282,6 +301,15 @@ public class Page
 		public String GetURI()
 		{
 			return Page.getAnnotURI(page.hand, hand);
+		}
+		/**
+		 * get annotation's java-script string.<br/>
+		 * this method valid in professional or premium version
+		 * @return string of java-script, or null.
+		 */
+		public String GetJS()
+		{
+			return Page.getAnnotJS(page.hand, hand);
 		}
 		/**
 		 * get annotation's file link path string.<br/>
@@ -409,6 +437,59 @@ public class Page
 			return Page.getAnnotEditTextSize(page.hand, hand);
 		}
 		/**
+		 * get format of edit-box.<br/>
+		 * this method valid in premium version
+		 * @return format of edit-box, mostly a java-script like:<br/>
+		 * AFDate_FormatEx("dd/mm/yy");<br/>
+		 * most common java script function invoked as:
+		 * AFNumber_Format<br/>
+		 * AFDate_Format<br/>
+		 * AFTime_Format<br/>
+		 * AFSpecial_Format<br/>
+		 * AFPercent_Format<br/>
+		 * and so on.
+		 */
+		public String GetFieldFormat()
+		{
+			return Page.getAnnotFieldFormat(page.hand, hand);
+		}
+		/**
+		 * get format of edit-box.<br/>
+		 * this method valid in premium version
+		 * @return format of edit-box, mostly a java-script like:<br/>
+		 * AFDate_FormatEx("dd/mm/yy");<br/>
+		 * most common java script function invoked as:
+		 * AFNumber_Format<br/>
+		 * AFDate_Format<br/>
+		 * AFTime_Format<br/>
+		 * AFSpecial_Format<br/>
+		 * AFPercent_Format<br/>
+		 * and so on.
+		 */
+		public String GetEditTextFormat()
+		{
+			return Page.getAnnotEditTextFormat(page.hand, hand);
+		}
+		/**
+		 * get text color for free text annotation.<br/>
+		 * this method valid in premium version
+		 * @return 0 or color, format as 0xAARRGGBB.
+		 */
+		public int GetEditTextColor()
+		{
+			return Page.getAnnotEditTextColor(page.hand, hand);
+		}
+		/**
+		 * set text color for free text annotation.<br/>
+		 * this method valid in premium version
+		 * @param color color format as 0xRRGGBB, alpha channel are ignored.
+		 * @return true or false.
+		 */
+		public boolean SetEditTextColor(int color)
+		{
+			return Page.setAnnotEditTextColor(page.hand, hand, color);
+		}
+		/**
 		 * get contents of edit-box.<br/>
 		 * this method valid in premium version
 		 * @return content in edit-box
@@ -420,7 +501,8 @@ public class Page
 		/**
 		 * set contents of edit-box.<br/>
 		 * you should re-render page to display modified data.<br/>
-		 * this method valid in premium version
+		 * this method valid in premium version.<br/>
+		 * Notice: this method not check format as GetEditTextFormat. developers shall check format by developer self.
 		 * @param text contents to be set.<br/>in MultiLine mode: '\r' or '\n' means change line.<br/>in password mode the edit box always display "*". 
 		 * @return true or false.
 		 */
@@ -598,7 +680,7 @@ public class Page
 		 * set fill color of square/circle/highlight/line/ploygon/polyline/sticky text/free text annotation.<br/>
 		 * you need render page again to show modified annotation.<br/>
 		 * this method valid in professional or premium version
-		 * @param color color value formatted as 0xAARRGGBB, if alpha channel is too less or 0, return false.
+		 * @param color color value formatted as 0xAARRGGBB.
 		 * @return true or false
 		 */
 		public boolean SetFillColor( int color )
@@ -654,7 +736,7 @@ public class Page
 		 */
 		public Path GetInkPath()
 		{
-			int ret = Page.getAnnotInkPath(page.hand, hand);
+			long ret = Page.getAnnotInkPath(page.hand, hand);
 			if( ret == 0 ) return null;
 			Path path = new Path();
 			path.m_hand = ret;
@@ -679,7 +761,7 @@ public class Page
 		 */
 		public Path GetPolygonPath()
 		{
-			int ret = Page.getAnnotPolygonPath(page.hand, hand);
+			long ret = Page.getAnnotPolygonPath(page.hand, hand);
 			if( ret == 0 ) return null;
 			Path path = new Path();
 			path.m_hand = ret;
@@ -704,7 +786,7 @@ public class Page
 		 */
 		public Path GetPolylinePath()
 		{
-			int ret = Page.getAnnotPolylinePath(page.hand, hand);
+			long ret = Page.getAnnotPolylinePath(page.hand, hand);
 			if( ret == 0 ) return null;
 			Path path = new Path();
 			path.m_hand = ret;
@@ -832,7 +914,7 @@ public class Page
 		 */
 		public int GetIcon()
 		{
-			return Page.getAnnotInkPath(page.hand, hand);
+			return Page.getAnnotIcon(page.hand, hand);
 		}
 		/**
 		 * remove annotation<br/>
@@ -849,174 +931,182 @@ public class Page
 	}
 	public class Finder
 	{
-		protected int hand;
+		protected long hand;
 		/**
 		 * get find count in this page.
-		 * @param hand_finder handle of find session, obtained by FindOpen.
 		 * @return count or 0 if no found.
 		 */
-		public int GetCount()
+		public final int GetCount()
 		{
 			return Page.findGetCount( hand );
 		}
 		/**
 		 * get find count in this page.
-		 * @param hand_finder handle of find session, obtained by FindOpen.
 		 * @param index 0 based index value. range:[0, FindGetCount()-1]
 		 * @return the first char index of texts, see: ObjsGetString. range:[0, ObjsGetCharCount()-1]
 		 */
-		public int GetFirstChar( int index )
+		public final int GetFirstChar( int index )
 		{
 			return Page.findGetFirstChar( hand, index );
 		}
 		/**
 		 * free memory of find session.
-		 * @param hand_finder handle of find session, obtained by FindOpen.
 		 */
-		public void Close()
+		public final void Close()
 		{
 			Page.findClose( hand );
 			hand = 0;
 		}
 	}
-	protected int hand = 0;
-	static private native float[] getCropBox( int hand );
-	static private native float[] getMediaBox( int hand );
-	static private native void close( int hand );
-	static private native void renderPrepare( int hand, int dib );
-	static private native boolean render( int hand, int dib, int matrix, int quality );
-	static private native boolean renderToBmp( int hand, Bitmap bitmap, int matrix, int quality );
-	static private native void renderCancel(int hand);
-	static private native boolean renderThumb(int hand, Bitmap bmp);
-	static private native boolean renderIsFinished(int hand);
-	static private native float reflowStart( int hand, float width, float scale, boolean enable_images );
-	static private native boolean reflow( int hand, int dib, float orgx, float orgy );
-	static private native boolean reflowToBmp( int hand, Bitmap bitmap, float orgx, float orgy );
-	static private native int reflowGetParaCount( int hand );
-	static private native int reflowGetCharCount( int hand, int iparagraph );
-	static private native float reflowGetCharWidth( int hand, int iparagraph, int ichar );
-	static private native float reflowGetCharHeight( int hand, int iparagraph, int ichar );
-	static private native int reflowGetCharColor( int hand, int iparagraph, int ichar );
-	static private native int reflowGetCharUnicode( int hand, int iparagraph, int ichar );
-	static private native String reflowGetCharFont( int hand, int iparagraph, int ichar );
-	static private native void reflowGetCharRect( int hand, int iparagraph, int ichar, float rect[] );
-	static private native String reflowGetText( int hand, int iparagraph1, int ichar1, int iparagraph2, int ichar2 );
+	protected long hand = 0;
+	static private native float[] getCropBox( long hand );
+	static private native float[] getMediaBox( long hand );
+	static private native void close( long hand );
+	static private native void renderPrepare( long hand, long dib );
+	static private native boolean render( long hand, long dib, long matrix, int quality );
+	static private native boolean renderToBmp( long hand, Bitmap bitmap, long matrix, int quality );
+	static private native boolean renderToBuf( long hand, int[] data, int w, int h, long matrix, int quality);
+	static private native void renderCancel(long hand);
+	static private native boolean renderThumb(long hand, Bitmap bmp);
+	static private native boolean renderThumbToDIB( long hand, long dib);
+	static private native boolean renderThumbToBuf( long hand, int[] data, int w, int h);
+	static private native boolean renderIsFinished(long hand);
+	static private native float reflowStart( long hand, float width, float scale, boolean enable_images );
+	static private native boolean reflow( long hand, long dib, float orgx, float orgy );
+	static private native boolean reflowToBmp( long hand, Bitmap bitmap, float orgx, float orgy );
+	static private native int reflowGetParaCount( long hand );
+	static private native int reflowGetCharCount( long hand, int iparagraph );
+	static private native float reflowGetCharWidth( long hand, int iparagraph, int ichar );
+	static private native float reflowGetCharHeight( long hand, int iparagraph, int ichar );
+	static private native int reflowGetCharColor( long hand, int iparagraph, int ichar );
+	static private native int reflowGetCharUnicode( long hand, int iparagraph, int ichar );
+	static private native String reflowGetCharFont( long hand, int iparagraph, int ichar );
+	static private native void reflowGetCharRect( long hand, int iparagraph, int ichar, float rect[] );
+	static private native String reflowGetText( long hand, int iparagraph1, int ichar1, int iparagraph2, int ichar2 );
 
-	static private native void objsStart( int hand, boolean rtol );
-	static private native String objsGetString( int hand, int from, int to );
-	static private native int objsAlignWord( int hand, int from, int dir );
-	static private native void objsGetCharRect( int hand, int index, float[]vals );
-	static private native String objsGetCharFontName( int hand, int index );
-	static private native int objsGetCharCount( int hand );
-	static private native int objsGetCharIndex( int hand, float[] pt );
+	static private native void objsStart( long hand, boolean rtol );
+	static private native String objsGetString( long hand, int from, int to );
+	static private native int objsAlignWord( long hand, int from, int dir );
+	static private native void objsGetCharRect( long hand, int index, float[]vals );
+	static private native String objsGetCharFontName( long hand, int index );
+	static private native int objsGetCharCount( long hand );
+	static private native int objsGetCharIndex( long hand, float[] pt );
 
-	static private native int findOpen( int hand, String str, boolean match_case, boolean whole_word );
-	static private native int findGetCount( int hand_finder );
-	static private native int findGetFirstChar( int hand_finder, int index );
-	static private native int findClose( int hand_finder );
+	static private native long findOpen( long hand, String str, boolean match_case, boolean whole_word );
+	static private native int findGetCount( long hand_finder );
+	static private native int findGetFirstChar( long hand_finder, int index );
+	static private native void findClose( long hand_finder );
 
-	private static native int getRotate( int hand );
-	static private native int getAnnotCount( int hand );
-	static private native int getAnnot( int hand, int index );
-	static private native boolean renderAnnotToBmp( int hand, int annot, Bitmap bitmap );
-	static private native int getAnnotFromPoint( int hand, float x, float y );
-	static private native int getAnnotFieldType( int hand, int annot );
-	static private native String getAnnotFieldName( int hand, int annot );
-	static private native String getAnnotFieldFullName( int hand, int annot );
-	static private native String getAnnotFieldFullName2( int hand, int annot );
-	static private native int getAnnotType( int hand, int annot );
-	static private native boolean isAnnotLocked( int hand, int annot );
-	static private native boolean isAnnotHide( int hand, int annot );
-	static private native boolean isAnnotLockedContent( int hand, int annot );
-	static private native float[] getAnnotMarkupRects( int hand, int annot );
-	static private native void getAnnotRect( int hand, int annot, float[] rect );
-	static private native void setAnnotRect( int hand, int annot, float[] rect );
-	static private native void setAnnotHide( int hand, int annot, boolean hide );
-	static private native void setAnnotLock( int hand, int annot, boolean lock );
-	static private native String getAnnotPopupText( int hand, int annot );
-	static private native boolean setAnnotPopupText( int hand, int annot, String val );
-	static private native String getAnnotPopupSubject( int hand, int annot );
-	static private native boolean setAnnotPopupSubject( int hand, int annot, String val );
-	static private native int getAnnotDest( int hand, int annot );
-	static private native String getAnnotURI( int hand, int annot );
-	static private native String getAnnotFileLink( int hand, int annot );
-	static private native String getAnnot3D( int hand, int annot );
-	static private native String getAnnotMovie( int hand, int annot );
-	static private native String getAnnotSound( int hand, int annot );
-	static private native String getAnnotAttachment( int hand, int annot );
-	static private native boolean getAnnot3DData( int hand, int annot, String save_file );
-	static private native boolean getAnnotMovieData( int hand, int annot, String save_file );
-	static private native boolean getAnnotSoundData( int hand, int annot, int paras[], String save_file );
-	static private native boolean getAnnotAttachmentData( int hand, int annot, String save_file );
-	static private native int getAnnotEditType( int hand, int annot );
-	static private native int getAnnotEditMaxlen( int hand, int annot );
-	static private native boolean getAnnotEditTextRect( int hand, int annot, float[] rect );
-	static private native float getAnnotEditTextSize( int hand, int annot );
-	static private native String getAnnotEditText( int hand, int annot );
-	static private native boolean setAnnotEditText( int hand, int annot, String text );
-	static private native int getAnnotComboItemCount( int hand, int annot );
-	static private native String getAnnotComboItem( int hand, int annot, int item );
-	static private native int getAnnotComboItemSel( int hand, int annot );
-	static private native boolean setAnnotComboItem( int hand, int annot, int item );
-	static private native int getAnnotListItemCount( int hand, int annot );
-	static private native String getAnnotListItem( int hand, int annot, int item );
-	static private native int[] getAnnotListSels( int hand, int annot );
-	static private native boolean setAnnotListSels( int hand, int annot, int[] items );
-	static private native int getAnnotCheckStatus( int hand, int annot );
-	static private native boolean setAnnotCheckValue( int hand, int annot, boolean check );
-	static private native boolean setAnnotRadio( int hand, int annot );
-	static private native int getAnnotSignStatus( int hand, int annot );
-	static private native boolean getAnnotReset( int hand, int annot );
-	static private native boolean setAnnotReset( int hand, int annot );
-	static private native String getAnnotSubmitTarget( int hand, int annot );
-	static private native String getAnnotSubmitPara( int hand, int annot );
-	static private native int getAnnotFillColor( int hand, int annot );
-	static private native boolean setAnnotFillColor( int hand, int annot, int color );
-	static private native int getAnnotStrokeColor( int hand, int annot );
-	static private native boolean setAnnotStrokeColor( int hand, int annot, int color );
-	static private native float getAnnotStrokeWidth( int hand, int annot );
-	static private native boolean setAnnotStrokeWidth( int hand, int annot, float width );
-	static private native int getAnnotInkPath( int hand, int annot );
-	static private native boolean setAnnotInkPath( int hand, int annot, int path );
-	static private native int getAnnotPolygonPath( int hand, int annot );
-	static private native boolean setAnnotPolygonPath( int hand, int annot, int path );
-	static private native int getAnnotPolylinePath( int hand, int annot );
-	static private native boolean setAnnotPolylinePath( int hand, int annot, int path );
-	static private native boolean setAnnotIcon( int hand, int annot, int icon );
-	static private native int getAnnotIcon( int hand, int annot );
-	static private native boolean setAnnotIcon2( int hand, int annot, String name, int content );
+	private static native int getRotate( long hand );
+	static private native int getAnnotCount( long hand );
+	static private native long getAnnot( long hand, int index );
+	static private native boolean renderAnnotToBmp( long hand, long annot, Bitmap bitmap );
+	static private native long getAnnotFromPoint( long hand, float x, float y );
+	static private native long getAnnotByName( long hand, String name );
+	static private native String getAnnotName( long hand, long annot);
+	static private native boolean setAnnotName( long hand, long annot, String name);
+	static private native int getAnnotFieldType( long hand, long annot );
+	static private native String getAnnotFieldName( long hand, long annot );
+	static private native String getAnnotFieldFullName( long hand, long annot );
+	static private native String getAnnotFieldFullName2( long hand, long annot );
+	static private native int getAnnotType( long hand, long annot );
+	static private native boolean isAnnotLocked( long hand, long annot );
+	static private native boolean isAnnotHide( long hand, long annot );
+	static private native boolean isAnnotLockedContent( long hand, long annot );
+	static private native float[] getAnnotMarkupRects( long hand, long annot );
+	static private native void getAnnotRect( long hand, long annot, float[] rect );
+	static private native void setAnnotRect( long hand, long annot, float[] rect );
+	static private native void setAnnotHide( long hand, long annot, boolean hide );
+	static private native void setAnnotLock( long hand, long annot, boolean lock );
+	static private native String getAnnotPopupText( long hand, long annot );
+	static private native boolean setAnnotPopupText( long hand, long annot, String val );
+	static private native String getAnnotPopupSubject( long hand, long annot );
+	static private native boolean setAnnotPopupSubject( long hand, long annot, String val );
+	static private native int getAnnotDest( long hand, long annot );
+	static private native String getAnnotURI( long hand, long annot );
+	static private native String getAnnotJS( long hand, long annot);
+	static private native String getAnnotFileLink( long hand, long annot );
+	static private native String getAnnot3D( long hand, long annot );
+	static private native String getAnnotMovie( long hand, long annot );
+	static private native String getAnnotSound( long hand, long annot );
+	static private native String getAnnotAttachment( long hand, long annot );
+	static private native boolean getAnnot3DData( long hand, long annot, String save_file );
+	static private native boolean getAnnotMovieData( long hand, long annot, String save_file );
+	static private native boolean getAnnotSoundData( long hand, long annot, int paras[], String save_file );
+	static private native boolean getAnnotAttachmentData( long hand, long annot, String save_file );
+	static private native int getAnnotEditType( long hand, long annot );
+	static private native int getAnnotEditMaxlen( long hand, long annot );
+	static private native boolean getAnnotEditTextRect( long hand, long annot, float[] rect );
+	static private native float getAnnotEditTextSize( long hand, long annot );
+	static private native String getAnnotEditTextFormat( long hand, long annot );
+	static private native String getAnnotFieldFormat( long hand, long annot );
+	static private native int getAnnotEditTextColor(long hand, long annot);
+	static private native boolean setAnnotEditTextColor(long hand, long annot, int color);
+	static private native String getAnnotEditText( long hand, long annot );
+	static private native boolean setAnnotEditText( long hand, long annot, String text );
+	static private native int getAnnotComboItemCount( long hand, long annot );
+	static private native String getAnnotComboItem( long hand, long annot, int item );
+	static private native int getAnnotComboItemSel( long hand, long annot );
+	static private native boolean setAnnotComboItem( long hand, long annot, int item );
+	static private native int getAnnotListItemCount( long hand, long annot );
+	static private native String getAnnotListItem( long hand, long annot, int item );
+	static private native int[] getAnnotListSels( long hand, long annot );
+	static private native boolean setAnnotListSels( long hand, long annot, int[] items );
+	static private native int getAnnotCheckStatus( long hand, long annot );
+	static private native boolean setAnnotCheckValue( long hand, long annot, boolean check );
+	static private native boolean setAnnotRadio( long hand, long annot );
+	static private native int getAnnotSignStatus( long hand, long annot );
+	static private native boolean getAnnotReset( long hand, long annot );
+	static private native boolean setAnnotReset( long hand, long annot );
+	static private native String getAnnotSubmitTarget( long hand, long annot );
+	static private native String getAnnotSubmitPara( long hand, long annot );
+	static private native int getAnnotFillColor( long hand, long annot );
+	static private native boolean setAnnotFillColor( long hand, long annot, int color );
+	static private native int getAnnotStrokeColor( long hand, long annot );
+	static private native boolean setAnnotStrokeColor( long hand, long annot, int color );
+	static private native float getAnnotStrokeWidth( long hand, long annot );
+	static private native boolean setAnnotStrokeWidth( long hand, long annot, float width );
+	static private native long getAnnotInkPath( long hand, long annot );
+	static private native boolean setAnnotInkPath( long hand, long annot, long path );
+	static private native long getAnnotPolygonPath( long hand, long annot );
+	static private native boolean setAnnotPolygonPath( long hand, long annot, long path );
+	static private native long getAnnotPolylinePath( long hand, long annot );
+	static private native boolean setAnnotPolylinePath( long hand, long annot, long path );
+	static private native boolean setAnnotIcon( long hand, long annot, int icon );
+	static private native int getAnnotIcon( long hand, long annot );
+	static private native boolean setAnnotIcon2( long hand, long annot, String name, long content );
 
-	static private native boolean removeAnnot( int hand, int annot );
-	static private native boolean moveAnnot( int hand_src, int hand_dst, int annot, float[] rect );
-	static private native boolean copyAnnot( int hand, int annot, float[] rect );
-	static private native boolean addAnnotHWriting( int hand, int matrix, int hwriting, float orgx, float orgy );
-	static private native boolean addAnnotInk( int hand, int matrix, int ink, float orgx, float orgy );
-	static private native boolean addAnnotGlyph( int hand, int matrix, int path, int color, boolean winding );
-	static private native boolean addAnnotLine( int hand, int matrix, float[] pt1, float[] pt2, int style1, int style2, float width, int color, int icolor );
-	static private native boolean addAnnotRect( int hand, int matrix, float[] rect, float width, int color, int fill_color );
-	static private native boolean addAnnotEllipse( int hand, int matrix, float[] rect, float width, int color, int fill_color );
-	static private native boolean addAnnotEditbox( int hand, int matrix, float[] rect, int line_clr, float line_w, int fill_clr, float tsize, int text_clr );
-	static private native boolean addAnnotEditbox2( int hand, float[] rect, int line_clr, float line_w, int fill_clr, float tsize, int text_clr );
-	static private native boolean addAnnotMarkup( int hand, int matrix, float[] rects, int color, int type );
+	static private native boolean removeAnnot( long hand, long annot );
+	static private native boolean moveAnnot( long hand_src, long hand_dst, long annot, float[] rect );
+	static private native boolean copyAnnot( long hand, long annot, float[] rect );
+	static private native boolean addAnnotHWriting( long hand, long matrix, long hwriting, float orgx, float orgy );
+	static private native boolean addAnnotInk( long hand, long matrix, long ink, float orgx, float orgy );
+	static private native boolean addAnnotGlyph( long hand, long matrix, long path, int color, boolean winding );
+	static private native boolean addAnnotLine( long hand, long matrix, float[] pt1, float[] pt2, int style1, int style2, float width, int color, int icolor );
+	static private native boolean addAnnotRect( long hand, long matrix, float[] rect, float width, int color, int fill_color );
+	static private native boolean addAnnotEllipse( long hand, long matrix, float[] rect, float width, int color, int fill_color );
+	static private native boolean addAnnotEditbox( long hand, long matrix, float[] rect, int line_clr, float line_w, int fill_clr, float tsize, int text_clr );
+	static private native boolean addAnnotEditbox2( long hand, float[] rect, int line_clr, float line_w, int fill_clr, float tsize, int text_clr );
+	static private native boolean addAnnotMarkup( long hand, long matrix, float[] rects, int color, int type );
 
-	static private native boolean addAnnotInk2( int hand, int ink );
-	static private native boolean addAnnotLine2( int hand, float[] pt1, float[] pt2, int style1, int style2, float width, int color, int icolor );
-	static private native boolean addAnnotRect2( int hand, float[] rect, float width, int color, int fill_color );
-	static private native boolean addAnnotEllipse2( int hand, float[] rect, float width, int color, int fill_color );
-	static private native boolean addAnnotMarkup2( int hand, int cindex1, int cindex2, int color, int type );
-	static private native boolean addAnnotBitmap( int hand, Bitmap bitmap, boolean has_alpha, float[] rect );
-	static private native boolean addAnnotAttachment( int hand, String path, int icon, float[] rect );
-	static private native boolean addAnnotText( int hand, float[] pt );
-	static private native boolean addAnnotGoto( int hand, float[] rect, int pageno, float top );
-	static private native boolean addAnnotURI( int hand, float[] rect, String uri );
-	static private native boolean addAnnotStamp( int hand, float[] rect, int icon );
-	static private native boolean addAnnotPolygon( int hand, int path, int color, int fill_color, float width );
-	static private native boolean addAnnotPolyline( int hand, int path, int style1, int style2, int color, int fill_color, float width );
+	static private native boolean addAnnotInk2( long hand, long ink );
+	static private native boolean addAnnotLine2( long hand, float[] pt1, float[] pt2, int style1, int style2, float width, int color, int icolor );
+	static private native boolean addAnnotRect2( long hand, float[] rect, float width, int color, int fill_color );
+	static private native boolean addAnnotEllipse2( long hand, float[] rect, float width, int color, int fill_color );
+	static private native boolean addAnnotMarkup2( long hand, int cindex1, int cindex2, int color, int type );
+	static private native boolean addAnnotBitmap( long hand, Bitmap bitmap, boolean has_alpha, float[] rect );
+	static private native boolean addAnnotAttachment( long hand, String path, int icon, float[] rect );
+	static private native boolean addAnnotText( long hand, float[] pt );
+	static private native boolean addAnnotGoto( long hand, float[] rect, int pageno, float top );
+	static private native boolean addAnnotURI( long hand, float[] rect, String uri );
+	static private native boolean addAnnotStamp( long hand, float[] rect, int icon );
+	static private native boolean addAnnotPolygon( long hand, long path, int color, int fill_color, float width );
+	static private native boolean addAnnotPolyline( long hand, long path, int style1, int style2, int color, int fill_color, float width );
 
-	static private native int addResFont( int hand, int font );
-	static private native int addResImage( int hand, int image );
-	static private native int addResGState( int hand, int gstate );
-	static private native boolean addContent( int hand, int content, boolean flush );
+	static private native long addResFont( long hand, long font );
+	static private native long addResImage( long hand, long image );
+	static private native long addResGState( long hand, long gstate );
+	static private native boolean addContent( long hand, long content, boolean flush );
 
 	/**
 	 * get rotated CropBox, this method need an any type of license.
@@ -1047,9 +1137,9 @@ public class Page
 	 * prepare to render. it reset dib pixels to white value, and reset page status.
 	 * @param dib DIB object to render. obtained by Global.dibGet().
 	 */
-	public void RenderPrePare( int dib )
+	public void RenderPrePare( DIB dib )
 	{
-		renderPrepare( hand, dib );
+		renderPrepare( hand, dib.hand );
 	}
 	/**
 	 * render page to dib object. this function returned for cancelled or finished.<br/>before render, you need invoke RenderPrePare.
@@ -1057,13 +1147,14 @@ public class Page
 	 * @param mat Matrix object define scale, rotate, translate operations.
 	 * @return true or false.
 	 */
-	public boolean Render( int dib, Matrix mat )
+	public boolean Render( DIB dib, Matrix mat )
 	{
-		boolean ret = render( hand, dib, mat.hand, Global.render_mode );
+		boolean ret = render( hand, dib.hand, mat.hand, Global.render_mode );
 		return ret;
 	}
 	/**
-	 * render page to Bitmap object directly. this function returned for cancelled or finished.<br/>before render, you need erase Bitmap object. 
+	 * render page to Bitmap object directly. this function returned for cancelled or finished.<br/>
+	 * before render, you need erase Bitmap object. 
 	 * @param bitmap Bitmap object to render.
 	 * @param mat Matrix object define scale, rotate, translate operations.
 	 * @return true or false.
@@ -1073,13 +1164,26 @@ public class Page
 		return renderToBmp( hand, bitmap, mat.hand, Global.render_mode );
 	}
 	/**
+	 * render page to int array directly. this function returned for cancelled or finished.<br/>
+	 * before render, you need erase int array object.
+	 * @param data  int array store as pixels, must length as w * h, each element formated as 0xAARRGGBB
+	 * @param w width.
+	 * @param h height.
+	 * @param mat Matrix object define scale, rotate, translate operations.
+	 * @return true or false.
+	 */
+	public boolean RenderToBuf( int[] data, int w, int h, Matrix mat )
+	{
+		return renderToBuf( hand, data, w, h, mat.hand, Global.render_mode );
+	}
+	/**
 	 * render to page in normal quality
 	 * @param dib same as Render function
 	 * @param mat same as Render function
 	 */
-	public void Render_Normal( int dib, Matrix mat )
+	public void Render_Normal( DIB dib, Matrix mat )
 	{
-		render( hand, dib, mat.hand, 1 );
+		render( hand, dib.hand, mat.hand, 1 );
 	}
 	/**
 	 * set page status to cancelled and cancel render function.
@@ -1097,6 +1201,22 @@ public class Page
 	public boolean RenderThumb(Bitmap bmp)
 	{
 		return renderThumb(hand, bmp);
+	}
+	public boolean RenderThumbToDIB(DIB dib)
+	{
+		return renderThumbToDIB(hand, dib.hand);
+	}
+	/**
+	 * render thumb image to int array object.<br/>
+	 * the image always scale and displayed in center of Bitmap.<br/>
+	 * @param data int array store as pixels, must length as w * h, each element formated as 0xAARRGGBB
+	 * @param w
+	 * @param h
+	 * @return
+	 */
+	public boolean RenderThumbToBuf(int []data, int w, int h)
+	{
+		return renderThumbToBuf(hand, data, w, h);
 	}
 	/**
 	 * check if page rendering is finished.
@@ -1139,7 +1259,7 @@ public class Page
 	 * @param index 0 based unicode index.
 	 * @param vals return 4 elements for PDF rectangle.
 	 */
-	public void ObjsGetCharRect( int index, float[]vals )
+	public final void ObjsGetCharRect( int index, float[]vals )
 	{
 		objsGetCharRect( hand, index, vals );
 	}
@@ -1166,7 +1286,7 @@ public class Page
 	 * @param pt point as [x,y] in PDF coordinate.
 	 * @return char index or -1 failed.
 	 */
-	public int ObjsGetCharIndex( float[] pt )
+	public final int ObjsGetCharIndex( float[] pt )
 	{
 		return objsGetCharIndex( hand, pt );
 	}
@@ -1179,7 +1299,7 @@ public class Page
 	 */
 	public Finder FindOpen( String str, boolean match_case, boolean whole_word )
 	{
-		int ret = findOpen( hand, str, match_case, whole_word );
+		long ret = findOpen( hand, str, match_case, whole_word );
 		if( ret == 0 ) return null;
 		Finder find = new Finder();
 		find.hand = ret;
@@ -1214,7 +1334,7 @@ public class Page
 	 */
 	public Annotation GetAnnot( int index )
 	{
-		int ret = getAnnot( hand, index );
+		long ret = getAnnot( hand, index );
 		if( ret == 0 ) return null;
 		Annotation annot = new Annotation();
 		annot.hand = ret;
@@ -1222,16 +1342,32 @@ public class Page
 		return annot;
 	}
 	/**
-	 * get annotations by PDF point.<br/>
+	 * get annotation by PDF point.<br/>
 	 * this can be invoked after ObjsStart or Render or RenderToBmp.<br/>
 	 * this method valid in professional or premium version
 	 * @param x x value in PDF coordinate system.
 	 * @param y y value in PDF coordinate system.
-	 * @return handle of annotation, valid until Close invoked.
+	 * @return Annotation object, valid until Page.Close invoked.
 	 */
 	public Annotation GetAnnotFromPoint( float x, float y )
 	{
-		int ret = getAnnotFromPoint( hand, x, y );
+		long ret = getAnnotFromPoint( hand, x, y );
+		if( ret == 0 ) return null;
+		Annotation annot = new Annotation();
+		annot.hand = ret;
+		annot.page = this;
+		return annot;
+	}
+	/**
+	 * get annotation by name.<br/>
+	 * this can be invoked after ObjsStart or Render or RenderToBmp.<br/>
+	 * this method valid in professional or premium version
+	 * @param name name string in "NM" entry of annotation.
+	 * @return Annotation object, valid until Page.Close invoked.
+	 */
+	public Annotation GetAnnotByName( String name )
+	{
+		long ret = getAnnotByName( hand, name );
 		if( ret == 0 ) return null;
 		Annotation annot = new Annotation();
 		annot.hand = ret;
@@ -1512,16 +1648,16 @@ public class Page
 		return addAnnotEllipse2( hand, rect, width, color, fill_color );
 	}
 	/**
-	 * add an edit-box on page. the edit-box has no border and background.
-	 * the font of edit box is set by Global.setTextFont in Global.Init().
+	 * add an edit-box on page.<br/>
+	 * the font of edit box is set by Global.setTextFont in Global.Init().<br/>
 	 * this can be invoked after ObjsStart or Render or RenderToBmp.<br/>
 	 * this method valid in premium version.
 	 * @param rect 4 elements: left, top, right, bottom in PDF coordinate system.
 	 * @param line_clr color of border line, formated as 0xAARRGGBB.
 	 * @param line_w width of border line.
-	 * @param fill_clr color of background, formated as 0xAARRGGBB.
-	 * @param tsize text size in DIB coordinate system.
-	 * @param text_clr text color, formated as 0xAARRGGBB.
+	 * @param fill_clr color of background, formated as 0xAARRGGBB. AA must same to line_clr AA, or 0 means no fill color.
+	 * @param tsize text size in PDF coordinate system.
+	 * @param text_clr text color, formated as 0xAARRGGBB. AA must same to line_clr AA
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
@@ -1601,7 +1737,7 @@ public class Page
 	 * add a bitmap object as an annotation to page.<br/>
 	 * you should re-render page to display modified data.<br/>
 	 * this can be invoked after ObjsStart or Render or RenderToBmp.<br/>
-	 * this method valid in professional or premium version
+	 * this method valid in professional or premium version, and Document.SetCache() invoked.
 	 * @param bitmap Bitmap object to add, which should be formated in ARGB_8888
 	 * @param has_alpha is need to save alpha channel information?
 	 * @param rect 4 elements: left, top, right, bottom in PDF coordinate system.
@@ -1616,7 +1752,7 @@ public class Page
 	 * add a file as an attachment to page.<br/>
 	 * you should re-render page to display modified data.<br/>
 	 * this can be invoked after ObjsStart or Render or RenderToBmp.<br/>
-	 * this method valid in professional or premium version
+	 * this method valid in professional or premium version, and Document.SetCache invoked.
 	 * @param path absolute path name to the file.
 	 * @param icon icon display to the page. values as:<br/>
 	 * 0: PushPin<br/>
@@ -1645,17 +1781,17 @@ public class Page
 		return addAnnotText( hand, pt );
 	}
 	/**
-	 * add an edit-box on page. the edit-box has no border and background.
-	 * the font of edit box is set by Global.setTextFont in Global.Init().
+	 * add an edit-box on page.<br/>
+	 * the font of edit box is set by Global.setTextFont in Global.Init().<br/>
 	 * this can be invoked after ObjsStart or Render or RenderToBmp.<br/>
 	 * this method valid in premium version.
 	 * @param mat Matrix object that passed to Render or RenderToBmp function.
 	 * @param rect 4 elements: left, top, right, bottom in PDF coordinate system.
 	 * @param line_clr color of border line, formated as 0xAARRGGBB.
 	 * @param line_w width of border line.
-	 * @param fill_clr color of background, formated as 0xAARRGGBB.
+	 * @param fill_clr color of background, formated as 0xAARRGGBB. AA must same to line_clr AA, or 0 means no fill color.
 	 * @param tsize text size in DIB coordinate system.
-	 * @param text_clr text color, formated as 0xAARRGGBB.
+	 * @param text_clr text color, formated as 0xAARRGGBB. AA must same to line_clr AA
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
@@ -1683,9 +1819,9 @@ public class Page
 	 * @param orgy origin y coordinate
 	 * @return true or false
 	 */
-	public boolean Reflow( int dib, float orgx, float orgy )
+	public boolean Reflow( DIB dib, float orgx, float orgy )
 	{
-		return reflow( hand, dib, orgx, orgy );
+		return reflow( hand, dib.hand, orgx, orgy );
 	}
 	/**
 	 * Reflow to Bitmap object.<br/>
@@ -1815,7 +1951,7 @@ public class Page
 	public ResFont AddResFont( DocFont font )
 	{
 		if( font == null ) return null;
-		int ret = addResFont( hand, font.hand );
+		long ret = addResFont( hand, font.hand );
 		if( ret != 0 )
 		{
 			ResFont fnt = new ResFont();
@@ -1833,7 +1969,7 @@ public class Page
 	public ResImage AddResImage( DocImage image )
 	{
 		if( image == null ) return null;
-		int ret = addResImage( hand, image.hand );
+		long ret = addResImage( hand, image.hand );
 		if( ret != 0 )
 		{
 			ResImage img = new ResImage();
@@ -1851,7 +1987,7 @@ public class Page
 	public ResGState AddResGState( DocGState gstate )
 	{
 		if( gstate == null ) return null;
-		int ret = addResGState( hand, gstate.hand );
+		long ret = addResGState( hand, gstate.hand );
 		if( ret != 0 )
 		{
 			ResGState gs = new ResGState();
