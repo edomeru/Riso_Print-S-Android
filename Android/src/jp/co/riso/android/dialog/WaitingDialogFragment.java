@@ -169,6 +169,13 @@ public class WaitingDialogFragment extends DialogFragment {
         
     }
     
+    public void setButton(final String buttonText){
+        if (getDialog() != null) {
+            ProgressDialog dialog = (ProgressDialog) getDialog();
+            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(buttonText);
+        }
+    }
+    
     // ================================================================================
     // Internal Classes
     // ================================================================================
