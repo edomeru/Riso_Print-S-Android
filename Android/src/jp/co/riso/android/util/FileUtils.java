@@ -45,4 +45,10 @@ public class FileUtils {
         in.close();
         out.close();
     }
+    
+    public static void delete(File src) throws IOException {
+        
+        src.delete();
+        
+    }
 }
