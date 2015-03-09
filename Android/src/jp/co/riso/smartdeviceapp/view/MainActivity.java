@@ -8,9 +8,14 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import java.io.File;
+import java.io.IOException;
+
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.Logger;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.HelpFragment;
@@ -124,6 +129,21 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 mHandler.sendMessage(msg);
             }
         }
+    }
+    
+    @Override
+    protected void onDestroy() {
+
+        if (isFinishing()){
+            // delete PDF cache
+            File file = new File(PDFFileManager.getSandboxPath());
+            try {
+                FileUtils.delete(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }        
+        super.onDestroy();
     }
     
     @Override
