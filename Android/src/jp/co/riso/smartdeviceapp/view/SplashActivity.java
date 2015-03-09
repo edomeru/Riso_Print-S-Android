@@ -8,9 +8,13 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import java.io.File;
+import java.io.IOException;
+
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartprint.R;
@@ -181,6 +185,14 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         
         if (data != null) {
             launchIntent.setData(data);
+        } else {
+            // delete PDF cache
+            File file = new File(PDFFileManager.getSandboxPath());
+            try {
+                FileUtils.delete(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         
         int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;

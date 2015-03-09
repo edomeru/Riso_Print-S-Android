@@ -133,7 +133,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     
     @Override
     protected void onDestroy() {
-
+        //Debug.waitForDebugger();
         if (isFinishing()){
             // delete PDF cache
             File file = new File(PDFFileManager.getSandboxPath());
