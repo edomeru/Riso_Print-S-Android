@@ -328,7 +328,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                     break;
                 case DirectPrintManager.PRINT_STATUS_SENDING:
                     if (mWaitingDialog != null) {
-                        String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, progress);
+                        String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, Math.min((progress + 1),100.0f));
                         mWaitingDialog.setMessage(msg);
                     }
                     break;
