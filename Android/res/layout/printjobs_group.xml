@@ -69,7 +69,7 @@
             android:paddingLeft="@dimen/printjob_delgroupbtn_padding_side"
             android:paddingRight="@dimen/printjob_delgroupbtn_padding_side"
             android:text="@string/ids_lbl_delete_all"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
             android:textColor="@drawable/selector_jobs_deletealltextcolor" />
     </RelativeLayout>
 
