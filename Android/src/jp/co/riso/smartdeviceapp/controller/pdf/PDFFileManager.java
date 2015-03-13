@@ -602,7 +602,16 @@ public class PDFFileManager {
                     
                     try {
                         if (!mPath.equals(sandboxPath)) {
-                            FileUtils.copy(file, new File(sandboxPath));
+                            //check if the sandbox can still accommodate the PDF
+                            File destFile = new File(sandboxPath);
+                            destFile.createNewFile();
+                            long srcSize = file.length();
+                            long destSize = destFile.getUsableSpace();
+                            if (srcSize > destSize){
+                                return PDF_OPEN_FAILED;
+                            } else {                            
+                                FileUtils.copy(file, destFile);
+                            }
                         }
                         
                         PDFFileManager.setSandboxPDF(SmartDeviceApp.getAppContext(), fileName);
