@@ -10,7 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Width="{StaticResource SIZE_SidePaneWidth}"
-    DataContext="{Binding PrintSettingsViewModel, Source={StaticResource Locator}}">
+    DataContext="{Binding PrintSettingsViewModel, Source={StaticResource Locator}}"
+    IsHitTestVisible="{Binding IsHitTestVisible}">
     
     <Grid.Resources>
         <DataTemplate x:Key="TEMPLATE_ListViewItemToggleSwitch">
