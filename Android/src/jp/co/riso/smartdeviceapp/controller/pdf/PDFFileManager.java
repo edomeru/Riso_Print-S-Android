@@ -40,6 +40,7 @@ public class PDFFileManager {
     public static final int PDF_PRINT_RESTRICTED = -2; ///< Printing is restricted
     public static final int PDF_OPEN_FAILED = -3; ///< PDF open failed
     public static final int PDF_CANCELLED = -4; ///< PDF open was cancelled
+    public static final int PDF_NOT_ENOUGH_FREE_SPACE = -5;
     
     protected static final String KEY_NEW_PDF_DATA = "new_pdf_data";
     protected static final String KEY_SANDBOX_PDF_NAME = "key_sandbox_pdf_name";
@@ -608,7 +609,7 @@ public class PDFFileManager {
                             long srcSize = file.length();
                             long destSize = destFile.getUsableSpace() - AppConstants.CONST_FREE_SPACE_BUFFER;
                             if (srcSize > destSize){
-                                return PDF_OPEN_FAILED;
+                                return PDF_NOT_ENOUGH_FREE_SPACE;
                             } else {                            
                                 FileUtils.copy(file, destFile);
                             }
