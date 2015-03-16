@@ -606,7 +606,7 @@ public class PDFFileManager {
                             File destFile = new File(sandboxPath);
                             destFile.createNewFile();
                             long srcSize = file.length();
-                            long destSize = destFile.getUsableSpace();
+                            long destSize = destFile.getUsableSpace() - AppConstants.CONST_FREE_SPACE_BUFFER;
                             if (srcSize > destSize){
                                 return PDF_OPEN_FAILED;
                             } else {                            
