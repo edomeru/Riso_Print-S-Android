@@ -360,15 +360,8 @@ namespace DirectPrint
             //StorageFile sampleFile = await localFolder.GetFileAsync("test.pdf");
             //StorageFile sampleFile = filePickerFile;
 
-            var fbuffer = await Windows.Storage.FileIO.ReadBufferAsync(print_job.file);
-            DataReader fileDataReader = Windows.Storage.Streams.DataReader.FromBuffer(fbuffer);
-            BasicProperties pro = await print_job.file.GetBasicPropertiesAsync();
-            ulong file_size = pro.Size;
-
-            byte[] filebuffer = new byte[file_size];
-            fileDataReader.ReadBytes(filebuffer);
-
-
+            ulong file_size = (await print_job.file.GetBasicPropertiesAsync()).Size;
+			
             ulong total_data_size = (ulong)file_size +(ulong)pjl_header_size + (ulong)pjl_footer_size;
             String total_data_size_str = String.Format("{0}", (ulong)total_data_size);
 
@@ -415,21 +408,37 @@ namespace DirectPrint
 #endif
             totalbytes += (ulong)pjl_header.Length;
 
-            MemoryStream fstream = new MemoryStream(filebuffer);
-            while ((bytesRead = fstream.Read(buffer, 0, BUFFER_SIZE)) > 0)
+            byte[] filebuffer = null;
+            Stream fstream = null;
+            try
             {
-                totalbytes += (ulong)bytesRead;
-                await socket.write(buffer, 0, bytesRead);
-                print_job.progress += data_step;
-                if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
-
-                if (print_job.cancel_print == 1)
+                using (var stream = await print_job.file.OpenReadAsync())
                 {
-                    triggerCallback(PRINT_STATUS_ERROR);
-                    if (socket != null) socket.disconnect();
-                    return;
+                    fstream = stream.AsStreamForRead();
+                    while ((bytesRead = fstream.Read(buffer, 0, BUFFER_SIZE)) > 0)
+                    {
+                        totalbytes += (ulong)bytesRead;
+                        await socket.write(buffer, 0, bytesRead);
+                        print_job.progress += data_step;
+                        if (print_job.progress_callback != null) print_job.progress_callback(print_job.progress);
+
+                        if (print_job.cancel_print == 1)
+                        {
+                            triggerCallback(PRINT_STATUS_ERROR);
+                            if (socket != null) socket.disconnect();
+                            return;
+                        }
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                triggerCallback(PRINT_STATUS_ERROR);
+                if (socket != null) socket.disconnect();
+                return;
+            }
+
+            
             await socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
 #if DEBUG
             await printJobStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
