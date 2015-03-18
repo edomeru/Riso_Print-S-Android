@@ -434,6 +434,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 return getResources().getString(R.string.ids_err_msg_pdf_printing_not_allowed);
             case PDFFileManager.PDF_OPEN_FAILED:
                 return getResources().getString(R.string.ids_err_msg_open_failed);
+            case PDFFileManager.PDF_NOT_ENOUGH_FREE_SPACE:
+                return getResources().getString(R.string.ids_err_msg_not_enough_space);
         }
         
         return "";
@@ -600,9 +602,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
                 
                 if (printerManager.getDefaultPrinter() == PrinterManager.EMPTY_ID) {
+                    String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
                     String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
                     String btnMsg = getString(R.string.ids_lbl_ok);
-                    InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
+                    InfoDialogFragment fragment = InfoDialogFragment.newInstance(titleMsg, strMsg, btnMsg);
                     DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
                     mPauseableHandler.resume();
                     return;

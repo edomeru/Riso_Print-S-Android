@@ -77,4 +77,8 @@ public class AppConstants {
     public static final String KEY_LOGINID = "loginId";
     /// Tag for PIN code
     public static final String KEY_PINCODE = "pinCode";
+    
+    /// Maximum printer count
+    public static final long CONST_FREE_SPACE_BUFFER = 104857600;
+    
 }

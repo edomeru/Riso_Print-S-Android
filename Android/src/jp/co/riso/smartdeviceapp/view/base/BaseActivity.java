@@ -8,11 +8,19 @@
 
 package jp.co.riso.smartdeviceapp.view.base;
 
+import java.io.File;
+import java.io.IOException;
+
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartprint.R;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Debug;
+import android.util.DebugUtils;
 
 /**
  * @class BaseActivity
@@ -26,7 +34,7 @@ public abstract class BaseActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         onCreateContent(savedInstanceState);
-    }
+    }       
     
     // ================================================================================
     // Abstract Functions

@@ -7,7 +7,7 @@
             name="colorMode"
             dbkey="pst_color_mode"
             text="ids_lbl_colormode"
-            icon="temp_img_printsettings_colormode"
+            
             type="list"
             default="0" >
             <option>ids_lbl_colormode_auto</option>
@@ -18,7 +18,7 @@
             name="orientation"
             dbkey="pst_orientation"
             text="ids_lbl_orientation"
-            icon="temp_img_printsettings_orientation"
+
             type="list"
             default="0" >
             <option>ids_lbl_orientation_portrait</option>
@@ -28,14 +28,14 @@
             name="copies"
             dbkey="pst_copies"
             text="ids_lbl_number_of_copies"
-            icon="temp_img_printsettings_copies"
+
             type="numeric"
             default="1" />
         <setting
             name="duplex"
             dbkey="pst_duplex"
             text="ids_lbl_duplex"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_off</option>
@@ -46,7 +46,7 @@
             name="paperSize"
             dbkey="pst_paper_size"
             text="ids_lbl_papersize"
-            icon="temp_img_printsettings_papersize"
+
             type="list"
             default="2" >
             <option>ids_lbl_papersize_a3</option>
@@ -67,14 +67,14 @@
             name="scaleToFit"
             dbkey="pst_scale_to_fit"
             text="ids_lbl_scaletofit"
-            icon="temp_img_printsettings_null"
+ 
             type="boolean"
             default="true" />
         <setting
             name="paperType"
             dbkey="pst_paper_type"
             text="ids_lbl_papertype"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_papertype_any</option>
@@ -89,7 +89,7 @@
             name="inputTray"
             dbkey="pst_input_tray"
             text="ids_lbl_inputtray"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_inputtray_auto</option>
@@ -106,7 +106,7 @@
             name="imposition"
             dbkey="pst_imposition"
             text="ids_lbl_imposition"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_off</option>
@@ -117,7 +117,7 @@
             name="impositionOrder"
             dbkey="pst_imposition_order"
             text="ids_lbl_imposition_order"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_imposition_order_2up_lr</option>
@@ -135,7 +135,7 @@
             name="sort"
             dbkey="pst_sort"
             text="ids_lbl_sort"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_sort_perpage</option>
@@ -145,14 +145,14 @@
             name="booklet"
             dbkey="pst_booklet"
             text="ids_lbl_booklet"
-            icon="temp_img_printsettings_null"
+
             type="boolean"
             default="false" />
         <setting
             name="bookletFinish"
             dbkey="pst_booklet_finish"
             text="ids_lbl_booklet_finishing"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_off</option>
@@ -163,7 +163,7 @@
             name="bookletLayout"
             dbkey="pst_booklet_layout"
             text="ids_lbl_booklet_layout"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_booklet_layout_forward</option>
@@ -173,7 +173,7 @@
             name="finishingSide"
             dbkey="pst_finishing_side"
             text="ids_lbl_finishingside"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_finishingside_left</option>
@@ -184,7 +184,7 @@
             name="staple"
             dbkey="pst_staple"
             text="ids_lbl_staple"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_off</option>
@@ -197,7 +197,7 @@
             name="punch"
             dbkey="pst_punch"
             text="ids_lbl_punch"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_off</option>
@@ -208,7 +208,7 @@
             name="outputTray"
             dbkey="pst_output_tray"
             text="ids_lbl_outputtray"
-            icon="temp_img_printsettings_null"
+
             type="list"
             default="0" >
             <option>ids_lbl_outputtray_auto</option>

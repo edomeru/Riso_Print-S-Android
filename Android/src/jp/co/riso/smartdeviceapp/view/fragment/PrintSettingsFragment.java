@@ -32,6 +32,7 @@ import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -132,6 +133,12 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void onResume() {
         super.onResume();
         mPauseableHandler.resume();
+        
+        //update strings in case locale has changed         
+        mPrintMsg = getString(R.string.ids_info_msg_printing);
+        if (mWaitingDialog != null){
+            mWaitingDialog.setButtonText(getString(R.string.ids_lbl_cancel));
+        }
     }
     
     // ================================================================================
@@ -306,7 +313,6 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // ================================================================================
     // INTERFACE - DirectPrintCallback
     // ================================================================================
-    
     @Override
     public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
         if (NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
@@ -322,7 +328,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                     break;
                 case DirectPrintManager.PRINT_STATUS_SENDING:
                     if (mWaitingDialog != null) {
-                        String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, progress);
+                        String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, Math.min((progress + 1),100.0f));
                         mWaitingDialog.setMessage(msg);
                     }
                     break;
