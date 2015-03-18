@@ -266,8 +266,17 @@ namespace SmartDeviceApp.Controllers
         {
             if (_resetPrintSettings)
             {
-                _selectedPrinter = null;
-                await SetSelectedPrinterAndPrintSettings(NO_SELECTED_PRINTER_ID);
+                // If all printers are deleted, set selected printer to default printer
+                _selectedPrinter = PrinterController.Instance.GetDefaultPrinter();
+                if (_selectedPrinter != null)
+                {
+                    await SetSelectedPrinterAndPrintSettings(_selectedPrinter.Id);
+                }
+                else
+                {
+                    await SetSelectedPrinterAndPrintSettings(NO_SELECTED_PRINTER_ID);
+                }
+                
                 _resetPrintSettings = false;
             }
             else
@@ -293,7 +302,7 @@ namespace SmartDeviceApp.Controllers
             if (_selectedPrinter.Id == printer.Id)
             {
                 _resetPrintSettings = true;
-            }
+            }            
         }
 
         /// <summary>
