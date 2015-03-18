@@ -60,6 +60,11 @@ public class BMP
 	protected long hand = 0;
 	private int m_w = 0;
 	private int m_h = 0;
+
+    /**
+     * create BMP object for native using.
+     * @param bmp format can be ARGB_8888/ARGB_4444/RGB_565
+     */
 	public final void Create(Bitmap bmp)
 	{
 		m_w = bmp.getWidth();

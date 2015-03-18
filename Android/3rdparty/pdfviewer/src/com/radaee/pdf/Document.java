@@ -1,6 +1,7 @@
 package com.radaee.pdf;
 
 import android.graphics.Bitmap;
+import android.os.Bundle;
 
 /**
 class for PDF Document.
@@ -796,7 +797,7 @@ public class Document
 	/**
 	 * create an image from Bitmap object.<br/>
 	 * a premium license is needed for this method.
-	 * @param bmp Bitmap object in ARGB_8888 format.
+	 * @param bmp Bitmap object in ARGB_8888/ARGB_4444/RGB_565 format.
 	 * @param has_alpha generate alpha channel information?
 	 * @return DocImage object or null.
 	 */
@@ -938,5 +939,30 @@ public class Document
 	public int CheckSignByteRange()
 	{
 		return checkSignByteRange( hand_val );
+	}
+	public static void BundleSave(Bundle bundle, Document doc)
+	{
+		bundle.putLong("pdf_doc_handle", doc.hand_val);
+		bundle.putInt("pdf_page_count", doc.page_count);
+	}
+	public static Document BundleRestore(Bundle bundle)
+	{
+		try
+		{
+			long hand = bundle.getLong("pdf_doc_handle");
+			int pcount = bundle.getInt("pdf_page_count");
+			if( hand != 0 )
+			{
+				Document doc = new Document();
+				doc.hand_val = hand;
+				doc.page_count = pcount;
+				return doc;
+			}
+			else return null;
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
 	}
 }

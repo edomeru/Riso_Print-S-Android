@@ -38,14 +38,14 @@ public class PageContent
 	/**
 	 * create it.
 	 */
-	public void Create()
+    final public void Create()
 	{
 		hand = create();
 	}
 	/**
 	 * destroy and free memory.
 	 */
-	public void Destroy()
+    final public void Destroy()
 	{
 		destroy(hand);
 		hand = 0;
@@ -53,14 +53,14 @@ public class PageContent
 	/**
 	 * PDF operator: gs_save, save current GraphicState
 	 */
-	public void GSSave()
+    final public void GSSave()
 	{
 		gsSave(hand);
 	}
 	/**
 	 * PDF operator: gs_restore, restore GraphicState
 	 */
-	public void GSRestore()
+    final public void GSRestore()
 	{
 		gsRestore(hand);
 	}
@@ -68,7 +68,7 @@ public class PageContent
 	 * PDF operator: set matrix.
 	 * @param mat Matrix object
 	 */
-	public void GSSetMatrix(Matrix mat)
+    final public void GSSetMatrix(Matrix mat)
 	{
 		gsSetMatrix(hand, mat.hand);
 	}
@@ -76,7 +76,7 @@ public class PageContent
 	 * PDF operator: set ExtGraphicState
 	 * @param gs ResGState object created by Page.AddResGState()
 	 */
-	public void GSSet( ResGState gs )
+    final public void GSSet( ResGState gs )
 	{
 		if( gs != null )
 			gsSet(hand, gs.hand);
@@ -85,7 +85,7 @@ public class PageContent
 	 * PDF operator: show image.
 	 * @param image image object created by Page.AddResImage()
 	 */
-	public void DrawImage(ResImage image)
+    final public void DrawImage(ResImage image)
 	{
 		drawImage(hand, image.hand);
 	}
@@ -94,7 +94,7 @@ public class PageContent
 	 * @param path Path object
 	 * @param winding winding fill rule?
 	 */
-	public void FillPath(Path path, boolean winding)
+    final public void FillPath(Path path, boolean winding)
 	{
 		fillPath(hand, path.m_hand, winding);
 	}
@@ -103,7 +103,7 @@ public class PageContent
 	 * @param path Path object
 	 * @param winding winding fill rule?
 	 */
-	public void ClipPath(Path path, boolean winding)
+    final public void ClipPath(Path path, boolean winding)
 	{
 		clipPath(hand, path.m_hand, winding);
 	}
@@ -111,7 +111,7 @@ public class PageContent
 	 * stroke path.
 	 * @param path Path object
 	 */
-	public void StrokePath(Path path)
+    final public void StrokePath(Path path)
 	{
 		strokePath(hand, path.m_hand);
 	}
@@ -119,7 +119,7 @@ public class PageContent
 	 * PDF operator: set fill and other operations color.
 	 * @param color formatted as 0xRRGGBB, no alpha channel. alpha value shall set by ExtGraphicState(ResGState).
 	 */
-	public void SetFillColor(int color)
+    final public void SetFillColor(int color)
 	{
 		setFillColor(hand, color);
 	}
@@ -127,7 +127,7 @@ public class PageContent
 	 * PDF operator: set stroke color.
 	 * @param color formatted as 0xRRGGBB, no alpha channel. alpha value shall set by ExtGraphicState(ResGState).
 	 */
-	public void SetStrokeColor(int color)
+    final public void SetStrokeColor(int color)
 	{
 		setStrokeColor(hand, color);
 	}
@@ -135,7 +135,7 @@ public class PageContent
 	 * PDF operator: set line cap
 	 * @param cap 0:butt, 1:round: 2:square
 	 */
-	public void SetStrokeCap(int cap)
+    final public void SetStrokeCap(int cap)
 	{
 		setStrokeCap(hand, cap);
 	}
@@ -143,7 +143,7 @@ public class PageContent
 	 * PDF operator: set line join
 	 * @param join 0:miter, 1:round, 2:bevel
 	 */
-	public void SetStrokeJoin(int join)
+    final public void SetStrokeJoin(int join)
 	{
 		setStrokeJoin(hand, join);
 	}
@@ -151,7 +151,7 @@ public class PageContent
 	 * PDF operator: set line width
 	 * @param w line width in PDF coordinate
 	 */
-	public void SetStrokeWidth(float w)
+    final public void SetStrokeWidth(float w)
 	{
 		setStrokeWidth(hand, w);
 	}
@@ -159,7 +159,7 @@ public class PageContent
 	 * PDF operator: set miter limit.
 	 * @param miter miter limit.
 	 */
-	public void SetStrokeMiter(float miter)
+    final public void SetStrokeMiter(float miter)
 	{
 		setStrokeMiter(hand, miter);
 	}
@@ -167,21 +167,21 @@ public class PageContent
 	 * show text
 	 * @param text text to show, '\r' or '\n' in string start a new line.
 	 */
-	public void DrawText(String text )
+    final public void DrawText(String text )
 	{
 		drawText(hand, text);
 	}
 	/**
 	 * PDF operator: begin text and set text position to (0,0).
 	 */
-	public void TextBegin()
+    final public void TextBegin()
 	{
 		textBegin(hand);
 	}
 	/**
 	 * PDF operator: text end.
 	 */
-	public void TextEnd()
+    final public void TextEnd()
 	{
 		textEnd(hand);
 	}
@@ -189,7 +189,7 @@ public class PageContent
 	 * PDF operator: set char space(extra space between chars).
 	 * @param space char space
 	 */
-	public void TextSetCharSpace(float space)
+    final public void TextSetCharSpace(float space)
 	{
 		textSetCharSpace(hand, space);
 	}
@@ -197,7 +197,7 @@ public class PageContent
 	 * PDF operator: set word space(extra space between words spit by blank char ' ' ).
 	 * @param space word space.
 	 */
-	public void TextSetWordSpace(float space)
+    final public void TextSetWordSpace(float space)
 	{
 		textSetWordSpace(hand, space);
 	}
@@ -205,7 +205,7 @@ public class PageContent
 	 * PDF operator: set text leading, height between 2 text lines.
 	 * @param leading leading in PDF coordinate
 	 */
-	public void TextSetLeading(float leading)
+    final public void TextSetLeading(float leading)
 	{
 		textSetLeading(hand, leading);
 	}
@@ -213,7 +213,7 @@ public class PageContent
 	 * PDF operator: set text rise
 	 * @param rise
 	 */
-	public void TextSetRise(float rise)
+    final public void TextSetRise(float rise)
 	{
 		textSetRise(hand, rise);
 	}
@@ -221,14 +221,14 @@ public class PageContent
 	 * PDF operator: set horizon scale for chars.
 	 * @param scale 100 means scale value 1.0f
 	 */
-	public void TextSetHScale(int scale)
+    final public void TextSetHScale(int scale)
 	{
 		textSetHScale(hand, scale);
 	}
 	/**
 	 * PDF operator: new a text line
 	 */
-	public void TextNextLine()
+    final public void TextNextLine()
 	{
 		textNextLine(hand);
 	}
@@ -237,7 +237,7 @@ public class PageContent
 	 * @param x in PDF coordinate add to previous line position
 	 * @param y in PDF coordinate add to previous line position
 	 */
-	public void TextMove(float x, float y)
+    final public void TextMove(float x, float y)
 	{
 		textMove( hand, x, y );
 	}
@@ -253,7 +253,7 @@ public class PageContent
 	 * 6: fill/stroke/clip<br/>
 	 * 7: set clip path.
 	 */
-	public void TextSetRenderMode(int mode)
+    final public void TextSetRenderMode(int mode)
 	{
 		textSetRenderMode(hand, mode);
 	}
@@ -262,7 +262,7 @@ public class PageContent
 	 * @param font ResFont object created by Page.AddResFont()
 	 * @param size text size in PDF coordinate.
 	 */
-	public void TextSetFont(ResFont font, float size)
+    final public void TextSetFont(ResFont font, float size)
 	{
 		textSetFont(hand, font.hand, size);
 	}
@@ -276,7 +276,7 @@ public class PageContent
 	 * @param word_space
 	 * @return
 	 */
-	public float[] TextGetSize(ResFont font, String text, float width, float height, float char_space, float word_space )
+    final public float[] TextGetSize(ResFont font, String text, float width, float height, float char_space, float word_space )
 	{
 		return textGetSize(hand, font.hand, text, width, height, char_space, word_space);
 	}

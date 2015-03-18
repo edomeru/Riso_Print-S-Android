@@ -4,14 +4,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import jp.co.riso.smartprint.R;
 import android.app.Activity;
 import android.content.ContextWrapper;
-import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Environment;
 //import android.telephony.TelephonyManager;
 //import android.net.wifi.WifiInfo;
 //import android.net.wifi.WifiManager;
-import android.os.Environment;
 
 /**
  * class for Global setting.
@@ -19,7 +20,23 @@ import android.os.Environment;
  * @author Radaee
  * @version 1.1
  */
-public class Global {
+public class Global
+{
+    public static void Init(Activity act)
+    {
+        //second para is license type
+        //            0 means standard license.
+        //            1 means professional license
+        //            2 means premium license
+        //3rd para is company name string(not package name)
+        //4th para is mail
+        //5th para is key string
+        //the package name got by native C/C++ library, not by pass parameter.
+//        Init( act, 2, "radaee", "radaee_com@yahoo.cn",
+//                "LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO" );
+        Init( act, 1, "RISO KAGAKU CORPORATION", "zhang@riso.co.jp",
+                "J7GEIT-JYKWMH-NRHUWW-T0WD5S-GH0FFJ-GT61BP" );
+    }
 	/**
 	 * get version string from library.
 	 * @return version string, like: "201401"
@@ -283,18 +300,16 @@ public class Global {
 	public static String tmp_path = null;
 	public static boolean need_time_span = true;
 
-	static private void load_std_font(String asset_name, int index, AssetManager assets, File dir)
+	static private void load_file(Resources res, int res_id, File save_file)
 	{
-        String fonts_path = dir.getAbsolutePath() + "/" + asset_name;
-        int read;
-		File sub = new File(fonts_path);
-		byte buf[] = new byte[4096];
-		if( !sub.exists() )
+		if( !save_file.exists() )
 		{
 			try
 	    	{
-				InputStream src = assets.open(asset_name);
-    			FileOutputStream dst = new FileOutputStream( new File(fonts_path) );
+		        int read;
+				byte buf[] = new byte[4096];
+				InputStream src = res.openRawResource(res_id );
+    			FileOutputStream dst = new FileOutputStream( save_file );
    				while( (read = src.read( buf )) > 0 )
    					dst.write( buf, 0, read );
    				dst.close();
@@ -306,157 +321,84 @@ public class Global {
 			{
 			}
 		}
-		sub = null;
-		loadStdFont( index, fonts_path );
 	}
-	static private boolean load_cmyk_icc(String asset_name, AssetManager assets, File dir)
+	static private void load_std_font(Resources res, int res_id, int index, File dst)
 	{
-        String path = dir.getAbsolutePath() + "/" + asset_name;
-        int read;
-		File sub = new File(path);
-		byte buf[] = new byte[4096];
-		if( !sub.exists() )
-		{
-			try
-	    	{
-				InputStream src = assets.open(asset_name);
-    			FileOutputStream dst = new FileOutputStream( new File(path) );
-   				while( (read = src.read( buf )) > 0 )
-   					dst.write( buf, 0, read );
-   				dst.close();
-   				src.close();
-   				dst = null;
-   				src = null;
-	    	}
-			catch(Exception e)
-			{
-			}
-		}
-		sub = null;
-		return setCMYKICCPath(path);
+		load_file(res, res_id, dst);
+		loadStdFont( index, dst.getPath() );
 	}
+    static private void load_truetype_font(Resources res, int res_id, File dst)
+    {
+        load_file(res, res_id, dst);
+        fontfileListAdd( dst.getPath() );
+    }
+	static private boolean load_cmyk_icc(Resources res, int res_id, File dst)
+	{
+		load_file(res, res_id, dst);
+		return setCMYKICCPath(dst.getPath());
+	}
+	static private void load_cmaps(Resources res, int res_cmap, File dst_cmap, int res_umap, File dst_umap)
+	{
+		load_file(res, res_cmap, dst_cmap);
+		load_file(res, res_umap, dst_umap);
+		setCMapsPath(dst_cmap.getPath(), dst_umap.getPath());
+	}
+	static private boolean ms_init = false;
 	/**
-	 * global initialize function. it load JNI library and write some data to
-	 * memory.
-	 * 
-	 * @param act
-	 *            Activity object, must be called super.onCreate().
+	 * global initialize function. it load JNI library and write some data to memory.
+	 * @param act Activity need input, native get package name from this Activity, and then check package name.
+	 * @param license_type 1: standard license, 2: professional license, 3: premium license.
+	 * @param company_name
+	 * @param mail
+	 * @param serial
+	 * @return
 	 */
-	public static void Init(Activity act)
+	public static boolean Init(Activity act, int license_type, String company_name, String mail, String serial)
 	{
-		/*
-		 * String devID =
-		 * ((TelephonyManager)act.getSystemService(act.TELEPHONY_SERVICE
-		 * )).getDeviceId(); if( devID == null ) { WifiManager wm =
-		 * (WifiManager)act.getSystemService(act.WIFI_SERVICE); if( wm != null )
-		 * { WifiInfo wi = wm.getConnectionInfo(); if( wi != null ) devID =
-		 * wi.getMacAddress(); } }
-		 */
-		// load library
+		if(ms_init) return true;
+		if( act == null ) return false;
+ 		// load library
 		System.loadLibrary("rdpdf");
+		// save resource to sand-box for application.
+		File files = new File(act.getFilesDir(), "rdres");
+		if (!files.exists())// not exist? make it!
+			files.mkdir();
+		Resources res = act.getResources();
+        load_std_font( res, R.raw.rdf008, 8, new File(files, "rdf008") );
+        load_std_font( res, R.raw.rdf013, 13, new File(files, "rdf013") );
+		load_cmyk_icc( res, R.raw.cmyk_rgb, new File(files, "cmyk_rgb") );
+		load_cmaps( res, R.raw.cmaps, new File(files, "cmaps"), R.raw.umaps, new File(files, "umaps") );
 
-		// save assets to files path for application.
-		// assets mainly include encoding map data.
-		AssetManager assets = act.getAssets();
-		byte buf[] = new byte[4096];
-		File sub;
-		int read;
-		File files = act.getFilesDir();
-		String cmaps_path = files.getAbsolutePath() + "/cmaps";// get destiny
-																// cmaps file
-																// path
-		String umaps_path = files.getAbsolutePath() + "/umaps";// get destiny
-																// umaps file
-																// path
-
-		load_std_font( "rdf013", 13, assets, files );
-		load_std_font( "rdf008", 8, assets, files );
-		load_cmyk_icc( "cmyk_rgb.dat", assets, files );
-		
 		// create temporary dictionary, to save media or attachment data.
 		File sdDir = Environment.getExternalStorageDirectory();
-		if (Environment.getExternalStorageState().equals(
-				Environment.MEDIA_MOUNTED)) {
-			tmp_path = sdDir.toString() + "/rdtmp";
-			File dir = new File(tmp_path);
-			if (!dir.exists())// not exist? make it!
-				dir.mkdir();
-			else if (!dir.isDirectory())
-				tmp_path = sdDir.getAbsolutePath();
-		} else if (sdDir != null)
-			tmp_path = sdDir.getAbsolutePath();// not mount? get sdcard path
+		if (sdDir != null && Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+			files = new File(sdDir, "rdtmp");
 		else
-			tmp_path = files.getAbsolutePath() + "/rdtmp";
-		files = null;
-		Global.RemoveTmp();// clear temporary dictionary
-		files = new File(tmp_path);
-		files.mkdir();
-		files = null;
+			files = new File(act.getFilesDir(), "rdtmp");
+		if (!files.exists())// not exist? make it!
+			files.mkdir();
+		tmp_path = files.getPath();
 
-		// save cmaps data from assets to files path
-		sub = new File(cmaps_path);
-		if (!sub.exists()) {
-			try {
-				InputStream src;
-
-				FileOutputStream dst = new FileOutputStream(
-						new File(cmaps_path));
-
-				src = assets.open("cmaps1");
-				while ((read = src.read(buf)) > 0)
-					dst.write(buf, 0, read);
-				src.close();
-				src = null;
-				src = assets.open("cmaps2");
-				while ((read = src.read(buf)) > 0)
-					dst.write(buf, 0, read);
-				src.close();
-				src = null;
-
-				dst.close();
-				dst = null;
-				src = null;
-			} catch (Exception e) {
-			}
+		switch(license_type)
+		{
+		case 1:
+			ms_init = activeProfessional(act, company_name, mail, serial);
+			break;
+		case 2:
+			ms_init = activePremium(act, company_name, mail, serial);
+			break;
+		default:
+			ms_init = activeStandard(act, company_name, mail, serial);
+			break;
 		}
-		sub = null;
-
-		// save umaps data from assets to files path
-		sub = new File(umaps_path);
-		if (!sub.exists()) {
-			try {
-				InputStream src;
-
-				FileOutputStream dst = new FileOutputStream(
-						new File(umaps_path));
-
-				src = assets.open("umaps1");
-				while ((read = src.read(buf)) > 0)
-					dst.write(buf, 0, read);
-				src.close();
-				src = null;
-				src = assets.open("umaps2");
-				while ((read = src.read(buf)) > 0)
-					dst.write(buf, 0, read);
-				src.close();
-				src = null;
-
-				dst.close();
-				dst = null;
-				src = null;
-			} catch (Exception e) {
-			}
-		}
-		sub = null;
-
-		buf = null;
-		assets = null;
-
 		// active library, or WaterMark will displayed on each page.
-		// boolean succeeded = activeStandard(act, "radaee", "radaee_com@yahoo.cn", "HV8A19-WOT9YC-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
-		// boolean succeeded = activeProfessional( act, "radaee", "radaee_com@yahoo.cn", "Z5A7JV-5WQAJY-9ZOU9E-OQ31K2-FADG6Z-XEBCAO" );
-		boolean succeeded = activePremium(act, "radaee", "radaee_com@yahoo.cn", "LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
-		
+		// boolean succeeded = activeStandard(act, "radaee",
+		// "radaee_com@yahoo.cn", "HV8A19-WOT9YC-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
+		// boolean succeeded = activeProfessional( act, "radaee",
+		// "radaee_com@yahoo.cn", "Z5A7JV-5WQAJY-9ZOU9E-OQ31K2-FADG6Z-XEBCAO" );
+		//boolean succeeded = activePremium(act, "radaee", "radaee_com@yahoo.cn",
+		//		"LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
+
 		// active library, or WaterMark will displayed on each page.
 		// these active function is binding to version string "201401".
 		//String ver = getVersion();
@@ -467,24 +409,140 @@ public class Global {
 		// boolean succeeded = activePremiumForVer(act, "Radaee", "radaeepdf@gmail.com",
 		//		"Q6EL00-BTB1EG-H3CRUZ-WAJQ9H-5R5V9L-KM0Y1L");
 
-		// set cmaps and umaps data.
-		setCMapsPath(cmaps_path, umaps_path);
-		
 		// add system external fonts.
 		fontfileListStart();
 		fontfileListAdd("/system/fonts/DroidSans.ttf");
 		fontfileListAdd("/system/fonts/Roboto-Regular.ttf");
 		fontfileListAdd("/system/fonts/DroidSansFallback.ttf");
+        load_truetype_font( res, R.raw.arimo, new File(files, "arimo.ttf") );
+        load_truetype_font( res, R.raw.arimob, new File(files, "arimob.ttf") );
+        load_truetype_font( res, R.raw.arimoi, new File(files, "arimoi.ttf") );
+        load_truetype_font( res, R.raw.arimobi, new File(files, "arimobi.ttf") );
+        load_truetype_font( res, R.raw.tinos, new File(files, "tinos.ttf") );
+        load_truetype_font( res, R.raw.tinosb, new File(files, "tinosb.ttf") );
+        load_truetype_font( res, R.raw.tinosi, new File(files, "tinosi.ttf") );
+        load_truetype_font( res, R.raw.tinosbi, new File(files, "tinosbi.ttf") );
+        load_truetype_font( res, R.raw.cousine, new File(files, "cousine.ttf") );
+        load_truetype_font( res, R.raw.cousineb, new File(files, "cousineb.ttf") );
+        load_truetype_font( res, R.raw.cousinei, new File(files, "cousinei.ttf") );
+        load_truetype_font( res, R.raw.cousinebi, new File(files, "cousinebi.ttf") );
 		fontfileListEnd();
+        fontfileMapping("Arial",                    "Arimo");
+        fontfileMapping("Arial Bold",              "Arimo Bold");
+        fontfileMapping("Arial BoldItalic",       "Arimo Bold Italic");
+        fontfileMapping("Arial Italic",            "Arimo Italic");
+        fontfileMapping("Arial,Bold",              "Arimo Bold");
+        fontfileMapping("Arial,BoldItalic",       "Arimo Bold Italic");
+        fontfileMapping("Arial,Italic",            "Arimo Italic");
+        fontfileMapping("Arial-Bold",              "Arimo Bold");
+        fontfileMapping("Arial-BoldItalic",       "Arimo Bold Italic");
+        fontfileMapping("Arial-Italic",            "Arimo Italic");
+        fontfileMapping("ArialMT",                  "Arimo");
+        fontfileMapping("Calibri",                  "Arimo");
+        fontfileMapping("Calibri Bold",            "Arimo Bold");
+        fontfileMapping("Calibri BoldItalic",      "Arimo Bold Italic");
+        fontfileMapping("Calibri Italic",           "Arimo Italic");
+        fontfileMapping("Calibri,Bold",             "Arimo Bold");
+        fontfileMapping("Calibri,BoldItalic",      "Arimo Bold Italic");
+        fontfileMapping("Calibri,Italic",           "Arimo Italic");
+        fontfileMapping("Calibri-Bold",             "Arimo Bold");
+        fontfileMapping("Calibri-BoldItalic",      "Arimo Bold Italic");
+        fontfileMapping("Calibri-Italic",           "Arimo Italic");
+        fontfileMapping("Helvetica",                "Arimo");
+        fontfileMapping("Helvetica Bold",          "Arimo Bold");
+        fontfileMapping("Helvetica BoldItalic",   "Arimo Bold Italic");
+        fontfileMapping("Helvetica Italic",        "Arimo Italic");
+        fontfileMapping("Helvetica,Bold",          "Arimo,Bold");
+        fontfileMapping("Helvetica,BoldItalic",   "Arimo Bold Italic");
+        fontfileMapping("Helvetica,Italic",        "Arimo Italic");
+        fontfileMapping("Helvetica-Bold",          "Arimo Bold");
+        fontfileMapping("Helvetica-BoldItalic",   "Arimo Bold Italic");
+        fontfileMapping("Helvetica-Italic",        "Arimo Italic");
+        fontfileMapping("Garamond",                    "Tinos");
+        fontfileMapping("Garamond,Bold",              "Tinos Bold");
+        fontfileMapping("Garamond,BoldItalic",       "Tinos Bold Italic");
+        fontfileMapping("Garamond,Italic",            "Tinos Italic");
+        fontfileMapping("Garamond-Bold",              "Tinos Bold");
+        fontfileMapping("Garamond-BoldItalic",       "Tinos Bold Italic");
+        fontfileMapping("Garamond-Italic",            "Tinos Italic");
+        fontfileMapping("Times",                    "Tinos");
+        fontfileMapping("Times,Bold",              "Tinos Bold");
+        fontfileMapping("Times,BoldItalic",       "Tinos Bold Italic");
+        fontfileMapping("Times,Italic",            "Tinos Italic");
+        fontfileMapping("Times-Bold",              "Tinos Bold");
+        fontfileMapping("Times-BoldItalic",       "Tinos Bold Italic");
+        fontfileMapping("Times-Italic",            "Tinos Italic");
+        fontfileMapping("Times-Roman",             "Tinos");
+        fontfileMapping("Times New Roman",                "Tinos");
+        fontfileMapping("Times New Roman,Bold",          "Tinos Bold");
+        fontfileMapping("Times New Roman,BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("Times New Roman,Italic",        "Tinos Italic");
+        fontfileMapping("Times New Roman-Bold",          "Tinos Bold");
+        fontfileMapping("Times New Roman-BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("Times New Roman-Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRoman",                "Tinos");
+        fontfileMapping("TimesNewRoman,Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRoman,BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRoman,Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRoman-Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRoman-BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRoman-Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRomanPS",                "Tinos");
+        fontfileMapping("TimesNewRomanPS,Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRomanPS,BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRomanPS,Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRomanPS-Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRomanPS-BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRomanPS-Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRomanPSMT",                "Tinos");
+        fontfileMapping("TimesNewRomanPSMT,Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRomanPSMT,BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRomanPSMT,Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRomanPSMT-Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRomanPSMT-BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRomanPSMT-Italic",        "Tinos Italic");
+        fontfileMapping("Courier",                    "Cousine");
+        fontfileMapping("Courier Bold",              "Cousine Bold");
+        fontfileMapping("Courier BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("Courier Italic",            "Cousine Italic");
+        fontfileMapping("Courier,Bold",              "Cousine Bold");
+        fontfileMapping("Courier,BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("Courier,Italic",            "Cousine Italic");
+        fontfileMapping("Courier-Bold",              "Cousine Bold");
+        fontfileMapping("Courier-BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("Courier-Italic",            "Cousine Italic");
+        fontfileMapping("Courier New",                    "Cousine");
+        fontfileMapping("Courier New Bold",              "Cousine Bold");
+        fontfileMapping("Courier New BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("Courier New Italic",            "Cousine Italic");
+        fontfileMapping("Courier New,Bold",              "Cousine Bold");
+        fontfileMapping("Courier New,BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("Courier New,Italic",            "Cousine Italic");
+        fontfileMapping("Courier New-Bold",              "Cousine Bold");
+        fontfileMapping("Courier New-BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("Courier New-Italic",            "Cousine Italic");
+        fontfileMapping("CourierNew",                    "Cousine");
+        fontfileMapping("CourierNew Bold",              "Cousine Bold");
+        fontfileMapping("CourierNew BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("CourierNew Italic",            "Cousine Italic");
+        fontfileMapping("CourierNew,Bold",              "Cousine Bold");
+        fontfileMapping("CourierNew,BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("CourierNew,Italic",            "Cousine Italic");
+        fontfileMapping("CourierNew-Bold",              "Cousine Bold");
+        fontfileMapping("CourierNew-BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("CourierNew-Italic",            "Cousine Italic");
+        //fontfileMapping("TimesNewRoman", "Times New Roman");
+
+		String face_name = null;
 		int face_first = 0;
 		int face_count = getFaceCount();
-		String face_name = null;
-		while (face_first < face_count) {
+		while (face_first < face_count)
+		{
 			face_name = getFaceName(face_first);
-			if (face_name != null)
-				break;
+			if (face_name != null) break;
 			face_first++;
 		}
+
 		// set default font for fixed width font.
 		if (!setDefaultFont(null, "Roboto-Regular", true) && face_name != null)
 		{
@@ -541,6 +599,7 @@ public class Global {
 
 		// set configure to default value
 		default_config();
+		return ms_init;
 	}
 
 	/**
@@ -704,14 +763,21 @@ public class Global {
 	/**
 	 * remove all tmp files that "pdfex" library generated.
 	 */
-	public static void RemoveTmp() {
-		File tmp = new File(tmp_path);
-		File files[] = tmp.listFiles();
-		if (files != null) {
-			int index;
-			for (index = 0; index < files.length; index++)
-				files[index].delete();
-			tmp.delete();
+	public static void RemoveTmp()
+	{
+		try
+		{
+			File tmp = new File(tmp_path);
+			File files[] = tmp.listFiles();
+			if (files != null)
+			{
+				for (int index = 0; index < files.length; index++)
+					files[index].delete();
+				tmp.delete();
+			}
+		}
+		catch(Exception e)
+		{
 		}
 	}
 }

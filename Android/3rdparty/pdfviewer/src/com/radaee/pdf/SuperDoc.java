@@ -2,14 +2,6 @@ package com.radaee.pdf;
 
 import android.graphics.Bitmap;
 
-import com.radaee.pdf.Document.DocFont;
-import com.radaee.pdf.Document.DocGState;
-import com.radaee.pdf.Document.DocImage;
-import com.radaee.pdf.Document.ImportContext;
-import com.radaee.pdf.Document.Outline;
-import com.radaee.pdf.Document.PDFFontDelegate;
-import com.radaee.pdf.Document.PDFStream;
-
 /**
  * managed many Documents as 1 Document object.
  * @author radaee

@@ -53,7 +53,7 @@ public class Page
 		 * @param rect [left, top, right, bottom] in PDF coordinate in dst_page.
 		 * @return true or false.
 		 */
-		public boolean MoveToPage( Page dst_page, float[] rect )
+        final public boolean MoveToPage( Page dst_page, float[] rect )
 		{
 			return Page.moveAnnot(page.hand, dst_page.hand, hand, rect);
 		}
@@ -66,7 +66,7 @@ public class Page
 		 * @param bitmap Bitmap object.
 		 * @return true or false.
 		 */
-		public boolean RenderToBmp(Bitmap bitmap )
+        final public boolean RenderToBmp(Bitmap bitmap )
 		{
 			return Page.renderAnnotToBmp(page.hand, hand, bitmap);
 		}
@@ -80,7 +80,7 @@ public class Page
 		 * 3: choice field<br/>
 		 * 4: signature field<br/>
 		 */
-		public int GetFieldType()
+        final public int GetFieldType()
 		{
 			return Page.getAnnotFieldType(page.hand, hand);
 		}
@@ -89,7 +89,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return null if it is not field, or name of the annotation, example: "EditBox1[0]".
 		 */
-		public String GetFieldName()
+        final public String GetFieldName()
 		{
 			return Page.getAnnotFieldName(page.hand, hand);
 		}
@@ -98,7 +98,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return null if it is not field, or full name of the annotation, example: "Form1.EditBox1".
 		 */
-		public String GetFieldFullName()
+        final public String GetFieldFullName()
 		{
 			return Page.getAnnotFieldFullName(page.hand, hand);
 		}
@@ -107,7 +107,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return null if it is not field, or full name of the annotation, example: "Form1[0].EditBox1[0]".
 		 */
-		public String GetFieldFullName2()
+        final public String GetFieldFullName2()
 		{
 			return Page.getAnnotFieldFullName2(page.hand, hand);
 		}
@@ -143,7 +143,7 @@ public class Page
 		 * 25: 3d object<br/>
 		 * 26: rich media
 		 */
-		public int GetType()
+        final public int GetType()
 		{
 			return Page.getAnnotType(page.hand, hand);
 		}
@@ -152,7 +152,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return true if locked, or not locked.
 		 */
-		public boolean IsLocked()
+        final public boolean IsLocked()
 		{
 			return Page.isAnnotLocked(page.hand, hand);
 		}
@@ -160,7 +160,7 @@ public class Page
 		 * set annotation lock status.<br/>
 		 * @param lock true if lock, otherwise false.
 		 */
-		public void SetLocked(boolean lock)
+        final public void SetLocked(boolean lock)
 		{
 			Page.setAnnotLock(page.hand, hand, lock);
 		}
@@ -169,7 +169,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return true if locked, or not locked.
 		 */
-		public boolean IsLockedContent()
+        final public boolean IsLockedContent()
 		{
 			return Page.isAnnotLockedContent(page.hand, hand);
 		}
@@ -177,7 +177,7 @@ public class Page
 		 * check whether the annotation is hide.
 		 * @return true or false.
 		 */
-		public boolean IsHide()
+        final public boolean IsHide()
 		{
 			return Page.isAnnotHide(page.hand, hand);
 		}
@@ -186,7 +186,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return 4 elements: left, top, right, bottom in PDF coordinate system
 		 */
-		public float[] GetRect()
+        final public float[] GetRect()
 		{
 			float rect[] = new float[4];
 			Page.getAnnotRect(page.hand, hand, rect);
@@ -197,7 +197,7 @@ public class Page
 		 * this method valid in professional or premium version.<br/>
 		 * you shall render page after this invoked, to resize or move annotation.
 		 */
-		public void SetRect( float left, float top, float right, float bottom )
+        final public void SetRect( float left, float top, float right, float bottom )
 		{
 			float rect[] = new float[4];
 			rect[0] = left;
@@ -213,7 +213,7 @@ public class Page
 		 * each 4 elements defined a box, as [left, top, right, bottom] in PDF coordinate.<br/>
 		 * length of this array must be 4 times.
 		 */
-		public float[] GetMarkupRects()
+        final public float[] GetMarkupRects()
 		{
 			return Page.getAnnotMarkupRects( page.hand, hand );
 		}
@@ -223,45 +223,109 @@ public class Page
 		 * you shall render page after this invoked, to hide annotation.
 		 * @param hide true or false.
 		 */
-		public void SetHide( boolean hide )
+        final public void SetHide( boolean hide )
 		{
 			Page.setAnnotHide(page.hand, hand, hide);
 		}
-		/**
-		 * get annotation's popup text.<br/>
-		 * this method valid in professional or premium version.
-		 * @return text string or null if failed.
-		 */
-		public String GetPopupText()
-		{
-			return Page.getAnnotPopupText(page.hand, hand);
-		}
-		/**
-		 * set annotation's popup text.<br/>
-		 * this method valid in professional or premium version
-		 * @param val text string
-		 * @return true or false
-		 */
-		public boolean SetPopupText( String val )
-		{
-			return Page.setAnnotPopupText(page.hand, hand, val);
-		}
+
+        /**
+         * get popup Annotation associate to this annotation.
+         * @return Popup Annotation, or null, if this annotation is Popup Annotation, then return same as this.
+         */
+        final public Annotation GetPopup()
+        {
+            long ret = Page.getAnnotPopup(page.hand, hand);
+            if(ret != 0)
+            {
+                Annotation annot = new Annotation();
+                annot.hand = ret;
+                annot.page = page;
+                return annot;
+            }
+            else
+                return null;
+        }
+
+        /**
+         * get open status for Popup Annotation.<br/>
+         * if this annotation is not popup annotation, it return Popup annotation open status, which associate to this annotation.<br/>
+         * this method valid in professional or premium version.
+         * @return true or false.
+         */
+        final public boolean GetPopupOpen()
+        {
+            return Page.getAnnotPopupOpen(page.hand, hand);
+        }
+        /**
+         * set open status for Popup Annotation.<br/>
+         * if this annotation is not popup annotation, it set Popup annotation open status, which associate to this annotation.<br/>
+         * this method valid in professional or premium version.
+         * @return true or false.
+         */
+        final public boolean SetPopupOpen(boolean open)
+        {
+            return Page.setAnnotPopupOpen(page.hand, hand, open);
+        }
+        /**
+         * get annotation's popup text.<br/>
+         * if this annotation is popup annotation, it get parent annotation's text.<br/>
+         * this method valid in professional or premium version.
+         * @return text string or null if failed.
+         */
+        final public String GetPopupText()
+        {
+            return Page.getAnnotPopupText(page.hand, hand);
+        }
+        /**
+         * set annotation's popup label, mostly it means the author.<br/>
+         * if this annotation is popup annotation, it set parent annotation's text.<br/>
+         * this method valid in professional or premium version
+         * @param val text string
+         * @return true or false
+         */
+        final public boolean SetPopupLabel( String val )
+        {
+            return Page.setAnnotPopupLabel(page.hand, hand, val);
+        }
+        /**
+         * get annotation's popup text, mostly it means the author.<br/>
+         * if this annotation is popup annotation, it get parent annotation's label.<br/>
+         * this method valid in professional or premium version.
+         * @return text string or null if failed.
+         */
+        final public String GetPopupLabel()
+        {
+            return Page.getAnnotPopupLabel(page.hand, hand);
+        }
+        /**
+         * set annotation's popup text.<br/>
+         * if this annotation is popup annotation, it set parent annotation's label.<br/>
+         * this method valid in professional or premium version
+         * @param val text string
+         * @return true or false
+         */
+        public boolean SetPopupText( String val )
+        {
+            return Page.setAnnotPopupText(page.hand, hand, val);
+        }
 		/**
 		 * get annotation's popup subject.<br/>
+         * if this annotation is popup annotation, it get parent annotation's subject.<br/>
 		 * this method valid in professional or premium version
 		 * @return subject string or null if failed.
 		 */
-		public String GetPopupSubject()
+        final public String GetPopupSubject()
 		{
 			return Page.getAnnotPopupSubject(page.hand, hand);
 		}
 		/**
 		 * set annotation's popup subject.<br/>
+         * if this annotation is popup annotation, it set parent annotation's subject.<br/>
 		 * this method valid in professional or premium version
 		 * @param val subject string
 		 * @return true or false
 		 */
-		public boolean SetPopupSubject( String val )
+        final public boolean SetPopupSubject( String val )
 		{
 			return Page.setAnnotPopupSubject(page.hand, hand, val);
 		}
@@ -270,7 +334,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return 0 based page NO, or -1 if failed.
 		 */
-		public int GetDest()
+        final public int GetDest()
 		{
 			return Page.getAnnotDest(page.hand, hand);
 		}
@@ -279,7 +343,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return name string.
 		 */
-		public String GetName()
+        final public String GetName()
 		{
 			return Page.getAnnotName(page.hand, hand);
 		}
@@ -289,7 +353,7 @@ public class Page
 		 * @param name name string to be set.
 		 * @return true or false.
 		 */
-		public boolean SetName(String name)
+        final public boolean SetName(String name)
 		{
 			return Page.setAnnotName(page.hand, hand, name);
 		}
@@ -298,7 +362,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return string of URL, or null
 		 */
-		public String GetURI()
+        final public String GetURI()
 		{
 			return Page.getAnnotURI(page.hand, hand);
 		}
@@ -307,7 +371,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return string of java-script, or null.
 		 */
-		public String GetJS()
+        final public String GetJS()
 		{
 			return Page.getAnnotJS(page.hand, hand);
 		}
@@ -316,7 +380,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return string of link path, or null
 		 */
-		public String GetFileLink()
+        final public String GetFileLink()
 		{
 			return Page.getAnnotFileLink(page.hand, hand);
 		}
@@ -325,7 +389,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return name of the 3D object, or null
 		 */
-		public String Get3D()
+        final public String Get3D()
 		{
 			return Page.getAnnot3D(page.hand, hand);
 		}
@@ -334,7 +398,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return name of the movie, or null
 		 */
-		public String GetMovie()
+        final public String GetMovie()
 		{
 			return Page.getAnnotMovie(page.hand, hand);
 		}
@@ -343,7 +407,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return name of the audio, or null
 		 */
-		public String GetSound()
+        final public String GetSound()
 		{
 			return Page.getAnnotSound(page.hand, hand);
 		}
@@ -352,7 +416,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return name of the attachment, or null
 		 */
-		public String GetAttachment()
+        final public String GetAttachment()
 		{
 			return Page.getAnnotAttachment(page.hand, hand);
 		}
@@ -362,7 +426,7 @@ public class Page
 		 * @param save_file full path name to save data.
 		 * @return true if save_file created, or false.
 		 */
-		public boolean Get3DData( String save_file )
+        final public boolean Get3DData( String save_file )
 		{
 			return Page.getAnnot3DData(page.hand, hand, save_file);
 		}
@@ -372,7 +436,7 @@ public class Page
 		 * @param save_file full path name to save data.
 		 * @return true if save_file created, or false.
 		 */
-		public boolean GetMovieData( String save_file )
+        final public boolean GetMovieData( String save_file )
 		{
 			return Page.getAnnotMovieData(page.hand, hand, save_file);
 		}
@@ -383,7 +447,7 @@ public class Page
 		 * @param save_file full path name to save data.
 		 * @return true if save_file created, or false.
 		 */
-		public boolean GetSoundData( int paras[], String save_file )
+        final public boolean GetSoundData( int paras[], String save_file )
 		{
 			return Page.getAnnotSoundData(page.hand, hand, paras, save_file);
 		}
@@ -393,7 +457,7 @@ public class Page
 		 * @param save_file full path name to save data.
 		 * @return true if save_file created, or false.
 		 */
-		public boolean GetAttachmentData( String save_file )
+        final public boolean GetAttachmentData( String save_file )
 		{
 			return Page.getAnnotAttachmentData(page.hand, hand, save_file);
 		}
@@ -402,7 +466,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return <br/>-1: this annotation is not text-box.<br/> 1: normal single line.<br/>2: password.<br/>3: MultiLine edit area.
 		 */
-		public int GetEditType()
+        final public int GetEditType()
 		{
 			return Page.getAnnotEditType(page.hand, hand);
 		}
@@ -411,7 +475,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return 0 if no limit, great than 0 if has limit.
 		 */
-		public int GetEditMaxlen()
+        final public int GetEditMaxlen()
 		{
 			return Page.getAnnotEditMaxlen(page.hand, hand);
 		}
@@ -423,7 +487,7 @@ public class Page
 		 * @param rect 4 elements in order: left, top, right, bottom, in PDF coordinate.
 		 * @return true or false
 		 */
-		public boolean GetEditTextRect( float[] rect )
+        final public boolean GetEditTextRect( float[] rect )
 		{
 			return Page.getAnnotEditTextRect(page.hand, hand, rect);
 		}
@@ -432,7 +496,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return size of text, in PDF coordinate system.
 		 */
-		public float GetEditTextSize()
+        final public float GetEditTextSize()
 		{
 			return Page.getAnnotEditTextSize(page.hand, hand);
 		}
@@ -449,7 +513,7 @@ public class Page
 		 * AFPercent_Format<br/>
 		 * and so on.
 		 */
-		public String GetFieldFormat()
+        final public String GetFieldFormat()
 		{
 			return Page.getAnnotFieldFormat(page.hand, hand);
 		}
@@ -466,7 +530,7 @@ public class Page
 		 * AFPercent_Format<br/>
 		 * and so on.
 		 */
-		public String GetEditTextFormat()
+        final public String GetEditTextFormat()
 		{
 			return Page.getAnnotEditTextFormat(page.hand, hand);
 		}
@@ -475,7 +539,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return 0 or color, format as 0xAARRGGBB.
 		 */
-		public int GetEditTextColor()
+        final public int GetEditTextColor()
 		{
 			return Page.getAnnotEditTextColor(page.hand, hand);
 		}
@@ -485,7 +549,7 @@ public class Page
 		 * @param color color format as 0xRRGGBB, alpha channel are ignored.
 		 * @return true or false.
 		 */
-		public boolean SetEditTextColor(int color)
+        final public boolean SetEditTextColor(int color)
 		{
 			return Page.setAnnotEditTextColor(page.hand, hand, color);
 		}
@@ -494,7 +558,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return content in edit-box
 		 */
-		public String GetEditText()
+        final public String GetEditText()
 		{
 			return Page.getAnnotEditText(page.hand, hand);
 		}
@@ -506,7 +570,7 @@ public class Page
 		 * @param text contents to be set.<br/>in MultiLine mode: '\r' or '\n' means change line.<br/>in password mode the edit box always display "*". 
 		 * @return true or false.
 		 */
-		public boolean SetEditText( String text )
+        final public boolean SetEditText( String text )
 		{
 			return Page.setAnnotEditText(page.hand, hand, text);
 		}
@@ -515,7 +579,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return -1: this is not combo. otherwise: items count.
 		 */
-		public int GetComboItemCount()
+        final public int GetComboItemCount()
 		{
 			return Page.getAnnotComboItemCount(page.hand, hand);
 		}
@@ -525,7 +589,7 @@ public class Page
 		 * @param item 0 based item index. range:[0, GetAnnotComboItemCount()-1]
 		 * @return null if this is not combo-box, "" if no item selected, otherwise the item selected.
 		 */
-		public String GetComboItem( int item )
+        final public String GetComboItem( int item )
 		{
 			return Page.getAnnotComboItem(page.hand, hand, item);
 		}
@@ -534,7 +598,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return -1 if this is not combo-box or no item selected, otherwise the item index that selected.
 		 */
-		public int GetComboItemSel()
+        final public int GetComboItemSel()
 		{
 			return Page.getAnnotComboItemSel(page.hand, hand);
 		}
@@ -545,7 +609,7 @@ public class Page
 		 * @param item 0 based item index to set.
 		 * @return true or false.
 		 */
-		public boolean SetComboItem( int item )
+        final public boolean SetComboItem( int item )
 		{
 			return Page.setAnnotComboItem(page.hand, hand, item);
 		}
@@ -554,7 +618,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return -1: this is not a list. otherwise: items count.
 		 */
-		public int GetListItemCount()
+        final public int GetListItemCount()
 		{
 			return Page.getAnnotListItemCount(page.hand, hand);
 		}
@@ -564,7 +628,7 @@ public class Page
 		 * @param item 0 based item index. range:[0, GetListItemCount()-1]
 		 * @return null if this is not list-box, "" if no item selected, otherwise the item selected.
 		 */
-		public String GetListItem( int item )
+        final public String GetListItem( int item )
 		{
 			return Page.getAnnotListItem(page.hand, hand, item);
 		}
@@ -573,7 +637,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return null if it is not a list-box, or no items selected.
 		 */
-		public int[] GetListSels()
+        final public int[] GetListSels()
 		{
 			return Page.getAnnotListSels(page.hand, hand);
 		}
@@ -583,7 +647,7 @@ public class Page
 		 * @param items 0 based indexes of items.
 		 * @return true or false
 		 */
-		public boolean SetListSels( int[] items )
+        final public boolean SetListSels( int[] items )
 		{
 			return Page.setAnnotListSels(page.hand, hand, items);
 		}
@@ -592,7 +656,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return <br/>-1 if annotation is not valid control.<br/>0 if check-box is not checked.<br/>1 if check-box checked.<br/>2 if radio-box is not checked.<br/>3 if radio-box checked.
 		 */
-		public int GetCheckStatus()
+        final public int GetCheckStatus()
 		{
 			return Page.getAnnotCheckStatus(page.hand, hand);
 		}
@@ -603,7 +667,7 @@ public class Page
 		 * @param check true or false.
 		 * @return true or false.
 		 */
-		public boolean SetCheckValue( boolean check )
+        final public boolean SetCheckValue( boolean check )
 		{
 			return Page.setAnnotCheckValue(page.hand, hand, check);
 		}
@@ -613,7 +677,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return true or false.
 		 */
-		public boolean SetRadio()
+        final public boolean SetRadio()
 		{
 			return Page.setAnnotRadio(page.hand, hand);
 		}
@@ -624,7 +688,7 @@ public class Page
 		 *  0 if not signed.<br/>
 		 *  1 if signed.
 		 */
-		public int GetSignStatus()
+        final public int GetSignStatus()
 		{
 			return Page.getAnnotSignStatus(page.hand, hand);
 		}
@@ -633,7 +697,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return true or false.
 		 */
-		public boolean GetReset()
+        final public boolean GetReset()
 		{
 			return Page.getAnnotReset(page.hand, hand);
 		}
@@ -643,7 +707,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return true or false.
 		 */
-		public boolean SetReset()
+        final public boolean SetReset()
 		{
 			return Page.setAnnotReset(page.hand, hand);
 		}
@@ -652,7 +716,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return null if this is not submit button.
 		 */
-		public String GetSubmitTarget()
+        final public String GetSubmitTarget()
 		{
 			return Page.getAnnotSubmitTarget(page.hand, hand);
 		}
@@ -663,7 +727,7 @@ public class Page
 		 * this method valid in premium version
 		 * @return null if this is not submit button.
 		 */
-		public String GetSubmitPara()
+        final public String GetSubmitPara()
 		{
 			return Page.getAnnotSubmitPara(page.hand, hand);
 		}
@@ -672,7 +736,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return color value formatted as 0xAARRGGBB, if 0 returned, means false.
 		 */
-		public int GetFillColor()
+        final public int GetFillColor()
 		{
 			return Page.getAnnotFillColor(page.hand, hand);
 		}
@@ -683,7 +747,7 @@ public class Page
 		 * @param color color value formatted as 0xAARRGGBB.
 		 * @return true or false
 		 */
-		public boolean SetFillColor( int color )
+        final public boolean SetFillColor( int color )
 		{
 			return Page.setAnnotFillColor(page.hand, hand, color);
 		}
@@ -692,7 +756,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return color value formatted as 0xAARRGGBB, if 0 returned, means false.
 		 */
-		public int GetStrokeColor()
+        final public int GetStrokeColor()
 		{
 			return Page.getAnnotStrokeColor(page.hand, hand);
 		}
@@ -703,7 +767,7 @@ public class Page
 		 * @param color color value formatted as 0xAARRGGBB, if alpha channel is too less or 0, return false.
 		 * @return true or false
 		 */
-		public boolean SetStrokeColor( int color )
+        final public boolean SetStrokeColor( int color )
 		{
 			return Page.setAnnotStrokeColor(page.hand, hand, color);
 		}
@@ -713,7 +777,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return width value in PDF coordinate, or 0 if error.
 		 */
-		public float GetStrokeWidth()
+        final public float GetStrokeWidth()
 		{
 			return Page.getAnnotStrokeWidth(page.hand, hand);
 		}
@@ -725,7 +789,7 @@ public class Page
 		 * @param width stroke width in PDF coordinate.
 		 * @return true or false
 		 */
-		public boolean SetStrokeWidth( float width )
+        final public boolean SetStrokeWidth( float width )
 		{
 			return Page.setAnnotStrokeWidth(page.hand, hand, width);
 		}
@@ -734,7 +798,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return a new Path object, you need invoke Path.Destroy() to free memory.
 		 */
-		public Path GetInkPath()
+        final public Path GetInkPath()
 		{
 			long ret = Page.getAnnotInkPath(page.hand, hand);
 			if( ret == 0 ) return null;
@@ -749,7 +813,7 @@ public class Page
 		 * @param path Path object.
 		 * @return true or false.
 		 */
-		public boolean SetInkPath( Path path )
+        final public boolean SetInkPath( Path path )
 		{
 			if( path == null ) return false;
 			return Page.setAnnotInkPath(page.hand, hand, path.m_hand);
@@ -759,7 +823,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return a new Path object, you need invoke Path.Destroy() to free memory.
 		 */
-		public Path GetPolygonPath()
+        final public Path GetPolygonPath()
 		{
 			long ret = Page.getAnnotPolygonPath(page.hand, hand);
 			if( ret == 0 ) return null;
@@ -774,7 +838,7 @@ public class Page
 		 * @param path Path object.
 		 * @return true or false.
 		 */
-		public boolean SetPolygonPath( Path path )
+        final public boolean SetPolygonPath( Path path )
 		{
 			if( path == null ) return false;
 			return Page.setAnnotPolygonPath(page.hand, hand, path.m_hand);
@@ -784,7 +848,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return a new Path object, you need invoke Path.Destroy() to free memory.
 		 */
-		public Path GetPolylinePath()
+        final public Path GetPolylinePath()
 		{
 			long ret = Page.getAnnotPolylinePath(page.hand, hand);
 			if( ret == 0 ) return null;
@@ -799,7 +863,7 @@ public class Page
 		 * @param path Path object.
 		 * @return true or false.
 		 */
-		public boolean SetPolylinePath( Path path )
+        final public boolean SetPolylinePath( Path path )
 		{
 			if( path == null ) return false;
 			return Page.setAnnotPolylinePath(page.hand, hand, path.m_hand);
@@ -852,7 +916,7 @@ public class Page
 		 * 23: "End"<br/>
 		 * @return true or false.
 		 */
-		public boolean SetIcon( int icon )
+        final public boolean SetIcon( int icon )
 		{
 			return Page.setAnnotIcon(page.hand, hand, icon);
 		}
@@ -862,7 +926,7 @@ public class Page
 		 * @param content PageContent object to display icon, must be 20 * 20 size.
 		 * @return true or false.
 		 */
-		public boolean SetIcon( String name, PageContent content )
+        final public boolean SetIcon( String name, PageContent content )
 		{
 			return Page.setAnnotIcon2(page.hand, hand, name, content.hand);
 		}
@@ -912,7 +976,7 @@ public class Page
 		 * 22: "InformationOnly"<br/>
 		 * 23: "End"<br/>
 		 */
-		public int GetIcon()
+        final public int GetIcon()
 		{
 			return Page.getAnnotIcon(page.hand, hand);
 		}
@@ -922,7 +986,7 @@ public class Page
 		 * this method valid in professional or premium version
 		 * @return true or false
 		 */
-		public boolean RemoveFromPage()
+        final public boolean RemoveFromPage()
 		{
 			boolean ret = removeAnnot( page.hand, hand );
 			hand = 0;
@@ -1004,6 +1068,9 @@ public class Page
 	static private native long getAnnotFromPoint( long hand, float x, float y );
 	static private native long getAnnotByName( long hand, String name );
 	static private native String getAnnotName( long hand, long annot);
+    static private native long getAnnotPopup(long page, long annot);
+    static private native boolean getAnnotPopupOpen(long page, long annot);
+    static private native boolean setAnnotPopupOpen(long page, long annot, boolean open);
 	static private native boolean setAnnotName( long hand, long annot, String name);
 	static private native int getAnnotFieldType( long hand, long annot );
 	static private native String getAnnotFieldName( long hand, long annot );
@@ -1022,6 +1089,8 @@ public class Page
 	static private native boolean setAnnotPopupText( long hand, long annot, String val );
 	static private native String getAnnotPopupSubject( long hand, long annot );
 	static private native boolean setAnnotPopupSubject( long hand, long annot, String val );
+    static private native String getAnnotPopupLabel( long hand, long annot );
+    static private native boolean setAnnotPopupLabel( long hand, long annot, String val );
 	static private native int getAnnotDest( long hand, long annot );
 	static private native String getAnnotURI( long hand, long annot );
 	static private native String getAnnotJS( long hand, long annot);
@@ -1079,6 +1148,7 @@ public class Page
 	static private native boolean removeAnnot( long hand, long annot );
 	static private native boolean moveAnnot( long hand_src, long hand_dst, long annot, float[] rect );
 	static private native boolean copyAnnot( long hand, long annot, float[] rect );
+    static private native boolean addAnnotPopup( long hand, long parent, float[] rect, boolean open );
 	static private native boolean addAnnotHWriting( long hand, long matrix, long hwriting, float orgx, float orgy );
 	static private native boolean addAnnotInk( long hand, long matrix, long ink, float orgx, float orgy );
 	static private native boolean addAnnotGlyph( long hand, long matrix, long path, int color, boolean winding );
@@ -1112,7 +1182,7 @@ public class Page
 	 * get rotated CropBox, this method need an any type of license.
 	 * @return float array as [left, top, right, bottom] in PDF coordinate.
 	 */
-	public float[] GetCropBox()
+    final public float[] GetCropBox()
 	{
 		return getCropBox( hand );
 	}
@@ -1120,7 +1190,7 @@ public class Page
 	 * get rotated MediaBox, this method need an any type of license.
 	 * @return float array as [left, top, right, bottom] in PDF coordinate.
 	 */
-	public float[] GetMediaBox()
+    final public float[] GetMediaBox()
 	{
 		return getMediaBox( hand );
 	}
@@ -1128,7 +1198,7 @@ public class Page
 	/**
 	 * Close page object and free memory.
 	 */
-	public void Close()
+    final public void Close()
 	{
 		close( hand );
 		hand = 0;
@@ -1137,7 +1207,7 @@ public class Page
 	 * prepare to render. it reset dib pixels to white value, and reset page status.
 	 * @param dib DIB object to render. obtained by Global.dibGet().
 	 */
-	public void RenderPrePare( DIB dib )
+    final public void RenderPrePare( DIB dib )
 	{
 		renderPrepare( hand, dib.hand );
 	}
@@ -1147,7 +1217,7 @@ public class Page
 	 * @param mat Matrix object define scale, rotate, translate operations.
 	 * @return true or false.
 	 */
-	public boolean Render( DIB dib, Matrix mat )
+    final public boolean Render( DIB dib, Matrix mat )
 	{
 		boolean ret = render( hand, dib.hand, mat.hand, Global.render_mode );
 		return ret;
@@ -1159,7 +1229,7 @@ public class Page
 	 * @param mat Matrix object define scale, rotate, translate operations.
 	 * @return true or false.
 	 */
-	public boolean RenderToBmp( Bitmap bitmap, Matrix mat )
+    final public boolean RenderToBmp( Bitmap bitmap, Matrix mat )
 	{
 		return renderToBmp( hand, bitmap, mat.hand, Global.render_mode );
 	}
@@ -1172,7 +1242,7 @@ public class Page
 	 * @param mat Matrix object define scale, rotate, translate operations.
 	 * @return true or false.
 	 */
-	public boolean RenderToBuf( int[] data, int w, int h, Matrix mat )
+    final public boolean RenderToBuf( int[] data, int w, int h, Matrix mat )
 	{
 		return renderToBuf( hand, data, w, h, mat.hand, Global.render_mode );
 	}
@@ -1181,14 +1251,14 @@ public class Page
 	 * @param dib same as Render function
 	 * @param mat same as Render function
 	 */
-	public void Render_Normal( DIB dib, Matrix mat )
+    final public void Render_Normal( DIB dib, Matrix mat )
 	{
 		render( hand, dib.hand, mat.hand, 1 );
 	}
 	/**
 	 * set page status to cancelled and cancel render function.
 	 */
-	public void RenderCancel()
+    final public void RenderCancel()
 	{
 		renderCancel( hand );
 	}
@@ -1198,11 +1268,11 @@ public class Page
 	 * @param bmp Bitmap to render
 	 * @return true if the page has thumb image, or false.
 	 */
-	public boolean RenderThumb(Bitmap bmp)
+    final public boolean RenderThumb(Bitmap bmp)
 	{
 		return renderThumb(hand, bmp);
 	}
-	public boolean RenderThumbToDIB(DIB dib)
+    final public boolean RenderThumbToDIB(DIB dib)
 	{
 		return renderThumbToDIB(hand, dib.hand);
 	}
@@ -1214,7 +1284,7 @@ public class Page
 	 * @param h
 	 * @return
 	 */
-	public boolean RenderThumbToBuf(int []data, int w, int h)
+    final public boolean RenderThumbToBuf(int []data, int w, int h)
 	{
 		return renderThumbToBuf(hand, data, w, h);
 	}
@@ -1222,7 +1292,7 @@ public class Page
 	 * check if page rendering is finished.
 	 * @return true or false
 	 */
-	public boolean RenderIsFinished()
+    final public boolean RenderIsFinished()
 	{
 		return renderIsFinished( hand );
 	}
@@ -1230,7 +1300,7 @@ public class Page
 	 * get text objects to memory.<br/>
 	 * a standard license is needed for this method
 	 */
-	public void ObjsStart()
+    final public void ObjsStart()
 	{
 		objsStart( hand, Global.selRTOL );
 	}
@@ -1240,7 +1310,7 @@ public class Page
 	 * @param to 0 based unicode index.
 	 * @return string or null.
 	 */
-	public String ObjsGetString( int from, int to )
+    final public String ObjsGetString( int from, int to )
 	{
 		return objsGetString( hand, from, to );
 	}
@@ -1250,7 +1320,7 @@ public class Page
 	 * @param dir if dir < 0,  get start index of the word. otherwise get last index of the word.
 	 * @return new index value.
 	 */
-	public int ObjsAlignWord( int from, int dir )
+    final public int ObjsAlignWord( int from, int dir )
 	{
 		return objsAlignWord( hand, from, dir );
 	}
@@ -1277,7 +1347,7 @@ public class Page
 	 * a standard license is needed for this method
 	 * @return count or 0 if ObjsStart not invoked.
 	 */
-	public int ObjsGetCharCount()
+    final public int ObjsGetCharCount()
 	{
 		return objsGetCharCount( hand );
 	}
@@ -1308,10 +1378,9 @@ public class Page
 
 	/**
 	 * get rotate degree for page, example: 0 or 90
-	 * @param page
 	 * @return rotate degree for page
 	 */
-	public int GetRotate()
+    final public int GetRotate()
 	{
 		return getRotate( hand );
 	}
@@ -1321,7 +1390,7 @@ public class Page
 	 * this method valid in professional or premium version
 	 * @return count
 	 */
-	public int GetAnnotCount()
+    final public int GetAnnotCount()
 	{
 		return getAnnotCount( hand );
 	}
@@ -1385,7 +1454,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotGoto( float[] rect, int pageno, float top )
+    final public boolean AddAnnotGoto( float[] rect, int pageno, float top )
 	{
 		return addAnnotGoto( hand, rect, pageno, top );
 	}
@@ -1399,7 +1468,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotURI( float[] rect, String uri )
+    final public boolean AddAnnotURI( float[] rect, String uri )
 	{
 		return addAnnotURI( hand, rect, uri );
 	}
@@ -1437,7 +1506,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotStamp( float[] rect, int icon )
+    final public boolean AddAnnotStamp( float[] rect, int icon )
 	{
 		return addAnnotStamp( hand, rect, icon );
 	}
@@ -1454,7 +1523,7 @@ public class Page
 	 * @return true or false<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotInk( Matrix mat, Ink ink, float orgx, float orgy )
+    final public boolean AddAnnotInk( Matrix mat, Ink ink, float orgx, float orgy )
 	{
 		return addAnnotInk( hand, mat.hand, ink.hand, orgx, orgy );
 	}
@@ -1470,9 +1539,9 @@ public class Page
 	 * @return true or false<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotHWriting( Matrix mat, HWriting hwriting, float orgx, float orgy )
+    final public boolean AddAnnotHWriting( Matrix mat, HWriting hwriting, float orgx, float orgy )
 	{
-		return addAnnotHWriting( hand, mat.hand,  hwriting.hand, orgx, orgy );
+		return addAnnotHWriting(hand, mat.hand, hwriting.hand, orgx, orgy);
 	}
 	/**
 	 * add a user-defined glyph to page.<br/>
@@ -1486,9 +1555,9 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotGlyph( Matrix mat, Path path, int color, boolean winding )
+    final public boolean AddAnnotGlyph( Matrix mat, Path path, int color, boolean winding )
 	{
-		return addAnnotGlyph( hand, mat.hand, path.m_hand, color, winding );
+		return addAnnotGlyph(hand, mat.hand, path.m_hand, color, winding);
 	}
 	/**
 	 * add rectangle to page.<br/>
@@ -1503,9 +1572,9 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotRect( Matrix mat, float[] rect, float width, int color, int fill_color )
+    final public boolean AddAnnotRect( Matrix mat, float[] rect, float width, int color, int fill_color )
 	{
-		return addAnnotRect( hand, mat.hand, rect, width, color, fill_color );
+		return addAnnotRect(hand, mat.hand, rect, width, color, fill_color);
 	}
 	/**
 	 * add line to page.<br/>
@@ -1533,9 +1602,9 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotLine( Matrix mat, float[] pt1, float[] pt2, int style1, int style2, float width, int color, int fill_color )
+    final public boolean AddAnnotLine( Matrix mat, float[] pt1, float[] pt2, int style1, int style2, float width, int color, int fill_color )
 	{
-		return addAnnotLine( hand, mat.hand, pt1, pt2, style1, style2, width, color, fill_color );
+		return addAnnotLine(hand, mat.hand, pt1, pt2, style1, style2, width, color, fill_color);
 	}
 	/**
 	 * add ellipse to page.<br/>
@@ -1550,10 +1619,14 @@ public class Page
 	 * @return true or false<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotEllipse( Matrix mat, float[] rect, float width, int color, int fill_color )
+    final public boolean AddAnnotEllipse( Matrix mat, float[] rect, float width, int color, int fill_color )
 	{
-		return addAnnotEllipse( hand, mat.hand, rect, width, color, fill_color );
+		return addAnnotEllipse(hand, mat.hand, rect, width, color, fill_color);
 	}
+    final public boolean AddAnnotPopup( Annotation parent, float[] rect, boolean open )
+    {
+        return addAnnotPopup( hand, parent.hand, rect, open);
+    }
 	/**
 	 * add a text-markup annotation to page.<br/>
 	 * you should re-render page to display modified data.<br/>
@@ -1582,7 +1655,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotInk( Ink ink )
+    final public boolean AddAnnotInk( Ink ink )
 	{
 		return addAnnotInk2( hand, ink.hand );
 	}
@@ -1607,11 +1680,11 @@ public class Page
 	 * @param style2 style for end point, values are same as style1.
 	 * @param width line width in DIB coordinate
 	 * @param color line color. same as addAnnotRect.
-	 * @param fill_color fill color, used to fill arrows of the line.
+	 * @param icolor fill color, used to fill arrows of the line.
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotLine( float[] pt1, float[] pt2, int style1, int style2, float width, int color, int icolor )
+    final public boolean AddAnnotLine( float[] pt1, float[] pt2, int style1, int style2, float width, int color, int icolor )
 	{
 		return addAnnotLine2( hand, pt1, pt2, style1, style2, width, color, icolor );
 	}
@@ -1627,7 +1700,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotRect( float[] rect, float width, int color, int fill_color )
+    final public boolean AddAnnotRect( float[] rect, float width, int color, int fill_color )
 	{
 		return addAnnotRect2( hand, rect, width, color, fill_color );
 	}
@@ -1643,7 +1716,7 @@ public class Page
 	 * @return true or false<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotEllipse( float[] rect, float width, int color, int fill_color )
+    final public boolean AddAnnotEllipse( float[] rect, float width, int color, int fill_color )
 	{
 		return addAnnotEllipse2( hand, rect, width, color, fill_color );
 	}
@@ -1661,7 +1734,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotEditbox( float[] rect, int line_clr, float line_w, int fill_clr, float tsize, int text_clr )
+    final public boolean AddAnnotEditbox( float[] rect, int line_clr, float line_w, int fill_clr, float tsize, int text_clr )
 	{
 		return addAnnotEditbox2( hand, rect, line_clr, line_w, fill_clr, tsize, text_clr );
 	}
@@ -1677,7 +1750,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotPolygon( Path path, int color, int fill_color, float width )
+    final public boolean AddAnnotPolygon( Path path, int color, int fill_color, float width )
 	{
 		return addAnnotPolygon( hand, path.m_hand, color, fill_color, width );
 	}
@@ -1705,7 +1778,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotPolyline( Path path, int style1, int style2, int color, int fill_color, float width )
+    final public boolean AddAnnotPolyline( Path path, int style1, int style2, int color, int fill_color, float width )
 	{
 		return addAnnotPolyline( hand, path.m_hand, style1, style2, color, fill_color, width );
 	}
@@ -1738,13 +1811,13 @@ public class Page
 	 * you should re-render page to display modified data.<br/>
 	 * this can be invoked after ObjsStart or Render or RenderToBmp.<br/>
 	 * this method valid in professional or premium version, and Document.SetCache() invoked.
-	 * @param bitmap Bitmap object to add, which should be formated in ARGB_8888
+	 * @param bitmap Bitmap object to add, which should be formated in ARGB_8888/ARGB_4444/RGB_565
 	 * @param has_alpha is need to save alpha channel information?
 	 * @param rect 4 elements: left, top, right, bottom in PDF coordinate system.
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotBitmap( Bitmap bitmap, boolean has_alpha, float[] rect )
+    final public boolean AddAnnotBitmap( Bitmap bitmap, boolean has_alpha, float[] rect )
 	{
 		return addAnnotBitmap( hand, bitmap, has_alpha, rect );
 	}
@@ -1763,7 +1836,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true. 
 	 */
-	public boolean AddAnnotAttachment(String path, int icon, float[] rect)
+    final public boolean AddAnnotAttachment(String path, int icon, float[] rect)
 	{
 		return addAnnotAttachment( hand, path, icon, rect );
 	}
@@ -1776,7 +1849,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotText( float[] pt )
+    final public boolean AddAnnotText( float[] pt )
 	{
 		return addAnnotText( hand, pt );
 	}
@@ -1795,7 +1868,7 @@ public class Page
 	 * @return true or false.<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
-	public boolean AddAnnotEditbox( Matrix mat, float[] rect, int line_clr, float line_w, int fill_clr, int text_clr, float tsize )
+    final public boolean AddAnnotEditbox( Matrix mat, float[] rect, int line_clr, float line_w, int fill_clr, int text_clr, float tsize )
 	{
 		return addAnnotEditbox( hand, mat.hand, rect, line_clr, line_w, fill_clr, tsize, text_clr );
 	}
@@ -1807,7 +1880,7 @@ public class Page
 	 * @param enable_images enable reflow images.
 	 * @return the height that reflow needed.
 	 */
-	public float ReflowStart( float width, float scale, boolean enable_images )
+    final public float ReflowStart( float width, float scale, boolean enable_images )
 	{
 		return reflowStart( hand, width, scale, enable_images );
 	}
@@ -1819,7 +1892,7 @@ public class Page
 	 * @param orgy origin y coordinate
 	 * @return true or false
 	 */
-	public boolean Reflow( DIB dib, float orgx, float orgy )
+    final public boolean Reflow( DIB dib, float orgx, float orgy )
 	{
 		return reflow( hand, dib.hand, orgx, orgy );
 	}
@@ -1831,7 +1904,7 @@ public class Page
 	 * @param orgy origin y coordinate
 	 * @return true or false
 	 */
-	public boolean ReflowToBmp( Bitmap bitmap, float orgx, float orgy )
+    final public boolean ReflowToBmp( Bitmap bitmap, float orgx, float orgy )
 	{
 		return reflowToBmp( hand, bitmap, orgx, orgy );
 	}
@@ -1840,7 +1913,7 @@ public class Page
 	 * this method valid in professional or premium version
 	 * @return count
 	 */
-	public int ReflowGetParaCount()
+    final public int ReflowGetParaCount()
 	{
 		return reflowGetParaCount( hand );
 	}
@@ -1850,7 +1923,7 @@ public class Page
 	 * @param iparagraph paragraph index range[0, ReflowGetParaCount()-1]
 	 * @return char count
 	 */
-	public int ReflowGetCharCount( int iparagraph )
+    final public int ReflowGetCharCount( int iparagraph )
 	{
 		if( iparagraph < 0 || iparagraph >= reflowGetParaCount( hand ) ) return 0;
 		return reflowGetCharCount( hand, iparagraph );
@@ -1862,7 +1935,7 @@ public class Page
 	 * @param ichar char index range[0, ReflowGetCharCount()]
 	 * @return font width for this char
 	 */
-	public float ReflowGetCharWidth( int iparagraph, int ichar )
+    final public float ReflowGetCharWidth( int iparagraph, int ichar )
 	{
 		if( ichar < 0 || ichar >= ReflowGetCharCount(iparagraph) ) return 0;
 		return reflowGetCharWidth( hand, iparagraph, ichar );
@@ -1874,7 +1947,7 @@ public class Page
 	 * @param ichar char index range[0, ReflowGetCharCount()]
 	 * @return font height for this char
 	 */
-	public float ReflowGetCharHeight( int iparagraph, int ichar )
+    final public float ReflowGetCharHeight( int iparagraph, int ichar )
 	{
 		if( ichar < 0 || ichar >= ReflowGetCharCount(iparagraph) ) return 0;
 		return reflowGetCharHeight( hand, iparagraph, ichar );
@@ -1886,7 +1959,7 @@ public class Page
 	 * @param ichar char index range[0, ReflowGetCharCount()]
 	 * @return color value formatted 0xAARRGGBB, AA: alpha value, RR:red, GG:green, BB:blue
 	 */
-	public int ReflowGetCharColor( int iparagraph, int ichar )
+    final public int ReflowGetCharColor( int iparagraph, int ichar )
 	{
 		if( ichar < 0 || ichar >= ReflowGetCharCount(iparagraph) ) return 0;
 		return reflowGetCharColor( hand, iparagraph, ichar );
@@ -1898,7 +1971,7 @@ public class Page
 	 * @param ichar char index range[0, ReflowGetCharCount()]
 	 * @return unicode
 	 */
-	public int ReflowGetCharUnicode( int iparagraph, int ichar )
+    final public int ReflowGetCharUnicode( int iparagraph, int ichar )
 	{
 		if( ichar < 0 || ichar >= ReflowGetCharCount(iparagraph) ) return 0;
 		return reflowGetCharUnicode( hand, iparagraph, ichar );
@@ -1910,7 +1983,7 @@ public class Page
 	 * @param ichar char index range[0, ReflowGetCharCount()]
 	 * @return name string
 	 */
-	public String ReflowGetCharFont( int iparagraph, int ichar )
+    final public String ReflowGetCharFont( int iparagraph, int ichar )
 	{
 		if( ichar < 0 || ichar >= ReflowGetCharCount(iparagraph) ) return null;
 		return reflowGetCharFont( hand, iparagraph, ichar );
@@ -1922,7 +1995,7 @@ public class Page
 	 * @param ichar char index range[0, ReflowGetCharCount()]
 	 * @param rect output: 4 element as [left, top, right, bottom].
 	 */
-	public void ReflowGetCharRect( int iparagraph, int ichar, float rect[] )
+    final public void ReflowGetCharRect( int iparagraph, int ichar, float rect[] )
 	{
 		if( ichar < 0 || ichar >= ReflowGetCharCount(iparagraph) ) return;
 		reflowGetCharRect( hand, iparagraph, ichar, rect );
