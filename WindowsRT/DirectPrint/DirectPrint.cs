@@ -408,7 +408,6 @@ namespace DirectPrint
 #endif
             totalbytes += (ulong)pjl_header.Length;
 
-            byte[] filebuffer = null;
             Stream fstream = null;
             try
             {
