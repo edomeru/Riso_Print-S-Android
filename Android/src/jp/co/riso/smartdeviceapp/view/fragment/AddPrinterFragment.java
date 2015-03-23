@@ -33,9 +33,7 @@ import android.os.Message;
 import android.text.InputFilter;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -108,15 +106,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 params.width = screenSize.x;
             }
         }
-        
-        // disable touch events to be consistent with iOS Behavior
-        OnTouchListener t = new OnTouchListener() {            
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        };
-        view.setOnTouchListener(t);
     }
     
     @Override

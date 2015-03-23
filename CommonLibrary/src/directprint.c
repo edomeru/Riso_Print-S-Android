@@ -65,7 +65,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define BUFFER_SIZE 4096
 
 #define QUEUE_NAME "normal"
-#define HOST_NAME "SmartDeviceApp"
+#define HOST_NAME "RISO PRINT-S"
 
 #define PJL_ESCAPE "\x1B%-12345X"
 #define PJL_LANGUAGE "@PJL ENTER LANGUAGE = PDF\x0d\x0a"
