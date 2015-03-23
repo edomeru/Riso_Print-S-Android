@@ -56,6 +56,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _printCommand;
         private ICommand _listPrintersCommand;
         private double _printerValueTextWidth;
+        private bool _isHitTestVisible = true; // Set all touch events to enabled initially
 
         private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
@@ -227,6 +228,21 @@ namespace SmartDeviceApp.ViewModels
                     );
                 }
                 return _selectPrintSetting;
+            }
+        }
+
+        /// <summary>
+        /// Gets/sets touch events enable/disable
+        /// </summary>
+        public bool IsHitTestVisible
+        {
+            get { return _isHitTestVisible; }
+            set
+            {
+                if (_isHitTestVisible != value)
+                {
+                    _isHitTestVisible = value;
+                }
             }
         }
 

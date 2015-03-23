@@ -107,7 +107,16 @@ namespace SmartDeviceApp.Common.Utilities
             title = _resourceLoader.GetString(title);
 
             var dialog = new MessageDialog(message, title ?? string.Empty);
-            await dialog.ShowAsync();
+            try
+            {
+                await dialog.ShowAsync();
+            }
+            catch (Exception)
+            {
+                // Do not show message dialog if error occurs
+                // E.g. UnauthorizedAccessException: Another dialog is currently shown
+                // May occur if sender control is tapped repeatedly
+            }
         }
 
         /// <summary>
@@ -136,7 +145,16 @@ namespace SmartDeviceApp.Common.Utilities
                         }
                     }));
             dialog.CancelCommandIndex = 0;
-            await dialog.ShowAsync();
+            try
+            {
+                await dialog.ShowAsync();
+            }
+            catch (Exception)
+            {
+                // Do not show message dialog if error occurs
+                // E.g. UnauthorizedAccessException: Another dialog is currently shown
+                // May occur if sender control is tapped repeatedly
+            }
         }
 
         /// <summary>
@@ -164,7 +182,16 @@ namespace SmartDeviceApp.Common.Utilities
             dialog.Commands.Add(new UICommand(buttonConfirmText, c => afterHideCallback(true)));
             dialog.Commands.Add(new UICommand(buttonCancelText, c => afterHideCallback(false)));
             dialog.CancelCommandIndex = 1;
-            await dialog.ShowAsync();
+            try
+            {
+                await dialog.ShowAsync();
+            }
+            catch (Exception)
+            {
+                // Do not show message dialog if error occurs
+                // E.g. UnauthorizedAccessException: Another dialog is currently shown
+                // May occur if sender control is tapped repeatedly
+            }
         }
 
         /// <summary>
@@ -179,7 +206,16 @@ namespace SmartDeviceApp.Common.Utilities
             title = _resourceLoader.GetString(title);
 
             var dialog = new MessageDialog(message, title ?? string.Empty);
-            await dialog.ShowAsync();
+            try
+            {
+                await dialog.ShowAsync();
+            }
+            catch (Exception)
+            {
+                // Do not show message dialog if error occurs
+                // E.g. UnauthorizedAccessException: Another dialog is currently shown
+                // May occur if sender control is tapped repeatedly
+            }
         }
 
         /// <summary>
@@ -204,7 +240,16 @@ namespace SmartDeviceApp.Common.Utilities
                         }
                     }));
             dialog.CancelCommandIndex = 0;
-            await dialog.ShowAsync();
+            try
+            {
+                await dialog.ShowAsync();
+            }
+            catch (Exception)
+            {
+                // Do not show message dialog if error occurs
+                // E.g. UnauthorizedAccessException: Another dialog is currently shown
+                // May occur if sender control is tapped repeatedly
+            }
         }
     }
 }
