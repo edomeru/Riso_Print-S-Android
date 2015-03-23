@@ -51,7 +51,6 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private int _printerId;
-        private string _printerName;
         private string _printerIpAddress;
         private bool _isPrintPreview;
         private ICommand _printCommand;
@@ -85,22 +84,6 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _printerId = value;
                     RaisePropertyChanged("PrinterId");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets/sets the text label based on the selected printer
-        /// </summary>
-        public string PrinterName
-        {
-            get { return _printerName; }
-            set
-            {
-                if (_printerName != value)
-                {
-                    _printerName = value;
-                    RaisePropertyChanged("PrinterName");
                 }
             }
         }
@@ -150,7 +133,6 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _printerValueTextWidth = value;
                     RaisePropertyChanged("PrinterId");
-                    RaisePropertyChanged("PrinterName");
                     RaisePropertyChanged("PrinterIpAddress");
                     RaisePropertyChanged("PrinterValueTextWidth");
                 }

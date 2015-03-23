@@ -222,31 +222,11 @@ namespace SmartDeviceApp.Converters
                 return String.Empty;
             }
 
-            bool isSelectPrinter = false;
-            if (parameter != null)
+            if (!(value is int)) // Printer id
             {
-                isSelectPrinter = System.Convert.ToBoolean(parameter);
+                return String.Empty;
             }
-
-            String text;
-            if (isSelectPrinter)
-            {
-                if (!(value is int))
-                {
-                    return String.Empty;
-                }
-
-                text = (string)new SelectedPrinterIdToTextConverter().Convert(value, null, null, null);
-            }
-            else
-            {
-                if (!(value is string))
-                {
-                    return String.Empty;
-                }
-
-                text = (string)new PrinterNameToTextConverter().Convert(value, null, null, null);
-            }
+            string text = (string)new SelectedPrinterIdToTextConverter().Convert(value, null, null, null);
 
             Style style = (Style)Application.Current.Resources["STYLE_TextValueWithSubTextNoTextTrim"];
 

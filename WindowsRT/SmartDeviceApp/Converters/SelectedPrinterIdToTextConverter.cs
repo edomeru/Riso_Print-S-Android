@@ -10,8 +10,6 @@
 //  ----------------------------------------------------------------------
 //
 
-using SmartDeviceApp.Common.Utilities;
-using SmartDeviceApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +17,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
+using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Controllers;
+using SmartDeviceApp.Models;
 
 namespace SmartDeviceApp.Converters
 {
@@ -40,13 +41,17 @@ namespace SmartDeviceApp.Converters
                 printerId = (int)value;
             }
 
-            string printerName = new ViewModelLocator().PrintSettingsViewModel.PrinterName;
-            if (printerId > -1 && !string.IsNullOrEmpty(printerName))
+            Printer printer = PrinterController.Instance.GetPrinter(printerId);
+            if (printer != null)
             {
-                return printerName;
+                string printerName = printer.Name;
+                if (printerId > -1 && !string.IsNullOrEmpty(printerName))
+                {
+                    return printerName;
+                }
             }
-
-            string resourceId = (printerId == -1) ? "IDS_LBL_CHOOSE_PRINTER" : "IDS_LBL_NO_NAME";
+            
+            string resourceId = "IDS_LBL_NO_NAME";
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             var text = loader.GetString(resourceId);
             return text;
