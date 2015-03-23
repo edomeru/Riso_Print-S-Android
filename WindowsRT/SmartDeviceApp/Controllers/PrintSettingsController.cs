@@ -97,7 +97,6 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
 
-            _printSettingsViewModel.PrinterName = printer.Name;
             _printSettingsViewModel.PrinterId = printer.Id;
             _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
 
@@ -255,7 +254,6 @@ namespace SmartDeviceApp.Controllers
                 Printer printer = null;
                 if (_printerMap.TryGetValue(screenName, out printer))
                 {
-                    _printSettingsViewModel.PrinterName = printer.Name;
                     _printSettingsViewModel.PrinterId = printer.Id;
                     _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
                 }

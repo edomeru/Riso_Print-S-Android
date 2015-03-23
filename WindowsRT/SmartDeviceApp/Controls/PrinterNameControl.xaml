@@ -140,7 +140,7 @@
                   Width="{StaticResource SIZE_DeleteButtonWidth_Long}" 
                   Height="{StaticResource SIZE_DeleteButtonHeight_Long}" >
                 
-                <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}">
+                <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=None}" Style="{StaticResource STYLE_TextBody}">
                     <Interactivity:Interaction.Behaviors>
                     <Core:DataTriggerBehavior Binding="{Binding WillBeDeleted, ElementName=printerNameControl}" Value="True">
                         <Core:ChangePropertyAction PropertyName="Foreground" Value="{StaticResource BRUSH_White}"/>

@@ -51,12 +51,12 @@ namespace SmartDeviceApp.ViewModels
         private readonly INavigationService _navigationService;
 
         private int _printerId;
-        private string _printerName;
         private string _printerIpAddress;
         private bool _isPrintPreview;
         private ICommand _printCommand;
         private ICommand _listPrintersCommand;
         private double _printerValueTextWidth;
+        private bool _isHitTestVisible = true; // Set all touch events to enabled initially
 
         private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
@@ -85,22 +85,6 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _printerId = value;
                     RaisePropertyChanged("PrinterId");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets/sets the text label based on the selected printer
-        /// </summary>
-        public string PrinterName
-        {
-            get { return _printerName; }
-            set
-            {
-                if (_printerName != value)
-                {
-                    _printerName = value;
-                    RaisePropertyChanged("PrinterName");
                 }
             }
         }
@@ -150,7 +134,6 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _printerValueTextWidth = value;
                     RaisePropertyChanged("PrinterId");
-                    RaisePropertyChanged("PrinterName");
                     RaisePropertyChanged("PrinterIpAddress");
                     RaisePropertyChanged("PrinterValueTextWidth");
                 }
@@ -245,6 +228,21 @@ namespace SmartDeviceApp.ViewModels
                     );
                 }
                 return _selectPrintSetting;
+            }
+        }
+
+        /// <summary>
+        /// Gets/sets touch events enable/disable
+        /// </summary>
+        public bool IsHitTestVisible
+        {
+            get { return _isHitTestVisible; }
+            set
+            {
+                if (_isHitTestVisible != value)
+                {
+                    _isHitTestVisible = value;
+                }
             }
         }
 

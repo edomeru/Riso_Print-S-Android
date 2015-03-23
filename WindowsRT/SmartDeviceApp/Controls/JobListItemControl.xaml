@@ -85,7 +85,7 @@
                       Background="{StaticResource BRUSH_White}" Grid.Row="0"
                       Width="{StaticResource SIZE_DeleteButtonWidth_Short}" 
                       Height="{StaticResource SIZE_DeleteButtonHeight_Short}">
-                    <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"/>
+                    <TextBlock Text="{Binding Source=IDS_LBL_DELETE, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=None}" Style="{StaticResource STYLE_TextBody}"/>
                 </Grid>
                 <Grid x:Name="deleteButtonCoverVisible" Grid.Row="0"
                       Background="{StaticResource BRUSH_Purple2}" 

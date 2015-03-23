@@ -32,7 +32,7 @@
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <local:MainMenuKeyControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                <local:MainMenuKeyControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=None}"
                                           Command="{Binding Command}"
                                           GroupName="mainMenuGroup" 
                                           IsChecked="{Binding IsChecked, Mode=TwoWay}"

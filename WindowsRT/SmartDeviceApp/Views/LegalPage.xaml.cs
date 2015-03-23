@@ -31,20 +31,12 @@ namespace SmartDeviceApp.Views
             this.InitializeComponent();
         }
 
-        private async void WebView_Loaded(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// // Load HTML referring to image files
+        /// </summary>
+        private void WebView_Loaded(object sender, RoutedEventArgs e)
         {
-            StorageFile MyWebPageFile = await StorageFileUtility.GetFileFromAppResource("Assets/legal.html");
-            string MyWebPageString = await FileIO.ReadTextAsync(MyWebPageFile);
-            string ScriptTagString = "<h2 id=\"localize_version\">Ver.";
-            int IndexOfScriptTag = MyWebPageString.IndexOf(ScriptTagString);
-            int LengthOfScriptTag = ScriptTagString.Length - 1;
-
-            PackageVersion version = Package.Current.Id.Version;
-            string versionString = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
-
-            MyWebPageString = MyWebPageString.Insert(IndexOfScriptTag + LengthOfScriptTag + 1, versionString);
-            ((WebView)sender).NavigateToString(MyWebPageString);
-
+            ((WebView)sender).Navigate(new Uri("ms-appx-web:///Assets/legal.html"));
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

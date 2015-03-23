@@ -122,6 +122,7 @@ namespace SmartDeviceApp.Controllers
         private static int _currLeftBackPageIndex;
         private static int _currRightBackPageIndex;
         private bool _resetPrintSettings; // Flag used only when selected printer is deleted
+        private bool _isPrintingEnabled;
 
         List<CancellationTokenSource> _cancellationTokenSourceQueue;
         LruCacheHelper<int, byte[]> _previewPageImages;
@@ -158,6 +159,8 @@ namespace SmartDeviceApp.Controllers
             _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
             _onNavigateFromEventHandler = new OnNavigateFromEventHandler(UnregisterPrintSettingValueChange);
             _pageAreaGridLoadedEventHandler = new PageAreaGridLoadedEventHandler(InitializeGestures);
+
+            _isPrintingEnabled = true;
         }
 
         /// <summary>
@@ -266,8 +269,17 @@ namespace SmartDeviceApp.Controllers
         {
             if (_resetPrintSettings)
             {
-                _selectedPrinter = null;
-                await SetSelectedPrinterAndPrintSettings(NO_SELECTED_PRINTER_ID);
+                // If all printers are deleted, set selected printer to default printer
+                _selectedPrinter = PrinterController.Instance.GetDefaultPrinter();
+                if (_selectedPrinter != null)
+                {
+                    await SetSelectedPrinterAndPrintSettings(_selectedPrinter.Id);
+                }
+                else
+                {
+                    await SetSelectedPrinterAndPrintSettings(NO_SELECTED_PRINTER_ID);
+                }
+                
                 _resetPrintSettings = false;
             }
             else
@@ -293,7 +305,7 @@ namespace SmartDeviceApp.Controllers
             if (_selectedPrinter.Id == printer.Id)
             {
                 _resetPrintSettings = true;
-            }
+            }            
         }
 
         /// <summary>
@@ -1186,8 +1198,12 @@ namespace SmartDeviceApp.Controllers
         {
             if (_selectedPrinter.Id > -1)
             {
-                if (NetworkController.IsConnectedToNetwork)
+                if (NetworkController.IsConnectedToNetwork && _isPrintingEnabled)
                 {
+                    // Disable other printing requests and UI hit events during printing
+                    _printSettingsViewModel.IsHitTestVisible = false;
+                    _isPrintingEnabled = false; 
+
                     // Get latest print settings since non-preview related print settings may be updated
                     _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
 
@@ -1297,6 +1313,10 @@ namespace SmartDeviceApp.Controllers
                         _directPrintController.UnsubscribeEvents();
                         _directPrintController = null;
                     }
+
+                    // Enable other printing requests and UI hit events after printing
+                    _printSettingsViewModel.IsHitTestVisible = true;
+                    _isPrintingEnabled = true; 
                 });
         }
 

@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="RISORRINT-S" Publisher="CN=RISO KAGAKU CORPORATION" Version="1.0.4.0" />
+  <Identity Name="RISOPRINT-S" Publisher="CN=RISO KAGAKU CORPORATION" Version="1.0.5.0" />
   <Properties>
-    <DisplayName>RISO RRINT-S</DisplayName>
+    <DisplayName>RISO PRINT-S</DisplayName>
     <PublisherDisplayName>RISO KAGAKU CORPORATION</PublisherDisplayName>
     <Logo>Resources\Images\StoreLogo.png</Logo>
   </Properties>

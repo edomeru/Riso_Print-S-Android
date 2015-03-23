@@ -54,7 +54,7 @@
                     <TextBlock Text="{Binding Source=IDS_APP_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
                                 Style="{StaticResource STYLE_TextAppTitle}"/>
                     <Line x:Name="lineTop" Style="{StaticResource STYLE_Line}" Margin="0,0,0,10"/>
-                    <TextBlock x:Name="openDocumentButtonLabel" Text="{Binding Source=IDS_LBL_OPEN_IN_WINRT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}"
+                    <TextBlock x:Name="openDocumentButtonLabel" Text="{Binding Source=IDS_LBL_OPEN_IN_WINRT, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=None}"
                                Style="{StaticResource STYLE_TextOpenDocument}"
                                Margin="0,0,0,10"/>
                     <Line x:Name="lineBottom" Style="{StaticResource STYLE_Line}" 

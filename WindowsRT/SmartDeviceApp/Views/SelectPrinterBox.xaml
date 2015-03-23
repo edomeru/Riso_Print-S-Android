@@ -35,7 +35,7 @@
                 <StackPanel Style="{StaticResource STYLE_StackLeft}">
                     <Image x:Name="backImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_back_normal.png"/>
                     <TextBlock x:Name="key" 
-                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" 
+                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=None}" 
                             Style="{StaticResource STYLE_TextListHeader}" />
                 </StackPanel>
             </Grid>
