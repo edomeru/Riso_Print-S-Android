@@ -47,12 +47,12 @@ namespace SmartDeviceApp.Views
                 return (HelpViewModel)DataContext;
             }
         }
-
-        private async void WebView_Loaded(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// // Load HTML referring to image files
+        /// </summary>
+        private void WebView_Loaded(object sender, RoutedEventArgs e)
         {
-            StorageFile MyWebPageFile = await StorageFileUtility.GetFileFromAppResource("Assets/help.html");
-            string MyWebPageString = await FileIO.ReadTextAsync(MyWebPageFile);
-            ((WebView)sender).NavigateToString(MyWebPageString);
+            ((WebView)sender).Navigate(new Uri("ms-appx-web:///Assets/help.html"));
         }
     }
 }

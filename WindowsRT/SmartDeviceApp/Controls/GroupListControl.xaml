@@ -45,7 +45,7 @@
                         </VisualState>
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
-                <TextBlock x:Name="deleteButtonLabel" Text="{Binding Source=IDS_LBL_DELETE_ALL, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" Style="{StaticResource STYLE_TextBody}"></TextBlock>
+                <TextBlock x:Name="deleteButtonLabel" Text="{Binding Source=IDS_LBL_DELETE_ALL, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=None}" Style="{StaticResource STYLE_TextBody}"></TextBlock>
             </Grid>
         </ControlTemplate>
         <ControlTemplate x:Key="TEMPLATE_ToggleButton" TargetType="ToggleButton">

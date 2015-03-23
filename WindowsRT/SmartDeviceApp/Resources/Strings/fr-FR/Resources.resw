@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_APP_NAME" xml:space="preserve">
-    <value>RISO RRINT-S</value>
+    <value>RISO PRINT-S</value>
   </data>
   <data name="IDS_APP_LAUNCHER_NAME" xml:space="preserve">
-    <value>RISO RRINT-S</value>
+    <value>RISO PRINT-S</value>
   </data>
   <data name="IDS_LBL_OK" xml:space="preserve">
     <value>OK</value>
@@ -337,7 +337,7 @@
     <value>4 pages</value>
   </data>
   <data name="IDS_LBL_IMPOSITION_ORDER" xml:space="preserve">
-    <value>Ordre mise en page</value>
+    <value>Ordre</value>
   </data>
   <data name="IDS_LBL_IMPOSITION_ORDER_2UP_RL" xml:space="preserve">
     <value>Droite à gauche </value>
@@ -349,13 +349,13 @@
     <value>Haut gauche vers bas</value>
   </data>
   <data name="IDS_LBL_IMPOSITION_ORDER_4UP_ULR" xml:space="preserve">
-    <value>Haut gauche v droite</value>
+    <value>Haut gauche à droite</value>
   </data>
   <data name="IDS_LBL_IMPOSITION_ORDER_4UP_URB" xml:space="preserve">
     <value>Haut droite vers bas</value>
   </data>
   <data name="IDS_LBL_IMPOSITION_ORDER_4UP_URL" xml:space="preserve">
-     <value>Haut droite v gauche</value>
+     <value>Haut droite à gauche</value>
   </data>
   <data name="IDS_LBL_FINISHING" xml:space="preserve">
     <value>Finition</value>

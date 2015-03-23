@@ -37,11 +37,10 @@
                 <StackPanel Style="{StaticResource STYLE_StackLeft}">
                     <Image x:Name="backImage" Style="{StaticResource STYLE_AlignLeft}" Stretch="None" Source="ms-appx:///Resources/Images/img_btn_back_normal.png"/>
                     <Image x:Name="icon"
-                           Source="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
                            Style="{StaticResource STYLE_AlignLeft}" Stretch="None"
                            Visibility="Collapsed"/>
                     <TextBlock x:Name="key" 
-                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=Uppercase}" 
+                            Text="{Binding Path=Content, ElementName=header, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=None}" 
                             Style="{StaticResource STYLE_TextListHeader}" />
                 </StackPanel>
             </Grid>
@@ -68,7 +67,7 @@
                                                 GroupName="printSettingOptionsGroup"
                                                 Index="{Binding Index}"
                                                 Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}}"
-                                                IconImage="ms-appx:///Resources/Images/img_btn_dummy_print_setting.png"
+                                                IconVisibility="Collapsed"
                                                 IsChecked="{Binding Index, Converter={StaticResource PrintSettingOptionToBooleanConverter}, Mode=TwoWay}"
                                                 IsEnabled="{Binding IsEnabled}"
                                                 SeparatorVisibility="{Binding Index, Converter={StaticResource PrintSettingOptionToSeparatorVisibilityConverter}}"
