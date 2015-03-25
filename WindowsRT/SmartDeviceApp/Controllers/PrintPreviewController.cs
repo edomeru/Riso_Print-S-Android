@@ -1196,9 +1196,9 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public async void Print()
         {
-            if (_selectedPrinter.Id > -1)
+            if (_selectedPrinter.Id > -1 && _isPrintingEnabled)
             {
-                if (NetworkController.IsConnectedToNetwork && _isPrintingEnabled)
+                if (NetworkController.IsConnectedToNetwork)
                 {
                     // Disable other printing requests and UI hit events during printing
                     _printSettingsViewModel.IsHitTestVisible = false;
@@ -1252,7 +1252,8 @@ namespace SmartDeviceApp.Controllers
                 _directPrintController.UnsubscribeEvents();
                 _directPrintController.CancelPrintJob();                
                 _directPrintController = null;
-            }            
+            }
+            if (!_isPrintingEnabled) _isPrintingEnabled = true;
         }
 
         /// <summary>
