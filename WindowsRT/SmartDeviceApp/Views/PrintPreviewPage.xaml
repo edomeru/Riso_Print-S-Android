@@ -432,6 +432,7 @@
             <Slider x:Name="pageNumberSlider" Grid.Row="1"
                     IsThumbToolTipEnabled="False"
                     IsEnabled="{Binding IsPageNumberSliderEnabled}" 
+                    Minimum="0"
                     Maximum="{Binding PageTotal, Mode=TwoWay}" 
                     Value="{Binding CurrentPageIndex, Mode=TwoWay, Converter={StaticResource PageIndexToSliderValueConverter}}"
                     Style="{StaticResource STYLE_PageNumberSlider}" >
