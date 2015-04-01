@@ -36,8 +36,21 @@ namespace SmartDeviceApp.Views
         /// </summary>
         private void WebView_Loaded(object sender, RoutedEventArgs e)
         {
-            ((WebView)sender).Navigate(new Uri("ms-appx-web:///Assets/legal.html"));
+            ((WebView)sender).Navigate(new Uri("ms-appx-web:///Assets/legal.html"));           
         }
+
+        /// <summary>
+        /// // Automatically set version
+        /// </summary>
+        private void WebView_DOMContentLoaded(WebView sender, WebViewDOMContentLoadedEventArgs e)
+        {
+            PackageVersion version = Package.Current.Id.Version;
+            string versionString = string.Format("var v = document.getElementById(\"localize_version\"); if (v != null) v.innerHTML = \"Ver.{0}.{1}.{2}.{3}\"; ", version.Major, version.Minor, version.Build, version.Revision);
+
+            WebView webview = ((WebView)sender);
+            webview.InvokeScriptAsync("eval", new string[] { versionString }); 
+        }
+
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {

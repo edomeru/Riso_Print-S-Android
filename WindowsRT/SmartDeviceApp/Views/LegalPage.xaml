@@ -15,7 +15,7 @@
         Text="{Binding Source=IDS_LBL_LEGAL, Converter={StaticResource ResourceStringToTextConverter}}"
         Button1Visibility="Collapsed"
         Button2Visibility="Collapsed">
-        <WebView  DefaultBackgroundColor="Transparent" Loaded="WebView_Loaded" >
+        <WebView  DefaultBackgroundColor="Transparent" Loaded="WebView_Loaded" DOMContentLoaded="WebView_DOMContentLoaded">
             <WebView.Margin>
                 <Thickness Top="{StaticResource MARGIN_Default}"
                            Bottom="{StaticResource MARGIN_Default}"
