@@ -56,7 +56,7 @@ namespace SNMP
         //public const string MIB_GETNEXTOID_NAME         = "1.3.6.1.2.1.1.5";
 
         //check interpreter family, accepted value is 54 (langPDF)
-        public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY = "1.3.6.1.2.1.43.15.1.1.2";
+        public const string MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY = "1.3.6.1.2.1.43.15.1.1.2.1.5"; 
 
         //hrDeviceDescr check for supported AZA Devices. 
         //if hrDeviceDescr is not RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G, device is DIO
