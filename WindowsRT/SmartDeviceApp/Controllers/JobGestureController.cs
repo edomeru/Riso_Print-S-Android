@@ -23,6 +23,7 @@ namespace SmartDeviceApp.Controllers
         private const string JOB_LIST_HEADER_CONTROL_NAME = "header";
         private const string JOB_LIST_HEADER_DELETE_CONTROL_NAME = "deleteButton";
         private const string JOB_LIST_ITEM_CONTROL_NAME = "jobListItemControl";
+        private const string JOB_LIST_ITEM_DELETE_CONTROL_NAME = "deleteButton";
         private const string JOBS_GRID_CONTROL_NAME = "jobsGrid";
 
         private GestureRecognizer _gestureRecognizer;
@@ -164,37 +165,25 @@ namespace SmartDeviceApp.Controllers
 
         void OnTapped(object sender, TappedEventArgs e)
         {
-
-            var jobListItem = GetJobListItemControl(e.Position, false);
+            bool isDeleteJob;
+            var jobListItem = GetJobListItemControlForDelete(e.Position, false, out isDeleteJob);
             if (jobListItem != null)
             {
-                PrintJob printJob = (PrintJob)jobListItem.DataContext;
-
-                if (printJob.DeleteButtonVisibility == Visibility.Visible)
+                if (isDeleteJob)
                 {
-                    //HideDeleteJobButton();
+                    PrintJob printJob = (PrintJob)jobListItem.DataContext;
                     (new ViewModelLocator().JobsViewModel).DeleteJobCommand.Execute(printJob);
-
-                    return;
                 }
+                else
+                {
+                    HideDeleteJobButton();
+                }
+                return;
             }
-
-            //if (_isDeleteJobButtonVisible)
-            //{
-                
-            //    // Check if tap is for jobListControl which has the visible delete button
-            //    var jobListItem = GetJobListItemControl(e.Position, false);
-            //    if (jobListItem != null && jobListItem == _lastJobListItem)
-            //    {
-            //        var printJob = jobListItem.DataContext;
-            //        (new ViewModelLocator().JobsViewModel).DeleteJobCommand.Execute(printJob);
-            //    }
-            //    return;
-            //}
 
             var point = TransformPointToGlobalCoordinates(e.Position, false);
             var elements = VisualTreeHelper.FindElementsInHostCoordinates(point, _targetControl);
-            bool isDelete = false;
+            bool isDeleteAllJobs = false;
             Button deleteButton = null;
             ToggleButton jobListHeader = null;
             foreach (UIElement element in elements)
@@ -203,7 +192,7 @@ namespace SmartDeviceApp.Controllers
                 if (elementName == JOB_LIST_HEADER_DELETE_CONTROL_NAME)
                 {
                     deleteButton = (Button)element;
-                    isDelete = true;
+                    isDeleteAllJobs = true;
                 }
                 else if (elementName == JOB_LIST_HEADER_CONTROL_NAME)
                 {
@@ -212,7 +201,7 @@ namespace SmartDeviceApp.Controllers
                 }
             }
             // Manually execute delete command
-            if (isDelete && jobListHeader != null)
+            if (isDeleteAllJobs && jobListHeader != null)
             {
                 HideDeleteJobButton();
                 PrintJobGroup printJobGroup = ((PrintJobGroup)jobListHeader.DataContext);
@@ -222,7 +211,7 @@ namespace SmartDeviceApp.Controllers
                 printJobGroup.DeleteButtonVisualState = "DeletePressed";
                 (new ViewModelLocator().JobsViewModel).DeleteAllJobsCommand.Execute(printerId);
             }
-            else if (!isDelete && jobListHeader != null)
+            else if (!isDeleteAllJobs && jobListHeader != null)
             {
                 HideDeleteJobButton();
                 if ((bool)jobListHeader.IsChecked) // Manually set pressed states
@@ -240,6 +229,8 @@ namespace SmartDeviceApp.Controllers
             {
                 VisualStateManager.GoToState(jobListHeader, "Normal", true);
             }
+
+            HideDeleteJobButton();
         }
 
         //void OnRightTapped(object sender, RightTappedEventArgs e)
@@ -344,6 +335,46 @@ namespace SmartDeviceApp.Controllers
                 }
             }
             return null;
+        }
+
+        /// Get tapped JobListItemControl for delete operation
+        /// <param name="isScrolled">True if from ManipulationUpdatedEventArgs
+        /// <param name="isDeleteJob">True if delete button is tapped and visible
+        /// Job list item control, null if no element at tapped area
+        /// False if from TappedEventArgs</param>        
+        private JobListItemControl GetJobListItemControlForDelete(Point position, bool isScrolled, 
+            out bool isDeleteJob)
+        {   
+            var point = TransformPointToGlobalCoordinates(position, isScrolled);
+            var elements = VisualTreeHelper.FindElementsInHostCoordinates(point, _targetControl);
+            JobListItemControl jobListItemControl = null;
+            Button deleteButton = null;
+            bool isDeleteButtonHit = false;
+            bool isDeleteButtonVisible = false;
+            foreach (UIElement element in elements)
+            {
+                if (jobListItemControl != null && deleteButton != null)
+                {
+                    break;
+                }
+                var elementName = ((FrameworkElement)element).Name;
+                if (elementName == JOB_LIST_ITEM_CONTROL_NAME)
+                {
+                    jobListItemControl = (JobListItemControl)element;
+                    PrintJob printJob = (PrintJob)jobListItemControl.DataContext;
+                    if (printJob.DeleteButtonVisibility == Visibility.Visible)
+                    {
+                        isDeleteButtonVisible = true;
+                    }
+                }
+                else if (elementName == JOB_LIST_ITEM_DELETE_CONTROL_NAME)
+                {
+                    deleteButton = (Button)element;
+                    isDeleteButtonHit = true;
+                }
+            }
+            isDeleteJob = isDeleteButtonHit && isDeleteButtonVisible;
+            return jobListItemControl;
         }
 
         private bool DetectVerticalSwipe(Point currentPosition, Point delta)
