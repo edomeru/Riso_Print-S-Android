@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.Devices.Sensors;
 using Windows.UI.Core;
@@ -42,6 +43,10 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty RightPaneContentTemplateSelectorProperty =
             DependencyProperty.Register("RightPaneContentTemplateSelector", typeof(DataTemplateSelector), typeof(ViewControl), null);
+
+        public static readonly DependencyProperty MainMenuButtonPressedImageProperty =
+           DependencyProperty.Register("MainMenuButtonPressedImage", typeof(ImageSource), typeof(ViewControl), 
+           new PropertyMetadata(new BitmapImage(new Uri("ms-appx:///Resources/Images/img_btn_main_menu_pressed.png"))));
         
         public static readonly DependencyProperty Button1ImageProperty =
            DependencyProperty.Register("Button1Image", typeof(ImageSource), typeof(ViewControl), null);
@@ -138,6 +143,16 @@ namespace SmartDeviceApp.Controls
         {
             get { return (DataTemplateSelector)GetValue(RightPaneContentTemplateSelectorProperty); }
             set { SetValue(RightPaneContentTemplateSelectorProperty, value); }
+        }
+
+        /// <summary>
+        /// Imagesource for the pressed state of main menu button
+        /// This is a workaround to load image faster; if set directly in xaml, the image appears blank at first
+        /// </summary>
+        public ImageSource MainMenuButtonPressedImage
+        {
+            get { return (ImageSource)GetValue(MainMenuButtonPressedImageProperty); }
+            set { SetValue(MainMenuButtonPressedImageProperty, value); }
         }
 
         /// <summary>
