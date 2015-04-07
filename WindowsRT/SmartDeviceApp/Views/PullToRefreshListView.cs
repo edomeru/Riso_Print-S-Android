@@ -107,9 +107,7 @@ namespace SmartDeviceApp.Views
 
                 if (canRefresh)
                 {
-                    //pull to refresh
-                    this.Margin = new Thickness(0, e.Position.Y, 0, 0);
-                    
+                    //pull to refresh                    
                     if (currentpoint.Y - initialpoint.Y >= 10)
                     {
                         System.Diagnostics.Debug.WriteLine("Swipe Down");
@@ -160,7 +158,6 @@ namespace SmartDeviceApp.Views
 
         private void viewer_ManipulationCompleted(object sender, Windows.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs e)
         {
-            this.Margin = new Thickness(0, 0, 0, 0);
             if (isPulling)
             {
                 Messenger.Default.Send<PrinterSearchRefreshState>(PrinterSearchRefreshState.RefreshingState);
