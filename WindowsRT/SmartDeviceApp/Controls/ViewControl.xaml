@@ -51,7 +51,7 @@
                         <VisualState x:Name="Checked">
                             <Storyboard>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Source" Storyboard.TargetName="mainMenuButtonImage">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="ms-appx:///Resources/Images/img_btn_main_menu_pressed.png"/>
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding MainMenuButtonPressedImage, ElementName=viewControl}"/>
                                 </ObjectAnimationUsingKeyFrames>
                             </Storyboard>
                         </VisualState>
