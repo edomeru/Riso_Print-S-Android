@@ -1054,7 +1054,13 @@ namespace SmartDeviceApp.ViewModels
             get { return _isPageNumberSliderEnabled; }
             set
             {
-                if (_isPageNumberSliderEnabled != value)
+                // If document has only one page, always disable
+                if (DocumentController.Instance.PageCount == 1)
+                {
+                    _isPageNumberSliderEnabled = false;
+                    RaisePropertyChanged("IsPageNumberSliderEnabled");
+                }
+                else if (_isPageNumberSliderEnabled != value)
                 {
                     _isPageNumberSliderEnabled = value;
                     RaisePropertyChanged("IsPageNumberSliderEnabled");

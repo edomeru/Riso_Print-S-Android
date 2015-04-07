@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
+using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceApp.Converters
 {
@@ -21,7 +22,8 @@ namespace SmartDeviceApp.Converters
         {
             if (value == null) return 0;
 
-            var pageNumber = System.Convert.ToDouble(value) + 1.0;
+            // If document has only one page, set page number to 0
+            var pageNumber = (DocumentController.Instance.PageCount > 1) ? System.Convert.ToDouble(value) + 1.0 : 0;
             return pageNumber;
         }
 
@@ -37,7 +39,8 @@ namespace SmartDeviceApp.Converters
         {
             if (value == null) return 0;
 
-            var pageNumber = System.Convert.ToInt32(value) - 1;
+            // If document has only one page, set page number to 0
+            var pageNumber = (DocumentController.Instance.PageCount > 1) ? System.Convert.ToInt32(value) - 1 : 0;
             return pageNumber;
         }
     }
