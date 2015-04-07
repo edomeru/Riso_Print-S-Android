@@ -34,7 +34,30 @@ void convertWCharToCharArray(char** output, const wchar_t* input)
 {
     size_t length = wcslen(input) + 1;
     size_t convertedChars = 0;
-    wcstombs_s(&convertedChars, *output, length, input, _TRUNCATE);
+
+	// First call to get length
+	int utf8_length;
+	utf8_length = WideCharToMultiByte(
+		CP_UTF8,           // Convert to UTF-8
+		0,                 // No special character conversions required 
+						   // (UTF-16 and UTF-8 support the same characters)
+		input,             // UTF-16 string to convert
+		-1,                // utf16 is NULL terminated (if not, use length)
+		NULL,              // Determining correct output buffer size
+		0,                 // Determining correct output buffer size
+		NULL,              // Must be NULL for CP_UTF8
+		NULL);             // Must be NULL for CP_UTF8
+
+	utf8_length = WideCharToMultiByte(
+		CP_UTF8,           // Convert to UTF-8
+		0,                 // No special character conversions required 
+		                   // (UTF-16 and UTF-8 support the same characters)
+		input,             // UTF-16 string to convert
+		-1,                // utf16 is NULL terminated (if not, use length)
+		*output,           // UTF-8 output buffer
+		utf8_length,       // UTF-8 output buffer size
+		NULL,              // Must be NULL for CP_UTF8
+		NULL);             // Must be NULL for CP_UTF8
 }
 
 /*
@@ -44,7 +67,9 @@ void convertCharArrayToWChar(wchar_t** output, const char* input)
 {
     size_t length = strlen(input) + 1;
     size_t convertedChars = 0;
-    mbstowcs_s(&convertedChars, *output, length, input, _TRUNCATE);
+	// First call to get length
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, input, length, NULL, 0);
+	MultiByteToWideChar(CP_UTF8, 0, input, length, *output, size_needed);
 }
 
 /*

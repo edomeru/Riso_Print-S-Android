@@ -194,14 +194,16 @@ namespace DirectPrint
             pjl_header += PJL_ESCAPE;
             pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
             pjl_header += PJL_LANGUAGE;
-            int pjl_header_size = pjl_header.Length;
+            byte[] pjl_header_bytes = System.Text.Encoding.UTF8.GetBytes(pjl_header);
+            int pjl_header_size = pjl_header_bytes.Length;
 
             // Prepare PJL footer
             string pjl_footer = "";
             pjl_footer += PJL_ESCAPE;
             pjl_footer += PJL_EOJ;
             pjl_footer += PJL_ESCAPE;
-            int pjl_footer_size = pjl_footer.Length;
+            byte[] pjl_footer_bytes = System.Text.Encoding.UTF8.GetBytes(pjl_footer);
+            int pjl_footer_size = pjl_footer_bytes.Length;
 
             ////
 
@@ -401,12 +403,13 @@ namespace DirectPrint
             ulong totalbytes = 0;
             int bytesRead = 0;
 
-            await socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length);
+            await socket.write(pjl_header_bytes, 0, pjl_header_size);
 #if DEBUG
-            await printJobStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(pjl_header), 0, pjl_header.Length);
-            await printJobStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(PDF_DATA), 0, PDF_DATA.Length);
+            await printJobStream.WriteAsync(pjl_header_bytes, 0, pjl_header_size);
+            byte[] pjl_data_bytes = System.Text.Encoding.UTF8.GetBytes(PDF_DATA);
+            await printJobStream.WriteAsync(pjl_data_bytes, 0, pjl_data_bytes.Length);
 #endif
-            totalbytes += (ulong)pjl_header.Length;
+            totalbytes += (ulong)pjl_header_size;
 
             Stream fstream = null;
             try
@@ -438,11 +441,11 @@ namespace DirectPrint
             }
 
             
-            await socket.write(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
+            await socket.write(pjl_footer_bytes, 0, pjl_footer_size);
 #if DEBUG
-            await printJobStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(pjl_footer), 0, pjl_footer.Length);
+            await printJobStream.WriteAsync(pjl_footer_bytes, 0, pjl_footer_size);
 #endif
-            totalbytes += (ulong)pjl_footer.Length;
+            totalbytes += (ulong)pjl_footer_size;
 
             if (total_data_size != totalbytes)
             {
