@@ -25,6 +25,7 @@ import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -161,6 +162,15 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             //if user has not yet agreed to the license agreement
             launchIntent = AppUtils.createActivityIntent(this, LicenseActivity.class);    
         }
+        
+        //reset secure print values
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        
+        Editor editor = prefs.edit();
+        editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+        editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
+        editor.commit();
+        
         
         if (launchIntent == null) {
             Logger.logError(SplashActivity.class, "Cannot create Intent");
