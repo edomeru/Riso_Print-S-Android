@@ -1157,12 +1157,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @brief Initialize the authentication setting values
      */
     private void initializeAuthenticationValues() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        
+        boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+        String pinCode = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
+
         EditText pinCodeEditText = (EditText) mMainView.findViewById(ID_PIN_CODE_EDIT_TEXT);
-        pinCodeEditText.setText("");
+        pinCodeEditText.setText(pinCode);
         
         Switch securePrintSwitch = (Switch) mMainView.findViewById(ID_SECURE_PRINT_SWITCH);
-        securePrintSwitch.setChecked(false);
-        setSecurePrintEnabled(false);
+        securePrintSwitch.setChecked(isSecurePrint);
+        setSecurePrintEnabled(isSecurePrint);
     }
     
     // ================================================================================
