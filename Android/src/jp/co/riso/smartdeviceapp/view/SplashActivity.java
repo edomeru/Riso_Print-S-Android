@@ -17,20 +17,20 @@ import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
+import jp.co.riso.smartprint.R;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.AndroidRuntimeException;
 
@@ -206,6 +206,10 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
         
         int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
+        //workaround for android 5.0
+        if (Build.VERSION.SDK_INT >= 21){
+            flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
+        }
         
         if (isTaskRoot()) {
             flags |= Intent.FLAG_ACTIVITY_NO_ANIMATION;
