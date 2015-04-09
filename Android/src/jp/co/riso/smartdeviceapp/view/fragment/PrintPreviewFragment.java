@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import jp.co.riso.android.dialog.DialogUtils;
@@ -29,6 +30,7 @@ import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
 import jp.co.riso.smartprint.R;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ContentResolver;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -117,12 +119,24 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 mPdfManager.setSandboxPDF();
                 
                 // Automatically open asynchronously
-                mPdfManager.initializeAsync();
+                mPdfManager.initializeAsync(null);
             } else if (data != null) {
-                mPdfManager.setPDF(data.getPath());
-                
-                // Automatically open asynchronously
-                mPdfManager.initializeAsync();
+                if (data.getScheme().equals("file")){
+                    mPdfManager.setPDF(data.getPath());
+                    // Automatically open asynchronously
+                    mPdfManager.initializeAsync(null);
+                } else {
+                    //resolve content
+                    ContentResolver c = this.getActivity().getContentResolver();
+                    mPdfManager.setPDF(null);
+                    // Automatically open asynchronously
+                    try {
+                        mPdfManager.initializeAsync(c.openInputStream(data));
+                    } catch (FileNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }                
             }
         }
         

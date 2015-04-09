@@ -10,12 +10,12 @@ package jp.co.riso.smartdeviceapp.controller.pdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -69,6 +69,8 @@ public class PDFFileManager {
     private volatile boolean mIsInitialized;
     private volatile int mPageCount;
     
+    private InputStream contentInputStream = null;
+    
     /**
      * @brief Creates a PDFFileManager with an Interface class
      * 
@@ -118,7 +120,7 @@ public class PDFFileManager {
         
         mPath = path;
         mFileName = file.getName();
-    }
+    }    
     
     /**
      * @brief Sets the PDF in the sandbox as the PDF to be processed.
@@ -355,7 +357,7 @@ public class PDFFileManager {
      *        <li>Returns status via PDFFileManagerInterface</li>
      *        </ol>
      */
-    public void initializeAsync() {
+    public void initializeAsync(InputStream is) {
         mIsInitialized = false;
         mPageCount = 0;
         
@@ -363,9 +365,16 @@ public class PDFFileManager {
         if (mInitTask != null) {
             mInitTask.cancel(true);
         }
+        if (is != null){
+            contentInputStream = is;
+            this.setPDF(null);
+        } else {
+            contentInputStream = null;            
+        }
         
         mInitTask = new PDFInitTask();
         mInitTask.execute(mPath);
+        
     }
     
     /**
@@ -586,17 +595,24 @@ public class PDFFileManager {
      */
     private class PDFInitTask extends AsyncTask<String, Void, Integer> {
         
+        String sandboxPath = PDFFileManager.getSandboxPath();
+        String inputFile = null;
+        
         @Override
         protected Integer doInBackground(String... params) {
-            int status = testDocument(params[0]);
             
-            if (isCancelled() || (mPath != null && !mPath.equals(params[0]))) {
+            if (inputFile == null){
+                inputFile = params[0];
+            }
+            
+            int status = testDocument(inputFile);
+            
+            if (isCancelled() || (mPath != null && !mPath.equals(inputFile))) {
                 return PDF_CANCELLED;
             }
             if (status == PDF_OK) {
                 File file = new File(mPath);
                 String fileName = file.getName();
-                String sandboxPath = PDFFileManager.getSandboxPath();
                 
                 if (PDFFileManager.hasNewPDFData(SmartDeviceApp.getAppContext())) {
                     PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
@@ -629,6 +645,23 @@ public class PDFFileManager {
         }
         
         @Override
+        protected void onPreExecute() {
+            if (contentInputStream != null){
+                File destFile = new File(sandboxPath);
+                try {
+                    destFile.createNewFile();
+                    FileUtils.copy(contentInputStream, destFile);
+                    inputFile = destFile.getPath();
+                    
+                    setPDF(destFile.getPath());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             
@@ -643,4 +676,5 @@ public class PDFFileManager {
             }
         }
     }
+ 
 }
