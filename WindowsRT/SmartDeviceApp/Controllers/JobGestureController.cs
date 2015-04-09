@@ -166,18 +166,16 @@ namespace SmartDeviceApp.Controllers
         void OnTapped(object sender, TappedEventArgs e)
         {
             bool isDeleteJob;
-            var jobListItem = GetJobListItemControlForDelete(e.Position, false, out isDeleteJob);
+            var jobListItem = GetJobListItemControlForDelete(e.Position, false);
             if (jobListItem != null)
             {
-                if (isDeleteJob)
-                {
-                    PrintJob printJob = (PrintJob)jobListItem.DataContext;
-                    (new ViewModelLocator().JobsViewModel).DeleteJobCommand.Execute(printJob);
-                }
-                else
-                {
-                    HideDeleteJobButton();
-                }
+                PrintJob printJob = (PrintJob)jobListItem.DataContext;
+                (new ViewModelLocator().JobsViewModel).DeleteJobCommand.Execute(printJob);
+                return;
+            }
+            if (_isDeleteJobButtonVisible)
+            {
+                HideDeleteJobButton();
                 return;
             }
 
@@ -203,7 +201,6 @@ namespace SmartDeviceApp.Controllers
             // Manually execute delete command
             if (isDeleteAllJobs && jobListHeader != null)
             {
-                HideDeleteJobButton();
                 PrintJobGroup printJobGroup = ((PrintJobGroup)jobListHeader.DataContext);
                 var printerId = printJobGroup.Jobs[0].PrinterId;
                 _lastDeleteAllButton = deleteButton;
@@ -213,7 +210,6 @@ namespace SmartDeviceApp.Controllers
             }
             else if (!isDeleteAllJobs && jobListHeader != null)
             {
-                HideDeleteJobButton();
                 if ((bool)jobListHeader.IsChecked) // Manually set pressed states
                 {
                     VisualStateManager.GoToState(jobListHeader, "CheckedPressed", true);
@@ -229,8 +225,6 @@ namespace SmartDeviceApp.Controllers
             {
                 VisualStateManager.GoToState(jobListHeader, "Normal", true);
             }
-
-            HideDeleteJobButton();
         }
 
         //void OnRightTapped(object sender, RightTappedEventArgs e)
@@ -339,18 +333,17 @@ namespace SmartDeviceApp.Controllers
 
         /// Get tapped JobListItemControl for delete operation
         /// <param name="isScrolled">True if from ManipulationUpdatedEventArgs
-        /// <param name="isDeleteJob">True if delete button is tapped and visible
-        /// Job list item control, null if no element at tapped area
+        /// Job list item control, null if not tapped at delete button area
         /// False if from TappedEventArgs</param>        
-        private JobListItemControl GetJobListItemControlForDelete(Point position, bool isScrolled, 
-            out bool isDeleteJob)
-        {   
+        private JobListItemControl GetJobListItemControlForDelete(Point position, bool isScrolled)
+        {
+            bool isDeleteJob = false;
+            if (!_isDeleteJobButtonVisible) return null;
             var point = TransformPointToGlobalCoordinates(position, isScrolled);
             var elements = VisualTreeHelper.FindElementsInHostCoordinates(point, _targetControl);
             JobListItemControl jobListItemControl = null;
             Button deleteButton = null;
             bool isDeleteButtonHit = false;
-            bool isDeleteButtonVisible = false;
             foreach (UIElement element in elements)
             {
                 if (jobListItemControl != null && deleteButton != null)
@@ -361,19 +354,16 @@ namespace SmartDeviceApp.Controllers
                 if (elementName == JOB_LIST_ITEM_CONTROL_NAME)
                 {
                     jobListItemControl = (JobListItemControl)element;
-                    PrintJob printJob = (PrintJob)jobListItemControl.DataContext;
-                    if (printJob.DeleteButtonVisibility == Visibility.Visible)
-                    {
-                        isDeleteButtonVisible = true;
-                    }
                 }
-                else if (elementName == JOB_LIST_ITEM_DELETE_CONTROL_NAME)
+                else if (elementName == JOB_LIST_ITEM_DELETE_CONTROL_NAME) // Delete button is hit
                 {
                     deleteButton = (Button)element;
                     isDeleteButtonHit = true;
                 }
             }
-            isDeleteJob = isDeleteButtonHit && isDeleteButtonVisible;
+            // Delete job only when the delete button of the current job list item is hit
+            isDeleteJob = isDeleteButtonHit && jobListItemControl == _lastJobListItem;
+            if (!isDeleteJob) jobListItemControl = null;
             return jobListItemControl;
         }
 
