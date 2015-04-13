@@ -239,6 +239,13 @@ namespace SmartDeviceApp.Controllers
 
         private void OnManipulationUpdated(object sender, ManipulationUpdatedEventArgs e)
         {
+            // If delete job button is visible, ignore gesture
+            if (_isDeleteJobButtonVisible && _lastJobListItem != null)
+            {
+                HideDeleteJobButton();
+                _gestureRecognizer.CompleteGesture();
+                return;
+            }
             var isVerticalSwipe = DetectVerticalSwipe(e.Position, e.Delta.Translation);
             if (isVerticalSwipe)
             {
@@ -256,12 +263,7 @@ namespace SmartDeviceApp.Controllers
                 isSwipe = true;
                 _gestureRecognizer.CompleteGesture();
                 var jobListItem = GetJobListItemControl(currentPosition, isScrolled);
-                if (jobListItem == null) return isSwipe;
-                if (_isDeleteJobButtonVisible && _lastJobListItem != null)
-                {
-                    HideDeleteJobButton();
-                    return isSwipe;
-                }
+                if (jobListItem == null) return isSwipe;                
             }
             // Swipe left, show delete button
             else if (_startPoint.X - currentPosition.X >= SWIPE_THRESHOLD)
@@ -270,11 +272,6 @@ namespace SmartDeviceApp.Controllers
                 _gestureRecognizer.CompleteGesture();
                 var jobListItem = GetJobListItemControl(currentPosition, isScrolled);
                 if (jobListItem == null) return isSwipe;
-                if (_isDeleteJobButtonVisible && _lastJobListItem != null && _lastJobListItem != jobListItem)
-                {
-                    HideDeleteJobButton();
-                    return isSwipe;
-                }
                 if (jobListItem.DeleteButtonVisibility != Visibility.Visible)
                 {
                     PrintJob printJob = (PrintJob)jobListItem.DataContext;
