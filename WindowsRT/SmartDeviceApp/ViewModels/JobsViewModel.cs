@@ -34,6 +34,12 @@ namespace SmartDeviceApp.ViewModels
         /// </summary>
         public event SmartDeviceApp.Controllers.JobController.RemoveGroupedJobsEventHandler RemoveGroupedJobsEventHandler;
 
+        /// <summary>
+        /// Transition from Jobs Screen delegate
+        /// </summary>
+        public delegate void OnNavigateFromEventHandler();
+        private OnNavigateFromEventHandler _onNavigateFromEventHandler;
+
         private readonly IDataService _dataService;
         private readonly INavigationService _navigationService;
 
@@ -72,6 +78,8 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => SetViewOrientation(viewOrientation));
             SetViewOrientation(_viewControlViewModel.ViewOrientation); // Initialize MaxColumns
+
+            _onNavigateFromEventHandler = new OnNavigateFromEventHandler(HandleNavigatedFrom);
         }
 
         /// <summary>
@@ -269,6 +277,17 @@ namespace SmartDeviceApp.ViewModels
         {
             get { return _gestureController; }
             set { _gestureController = value; }
+        }
+
+        /// <summary>
+        /// Transition from Jobs Screen event handler
+        /// </summary>
+        public void OnNavigatedFrom()
+        {
+            if (_onNavigateFromEventHandler != null)
+            {
+                _onNavigateFromEventHandler();
+            }
         }
 
         private void SetViewMode(ViewMode viewMode)
@@ -600,6 +619,15 @@ namespace SmartDeviceApp.ViewModels
 
             // Group text width
             GroupTextWidth = maxGroupTextWidth;
+        }
+
+
+        /// <summary>
+        /// Updates elements for navigated from event
+        /// </summary>
+        private void HandleNavigatedFrom()
+        {
+            GestureController.HideDeleteJobButton();
         }
     }
 }

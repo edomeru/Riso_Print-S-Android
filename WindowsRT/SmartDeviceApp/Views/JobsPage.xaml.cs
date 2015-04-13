@@ -77,6 +77,12 @@ namespace SmartDeviceApp.Views
             set { SetValue(DeleteJobCommandProperty, value); }
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.OnNavigatedFrom();
+            base.OnNavigatedFrom(e);
+        }
+
         private void OnJobsGridLoaded(object sender, RoutedEventArgs e)
         {
             if (!_isJobsGridLoaded)
