@@ -31,7 +31,6 @@
             </Style.Setters>
         </Style>
         <Style x:Key="STYLE_PageNumberSlider" TargetType="Slider">
-            <Setter Property="Minimum" Value="1"/>
             <Setter Property="Background" Value="{ThemeResource SliderTrackBackgroundThemeBrush}" />
             <Setter Property="BorderBrush" Value="{ThemeResource SliderBorderThemeBrush}" />
             <Setter Property="BorderThickness" Value="{ThemeResource SliderBorderThemeThickness}" />
@@ -431,8 +430,8 @@
             
             <Slider x:Name="pageNumberSlider" Grid.Row="1"
                     IsThumbToolTipEnabled="False"
-                    IsEnabled="{Binding IsPageNumberSliderEnabled}" 
-                    Minimum="0"
+                    IsEnabled="{Binding IsPageNumberSliderEnabled}"
+                    Minimum="{Binding PageNumberMinimum}"
                     Maximum="{Binding PageTotal, Mode=TwoWay}" 
                     Value="{Binding CurrentPageIndex, Mode=TwoWay, Converter={StaticResource PageIndexToSliderValueConverter}}"
                     Style="{StaticResource STYLE_PageNumberSlider}" >

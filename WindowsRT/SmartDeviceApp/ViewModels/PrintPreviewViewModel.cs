@@ -76,6 +76,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _goToNextPage;
         private ICommand _pageNumberSliderValueChange;
         private ICommand _pageNumberSliderPointerCaptureLost;
+        private uint _pageNumberMinimum;
         private uint _pageTotal;
         private uint _pagesPerSheet;
         private uint _currentPageIndex;
@@ -579,7 +580,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void EnablePreviewGestures()
         {
-            if (_gestureController != null)
+            if (_gestureController != null && PageTotal > 1)
             {
                 _gestureController.EnableGestures();
             }
@@ -885,7 +886,7 @@ namespace SmartDeviceApp.ViewModels
             _pagesPerSheet = pagesPerSheet;
             SetPageIndexes();
 
-            IsPageNumberSliderEnabled = true;
+            IsPageNumberSliderEnabled = (PageTotal == 1) ? false : true;
         }
 
         /// <summary>
@@ -1003,6 +1004,23 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
+        /// Gets/sets the minimum value of the page slider.
+        /// Should be 0 if the page total is 1, and 1 otherwise
+        /// </summary>
+        public uint PageNumberMinimum
+        {
+            get { return _pageNumberMinimum; }
+            set
+            {
+                if (_pageNumberMinimum != value)
+                {
+                    _pageNumberMinimum = value;
+                    RaisePropertyChanged("PageNumberMinimum");
+                }
+            }
+        }
+
+        /// <summary>
         /// Page total
         /// </summary>
         public uint PageTotal
@@ -1018,6 +1036,7 @@ namespace SmartDeviceApp.ViewModels
                     {
                         _gestureController.SetPageTotal(_pageTotal);
                     }
+                    PageNumberMinimum = (_pageTotal == 1) ? (uint)0 : 1;
                 }
             }
         }
@@ -1037,11 +1056,10 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _gestureController.SetPageIndex(_currentPageIndex);
                 }
-                if (_currentPageIndex != value)
-                {
-                    _currentPageIndex = value;
-                    RaisePropertyChanged("CurrentPageIndex");
-                }
+                // Set value and raise property changed even if same as previous value
+                // to update PageIndexToSliderValueConverter results
+                _currentPageIndex = value;
+                RaisePropertyChanged("CurrentPageIndex");
             }
         }
 
@@ -1055,7 +1073,7 @@ namespace SmartDeviceApp.ViewModels
             set
             {
                 // If document has only one page, always disable
-                if (DocumentController.Instance.PageCount == 1)
+                if (PageTotal == 1)
                 {
                     _isPageNumberSliderEnabled = false;
                     RaisePropertyChanged("IsPageNumberSliderEnabled");
