@@ -256,8 +256,6 @@ namespace SmartDeviceApp.Controllers
             _currLeftPageIndex = 0;
             _currRightPageIndex = 0;
 
-            _printPreviewViewModel.PageTotal = 0;
-
             _previewPageImages.Clear();
             _printPreviewViewModel.Cleanup();
         }
