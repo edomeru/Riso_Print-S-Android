@@ -47,7 +47,7 @@
                                             utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                             IconVisibility="Collapsed"
                                             SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
-                                            PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Medium}"
+                                            PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
                                             PasswordMaxLength="{StaticResource MAXLENGTH_SecurePrintPinCode}"
                                             PasswordBoxBehavior="Numeric"
                                             Width="{Binding Width, ElementName=printSettingsBox}"

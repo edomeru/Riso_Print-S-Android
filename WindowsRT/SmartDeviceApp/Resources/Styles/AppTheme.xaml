@@ -51,8 +51,7 @@
     <x:Double x:Key="SIZE_ListButton2Width">22</x:Double>
     <x:Double x:Key="SIZE_ListButton2Height">28</x:Double>
     <x:Double x:Key="SIZE_ListValue_ToggleWidth">50</x:Double>
-    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Short">80</x:Double>
-    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Medium">100</x:Double>
+    <x:Double x:Key="SIZE_ListValue_TextboxWidth_Short">100</x:Double>
     <x:Double x:Key="SIZE_ListValue_TextboxWidth_Long">250</x:Double>
     <x:Double x:Key="SIZE_ProgressRing">50</x:Double>
     <x:Double x:Key="SIZE_DeleteButtonWidth_Long">150</x:Double>
