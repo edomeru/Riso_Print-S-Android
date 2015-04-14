@@ -1055,16 +1055,17 @@ namespace SmartDeviceApp.Controllers
                 DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
                 {
-                    if (_previewPageImages.ContainsKey(_currRightPageIndex))
+                    if (enableClearPage || _currRightPageIndex == _maxPreviewPageCount)
+                    {
+                        _printPreviewViewModel.RightPageImage.Clear();
+                    }
+                    else if (_previewPageImages.ContainsKey(_currRightPageIndex))
                     {
                         WriteableBitmapExtensions.FromByteArray(
                             _printPreviewViewModel.RightPageImage,
                             _previewPageImages.GetValue(_currRightPageIndex));
                     }
-                    else if (enableClearPage)
-                    {
-                        _printPreviewViewModel.RightPageImage.Clear();
-                    }
+                   
                     _printPreviewViewModel.IsLoadRightPageActive = false;
                 });
             }
