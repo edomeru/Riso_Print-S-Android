@@ -43,6 +43,7 @@ namespace SmartDeviceApp.Behaviors
             passwordBox.KeyUp += OnKeyUp;
             passwordBox.IsEnabledChanged += OnEnabledChange;
             passwordBox.Paste += OnPaste;
+            passwordBox.TextChanged += OnTextChanged;
 
             // Note: No inputscope supported in PasswordBox control
             // TODO: Show numeric keyboard
@@ -154,6 +155,21 @@ namespace SmartDeviceApp.Behaviors
             {
                 passwordBox.KeyDown -= OnKeyDown;
                 passwordBox.KeyUp -= OnKeyUp;
+            }
+        }
+
+        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var passwordBox = AssociatedObject as PasswordTextbox;
+            
+            if (passwordBox != null && !string.IsNullOrWhiteSpace(REGEX_NUMERIC))
+            {
+                // Handle pressing clear 'X' behavior
+                if (String.IsNullOrEmpty(passwordBox.Text))
+                {
+                    passwordBox.OriginalText = String.Empty;
+                }
+                // Let OnKeyUp handle the rest
             }
         }
     }
