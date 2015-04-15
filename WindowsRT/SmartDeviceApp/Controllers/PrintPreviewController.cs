@@ -500,7 +500,7 @@ namespace SmartDeviceApp.Controllers
                 _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
                 if (_currSliderIndex >= _previewPageTotal)
                 {
-                    _currSliderIndex = (int)_previewPageTotal - 1;
+                    _currSliderIndex = 0;////(int)_previewPageTotal - 1;
                 }
                 _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet,(uint) _pagesPerSheet);
             }
