@@ -1055,7 +1055,7 @@ namespace SmartDeviceApp.Controllers
                 DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
                 {
-                    if (enableClearPage || _currRightPageIndex == _maxPreviewPageCount)
+                    if (enableClearPage || _currRightPageIndex >= _maxPreviewPageCount)
                     {
                         _printPreviewViewModel.RightPageImage.Clear();
                     }
@@ -1149,7 +1149,7 @@ namespace SmartDeviceApp.Controllers
                 DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
                 {
-                    if (_previewPageImages.ContainsKey(_currRightBackPageIndex))
+                    if (_previewPageImages.ContainsKey(_currRightBackPageIndex) && _currRightBackPageIndex < _maxPreviewPageCount)
                     {
                         WriteableBitmapExtensions.FromByteArray(
                             _printPreviewViewModel.RightBackPageImage,
@@ -1161,7 +1161,7 @@ namespace SmartDeviceApp.Controllers
                                 _previewPageImages.GetValue(_currRightBackPageIndex));
                         }
                     }
-                    else if (enableClearPage)
+                    else if (enableClearPage || _currRightBackPageIndex >= _maxPreviewPageCount) 
                     {
                         _printPreviewViewModel.RightBackPageImage.Clear();
                         if(_isDuplex)
