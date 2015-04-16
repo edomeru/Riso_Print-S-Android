@@ -151,7 +151,10 @@ namespace SmartDeviceApp.Controllers
             }
              */
 
-            _printSettings = currPrintSettings;
+            if (_printSettings != currPrintSettings)
+            {
+                _printSettings = currPrintSettings;
+            }
             /*
             if (!_printSettingsMap.ContainsKey(screenName))
             {
@@ -193,6 +196,22 @@ namespace SmartDeviceApp.Controllers
 
                 _printer = null;
                 _printSettings = null;
+
+                if (_printSettingList != null)
+                {
+                    for (int i = 0; i < _printSettingList.Count; i++)
+                    {
+                        var element = _printSettingList.ElementAt(i);
+                        for (int j = 0; j < element.PrintSettings.Count; j++)
+                        {
+                            PrintSetting setting = element.PrintSettings.ElementAt(j);
+                            setting.Dispose();
+                            setting = null;
+                        }
+                        element.PrintSettings.Clear();
+                    }
+                    _printSettingList.Clear();
+                }
                 /*
                 if (_printerMap.ContainsKey(screenName))
                 {
@@ -204,6 +223,8 @@ namespace SmartDeviceApp.Controllers
                     _printSettingsMap.Remove(screenName);
                 }
                 */
+
+                System.GC.Collect();
             }
         }
 
@@ -291,7 +312,10 @@ namespace SmartDeviceApp.Controllers
                 // Refresh Print Settings
                 if (_printSettingList != null)
                 {
-                    _printSettingsViewModel.PrintSettingsList = _printSettingList;
+                    if (_printSettingsViewModel.PrintSettingsList != _printSettingList)
+                    {
+                        _printSettingsViewModel.PrintSettingsList = _printSettingList;
+                    }
                 }
                 /*
                 PrintSettingList printSettingList = null;
@@ -423,7 +447,20 @@ namespace SmartDeviceApp.Controllers
                                             }).ToList<PrintSetting>()
                                     };
 
-            return printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
+            PrintSettingGroup group = new PrintSettingGroup();
+            PrintSetting fakeSetting = new PrintSetting();
+            fakeSetting.Text = "blah";
+            group.Name = "Fake Group";
+            group.PrintSettings = new List<PrintSetting>();
+            group.PrintSettings.Add(fakeSetting);
+
+            //List<PrintSettingGroup> groupList = new List<PrintSettingGroup>();
+            //groupList.Add(group);
+            //return groupList;
+            List<PrintSettingGroup> groupList = printSettingsData.ToList<PrintSettingGroup>();
+            //List<PrintSettingGroup> groupList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
+            return groupList;
+            //return printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
         }
 
         /// <summary>
