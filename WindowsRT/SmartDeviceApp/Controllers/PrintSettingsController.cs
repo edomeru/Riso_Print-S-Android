@@ -262,6 +262,21 @@ namespace SmartDeviceApp.Controllers
                 PrintSettingList printSettingList = null;
                 if (_printSettingListMap.TryGetValue(screenName, out printSettingList))
                 {
+                    //unload previous printsettings
+                    if (_printSettingsViewModel.PrintSettingsList != null &&
+                        _printSettingsViewModel.PrintSettingsList.Count > 0)
+                    {
+                        for (int i = 0; i < _printSettingsViewModel.PrintSettingsList.Count; i++)
+                        {
+                            var p = _printSettingsViewModel.PrintSettingsList.ElementAt(i);
+                            //for (int j = 0; j < p.PrintSettings.Count; j++)
+                            {
+                                p.PrintSettings.Clear();
+                            }
+                        }
+                    }
+                    System.GC.Collect();
+                    
                     _printSettingsViewModel.PrintSettingsList = printSettingList;
                 }
 
