@@ -50,9 +50,14 @@ namespace SmartDeviceApp.Controllers
         private string _prevPinCode;
 
         // Maps (Managed values)
+        /*
         private Dictionary<string, Printer> _printerMap;
         private Dictionary<string, PrintSettings> _printSettingsMap;
         private Dictionary<string, PrintSettingList> _printSettingListMap;
+         */
+        private Printer _printer;
+        private PrintSettings _printSettings;
+        private PrintSettingList _printSettingList;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -61,9 +66,14 @@ namespace SmartDeviceApp.Controllers
 
         private PrintSettingsController()
         {
+            /*
             _printerMap = new Dictionary<string, Printer>();
             _printSettingsMap = new Dictionary<string, PrintSettings>();
             _printSettingListMap = new Dictionary<string, PrintSettingList>();
+            */
+            _printer = null;
+            _printSettings = null;
+            _printSettingList = null;
 
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
@@ -90,7 +100,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Initialize(string screenName, Printer printer)
         {
-            PrintSettings currPrintSettings = new PrintSettings();
+            PrintSettings currPrintSettings = null;// new PrintSettings();
 
             if (string.IsNullOrEmpty(screenName) || printer == null)
             {
@@ -129,6 +139,8 @@ namespace SmartDeviceApp.Controllers
 
             RegisterPrintSettingValueChanged(screenName);
 
+            _printer = printer;
+            /*
             if (!_printerMap.ContainsKey(screenName))
             {
                 _printerMap.Add(screenName, printer);
@@ -137,7 +149,10 @@ namespace SmartDeviceApp.Controllers
             {
                 _printerMap[screenName] = printer;
             }
+             */
 
+            _printSettings = currPrintSettings;
+            /*
             if (!_printSettingsMap.ContainsKey(screenName))
             {
                 _printSettingsMap.Add(screenName, currPrintSettings);
@@ -146,12 +161,15 @@ namespace SmartDeviceApp.Controllers
             {
                 _printSettingsMap[screenName] = currPrintSettings;
             }
+            */
 
             LoadPrintSettingsOptions();
             FilterPrintSettingsUsingCapabilities();
             MergePrintSettings();
             ApplyPrintSettingConstraints();
 
+            _printSettingList = _printSettingsViewModel.PrintSettingsList;
+            /*
             if (!_printSettingListMap.ContainsKey(screenName))
             {
                 _printSettingListMap.Add(screenName, _printSettingsViewModel.PrintSettingsList);
@@ -160,6 +178,7 @@ namespace SmartDeviceApp.Controllers
             {
                 _printSettingListMap[screenName] = _printSettingsViewModel.PrintSettingsList;
             }
+             */
         }
 
         /// <summary>
@@ -172,6 +191,9 @@ namespace SmartDeviceApp.Controllers
             {
                 UnregisterPrintSettingValueChanged(screenName);
 
+                _printer = null;
+                _printSettings = null;
+                /*
                 if (_printerMap.ContainsKey(screenName))
                 {
                     _printerMap.Remove(screenName);
@@ -181,6 +203,7 @@ namespace SmartDeviceApp.Controllers
                 {
                     _printSettingsMap.Remove(screenName);
                 }
+                */
             }
         }
 
@@ -251,34 +274,32 @@ namespace SmartDeviceApp.Controllers
                 _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
 
                 // Refresh Printer
+                if (_printer != null)
+                {
+                    _printSettingsViewModel.PrinterId = _printer.Id;
+                    _printSettingsViewModel.PrinterIpAddress = _printer.IpAddress;
+                }
+                /*
                 Printer printer = null;
                 if (_printerMap.TryGetValue(screenName, out printer))
                 {
                     _printSettingsViewModel.PrinterId = printer.Id;
                     _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
                 }
+                */
 
                 // Refresh Print Settings
+                if (_printSettingList != null)
+                {
+                    _printSettingsViewModel.PrintSettingsList = _printSettingList;
+                }
+                /*
                 PrintSettingList printSettingList = null;
                 if (_printSettingListMap.TryGetValue(screenName, out printSettingList))
                 {
-                    //unload previous printsettings
-                    if (_printSettingsViewModel.PrintSettingsList != null &&
-                        _printSettingsViewModel.PrintSettingsList.Count > 0)
-                    {
-                        for (int i = 0; i < _printSettingsViewModel.PrintSettingsList.Count; i++)
-                        {
-                            var p = _printSettingsViewModel.PrintSettingsList.ElementAt(i);
-                            //for (int j = 0; j < p.PrintSettings.Count; j++)
-                            {
-                                p.PrintSettings.Clear();
-                            }
-                        }
-                    }
-                    System.GC.Collect();
-                    
                     _printSettingsViewModel.PrintSettingsList = printSettingList;
                 }
+                */
 
                 PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
             }
@@ -411,10 +432,12 @@ namespace SmartDeviceApp.Controllers
         private void FilterPrintSettingsUsingCapabilities()
         {
             Printer printer = null;
-            _printerMap.TryGetValue(_activeScreen, out printer);
+            printer = _printer;
+            //_printerMap.TryGetValue(_activeScreen, out printer);
             
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //_printSettingsMap.TryGetValue(_activeScreen, out printSettings);
 
             if (printer == null || printSettings == null)
             {
@@ -551,7 +574,8 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            _printSettings = printSettings;
+            //_printSettingsMap[_activeScreen] = printSettings;
         }
 
         /// <summary>
@@ -613,7 +637,9 @@ namespace SmartDeviceApp.Controllers
         private void MergePrintSettings()
         {
             PrintSettings printSettings;
-            if (_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
+            printSettings = _printSettings;
+            if (printSettings != null)
+            //if (_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
             {
                 foreach (var group in _printSettingsViewModel.PrintSettingsList)
                 {
@@ -698,7 +724,9 @@ namespace SmartDeviceApp.Controllers
         private void ApplyPrintSettingConstraints()
         {
             PrintSettings printSettings;
-            if (_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
+            printSettings = _printSettings;
+            if (printSettings != null)
+            //if (_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
             {
                 // Note: The following order must be checked when constraints specifications is updated
                 UpdateConstraintsBasedOnBooklet(printSettings.Booklet, false);
@@ -721,7 +749,8 @@ namespace SmartDeviceApp.Controllers
             bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //if (_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
             if (printSettings == null)
             {
                 return isValueUpdated;
@@ -772,7 +801,8 @@ namespace SmartDeviceApp.Controllers
                 isValueUpdated = true;
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            _printSettings = printSettings;
+            //_printSettingsMap[_activeScreen] = printSettings;
 
             return isValueUpdated;
         }
@@ -787,7 +817,8 @@ namespace SmartDeviceApp.Controllers
             bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //if (_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
             if (printSettings == null)
             {
                 return isValueUpdated;
@@ -961,7 +992,8 @@ namespace SmartDeviceApp.Controllers
                 isValueUpdated = true;
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            _printSettings = printSettings;
+            //_printSettingsMap[_activeScreen] = printSettings;
 
             return isValueUpdated;
         }
@@ -977,7 +1009,8 @@ namespace SmartDeviceApp.Controllers
             bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
             if (printSettings == null)
             {
                 return isValueUpdated;
@@ -1129,7 +1162,8 @@ namespace SmartDeviceApp.Controllers
                 isValueUpdated = true;
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            _printSettings = printSettings;
+            //_printSettingsMap[_activeScreen] = printSettings;
 
             return isValueUpdated;
         }
@@ -1145,7 +1179,8 @@ namespace SmartDeviceApp.Controllers
             bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //_printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
                 return isValueUpdated;
@@ -1227,7 +1262,8 @@ namespace SmartDeviceApp.Controllers
             bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;            
+            //_printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
                 return isValueUpdated;
@@ -1336,7 +1372,8 @@ namespace SmartDeviceApp.Controllers
                 isValueUpdated = true;
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            _printSettings = printSettings;
+            //_printSettingsMap[_activeScreen] = printSettings;
 
             return isValueUpdated;
         }
@@ -1351,7 +1388,8 @@ namespace SmartDeviceApp.Controllers
             bool isValueUpdated = false;
 
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //_printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
                 return isValueUpdated;
@@ -1450,7 +1488,8 @@ namespace SmartDeviceApp.Controllers
                 isValueUpdated = true;
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            _printSettings = printSettings;
+            //_printSettingsMap[_activeScreen] = printSettings;
 
             return isValueUpdated;
         }
@@ -1462,7 +1501,8 @@ namespace SmartDeviceApp.Controllers
         private void UpdateConstraintsBasedOnSecurePrint(bool value)
         {
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //_printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
                 return;
@@ -1491,7 +1531,8 @@ namespace SmartDeviceApp.Controllers
                 }
             }
 
-            _printSettingsMap[_activeScreen] = printSettings;
+            _printSettings = printSettings;
+            //_printSettingsMap[_activeScreen] = printSettings;
         }
 
         /// <summary>
@@ -1556,7 +1597,8 @@ namespace SmartDeviceApp.Controllers
             bool isPreviewAffected = false;
 
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //_printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
                 return isPreviewAffected;
@@ -1716,9 +1758,10 @@ namespace SmartDeviceApp.Controllers
                 // Ignore error
             }
 
-            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            //if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
             {
-                _printSettingsMap[_activeScreen] = printSettings;
+                _printSettings = printSettings;
+                //_printSettingsMap[_activeScreen] = printSettings;
             }
 
             return isPreviewAffected;
@@ -1737,7 +1780,8 @@ namespace SmartDeviceApp.Controllers
             bool isPreviewAffected = false;
 
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //_printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
                 return isPreviewAffected;
@@ -1776,9 +1820,10 @@ namespace SmartDeviceApp.Controllers
                 // Ignore error
             }
 
-            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            //if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
             {
-                _printSettingsMap[_activeScreen] = printSettings;
+                _printSettings = printSettings;
+                //_printSettingsMap[_activeScreen] = printSettings;
             }
 
             return isPreviewAffected;
@@ -1795,7 +1840,8 @@ namespace SmartDeviceApp.Controllers
             //bool isPreviewAffected = false;
 
             PrintSettings printSettings = null;
-            _printSettingsMap.TryGetValue(_activeScreen, out printSettings);
+            printSettings = _printSettings;
+            //_printSettingsMap.TryGetValue(_activeScreen, out printSettings);
             if (printSettings == null)
             {
                 //return isPreviewAffected;
@@ -1815,9 +1861,10 @@ namespace SmartDeviceApp.Controllers
             //    await DatabaseController.Instance.UpdatePrintSettings(printSettings);
             //}
 
-            if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
+            //if (!string.IsNullOrEmpty(_activeScreen) && _printSettingsMap.ContainsKey(_activeScreen))
             {
-                _printSettingsMap[_activeScreen] = printSettings;
+                _printSettings = printSettings;
+                //_printSettingsMap[_activeScreen] = printSettings;
             }
 
             //return isPreviewAffected;
@@ -1835,9 +1882,10 @@ namespace SmartDeviceApp.Controllers
         public PrintSettings GetCurrentPrintSettings(string screenName)
         {
             PrintSettings printSettings = null;
-            if (!string.IsNullOrEmpty(screenName) && _printSettingsMap.ContainsKey(screenName))
+            //if (!string.IsNullOrEmpty(screenName) && _printSettingsMap.ContainsKey(screenName))
             {
-                printSettings = _printSettingsMap[screenName];
+                printSettings = _printSettings;
+                //printSettings = _printSettingsMap[screenName];
             }
 
             return printSettings;
