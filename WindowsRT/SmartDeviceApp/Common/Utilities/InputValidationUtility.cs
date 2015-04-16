@@ -20,7 +20,6 @@ namespace SmartDeviceApp.Common.Utilities
 
         private const string STR_IPV4_LOOPBACK_ADDRESS    = "127.0.0.1";
         private const string STR_IPV6_LOOPBACK_ADDRESS    = "::1";
-        private const string STR_IPV4_UNSPECIFIED_ADDRESS = "0.0.0.0";
         private const string STR_IPV6_UNSPECIFIED_ADDRESS = "::";
 
         /// <summary>
@@ -47,7 +46,7 @@ namespace SmartDeviceApp.Common.Utilities
                 ipAddress = h.CanonicalName.ToString();
 
                 // Loopback address
-                if (ipAddress.Equals(STR_IPV4_LOOPBACK_ADDRESS) || ipAddress.Equals(STR_IPV4_UNSPECIFIED_ADDRESS) ||
+                if (ipAddress.Equals(STR_IPV4_LOOPBACK_ADDRESS) ||
                     ipAddress.Equals(STR_IPV6_LOOPBACK_ADDRESS) || ipAddress.Equals(STR_IPV6_UNSPECIFIED_ADDRESS))
                 {
                     return false;
