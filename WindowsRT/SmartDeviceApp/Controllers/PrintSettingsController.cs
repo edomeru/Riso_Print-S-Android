@@ -194,6 +194,7 @@ namespace SmartDeviceApp.Controllers
             {
                 UnregisterPrintSettingValueChanged(screenName);
 
+                /*
                 _printer = null;
                 _printSettings = null;
 
@@ -370,26 +371,50 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSettingList Operations
 
+        private List<PrintSettingGroup> mainGroup = null;
+        private List<PrintSettingGroup> authGroup = null;
+
         /// <summary>
         /// Loads the initial print settings file
         /// </summary>
         private void LoadPrintSettingsOptions()
         {
+            //initial loaders (load only once and reuse)
+            if (mainGroup == null) mainGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+            if (authGroup == null) authGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML);
             // Construct the PrintSettingList
-            _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
-            var tempList = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+            if (_printSettingsViewModel.PrintSettingsList == null)
+            {
+                _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
+
+                foreach (PrintSettingGroup g in mainGroup)
+                {
+                    _printSettingsViewModel.PrintSettingsList.Add(g);
+                }
+            }
+
+            //remove Authentication group temporarily
+            foreach (PrintSettingGroup g in authGroup)
+            {
+                _printSettingsViewModel.PrintSettingsList.Remove(g);
+            }
 
             // Append Authentication group for Print Preview screen
             if (_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
             {
-                tempList.AddRange(ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML).AsEnumerable());
-            }
+                foreach (PrintSettingGroup g in authGroup)
+                {
+                    _printSettingsViewModel.PrintSettingsList.Add(g);
+                }
+            }            
 
             // Bind list with UI
+            /*
             foreach (PrintSettingGroup group in tempList)
             {
                 _printSettingsViewModel.PrintSettingsList.Add(group);
             }
+            */
 
 #if !PRINTSETTING_ORIENTATION
             // Remove Orientation in list
@@ -399,6 +424,8 @@ namespace SmartDeviceApp.Controllers
                 RemovePrintSetting(orientationPrintSetting);
             }
 #endif // !PRINTSETTING_ORIENTATION
+
+            System.GC.Collect();
         }
 
         /// <summary>
