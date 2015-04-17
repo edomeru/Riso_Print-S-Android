@@ -50,11 +50,6 @@ namespace SmartDeviceApp.Controllers
         private string _prevPinCode;
 
         // Maps (Managed values)
-        /*
-        private Dictionary<string, Printer> _printerMap;
-        private Dictionary<string, PrintSettings> _printSettingsMap;
-        private Dictionary<string, PrintSettingList> _printSettingListMap;
-         */
         private Printer _printer;
         private PrintSettings _printSettings;
         private PrintSettingList _printSettingList;
@@ -66,11 +61,6 @@ namespace SmartDeviceApp.Controllers
 
         private PrintSettingsController()
         {
-            /*
-            _printerMap = new Dictionary<string, Printer>();
-            _printSettingsMap = new Dictionary<string, PrintSettings>();
-            _printSettingListMap = new Dictionary<string, PrintSettingList>();
-            */
             _printer = null;
             _printSettings = null;
             _printSettingList = null;
@@ -140,31 +130,13 @@ namespace SmartDeviceApp.Controllers
             RegisterPrintSettingValueChanged(screenName);
 
             _printer = printer;
-            /*
-            if (!_printerMap.ContainsKey(screenName))
-            {
-                _printerMap.Add(screenName, printer);
-            }
-            else
-            {
-                _printerMap[screenName] = printer;
-            }
-             */
+
 
             if (_printSettings != currPrintSettings)
             {
                 _printSettings = currPrintSettings;
             }
-            /*
-            if (!_printSettingsMap.ContainsKey(screenName))
-            {
-                _printSettingsMap.Add(screenName, currPrintSettings);
-            }
-            else
-            {
-                _printSettingsMap[screenName] = currPrintSettings;
-            }
-            */
+
 
             LoadPrintSettingsOptions();
             FilterPrintSettingsUsingCapabilities();
@@ -172,16 +144,6 @@ namespace SmartDeviceApp.Controllers
             ApplyPrintSettingConstraints();
 
             _printSettingList = _printSettingsViewModel.PrintSettingsList;
-            /*
-            if (!_printSettingListMap.ContainsKey(screenName))
-            {
-                _printSettingListMap.Add(screenName, _printSettingsViewModel.PrintSettingsList);
-            }
-            else
-            {
-                _printSettingListMap[screenName] = _printSettingsViewModel.PrintSettingsList;
-            }
-             */
         }
 
         /// <summary>
@@ -195,37 +157,10 @@ namespace SmartDeviceApp.Controllers
                 UnregisterPrintSettingValueChanged(screenName);
 
                 /*
+                //should not unload, these should be reused 
                 _printer = null;
                 _printSettings = null;
-
-                if (_printSettingList != null)
-                {
-                    for (int i = 0; i < _printSettingList.Count; i++)
-                    {
-                        var element = _printSettingList.ElementAt(i);
-                        for (int j = 0; j < element.PrintSettings.Count; j++)
-                        {
-                            PrintSetting setting = element.PrintSettings.ElementAt(j);
-                            setting.Dispose();
-                            setting = null;
-                        }
-                        element.PrintSettings.Clear();
-                    }
-                    _printSettingList.Clear();
-                }
-                /*
-                if (_printerMap.ContainsKey(screenName))
-                {
-                    _printerMap.Remove(screenName);
-                }
-
-                if (_printSettingsMap.ContainsKey(screenName))
-                {
-                    _printSettingsMap.Remove(screenName);
-                }
                 */
-
-                System.GC.Collect();
             }
         }
 
@@ -301,14 +236,6 @@ namespace SmartDeviceApp.Controllers
                     _printSettingsViewModel.PrinterId = _printer.Id;
                     _printSettingsViewModel.PrinterIpAddress = _printer.IpAddress;
                 }
-                /*
-                Printer printer = null;
-                if (_printerMap.TryGetValue(screenName, out printer))
-                {
-                    _printSettingsViewModel.PrinterId = printer.Id;
-                    _printSettingsViewModel.PrinterIpAddress = printer.IpAddress;
-                }
-                */
 
                 // Refresh Print Settings
                 if (_printSettingList != null)
@@ -318,13 +245,6 @@ namespace SmartDeviceApp.Controllers
                         _printSettingsViewModel.PrintSettingsList = _printSettingList;
                     }
                 }
-                /*
-                PrintSettingList printSettingList = null;
-                if (_printSettingListMap.TryGetValue(screenName, out printSettingList))
-                {
-                    _printSettingsViewModel.PrintSettingsList = printSettingList;
-                }
-                */
 
                 PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
             }
@@ -408,13 +328,6 @@ namespace SmartDeviceApp.Controllers
                 }
             }            
 
-            // Bind list with UI
-            /*
-            foreach (PrintSettingGroup group in tempList)
-            {
-                _printSettingsViewModel.PrintSettingsList.Add(group);
-            }
-            */
 
 #if !PRINTSETTING_ORIENTATION
             // Remove Orientation in list
@@ -700,8 +613,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         private void MergePrintSettings()
         {
-            PrintSettings printSettings;
-            printSettings = _printSettings;
+            PrintSettings printSettings = _printSettings;
             if (printSettings != null)
             //if (_printSettingsMap.TryGetValue(_activeScreen, out printSettings))
             {
