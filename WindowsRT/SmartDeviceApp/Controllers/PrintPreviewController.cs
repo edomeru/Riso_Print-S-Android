@@ -1055,16 +1055,17 @@ namespace SmartDeviceApp.Controllers
                 DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
                 {
-                    if (_previewPageImages.ContainsKey(_currRightPageIndex))
+                    if (enableClearPage || _currRightPageIndex >= _maxPreviewPageCount)
+                    {
+                        _printPreviewViewModel.RightPageImage.Clear();
+                    }
+                    else if (_previewPageImages.ContainsKey(_currRightPageIndex))
                     {
                         WriteableBitmapExtensions.FromByteArray(
                             _printPreviewViewModel.RightPageImage,
                             _previewPageImages.GetValue(_currRightPageIndex));
                     }
-                    else if (enableClearPage)
-                    {
-                        _printPreviewViewModel.RightPageImage.Clear();
-                    }
+                   
                     _printPreviewViewModel.IsLoadRightPageActive = false;
                 });
             }
@@ -1148,7 +1149,7 @@ namespace SmartDeviceApp.Controllers
                 DispatcherHelper.CheckBeginInvokeOnUI(
                 () =>
                 {
-                    if (_previewPageImages.ContainsKey(_currRightBackPageIndex))
+                    if (_previewPageImages.ContainsKey(_currRightBackPageIndex) && _currRightBackPageIndex < _maxPreviewPageCount)
                     {
                         WriteableBitmapExtensions.FromByteArray(
                             _printPreviewViewModel.RightBackPageImage,
@@ -1160,7 +1161,7 @@ namespace SmartDeviceApp.Controllers
                                 _previewPageImages.GetValue(_currRightBackPageIndex));
                         }
                     }
-                    else if (enableClearPage)
+                    else if (enableClearPage || _currRightBackPageIndex >= _maxPreviewPageCount) 
                     {
                         _printPreviewViewModel.RightBackPageImage.Clear();
                         if(_isDuplex)
