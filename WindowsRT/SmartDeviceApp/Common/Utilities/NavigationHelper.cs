@@ -18,6 +18,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using GalaSoft.MvvmLight.Command;
+using System.Text;
 
 namespace SmartDeviceApp.Common.Utilities
 {
@@ -70,6 +71,8 @@ namespace SmartDeviceApp.Common.Utilities
     {
         private Page Page { get; set; }
         private Frame Frame { get { return this.Page.Frame; } }
+        private StringBuilder stringBuilder = new StringBuilder();
+        private const string PAGE_PREFIX = "Page-";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationHelper"/> class.
@@ -306,9 +309,13 @@ namespace SmartDeviceApp.Common.Utilities
         /// <param name="e">Event data that describes how this page was reached.  The Parameter
         /// property provides the group to be displayed.</param>
         public void OnNavigatedTo(NavigationEventArgs e)
-        {
+        {            
             var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
-            this._pageKey = "Page-" + this.Frame.BackStackDepth;
+            this._pageKey = null;
+            stringBuilder.Clear();
+            stringBuilder.Append(PAGE_PREFIX);
+            stringBuilder.Append(this.Frame.BackStackDepth);
+            this._pageKey = stringBuilder.ToString();
 
             if (e.NavigationMode == NavigationMode.New)
             {
@@ -319,7 +326,11 @@ namespace SmartDeviceApp.Common.Utilities
                 while (frameState.Remove(nextPageKey))
                 {
                     nextPageIndex++;
-                    nextPageKey = "Page-" + nextPageIndex;
+                    nextPageKey = null;
+                    stringBuilder.Clear();
+                    stringBuilder.Append(PAGE_PREFIX);
+                    stringBuilder.Append(nextPageIndex);
+                    nextPageKey = stringBuilder.ToString();
                 }
 
                 // Pass the navigation parameter to the new page

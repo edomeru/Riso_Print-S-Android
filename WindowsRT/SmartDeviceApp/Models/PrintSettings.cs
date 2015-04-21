@@ -229,6 +229,35 @@ namespace SmartDeviceApp.Models
         {
             return Text.GetHashCode();
         }
+
+        public void Dispose()
+        {
+            this.Name = null;;
+            this.Text = null;
+            this.Icon = null;
+            //this.Value = null;
+            //this.Default = null;
+            if (this._selectedOption != null)
+            {
+                this._selectedOption.Text = null;
+                this._selectedOption = null;
+            }
+            this._isEnabled = false;
+            this._isValueDisplayed = false;
+            this._selectedOption = null;
+            if (this.Options != null && this.Options.Count > 0)
+            {
+                for (int i = 0; i < this.Options.Count; i++)
+                {
+                    this.Options[i].Text = null;
+                    this.Options[i] = null;
+                }
+                this.Options.Clear();
+            }
+
+            this.PropertyChanged -= this.PropertyChangedHandler;
+            this.PropertyChanging -= this.PropertyChangingHandler;
+        }
     }
 
     public class PrintSettingGroup

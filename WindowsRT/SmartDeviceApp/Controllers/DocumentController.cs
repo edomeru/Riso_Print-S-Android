@@ -40,7 +40,7 @@ namespace SmartDeviceApp.Controllers
         private LruCacheHelper<int, LogicalPage> _logicalPages =
             new LruCacheHelper<int, LogicalPage>(MAX_LOGICAL_PAGE_IMAGE_CACHE);
 
-        private Document _document;
+        private Document _document = null;
 
         /// <summary>
         /// Number of pages of the actual PDF file
@@ -108,7 +108,17 @@ namespace SmartDeviceApp.Controllers
                 PdfDocument pdfDocument = await PdfDocument.LoadFromFileAsync(PdfFile,
                     PDF_PASSWORD_EMPTY);
 
-                _document = new Document(file.Path, PdfFile.Path, pdfDocument);
+                if (_document == null)
+                {
+                    _document = new Document(file.Path, PdfFile.Path, pdfDocument);
+                }
+                else
+                {
+                    //reuse previous object
+                    _document.OrigSource = file.Path;
+                    _document.TempSource = PdfFile.Path;
+                    _document.PdfDocument = pdfDocument;
+                }
                 PageCount = pdfDocument.PageCount;
                 FileName = file.Name;
                 Result = LoadDocumentResult.Successful;
@@ -142,7 +152,7 @@ namespace SmartDeviceApp.Controllers
         {
             await StorageFileUtility.DeleteAllTempFiles();
             _logicalPages.Clear();
-            _document = null;
+            //_document = null;//_document will be reused
             PageCount = 0;
             PdfFile = null;
             FileName = null;

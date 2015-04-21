@@ -25,17 +25,17 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// File path of the PDF file opened by the user
         /// </summary>
-        public string OrigSource { get; private set; }
+        public string OrigSource { get; set; }
 
         /// <summary>
         /// File path of the PDF file saved in AppData
         /// </summary>
-        public string TempSource { get; private set; }
+        public string TempSource { get; set; }
 
         /// <summary>
         /// PDF document object
         /// </summary>
-        public PdfDocument PdfDocument { get; private set; }
+        public PdfDocument PdfDocument { get; set; }
 
         /// <summary>
         /// Document class constructor
