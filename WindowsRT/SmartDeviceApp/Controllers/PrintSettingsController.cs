@@ -66,6 +66,7 @@ namespace SmartDeviceApp.Controllers
             _printSettingListMap = new Dictionary<string, PrintSettingList>();
 
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
+            _printSettingsViewModel.PrintSettingsList = null;
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
 
             // Set PrinterList in PrintSettingsViewModel only once (this will be the original list)
@@ -310,25 +311,46 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSettingList Operations
 
+        PrintSettingList defaultSettingsList = null;
+        PrintSettingList printSettingsList = null;
         /// <summary>
         /// Loads the initial print settings file
         /// </summary>
         private void LoadPrintSettingsOptions()
         {
-            // Construct the PrintSettingList
-            _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
-            var tempList = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
-
-            // Append Authentication group for Print Preview screen
+            //prepare print settings
             if (_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
             {
-                tempList.AddRange(ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML).AsEnumerable());
-            }
+                if (printSettingsList == null)
+                {
+                    printSettingsList = new PrintSettingList();
+                    var tempList = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
 
-            // Bind list with UI
-            foreach (PrintSettingGroup group in tempList)
-            {
-                _printSettingsViewModel.PrintSettingsList.Add(group);
+                    // Append Authentication group for Print Preview screen
+                    tempList.AddRange(ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML).AsEnumerable());
+
+                    // Bind list with UI
+                    foreach (PrintSettingGroup group in tempList)
+                    {
+                        printSettingsList.Add(group);
+                    }
+                }
+
+                _printSettingsViewModel.PrintSettingsList = printSettingsList;
+            } else {
+                if (defaultSettingsList == null)
+                {
+                    defaultSettingsList = new PrintSettingList();
+                    var tempList = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+
+                    // Bind list with UI
+                    foreach (PrintSettingGroup group in tempList)
+                    {
+                        defaultSettingsList.Add(group);
+                    }
+                }
+
+                _printSettingsViewModel.PrintSettingsList = defaultSettingsList;
             }
 
 #if !PRINTSETTING_ORIENTATION
