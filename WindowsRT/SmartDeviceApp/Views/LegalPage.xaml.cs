@@ -23,6 +23,8 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class LegalPage : PageBase
     {
+        private bool isAlreadyLoaded = false;
+
         /// <summary>
         /// Constructor. Initializes UI components.
         /// </summary>
@@ -36,7 +38,16 @@ namespace SmartDeviceApp.Views
         /// </summary>
         private void WebView_Loaded(object sender, RoutedEventArgs e)
         {
-            ((WebView)sender).Navigate(new Uri("ms-appx-web:///Assets/legal.html"));           
+            if (!isAlreadyLoaded)
+            {
+                isAlreadyLoaded = true;
+                ((WebView)sender).Navigate(new Uri("ms-appx-web:///Assets/legal.html"));
+            }
+            else
+            {
+                WebView webview = ((WebView)sender);
+                webview.InvokeScriptAsync("eval", new string[] { "scroll(0, 0);"}); 
+            }
         }
 
         /// <summary>
