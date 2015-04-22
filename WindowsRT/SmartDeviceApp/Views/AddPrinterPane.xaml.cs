@@ -28,17 +28,21 @@ namespace SmartDeviceApp.Views
         /// <summary>
         /// Constructor of AddPrinterPane.
         /// </summary>
+
+        private IPAddressTextBoxBehavior _ipAddressBehavior;
         public AddPrinterPane()
         {
             this.InitializeComponent();
-
+            _ipAddressBehavior = null;
         }
 
         private void ipTextBox_Loaded(object sender, RoutedEventArgs e)
         {
-            IBehavior behavior = null;
-            behavior = new IPAddressTextBoxBehavior();
-            behavior.Attach((TextBox)sender);
+            if (_ipAddressBehavior == null)
+            {
+                _ipAddressBehavior = new IPAddressTextBoxBehavior();
+                _ipAddressBehavior.Attach((TextBox)sender);
+            }
         }
 
         /// <summary>
