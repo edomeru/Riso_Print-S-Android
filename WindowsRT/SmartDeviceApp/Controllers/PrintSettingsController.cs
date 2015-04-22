@@ -91,7 +91,7 @@ namespace SmartDeviceApp.Controllers
         /// <returns>task</returns>
         public async Task Initialize(string screenName, Printer printer)
         {
-            PrintSettings currPrintSettings = new PrintSettings();
+            PrintSettings currPrintSettings = null;// new PrintSettings();
 
             if (string.IsNullOrEmpty(screenName) || printer == null)
             {
@@ -159,7 +159,7 @@ namespace SmartDeviceApp.Controllers
             }
             else
             {
-                _printSettingListMap[screenName] = _printSettingsViewModel.PrintSettingsList;
+                _printSettingListMap[screenName] = _printSettingsViewModel.PrintSettingsList;                
             }
         }
 
@@ -311,19 +311,21 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSettingList Operations
 
-        PrintSettingList defaultSettingsList = null;
-        PrintSettingList printSettingsList = null;
+        PrintSettingList baseDefaultSettingsList = null;
+        PrintSettingList basePrintSettingsList = null;
         /// <summary>
         /// Loads the initial print settings file
         /// </summary>
         private void LoadPrintSettingsOptions()
         {
-            //prepare print settings
+            //reset PrintSettingsList UI binding
+            _printSettingsViewModel.PrintSettingsList = null;
+
             if (_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
             {
-                if (printSettingsList == null)
+                if (basePrintSettingsList == null)
                 {
-                    printSettingsList = new PrintSettingList();
+                    basePrintSettingsList = new PrintSettingList();
                     var tempList = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
 
                     // Append Authentication group for Print Preview screen
@@ -332,25 +334,42 @@ namespace SmartDeviceApp.Controllers
                     // Bind list with UI
                     foreach (PrintSettingGroup group in tempList)
                     {
-                        printSettingsList.Add(group);
+                        group.ResetPrintSettings();
+                        basePrintSettingsList.Add(group);
                     }
                 }
 
-                _printSettingsViewModel.PrintSettingsList = printSettingsList;
-            } else {
-                if (defaultSettingsList == null)
+                foreach (PrintSettingGroup group in basePrintSettingsList)
                 {
-                    defaultSettingsList = new PrintSettingList();
+                    group.ResetPrintSettings();
+                }
+                _printSettingsViewModel.PrintSettingsList = basePrintSettingsList;
+
+
+            } else {
+                if (baseDefaultSettingsList == null)
+                {
+                    baseDefaultSettingsList = new PrintSettingList();
                     var tempList = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
 
                     // Bind list with UI
                     foreach (PrintSettingGroup group in tempList)
                     {
-                        defaultSettingsList.Add(group);
+                        group.ResetPrintSettings();
+                        baseDefaultSettingsList.Add(group);
                     }
                 }
 
-                _printSettingsViewModel.PrintSettingsList = defaultSettingsList;
+                foreach (PrintSettingGroup group in baseDefaultSettingsList)
+                {
+                    group.ResetPrintSettings();
+                }
+
+                //refresh UI binding
+                if (_printSettingsViewModel.PrintSettingsList != baseDefaultSettingsList)
+                {
+                    _printSettingsViewModel.PrintSettingsList = baseDefaultSettingsList;
+                }
             }
 
 #if !PRINTSETTING_ORIENTATION
@@ -583,7 +602,8 @@ namespace SmartDeviceApp.Controllers
             PrintSettingGroup printSettingGroup = GetPrintSettingGroup(printSetting);
             if (printSettingGroup != null)
             {
-                printSettingGroup.PrintSettings.Remove(printSetting);
+                //printSettingGroup.PrintSettings.Remove(printSetting);
+                printSettingGroup.RemovePrintSetting(printSetting);
             }
         }
 
@@ -609,7 +629,8 @@ namespace SmartDeviceApp.Controllers
                 .FirstOrDefault(setting => setting.Index == index);
             if (printSettingOption != null)
             {
-                printSetting.Options.Remove(printSettingOption);
+                //printSetting.Options.Remove(printSettingOption);
+                printSetting.RemoveOption(printSettingOption);
             }
         }
 
