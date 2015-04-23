@@ -213,14 +213,12 @@ namespace SmartDeviceApp.Controllers
                 (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_PDF_ENCRYPTED", "IDS_APP_NAME",
                     "IDS_LBL_OK", null);
-                (new ViewModelLocator().HomeViewModel).EnabledOpenDocumentCommand = true;
             }
             else // DocumentController.Instance.Result == LoadDocumentResult.ErrorReadPdf or LoadDocumentResult.NotStarted
             {
                 (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME",
                     "IDS_LBL_OK", null);
-                (new ViewModelLocator().HomeViewModel).EnabledOpenDocumentCommand = true;
             }
         }
 
