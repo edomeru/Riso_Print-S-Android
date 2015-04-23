@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
+using System.Linq;
 
 namespace SmartDeviceApp.Models
 {
@@ -131,7 +132,7 @@ namespace SmartDeviceApp.Models
         {
             get 
             {
-                _selectedOption = Options.Find(option => option.Index == (int)Value);
+                _selectedOption = Options.FirstOrDefault(option => option.Index == (int)Value);
                 return _selectedOption;
             }
             set
@@ -153,12 +154,12 @@ namespace SmartDeviceApp.Models
         /// Print setting options
         /// Should be used only if PrintSettingType = list
         /// </summary>
-        public List<PrintSettingOption> Options { get; set; }
-        private List<PrintSettingOption> RemovedOptions = null;
+        public IList<PrintSettingOption> Options { get; set; }
+        private ObservableCollection<PrintSettingOption> RemovedOptions = null;
 
         public void RemoveOption(PrintSettingOption o)
         {
-            if (RemovedOptions == null) RemovedOptions = new List<PrintSettingOption>();
+            if (RemovedOptions == null) RemovedOptions = new ObservableCollection<PrintSettingOption>();
 
             RemovedOptions.Add(o);
             Options.Remove(o);
@@ -295,7 +296,7 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Collection of print settings in a group
         /// </summary>
-        public List<PrintSetting> PrintSettings { get; set; }
+        public ObservableCollection<PrintSetting> PrintSettings { get; set; }
 
         /// <summary>
         /// Collection of removed print settings in a group
@@ -336,7 +337,18 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Collection of print setting groups
         /// </summary>
-        public List<PrintSettingGroup> Groups { get; set; }
+        //public List<PrintSettingGroup> Groups { get; set; }
+        public PrintSettingList()
+        {
+            //this.CollectionChanged += this.changedCol;
+        }
+        /*
+        private void changedCol(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            
+            return;
+        }
+        */
     }
 
     [SQLite.Table("PrintSetting")]

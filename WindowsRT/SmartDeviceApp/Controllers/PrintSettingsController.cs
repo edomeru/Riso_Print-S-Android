@@ -18,6 +18,7 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -319,7 +320,9 @@ namespace SmartDeviceApp.Controllers
         private void LoadPrintSettingsOptions()
         {
             //reset PrintSettingsList UI binding
-            _printSettingsViewModel.PrintSettingsList = null;
+            //this causes leak!?
+            //_printSettingsViewModel.PrintSettingsList = null;
+
 
             if (_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
             {
@@ -366,7 +369,7 @@ namespace SmartDeviceApp.Controllers
                 }
 
                 //refresh UI binding
-                if (_printSettingsViewModel.PrintSettingsList != baseDefaultSettingsList)
+                //if (_printSettingsViewModel.PrintSettingsList != baseDefaultSettingsList)
                 {
                     _printSettingsViewModel.PrintSettingsList = baseDefaultSettingsList;
                 }
@@ -380,6 +383,7 @@ namespace SmartDeviceApp.Controllers
                 RemovePrintSetting(orientationPrintSetting);
             }
 #endif // !PRINTSETTING_ORIENTATION
+
         }
 
         /// <summary>
@@ -398,7 +402,7 @@ namespace SmartDeviceApp.Controllers
                                     {
                                         Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
                                         Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
-                                        PrintSettings = (
+                                        PrintSettings = new ObservableCollection<PrintSetting>(
                                             from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
                                             select new PrintSetting
                                             {
@@ -415,17 +419,17 @@ namespace SmartDeviceApp.Controllers
                                                     (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
                                                     null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
                                                     null),
-                                                Options = (
+                                                Options = new ObservableCollection<PrintSettingOption>(
                                                     from optionData in settingData.Elements(PrintSettingConstant.KEY_OPTION)
                                                     select new PrintSettingOption
                                                     {
                                                         Text = (string)optionData.Value,
                                                         Index = optionData.ElementsBeforeSelf().Count(),
                                                         IsEnabled = true // To be updated later upon apply constraints
-                                                    }).ToList<PrintSettingOption>(),
+                                                    }), //.ToList<PrintSettingOption>(),
                                                 IsEnabled = true,        // To be updated later upon apply constraints
                                                 IsValueDisplayed = true  // To be updated later upon apply constraints
-                                            }).ToList<PrintSetting>()
+                                            })//.ToList<PrintSetting>()
                                     };
 
             return printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
