@@ -17,12 +17,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RISO Print-S")]
-[assembly: AssemblyDescription("RISO Print-S")]
+[assembly: AssemblyTitle("RISO PRINT-S")]
+[assembly: AssemblyDescription("RISO PRINT-S")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RISO Print-S")]
-[assembly: AssemblyCopyright("Copyright 2014 RISO KAGAKU CORPORATION. All Rights Reserved.")]
+[assembly: AssemblyProduct("RISO PRINT-S")]
+[assembly: AssemblyCopyright("Copyright 2015 RISO KAGAKU CORPORATION. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
