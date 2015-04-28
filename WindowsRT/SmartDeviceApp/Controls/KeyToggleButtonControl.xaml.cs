@@ -24,7 +24,8 @@ namespace SmartDeviceApp.Controls
         private ICommand _toggleValues;
         private ICommand _updateYesValue;
         private ICommand _updateNoValue;
-
+        private bool isUnCheckSet = false;
+        private bool isCheckSet = false;
         /// <summary>
         /// Constructor for the control.
         /// </summary>
@@ -147,17 +148,25 @@ namespace SmartDeviceApp.Controls
 
         private void OnNoToggleLoaded(object obj, RoutedEventArgs args)
         {
-            KeyToggleButtonControl context = this;
+            if (!isUnCheckSet)
+            {
+                KeyToggleButtonControl context = this;
 
-            ((ToggleButton)obj).Unchecked += (sender, e) => NoToggled(sender, context);
+                ((ToggleButton)obj).Unchecked += (sender, e) => NoToggled(sender, context);
+                isUnCheckSet = true;
+            }
         }
 
 
         private void OnYesToggleLoaded(object obj, RoutedEventArgs args)
         {
-            KeyToggleButtonControl context = this;
+            if (!isCheckSet)
+            {
+                KeyToggleButtonControl context = this;
 
-            ((ToggleButton)obj).Checked += (sender, e) => YesToggled(sender, context);
+                ((ToggleButton)obj).Checked += (sender, e) => YesToggled(sender, context);
+                isCheckSet = true;
+            }
         }
 
         private void YesToggled(object sender, KeyToggleButtonControl control)

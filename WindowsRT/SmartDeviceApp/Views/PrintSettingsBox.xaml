@@ -181,7 +181,7 @@
                               Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
     <ListView Grid.Row="2"
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
-        <ListView ItemsSource="{Binding Path=PrintSettingsList}"
+        <ListView ItemsSource="{Binding Path=PrintSettingsList, Mode=TwoWay}"
                   ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
             <ListView.ItemContainerTransitions>
                 <TransitionCollection>
@@ -196,7 +196,7 @@
                                                PressedHeaderColor="{StaticResource BRUSH_Purple1}">
                         <controls:GroupListControl.Content>
                             <ListView x:Name="printSettingGroupListView" 
-                                      ItemsSource="{Binding PrintSettings}" 
+                                      ItemsSource="{Binding PrintSettings, Mode=TwoWay}" 
                                       ItemTemplateSelector="{StaticResource PrintSettingsListTemplateSelector}"
                                       ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
                                       IsItemClickEnabled="False" 
