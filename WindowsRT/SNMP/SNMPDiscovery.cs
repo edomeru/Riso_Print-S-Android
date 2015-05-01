@@ -129,7 +129,7 @@ namespace SNMP
                                 snmpControllerDiscoverTimeOut = null;
                             }
 #if DEBUG
-                            else
+                            else if(!snmpDevice.isRISOAZADevice())
                             {
                                 snmpControllerDiscoverCallback(snmpDevice);
                             }
