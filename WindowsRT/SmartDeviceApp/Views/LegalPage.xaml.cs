@@ -46,7 +46,8 @@ namespace SmartDeviceApp.Views
             else
             {
                 WebView webview = ((WebView)sender);
-                webview.InvokeScriptAsync("eval", new string[] { "scroll(0, 0);"}); 
+                webview.InvokeScriptAsync("eval", new string[] { "scroll(0, 0);"});
+                webview.Refresh();
             }
         }
 
@@ -66,7 +67,7 @@ namespace SmartDeviceApp.Views
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            ViewModel.LegalGestureGrid = (Grid)sender;
+            //ViewModel.LegalGestureGrid = (Grid)sender;
 
         }
 

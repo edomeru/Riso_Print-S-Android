@@ -33,8 +33,8 @@ namespace SmartDeviceApp.Views
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            ViewModel.HelpGestureGrid = (Grid)sender;
+           ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+           //ViewModel.HelpGestureGrid = (Grid)sender;
 
         }
 
@@ -62,6 +62,7 @@ namespace SmartDeviceApp.Views
             {
                 WebView webview = ((WebView)sender);
                 webview.InvokeScriptAsync("eval", new string[] { "scroll(0, 0);" });
+                webview.Refresh();
             }
         }
     }
