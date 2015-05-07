@@ -53,7 +53,7 @@ namespace DirectPrint
         private const int BUFFER_SIZE = 4096;
 
         private const string QUEUE_NAME = "normal";
-        private const string HOST_NAME = "SmartDeviceApp";
+        private const string HOST_NAME = "RISO PRINT-S";
 
         private const string PJL_ESCAPE = "\x1B%-12345X";
         private const string PJL_LANGUAGE = "@PJL ENTER LANGUAGE = PDF\x0d\x0a";
