@@ -146,7 +146,7 @@ namespace SNMP
             System.Diagnostics.Debug.WriteLine("SNMPDeviice success for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
            
-            if (snmpControllerCallBackGetCapability != null && (supportsMultiFunctionFinisher && this._langfamily == 54))
+            if (snmpControllerCallBackGetCapability != null)
             {
                 snmpControllerCallBackGetCapability(this);
                 callbackCalled = true;
@@ -290,6 +290,10 @@ namespace SNMP
                                     _capabilitiesList = new List<string>();
                                     //check the first one
                                     capabilityCheckStarted = true;
+                                    if (snmpControllerCallBackGetCapability != null)
+                                    {
+                                        snmpControllerCallBackGetCapability(this);
+                                    }
                                     sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, new string[] { capabilityMIB[_capabilitiesList.Count()] });
                                 }
                                 else
