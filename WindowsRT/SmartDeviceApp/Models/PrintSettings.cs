@@ -86,6 +86,12 @@ namespace SmartDeviceApp.Models
         private PrintSettingOption _selectedOption;
         private bool _isEnabled;
         private bool _isValueDisplayed;
+        private int index = -1;
+
+        /// <summary>
+        /// Print setting index
+        /// </summary>
+        public int Index { get { return index; } set { index = value; } }
 
         /// <summary>
         /// Print setting name/identifier
@@ -310,6 +316,7 @@ namespace SmartDeviceApp.Models
         {
             if (RemovedPrintSettings == null) RemovedPrintSettings = new List<PrintSetting>();
 
+            p.Index = PrintSettings.IndexOf(p);
             RemovedPrintSettings.Add(p);
             PrintSettings.Remove(p);
         }
@@ -321,11 +328,21 @@ namespace SmartDeviceApp.Models
         {
             if (RemovedPrintSettings == null) return;
 
-            foreach (PrintSetting p in RemovedPrintSettings)
-            {                
+            //foreach (PrintSetting p in RemovedPrintSettings)
+            for (int i = RemovedPrintSettings.Count() - 1; i >= 0; i--)
+            {
+                PrintSetting p = RemovedPrintSettings.ElementAt(i);
                 if (resetOptions) p.ResetOptions();
 
-                PrintSettings.Add(p);
+                if (p.Index >= 0)
+                {
+                    PrintSettings.Insert(p.Index, p);
+                    p.Index = -1;
+                }
+                else
+                {
+                    PrintSettings.Add(p);
+                }
             }
             RemovedPrintSettings.Clear();
         }
