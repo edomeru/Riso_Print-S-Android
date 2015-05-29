@@ -42,6 +42,9 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty IsDefaultProperty =
             DependencyProperty.Register("IsDefault", typeof(bool), typeof(KeyToggleButtonControl), new PropertyMetadata(false, SetDefault));
 
+        public static readonly DependencyProperty IsBackgroundButtonEnabledProperty =
+            DependencyProperty.Register("IsBackgroundButtonEnabled", typeof(bool), typeof(KeyToggleButtonControl), new PropertyMetadata(true, SetBGButtonEnable));
+
         public static readonly DependencyProperty IsYesProperty =
             DependencyProperty.Register("IsYes", typeof(bool), typeof(KeyToggleButtonControl), new PropertyMetadata(false, SetYes));
 
@@ -78,10 +81,31 @@ namespace SmartDeviceApp.Controls
         /// <summary>
         /// Binded to the Yes ToggleButton.
         /// </summary>
+        public bool IsBackgroundButtonEnabled
+        {
+            set
+            {
+                if (value)
+                {
+                    this.Command = ToggleValues;
+                }
+                else
+                {
+                    this.Command = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Binded to the Yes ToggleButton.
+        /// </summary>
         public bool IsYes
         {
             get { return (bool)GetValue(IsYesProperty); }
-            set { SetValue(IsYesProperty, value); }
+            set
+            {
+                SetValue(IsYesProperty, value);
+            }
         }
 
         /// <summary>
@@ -90,7 +114,9 @@ namespace SmartDeviceApp.Controls
         public bool IsNo
         {
             get { return (bool)GetValue(IsNoProperty); }
-            set { SetValue(IsNoProperty, value); }
+            set { 
+                SetValue(IsNoProperty, value); 
+            }
         }
         
         private void ToggleValuesExecute()
@@ -101,7 +127,21 @@ namespace SmartDeviceApp.Controls
                 IsYes = !IsNo;
             }
         }
-        
+
+        private static void SetBGButtonEnable(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = bool.Parse(e.NewValue.ToString());
+            KeyToggleButtonControl obj = d as KeyToggleButtonControl;
+            if (value)
+            {
+                obj.Command = obj.ToggleValues;
+            }
+            else
+            {
+                obj.Command = null;
+            }
+        }
+       
         private static void SetDefault(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((KeyToggleButtonControl)d).IsDefault = bool.Parse(e.NewValue.ToString());

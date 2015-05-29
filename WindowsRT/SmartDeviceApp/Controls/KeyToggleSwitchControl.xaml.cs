@@ -35,6 +35,8 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty IsOnProperty =
             DependencyProperty.Register("IsOn", typeof(bool), typeof(KeyToggleSwitchControl), new PropertyMetadata(false, SetIsOn));
 
+        public static readonly DependencyProperty IsBackgroundButtonEnabledProperty =
+    DependencyProperty.Register("IsBackgroundButtonEnabled", typeof(bool), typeof(KeyToggleButtonControl), new PropertyMetadata(false, SetBGButtonEnable));
         /// <summary>
         /// Toggles the switch when any part of the button is tapped
         /// </summary>
@@ -62,6 +64,37 @@ namespace SmartDeviceApp.Controls
             set { SetValue(IsOnProperty, value); }
         }
 
+        /// <summary>
+        /// Binded to the Yes ToggleButton.
+        /// </summary>
+        public bool IsBackgroundButtonEnabled
+        {
+            set
+            {
+                if (value)
+                {
+                    this.Command = ToggleSwitchCommand;
+                }
+                else
+                {
+                    this.Command = null;
+                }
+            }
+        }
+        private static void SetBGButtonEnable(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = bool.Parse(e.NewValue.ToString());
+            KeyToggleSwitchControl obj = d as KeyToggleSwitchControl;
+            if (value)
+            {
+                obj.Command = obj.ToggleSwitchCommand;
+            }
+            else
+            {
+                obj.Command = null;
+            }
+        }
+       
         private void OnToggleSwitchLoaded(object obj, RoutedEventArgs args)
         {
             if (!_isToggleSwitchLoaded)

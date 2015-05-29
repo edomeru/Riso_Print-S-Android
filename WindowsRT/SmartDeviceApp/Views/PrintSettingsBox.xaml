@@ -17,13 +17,14 @@
         <DataTemplate x:Key="TEMPLATE_ListViewItemToggleSwitch">
             <controls:KeyToggleSwitchControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                              IsOn="{Binding Path=Value, Mode=TwoWay}"
+                                             IsBackgroundButtonEnabled="false"
                                              utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                              IconVisibility="Collapsed"
                                              SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
                                              IsListItem="True"
                                              Width="{Binding Width, ElementName=printSettingsBox}"
                                              IsEnabled="{Binding Path=IsEnabled}"
-                                             PressedColor="{StaticResource BRUSH_Purple1}"/>
+                                             PressedColor="{StaticResource BRUSH_Gray2}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemTextBox">
             <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
