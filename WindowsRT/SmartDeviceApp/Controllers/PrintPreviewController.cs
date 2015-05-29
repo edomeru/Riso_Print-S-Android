@@ -121,7 +121,6 @@ namespace SmartDeviceApp.Controllers
         private static int _currRightPageIndex;
         private static int _currLeftBackPageIndex;
         private static int _currRightBackPageIndex;
-        private bool _resetPrintSettings; // Flag used only when selected printer is deleted
         private bool _isPrintingEnabled;
 
         List<CancellationTokenSource> _cancellationTokenSourceQueue;
@@ -153,7 +152,7 @@ namespace SmartDeviceApp.Controllers
             _goToPageEventHandler = new GoToPageEventHandler(GoToPage);
             _turnPageEventHandler = new TurnPageEventHandler(LoadBackPage);
             _selectedPrinterChangedEventHandler = new SelectedPrinterChangedEventHandler(SelectedPrinterChanged);
-            _addFirstPrinterEventHandler = new AddFirstPrinterEventHandler(FirstPrinterAdded);
+            //_addFirstPrinterEventHandler = new AddFirstPrinterEventHandler(FirstPrinterAdded);
             _printEventHandler = new PrintEventHandler(Print);
             _cancelPrintEventHandler = new CancelPrintEventHandler(CancelPrint);
             _onNavigateToEventHandler = new OnNavigateToEventHandler(RegisterPrintSettingValueChange);
@@ -250,8 +249,6 @@ namespace SmartDeviceApp.Controllers
                 token.Cancel();
             }
             _cancellationTokenSourceQueue.Clear();
-
-            _resetPrintSettings = false;
             _selectedPrinter = null;
 
             _pagesPerSheet = 1;
@@ -273,7 +270,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public async void RegisterPrintSettingValueChange()
         {
-            if (_resetPrintSettings)
+            if (_selectedPrinter ==null || _selectedPrinter.Id == -1 )
             {
                 // If all printers are deleted, set selected printer to default printer
                 _selectedPrinter = PrinterController.Instance.GetDefaultPrinter();
@@ -285,8 +282,6 @@ namespace SmartDeviceApp.Controllers
                 {
                     await SetSelectedPrinterAndPrintSettings(NO_SELECTED_PRINTER_ID);
                 }
-                
-                _resetPrintSettings = false;
             }
             else
             {
@@ -308,9 +303,9 @@ namespace SmartDeviceApp.Controllers
         /// <param name="printer">printer</param>
         public void PrinterDeleted(Printer printer)
         {
-            if (_selectedPrinter.Id == printer.Id)
+            if (_selectedPrinter == null || _selectedPrinter.Id == printer.Id)
             {
-                _resetPrintSettings = true;
+                _selectedPrinter = null;
             }            
         }
 
@@ -320,19 +315,10 @@ namespace SmartDeviceApp.Controllers
         /// <param name="printerId">printer ID</param>
         public async void SelectedPrinterChanged(int printerId)
         {
-            if (_selectedPrinter.Id != printerId)
+            if (_selectedPrinter == null || _selectedPrinter.Id != printerId)
             {
                 await SetSelectedPrinterAndPrintSettings(printerId);
             }
-        }
-
-        /// <summary>
-        /// Event handler for first printer added
-        /// </summary>
-        public async void FirstPrinterAdded()
-        {
-            await GetDefaultPrinter();
-            if (_resetPrintSettings) _resetPrintSettings = false;
         }
 
         /// <summary>
