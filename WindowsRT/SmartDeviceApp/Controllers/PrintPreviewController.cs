@@ -214,6 +214,12 @@ namespace SmartDeviceApp.Controllers
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_PDF_ENCRYPTED", "IDS_APP_NAME",
                     "IDS_LBL_OK", null);
             }
+            else if (DocumentController.Instance.Result == LoadDocumentResult.InsufficientSpaceToCopyPdf)
+            {
+                (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_NOT_ENOUGH_SPACE", "IDS_APP_NAME",
+                    "IDS_LBL_OK", null);
+            }
             else // DocumentController.Instance.Result == LoadDocumentResult.ErrorReadPdf or LoadDocumentResult.NotStarted
             {
                 (new ViewModelLocator().HomeViewModel).IsProgressRingActive = false;

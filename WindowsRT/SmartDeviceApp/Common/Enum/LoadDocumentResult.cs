@@ -20,6 +20,7 @@ namespace SmartDeviceApp.Common.Enum
         NotStarted,
         Successful,
         UnsupportedPdf,
-        ErrorReadPdf
+        ErrorReadPdf,
+        InsufficientSpaceToCopyPdf,
     }
 }
