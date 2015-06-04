@@ -26,6 +26,7 @@ namespace SmartDeviceApp.Views
         /// Constructor for the HelpPage class
         /// </summary>
         private bool isAlreadyLoaded = false;
+        private WebView webview;
         public HelpPage()
         {
             this.InitializeComponent();
@@ -53,17 +54,19 @@ namespace SmartDeviceApp.Views
         /// </summary>
         private void WebView_Loaded(object sender, RoutedEventArgs e)
         {
+            webview = ((WebView)sender);
             if (!isAlreadyLoaded)
             {
                 isAlreadyLoaded = true;
                 ((WebView)sender).Navigate(new Uri("ms-appx-web:///Assets/help.html"));
             }
-            else
-            {
-                WebView webview = ((WebView)sender);
-                webview.InvokeScriptAsync("eval", new string[] { "scroll(0, 0);" });
-                webview.Refresh();
-            }
+            
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            webview.InvokeScriptAsync("eval", new string[] { "scroll(0, 0);" });
+            webview.Refresh();
         }
     }
 }
