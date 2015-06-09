@@ -494,19 +494,17 @@ namespace SmartDeviceApp.Controllers
             {
                 _previewPageTotal = (_previewPageTotal / 2) + (_previewPageTotal % 2) + 1;
             }
-            if (_printPreviewViewModel.PageTotal != _previewPageTotal)
+         
+            _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
+            _printPreviewViewModel.PageTotal = _previewPageTotal;
+            _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
+            if (_currSliderIndex >= _previewPageTotal)
             {
-                _printPreviewViewModel.GoToPageEventHandler -= _goToPageEventHandler;
-                _printPreviewViewModel.PageTotal = _previewPageTotal;
-                _printPreviewViewModel.GoToPageEventHandler += _goToPageEventHandler;
-                if (_currSliderIndex >= _previewPageTotal)
-                {
-                    _currSliderIndex = 0;////(int)_previewPageTotal - 1;
-                }
-                _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet,(uint) _pagesPerSheet);
+                _currSliderIndex = 0;////(int)_previewPageTotal - 1;
             }
-
+            _printPreviewViewModel.UpdatePageIndexes((uint)_currSliderIndex, _isBooklet,(uint) _pagesPerSheet);
             _maxPreviewPageCount = (int)_previewPageTotal;
+
             if (_isBooklet || _isDuplex)
             {
                 _maxPreviewPageCount = ((int)_previewPageTotal * 2) - 2;
