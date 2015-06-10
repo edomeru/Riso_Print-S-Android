@@ -285,16 +285,18 @@ namespace SmartDeviceApp.ViewModels
 
                 if (scalingFactor != _scalingFactor || PageViewMode != _previousPageViewMode)
                 {
-                    _scalingFactor = scalingFactor;
-                    if (_gestureController != null)
+                    if (_gestureController==null)
                     {
-                        _gestureController.Dispose();
-                        _gestureController = null;
+                        _gestureController = new PreviewGestureController(_twoPageControl, _controlReference,
+                           targetSize, scalingFactor, swipeRight, swipeLeft, isDuplex, _currentPageIndex, _pageTotal);
+                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,
+                            swipeTop, swipeBottom, swipeDirection);
+
                     }
-                    _gestureController = new PreviewGestureController(_twoPageControl, _controlReference,
-                           targetSize, scalingFactor, swipeRight, swipeLeft, isDuplex, _currentPageIndex,_pageTotal);
-                    _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,
-                        swipeTop, swipeBottom, swipeDirection);
+                    else
+                    {
+                        _gestureController.SetScreenSize(targetSize, scalingFactor, swipeRight, swipeLeft);
+                    }
                 }
                 else
                 {
