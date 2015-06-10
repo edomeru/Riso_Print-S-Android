@@ -582,7 +582,7 @@ namespace SmartDeviceApp.ViewModels
 
         private void EnablePreviewGestures()
         {
-            if (_gestureController != null && PageTotal > 1)
+            if (_gestureController != null )
             {
                 _gestureController.EnableGestures();
             }
