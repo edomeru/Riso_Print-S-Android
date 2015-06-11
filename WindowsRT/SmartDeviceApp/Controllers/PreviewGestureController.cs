@@ -160,6 +160,13 @@ namespace SmartDeviceApp.Controllers
             ResetClipTransforms();
         }
 
+        public bool IsScaled
+        {
+            get
+            {
+                return _isScaled;
+            }
+        }
         /// <summary>
         /// Swipe right delegate
         /// </summary>
@@ -189,18 +196,7 @@ namespace SmartDeviceApp.Controllers
         private void Initialize()
         {
             _gestureRecognizer = new GestureRecognizer();
-            _gestureRecognizer.GestureSettings =
-                GestureSettings.Tap |
-                GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
-                GestureSettings.RightTap |
-                GestureSettings.DoubleTap |
-                GestureSettings.ManipulationTranslateX |
-                GestureSettings.ManipulationTranslateY |
-                GestureSettings.ManipulationScale |
-                GestureSettings.ManipulationTranslateInertia |
-                GestureSettings.ManipulationMultipleFingerPanning  | //reduces zoom jitter when panning with multiple fingers
-                GestureSettings.ManipulationScaleInertia;
-
+           
             EnableGestures();
             
             // InitializeTransforms
@@ -211,13 +207,10 @@ namespace SmartDeviceApp.Controllers
            
         }
 
-        public void SetScreenSize(Size targetSize, double originalScale, SwipeRightDelegate swipeRightHandler,
-            SwipeLeftDelegate swipeLeftHandler)
+        public void SetScreenSize(Size targetSize, double originalScale)
         {
             _targetSize = targetSize;
             _originalScale = originalScale;
-            _swipeRightHandler = swipeRightHandler;
-            _swipeLeftHandler = swipeLeftHandler;
             _maxZoomLength = _targetSize.Width * MAX_ZOOM_LEVEL_FACTOR;
             if (!_isScaled)
             {
@@ -239,6 +232,18 @@ namespace SmartDeviceApp.Controllers
         {
             if (!_isEnabled)
             {
+                _gestureRecognizer.GestureSettings =
+                   GestureSettings.Tap |
+                   GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
+                   GestureSettings.RightTap |
+                   GestureSettings.DoubleTap |
+                   GestureSettings.ManipulationTranslateX |
+                   GestureSettings.ManipulationTranslateY |
+                   GestureSettings.ManipulationScale |
+                   GestureSettings.ManipulationTranslateInertia |
+                   GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
+                   GestureSettings.ManipulationScaleInertia;
+
                 _control.PointerCanceled += OnPointerCanceled;
                 _control.PointerPressed += OnPointerPressed;
                 _control.PointerReleased += OnPointerReleased;
