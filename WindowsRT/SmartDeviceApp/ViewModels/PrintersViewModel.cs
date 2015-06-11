@@ -226,13 +226,17 @@ namespace SmartDeviceApp.ViewModels
 
         private void ResetPrinterInfoGrid(ViewOrientation viewOrientation)
         {
-            if (GestureController != null)
+            if (GestureController != null && GestureController.TargetControl != null)
             {
                 var columns = (viewOrientation == Common.Enum.ViewOrientation.Landscape) ? 3 : 2;
                 var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
                 var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-                ((AdaptableGridView)GestureController.TargetControl).ItemWidth = (double)((new PrintersListWidthConverter()).Convert(_viewControlViewModel.ViewMode, null,
-                    new ViewItemParameters() { columns = columns, viewOrientation = viewOrientation }, null));
+
+                var targetControl = (AdaptableGridView)GestureController.TargetControl;
+                var converter = new PrintersListWidthConverter();
+                var viewMode = _viewControlViewModel.ViewMode;
+                var param = new ViewItemParameters() { columns = columns, viewOrientation = viewOrientation };
+                targetControl.ItemWidth = (double) converter.Convert(viewMode, null,param , null);
             }
         }
 

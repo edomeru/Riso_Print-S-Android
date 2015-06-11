@@ -19,6 +19,7 @@ using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Converters;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Constants;
+using Windows.UI.Core;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -58,7 +59,7 @@ namespace SmartDeviceApp.ViewModels
         private JobGestureController _gestureController;
         private ViewControlViewModel _viewControlViewModel;
 
-        private bool _isPrintJobsListEmpty;
+        private bool _isPrintJobsListEmpty=true;
         private bool _isProgressRingActive;
 
         private double _columnWidth;
@@ -146,8 +147,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _isPrintJobsListEmpty = value;
                     RaisePropertyChanged("IsPrintJobsListEmpty");
-                    if (_isPrintJobsListEmpty) IsProgressRingActive = false;
-                    else IsProgressRingActive = true;
+                    IsProgressRingActive = !_isPrintJobsListEmpty;
                 }
             }
         }
@@ -253,19 +253,27 @@ namespace SmartDeviceApp.ViewModels
         /// Gets/sets the width of the group text
         /// </summary>
         public double GroupTextWidth { get; set; }
-
+        private object ringLock = new Object();
         /// <summary>
         /// True when loading indicator is active, false otherwise
         /// </summary>
         public bool IsProgressRingActive
         {
-            get { return _isProgressRingActive; }
+            get {
+                lock (ringLock)
+                {
+                    return _isProgressRingActive;
+                }
+            }
             set
             {
-                if (_isProgressRingActive != value)
+                lock (ringLock)
                 {
-                    _isProgressRingActive = value;
-                    RaisePropertyChanged("IsProgressRingActive");
+                    if (_isProgressRingActive != value)
+                    {
+                        _isProgressRingActive = value;
+                        RaisePropertyChanged("IsProgressRingActive");
+                    }
                 }
             }
         }
@@ -334,7 +342,7 @@ namespace SmartDeviceApp.ViewModels
             else if (viewOrientation == ViewOrientation.Portrait)
             {
                 MaxColumns = MAX_COLUMNS_PORTRAIT;
-            }            
+            }
         }
 
         private async void DeleteAllJobsExecute(int printerId)

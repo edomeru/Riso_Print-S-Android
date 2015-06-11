@@ -8,6 +8,9 @@ using Windows.UI.Xaml.Data;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Models;
+using Microsoft.Practices.ServiceLocation;
+using Windows.UI.Core;
+using Windows.ApplicationModel.Core;
 
 namespace SmartDeviceApp.Converters
 {
@@ -53,27 +56,9 @@ namespace SmartDeviceApp.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             double width = 0.0;
-            if (parameter != null && parameter is ViewOrientation)
-            {
-                // Need this workaround because OrientationChange event is fired before 
-                // window bounds are updated
-                var viewOrientation = (ViewOrientation)parameter;
-                if (viewOrientation == ViewOrientation.Landscape)
-                {
-                    width = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
-                        Window.Current.Bounds.Width : Window.Current.Bounds.Height;
-                }
-                else if (viewOrientation == ViewOrientation.Portrait)
-                {
-                    width = (Window.Current.Bounds.Width <= Window.Current.Bounds.Height) ?
-                        Window.Current.Bounds.Width : Window.Current.Bounds.Height;
-                }
-            }
-            else 
-            {
-                width = Window.Current.Bounds.Width;
-            }
-            
+            var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+            width = viewControl.ScreenBound.Width;
+                       
             if (value != null)
             {
                 ViewMode viewMode;
@@ -113,27 +98,21 @@ namespace SmartDeviceApp.Converters
         /// <param name="parameter">The converter parameter to use.</param>
         /// <param name="language">The culture to use in the converter.</param>
         /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
-        public object Convert(object value, Type targetType, object parameter, string language)
+        public object  Convert(object value, Type targetType, object parameter, string language)
         {
+            var columnWidth = 0.0;
+  
             var viewModel = new ViewModelLocator().JobsViewModel;
             var columns = viewModel.MaxColumns;
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-            // Need this workaround because OrientationChange event is fired before 
-            // window bounds are updated
-            var width = 0.0;
-            var viewOrientation = new ViewModelLocator().ViewControlViewModel.ViewOrientation;
-            if (viewOrientation == ViewOrientation.Landscape)
-            {
-                width = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
-                    Window.Current.Bounds.Width : Window.Current.Bounds.Height;
-            }
-            else if (viewOrientation == ViewOrientation.Portrait)
-            {
-                width = (Window.Current.Bounds.Width <= Window.Current.Bounds.Height) ?
-                    Window.Current.Bounds.Width : Window.Current.Bounds.Height;
-            }
-            var columnWidth = (width - (defaultMargin * 2) - (defaultMargin * (columns - 1))) / columns;
+
+            var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+            var width = viewControl.ScreenBound.Width;
+
+            columnWidth = (width - (defaultMargin * 2) - (defaultMargin * (columns - 1))) / columns;
             viewModel.ColumnWidth = columnWidth;
+                
+           
             return columnWidth;
         }
 
@@ -164,29 +143,9 @@ namespace SmartDeviceApp.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var columns = 3;
-            var width = Window.Current.Bounds.Width;
-            if (parameter != null)
-            {
-                var itemParams = parameter as ViewItemParameters;
-                columns = itemParams.columns;
-                if (itemParams.viewOrientation != null)
-                {
-                    // Need this workaround because OrientationChange event is fired before 
-                    // window bounds are updated
-                    var viewOrientation = (ViewOrientation)itemParams.viewOrientation;
-                    if (viewOrientation == ViewOrientation.Landscape)
-                    {
-                        width = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
-                            Window.Current.Bounds.Width : Window.Current.Bounds.Height;
-                    }
-                    else if (viewOrientation == ViewOrientation.Portrait)
-                    {
-                        width = (Window.Current.Bounds.Width <= Window.Current.Bounds.Height) ?
-                            Window.Current.Bounds.Width : Window.Current.Bounds.Height;
-                    }
-                }
-            }
-            
+            var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+            var width = viewControl.ScreenBound.Width;
+                        
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
             var columnWidth = (width - (defaultMargin * 2) - (defaultMargin * (columns - 1))) / columns;
             return columnWidth ;
@@ -218,18 +177,9 @@ namespace SmartDeviceApp.Converters
         /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null || !(value is ViewOrientation)) return null;
-            // Need this workaround because OrientationChange event is fired before 
-            // window bounds are updated
-            var viewOrientation = (ViewOrientation)value;
-            if (viewOrientation == ViewOrientation.Landscape)
-            {
-                return (Window.Current.Bounds.Height <= Window.Current.Bounds.Width) ?
-                    Window.Current.Bounds.Height : Window.Current.Bounds.Width;
-            }
-            // Portrait
-            return (Window.Current.Bounds.Height >= Window.Current.Bounds.Width) ?
-                Window.Current.Bounds.Height : Window.Current.Bounds.Width;
+            var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+           return  viewControl.ScreenBound.Height;
+                        
         }
 
         /// <summary>
@@ -258,9 +208,8 @@ namespace SmartDeviceApp.Converters
         /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null) return null;
-            return Window.Current.Bounds.Height;
-            
+            var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+            return viewControl.ScreenBound.Height;
         }
 
         /// <summary>
