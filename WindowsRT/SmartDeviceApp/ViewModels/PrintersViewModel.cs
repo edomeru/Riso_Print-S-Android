@@ -327,6 +327,13 @@ namespace SmartDeviceApp.ViewModels
             //get default printer settings using ip
             System.Diagnostics.Debug.WriteLine("OpenDefaultPrinterSettingsExecute");
             printer.VisualState = "Pressed";
+
+            var printSettingsOptionsVM = new ViewModelLocator().PrintSettingOptionsViewModel;
+            if (printSettingsOptionsVM != null)
+            {
+                printSettingsOptionsVM.PrintSetting = null; // Reset PrintSetting on back so that bindings will refresh on re-open
+            }
+
             var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
             
             _viewControlViewModel.ViewMode = Common.Enum.ViewMode.RightPaneVisible;
