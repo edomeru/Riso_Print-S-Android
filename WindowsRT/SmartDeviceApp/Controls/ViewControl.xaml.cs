@@ -368,7 +368,10 @@ namespace SmartDeviceApp.Controls
 
         async private void OrientationChanged(object sender, SimpleOrientationSensorOrientationChangedEventArgs e)
         {
-            DisplayOrientation(e.Orientation);
+           await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                DisplayOrientation(e.Orientation);
+            });
         }
 
         private void DisplayOrientation(SimpleOrientation orientation)
