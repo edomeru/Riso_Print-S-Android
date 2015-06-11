@@ -23,6 +23,7 @@ using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Converters;
+using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Controls
 {
@@ -440,8 +441,9 @@ namespace SmartDeviceApp.Controls
 
         async private void OrientationChanged(object sender, SimpleOrientationSensorOrientationChangedEventArgs e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
+                await Task.Delay(350);
                 DisplayOrientation(e.Orientation);
             });
         }
