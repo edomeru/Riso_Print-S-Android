@@ -18,7 +18,7 @@ namespace SmartDeviceApp.Behaviors
     {
         private const string REGEX_NUMERIC = "^[0-9]*$";
 
-        private string lastValidText;
+        private string lastValidText="";
 
         /// <summary>
         /// Object which this behavior is associated to.
@@ -63,6 +63,21 @@ namespace SmartDeviceApp.Behaviors
             }
         }
 
+        private void restoreLastSaved(PasswordTextbox passwordBox,string value)
+        {
+            // The text matches the regular expression.
+            var caretPosition = passwordBox.SelectionStart;
+            if (string.IsNullOrEmpty(value))
+            {
+                value = "";
+            }
+            passwordBox.OriginalText = value;
+            lastValidText = value;
+            passwordBox.Text = Regex.Replace(value, @".", "*");
+            passwordBox.SelectionStart = (caretPosition > 0) ? caretPosition : 0;
+        }
+
+
         private void OnKeyUp(object sender, KeyRoutedEventArgs e)
         {
             var passwordBox = AssociatedObject as PasswordTextbox;
@@ -90,37 +105,30 @@ namespace SmartDeviceApp.Behaviors
             }
             else if (e.Key == VirtualKey.Back) //backspace
             {
-                if (passwordBox.Text.Length != passwordBox.OriginalText.Length)
+                 if (passwordBox.OriginalText.Length > passwordBox.Text.Length)
                 {
                     var difference = Math.Abs(passwordBox.Text.Length - passwordBox.OriginalText.Length);
                     passwordBox.OriginalText = passwordBox.OriginalText.Remove(caretPosition, difference);//.Substring(caretPosition, passwordBox.OriginalText.Length - difference);
                 }
-                
             }
             if (e.Key == VirtualKey.Enter)
             {
                 return;
             }
 
-            if (passwordBox != null && !string.IsNullOrWhiteSpace(REGEX_NUMERIC))
+            if (passwordBox != null)
             {
-
-                
                 if (Regex.IsMatch(passwordBox.OriginalText, REGEX_NUMERIC))
-                {
+                {                    
                     // The text matches the regular expression.
-                    lastValidText = passwordBox.OriginalText;
-                    passwordBox.Text = Regex.Replace(lastValidText, @".", "*");
-                    passwordBox.SelectionStart = (caretPosition > 0) ? caretPosition : 0;
+                    restoreLastSaved(passwordBox, passwordBox.OriginalText);
                 }
                 else
                 {
                     // The text doesn't match the regular expression.
                     // Restore the last valid value.
                     //var caretPosition = passwordBox.SelectionStart;
-                    passwordBox.OriginalText = lastValidText;
-                    passwordBox.Text = Regex.Replace(lastValidText, @".", "*");
-                    passwordBox.SelectionStart = (caretPosition > 0) ? caretPosition : 0;
+                    restoreLastSaved(passwordBox, lastValidText);
                 }
             }
 
@@ -161,8 +169,8 @@ namespace SmartDeviceApp.Behaviors
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
             var passwordBox = AssociatedObject as PasswordTextbox;
-            
-            if (passwordBox != null && !string.IsNullOrWhiteSpace(REGEX_NUMERIC))
+            var text = passwordBox.Text.Replace("*", "");
+            if (passwordBox != null)
             {
                 // Handle pressing clear 'X' behavior
                 if (String.IsNullOrEmpty(passwordBox.Text))
@@ -171,6 +179,13 @@ namespace SmartDeviceApp.Behaviors
                 }
                 // Let OnKeyUp handle the rest
             }
+            
+            if (!String.IsNullOrEmpty(text)  && !Regex.IsMatch(text, REGEX_NUMERIC))
+            {
+                restoreLastSaved(passwordBox, lastValidText);
+               
+            }
+           
         }
     }
 }
