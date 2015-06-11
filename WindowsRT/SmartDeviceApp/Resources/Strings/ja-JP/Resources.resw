@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,11 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+
+  <!-- WordingList_Alpha1 -->
+  <!-- THIS IS A GENERATED FILE , ANY CHANGES MADE TO THIS FILE WILL BE ERASED  -->
+
   <data name="IDS_APP_NAME" xml:space="preserve">
     <value>RISO PRINT-S</value>
   </data>
   <data name="IDS_APP_LAUNCHER_NAME" xml:space="preserve">
     <value>RISO PRINT-S</value>
+  </data>
+  <data name="IDS_LBL_SAVE" xml:space="preserve">
+    <value>保存</value>
   </data>
   <data name="IDS_LBL_OK" xml:space="preserve">
     <value>OK</value>
@@ -146,6 +153,9 @@
   </data>
   <data name="IDS_LBL_HOME" xml:space="preserve">
     <value>ホーム</value>
+  </data>
+  <data name="IDS_LBL_PRINT_PREVIEW" xml:space="preserve">
+    <value>プレビュー</value>
   </data>
   <data name="IDS_LBL_PRINTERS" xml:space="preserve">
     <value>プリンター</value>
@@ -224,6 +234,15 @@
   </data>
   <data name="IDS_LBL_COLORMODE_BLACK" xml:space="preserve">
     <value>白黒</value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
+    <value>向き</value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
+    <value>縦</value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
+    <value>横</value>
   </data>
   <data name="IDS_LBL_NUMBER_OF_COPIES" xml:space="preserve">
     <value>部数</value>
@@ -462,15 +481,6 @@
   <data name="IDS_LBL_LEGAL" xml:space="preserve">
     <value>リーガル情報</value>
   </data>
-  <data name="IDS_LBL_LICENSE" xml:space="preserve">
-    <value>使用許諾契約</value>
-  </data>
-  <data name="IDS_LBL_LICENSE_AGREE" xml:space="preserve">
-    <value>同意する</value>
-  </data>
-  <data name="IDS_LBL_LICENSE_DISAGREE" xml:space="preserve">
-    <value>同意しない</value>
-  </data>
   <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
     <value>プリンターがありません。</value>
   </data>
@@ -513,6 +523,9 @@
   <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
     <value>プリンターを登録してください。</value>
   </data>
+  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
+    <value>パスワードが正しくありません。確認してください。</value>
+  </data>
   <data name="IDS_ERR_MSG_OPEN_FAILED" xml:space="preserve">
     <value>ファイルが開けません。</value>
   </data>
@@ -522,14 +535,17 @@
   <data name="IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" xml:space="preserve">
     <value>印刷が許可されていません。</value>
   </data>
+  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
+    <value>ファイルサイズが大きすぎます。</value>
+  </data>
+  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
+    <value>デバイスの空き容量が不足しています。</value>
+  </data>
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>ネットワークに接続できません。</value>
   </data>
   <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
     <value>内部データにアクセスできません。\n再起動してみてください。\n再起動しても解消されない場合は、再インストールしてください。</value>
-  </data>
-  <data name="IDS_ERR_MSG_LICENSE_DISAGREE" xml:space="preserve">
-    <value>このアプリを使用するには、使用許諾への同意が必要です。</value>
   </data>
   <data name="IDS_LBL_YES" xml:space="preserve">
     <value>Yes</value>
@@ -537,31 +553,23 @@
   <data name="IDS_LBL_NO" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="IDS_LBL_SAVE" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_LICENSE" xml:space="preserve">
+    <value>使用許諾契約</value>
   </data>
-  <data name="IDS_LBL_PRINT_PREVIEW" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_PAPERTYPE_ROUGHPAPER" xml:space="preserve">
+    <value>更紙</value>
   </data>
-  <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_AGREE" xml:space="preserve">
+    <value>同意する</value>
   </data>
-  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_DISAGREE" xml:space="preserve">
+    <value>同意しない</value>
   </data>
-  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
-    <value></value>
+  <data name="IDS_ERR_MSG_DISAGREE_TO_LICENSE" xml:space="preserve">
+    <value>このアプリを使用するには、使用許諾への同意が必要です。</value>
   </data>
-  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_QUEUE" xml:space="preserve">
+    <value>出力キュー</value>
   </data>
-  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
-    <value></value>
-  </data>
-  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
-    <value></value>
-  </data>
-  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
-    <value></value>
-  </data>
+
 </root>

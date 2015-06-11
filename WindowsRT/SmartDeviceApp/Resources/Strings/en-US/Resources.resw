@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,11 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+
+  <!-- WordingList_Alpha1 -->
+  <!-- THIS IS A GENERATED FILE , ANY CHANGES MADE TO THIS FILE WILL BE ERASED  -->
+
   <data name="IDS_APP_NAME" xml:space="preserve">
     <value>RISO PRINT-S</value>
   </data>
   <data name="IDS_APP_LAUNCHER_NAME" xml:space="preserve">
     <value>RISO PRINT-S</value>
+  </data>
+  <data name="IDS_LBL_SAVE" xml:space="preserve">
+    <value>Save</value>
   </data>
   <data name="IDS_LBL_OK" xml:space="preserve">
     <value>OK</value>
@@ -146,6 +153,9 @@
   </data>
   <data name="IDS_LBL_HOME" xml:space="preserve">
     <value>Home</value>
+  </data>
+  <data name="IDS_LBL_PRINT_PREVIEW" xml:space="preserve">
+    <value>Preview</value>
   </data>
   <data name="IDS_LBL_PRINTERS" xml:space="preserve">
     <value>Printers</value>
@@ -193,11 +203,7 @@
     <value>Owner</value>
   </data>
   <data name="IDS_LBL_AUTHENTICATION" xml:space="preserve">
-
     <value>Authentification</value>
-  </data>
-  <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
-    <value />
   </data>
   <data name="IDS_LBL_PRINT_SETTINGS" xml:space="preserve">
     <value>Print Settings</value>
@@ -228,6 +234,15 @@
   </data>
   <data name="IDS_LBL_COLORMODE_BLACK" xml:space="preserve">
     <value>Black</value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
+    <value>Orientation</value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
+    <value>Portrait</value>
+  </data>
+  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
+    <value>Landscape</value>
   </data>
   <data name="IDS_LBL_NUMBER_OF_COPIES" xml:space="preserve">
     <value>Copies</value>
@@ -466,15 +481,6 @@
   <data name="IDS_LBL_LEGAL" xml:space="preserve">
     <value>Legal</value>
   </data>
-  <data name="IDS_LBL_LICENSE" xml:space="preserve">
-    <value>End User License Agreement</value>
-  </data>
-  <data name="IDS_LBL_LICENSE_AGREE" xml:space="preserve">
-    <value>Agree</value>
-  </data>
-  <data name="IDS_LBL_LICENSE_DISAGREE" xml:space="preserve">
-    <value>Disagree</value>
-  </data>
   <data name="IDS_LBL_PRINTERS_EMPTY" xml:space="preserve">
     <value>No Printers</value>
   </data>
@@ -517,6 +523,9 @@
   <data name="IDS_ERR_MSG_NO_SELECTED_PRINTER" xml:space="preserve">
     <value>Please register a printer.</value>
   </data>
+  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
+    <value>Please check the password you entered.</value>
+  </data>
   <data name="IDS_ERR_MSG_OPEN_FAILED" xml:space="preserve">
     <value>Please select a valid file.</value>
   </data>
@@ -526,14 +535,17 @@
   <data name="IDS_ERR_MSG_PDF_PRINTING_NOT_ALLOWED" xml:space="preserve">
     <value>File does not allow printing.</value>
   </data>
+  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
+    <value>File size is too large.</value>
+  </data>
+  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
+    <value>Not enough free space on device.</value>
+  </data>
   <data name="IDS_ERR_MSG_NETWORK_ERROR" xml:space="preserve">
     <value>No network available.</value>
   </data>
   <data name="IDS_ERR_MSG_DB_FAILURE" xml:space="preserve">
     <value>Database failure. Please restart the application. If the problem persists, please reinstall the application.</value>
-  </data>
-  <data name="IDS_ERR_MSG_LICENSE_DISAGREE" xml:space="preserve">
-    <value>User must agree to License Agreement to continue using the app</value>
   </data>
   <data name="IDS_LBL_YES" xml:space="preserve">
     <value>Yes</value>
@@ -541,28 +553,23 @@
   <data name="IDS_LBL_NO" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="IDS_LBL_SAVE" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_LICENSE" xml:space="preserve">
+    <value>End User License Agreement</value>
   </data>
-  <data name="IDS_LBL_LOGIN_ID" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_PAPERTYPE_ROUGHPAPER" xml:space="preserve">
+    <value>Rough Paper</value>
   </data>
-  <data name="IDS_LBL_ORIENTATION" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_AGREE" xml:space="preserve">
+    <value>Agree</value>
   </data>
-  <data name="IDS_LBL_ORIENTATION_PORTRAIT" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_DISAGREE" xml:space="preserve">
+    <value>Disagree</value>
   </data>
-  <data name="IDS_LBL_ORIENTATION_LANDSCAPE" xml:space="preserve">
-    <value></value>
+  <data name="IDS_ERR_MSG_DISAGREE_TO_LICENSE" xml:space="preserve">
+    <value>User must agree to License Agreement to continue using the app</value>
   </data>
-  <data name="IDS_ERR_MSG_PDF_WRONG_PASSWORD" xml:space="preserve">
-    <value></value>
+  <data name="IDS_LBL_QUEUE" xml:space="preserve">
+    <value>Queue</value>
   </data>
-  <data name="IDS_ERR_MSG_FILE_TOO_LARGE" xml:space="preserve">
-    <value></value>
-  </data>
-  <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
-    <value></value>
-  </data>
+
 </root>
