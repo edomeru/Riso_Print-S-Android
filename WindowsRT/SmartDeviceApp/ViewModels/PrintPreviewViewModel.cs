@@ -214,7 +214,6 @@ namespace SmartDeviceApp.ViewModels
                 double scalingFactor = 1;
                 bool isDuplex = false;
                 Size targetSize;
-                Size pageAreaGridSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);
                 switch (PageViewMode)
                 {
                     case PageViewMode.SinglePageView:

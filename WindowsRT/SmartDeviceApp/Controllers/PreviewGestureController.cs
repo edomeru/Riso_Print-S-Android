@@ -94,7 +94,13 @@ namespace SmartDeviceApp.Controllers
         private bool _manipulationCancel;
 
         private bool _deltaCalled;
-
+        public bool IsScaled
+        {
+            get
+            {
+                return _isScaled;
+            }
+        }
         /// <summary>
         /// PreviewGestureController class constructor
         /// </summary>
@@ -202,28 +208,20 @@ namespace SmartDeviceApp.Controllers
             // InitializeTransforms
             _controlSize = new Size(((ScrollViewer)_controlReference).Width, ((ScrollViewer)_controlReference).Height);  // BTS#14894 - Use size set programmatically from caller class. Actual size will be retrieved on SizeChanged event.
             _center = new Point(_controlSize.Width / 2, _controlSize.Height / 2);
-
             ResetTransforms();
-           
         }
 
         public void SetScreenSize(Size targetSize, double originalScale)
         {
             _targetSize = targetSize;
             _originalScale = originalScale;
+            _currentZoomLength = _targetSize.Width;
             _maxZoomLength = _targetSize.Width * MAX_ZOOM_LEVEL_FACTOR;
-            if (!_isScaled)
-            {
-                ResetTransforms();
-            }
-            else
-            {
-                Normalize();
-                DetectTranslate(null, true);
+           
+            Normalize();
+            DetectTranslate(null, true);
 
-                ManipulationGrid_ManipulationCancel();
-            }
-
+            ManipulationGrid_ManipulationCancel();
         }
         /// <summary>
         /// Enables handling of gestures

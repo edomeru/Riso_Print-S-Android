@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.ViewModels;
+using Microsoft.Practices.ServiceLocation;
 
 namespace SmartDeviceApp.Views
 {
@@ -43,7 +44,9 @@ namespace SmartDeviceApp.Views
 
         private void printSettingsPaneLoaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Height = Window.Current.Bounds.Height;
+            var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+            ViewModel.Height = viewControl.ScreenBound.Height;
+           
         }
     }
 }
