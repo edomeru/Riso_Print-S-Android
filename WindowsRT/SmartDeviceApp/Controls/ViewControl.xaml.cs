@@ -48,6 +48,10 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty MainMenuButtonPressedImageProperty =
            DependencyProperty.Register("MainMenuButtonPressedImage", typeof(ImageSource), typeof(ViewControl), 
            new PropertyMetadata(new BitmapImage(new Uri("ms-appx:///Resources/Images/img_btn_main_menu_pressed.png"))));
+
+        public static readonly DependencyProperty MainMenuButtonImageProperty =
+           DependencyProperty.Register("MainMenuButtonImage", typeof(ImageSource), typeof(ViewControl),
+           new PropertyMetadata(new BitmapImage(new Uri("ms-appx:///Resources/Images/img_btn_main_menu_normal.png"))));
         
         public static readonly DependencyProperty Button1ImageProperty =
            DependencyProperty.Register("Button1Image", typeof(ImageSource), typeof(ViewControl), null);
@@ -155,7 +159,15 @@ namespace SmartDeviceApp.Controls
             get { return (ImageSource)GetValue(MainMenuButtonPressedImageProperty); }
             set { SetValue(MainMenuButtonPressedImageProperty, value); }
         }
-
+        /// <summary>
+        /// Imagesource for the pressed state of main menu button
+        /// This is a workaround to load image faster; if set directly in xaml, the image appears blank at first
+        /// </summary>
+        public ImageSource MainMenuButtonImage
+        {
+            get { return (ImageSource)GetValue(MainMenuButtonImageProperty); }
+            set { SetValue(MainMenuButtonImageProperty, value); }
+        }
         /// <summary>
         /// Imagesource for button1.
         /// </summary>
