@@ -59,7 +59,7 @@ namespace SmartDeviceApp.ViewModels
         private JobGestureController _gestureController;
         private ViewControlViewModel _viewControlViewModel;
 
-        private bool _isPrintJobsListEmpty=true;
+        private bool _isPrintJobsListEmpty;
         private bool _isProgressRingActive;
 
         private double _columnWidth;
@@ -260,20 +260,14 @@ namespace SmartDeviceApp.ViewModels
         public bool IsProgressRingActive
         {
             get {
-                lock (ringLock)
-                {
-                    return _isProgressRingActive;
-                }
+                return _isProgressRingActive;
             }
             set
             {
-                lock (ringLock)
+                if (_isProgressRingActive != value)
                 {
-                    if (_isProgressRingActive != value)
-                    {
-                        _isProgressRingActive = value;
-                        RaisePropertyChanged("IsProgressRingActive");
-                    }
+                    _isProgressRingActive = value;
+                    RaisePropertyChanged("IsProgressRingActive");
                 }
             }
         }
@@ -334,6 +328,10 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetViewOrientation(ViewOrientation viewOrientation)
         {
+            if (Window.Current == null)
+                return;
+             Window.Current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
             if (!IsPrintJobsListEmpty) IsProgressRingActive = true;
             if (viewOrientation == ViewOrientation.Landscape)
             {
@@ -343,6 +341,7 @@ namespace SmartDeviceApp.ViewModels
             {
                 MaxColumns = MAX_COLUMNS_PORTRAIT;
             }
+            });
         }
 
         private async void DeleteAllJobsExecute(int printerId)

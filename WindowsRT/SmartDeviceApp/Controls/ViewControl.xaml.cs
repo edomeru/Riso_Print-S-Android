@@ -443,6 +443,10 @@ namespace SmartDeviceApp.Controls
                 await Task.Delay(350);
                 DisplayOrientation(e.Orientation);
             });
+           await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                DisplayOrientation(e.Orientation);
+            });
         }
 
         private void DisplayOrientation(SimpleOrientation orientation)

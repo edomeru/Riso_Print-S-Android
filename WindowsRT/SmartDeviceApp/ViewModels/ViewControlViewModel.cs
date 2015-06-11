@@ -94,7 +94,8 @@ namespace SmartDeviceApp.ViewModels
                 if (_viewMode != value)
                 {
                     _viewMode = value;
-                    RecomputeBounds();
+                    RaisePropertyChanged("ViewMode");
+                    Messenger.Default.Send<ViewMode>(_viewMode); 
                 }
             }
         }
