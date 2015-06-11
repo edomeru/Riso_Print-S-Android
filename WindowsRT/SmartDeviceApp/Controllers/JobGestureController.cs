@@ -47,16 +47,7 @@ namespace SmartDeviceApp.Controllers
         public JobGestureController()
         {
             _gestureRecognizer = new GestureRecognizer();
-            _gestureRecognizer.GestureSettings =
-                GestureSettings.Tap |
-                GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
-                GestureSettings.RightTap |
-                GestureSettings.ManipulationTranslateX |
-                GestureSettings.ManipulationTranslateY |
-                GestureSettings.ManipulationScale |
-                GestureSettings.ManipulationTranslateInertia |
-                GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
-                GestureSettings.ManipulationScaleInertia;
+
         }
 
         /// <summary>
@@ -103,6 +94,17 @@ namespace SmartDeviceApp.Controllers
             if (_control == null) return;
             if (!_isEnabled)
             {
+                _gestureRecognizer.GestureSettings =
+                    GestureSettings.Tap |
+                    GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
+                    GestureSettings.RightTap |
+                    GestureSettings.ManipulationTranslateX |
+                    GestureSettings.ManipulationTranslateY |
+                    GestureSettings.ManipulationScale |
+                    GestureSettings.ManipulationTranslateInertia |
+                    GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
+                    GestureSettings.ManipulationScaleInertia;
+
                 _control.PointerCanceled += OnPointerCanceled;
                 _control.PointerPressed += OnPointerPressed;
                 _control.PointerReleased += OnPointerReleased;

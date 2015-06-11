@@ -286,16 +286,24 @@ namespace SmartDeviceApp.ViewModels
                 {
                     if (_gestureController==null || !_gestureController.IsScaled)
                     {
+                        if (_gestureController!=null)
+                        {
+                            _gestureController.Dispose();
+                            _gestureController = null;
+                        }
                         _gestureController = new PreviewGestureController(_twoPageControl, _controlReference,
                            targetSize, scalingFactor, swipeRight, swipeLeft, isDuplex, _currentPageIndex, _pageTotal);
                         _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,
-                            swipeTop, swipeBottom, swipeDirection);
+                           swipeTop, swipeBottom, swipeDirection);
 
                     }
                     else
                     {
-                        _gestureController.SetScreenSize(targetSize, scalingFactor, swipeRight, swipeLeft);
+                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,
+                           swipeTop, swipeBottom, swipeDirection);
+                        _gestureController.SetScreenSize(targetSize, scalingFactor);
                     }
+                   
                 }
                 else
                 {
