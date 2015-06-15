@@ -35,7 +35,7 @@ namespace SmartDeviceApp.Views
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
            ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-           //ViewModel.HelpGestureGrid = (Grid)sender;
+           ViewModel.HelpGestureGrid = (Grid)sender;
 
         }
 
