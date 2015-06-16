@@ -22,6 +22,7 @@
                                        SubText="{Binding IpAddress}"
                                        SubTextVisibility="{Binding IpAddress, Converter={StaticResource StringToVisibilityConverter}}"
                                        Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
+                                       Height="{Binding Height}"
                                        Visibility="{Binding Jobs.Count, Converter={StaticResource PrintJobListToGroupVisibilityConverter}}"
                                        PressedHeaderColor="{StaticResource BRUSH_Purple2}"
                                        IsCollapsed="{Binding IsCollapsed}"
@@ -34,7 +35,8 @@
                     <ListView x:Name="jobsGroupListView"
                               ItemsSource="{Binding Jobs}"
                               ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
-                              ScrollViewer.HorizontalScrollMode="Disabled"
+                              
+                              ScrollViewer.HorizontalScrollMode="Enabled"
                               ScrollViewer.VerticalScrollMode="Disabled"
                               ScrollViewer.ZoomMode="Disabled"
                               IsItemClickEnabled="False"
@@ -84,6 +86,7 @@
                 <Grid x:Name="jobsGrid" Loaded="OnJobsGridLoaded" Grid.Row="0"
                       Width="Auto"
                       Height="Auto"
+                  
                       Background="Transparent"
                       ManipulationMode="None">
                     <Grid.Margin>

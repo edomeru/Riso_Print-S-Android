@@ -165,7 +165,7 @@ namespace SmartDeviceApp.Controllers
             args.Handled = true;
         }
 
-        void OnTapped(object sender, TappedEventArgs e)
+        async void OnTapped(object sender, TappedEventArgs e)
         {
             bool isDeleteJob;
             var jobListItem = GetJobListItemControlForDelete(e.Position, false);
@@ -212,6 +212,16 @@ namespace SmartDeviceApp.Controllers
             }
             else if (!isDeleteAllJobs && jobListHeader != null)
             {
+
+                var lastCollapsed = (new ViewModelLocator().JobsViewModel).lastCollapsed();
+                if (lastCollapseBtn != null && lastCollapseBtn !=jobListHeader)
+                {
+                    if (lastCollapsed.IsCollapsed) // Manually set pressed states
+                    {
+                        VisualStateManager.GoToState(jobListHeader, "Normal", true);
+                    }
+
+                }
                 if ((bool)jobListHeader.IsChecked) // Manually set pressed states
                 {
                     VisualStateManager.GoToState(jobListHeader, "CheckedPressed", true);
@@ -221,13 +231,17 @@ namespace SmartDeviceApp.Controllers
                     VisualStateManager.GoToState(jobListHeader, "Pressed", true);
                 }
                 jobListHeader.IsChecked = !jobListHeader.IsChecked; // Manually toggle the button
+                (new ViewModelLocator().JobsViewModel).setCollapseExcept((PrintJobGroup)jobListHeader.DataContext);
                 ((PrintJobGroup)jobListHeader.DataContext).IsCollapsed = jobListHeader.IsChecked.Value;
+                lastCollapseBtn = jobListHeader;
             }
             else if (jobListHeader != null)
             {
                 VisualStateManager.GoToState(jobListHeader, "Normal", true);
             }
         }
+        private ToggleButton lastCollapseBtn;
+
 
         //void OnRightTapped(object sender, RightTappedEventArgs e)
         //{

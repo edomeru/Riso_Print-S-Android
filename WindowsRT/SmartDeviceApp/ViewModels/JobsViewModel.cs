@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.Foundation;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -16,7 +8,6 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
-using SmartDeviceApp.Converters;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Constants;
 using Windows.UI.Core;
@@ -381,7 +372,44 @@ namespace SmartDeviceApp.ViewModels
                     }
                 }));
         }
+        public async void setUpCollapsed()
+        {
+            //get printers from db
+            int indexOfDefaultPrinter = 0;
+            var printerListFromDB = await DatabaseController.Instance.GetPrinters();
+            var defaultPrinter = await DatabaseController.Instance.GetDefaultPrinter();
 
+            Printer dPrinter = null;
+            foreach (var p in printerListFromDB)
+            {
+                if (p.Id == defaultPrinter.PrinterId)
+                {
+                    dPrinter = p;
+                }
+            }
+
+            foreach (var printerFromDB in PrintJobsList)
+            {
+                printerFromDB.IsCollapsed = (printerFromDB.IpAddress != dPrinter.IpAddress);
+            }
+        }
+
+        public void setCollapseExcept(PrintJobGroup jg)
+        {
+            foreach (var printerFromDB in PrintJobsList)
+            {
+                printerFromDB.IsCollapsed = (printerFromDB.IpAddress != jg.IpAddress);
+            }
+        }
+        public PrintJobGroup lastCollapsed()
+        {
+            foreach (var printerFromDB in PrintJobsList)
+            {
+                if (printerFromDB.IsCollapsed)
+                    return printerFromDB;
+            }
+            return null;
+        }
         /// <summary>
         /// Sorts the print job list into columns (based on size)
         /// </summary>

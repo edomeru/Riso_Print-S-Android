@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
 using Windows.UI.Xaml;
+using Microsoft.Practices.ServiceLocation;
+using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Models
 {
@@ -160,6 +162,20 @@ namespace SmartDeviceApp.Models
         /// </summary>
         public string IpAddress { get; set; }
 
+        public int Height
+        {
+            get{
+                if (_isCollapsed)
+                    return 60;
+                else
+                {
+                    var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+                    var height = viewControl.ScreenBound.Height;
+                    return Convert.ToInt32(height - 250);
+                }
+            }   
+        }
+
         /// <summary>
         /// Collection of PrintJob objects in a group
         /// </summary>
@@ -188,6 +204,7 @@ namespace SmartDeviceApp.Models
                 {
                     _isCollapsed = value;
                     RaisePropertyChanged("IsCollapsed");
+                    RaisePropertyChanged("Height");
                 }
             }
         }
