@@ -161,8 +161,27 @@ namespace SmartDeviceApp.Controllers
         }
         void OnPointerMoved(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
-            _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
-            args.Handled = true;
+
+           
+            var p = args.GetCurrentPoint(_targetControl);
+            var point = TransformPointToGlobalCoordinates(p.Position, false);
+            var elements = VisualTreeHelper.FindElementsInHostCoordinates(point, _targetControl);
+            ListView scrollview;
+            foreach (UIElement element in elements)
+            {
+                var elementName = ((FrameworkElement)element).Name;
+                if (elementName == "jobsGroupListView")
+                {
+                    scrollview = element;
+                    break;
+                }
+            }
+            if (scrollview == null)
+            {
+                _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
+                args.Handled = true;
+            }
+
         }
 
         async void OnTapped(object sender, TappedEventArgs e)
