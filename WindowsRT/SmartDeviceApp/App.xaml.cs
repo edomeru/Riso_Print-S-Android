@@ -144,7 +144,7 @@ namespace SmartDeviceApp
             {
                 if (frameIsNull)
                 {
-                    await Task.Delay(500);
+                    await Task.Delay(400);
                 }
                 await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);      
             });
