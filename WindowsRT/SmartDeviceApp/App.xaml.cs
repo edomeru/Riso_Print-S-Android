@@ -21,6 +21,7 @@ using SmartDeviceApp.Views;
 using SmartDeviceApp.Controllers;
 using DirectPrint;
 using SmartDeviceApp.ViewModels;
+using System.Threading.Tasks;
 
 namespace SmartDeviceApp
 {
@@ -97,6 +98,18 @@ namespace SmartDeviceApp
             //DirectPrint.DirectPrint p = new DirectPrint.DirectPrint();
         }
 
+        private async Task openFile(FileActivatedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame.Content == null)
+            {
+                // When the navigation stack isn't restored navigate to the first page,
+                // configuring the new page by passing required information as a navigation
+                // parameter
+                rootFrame.Navigate(typeof(HomePage), e.Files);
+            }
+            await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);
+        }
         /// <summary>
         /// Invoked when the application is launched by the end user thru Open With.
         /// </summary>
@@ -126,20 +139,11 @@ namespace SmartDeviceApp
                 DispatcherHelper.Initialize();
             }
 
-            if (rootFrame.Content == null)
-            {
-                // When the navigation stack isn't restored navigate to the first page,
-                // configuring the new page by passing required information as a navigation
-                // parameter
-                rootFrame.Navigate(typeof(HomePage), e.Files);
-            }
-
             // Ensure the current window is active
             Window.Current.Activate();
 
             SettingController.ShowLicenseAgreement();
-
-            await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);            
+            openFile(e);          
         }
 
         /// <summary>
