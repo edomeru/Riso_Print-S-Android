@@ -143,12 +143,21 @@ namespace SmartDeviceApp.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var columns = 3;
+            if (parameter is ViewItemParameters)
+            {
+                ViewItemParameters p = parameter as ViewItemParameters;
+                columns = p.columns==0 ?3 : p.columns;
+            }
             var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
             var width = viewControl.ScreenBound.Width;
                         
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-            var columnWidth = (width - (defaultMargin * 2) - (defaultMargin * (columns - 1))) / columns;
-            return columnWidth ;
+            //                LEFT MOST       each item        
+            var maxMargin = defaultMargin + (defaultMargin * columns);
+            var columnWidth = (width - maxMargin )/ columns;
+            if (columnWidth > 430)
+                return 430 / 1.0;
+            return columnWidth;
         }
 
         /// <summary>

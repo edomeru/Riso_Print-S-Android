@@ -22,6 +22,7 @@ using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Views;
 using SmartDeviceApp.Converters;
+using Microsoft.Practices.ServiceLocation;
 
 
 namespace SmartDeviceApp.ViewModels
@@ -228,9 +229,11 @@ namespace SmartDeviceApp.ViewModels
         {
             if (GestureController != null && GestureController.TargetControl != null)
             {
-                var columns = (viewOrientation == Common.Enum.ViewOrientation.Landscape) ? 3 : 2;
                 var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-                var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+                // Calculate the proper max rows or columns based on new size 
+                var maxWidth = 430;
+                var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+                var columns = Convert.ToInt32(Math.Floor(viewControl.ScreenBound.Width / maxWidth));
 
                 var targetControl = (AdaptableGridView)GestureController.TargetControl;
                 var converter = new PrintersListWidthConverter();
