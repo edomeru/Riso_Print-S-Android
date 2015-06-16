@@ -98,14 +98,6 @@ namespace SmartDeviceApp
             //DirectPrint.DirectPrint p = new DirectPrint.DirectPrint();
         }
 
-        private async Task openFile(FileActivatedEventArgs e,bool frameIsNull)
-        {
-            if (frameIsNull)
-            {
-                await Task.Delay(500);
-            }
-            await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);
-        }
         /// <summary>
         /// Invoked when the application is launched by the end user thru Open With.
         /// </summary>
@@ -146,7 +138,18 @@ namespace SmartDeviceApp
             Window.Current.Activate();
 
             SettingController.ShowLicenseAgreement();
-            openFile(e, frameIsNull);          
+
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                if (frameIsNull)
+                {
+                    await Task.Delay(500);
+                }
+                await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);      
+            });
+        
+             
         }
 
         /// <summary>
