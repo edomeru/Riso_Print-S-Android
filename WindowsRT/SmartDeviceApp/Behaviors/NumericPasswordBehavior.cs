@@ -18,8 +18,7 @@ namespace SmartDeviceApp.Behaviors
     {
         private const string REGEX_NUMERIC = "^[0-9]*$";
 
-        private string lastValidText="";
-
+        private string lastValidText = String.Empty;
         /// <summary>
         /// Object which this behavior is associated to.
         /// </summary>
@@ -59,8 +58,13 @@ namespace SmartDeviceApp.Behaviors
             var passwordBox = AssociatedObject as PasswordTextbox;
             if ((bool)e.NewValue == true)
             {
-                passwordBox.Text = Regex.Replace(passwordBox.OriginalText, @".", "*");
+                passwordBox.Text = Regex.Replace(lastValidText, @".", "*");
+                passwordBox.OriginalText = lastValidText;
             }
+            else 
+            {
+                lastValidText = passwordBox.OriginalText;
+        }
         }
 
         private void restoreLastSaved(PasswordTextbox passwordBox,string value)
