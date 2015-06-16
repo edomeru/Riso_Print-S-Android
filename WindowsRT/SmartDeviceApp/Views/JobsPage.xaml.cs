@@ -20,6 +20,8 @@ using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Converters;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Models;
+using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Views
 {
@@ -33,6 +35,8 @@ namespace SmartDeviceApp.Views
         /// <summary>
         /// Constructor. Initializes UI components and gesture controller.
         /// </summary>
+        /// 
+
         public JobsPage()
         {
             this.InitializeComponent();
@@ -41,6 +45,9 @@ namespace SmartDeviceApp.Views
 
             if (!ViewModel.IsPrintJobsListEmpty) ViewModel.IsProgressRingActive = true;
         }
+
+
+
 
         /// <summary>
         /// Gets the data context of this xaml
@@ -124,5 +131,7 @@ namespace SmartDeviceApp.Views
                 ViewModel.IsProgressRingActive = false;
             }
         }
+
+
     }
 }
