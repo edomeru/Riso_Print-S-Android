@@ -79,7 +79,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _screenBound.Width = value.Width;
                     _screenBound.Height = value.Height;
-                    RecomputeBounds();
+                    //RecomputeBounds();
                 }
             }
         }
@@ -111,7 +111,8 @@ namespace SmartDeviceApp.ViewModels
                 if (_viewOrientation != value)
                 {
                     _viewOrientation = value;
-                    RecomputeBounds();
+                    RaisePropertyChanged("ViewOrientation");
+                    Messenger.Default.Send<ViewOrientation>(_viewOrientation); // Broadcast to all viewmodels that need to be updated
                 }
             }
         }
