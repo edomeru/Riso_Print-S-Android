@@ -62,7 +62,7 @@ namespace SmartDeviceApp.Views
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            //ViewModel.LegalGestureGrid = (Grid)sender;
+            ViewModel.LegalGestureGrid = (Grid)sender;
 
         }
 
