@@ -364,12 +364,16 @@ namespace SmartDeviceApp.Controls
         {
             var newBound = new Windows.Foundation.Rect(0, 0, e.Size.Width, e.Size.Height);
             ViewModel.ScreenBound = newBound;  
+            var prevViewMode = ViewModel.ViewMode;
+            ViewModel.ViewMode = ViewMode.Unknown;
+            ViewModel.ViewMode = prevViewMode;
         }
 
         async private void OrientationChanged(object sender, SimpleOrientationSensorOrientationChangedEventArgs e)
         {
-           await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
+                await Task.Delay(350);
                 DisplayOrientation(e.Orientation);
             });
         }
