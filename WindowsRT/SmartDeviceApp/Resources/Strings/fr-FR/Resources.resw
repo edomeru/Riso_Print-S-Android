@@ -571,5 +571,13 @@
   <data name="IDS_LBL_QUEUE" xml:space="preserve">
     <value>Queue</value>
   </data>
-
+<data name="IDS_ERR_MSG_LICENSE_DISAGREE" xml:space="preserve">
+  <value>User must agree to License Agreement to continue using the app</value>
+</data>
+<data name="IDS_LBL_LICENSE_AGREE" xml:space="preserve">
+  <value>Agree</value>
+</data>
+<data name="IDS_LBL_LICENSE_DISAGREE" xml:space="preserve">
+  <value>Disagree</value>
+</data>
 </root>

@@ -571,5 +571,13 @@
   <data name="IDS_LBL_QUEUE" xml:space="preserve">
     <value>出力キュー</value>
   </data>
-
+ <data name="IDS_LBL_LICENSE_AGREE" xml:space="preserve">
+   <value>蜷梧э縺吶ｋ</value>
+ </data>
+ <data name="IDS_LBL_LICENSE_DISAGREE" xml:space="preserve">
+   <value>蜷梧э縺励↑縺</value>
+ </data>
+ <data name="IDS_ERR_MSG_LICENSE_DISAGREE" xml:space="preserve">
+   <value>縺薙ｮ繧｢繝励Μ繧剃ｽｿ逕ｨ縺吶ｋ縺ｫ縺ｯ縲∽ｽｿ逕ｨ險ｱ隲ｾ縺ｸ縺ｮ蜷梧э縺悟ｿ隕√〒縺吶</value>
+ </data>
 </root>
