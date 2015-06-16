@@ -98,15 +98,11 @@ namespace SmartDeviceApp
             //DirectPrint.DirectPrint p = new DirectPrint.DirectPrint();
         }
 
-        private async Task openFile(FileActivatedEventArgs e)
+        private async Task openFile(FileActivatedEventArgs e,bool frameIsNull)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-            if (rootFrame.Content == null)
+            if (frameIsNull)
             {
-                // When the navigation stack isn't restored navigate to the first page,
-                // configuring the new page by passing required information as a navigation
-                // parameter
-                rootFrame.Navigate(typeof(HomePage), e.Files);
+                await Task.Delay(500);
             }
             await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);
         }
@@ -120,10 +116,10 @@ namespace SmartDeviceApp
             (new ViewModelLocator().HomeViewModel).EnabledOpenDocumentCommand = false;
 
             Frame rootFrame = Window.Current.Content as Frame;
-
+            var frameIsNull = rootFrame == null;
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (rootFrame == null)
+            if (frameIsNull)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
@@ -141,12 +137,19 @@ namespace SmartDeviceApp
                 Window.Current.Content = rootFrame;
                 DispatcherHelper.Initialize();
             }
-
+            
+            if (rootFrame.Content == null)
+            {
+                // When the navigation stack isn't restored navigate to the first page,
+                // configuring the new page by passing required information as a navigation
+                // parameter
+                rootFrame.Navigate(typeof(HomePage), e.Files);
+            }
             // Ensure the current window is active
             Window.Current.Activate();
 
             SettingController.ShowLicenseAgreement();
-            openFile(e);          
+            openFile(e, frameIsNull);          
         }
 
         /// <summary>
