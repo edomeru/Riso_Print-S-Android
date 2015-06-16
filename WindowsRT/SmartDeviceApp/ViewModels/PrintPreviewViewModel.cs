@@ -214,7 +214,6 @@ namespace SmartDeviceApp.ViewModels
                 double scalingFactor = 1;
                 bool isDuplex = false;
                 Size targetSize;
-                Size pageAreaGridSize = new Size(LeftPageActualSize.Width + RightPageActualSize.Width, RightPageActualSize.Height);
                 switch (PageViewMode)
                 {
                     case PageViewMode.SinglePageView:
@@ -285,24 +284,26 @@ namespace SmartDeviceApp.ViewModels
 
                 if (scalingFactor != _scalingFactor || PageViewMode != _previousPageViewMode)
                 {
-                    if (_gestureController == null || !_gestureController.IsScaled)
+                    if (_gestureController==null || !_gestureController.IsScaled)
                     {
-                        if (_gestureController !=null)
+                        if (_gestureController!=null)
                         {
                             _gestureController.Dispose();
                             _gestureController = null;
                         }
                         _gestureController = new PreviewGestureController(_twoPageControl, _controlReference,
                            targetSize, scalingFactor, swipeRight, swipeLeft, isDuplex, _currentPageIndex, _pageTotal);
-                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight, swipeTop, swipeBottom, swipeDirection);
+                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,
+                           swipeTop, swipeBottom, swipeDirection);
 
                     }
                     else
                     {
-                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,swipeTop, swipeBottom, swipeDirection);
+                        _gestureController.InitializeSwipe(IsHorizontalSwipeEnabled, IsReverseSwipe, swipeLeft, swipeRight,
+                           swipeTop, swipeBottom, swipeDirection);
                         _gestureController.SetScreenSize(targetSize, scalingFactor);
-
                     }
+                   
                 }
                 else
                 {

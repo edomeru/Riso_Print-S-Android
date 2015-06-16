@@ -94,7 +94,13 @@ namespace SmartDeviceApp.Controllers
         private bool _manipulationCancel;
 
         private bool _deltaCalled;
-
+        public bool IsScaled
+        {
+            get
+            {
+                return _isScaled;
+            }
+        }
         /// <summary>
         /// PreviewGestureController class constructor
         /// </summary>
@@ -160,13 +166,6 @@ namespace SmartDeviceApp.Controllers
             ResetClipTransforms();
         }
 
-        public bool IsScaled
-        {
-            get
-            {
-                return _isScaled;
-            }
-        }
         /// <summary>
         /// Swipe right delegate
         /// </summary>
@@ -196,54 +195,45 @@ namespace SmartDeviceApp.Controllers
         private void Initialize()
         {
             _gestureRecognizer = new GestureRecognizer();
-           
             EnableGestures();
             
             // InitializeTransforms
             _controlSize = new Size(((ScrollViewer)_controlReference).Width, ((ScrollViewer)_controlReference).Height);  // BTS#14894 - Use size set programmatically from caller class. Actual size will be retrieved on SizeChanged event.
             _center = new Point(_controlSize.Width / 2, _controlSize.Height / 2);
-
             ResetTransforms();
-           
         }
 
         public void SetScreenSize(Size targetSize, double originalScale)
         {
             _targetSize = targetSize;
             _originalScale = originalScale;
+            _currentZoomLength = _targetSize.Width;
             _maxZoomLength = _targetSize.Width * MAX_ZOOM_LEVEL_FACTOR;
-            if (!_isScaled)
-            {
-                ResetTransforms();
-            }
-            else
-            {
-                Normalize();
-                DetectTranslate(null, true);
+           
+            Normalize();
+            DetectTranslate(null, true);
 
-                ManipulationGrid_ManipulationCancel();
-            }
-
+            ManipulationGrid_ManipulationCancel();
         }
         /// <summary>
         /// Enables handling of gestures
         /// </summary>
         public void EnableGestures()
         {
+            _gestureRecognizer.GestureSettings =
+                GestureSettings.Tap |
+                GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
+                GestureSettings.RightTap |
+                GestureSettings.DoubleTap |
+                GestureSettings.ManipulationTranslateX |
+                GestureSettings.ManipulationTranslateY |
+                GestureSettings.ManipulationScale |
+                GestureSettings.ManipulationTranslateInertia |
+                GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
+                GestureSettings.ManipulationScaleInertia;
+
             if (!_isEnabled)
             {
-                _gestureRecognizer.GestureSettings =
-                   GestureSettings.Tap |
-                   GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
-                   GestureSettings.RightTap |
-                   GestureSettings.DoubleTap |
-                   GestureSettings.ManipulationTranslateX |
-                   GestureSettings.ManipulationTranslateY |
-                   GestureSettings.ManipulationScale |
-                   GestureSettings.ManipulationTranslateInertia |
-                   GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
-                   GestureSettings.ManipulationScaleInertia;
-
                 _control.PointerCanceled += OnPointerCanceled;
                 _control.PointerPressed += OnPointerPressed;
                 _control.PointerReleased += OnPointerReleased;
