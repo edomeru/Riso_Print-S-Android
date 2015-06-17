@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.Foundation;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -16,10 +8,10 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Controllers;
-using SmartDeviceApp.Converters;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Constants;
 using Windows.UI.Core;
+using Microsoft.Practices.ServiceLocation;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -208,12 +200,11 @@ namespace SmartDeviceApp.ViewModels
             get { return _maxColumns; }
             set
             {
-                if (_maxColumns != value)
-                {
+                
                     _maxColumns = value;
                     RaisePropertyChanged("MaxColumns");
                     SortPrintJobsListToColumns();
-                }
+             
             }
         }
 
@@ -324,24 +315,43 @@ namespace SmartDeviceApp.ViewModels
                         break;
                     }
             }
+            if (!IsPrintJobsListEmpty) IsProgressRingActive = true;
+            MaxColumns = computeMaxColumns();
         }
 
+        private int computeMaxColumns()
+        {
+            
+            if (Window.Current != null)
+            {
+                var maxWidth = 450;
+                var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+                var columns = Convert.ToInt32(Math.Floor(viewControl.ScreenBound.Width / maxWidth));
+                return columns;
+            }
+            else
+            {
+                if (orientation == ViewOrientation.Landscape)
+                {
+                    return MAX_COLUMNS_LANDSCAPE;
+                }
+                else if (orientation == ViewOrientation.Portrait)
+                {
+                    return MAX_COLUMNS_PORTRAIT;
+                }
+            }
+            return MAX_COLUMNS_LANDSCAPE;
+        }
+        private ViewOrientation orientation=ViewOrientation.Landscape;
         private void SetViewOrientation(ViewOrientation viewOrientation)
         {
-            if (Window.Current == null)
-                return;
-             Window.Current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
+            orientation = viewOrientation;
+
             if (!IsPrintJobsListEmpty) IsProgressRingActive = true;
-            if (viewOrientation == ViewOrientation.Landscape)
-            {
-                MaxColumns = MAX_COLUMNS_LANDSCAPE;
-            }
-            else if (viewOrientation == ViewOrientation.Portrait)
-            {
-                MaxColumns = MAX_COLUMNS_PORTRAIT;
-            }
-            });
+            MaxColumns = computeMaxColumns();
+            /*
+           */
+            
         }
 
         private async void DeleteAllJobsExecute(int printerId)
@@ -381,7 +391,44 @@ namespace SmartDeviceApp.ViewModels
                     }
                 }));
         }
+        public async void setUpCollapsed()
+        {
+            //get printers from db
+            int indexOfDefaultPrinter = 0;
+            var printerListFromDB = await DatabaseController.Instance.GetPrinters();
+            var defaultPrinter = await DatabaseController.Instance.GetDefaultPrinter();
 
+            Printer dPrinter = null;
+            foreach (var p in printerListFromDB)
+            {
+                if (p.Id == defaultPrinter.PrinterId)
+                {
+                    dPrinter = p;
+                }
+            }
+
+            foreach (var printerFromDB in PrintJobsList)
+            {
+                printerFromDB.IsCollapsed = (printerFromDB.IpAddress != dPrinter.IpAddress);
+            }
+        }
+
+        public void setCollapseExcept(PrintJobGroup jg)
+        {
+            foreach (var printerFromDB in PrintJobsList)
+            {
+                printerFromDB.IsCollapsed = (printerFromDB.IpAddress != jg.IpAddress);
+            }
+        }
+        public PrintJobGroup lastCollapsed()
+        {
+            foreach (var printerFromDB in PrintJobsList)
+            {
+                if (printerFromDB.IsCollapsed)
+                    return printerFromDB;
+            }
+            return null;
+        }
         /// <summary>
         /// Sorts the print job list into columns (based on size)
         /// </summary>
@@ -399,54 +446,35 @@ namespace SmartDeviceApp.ViewModels
 
             // Place each print job group in column with least items
             // Add 1 count for every group for group header control
-            var column1 = new PrintJobList();
-            var column2 = new PrintJobList();            
-            var column1Count = 0;
-            var column2Count = 0;           
 
-            if (MaxColumns == MAX_COLUMNS_LANDSCAPE)
+            PrintJobList[] columns = new PrintJobList[MaxColumns];
+            for (int i = 0; i< MaxColumns ; i++)
             {
-                var column3 = new PrintJobList();
-                var column3Count = 0;
-                foreach (PrintJobGroup group in PrintJobsList)
-                {
-                    if (column1Count <= column2Count && column1Count <= column3Count)
-                    {
-                        column1.Add(group);
-                        column1Count += 1 + group.Jobs.Count;
-                    }
-                    else if (column2Count <= column1Count && column2Count <= column3Count)
-                    {
-                        column2.Add(group);
-                        column2Count += 1 + group.Jobs.Count;
-                    }
-                    else if (column3Count <= column1Count && column3Count <= column2Count)
-                    {
-                        column3.Add(group);
-                        column3Count += 1 + group.Jobs.Count;
-                    }
-                }
-                PrintJobsColumn3 = column3;
+                columns[i] = new PrintJobList();
             }
-            else if (MaxColumns == MAX_COLUMNS_PORTRAIT)                
+            var currentColumnIndex = 0;
+            foreach (PrintJobGroup group in PrintJobsList)
             {
-                foreach (PrintJobGroup group in PrintJobsList)
-                {
-                    if (column1Count <= column2Count)
-                    {
-                        column1.Add(group);
-                        column1Count += 1 + group.Jobs.Count;
-                    }
-                    else if (column2Count <= column1Count)
-                    {
-                        column2.Add(group);
-                        column2Count += 1 + group.Jobs.Count;
-                    }
-                }
+                currentColumnIndex = (currentColumnIndex +1 ) % MaxColumns;
+                columns[currentColumnIndex].Add(group);
+            }
+            switch (MaxColumns)
+            {
+                case 3:
+                    PrintJobsColumn3 = columns[0];
+                    PrintJobsColumn2 = columns[2];
+                    PrintJobsColumn1 = columns[1];
+                    break;
+                case 2:
+                    PrintJobsColumn2 = columns[1];
+                    PrintJobsColumn1 = columns[0];
+                    break;
+                case 1:
+                    PrintJobsColumn1 = columns[0];
+                    break;
+
             }
 
-            PrintJobsColumn1 = column1;
-            PrintJobsColumn2 = column2;
         }
 
         #region For testing

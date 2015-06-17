@@ -161,11 +161,13 @@ namespace SmartDeviceApp.Controllers
         }
         void OnPointerMoved(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
+
             _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
             args.Handled = true;
+
         }
 
-        void OnTapped(object sender, TappedEventArgs e)
+        async void OnTapped(object sender, TappedEventArgs e)
         {
             bool isDeleteJob;
             var jobListItem = GetJobListItemControlForDelete(e.Position, false);
@@ -199,6 +201,10 @@ namespace SmartDeviceApp.Controllers
                     jobListHeader = (ToggleButton)element;
                     break;
                 }
+                else if (elementName == "ScrollView")
+                {
+                    scroller = element as ScrollViewer;
+                }
             }
             // Manually execute delete command
             if (isDeleteAllJobs && jobListHeader != null)
@@ -212,6 +218,16 @@ namespace SmartDeviceApp.Controllers
             }
             else if (!isDeleteAllJobs && jobListHeader != null)
             {
+
+                var lastCollapsed = (new ViewModelLocator().JobsViewModel).lastCollapsed();
+                if (lastCollapseBtn != null && lastCollapseBtn !=jobListHeader)
+                {
+                    if (lastCollapsed.IsCollapsed) // Manually set pressed states
+                    {
+                        VisualStateManager.GoToState(jobListHeader, "Normal", true);
+                    }
+
+                }
                 if ((bool)jobListHeader.IsChecked) // Manually set pressed states
                 {
                     VisualStateManager.GoToState(jobListHeader, "CheckedPressed", true);
@@ -221,21 +237,26 @@ namespace SmartDeviceApp.Controllers
                     VisualStateManager.GoToState(jobListHeader, "Pressed", true);
                 }
                 jobListHeader.IsChecked = !jobListHeader.IsChecked; // Manually toggle the button
+                (new ViewModelLocator().JobsViewModel).setCollapseExcept((PrintJobGroup)jobListHeader.DataContext);
                 ((PrintJobGroup)jobListHeader.DataContext).IsCollapsed = jobListHeader.IsChecked.Value;
+                lastCollapseBtn = jobListHeader;
             }
             else if (jobListHeader != null)
             {
                 VisualStateManager.GoToState(jobListHeader, "Normal", true);
             }
         }
+        private ToggleButton lastCollapseBtn;
+
 
         //void OnRightTapped(object sender, RightTappedEventArgs e)
         //{
         //}
-
+        private ScrollViewer scroller;
         private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
         {
             _startPoint = e.Position;
+            scroller = getScrollFromPoint(e.Position);
             //Debug.WriteLine("OnManipulationStarted");
         }
 
@@ -308,6 +329,7 @@ namespace SmartDeviceApp.Controllers
             _lastPrintJobGroup.DeleteButtonVisualState = "DeleteNormal";
             _lastDeleteAllButton = null;
             _lastPrintJobGroup = null;
+            
         }
 
         /// <param name="isScrolled">True if from ManipulationUpdatedEventArgs,
@@ -365,14 +387,39 @@ namespace SmartDeviceApp.Controllers
             if (!isDeleteJob) jobListItemControl = null;
             return jobListItemControl;
         }
-
+        private ScrollViewer getScrollFromPoint(Point currentPosition)
+        {
+            var elements = VisualTreeHelper.FindElementsInHostCoordinates(currentPosition, _targetControl);
+            UIElement listView = null;
+            bool isJobController = false;
+            ScrollViewer view = _controlReference as ScrollViewer;
+            foreach (UIElement element in elements)
+            {
+                var elementName = ((FrameworkElement)element).Name;
+                if (elementName == "ScrollViewer" && isJobController)
+                {
+                    view =  element as ScrollViewer;
+                    break;
+                    
+                }
+                else if (elementName == "jobListItemControl")
+                {
+                    isJobController = true;
+                }
+            }
+            return view;
+        }
         private bool DetectVerticalSwipe(Point currentPosition, Point delta)
         {
             var isTranslate = false;
             if (Math.Abs(delta.Y) > 0)
             {
                 isTranslate = true;
-                var scrollViewer = (ScrollViewer)_controlReference;
+                if (scroller == null)
+                {
+                    scroller = getScrollFromPoint(currentPosition);
+                }
+                var scrollViewer = scroller;
                 scrollViewer.ChangeView(null, scrollViewer.VerticalOffset - delta.Y, null);
 
                 // Hide delete button only on outside of containing row
