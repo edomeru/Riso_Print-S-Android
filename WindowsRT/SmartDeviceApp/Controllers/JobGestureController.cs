@@ -162,25 +162,8 @@ namespace SmartDeviceApp.Controllers
         void OnPointerMoved(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
 
-           
-            var p = args.GetCurrentPoint(_targetControl);
-            var point = TransformPointToGlobalCoordinates(p.Position, false);
-            var elements = VisualTreeHelper.FindElementsInHostCoordinates(point, _targetControl);
-            ListView scrollview;
-            foreach (UIElement element in elements)
-            {
-                var elementName = ((FrameworkElement)element).Name;
-                if (elementName == "jobsGroupListView")
-                {
-                    scrollview = element;
-                    break;
-                }
-            }
-            if (scrollview == null)
-            {
-                _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
-                args.Handled = true;
-            }
+            _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
+            args.Handled = true;
 
         }
 
@@ -217,6 +200,10 @@ namespace SmartDeviceApp.Controllers
                 {
                     jobListHeader = (ToggleButton)element;
                     break;
+                }
+                else if (elementName == "ScrollView")
+                {
+                    scroller = element as ScrollViewer;
                 }
             }
             // Manually execute delete command
@@ -265,10 +252,11 @@ namespace SmartDeviceApp.Controllers
         //void OnRightTapped(object sender, RightTappedEventArgs e)
         //{
         //}
-
+        private ScrollViewer scroller;
         private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
         {
             _startPoint = e.Position;
+            scroller = getScrollFromPoint(e.Position);
             //Debug.WriteLine("OnManipulationStarted");
         }
 
@@ -341,6 +329,7 @@ namespace SmartDeviceApp.Controllers
             _lastPrintJobGroup.DeleteButtonVisualState = "DeleteNormal";
             _lastDeleteAllButton = null;
             _lastPrintJobGroup = null;
+            
         }
 
         /// <param name="isScrolled">True if from ManipulationUpdatedEventArgs,
@@ -398,14 +387,39 @@ namespace SmartDeviceApp.Controllers
             if (!isDeleteJob) jobListItemControl = null;
             return jobListItemControl;
         }
-
+        private ScrollViewer getScrollFromPoint(Point currentPosition)
+        {
+            var elements = VisualTreeHelper.FindElementsInHostCoordinates(currentPosition, _targetControl);
+            UIElement listView = null;
+            bool isJobController = false;
+            ScrollViewer view = _controlReference as ScrollViewer;
+            foreach (UIElement element in elements)
+            {
+                var elementName = ((FrameworkElement)element).Name;
+                if (elementName == "ScrollViewer" && isJobController)
+                {
+                    view =  element as ScrollViewer;
+                    break;
+                    
+                }
+                else if (elementName == "jobListItemControl")
+                {
+                    isJobController = true;
+                }
+            }
+            return view;
+        }
         private bool DetectVerticalSwipe(Point currentPosition, Point delta)
         {
             var isTranslate = false;
             if (Math.Abs(delta.Y) > 0)
             {
                 isTranslate = true;
-                var scrollViewer = (ScrollViewer)_controlReference;
+                if (scroller == null)
+                {
+                    scroller = getScrollFromPoint(currentPosition);
+                }
+                var scrollViewer = scroller;
                 scrollViewer.ChangeView(null, scrollViewer.VerticalOffset - delta.Y, null);
 
                 // Hide delete button only on outside of containing row

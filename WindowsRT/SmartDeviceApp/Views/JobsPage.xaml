@@ -37,7 +37,7 @@
                               ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
                               
                               ScrollViewer.HorizontalScrollMode="Enabled"
-                              ScrollViewer.VerticalScrollMode="Disabled"
+                              ScrollViewer.VerticalScrollMode="Enabled"
                               ScrollViewer.ZoomMode="Disabled"
                               IsItemClickEnabled="False"
                               SelectionMode="None">
@@ -57,7 +57,7 @@
             <Setter Property="Width" Value="{Binding Converter={StaticResource PrintJobListWidthConverter}}"/>
             <Setter Property="ItemTemplate" Value="{StaticResource TEMPLATE_PrintJobItem}"/>
             <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
-            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="IsItemClickEnabled" Value="False"/>
             <Setter Property="SelectionMode" Value="None"/>
@@ -72,7 +72,7 @@
                           Button2Visibility="Collapsed"
                           Button3Visibility="Collapsed">
         <ScrollViewer x:Name="jobsScrollViewer"
-                      HorizontalScrollMode="Disabled" VerticalScrollMode="Enabled"
+                      HorizontalScrollMode="Disabled" VerticalScrollMode="Disabled"
                       ZoomMode="Disabled" 
                       Loaded="OnJobsScrollViewerLoaded">
             <Grid>
@@ -86,7 +86,6 @@
                 <Grid x:Name="jobsGrid" Loaded="OnJobsGridLoaded" Grid.Row="0"
                       Width="Auto"
                       Height="Auto"
-                  
                       Background="Transparent"
                       ManipulationMode="None">
                     <Grid.Margin>
