@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Media;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
+using Microsoft.Practices.ServiceLocation;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -92,6 +93,7 @@ namespace SmartDeviceApp.Controllers
         public void EnableGestures()
         {
             if (_control == null) return;
+            clearGroupButtonCache();
             if (!_isEnabled)
             {
                 _gestureRecognizer.GestureSettings =
@@ -175,6 +177,7 @@ namespace SmartDeviceApp.Controllers
             {
                 PrintJob printJob = (PrintJob)jobListItem.DataContext;
                 (new ViewModelLocator().JobsViewModel).DeleteJobCommand.Execute(printJob);
+                clearGroupButtonCache();
                 return;
             }
             if (_isDeleteJobButtonVisible)
@@ -214,20 +217,13 @@ namespace SmartDeviceApp.Controllers
                 _lastDeleteAllButton = deleteButton;
                 _lastPrintJobGroup = printJobGroup;
                 printJobGroup.DeleteButtonVisualState = "DeletePressed";
+                clearGroupButtonCache();
                 (new ViewModelLocator().JobsViewModel).DeleteAllJobsCommand.Execute(printerId);
             }
             else if (!isDeleteAllJobs && jobListHeader != null)
             {
 
-                var lastCollapsed = (new ViewModelLocator().JobsViewModel).lastCollapsed();
-                if (lastCollapseBtn != null && lastCollapseBtn !=jobListHeader)
-                {
-                    if (lastCollapsed.IsCollapsed) // Manually set pressed states
-                    {
-                        VisualStateManager.GoToState(jobListHeader, "Normal", true);
-                    }
-
-                }
+                collapseAllGroups(jobListHeader);
                 if ((bool)jobListHeader.IsChecked) // Manually set pressed states
                 {
                     VisualStateManager.GoToState(jobListHeader, "CheckedPressed", true);
@@ -237,18 +233,50 @@ namespace SmartDeviceApp.Controllers
                     VisualStateManager.GoToState(jobListHeader, "Pressed", true);
                 }
                 jobListHeader.IsChecked = !jobListHeader.IsChecked; // Manually toggle the button
-                (new ViewModelLocator().JobsViewModel).setCollapseExcept((PrintJobGroup)jobListHeader.DataContext);
                 ((PrintJobGroup)jobListHeader.DataContext).IsCollapsed = jobListHeader.IsChecked.Value;
-                lastCollapseBtn = jobListHeader;
-            }
-            else if (jobListHeader != null)
-            {
-                VisualStateManager.GoToState(jobListHeader, "Normal", true);
+                
             }
         }
-        private ToggleButton lastCollapseBtn;
-
-
+        private List<ToggleButton> _groupButtons;
+        private List<ToggleButton> GroupButtonCache
+        {
+            get
+            {
+                if (_groupButtons == null)
+                {
+                    _groupButtons = new List<ToggleButton>();
+                    var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+                    var elements = VisualTreeHelper.FindElementsInHostCoordinates(viewControl.ScreenBound, _targetControl, true);
+                    foreach (var element in elements)
+                    {
+                        var elementName = ((FrameworkElement)element).Name;
+                        if (elementName == JOB_LIST_HEADER_CONTROL_NAME)
+                        {
+                            _groupButtons.Add(element as ToggleButton);
+                        }
+                    }
+                }
+                return _groupButtons;
+            }
+        }
+        private void clearGroupButtonCache()
+        {
+            _groupButtons = null;
+        }
+        private void collapseAllGroups(ToggleButton exceptGroup)
+        {
+            
+            foreach (var element in GroupButtonCache)
+            {
+                if (element != exceptGroup)
+                {
+                    VisualStateManager.GoToState(element as ToggleButton, "Checked", false);
+               
+                    var data = (PrintJobGroup)element.DataContext;
+                    data.IsCollapsed = true;
+                }
+            }
+        }
         //void OnRightTapped(object sender, RightTappedEventArgs e)
         //{
         //}
