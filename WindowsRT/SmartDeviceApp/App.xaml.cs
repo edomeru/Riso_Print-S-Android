@@ -30,6 +30,7 @@ namespace SmartDeviceApp
     /// </summary>
     sealed partial class App : Application
     {
+        private bool hasAlreadyStarted = false;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -51,7 +52,7 @@ namespace SmartDeviceApp
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-
+            hasAlreadyStarted = true;
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
@@ -138,7 +139,15 @@ namespace SmartDeviceApp
             Window.Current.Activate();
 
             SettingController.ShowLicenseAgreement();
-            MainController.OpenFileHandler(e.Files[0] as Windows.Storage.StorageFile);      
+            if (!hasAlreadyStarted || !(new ViewModelLocator().ViewControlViewModel).IsLicenseAgreed)
+            {
+                MainController.OpenFileHandler(e.Files[0] as Windows.Storage.StorageFile);
+            }
+            else
+            {
+                await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);
+            }
+            hasAlreadyStarted = true;
         }
 
         /// <summary>

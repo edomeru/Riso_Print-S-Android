@@ -62,7 +62,7 @@ namespace SmartDeviceApp.Controllers
             }
             else
             {
-                new ViewModelLocator().HomeViewModel.onHomeLoaded += async () =>
+                new ViewModelLocator().HomeViewModel.onHomeLoaded = async () =>
                 {
                     await FileActivationHandler(file);
                     new ViewModelLocator().HomeViewModel.onHomeLoaded = null;
