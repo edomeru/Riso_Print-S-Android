@@ -179,9 +179,16 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Collection of PrintJob objects in a group
         /// </summary>
+
+        //private ObservableCollection<PrintJob> empty = new ObservableCollection<PrintJob>();
         public ObservableCollection<PrintJob> Jobs
         {
-            get { return _jobs; }
+            get { 
+                    //if (_isCollapsed)
+                    //    return null;
+                   
+                    return _jobs;
+                }
             set
             {
                 if (_jobs != value)
@@ -203,8 +210,11 @@ namespace SmartDeviceApp.Models
                 if (_isCollapsed != value)
                 {
                     _isCollapsed = value;
-                    RaisePropertyChanged("IsCollapsed");
+                    RaisePropertyChanged("Jobs");
                     RaisePropertyChanged("Height");
+                    RaisePropertyChanged("IsCollapsed");
+                    
+                    
                 }
             }
         }
