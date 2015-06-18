@@ -26,7 +26,8 @@ namespace SmartDeviceApp.Converters
         /// <returns>A converted value. If the method returns null, the valid null value is used.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return Window.Current.Bounds.Width;
+            var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>(); 
+            return viewControl.ScreenBound.Width;
         }
 
         /// <summary>

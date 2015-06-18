@@ -24,6 +24,7 @@ using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Converters;
 using System.Threading.Tasks;
+using Windows.Graphics.Display;
 
 namespace SmartDeviceApp.Controls
 {
@@ -88,10 +89,9 @@ namespace SmartDeviceApp.Controls
             {
                 _orientationSensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
             }
-
+            var orientation =  DisplayInformation.GetForCurrentView().CurrentOrientation;
             // Get initial orientation
-            ViewModel.ViewOrientation = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
-                ViewOrientation.Landscape : ViewOrientation.Portrait;
+            ViewModel.SetOrientation(orientation);
         }
 
         /// <summary>
@@ -372,26 +372,29 @@ namespace SmartDeviceApp.Controls
         /// Triggered when the window is snapped, reduced to a partial screen view by another app,
         /// or changed to full screen from a partial screen view
         /// </summary>
-        private void WindowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
+        async private void WindowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
         {
-            var newBound = new Windows.Foundation.Rect(0, 0, e.Size.Width, e.Size.Height);
-            ViewModel.ScreenBound = newBound;  
-            var prevViewMode = ViewModel.ViewMode;
-            ViewModel.ViewMode = ViewMode.Unknown;
-            ViewModel.ViewMode = prevViewMode;
+           await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+           {
+               await Task.Delay(200);
+               ViewModel.ScreenBound = Window.Current.Bounds;
+               var prevViewMode = ViewModel.ViewMode;
+               ViewModel.ViewMode = ViewMode.Unknown;
+               ViewModel.ViewMode = prevViewMode;
+               var orientation = DisplayInformation.GetForCurrentView().CurrentOrientation;
+               ViewModel.SetOrientation(orientation);
+           });
+            
         }
 
+  
         async private void OrientationChanged(object sender, SimpleOrientationSensorOrientationChangedEventArgs e)
         {
-            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                await Task.Delay(350);
-                DisplayOrientation(e.Orientation);
-            });
+            
         }
 
         private void DisplayOrientation(SimpleOrientation orientation)
-        {        
+        {
             var viewOrientation = ViewModel.ViewOrientation; // Initialize to previous value
             switch (orientation)
             {

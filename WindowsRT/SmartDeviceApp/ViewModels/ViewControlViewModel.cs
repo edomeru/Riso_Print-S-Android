@@ -16,6 +16,7 @@ using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Views;
 using SmartDeviceApp.Controllers;
 using Windows.UI.Core;
+using Windows.Graphics.Display;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -240,6 +241,21 @@ namespace SmartDeviceApp.ViewModels
                         break;
                     }
             }
+        }
+        
+        public void SetOrientation(DisplayOrientations orientation)
+        {
+           switch (orientation)
+           {
+               case DisplayOrientations.Landscape:
+               case DisplayOrientations.LandscapeFlipped:
+                   ViewOrientation = ViewOrientation.Landscape;
+                   break;
+               case DisplayOrientations.Portrait:
+               case DisplayOrientations.PortraitFlipped:
+                   ViewOrientation = ViewOrientation.Portrait;
+                   break;
+           }
         }
 
         private void TogglePane1Execute()
