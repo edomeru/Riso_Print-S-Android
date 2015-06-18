@@ -138,18 +138,7 @@ namespace SmartDeviceApp
             Window.Current.Activate();
 
             SettingController.ShowLicenseAgreement();
-
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-            Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-            {
-                if (frameIsNull)
-                {
-                    await Task.Delay(400);
-                }
-                await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);      
-            });
-        
-             
+            MainController.OpenFileHandler(e.Files[0] as Windows.Storage.StorageFile);      
         }
 
         /// <summary>

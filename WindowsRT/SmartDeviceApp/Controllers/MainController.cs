@@ -50,7 +50,26 @@ namespace SmartDeviceApp.Controllers
             new ViewModelLocator().ViewControlViewModel.GoToHomePage.Execute(null);
             new ViewModelLocator().ViewControlViewModel.EnabledGoToHomeExecute = false;
         }
+        public static async Task OpenFileHandler(StorageFile file)
+        {
+            if (file == null)
+            {
+                return;
+            }
+            if (currentFile != null)
+            {
+                await FileActivationHandler(file);
+            }
+            else
+            {
+                new ViewModelLocator().HomeViewModel.onHomeLoaded += async () =>
+                {
+                    await FileActivationHandler(file);
+                    new ViewModelLocator().HomeViewModel.onHomeLoaded = null;
+                };
+            }
 
+        }
         /// <summary>
         /// Initiates loading of PDF document
         /// </summary>
@@ -63,16 +82,7 @@ namespace SmartDeviceApp.Controllers
                 return;
             }
             currentFile = file;
-            
-            if (SettingController.Instance.IsLicenseAgreed)
-            {
-                await loadDocument();
-            }
-            else if (!isLicenseAgreedEventHandlerSet)
-            {
-                isLicenseAgreedEventHandlerSet = true;
-                new ViewModelLocator().LicenseViewModel.SetLicenseAgreedEventHandler += () => {  loadDocument(); };
-            }
+            await loadDocument();
         }
 
         /// <summary>
