@@ -69,7 +69,8 @@
     <controls:ViewControl ChildrenDataContext="{Binding DataContext, ElementName=jobsPage}"
                           Text="{Binding Source=IDS_LBL_PRINT_JOB_HISTORY, Converter={StaticResource ResourceStringToTextConverter}}" 
                           Button1Visibility="Collapsed"
-                          Button2Visibility="Collapsed">
+                          Button2Visibility="Collapsed"
+                          Loaded="UILoaded">
         <ScrollViewer x:Name="jobsScrollViewer"
                       HorizontalScrollMode="Disabled" VerticalScrollMode="Disabled"
                       ZoomMode="Disabled" 
