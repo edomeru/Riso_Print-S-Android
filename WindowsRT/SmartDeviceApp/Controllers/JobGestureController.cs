@@ -259,11 +259,11 @@ namespace SmartDeviceApp.Controllers
                 return _groupButtons;
             }
         }
-        private void clearGroupButtonCache()
+        public void clearGroupButtonCache()
         {
             _groupButtons = null;
         }
-        private void collapseAllGroups(ToggleButton exceptGroup)
+        public void collapseAllGroups(ToggleButton exceptGroup)
         {
             
             foreach (var element in GroupButtonCache)
