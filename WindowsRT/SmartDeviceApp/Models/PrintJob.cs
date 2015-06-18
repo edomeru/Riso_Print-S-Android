@@ -171,7 +171,9 @@ namespace SmartDeviceApp.Models
                 {
                     var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
                     var height = viewControl.ScreenBound.Height;
-                    return Convert.ToInt32(height - 250);
+                    var maxHieght = Convert.ToInt32(height - 250);
+                    var curHeight = 60 + (60 * _jobs.Count)+(1 * _jobs.Count-1 );
+                    return Math.Min(maxHieght, curHeight);
                 }
             }   
         }

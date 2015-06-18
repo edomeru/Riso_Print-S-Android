@@ -31,7 +31,6 @@ namespace SmartDeviceApp.Views
         private bool _isJobsGridLoaded;
         private bool _isJobGesturesGridLoaded;
         private bool _isJobsScrollViewerLoaded;
-
         /// <summary>
         /// Constructor. Initializes UI components and gesture controller.
         /// </summary>
@@ -95,6 +94,7 @@ namespace SmartDeviceApp.Views
             if (!_isJobsGridLoaded)
             {
                 _gestureController.TargetControl = (Grid)sender;
+
                 _isJobsGridLoaded = true;
             }
         }
@@ -131,7 +131,13 @@ namespace SmartDeviceApp.Views
                 ViewModel.IsProgressRingActive = false;
             }
         }
-
+        private void UILoaded(object sender, RoutedEventArgs e)
+        {
+       
+            _gestureController.collapseAllGroups(null);
+            ViewModel.setUpCollapsed();
+            
+        }
 
     }
 }

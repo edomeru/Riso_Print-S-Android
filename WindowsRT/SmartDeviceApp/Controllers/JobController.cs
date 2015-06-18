@@ -68,7 +68,6 @@ namespace SmartDeviceApp.Controllers
             _jobsViewModel = new ViewModelLocator().JobsViewModel;
             await RefreshPrintJobsList();
             _jobsViewModel.SortPrintJobsListToColumns();
-            _jobsViewModel.setUpCollapsed();
             _jobsViewModel.RemoveJobEventHandler += _removeJobEventHandler;
             _jobsViewModel.RemoveGroupedJobsEventHandler += _removeGroupedJobsEventHandler;
         }
