@@ -40,6 +40,9 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _openDocumentCommand;
         private bool _isProgressRingActive;
 
+        public delegate void OnHomeLoaded();
+        public  OnHomeLoaded onHomeLoaded{get; set;}
+
         /// <summary>
         /// HomeViewModel class constructor
         /// </summary>
@@ -54,6 +57,14 @@ namespace SmartDeviceApp.ViewModels
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 
+
+        public void triggerOnLoaded()
+        {
+            if (onHomeLoaded != null)
+            {
+                onHomeLoaded();
+            }
+        }
         /// <summary>
         /// Command for open document
         /// </summary>
