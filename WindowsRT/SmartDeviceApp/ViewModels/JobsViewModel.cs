@@ -417,7 +417,10 @@ namespace SmartDeviceApp.ViewModels
         {
             foreach (var printerFromDB in PrintJobsList)
             {
-                printerFromDB.IsCollapsed = (printerFromDB.IpAddress != jg.IpAddress);
+                if (printerFromDB.IpAddress != jg.IpAddress)
+                {
+                    printerFromDB.IsCollapsed = true;
+                }
             }
         }
         public PrintJobGroup lastCollapsed()
