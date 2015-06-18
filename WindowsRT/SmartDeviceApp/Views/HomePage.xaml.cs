@@ -27,6 +27,7 @@ using Windows.UI.Xaml.Navigation;
 using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.ViewModels;
+using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceApp.Views
 {
@@ -44,8 +45,9 @@ namespace SmartDeviceApp.Views
         {
             ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             ViewModel.HomeGestureGrid = (Grid)sender;
-
+            ViewModel.triggerOnLoaded();
         }
+        
         /// <summary>
         /// Gets the data context of this xaml
         /// </summary>
