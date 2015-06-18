@@ -290,10 +290,7 @@ namespace SNMP
                                     _capabilitiesList = new List<string>();
                                     //check the first one
                                     capabilityCheckStarted = true;
-                                    if (snmpControllerCallBackGetCapability != null)
-                                    {
-                                        snmpControllerCallBackGetCapability(this);
-                                    }
+                 
                                     sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, new string[] { capabilityMIB[_capabilitiesList.Count()] });
                                 }
                                 else
