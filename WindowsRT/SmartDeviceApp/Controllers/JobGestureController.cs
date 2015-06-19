@@ -81,6 +81,17 @@ namespace SmartDeviceApp.Controllers
         
         private void Initialize()
         {
+            _gestureRecognizer.GestureSettings =
+                GestureSettings.Tap |
+                GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
+                GestureSettings.RightTap |
+                GestureSettings.ManipulationTranslateX |
+                GestureSettings.ManipulationTranslateY |
+                GestureSettings.ManipulationScale |
+                GestureSettings.ManipulationTranslateInertia |
+                GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
+                GestureSettings.ManipulationScaleInertia;
+
             EnableGestures();
 
             var transform = _control.TransformToVisual(null);
@@ -93,20 +104,9 @@ namespace SmartDeviceApp.Controllers
         public void EnableGestures()
         {
             if (_control == null) return;
-            clearGroupButtonCache();
+            
             if (!_isEnabled)
             {
-                _gestureRecognizer.GestureSettings =
-                    GestureSettings.Tap |
-                    GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
-                    GestureSettings.RightTap |
-                    GestureSettings.ManipulationTranslateX |
-                    GestureSettings.ManipulationTranslateY |
-                    GestureSettings.ManipulationScale |
-                    GestureSettings.ManipulationTranslateInertia |
-                    GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
-                    GestureSettings.ManipulationScaleInertia;
-
                 _control.PointerCanceled += OnPointerCanceled;
                 _control.PointerPressed += OnPointerPressed;
                 _control.PointerReleased += OnPointerReleased;
@@ -130,6 +130,7 @@ namespace SmartDeviceApp.Controllers
             if (_control == null) return;
             if (_isEnabled)
             {
+                
                 _control.PointerCanceled -= OnPointerCanceled;
                 _control.PointerPressed -= OnPointerPressed;
                 _control.PointerReleased -= OnPointerReleased;
@@ -177,7 +178,6 @@ namespace SmartDeviceApp.Controllers
             {
                 PrintJob printJob = (PrintJob)jobListItem.DataContext;
                 (new ViewModelLocator().JobsViewModel).DeleteJobCommand.Execute(printJob);
-                clearGroupButtonCache();
                 return;
             }
             if (_isDeleteJobButtonVisible)
@@ -217,13 +217,11 @@ namespace SmartDeviceApp.Controllers
                 _lastDeleteAllButton = deleteButton;
                 _lastPrintJobGroup = printJobGroup;
                 printJobGroup.DeleteButtonVisualState = "DeletePressed";
-                clearGroupButtonCache();
                 (new ViewModelLocator().JobsViewModel).DeleteAllJobsCommand.Execute(printerId);
             }
             else if (!isDeleteAllJobs && jobListHeader != null)
             {
-
-                collapseAllGroups(jobListHeader);
+                (new ViewModelLocator().JobsViewModel).setCollapseExcept((PrintJobGroup)jobListHeader.DataContext);
                 if ((bool)jobListHeader.IsChecked) // Manually set pressed states
                 {
                     VisualStateManager.GoToState(jobListHeader, "CheckedPressed", true);
@@ -242,11 +240,12 @@ namespace SmartDeviceApp.Controllers
         {
             get
             {
-                if (_groupButtons == null)
+                //if (_groupButtons == null || _groupButtons.Count == 0)
                 {
                     _groupButtons = new List<ToggleButton>();
                     var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
-                    var elements = VisualTreeHelper.FindElementsInHostCoordinates(viewControl.ScreenBound, _targetControl, true);
+                    var size = new Rect(0, 0, viewControl.ScreenBound.Width * 2, viewControl.ScreenBound.Height * 2);
+                    var elements = VisualTreeHelper.FindElementsInHostCoordinates(size, _targetControl, true);
                     foreach (var element in elements)
                     {
                         var elementName = ((FrameworkElement)element).Name;
@@ -259,27 +258,7 @@ namespace SmartDeviceApp.Controllers
                 return _groupButtons;
             }
         }
-        public void clearGroupButtonCache()
-        {
-            _groupButtons = null;
-        }
-        public void collapseAllGroups(ToggleButton exceptGroup)
-        {
-            
-            foreach (var element in GroupButtonCache)
-            {
-                if (element != exceptGroup)
-                {
-                    VisualStateManager.GoToState(element as ToggleButton, "Checked", false);
-               
-                    var data = (PrintJobGroup)element.DataContext;
-                    data.IsCollapsed = true;
-                }
-            }
-        }
-        //void OnRightTapped(object sender, RightTappedEventArgs e)
-        //{
-        //}
+
         private ScrollViewer scroller;
         private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
         {

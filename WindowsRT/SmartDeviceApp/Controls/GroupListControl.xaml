@@ -175,7 +175,7 @@
                       Width="{Binding Width, ElementName=groupListControl}"
                       Template="{StaticResource TEMPLATE_ToggleButton}" 
                       Style="{StaticResource STYLE_ListToggleButton}"
-                      IsChecked="{Binding IsCollapsed, ElementName=groupListControl}"
+                      IsChecked="{Binding IsCollapsed, ElementName=groupListControl, Mode=TwoWay}"
                       />
         <ContentPresenter Grid.Row="2" 
                           Content="{Binding Content, ElementName=groupListControl}" 

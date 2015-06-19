@@ -133,10 +133,7 @@ namespace SmartDeviceApp.Views
         }
         private void UILoaded(object sender, RoutedEventArgs e)
         {
-       
-            _gestureController.collapseAllGroups(null);
             ViewModel.setUpCollapsed();
-            
         }
 
     }

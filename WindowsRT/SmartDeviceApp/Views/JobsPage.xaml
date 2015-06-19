@@ -25,7 +25,7 @@
                                        Height="{Binding Height}"
                                        Visibility="{Binding Jobs.Count, Converter={StaticResource PrintJobListToGroupVisibilityConverter}}"
                                        PressedHeaderColor="{StaticResource BRUSH_Purple2}"
-                                       IsCollapsed="{Binding IsCollapsed}"
+                                       IsCollapsed="{Binding IsCollapsed, Mode=TwoWay}"
                                        DeleteButtonVisualState="{Binding DeleteButtonVisualState}"
                                        SizeChanged="OnGroupListLoaded">
                 <controls:JobGroupListControl.Margin>
