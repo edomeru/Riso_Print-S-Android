@@ -411,7 +411,14 @@ public class Global
 
 		// add system external fonts.
 		fontfileListStart();
-		fontfileListAdd("/system/fonts/DroidSans.ttf");
+		//fontfileListAdd("/system/fonts/DroidSans.ttf");
+		//workaround for android 5.0
+		File file = new File("/system/fonts/DroidSansFallback.ttf");
+		if(file.exists())
+		 fontfileListAdd("/system/fonts/DroidSansFallback.ttf");
+		else
+		 load_truetype_font(res, R.raw.droidsansfallback, new File(files, "droidsansfallback.ttf"));
+
 		fontfileListAdd("/system/fonts/Roboto-Regular.ttf");
 		fontfileListAdd("/system/fonts/DroidSansFallback.ttf");
         load_truetype_font( res, R.raw.arimo, new File(files, "arimo.ttf") );
