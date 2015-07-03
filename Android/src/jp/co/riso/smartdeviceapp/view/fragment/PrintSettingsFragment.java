@@ -33,12 +33,10 @@ import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
-<<<<<<< HEAD
-=======
+
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView.PrintSettingsViewInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
->>>>>>> 6081990... bug fixes
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Message;
