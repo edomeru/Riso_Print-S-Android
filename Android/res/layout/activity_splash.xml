@@ -1,19 +1,60 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/theme_light_2"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin" >
+    android:layout_height="match_parent" 
+    android:id="@+id/viewFlipper">
 
-    <ImageView
-        android:id="@+id/risoLogoImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:contentDescription="@string/default_content_description"
-        android:src="@drawable/img_splash" />
+		<ImageView
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_gravity="center"
+			android:background="@color/theme_light_2"
+		    android:paddingBottom="@dimen/activity_vertical_margin"
+		    android:paddingLeft="@dimen/activity_horizontal_margin"
+		    android:paddingRight="@dimen/activity_horizontal_margin"
+		    android:paddingTop="@dimen/activity_vertical_margin"
+	        android:contentDescription="@string/default_content_description"
+	        android:src="@drawable/img_splash" />
 
-</FrameLayout>
+	    <LinearLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:orientation="vertical"
+		    android:splitMotionEvents="false"  >
+	
+		    <include
+		        layout="@layout/actionbar_main" />
+		
+		    <FrameLayout
+		        android:layout_width="match_parent"
+		        android:layout_height="0dp"
+		        android:layout_weight="0.33" >
+		
+		        <jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
+		            android:id="@+id/contentWebView"
+		            android:layout_width="match_parent"
+		            android:layout_height="fill_parent" />
+		    </FrameLayout>
+		
+		    <LinearLayout
+		        android:id="@+id/LicenseButtonLayout"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content">
+		
+		        <Button
+		            android:id="@+id/licenseAgreeButton"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1"/>
+		
+		        <Button
+		            android:id="@+id/licenseDisagreeButton"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1"/>
+		    </LinearLayout>
+	        
+	    </LinearLayout>
+	    
+
+</ViewFlipper>

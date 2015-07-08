@@ -21,11 +21,15 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
+import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView;
 import jp.co.riso.smartprint.R;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -33,13 +37,24 @@ import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.AndroidRuntimeException;
+import android.view.ContextThemeWrapper;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 /**
  * @class SplashActivity
  * 
  * @brief Splash activity class.
  */
-public class SplashActivity extends BaseActivity implements PauseableHandlerCallback {
+public class SplashActivity extends BaseActivity implements PauseableHandlerCallback, OnTouchListener {
     
     /// Message ID for running main activity
     public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
@@ -49,6 +64,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     private PauseableHandler mHandler = null;
     private DBInitTask mInitTask = null;
     private boolean mDatabaseInitialized;
+    private SDAWebView mWebView = null;
     
     @SuppressWarnings("unused") // AppConstant.APP_SHOW_SPLASH is a config setting
     @Override
@@ -160,7 +176,46 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);   
         } else {
             //if user has not yet agreed to the license agreement
-            launchIntent = AppUtils.createActivityIntent(this, LicenseActivity.class);    
+            TextView textView = (TextView) this.findViewById(R.id.actionBarTitle);
+            textView.setText(R.string.ids_lbl_license);
+            textView.setPadding(18, 0, 0, 0);
+            
+            mWebView = (SDAWebView) this.findViewById(R.id.contentWebView);              
+            
+            final Context context = this;
+            mWebView.setWebViewClient(new WebViewClient() {
+                
+                @Override
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    super.onPageStarted(view, url, favicon);
+                    
+                    Logger.logStartTime(context, SplashActivity.class, "License Activity load");
+                }
+
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    Logger.logStopTime(context, SplashActivity.class, "License Activity load");
+                }
+            });
+            
+            mWebView.loadUrl(getUrlString());
+            
+            LinearLayout buttonLayout = (LinearLayout)this.findViewById(R.id.LicenseButtonLayout);
+            buttonLayout.setVisibility(View.VISIBLE);
+            
+            Button agreebutton = (Button)buttonLayout.findViewById(R.id.licenseAgreeButton);
+            agreebutton.setText(R.string.ids_lbl_agree);
+            agreebutton.setOnTouchListener(this);
+            
+            Button disagreebutton = (Button)buttonLayout.findViewById(R.id.licenseDisagreeButton);
+            disagreebutton.setText(R.string.ids_lbl_disagree);
+            disagreebutton.setOnTouchListener(this);
+            
+            
+            ViewFlipper vf = (ViewFlipper) findViewById( R.id.viewFlipper);
+            vf.showNext();
+            
+            return;
         }
         
         //reset secure print values
@@ -227,17 +282,13 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             throw e;
         }
         
-        finish();try {
-            startActivity(launchIntent);
-        } catch (ActivityNotFoundException e) {
-            Logger.logError(SplashActivity.class, "Fatal Error: Intent MainActivity Not Found is not defined");
-            throw e;
-        } catch (AndroidRuntimeException e) {
-            Logger.logError(SplashActivity.class, "Fatal Error: Android runtime");
-            throw e;
-        }
-        
         finish();
+    }
+    
+    private String getUrlString() {
+        String htmlFolder = getString(R.string.html_folder);
+        String helpHtml = getString(R.string.license_html);
+        return AppUtils.getLocalizedAssetFullPath(this, htmlFolder, helpHtml);
     }
     
     // ================================================================================
@@ -304,5 +355,60 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             editor.putInt(AppConstants.PREF_KEY_DB_VERSION, DatabaseManager.DATABASE_VERSION);
             editor.apply();
         }
+    }
+
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP){
+            if (v.getId() == R.id.licenseAgreeButton){
+                
+                // save to shared preferences
+                SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs",MODE_PRIVATE);
+                
+                SharedPreferences.Editor edit = preferences.edit();
+                edit.putBoolean("licenseAgreementDone",true);
+                //edit.putBoolean("licenseAgreementDone",false);
+                edit.apply();
+                
+                
+                runMainActivity();
+                
+                return true;
+                
+            } else if (v.getId() == R.id.licenseDisagreeButton){
+                
+                // alert box
+                String title = getString(R.string.ids_lbl_license);
+                String message = getString(R.string.ids_err_msg_disagree_to_license);
+                String buttonTitle = getString(R.string.ids_lbl_ok);
+
+                ContextThemeWrapper newContext = new ContextThemeWrapper(this, android.R.style.TextAppearance_Holo_DialogWindowTitle);
+                AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
+                
+                if (title != null) {
+                    builder.setTitle(title);
+                }
+                
+                if (message != null) {
+                    builder.setMessage(message);
+                }
+                
+                if (buttonTitle != null) {
+                    builder.setNegativeButton(buttonTitle, null);
+                }
+                
+                AlertDialog dialog = null;
+                dialog = builder.create();
+                
+                dialog.show();
+                
+                return true;
+            } else {
+                v.performClick();
+            }
+        }
+        
+        return false;
     }
 }
