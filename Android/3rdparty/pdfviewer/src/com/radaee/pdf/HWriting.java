@@ -12,14 +12,14 @@ so the line in HWriting will not in same width.
 */
 public class HWriting
 {
-	protected long hand = 0;
+	protected int hand = 0;
 	private Bitmap m_bmp;
 	private static native int create( int w, int h, float min_w, float max_w, int clr_r, int clr_g, int clr_b );
-	private static native void onDown( long hand, float x, float y );
-	private static native void onMove( long hand, float x, float y );
-	private static native void onUp( long hand, float x, float y );
-	private static native void onDraw( long hand, long bmp );
-	private static native void destroy( long hand );
+	private static native void onDown( int hand, float x, float y );
+	private static native void onMove( int hand, float x, float y );
+	private static native void onUp( int hand, float x, float y );
+	private static native void onDraw( int hand, int bmp );
+	private static native void destroy( int hand );
 	/**
 	 * constructor for hand-writing.
 	 * @param w width of cache.
@@ -75,8 +75,8 @@ public class HWriting
 	 * draw to locked bitmap handle.
 	 * @param bmp, obtained by Global.lockBitmap()
 	 */
-	public void OnDraw( BMP bmp )
+	public void OnDraw( int bmp )
 	{
-		onDraw( hand, bmp.hand );
+		onDraw( hand, bmp );
 	}
 }

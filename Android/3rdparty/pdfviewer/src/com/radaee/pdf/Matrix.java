@@ -7,15 +7,15 @@ class for PDF Matrix.
 */
 public class Matrix
 {
-	protected long hand = 0;
-	private static native long create( float xx, float yx, float xy, float yy, float x0, float y0 );
-	private static native long createScale( float sx, float sy, float x0, float y0 );
-	private static native void invert( long matrix );
-	private static native void transformPath( long matrix, long path );
-	private static native void transformInk( long matrix, long ink );
-	private static native void transformRect( long matrix, float[] rect );
-	private static native void transformPoint( long matrix, float[] point );
-	private static native void destroy( long matrix );
+	protected int hand = 0;
+	private static native int create( float xx, float yx, float xy, float yy, float x0, float y0 );
+	private static native int createScale( float sx, float sy, float x0, float y0 );
+	private static native void invert( int matrix );
+	private static native void transformPath( int matrix, int path );
+	private static native void transformInk( int matrix, int ink );
+	private static native void transformRect( int matrix, float[] rect );
+	private static native void transformPoint( int matrix, float[] point );
+	private static native void destroy( int matrix );
 	/**
 	 * constructor for full values.
 	 * @param xx
@@ -44,30 +44,30 @@ public class Matrix
 	{
 		hand = createScale( sx, sy, x0, y0 );
 	}
-	public final void Invert()
+	public void Invert()
 	{
 		invert( hand );
 	}
-	public final void TransformPath( Path path )
+	public void TransformPath( Path path )
 	{
 		transformPath( hand, path.m_hand );
 	}
-	public final void TransformInk( Ink ink )
+	public void TransformInk( Ink ink )
 	{
 		transformInk( hand, ink.hand );
 	}
-	public final void TransformRect( float[] rect )
+	public void TransformRect( float[] rect )
 	{
 		transformRect( hand, rect );
 	}
-	public final void TransformPoint( float[] point )
+	public void TransformPoint( float[] point )
 	{
 		transformPoint( hand, point );
 	}
 	/**
 	 * destroy and free memory.
 	 */
-	public final void Destroy()
+	public void Destroy()
 	{
 		destroy( hand );
 		hand = 0;

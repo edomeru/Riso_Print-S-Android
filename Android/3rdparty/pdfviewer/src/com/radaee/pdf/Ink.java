@@ -14,16 +14,16 @@ import android.graphics.Paint.Join;
  */
 public class Ink 
 {
-	protected long hand = 0;
+	protected int hand = 0;
 	protected int color = 0;
 	protected float width = 0;
 	private static native int create( float line_w, int color, int style );
-	private static native void onDown( long hand, float x, float y );
-	private static native void onMove( long hand, float x, float y );
-	private static native void onUp( long hand, float x, float y );
-	private static native int getNodeCount( long hand );
-	private static native int getNode( long hand, int index, float[] pt );
-	private static native void destroy( long hand );
+	private static native void onDown( int hand, float x, float y );
+	private static native void onMove( int hand, float x, float y );
+	private static native void onUp( int hand, float x, float y );
+	private static native int getNodeCount( int hand );
+	private static native int getNode( int hand, int index, float[] pt );
+	private static native void destroy( int hand );
 	/**
 	 * constructor for ink.
 	 * @param line_w width of line.
@@ -37,7 +37,7 @@ public class Ink
 	/**
 	 * destroy and free memory.
 	 */
-	public final void Destroy()
+	public void Destroy()
 	{
 		destroy( hand );
 		hand = 0;
@@ -47,7 +47,7 @@ public class Ink
 	 * @param x x value of point in this object.
 	 * @param y y value of point in this object.
 	 */
-	public final void OnDown( float x, float y )
+	public void OnDown( float x, float y )
 	{
 		onDown( hand, x, y );
 	}
@@ -56,7 +56,7 @@ public class Ink
 	 * @param x x value of point in this object.
 	 * @param y y value of point in this object.
 	 */
-	public final void OnMove( float x, float y )
+	public void OnMove( float x, float y )
 	{
 		onMove( hand, x, y );
 	}
@@ -65,7 +65,7 @@ public class Ink
 	 * @param x x value of point in this object.
 	 * @param y y value of point in this object.
 	 */
-	public final void OnUp( float x, float y )
+	public void OnUp( float x, float y )
 	{
 		onUp( hand, x, y );
 	}

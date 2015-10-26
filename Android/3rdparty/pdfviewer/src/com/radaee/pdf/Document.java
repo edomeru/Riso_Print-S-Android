@@ -1,7 +1,6 @@
 package com.radaee.pdf;
 
 import android.graphics.Bitmap;
-import android.os.Bundle;
 
 /**
 class for PDF Document.
@@ -62,7 +61,7 @@ public class Document
 	}
 	public class ImportContext
 	{
-		protected ImportContext(Document doc, long value)
+		protected ImportContext(Document doc, int value)
 		{
 			hand = value;
 			m_doc = doc;
@@ -75,12 +74,12 @@ public class Document
 			Document.importEnd( m_doc.hand_val, hand );
 			hand = 0;
 		}
-		protected long hand;
+		protected int hand;
 		protected Document m_doc;
 	}
 	public class Outline
 	{
-		protected long hand;
+		protected int hand;
 		protected Document doc;
 		/**
 		 * get label of Outline
@@ -106,7 +105,7 @@ public class Document
 		 */
 		public Outline GetNext()
 		{
-			long ret =  Document.getOutlineNext(doc.hand_val, hand);
+			int ret =  Document.getOutlineNext(doc.hand_val, hand);
 			if( ret == 0 ) return null;
 			Outline ol = new Outline();
 			ol.hand = ret;
@@ -119,7 +118,7 @@ public class Document
 		 */
 		public Outline GetChild()
 		{
-			long ret =  Document.getOutlineChild(doc.hand_val, hand);
+			int ret =  Document.getOutlineChild(doc.hand_val, hand);
 			if( ret == 0 ) return null;
 			Outline ol = new Outline();
 			ol.hand = ret;
@@ -187,67 +186,64 @@ public class Document
 			return ret;
 		}
 	}
-	protected long hand_val = 0;
+	protected int hand_val = 0;
 	private int page_count = 0;
-	private static native long create( String path );
-	private static native long createForStream( PDFStream stream );
-	private static native long open( String path, String password );
-	private static native long openMem( byte[] data, String password );
-	private static native long openStream( PDFStream stream, String password );
-	private static native boolean setCache( long hand, String path );
-	private static native void setFontDel( long hand, PDFFontDelegate del );
-	private static native int getPermission( long hand );
-	private static native int getPerm( long hand );
-	private static native String exportForm( long hand );
-	private static native void close( long hand );
-	private static native long getPage( long hand, int pageno );
-	private static native int getPageCount( long hand );
-	private static native float getPageWidth( long hand, int pageno );
-	private static native float getPageHeight( long hand, int pageno );
-	private static native boolean changePageRect( long hand, int pageno, float dl, float dt, float dr, float db );
-	private static native boolean setPageRotate( long hand, int pageno, int degree );
-	private static native String getOutlineTitle( long hand, long outline );
-	private static native boolean setOutlineTitle( long hand, long outline, String title );
-	private static native int getOutlineDest( long hand, long outline );
-	private static native String getOutlineURI( long hand, long outline );
-	private static native String getOutlineFileLink( long hand, long outline );
-	private static native long getOutlineNext( long hand, long outline );
-	private static native long getOutlineChild( long hand, long outline );
-	private static native boolean addOutlineNext( long hand, long outline, String label, int pageno, float top );
-	private static native boolean addOutlineChild( long hand, long outline, String label, int pageno, float top );
-	private static native boolean removeOutline( long hand, long outline );
-	private static native String getMeta( long hand, String tag );
-	private static native byte[] getID( long hand, int index);
-	private static native boolean setMeta( long hand, String tag, String value );
-	private static native boolean canSave( long hand );
-	private static native boolean save( long hand );
-	private static native boolean saveAs( long hand, String dst, boolean rem_sec );//remove security info and save to another file.
-	private static native boolean encryptAs( long hand, String dst, String upswd, String opswd, int perm, int method, byte[] id);
-	private static native boolean isEncrypted( long hand );
+	private static native int create( String path );
+	private static native int createForStream( PDFStream stream );
+	private static native int open( String path, String password );
+	private static native int openMem( byte[] data, String password );
+	private static native int openStream( PDFStream stream, String password );
+	private static native boolean setCache( int hand, String path );
+	private static native void setFontDel( int hand, PDFFontDelegate del );
+	private static native int getPermission( int hand );
+	private static native int getPerm( int hand );
+	private static native void close( int hand );
+	private static native int getPage( int hand, int pageno );
+	private static native int getPageCount( int hand );
+	private static native float getPageWidth( int hand, int pageno );
+	private static native float getPageHeight( int hand, int pageno );
+	private static native boolean changePageRect( int hand, int pageno, float dl, float dt, float dr, float db );
+	private static native boolean setPageRotate( int hand, int pageno, int degree );
+	private static native String getOutlineTitle( int hand, int outline );
+	private static native boolean setOutlineTitle( int hand, int outline, String title );
+	private static native int getOutlineDest( int hand, int outline );
+	private static native String getOutlineURI( int hand, int outline );
+	private static native String getOutlineFileLink( int hand, int outline );
+	private static native int getOutlineNext( int hand, int outline );
+	private static native int getOutlineChild( int hand, int outline );
+	private static native boolean addOutlineNext( int hand, int outline, String label, int pageno, float top );
+	private static native boolean addOutlineChild( int hand, int outline, String label, int pageno, float top );
+	private static native boolean removeOutline( int hand, int outline );
+	private static native String getMeta( int hand, String tag );
+	private static native boolean setMeta( int hand, String tag, String value );
+	private static native boolean canSave( int hand );
+	private static native boolean save( int hand );
+	private static native boolean saveAs( int hand, String dst, boolean rem_sec );//remove security info and save to another file.
+	private static native boolean isEncrypted( int hand );
 
-	private static native long importStart( long hand, long hand_src );
-	private static native boolean importPage( long hand, long ctx, int srcno, int dstno );
-	private static native void importEnd( long hand, long ctx );
-	private static native long newPage( long hand, int pageno, float w, float h );
-	private static native boolean removePage( long hand, int pageno );
-	private static native boolean movePage( long hand, int pageno1, int pageno2 );
-	private static native long newFontCID( long hand, String name, int style );
-	private static native float getFontAscent( long hand, long font );
-	private static native float getFontDescent( long hand, long font );
-	private static native long newGState(long hand);
-	private static native boolean setGStateStrokeAlpha(long hand, long gstate, int alpha);
-	private static native boolean setGStateFillAlpha(long hand, long gstate, int alpha);
-	private static native long newImage( long hand, Bitmap bmp, boolean has_alpha );
-	private static native long newImageJPEG( long hand, String path );
-	private static native long newImageJPX( long hand, String path );
-	private static native byte[] getSignContents( long hand );
-	private static native String getSignFilter( long hand );
-	private static native String getSignSubFilter( long hand );
-	private static native int[] getSignByteRange( long hand );
-	private static native int checkSignByteRange( long hand );
+	private static native int importStart( int hand, int hand_src );
+	private static native boolean importPage( int hand, int ctx, int srcno, int dstno );
+	private static native void importEnd( int hand, int ctx );
+	private static native int newPage( int hand, int pageno, float w, float h );
+	private static native boolean removePage( int hand, int pageno );
+	private static native boolean movePage( int hand, int pageno1, int pageno2 );
+	private static native int newFontCID( int hand, String name, int style );
+	private static native float getFontAscent( int hand, int font );
+	private static native float getFontDescent( int hand, int font );
+	private static native int newGState(int hand);
+	private static native boolean setGStateStrokeAlpha(int hand, int gstate, int alpha);
+	private static native boolean setGStateFillAlpha(int hand, int gstate, int alpha);
+	private static native int newImage( int hand, Bitmap bmp, boolean has_alpha );
+	private static native int newImageJPEG( int hand, String path );
+	private static native int newImageJPX( int hand, String path );
+	private static native byte[] getSignContents( int hand );
+	private static native String getSignFilter( int hand );
+	private static native String getSignSubFilter( int hand );
+	private static native int[] getSignByteRange( int hand );
+	private static native int checkSignByteRange( int hand );
 	public class DocFont
 	{
-		protected long hand;
+		protected int hand;
 		Document doc;
 		/**
 		 * get ascent
@@ -268,7 +264,7 @@ public class Document
 	}
 	public class DocGState
 	{
-		protected long hand;
+		protected int hand;
 		Document doc;
 		/**
 		 * set alpha value for fill and other non-stroke operation
@@ -291,7 +287,7 @@ public class Document
 	}
 	public class DocImage
 	{
-		protected long hand;
+		protected int hand;
 	}
 	public Document()
 	{
@@ -308,7 +304,18 @@ public class Document
 			page_count = vals[1];
 		}
 	}
-	private long getOutlineRoot()
+	/**
+	 * inner function.
+	 * @return inner value
+	 */
+	public int[] getVals()
+	{
+		int vals[] = new int[2];
+		vals[0] = hand_val;
+		vals[1] = vals[1];
+		return vals;
+	}
+	private int getOutlineRoot( int hand )
 	{
 		return getOutlineNext( hand_val, 0 );
 	}
@@ -316,7 +323,7 @@ public class Document
 	 * check if opened.
 	 * @return true or false.
 	 */
-	public boolean IsOpened()
+	public boolean is_opened()
 	{
 		return (hand_val != 0);
 	}
@@ -333,7 +340,7 @@ public class Document
 			hand_val = create( path );
 			if( hand_val <= 0 && hand_val >= -10 )//error
 			{
-				ret = (int)hand_val;
+				ret = hand_val;
 				hand_val = 0;
 				page_count = 0;
 			}
@@ -356,7 +363,7 @@ public class Document
 			hand_val = createForStream( stream );
 			if( hand_val <= 0 && hand_val >= -10 )//error
 			{
-				ret = (int)hand_val;
+				ret = hand_val;
 				hand_val = 0;
 				page_count = 0;
 			}
@@ -407,7 +414,7 @@ public class Document
 			hand_val = open( path, password );
 			if( hand_val <= 0 && hand_val >= -10 )//error
 			{
-				ret = (int)hand_val;
+				ret = hand_val;
 				hand_val = 0;
 				page_count = 0;
 			}
@@ -438,7 +445,7 @@ public class Document
 			hand_val = openMem( data, password );
 			if( hand_val <= 0 && hand_val >= -10 )//error
 			{
-				ret = (int)hand_val;
+				ret = hand_val;
 				hand_val = 0;
 				page_count = 0;
 			}
@@ -469,7 +476,7 @@ public class Document
 			hand_val = openStream( stream, password );
 			if( hand_val <= 0 && hand_val >= -10 )//error
 			{
-				ret = (int)hand_val;
+				ret = hand_val;
 				hand_val = 0;
 				page_count = 0;
 			}
@@ -508,15 +515,6 @@ public class Document
 		return getPerm( hand_val );
 	}
 	/**
-	 * export form data as xml string.<br/>
-	 * this method need premium license.
-	 * @return xml string or null.
-	 */
-	public String ExportForm()
-	{
-		return exportForm( hand_val );
-	}
-	/**
 	 * close the document.
 	 */
 	public void Close()
@@ -534,7 +532,7 @@ public class Document
 	public Page GetPage( int pageno )
 	{
 		if( hand_val == 0 ) return null;
-		long hand = getPage( hand_val, pageno );
+		int hand = getPage( hand_val, pageno );
 		if( hand == 0 ) return null;
 		Page page = new Page();
 		if( page != null ) page.hand = hand;
@@ -572,22 +570,13 @@ public class Document
 		else return h;
 	}
 	/**
-	 * get meta data of document.
+	 * get meta data for document.
 	 * @param tag Predefined values:"Title", "Author", "Subject", "Keywords", "Creator", "Producer", "CreationDate", "ModDate".<br/>or you can pass any key that self-defined.
 	 * @return Meta string value, or null.
 	 */
 	public String GetMeta( String tag )
 	{
 		return getMeta( hand_val, tag );
-	}
-	/**
-	 * get id of document.
-	 * @param index must 0 or 1, 0 means first 16 bytes, 1 means last 16 bytes.
-	 * @return bytes or null if no id for this document.
-	 */
-	public byte[] GetID(int index)
-	{
-		return getID( hand_val, index);
 	}
 	/**
 	 * set meta data for document.<br/>
@@ -606,7 +595,7 @@ public class Document
 	 */
 	public Outline GetOutlines()
 	{
-		long ret = getOutlineRoot();
+		int ret = getOutlineRoot(hand_val);
 		if( ret == 0 ) return null;
 		Outline ol = new Outline();
 		ol.doc = this;
@@ -632,7 +621,7 @@ public class Document
 		return save( hand_val );
 	}
 	/**
-	 * save as the document to another file.<br/>
+	 * save as the document to another file. it remove any security information.<br/>
 	 * this method need professional or premium license.
 	 * @param path path to save.
 	 * @param rem_sec remove security info?
@@ -641,26 +630,6 @@ public class Document
 	public boolean SaveAs( String path, boolean rem_sec )
 	{
 		return saveAs( hand_val, path, rem_sec );
-	}
-	/**
-	 * encrypt document and save as the document to another file.<br/>
-	 * this method need premium license.
-	 * @param dst path to save， same as path parameter of SaveAs.
-	 * @param upswd user password, can be null.
-	 * @param opswd owner password, can be null.
-	 * @param perm permission to set, same as GetPermission() method.<br/>
-	 * bit 1-2 reserved<br/>
-	 * bit 3(0x4) print<br/>
-	 * bit 4(0x8) modify<br/>
-	 * bit 5(0x10) extract text or image<br/>
-	 * others: see PDF reference
-	 * @param method reserved, currently only AES with V=4 and R=4 mode can be working.
-	 * @param id must be 32 bytes for file ID. it is divided to 2 array in native library, as each 16 bytes.
-	 * @return true or false. 
-	 */
-	public boolean EncryptAs( String dst, String upswd, String opswd, int perm, int method, byte[] id)
-	{
-		return encryptAs( hand_val, dst, upswd, opswd, perm, method, id);
 	}
 	/**
 	 * check if document is encrypted.
@@ -692,7 +661,7 @@ public class Document
 	public ImportContext ImportStart( Document src )
 	{
 		if( src == null ) return null;
-		long hand = importStart( hand_val, src.hand_val );
+		int hand = importStart( hand_val, src.hand_val );
 		if( hand != 0 ) return new ImportContext(this, hand);
 		else return null;
 	}
@@ -722,7 +691,7 @@ public class Document
 	 */
 	public Page NewPage( int pageno, float w, float h )
 	{
-		long ret = newPage( hand_val, pageno, w, h );
+		int ret = newPage( hand_val, pageno, w, h );
 		if( ret != 0 )
 		{
 			Page page = new Page();
@@ -767,7 +736,7 @@ public class Document
 	 */
 	public DocFont NewFontCID( String font_name, int style )
 	{
-		long ret = newFontCID(hand_val, font_name, style);
+		int ret = newFontCID(hand_val, font_name, style);
 		if( ret != 0 )
 		{
 			DocFont font = new DocFont();
@@ -784,7 +753,7 @@ public class Document
 	 */
 	public DocGState NewGState()
 	{
-		long ret = newGState(hand_val);
+		int ret = newGState(hand_val);
 		if( ret != 0 )
 		{
 			DocGState gs = new DocGState();
@@ -797,13 +766,13 @@ public class Document
 	/**
 	 * create an image from Bitmap object.<br/>
 	 * a premium license is needed for this method.
-	 * @param bmp Bitmap object in ARGB_8888/ARGB_4444/RGB_565 format.
+	 * @param bmp Bitmap object in ARGB_8888 format.
 	 * @param has_alpha generate alpha channel information?
 	 * @return DocImage object or null.
 	 */
 	public DocImage NewImage( Bitmap bmp, boolean has_alpha )
 	{
-		long ret = newImage(hand_val, bmp, has_alpha);
+		int ret = newImage(hand_val, bmp, has_alpha);
 		if( ret != 0 )
 		{
 			DocImage img = new DocImage();
@@ -824,7 +793,7 @@ public class Document
 	 */
 	public DocImage NewImageJPEG( String path )
 	{
-		long ret = newImageJPEG(hand_val, path);
+		int ret = newImageJPEG(hand_val, path);
 		if( ret != 0 )
 		{
 			DocImage img = new DocImage();
@@ -841,7 +810,7 @@ public class Document
 	 */
 	public DocImage NewImageJPX( String path )
 	{
-		long ret = newImageJPX(hand_val, path);
+		int ret = newImageJPX(hand_val, path);
 		if( ret != 0 )
 		{
 			DocImage img = new DocImage();
@@ -939,30 +908,5 @@ public class Document
 	public int CheckSignByteRange()
 	{
 		return checkSignByteRange( hand_val );
-	}
-	public static void BundleSave(Bundle bundle, Document doc)
-	{
-		bundle.putLong("pdf_doc_handle", doc.hand_val);
-		bundle.putInt("pdf_page_count", doc.page_count);
-	}
-	public static Document BundleRestore(Bundle bundle)
-	{
-		try
-		{
-			long hand = bundle.getLong("pdf_doc_handle");
-			int pcount = bundle.getInt("pdf_page_count");
-			if( hand != 0 )
-			{
-				Document doc = new Document();
-				doc.hand_val = hand;
-				doc.page_count = pcount;
-				return doc;
-			}
-			else return null;
-		}
-		catch(Exception e)
-		{
-			return null;
-		}
 	}
 }

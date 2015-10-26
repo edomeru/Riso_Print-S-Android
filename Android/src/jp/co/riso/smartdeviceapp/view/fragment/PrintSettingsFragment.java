@@ -20,7 +20,6 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartprint.R;
-import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
@@ -33,14 +32,9 @@ import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
-
-import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView.PrintSettingsViewInterface;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
@@ -166,20 +160,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
      * @param printerId Printer ID
      */
     public void setPrinterId(int printerId) {
-        if (mPrinterId != printerId){
-            
-            if (mPrinterId != -1){
-                //reset secure print values
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
-                
-                Editor editor = prefs.edit();
-                editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
-                editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
-                editor.commit();
-            }
-        
-            mPrinterId = printerId;
-        }
+        mPrinterId = printerId;
     }
 
     /**
