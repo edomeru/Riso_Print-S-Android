@@ -11,6 +11,10 @@
       "filename" : "img_home_icon_iphone@2x.png"
     },
     {
+      "idiom" : "iphone",
+      "scale" : "3x"
+    },
+    {
       "idiom" : "ipad",
       "scale" : "1x",
       "filename" : "img_home_icon_ipad.png"

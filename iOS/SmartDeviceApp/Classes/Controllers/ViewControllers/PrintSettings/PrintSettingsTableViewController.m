@@ -418,7 +418,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         if (row == 0)
         {
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
-            headerCell.groupLabel.uppercaseLocalizationId = IDS_LBL_AUTHENTICATION;
+            headerCell.groupLabel.localizationId = IDS_LBL_AUTHENTICATION;
             headerCell.expanded = [[self.expandedSections objectAtIndex:section] boolValue];
             
             if(headerCell.expanded || section == [self.supportedSettings count])
@@ -472,7 +472,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         if (row == 0)
         {
             PrintSettingsHeaderCell *headerCell = [tableView dequeueReusableCellWithIdentifier:SETTING_HEADER_CELL forIndexPath:indexPath];
-            headerCell.groupLabel.uppercaseLocalizationId = [group objectForKey:@"text"];
+            headerCell.groupLabel.localizationId = [group objectForKey:@"text"];
             headerCell.expanded = [[self.expandedSections objectAtIndex:section] boolValue];
             
             if(headerCell.expanded || section == [self.supportedSettings count])

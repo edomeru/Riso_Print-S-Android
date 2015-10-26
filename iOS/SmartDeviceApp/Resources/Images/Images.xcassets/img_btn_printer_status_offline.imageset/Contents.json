@@ -1,18 +1,22 @@
 {
-	"images" : [
-		{
-			"idiom" : "universal",
-			"scale" : "1x",
-		"filename" : "img_btn_printer_status_offline.png"
-		},
-	{
-			"idiom" : "universal",
-			"scale" : "2x",
-		"filename" : "img_btn_printer_status_offline_2x.png"
-		}
-	],
-	"info" : {
-		"version" : 1,
-	"author" : "xcode"
-}
+  "images" : [
+    {
+      "idiom" : "universal",
+      "scale" : "1x",
+      "filename" : "img_btn_printer_status_offline.png"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x",
+      "filename" : "img_btn_printer_status_offline_2x.png"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  }
 }

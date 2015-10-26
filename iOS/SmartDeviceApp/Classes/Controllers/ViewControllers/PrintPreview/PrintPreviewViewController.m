@@ -1002,14 +1002,14 @@
     if ([[PrinterManager sharedPrinterManager] countSavedPrinters] == 0)
     {
         [AlertHelper displayResult:kAlertResultErrNoPrinterSelected
-                         withTitle:kAlertTitlePrintPreview
+                         withTitle:kAlertTitlePrintSetting
                        withDetails:nil];
     }
     //if getDefaultPrinter returns nil, there is an error in db request
     else if([[PrinterManager sharedPrinterManager] getDefaultPrinter] == nil)
     {
         [AlertHelper displayResult:kAlertResultErrDB
-                         withTitle:kAlertTitlePrintPreview
+                         withTitle:kAlertTitlePrintSetting
                        withDetails:nil];
     }
     else

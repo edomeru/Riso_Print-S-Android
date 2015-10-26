@@ -18,8 +18,9 @@ typedef enum
     kAlertTitlePrintersAdd, /**< Title for alerts displayed in Add Printer Screen. */
     kAlertTitlePrintersSearch, /**< Title for alerts displayed in Search Printers Screen. */
     kAlertTitlePrintJobHistory, /**< Title for alerts displayed in Print Job History Screen. */
-    kAlertTitlePrintPreview, /**< Title for alerts displayed in Print Preview Screen. */
-    
+    kAlertTitlePrintSetting, /**< Title for alerts displayed in Print Setting. */
+    kAlertTitleLicenseAgreement, /*< Title for alerts displayed in LicenseAgreement  Screen.*/
+
     kAlertTitleDefault /**< Sets alert title to RISO Smart Print */
     
 } kAlertTitle;

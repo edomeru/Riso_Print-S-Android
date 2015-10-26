@@ -95,9 +95,11 @@
 {
     NSString *appName = NSLocalizedString(IDS_APP_NAME, "");
     NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    NSString *build = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+    NSString *showVersion = [NSString stringWithFormat:@"%@.%@", version, build];
     
     [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:DOC_REPLACE_STRING, DOC_APP_NAME_ID, appName]];
-    [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:DOC_REPLACE_STRING, DOC_VERSION_ID, version]];
+    [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:DOC_REPLACE_STRING, DOC_VERSION_ID, showVersion]];
     
 #if USE_INFO_PLIST_COPYRIGHT
     NSString *copyright = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSHumanReadableCopyright"];

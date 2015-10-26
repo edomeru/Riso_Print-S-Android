@@ -99,7 +99,7 @@
 -(IBAction) cancelAction:(id)sender
 {
     [AlertHelper displayResult:kAlertResultErrorLicenseAgreementDisagree
-                     withTitle:kAlertTitleDefault
+                     withTitle:kAlertTitleLicenseAgreement
                    withDetails:nil
            ];
 }

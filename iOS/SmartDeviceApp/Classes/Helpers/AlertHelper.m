@@ -41,10 +41,14 @@
             alertTitle = NSLocalizedString(IDS_LBL_PRINT_JOB_HISTORY, @"");
             break;
             
-        case kAlertTitlePrintPreview:
-            alertTitle = NSLocalizedString(IDS_LBL_PRINT_PREVIEW, @"");
+        case kAlertTitlePrintSetting:
+            alertTitle = NSLocalizedString(IDS_LBL_PRINT_SETTINGS, @"");
             break;
         
+       case kAlertTitleLicenseAgreement:
+            alertTitle = NSLocalizedString(IDS_LBL_LICENSE, @"");
+            break;
+            
         case kAlertTitleDefault:
         default:
             alertTitle = NSLocalizedString(IDS_APP_NAME, @"");
