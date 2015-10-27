@@ -22,10 +22,9 @@
                                        SubText="{Binding IpAddress}"
                                        SubTextVisibility="{Binding IpAddress, Converter={StaticResource StringToVisibilityConverter}}"
                                        Width="{Binding Converter={StaticResource PrintJobListWidthConverter}}"
-                                       Height="{Binding Height}"
                                        Visibility="{Binding Jobs.Count, Converter={StaticResource PrintJobListToGroupVisibilityConverter}}"
                                        PressedHeaderColor="{StaticResource BRUSH_Purple2}"
-                                       IsCollapsed="{Binding IsCollapsed, Mode=TwoWay}"
+                                       IsCollapsed="{Binding IsCollapsed}"
                                        DeleteButtonVisualState="{Binding DeleteButtonVisualState}"
                                        SizeChanged="OnGroupListLoaded">
                 <controls:JobGroupListControl.Margin>
@@ -35,9 +34,8 @@
                     <ListView x:Name="jobsGroupListView"
                               ItemsSource="{Binding Jobs}"
                               ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
-                              
-                              ScrollViewer.HorizontalScrollMode="Enabled"
-                              ScrollViewer.VerticalScrollMode="Enabled"
+                              ScrollViewer.HorizontalScrollMode="Disabled"
+                              ScrollViewer.VerticalScrollMode="Disabled"
                               ScrollViewer.ZoomMode="Disabled"
                               IsItemClickEnabled="False"
                               SelectionMode="None">
@@ -57,7 +55,7 @@
             <Setter Property="Width" Value="{Binding Converter={StaticResource PrintJobListWidthConverter}}"/>
             <Setter Property="ItemTemplate" Value="{StaticResource TEMPLATE_PrintJobItem}"/>
             <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
-            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="IsItemClickEnabled" Value="False"/>
             <Setter Property="SelectionMode" Value="None"/>
@@ -69,10 +67,9 @@
     <controls:ViewControl ChildrenDataContext="{Binding DataContext, ElementName=jobsPage}"
                           Text="{Binding Source=IDS_LBL_PRINT_JOB_HISTORY, Converter={StaticResource ResourceStringToTextConverter}}" 
                           Button1Visibility="Collapsed"
-                          Button2Visibility="Collapsed"
-                          Loaded="UILoaded">
+                          Button2Visibility="Collapsed">
         <ScrollViewer x:Name="jobsScrollViewer"
-                      HorizontalScrollMode="Disabled" VerticalScrollMode="Disabled"
+                      HorizontalScrollMode="Disabled" VerticalScrollMode="Enabled"
                       ZoomMode="Disabled" 
                       Loaded="OnJobsScrollViewerLoaded">
             <Grid>

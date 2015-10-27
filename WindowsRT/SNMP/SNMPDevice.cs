@@ -26,7 +26,7 @@ namespace SNMP
 
 
         private string _ipAddress;
-        private int _langfamily = 0;
+        private int _langfamily;
         private string _description;
     
         UDPSocket udpSocket;
@@ -262,8 +262,7 @@ namespace SNMP
                         }
                         else
                         {
-                            int num1;
-                            if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES) && int.TryParse(val, out num1))
+                            if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_4HOLES))
                             {
                                 supportsMultiFunctionFinisher = true;
                             }
@@ -273,7 +272,7 @@ namespace SNMP
                                     this.Description = val;
                                 }
                                 else
-                                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY) && val == "54")
+                                    if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_PRINTERINTERPRETERLANGFAMILY))
                                     {
                                         this._langfamily = 54;// (byte)val[0];
                                     }
@@ -290,7 +289,6 @@ namespace SNMP
                                     _capabilitiesList = new List<string>();
                                     //check the first one
                                     capabilityCheckStarted = true;
-                 
                                     sendData(SNMPConstants.SNMP_GETCAPABILITY_SEND_TIMEOUT, new string[] { capabilityMIB[_capabilitiesList.Count()] });
                                 }
                                 else

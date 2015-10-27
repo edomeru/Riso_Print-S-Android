@@ -39,9 +39,7 @@ namespace SmartDeviceApp.ViewModels
 
         private ICommand _openDocumentCommand;
         private bool _isProgressRingActive;
-
-        public delegate void OnHomeLoaded();
-        public  OnHomeLoaded onHomeLoaded{get; set;}
+        private bool _enabledOpenDocumentCommand;
 
         /// <summary>
         /// HomeViewModel class constructor
@@ -53,18 +51,11 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            EnabledOpenDocumentCommand = true;
             IsProgressRingActive = false;
             Messenger.Default.Register<ViewMode>(this, (viewMode) => EnableMode(viewMode));
         }
 
-
-        public void triggerOnLoaded()
-        {
-            if (onHomeLoaded != null)
-            {
-                onHomeLoaded();
-            }
-        }
         /// <summary>
         /// Command for open document
         /// </summary>
@@ -95,8 +86,6 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _isProgressRingActive = value;
                     RaisePropertyChanged("IsProgressRingActive");
-                    // for change in open document command
-                    RaisePropertyChanged("EnabledOpenDocumentCommand");
                 }
             }
         }
@@ -107,15 +96,23 @@ namespace SmartDeviceApp.ViewModels
         /// </summary>
         public bool EnabledOpenDocumentCommand
         {
-            get
-            {   /// this is the reverse value of progress ring active 
-                /// if progress ring is active disable open document command 
-                return !_isProgressRingActive; 
+            get 
+            { 
+                return _enabledOpenDocumentCommand; 
+            }
+            set
+            {
+                if (_enabledOpenDocumentCommand != value)
+                {
+                    _enabledOpenDocumentCommand = value;
+                    RaisePropertyChanged("EnabledOpenDocumentCommand");
+                }
             }
         }
 
         private async void OpenDocumentCommandExecute()
         {
+            EnabledOpenDocumentCommand = false;
             try
             {
                 FileOpenPicker openPicker = new FileOpenPicker();
@@ -147,6 +144,7 @@ namespace SmartDeviceApp.ViewModels
                 LogUtility.LogError(ex);
                 DialogService.Instance.ShowError("IDS_ERR_MSG_OPEN_FAILED", "IDS_APP_NAME", "IDS_LBL_OK", null);
             }
+            EnabledOpenDocumentCommand = true;
         }
 
         private void EnableMode(ViewMode viewMode)

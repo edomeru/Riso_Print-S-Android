@@ -167,13 +167,6 @@ namespace SmartDeviceApp.ViewModels
                 PollingHandler(false);
             }
             new ViewModelLocator().PrintSettingsPaneViewModel.PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
-
-            var printSettingsOptionsVM = new ViewModelLocator().PrintSettingOptionsViewModel;
-            if (printSettingsOptionsVM != null)
-            {
-                printSettingsOptionsVM.PrintSetting = null; // Reset PrintSetting on back so that bindings will refresh on re-open
-            }
-
             PrinterList = null; // Reset PrinterList on back so that bindings will refresh on re-open
         }
 

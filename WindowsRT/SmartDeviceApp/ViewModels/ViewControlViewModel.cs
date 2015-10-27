@@ -15,8 +15,6 @@ using SmartDeviceApp.Models;
 using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Views;
 using SmartDeviceApp.Controllers;
-using Windows.UI.Core;
-using Windows.Graphics.Display;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -30,12 +28,11 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _togglePane2;
         private ViewMode _viewMode;
         private ViewOrientation _viewOrientation;
-        
         private ScreenMode _screenMode;        
         private bool _isPane1Visible = false;
         private bool _isPane2Visible = false;
         private bool _tapHandled = false;
-        private Windows.Foundation.Rect _screenBound;
+
         /// <summary>
         /// ViewControlViewModel class constructor
         /// </summary>
@@ -47,41 +44,9 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
             ViewMode = ViewMode.FullScreen;
             ScreenMode = ScreenMode.Home;
-            _screenBound = Windows.Foundation.Rect.Empty;
             InitializeMainMenu();
-            
         }
 
-        private void RecomputeBounds()
-        {
-          
-            RaisePropertyChanged("ViewMode");
-            Messenger.Default.Send<ViewMode>(_viewMode); // Broadcast to all viewmodels that need to be updated
-            RaisePropertyChanged("ViewOrientation");
-            Messenger.Default.Send<ViewOrientation>(_viewOrientation); // Broadcast to all viewmodels that need to be updated
-              
-        }
-
-        public Windows.Foundation.Rect ScreenBound
-        {
-            get
-            {
-                if (_screenBound.IsEmpty)
-                {
-                    _screenBound = Window.Current.Bounds;
-                }
-                return _screenBound;
-            }
-            set
-            {
-                if (_screenBound.Width != value.Width || _screenBound.Height != value.Height)
-                {
-                    _screenBound.Width = value.Width;
-                    _screenBound.Height = value.Height;
-                    //RecomputeBounds();
-                }
-            }
-        }
         /// <summary>
         /// Gets/sets the current view mode
         /// </summary>
@@ -94,7 +59,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _viewMode = value;
                     RaisePropertyChanged("ViewMode");
-                    Messenger.Default.Send<ViewMode>(_viewMode); 
+                    Messenger.Default.Send<ViewMode>(_viewMode); // Broadcast to all viewmodels that need to be updated
                 }
             }
         }
@@ -241,21 +206,6 @@ namespace SmartDeviceApp.ViewModels
                         break;
                     }
             }
-        }
-        
-        public void SetOrientation(DisplayOrientations orientation)
-        {
-           switch (orientation)
-           {
-               case DisplayOrientations.Landscape:
-               case DisplayOrientations.LandscapeFlipped:
-                   ViewOrientation = ViewOrientation.Landscape;
-                   break;
-               case DisplayOrientations.Portrait:
-               case DisplayOrientations.PortraitFlipped:
-                   ViewOrientation = ViewOrientation.Portrait;
-                   break;
-           }
         }
 
         private void TogglePane1Execute()

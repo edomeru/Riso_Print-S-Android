@@ -85,9 +85,6 @@ namespace SmartDeviceApp.Controls
             DependencyProperty.Register("KeyTextStyle", typeof(Style), typeof(KeyValueControl),
             new PropertyMetadata((Style)Application.Current.Resources["STYLE_TextKey"]));
 
-        public static readonly DependencyProperty KeyVisibilityProperty =
-            DependencyProperty.Register("keyVisibility", typeof(Visibility), typeof(KeyValueControl), new PropertyMetadata(Visibility.Visible));
-
         public static readonly DependencyProperty ValueTextProperty =
             DependencyProperty.Register("ValueText", typeof(string), typeof(KeyValueControl), null);
 
@@ -293,15 +290,6 @@ namespace SmartDeviceApp.Controls
         {
             get { return (string)GetValue(ValueSubTextProperty); }
             set { SetValue(ValueSubTextProperty, value); }
-        }
-
-        /// <summary>
-        /// Visibility property for the Key.
-        /// </summary>
-        public Visibility KeyVisibility
-        {
-            get { return (Visibility)GetValue(KeyVisibilityProperty); }
-            set { SetValue(KeyVisibilityProperty, value); }
         }
 
         /// <summary>

@@ -314,7 +314,7 @@ namespace SmartDeviceApp.Common.Utilities
             this._pageKey = null;
             stringBuilder.Clear();
             stringBuilder.Append(PAGE_PREFIX);
-            stringBuilder.Append(e.SourcePageType.FullName);
+            stringBuilder.Append(this.Frame.BackStackDepth);
             this._pageKey = stringBuilder.ToString();
 
             if (e.NavigationMode == NavigationMode.New)

@@ -14,7 +14,6 @@ using Windows.UI.Xaml.Media.Imaging;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Common.Constants;
-using System.Collections.Concurrent;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -117,10 +116,7 @@ namespace SmartDeviceApp.Controllers
         private string _screenName;
 
         private bool isPolling = false;
-        
-        // Sometimes printer is added multiple times 
-        // fix this by storing the ip address in a map to act as a set 
-        private ConcurrentDictionary<string, PrinterSearchItem> _addedIpToPrinterMap;
+
         private string _manualAddIP = "";
 
         /// <summary>
@@ -155,7 +151,6 @@ namespace SmartDeviceApp.Controllers
             _addPrinterViewModel = new ViewModelLocator().AddPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _selectPrinterViewModel = new ViewModelLocator().SelectPrinterViewModel;
-            _addedIpToPrinterMap = new ConcurrentDictionary<string, PrinterSearchItem>();
 
             _screenName = SmartDeviceApp.Common.Enum.ScreenMode.Printers.ToString();
 
@@ -334,7 +329,6 @@ namespace SmartDeviceApp.Controllers
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
-                    await Task.Delay(350);
                     await DialogService.Instance.ShowError("IDS_ERR_MSG_MAX_PRINTER_COUNT", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 });
                 return false;
@@ -373,7 +367,6 @@ namespace SmartDeviceApp.Controllers
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
-                    await Task.Delay(350);
                     DialogService.Instance.ShowError("IDS_ERR_MSG_CANNOT_ADD_PRINTER", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 });
                 return false;
@@ -401,7 +394,7 @@ namespace SmartDeviceApp.Controllers
         {
             //_searchPrinterViewModel.SetStateRefreshState();
             _printerSearchList.Clear();
-            _addedIpToPrinterMap.Clear();
+
             //for testing
             //PrinterSearchItem p1 = new PrinterSearchItem() {Name = "Test1", Ip_address = "192.12.12.12", IsInPrinterList = true };
             //PrinterSearchItem p2 = new PrinterSearchItem() { Name = "Test2", Ip_address = "192.12.12.11", IsInPrinterList = true };
@@ -1013,22 +1006,21 @@ namespace SmartDeviceApp.Controllers
 
         private async void handleDeviceDiscovered(PrinterSearchItem printer)
         {
+            Printer printerInList = null;
+
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
+                    _printerSearchList.Add(printer);
 
-                    if (_addedIpToPrinterMap.TryAdd(printer.Ip_address,printer))
+                    printerInList = _printerList.FirstOrDefault(x => x.IpAddress == printer.Ip_address);
+                    if (printerInList == null)
                     {
-                        var printerInList = _printerList.FirstOrDefault(x => x.IpAddress == printer.Ip_address);
-                        if (printerInList == null)
-                        {
-                            printer.IsInPrinterList = false;
-                        }
-                        else
-                        {
-                            printer.IsInPrinterList = true;
-                        }
-                        _printerSearchList.Add(printer);
+                        printer.IsInPrinterList = false;
+                    }
+                    else
+                    {
+                        printer.IsInPrinterList = true;
                     }
                 });
 

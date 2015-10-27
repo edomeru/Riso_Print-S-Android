@@ -286,19 +286,6 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private async Task ShowError(string message, string title, string buttonText)
-        {
-           
-            IsButtonVisible = false;
-            await Task.Delay(350);
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-            Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-            {
-                await DialogService.Instance.ShowError(message, title, buttonText, () => { setVisibilities(); });
-            });
-            
-        }
-
         private async Task AddPrinterExecute()
         {
             //Messenger.Default.Send<string>("HideKeyboard");
@@ -315,7 +302,8 @@ namespace SmartDeviceApp.ViewModels
 
             if (!isValidIp)
             {
-                await ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK");
+                //display error message
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_IP_ADDRESS", "IDS_LBL_ADD_PRINTER", "IDS_LBL_OK", null);
                 return;
             }
 

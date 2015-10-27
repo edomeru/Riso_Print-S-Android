@@ -20,8 +20,6 @@ using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Converters;
 using SmartDeviceApp.Common.Enum;
-using SmartDeviceApp.Models;
-using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Views
 {
@@ -31,11 +29,10 @@ namespace SmartDeviceApp.Views
         private bool _isJobsGridLoaded;
         private bool _isJobGesturesGridLoaded;
         private bool _isJobsScrollViewerLoaded;
+
         /// <summary>
         /// Constructor. Initializes UI components and gesture controller.
         /// </summary>
-        /// 
-
         public JobsPage()
         {
             this.InitializeComponent();
@@ -44,9 +41,6 @@ namespace SmartDeviceApp.Views
 
             if (!ViewModel.IsPrintJobsListEmpty) ViewModel.IsProgressRingActive = true;
         }
-
-
-
 
         /// <summary>
         /// Gets the data context of this xaml
@@ -94,7 +88,6 @@ namespace SmartDeviceApp.Views
             if (!_isJobsGridLoaded)
             {
                 _gestureController.TargetControl = (Grid)sender;
-
                 _isJobsGridLoaded = true;
             }
         }
@@ -131,10 +124,5 @@ namespace SmartDeviceApp.Views
                 ViewModel.IsProgressRingActive = false;
             }
         }
-        private void UILoaded(object sender, RoutedEventArgs e)
-        {
-            ViewModel.setUpCollapsed();
-        }
-
     }
 }

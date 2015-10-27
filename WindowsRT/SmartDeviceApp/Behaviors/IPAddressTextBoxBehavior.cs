@@ -16,7 +16,7 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class IPAddressTextBoxBehavior : DependencyObject, IBehavior
     {
-        private const string REGEX_IPADRESS_CHARS = "[^a-fA-F0-9:.]";
+        private const string REGEX_IPADRESS_CHARS = "[^a-fA-F0-9:.一-龠ぁ-ゔァ-ヴー々〆〤]";
 
         private string lastValidText;
 

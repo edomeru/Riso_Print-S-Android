@@ -98,12 +98,6 @@ namespace SmartDeviceApp.Controllers
             {
                 // Copy to AppData temporary store
                 StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                var haveSpace = await haveSpaceToCopy(file,tempFolder);
-                if (!haveSpace)
-                {
-                    Result = LoadDocumentResult.InsufficientSpaceToCopyPdf;
-                    return; 
-                }
                 PdfFile =  await file.CopyAsync(tempFolder, TEMP_PDF_NAME,
                     NameCollisionOption.ReplaceExisting);
 
@@ -148,22 +142,6 @@ namespace SmartDeviceApp.Controllers
                     }
                 }
             }
-        }
-
-        private async Task<bool> haveSpaceToCopy(StorageFile file, StorageFolder destinationFolder)
-        {   
-            var properties = await file.GetBasicPropertiesAsync();
-            var freeSpace = await GetFreeSpace(destinationFolder);
-    
-            return (freeSpace > properties.Size);
-        }
-
-        private static async Task<UInt64> GetFreeSpace(StorageFolder sf)
-        {
-            var properties = await sf.GetBasicPropertiesAsync();
-            var filteredProperties = await properties.RetrievePropertiesAsync(new[] { "System.FreeSpace" });
-            var freeSpace = filteredProperties["System.FreeSpace"];
-            return (UInt64)freeSpace;
         }
 
         /// <summary>

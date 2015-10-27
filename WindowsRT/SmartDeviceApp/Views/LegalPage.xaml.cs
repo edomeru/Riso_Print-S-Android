@@ -23,8 +23,6 @@ namespace SmartDeviceApp.Views
 {
     public sealed partial class LegalPage : PageBase
     {
-        private bool isAlreadyLoaded = false;
-        private WebView webview;
         /// <summary>
         /// Constructor. Initializes UI components.
         /// </summary>
@@ -38,12 +36,7 @@ namespace SmartDeviceApp.Views
         /// </summary>
         private void WebView_Loaded(object sender, RoutedEventArgs e)
         {
-            webview = (WebView)sender;
-            if (!isAlreadyLoaded)
-            {
-                isAlreadyLoaded = true;
-                ((WebView)sender).Navigate(new Uri("ms-appx-web:///Assets/legal.html"));
-            }
+            ((WebView)sender).Navigate(new Uri("ms-appx-web:///Assets/legal.html"));           
         }
 
         /// <summary>
@@ -54,8 +47,8 @@ namespace SmartDeviceApp.Views
             PackageVersion version = Package.Current.Id.Version;
             string versionString = string.Format("var v = document.getElementById(\"localize_version\"); if (v != null) v.innerHTML = \"Ver.{0}.{1}.{2}.{3}\"; ", version.Major, version.Minor, version.Build, version.Revision);
 
-            webview = ((WebView)sender);
-            webview.InvokeScriptAsync("eval", new string[] { versionString });
+            WebView webview = ((WebView)sender);
+            webview.InvokeScriptAsync("eval", new string[] { versionString }); 
         }
 
 
@@ -64,12 +57,6 @@ namespace SmartDeviceApp.Views
             ((Grid)sender).Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             ViewModel.LegalGestureGrid = (Grid)sender;
 
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            webview.InvokeScriptAsync("eval", new string[] { "scroll(0, 0);" });
-            webview.Refresh();
         }
 
         /// <summary>

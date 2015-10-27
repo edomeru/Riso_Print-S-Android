@@ -78,7 +78,6 @@
                                    Text="{Binding Text, ElementName=keyValueControl}"
                                    Width="{Binding KeyTextWidth, ElementName=keyValueControl}"
                                    Style="{Binding KeyTextStyle, ElementName=keyValueControl}"
-                                   Visibility="{Binding keyVisibility, ElementName=keyValueControl}"
                                    VerticalAlignment="Center">
                         </TextBlock>
                         <TextBlock x:Name="keySubText"

@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight.Command;
-using Microsoft.Practices.ServiceLocation;
-using SmartDeviceApp.ViewModels;
 
 namespace SmartDeviceApp.Views
 {
@@ -68,10 +66,17 @@ namespace SmartDeviceApp.Views
         private void MyGridViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             //guess the default max rows and columns based on current window height/width
-            this.ItemWidth = this.ItemWidth <= 0 ? 430 : this.ItemWidth;
-            var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+            if (Window.Current.Bounds.Width > Window.Current.Bounds.Height)
+            {
+                this.MaxRowsOrColumns = 3;
+            }
+            else
+            {
+                this.MaxRowsOrColumns = 2;
+            }
 
-            this.MaxRowsOrColumns = Convert.ToInt32(Math.Floor(viewControl.ScreenBound.Width / this.ItemWidth));
+            // Calculate the proper max rows or columns based on new size 
+            this.MaxRowsOrColumns = this.ItemWidth > 0 ? Convert.ToInt32(Math.Floor(e.NewSize.Width / this.ItemWidth)) : this.MaxRowsOrColumns;
         }
     }
 }

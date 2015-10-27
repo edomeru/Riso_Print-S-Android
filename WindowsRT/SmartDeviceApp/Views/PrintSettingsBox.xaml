@@ -17,14 +17,13 @@
         <DataTemplate x:Key="TEMPLATE_ListViewItemToggleSwitch">
             <controls:KeyToggleSwitchControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                              IsOn="{Binding Path=Value, Mode=TwoWay}"
-                                             IsBackgroundButtonEnabled="false"
                                              utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
                                              IconVisibility="Collapsed"
                                              SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
                                              IsListItem="True"
                                              Width="{Binding Width, ElementName=printSettingsBox}"
                                              IsEnabled="{Binding Path=IsEnabled}"
-                                             PressedColor="{StaticResource BRUSH_Gray2}"/>
+                                             PressedColor="{StaticResource BRUSH_Purple1}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemTextBox">
             <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
@@ -182,7 +181,7 @@
                               Visibility="{Binding IsPrintPreview, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
     <ListView Grid.Row="2"
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
-        <ListView ItemsSource="{Binding Path=PrintSettingsList, Mode=TwoWay}"
+        <ListView ItemsSource="{Binding Path=PrintSettingsList}"
                   ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
             <ListView.ItemContainerTransitions>
                 <TransitionCollection>
@@ -197,7 +196,7 @@
                                                PressedHeaderColor="{StaticResource BRUSH_Purple1}">
                         <controls:GroupListControl.Content>
                             <ListView x:Name="printSettingGroupListView" 
-                                      ItemsSource="{Binding PrintSettings, Mode=TwoWay}" 
+                                      ItemsSource="{Binding PrintSettings}" 
                                       ItemTemplateSelector="{StaticResource PrintSettingsListTemplateSelector}"
                                       ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
                                       IsItemClickEnabled="False" 

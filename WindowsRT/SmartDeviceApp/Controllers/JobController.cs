@@ -68,7 +68,7 @@ namespace SmartDeviceApp.Controllers
             _jobsViewModel = new ViewModelLocator().JobsViewModel;
             await RefreshPrintJobsList();
             _jobsViewModel.SortPrintJobsListToColumns();
-            _jobsViewModel.setUpCollapsed();
+
             _jobsViewModel.RemoveJobEventHandler += _removeJobEventHandler;
             _jobsViewModel.RemoveGroupedJobsEventHandler += _removeGroupedJobsEventHandler;
         }
@@ -154,7 +154,6 @@ namespace SmartDeviceApp.Controllers
                         PrintJobGroup newPrintJobGroup = new PrintJobGroup(printer.Name,
                             printer.IpAddress, new ObservableCollection<PrintJob>());
                         newPrintJobGroup.Jobs.Add(printJob);
-                        newPrintJobGroup.IsCollapsed = true;
                         _jobsViewModel.PrintJobsList.Add(newPrintJobGroup);
                         _jobsViewModel.SortPrintJobsListToColumns();
                     }

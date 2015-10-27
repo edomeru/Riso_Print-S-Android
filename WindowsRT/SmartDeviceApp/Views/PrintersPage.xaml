@@ -232,9 +232,8 @@
                                                              SeparatorVisibility="Visible"
                                                              IsListItem="True"
                                                              Width="{Binding ItemWidth, ElementName=printerInfoView}"
-                                                             PressedColor="{StaticResource BRUSH_Gray2}"
-                                                             IsBackgroundButtonEnabled="False"
-                                                             />
+                                                             PressedColor="{StaticResource BRUSH_Purple2}"
+                                                             KeyPressedColor="{StaticResource BRUSH_White}"/>
                             <controls:DefaultPrintSettingsControl x:Name="settings" 
                                                                   IconVisibility="Collapsed"
                                                           Text="{Binding Source=IDS_LBL_DEFAULT_PRINT_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}"

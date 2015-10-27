@@ -118,7 +118,6 @@ namespace SNMP
                             snmpDevice.IpAddress = host;
                             snmpDevice.CommunityName = this.communityName;
                             snmpDevice.Description = identifier[SNMPConstants.KEY_VAL];
-                            snmpDevice.snmpControllerCallBackGetCapability = snmpControllerDiscoverCallback;
 
                             snmpDevices.Add(snmpDevice);
                             snmpDevice.beginRetrieveCapabilities();
@@ -128,12 +127,18 @@ namespace SNMP
                             {
                                 snmpControllerDiscoverTimeOut = null;
                             }
-#if DEBUG
-                            else if(!snmpDevice.isRISOAZADevice())
+                            else // if printer search
                             {
-                                snmpControllerDiscoverCallback(snmpDevice);
-                            }
+#if !DEBUG
+                                if (snmpDevice.isRISOAZADevice())//comment out to remove RISO filter
 #endif
+                                {
+                                    snmpControllerDiscoverCallback(snmpDevice);
+
+                                }
+                            }
+                            //call callback
+
                         }
 
                     }

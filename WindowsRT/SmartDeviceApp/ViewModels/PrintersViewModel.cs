@@ -22,7 +22,6 @@ using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Views;
 using SmartDeviceApp.Converters;
-using Microsoft.Practices.ServiceLocation;
 
 
 namespace SmartDeviceApp.ViewModels
@@ -227,19 +226,13 @@ namespace SmartDeviceApp.ViewModels
 
         private void ResetPrinterInfoGrid(ViewOrientation viewOrientation)
         {
-            if (GestureController != null && GestureController.TargetControl != null)
+            if (GestureController != null)
             {
+                var columns = (viewOrientation == Common.Enum.ViewOrientation.Landscape) ? 3 : 2;
                 var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-                // Calculate the proper max rows or columns based on new size 
-                var maxWidth = 430;
-                var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
-                var columns = Convert.ToInt32(Math.Floor(viewControl.ScreenBound.Width / maxWidth));
-
-                var targetControl = (AdaptableGridView)GestureController.TargetControl;
-                var converter = new PrintersListWidthConverter();
-                var viewMode = _viewControlViewModel.ViewMode;
-                var param = new ViewItemParameters() { columns = columns, viewOrientation = viewOrientation };
-                targetControl.ItemWidth = (double) converter.Convert(viewMode, null,param , null);
+                var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
+                ((AdaptableGridView)GestureController.TargetControl).ItemWidth = (double)((new PrintersListWidthConverter()).Convert(_viewControlViewModel.ViewMode, null,
+                    new ViewItemParameters() { columns = columns, viewOrientation = viewOrientation }, null));
             }
         }
 
@@ -334,13 +327,6 @@ namespace SmartDeviceApp.ViewModels
             //get default printer settings using ip
             System.Diagnostics.Debug.WriteLine("OpenDefaultPrinterSettingsExecute");
             printer.VisualState = "Pressed";
-
-            var printSettingsOptionsVM = new ViewModelLocator().PrintSettingOptionsViewModel;
-            if (printSettingsOptionsVM != null)
-            {
-                printSettingsOptionsVM.PrintSetting = null; // Reset PrintSetting on back so that bindings will refresh on re-open
-            }
-
             var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
             
             _viewControlViewModel.ViewMode = Common.Enum.ViewMode.RightPaneVisible;

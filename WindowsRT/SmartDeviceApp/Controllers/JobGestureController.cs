@@ -13,7 +13,6 @@ using Windows.UI.Xaml.Media;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Models;
 using SmartDeviceApp.ViewModels;
-using Microsoft.Practices.ServiceLocation;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -48,7 +47,16 @@ namespace SmartDeviceApp.Controllers
         public JobGestureController()
         {
             _gestureRecognizer = new GestureRecognizer();
-
+            _gestureRecognizer.GestureSettings =
+                GestureSettings.Tap |
+                GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
+                GestureSettings.RightTap |
+                GestureSettings.ManipulationTranslateX |
+                GestureSettings.ManipulationTranslateY |
+                GestureSettings.ManipulationScale |
+                GestureSettings.ManipulationTranslateInertia |
+                GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
+                GestureSettings.ManipulationScaleInertia;
         }
 
         /// <summary>
@@ -81,17 +89,6 @@ namespace SmartDeviceApp.Controllers
         
         private void Initialize()
         {
-            _gestureRecognizer.GestureSettings =
-                GestureSettings.Tap |
-                GestureSettings.Hold | //hold must be set in order to recognize the press & hold gesture
-                GestureSettings.RightTap |
-                GestureSettings.ManipulationTranslateX |
-                GestureSettings.ManipulationTranslateY |
-                GestureSettings.ManipulationScale |
-                GestureSettings.ManipulationTranslateInertia |
-                GestureSettings.ManipulationMultipleFingerPanning | //reduces zoom jitter when panning with multiple fingers
-                GestureSettings.ManipulationScaleInertia;
-
             EnableGestures();
 
             var transform = _control.TransformToVisual(null);
@@ -104,7 +101,6 @@ namespace SmartDeviceApp.Controllers
         public void EnableGestures()
         {
             if (_control == null) return;
-            
             if (!_isEnabled)
             {
                 _control.PointerCanceled += OnPointerCanceled;
@@ -130,7 +126,6 @@ namespace SmartDeviceApp.Controllers
             if (_control == null) return;
             if (_isEnabled)
             {
-                
                 _control.PointerCanceled -= OnPointerCanceled;
                 _control.PointerPressed -= OnPointerPressed;
                 _control.PointerReleased -= OnPointerReleased;
@@ -164,13 +159,11 @@ namespace SmartDeviceApp.Controllers
         }
         void OnPointerMoved(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs args)
         {
-
             _gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints(_control));
             args.Handled = true;
-
         }
 
-        async void OnTapped(object sender, TappedEventArgs e)
+        void OnTapped(object sender, TappedEventArgs e)
         {
             bool isDeleteJob;
             var jobListItem = GetJobListItemControlForDelete(e.Position, false);
@@ -204,10 +197,6 @@ namespace SmartDeviceApp.Controllers
                     jobListHeader = (ToggleButton)element;
                     break;
                 }
-                else if (elementName == "ScrollView")
-                {
-                    scroller = element as ScrollViewer;
-                }
             }
             // Manually execute delete command
             if (isDeleteAllJobs && jobListHeader != null)
@@ -221,7 +210,6 @@ namespace SmartDeviceApp.Controllers
             }
             else if (!isDeleteAllJobs && jobListHeader != null)
             {
-                (new ViewModelLocator().JobsViewModel).setCollapseExcept((PrintJobGroup)jobListHeader.DataContext);
                 if ((bool)jobListHeader.IsChecked) // Manually set pressed states
                 {
                     VisualStateManager.GoToState(jobListHeader, "CheckedPressed", true);
@@ -232,38 +220,20 @@ namespace SmartDeviceApp.Controllers
                 }
                 jobListHeader.IsChecked = !jobListHeader.IsChecked; // Manually toggle the button
                 ((PrintJobGroup)jobListHeader.DataContext).IsCollapsed = jobListHeader.IsChecked.Value;
-                
             }
-        }
-        private List<ToggleButton> _groupButtons;
-        private List<ToggleButton> GroupButtonCache
-        {
-            get
+            else if (jobListHeader != null)
             {
-                //if (_groupButtons == null || _groupButtons.Count == 0)
-                {
-                    _groupButtons = new List<ToggleButton>();
-                    var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
-                    var size = new Rect(0, 0, viewControl.ScreenBound.Width * 2, viewControl.ScreenBound.Height * 2);
-                    var elements = VisualTreeHelper.FindElementsInHostCoordinates(size, _targetControl, true);
-                    foreach (var element in elements)
-                    {
-                        var elementName = ((FrameworkElement)element).Name;
-                        if (elementName == JOB_LIST_HEADER_CONTROL_NAME)
-                        {
-                            _groupButtons.Add(element as ToggleButton);
-                        }
-                    }
-                }
-                return _groupButtons;
+                VisualStateManager.GoToState(jobListHeader, "Normal", true);
             }
         }
 
-        private ScrollViewer scroller;
+        //void OnRightTapped(object sender, RightTappedEventArgs e)
+        //{
+        //}
+
         private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
         {
             _startPoint = e.Position;
-            scroller = getScrollFromPoint(e.Position);
             //Debug.WriteLine("OnManipulationStarted");
         }
 
@@ -336,7 +306,6 @@ namespace SmartDeviceApp.Controllers
             _lastPrintJobGroup.DeleteButtonVisualState = "DeleteNormal";
             _lastDeleteAllButton = null;
             _lastPrintJobGroup = null;
-            
         }
 
         /// <param name="isScrolled">True if from ManipulationUpdatedEventArgs,
@@ -394,39 +363,14 @@ namespace SmartDeviceApp.Controllers
             if (!isDeleteJob) jobListItemControl = null;
             return jobListItemControl;
         }
-        private ScrollViewer getScrollFromPoint(Point currentPosition)
-        {
-            var elements = VisualTreeHelper.FindElementsInHostCoordinates(currentPosition, _targetControl);
-            UIElement listView = null;
-            bool isJobController = false;
-            ScrollViewer view = _controlReference as ScrollViewer;
-            foreach (UIElement element in elements)
-            {
-                var elementName = ((FrameworkElement)element).Name;
-                if (elementName == "ScrollViewer" && isJobController)
-                {
-                    view =  element as ScrollViewer;
-                    break;
-                    
-                }
-                else if (elementName == "jobListItemControl")
-                {
-                    isJobController = true;
-                }
-            }
-            return view;
-        }
+
         private bool DetectVerticalSwipe(Point currentPosition, Point delta)
         {
             var isTranslate = false;
             if (Math.Abs(delta.Y) > 0)
             {
                 isTranslate = true;
-                if (scroller == null)
-                {
-                    scroller = getScrollFromPoint(currentPosition);
-                }
-                var scrollViewer = scroller;
+                var scrollViewer = (ScrollViewer)_controlReference;
                 scrollViewer.ChangeView(null, scrollViewer.VerticalOffset - delta.Y, null);
 
                 // Hide delete button only on outside of containing row

@@ -56,7 +56,7 @@
             Template="{StaticResource TEMPLATE_HeaderButton}"
             Width="{Binding Width, ElementName=printSettingOptionsBox}" Loaded="printSettingsOptionsBoxLoaded"/>
     <ListView x:Name="printSettingOptionsListView" Grid.Row="1"  
-              ItemsSource="{Binding PrintSetting.Options, Mode=TwoWay}" 
+              ItemsSource="{Binding PrintSetting.Options}" 
               ItemContainerStyle="{StaticResource STYLE_ListViewItem}" 
               IsItemClickEnabled="False" 
               SelectionMode="Single">
