@@ -23,12 +23,12 @@
 @interface LicenseAgreementViewControllerTest : GHTestCase
 {
     UIStoryboard* storyboard;
-    LegalViewController* controller;
+    LicenseAgreementViewController* controller;
 }
 
 @end
 
-@implementation LegalViewControllerTest
+@implementation LicenseAgreementViewControllerTest
 
 #pragma mark - Setup/TearDown Methods
 
@@ -106,11 +106,11 @@
     
     GHTestLog(@"# CHECK: LicenseAgreement state. #");
     
-    [controller setLicenseAgreement:NO];
-    GHAssertTrue([controller hasConfirmedToLicenseAgreement]  == NO, @"");
+    [controller performSelector:@selector(setLicenseAgreement:) withObject:[NSNumber numberWithBool:NO]];
+    GHAssertTrue([LicenseAgreementViewController hasConfirmedToLicenseAgreement]  == NO, @"");
     
-    [controller setLicenseAgreement:YES];
-    GHAssertTrue([controller hasConfirmedToLicenseAgreement] , @"");
+    [controller performSelector:@selector(setLicenseAgreement:) withObject:[NSNumber numberWithBool:YES]];
+    GHAssertTrue([LicenseAgreementViewController hasConfirmedToLicenseAgreement] , @"");
 }
 
 

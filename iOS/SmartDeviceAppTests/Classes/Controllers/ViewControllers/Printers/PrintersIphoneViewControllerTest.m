@@ -149,7 +149,7 @@
     GHAssertTrue([tableView numberOfRowsInSection:0] == expectedPrinters, @"#rows = #printers");
     
     GHTestLog(@"-- check reloading");
-    [controller reloadData];
+    [controller reloadPrinters];
     GHAssertTrue(pm.countSavedPrinters == expectedPrinters, @"#printers = test data");
     GHAssertTrue([tableView numberOfSections] == 1, @"should only have 1 section");
     GHAssertTrue([tableView numberOfRowsInSection:0] == expectedPrinters, @"#rows = #printers");
@@ -267,7 +267,7 @@
     pd1.name = @"RISO Printer 1";
     pd1.ip = @"192.168.0.199";
     pd1.port = [NSNumber numberWithInt:0];
-    pd1.enBooklet = YES;
+    pd1.enBookletFinishing = YES;
     pd1.enStaple = NO;
     pd1.enFinisher23Holes = YES;
     pd1.enFinisher24Holes = NO;
@@ -284,7 +284,7 @@
     //pd2.name should be nil
     pd2.ip = @"127.0.0.1";
     pd2.port = [NSNumber numberWithInt:0];
-    pd2.enBooklet = YES;
+    pd2.enBookletFinishing = YES;
     pd2.enStaple = YES;
     pd2.enFinisher23Holes = NO;
     pd2.enFinisher24Holes = YES;

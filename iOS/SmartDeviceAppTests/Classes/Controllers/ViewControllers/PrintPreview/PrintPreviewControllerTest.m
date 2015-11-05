@@ -308,21 +308,14 @@
     previewSetting.booklet = YES;
     previewSetting.finishingSide = kFinishingSideLeft;
     
-    previewSetting.bookletLayout = kBookletLayoutLeftToRight;
+    previewSetting.bookletLayout = kBookletLayoutForward;
     [viewController setupPageviewControllerWithBindSetting];
     GHAssertNotNil(viewController.pageViewController, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
     GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
     
-    previewSetting.bookletLayout = kBookletLayoutTopToBottom;
-    [viewController setupPageviewControllerWithBindSetting];
-    GHAssertNotNil(viewController.pageViewController, @"");
-    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
-    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
-    GHAssertTrue(viewController.pageViewController.isDoubleSided, @"");
-    
-    previewSetting.bookletLayout = kBookletLayoutRightToLeft;
+    previewSetting.bookletLayout = kBookletLayoutReverse;
     [viewController setupPageviewControllerWithBindSetting];
     GHAssertNotNil(viewController.pageViewController, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
@@ -423,20 +416,12 @@
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
 
     
-    manager.printDocument.previewSetting.bookletLayout = kBookletLayoutRightToLeft;
+    manager.printDocument.previewSetting.bookletLayout = kBookletLayoutReverse;
     GHAssertEquals(viewController.totalPageNum, (NSInteger)4,@"");
     GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
     GHAssertLessThanOrEqual(fabsf(ratio - viewController.previewView.aspectRatio), tolerance, @"");
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
-    
-    
-    manager.printDocument.previewSetting.bookletLayout = kBookletLayoutTopToBottom;
-    GHAssertEquals(viewController.totalPageNum, (NSInteger)4,@"");
-    GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
-    GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
-    GHAssertLessThanOrEqual(fabsf(ratio - viewController.previewView.aspectRatio), tolerance, @"");
-    GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
     
 }
 
@@ -574,7 +559,7 @@
     GHAssertNotNil(viewController.view, @"");
     
     manager.printDocument.previewSetting.booklet = YES;
-    manager.printDocument.previewSetting.bookletLayout = kBookletLayoutLeftToRight;
+    manager.printDocument.previewSetting.bookletLayout = kBookletLayoutForward;
     [viewController goToPage:2];
     NSArray *pageControllers = [viewController.pageViewController viewControllers];
     PDFPageContentViewController *leftPage = [pageControllers objectAtIndex:0];
@@ -591,7 +576,7 @@
     GHAssertEquals(rightPage.pageIndex, (NSInteger)2, @"");
     
     manager.printDocument.previewSetting.booklet = YES;
-    manager.printDocument.previewSetting.bookletLayout = kBookletLayoutRightToLeft;
+    manager.printDocument.previewSetting.bookletLayout = kBookletLayoutReverse;
     [viewController goToPage:2];
     pageControllers = [viewController.pageViewController viewControllers];
     leftPage = [pageControllers objectAtIndex:0];

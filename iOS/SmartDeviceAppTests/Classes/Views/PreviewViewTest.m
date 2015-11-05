@@ -33,11 +33,11 @@
     PreviewView *view = [[PreviewView alloc] initWithFrame:CGRectMake(0, 0, testWidth, testHeight)];
     [view setPreviewWithOrientation:kPreviewViewOrientationPortrait aspectRatio:aspectRatio];
     
-    GHAssertNotNil(view.contentView, @"");
-    GHAssertLessThanOrEqual(view.contentView.frame.size.height, testHeight, @"");
-    GHAssertLessThanOrEqual(view.contentView.frame.size.width, testWidth, @"");
+    GHAssertNotNil(view.pageContentView, @"");
+    GHAssertLessThanOrEqual(view.pageContentView.frame.size.height, testHeight, @"");
+    GHAssertLessThanOrEqual(view.pageContentView.frame.size.width, testWidth, @"");
     
-    CGFloat resultingRatio = view.contentView.frame.size.width/view.contentView.frame.size.height;
+    CGFloat resultingRatio = view.pageContentView.frame.size.width/view.pageContentView.frame.size.height;
     
     GHAssertLessThanOrEqual(fabsf(resultingRatio - aspectRatio), tolerance, @"");
 }
@@ -53,11 +53,11 @@
     PreviewView *view = [[PreviewView alloc] initWithFrame:CGRectMake(0, 0, testWidth, testHeight)];
     [view setPreviewWithOrientation:kPreviewViewOrientationLandscape aspectRatio:aspectRatio];
     
-    GHAssertNotNil(view.contentView, @"");
-    GHAssertLessThanOrEqual(view.contentView.frame.size.height, testHeight, @"");
-    GHAssertLessThanOrEqual(view.contentView.frame.size.width, testWidth, @"");
+    GHAssertNotNil(view.pageContentView, @"");
+    GHAssertLessThanOrEqual(view.pageContentView.frame.size.height, testHeight, @"");
+    GHAssertLessThanOrEqual(view.pageContentView.frame.size.width, testWidth, @"");
     
-    CGFloat resultingRatio = view.contentView.frame.size.height/view.contentView.frame.size.width;
+    CGFloat resultingRatio = view.pageContentView.frame.size.height/view.pageContentView.frame.size.width;
     
     GHAssertLessThanOrEqual(fabsf(resultingRatio - aspectRatio), tolerance, @"");
 }
