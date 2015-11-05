@@ -58,13 +58,14 @@
 // Run at start of all tests in the class
 - (void)setUpClass
 {
+#if 0
     Swizzler* swizzler = [[Swizzler alloc] init];
     
     NSString* storyboardTitle = @"Main";
     storyboard = [UIStoryboard storyboardWithName:storyboardTitle bundle:nil];
     GHAssertNotNil(storyboard, @"unable to retrieve storyboard file %@", storyboardTitle);
     
-#if 0
+
     NSString* controllerIphoneName = @"PrinterSearchIphoneViewController";
     [swizzler swizzleInstanceMethod:[PrinterManager class] targetSelector:@selector(searchForAllPrinters) swizzleClass:[PrinterManagerMock class] swizzleSelector:@selector(searchForAllPrintersSuccessful)];
     controllerIphone = [storyboard instantiateViewControllerWithIdentifier:controllerIphoneName];

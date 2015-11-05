@@ -176,7 +176,8 @@
 - (void)test004_SaveOnlinePrinter
 {
     GHTestLog(@"# CHECK: Save Online Printer. #");
-    NSString* printerIP = @"192.168.0.1";
+
+   /*NSString* printerIP = @"192.168.0.1";
     UITextField* inputText = [controllerIphone textIP];
     Swizzler* swizzler = [[Swizzler alloc] init];
     
@@ -185,7 +186,7 @@
         GHAssertTrue([pm deletePrinterAtIndex:0], @"");
     
     GHTestLog(@"-- adding an online printer");
-    /*inputText.text = printerIP;
+   inputText.text = printerIP;
     [swizzler swizzleInstanceMethod:[PrinterManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[PrinterManagerMock class] swizzleSelector:@selector(searchForPrinterSuccessful:)];
     [controllerIphone onSave:[controllerIphone saveButton]];
     [swizzler deswizzle];
@@ -197,6 +198,7 @@
 - (void)test005_SaveOfflinePrinter
 {
     GHTestLog(@"# CHECK: Save Offline Printer. #");
+/*
     NSString* printerIP = @"192.168.0.1";
     UITextField* inputText = [controllerIphone textIP];
     Swizzler* swizzler = [[Swizzler alloc] init];
@@ -206,7 +208,7 @@
         GHAssertTrue([pm deletePrinterAtIndex:0], @"");
     
     GHTestLog(@"-- adding an offline printer");
-    /*inputText.text = printerIP;
+    inputText.text = printerIP;
     [swizzler swizzleInstanceMethod:[PrinterManager class] targetSelector:@selector(searchForPrinter:) swizzleClass:[PrinterManagerMock class] swizzleSelector:@selector(searchForPrinterFail:)];
     [controllerIphone onSave:[controllerIphone saveButton]];
     [swizzler deswizzle];

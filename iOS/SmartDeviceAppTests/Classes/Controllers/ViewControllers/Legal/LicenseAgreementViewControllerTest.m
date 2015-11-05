@@ -101,6 +101,10 @@
     GHAssertTrue([ibActions containsObject:@"cancelAction:"], @"");
 }
 
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+//Suppress undeclared selector warning because setLicenseAgreement is meant to be private but needs to be tested in UT
+//http://stackoverflow.com/questions/6224976/how-to-get-rid-of-the-undeclared-selector-warning
+
 - (void)test003_LicenseAgreementState
 {
     
@@ -113,5 +117,5 @@
     GHAssertTrue([LicenseAgreementViewController hasConfirmedToLicenseAgreement] , @"");
 }
 
-
+#pragma clang diagnostic pop
 @end

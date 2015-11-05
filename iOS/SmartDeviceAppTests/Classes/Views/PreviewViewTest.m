@@ -39,7 +39,7 @@
     
     CGFloat resultingRatio = view.pageContentView.frame.size.width/view.pageContentView.frame.size.height;
     
-    GHAssertLessThanOrEqual(fabsf(resultingRatio - aspectRatio), tolerance, @"");
+    GHAssertLessThanOrEqual(fabs(resultingRatio - aspectRatio), tolerance, @"");
 }
 
 -(void) test001_setPreviewWithOrientation_Landscape
@@ -59,7 +59,7 @@
     
     CGFloat resultingRatio = view.pageContentView.frame.size.height/view.pageContentView.frame.size.width;
     
-    GHAssertLessThanOrEqual(fabsf(resultingRatio - aspectRatio), tolerance, @"");
+    GHAssertLessThanOrEqual(fabs(resultingRatio - aspectRatio), tolerance, @"");
 }
 
 @end

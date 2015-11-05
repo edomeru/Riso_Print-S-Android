@@ -318,7 +318,7 @@
 		6603A8181BE1F83600DBD0F0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
 		6603A8191BE1F84800DBD0F0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		6603A81F1BE1FB2F00DBD0F0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
-		664F90961BEB29D800EF5F10 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 664F90941BEB29D800EF5F10 /* InfoPlist.strings */; settings = {ASSET_TAGS = (); }; };
+		664F90961BEB29D800EF5F10 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 664F90941BEB29D800EF5F10 /* InfoPlist.strings */; };
 		6666D54F1BE30CAE00D93CEE /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
 		6666D5501BE3147600D93CEE /* SmartDeviceApp.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
 		6666D5511BE3147600D93CEE /* license.html in Resources */ = {isa = PBXBuildFile; fileRef = 94D0C05B1A89AF3A00451EFD /* license.html */; };
@@ -1941,7 +1941,7 @@
 		2D0AEBF7185FDD2100810455 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = aLink;
 				TargetAttributes = {
 					2D0AEBFE185FDD2100810455 = {

@@ -163,9 +163,9 @@
                                                    forDevice:UIUserInterfaceIdiomPhone];
     GHTestLog(@"-- checking sections");
     groupsView = [controllerIphone groupsView];
-    GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
+    GHTestLog(@"-- #sections=%ld", (long)[groupsView numberOfSections]);
     GHAssertTrue([groupsView numberOfSections] == 1, @"");
-    GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
+    GHTestLog(@"-- #items/section=%ld", (long)[groupsView numberOfItemsInSection:0]);
     GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
     
     GHTestLog(@"-- UICollectionView (iPhone-Landscape)");
@@ -173,9 +173,9 @@
                                                    forDevice:UIUserInterfaceIdiomPhone];
     GHTestLog(@"-- checking sections");
     groupsView = [controllerIphone groupsView];
-    GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
+    GHTestLog(@"-- #sections=%ld", (long)[groupsView numberOfSections]);
     GHAssertTrue([groupsView numberOfSections] == 1, @"");
-    GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
+    GHTestLog(@"-- #items/section=%ld", (long)[groupsView numberOfItemsInSection:0]);
     GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
     
     GHTestLog(@"-- List of Print Jobs (iPad)");
@@ -190,9 +190,9 @@
     
     GHTestLog(@"-- checking sections");
     groupsView = [controllerIpad groupsView];
-    GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
+    GHTestLog(@"-- #sections=%ld", (long)[groupsView numberOfSections]);
     GHAssertTrue([groupsView numberOfSections] == 1, @"");
-    GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
+    GHTestLog(@"-- #items/section=%ld", (long)[groupsView numberOfItemsInSection:0]);
     GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
     
     GHTestLog(@"-- UICollectionView (iPad-Landscape)");
@@ -201,9 +201,9 @@
     
     GHTestLog(@"-- checking sections");
     groupsView = [controllerIpad groupsView];
-    GHTestLog(@"-- #sections=%u", [groupsView numberOfSections]);
+    GHTestLog(@"-- #sections=%ld", (long)[groupsView numberOfSections]);
     GHAssertTrue([groupsView numberOfSections] == 1, @"");
-    GHTestLog(@"-- #items/section=%u", [groupsView numberOfItemsInSection:0]);
+    GHTestLog(@"-- #items/section=%ld", (long)[groupsView numberOfItemsInSection:0]);
     GHAssertTrue([groupsView numberOfItemsInSection:0] == countGroups, @"");
 }
 
@@ -226,7 +226,7 @@
         // get the group
         PrintJobHistoryGroup* group = [listPrintJobHistoryGroups objectAtIndex:i];
         
-        NSString* tagString = [NSString stringWithFormat:@"%u", group.tag];
+        NSString* tagString = [NSString stringWithFormat:@"%ld", (long)group.tag];
         
         // save the (tag,name)
         [groupNames setValue:group.groupName forKey:tagString];
@@ -258,8 +258,8 @@
                                    outIndex:&groupFoundIdx
                                    outGroup:&groupFound];
          
-         GHTestLog(@"--- actual=[%u]", groupFoundIdx);
-         GHTestLog(@"--- expected=[%u]", [expectedIdx integerValue]);
+         GHTestLog(@"--- actual=[%ld]", (long)groupFoundIdx);
+         GHTestLog(@"--- expected=[%ld]", (long)[expectedIdx integerValue]);
          GHAssertTrue(groupFoundIdx == [expectedIdx integerValue], @"");
     }];
     

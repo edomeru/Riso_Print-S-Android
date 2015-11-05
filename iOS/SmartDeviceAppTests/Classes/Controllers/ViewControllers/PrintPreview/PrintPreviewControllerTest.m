@@ -408,11 +408,11 @@
     
     
     manager.printDocument.previewSetting.booklet = YES;
-    CGFloat ratio = [PrintPreviewHelper getAspectRatioForPaperSize:manager.printDocument.previewSetting.paperSize];
+    CGFloat ratio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)manager.printDocument.previewSetting.paperSize];
     GHAssertEquals(viewController.totalPageNum, (NSInteger)4,@"");
     GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
-    GHAssertLessThanOrEqual(fabsf(ratio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertLessThanOrEqual(fabs(ratio - viewController.previewView.aspectRatio), tolerance, @"");
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
 
     
@@ -420,7 +420,7 @@
     GHAssertEquals(viewController.totalPageNum, (NSInteger)4,@"");
     GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
-    GHAssertLessThanOrEqual(fabsf(ratio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertLessThanOrEqual(fabs(ratio - viewController.previewView.aspectRatio), tolerance, @"");
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
     
 }
@@ -437,12 +437,12 @@
     GHAssertNotNil(viewController.view, @"");
     
     manager.printDocument.previewSetting.duplex = kDuplexSettingLongEdge;
-    CGFloat ratio = [PrintPreviewHelper getAspectRatioForPaperSize:manager.printDocument.previewSetting.paperSize];
+    CGFloat ratio = [PrintPreviewHelper getAspectRatioForPaperSize:(kPaperSize)manager.printDocument.previewSetting.paperSize];
     CGFloat expectedRatio = ratio * 2;
     GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
     GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
-    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertLessThanOrEqual(fabs(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
     
     manager.printDocument.previewSetting.orientation = kOrientationLandscape;
@@ -450,7 +450,7 @@
     GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
     GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
-    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertLessThanOrEqual(fabs(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
     
     
@@ -459,7 +459,7 @@
     GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
     GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
-    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertLessThanOrEqual(fabs(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
     
     
@@ -468,7 +468,7 @@
     GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
     GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
-    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertLessThanOrEqual(fabs(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationVertical, @"");
     
     manager.printDocument.previewSetting.finishingSide = kFinishingSideRight;
@@ -476,7 +476,7 @@
     GHAssertEquals(viewController.totalPageNum, (NSInteger)3,@"");
     GHAssertEquals(viewController.layoutPageNum, (NSInteger) 6, @"");
     GHAssertEquals(viewController.pageViewController.spineLocation, UIPageViewControllerSpineLocationMid, @"");
-    GHAssertLessThanOrEqual(fabsf(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
+    GHAssertLessThanOrEqual(fabs(expectedRatio - viewController.previewView.aspectRatio), tolerance, @"");
     GHAssertEquals(viewController.pageViewController.navigationOrientation, UIPageViewControllerNavigationOrientationHorizontal, @"");
     
 }
@@ -725,6 +725,10 @@
     GHAssertNil(nextPage, @"");
 }
 
+#pragma clang diagnostic ignored "-Wnonnull"
+//Supress warning for passing nil to previousViewControllers since it is not used inside method and also to check if nil parameters if properly handled
+//http://stackoverflow.com/questions/32677389/xcode-7-null-passed-to-a-callee-that-requires-a-non-null-argument
+
 -(void)test022_pageViewControllerDidFinishAnimating
 {
     PDFFileManager *manager = [PDFFileManager sharedManager];
@@ -758,6 +762,8 @@
     [viewController pageViewController:viewController.pageViewController didFinishAnimating:NO previousViewControllers:nil transitionCompleted:YES];
     GHAssertFalse(viewController.pageIsAnimating, @"");
 }
+
+#pragma clang diagnostic pop
 
 -(void)test023_pageViewControllerWillTransitionToViewController
 {
