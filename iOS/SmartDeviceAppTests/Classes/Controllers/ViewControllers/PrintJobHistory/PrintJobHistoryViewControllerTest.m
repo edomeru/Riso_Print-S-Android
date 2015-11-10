@@ -405,6 +405,178 @@ const NSUInteger TEST_NUM_JOBS[TEST_NUM_PRINTERS] = {8, 5, 10, 1, 4, 6, 3, 7};
     GHAssertNotNil(jobCell.result, @"");
 }
 
+- (void)test009_PrintJobHistoryGroupCellJobs_DeleteState_Reswipe
+{
+    UICollectionView* groupsView;
+    NSIndexPath* index;
+    PrintJobHistoryGroupCell* groupCell;
+    NSUInteger tag = 5;
+    NSString* printerName = @"RISO Printer";
+    NSString* printerIP = @"192.168.0.1";
+    NSString* printJobName = @"Print Job 1";
+    NSDate* printJobDate = [NSDate date];
+    
+    groupsView = [controller groupsView];
+    index = [NSIndexPath indexPathForItem:0 inSection:0];
+    groupCell = [groupsView dequeueReusableCellWithReuseIdentifier:GROUPCELL forIndexPath:index];
+    [groupCell initWithTag:tag];
+    [groupCell putGroupName:printerName];
+    [groupCell putGroupIP:printerIP];
+    [groupCell putPrintJob:printJobName withResult:YES withTimestamp:printJobDate];
+    [groupCell putPrintJob:printJobName withResult:NO withTimestamp:printJobDate];
+    [groupCell putPrintJob:printJobName withResult:YES withTimestamp:printJobDate];
+    [groupCell reloadContents];
+    
+    
+    groupCell.delegate = self;
+ 
+    PrintJobItemCell *jobCell = [[PrintJobItemCell alloc] init];
+    NSIndexPath *testIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    
+    UITableView*  originalPrintJobsView = groupCell.printJobsView;
+    
+    CGPoint point = CGPointMake(1.0f, 2.0f);
+    
+    id partialPrintJobsViewMock = OCMPartialMock(groupCell.printJobsView);
+    
+    [[[partialPrintJobsViewMock stub] andReturn:jobCell] cellForRowAtIndexPath:[OCMArg any]];
+    [[[partialPrintJobsViewMock stub] andReturn:testIndexPath] indexPathForRowAtPoint:point];
+    
+    [groupCell setValue:partialPrintJobsViewMock forKey:@"printJobsView"];
+    
+    id mockGestureRecognizer = OCMClassMock([UIGestureRecognizer class]);
+    [[[mockGestureRecognizer stub] andReturnValue:OCMOCK_VALUE(point)] locationInView:[OCMArg any]];
+    
+    //1st Swipe
+    [groupCell performSelector:@selector(putDeleteButton:) withObject:mockGestureRecognizer];
+
+    BOOL isReswipe = [[groupCell valueForKey:@"reswipeLeftOccured"] boolValue];
+    GHAssertFalse(isReswipe, @"");
+    
+    //2nd Swipe
+    [groupCell performSelector:@selector(putDeleteButton:) withObject:mockGestureRecognizer];
+    
+    isReswipe = [[groupCell valueForKey:@"reswipeLeftOccured"] boolValue];
+    GHAssertTrue(isReswipe, @"");
+    NSIndexPath *jobWithDelete = [groupCell valueForKey:@"jobWithDelete"];
+    GHAssertNotNil(jobWithDelete, @"");
+    GHAssertEqualObjects(jobWithDelete, testIndexPath,@"");
+    
+    //attempt to remove button after 2nd swipe
+    GHAssertFalse([groupCell removeDeleteButton], @"");
+    
+    isReswipe = [[groupCell valueForKey:@"reswipeLeftOccured"] boolValue];
+    GHAssertFalse(isReswipe, @"");
+    jobWithDelete = [groupCell valueForKey:@"jobWithDelete"];
+    GHAssertNotNil(jobWithDelete, @"");
+    GHAssertEqualObjects(jobWithDelete, testIndexPath,@"");
+    
+    //3rd swipe
+    [groupCell performSelector:@selector(putDeleteButton:) withObject:mockGestureRecognizer];
+    isReswipe = [[groupCell valueForKey:@"reswipeLeftOccured"] boolValue];
+    GHAssertTrue(isReswipe, @"");
+    jobWithDelete = [groupCell valueForKey:@"jobWithDelete"];
+    GHAssertNotNil(jobWithDelete, @"");
+    GHAssertEqualObjects(jobWithDelete, testIndexPath,@"");
+    
+    //attemp to remove button after 3rd swipe
+    GHAssertFalse([groupCell removeDeleteButton], @"");
+    
+    //assume another gesture triggered to remove button again, this time reswipe is not anymore called before attempt to remove button so reswipe did not occur
+    GHAssertTrue([groupCell removeDeleteButton], @"");
+    jobWithDelete = [groupCell valueForKey:@"jobWithDelete"];
+    GHAssertNil(jobWithDelete, @"");
+    
+    [groupCell setValue:originalPrintJobsView forKey:@"printJobsView"];
+    [partialPrintJobsViewMock stopMocking];
+    [mockGestureRecognizer stopMocking];
+    
+}
+
+
+- (void)test010_PrintJobHistory_SwipeNotDelete
+{
+    id mockGroupCell = OCMClassMock([PrintJobHistoryGroupCell class]);
+    [[[mockGroupCell stub] andReturnValue:OCMOCK_VALUE(YES)] removeDeleteButton];
+    
+    UICollectionView *originalGroupsView = [controller groupsView];
+    id mockGroupsView = OCMPartialMock([controller groupsView]);
+    [[[mockGroupsView stub] andReturn:mockGroupCell] cellForItemAtIndexPath:[OCMArg any]];
+    
+    NSIndexPath *testIndexPath = [NSIndexPath indexPathForRow:1 inSection:2];
+    [controller setValue:testIndexPath forKey:@"groupWithDelete"];
+    [controller setValue:mockGroupsView forKey:@"groupsView"];
+    
+    {
+        id mockGestureRecognizer = OCMClassMock([UIGestureRecognizer class]);
+        [[[mockGestureRecognizer stub] andReturnValue:OCMOCK_VALUE(UIGestureRecognizerStateBegan)] state];
+        [controller performSelector:@selector(swipedNotLeftCollection:) withObject:mockGestureRecognizer];
+        NSIndexPath *groupWithDelete = [controller valueForKey:@"groupWithDelete"];
+        GHAssertNotNil(groupWithDelete, @"");
+        GHAssertEqualObjects(groupWithDelete, testIndexPath, @"");
+        [mockGestureRecognizer stopMocking];
+    }
+    
+    {
+        id mockGestureRecognizer = OCMClassMock([UIGestureRecognizer class]);
+        [[[mockGestureRecognizer stub] andReturnValue:OCMOCK_VALUE(UIGestureRecognizerStateEnded)] state];
+        [controller performSelector:@selector(swipedNotLeftCollection:) withObject:mockGestureRecognizer];
+        NSIndexPath *groupWithDelete = [controller valueForKey:@"groupWithDelete"];
+        GHAssertNil(groupWithDelete, @"");
+        [mockGestureRecognizer stopMocking];
+    }
+    
+    [controller setValue:originalGroupsView forKey:@"groupsView"];
+    [mockGroupsView stopMocking];
+    [mockGroupCell stopMocking];
+}
+
+
+- (void)test011_PrintJobHistory_RemoveDelete
+{
+    
+    NSIndexPath *testIndexPath = [NSIndexPath indexPathForRow:1 inSection:2];
+    [controller setValue:testIndexPath forKey:@"groupWithDelete"];
+    UICollectionView *originalGroupsView = [controller groupsView];
+
+    //remove delete NO
+    id mockGroupCell = OCMClassMock([PrintJobHistoryGroupCell class]);
+    [[[mockGroupCell stub] andReturnValue:OCMOCK_VALUE(NO)] removeDeleteButton];
+    
+    id mockGroupsView = OCMPartialMock([controller groupsView]);
+    [[[mockGroupsView stub] andReturn:mockGroupCell] cellForItemAtIndexPath:[OCMArg any]];
+    [controller setValue:mockGroupsView forKey:@"groupsView"];
+    
+    [controller performSelector:@selector(removeDeleteButton) withObject:nil];
+    
+    NSIndexPath *groupWithDelete = [controller valueForKey:@"groupWithDelete"];
+    GHAssertNotNil(groupWithDelete, @"");
+    GHAssertEqualObjects(groupWithDelete, testIndexPath, @"");
+    
+    [mockGroupsView stopMocking];
+    [mockGroupCell stopMocking];
+    
+    //remove delete YES
+    mockGroupCell = OCMClassMock([PrintJobHistoryGroupCell class]);
+    [[[mockGroupCell stub] andReturnValue:OCMOCK_VALUE(YES)] removeDeleteButton];
+    
+    mockGroupsView = OCMPartialMock([controller groupsView]);
+    [[[mockGroupsView stub] andReturn:mockGroupCell] cellForItemAtIndexPath:[OCMArg any]];
+    [controller setValue:mockGroupsView forKey:@"groupsView"];
+    
+    [controller performSelector:@selector(removeDeleteButton) withObject:nil];
+    
+    groupWithDelete = [controller valueForKey:@"groupWithDelete"];
+    GHAssertNil(groupWithDelete, @"");
+    GHAssertNotEqualObjects(groupWithDelete, testIndexPath, @"");
+    
+    [controller setValue:originalGroupsView forKey:@"groupsView"];
+    [mockGroupsView stopMocking];
+    [mockGroupCell stopMocking];
+    
+}
+
+
 #pragma mark - PrintJobHistoryGroupCellDelegate Methods
 
 - (BOOL)shouldHighlightGroupHeader
@@ -442,6 +614,7 @@ const NSUInteger TEST_NUM_JOBS[TEST_NUM_PRINTERS] = {8, 5, 10, 1, 4, 6, 3, 7};
     return YES;
 }
 
+#pragma mark - Test Data preparation
 
 -(void)prepareTestData
 {
@@ -473,6 +646,5 @@ const NSUInteger TEST_NUM_JOBS[TEST_NUM_PRINTERS] = {8, 5, 10, 1, 4, 6, 3, 7};
         [mockListPrintJobHistoryGroup addObject:group];
     }
 }
-
 
 @end

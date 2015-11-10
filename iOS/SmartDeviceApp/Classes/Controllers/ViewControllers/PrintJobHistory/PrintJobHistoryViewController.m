@@ -569,8 +569,10 @@
 {
     // method will only be called when gestureRecognizerShouldBegin returns YES,
     // which will only happen when there is a delete button to be cancelled
-    
-    [self removeDeleteButton];
+    if(gestureRecognizer.state == UIGestureRecognizerStateEnded)
+    {
+        [self removeDeleteButton];
+    }
 }
 
 #pragma mark - Utilities
@@ -583,8 +585,10 @@
     
     PrintJobHistoryGroupCell* groupCell = (PrintJobHistoryGroupCell*)[self.groupsView
                                                                       cellForItemAtIndexPath:self.groupWithDelete];
-    [groupCell removeDeleteButton];
-    self.groupWithDelete = nil;
+    if([groupCell removeDeleteButton] == YES)
+    {
+        self.groupWithDelete = nil;
+    }
 }
 
 - (void)findGroupWithTag:(NSInteger)tag outIndex:(NSInteger*)index outGroup:(PrintJobHistoryGroup**)group

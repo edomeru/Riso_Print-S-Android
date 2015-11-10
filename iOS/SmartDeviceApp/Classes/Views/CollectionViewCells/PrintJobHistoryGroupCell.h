@@ -124,7 +124,7 @@
 /**
  * Removes an existing "DELETE" button from its items.
  */
-- (void)removeDeleteButton;
+- (BOOL)removeDeleteButton;
 
 /**
  * Forces the cell to update its current layout and views.
