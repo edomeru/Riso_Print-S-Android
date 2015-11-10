@@ -359,6 +359,7 @@
 		6666D5751BE3147600D93CEE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232B1900D69A00301D1E /* Main.storyboard */; };
 		6666D5761BE3147600D93CEE /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232F1900F86A00301D1E /* printsettings.xml */; };
 		66C5194E1BE760A600C05AB4 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */; };
+		66CABAE71BF9C85300B35BD3 /* PrintJobHistoryLayoutTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CABAE51BF9C7EE00B35BD3 /* PrintJobHistoryLayoutTest.m */; };
 		66FA3DBF1BE8CD4800023A87 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66FA3DBD1BE8CD0A00023A87 /* SystemConfiguration.framework */; };
 		66FA3DC01BE8CD5400023A87 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		66FA3DC11BE8CDAC00023A87 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
@@ -826,6 +827,7 @@
 		6603A7691BE1F34800DBD0F0 /* TestAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAppDelegate.h; sourceTree = "<group>"; };
 		6603A76A1BE1F34800DBD0F0 /* TestAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAppDelegate.m; sourceTree = "<group>"; };
 		664F90951BEB29D800EF5F10 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		66CABAE51BF9C7EE00B35BD3 /* PrintJobHistoryLayoutTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryLayoutTest.m; sourceTree = "<group>"; };
 		66CABAE81BF9D6BA00B35BD3 /* OCMFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMFunctions.h; sourceTree = "<group>"; };
 		66CABAE91BF9D6BA00B35BD3 /* OCMLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMLocation.h; sourceTree = "<group>"; };
 		66CABAEA1BF9D6BA00B35BD3 /* OCMMacroState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMMacroState.h; sourceTree = "<group>"; };
@@ -1544,6 +1546,7 @@
 		6603A6D41BE1F34800DBD0F0 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				66CABAE41BF9C7A400B35BD3 /* Layouts */,
 				6603A6D51BE1F34800DBD0F0 /* ViewControllers */,
 			);
 			path = Controllers;
@@ -1885,6 +1888,14 @@
 				6603A7641BE1F34800DBD0F0 /* TestPDF_3Pages_Pass(test123-None).pdf */,
 			);
 			path = TestData;
+			sourceTree = "<group>";
+		};
+		66CABAE41BF9C7A400B35BD3 /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				66CABAE51BF9C7EE00B35BD3 /* PrintJobHistoryLayoutTest.m */,
+			);
+			path = Layouts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2330,6 +2341,7 @@
 				6603A7731BE1F34800DBD0F0 /* PrinterSearchViewControllerTest.m in Sources */,
 				6603A78E1BE1F34800DBD0F0 /* CGPDFMock.m in Sources */,
 				6603A7921BE1F34800DBD0F0 /* MenuButtonTest.m in Sources */,
+				66CABAE71BF9C85300B35BD3 /* PrintJobHistoryLayoutTest.m in Sources */,
 				6603A7751BE1F34800DBD0F0 /* PDFPageContentViewControllerTest.m in Sources */,
 				6603A7A01BE1F34800DBD0F0 /* NSManagedObject+MagicalRecord.m in Sources */,
 				6603A7A71BE1F34800DBD0F0 /* NSPersistentStore+MagicalRecord.m in Sources */,

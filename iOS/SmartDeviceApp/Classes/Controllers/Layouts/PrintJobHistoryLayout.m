@@ -233,7 +233,15 @@
         if (UIInterfaceOrientationIsLandscape(orientation))
         {
             CGRect screenRect = [[UIScreen mainScreen] bounds];
-            self.groupWidth = screenRect.size.height;
+            //For landscape phone, always set width to the size of the longer side
+            if (screenRect.size.height > screenRect.size.width)
+            {
+                self.groupWidth = screenRect.size.height;
+            }
+            else
+            {
+                self.groupWidth = screenRect.size.width;
+            }
             
             self.interGroupSpacingY = 2.0f;
             self.interGroupSpacingX = 0.0f;
