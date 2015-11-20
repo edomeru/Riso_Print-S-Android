@@ -360,6 +360,8 @@
 		6666D5761BE3147600D93CEE /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232F1900F86A00301D1E /* printsettings.xml */; };
 		66C5194E1BE760A600C05AB4 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */; };
 		66CABAE71BF9C85300B35BD3 /* PrintJobHistoryLayoutTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CABAE51BF9C7EE00B35BD3 /* PrintJobHistoryLayoutTest.m */; };
+		66D381301BFEE5FB00166215 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEEA18E2EF9600085F27 /* AppDelegate.m */; };
+		66D381331BFEE66E00166215 /* AppDelegateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 66D381321BFEE66E00166215 /* AppDelegateTest.m */; };
 		66FA3DBF1BE8CD4800023A87 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66FA3DBD1BE8CD0A00023A87 /* SystemConfiguration.framework */; };
 		66FA3DC01BE8CD5400023A87 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC02185FDD2100810455 /* Foundation.framework */; };
 		66FA3DC11BE8CDAC00023A87 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC8A185FE64A00810455 /* QuartzCore.framework */; };
@@ -833,6 +835,7 @@
 		66CABAEA1BF9D6BA00B35BD3 /* OCMMacroState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMMacroState.h; sourceTree = "<group>"; };
 		66CABAEB1BF9D6BA00B35BD3 /* OCMRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMRecorder.h; sourceTree = "<group>"; };
 		66CABAEC1BF9D6BA00B35BD3 /* OCMStubRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMStubRecorder.h; sourceTree = "<group>"; };
+		66D381321BFEE66E00166215 /* AppDelegateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegateTest.m; sourceTree = "<group>"; };
 		66FA3DBD1BE8CD0A00023A87 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		66FA3DC21BE8CE0F00023A87 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		94D0C05C1A89AF3A00451EFD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/license.html; sourceTree = "<group>"; };
@@ -1546,6 +1549,7 @@
 		6603A6D41BE1F34800DBD0F0 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				66D381311BFEE65300166215 /* AppLauncher */,
 				66CABAE41BF9C7A400B35BD3 /* Layouts */,
 				6603A6D51BE1F34800DBD0F0 /* ViewControllers */,
 			);
@@ -1898,6 +1902,14 @@
 			path = Layouts;
 			sourceTree = "<group>";
 		};
+		66D381311BFEE65300166215 /* AppLauncher */ = {
+			isa = PBXGroup;
+			children = (
+				66D381321BFEE66E00166215 /* AppDelegateTest.m */,
+			);
+			path = AppLauncher;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2205,6 +2217,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66D381301BFEE5FB00166215 /* AppDelegate.m in Sources */,
 				6603A7BC1BE1F7A900DBD0F0 /* Printer+Log.m in Sources */,
 				6603A7BD1BE1F7A900DBD0F0 /* PrintJob+Log.m in Sources */,
 				6603A7BE1BE1F7A900DBD0F0 /* PrintSetting+Log.m in Sources */,
@@ -2220,6 +2233,7 @@
 				6603A7C81BE1F7A900DBD0F0 /* PrintJobHistoryGroupCell.m in Sources */,
 				6603A7C91BE1F7A900DBD0F0 /* UIView+Localization.m in Sources */,
 				6603A7CA1BE1F7A900DBD0F0 /* PrinterCell.m in Sources */,
+				66D381331BFEE66E00166215 /* AppDelegateTest.m in Sources */,
 				6603A7CB1BE1F7A900DBD0F0 /* PrintJobItemCell.m in Sources */,
 				6603A7CC1BE1F7A900DBD0F0 /* PrintSettingsHeaderCell.m in Sources */,
 				6603A7CD1BE1F7A900DBD0F0 /* PrintSettingsItemInputCell.m in Sources */,
