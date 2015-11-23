@@ -8,14 +8,6 @@
 # Java class files
 *.class
 
-# generated files
-bin/
-gen/
-
-# Ignore gradle files
-.gradle/
-build/
-
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -25,10 +17,13 @@ proguard/
 # NDK
 obj/
 
-# Eclipse project settings
-.cproject
-.project
-
 # doxygen generated
 doc/
 *.doxyfile
+
+# Ignore Android Studio Files
+.gradle
+.idea/workspace.xml
+.idea/libraries/
+.DS_Store
+build/
