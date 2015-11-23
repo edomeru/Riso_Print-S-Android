@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "jp.co.riso.smartprint"
+        minSdkVersion 14
+        targetSdkVersion 19
+        versionCode 1000703
+        versionName "v1.0.7.3"
+
+        testApplicationId "jp.co.riso.smartprint.test"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+    sourceSets.main {
+        jniLibs.srcDir 'src/main/libs'
+        jni.srcDirs = [] //disable automatic ndk-build call
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:19.1.0'
+    compile files('libs/com.radaee.pdfex_view.jar')
+    androidTestCompile files('libs/the-missing-android-xml-junit-test-runner-release-1.3_2.jar')
+}
+
+// Returns NDK build command based on development OS
+import org.apache.tools.ant.taskdefs.condition.Os
+def getNdkBuildCmd() {
+    def ndkDir = plugins.getPlugin('com.android.application').sdkHandler.getNdkFolder()
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        return "${ndkDir}${File.separator}ndk-build.cmd"
+    } else {
+        return "${ndkDir}${File.separator}ndk-build"
+    }
+}
+
+// Temporary NDK build task until full support is added by Google.
+task ndkBuild(type: Exec) {
+    commandLine getNdkBuildCmd(), '-C', file('src/main/jni').absolutePath
+}
+
+task ndkClean(type: Exec) {
+    commandLine getNdkBuildCmd(), '-C', file('src/main/jni').absolutePath, 'clean'
+}
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn ndkBuild
+}
+
+clean.dependsOn ndkClean
+
