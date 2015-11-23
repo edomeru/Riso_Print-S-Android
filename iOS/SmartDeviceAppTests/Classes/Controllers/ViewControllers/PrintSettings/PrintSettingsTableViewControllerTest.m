@@ -21,6 +21,7 @@
 #import "Printer.h"
 #import "PrintPreviewHelper.h"
 #import "PrintSettingsHelper.h"
+#import "OCMock.h"
 
 #define PRINTER_HEADER_CELL_ID @"PrinterHeaderCell"
 #define PRINTER_ITEM_CELL_ID @"PrinterItemCell"
@@ -51,7 +52,9 @@
 - (BOOL)isSettingEnabled:(NSString*)settingKey;
 - (BOOL)isSettingApplicable:(NSString*)settingKey;
 - (BOOL)isSettingSupported:(NSString*)settingKey;
--(BOOL) isSettingOptionSupported:(NSString *) option;
+- (BOOL)isSettingOptionSupported:(NSString *) option;
+- (void)fillSupportedSettings;
+- (void)reloadRowsForIndexPathsToUpdate;
 
 @end
 
@@ -746,7 +749,38 @@
     GHAssertEquals(previewSetting.punch, (NSInteger)kPunchTypeNone, @"");
 
     previewSetting.punch = kPunchType3or4Holes;
-    GHAssertEquals(previewSetting.finishingSide, (NSInteger)kFinishingSideTop, @"");}
+    GHAssertEquals(previewSetting.finishingSide, (NSInteger)kFinishingSideTop, @"");
+}
+
+-(void)test015_viewDidAppear
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    
+    id mockViewController = OCMPartialMock(viewController);
+    
+    [mockViewController setValue:[NSNumber numberWithBool:YES] forKey:@"isRedrawFullSettingsTable"];
+    
+    [[mockViewController expect] fillSupportedSettings];
+    
+    [mockViewController viewDidAppear:NO];
+    
+    BOOL isRedrawFullSettingsTable = [[mockViewController valueForKey:@"isRedrawFullSettingsTable"] boolValue];
+
+    GHAssertFalse(isRedrawFullSettingsTable, @"");
+    
+    [mockViewController verify];
+    
+    [[mockViewController expect] reloadRowsForIndexPathsToUpdate];
+    [[mockViewController reject] fillSupportedSettings];
+    
+    [mockViewController viewDidAppear:NO];
+    
+    [mockViewController verify];
+    
+    [mockViewController stopMocking];
+}
 
 
 @end
