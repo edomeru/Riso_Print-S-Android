@@ -40,22 +40,31 @@ public class DirectPrintManager {
      * @param printSetting Formatted string of the print settings.
      * @param ipAddress IP address of the printer.
      */
+    @SuppressWarnings("JniMissingFunction")
     private native void initializeDirectPrint(String userName, String jobName, String fileName, String printSetting, String ipAddress);
+
     /**
      * @brief Finalizes Direct Print.
      */
+    @SuppressWarnings("JniMissingFunction")
     private native void finalizeDirectPrint();
+
     /**
      * @brief Executes an LPR Print.
      */
+    @SuppressWarnings("JniMissingFunction")
     private native void lprPrint();
+
     /**
      * @brief Executes a RAW Print.
      */
+    @SuppressWarnings("JniMissingFunction")
     private native void rawPrint();
+
     /**
      * @brief Cancels Direct Print.
      */
+    @SuppressWarnings("JniMissingFunction")
     private native void cancel();
     
     

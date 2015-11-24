@@ -19,10 +19,15 @@ public class SNMPManager {
     public long mContext = 0;
     private WeakReference<SNMPManagerCallback> mCallbackRef = null;
     
+    @SuppressWarnings("JniMissingFunction")
     public native void initializeSNMPManager();
+    @SuppressWarnings("JniMissingFunction")
     public native void finalizeSNMPManager();
+    @SuppressWarnings("JniMissingFunction")
     public native void deviceDiscovery();
+    @SuppressWarnings("JniMissingFunction")
     public native void manualDiscovery(String ipAddress);
+    @SuppressWarnings("JniMissingFunction")
     public native void cancel();
     
     /// Booklet finishing capability
