@@ -16,6 +16,8 @@ import jp.co.riso.android.util.NetUtils;
  * @brief Utility class using JNI to validate IP Address. 
  */
 public class JniUtils {
+    //https://code.google.com/p/android/issues/detail?id=181918
+    @SuppressWarnings("JniMissingFunction")
     public static native String validateIp(String ipAddress);
     
     /**

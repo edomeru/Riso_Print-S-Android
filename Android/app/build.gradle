@@ -13,11 +13,15 @@ android {
 
         testApplicationId "jp.co.riso.smartprint.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
+
+        ndk {
+            moduleName "common"
+        }
     }
 
     sourceSets.main {
-        jniLibs.srcDir 'src/main/libs'
         jni.srcDirs = [] //disable automatic ndk-build call
+        jniLibs.srcDir 'src/main/libs'
     }
 
     buildTypes {
