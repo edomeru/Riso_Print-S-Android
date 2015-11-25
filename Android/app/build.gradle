@@ -20,7 +20,7 @@ android {
     }
 
     sourceSets.main {
-        jni.srcDirs = [] //disable automatic ndk-build call
+        jni.srcDirs = [] //disables automatic ndk-build call in order to use custom Android.mk
         jniLibs.srcDir 'src/main/libs'
     }
 

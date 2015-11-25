@@ -9,10 +9,10 @@ import android.widget.EditText;
 public class AlphaNumericFilterTest extends  ActivityInstrumentationTestCase2<MainActivity> {
     private static final String INVALID_INPUT_TEXT = "!";
     private static final String VALID_INPUT_TEXT = "a";
-    private static final String KANJI_TEXT_ONLY = "���̌��t�͊����ł��B";
-    private static final String KANJI_WITH_NUMBERS = "���̌��t�͊����ł��B12345";
-    private static final String KANJI_WITH_LETTERS = "ABCDE���̌��t�͊����ł��B";
-    private static final String KANJI_WITH_ALPHANUM = "���̌��t12345�͊����ł��BABCDE";
+    private static final String KANJI_TEXT_ONLY = "この言葉は漢字です。";
+    private static final String KANJI_WITH_NUMBERS = "この言葉は漢字です。12345";
+    private static final String KANJI_WITH_LETTERS = "ABCDEこの言葉は漢字です。";
+    private static final String KANJI_WITH_ALPHANUM = "この言葉12345は漢字です。ABCDE";
     
     public AlphaNumericFilterTest() {
         super(MainActivity.class);
