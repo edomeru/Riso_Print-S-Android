@@ -27,6 +27,7 @@ public:
 
 #define IP_ADDRESS_LENGTH 128
 #define MIB_STRING_LENGTH 256
+#define COMMUNITY_NAME "public"
 
 typedef struct
 {
@@ -89,7 +90,7 @@ void added_callback(snmp_context *context, snmp_device *device)
 
 TEST_F(SNMPTest, ContextNew)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
 
     ASSERT_TRUE(context != 0);
     ASSERT_TRUE(context->ip_address != 0);
@@ -106,7 +107,7 @@ TEST_F(SNMPTest, ContextNew)
 
 TEST_F(SNMPTest, SetCallerData)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     
     char test_data[16];
     sprintf(test_data, "sample data");
@@ -120,7 +121,7 @@ TEST_F(SNMPTest, SetCallerData)
 
 TEST_F(SNMPTest, GetCallerData)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     
     char test_data[16];
     sprintf(test_data, "sample data");
@@ -133,7 +134,7 @@ TEST_F(SNMPTest, GetCallerData)
 
 TEST_F(SNMPTest, Cancel)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_cancel(context);
 
     ASSERT_TRUE(context->state == kSnmpStateCancelled);
@@ -192,7 +193,7 @@ extern "C" int snmp_context_get_state(snmp_context *context);
 
 TEST_F(SNMPTest, ContextGetState)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     context->state = kSnmpStateStarted;
     
     ASSERT_TRUE(snmp_context_get_state(context) == kSnmpStateStarted);
@@ -203,7 +204,7 @@ extern "C" void snmp_context_set_state(snmp_context *context, int state);
 
 TEST_F(SNMPTest, ContextSetState)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_context_set_state(context, kSnmpStateStarted);
     
     ASSERT_TRUE(context->state == kSnmpStateStarted);
@@ -214,7 +215,7 @@ extern "C" void snmp_context_device_add(snmp_context *context, snmp_device *devi
 
 TEST_F(SNMPTest, DeviceAdd_Empty)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device = snmp_device_new("192.168.1.1");
     snmp_context_device_add(context, device);
 
@@ -227,7 +228,7 @@ TEST_F(SNMPTest, DeviceAdd_Empty)
 
 TEST_F(SNMPTest, DeviceAdd_Duplicate)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device = snmp_device_new("192.168.1.1");
     snmp_device *duplicate = snmp_device_new("192.168.1.1");
     snmp_context_device_add(context, device);
@@ -242,7 +243,7 @@ TEST_F(SNMPTest, DeviceAdd_Duplicate)
 
 TEST_F(SNMPTest, DeviceAdd_Unique)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_context_device_add(context, device1);
@@ -258,7 +259,7 @@ TEST_F(SNMPTest, DeviceAdd_Unique)
 
 TEST_F(SNMPTest, DeviceAdd_Multiple)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_device *device3 = snmp_device_new("192.168.1.3");
@@ -279,7 +280,7 @@ extern "C" int snmp_context_device_find_with_ip(snmp_context *context, const cha
 
 TEST_F(SNMPTest, FindWithIP_Found)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_context_device_add(context, device1);
@@ -291,7 +292,7 @@ TEST_F(SNMPTest, FindWithIP_Found)
 
 TEST_F(SNMPTest, FindWithIP_NotFound)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_context_device_add(context, device1);
@@ -305,7 +306,7 @@ extern "C" int snmp_context_device_count(snmp_context *context);
 
 TEST_F(SNMPTest, Count)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_device *device3 = snmp_device_new("192.168.1.3");
