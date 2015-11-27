@@ -67,6 +67,14 @@
  */
 - (IBAction)printerSearchAction:(id)sender;
 
+/**
+ * Responds to pressing the search settings button in the header.
+ * Displays the "Search Settings" screen.
+ *
+ * @param sender the button object
+ */
+- (IBAction)searchSettingsAction:(id)sender;
+
 /** 
  * Reloads the displayed list of printers.
  */

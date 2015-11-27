@@ -608,7 +608,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A02-B0-54s" userLabel="iPad Button - Add">
-                                        <rect key="frame" x="520" y="8" width="32" height="32"/>
+                                        <rect key="frame" x="480" y="8" width="32" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="32" id="44m-vF-CvS"/>
                                             <constraint firstAttribute="height" constant="32" id="9Ne-SM-E0H"/>
@@ -624,7 +624,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yVZ-uL-cVj" userLabel="iPad Button - Search">
-                                        <rect key="frame" x="560" y="8" width="32" height="32"/>
+                                        <rect key="frame" x="520" y="8" width="32" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="32" id="GIb-HG-IEq"/>
                                             <constraint firstAttribute="width" constant="32" id="ZWR-SJ-Y8b"/>
@@ -639,8 +639,24 @@
                                             <action selector="printerSearchAction:" destination="ZEw-b3-LhF" eventType="touchUpInside" id="vfd-qf-Wte"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hcS-jX-i1V" userLabel="iPad Button - Search Settings">
+                                        <rect key="frame" x="560" y="8" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="32" id="KBo-WY-Sic"/>
+                                            <constraint firstAttribute="width" constant="32" id="R3O-Xz-IzK"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="img_btn_search_settings_normal">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" image="img_btn_search_settings_pressed"/>
+                                        <state key="highlighted" image="img_btn_search_settings_pressed"/>
+                                        <connections>
+                                            <action selector="searchSettingsAction:" destination="ZEw-b3-LhF" eventType="touchUpInside" id="To7-Zh-3a2"/>
+                                        </connections>
+                                    </button>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Printers" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mqH-tq-G2Q">
-                                        <rect key="frame" x="48" y="0.0" width="464" height="48"/>
+                                        <rect key="frame" x="48" y="0.0" width="424" height="48"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="48" id="HAV-ey-TKl"/>
                                         </constraints>
@@ -656,14 +672,16 @@
                                 <constraints>
                                     <constraint firstItem="mqH-tq-G2Q" firstAttribute="leading" secondItem="b1T-z4-dco" secondAttribute="trailing" constant="8" id="2Xu-92-Yt2"/>
                                     <constraint firstItem="yVZ-uL-cVj" firstAttribute="leading" secondItem="A02-B0-54s" secondAttribute="trailing" constant="8" id="C7Y-S5-SPi"/>
+                                    <constraint firstItem="hcS-jX-i1V" firstAttribute="centerY" secondItem="Z56-E4-xom" secondAttribute="centerY" id="Ckz-eO-xL4"/>
+                                    <constraint firstAttribute="trailing" secondItem="hcS-jX-i1V" secondAttribute="trailing" constant="8" id="GZQ-dR-Kpb"/>
                                     <constraint firstAttribute="height" constant="48" id="HDD-AK-g1J"/>
                                     <constraint firstAttribute="centerY" secondItem="A02-B0-54s" secondAttribute="centerY" id="L0N-HF-DXp"/>
                                     <constraint firstAttribute="centerY" secondItem="yVZ-uL-cVj" secondAttribute="centerY" id="Sdp-NT-JWI"/>
                                     <constraint firstItem="A02-B0-54s" firstAttribute="leading" secondItem="mqH-tq-G2Q" secondAttribute="trailing" constant="8" id="TJe-C7-KVD"/>
-                                    <constraint firstAttribute="trailing" secondItem="yVZ-uL-cVj" secondAttribute="trailing" constant="8" id="VF1-Og-Iy5"/>
                                     <constraint firstAttribute="centerY" secondItem="mqH-tq-G2Q" secondAttribute="centerY" id="g02-v0-PWi"/>
                                     <constraint firstItem="b1T-z4-dco" firstAttribute="leading" secondItem="Z56-E4-xom" secondAttribute="leading" constant="8" id="kob-DH-jxV"/>
                                     <constraint firstAttribute="centerY" secondItem="b1T-z4-dco" secondAttribute="centerY" id="uPl-bP-FbG"/>
+                                    <constraint firstItem="hcS-jX-i1V" firstAttribute="leading" secondItem="yVZ-uL-cVj" secondAttribute="trailing" constant="8" id="yFg-nF-L18"/>
                                 </constraints>
                             </view>
                             <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="wgF-aL-OIc">
@@ -952,10 +970,12 @@
                         <outlet property="emptyLabel" destination="dF1-M7-1Ty" id="hN6-jB-bHc"/>
                         <outlet property="mainMenuButton" destination="b1T-z4-dco" id="U8O-rG-yKD"/>
                         <outlet property="printerSearchButton" destination="yVZ-uL-cVj" id="rCV-HV-ZSZ"/>
+                        <outlet property="searchSettingsButton" destination="hcS-jX-i1V" id="pod-mn-ld0"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintersIpad-Home" customClass="SlideSegue" id="Ysc-8g-iB4"/>
                         <segue destination="Awv-gP-Onf" kind="custom" identifier="PrintersIpad-AddPrinter" customClass="SlideSegue" id="JN0-oy-t0D"/>
                         <segue destination="vSr-S1-xXi" kind="custom" identifier="PrintersIpad-PrinterSearch" customClass="SlideSegue" id="wRN-hA-Rro"/>
                         <segue destination="g6Y-y1-ImV" kind="custom" identifier="PrintersIpad-PrintSettings" customClass="SlideSegue" id="CWW-vD-UgO"/>
+                        <segue destination="NYf-jS-nBL" kind="custom" identifier="PrintersIpad-SearchSettings" customClass="SlideSegue" id="d3g-Iy-Dmt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tCH-ks-STu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1075,6 +1095,105 @@
                 <exit id="flo-EE-x3p" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1215" y="2188"/>
+        </scene>
+        <!--Search Settings View Controller-->
+        <scene sceneID="Hpj-CP-ZW7">
+            <objects>
+                <viewController storyboardIdentifier="SearchSettingsIpadViewController" id="NYf-jS-nBL" customClass="SearchSettingsViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="g4v-6f-GGE"/>
+                        <viewControllerLayoutGuide type="bottom" id="1VG-2W-Lno"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Fzk-xQ-3yf" customClass="DefaultView">
+                        <rect key="frame" x="0.0" y="0.0" width="270" height="784"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PGB-UY-rM8" userLabel="Header">
+                                <rect key="frame" x="0.0" y="0.0" width="270" height="48"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="Search Settings" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lyg-bB-CLv">
+                                        <rect key="frame" x="16" y="0.0" width="238" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="xjN-m3-YoK"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SEARCH_SETTINGS"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="Lyg-bB-CLv" secondAttribute="centerY" id="6Yu-zs-Ttf"/>
+                                    <constraint firstItem="Lyg-bB-CLv" firstAttribute="top" secondItem="PGB-UY-rM8" secondAttribute="top" id="SHp-gU-tC3"/>
+                                    <constraint firstAttribute="height" constant="48" id="gLz-xv-Xmd"/>
+                                    <constraint firstAttribute="trailing" secondItem="Lyg-bB-CLv" secondAttribute="trailing" constant="16" id="jrc-vN-oFu"/>
+                                    <constraint firstItem="Lyg-bB-CLv" firstAttribute="leading" secondItem="PGB-UY-rM8" secondAttribute="leading" constant="16" id="ukl-1b-hxJ"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JFA-mn-x7k" userLabel="Input">
+                                <rect key="frame" x="0.0" y="48" width="270" height="736"/>
+                                <subviews>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Community Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="0MY-in-093" userLabel="iPad Community Name">
+                                        <rect key="frame" x="16" y="45" width="238" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="tgW-Fn-xft"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
+                                        <connections>
+                                            <outlet property="delegate" destination="NYf-jS-nBL" id="SWR-6A-E3n"/>
+                                        </connections>
+                                    </textField>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SNMP Community Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T2n-Vt-2Mf">
+                                        <rect key="frame" x="16" y="16" width="238" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SNMP_COMMUNITY_NAME"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="0MY-in-093" firstAttribute="top" secondItem="T2n-Vt-2Mf" secondAttribute="bottom" constant="8" id="FLc-gZ-eez"/>
+                                    <constraint firstItem="T2n-Vt-2Mf" firstAttribute="top" secondItem="JFA-mn-x7k" secondAttribute="top" constant="16" id="Jx5-py-bxR"/>
+                                    <constraint firstAttribute="trailing" secondItem="0MY-in-093" secondAttribute="trailing" constant="16" id="MHF-hd-cOy"/>
+                                    <constraint firstItem="0MY-in-093" firstAttribute="leading" secondItem="JFA-mn-x7k" secondAttribute="leading" constant="16" id="TcR-1B-HKK"/>
+                                    <constraint firstAttribute="trailing" secondItem="T2n-Vt-2Mf" secondAttribute="trailing" constant="16" id="cMh-DQ-dmt"/>
+                                    <constraint firstItem="T2n-Vt-2Mf" firstAttribute="leading" secondItem="JFA-mn-x7k" secondAttribute="leading" constant="16" id="jlg-Qm-fdh"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="PGB-UY-rM8" firstAttribute="leading" secondItem="JFA-mn-x7k" secondAttribute="leading" id="DEF-Dw-yVK"/>
+                            <constraint firstItem="PGB-UY-rM8" firstAttribute="top" secondItem="Fzk-xQ-3yf" secondAttribute="top" id="PF2-qJ-Mpg"/>
+                            <constraint firstItem="JFA-mn-x7k" firstAttribute="top" secondItem="PGB-UY-rM8" secondAttribute="bottom" id="Pg0-tC-PGB"/>
+                            <constraint firstAttribute="bottom" secondItem="JFA-mn-x7k" secondAttribute="bottom" id="TXz-Ab-MDG"/>
+                            <constraint firstAttribute="trailing" secondItem="PGB-UY-rM8" secondAttribute="trailing" id="ZpA-7p-wVI"/>
+                            <constraint firstItem="PGB-UY-rM8" firstAttribute="trailing" secondItem="JFA-mn-x7k" secondAttribute="trailing" id="eRP-Vj-XAq"/>
+                            <constraint firstItem="PGB-UY-rM8" firstAttribute="leading" secondItem="Fzk-xQ-3yf" secondAttribute="leading" id="edJ-x3-TeM"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="270" height="784"/>
+                    <connections>
+                        <outlet property="snmpCommunityName" destination="0MY-in-093" id="aZE-3G-Ixd"/>
+                        <segue destination="ogp-MS-fzA" kind="unwind" identifier="UnwindToPrintersIpad" unwindAction="unwindToPrinters:" id="g9m-jN-8q9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="YOa-UD-R7n" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="ogp-MS-fzA" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2244" y="2188"/>
         </scene>
         <!--Printer Search Table View Controller-->
         <scene sceneID="4Gj-4c-Dbw">
@@ -1935,6 +2054,123 @@
             </objects>
             <point key="canvasLocation" x="1215" y="1457"/>
         </scene>
+        <!--Search Settings View Controller-->
+        <scene sceneID="M0m-UA-wZh">
+            <objects>
+                <viewController storyboardIdentifier="SearchSettingsIphoneViewController" id="8xs-wI-cDN" customClass="SearchSettingsViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="DQ7-wy-v5d"/>
+                        <viewControllerLayoutGuide type="bottom" id="Ve6-Oe-GbU"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="R5p-HT-mHb" customClass="DefaultView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mDP-6G-QWN" userLabel="Header">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HoX-UB-3St" userLabel="iPhone Button - Back">
+                                        <rect key="frame" x="8" y="8" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="32" id="GBo-VS-Ipt"/>
+                                            <constraint firstAttribute="width" constant="32" id="JB7-Dg-Pfg"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                        <state key="normal" image="img_btn_back_normal">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" image="img_btn_back_pressed"/>
+                                        <state key="highlighted" image="img_btn_back_pressed"/>
+                                        <connections>
+                                            <action selector="onBack:" destination="8xs-wI-cDN" eventType="touchUpInside" id="20v-yF-b9r"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="Search Settings" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="os3-Am-56Y">
+                                        <rect key="frame" x="48" y="0.0" width="256" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="sMg-UR-SYh"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SEARCH_SETTINGS"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.32156862749999998" green="0.027450980390000001" blue="0.71372549019999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="JfY-4u-c4J"/>
+                                    <constraint firstAttribute="trailing" secondItem="os3-Am-56Y" secondAttribute="trailing" constant="16" id="NYj-oL-hiS"/>
+                                    <constraint firstItem="HoX-UB-3St" firstAttribute="leading" secondItem="mDP-6G-QWN" secondAttribute="leading" constant="8" id="kkU-mh-AYM"/>
+                                    <constraint firstAttribute="centerY" secondItem="os3-Am-56Y" secondAttribute="centerY" id="rsY-Mz-xie"/>
+                                    <constraint firstItem="os3-Am-56Y" firstAttribute="leading" secondItem="HoX-UB-3St" secondAttribute="trailing" constant="8" id="vek-mb-jrX"/>
+                                    <constraint firstAttribute="centerY" secondItem="HoX-UB-3St" secondAttribute="centerY" id="x0y-oV-KAl"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9z2-wx-0z6" userLabel="Input">
+                                <rect key="frame" x="0.0" y="48" width="320" height="500"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SNMP Community Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="unI-wB-3YS">
+                                        <rect key="frame" x="16" y="16" width="288" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SNMP_COMMUNITY_NAME"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Community Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="TNO-HH-JB3" userLabel="iPad Community Name">
+                                        <rect key="frame" x="16" y="45" width="288" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="Kct-hS-Ec4"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
+                                        <connections>
+                                            <outlet property="delegate" destination="8xs-wI-cDN" id="WrF-rU-GHM"/>
+                                        </connections>
+                                    </textField>
+                                </subviews>
+                                <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="TNO-HH-JB3" firstAttribute="top" secondItem="unI-wB-3YS" secondAttribute="bottom" constant="8" id="52A-oh-mIJ"/>
+                                    <constraint firstItem="unI-wB-3YS" firstAttribute="leading" secondItem="9z2-wx-0z6" secondAttribute="leading" constant="16" id="H6r-Yc-hIB"/>
+                                    <constraint firstAttribute="trailing" secondItem="unI-wB-3YS" secondAttribute="trailing" constant="16" id="Nkh-78-qWf"/>
+                                    <constraint firstAttribute="width" constant="320" id="b0i-FX-rTH"/>
+                                    <constraint firstItem="unI-wB-3YS" firstAttribute="top" secondItem="9z2-wx-0z6" secondAttribute="top" constant="16" id="cLX-Dc-i32"/>
+                                    <constraint firstAttribute="trailing" secondItem="TNO-HH-JB3" secondAttribute="trailing" constant="16" id="nIP-qZ-8ap"/>
+                                    <constraint firstItem="TNO-HH-JB3" firstAttribute="leading" secondItem="9z2-wx-0z6" secondAttribute="leading" constant="16" id="sZU-er-y7s"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.80392156859999997" green="0.80392156859999997" blue="0.80392156859999997" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="centerX" secondItem="9z2-wx-0z6" secondAttribute="centerX" id="1TF-V9-rRy"/>
+                            <constraint firstAttribute="trailing" secondItem="mDP-6G-QWN" secondAttribute="trailing" id="Dbl-Sk-H3D"/>
+                            <constraint firstItem="mDP-6G-QWN" firstAttribute="top" secondItem="R5p-HT-mHb" secondAttribute="top" id="Pu7-c9-iNT"/>
+                            <constraint firstItem="9z2-wx-0z6" firstAttribute="top" secondItem="mDP-6G-QWN" secondAttribute="bottom" id="eRB-SE-ZZT"/>
+                            <constraint firstAttribute="bottom" secondItem="9z2-wx-0z6" secondAttribute="bottom" id="lad-to-FIq"/>
+                            <constraint firstItem="mDP-6G-QWN" firstAttribute="leading" secondItem="R5p-HT-mHb" secondAttribute="leading" id="wmg-iJ-4uq"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="548"/>
+                    <connections>
+                        <outlet property="snmpCommunityName" destination="TNO-HH-JB3" id="DAR-Ti-dYN"/>
+                        <segue destination="HnC-9P-KC3" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindToPrinters:" id="FQ6-cv-X2V"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uis-pF-tR8" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="HnC-9P-KC3" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2230" y="1465"/>
+        </scene>
         <!--Root View Controller-->
         <scene sceneID="90o-YW-6Lp">
             <objects>
@@ -2630,7 +2866,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vao-bW-C6W" userLabel="iPhone Button - Add">
-                                        <rect key="frame" x="240" y="8" width="32" height="32"/>
+                                        <rect key="frame" x="200" y="8" width="32" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="32" id="awG-VH-lKF"/>
                                             <constraint firstAttribute="width" constant="32" id="uRH-IA-xuT"/>
@@ -2645,7 +2881,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6QJ-AC-XQW" userLabel="iPhone Button - Search">
-                                        <rect key="frame" x="280" y="8" width="32" height="32"/>
+                                        <rect key="frame" x="240" y="8" width="32" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="32" id="bNg-ul-nWt"/>
                                             <constraint firstAttribute="height" constant="32" id="vBe-FU-bKT"/>
@@ -2660,7 +2896,7 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Printers" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="80b-G1-gwP">
-                                        <rect key="frame" x="48" y="0.0" width="184" height="48"/>
+                                        <rect key="frame" x="48" y="0.0" width="144" height="48"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="48" id="s9h-cp-1Le"/>
                                         </constraints>
@@ -2671,16 +2907,33 @@
                                             <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_PRINTERS"/>
                                         </userDefinedRuntimeAttributes>
                                     </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zgl-W3-LxE" userLabel="iPhone Button - Search Settings">
+                                        <rect key="frame" x="280" y="8" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="32" id="Ot6-uW-K6N"/>
+                                            <constraint firstAttribute="height" constant="32" id="rpg-8F-pBj"/>
+                                        </constraints>
+                                        <state key="normal" image="img_btn_search_settings_normal">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" image="img_btn_search_settings_pressed"/>
+                                        <state key="highlighted" image="img_btn_search_settings_pressed"/>
+                                        <connections>
+                                            <action selector="searchSettingsAction:" destination="jTA-Cg-WoR" eventType="touchUpInside" id="3tf-gg-BYZ"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.52156862749999999" green="0.25490196079999999" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="centerY" secondItem="vao-bW-C6W" secondAttribute="centerY" id="BMI-Y2-zjk"/>
                                     <constraint firstAttribute="height" constant="48" id="Rrp-II-0qt"/>
+                                    <constraint firstAttribute="trailing" secondItem="zgl-W3-LxE" secondAttribute="trailing" constant="8" id="T5u-Uv-Yxq"/>
                                     <constraint firstItem="80b-G1-gwP" firstAttribute="leading" secondItem="YCg-wj-kPh" secondAttribute="trailing" constant="8" id="YSt-Yv-F7m"/>
                                     <constraint firstItem="YCg-wj-kPh" firstAttribute="leading" secondItem="47V-gy-9c1" secondAttribute="leading" constant="8" id="ZZI-7c-RHs"/>
-                                    <constraint firstAttribute="trailing" secondItem="6QJ-AC-XQW" secondAttribute="trailing" constant="8" id="dau-FF-nKn"/>
+                                    <constraint firstItem="zgl-W3-LxE" firstAttribute="centerY" secondItem="47V-gy-9c1" secondAttribute="centerY" id="fzU-MW-IzJ"/>
                                     <constraint firstItem="6QJ-AC-XQW" firstAttribute="leading" secondItem="vao-bW-C6W" secondAttribute="trailing" constant="8" id="gym-kw-VX1"/>
                                     <constraint firstItem="vao-bW-C6W" firstAttribute="leading" secondItem="80b-G1-gwP" secondAttribute="trailing" constant="8" id="heb-i9-kf0"/>
+                                    <constraint firstItem="zgl-W3-LxE" firstAttribute="leading" secondItem="6QJ-AC-XQW" secondAttribute="trailing" constant="8" id="khb-4c-xtJ"/>
                                     <constraint firstAttribute="centerY" secondItem="6QJ-AC-XQW" secondAttribute="centerY" id="lbq-X1-S8b"/>
                                     <constraint firstAttribute="centerY" secondItem="80b-G1-gwP" secondAttribute="centerY" id="sy0-o2-hql"/>
                                     <constraint firstAttribute="centerY" secondItem="YCg-wj-kPh" secondAttribute="centerY" id="xt5-kV-JhQ"/>
@@ -2829,12 +3082,14 @@
                         <outlet property="emptyLabel" destination="dOk-xR-7Ro" id="KJp-ar-g7e"/>
                         <outlet property="mainMenuButton" destination="YCg-wj-kPh" id="5je-mE-eIN"/>
                         <outlet property="printerSearchButton" destination="6QJ-AC-XQW" id="zzR-e2-EQL"/>
+                        <outlet property="searchSettingsButton" destination="zgl-W3-LxE" id="POY-5T-E0R"/>
                         <outlet property="tableView" destination="3lb-qN-g3W" id="h2x-FI-wZe"/>
                         <segue destination="vvM-i0-l3B" kind="custom" identifier="PrintersIphone-AddPrinter" customClass="SlideOverSegue" id="swm-QD-T01"/>
                         <segue destination="RaD-uj-jjo" kind="custom" identifier="PrintersIphone-PrinterSearch" customClass="SlideOverSegue" id="lfU-nP-RfT"/>
                         <segue destination="v0J-sN-35H" kind="custom" identifier="PrintersIphone-Home" customClass="SlideSegue" id="suq-fU-kcs"/>
                         <segue destination="qXF-RA-AFJ" kind="custom" identifier="PrintersIphone-PrinterInfo" customClass="SlideOverSegue" id="nJs-JD-TzO"/>
                         <segue destination="g6Y-y1-ImV" kind="custom" identifier="PrintersIphone-PrintSettings" customClass="SlideSegue" id="JPo-5o-n9C"/>
+                        <segue destination="8xs-wI-cDN" kind="custom" identifier="PrintersIphone-SearchSettings" customClass="SlideOverSegue" id="ZCd-lK-Mqz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7EE-4m-YZw" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -3655,6 +3910,8 @@
         <image name="img_btn_search_printer_normal" width="64" height="64"/>
         <image name="img_btn_search_printer_plus" width="25" height="25"/>
         <image name="img_btn_search_printer_pressed" width="64" height="64"/>
+        <image name="img_btn_search_settings_normal" width="64" height="64"/>
+        <image name="img_btn_search_settings_pressed" width="64" height="64"/>
         <image name="img_btn_submenu" width="64" height="64"/>
         <image name="img_home_icon" width="160" height="20"/>
     </resources>
@@ -3664,9 +3921,8 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="JPo-5o-n9C"/>
         <segue reference="suq-fU-kcs"/>
-        <segue reference="h8r-TR-IcV"/>
+        <segue reference="JPo-5o-n9C"/>
         <segue reference="scK-T0-ew0"/>
         <segue reference="eWD-cA-0HX"/>
     </inferredMetricsTieBreakers>

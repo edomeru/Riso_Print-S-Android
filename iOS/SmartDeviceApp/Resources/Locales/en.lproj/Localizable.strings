@@ -17,6 +17,7 @@
 "IDS_LBL_SETTINGS" = "Settings";
 "IDS_LBL_ADD_PRINTER" = "Add";
 "IDS_LBL_SEARCH_PRINTERS" = "Search";
+"IDS_LBL_SEARCH_SETTINGS" = "Search Settings";
 "IDS_LBL_SET_DEFAULT_PRINTER" = "Set as Default Printer";
 "IDS_LBL_DELETE_ALL" = "Delete All";
 "IDS_LBL_PRINTER_INFO" = "Printer Info";
@@ -154,4 +155,5 @@
 "IDS_LBL_PAPERSIZE_8K" = "8K";
 "IDS_LBL_PAPERSIZE_16K" = "16K";
 "IDS_LBL_PAPERSIZE_LEGAL14" = "Legal 8.5x14";
+"IDS_LBL_SNMP_COMMUNITY_NAME" = "SNMP Community Name";
 
