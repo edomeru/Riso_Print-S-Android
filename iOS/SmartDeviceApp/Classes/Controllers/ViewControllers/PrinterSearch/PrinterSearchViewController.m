@@ -13,6 +13,7 @@
 #import "AlertHelper.h"
 #import "UIColor+Theme.h"
 #import "SearchingIndicator.h"
+#import "AppSettingsHelper.h"
 
 #define SEGUE_IPHONE_TO_SEARCH_TABLE    @"PrinterSearchIphone-PrinterSearchTable"
 #define SEGUE_IPAD_TO_SEARCH_TABLE      @"PrinterSearchIpad-PrinterSearchTable"
@@ -111,6 +112,11 @@
  * Reference to the "No Printers Found" label that is displayed if there are no printers. 
  */
 @property (weak, nonatomic) IBOutlet UILabel *emptyLabel;
+
+/**
+ * Reference to the text display for the SNMP Community Name.
+ */
+@property (weak, nonatomic) IBOutlet UITextField *communityNameDisplay;
 
 #pragma mark - Internal Methods
 
@@ -267,6 +273,8 @@
     
     self.hasAddedPrinters = NO;
     self.isSearching = NO;
+    self.communityNameDisplay.text = [AppSettingsHelper getSNMPCommunityName];
+    
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         self.isIpad = YES;
     else

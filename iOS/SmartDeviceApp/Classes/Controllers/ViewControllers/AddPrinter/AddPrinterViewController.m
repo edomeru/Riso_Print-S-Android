@@ -12,6 +12,7 @@
 #import "NetworkManager.h"
 #import "AlertHelper.h"
 #import "InputHelper.h"
+#import "AppSettingsHelper.h"
 
 NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 
@@ -41,6 +42,11 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
  * Reference to the textfield for the IP address.
  */
 @property (weak, nonatomic) IBOutlet UITextField *textIP;
+
+/**
+ * Reference to the text display for the SNMP Community Name.
+ */
+@property (weak, nonatomic) IBOutlet UITextField *communityNameDisplay;
 
 /** 
  * Reference to the save (+) button.
@@ -164,6 +170,8 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     [self.saveButton setHidden:NO];
     [self.textIP setEnabled:YES];
     [self.textIP setPlaceholder:NSLocalizedString(IDS_LBL_IP_ADDRESS, @"")];
+    
+    self.communityNameDisplay.text = [AppSettingsHelper getSNMPCommunityName];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         self.isIpad = YES;
