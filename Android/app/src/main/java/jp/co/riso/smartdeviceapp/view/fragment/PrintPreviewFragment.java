@@ -8,9 +8,35 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import android.Manifest;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Handler.Callback;
+import android.os.Message;
+import android.support.v4.content.ContextCompat;
+import android.util.LruCache;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+
+import com.radaee.pdf.Global;
+
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import jp.co.riso.android.dialog.ConfirmDialogFragment;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
@@ -28,24 +54,6 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.preview.PreviewControlsListener;
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView;
 import jp.co.riso.smartprint.R;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.ContentResolver;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Handler.Callback;
-import android.os.Message;
-import android.util.LruCache;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
 
 /**
  * @class PrintPreviewFragment
@@ -53,7 +61,7 @@ import android.widget.TextView;
  * @brief Fragment which contains the Print Preview Screen
  */
 public class PrintPreviewFragment extends BaseFragment implements Callback, PDFFileManagerInterface,
-        PreviewControlsListener, OnSeekBarChangeListener, PauseableHandlerCallback {
+        PreviewControlsListener, OnSeekBarChangeListener, PauseableHandlerCallback, ConfirmDialogFragment.ConfirmDialogListener {
 
     /// Tag used to identify the error dialog
     public static final String FRAGMENT_TAG_DIALOG = "pdf_error_dialog";
@@ -68,7 +76,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     /// Tag used to identify the dialog message
     private static final String TAG_MESSAGE_DIALOG = "dialog_message";
-    
+
+    public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    private static final String TAG_PERMISSION_DIALOG = "external_storage_tag";
+
     private PDFFileManager mPdfManager = null;
     
     private int mPrinterId = PrinterManager.EMPTY_ID;
@@ -108,38 +119,36 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         // Initialize PDF File Manager if it has not been previously initialized yet
         if (mPdfManager == null) {
-            Uri data = null;
 
-            data = getActivity().getIntent().getData();
-            
             mPdfManager = new PDFFileManager(this);
-            
-            String pdfInSandbox = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
-            if (pdfInSandbox != null) {
-                mPdfManager.setSandboxPDF();
-                
-                // Automatically open asynchronously
-                mPdfManager.initializeAsync(null);
-            } else if (data != null) {
-                if (data.getScheme().equals("file")){
-                    mPdfManager.setPDF(data.getPath());
-                    // Automatically open asynchronously
-                    mPdfManager.initializeAsync(null);
+
+            if (hasPdfFile()) { // if has PDF to open, check permission
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                == PackageManager.PERMISSION_GRANTED) {
+                    initializePdfManagerAndRunAsync();
                 } else {
-                    //resolve content
-                    ContentResolver c = this.getActivity().getContentResolver();
-                    mPdfManager.setPDF(null);
-                    // Automatically open asynchronously
-                    try {
-                        mPdfManager.initializeAsync(c.openInputStream(data));
-                    } catch (FileNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        // Display an explanation to the user that the permission is needed
+                        final String message = getContext().getString(R.string.ids_lbl_storage_permission);
+                        final String positiveButton = getContext().getString(R.string.ids_lbl_ok);
+                        final String negativeButton = getContext().getString(R.string.ids_lbl_cancel);
+                        new Handler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ConfirmDialogFragment dialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, negativeButton);
+                                dialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
+                                DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, dialogFragment);
+                            }
+                        });
+                    } else {
+                        // Request the permission, no explanation needed
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                PrintPreviewFragment.REQUEST_WRITE_EXTERNAL_STORAGE);
                     }
-                }                
+                }
             }
         }
-        
+
         if (mPrinterId == PrinterManager.EMPTY_ID) {
             mPrinterId = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getDefaultPrinter();
             
@@ -170,7 +179,51 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mCurrentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0);
         }
     }
-    
+
+    /**
+     * @brief Checks if there is a PDF file for display
+     *
+     * @return true if there is a PDF in sandbox or from open-in
+     * @return false if app is opened without PDF to be displayed
+     */
+    private boolean hasPdfFile() {
+        Intent intent = getActivity().getIntent();
+        boolean isOpenIn = (intent != null && intent.getData() != null);
+        boolean isInSandbox = (PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext()) != null);
+        return (isInSandbox || isOpenIn);
+    }
+
+    /**
+     * @brief Initializes the PDF Manager and runs the PDF task asynchronously
+     */
+    private void initializePdfManagerAndRunAsync() {
+        ((MainActivity) getActivity()).initializeRadaee();
+        Uri data = getActivity().getIntent().getData();
+        String pdfInSandbox = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
+        if (pdfInSandbox != null) {
+            mPdfManager.setSandboxPDF();
+            // Automatically open asynchronously
+            mPdfManager.initializeAsync(null);
+        } else if (data != null) {
+            if (data.getScheme().equals("file")) {
+                mPdfManager.setPDF(data.getPath());
+                // Automatically open asynchronously
+                mPdfManager.initializeAsync(null);
+            } else {
+                //resolve content
+                ContentResolver c = this.getActivity().getContentResolver();
+                mPdfManager.setPDF(null);
+                // Automatically open asynchronously
+                try {
+                    mPdfManager.initializeAsync(c.openInputStream(data));
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         
@@ -193,6 +246,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         if (mCurrentPage != 0) {
             mPrintPreviewView.setCurrentPage(mCurrentPage);
         }
+
         if (mPdfManager.isInitialized()) {
             mPrintPreviewView.refreshView();
             setTitle(view, mPdfManager.getFileName());
@@ -200,14 +254,14 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         
         mOpenInView = view.findViewById(R.id.openInView);
         mProgressBar = (ProgressBar) view.findViewById(R.id.pdfLoadIndicator);
-        
+
         mProgressBar.setVisibility(View.GONE);
-        
+
         setPrintPreviewViewDisplayed(view, mPdfManager.getFileName() != null);
-        
+
         Message newMessage = Message.obtain(mHandler, 0);
         newMessage.arg1 = mPrintPreviewView.getVisibility();
-        
+
         mPrintPreviewView.setVisibility(View.GONE);
         mHandler.sendMessage(newMessage);
     }
@@ -661,5 +715,30 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 activity.openDrawer(Gravity.LEFT);
                 break;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_WRITE_EXTERNAL_STORAGE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, run PDF initializations
+                    initializePdfManagerAndRunAsync();
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void onConfirm() {
+        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                PrintPreviewFragment.REQUEST_WRITE_EXTERNAL_STORAGE);
+    }
+
+    @Override
+    public void onCancel() {
+
     }
 }
