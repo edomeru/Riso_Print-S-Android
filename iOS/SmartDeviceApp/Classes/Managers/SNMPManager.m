@@ -11,6 +11,7 @@
 #import "PrinterDetails.h"
 #import "NotificationNames.h"
 #import "common.h" 
+#import "AppSettingsHelper.h"
 
 #define BROADCAST_ADDRESS @"255.255.255.255"
 
@@ -92,7 +93,8 @@ static SNMPManager* sharedSNMPManager = nil;
 - (void)searchForPrinter:(NSString*)printerIP;
 {
 #if !DEBUG_SNMP_USE_FAKE_PRINTERS
-    snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback);
+    const char *community_name = [[AppSettingsHelper getSNMPCommunityName] cStringUsingEncoding:[NSString defaultCStringEncoding]];
+    snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback, community_name);
     snmp_manual_discovery(snmpContext, [printerIP UTF8String]);
 #else
     // "Fake" SNMP
@@ -126,7 +128,8 @@ static SNMPManager* sharedSNMPManager = nil;
 - (void)searchForAvailablePrinters
 {
 #if !DEBUG_SNMP_USE_FAKE_PRINTERS
-    snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback);
+    const char *community_name = [[AppSettingsHelper getSNMPCommunityName] cStringUsingEncoding:[NSString defaultCStringEncoding]];
+    snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback, community_name);
     snmp_device_discovery(snmpContext);
 #else
     [NSThread sleepForTimeInterval:1];
