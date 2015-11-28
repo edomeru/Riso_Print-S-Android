@@ -8,6 +8,27 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Message;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.radaee.pdf.Global;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -24,23 +45,6 @@ import jp.co.riso.smartdeviceapp.view.fragment.LegalFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
 import jp.co.riso.smartprint.R;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Message;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.radaee.pdf.Global;
 
 /**
  * @class MainActivity
@@ -69,7 +73,8 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     private boolean mResizeView = false;
     
     private PauseableHandler mHandler = null;
-    
+    private volatile boolean isRadaeeInitialized = false;
+
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
         if (getIntent() != null && getIntent().getData() != null) {
@@ -77,9 +82,14 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         } else {
             Logger.logStartTime(this, this.getClass(), "AppLaunch");
         }
-        
-        Global.Init(this);
 
+        if (getIntent() != null && getIntent().getData() != null) { // check if Open-In
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                // permission is granted, initialize Radaee (uses external storage)
+                initializeRadaee();
+            }
+        }
         mHandler = new PauseableHandler(this);
         
         setContentView(R.layout.activity_main);
@@ -400,6 +410,16 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             if (!mResizeView) {
                 getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
             }
+        }
+    }
+
+    /**
+     * @brief Initializes 3rd party PDF library
+     */
+    public synchronized void initializeRadaee() {
+        if (!isRadaeeInitialized) {
+            Global.Init(this);
+            isRadaeeInitialized = true;
         }
     }
 }

@@ -156,5 +156,6 @@
     <string name="ids_lbl_agree">Agree</string>
     <string name="ids_lbl_disagree">Disagree</string>
     <string name="ids_err_msg_disagree_to_license">User must agree to License Agreement to continue using the app</string>
+    <string name="ids_lbl_storage_permission">User must enable the storage permission in order to open PDF file.</string>
 
 </resources>

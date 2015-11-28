@@ -24,6 +24,7 @@ public class SmartDeviceApp extends Application {
     
     @Override
     public void onCreate() {
+        super.onCreate();
         SmartDeviceApp.sContext = getApplicationContext();
         
         if (AppConstants.DEBUG) {

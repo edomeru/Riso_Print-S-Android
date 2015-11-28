@@ -49,7 +49,7 @@ public class FileUtils {
     /**
      * @brief Copy a file from inputstream.
      * 
-     * @param src Source inputstream
+     * @param in Source inputstream
      * @param dst Destination file
      */
     public static void copy(InputStream in, File dst) throws IOException {
