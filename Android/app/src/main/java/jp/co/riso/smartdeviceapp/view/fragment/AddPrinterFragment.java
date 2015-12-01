@@ -47,7 +47,6 @@ import android.widget.TextView.OnEditorActionListener;
  */
 public class AddPrinterFragment extends BaseFragment implements PrinterSearchCallback, OnEditorActionListener, ConfirmDialogListener, PauseableHandlerCallback {
     private static final String KEY_ADD_PRINTER_DIALOG = "add_printer_dialog";
-    private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     private static final int ERR_INVALID_IP_ADDRESS = -1;
     private static final int ERR_CAN_NOT_ADD_PRINTER = -2;
     private static final int ERR_PRINTER_ADDED_WARNING = -3;
@@ -117,7 +116,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             int leftTextPadding = (int) getResources().getDimension(R.dimen.home_title_padding);            
             textView.setPadding(leftTextPadding, 0, 0, 0);
         } else {
-            addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
+            addMenuButton(view, R.id.leftActionLayout, R.id.menu_id_back_button, R.drawable.selector_actionbar_back, this);
         }
     }
     
@@ -306,7 +305,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case ID_MENU_BACK_BUTTON:
+            case R.id.menu_id_back_button:
                 closeScreen();
                 break;
             case R.id.img_save_button:

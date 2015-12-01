@@ -44,8 +44,6 @@ import android.widget.TextView;
 public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedListener, PauseableHandlerCallback {
     private static final String FRAGMENT_TAG_PRINTERS = "fragment_printers";
     private static final String KEY_PRINTER_INFO_ID = "fragment_printer_info_id";
-    private static final int ID_MENU_ACTION_PRINT_SETTINGS_BUTTON = 0x11000004;
-    private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     
     private static final String KEY_PRINTER_INFO_ERR_DIALOG = "printer_info_err_dialog";
     
@@ -114,9 +112,9 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printer_info);
-        
-        addMenuButton(view, R.id.rightActionLayout, ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, R.drawable.selector_actionbar_printerinfo, this);
-        addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
+
+        addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_print_settings_button, R.drawable.selector_actionbar_printerinfo, this);
+        addMenuButton(view, R.id.leftActionLayout, R.id.menu_id_back_button, R.drawable.selector_actionbar_back, this);
     }
     
     @Override
@@ -158,7 +156,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     @Override
     public void clearIconStates() {
         super.clearIconStates();
-        setIconState(ID_MENU_ACTION_PRINT_SETTINGS_BUTTON, false);
+        setIconState(R.id.menu_id_action_print_settings_button, false);
     }
   
     @Override
@@ -201,7 +199,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     @Override
     public void processMessage(Message msg) {
         switch (msg.what) {
-            case ID_MENU_ACTION_PRINT_SETTINGS_BUTTON:
+            case R.id.menu_id_action_print_settings_button:
                 mPauseableHandler.pause();
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getActivity();
@@ -230,7 +228,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                     }
                 }
                 break;
-            case ID_MENU_BACK_BUTTON:
+            case R.id.menu_id_back_button:
                 mPauseableHandler.pause();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
@@ -250,13 +248,13 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case ID_MENU_ACTION_PRINT_SETTINGS_BUTTON:
-                Message newMessage = Message.obtain(mPauseableHandler, ID_MENU_ACTION_PRINT_SETTINGS_BUTTON);
+            case R.id.menu_id_action_print_settings_button:
+                Message newMessage = Message.obtain(mPauseableHandler, R.id.menu_id_action_print_settings_button);
                 newMessage.obj = v;
                 mPauseableHandler.sendMessage(newMessage);
                 break;
-            case ID_MENU_BACK_BUTTON:
-                mPauseableHandler.sendEmptyMessage(ID_MENU_BACK_BUTTON);
+            case R.id.menu_id_back_button:
+                mPauseableHandler.sendEmptyMessage(R.id.menu_id_back_button);
                 break;
         }
     }

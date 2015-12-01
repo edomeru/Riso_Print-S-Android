@@ -210,7 +210,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         }
         
         if (fragment instanceof BaseFragment) {
-            setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, true);
+            setIconState(R.id.menu_id_action_button, true);
         }
         
         ft.commit();
