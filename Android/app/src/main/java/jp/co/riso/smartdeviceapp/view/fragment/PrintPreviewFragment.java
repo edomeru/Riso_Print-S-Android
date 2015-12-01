@@ -69,9 +69,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     /// Key used to store current page
     private static final String KEY_CURRENT_PAGE = "current_page";
     
-    /// Print button view ID
-    private static final int ID_PRINT_BUTTON = 0x11000002;
-
     /// Tag used to identify the dialog message
     private static final String TAG_MESSAGE_DIALOG = "dialog_message";
 
@@ -308,7 +305,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     @Override
     public void clearIconStates() {
         super.clearIconStates();
-        setIconState(ID_PRINT_BUTTON, false);
+        setIconState(R.id.view_id_print_button, false);
     }
     
     @Override
@@ -367,7 +364,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * @param v Root view which contains the action bar view
      */
     public void addPrintButton(View v) {
-        addMenuButton(v, R.id.rightActionLayout, ID_PRINT_BUTTON, R.drawable.selector_actionbar_printsettings, this);
+        addMenuButton(v, R.id.rightActionLayout, R.id.view_id_print_button, R.drawable.selector_actionbar_printsettings, this);
     }
     
     /**
@@ -481,11 +478,11 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * @param show Show or hide the button
      */
     public void showPrintSettingsButton(View v, boolean show) {
-        if (v.findViewById(ID_PRINT_BUTTON) != null) {
+        if (v.findViewById(R.id.view_id_print_button) != null) {
             if (show) {
-                v.findViewById(ID_PRINT_BUTTON).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.view_id_print_button).setVisibility(View.VISIBLE);
             } else {
-                v.findViewById(ID_PRINT_BUTTON).setVisibility(View.GONE);
+                v.findViewById(R.id.view_id_print_button).setVisibility(View.GONE);
             }
         }
     }
@@ -562,13 +559,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case ID_PRINT_BUTTON:
-                Message msg = Message.obtain(mPauseableHandler, ID_PRINT_BUTTON);
+            case R.id.view_id_print_button:
+                Message msg = Message.obtain(mPauseableHandler, R.id.view_id_print_button);
                 msg.obj = v;
                 mPauseableHandler.sendMessage(msg);
                 break;
-            case ID_MENU_ACTION_BUTTON:
-                mPauseableHandler.sendEmptyMessage(ID_MENU_ACTION_BUTTON);
+            case R.id.menu_id_action_button:
+                mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
                 break;
         }
     }
@@ -675,7 +672,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     @Override
     public void processMessage(Message msg) {
         switch (msg.what) {
-            case ID_PRINT_BUTTON:
+            case R.id.view_id_print_button:
                 mPauseableHandler.pause();
                 PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
                 
@@ -719,7 +716,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     }
                 }
                 break;
-            case ID_MENU_ACTION_BUTTON:
+            case R.id.menu_id_action_button:
                 mPauseableHandler.pause();
                 MainActivity activity = (MainActivity) getActivity();
                 activity.openDrawer(Gravity.LEFT);

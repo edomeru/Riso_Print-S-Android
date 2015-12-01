@@ -49,7 +49,6 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     private static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     private static final String KEY_SEARCHED_PRINTER_LIST = "searched_printer_list";
     private static final String KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog";
-    private static final int ID_MENU_BACK_BUTTON = 0x11000005;
     private static final int MSG_UPDATE_REFRESH_BAR = 0x0;
     
     // ListView parameters
@@ -109,7 +108,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             view.setPadding(leftViewPadding, 0, 0, 0);
             textView.setPadding(leftTextPadding, 0, 0, 0);
         } else {
-            addMenuButton(view, R.id.leftActionLayout, ID_MENU_BACK_BUTTON, R.drawable.selector_actionbar_back, this);
+            addMenuButton(view, R.id.leftActionLayout, R.id.menu_id_back_button, R.drawable.selector_actionbar_back, this);
         }
     }
     
@@ -237,7 +236,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void onClick(View v) {
         // Back Button
-        if (v.getId() == ID_MENU_BACK_BUTTON) {
+        if (v.getId() == R.id.menu_id_back_button) {
             mPrinterManager.cancelPrinterSearch();
             closeScreen();
         }

@@ -75,7 +75,7 @@ public class SettingsFragment extends BaseFragment {
         super.onClick(v);
         
         switch (v.getId()) {
-            case ID_MENU_ACTION_BUTTON:
+            case R.id.menu_id_action_button:
                 AppUtils.hideSoftKeyboard(getActivity());
                 break;
         }

@@ -29,8 +29,6 @@ import android.widget.ImageView;
  * @brief Base fragment class
  */
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
-    /// Menu action button ID
-    public static final int ID_MENU_ACTION_BUTTON = 0x11000001;
     private static final String KEY_ICON_STATE = "icon_state";
     private static final String KEY_ICON_ID = "icon_id";
     
@@ -193,7 +191,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
      * @param v Action bar view
      */
     public void addActionMenuButton(View v) {
-        addMenuButton(v, R.id.leftActionLayout, ID_MENU_ACTION_BUTTON, R.drawable.selector_actionbar_mainmenu, this);
+        addMenuButton(v, R.id.leftActionLayout, R.id.menu_id_action_button, R.drawable.selector_actionbar_mainmenu, this);
     }
     
     /**
@@ -236,10 +234,10 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
      */
     public void clearIconStates() {
         if (getView() != null) {
-            View menuButton = getView().findViewById(BaseFragment.ID_MENU_ACTION_BUTTON);
+            View menuButton = getView().findViewById(R.id.menu_id_action_button);
             
             if (menuButton != null) {
-                setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, false);
+                setIconState(R.id.menu_id_action_button, false);
             }
         }
         mIconState = false;
@@ -267,7 +265,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case ID_MENU_ACTION_BUTTON:
+            case R.id.menu_id_action_button:
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getActivity();
                     activity.openDrawer(Gravity.LEFT);

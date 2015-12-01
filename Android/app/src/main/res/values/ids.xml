@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="menu_id_action_button" type="id"/>
+    <item name="menu_id_action_search_button" type="id"/>
+    <item name="menu_id_action_add_button" type="id"/>
+    <item name="menu_id_action_print_settings_button" type="id"/>
+    <item name="menu_id_back_button" type="id"/>
+
+    <item name="view_id_print_button" type="id"/>
+    <item name="view_id_disclosure" type="id"/>
+    <item name="view_id_print_header" type="id"/>
+    <item name="view_id_print_selected_printer" type="id"/>
+    <item name="view_id_secure_print_switch" type="id"/>
+    <item name="view_id_pin_code_edit_text" type="id"/>
+    <item name="view_id_show_subview_container" type="id"/>
+    <item name="view_id_hide_subview_container" type="id"/>
+    <item name="view_id_subview_option_item" type="id"/>
+    <item name="view_id_subview_status" type="id"/>
+    <item name="view_id_subview_printer_item" type="id"/>
+    <item name="view_id_collapse_container" type="id"/>
+</resources>

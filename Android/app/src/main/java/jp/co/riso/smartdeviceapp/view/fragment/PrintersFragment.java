@@ -54,8 +54,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     public final static String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
     public static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
-    public static final int ID_MENU_ACTION_SEARCH_BUTTON = 0x11000002;
-    public static final int ID_MENU_ACTION_ADD_BUTTON = 0x11000003;
     public static final int MSG_ADD_NEW_PRINTER = 0x1;
     public static final int MSG_SUBMENU_BUTTON = 0x2;
     public static final int MSG_PRINTSETTINGS_BUTTON = 0x3;
@@ -141,8 +139,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printers);
-        addMenuButton(view, R.id.rightActionLayout, ID_MENU_ACTION_ADD_BUTTON, R.drawable.selector_actionbar_add_printer, this);
-        addMenuButton(view, R.id.rightActionLayout, ID_MENU_ACTION_SEARCH_BUTTON, R.drawable.selector_actionbar_printersearch, this);
+        addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_add_button, R.drawable.selector_actionbar_add_printer, this);
+        addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_search_button, R.drawable.selector_actionbar_printersearch, this);
         addActionMenuButton(view);
     }
     
@@ -219,9 +217,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void clearIconStates() {
         super.clearIconStates();
         setDefaultSettingSelected(false);
-        setIconState(PrintersFragment.ID_MENU_ACTION_BUTTON, false);
-        setIconState(PrintersFragment.ID_MENU_ACTION_SEARCH_BUTTON, false);
-        setIconState(PrintersFragment.ID_MENU_ACTION_ADD_BUTTON, false);
+        setIconState(R.id.menu_id_action_button, false);
+        setIconState(R.id.menu_id_action_search_button, false);
+        setIconState(R.id.menu_id_action_add_button, false);
     }
     
     // ================================================================================
@@ -237,7 +235,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             return;
         }
         if (isTablet()) {
-            setIconState(ID_MENU_ACTION_SEARCH_BUTTON, true);
+            setIconState(R.id.menu_id_action_search_button, true);
         }
         PrinterSearchFragment fragment = new PrinterSearchFragment();
         switchToFragment(fragment, FRAGMENT_TAG_PRINTER_SEARCH);
@@ -252,7 +250,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             return;
         }
         if (isTablet()) {
-            setIconState(ID_MENU_ACTION_ADD_BUTTON, true);
+            setIconState(R.id.menu_id_action_add_button, true);
         }
         AddPrinterFragment fragment = new AddPrinterFragment();
         switchToFragment(fragment, FRAGMENT_TAG_ADD_PRINTER);
@@ -397,32 +395,32 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     @Override
     public void onClick(View v) {        
         switch (v.getId()) {
-            case ID_MENU_ACTION_SEARCH_BUTTON:
+            case R.id.menu_id_action_search_button:
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
                     
                     MainActivity activity = (MainActivity) getActivity();
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        mPauseableHandler.sendEmptyMessage(ID_MENU_ACTION_SEARCH_BUTTON);
+                        mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_search_button);
                     } else {
                         activity.closeDrawers();
                     }
                 }
                 break;
-            case ID_MENU_ACTION_ADD_BUTTON:
+            case R.id.menu_id_action_add_button:
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
                     MainActivity activity = (MainActivity) getActivity();
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        mPauseableHandler.sendEmptyMessage(ID_MENU_ACTION_ADD_BUTTON);
+                        mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_add_button);
                     } else {
                         activity.closeDrawers();
                     }
                 }
                 break;
-            case ID_MENU_ACTION_BUTTON:
+            case R.id.menu_id_action_button:
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    mPauseableHandler.sendEmptyMessage(ID_MENU_ACTION_BUTTON);
+                    mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
                 }
                 break;
             default:
@@ -514,7 +512,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public boolean storeMessage(Message message) {
-        return message.what != ID_MENU_ACTION_ADD_BUTTON && message.what != ID_MENU_ACTION_SEARCH_BUTTON && message.what != ID_MENU_ACTION_BUTTON
+        return message.what != R.id.menu_id_action_add_button && message.what != R.id.menu_id_action_search_button && message.what != R.id.menu_id_action_button
                 && message.what != MSG_SUBMENU_BUTTON && message.what != MSG_PRINTSETTINGS_BUTTON;
     }
 
@@ -552,15 +550,15 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 displayDefaultPrintSettings(fragment);
                 mPrinterTabletView.setDefaultSettingSelected(msg.arg1, true);
                 break;
-            case ID_MENU_ACTION_SEARCH_BUTTON:
+            case R.id.menu_id_action_search_button:
                 mPauseableHandler.pause();
                 displayPrinterSearchFragment();
                 return;
-            case ID_MENU_ACTION_ADD_BUTTON:
+            case R.id.menu_id_action_add_button:
                 mPauseableHandler.pause();
                 displayAddPrinterFragment();
                 return;
-            case ID_MENU_ACTION_BUTTON:
+            case R.id.menu_id_action_button:
                 mPauseableHandler.pause();
                 MainActivity activity = (MainActivity) getActivity();
                 activity.openDrawer(Gravity.LEFT);

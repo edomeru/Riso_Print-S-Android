@@ -283,7 +283,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 mDrawerLayout.closeDrawers();
                 
                 if (fragment != null) {
-                    fragment.setIconState(BaseFragment.ID_MENU_ACTION_BUTTON, gravityLeft);
+                    fragment.setIconState(R.id.menu_id_action_button, gravityLeft);
                 }
 
                 mResizeView = (msg.arg2 == 1);
@@ -370,12 +370,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 @Override
                 public void run() {
                     if (layoutState == DrawerLayout.STATE_IDLE) {
-                        if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
-                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.START);
-                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-                        } else if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
-                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.START);
-                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END);
+                        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+                        } else if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
                         } else {
                             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         }
