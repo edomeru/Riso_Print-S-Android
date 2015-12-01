@@ -13,6 +13,8 @@
 #import "PrinterDetails.h"
 #import "Swizzler.h"
 #import "SNMPManager.h"
+#import "AppSettingsHelper.h"
+#import "OCMock.h"
 
 @interface AddPrinterViewController (UnitTest)
 
@@ -20,6 +22,7 @@
 - (UITextField*)textIP;
 - (UIButton*)saveButton;
 - (UIActivityIndicatorView*)progressIndicator;
+- (UITextField*)communityNameDisplay;
 
 // expose private methods
 - (void)addFullCapabilityPrinter:(NSString *)ipAddress;
@@ -32,6 +35,7 @@
     UIStoryboard* storyboard;
     AddPrinterViewController* controllerIphone;
     AddPrinterViewController* controllerIpad;
+    NSString *testCommunityName;
 }
 
 @end
@@ -48,6 +52,10 @@
 // Run at start of all tests in the class
 - (void)setUpClass
 {
+    testCommunityName = @"testname";
+    id mockAppSettingsHelper = OCMClassMock([AppSettingsHelper class]);
+    [[[mockAppSettingsHelper stub] andReturn:testCommunityName] getSNMPCommunityName];
+
     NSString* storyboardTitle = @"Main";
     storyboard = [UIStoryboard storyboardWithName:storyboardTitle bundle:nil];
     GHAssertNotNil(storyboard, @"unable to retrieve storyboard file %@", storyboardTitle);
@@ -63,6 +71,8 @@
     GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
     GHAssertNotNil(controllerIpad.view, @"");
     GHAssertFalse(controllerIpad.hasAddedPrinters, @"");
+    
+    [mockAppSettingsHelper stopMocking];
 }
 
 // Run at end of all tests in the class
@@ -96,11 +106,16 @@
     GHAssertNotNil([controllerIphone textIP], @"");
     GHAssertNotNil([controllerIphone saveButton], @"");
     GHAssertNotNil([controllerIphone progressIndicator], @"");
+    GHAssertNotNil([controllerIphone communityNameDisplay], @"");
+    GHAssertEqualStrings([[controllerIphone communityNameDisplay] text] , testCommunityName, @"");
     GHAssertNil(controllerIphone.printersViewController, @"will only be non-nil on segue from Printers");
     
     GHAssertNotNil([controllerIpad textIP], @"");
     GHAssertNotNil([controllerIpad saveButton], @"");
     GHAssertNotNil([controllerIpad progressIndicator], @"");
+    GHAssertNotNil([controllerIpad communityNameDisplay], @"");
+    GHAssertNotNil([controllerIpad communityNameDisplay], @"");
+    GHAssertEqualStrings([[controllerIphone communityNameDisplay] text] , testCommunityName, @"");
     GHAssertNil(controllerIpad.printersViewController, @"will only be non-nil on segue from Printers");
 }
 
