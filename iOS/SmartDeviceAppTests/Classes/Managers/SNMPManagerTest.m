@@ -11,13 +11,14 @@
 #import "SNMPManager.h"
 #import "NotificationNames.h"
 #import "PrinterDetails.h"
+#import "AppSettingsHelper.h"
 #include "common.h"
 
 #include "fff.h"
 DEFINE_FFF_GLOBALS;
 
 FAKE_VOID_FUNC(snmp_manual_search);
-FAKE_VALUE_FUNC(snmp_context *, snmp_context_new, snmp_discovery_ended_callback, snmp_printer_added_callback);
+FAKE_VALUE_FUNC(snmp_context *, snmp_context_new, snmp_discovery_ended_callback, snmp_printer_added_callback, const char*);
 FAKE_VOID_FUNC(snmp_context_free);
 FAKE_VOID_FUNC(snmp_manual_discovery);
 FAKE_VOID_FUNC(snmp_device_discovery);
@@ -32,10 +33,18 @@ FAKE_VALUE_FUNC(const char *, snmp_device_get_name);
 snmp_discovery_ended_callback mockEndCallback;
 snmp_printer_added_callback mockAddedCallback;
 
-snmp_context *mock_snmp_context_new(snmp_discovery_ended_callback endCallback, snmp_printer_added_callback addedCallback)
+char mockCommunityName[33];
+
+snmp_context *mock_snmp_context_new(snmp_discovery_ended_callback endCallback, snmp_printer_added_callback addedCallback, const char* community_name)
 {
     mockEndCallback = endCallback;
     mockAddedCallback = addedCallback;
+    memset(mockCommunityName, 0x0, 33);
+    if(community_name != nil)
+    {
+        strncpy(mockCommunityName, community_name, 32);
+    }
+    
     return snmp_context_new_fake.return_val;
 }
 
@@ -72,6 +81,8 @@ void mock_success_snmp_device_discovery()
 @interface SNMPManagerTest : GHAsyncTestCase
 {
     SNMPManager* snmpManager;
+    id mockAppSettingsHelper;
+    NSString *testCommunityName;
 }
 
 @property (nonatomic, strong) PrinterDetails *testPrinterDetails;
@@ -91,6 +102,10 @@ void mock_success_snmp_device_discovery()
 // Run at start of all tests in the class
 - (void)setUpClass
 {
+    testCommunityName = @"testname";
+    mockAppSettingsHelper = OCMClassMock([AppSettingsHelper class]);
+    [[[mockAppSettingsHelper stub] andCall:@selector(mockGetSNMPCommunityName) onObject:self] getSNMPCommunityName];
+    
     self.testPrinterDetails = [[PrinterDetails alloc] init];
     self.testPrinterDetails.ip = @"192.168.1.1";
     self.testPrinterDetails.name = @"RISO Printer 1";
@@ -99,6 +114,7 @@ void mock_success_snmp_device_discovery()
 // Run at end of all tests in the class
 - (void)tearDownClass
 {
+    [mockAppSettingsHelper stopMocking];
 }
 
 // Run before each test method
@@ -158,8 +174,12 @@ void mock_success_snmp_device_discovery()
     
     snmp_manual_discovery_fake.custom_fake = mock_fail_snmp_manual_discovery;
     
+    
+    testCommunityName = @"testName_searchPrinterNotFound";
     // SUT
     [sharedSNMPManager searchForPrinter:@"192.168.1.1"];
+    
+    GHAssertEqualCStrings([testCommunityName cStringUsingEncoding:[NSString defaultCStringEncoding]], mockCommunityName, @"");
     
     // Verification
     [NSThread sleepForTimeInterval:1];
@@ -199,9 +219,12 @@ void mock_success_snmp_device_discovery()
     snmp_device_get_ip_address_fake.return_val = [self.testPrinterDetails.ip UTF8String];
     snmp_device_get_name_fake.return_val = [self.testPrinterDetails.name UTF8String];
     
+    testCommunityName = @"testName_searchPrinterFound";
     // SUT
     [sharedSNMPManager searchForPrinter:@"192.168.1.1"];
     
+    GHAssertEqualCStrings([testCommunityName cStringUsingEncoding:[NSString defaultCStringEncoding]], mockCommunityName, @"");
+    /*
     // Verification
     [NSThread sleepForTimeInterval:3];
     GHAssertEquals((int)snmp_manual_discovery_fake.call_count, 1, @"snmp_manual_discovery must be called.");
@@ -227,8 +250,11 @@ void mock_success_snmp_device_discovery()
     snmp_device_get_ip_address_fake.return_val = "255.255.255.255";
     snmp_device_get_name_fake.return_val = [self.testPrinterDetails.name UTF8String];
     
+    testCommunityName = @"testName_searchPrinterBroadcast";
     // SUT
     [sharedSNMPManager searchForPrinter:@"255.255.255.255"];
+    
+    GHAssertEqualCStrings([testCommunityName cStringUsingEncoding:[NSString defaultCStringEncoding]], mockCommunityName, @"");
     
     // Verification
     [NSThread sleepForTimeInterval:1];
@@ -253,8 +279,11 @@ void mock_success_snmp_device_discovery()
     
     snmp_device_discovery_fake.custom_fake = mock_fail_snmp_device_discovery;
     
+    testCommunityName = @"testName_searchAllNotFound";
     // SUT
     [sharedSNMPManager searchForAvailablePrinters];
+    
+    GHAssertEqualCStrings([testCommunityName cStringUsingEncoding:[NSString defaultCStringEncoding]], mockCommunityName, @"");
     
     // Verification
     [NSThread sleepForTimeInterval:1];
@@ -294,8 +323,11 @@ void mock_success_snmp_device_discovery()
     snmp_device_get_ip_address_fake.return_val = [self.testPrinterDetails.ip UTF8String];
     snmp_device_get_name_fake.return_val = [self.testPrinterDetails.name UTF8String];
     
+    testCommunityName = @"testName_searchAllFound";
     // SUT
     [sharedSNMPManager searchForAvailablePrinters];
+    
+    GHAssertEqualCStrings([testCommunityName cStringUsingEncoding:[NSString defaultCStringEncoding]], mockCommunityName, @"");
     
     // Verification
     [NSThread sleepForTimeInterval:2];
@@ -349,6 +381,13 @@ void mock_success_snmp_device_discovery()
     GHAssertEquals((int)snmp_cancel_fake.call_count, 0, @"snmp_cancel must not be called.");
     GHAssertThrows([self.mockObserver verify], @"");
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
+}
+
+#pragma mark - Mock Methods
+
+- (NSString *)mockGetSNMPCommunityName
+{
+    return testCommunityName;
 }
 
 @end
