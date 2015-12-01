@@ -31,8 +31,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.radaee.pdf.Global;
-
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -79,6 +77,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private static final String TAG_PERMISSION_DIALOG = "external_storage_tag";
+    private static final String KEY_EXTERNAL_STORAGE_DIALOG_OPEN = "key_external_storage_dialog_open";
 
     private PDFFileManager mPdfManager = null;
     
@@ -102,7 +101,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     private Handler mHandler;
     private PauseableHandler mPauseableHandler = null;
-    
+    private ConfirmDialogFragment mConfirmDialogFragment = null;
+    private boolean mIsPermissionDialogOpen;
+
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printpreview;
@@ -110,6 +111,14 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
+        // dismiss permission alert dialog if showing
+        DialogUtils.dismissDialog(getActivity(), TAG_PERMISSION_DIALOG);
+
+        if (savedInstanceState != null) {
+            mCurrentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0);
+            mIsPermissionDialogOpen = savedInstanceState.getBoolean(KEY_EXTERNAL_STORAGE_DIALOG_OPEN, false);
+        }
+
         setRetainInstance(true);
         
         mHandler = new Handler(this);
@@ -122,7 +131,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
             mPdfManager = new PDFFileManager(this);
 
-            if (hasPdfFile()) { // if has PDF to open, check permission
+            // if has PDF to open and the Android permission dialog is not yet opened, check permission
+            if (hasPdfFile() && !mIsPermissionDialogOpen) {
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 == PackageManager.PERMISSION_GRANTED) {
                     initializePdfManagerAndRunAsync();
@@ -135,12 +145,15 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         new Handler().post(new Runnable() {
                             @Override
                             public void run() {
-                                ConfirmDialogFragment dialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, negativeButton);
-                                dialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
-                                DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, dialogFragment);
+                                if (mConfirmDialogFragment == null) {
+                                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, negativeButton);
+                                    mConfirmDialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
+                                    DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
+                                }
                             }
                         });
                     } else {
+                        mIsPermissionDialogOpen = true;
                         // Request the permission, no explanation needed
                         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                 PrintPreviewFragment.REQUEST_WRITE_EXTERNAL_STORAGE);
@@ -173,10 +186,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 }
             };
             mBmpCache.evictAll();
-        }
-        
-        if (savedInstanceState != null) {
-            mCurrentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0);
         }
     }
 
@@ -293,6 +302,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mCurrentPage = mPrintPreviewView.getCurrentPage();
             outState.putInt(KEY_CURRENT_PAGE, mCurrentPage);
         }
+        outState.putBoolean(KEY_EXTERNAL_STORAGE_DIALOG_OPEN, mIsPermissionDialogOpen);
     }
     
     @Override
@@ -721,6 +731,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
+                mIsPermissionDialogOpen = false; // the request returned a result hence dialog is closed
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, run PDF initializations
@@ -733,12 +744,14 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void onConfirm() {
+        mConfirmDialogFragment = null;
+        mIsPermissionDialogOpen = true;
         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 PrintPreviewFragment.REQUEST_WRITE_EXTERNAL_STORAGE);
     }
 
     @Override
     public void onCancel() {
-
+        mConfirmDialogFragment = null;
     }
 }
