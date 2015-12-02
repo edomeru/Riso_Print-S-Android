@@ -3,6 +3,7 @@ package jp.co.riso.smartdeviceapp.view.printers;
 import jp.co.riso.smartprint.R;
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -53,13 +54,13 @@ public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
         
         if(isNoDisabled && position == 1)//No
         {
-            view.setBackgroundColor(activity.getResources().getColor(R.color.theme_light_3));
-            ((TextView)view).setTextColor(activity.getResources().getColor(R.color.theme_light_4));
+            view.setBackgroundColor(ContextCompat.getColor(activity, R.color.theme_light_3));
+            ((TextView)view).setTextColor(ContextCompat.getColor(activity, R.color.theme_light_4));
         }
         else
         {
             view.setBackgroundResource(R.drawable.selector_printerinfo_port);
-            ((TextView)view).setTextColor(activity.getResources().getColorStateList(R.color.selector_printers_text));
+            ((TextView)view).setTextColor(ContextCompat.getColorStateList(activity, R.color.selector_printers_text));
         }
         
         return view;

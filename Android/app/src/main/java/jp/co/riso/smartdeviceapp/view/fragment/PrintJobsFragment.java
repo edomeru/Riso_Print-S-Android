@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -115,7 +116,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mScrollView.setVisibility(View.GONE);
         View view = getView();
         if (view != null) {
-            view.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
+            view.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.theme_light_2));
         }
     }
     
@@ -200,7 +201,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         if (!isTablet()) {
             View view = getView();
             if (view != null) {
-                view.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
+                view.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.theme_light_3));
             }
         }
     }

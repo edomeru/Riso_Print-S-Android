@@ -32,6 +32,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -84,7 +85,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mListView = (PullToRefreshListView) view.findViewById(R.id.printer_list);
-        mListView.setBackgroundColor(getResources().getColor(R.color.theme_light_3));
+        mListView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.theme_light_3));
         mListView.setAdapter(mPrinterSearchAdapter);
         mListView.setOnRefreshListener(this);
         
