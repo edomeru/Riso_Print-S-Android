@@ -36,6 +36,7 @@ import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.LruCache;
 import android.view.GestureDetector;
@@ -872,12 +873,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         mCurlView.setMargins(0, 0, 0, 0);
         mCurlView.setPageProvider(mPdfPageProvider);
         mCurlView.setBindPosition(CurlView.BIND_LEFT);
-        mCurlView.setBackgroundColor(getResources().getColor(R.color.theme_light_2));
+        mCurlView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.theme_light_2));
         
         reconfigureCurlView();
         
         if (!isInEditMode()) {
-            float percentage = getResources().getFraction(R.dimen.preview_view_drop_shadow_percentage, 1, 1);
+            float percentage = getResources().getFraction(R.fraction.preview_view_drop_shadow_percentage, 1, 1);
             mCurlView.setDropShadowSize(percentage);
         }
         
@@ -1110,8 +1111,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         @Override
         public void updatePage(CurlPage page, int width, int height, int index) {
-            page.setColor(getResources().getColor(R.color.bg_paper), CurlPage.SIDE_FRONT);
-            page.setColor(getResources().getColor(R.color.bg_paper), CurlPage.SIDE_BACK);
+            page.setColor(ContextCompat.getColor(getContext(), R.color.bg_paper), CurlPage.SIDE_FRONT);
+            page.setColor(ContextCompat.getColor(getContext(), R.color.bg_paper), CurlPage.SIDE_BACK);
             
             boolean GET_FROM_CACHE = true;
             
@@ -1234,11 +1235,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             }
             
             paint.setStyle(Style.STROKE);
-            paint.setColor(getResources().getColor(R.color.theme_light_1));
+            paint.setColor(ContextCompat.getColor(getContext(), R.color.theme_light_1));
             canvas.drawLine(fromX, fromY, toX, toY, paint);
             
             paint.setStyle(Style.STROKE);
-            paint.setColor(getResources().getColor(R.color.theme_light_4));
+            paint.setColor(ContextCompat.getColor(getContext(), R.color.theme_light_4));
             paint.setPathEffect(new DashPathEffect(new float[] {CREASE_DARK_LENGTH, CREASE_WHITE_LENGTH}, 0));
             canvas.drawLine(fromX, fromY, toX, toY, paint);
         }

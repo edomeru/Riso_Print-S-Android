@@ -22,7 +22,9 @@ import java.util.regex.Pattern;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
+import android.os.Build;
 
 /**
  * @class NetUtils
@@ -187,8 +189,25 @@ public class NetUtils {
         }
         
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return (wifi != null && wifi.isConnected());
+        boolean result = false;
+        if (Build.VERSION.SDK_INT < 23) {
+            NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            result = (wifi != null && wifi.isConnected());
+        } else {
+            Network[] networks = connManager.getAllNetworks();
+            NetworkInfo networkInfo;
+            Network network;
+            for (int i = 0; i < networks.length; i++){
+                network = networks[i];
+                networkInfo = connManager.getNetworkInfo(network);
+                if ((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
+                        (networkInfo.getState().equals(NetworkInfo.State.CONNECTED))) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
     }
     
     /**

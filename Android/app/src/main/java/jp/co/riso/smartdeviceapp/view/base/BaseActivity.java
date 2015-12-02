@@ -79,7 +79,7 @@ public abstract class BaseActivity extends Activity {
      */
     public int getDrawerWidth() {
         Point screenSize = AppUtils.getScreenDimensions(this);
-        float drawerWidthPercentage = getResources().getFraction(R.dimen.drawer_width_percentage, 1, 1);
+        float drawerWidthPercentage = getResources().getFraction(R.fraction.drawer_width_percentage, 1, 1);
         int minDrawerWidth = getResources().getDimensionPixelSize(R.dimen.drawer_width_min);
         int maxDrawerWidth = getResources().getDimensionPixelSize(R.dimen.drawer_width_max);
         

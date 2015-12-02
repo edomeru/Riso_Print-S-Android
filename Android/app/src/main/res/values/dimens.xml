@@ -41,12 +41,12 @@
     
     <dimen name="printsettings_icon_setting_padding">12dp</dimen>
     
-    <item name="drawer_width_percentage" type="dimen">85%</item>
+    <fraction name="drawer_width_percentage">85%</fraction>
     <dimen name="drawer_width_min">240dp</dimen>
     <dimen name="drawer_width_max">320dp</dimen>
     <dimen name="drawer_margin">1dp</dimen>
     
-    <item name="preview_view_drop_shadow_percentage" type="dimen">2%</item>
+    <fraction name="preview_view_drop_shadow_percentage">2%</fraction>
     <dimen name="preview_view_margin">4dp</dimen>
     <dimen name="preview_controls_text_width">120dp</dimen>
     <dimen name="preview_controls_margin_side">32dp</dimen>

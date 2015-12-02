@@ -30,6 +30,7 @@ import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -84,7 +85,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mAddPrinterView.mSaveButton = view.findViewById(R.id.img_save_button);
         mAddPrinterView.mProgressBar = view.findViewById(R.id.actionbar_progressbar);
         
-        mAddPrinterView.mIpAddress.setBackgroundColor(getResources().getColor(R.color.theme_light_1));
+        mAddPrinterView.mIpAddress.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.theme_light_1));
         mAddPrinterView.mIpAddress.setOnEditorActionListener(this);
         mAddPrinterView.mSaveButton.setOnClickListener(this);
 
@@ -253,7 +254,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
         viewHolder.mSaveButton.setVisibility(View.GONE);
         viewHolder.mProgressBar.setVisibility(View.VISIBLE);
-        viewHolder.mIpAddress.setTextColor(getResources().getColor(R.color.theme_light_4));
+        viewHolder.mIpAddress.setTextColor(ContextCompat.getColor(getActivity(), R.color.theme_light_4));
         viewHolder.mIpAddress.setFocusable(false);
         
     }
@@ -270,7 +271,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         
         viewHolder.mSaveButton.setVisibility(View.VISIBLE);
         viewHolder.mProgressBar.setVisibility(View.GONE);
-        viewHolder.mIpAddress.setTextColor(getResources().getColor(R.color.theme_dark_1));
+        viewHolder.mIpAddress.setTextColor(ContextCompat.getColor(getActivity(), R.color.theme_dark_1));
         viewHolder.mIpAddress.setFocusableInTouchMode(true);
     }
     
