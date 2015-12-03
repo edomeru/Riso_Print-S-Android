@@ -46,7 +46,7 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 /**
  * Reference to the text display for the SNMP Community Name.
  */
-@property (weak, nonatomic) IBOutlet UITextField *communityNameDisplay;
+@property (weak, nonatomic) IBOutlet UILabel *communityNameDisplay;
 
 /** 
  * Reference to the save (+) button.

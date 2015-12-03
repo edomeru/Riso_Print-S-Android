@@ -22,7 +22,7 @@
 
 - (UITableView*)searchResultsTable;
 - (UIRefreshControl*)refreshControl;
-- (UITextField*)communityNameDisplay;
+- (UILabel*)communityNameDisplay;
 
 // expose private methods
 - (void)refreshScreen;

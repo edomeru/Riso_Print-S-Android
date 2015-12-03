@@ -22,7 +22,7 @@
 - (UITextField*)textIP;
 - (UIButton*)saveButton;
 - (UIActivityIndicatorView*)progressIndicator;
-- (UITextField*)communityNameDisplay;
+- (UILabel*)communityNameDisplay;
 
 // expose private methods
 - (void)addFullCapabilityPrinter:(NSString *)ipAddress;

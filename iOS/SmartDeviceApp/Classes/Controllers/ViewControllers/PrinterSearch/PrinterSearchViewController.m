@@ -116,7 +116,7 @@
 /**
  * Reference to the text display for the SNMP Community Name.
  */
-@property (weak, nonatomic) IBOutlet UITextField *communityNameDisplay;
+@property (weak, nonatomic) IBOutlet UILabel *communityNameDisplay;
 
 #pragma mark - Internal Methods
 
