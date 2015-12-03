@@ -1199,7 +1199,7 @@
                                             <constraint firstAttribute="height" constant="30" id="tgW-Fn-xft"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                        <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="done"/>
                                         <connections>
                                             <outlet property="delegate" destination="NYf-jS-nBL" id="SWR-6A-E3n"/>
                                         </connections>
@@ -2296,7 +2296,7 @@
                                             <constraint firstAttribute="height" constant="30" id="Kct-hS-Ec4"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                        <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="done"/>
                                         <connections>
                                             <outlet property="delegate" destination="8xs-wI-cDN" id="WrF-rU-GHM"/>
                                         </connections>
