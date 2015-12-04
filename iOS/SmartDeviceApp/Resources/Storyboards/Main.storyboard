@@ -1176,7 +1176,7 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SEARCH_SETTINGS"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SEARCH_PRINTERS_SETTINGS"/>
                                         </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
@@ -1210,7 +1210,7 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SNMP_COMMUNITY_NAME"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_COMMUNITY_NAME"/>
                                         </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
@@ -2264,7 +2264,7 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SEARCH_SETTINGS"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SEARCH_PRINTERS_SETTINGS"/>
                                         </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
@@ -2287,7 +2287,7 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SNMP_COMMUNITY_NAME"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_COMMUNITY_NAME"/>
                                         </userDefinedRuntimeAttributes>
                                     </label>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Community Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="TNO-HH-JB3" userLabel="iPad Community Name">

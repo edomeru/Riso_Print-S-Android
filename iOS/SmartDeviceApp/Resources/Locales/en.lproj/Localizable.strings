@@ -17,7 +17,7 @@
 "IDS_LBL_SETTINGS" = "Settings";
 "IDS_LBL_ADD_PRINTER" = "Add";
 "IDS_LBL_SEARCH_PRINTERS" = "Search";
-"IDS_LBL_SEARCH_SETTINGS" = "Search Settings";
+"IDS_LBL_SEARCH_PRINTERS_SETTINGS" = "Search Settings";
 "IDS_LBL_SET_DEFAULT_PRINTER" = "Set as Default Printer";
 "IDS_LBL_DELETE_ALL" = "Delete All";
 "IDS_LBL_PRINTER_INFO" = "Printer Info";
