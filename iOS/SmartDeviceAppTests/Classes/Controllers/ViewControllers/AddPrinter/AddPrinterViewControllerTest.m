@@ -23,10 +23,12 @@
 - (UIButton*)saveButton;
 - (UIActivityIndicatorView*)progressIndicator;
 - (UILabel*)communityNameDisplay;
+- (NSLayoutConstraint *)viewTopConstraint;
 
 // expose private methods
 - (void)addFullCapabilityPrinter:(NSString *)ipAddress;
 - (IBAction)onSave:(UIButton*)sender;
+- (void)moveViewUp:(BOOL)isUp;
 
 @end
 
@@ -66,7 +68,7 @@
     GHAssertNotNil(controllerIphone.view, @"");
     GHAssertFalse(controllerIphone.hasAddedPrinters, @"");
     
-    NSString* controllerIpadName = @"AddPrinterIphoneViewController";
+    NSString* controllerIpadName = @"AddPrinterIpadViewController";
     controllerIpad = [storyboard instantiateViewControllerWithIdentifier:controllerIpadName];
     GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
     GHAssertNotNil(controllerIpad.view, @"");
@@ -108,14 +110,15 @@
     GHAssertNotNil([controllerIphone progressIndicator], @"");
     GHAssertNotNil([controllerIphone communityNameDisplay], @"");
     GHAssertEqualStrings([[controllerIphone communityNameDisplay] text] , testCommunityName, @"");
+    GHAssertNotNil([controllerIphone viewTopConstraint], @"");
     GHAssertNil(controllerIphone.printersViewController, @"will only be non-nil on segue from Printers");
     
     GHAssertNotNil([controllerIpad textIP], @"");
     GHAssertNotNil([controllerIpad saveButton], @"");
     GHAssertNotNil([controllerIpad progressIndicator], @"");
     GHAssertNotNil([controllerIpad communityNameDisplay], @"");
-    GHAssertNotNil([controllerIpad communityNameDisplay], @"");
     GHAssertEqualStrings([[controllerIphone communityNameDisplay] text] , testCommunityName, @"");
+    GHAssertNil([controllerIpad viewTopConstraint], @""); //constraint only binded for iphone
     GHAssertNil(controllerIpad.printersViewController, @"will only be non-nil on segue from Printers");
 }
 
@@ -337,6 +340,147 @@
     // clear out the other printers
     while (pm.countSavedPrinters != 0)
         GHAssertTrue([pm deletePrinterAtIndex:0], @"");
+}
+
+- (void)test010_TextFieldDidBeginEditing_IphoneLandscape
+{
+    id mockControllerIphone = OCMPartialMock(controllerIphone);
+    [[mockControllerIphone expect] moveViewUp:YES];
+    
+    id mockSharedApplicatipon = OCMPartialMock([UIApplication sharedApplication]);
+    [[[mockSharedApplicatipon stub] andReturnValue:OCMOCK_VALUE(UIInterfaceOrientationLandscapeLeft)] statusBarOrientation];
+    
+    [mockControllerIphone textFieldDidBeginEditing:[mockControllerIphone textIP]];
+    
+    [mockControllerIphone verify];
+    
+    [mockControllerIphone stopMocking];
+    [mockSharedApplicatipon stopMocking];
+}
+
+- (void)test011_TextFieldDidBeginEditing_IphonePortrait_iPad
+{
+    //iPhone portrait
+    id mockControllerIphone = OCMPartialMock(controllerIphone);
+    [[mockControllerIphone reject] moveViewUp:OCMOCK_ANY];
+    
+    id mockSharedApplicatipon = OCMPartialMock([UIApplication sharedApplication]);
+    [[[mockSharedApplicatipon stub] andReturnValue:OCMOCK_VALUE(UIInterfaceOrientationPortrait)] statusBarOrientation];
+    
+    [mockControllerIphone textFieldDidBeginEditing:[mockControllerIphone textIP]];
+    
+    [mockControllerIphone verify];
+    
+    [mockControllerIphone stopMocking];
+    [mockSharedApplicatipon stopMocking];
+
+    //iPad
+    [controllerIpad setValue:[NSNumber numberWithBool:YES] forKey:@"isIpad"];
+    id mockControllerIpad = OCMPartialMock(controllerIpad);
+    
+    [[mockControllerIpad reject] moveViewUp:OCMOCK_ANY];
+    
+    [mockControllerIpad textFieldDidBeginEditing:[mockControllerIpad textIP]];
+    
+    [mockControllerIpad verify];
+    [mockControllerIpad stopMocking];
+}
+
+- (void)test012_moveUpView
+{
+    [controllerIphone moveViewUp:YES];
+    
+    //top view constraint is negative of textIP height
+    CGFloat diff = controllerIphone.viewTopConstraint.constant + controllerIphone.textIP.frame.size.height;
+    GHAssertTrue(fabs(diff) < 0.0001, @"");
+    
+    [controllerIphone moveViewUp:NO];
+    GHAssertEquals(controllerIphone.viewTopConstraint.constant, 0.0, @"");
+    
+    [controllerIphone moveViewUp:NO];
+    GHAssertEquals(controllerIphone.viewTopConstraint.constant, 0.0, @"");
+    
+}
+
+- (void)test013_WillRotateToInterfaceOrientation_Landscape
+{
+    UITextField *originalTextField = [controllerIphone textIP];
+    
+    id mockTextIP = [OCMockObject niceMockForClass:[UITextField class]];
+    [[[mockTextIP stub] andReturnValue:OCMOCK_VALUE(YES)] isEditing];
+    [controllerIphone setValue:mockTextIP forKey:@"textIP"];
+    
+    id mockControllerIphone = OCMPartialMock(controllerIphone);
+    [[mockControllerIphone expect] moveViewUp:YES];
+    
+    [mockControllerIphone willRotateToInterfaceOrientation:UIInterfaceOrientationLandscapeRight duration:0];
+    
+    [mockControllerIphone verify];
+    
+    [mockTextIP stopMocking];
+    [mockControllerIphone stopMocking];
+    [controllerIphone setValue:originalTextField forKey:@"textIP"];
+}
+
+- (void)test014_WillRotateToInterfaceOrientation_Portrait
+{
+    UITextField *originalTextField = [controllerIphone textIP];
+    
+    id mockTextIP = [OCMockObject niceMockForClass:[UITextField class]];
+    [[[mockTextIP stub] andReturnValue:OCMOCK_VALUE(YES)] isEditing];
+    [controllerIphone setValue:mockTextIP forKey:@"textIP"];
+    
+    id mockControllerIphone = OCMPartialMock(controllerIphone);
+    [[mockControllerIphone expect] moveViewUp:NO];
+    
+    [mockControllerIphone willRotateToInterfaceOrientation:UIInterfaceOrientationPortrait duration:0];
+    
+    [mockControllerIphone verify];
+    
+    [mockTextIP stopMocking];
+    [mockControllerIphone stopMocking];
+    [controllerIphone setValue:originalTextField forKey:@"textIP"];
+}
+
+- (void)test015_WillRotateToInterfaceOrientation_NotEditing_NotIphone
+{
+    //iPhone, Not editing
+    UITextField *originalTextField = [controllerIphone textIP];
+    
+    id mockTextIP = [OCMockObject niceMockForClass:[UITextField class]];
+    [[[mockTextIP stub] andReturnValue:OCMOCK_VALUE(NO)] isEditing];
+    [controllerIphone setValue:mockTextIP forKey:@"textIP"];
+    
+    id mockControllerIphone = OCMPartialMock(controllerIphone);
+    [[mockControllerIphone reject] moveViewUp:OCMOCK_ANY];
+    
+    [mockControllerIphone willRotateToInterfaceOrientation:UIInterfaceOrientationPortrait duration:0];
+    
+    [mockControllerIphone verify];
+    
+    [mockTextIP stopMocking];
+    [mockControllerIphone stopMocking];
+    [controllerIphone setValue:originalTextField forKey:@"textIP"];
+    
+    //iPad, editing
+    originalTextField = [controllerIpad textIP];
+    
+    mockTextIP = [OCMockObject niceMockForClass:[UITextField class]];
+    [[[mockTextIP stub] andReturnValue:OCMOCK_VALUE(YES)] isEditing];
+    
+    [controllerIpad setValue:mockTextIP forKey:@"textIP"];
+    [controllerIpad setValue:[NSNumber numberWithBool:YES] forKey:@"isIpad"];
+    
+    id mockControllerIpad = OCMPartialMock(controllerIpad);
+    [[mockControllerIpad reject] moveViewUp:OCMOCK_ANY];
+    
+    [mockControllerIpad willRotateToInterfaceOrientation:UIInterfaceOrientationPortrait duration:0];
+    
+    [mockControllerIpad verify];
+    
+    [mockTextIP stopMocking];
+    [mockControllerIphone stopMocking];
+    [controllerIpad setValue:originalTextField forKey:@"textIP"];
 }
 
 #pragma mark - Utilities

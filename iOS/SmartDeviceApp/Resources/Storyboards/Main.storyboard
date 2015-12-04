@@ -2045,49 +2045,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="548"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uTH-dB-3AV" userLabel="Header">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KSA-EO-Vex" userLabel="iPhone Button - Back">
-                                        <rect key="frame" x="8" y="8" width="32" height="32"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="32" id="O7O-yg-txM"/>
-                                            <constraint firstAttribute="height" constant="32" id="sPI-Kv-9RS"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
-                                        <state key="normal" image="img_btn_back_normal">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <state key="disabled" image="img_btn_back_pressed"/>
-                                        <state key="highlighted" image="img_btn_back_pressed"/>
-                                        <connections>
-                                            <action selector="onBack:" destination="vvM-i0-l3B" eventType="touchUpInside" id="tps-3W-YQI"/>
-                                        </connections>
-                                    </button>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="Add Printer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2fv-Qc-fr2">
-                                        <rect key="frame" x="48" y="0.0" width="256" height="48"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="48" id="hnT-87-r7f"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_ADD_PRINTER"/>
-                                        </userDefinedRuntimeAttributes>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" red="0.32156862745098036" green="0.027450980392156862" blue="0.71372549019607845" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="centerY" secondItem="KSA-EO-Vex" secondAttribute="centerY" id="BV4-Ik-gM9"/>
-                                    <constraint firstAttribute="centerY" secondItem="2fv-Qc-fr2" secondAttribute="centerY" id="IgO-r6-EbD"/>
-                                    <constraint firstItem="2fv-Qc-fr2" firstAttribute="leading" secondItem="KSA-EO-Vex" secondAttribute="trailing" constant="8" id="eUO-6O-XLY"/>
-                                    <constraint firstAttribute="height" constant="48" id="p2n-Mq-xAj"/>
-                                    <constraint firstItem="KSA-EO-Vex" firstAttribute="leading" secondItem="uTH-dB-3AV" secondAttribute="leading" constant="8" id="uBU-AD-q2C"/>
-                                    <constraint firstAttribute="trailing" secondItem="2fv-Qc-fr2" secondAttribute="trailing" constant="16" id="zG6-Yx-3Mu"/>
-                                </constraints>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xuD-Td-Rsy" userLabel="SNMP Community Name">
                                 <rect key="frame" x="0.0" y="48" width="320" height="84"/>
                                 <subviews>
@@ -2139,6 +2096,49 @@
                                     <constraint firstItem="9Mj-OE-0E5" firstAttribute="leading" secondItem="xuD-Td-Rsy" secondAttribute="leading" constant="8" id="rjw-ip-bUy"/>
                                     <constraint firstAttribute="trailing" secondItem="31j-Wf-bon" secondAttribute="trailing" constant="16" id="wHf-g3-mco"/>
                                     <constraint firstAttribute="bottom" secondItem="9Mj-OE-0E5" secondAttribute="bottom" id="wmr-NM-d2B"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uTH-dB-3AV" userLabel="Header">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KSA-EO-Vex" userLabel="iPhone Button - Back">
+                                        <rect key="frame" x="8" y="8" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="32" id="O7O-yg-txM"/>
+                                            <constraint firstAttribute="height" constant="32" id="sPI-Kv-9RS"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                        <state key="normal" image="img_btn_back_normal">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" image="img_btn_back_pressed"/>
+                                        <state key="highlighted" image="img_btn_back_pressed"/>
+                                        <connections>
+                                            <action selector="onBack:" destination="vvM-i0-l3B" eventType="touchUpInside" id="tps-3W-YQI"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="Add Printer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2fv-Qc-fr2">
+                                        <rect key="frame" x="48" y="0.0" width="256" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="hnT-87-r7f"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_ADD_PRINTER"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.32156862745098036" green="0.027450980392156862" blue="0.71372549019607845" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="KSA-EO-Vex" secondAttribute="centerY" id="BV4-Ik-gM9"/>
+                                    <constraint firstAttribute="centerY" secondItem="2fv-Qc-fr2" secondAttribute="centerY" id="IgO-r6-EbD"/>
+                                    <constraint firstItem="2fv-Qc-fr2" firstAttribute="leading" secondItem="KSA-EO-Vex" secondAttribute="trailing" constant="8" id="eUO-6O-XLY"/>
+                                    <constraint firstAttribute="height" constant="48" id="p2n-Mq-xAj"/>
+                                    <constraint firstItem="KSA-EO-Vex" firstAttribute="leading" secondItem="uTH-dB-3AV" secondAttribute="leading" constant="8" id="uBU-AD-q2C"/>
+                                    <constraint firstAttribute="trailing" secondItem="2fv-Qc-fr2" secondAttribute="trailing" constant="16" id="zG6-Yx-3Mu"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QjV-Lm-YW6" userLabel="Input">
@@ -2214,6 +2214,7 @@
                         <outlet property="progressIndicator" destination="g0d-xd-vqb" id="DYM-Vl-dGh"/>
                         <outlet property="saveButton" destination="ydC-sb-GhE" id="YK4-g5-xR4"/>
                         <outlet property="textIP" destination="Ok1-kX-gI3" id="EM3-d6-PEG"/>
+                        <outlet property="viewTopConstraint" destination="jMo-2i-weS" id="IFk-RE-oGE"/>
                         <segue destination="XTe-Pd-MJw" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindToPrinters:" id="5tq-Se-gqS"/>
                     </connections>
                 </viewController>

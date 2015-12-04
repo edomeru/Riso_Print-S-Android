@@ -48,6 +48,11 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
  */
 @property (weak, nonatomic) IBOutlet UILabel *communityNameDisplay;
 
+/**
+ * Reference to the constraint between the header and top of content view
+ */
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *viewTopConstraint;
+
 /** 
  * Reference to the save (+) button.
  */
@@ -97,6 +102,14 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
  * @return YES if successful, NO otherwise
  */
 - (BOOL)addFullCapabilityPrinter:(NSString *)ipAddress;
+
+/**
+ * Moves the view by adjusting the top constraint to of the view that holds
+ * the snmp community name display. This is to be able to lift textIP field
+ *
+ * @param isUp indicated whether to move the view up
+ */
+- (void)moveViewUp:(BOOL)isUp;
 
 /**
  * Responds to pressing the back (<) button in the header (for phones only).
@@ -185,6 +198,22 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
         [self close];
     else
         [self unwindFromOverTo:[self.parentViewController class]];
+}
+
+-(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    //In iphone, if keyboard is already up when device is rotated to landscape, move the view up to prevent keyboard from covering textIP, move to original position when rotated back to portrait
+    if(!self.isIpad && self.textIP.isEditing)
+    {
+        if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation))
+        {
+            [self moveViewUp:YES];
+        }
+        else
+        {
+            [self moveViewUp:NO];
+        }
+    }
 }
 
 #pragma mark - Segue
@@ -422,6 +451,9 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 
 - (void)dismissKeypad
 {
+    //put the view back to normal when keypad is dismissed
+    [self moveViewUp:NO];
+    
     if (self.textIP.isEditing)
         [self.textIP resignFirstResponder];
 }
@@ -443,13 +475,39 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 {
     NSCharacterSet *validCharacters = [NSCharacterSet characterSetWithCharactersInString:@"0123456789abcdefABCDEF.:"];
     // ignore not valid characters
-    if([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
+    if ([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
     {
         return NO;
     }
     
     textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
     return NO;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if (!self.isIpad)
+    {
+        //if iphone and landscape, move up the view so the keyboard will not cover the text input
+        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+        if (UIInterfaceOrientationIsLandscape(orientation))
+        {
+            [self moveViewUp:YES];
+        }
+    }
+}
+
+- (void)moveViewUp:(BOOL)isUp
+{
+    if (isUp)
+    {
+        CGFloat offset = self.textIP.frame.size.height;
+        self.viewTopConstraint.constant = -offset;
+    }
+    else
+    {
+        self.viewTopConstraint.constant = 0;
+    }
 }
 
 @end
