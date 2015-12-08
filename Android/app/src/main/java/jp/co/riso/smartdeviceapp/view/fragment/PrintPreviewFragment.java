@@ -100,6 +100,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     private PauseableHandler mPauseableHandler = null;
     private ConfirmDialogFragment mConfirmDialogFragment = null;
     private boolean mIsPermissionDialogOpen;
+    private boolean mIsPdfInitialized;
+    private boolean mShouldDisplayExplanation;
 
     @Override
     public int getViewLayout() {
@@ -135,20 +137,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     initializePdfManagerAndRunAsync();
                 } else {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                        // Display an explanation to the user that the permission is needed
-                        final String message = getContext().getString(R.string.ids_lbl_storage_permission);
-                        final String positiveButton = getContext().getString(R.string.ids_lbl_ok);
-                        final String negativeButton = getContext().getString(R.string.ids_lbl_cancel);
-                        new Handler().post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mConfirmDialogFragment == null) {
-                                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, negativeButton);
-                                    mConfirmDialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
-                                    DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
-                                }
-                            }
-                        });
+                        mShouldDisplayExplanation = true;
                     } else {
                         mIsPermissionDialogOpen = true;
                         // Request the permission, no explanation needed
@@ -203,6 +192,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * @brief Initializes the PDF Manager and runs the PDF task asynchronously
      */
     private void initializePdfManagerAndRunAsync() {
+        mIsPdfInitialized = true;
         ((MainActivity) getActivity()).initializeRadaee();
         Uri data = getActivity().getIntent().getData();
         String pdfInSandbox = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
@@ -311,6 +301,30 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     @Override
     public void onResume() {
         super.onResume();
+        // to enable PDF display when Storage permission is switched from disabled to enabled
+        if (hasPdfFile() && !mIsPermissionDialogOpen) {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                if (mConfirmDialogFragment != null) {
+                    DialogUtils.dismissDialog(getActivity(), TAG_PERMISSION_DIALOG);
+                }
+                if (!mIsPdfInitialized) {
+                    initializePdfManagerAndRunAsync();
+                }
+            } else if (mShouldDisplayExplanation) {
+                // Display an explanation to the user that the permission is needed
+                final String message = getContext().getString(R.string.ids_lbl_storage_permission);
+                final String positiveButton = getContext().getString(R.string.ids_lbl_ok);
+                final String negativeButton = getContext().getString(R.string.ids_lbl_cancel);
+                if (mConfirmDialogFragment == null) {
+                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, negativeButton);
+                    mConfirmDialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
+                    DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
+                }
+            }
+        }
+        mShouldDisplayExplanation = false;
+
         PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         
         if (!printerManager.isExists(mPrinterId)) {
