@@ -349,12 +349,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 mMainLayout.setTranslationX(moveFactor);
                 
                 // #3614 and #3734 fix
-                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+/*                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     Fragment f = getFragmentManager().findFragmentById(R.id.mainLayout);
                     if (f instanceof PrintPreviewFragment || f instanceof HelpFragment || f instanceof LegalFragment) {
                         mMainLayout.requestLayout();
                     }
-                }
+                }*/
             }
         }
         

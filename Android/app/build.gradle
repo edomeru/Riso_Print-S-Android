@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "jp.co.riso.smartprint"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 1000703
         versionName "v1.0.7.3"

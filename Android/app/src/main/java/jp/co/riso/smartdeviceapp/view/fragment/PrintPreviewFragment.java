@@ -301,10 +301,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     @Override
     public void onResume() {
         super.onResume();
-        // to enable PDF display when Storage permission is switched from disabled to enabled
         if (hasPdfFile() && !mIsPermissionDialogOpen) {
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
+                // to enable PDF display when Storage permission is switched from disabled to enabled
                 if (mConfirmDialogFragment != null) {
                     DialogUtils.dismissDialog(getActivity(), TAG_PERMISSION_DIALOG);
                 }
@@ -313,10 +313,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 }
             } else if (mShouldDisplayExplanation) {
                 // Display an explanation to the user that the permission is needed
-                final String message = getContext().getString(R.string.ids_lbl_storage_permission);
-                final String positiveButton = getContext().getString(R.string.ids_lbl_ok);
-                final String negativeButton = getContext().getString(R.string.ids_lbl_cancel);
                 if (mConfirmDialogFragment == null) {
+                    final String message = getContext().getString(R.string.ids_lbl_storage_permission);
+                    final String positiveButton = getContext().getString(R.string.ids_lbl_ok);
+                    final String negativeButton = getContext().getString(R.string.ids_lbl_cancel);
                     mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, negativeButton);
                     mConfirmDialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
                     DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);

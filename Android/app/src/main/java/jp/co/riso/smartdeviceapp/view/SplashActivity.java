@@ -261,7 +261,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         
         int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
         //workaround for android 5.0
-        if (Build.VERSION.SDK_INT >= 21){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
         }
         

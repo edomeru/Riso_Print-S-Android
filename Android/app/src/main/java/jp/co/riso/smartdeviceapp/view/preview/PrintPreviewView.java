@@ -154,9 +154,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         if (!isInEditMode()) {
             mPrintSettings = new PrintSettings(); // Should not be null
             mScaleDetector = new ScaleGestureDetector(getContext(), this);
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                mScaleDetector.setQuickScaleEnabled(false);
-            }
+//            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            mScaleDetector.setQuickScaleEnabled(false);
+//            }
             mDoubleTapDetector = new GestureDetector(getContext(), this);
             mDoubleTapDetector.setOnDoubleTapListener(this);
             
