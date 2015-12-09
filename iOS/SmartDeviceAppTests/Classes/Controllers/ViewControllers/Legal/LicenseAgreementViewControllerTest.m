@@ -17,6 +17,8 @@
 -(UIButton *)cancelBtn;
 -(UIButton *)okBtn;
 
+//expose private methods
+-(void) setLicenseAgreement:(BOOL) doesAgree;
 
 @end
 
@@ -44,7 +46,7 @@
     storyboard = [UIStoryboard storyboardWithName:storyboardTitle bundle:nil];
     GHAssertNotNil(storyboard, @"unable to retrieve storyboard file %@", storyboardTitle);
     
-    NSString* controllerName = @"LicenseAgreementViewController";
+    NSString* controllerName = @"LicenceAgreementViewController";
     controller = [storyboard instantiateViewControllerWithIdentifier:controllerName];
     GHAssertNotNil(controller, @"unable to instantiate controller (%@)", controllerName);
     GHAssertNotNil(controller.view, @"");
@@ -93,7 +95,7 @@
     GHAssertTrue([ibActions count]  == 1, @"");
     GHAssertTrue([ibActions containsObject:@"okAction:"], @"");
     
-    UIButton* cancelButton = [controller okBtn];
+    UIButton* cancelButton = [controller cancelBtn];
     ibActions = [cancelButton actionsForTarget:controller
                            forControlEvent:UIControlEventTouchUpInside];
     GHAssertNotNil(ibActions, @"");
@@ -101,19 +103,15 @@
     GHAssertTrue([ibActions containsObject:@"cancelAction:"], @"");
 }
 
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-//Suppress undeclared selector warning because setLicenseAgreement is meant to be private but needs to be tested in UT
-//http://stackoverflow.com/questions/6224976/how-to-get-rid-of-the-undeclared-selector-warning
-
 - (void)test003_LicenseAgreementState
 {
     
     GHTestLog(@"# CHECK: LicenseAgreement state. #");
     
-    [controller performSelector:@selector(setLicenseAgreement:) withObject:[NSNumber numberWithBool:NO]];
+    [controller setLicenseAgreement:NO];
     GHAssertTrue([LicenseAgreementViewController hasConfirmedToLicenseAgreement]  == NO, @"");
     
-    [controller performSelector:@selector(setLicenseAgreement:) withObject:[NSNumber numberWithBool:YES]];
+    [controller setLicenseAgreement:YES];
     GHAssertTrue([LicenseAgreementViewController hasConfirmedToLicenseAgreement] , @"");
 }
 

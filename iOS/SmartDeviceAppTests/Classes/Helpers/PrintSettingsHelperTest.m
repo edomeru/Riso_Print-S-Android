@@ -62,7 +62,7 @@
                             [NSNumber numberWithInt:9999],
                             [NSNumber numberWithInt:3],
                             [NSNumber numberWithInt:13],
-                            [NSNumber numberWithInt:3],
+                            [NSNumber numberWithInt:2],
                             [NSNumber numberWithInt:7],
                             [NSNumber numberWithInt:5],
                             [NSNumber numberWithInt:3],

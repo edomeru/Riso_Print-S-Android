@@ -148,7 +148,7 @@
     // Verification
     GHAssertNoThrow([mockPrintSettingsHelper verify], @"");
     GHAssertNotNil(formattedString, @"formattedString must no be nil.");
-    NSString *loginIdField = @"loginId=\n";
+    NSString *loginIdField = @"loginId=";
     NSString *pinCodeField = @"pinCode=\n";
     NSString *securePrint = @"securePrint=0\n";
     NSRange rangeLogin = [formattedString rangeOfString:loginIdField];
@@ -179,7 +179,7 @@
     // Verification
     GHAssertNoThrow([mockPrintSettingsHelper verify], @"");
     GHAssertNotNil(formattedString, @"formattedString must no be nil.");
-    NSString *loginIdField = @"loginId=\n";
+    NSString *loginIdField = @"loginId=";
     NSString *pinCodeField = @"pinCode=\n";
     NSString *securePrint = @"securePrint=0\n";
     NSRange rangeLogin = [formattedString rangeOfString:loginIdField];

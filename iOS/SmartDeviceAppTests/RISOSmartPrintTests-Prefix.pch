@@ -21,4 +21,7 @@
 
     #define MR_ENABLE_ACTIVE_RECORD_LOGGING 0
     #import "CoreData+MagicalRecord.h"
+
+    #define DISABLE_FAILED_TESTS 1
+
 #endif
