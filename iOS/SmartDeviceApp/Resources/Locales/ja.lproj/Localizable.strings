@@ -17,7 +17,7 @@
 "IDS_LBL_SETTINGS" = "設定";
 "IDS_LBL_ADD_PRINTER" = "追加";
 "IDS_LBL_SEARCH_PRINTERS" = "検索";
-"IDS_LBL_SEARCH_SETTINGS" = "Search Settings";
+"IDS_LBL_SEARCH_PRINTERS_SETTINGS" = "検索設定";
 "IDS_LBL_SET_DEFAULT_PRINTER" = "デフォルトプリンターに指定";
 "IDS_LBL_DELETE_ALL" = "全て削除";
 "IDS_LBL_PRINTER_INFO" = "プリンター情報";
