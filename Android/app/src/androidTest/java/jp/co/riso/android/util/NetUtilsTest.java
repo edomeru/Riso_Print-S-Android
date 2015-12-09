@@ -441,10 +441,10 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             String ipv6Addr = IPV6_STD_PRINTER_ADDRESS;
             
             // Ipv6 Address
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                ipv6Addr = getLocalIpv6Address();
-                assertNotNull(ipv6Addr);
-            }
+            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            ipv6Addr = getLocalIpv6Address();
+            assertNotNull(ipv6Addr);
+            //}
             
             while (retry > 0) {
                 isReachable = NetUtils.connectToIpv6Address(ipv6Addr, inetIpAddress);
