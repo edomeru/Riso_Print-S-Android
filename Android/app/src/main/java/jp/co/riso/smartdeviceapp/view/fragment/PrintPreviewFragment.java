@@ -743,10 +743,17 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         switch (requestCode) {
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
                 mIsPermissionDialogOpen = false; // the request returned a result hence dialog is closed
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, run PDF initializations
-                    initializePdfManagerAndRunAsync();
+                if (grantResults.length > 0) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        // permission was granted, run PDF initializations
+                        initializePdfManagerAndRunAsync();
+                    } else {
+                        // permission was denied check if Print Settings is open
+                        MainActivity activity = (MainActivity) getActivity();
+                        if (activity.isDrawerOpen(Gravity.RIGHT)) {
+                            activity.closeDrawers();
+                        }
+                    }
                 }
                 return;
             }
@@ -764,5 +771,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     @Override
     public void onCancel() {
         mConfirmDialogFragment = null;
+        MainActivity activity = (MainActivity) getActivity();
+        // close Print Settings menu if open since PDF preview will not be displayed
+        if (activity.isDrawerOpen(Gravity.RIGHT)) {
+            activity.closeDrawers();
+        }
     }
 }
