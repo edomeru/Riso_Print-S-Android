@@ -79,7 +79,19 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
         mPort.setOnItemSelectedListener(this);
         mDefaultPrinter = (Spinner) view.findViewById(R.id.defaultPrinter);
         mDefaultPrinter.setOnItemSelectedListener(this);
-        
+
+        if (savedInstanceState != null) {
+            if (mPrinter == null) {
+                List<Printer> printersList = mPrinterManager.getSavedPrintersList();
+                int printerId = savedInstanceState.getInt(KEY_PRINTER_INFO_ID);
+                for (Printer printer : printersList) {
+                    if (printer.getId() == printerId) {
+                        mPrinter = printer;
+                    }
+                }
+            }
+        }
+
         ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getActivity(), R.layout.printerinfo_port_item);
         // Assumption is that LPR is always available
         portAdapter.add(getString(R.string.ids_lbl_port_lpr));
@@ -120,17 +132,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (mPrinter == null) {
-                List<Printer> printersList = mPrinterManager.getSavedPrintersList();
-                int printerId = savedInstanceState.getInt(KEY_PRINTER_INFO_ID);
-                for (Printer printer : printersList) {
-                    if (printer.getId() == printerId) {
-                        mPrinter = printer;
-                    }
-                }
-            }
-        }
+
         String printerName = mPrinter.getName();
         if(printerName == null || printerName.isEmpty()) {
             printerName = getActivity().getResources().getString(R.string.ids_lbl_no_name);
