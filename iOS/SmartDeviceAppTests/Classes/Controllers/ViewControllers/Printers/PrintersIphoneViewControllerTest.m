@@ -14,6 +14,8 @@
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
 #import "PrinterStatusView.h"
+#import "SearchSettingsViewController.h"
+#import "OCMock.h"
 
 @interface PrintersIphoneViewController (UnitTest)
 
@@ -22,6 +24,10 @@
 - (UIButton*)addPrinterButton;
 - (UIButton*)printerSearchButton;
 - (UITableView*)tableView;
+- (UIButton*)searchSettingsButton;
+
+//expose private methods
+- (IBAction)unwindToPrinters:(UIStoryboardSegue *)sender;
 
 @end
 
@@ -100,6 +106,7 @@
     GHAssertNotNil([controller addPrinterButton], @"");
     GHAssertNotNil([controller printerSearchButton], @"");
     GHAssertNotNil([controller tableView], @"");
+    GHAssertNotNil([controller searchSettingsButton], @"");
 }
 
 - (void)test002_IBActionsBinding
@@ -254,6 +261,34 @@
     [printerCell setCellToBeDeletedState:NO];
     GHAssertTrue([[printerCell spaceDeleteButtonToSuperview] constant] < 0, @"");
     GHAssertFalse([[printerCell disclosureImage] isHidden], @"");
+}
+
+- (void)test010_SearchSettingsAction
+{
+    id mockController = OCMPartialMock(controller);
+    [[mockController expect] performSegueTo:[SearchSettingsViewController class]];
+    
+    [mockController searchSettingsAction:[controller searchSettingsButton]];
+    
+    GHAssertFalse([[mockController searchSettingsButton] isEnabled], @"");
+    
+    [mockController verify];
+    
+    [mockController stopMocking];
+}
+
+- (void)test011_UnwindFromSearchSettings
+{
+    id mockStoryBoardSegue = OCMClassMock([UIStoryboardSegue class]);
+    [[[mockStoryBoardSegue stub] andReturn:[[SearchSettingsViewController alloc] init]] sourceViewController];
+    
+    [[controller searchSettingsButton] setEnabled:NO];
+    
+    [controller unwindToPrinters: mockStoryBoardSegue];
+    
+    GHAssertTrue([[controller searchSettingsButton] isEnabled], @"");
+    
+    [mockStoryBoardSegue stopMocking];
 }
 
 #pragma mark - Utilities

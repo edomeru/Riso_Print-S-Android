@@ -15,6 +15,8 @@
 #import "PrinterDetails.h"
 #import "PrinterStatusView.h"
 #import "DeleteButton.h"
+#import "SearchSettingsViewController.h"
+#import "OCMock.h"
 
 @interface PrintersIpadViewController (UnitTest)
 
@@ -23,10 +25,16 @@
 - (UIButton*)addPrinterButton;
 - (UIButton*)printerSearchButton;
 - (UICollectionView*)collectionView;
+- (UIButton*)searchSettingsButton;
 
 // expose private methods
 - (BOOL)setDefaultPrinter:(NSIndexPath*)indexPath;
+<<<<<<< HEAD
 - (IBAction)defaultPrinterSelectionAction:(id)sender;
+=======
+- (IBAction)defaultPrinterSwitchAction:(id)sender;
+- (IBAction)unwindToPrinters:(UIStoryboardSegue *)sender;
+>>>>>>> [RQM-1511-002][iOS]
 
 @end
 
@@ -103,6 +111,7 @@
     GHAssertNotNil([controller addPrinterButton], @"");
     GHAssertNotNil([controller printerSearchButton], @"");
     GHAssertNotNil([controller collectionView], @"");
+    GHAssertNotNil([controller searchSettingsButton], @"");
 }
 
 - (void)test002_IBActionsBinding
@@ -134,6 +143,14 @@
     GHAssertNotNil(ibActions, @"");
     GHAssertTrue([ibActions count]  == 1, @"");
     GHAssertTrue([ibActions containsObject:@"printerSearchAction:"], @"");
+    
+    GHTestLog(@"-- check search settings button");
+    UIButton* searchSettingsButton = [controller searchSettingsButton];
+    ibActions = [searchSettingsButton actionsForTarget:controller
+                                      forControlEvent:UIControlEventTouchUpInside];
+    GHAssertNotNil(ibActions, @"");
+    GHAssertTrue([ibActions count]  == 1, @"");
+    GHAssertTrue([ibActions containsObject:@"searchSettingsAction:"], @"");
 }
 
 - (void)test003_UICollectionViewPopulate
@@ -318,6 +335,35 @@
     [controller defaultPrinterSelectionAction:defaultPrinterSelection];
     GHAssertTrue(controller.defaultPrinterIndexPath.row == index.row, @"");
 }
+
+- (void)test011_SearchSettingsAction
+{
+    id mockController = OCMPartialMock(controller);
+    [[mockController expect] performSegueTo:[SearchSettingsViewController class]];
+    
+    [mockController searchSettingsAction:[controller searchSettingsButton]];
+    
+    GHAssertFalse([[mockController searchSettingsButton] isEnabled], @"");
+    
+    [mockController verify];
+    
+    [mockController stopMocking];
+}
+
+- (void)test012_UnwindFromSearchSettings
+{
+    id mockStoryBoardSegue = OCMClassMock([UIStoryboardSegue class]);
+    [[[mockStoryBoardSegue stub] andReturn:[[SearchSettingsViewController alloc] init]] sourceViewController];
+    
+    [[controller searchSettingsButton] setEnabled:NO];
+    
+    [controller unwindToPrinters: mockStoryBoardSegue];
+    
+    GHAssertTrue([[controller searchSettingsButton] isEnabled], @"");
+    
+    [mockStoryBoardSegue stopMocking];
+}
+
 
 #pragma mark - Utilities
 
