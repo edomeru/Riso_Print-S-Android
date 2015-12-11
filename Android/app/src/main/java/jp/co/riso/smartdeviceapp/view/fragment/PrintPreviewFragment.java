@@ -314,7 +314,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             } else if (mShouldDisplayExplanation) {
                 // Display an explanation to the user that the permission is needed
                 if (mConfirmDialogFragment == null) {
-                    final String message = getContext().getString(R.string.ids_lbl_storage_permission);
+                    final String message = getContext().getString(R.string.ids_lbl_permission_dialog_msg);
                     final String positiveButton = getContext().getString(R.string.ids_lbl_ok);
                     final String negativeButton = getContext().getString(R.string.ids_lbl_cancel);
                     mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, negativeButton);

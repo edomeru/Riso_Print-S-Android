@@ -36,6 +36,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.AndroidRuntimeException;
 import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
@@ -45,6 +46,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -360,51 +362,87 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP){
-            if (v.getId() == R.id.licenseAgreeButton){
-                
-                // save to shared preferences
-                SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs",MODE_PRIVATE);
-                
-                SharedPreferences.Editor edit = preferences.edit();
-                edit.putBoolean("licenseAgreementDone",true);
-                //edit.putBoolean("licenseAgreementDone",false);
-                edit.apply();
-                
-                
-                runMainActivity();
-                
-                return true;
-                
-            } else if (v.getId() == R.id.licenseDisagreeButton){
-                
-                // alert box
-                String title = getString(R.string.ids_lbl_license);
-                String message = getString(R.string.ids_err_msg_disagree_to_license);
-                String buttonTitle = getString(R.string.ids_lbl_ok);
+            switch (v.getId()) {
+                case R.id.licenseAgreeButton:
+                    // save to shared preferences
+                    SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs", MODE_PRIVATE);
 
-                ContextThemeWrapper newContext = new ContextThemeWrapper(this, android.R.style.TextAppearance_Holo_DialogWindowTitle);
-                AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
-                
-                if (title != null) {
-                    builder.setTitle(title);
-                }
-                
-                if (message != null) {
-                    builder.setMessage(message);
-                }
-                
-                if (buttonTitle != null) {
-                    builder.setNegativeButton(buttonTitle, null);
-                }
-                
-                AlertDialog dialog = null;
-                dialog = builder.create();
-                
-                dialog.show();
-                
-                return true;
-            } else {
-                v.performClick();
+                    SharedPreferences.Editor edit = preferences.edit();
+                    edit.putBoolean("licenseAgreementDone", true);
+                    //edit.putBoolean("licenseAgreementDone",false);
+                    edit.apply();
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        // show permission onboarding screens
+                        findViewById(R.id.startButton).setOnTouchListener(this);
+                        findViewById(R.id.nextButton).setOnTouchListener(this);
+                        findViewById(R.id.backButton).setOnTouchListener(this);
+                        findViewById(R.id.settingsButton).setOnTouchListener(this);
+                        findViewById(R.id.startButton).setOnTouchListener(this);
+
+                        ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
+                    } else {
+                        // start home screen
+                        runMainActivity();
+                    }
+                    return true;
+
+                case R.id.licenseDisagreeButton:
+
+                    // alert box
+                    String title = getString(R.string.ids_lbl_license);
+                    String message = getString(R.string.ids_err_msg_disagree_to_license);
+                    String buttonTitle = getString(R.string.ids_lbl_ok);
+
+                    ContextThemeWrapper newContext = new ContextThemeWrapper(this, android.R.style.TextAppearance_Holo_DialogWindowTitle);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
+
+                    if (title != null) {
+                        builder.setTitle(title);
+                    }
+
+                    if (message != null) {
+                        builder.setMessage(message);
+                    }
+
+                    if (buttonTitle != null) {
+                        builder.setNegativeButton(buttonTitle, null);
+                    }
+
+                    AlertDialog dialog = null;
+                    dialog = builder.create();
+
+                    dialog.show();
+
+                    return true;
+                case R.id.startButton:
+                    // start Home Screen
+                    runMainActivity();
+                    return true;
+                case R.id.nextButton:
+                    // Go to next onboarding screen
+                    ((TextSwitcher) findViewById(R.id.textSwitcher)).showPrevious();
+                    findViewById(R.id.nextButton).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.startButton).setVisibility(View.VISIBLE);
+                    findViewById(R.id.backButton).setVisibility(View.VISIBLE);
+                    return true;
+                case R.id.backButton:
+                    // Go to previous onboarding screen
+                    ((TextSwitcher) findViewById(R.id.textSwitcher)).showPrevious();
+                    findViewById(R.id.nextButton).setVisibility(View.VISIBLE);
+                    findViewById(R.id.startButton).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.backButton).setVisibility(View.INVISIBLE);
+                    return true;
+                case R.id.settingsButton:
+                    // Go to Settings screen screen
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                    return true;
+                default:
+                    v.performClick();
             }
         }
         

@@ -15,7 +15,8 @@
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.SplashActivity"
             android:theme="@style/SplashTheme"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
