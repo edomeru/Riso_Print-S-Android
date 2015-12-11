@@ -76,11 +76,7 @@ public class LegalFragment extends BaseWebFragment {
                         String javascript = String.format(Locale.getDefault(), JS_REPLACE_FORMAT, VERSION_HTML_ID,
                                 versionName, APPNAME_HTML_ID, appName);
                         
-//                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                          view.evaluateJavascript(javascript, null);
-//                        } else {
-//                            view.loadUrl(javascript);
-//                        }
+                        view.evaluateJavascript(javascript, null);
                     }
                 } catch (NameNotFoundException e) {
                     Logger.logWarn(LegalFragment.class, "No version name found");
