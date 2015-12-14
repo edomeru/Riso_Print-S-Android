@@ -32,6 +32,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 import jp.co.riso.android.dialog.ConfirmDialogFragment;
@@ -102,6 +103,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     private boolean mIsPermissionDialogOpen;
     private boolean mIsPdfInitialized;
     private boolean mShouldDisplayExplanation;
+    private Uri mIntentData;
+    private InputStream mInputStream;
 
     @Override
     public int getViewLayout() {
@@ -112,14 +115,29 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public void initializeFragment(Bundle savedInstanceState) {
         // dismiss permission alert dialog if showing
         DialogUtils.dismissDialog(getActivity(), TAG_PERMISSION_DIALOG);
+        setRetainInstance(true);
 
         if (savedInstanceState != null) {
             mCurrentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0);
             mIsPermissionDialogOpen = savedInstanceState.getBoolean(KEY_EXTERNAL_STORAGE_DIALOG_OPEN, false);
         }
 
-        setRetainInstance(true);
-        
+        Intent intent = getActivity().getIntent();
+        if (intent != null) {
+            mIntentData = intent.getData();
+            if (PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext()) == null
+                    && mIntentData != null && !mIntentData.getScheme().equals("file")) {
+                //resolve content if not from Sandbox or File
+                try {
+                    ContentResolver c = this.getActivity().getContentResolver();
+                    mInputStream = c.openInputStream(mIntentData);
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+
         mHandler = new Handler(this);
         if (mPauseableHandler == null) {
             mPauseableHandler = new PauseableHandler(this);
@@ -194,35 +212,28 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     private void initializePdfManagerAndRunAsync() {
         mIsPdfInitialized = true;
         ((MainActivity) getActivity()).initializeRadaee();
-        Uri data = getActivity().getIntent().getData();
+
         String pdfInSandbox = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
         if (pdfInSandbox != null) {
             mPdfManager.setSandboxPDF();
             // Automatically open asynchronously
             mPdfManager.initializeAsync(null);
-        } else if (data != null) {
-            if (data.getScheme().equals("file")) {
-                mPdfManager.setPDF(data.getPath());
+        } else if (mIntentData != null) {
+            if (mIntentData.getScheme().equals("file")) {
+                mPdfManager.setPDF(mIntentData.getPath());
                 // Automatically open asynchronously
                 mPdfManager.initializeAsync(null);
             } else {
-                //resolve content
-                ContentResolver c = this.getActivity().getContentResolver();
                 mPdfManager.setPDF(null);
                 // Automatically open asynchronously
-                try {
-                    mPdfManager.initializeAsync(c.openInputStream(data));
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                mPdfManager.initializeAsync(mInputStream);
             }
         }
     }
 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        
+
         mPrintPreviewView = (PrintPreviewView) view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
         //mPrintPreviewView.setShow3Punch(isPrinterJapanese());
