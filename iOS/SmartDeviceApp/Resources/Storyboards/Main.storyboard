@@ -1213,12 +1213,24 @@
                                             <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_SNMP_COMMUNITY_NAME"/>
                                         </userDefinedRuntimeAttributes>
                                     </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="do1-Xp-evm" userLabel="Valid Input Message">
+                                        <rect key="frame" x="24" y="83" width="230" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_VALID_COMMUNITY_NAME"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstItem="0MY-in-093" firstAttribute="top" secondItem="T2n-Vt-2Mf" secondAttribute="bottom" constant="8" id="FLc-gZ-eez"/>
+                                    <constraint firstAttribute="trailing" secondItem="do1-Xp-evm" secondAttribute="trailing" constant="16" id="Fcm-I9-Y9A"/>
+                                    <constraint firstItem="do1-Xp-evm" firstAttribute="leading" secondItem="JFA-mn-x7k" secondAttribute="leading" constant="24" id="IzZ-Rm-Vs6"/>
                                     <constraint firstItem="T2n-Vt-2Mf" firstAttribute="top" secondItem="JFA-mn-x7k" secondAttribute="top" constant="16" id="Jx5-py-bxR"/>
                                     <constraint firstAttribute="trailing" secondItem="0MY-in-093" secondAttribute="trailing" constant="16" id="MHF-hd-cOy"/>
+                                    <constraint firstItem="do1-Xp-evm" firstAttribute="top" secondItem="0MY-in-093" secondAttribute="bottom" constant="8" id="TUd-X4-xCT"/>
                                     <constraint firstItem="0MY-in-093" firstAttribute="leading" secondItem="JFA-mn-x7k" secondAttribute="leading" constant="16" id="TcR-1B-HKK"/>
                                     <constraint firstAttribute="trailing" secondItem="T2n-Vt-2Mf" secondAttribute="trailing" constant="16" id="cMh-DQ-dmt"/>
                                     <constraint firstItem="T2n-Vt-2Mf" firstAttribute="leading" secondItem="JFA-mn-x7k" secondAttribute="leading" constant="16" id="jlg-Qm-fdh"/>
@@ -2302,6 +2314,15 @@
                                             <outlet property="delegate" destination="8xs-wI-cDN" id="WrF-rU-GHM"/>
                                         </connections>
                                     </textField>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z0F-Ou-U8F" userLabel="Valid Input Message">
+                                        <rect key="frame" x="24" y="83" width="280" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="localizationId" value="IDS_LBL_VALID_COMMUNITY_NAME"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -2310,8 +2331,11 @@
                                     <constraint firstAttribute="trailing" secondItem="unI-wB-3YS" secondAttribute="trailing" constant="16" id="Nkh-78-qWf"/>
                                     <constraint firstAttribute="width" constant="320" id="b0i-FX-rTH"/>
                                     <constraint firstItem="unI-wB-3YS" firstAttribute="top" secondItem="9z2-wx-0z6" secondAttribute="top" constant="16" id="cLX-Dc-i32"/>
+                                    <constraint firstAttribute="trailing" secondItem="Z0F-Ou-U8F" secondAttribute="trailing" constant="16" id="haI-8c-Vhj"/>
+                                    <constraint firstItem="Z0F-Ou-U8F" firstAttribute="top" secondItem="TNO-HH-JB3" secondAttribute="bottom" constant="8" id="n4u-gM-JHK"/>
                                     <constraint firstAttribute="trailing" secondItem="TNO-HH-JB3" secondAttribute="trailing" constant="16" id="nIP-qZ-8ap"/>
                                     <constraint firstItem="TNO-HH-JB3" firstAttribute="leading" secondItem="9z2-wx-0z6" secondAttribute="leading" constant="16" id="sZU-er-y7s"/>
+                                    <constraint firstItem="Z0F-Ou-U8F" firstAttribute="leading" secondItem="9z2-wx-0z6" secondAttribute="leading" constant="24" id="wgO-Af-QxT"/>
                                 </constraints>
                             </view>
                         </subviews>

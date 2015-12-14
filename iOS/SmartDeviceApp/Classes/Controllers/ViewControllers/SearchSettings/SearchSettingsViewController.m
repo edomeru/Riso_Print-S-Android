@@ -9,6 +9,7 @@
 #import "SearchSettingsViewController.h"
 #import "UIViewController+Segue.h"
 #import "AppSettingsHelper.h"
+#import "AlertHelper.h"
 
 
 #define SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN   32
@@ -154,13 +155,25 @@
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     NSMutableCharacterSet *validCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
-    [validCharacters addCharactersInString:@",./:;@[\\]^_"];
+    [validCharacters addCharactersInString:@",./:;@[¥]^_"];
     
     //ignore if:
     //-input has invalid characters
     //-input will exceed max chars
-    if ([string stringByTrimmingCharactersInSet:validCharacters].length > 0 ||
-       ((textField.text.length + string.length) > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN && string.length > 0))
+    if ([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
+    {
+        //show error if pasted string has invalid characters
+        //considered as paste if replacement string lengt is greater than 1 character
+        //if 1 chracter only, it is considered as keyboard input
+        if (string.length > 1)
+        {
+            [AlertHelper displayResult:kAlertResultErrCommunityNameInvalidPaste
+                             withTitle:kAlertTitleSearchSettings
+                           withDetails:nil];
+        }
+        return NO;
+    }
+    if ((textField.text.length + string.length) > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN && string.length > 0)
     {
         return NO;
     }

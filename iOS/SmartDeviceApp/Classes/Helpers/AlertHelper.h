@@ -20,6 +20,7 @@ typedef enum
     kAlertTitlePrintJobHistory, /**< Title for alerts displayed in Print Job History Screen. */
     kAlertTitlePrintSetting, /**< Title for alerts displayed in Print Setting. */
     kAlertTitleLicenseAgreement, /*< Title for alerts displayed in LicenseAgreement  Screen.*/
+    kAlertTitleSearchSettings,/*< Title for alerts displayed in Search Settings Screen.*/
 
     kAlertTitleDefault /**< Sets alert title to RISO Smart Print */
     
@@ -58,7 +59,9 @@ typedef enum
     kAlertResultErrDB, /**< Message when a database related error occurs. */
     
     // license agreement errors
-    kAlertResultErrorLicenseAgreementDisagree /**< Message when user doesnt accept license agreement. */
+    kAlertResultErrorLicenseAgreementDisagree, /**< Message when user doesnt accept license agreement. */
+    // search settings screen errors
+    kAlertResultErrCommunityNameInvalidPaste /**< Message when user pasted string with invalid characters in community name input. */
     
     
 } kAlertResult;

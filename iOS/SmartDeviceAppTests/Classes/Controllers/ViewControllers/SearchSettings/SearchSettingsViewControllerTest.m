@@ -11,6 +11,7 @@
 #import "SearchSettingsViewController.h"
 #import "UIViewController+Segue.h"
 #import "AppSettingsHelper.h"
+#import "CXAlertView.h"
 
 
 @interface SearchSettingsViewController (UnitTest)
@@ -109,6 +110,9 @@
     GHAssertFalse([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
                             replacementString:testString], @"");
     
+    [self waitForCompletion:2]; //to see the alert
+    [self removeResultAlert];
+    
     //paste all valid character but can exceed total
     controllerIphone.snmpCommunityName.text = @"abcdefghijklmnopqrstuvwxyz";
     testString = @"1234567890";
@@ -132,7 +136,7 @@
     
     //test all valid characters
     //valid symbols
-    testString = @",./:;@[\\]^_";
+    testString = @",./:;@[¥]^_";
     GHAssertTrue([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
                            replacementString:testString], @"");
     
@@ -318,6 +322,39 @@
     testCommunityName = communityName;
 }
 
+#pragma mark - Utilties
+
+
+- (void)waitForCompletion:(NSTimeInterval)timeoutSecs
+{
+    NSDate* timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeoutSecs];
+    
+    do
+    {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
+        if ([timeoutDate timeIntervalSinceNow] < 0.0)
+            break;
+    } while (1);
+}
+
+- (void)removeResultAlert
+{
+    for (UIWindow* window in [UIApplication sharedApplication].windows)
+    {
+        NSArray* subViews = window.subviews;
+        if ([subViews count] > 0)
+        {
+            UIView* view = [subViews objectAtIndex:0];
+            if ([view isKindOfClass:[CXAlertView class]])
+            {
+                CXAlertView* alert = (CXAlertView*)view;
+                [alert dismiss];
+                [self waitForCompletion:2];
+                alert = nil;
+            }
+        }
+    }
+}
 @end
 
 
