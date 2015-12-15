@@ -96,9 +96,10 @@
     <dimen name="printers_sub_separator_padding">20dp</dimen>
     <dimen name="printers_name_space">4dp</dimen>
 
-    <dimen name="permission_button_margin">16dp</dimen>
-    <dimen name="permission_button_padding">12dp</dimen>
-    <dimen name="permission_logo_height">64dp</dimen>
-    <dimen name="permission_logo_margin">48dp</dimen>
+    <dimen name="onboarding_text_margin">16dp</dimen>
+    <dimen name="onboarding_button_margin">4dp</dimen>
+    <dimen name="onboarding_button_padding">8dp</dimen>
+    <dimen name="onboarding_logo_height">56dp</dimen>
+    <dimen name="onboarding_logo_margin">32dp</dimen>
 
 </resources>

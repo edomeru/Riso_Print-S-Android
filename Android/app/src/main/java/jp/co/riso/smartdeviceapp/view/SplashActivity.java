@@ -46,7 +46,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -211,8 +210,8 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             Button disagreebutton = (Button)buttonLayout.findViewById(R.id.licenseDisagreeButton);
             disagreebutton.setText(R.string.ids_lbl_disagree);
             disagreebutton.setOnTouchListener(this);
-            
-            
+
+
             ViewFlipper vf = (ViewFlipper) findViewById( R.id.viewFlipper);
             vf.showNext();
             
@@ -374,12 +373,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         // show permission onboarding screens
-                        findViewById(R.id.startButton).setOnTouchListener(this);
-                        findViewById(R.id.nextButton).setOnTouchListener(this);
-                        findViewById(R.id.backButton).setOnTouchListener(this);
                         findViewById(R.id.settingsButton).setOnTouchListener(this);
                         findViewById(R.id.startButton).setOnTouchListener(this);
 
+                        TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
+                        infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
                         ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
                     } else {
                         // start home screen
@@ -419,27 +417,13 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                     // start Home Screen
                     runMainActivity();
                     return true;
-                case R.id.nextButton:
-                    // Go to next onboarding screen
-                    ((TextSwitcher) findViewById(R.id.textSwitcher)).showPrevious();
-                    findViewById(R.id.nextButton).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.startButton).setVisibility(View.VISIBLE);
-                    findViewById(R.id.backButton).setVisibility(View.VISIBLE);
-                    return true;
-                case R.id.backButton:
-                    // Go to previous onboarding screen
-                    ((TextSwitcher) findViewById(R.id.textSwitcher)).showPrevious();
-                    findViewById(R.id.nextButton).setVisibility(View.VISIBLE);
-                    findViewById(R.id.startButton).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.backButton).setVisibility(View.INVISIBLE);
-                    return true;
                 case R.id.settingsButton:
                     // Go to Settings screen screen
                     Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", getPackageName(), null);
                     intent.setData(uri);
-                    startActivity(intent);
+                    startActivityForResult(intent, 11);
                     return true;
                 default:
                     v.performClick();
@@ -447,5 +431,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
         
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        runMainActivity();
     }
 }

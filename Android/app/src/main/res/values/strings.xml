@@ -156,12 +156,8 @@
     <string name="ids_lbl_agree">Agree</string>
     <string name="ids_lbl_disagree">Disagree</string>
     <string name="ids_err_msg_disagree_to_license">User must agree to License Agreement to continue using the app</string>
-    <string name="ids_lbl_permission_dialog_msg">Access to storage is needed to open PDF file.\n\nIn the next alert dialog that will appear, please tap the \"Allow\"/\"OK\" button.</string>
-    <string name="ids_lbl_permission_onboarding_1">RISO PRINT-S lets you open a PDF file for printing using the Open-In feature.\nIn order to open a PDF file, RISO PRINT-S needs to access the storage on your device.</string>
-    <string name="ids_lbl_permission_onboarding_2">You can enable the storage permission when prompted in the RISO PRINT-S Home screen or in the Permission Settings screen via Settings -> Apps -> RISO PRINT-S -> Permissions.</string>
-    <string name="ids_lbl_permission_back">&lt; Back</string>
-    <string name="ids_lbl_permission_next">Next ></string>
-    <string name="ids_lbl_permission_settings">Settings</string>
-    <string name="ids_lbl_permission_start">Start</string>
+    <string name="ids_err_msg_storage_permission_not_allowed">Access to storage is needed to open PDF file.\n\nIn the next alert dialog that will appear, please tap the \"Allow\"/\"OK\" button.</string>
+    <string name="ids_lbl_permission_information">%1$s lets you open a PDF file for printing using the Open-In feature.\nIn order to open a PDF file, access to the storage of the device is needed.\n\nYou can enable the storage permission when prompted in the Home screen or in the Permission Settings screen via [Settings] -> [Apps] -> [%1$s] -> [Permissions].</string>
+    <string name="ids_lbl_start">Start</string>
 
 </resources>
