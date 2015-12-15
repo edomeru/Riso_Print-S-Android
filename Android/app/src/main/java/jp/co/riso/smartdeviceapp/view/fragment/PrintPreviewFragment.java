@@ -325,10 +325,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             } else if (mShouldDisplayExplanation) {
                 // Display an explanation to the user that the permission is needed
                 if (mConfirmDialogFragment == null) {
-                    final String message = getContext().getString(R.string.ids_lbl_permission_dialog_msg);
+                    final String message = getContext().getString(R.string.ids_err_msg_storage_permission_not_allowed);
                     final String positiveButton = getContext().getString(R.string.ids_lbl_ok);
-                    final String negativeButton = getContext().getString(R.string.ids_lbl_cancel);
-                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, negativeButton);
+                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
+                    mConfirmDialogFragment.setCancelable(false);
                     mConfirmDialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
                     DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                 }
@@ -781,11 +781,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void onCancel() {
-        mConfirmDialogFragment = null;
-        MainActivity activity = (MainActivity) getActivity();
-        // close Print Settings menu if open since PDF preview will not be displayed
-        if (activity.isDrawerOpen(Gravity.RIGHT)) {
-            activity.closeDrawers();
-        }
+        // cancel is disabled since no cancel button
     }
 }

@@ -63,97 +63,60 @@
         android:splitMotionEvents="false">
 
         <ImageView
+            android:id="@+id/logoImgView"
             android:layout_alignParentTop="true"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/permission_logo_height"
+            android:layout_height="@dimen/onboarding_logo_height"
             android:layout_centerHorizontal="true"
             android:src="@drawable/img_logo_icon"
-            android:layout_margin="@dimen/permission_logo_margin"
-            android:background="@color/theme_light_2"/>
+            android:layout_margin="@dimen/onboarding_logo_margin"
+            android:background="@color/theme_light_2"
+            android:contentDescription="@string/default_content_description"/>
 
-        <TextSwitcher
+        <TextView
+            android:id="@+id/txtPermissionInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:id="@+id/textSwitcher"
-            android:layout_margin="@dimen/permission_button_margin">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/ids_lbl_permission_onboarding_1"
-                android:textStyle="bold"
-                android:textColor="@color/theme_color_2"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:gravity="center_horizontal"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/ids_lbl_permission_onboarding_2"
-                android:textStyle="bold"
-                android:textColor="@color/theme_color_2"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:gravity="center_horizontal"/>
-        </TextSwitcher>
-        <Button
-            android:id="@+id/backButton"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ids_lbl_permission_back"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/ids_lbl_permission_information"
+            android:textColor="@color/theme_color_2"
             android:textStyle="bold"
-            android:background="@color/theme_color_1"
-            android:textColor="@color/theme_light_1"
-            android:layout_margin="@dimen/permission_button_margin"
-            android:padding="@dimen/permission_button_padding"
-            android:visibility="invisible"/>
-        <Button
-            android:id="@+id/settingsButton"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ids_lbl_permission_settings"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"
-            android:background="@color/theme_color_1"
-            android:textColor="@color/theme_light_1"
-            android:layout_margin="@dimen/permission_button_margin"
-            android:padding="@dimen/permission_button_padding"/>
+            android:textAppearance="?android:textAppearanceLarge"
+            android:gravity="center_horizontal"
+            android:layout_margin="@dimen/onboarding_text_margin"/>
 
-        <FrameLayout
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/permissionButtonLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/permission_button_margin">
+            android:layout_alignParentBottom="true">
+
             <Button
-                android:id="@+id/nextButton"
+                android:id="@+id/settingsButton"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/ids_lbl_permission_next"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ids_lbl_settings"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold"
                 android:background="@color/theme_color_1"
                 android:textColor="@color/theme_light_1"
-                android:padding="@dimen/permission_button_padding"/>
+                android:layout_margin="@dimen/onboarding_button_margin"
+                android:padding="@dimen/onboarding_button_padding"/>
+
             <Button
                 android:id="@+id/startButton"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/ids_lbl_permission_start"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ids_lbl_start"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold"
                 android:background="@color/theme_color_1"
                 android:textColor="@color/theme_light_1"
-                android:padding="@dimen/permission_button_padding"
-                android:visibility="invisible"/>
-        </FrameLayout>
+                android:layout_margin="@dimen/onboarding_button_margin"
+                android:padding="@dimen/onboarding_button_padding"/>
+        </LinearLayout>
     </RelativeLayout>
 
 </ViewFlipper>
