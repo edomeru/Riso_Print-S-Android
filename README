@@ -1,0 +1,124 @@
+## COMMON
+
+#### GIT WORKFLOW
+ * tutorial/reference: [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
+ * management (local): [Atlassian SourceTree](https://www.atlassian.com/software/sourcetree/overview/)
+ * management (remote): [Gitlab](http://doc.gitlab.com/ce/)
+ * branches:
+	* `master`
+	  - merge `release` branches to `master` after completing a release
+	  - tag the master branch with `yyyyMMdd.Va.b.c.<QE/RISO>-Release-<CycleX/Beta>`
+	  - ONLY `release` branches can update `master`
+	* `release`
+	  - branch for preparing the build for a QE/RISO release
+	  - naming convention: `release/yyyyMMdd.<QE/BETA>`
+	  - branch-out from the final IT-ed `developFromRISO`
+	  - versions are finalized on this branch
+	  - archived files (source codes) are obtained from this branch
+	  - QE special builds are prepared from this branch
+	* `developFromRISO`
+	  - serves as the merging area for all `feature` and `bug` branches
+	  - new `feature`, `inv`, and `bug` branches should always branch-out from `developFromRISO`
+	* `feature`
+	  - all **RQM**s and **INT**s are implemented in **separate** `feature` branches  
+	    -- **RQM**s are customer requirements  
+	    -- **INT**s are DEV internal tasks (ex. build scripts, base code improvements)
+	       * note that internal base code improvements should be approved by RISO since they check all updates in the source code
+	  - naming convention  
+	    -- **RQM**: `feature/Va.b.c/RQM-<number>-<android/ios>` (ex. `feature/V2.0.0/RQM-1506-002-android`)  
+	    -- **INT**: `feature/Va.b.c/INT-<number>-<android/ios>` (ex. `feature/V2.0.1/INT-031-android`)  
+	  - `feature` branches become grouped into versions  
+	     example:  
+         *V2.0.0*  
+         *-- INT-001-ios*  
+         *-- INT-001-android*  
+         *-- RQM-311-004-android*  
+         *-- RQM-311-004-ios*  
+         *V2.0.1*  
+         *-- INT-002-ios*  
+         *-- INT-002-android*  
+         *-- RQM-1508-006-ios*  
+         *-- RQM-311-004-android*  
+	* `inv`
+		- investigations for possible RQM implementations/features
+		- naming convention: `inv/Va.b.c/<description>` (ex. `inv/V2.0.1/permission-alerts-redesign`)		
+		- merge into a `feature` branch once the RQM is finalized
+		- `inv` branches also become grouped into versions (similar to `feature` branches)
+	* `bug`
+	    - BTS-reported bug fixes
+	    - naming convention: `bug/<BTS#>`
+
+#### REVIEW WORKFLOW 
+ 1. DEV pushes the branch for review to the remote repo
+ 2. DEV creates a new merge request for that branch in Gitlab
+    * specifies the branch to merge into
+    * displays the code changes and the commit descriptions
+    * additional info can also be added to the merge request's description
+ 3. DEV assigns and notifies the reviewer
+ 4. REVIEWER performs the review
+    * all review comments will be placed in the merge request
+    * the DEV is auto-notified of the review comments
+    * the REVIEWER is auto-notified when review comments are addressed
+    * the merge request is auto-updated when the code is updated
+ 5. when the REVIEWER finishes the review, the merge can now be completed
+
+---
+#### PROJECT STRUCTURE
+ 1. **Android* (Android Studio - TODO)
+    - project containing the SDA Android source codes, resources, and unit/functional tests
+    - most of the implementations and debugging are done here
+    - has 3 build variants (see `build.gradle`)
+        - `debug`: for running the tests
+        - `release`: called when running the `prepareSDA` script
+ 2. **iOS* (Xcode)
+    - project containing the SDA iOS source codes, resources, and unit/functional tests
+    - most of the implementations and debugging are done here
+ 3. **CommonLibrary**
+    - common project/library containing the SNMP and Direct Print APIs
+ 4. **Tools** (TBD)
+    - contains the build scripts and their related files
+        - `prepareSDA.<bat/tool>`
+            - builds Common Libraries and Application (ipa/apk)
+        - `archiveSDA.<bat/tool>`
+            - zips up the source codes (for releases)
+            - also excludes the unnecessary files from the zip (ex. test code)
+        - `specialbuild.<bat/tool>`
+            - script for setting-up SDA for QE special builds
+    - open each script to see their complete description
+ 5. **Simulators** (TBD)
+    - contains printer simulator tools/projects
+
+
+#### DEVELOPMENT WORKFLOW
+ 1. create a `feature` branch for a new **RQM**/**INT** or a `bug` branch for a **BTS bug fix**
+ 2. implement the feature or bug fix in **Android**, **iOS**, or **CommonLibrary**
+	- update the source code
+	- update values/content/layout in resource folder
+	- add/update unit/functional tests (run the entire test suite to make sure no other features were affected)
+ 3. test and debug in **Android**, **iOS**, or **CommonLibrary**
+    - do a project clean
+    - run `prepareSDA.<bat/tool>` to build app
+ 4. repeat steps **2**-**3**  until the feature or bug fix is complete
+ 5. when the feature or bug fix is complete, submit the code for review 
+    - see **REVIEW WORKFLOW** section above
+ 6. repeat steps **1**-**5** for each **RQM**/**INT** and **BTS bug fix** 
+ 7. when all the codes are completed and reviewed, merge all `feature` or `bug` branches to `develop`
+    - optional: delete the merged branches, to keep the repo clean
+ 8. execute IT
+    - includes:
+        - running the complete unit/functional tests
+        - running the performance and memory usage tests (enable `DebugUtils.DEBUG_MODE` to auto-generate logs)
+    - if a bug is found during IT, repeat steps **1**-**8**
+ 9. when IT is complete and all the test cases passed, prepare for release
+    - create a `release` branch (iOS and Android DEV should coordinate in creating branch)
+    - run `prepareSDA.<bat/tool>`  
+    - run `archiveSDA.<bat/tool>`
+    - build APK/IPA for SDA (make sure to do a project clean first)
+    - commit the updated scripts and other affected files
+ 10. do the other non-code release preparations
+    - finalize:
+        - the DVT and IT checksheets
+        - the unit/functional test logs
+        - the performance + memory usage report (get the auto-generated logs and results from `DebugUtils`)
+    - copy the archived source codes, APKs/IPAs, and the test logs/reports to the release directory
+ 11. when the release is complete, merge the `release` branch to `master` then tag it (iOS and Android DEV should coordinate in merging to `master`)
