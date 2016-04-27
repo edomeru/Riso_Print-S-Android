@@ -433,6 +433,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         }
     }
 
+    /*
     public void testConnectToIpv6Address_OnlineIpv6Address() {
         try {
             int retry = 10;
@@ -499,6 +500,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             fail(); // Error should not be thrown
         }
     }
+    */
 
     public void testConnectToIpv6Address_NullIpAddress() {
         try {
