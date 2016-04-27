@@ -1,6 +1,14 @@
 
 package jp.co.riso.smartdeviceapp.controller.printer;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.test.ActivityInstrumentationTestCase2;
+import android.widget.ImageView;
+
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -21,13 +29,6 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusC
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.test.ActivityInstrumentationTestCase2;
-import android.widget.ImageView;
 
 public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainActivity> implements
         UpdateStatusCallback, PrintersCallback, PrinterSearchCallback {
@@ -883,6 +884,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     // Tests - isOnline
     // ================================================================================
 
+    /*
     public void testIsOnline_OnlineIpv4Printer() {
         try {
             boolean ret = false;
@@ -894,6 +896,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             fail(); // Error should not be thrown
         }
     }
+    */
 
     public void testIsOnline_OnlineIpv6Printer() {
         try {

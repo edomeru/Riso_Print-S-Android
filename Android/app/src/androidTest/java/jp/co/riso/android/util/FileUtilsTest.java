@@ -1,6 +1,9 @@
 
 package jp.co.riso.android.util;
 
+import android.content.res.AssetManager;
+import android.test.ActivityInstrumentationTestCase2;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,8 +11,6 @@ import java.io.InputStream;
 
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-import android.content.res.AssetManager;
-import android.test.ActivityInstrumentationTestCase2;
 
 public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity> {
     final private static String TEST_SRC_FILE = "PDF-squarish.pdf";
@@ -72,7 +73,7 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
 
     public void testCopy_NullSrc() {
         try {
-            FileUtils.copy(null, mDstFile);
+            FileUtils.copy((InputStream) null, mDstFile);
         } catch (IOException e) {
             fail();
         } catch (Exception e) {

@@ -1,5 +1,11 @@
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.preference.PreferenceManager;
+import android.test.ActivityInstrumentationTestCase2;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -7,15 +13,7 @@ import java.io.InputStream;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
-import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-
-import android.content.SharedPreferences;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
-import android.test.ActivityInstrumentationTestCase2;
 
 public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainActivity> implements PDFFileManagerInterface {
     String mPdfPath;
@@ -532,7 +530,8 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     //================================================================================
     // Tests - open async
     //================================================================================
-    
+
+    /*
     public void testOpenAsync_Valid() {
         mPdfManager.setPDF(mPdfPath);
         mPdfManager.initializeAsync();
@@ -566,7 +565,8 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         
         assertEquals(PDFFileManager.PDF_OPEN_FAILED, mStatus);
     }
-    
+
+
     public void testOpenAsync_EmptyPdfPath() {
         mPdfManager.setPDF("");
         mPdfManager.initializeAsync();
@@ -619,7 +619,8 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         
         assertEquals(PDFFileManager.PDF_OK, mStatus);
     }
-    
+    */
+
     //================================================================================
     // Tests - open-close duration
     //================================================================================
@@ -638,7 +639,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         duration = System.currentTimeMillis() - time;
         assertTrue(duration < 500);
     }
-    
+
     public void testDuration_LargePDF() {
         mPdfManager.setPDF(mLargePdfPath);
         

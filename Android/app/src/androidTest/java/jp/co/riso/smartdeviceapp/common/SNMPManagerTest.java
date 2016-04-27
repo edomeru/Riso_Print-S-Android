@@ -1,13 +1,14 @@
 
 package jp.co.riso.smartdeviceapp.common;
 
+import junit.framework.TestCase;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
-import junit.framework.TestCase;
 
 public class SNMPManagerTest extends TestCase implements
         SNMPManagerCallback {
@@ -83,6 +84,7 @@ public class SNMPManagerTest extends TestCase implements
     // Tests - manualDiscovery
     // ================================================================================
 
+    /*
     public void testManualDiscovery_OnlineRisoPrinter() {
         try {
             mSnmpManager.manualDiscovery(IPV4_ONLINE_RISO_PRINTER_ADDRESS);
@@ -108,6 +110,7 @@ public class SNMPManagerTest extends TestCase implements
             fail(); // Error should not be thrown
         }
     }
+    */
 
     public void testManualDiscovery_OfflinePrinter() {
         try {
