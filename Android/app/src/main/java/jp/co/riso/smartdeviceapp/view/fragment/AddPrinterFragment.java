@@ -8,22 +8,6 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import jp.co.riso.android.dialog.ConfirmDialogFragment;
-import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
-import jp.co.riso.android.dialog.DialogUtils;
-import jp.co.riso.android.dialog.InfoDialogFragment;
-import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
-import jp.co.riso.android.text.IpAddressFilter;
-import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartprint.R;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartdeviceapp.common.JniUtils;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback;
-import jp.co.riso.smartdeviceapp.model.Printer;
-import jp.co.riso.smartdeviceapp.view.MainActivity;
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -40,6 +24,23 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import jp.co.riso.android.dialog.ConfirmDialogFragment;
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
+import jp.co.riso.android.dialog.DialogUtils;
+import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.text.IpAddressFilter;
+import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.JniUtils;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback;
+import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartprint.R;
 
 /**
  * @class AddPrinterFragment
@@ -148,7 +149,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     
     /**
      * @brief Display success dialog during successful printer search
-     * 
+     *
      * @param printer Searched printer
      */
     private void dialogCb(Printer printer) {
@@ -344,8 +345,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         if(mPrinterManager.isCancelled()) {
             return;
         }
-        String ipAddress = mAddPrinterView.mIpAddress.getText().toString();
-        
+
         final MainActivity activity = (MainActivity) getActivity();
         activity.runOnUiThread(new Runnable() {
             @Override
@@ -353,19 +353,10 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 setViewToNormal(mAddPrinterView);
             }
         });
-        
-        if (!mAdded) {
-            // Create Printer object
-            Printer printer = new Printer("", ipAddress);
+
+        if(!mAdded) {
             Message newWarningMsg = Message.obtain(mPauseableHandler, MSG_ERROR);
-            
-            if (mPrinterManager.savePrinterToDB(printer, false)) {
-                newWarningMsg.arg1 = ERR_PRINTER_ADDED_WARNING;
-                mAdded = true;
-            } else {
-                newWarningMsg = Message.obtain(mPauseableHandler, MSG_ERROR);
-                newWarningMsg.arg1 = ERR_DB_FAILURE;
-            }
+            newWarningMsg.arg1 = ERR_PRINTER_ADDED_WARNING;
             mPauseableHandler.sendMessage(newWarningMsg);
         }
     }
