@@ -80,5 +80,13 @@ public class AppConstants {
     
     /// Maximum printer count
     public static final long CONST_FREE_SPACE_BUFFER = 104857600;
-    
+
+    public static final String PRINTER_MODEL_IS = "IS";
+    public static final String PRINTER_MODEL_GD = "GD";
+    public static final String PRINTER_MODEL_FW = "FW";
+    public static final String[] IS_PRINTER_MODELS = {
+    	"RISO IS1000C-J", "RISO IS1000C-G", "RISO IS950C-G"
+    };
+    public static final String GD_PRINTER_MODEL_REGEX = ".*GD.*\\z";
+    public static final String FW_PRINTER_MODEL_REGEX = ".*FW.*\\z";
 }
