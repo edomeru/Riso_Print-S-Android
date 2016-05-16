@@ -8,14 +8,18 @@
 
 package jp.co.riso.smartdeviceapp.controller.printsettings;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+
+import java.util.Arrays;
+
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
 
 /**
  * @class PrintSettingsManager
@@ -61,7 +65,7 @@ public class PrintSettingsManager {
         PrintSettings printSettings = new PrintSettings();
         
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTSETTING_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID + "=?",
-                new String[] { String.valueOf(printerId) }, null, null, null);
+                new String[]{String.valueOf(printerId)}, null, null, null);
         // overwrite values if there is an entry retrieved from database
         if (c != null && c.moveToFirst()) {
             for (String key : PrintSettings.sSettingMap.keySet()) {
@@ -149,5 +153,25 @@ public class PrintSettingsManager {
         }
         
         return cv;
+    }
+
+    public static String getModelCategory(String modelName) {
+        if(modelName == null || modelName.isEmpty()) {
+            return null;
+        }
+
+        if(Arrays.asList(AppConstants.IS_PRINTER_MODELS).contains(modelName)) {
+            return AppConstants.PRINTER_MODEL_IS;
+        }
+
+        if(modelName.matches(AppConstants.GD_PRINTER_MODEL_REGEX)) {
+            return AppConstants.PRINTER_MODEL_GD;
+        }
+
+        if(modelName.matches(AppConstants.FW_PRINTER_MODEL_REGEX)) {
+            return AppConstants.PRINTER_MODEL_FW;
+        }
+
+        return null;
     }
 }
