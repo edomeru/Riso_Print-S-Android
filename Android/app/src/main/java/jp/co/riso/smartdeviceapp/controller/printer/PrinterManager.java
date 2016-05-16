@@ -8,6 +8,13 @@
 
 package jp.co.riso.smartdeviceapp.controller.printer;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ImageView;
+
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -21,15 +28,10 @@ import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
+import jp.co.riso.smartdeviceapp.controller.printsettings.PrintSettingsManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartprint.R;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.os.AsyncTask;
-import android.view.View;
-import android.widget.ImageView;
 
 /**
  * @class PrinterManager
@@ -750,7 +752,7 @@ public class PrinterManager implements SNMPManagerCallback {
     
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
-        if (manager == null || ipAddress == null || name == null || capabilities == null) {
+        if (manager == null || ipAddress == null || name == null || capabilities == null || PrintSettingsManager.getModelCategory(name) == null) {
             return;
         }
         Printer printer = new Printer(name, ipAddress);
