@@ -9,7 +9,6 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
@@ -18,7 +17,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
@@ -155,7 +153,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 == PackageManager.PERMISSION_GRANTED) {
                     initializePdfManagerAndRunAsync();
-                } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                } else {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         mShouldDisplayExplanation = true;
                     } else {
@@ -327,9 +325,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             } else if (mShouldDisplayExplanation) {
                 // Display an explanation to the user that the permission is needed
                 if (mConfirmDialogFragment == null) {
-                    final String message = getActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed);
-                    final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
+                    final String message = getContext().getString(R.string.ids_err_msg_storage_permission_not_allowed);
+                    final String positiveButton = getContext().getString(R.string.ids_lbl_ok);
                     mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
+                    mConfirmDialogFragment.setCancelable(false);
                     mConfirmDialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
                     DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                 }
@@ -773,7 +772,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     }
 
     @Override
-    @TargetApi(23)
     public void onConfirm() {
         mConfirmDialogFragment = null;
         mIsPermissionDialogOpen = true;
