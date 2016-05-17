@@ -24,6 +24,7 @@ import java.util.TimerTask;
 
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
@@ -736,7 +737,7 @@ public class PrinterManager implements SNMPManagerCallback {
     
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
-        if (manager == null || ipAddress == null || name == null || capabilities == null || PrintSettingsManager.getModelCategory(name) == null) {
+        if (manager == null || ipAddress == null || name == null || capabilities == null || PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext()).getModelCategory(name) == null) {
             return;
         }
         Printer printer = new Printer(name, ipAddress);
