@@ -45,6 +45,7 @@
     <string name="ids_lbl_colormode_auto">オート</string>
     <string name="ids_lbl_colormode_fullcolor">カラー</string>
     <string name="ids_lbl_colormode_black">白黒</string>
+    <string name="ids_lbl_colormode_2color">2色</string>
     <string name="ids_lbl_orientation">向き</string>
     <string name="ids_lbl_orientation_portrait">縦</string>
     <string name="ids_lbl_orientation_landscape">横</string>

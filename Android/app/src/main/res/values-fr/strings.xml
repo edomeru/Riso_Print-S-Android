@@ -45,6 +45,7 @@
     <string name="ids_lbl_colormode_auto">Auto</string>
     <string name="ids_lbl_colormode_fullcolor">Couleur</string>
     <string name="ids_lbl_colormode_black">Noir</string>
+    <string name="ids_lbl_colormode_2color">2 couleurs</string>
     <string name="ids_lbl_orientation">Orientation</string>
     <string name="ids_lbl_orientation_portrait">Portrait</string>
     <string name="ids_lbl_orientation_landscape">Paysage</string>
@@ -152,7 +153,7 @@
     <string name="ids_lbl_yes">Yes</string>
     <string name="ids_lbl_no">No</string>
     <string name="ids_lbl_license">End User License Agreement</string>
-    <string name="ids_lbl_papertype_roughpaper"></string>
+    <string name="ids_lbl_papertype_roughpaper">Papier brouillon</string>
     <string name="ids_lbl_agree">Agree</string>
     <string name="ids_lbl_disagree">Disagree</string>
     <string name="ids_err_msg_disagree_to_license">User must agree to License Agreement to continue using the app</string>

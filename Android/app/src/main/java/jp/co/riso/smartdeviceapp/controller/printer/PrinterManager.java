@@ -383,6 +383,22 @@ public class PrinterManager implements SNMPManagerCallback {
         mDatabaseManager.close();
         return mDefaultPrintId;
     }
+
+    /**
+     * @brief Obtains the information about the printer type of a printer with corresponding ID
+     *
+     * @param printerId The id of the printer that must be determined for printer type
+     * @return String representing printer type
+     */
+    public String getPrinterType(int printerId){
+        List<Printer> printerList = getSavedPrintersList();
+        for(Printer printer : printerList){
+            if(printer.getId() == printerId){
+                return printer.getPrinterType();
+            }
+        }
+        return null;
+    }
         
     /**
      * @brief Update the value of port settings.

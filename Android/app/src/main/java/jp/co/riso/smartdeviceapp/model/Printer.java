@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -24,6 +25,8 @@ public class Printer implements Parcelable {
     private PortSetting mPortSetting = PortSetting.LPR;
     
     private Config mConfig = null;
+
+    private String mPrinterType = null;
     
     /**
      * @brief Printer port setting.
@@ -47,6 +50,7 @@ public class Printer implements Parcelable {
         mPortSetting = PortSetting.LPR;
         
         mConfig = new Config();
+        initializePrinterType();
     }
     
     public static final Printer.Creator<Printer> CREATOR = new Parcelable.Creator<Printer>() {
@@ -83,6 +87,7 @@ public class Printer implements Parcelable {
                 break;
         }
         mConfig.readFromParcel(in);
+        initializePrinterType();
     }
     
     @Override
@@ -197,7 +202,46 @@ public class Printer implements Parcelable {
     public void setConfig(Config config) {
         mConfig = config;
     }
-    
+
+    /**
+     * @brief Returns the printer's printer type .
+     */
+    public String getPrinterType(){
+        return mPrinterType;
+    }
+
+    /**
+     * @brief Initizializes the printer's printer type based on the printer's model (name) .
+     */
+    private void initializePrinterType(){
+        //for the meantime, set the fallthrough printer type to IS since it is the originally
+        //supported printer type
+       if(mName == null || mName.isEmpty()){
+          mPrinterType =  AppConstants.PRINTER_MODEL_IS;
+       }
+
+       final String[] IS_Printers = {"RISO IS1000C-J", "RISO IS1000C-G", "RISO IS950C-G"} ;
+
+        for(String printerModel : IS_Printers){
+            if(printerModel.equalsIgnoreCase(mName)){
+                mPrinterType = AppConstants.PRINTER_MODEL_IS;
+                return ;
+            }
+        }
+
+        if(mName.contains(AppConstants.PRINTER_MODEL_FW)){
+            mPrinterType = AppConstants.PRINTER_MODEL_FW;
+            return;
+        }
+
+        if(mName.contains(AppConstants.PRINTER_MODEL_GD)){
+            mPrinterType = AppConstants.PRINTER_MODEL_GD;
+            return;
+        }
+
+         mPrinterType =  AppConstants.PRINTER_MODEL_IS;
+    }
+
     // ================================================================================
     // Internal Class - Printer Config
     // ================================================================================

@@ -172,13 +172,18 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mPrinterId = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getDefaultPrinter();
             
             if (mPrinterId != -1) {
-                mPrintSettings = new PrintSettings(mPrinterId);
+                String printerType = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(mPrinterId);
+                mPrintSettings = new PrintSettings(mPrinterId, printerType);
             }
         }
         
         // Initialize Print Settings if it has not been previously initialized yet
         if (mPrintSettings == null) {
-            mPrintSettings = new PrintSettings();
+            String printerType = AppConstants.PRINTER_MODEL_IS;
+            if (mPrinterId != -1) {
+                printerType = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(mPrinterId);
+            }
+            mPrintSettings = new PrintSettings(printerType);
         }
         
         if (mBmpCache == null) {
@@ -341,7 +346,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         
         if (!printerManager.isExists(mPrinterId)) {
             setPrintId(printerManager.getDefaultPrinter());
-            setPrintSettings(new PrintSettings(mPrinterId));
+            //use fallthrough printer type IS, if printer does not yet exist
+            setPrintSettings(new PrintSettings(mPrinterId, AppConstants.PRINTER_MODEL_IS));
         }
         if (mPauseableHandler != null) {
             mPauseableHandler.resume();

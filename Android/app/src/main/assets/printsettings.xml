@@ -1,220 +1,663 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <printsettings>
-    <group
-        name="basic"
-        text="ids_lbl_basic" >
-        <setting
-            name="colorMode"
-            dbkey="pst_color_mode"
-            text="ids_lbl_colormode"
-            
-            type="list"
-            default="0" >
-            <option>ids_lbl_colormode_auto</option>
-            <option>ids_lbl_colormode_fullcolor</option>
-            <option>ids_lbl_colormode_black</option>
-        </setting>
-        <setting
-            name="orientation"
-            dbkey="pst_orientation"
-            text="ids_lbl_orientation"
+    <printertype id="IS">
+        <group
+            name="basic"
+            text="ids_lbl_basic" >
+            <setting
+                name="colorMode"
+                dbkey="pst_color_mode"
+                text="ids_lbl_colormode"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_orientation_portrait</option>
-            <option>ids_lbl_orientation_landscape</option>
-        </setting>
-        <setting
-            name="copies"
-            dbkey="pst_copies"
-            text="ids_lbl_number_of_copies"
+                type="list"
+                default="0" >
+                <option>ids_lbl_colormode_auto</option>
+                <option>ids_lbl_colormode_fullcolor</option>
+                <option>ids_lbl_colormode_black</option>
+            </setting>
+            <setting
+                name="orientation"
+                dbkey="pst_orientation"
+                text="ids_lbl_orientation"
 
-            type="numeric"
-            default="1" />
-        <setting
-            name="duplex"
-            dbkey="pst_duplex"
-            text="ids_lbl_duplex"
+                type="list"
+                default="0" >
+                <option>ids_lbl_orientation_portrait</option>
+                <option>ids_lbl_orientation_landscape</option>
+            </setting>
+            <setting
+                name="copies"
+                dbkey="pst_copies"
+                text="ids_lbl_number_of_copies"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_off</option>
-            <option>ids_lbl_duplex_long_edge</option>
-            <option>ids_lbl_duplex_short_edge</option>
-        </setting>
-        <setting
-            name="paperSize"
-            dbkey="pst_paper_size"
-            text="ids_lbl_papersize"
+                type="numeric"
+                default="1" />
+            <setting
+                name="duplex"
+                dbkey="pst_duplex"
+                text="ids_lbl_duplex"
 
-            type="list"
-            default="2" >
-            <option>ids_lbl_papersize_a3</option>
-            <option>ids_lbl_papersize_a3w</option>
-            <option>ids_lbl_papersize_a4</option>
-            <option>ids_lbl_papersize_a5</option>
-            <option>ids_lbl_papersize_a6</option>
-            <option>ids_lbl_papersize_b4</option>
-            <option>ids_lbl_papersize_b5</option>
-            <option>ids_lbl_papersize_b6</option>
-            <option>ids_lbl_papersize_foolscap</option>
-            <option>ids_lbl_papersize_tabloid</option>
-            <option>ids_lbl_papersize_legal</option>
-            <option>ids_lbl_papersize_letter</option>
-            <option>ids_lbl_papersize_statement</option>
-        </setting>
-        <setting
-            name="scaleToFit"
-            dbkey="pst_scale_to_fit"
-            text="ids_lbl_scaletofit"
- 
-            type="boolean"
-            default="true" />
-        <setting
-            name="paperType"
-            dbkey="pst_paper_type"
-            text="ids_lbl_papertype"
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_duplex_long_edge</option>
+                <option>ids_lbl_duplex_short_edge</option>
+            </setting>
+            <setting
+                name="paperSize"
+                dbkey="pst_paper_size"
+                text="ids_lbl_papersize"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_papertype_any</option>
-            <option>ids_lbl_papertype_plain</option>
-            <option>ids_lbl_papertype_ijpaper</option>
-            <option>ids_lbl_papertype_mattcoated</option>
-            <option>ids_lbl_papertype_highquality</option>
-            <option>ids_lbl_papertype_cardij</option>
-            <option>ids_lbl_papertype_lwpaper</option>
-        </setting>
-        <setting
-            name="inputTray"
-            dbkey="pst_input_tray"
-            text="ids_lbl_inputtray"
+                type="list"
+                default="2" >
+                <option>ids_lbl_papersize_a3</option>
+                <option>ids_lbl_papersize_a3w</option>
+                <option>ids_lbl_papersize_a4</option>
+                <option>ids_lbl_papersize_a5</option>
+                <option>ids_lbl_papersize_a6</option>
+                <option>ids_lbl_papersize_b4</option>
+                <option>ids_lbl_papersize_b5</option>
+                <option>ids_lbl_papersize_b6</option>
+                <option>ids_lbl_papersize_foolscap</option>
+                <option>ids_lbl_papersize_tabloid</option>
+                <option>ids_lbl_papersize_legal</option>
+                <option>ids_lbl_papersize_letter</option>
+                <option>ids_lbl_papersize_statement</option>
+            </setting>
+            <setting
+                name="scaleToFit"
+                dbkey="pst_scale_to_fit"
+                text="ids_lbl_scaletofit"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_inputtray_auto</option>
-            <option>ids_lbl_inputtray_standard</option>
-            <option>ids_lbl_inputtray_tray1</option>
-            <option>ids_lbl_inputtray_tray2</option>
-            <option>ids_lbl_inputtray_tray3</option>
-        </setting>
-    </group>
-    <group
-        name="layout"
-        text="ids_lbl_layout" >
-        <setting
-            name="imposition"
-            dbkey="pst_imposition"
-            text="ids_lbl_imposition"
+                type="boolean"
+                default="true" />
+            <setting
+                name="paperType"
+                dbkey="pst_paper_type"
+                text="ids_lbl_papertype"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_off</option>
-            <option>ids_lbl_imposition_2up</option>
-            <option>ids_lbl_imposition_4up</option>
-        </setting>
-        <setting
-            name="impositionOrder"
-            dbkey="pst_imposition_order"
-            text="ids_lbl_imposition_order"
+                type="list"
+                default="0" >
+                <option>ids_lbl_papertype_any</option>
+                <option>ids_lbl_papertype_plain</option>
+                <option>ids_lbl_papertype_ijpaper</option>
+                <option>ids_lbl_papertype_mattcoated</option>
+                <option>ids_lbl_papertype_highquality</option>
+                <option>ids_lbl_papertype_cardij</option>
+                <option>ids_lbl_papertype_lwpaper</option>
+            </setting>
+            <setting
+                name="inputTray"
+                dbkey="pst_input_tray"
+                text="ids_lbl_inputtray"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_imposition_order_2up_lr</option>
-            <option>ids_lbl_imposition_order_2up_rl</option>
-            <option>ids_lbl_imposition_order_4up_ulr</option>
-            <option>ids_lbl_imposition_order_4up_url</option>
-            <option>ids_lbl_imposition_order_4up_ulb</option>
-            <option>ids_lbl_imposition_order_4up_urb</option>
-        </setting>
-    </group>
-    <group
-        name="finishing"
-        text="ids_lbl_finishing" >
-        <setting
-            name="sort"
-            dbkey="pst_sort"
-            text="ids_lbl_sort"
+                type="list"
+                default="0" >
+                <option>ids_lbl_inputtray_auto</option>
+                <option>ids_lbl_inputtray_standard</option>
+                <option>ids_lbl_inputtray_tray1</option>
+                <option>ids_lbl_inputtray_tray2</option>
+                <option>ids_lbl_inputtray_tray3</option>
+            </setting>
+        </group>
+        <group
+            name="layout"
+            text="ids_lbl_layout" >
+            <setting
+                name="imposition"
+                dbkey="pst_imposition"
+                text="ids_lbl_imposition"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_sort_perpage</option>
-            <option>ids_lbl_sort_percopy</option>
-        </setting>
-        <setting
-            name="booklet"
-            dbkey="pst_booklet"
-            text="ids_lbl_booklet"
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_imposition_2up</option>
+                <option>ids_lbl_imposition_4up</option>
+            </setting>
+            <setting
+                name="impositionOrder"
+                dbkey="pst_imposition_order"
+                text="ids_lbl_imposition_order"
 
-            type="boolean"
-            default="false" />
-        <setting
-            name="bookletFinish"
-            dbkey="pst_booklet_finish"
-            text="ids_lbl_booklet_finishing"
+                type="list"
+                default="0" >
+                <option>ids_lbl_imposition_order_2up_lr</option>
+                <option>ids_lbl_imposition_order_2up_rl</option>
+                <option>ids_lbl_imposition_order_4up_ulr</option>
+                <option>ids_lbl_imposition_order_4up_url</option>
+                <option>ids_lbl_imposition_order_4up_ulb</option>
+                <option>ids_lbl_imposition_order_4up_urb</option>
+            </setting>
+        </group>
+        <group
+            name="finishing"
+            text="ids_lbl_finishing" >
+            <setting
+                name="sort"
+                dbkey="pst_sort"
+                text="ids_lbl_sort"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_off</option>
-            <option>ids_lbl_booklet_finishing_fold</option>
-            <option>ids_lbl_booklet_finishing_foldstaple</option>
-        </setting>
-        <setting
-            name="bookletLayout"
-            dbkey="pst_booklet_layout"
-            text="ids_lbl_booklet_layout"
+                type="list"
+                default="0" >
+                <option>ids_lbl_sort_perpage</option>
+                <option>ids_lbl_sort_percopy</option>
+            </setting>
+            <setting
+                name="booklet"
+                dbkey="pst_booklet"
+                text="ids_lbl_booklet"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_booklet_layout_forward</option>
-            <option>ids_lbl_booklet_layout_reverse</option>
-        </setting>
-        <setting
-            name="finishingSide"
-            dbkey="pst_finishing_side"
-            text="ids_lbl_finishingside"
+                type="boolean"
+                default="false" />
+            <setting
+                name="bookletFinish"
+                dbkey="pst_booklet_finish"
+                text="ids_lbl_booklet_finishing"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_finishingside_left</option>
-            <option>ids_lbl_finishingside_top</option>
-            <option>ids_lbl_finishingside_right</option>
-        </setting>
-        <setting
-            name="staple"
-            dbkey="pst_staple"
-            text="ids_lbl_staple"
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_booklet_finishing_fold</option>
+                <option>ids_lbl_booklet_finishing_foldstaple</option>
+            </setting>
+            <setting
+                name="bookletLayout"
+                dbkey="pst_booklet_layout"
+                text="ids_lbl_booklet_layout"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_off</option>
-            <option>ids_lbl_staple_upperleft</option>
-            <option>ids_lbl_staple_upperright</option>
-            <option>ids_lbl_staple_1</option>
-            <option>ids_lbl_staple_2</option>
-        </setting>
-        <setting
-            name="punch"
-            dbkey="pst_punch"
-            text="ids_lbl_punch"
+                type="list"
+                default="0" >
+                <option>ids_lbl_booklet_layout_forward</option>
+                <option>ids_lbl_booklet_layout_reverse</option>
+            </setting>
+            <setting
+                name="finishingSide"
+                dbkey="pst_finishing_side"
+                text="ids_lbl_finishingside"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_off</option>
-            <option>ids_lbl_punch_2holes</option>
-            <option>ids_lbl_punch_4holes</option>
-        </setting>
-        <setting
-            name="outputTray"
-            dbkey="pst_output_tray"
-            text="ids_lbl_outputtray"
+                type="list"
+                default="0" >
+                <option>ids_lbl_finishingside_left</option>
+                <option>ids_lbl_finishingside_top</option>
+                <option>ids_lbl_finishingside_right</option>
+            </setting>
+            <setting
+                name="staple"
+                dbkey="pst_staple"
+                text="ids_lbl_staple"
 
-            type="list"
-            default="0" >
-            <option>ids_lbl_outputtray_auto</option>
-            <option>ids_lbl_outputtray_facedown</option>
-            <option>ids_lbl_outputtray_top</option>
-            <option>ids_lbl_outputtray_stacking</option>
-        </setting>
-    </group>
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_staple_upperleft</option>
+                <option>ids_lbl_staple_upperright</option>
+                <option>ids_lbl_staple_1</option>
+                <option>ids_lbl_staple_2</option>
+            </setting>
+            <setting
+                name="punch"
+                dbkey="pst_punch"
+                text="ids_lbl_punch"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_punch_2holes</option>
+                <option>ids_lbl_punch_4holes</option>
+            </setting>
+            <setting
+                name="outputTray"
+                dbkey="pst_output_tray"
+                text="ids_lbl_outputtray"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_outputtray_auto</option>
+                <option>ids_lbl_outputtray_facedown</option>
+                <option>ids_lbl_outputtray_top</option>
+                <option>ids_lbl_outputtray_stacking</option>
+            </setting>
+        </group>
+    </printertype>
+    <printertype id="GD">
+        <group
+            name="basic"
+            text="ids_lbl_basic" >
+            <setting
+                name="colorMode"
+                dbkey="pst_color_mode"
+                text="ids_lbl_colormode"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_colormode_auto</option>
+                <option>ids_lbl_colormode_fullcolor</option>
+                <option>ids_lbl_colormode_black</option>
+            </setting>
+            <setting
+                name="orientation"
+                dbkey="pst_orientation"
+                text="ids_lbl_orientation"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_orientation_portrait</option>
+                <option>ids_lbl_orientation_landscape</option>
+            </setting>
+            <setting
+                name="copies"
+                dbkey="pst_copies"
+                text="ids_lbl_number_of_copies"
+
+                type="numeric"
+                default="1" />
+            <setting
+                name="duplex"
+                dbkey="pst_duplex"
+                text="ids_lbl_duplex"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_duplex_long_edge</option>
+                <option>ids_lbl_duplex_short_edge</option>
+            </setting>
+            <setting
+                name="paperSize"
+                dbkey="pst_paper_size"
+                text="ids_lbl_papersize"
+
+                type="list"
+                default="2" >
+                <option>ids_lbl_papersize_a3</option>
+                <option>ids_lbl_papersize_a3w</option>
+                <option>ids_lbl_papersize_a4</option>
+                <option>ids_lbl_papersize_a5</option>
+                <option>ids_lbl_papersize_a6</option>
+                <option>ids_lbl_papersize_b4</option>
+                <option>ids_lbl_papersize_b5</option>
+                <option>ids_lbl_papersize_b6</option>
+                <option>ids_lbl_papersize_foolscap</option>
+                <option>ids_lbl_papersize_tabloid</option>
+                <option>ids_lbl_papersize_legal</option>
+                <option>ids_lbl_papersize_letter</option>
+                <option>ids_lbl_papersize_statement</option>
+            </setting>
+            <setting
+                name="scaleToFit"
+                dbkey="pst_scale_to_fit"
+                text="ids_lbl_scaletofit"
+
+                type="boolean"
+                default="true" />
+            <setting
+                name="paperType"
+                dbkey="pst_paper_type"
+                text="ids_lbl_papertype"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_papertype_any</option>
+                <option>ids_lbl_papertype_plain</option>
+                <option>ids_lbl_papertype_ijpaper</option>
+                <option>ids_lbl_papertype_mattcoated</option>
+                <option>ids_lbl_papertype_highquality</option>
+                <option>ids_lbl_papertype_cardij</option>
+                <option>ids_lbl_papertype_lwpaper</option>
+            </setting>
+            <setting
+                name="inputTray"
+                dbkey="pst_input_tray"
+                text="ids_lbl_inputtray"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_inputtray_auto</option>
+                <option>ids_lbl_inputtray_standard</option>
+                <option>ids_lbl_inputtray_tray1</option>
+                <option>ids_lbl_inputtray_tray2</option>
+                <option>ids_lbl_inputtray_tray3</option>
+            </setting>
+        </group>
+        <group
+            name="layout"
+            text="ids_lbl_layout" >
+            <setting
+                name="imposition"
+                dbkey="pst_imposition"
+                text="ids_lbl_imposition"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_imposition_2up</option>
+                <option>ids_lbl_imposition_4up</option>
+            </setting>
+            <setting
+                name="impositionOrder"
+                dbkey="pst_imposition_order"
+                text="ids_lbl_imposition_order"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_imposition_order_2up_lr</option>
+                <option>ids_lbl_imposition_order_2up_rl</option>
+                <option>ids_lbl_imposition_order_4up_ulr</option>
+                <option>ids_lbl_imposition_order_4up_url</option>
+                <option>ids_lbl_imposition_order_4up_ulb</option>
+                <option>ids_lbl_imposition_order_4up_urb</option>
+            </setting>
+        </group>
+        <group
+            name="finishing"
+            text="ids_lbl_finishing" >
+            <setting
+                name="sort"
+                dbkey="pst_sort"
+                text="ids_lbl_sort"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_sort_perpage</option>
+                <option>ids_lbl_sort_percopy</option>
+            </setting>
+            <setting
+                name="booklet"
+                dbkey="pst_booklet"
+                text="ids_lbl_booklet"
+
+                type="boolean"
+                default="false" />
+            <setting
+                name="bookletFinish"
+                dbkey="pst_booklet_finish"
+                text="ids_lbl_booklet_finishing"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_booklet_finishing_fold</option>
+                <option>ids_lbl_booklet_finishing_foldstaple</option>
+            </setting>
+            <setting
+                name="bookletLayout"
+                dbkey="pst_booklet_layout"
+                text="ids_lbl_booklet_layout"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_booklet_layout_forward</option>
+                <option>ids_lbl_booklet_layout_reverse</option>
+            </setting>
+            <setting
+                name="finishingSide"
+                dbkey="pst_finishing_side"
+                text="ids_lbl_finishingside"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_finishingside_left</option>
+                <option>ids_lbl_finishingside_top</option>
+                <option>ids_lbl_finishingside_right</option>
+            </setting>
+            <setting
+                name="staple"
+                dbkey="pst_staple"
+                text="ids_lbl_staple"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_staple_upperleft</option>
+                <option>ids_lbl_staple_upperright</option>
+                <option>ids_lbl_staple_1</option>
+                <option>ids_lbl_staple_2</option>
+            </setting>
+            <setting
+                name="punch"
+                dbkey="pst_punch"
+                text="ids_lbl_punch"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_punch_2holes</option>
+                <option>ids_lbl_punch_4holes</option>
+            </setting>
+            <setting
+                name="outputTray"
+                dbkey="pst_output_tray"
+                text="ids_lbl_outputtray"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_outputtray_auto</option>
+                <option>ids_lbl_outputtray_facedown</option>
+                <option>ids_lbl_outputtray_top</option>
+                <option>ids_lbl_outputtray_stacking</option>
+            </setting>
+        </group>
+    </printertype>
+    <printertype
+        id="FW"
+        type="id">
+        <group
+            name="basic"
+            text="ids_lbl_basic" >
+            <setting
+                name="colorMode"
+                dbkey="pst_color_mode"
+                text="ids_lbl_colormode"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_colormode_auto</option>
+                <option>ids_lbl_colormode_fullcolor</option>
+                <option>ids_lbl_colormode_black</option>
+                <option>ids_lbl_colormode_2color</option>
+            </setting>
+            <setting
+                name="orientation"
+                dbkey="pst_orientation"
+                text="ids_lbl_orientation"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_orientation_portrait</option>
+                <option>ids_lbl_orientation_landscape</option>
+            </setting>
+            <setting
+                name="copies"
+                dbkey="pst_copies"
+                text="ids_lbl_number_of_copies"
+
+                type="numeric"
+                default="1" />
+            <setting
+                name="duplex"
+                dbkey="pst_duplex"
+                text="ids_lbl_duplex"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_duplex_long_edge</option>
+                <option>ids_lbl_duplex_short_edge</option>
+            </setting>
+            <setting
+                name="paperSize"
+                dbkey="pst_paper_size"
+                text="ids_lbl_papersize"
+
+                type="list"
+                default="2" >
+                <option>ids_lbl_papersize_a3</option>
+                <option>ids_lbl_papersize_a3w</option>
+                <option>ids_lbl_papersize_a4</option>
+                <option>ids_lbl_papersize_a5</option>
+                <option>ids_lbl_papersize_a6</option>
+                <option>ids_lbl_papersize_b4</option>
+                <option>ids_lbl_papersize_b5</option>
+                <option>ids_lbl_papersize_b6</option>
+                <option>ids_lbl_papersize_foolscap</option>
+                <option>ids_lbl_papersize_tabloid</option>
+                <option>ids_lbl_papersize_legal</option>
+                <option>ids_lbl_papersize_letter</option>
+                <option>ids_lbl_papersize_statement</option>
+            </setting>
+            <setting
+                name="scaleToFit"
+                dbkey="pst_scale_to_fit"
+                text="ids_lbl_scaletofit"
+
+                type="boolean"
+                default="true" />
+            <setting
+                name="paperType"
+                dbkey="pst_paper_type"
+                text="ids_lbl_papertype"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_papertype_any</option>
+                <option>ids_lbl_papertype_plain</option>
+                <option>ids_lbl_papertype_ijpaper</option>
+                <option>ids_lbl_papertype_mattcoated</option>
+                <option>ids_lbl_papertype_highquality</option>
+                <option>ids_lbl_papertype_cardij</option>
+                <option>ids_lbl_papertype_lwpaper</option>
+                <option>ids_lbl_papertype_roughpaper</option>
+            </setting>
+            <setting
+                name="inputTray"
+                dbkey="pst_input_tray"
+                text="ids_lbl_inputtray"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_inputtray_auto</option>
+                <option>ids_lbl_inputtray_standard</option>
+                <option>ids_lbl_inputtray_tray1</option>
+                <option>ids_lbl_inputtray_tray2</option>
+            </setting>
+        </group>
+        <group
+            name="layout"
+            text="ids_lbl_layout" >
+            <setting
+                name="imposition"
+                dbkey="pst_imposition"
+                text="ids_lbl_imposition"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_imposition_2up</option>
+                <option>ids_lbl_imposition_4up</option>
+            </setting>
+            <setting
+                name="impositionOrder"
+                dbkey="pst_imposition_order"
+                text="ids_lbl_imposition_order"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_imposition_order_2up_lr</option>
+                <option>ids_lbl_imposition_order_2up_rl</option>
+                <option>ids_lbl_imposition_order_4up_ulr</option>
+                <option>ids_lbl_imposition_order_4up_url</option>
+                <option>ids_lbl_imposition_order_4up_ulb</option>
+                <option>ids_lbl_imposition_order_4up_urb</option>
+            </setting>
+        </group>
+        <group
+            name="finishing"
+            text="ids_lbl_finishing" >
+            <setting
+                name="sort"
+                dbkey="pst_sort"
+                text="ids_lbl_sort"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_sort_perpage</option>
+                <option>ids_lbl_sort_percopy</option>
+            </setting>
+            <setting
+                name="booklet"
+                dbkey="pst_booklet"
+                text="ids_lbl_booklet"
+
+                type="boolean"
+                default="false" />
+            <setting
+                name="bookletFinish"
+                dbkey="pst_booklet_finish"
+                text="ids_lbl_booklet_finishing"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_booklet_finishing_fold</option>
+                <option>ids_lbl_booklet_finishing_foldstaple</option>
+            </setting>
+            <setting
+                name="bookletLayout"
+                dbkey="pst_booklet_layout"
+                text="ids_lbl_booklet_layout"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_booklet_layout_forward</option>
+                <option>ids_lbl_booklet_layout_reverse</option>
+            </setting>
+            <setting
+                name="finishingSide"
+                dbkey="pst_finishing_side"
+                text="ids_lbl_finishingside"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_finishingside_left</option>
+                <option>ids_lbl_finishingside_top</option>
+                <option>ids_lbl_finishingside_right</option>
+            </setting>
+            <setting
+                name="staple"
+                dbkey="pst_staple"
+                text="ids_lbl_staple"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_staple_upperleft</option>
+                <option>ids_lbl_staple_upperright</option>
+                <option>ids_lbl_staple_1</option>
+                <option>ids_lbl_staple_2</option>
+            </setting>
+            <setting
+                name="punch"
+                dbkey="pst_punch"
+                text="ids_lbl_punch"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_off</option>
+                <option>ids_lbl_punch_2holes</option>
+                <option>ids_lbl_punch_4holes</option>
+            </setting>
+            <setting
+                name="outputTray"
+                dbkey="pst_output_tray"
+                text="ids_lbl_outputtray"
+
+                type="list"
+                default="0" >
+                <option>ids_lbl_outputtray_auto</option>
+                <option>ids_lbl_outputtray_facedown</option>
+                <option>ids_lbl_outputtray_top</option>
+                <option>ids_lbl_outputtray_stacking</option>
+            </setting>
+        </group>
+    </printertype>
 </printsettings>

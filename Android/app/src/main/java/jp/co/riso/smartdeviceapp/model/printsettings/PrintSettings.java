@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
+import org.w3c.dom.Element;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -67,31 +68,43 @@ public class PrintSettings {
     public static final String TAG_STAPLE = "staple"; ///< Tag used to identify Staple settings
     public static final String TAG_PUNCH = "punch"; ///< Tag used to identify Punch settings
     public static final String TAG_OUTPUT_TRAY = "outputTray"; ///< Tag used to identify OutputTray settings
-    
-    public static final List<Group> sGroupList; ///< ConvenienceList for groups
-    public static final HashMap<String, Setting> sSettingMap; ///< ConvenienceHashMap for settings
+
+    public static final HashMap<String, List<Group>> sGroupListMap;
+    public static final HashMap<String, HashMap<String, Setting>> sSettingsMaps;
     
     private HashMap<String, Integer> mSettingValues;
+    private String mSettingMapKey;
     
     /**
      * @brief Creates a PrintSettings instance using default values.
+     *
+     * @param printerType The type of printer used as key to the different set of settings.
+     *                    based on printer type
      */
-    public PrintSettings() {
+    public PrintSettings(String printerType) {
         mSettingValues = new HashMap<String, Integer>();
-        
-        for (String key : PrintSettings.sSettingMap.keySet()) {
-            Setting setting = PrintSettings.sSettingMap.get(key);
+        mSettingMapKey = printerType;
+
+        //Use IS as default settings map
+        for (String key :  sSettingsMaps.get(printerType).keySet()) {
+            Setting setting =  sSettingsMaps.get(printerType).get(key);
             
             mSettingValues.put(key, setting.getDefaultValue());
         }
     }
-    
+
+
+    public PrintSettings(){
+        this(AppConstants.PRINTER_MODEL_IS);
+    }
+
     /**
      * @brief Creates a PrintSettings instance from another existing PrintSettings instance.
      * 
      * @param printSettings Print settings to be copied
      */
     public PrintSettings(PrintSettings printSettings) {
+        mSettingMapKey = printSettings.getSettingMapKey();
         mSettingValues = new HashMap<String, Integer>();
         
         for (String key : printSettings.getSettingValues().keySet()) {
@@ -105,15 +118,16 @@ public class PrintSettings {
      * If print settings is not existing in the database, default values are used.
      * 
      * @param printerId Printer ID of the Print Settings to be retrieved from the database.
+     * @param printerType The type of printer used as key to determine the setting set to be used
      */
-    public PrintSettings(int printerId) {
-        this();
+    public PrintSettings(int printerId, String printerType) {
+        this(printerType);
         
         // overwrite values if valid printer id
         if (printerId != PrinterManager.EMPTY_ID) {
             PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
             
-            PrintSettings printSettings = manager.getPrintSetting(printerId);
+            PrintSettings printSettings = manager.getPrintSetting(printerId, printerType);
             
             for (String key : printSettings.getSettingValues().keySet()) {
                 mSettingValues.put(key, printSettings.getSettingValues().get(key));
@@ -160,16 +174,30 @@ public class PrintSettings {
         if (printSettingsContent == null) {
             return;
         }
-        
-        NodeList groupList = printSettingsContent.getElementsByTagName(XmlNode.NODE_GROUP);
-        
+
+        for(String printerType : AppConstants.PRINTER_TYPES)
+        {
+            Element settings =  printSettingsContent.getElementById(printerType);
+            if(settings != null) {
+                HashMap <String, Setting> settingsMap = new HashMap<>();
+                List<Group> groupList = new ArrayList<>();
+                parsePrintSettings(settings, settingsMap, groupList);
+                sSettingsMaps.put(printerType, settingsMap);
+                sGroupListMap.put(printerType, groupList);
+            }
+        }
+    }
+
+    private static void parsePrintSettings(Element settings, HashMap<String, Setting> map, List<Group> list) {
+        NodeList groupList = settings.getElementsByTagName(XmlNode.NODE_GROUP);
+
         // looping through all item nodes <item>
         for (int i = 0; i < groupList.getLength(); i++) {
             Group group = new Group(groupList.item(i));
-            sGroupList.add(group);
-            
+            list.add(group);
+
             for (Setting setting : group.getSettings()) {
-                sSettingMap.put(setting.getAttributeValue(XmlNode.ATTR_NAME), setting);
+                map.put(setting.getAttributeValue(XmlNode.ATTR_NAME), setting);
             }
         }
     }
@@ -430,11 +458,16 @@ public class PrintSettings {
         PrintSettingsManager manager = PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext());
         return manager.saveToDB(printerId, this);
     }
-    
+
+
+    public String getSettingMapKey(){
+        return mSettingMapKey;
+    }
+
     static {
-        sGroupList = new ArrayList<Group>();
-        sSettingMap = new HashMap<String, Setting>();
-        
+        sSettingsMaps = new HashMap<>();
+        sGroupListMap = new HashMap<>();
+
         String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), AppConstants.XML_FILENAME);
         initializeStaticObjects(xmlString);
     }
