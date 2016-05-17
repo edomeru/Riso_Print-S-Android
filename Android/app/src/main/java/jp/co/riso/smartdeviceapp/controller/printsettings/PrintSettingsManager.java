@@ -155,7 +155,7 @@ public class PrintSettingsManager {
         return cv;
     }
 
-    public static String getModelCategory(String modelName) {
+    public String getModelCategory(String modelName) {
         if(modelName == null || modelName.isEmpty()) {
             return null;
         }
