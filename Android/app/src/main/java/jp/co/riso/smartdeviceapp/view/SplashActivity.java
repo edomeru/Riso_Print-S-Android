@@ -8,21 +8,6 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
-import java.io.File;
-import java.io.IOException;
-
-import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
-import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.android.util.FileUtils;
-import jp.co.riso.android.util.Logger;
-import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
-import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
-import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
-import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView;
-import jp.co.riso.smartprint.R;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -49,6 +34,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import java.io.File;
+import java.io.IOException;
+
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.android.util.Logger;
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
+import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
+import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView;
+import jp.co.riso.smartprint.R;
+
 /**
  * @class SplashActivity
  * 
@@ -60,6 +61,8 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
     
     public static final String KEY_DB_INITIALIZED = "database_initialized";
+
+    private static final int DUMMY_REQUEST_CODE = 0;
 
     private PauseableHandler mHandler = null;
     private DBInitTask mInitTask = null;
@@ -423,7 +426,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", getPackageName(), null);
                     intent.setData(uri);
-                    startActivityForResult(intent, 11);
+                    startActivityForResult(intent, DUMMY_REQUEST_CODE);
                     return true;
                 default:
                     v.performClick();
