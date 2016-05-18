@@ -1,5 +1,13 @@
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
+import android.test.AndroidTestCase;
+import android.util.Log;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -10,15 +18,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import android.test.AndroidTestCase;
-import android.util.Log;
 
 public class XmlNodeTest extends AndroidTestCase {
     private static final String TAG = "XmlNodeTest";
@@ -86,7 +87,7 @@ public class XmlNodeTest extends AndroidTestCase {
 
 
     public void testPreConditions() {
-        assertEquals(3,mGroupList.size());
+        assertEquals(3*AppConstants.PRINTER_TYPES.length, mGroupList.size());
     }
 
     public void testGetAttributeValue() {
@@ -94,7 +95,7 @@ public class XmlNodeTest extends AndroidTestCase {
             XmlNode g = mGroupList.get(i);
             String attribName = g.getAttributeValue("name");
             String attribText = g.getAttributeValue("text");
-            switch(i) {
+            switch(i%AppConstants.PRINTER_TYPES.length) {
                 case 0:
                     assertEquals("basic", attribName);
                     assertEquals("ids_lbl_basic", attribText);

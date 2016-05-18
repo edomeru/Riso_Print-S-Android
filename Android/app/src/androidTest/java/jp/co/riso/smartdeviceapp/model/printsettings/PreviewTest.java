@@ -1,6 +1,14 @@
 
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
+import android.test.AndroidTestCase;
+import android.util.Log;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -26,14 +34,6 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import android.test.AndroidTestCase;
-import android.util.Log;
 
 public class PreviewTest extends AndroidTestCase {
     private static final String TAG = "PreviewTest";
@@ -229,7 +229,7 @@ public class PreviewTest extends AndroidTestCase {
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
         }
-        assertEquals(optionsList.size(), ColorMode.values().length);
+        assertEquals(optionsList.size(), ColorMode.values().length - 1); // Default does not have dual color mode
 
     }
 

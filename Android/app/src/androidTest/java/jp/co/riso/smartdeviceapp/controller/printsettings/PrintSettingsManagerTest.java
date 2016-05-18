@@ -67,13 +67,9 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
     private DatabaseManager mManager;
     private Context mContext;
     private int mPrinterId = PrinterManager.EMPTY_ID;
+    private String mPrinterType = AppConstants.PRINTER_MODEL_IS;
     private int mSettingId = 1;
     private int mIntValue = 1;
-
-    private static final String INVALID_PRINTER_MODEL = "ComColor 2150";
-    private static final String IS_PRINTER_MODEL = AppConstants.IS_PRINTER_MODELS[0];
-    private static final String GD_PRINTER_MODEL = "ORPHIS GD123";
-    private static final String FW_PRINTER_MODEL = "ORPHIS FW5230";
 
     @Override
     protected void setUp() throws Exception {
@@ -177,7 +173,7 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
     // ================================================================================
     
     public void testGetPrintSetting() {
-        PrintSettings settings = mPrintSettingsMgr.getPrintSetting(mPrinterId);
+        PrintSettings settings = mPrintSettingsMgr.getPrintSetting(mPrinterId, mPrinterType);
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
@@ -372,29 +368,5 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         assertEquals(newSettingId,  c.getInt(c.getColumnIndex(PRINTSETTING_ID)));
         c.close();
         db.close();
-    }
-
-    public void testGetModelCategory_invalid() {
-        assertNull(mPrintSettingsMgr.getModelCategory(INVALID_PRINTER_MODEL));
-    }
-
-    public void testGetModelCategory_null() {
-        assertNull(mPrintSettingsMgr.getModelCategory(null));
-    }
-
-    public void testGetModelCategory_empty() {
-        assertNull(mPrintSettingsMgr.getModelCategory(""));
-    }
-
-    public void testGetModelCategory_IS() {
-        assertEquals(AppConstants.PRINTER_MODEL_IS, mPrintSettingsMgr.getModelCategory(IS_PRINTER_MODEL));
-    }
-
-    public void testGetModelCategory_GD() {
-        assertEquals(AppConstants.PRINTER_MODEL_GD, mPrintSettingsMgr.getModelCategory(GD_PRINTER_MODEL));
-    }
-
-    public void testGetModelCategory_FW() {
-        assertEquals(AppConstants.PRINTER_MODEL_FW, mPrintSettingsMgr.getModelCategory(FW_PRINTER_MODEL));
     }
 }

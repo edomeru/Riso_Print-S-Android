@@ -8,10 +8,11 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
-import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 
 /**
  * @class Printer
@@ -19,6 +20,11 @@ import android.os.Parcelable;
  * @brief Class representation of printer object
  */
 public class Printer implements Parcelable {
+
+    //for the meantime, set the fallthrough printer type to IS since it is the originally
+    //supported printer type
+    private static final String DEFAULT_PRINTER_TYPE = AppConstants.PRINTER_MODEL_IS;
+
     private String mName = null;
     private String mIpAddress = null;
     private int mId = PrinterManager.EMPTY_ID;
@@ -27,7 +33,12 @@ public class Printer implements Parcelable {
     private Config mConfig = null;
 
     private String mPrinterType = null;
-    
+
+    // Flag to indicate if printer only defaulted to IS;
+    // Currently used to disable listing printers in search
+    // but can be used in future implementations for handling
+    private boolean actualPrinterTypeInvalid = false;
+
     /**
      * @brief Printer port setting.
      */
@@ -211,14 +222,20 @@ public class Printer implements Parcelable {
     }
 
     /**
-     * @brief Initizializes the printer's printer type based on the printer's model (name) .
+     * @brief Returns if the printer model is not supported and is only set to the default printer model
+     */
+    public boolean isActualPrinterTypeInvalid() {
+        return actualPrinterTypeInvalid;
+    }
+
+    /**
+     * @brief Initializes the printer's printer type based on the printer's model (name) .
      */
     private void initializePrinterType(){
-        //for the meantime, set the fallthrough printer type to IS since it is the originally
-        //supported printer type
-       if(mName == null || mName.isEmpty()){
-          mPrinterType =  AppConstants.PRINTER_MODEL_IS;
-       }
+        if(mName == null || mName.isEmpty()){
+            mPrinterType =  DEFAULT_PRINTER_TYPE;
+            actualPrinterTypeInvalid = true;
+        }
 
        final String[] IS_Printers = {"RISO IS1000C-J", "RISO IS1000C-G", "RISO IS950C-G"} ;
 
@@ -239,7 +256,8 @@ public class Printer implements Parcelable {
             return;
         }
 
-         mPrinterType =  AppConstants.PRINTER_MODEL_IS;
+        mPrinterType =  AppConstants.PRINTER_MODEL_IS;
+        actualPrinterTypeInvalid = true;
     }
 
     // ================================================================================

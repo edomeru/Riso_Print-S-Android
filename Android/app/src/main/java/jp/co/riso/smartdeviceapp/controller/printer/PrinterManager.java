@@ -24,12 +24,10 @@ import java.util.TimerTask;
 
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
-import jp.co.riso.smartdeviceapp.controller.printsettings.PrintSettingsManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartprint.R;
@@ -753,10 +751,15 @@ public class PrinterManager implements SNMPManagerCallback {
     
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
-        if (manager == null || ipAddress == null || name == null || capabilities == null || PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext()).getModelCategory(name) == null) {
+        if (manager == null || ipAddress == null || name == null || capabilities == null) {
             return;
         }
         Printer printer = new Printer(name, ipAddress);
+
+        if(printer.isActualPrinterTypeInvalid()) {
+            return;
+        }
+
         PrinterManager.setupPrinterConfig(printer, capabilities);
         
         if (isSearching()) {
