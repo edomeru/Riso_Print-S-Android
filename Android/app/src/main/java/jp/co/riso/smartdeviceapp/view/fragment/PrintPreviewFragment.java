@@ -346,9 +346,12 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         
         if (!printerManager.isExists(mPrinterId)) {
             setPrintId(printerManager.getDefaultPrinter());
+            String printerType = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(mPrinterId);
+
             //use fallthrough printer type IS, if printer does not yet exist
-            setPrintSettings(new PrintSettings(mPrinterId, AppConstants.PRINTER_MODEL_IS));
+            setPrintSettings(new PrintSettings(mPrinterId, printerType == null ? AppConstants.PRINTER_MODEL_IS : printerType));
         }
+
         if (mPauseableHandler != null) {
             mPauseableHandler.resume();
         }
