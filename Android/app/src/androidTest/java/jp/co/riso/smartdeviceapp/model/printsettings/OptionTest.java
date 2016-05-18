@@ -1,5 +1,13 @@
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
+import android.test.AndroidTestCase;
+import android.util.Log;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -11,14 +19,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import android.test.AndroidTestCase;
-import android.util.Log;
 
 public class OptionTest extends AndroidTestCase {
     private static final String TAG = "OptionTest";
@@ -66,7 +66,7 @@ public class OptionTest extends AndroidTestCase {
     }
 
     public void testPreConditions() {
-        assertEquals(64, mOptionList.size());
+        assertEquals(193, mOptionList.size());
     }
 
     public void testGetTextContent() {

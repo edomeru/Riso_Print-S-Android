@@ -754,6 +754,11 @@ public class PrinterManager implements SNMPManagerCallback {
             return;
         }
         Printer printer = new Printer(name, ipAddress);
+
+        if(printer.isActualPrinterTypeInvalid()) {
+            return;
+        }
+
         PrinterManager.setupPrinterConfig(printer, capabilities);
         
         if (isSearching()) {

@@ -76,7 +76,8 @@ public class PrintSettings {
     private String mSettingMapKey;
     
     /**
-     * @brief Creates a PrintSettings instance using default values.
+     * @brief Creates a PrintSettings instance using default values of print settings
+     *         of the printer type
      *
      * @param printerType The type of printer used as key to the different set of settings.
      *                    based on printer type
@@ -93,7 +94,10 @@ public class PrintSettings {
         }
     }
 
-
+    /**
+     * @brief Default constructor. Creates a PrintSettings instance using default values
+     *          of print settings of the default printer type
+     */
     public PrintSettings(){
         this(AppConstants.PRINTER_MODEL_IS);
     }

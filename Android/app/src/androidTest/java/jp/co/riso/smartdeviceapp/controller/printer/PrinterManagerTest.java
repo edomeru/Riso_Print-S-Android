@@ -1232,7 +1232,46 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             fail(); // Error should not be thrown
         }
     }
-    
+
+    // ================================================================================
+    // Tests - getPrinterType
+    // ================================================================================
+    public void testgGetPrinterType() {
+
+        try {
+            Printer printer = null;
+
+            printer = new Printer("RISO IS1000C-G", "192.168.0.1");
+                mPrinterManager.savePrinterToDB(printer, true);
+            String printerType =  mPrinterManager.getPrinterType(printer.getId());
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_IS);
+            mPrinterManager.removePrinter(printer);
+
+            printer = new Printer("ORPHIS GD500", "192.168.0.2");
+            mPrinterManager.savePrinterToDB(printer, true);
+            printerType =  mPrinterManager.getPrinterType(printer.getId());
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_GD);
+            mPrinterManager.removePrinter(printer);
+
+            printer = new Printer("ORPHIS FW1000", "192.168.0.3");
+            mPrinterManager.savePrinterToDB(printer, true);
+            printerType =  mPrinterManager.getPrinterType(printer.getId());
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_FW);
+            mPrinterManager.removePrinter(printer);
+
+            int nonExistentId = 2;
+            if(mPrinterManager.getPrinterCount() > 0) {
+                nonExistentId += mPrinterManager.getSavedPrintersList().get(mPrinterManager.getPrinterCount() - 1).getId();
+            }
+            printerType =  mPrinterManager.getPrinterType(nonExistentId);
+            assertNull(printerType);
+
+        } catch (Exception e) {
+            fail(); // Error should not be thrown
+        }
+    }
+
+
     // ================================================================================
     // Interface
     // ================================================================================
