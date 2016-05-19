@@ -8,14 +8,15 @@
 
 package jp.co.riso.smartdeviceapp.controller.printsettings;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
 
 /**
  * @class PrintSettingsManager
@@ -61,7 +62,7 @@ public class PrintSettingsManager {
         PrintSettings printSettings = new PrintSettings(printerType);
         
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTSETTING_TABLE, null, KeyConstants.KEY_SQL_PRINTER_ID + "=?",
-                new String[] { String.valueOf(printerId) }, null, null, null);
+                new String[]{String.valueOf(printerId)}, null, null, null);
         // overwrite values if there is an entry retrieved from database
         if (c != null && c.moveToFirst()) {
             for (String key : PrintSettings.sSettingsMaps.get(printerType).keySet()) {

@@ -438,9 +438,7 @@
             </setting>
         </group>
     </printertype>
-    <printertype
-        id="FW"
-        type="id">
+    <printertype id="FW">
         <group
             name="basic"
             text="ids_lbl_basic" >

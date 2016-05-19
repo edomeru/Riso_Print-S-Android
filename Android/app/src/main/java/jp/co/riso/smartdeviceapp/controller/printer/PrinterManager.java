@@ -8,6 +8,13 @@
 
 package jp.co.riso.smartdeviceapp.controller.printer;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ImageView;
+
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -24,12 +31,6 @@ import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartprint.R;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.os.AsyncTask;
-import android.view.View;
-import android.widget.ImageView;
 
 /**
  * @class PrinterManager

@@ -1,6 +1,12 @@
 
 package jp.co.riso.smartdeviceapp.controller.printsettings;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.test.AndroidTestCase;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,11 +17,6 @@ import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.test.AndroidTestCase;
 
 public class PrintSettingsManagerTest extends AndroidTestCase {
 
