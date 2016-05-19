@@ -235,6 +235,7 @@ public class Printer implements Parcelable {
         if(mName == null || mName.isEmpty()){
             mPrinterType =  DEFAULT_PRINTER_TYPE;
             actualPrinterTypeInvalid = true;
+            return;
         }
 
        final String[] IS_Printers = {"RISO IS1000C-J", "RISO IS1000C-G", "RISO IS950C-G"} ;
