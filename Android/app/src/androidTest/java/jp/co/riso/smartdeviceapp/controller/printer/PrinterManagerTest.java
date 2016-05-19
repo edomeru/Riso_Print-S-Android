@@ -1236,13 +1236,13 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     // ================================================================================
     // Tests - getPrinterType
     // ================================================================================
-    public void testgGetPrinterType() {
+    public void testGetPrinterType() {
 
         try {
             Printer printer = null;
 
             printer = new Printer("RISO IS1000C-G", "192.168.0.1");
-                mPrinterManager.savePrinterToDB(printer, true);
+            mPrinterManager.savePrinterToDB(printer, true);
             String printerType =  mPrinterManager.getPrinterType(printer.getId());
             assertEquals(printerType, AppConstants.PRINTER_MODEL_IS);
             mPrinterManager.removePrinter(printer);
@@ -1263,6 +1263,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             if(mPrinterManager.getPrinterCount() > 0) {
                 nonExistentId += mPrinterManager.getSavedPrintersList().get(mPrinterManager.getPrinterCount() - 1).getId();
             }
+
             printerType =  mPrinterManager.getPrinterType(nonExistentId);
             assertNull(printerType);
 

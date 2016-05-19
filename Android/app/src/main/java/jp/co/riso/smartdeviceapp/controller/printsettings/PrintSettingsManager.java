@@ -12,6 +12,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.HashMap;
+
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -65,8 +67,10 @@ public class PrintSettingsManager {
                 new String[]{String.valueOf(printerId)}, null, null, null);
         // overwrite values if there is an entry retrieved from database
         if (c != null && c.moveToFirst()) {
-            for (String key : PrintSettings.sSettingsMaps.get(printerType).keySet()) {
-                Setting setting =  PrintSettings.sSettingsMaps.get(printerType).get(key);
+            HashMap<String, Setting> currentPrintSettings = PrintSettings.sSettingsMaps.get(printerType);
+
+            for (String key : currentPrintSettings.keySet()) {
+                Setting setting =  currentPrintSettings.get(key);
                 
                 switch (setting.getType()) {
                     case Setting.TYPE_LIST:
@@ -131,8 +135,10 @@ public class PrintSettingsManager {
             return null;
         }
 
-        for (String key : PrintSettings.sSettingsMaps.get(printSettings.getSettingMapKey()).keySet()) {
-            Setting setting =  PrintSettings.sSettingsMaps.get(printSettings.getSettingMapKey()).get(key);
+        HashMap<String, Setting> printerSettings = PrintSettings.sSettingsMaps.get(printSettings.getSettingMapKey());
+
+        for (String key : printerSettings.keySet()) {
+            Setting setting =  printerSettings.get(key);
             String dbKey = setting.getDbKey();
             
             // no need to convert since BOOL is also stored as integer in SQLite DB

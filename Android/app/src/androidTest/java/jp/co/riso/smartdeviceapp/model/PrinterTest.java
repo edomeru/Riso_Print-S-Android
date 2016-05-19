@@ -1,13 +1,15 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
+import android.os.Bundle;
+import android.os.Parcel;
+
+import junit.framework.TestCase;
+
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer.Config;
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
-import junit.framework.TestCase;
-import android.os.Bundle;
-import android.os.Parcel;
 
 public class PrinterTest extends TestCase {
     final private String PRINTER_NAME = "Test Printer";
@@ -188,6 +190,11 @@ public class PrinterTest extends TestCase {
         assertEquals(printerType, AppConstants.PRINTER_MODEL_IS);
 
         printer = new Printer("RISO IS1000C-J", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_IS);
+
+        printer = new Printer("RISO IS10", "");
 
         printerType = printer.getPrinterType();
         assertEquals(printerType, AppConstants.PRINTER_MODEL_IS);
