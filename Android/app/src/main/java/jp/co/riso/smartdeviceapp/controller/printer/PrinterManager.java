@@ -24,6 +24,7 @@ import java.util.TimerTask;
 
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
