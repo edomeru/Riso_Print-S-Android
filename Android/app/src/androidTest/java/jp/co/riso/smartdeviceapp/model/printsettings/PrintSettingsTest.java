@@ -1,6 +1,14 @@
 
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
+import android.content.ContentValues;
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
+import android.test.ActivityInstrumentationTestCase2;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,13 +22,6 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-import android.content.ContentValues;
-import android.content.SharedPreferences;
-import android.content.res.AssetManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.preference.PreferenceManager;
-import android.test.ActivityInstrumentationTestCase2;
 
 public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
@@ -173,7 +174,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
     // must have default values
     public void testConstructor_PrinterIdInvalid() {
-        PrintSettings settings = new PrintSettings(PrinterManager.EMPTY_ID);
+        PrintSettings settings = new PrintSettings(PrinterManager.EMPTY_ID, AppConstants.PRINTER_MODEL_IS);
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);
@@ -212,7 +213,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
             // if from database, values must be from database
             c.moveToFirst();
             printerId = c.getInt(c.getColumnIndex(PRINTER_ID));
-            PrintSettings settings = new PrintSettings(printerId);
+            PrintSettings settings = new PrintSettings(printerId, AppConstants.PRINTER_MODEL_IS);
             assertNotNull(settings);
             HashMap<String, Integer> settingValues = settings.getSettingValues();
             assertNotNull(settingValues);
@@ -257,7 +258,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         } else {
             // if not yet existing in database must be default values
             printerId = 1;
-            PrintSettings settings = new PrintSettings(printerId);
+            PrintSettings settings = new PrintSettings(printerId, AppConstants.PRINTER_MODEL_IS);
             assertNotNull(settings);
             HashMap<String, Integer> settingValues = settings.getSettingValues();
             assertNotNull(settingValues);
@@ -383,9 +384,9 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testIsScaleToFit() {
-        assertEquals(false, mPrintSettings.isScaleToFit());
-        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 1);
         assertEquals(true, mPrintSettings.isScaleToFit());
+        mPrintSettings.setValue(KEY_SCALE_TO_FIT, 0);
+        assertEquals(false, mPrintSettings.isScaleToFit());
     }
 
     public void testGetImposition() {
@@ -528,8 +529,8 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testInitializeStaticObjects() {
-        assertEquals(18, PrintSettings.sSettingMap.size());
-        assertEquals(3, PrintSettings.sGroupList.size());
+        assertEquals(18, PrintSettings.sSettingsMaps.get(AppConstants.PRINTER_MODEL_IS).size());
+        assertEquals(3, PrintSettings.sGroupListMap.get(AppConstants.PRINTER_MODEL_IS).size());
 
         try {
             PrintSettings.initializeStaticObjects(null);
@@ -548,19 +549,19 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         PrintSettings.initializeStaticObjects(getFileContentsFromAssets("invalid_missingString.xml"));
 
         // w/ values since initially loaded - must still be equal to initial size
-        assertEquals(18, PrintSettings.sSettingMap.size());
-        assertEquals(3, PrintSettings.sGroupList.size());
+        assertEquals(18, PrintSettings.sSettingsMaps.get(AppConstants.PRINTER_MODEL_IS).size());
+        assertEquals(3, PrintSettings.sGroupListMap.get(AppConstants.PRINTER_MODEL_IS).size());
     }
 
     public void testInitializeStaticObjects_Duplicate() {
         // w/ values since initially loaded
-        assertEquals(18, PrintSettings.sSettingMap.size());
+        assertEquals(18, PrintSettings.sSettingsMaps.get(AppConstants.PRINTER_MODEL_IS).size());
         PrintSettings.initializeStaticObjects(getFileContentsFromAssets("printsettings.xml"));
-        assertEquals(18, PrintSettings.sSettingMap.size());
-        assertEquals(6, PrintSettings.sGroupList.size());
+        assertEquals(18, PrintSettings.sSettingsMaps.get(AppConstants.PRINTER_MODEL_IS).size());
+        assertEquals(3, PrintSettings.sGroupListMap.get(AppConstants.PRINTER_MODEL_IS).size());
         int count = 0;
-        for (String key : PrintSettings.sSettingMap.keySet()) {
-            Setting s = PrintSettings.sSettingMap.get(key);
+        for (String key : PrintSettings.sSettingsMaps.get(AppConstants.PRINTER_MODEL_IS).keySet()) {
+            Setting s = PrintSettings.sSettingsMaps.get(AppConstants.PRINTER_MODEL_IS).get(key);
             if (s.getAttributeValue("name").equals("colorMode")) {
                 count++;
             }
@@ -578,8 +579,8 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
         List<String> columns = Arrays.asList(columnNames);
 
-        for (String key : PrintSettings.sSettingMap.keySet()) {
-            Setting s = PrintSettings.sSettingMap.get(key);
+        for (String key : PrintSettings.sSettingsMaps.get(AppConstants.PRINTER_MODEL_IS).keySet()) {
+            Setting s = PrintSettings.sSettingsMaps.get(AppConstants.PRINTER_MODEL_IS).get(key);
             assertTrue(columns.contains(s.getDbKey()));
         }
     }

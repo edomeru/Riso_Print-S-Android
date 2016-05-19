@@ -1,5 +1,14 @@
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
+import android.content.res.AssetManager;
+import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,17 +22,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import android.content.res.AssetManager;
-import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 
 public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
@@ -79,7 +80,7 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
 
 
     public void testPreConditions() {
-        assertEquals(18, mSettingList.size());
+        assertEquals(18*AppConstants.PRINTER_TYPES.length, mSettingList.size());
     }
 
     public void testGetOptions() {

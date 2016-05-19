@@ -534,7 +534,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
                             fragment = new PrintSettingsFragment();
                             fragment.setPrinterId(mSelectedPrinter.getId());
                             // use new print settings retrieved from the database
-                            fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId()));
+                            fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId(), mSelectedPrinter.getPrinterType()));
                             
                             if (mPauseableHandler != null) {
                                 Message msg = Message.obtain(mPauseableHandler, PrintersFragment.MSG_PRINTSETTINGS_BUTTON);

@@ -1,20 +1,22 @@
 
 package jp.co.riso.smartdeviceapp.controller.printsettings;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.test.AndroidTestCase;
+
 import java.util.HashMap;
 import java.util.List;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.test.AndroidTestCase;
 
 public class PrintSettingsManagerTest extends AndroidTestCase {
 
@@ -65,9 +67,9 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
     private DatabaseManager mManager;
     private Context mContext;
     private int mPrinterId = PrinterManager.EMPTY_ID;
+    private String mPrinterType = AppConstants.PRINTER_MODEL_IS;
     private int mSettingId = 1;
     private int mIntValue = 1;
-
 
     @Override
     protected void setUp() throws Exception {
@@ -171,7 +173,7 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
     // ================================================================================
     
     public void testGetPrintSetting() {
-        PrintSettings settings = mPrintSettingsMgr.getPrintSetting(mPrinterId);
+        PrintSettings settings = mPrintSettingsMgr.getPrintSetting(mPrinterId, mPrinterType);
         assertNotNull(settings);
         HashMap<String, Integer> settingValues = settings.getSettingValues();
         assertNotNull(settingValues);

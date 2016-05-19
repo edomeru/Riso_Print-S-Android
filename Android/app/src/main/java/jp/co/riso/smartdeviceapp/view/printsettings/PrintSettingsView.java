@@ -165,10 +165,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         initializeMainView();
         initializePrinterControls();
-        initializePrintSettingsControls();
-        initializeAuthenticationSettingsView();
-        
-        initializeAuthenticationValues();
     }
     
     @Override
@@ -353,11 +349,16 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @return Default value for the tag
      */
     private int getDefaultValueWithConstraints(String tag) {
-        if (PrintSettings.sSettingMap.get(tag) == null) {
+        if(mPrintSettings == null){
+            return -1;
+        }
+
+        if (PrintSettings.sSettingsMaps.get(mPrintSettings.getSettingMapKey()) == null
+                || PrintSettings.sSettingsMaps.get(mPrintSettings.getSettingMapKey()).get(tag) == null) {
             return -1;
         }
         
-        int defaultValue = PrintSettings.sSettingMap.get(tag).getDefaultValue();
+        int defaultValue = PrintSettings.sSettingsMaps.get(mPrintSettings.getSettingMapKey()).get(tag).getDefaultValue();
         
         return defaultValue;
     }
@@ -826,11 +827,25 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @param printSettings Print Settings to be applied
      */
     protected void setPrintSettings(PrintSettings printSettings) {
+        boolean initializeViews = true;
+        if(mPrintSettings != null){
+            if(!mPrintSettings.getSettingMapKey().equalsIgnoreCase(printSettings.getSettingMapKey())) {
+                mPrintSettingsLayout.removeAllViews();
+            }
+            else {
+                initializeViews = false;
+            }
+        }
         mPrintSettings = new PrintSettings(printSettings);
-        
+
         if (mPrintSettings != null) {
+            if (initializeViews) {
+                initializePrintSettingsControls();
+                initializeAuthenticationSettingsView();
+                initializeAuthenticationValues();
+            }
             
-            Set<String> keySet = PrintSettings.sSettingMap.keySet();
+            Set<String> keySet = PrintSettings.sSettingsMaps.get(printSettings.getSettingMapKey()).keySet();
             
             for (String key : keySet) {
                 updateDisplayedValue(key);
@@ -1041,10 +1056,13 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @brief Create the Print Setting Controls
      */
     private void initializePrintSettingsControls() {
+       if(mPrintSettings == null){
+            return;
+        }
         mPrintSettingsTitles = new ArrayList<LinearLayout>();
-        
-        if (PrintSettings.sGroupList != null) {
-            for (Group group : PrintSettings.sGroupList) {
+
+        if (PrintSettings.sGroupListMap.get(mPrintSettings.getSettingMapKey()) != null) {
+            for (Group group : PrintSettings.sGroupListMap.get(mPrintSettings.getSettingMapKey())) {
                 addSettingsTitleView(group);
             }
         }
@@ -1462,7 +1480,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             if (mPrinterId != id) {
                 setPrinterId(id);
                 // TODO: get new printer settings
-                setPrintSettings(new PrintSettings(mPrinterId));
+                setPrintSettings(new PrintSettings(mPrinterId,  PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(mPrinterId)));
                 
                 if (mListener != null) {
                     mListener.onPrinterIdSelectedChanged(mPrinterId);

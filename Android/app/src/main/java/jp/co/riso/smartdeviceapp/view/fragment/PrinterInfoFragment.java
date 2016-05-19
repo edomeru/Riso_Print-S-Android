@@ -220,7 +220,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                         }
                         mPrintSettingsFragment.setPrinterId(mPrinter.getId());
                         // use new print settings retrieved from the database
-                        mPrintSettingsFragment.setPrintSettings(new PrintSettings(mPrinter.getId()));
+                        mPrintSettingsFragment.setPrintSettings(new PrintSettings(mPrinter.getId(), mPrinter.getPrinterType()));
                         
                         PrintersFragment printersFragment = (PrintersFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTERS);
                         mPrintSettingsFragment.setTargetFragment(printersFragment, 0);

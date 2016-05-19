@@ -8,6 +8,13 @@
 
 package jp.co.riso.smartdeviceapp.controller.printer;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ImageView;
+
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -24,12 +31,6 @@ import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartprint.R;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.os.AsyncTask;
-import android.view.View;
-import android.widget.ImageView;
 
 /**
  * @class PrinterManager
@@ -382,6 +383,22 @@ public class PrinterManager implements SNMPManagerCallback {
         cursor.close();
         mDatabaseManager.close();
         return mDefaultPrintId;
+    }
+
+    /**
+     * @brief Obtains the information about the printer type of a printer with corresponding ID
+     *
+     * @param printerId The id of the printer that must be determined for printer type
+     * @return String representing printer type
+     */
+    public String getPrinterType(int printerId){
+        List<Printer> printerList = getSavedPrintersList();
+        for(Printer printer : printerList){
+            if(printer.getId() == printerId){
+                return printer.getPrinterType();
+            }
+        }
+        return null;
     }
         
     /**
@@ -738,6 +755,11 @@ public class PrinterManager implements SNMPManagerCallback {
             return;
         }
         Printer printer = new Printer(name, ipAddress);
+
+        if(printer.isActualPrinterTypeInvalid()) {
+            return;
+        }
+
         PrinterManager.setupPrinterConfig(printer, capabilities);
         
         if (isSearching()) {

@@ -1,6 +1,7 @@
 
 package jp.co.riso.smartdeviceapp.model;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.Printer.Config;
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
@@ -164,6 +165,64 @@ public class PrinterTest extends TestCase {
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
+    }
+
+    // ================================================================================
+    // Tests - getPrinterType
+    // ================================================================================
+
+    public void testGetPrinterType_BlankName() {
+        Printer printer = new Printer("", "");
+
+        String printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_IS);
+    }
+    public void testGetPrinterType_IS() {
+        Printer printer = new Printer("RISO IS950C-G", "");
+        String printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_IS);
+
+        printer = new Printer("RISO IS1000C-G", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_IS);
+
+        printer = new Printer("RISO IS1000C-J", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_IS);
+    }
+
+    public void testGetPrinterType_GD() {
+        Printer printer = new Printer("RISO IS950C-GD", "");
+        String printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_GD);
+
+        printer = new Printer("ORPHIS GD", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_GD);
+
+        printer = new Printer("ORPHIS GDMODEL", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_GD);
+    }
+
+    public void testGetPrinterType_FW() {
+        Printer printer = new Printer("RISO IS950C-FW", "");
+        String printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_FW);
+
+        printer = new Printer("ORPHIS FW", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_FW);
+
+        printer = new Printer("ORPHIS FWMODEL", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_FW);
     }
 
     // ================================================================================

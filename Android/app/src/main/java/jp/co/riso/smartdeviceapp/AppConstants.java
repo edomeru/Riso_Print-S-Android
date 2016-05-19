@@ -80,5 +80,12 @@ public class AppConstants {
     
     /// Maximum printer count
     public static final long CONST_FREE_SPACE_BUFFER = 104857600;
-    
+
+    // Printer Types
+    public static final String PRINTER_MODEL_GD = "GD";
+    public static final String PRINTER_MODEL_FW = "FW";
+    public static final String PRINTER_MODEL_IS = "IS";
+
+    //Array of printer types
+    public static final String[] PRINTER_TYPES = {PRINTER_MODEL_IS, PRINTER_MODEL_GD, PRINTER_MODEL_FW};
 }

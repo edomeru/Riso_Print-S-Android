@@ -45,6 +45,7 @@
     <string name="ids_lbl_colormode_auto">Auto</string>
     <string name="ids_lbl_colormode_fullcolor">Full Color</string>
     <string name="ids_lbl_colormode_black">Black</string>
+    <string name="ids_lbl_colormode_2color">Dual Color</string>
     <string name="ids_lbl_orientation">Orientation</string>
     <string name="ids_lbl_orientation_portrait">Portrait</string>
     <string name="ids_lbl_orientation_landscape">Landscape</string>
