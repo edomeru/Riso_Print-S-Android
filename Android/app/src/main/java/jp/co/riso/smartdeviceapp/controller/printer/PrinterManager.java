@@ -753,7 +753,7 @@ public class PrinterManager implements SNMPManagerCallback {
     
     @Override
     public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities) {
-        if (manager == null || ipAddress == null || name == null || capabilities == null || PrintSettingsManager.getInstance(SmartDeviceApp.getAppContext()).getModelCategory(name) == null) {
+        if (manager == null || ipAddress == null || name == null || capabilities == null) {
             return;
         }
         Printer printer = new Printer(name, ipAddress);

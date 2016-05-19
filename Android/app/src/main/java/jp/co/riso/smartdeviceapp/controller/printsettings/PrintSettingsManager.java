@@ -12,9 +12,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import java.util.Arrays;
-
-import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
@@ -156,25 +153,5 @@ public class PrintSettingsManager {
         }
         
         return cv;
-    }
-
-    public String getModelCategory(String modelName) {
-        if(modelName == null || modelName.isEmpty()) {
-            return null;
-        }
-
-        if(Arrays.asList(AppConstants.IS_PRINTER_MODELS).contains(modelName)) {
-            return AppConstants.PRINTER_MODEL_IS;
-        }
-
-        if(modelName.matches(AppConstants.GD_PRINTER_MODEL_REGEX)) {
-            return AppConstants.PRINTER_MODEL_GD;
-        }
-
-        if(modelName.matches(AppConstants.FW_PRINTER_MODEL_REGEX)) {
-            return AppConstants.PRINTER_MODEL_FW;
-        }
-
-        return null;
     }
 }
