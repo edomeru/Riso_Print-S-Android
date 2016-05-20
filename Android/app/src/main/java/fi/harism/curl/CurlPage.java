@@ -137,7 +137,7 @@ public class CurlPage {
 	 * Recycles and frees underlying Bitmaps.
 	 */
 	public void recycle() {
-		if (mTextureFront != null) {
+		if (mTextureFront != null && !mTextureFront.isRecycled()) {
 			mTextureFront.recycle();
 		}
 		mTextureFront = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
@@ -190,20 +190,24 @@ public class CurlPage {
 		}
 		switch (side) {
 		case SIDE_FRONT:
-			if (mTextureFront != null)
+			if (mTextureFront != null && !mTextureFront.isRecycled()) {
 				mTextureFront.recycle();
+			}
 			mTextureFront = texture;
 			break;
 		case SIDE_BACK:
-			if (mTextureBack != null)
+			if (mTextureBack != null && !mTextureBack.isRecycled()) {
 				mTextureBack.recycle();
+			}
 			mTextureBack = texture;
 			break;
 		case SIDE_BOTH:
-			if (mTextureFront != null)
+			if (mTextureFront != null && !mTextureFront.isRecycled()) {
 				mTextureFront.recycle();
-			if (mTextureBack != null)
+			}
+			if (mTextureBack != null && !mTextureBack.isRecycled()) {
 				mTextureBack.recycle();
+			}
 			mTextureFront = mTextureBack = texture;
 			break;
 		}
