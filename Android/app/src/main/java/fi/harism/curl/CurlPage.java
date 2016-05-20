@@ -16,13 +16,10 @@
 
 package fi.harism.curl;
 
-import java.lang.ref.Reference;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.RectF;
-import android.os.Handler;
 
 /**
  * Storage class for page textures, blend colors and possibly some other values
@@ -145,7 +142,7 @@ public class CurlPage {
 		}
 		mTextureFront = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
 		mTextureFront.eraseColor(mColorFront);
-		if (mTextureBack != null) {
+		if (mTextureBack != null && !mTextureBack.isRecycled()) {
 			mTextureBack.recycle();
 		}
 		mTextureBack = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
