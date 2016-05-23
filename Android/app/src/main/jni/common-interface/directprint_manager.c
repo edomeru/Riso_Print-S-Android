@@ -28,6 +28,9 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(J
     const char *native_ip_address = (*env)->GetStringUTFChars(env, ip_address, 0);
 
     directprint_job *job = directprint_job_new(native_printer_name, native_app_name, native_app_version, native_user_name, native_job_name, native_file_name, native_print_setting, native_ip_address, print_callback);
+    (*env)->ReleaseStringUTFChars(env, printer_name, native_printer_name);
+    (*env)->ReleaseStringUTFChars(env, app_name, native_app_name);
+    (*env)->ReleaseStringUTFChars(env, app_version, native_app_version);
     (*env)->ReleaseStringUTFChars(env, job_name, native_job_name);
     (*env)->ReleaseStringUTFChars(env, file_name, native_file_name);
     (*env)->ReleaseStringUTFChars(env, print_setting, native_print_setting);
