@@ -10,5 +10,7 @@
 #define SmartDeviceApp_printsettings_h
 
 void create_pjl(char *pjl, char *settings);
+void create_pjl_fw(char *pjl, char *settings, char *appName, char *appVersion);
+void create_pjl_gd(char *pjl, char *settings, char *appName, char *appVersion);
 
 #endif
