@@ -305,9 +305,9 @@ typedef struct
     char *str_value;
 } setting_value;
 
-void parse(char *settings, setting_value values[]);
-void parse_line(char *line, char *name, char *value);
-int get_setting_index(const char *name);
+extern void parse(char *settings, setting_value values[]);
+extern void parse_line(char *line, char *name, char *value);
+extern int get_setting_index(const char *name);
 void add_pjl_fw(char *pjl, char *appName, char *appVersion, setting_value values[], int command);
 
 void create_pjl_fw(char *pjl, char *settings, char *appName, char *appVersion)
@@ -340,6 +340,7 @@ void create_pjl_fw(char *pjl, char *settings, char *appName, char *appVersion)
     }
 }
 
+/* 
 void parse(char *settings, setting_value values[])
 {
     char *current_line = settings;
@@ -407,6 +408,7 @@ int get_setting_index(const char *name)
     }
     return -1;
 }
+*/
 
 void add_pjl_fw(char *pjl, char *appName, char *appVersion, setting_value values[], int command)
 {

@@ -248,15 +248,17 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         
         mDirectPrintManager = new DirectPrintManager();
         mDirectPrintManager.setCallback(this);
-        
+
+        String appName = getResources().getString(R.string.ids_app_name);
+        String appVersion = AppUtils.getApplicationVersion(SmartDeviceApp.getAppContext());
         String userName = AppUtils.getOwnerName();
         boolean ret = false;
         
         String formattedString = printSettings.formattedString(mPDFisLandscape);
         if (printer.getPortSetting() == PortSetting.LPR) {
-            ret = mDirectPrintManager.executeLPRPrint(userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
+            ret = mDirectPrintManager.executeLPRPrint(printer.getName(), appName, appVersion, userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
         } else {
-            ret = mDirectPrintManager.executeRAWPrint(userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
+            ret = mDirectPrintManager.executeRAWPrint(printer.getName(), appName, appVersion, userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
         }
         if (ret) {
             btnMsg = getResources().getString(R.string.ids_lbl_cancel);

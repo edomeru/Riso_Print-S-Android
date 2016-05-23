@@ -10,7 +10,7 @@
 void print_callback(directprint_job *print_job, int status, float progress);
 
 JNIEXPORT void 
-Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(JNIEnv *env, jobject object, jstring user_name, jstring job_name, jstring file_name, jstring print_setting, jstring ip_address)
+Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(JNIEnv *env, jobject object, jstring printer_name, jstring app_name,  jstring app_version,  jstring user_name, jstring job_name, jstring file_name, jstring print_setting, jstring ip_address)
 {
     // Create cache object
     CommonJNIState *state = (CommonJNIState *)malloc(sizeof(CommonJNIState));
@@ -18,13 +18,16 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(J
     state->instance = (*env)->NewGlobalRef(env, object);
 
     // Create direct print job
+    const char *native_printer_name =  (*env)->GetStringUTFChars(env, printer_name, 0);
+    const char *native_app_name =  (*env)->GetStringUTFChars(env, app_name, 0);
+    const char *native_app_version =  (*env)->GetStringUTFChars(env, app_version, 0);
     const char *native_user_name = (*env)->GetStringUTFChars(env, user_name, 0);
     const char *native_job_name = (*env)->GetStringUTFChars(env, job_name, 0);
     const char *native_file_name = (*env)->GetStringUTFChars(env, file_name, 0);
     const char *native_print_setting = (*env)->GetStringUTFChars(env, print_setting, 0);
     const char *native_ip_address = (*env)->GetStringUTFChars(env, ip_address, 0);
 
-    directprint_job *job = directprint_job_new(native_user_name, native_job_name, native_file_name, native_print_setting, native_ip_address, print_callback);
+    directprint_job *job = directprint_job_new(native_printer_name, native_app_name, native_app_version, native_user_name, native_job_name, native_file_name, native_print_setting, native_ip_address, print_callback);
     (*env)->ReleaseStringUTFChars(env, job_name, native_job_name);
     (*env)->ReleaseStringUTFChars(env, file_name, native_file_name);
     (*env)->ReleaseStringUTFChars(env, print_setting, native_print_setting);

@@ -94,6 +94,28 @@ public final class AppUtils {
     }
     
     /**
+     * @brief Gets the Application version.
+     *
+     * @param context Application Context
+     *
+     * @return Version of the application in string
+     */
+    public static String getApplicationVersion(Context context) {
+        if (context == null) {
+            return null;
+        }
+        String appVersion = null;
+
+        try {
+            appVersion =  context.getPackageManager().getPackageInfo(getApplicationPackageName(context), 0).versionName;
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return appVersion;
+    }
+
+    /**
      * @brief Gets the Application install date using the package manager.
      * 
      * @param context Application Context
