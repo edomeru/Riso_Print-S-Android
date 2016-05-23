@@ -34,7 +34,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testDirectPrint_ValidCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
-        mgr.executeLPRPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeLPRPrint("printerName", "appName", "appVersion" ,"userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
         
         while (mgr.isPrinting()) {
             //wait for response
@@ -51,7 +51,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testDirectPrint_NullParameterValidCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
-        mgr.executeLPRPrint(null, null, null, null, null);
+        mgr.executeLPRPrint(null, null, null, null, null, null, null, null);
         
         while (mgr.isPrinting()) {
             //wait for response
@@ -68,7 +68,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testDirectPrint_EmptyParametersValidCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
-        mgr.executeLPRPrint("", "", "", "", "");
+        mgr.executeLPRPrint("","","","", "", "", "", "");
         
         while (mgr.isPrinting()) {
             //wait for response
@@ -85,7 +85,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testDirectPrint_NullCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.executeLPRPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
 
         //wait for response
         while (mgr.isPrinting()) {
@@ -103,7 +103,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testDirectPrint_NullParameterNullCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.executeLPRPrint(null, null, null, null, null);
+        mgr.executeLPRPrint(null, null, null, null, null, null, null, null);
 
         // wait for response
         while (mgr.isPrinting()) {
@@ -121,7 +121,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testDirectPrint_EmptyParametersNullCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.executeLPRPrint("", "", "", "", "");
+        mgr.executeLPRPrint("", "", "", "", "", "", "", "");
 
         // wait for response
         while (mgr.isPrinting()) {
@@ -143,7 +143,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testRawPrint_ValidCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
-        mgr.executeRAWPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeRAWPrint("printerName", "appName", "appVersion","userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
         
         while (mgr.isPrinting()) {
             //wait for response
@@ -160,7 +160,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testRawPrint_NullParameterValidCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
-        mgr.executeRAWPrint(null, null, null, null, null);
+        mgr.executeRAWPrint(null, null, null, null, null, null, null, null);
         
         while (mgr.isPrinting()) {
             //wait for response
@@ -177,7 +177,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testRawPrint_EmptyParametersValidCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
-        mgr.executeRAWPrint("", "", "", "", "");
+        mgr.executeRAWPrint("", "", "", "", "", "", "", "");
         
         while (mgr.isPrinting()) {
             //wait for response
@@ -194,7 +194,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testRawPrint_NullCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.executeRAWPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
 
         //wait for response
         while (mgr.isPrinting()) {
@@ -212,7 +212,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testRawPrint_NullParameterNullCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.executeRAWPrint(null, null, null, null, null);
+        mgr.executeRAWPrint(null, null, null, null,null, null, null, null);
 
         // wait for response
         while (mgr.isPrinting()) {
@@ -230,7 +230,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testRawPrint_EmptyParametersNullCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.executeRAWPrint("", "", "", "", "");
+        mgr.executeRAWPrint("", "", "", "", "", "", "", "");
 
         // wait for response
         while (mgr.isPrinting()) {
@@ -252,7 +252,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testSendCancelCommand() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(callback);
-        mgr.executeLPRPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeLPRPrint("printerName", "appName", "appVersion","userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
 
         assertFalse(callback.mCalled);
         mgr.sendCancelCommand();
@@ -273,7 +273,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     public void testSendCancelCommand_NullCallback() {
         MockCallback callback = new MockCallback();
         mgr.setCallback(null);
-        mgr.executeLPRPrint("userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
+        mgr.executeLPRPrint("printerName", "appName", "appVersion","userName", "jobName", "fileName", "orientation=0", "192.168.1.206");
 
         assertFalse(callback.mCalled);
         mgr.sendCancelCommand();

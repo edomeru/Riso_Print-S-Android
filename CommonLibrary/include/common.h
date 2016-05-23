@@ -34,7 +34,9 @@ enum kJobStatus
     kJobStatusSent
 };
 
-directprint_job *directprint_job_new(const char *user_name, const char *job_name, const char *filename, const char *print_settings, const char *ip_address, directprint_callback callback);
+directprint_job *directprint_job_new(const char *printer_name, const char *app_name, const char *app_version,
+                                     const char *user_name, const char *job_name, const char *filename,
+                                     const char *print_settings, const char *ip_address, directprint_callback callback);
 void directprint_job_free(directprint_job *print_job);
 void *directprint_job_get_caller_data(directprint_job *print_job);
 void directprint_job_set_caller_data(directprint_job *print_job, void *caller_data);
@@ -81,6 +83,16 @@ typedef enum
     kSnmpCapabilityCount
 } kSnmpCapability;
 
+
+// Target Printer Series
+typedef enum
+{
+    kPrinterSeriesIS,
+    kPrinterSeriesFW,
+    kPrinterSeriesGD,
+    kDeviceSeriesCount
+} kPrinterSeries;
+
 snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback);
 void snmp_context_free(snmp_context *context);
 void snmp_device_discovery(snmp_context *context);
@@ -93,6 +105,7 @@ snmp_device *snmp_device_new(const char *ip_address);
 void snmp_device_free(snmp_device *device);
 const char *snmp_device_get_ip_address(snmp_device *device);
 const char *snmp_device_get_name(snmp_device *device);
+int snmp_device_get_series(snmp_device *device);
 int snmp_device_get_capability_status(snmp_device *device, int capability);
 
 /**
