@@ -8,30 +8,6 @@
 
 package jp.co.riso.smartdeviceapp.view.printsettings;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartprint.R;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback;
-import jp.co.riso.smartdeviceapp.model.Printer;
-import jp.co.riso.smartdeviceapp.model.printsettings.Group;
-import jp.co.riso.smartdeviceapp.model.printsettings.Option;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
-import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
-import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -64,6 +40,31 @@ import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback;
+import jp.co.riso.smartdeviceapp.model.Printer;
+import jp.co.riso.smartdeviceapp.model.printsettings.Group;
+import jp.co.riso.smartdeviceapp.model.printsettings.Option;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
+import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
+import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
+import jp.co.riso.smartprint.R;
 
 /**
  * @class PrintSettingsView
@@ -676,27 +677,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         return true;
     }
-    
-    /**
-     * @brief Get constraint-updated string id for Punch setting.
-     * Dependent on the printer punch capabilities
-     * 
-     * @param name Print settings tag name
-     * @param id Current ID
-     * 
-     * @return Updated string ID           
-     */
-    private int getUpdatedStringId(String name, int id) {
-        if (getPrinter() != null) {
-            if (name.equals(PrintSettings.TAG_PUNCH)) {
-                if (id == R.string.ids_lbl_punch_4holes && getPrinter().getConfig().isPunch3Available()) {
-                    return R.string.ids_lbl_punch_3holes;
-                }
-            }
-        }
-        
-        return id;
-    }
 
     /**
      * @brief Updates the value and applies the value and view constraints
@@ -953,7 +933,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             String value = option.getTextContent();
             
             int id = AppUtils.getResourseId(value, R.string.class, -1);
-            id = getUpdatedStringId(name, id);
             
             if (id != -1) {
                 optionsStrings.add(getResources().getString(id));

@@ -67,6 +67,10 @@
     <string name="ids_lbl_papersize_legal">Legal</string>
     <string name="ids_lbl_papersize_letter">Letter</string>
     <string name="ids_lbl_papersize_statement">Statement</string>
+    <string name="ids_lbl_papersize_legal13">Legal 8.5x13</string>
+    <string name="ids_lbl_papersize_8k">8K</string>
+    <string name="ids_lbl_papersize_16k">16K</string>
+    <string name="ids_lbl_papersize_legal14">Legal 8.5x14</string>
     <string name="ids_lbl_scaletofit">用紙にフィット</string>
     <string name="ids_lbl_papertype">用紙種類</string>
     <string name="ids_lbl_papertype_any">指定しない</string>
