@@ -1,0 +1,123 @@
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/viewFlipper">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@color/theme_light_2"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:contentDescription="@string/default_content_description"
+        android:src="@drawable/img_splash" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:splitMotionEvents="false"  >
+
+        <include
+            layout="@layout/actionbar_main" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.33" >
+
+            <jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
+                android:id="@+id/contentWebView"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/LicenseButtonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/licenseAgreeButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/licenseDisagreeButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/theme_light_2"
+        android:splitMotionEvents="false">
+
+        <ImageView
+            android:id="@+id/logoImgView"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/onboarding_logo_height"
+            android:paddingBottom="@dimen/onboarding_logo_padding_bottom"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/img_logo_icon"
+            android:layout_margin="@dimen/onboarding_logo_margin"
+            android:background="@color/theme_light_2"
+            android:contentDescription="@string/default_content_description"/>
+
+        <TextView
+            android:id="@+id/txtPermissionInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/ids_lbl_permission_information"
+            android:textColor="@color/theme_color_2"
+            android:textStyle="bold"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:gravity="center_horizontal"
+            android:layout_margin="@dimen/onboarding_text_margin"/>
+
+        <LinearLayout
+            android:id="@+id/permissionButtonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/settingsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ids_lbl_settings"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"
+                android:background="@color/theme_color_1"
+                android:textColor="@color/theme_light_1"
+                android:layout_margin="@dimen/onboarding_button_margin"
+                android:padding="@dimen/onboarding_button_padding"/>
+
+            <Button
+                android:id="@+id/startButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ids_lbl_start"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"
+                android:background="@color/theme_color_1"
+                android:textColor="@color/theme_light_1"
+                android:layout_margin="@dimen/onboarding_button_margin"
+                android:padding="@dimen/onboarding_button_padding"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</ViewFlipper>

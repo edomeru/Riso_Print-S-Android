@@ -99,6 +99,34 @@ static const char *AZA_DEVICE_NAMES[] = {
     "RISO IS950C-G",
 };
 
+#define FW_DEVICE_NAME_COUNT 21
+
+static const char *FW_DEVICE_NAMES[] = {
+    // Japan, Overseas or Korea:
+    "ORPHIS FW5230",
+    "ORPHIS FW5230A",
+    "ORPHIS FW5231",
+    "ORPHIS FW2230",
+    "ORPHIS FW1230",
+    "ComColor FW5230",
+    "ComColor FW5230R",
+    "ComColor FW5231",
+    "ComColor FW5231R",
+    "ComColor FW5000",
+    "ComColor FW5000R",
+    "ComColor FW2230",
+    "ComColor black FW1230",
+    "ComColor black FW1230R",
+    // China:
+    "Shan Cai Yin Wang FW5230",
+    "Shan Cai Yin Wang FW5230R",
+    "Shan Cai Yin Wang FW5231",
+    "Shan Cai Yin Wang FW2230 Wenjianhong",
+    "Shan Cai Yin Wang FW2230 Lan",
+    "Shan Cai Yin Wang black FW1230",
+    "Shan Cai Yin Wang black FW1230R",
+};
+
 // Main functions
 void snmp_device_discovery(snmp_context *context);
 void snmp_manual_discovery(snmp_context *context, const char *ip_address);
@@ -569,6 +597,29 @@ const char *snmp_device_get_ip_address(snmp_device *device)
 const char *snmp_device_get_name(snmp_device *device)
 {
     return device->device_info[MIB_DEV_DESCR];
+}
+
+int snmp_device_get_series(snmp_device *device)
+{
+    for (int i = 0; i < AZA_DEVICE_NAME_COUNT; i++)
+    {
+        if (strcmp(AZA_DEVICE_NAMES[i], device->device_info[MIB_DEV_DESCR]) == 0)
+        {
+            // IS Series
+            return kPrinterSeriesIS;
+        }
+    }
+    
+    for (int i = 0; i < FW_DEVICE_NAME_COUNT; i++)
+    {
+        if (strcmp(FW_DEVICE_NAMES[i], device->device_info[MIB_DEV_DESCR]) == 0)
+        {
+            // IS Series
+            return kPrinterSeriesFW;
+        }
+    }
+    
+    return kPrinterSeriesGD;
 }
 
 int snmp_device_get_capability_status(snmp_device *device, int capability)

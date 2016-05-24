@@ -1,4 +1,4 @@
-//
+    //
 //  directprint.c
 //  SmartDeviceApp
 //
@@ -65,6 +65,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define BUFFER_SIZE 4096
 
 #define QUEUE_NAME "normal"
+#define QUEUE_NAME_FWGD "lp"
 #define HOST_NAME "RISO PRINT-S"
 
 #define PJL_ESCAPE "\x1B%-12345X"
@@ -74,11 +75,53 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define IPV6_LINK_LOCAL_PREFIX "fe80"
 #define IP_ADDRESS_LENGTH 128
 
+#define AZA_DEVICE_NAME_COUNT 3
+
+static const char *AZA_DEVICE_NAMES[] = {
+    "RISO IS1000C-J",
+    "RISO IS1000C-G",
+    "RISO IS950C-G",
+};
+
+#define FW_DEVICE_NAME_COUNT 21
+
+static const char *FW_DEVICE_NAMES[] = {
+    // Japan, Overseas or Korea:
+    "ORPHIS FW5230",
+    "ORPHIS FW5230A",
+    "ORPHIS FW5231",
+    "ORPHIS FW2230",
+    "ORPHIS FW1230",
+    "ComColor FW5230",
+    "ComColor FW5230R",
+    "ComColor FW5231",
+    "ComColor FW5231R",
+    "ComColor FW5000",
+    "ComColor FW5000R",
+    "ComColor FW2230",
+    "ComColor black FW1230",
+    "ComColor black FW1230R",
+    // China:
+    "Shan Cai Yin Wang FW5230",
+    "Shan Cai Yin Wang FW5230R",
+    "Shan Cai Yin Wang FW5231",
+    "Shan Cai Yin Wang FW2230 Wenjianhong",
+    "Shan Cai Yin Wang FW2230 Lan",
+    "Shan Cai Yin Wang black FW1230",
+    "Shan Cai Yin Wang black FW1230R",
+};
+
 /**
  Print Job
  */
 struct directprint_job_s
 {
+    // for ORPHIS FW start
+    char *printer_name;
+    char *app_name;
+    char *app_version;
+    // for ORPHIS FW end
+    
     char *user_name;
     char *job_name;
     char *filename;
@@ -92,6 +135,7 @@ struct directprint_job_s
     int cancel_print;
     
     void *caller_data;
+    
 };
 
 // Main functions
@@ -100,7 +144,9 @@ int directprint_job_raw_print(directprint_job *print_job);
 void directprint_job_cancel(directprint_job *print_job);
 
 // Direct print job accessors
-directprint_job *directprint_job_new(const char *user_name, const char *job_name, const char *filename, const char *print_settings, const char *ip_address, directprint_callback callback);
+directprint_job *directprint_job_new(const char *printer_name, const char *app_name, const char *app_version,
+                                     const char *user_name, const char *job_name, const char *filename,
+                                     const char *print_settings, const char *ip_address, directprint_callback callback);
 void directprint_job_free(directprint_job *print_job);
 void *directprint_job_get_caller_data(directprint_job *print_job);
 void directprint_job_set_caller_data(directprint_job *print_job, void *caller_data);
@@ -126,13 +172,18 @@ void job_dump_write(FILE *file, void *buffer, size_t buffer_len);
 /**
  Public Methods
  */
-directprint_job *directprint_job_new(const char *user_name, const char *job_name, const char *filename, const char *print_settings, const char *ip_address, directprint_callback callback)
+directprint_job *directprint_job_new(const char *printer_name, const char *app_name, const char *app_version,
+                                     const char *user_name, const char *job_name, const char *filename,
+                                     const char *print_settings, const char *ip_address, directprint_callback callback)
 {
     directprint_job *print_job = (directprint_job *)malloc(sizeof(directprint_job));
+    print_job->app_name = strdup(app_name);
+    print_job->app_version = strdup(app_version);
     print_job->user_name = strdup(user_name);
     print_job->job_name = strdup(job_name);
     print_job->filename = strdup(filename);
     print_job->print_settings = strdup(print_settings);
+    print_job->printer_name = strdup(printer_name);
     
     // IP address check
     struct in6_addr ip_v6;
@@ -167,10 +218,13 @@ directprint_job *directprint_job_new(const char *user_name, const char *job_name
 void directprint_job_free(directprint_job *print_job)
 {
     pthread_mutex_destroy(&print_job->mutex);
+    free(print_job->app_name);
+    free(print_job->app_version);
     free(print_job->job_name);
     free(print_job->filename);
     free(print_job->print_settings);
     free(print_job->ip_address);
+    free(print_job->printer_name);
     free(print_job);
 }
 
@@ -234,6 +288,10 @@ int can_start_print(directprint_job *print_job)
         return 0;
     }
     if (print_job->filename == 0 || strlen(print_job->filename) <= 0)
+    {
+        return 0;
+    }
+    if (print_job->printer_name == 0 || strlen(print_job->printer_name) <= 0)
     {
         return 0;
     }
@@ -357,18 +415,61 @@ int is_cancelled(directprint_job *print_job)
     return cancelled;
 }
 
+int is_ISSeries(const char* printer_name)
+{
+    int index = 0;
+    
+    for (index = 0; index < AZA_DEVICE_NAME_COUNT; index++)
+    {
+        if (strcmp(AZA_DEVICE_NAMES[index], printer_name) == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int is_FWSeries(const char* printer_name)
+{
+    int index = 0;
+    
+    for (index = 0; index < FW_DEVICE_NAME_COUNT; index++)
+    {
+        if (strcmp(FW_DEVICE_NAMES[index], printer_name) == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 /**
  Thread functions
  */
 void *do_lpr_print(void *parameter)
 {
     directprint_job *print_job = (directprint_job *)parameter;
+    char queueName[64];
     
     // Prepare PJL header
     char pjl_header[2048];
     pjl_header[0] = 0;
     strcat(pjl_header, PJL_ESCAPE);
-    create_pjl(pjl_header, print_job->print_settings);
+    if (is_ISSeries(print_job->printer_name))   // IS
+    {
+        create_pjl(pjl_header, print_job->print_settings);
+        strcpy(queueName, QUEUE_NAME);
+    }
+    else if (is_FWSeries(print_job->printer_name)) // FW Series
+    {
+        create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        strcpy(queueName, QUEUE_NAME_FWGD);
+    }
+    else    // GD Series
+    {
+        create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        strcpy(queueName, QUEUE_NAME_FWGD);
+    }
     strcat(pjl_header, PJL_LANGUAGE);
     long pjl_header_size = strlen(pjl_header);
     
@@ -437,10 +538,10 @@ void *do_lpr_print(void *parameter)
         // Send queue info
         pos = 0;
         buffer[pos++] = 0x2;
-        len = strlen(QUEUE_NAME);
+        len = strlen(queueName);
         for (i = 0; i < len; i++)
         {
-            buffer[pos++] = QUEUE_NAME[i];
+            buffer[pos++] = queueName[i];
         }
         buffer[pos++] = '\n';
         
@@ -685,7 +786,18 @@ void *do_raw_print(void *parameter)
     char pjl_header[2048];
     pjl_header[0] = 0;
     strcat(pjl_header, PJL_ESCAPE);
-    create_pjl(pjl_header, print_job->print_settings);
+    if (is_ISSeries(print_job->printer_name))   // IS
+    {
+        create_pjl(pjl_header, print_job->print_settings);
+    }
+    else if (is_FWSeries(print_job->printer_name)) // FW Series
+    {
+        create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+    }
+    else    // GD Series
+    {
+        create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+    }
     strcat(pjl_header, PJL_LANGUAGE);
     
     // Prepare PJL footer

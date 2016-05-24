@@ -14,6 +14,7 @@
 #include <string.h>
 #include "printsettings.h"
 
+
 #define PJL_COMMAND_STR "@PJL SET %s=%s\x0d\x0a"
 #define PJL_COMMAND_INT "@PJL SET %s=%d\x0d\x0a"
 
@@ -72,7 +73,7 @@ typedef enum
     kPjlCommandCount
 } kPjlCommand;
 
-const char *printsetting_names[kPrintSettingsCount] =
+const static char *printsetting_names[kPrintSettingsCount] =
 {
     "colorMode",
     "orientation",
@@ -97,26 +98,26 @@ const char *printsetting_names[kPrintSettingsCount] =
     "securePrint"
 };
 
-const char *color_mode[] =
+const static char *color_mode[] =
 {
     "AUTO",
     "COLOR",
     "MONOCHROME"
 };
 
-const char *orientation[] =
+const static char *orientation[] =
 {
     "PORTRAIT",
     "LANDSCAPE"
 };
 
-const char *duplex_binding[] =
+const static char *duplex_binding[] =
 {
     "LONGEDGE",
     "SHORTEDGE"
 };
 
-const char *paper_size[] =
+const static char *paper_size[] =
 {
     "A3",
     "A3W",
@@ -133,7 +134,7 @@ const char *paper_size[] =
     "STATEMENT"
 };
 
-const char *paper_type[] =
+const static char *paper_type[] =
 {
     "ANY",
     "PLAIN",
@@ -144,7 +145,7 @@ const char *paper_type[] =
     "LWPAPER"
 };
 
-const char *input_tray_media_source[] =
+const static char *input_tray_media_source[] =
 {
     "STANDARD",
     "TRAY1",
@@ -152,46 +153,46 @@ const char *input_tray_media_source[] =
     "TRAY3"
 };
 
-const char *imposition[] =
+const static char *imposition[] =
 {
     "SIMPLE",
     "BOOKLET",
     "NUP"
 };
 
-const char *nup_page_per_sheet[] =
+const static char *nup_page_per_sheet[] =
 {
     "2",
     "4"
 };
 
-const char *imposition_direction[] =
+const static char *imposition_direction[] =
 {
     "FORWARD",
     "REVERSE"
 };
 
-const char *nup_page_order[] =
+const static char *nup_page_order[] =
 {
     "HORIZONTAL",
     "VERTICAL"
 };
 
-const char *booklet_finishing[] =
+const static char *booklet_finishing[] =
 {
     "NONFOLD",
     "HALF",
     "HALFSTAPLE"
 };
 
-const char *finishing_side[] =
+const static char *finishing_side[] =
 {
     "LEFT",
     "TOP",
     "RIGHT"
 };
 
-const char *staple[] =
+const static char *staple[] =
 {
     "NONSTAPLE",
     "1STAPLELEFT",
@@ -199,14 +200,14 @@ const char *staple[] =
     "2STAPLES"
 };
 
-const char *punch[] =
+const static char *punch[] =
 {
     "NONPUNCH",
     "2HOLES",
     "3-4HOLES"
 };
 
-const char *output_tray[] =
+const static char *output_tray[] =
 {
     "AUTO",
     "FACEDOWN",
@@ -214,19 +215,19 @@ const char *output_tray[] =
     "STACKING"
 };
 
-const char *off_on[] =
+const static char *off_on[] =
 {
     "OFF",
     "ON"
 };
 
-const char *false_true[] =
+const static char *false_true[] =
 {
     "FALSE",
     "TRUE"
 };
 
-const char **pjl_values[kPjlCommandCount] =
+const static char **pjl_values[kPjlCommandCount] =
 {
     color_mode,
     orientation,
@@ -255,7 +256,7 @@ const char **pjl_values[kPjlCommandCount] =
 };
 
 
-const char *pjl_commands[kPjlCommandCount] =
+const static char *pjl_commands[kPjlCommandCount] =
 {
     "RKOUTPUTMODE",
     "ORIENTATION",
