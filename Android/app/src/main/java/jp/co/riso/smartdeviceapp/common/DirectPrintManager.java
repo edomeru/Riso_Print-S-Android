@@ -90,7 +90,7 @@ public class DirectPrintManager {
      * @retval false Print not executed
      */
     public boolean executeLPRPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress) {
-        if (printerName == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || jobName.isEmpty()
+        if (printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || jobName.isEmpty()
                 || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
             return false;
         }
