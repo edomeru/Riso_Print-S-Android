@@ -203,6 +203,7 @@
                 default="0" >
                 <option>ids_lbl_off</option>
                 <option>ids_lbl_punch_2holes</option>
+                <option>ids_lbl_punch_3holes</option>
                 <option>ids_lbl_punch_4holes</option>
             </setting>
             <setting
@@ -280,8 +281,11 @@
                 <option>ids_lbl_papersize_foolscap</option>
                 <option>ids_lbl_papersize_tabloid</option>
                 <option>ids_lbl_papersize_legal</option>
+                <option>ids_lbl_papersize_legal13</option>
                 <option>ids_lbl_papersize_letter</option>
                 <option>ids_lbl_papersize_statement</option>
+                <option>ids_lbl_papersize_8K</option>
+                <option>ids_lbl_papersize_16K</option>
             </setting>
             <setting
                 name="scaleToFit"
@@ -422,6 +426,7 @@
                 default="0" >
                 <option>ids_lbl_off</option>
                 <option>ids_lbl_punch_2holes</option>
+                <option>ids_lbl_punch_3holes</option>
                 <option>ids_lbl_punch_4holes</option>
             </setting>
             <setting
@@ -438,9 +443,7 @@
             </setting>
         </group>
     </printertype>
-    <printertype
-        id="FW"
-        type="id">
+    <printertype id="FW">
         <group
             name="basic"
             text="ids_lbl_basic" >
@@ -453,8 +456,8 @@
                 default="0" >
                 <option>ids_lbl_colormode_auto</option>
                 <option>ids_lbl_colormode_fullcolor</option>
-                <option>ids_lbl_colormode_black</option>
                 <option>ids_lbl_colormode_2color</option>
+                <option>ids_lbl_colormode_black</option>
             </setting>
             <setting
                 name="orientation"
@@ -502,8 +505,11 @@
                 <option>ids_lbl_papersize_foolscap</option>
                 <option>ids_lbl_papersize_tabloid</option>
                 <option>ids_lbl_papersize_legal</option>
+                <option>ids_lbl_papersize_legal13</option>
                 <option>ids_lbl_papersize_letter</option>
                 <option>ids_lbl_papersize_statement</option>
+                <option>ids_lbl_papersize_8k</option>
+                <option>ids_lbl_papersize_16k</option>
             </setting>
             <setting
                 name="scaleToFit"
@@ -644,6 +650,7 @@
                 default="0" >
                 <option>ids_lbl_off</option>
                 <option>ids_lbl_punch_2holes</option>
+                <option>ids_lbl_punch_3holes</option>
                 <option>ids_lbl_punch_4holes</option>
             </setting>
             <setting

@@ -58,8 +58,11 @@ public class Preview {
         FOOLSCAP(216.0f, 340.0f), ///< 216mm x 340mm
         TABLOID(280.0f, 432.0f), ///< 280mm x 432mm
         LEGAL(216.0f, 356.0f), ///< 216mm x 356mm
+        LEGAL13(216.0f, 330.0f), ///< 216mm x 330mm
         LETTER(216.0f, 280.0f), ///< 216mm x 280mm
-        STATEMENT(140.0f, 216.0f); ///< 140mm x 216mm
+        STATEMENT(140.0f, 216.0f), ///< 140mm x 216mm
+        HACHIKAI(267.0f, 388.0f), ///< 267mm x 388mm
+        JUROKUKAI(194.0f, 267.0f); ///< 194mm x 267mm
         
         private final float mWidth;
         private final float mHeight;
@@ -290,7 +293,8 @@ public class Preview {
     public enum Punch {
         OFF (0), ///< No punch holes
         HOLES_2 (2), ///< 2 holes
-        HOLES_4 (4); ///< 3 or 4 holes
+        HOLES_3 (3), ///< 3 holes
+        HOLES_4 (4); ///< 4 holes
         
         private final int mCount;
 
