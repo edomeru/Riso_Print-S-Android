@@ -101,5 +101,6 @@
     <dimen name="onboarding_button_padding">8dp</dimen>
     <dimen name="onboarding_logo_height">56dp</dimen>
     <dimen name="onboarding_logo_margin">32dp</dimen>
+    <dimen name="onboarding_logo_padding_bottom">10dp</dimen>
 
 </resources>

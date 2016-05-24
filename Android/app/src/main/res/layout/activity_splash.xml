@@ -67,6 +67,7 @@
             android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="@dimen/onboarding_logo_height"
+            android:paddingBottom="@dimen/onboarding_logo_padding_bottom"
             android:layout_centerHorizontal="true"
             android:src="@drawable/img_logo_icon"
             android:layout_margin="@dimen/onboarding_logo_margin"
