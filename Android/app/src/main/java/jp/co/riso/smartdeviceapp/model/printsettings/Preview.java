@@ -60,7 +60,7 @@ public class Preview {
         LEGAL(216.0f, 356.0f), ///< 216mm x 356mm
         LEGAL13(216.0f, 330.0f), ///< 216mm x 330mm
         LETTER(216.0f, 280.0f), ///< 216mm x 280mm
-        STATEMENT(140.0f, 216.0f), ///< 140mm x 216mmbeyo
+        STATEMENT(140.0f, 216.0f), ///< 140mm x 216mm
         HACHIKAI(267.0f, 388.0f), ///< 267mm x 388mm
         JUROKUKAI(194.0f, 267.0f); ///< 194mm x 267mm
         
