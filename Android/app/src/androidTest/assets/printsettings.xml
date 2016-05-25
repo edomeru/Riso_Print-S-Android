@@ -284,8 +284,8 @@
                 <option>ids_lbl_papersize_legal13</option>
                 <option>ids_lbl_papersize_letter</option>
                 <option>ids_lbl_papersize_statement</option>
-                <option>ids_lbl_papersize_8K</option>
-                <option>ids_lbl_papersize_16K</option>
+                <option>ids_lbl_papersize_8k</option>
+                <option>ids_lbl_papersize_16k</option>
             </setting>
             <setting
                 name="scaleToFit"
