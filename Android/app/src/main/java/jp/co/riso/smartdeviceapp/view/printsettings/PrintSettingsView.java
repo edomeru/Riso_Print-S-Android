@@ -651,7 +651,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * @brief Hides options disabled based on printer capabilities
-     * @note Currently only supported by Output Tray
+     * @note Currently only supported by Output Tray and Punch
      * 
      * @param name Print settings tag name
      * @param value Value of the option to be checked
@@ -671,6 +671,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         return getPrinter().getConfig().isTrayTopAvailable();
                     case STACKING:
                         return getPrinter().getConfig().isTrayStackAvailable();
+                }
+            }
+            if (name.equals(PrintSettings.TAG_PUNCH)) {
+                switch (Punch.values()[value]){
+                    case OFF:
+                    case HOLES_2:
+                        return true;
+                    case HOLES_3:
+                        return getPrinter().getConfig().isPunch3Available();
+                    case HOLES_4:
+                        return getPrinter().getConfig().isPunch4Available();
                 }
             }
         }

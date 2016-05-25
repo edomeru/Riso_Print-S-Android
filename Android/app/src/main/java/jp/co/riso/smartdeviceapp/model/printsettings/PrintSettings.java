@@ -8,7 +8,12 @@
 
 package jp.co.riso.smartdeviceapp.model.printsettings;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -38,11 +43,6 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * @class PrintSettings
@@ -286,7 +286,11 @@ public class PrintSettings {
      * @retval MONOCHROME Gray scale color mode
      */
     public ColorMode getColorMode() {
-        return ColorMode.values()[mSettingValues.get(TAG_COLOR_MODE)];
+        int index = mSettingValues.get(TAG_COLOR_MODE);
+        if(mSettingMapKey != AppConstants.PRINTER_MODEL_FW && index == ColorMode.DUAL_COLOR.ordinal()){
+            index++;
+        }
+        return ColorMode.values()[index];
     }
     
     /**
@@ -328,7 +332,11 @@ public class PrintSettings {
      * @retval STATEMENT 140mm x 216mm
      */
     public PaperSize getPaperSize() {
-        return PaperSize.values()[mSettingValues.get(TAG_PAPER_SIZE)];
+        int index = mSettingValues.get(TAG_PAPER_SIZE);
+        if(mSettingMapKey == AppConstants.PRINTER_MODEL_IS && (index == PaperSize.LEGAL13.ordinal() || index == PaperSize.LETTER.ordinal())){
+            index++;
+        }
+        return PaperSize.values()[index];
     }
     
     /**
