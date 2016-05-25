@@ -286,7 +286,11 @@ public class PrintSettings {
      * @retval MONOCHROME Gray scale color mode
      */
     public ColorMode getColorMode() {
-        return ColorMode.values()[mSettingValues.get(TAG_COLOR_MODE)];
+        int index = mSettingValues.get(TAG_COLOR_MODE);
+        if(mSettingMapKey != AppConstants.PRINTER_MODEL_FW && index == ColorMode.DUAL_COLOR.ordinal()){
+            index++;
+        }
+        return ColorMode.values()[index];
     }
     
     /**

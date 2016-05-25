@@ -20,8 +20,8 @@ public class Preview {
     public enum ColorMode {
         AUTO, ///< Auto color mode
         FULL_COLOR, ///< Colored mode
-        MONOCHROME, ///< Gray scale color mode
-        DUAL_COLOR ///2-color mode
+        DUAL_COLOR,///2-color mode
+        MONOCHROME ///< Gray scale color mode
     }
     
     /**

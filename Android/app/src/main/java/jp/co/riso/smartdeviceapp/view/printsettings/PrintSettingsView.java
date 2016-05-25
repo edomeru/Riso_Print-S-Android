@@ -673,6 +673,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         return getPrinter().getConfig().isTrayStackAvailable();
                 }
             }
+            if (name.equals(PrintSettings.TAG_PUNCH)) {
+                switch (Punch.values()[value]){
+                    case OFF:
+                    case HOLES_2:
+                        return true;
+                    case HOLES_3:
+                        return getPrinter().getConfig().isPunch3Available();
+                    case HOLES_4:
+                        return getPrinter().getConfig().isPunch4Available();
+                }
+            }
         }
         
         return true;
