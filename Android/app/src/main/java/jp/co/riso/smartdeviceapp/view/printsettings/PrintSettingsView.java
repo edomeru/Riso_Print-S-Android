@@ -651,7 +651,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * @brief Hides options disabled based on printer capabilities
-     * @note Currently only supported by Output Tray
+     * @note Currently only supported by Output Tray and Punch
      * 
      * @param name Print settings tag name
      * @param value Value of the option to be checked
