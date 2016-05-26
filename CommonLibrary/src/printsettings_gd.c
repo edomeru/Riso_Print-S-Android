@@ -138,6 +138,7 @@ const static char *paper_size[] =
     "FOOLSCAP",
     "TABLOID",
     "LEGAL",
+	"PHLEGAL",
     "LETTER",
     "STATEMENT"
     "HACHIKAI",
