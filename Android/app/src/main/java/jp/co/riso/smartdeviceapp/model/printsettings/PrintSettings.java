@@ -229,6 +229,10 @@ public class PrintSettings {
                     value = isLandscape ? 1 : 0;
                 }
             }
+
+            if(mSettingMapKey == AppConstants.PRINTER_MODEL_IS && key.equals(TAG_PUNCH) && value == 3) {
+                value = 2;
+            }
             
             strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
         }
