@@ -9,8 +9,8 @@ android {
         applicationId "jp.co.riso.smartprint"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 1000703
-        versionName "v1.0.7.3"
+        versionCode 2000000
+        versionName "v2.0.0"
 
         testApplicationId "jp.co.riso.smartprint.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -37,6 +37,11 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
+    }
+
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
     }
 }
 
