@@ -140,7 +140,7 @@ const static char *paper_size[] =
     "LEGAL",
     "PHLEGAL",
     "LETTER",
-    "STATEMENT"
+    "STATEMENT",
     "HACHIKAI",
     "JUROKUKAI",
 };
