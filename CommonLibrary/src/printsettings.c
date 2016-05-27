@@ -174,8 +174,8 @@ const static char *imposition_direction[] =
 
 const static char *nup_page_order[] =
 {
-    "VERTICAL",
-    "HORIZONTAL"
+    "HORIZONTAL",
+    "VERTICAL"
 };
 
 const static char *booklet_finishing[] =
