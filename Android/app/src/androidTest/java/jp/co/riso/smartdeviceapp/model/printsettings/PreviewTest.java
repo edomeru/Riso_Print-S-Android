@@ -81,7 +81,8 @@ public class PreviewTest extends AndroidTestCase {
     public void testColorMode() {
         assertEquals(0, ColorMode.AUTO.ordinal());
         assertEquals(1, ColorMode.FULL_COLOR.ordinal());
-        assertEquals(2, ColorMode.MONOCHROME.ordinal());
+        assertEquals(2, ColorMode.DUAL_COLOR.ordinal());
+        assertEquals(3, ColorMode.MONOCHROME.ordinal());
         assertEquals(ColorMode.AUTO, ColorMode.valueOf("AUTO"));
         assertEquals(ColorMode.FULL_COLOR, ColorMode.valueOf("FULL_COLOR"));
         assertEquals(ColorMode.MONOCHROME, ColorMode.valueOf("MONOCHROME"));
@@ -260,7 +261,7 @@ public class PreviewTest extends AndroidTestCase {
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
         }
-        assertEquals(optionsList.size(), PaperSize.values().length);
+        assertEquals(optionsList.size(), PaperSize.values().length-3); // Only tests IS
     }
 
     public void testImposition_XML() {
