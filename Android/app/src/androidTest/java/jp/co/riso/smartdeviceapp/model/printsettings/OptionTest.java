@@ -66,7 +66,7 @@ public class OptionTest extends AndroidTestCase {
     }
 
     public void testPreConditions() {
-        assertEquals(193, mOptionList.size());
+        assertEquals(204, mOptionList.size());
     }
 
     public void testGetTextContent() {
