@@ -187,6 +187,30 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
  */
 - (BOOL)isSettingOptionSupported:(NSString *)option;
 
+// for ORPHIS FW start
+/**
+ * Checks if the specified print setting value is supported for IS/FW/GD Series.
+ *
+ * @param settingKey the string name of the print setting
+ * @return YES if supported, NO otherwise
+ */
+-(BOOL)isSettingSupportedISFWGD:(NSString *)option;
+
+/**
+ * Checks if the printer name is IS Series.
+ *
+ * @return YES if IS Series, NO otherwise
+ */
+- (BOOL)isISSeries;
+
+/**
+ * Checks if the printer name is FW Series.
+ *
+ * @return YES if FW Series, NO otherwise
+ */
+- (BOOL)isFWSeries;
+// for ORPHIS FW end
+
 /**
  * Checks if the specified print setting is supported.
  *
@@ -291,7 +315,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         self.isDefaultSettingsMode = YES;
     }
 
-    // Get print settings tree
+    //// Get print settings tree
     self.printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
     
     // Prepare expansion
@@ -1171,8 +1195,86 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         return [self.printer.enabled_tray_stacking boolValue];
     }
     
+    // for ORPHIS FW start
+    return [self isSettingSupportedISFWGD:option];
+    // for ORPHIS FW end
+    
     return YES;
 }
+
+- (BOOL)isISSeries
+{
+    if([self.printer.name isEqualToString:@"RISO IS1000C-J"] ||
+       [self.printer.name isEqualToString:@"RISO IS1000C-G"] ||
+       [self.printer.name isEqualToString:@"RISO IS950C-G"])
+    {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)isFWSeries
+{
+    if ([self.printer.name isEqualToString:@"ORPHIS FW5230"] ||
+        [self.printer.name isEqualToString:@"ORPHIS FW5230A"] ||
+        [self.printer.name isEqualToString:@"ORPHIS FW5231"] ||
+        [self.printer.name isEqualToString:@"ORPHIS FW2230"] ||
+        [self.printer.name isEqualToString:@"ORPHIS FW1230"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5230"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5230R"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5231"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5231R"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5000"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5000R"] ||
+        [self.printer.name isEqualToString:@"ComColor FW2230"] ||
+        [self.printer.name isEqualToString:@"ComColor black FW1230"] ||
+        [self.printer.name isEqualToString:@"ComColor black FW1230R"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW5230"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW5230R"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW5231"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW2230 Wenjianhong"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW2230 Lan"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang black FW1230"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang black FW1230R"]
+        )
+    {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)isSettingSupportedISFWGD:(NSString *)option
+{
+    // for ORPHIS FW start
+    if ([self isISSeries])
+    {
+    if([option isEqualToString:@"ids_lbl_papertype_roughpaper"] ||
+       [option isEqualToString:@"ids_lbl_papersize_legal13"] ||
+       [option isEqualToString:@"ids_lbl_papersize_8K"] ||
+       [option isEqualToString:@"ids_lbl_papersize_16K"] ||
+       [option isEqualToString:@"ids_lbl_colormode_2color"] )
+        {
+            return NO;
+        }
+    }
+    else if ([self isFWSeries])
+    {
+        if([option isEqualToString:@"ids_lbl_inputtray_tray3"])
+        {
+            return NO;
+        }
+    }
+    else // GD Series
+    {
+        if([option isEqualToString:@"ids_lbl_papertype_roughpaper"] ||
+           [option isEqualToString:@"ids_lbl_colormode_2color"] )
+        {
+            return NO;
+        }
+    }
+    return YES;
+}
+// for ORPHIS FW end
 
 - (BOOL)isSettingSupported:(NSString*)settingKey
 {
@@ -1240,7 +1342,14 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             NSString *key = [setting objectForKey:@"name"];
             if([self isSettingSupported:key] == YES)
             {
-                if([key isEqualToString:KEY_PUNCH] == YES || [key isEqualToString:KEY_OUTPUT_TRAY] == YES)
+                // for ORPHIS FW start
+                //if([key isEqualToString:KEY_PUNCH] == YES || [key isEqualToString:KEY_OUTPUT_TRAY] == YES)
+                
+                if([key isEqualToString:KEY_PUNCH] == YES || [key isEqualToString:KEY_OUTPUT_TRAY] == YES ||
+                   [key isEqualToString:@"paperSize"] == YES || [key isEqualToString:KEY_PAPER_TYPE] == YES ||
+                   [key isEqualToString:KEY_INPUT_TRAY] == YES || [key isEqualToString:@"colorMode"] == YES)
+                 // for ORPHIS FW end
+                    
                 {
                     NSMutableDictionary *tempSetting = [NSMutableDictionary dictionaryWithDictionary:setting];
                     NSArray *options = [setting objectForKey:@"option"];

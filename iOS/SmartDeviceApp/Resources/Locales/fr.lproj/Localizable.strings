@@ -149,4 +149,8 @@
 "IDS_LBL_AGREE" = "Agree";
 "IDS_LBL_DISAGREE" = "Disagree";
 "IDS_ERR_MSG_DISAGREE_TO_LICENSE" = "User must agree to License Agreement to continue using the app";
-
+"IDS_LBL_COLORMODE_2COLOR" = "2 couleurs";
+"IDS_LBL_PAPERSIZE_LEGAL13" = "Legal 8.5x13";
+"IDS_LBL_PAPERSIZE_8K" = "8K";
+"IDS_LBL_PAPERSIZE_16K" = "16K";
+"IDS_LBL_PAPERSIZE_LEGAL14" = "Legal 8.5x14";

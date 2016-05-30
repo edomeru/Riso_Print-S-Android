@@ -257,11 +257,19 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     }
     
     // can the device connect to the network?
+    
+    // for ORPHIS FW start
+    /*
     if (![NetworkManager isConnectedToLocalWifi])
     {
         if([self addFullCapabilityPrinter:formattedIP])
         {
-            self.hasAddedPrinters = YES;
+            // for ORPHIS FW start
+            //self.hasAddedPrinters = YES;
+            self.hasAddedPrinters = NO;
+            // for ORPHIS FW end
+            
+            
             if (self.isIpad)
                 [self.printersViewController reloadPrinters];
             
@@ -282,6 +290,25 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
         
         return;
     }
+    */
+
+
+    if (![NetworkManager isConnectedToLocalWifi])
+    {
+            self.hasAddedPrinters = NO;
+        
+            if (self.isIpad)
+                [self.printersViewController reloadPrinters];
+            
+            [AlertHelper displayResult:kAlertResultErrPrinterNotFound
+                             withTitle:kAlertTitlePrintersAdd
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        [self dismissScreen];
+                    }];
+        return;
+    }
+    // for ORPHIS FW end
 
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
     NSLog(@"[INFO][AddPrinter] initiating search");
@@ -304,12 +331,18 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     [self.saveButton setHidden:NO];
     [self.textIP setEnabled:YES];
 
+// for ORPHIS FW start    
+/*
     if (!printerFound)
     {
-        NSString* trimmedIP = self.textIP.text;
+       NSString* trimmedIP = self.textIP.text;
         if([self addFullCapabilityPrinter:trimmedIP])
         {
-            self.hasAddedPrinters = YES;
+            // for ORPHIS FW start
+            //self.hasAddedPrinters = YES;
+            self.hasAddedPrinters = NO;
+            // for ORPHIS FW end
+            
             if (self.isIpad)
                 [self.printersViewController reloadPrinters];
             
@@ -321,6 +354,9 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
                     }];
             
         }
+        
+        
+        
         else
         {
             [AlertHelper displayResult:kAlertResultErrDB
@@ -328,6 +364,22 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
                            withDetails:nil];
         }
     }
+*/
+    if (!printerFound)
+    {
+            self.hasAddedPrinters = NO;
+        
+            if (self.isIpad)
+                [self.printersViewController reloadPrinters];
+            
+            [AlertHelper displayResult:kAlertResultErrPrinterNotFound
+                             withTitle:kAlertTitlePrintersAdd
+                           withDetails:nil
+                    withDismissHandler:^(CXAlertView *alertView) {
+                        [self dismissScreen];
+                    }];
+    }
+// for ORPHIS FW end
 }
 
 - (void)printerSearchDidFoundNewPrinter:(PrinterDetails*)printerDetails

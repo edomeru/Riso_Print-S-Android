@@ -11,7 +11,7 @@
 #import "PreviewSetting.h"
 #import "PrintSetting.h"
 
-
+#include "common.h"
 
 @implementation PrintSettingsHelper
 
@@ -28,6 +28,72 @@
     });
     return printSettingsTree;
 }
+
+// for ORPHIS FW start
+/*
++ (NSDictionary *)sharedPrintSettingsTreeFW:(NSString *)printerName
+{
+    // printerName = @"ORPHIS FW5230"; // debug
+    
+    
+    static dispatch_once_t once;
+    static NSDictionary *printSettingsTree;
+    dispatch_once(&once, ^
+                  {
+                      // Load print settings tree
+                       
+                      NSString *printSettingsFilePath;
+
+                      if ([printerName length] == 0) {
+                          printSettingsTree = NULL;
+                          printSettingsFilePath = NULL;
+                      }
+                      
+                      if ([printerName isEqualToString:@"RISO IS1000C-J"] ||
+                          [printerName isEqualToString:@"RISO IS1000C-G"] ||
+                          [printerName isEqualToString:@"RISO IS950C-G"]
+                          )
+                      {
+                          printSettingsFilePath = [[NSBundle mainBundle] pathForResource:@"printsettings" ofType:@"xml"];
+                      }
+                      else if ([printerName isEqualToString:@"ORPHIS FW5230"] ||
+                               [printerName isEqualToString:@"ORPHIS FW5230A"] ||
+                               [printerName isEqualToString:@"ORPHIS FW5231"] ||
+                               [printerName isEqualToString:@"ORPHIS FW2230"] ||
+                               [printerName isEqualToString:@"ORPHIS FW1230"] ||
+                               [printerName isEqualToString:@"ComColor FW5230"] ||
+                               [printerName isEqualToString:@"ComColor FW5230R"] ||
+                               [printerName isEqualToString:@"ComColor FW5231"] ||
+                               [printerName isEqualToString:@"ComColor FW5231R"] ||
+                               [printerName isEqualToString:@"ComColor FW5000"] ||
+                               [printerName isEqualToString:@"ComColor FW5000R"] ||
+                               [printerName isEqualToString:@"ComColor FW2230"] ||
+                               [printerName isEqualToString:@"ComColor black FW1230"] ||
+                               [printerName isEqualToString:@"ComColor black FW1230R"] ||
+                               [printerName isEqualToString:@"Shan Cai Yin Wang FW5230"] ||
+                               [printerName isEqualToString:@"Shan Cai Yin Wang FW5230R"] ||
+                               [printerName isEqualToString:@"Shan Cai Yin Wang FW5231"] ||
+                               [printerName isEqualToString:@"Shan Cai Yin Wang FW2230 Wenjianhong"] ||
+                               [printerName isEqualToString:@"Shan Cai Yin Wang FW2230 Lan"] ||
+                               [printerName isEqualToString:@"Shan Cai Yin Wang black FW1230"] ||
+                               [printerName isEqualToString:@"Shan Cai Yin Wang black FW1230R"]
+                          )
+                      {
+                          printSettingsFilePath = [[NSBundle mainBundle] pathForResource:@"printsettings_fw" ofType:@"xml"];
+                      }
+                      else
+                      {
+                          printSettingsFilePath = [[NSBundle mainBundle] pathForResource:@"printsettings_gd" ofType:@"xml"];
+                      }
+  
+                      NSDictionary *dictionary = [XMLParser dictionaryFromXMLFile:printSettingsFilePath];
+                      printSettingsTree = [dictionary objectForKey:@"printsettings"];
+                      
+                  });
+    return printSettingsTree;
+}
+ */
+// for ORPHIS FW end
 
 + (PreviewSetting *)defaultPreviewSetting
 {

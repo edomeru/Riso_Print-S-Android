@@ -23,6 +23,9 @@
  */
 + (NSDictionary *)sharedPrintSettingsTree;
 
+// for ORPHIS FW
+//+ (NSDictionary *)sharedPrintSettingsTreeFW:(NSString *)printerName;
+
 /**
  * Returns the preview setting containing the default settings from the printsettings.xml
  */

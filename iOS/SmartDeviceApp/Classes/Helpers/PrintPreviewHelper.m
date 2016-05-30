@@ -25,6 +25,11 @@ CGSize paperDimensionsMM[] = {
     {216.0f, 356.0f}, // Legal
     {216.0f, 280.0f}, // Letter
     {140.0f, 216.0f}, // Statement
+// for ORPHIS FW start
+    {216.0f, 330.0f}, // legal13
+    {270.0f, 390.0f}, // 8K
+    {195.0f, 270.0f}, // 16K
+// for ORPHIS FW end
 };
 
 

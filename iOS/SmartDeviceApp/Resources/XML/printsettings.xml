@@ -13,6 +13,7 @@
             <option>ids_lbl_colormode_auto</option>
             <option>ids_lbl_colormode_fullcolor</option>
             <option>ids_lbl_colormode_black</option>
+            <option>ids_lbl_colormode_2color</option>
         </setting>
         <setting
             name="orientation"
@@ -62,6 +63,11 @@
             <option>ids_lbl_papersize_legal</option>
             <option>ids_lbl_papersize_letter</option>
             <option>ids_lbl_papersize_statement</option>
+            <!-- for ORPHIS FW start -->
+            <option>ids_lbl_papersize_legal13</option>
+            <option>ids_lbl_papersize_8K</option>
+            <option>ids_lbl_papersize_16K</option>
+            <!-- for ORPHIS FW end -->
         </setting>
         <setting
             name="scaleToFit"
@@ -84,6 +90,9 @@
             <option>ids_lbl_papertype_highquality</option>
             <option>ids_lbl_papertype_cardij</option>
             <option>ids_lbl_papertype_lwpaper</option>
+            <!-- for ORPHIS FW start -->
+            <option>ids_lbl_papertype_roughpaper</option>
+            <!-- for ORPHIS FW end -->
         </setting>
         <setting
             name="inputTray"
@@ -138,8 +147,8 @@
             icon="temp_img_printsettings_null"
             type="list"
             default="0" >
-            <option>ids_lbl_sort_perpage</option>
             <option>ids_lbl_sort_percopy</option>
+            <option>ids_lbl_sort_perpage</option>
         </setting>
         <setting
             name="booklet"

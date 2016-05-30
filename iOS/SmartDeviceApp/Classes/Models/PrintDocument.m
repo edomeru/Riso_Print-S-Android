@@ -109,7 +109,12 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 - (void)addObservers
 {
     // Add self as observer of all the relevant properties in Preview Settings
+    
+    // for ORPHIS FW start
     NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
+    //NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTreeFW:@"ORPHIS FW5230"];
+    // for ORPHIS FW end
+    
     NSArray *groups = [printSettingsTree objectForKey:@"group"];
     for (NSDictionary *group in groups)
     {

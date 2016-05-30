@@ -230,7 +230,24 @@ void printProgressCallback(directprint_job *job, int status, float progress);
         loginId = @"";
     }
     
-    self.job = directprint_job_new([loginId UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
+    // for ORPHIS FW start;
+    NSString *printer_name =self.printDocument.printer.name;
+    
+    // for "No Name"
+    if (printer_name.length == 0)
+    {
+        printer_name =@"RISO IS1000C-J";
+    }
+    
+    NSString *app_name = @"IDS_APP_NAME";
+
+    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    NSString *build = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFundleVersion"];
+    NSString *app_version = [NSString stringWithFormat:@"%@.%@", version, build];
+    
+    self.job = directprint_job_new([printer_name UTF8String], [app_name UTF8String], [app_version UTF8String], [loginId UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
+    // for ORPHIS FW end;
+    
     directprint_job_set_caller_data(self.job, (void *)CFBridgingRetain(self));
     UIView *progressView = [self createProgressView];
     CXAlertView *alertView = [[CXAlertView alloc] initWithTitle:NSLocalizedString(IDS_INFO_MSG_PRINTING, @"") contentView:progressView cancelButtonTitle:nil];

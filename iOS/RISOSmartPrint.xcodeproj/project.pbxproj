@@ -37,7 +37,6 @@
 		2D1F231D1900D3C700301D1E /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F231C1900D3C700301D1E /* SimplePing.m */; };
 		2D1F23241900D57300301D1E /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23231900D57300301D1E /* SettingsViewController.m */; };
 		2D1F232C1900D69A00301D1E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232B1900D69A00301D1E /* Main.storyboard */; };
-		2D1F23301900F86A00301D1E /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232F1900F86A00301D1E /* printsettings.xml */; };
 		2D1F23731900FBF400301D1E /* PrinterCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5A18E2F02A00085F27 /* PrinterCollectionViewCell.m */; };
 		2D1F238C1900FC2000301D1E /* Printer+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5018E2EFCB00085F27 /* Printer+Log.m */; };
 		2D1F23951900FCBB00301D1E /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23941900FCBB00301D1E /* Reachability.m */; };
@@ -147,6 +146,9 @@
 		5F3145A51A30734D00F482A8 /* W014.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145801A30734D00F482A8 /* W014.png */; };
 		5F3145A61A30734D00F482A8 /* W015.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145821A30734D00F482A8 /* W015.png */; };
 		5F3145A71A30734D00F482A8 /* W016.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145841A30734D00F482A8 /* W016.png */; };
+		7FAAD94D1CD56EB400FC668F /* printsettings_fw.c in Sources */ = {isa = PBXBuildFile; fileRef = 7FAAD94B1CD56EB400FC668F /* printsettings_fw.c */; };
+		7FAAD94E1CD56EB400FC668F /* printsettings_gd.c in Sources */ = {isa = PBXBuildFile; fileRef = 7FAAD94C1CD56EB400FC668F /* printsettings_gd.c */; };
+		7FF4EDAE1CCF074200CB13DB /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 7FF4EDAD1CCF074200CB13DB /* printsettings.xml */; };
 		94D0C05D1A89AF3A00451EFD /* license.html in Resources */ = {isa = PBXBuildFile; fileRef = 94D0C05B1A89AF3A00451EFD /* license.html */; };
 		94D9805A1A89DB49004B8B37 /* LicenseAgreementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 94D980591A89DB49004B8B37 /* LicenseAgreementViewController.m */; };
 /* End PBXBuildFile section */
@@ -230,7 +232,6 @@
 		2D1F23221900D57300301D1E /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		2D1F23231900D57300301D1E /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		2D1F232B1900D69A00301D1E /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		2D1F232F1900F86A00301D1E /* printsettings.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = printsettings.xml; sourceTree = "<group>"; };
 		2D1F23931900FCBB00301D1E /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		2D1F23941900FCBB00301D1E /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2D1F23981900FF5800301D1E /* CXAlertBackgroundWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertBackgroundWindow.h; sourceTree = "<group>"; };
@@ -482,6 +483,9 @@
 		5F3145ED1A307B3900F482A8 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = fr; path = fr.lproj/legal.html; sourceTree = "<group>"; };
 		5F3145EE1A307B3F00F482A8 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5F3145EF1A307B4200F482A8 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		7FAAD94B1CD56EB400FC668F /* printsettings_fw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = printsettings_fw.c; sourceTree = "<group>"; };
+		7FAAD94C1CD56EB400FC668F /* printsettings_gd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = printsettings_gd.c; sourceTree = "<group>"; };
+		7FF4EDAD1CCF074200CB13DB /* printsettings.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = printsettings.xml; sourceTree = "<group>"; };
 		94D0C05C1A89AF3A00451EFD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/license.html; sourceTree = "<group>"; };
 		94D0C05E1A89AF4C00451EFD /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = ja; path = ja.lproj/license.html; sourceTree = "<group>"; };
 		94D0C05F1A89AF4E00451EFD /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = fr; path = fr.lproj/license.html; sourceTree = "<group>"; };
@@ -664,7 +668,7 @@
 		2D1F23281900D68D00301D1E /* XML */ = {
 			isa = PBXGroup;
 			children = (
-				2D1F232F1900F86A00301D1E /* printsettings.xml */,
+				7FF4EDAD1CCF074200CB13DB /* printsettings.xml */,
 			);
 			path = XML;
 			sourceTree = "<group>";
@@ -773,6 +777,8 @@
 		2D6C912018F4FB55002A7F48 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				7FAAD94B1CD56EB400FC668F /* printsettings_fw.c */,
+				7FAAD94C1CD56EB400FC668F /* printsettings_gd.c */,
 				2D6C913518F51257002A7F48 /* directprint.c */,
 				2D1B3E4718FBC701000080E1 /* printsettings.h */,
 				2D1B3E4818FC01E7000080E1 /* printsettings.c */,
@@ -1222,7 +1228,6 @@
 				5F3145A51A30734D00F482A8 /* W014.png in Resources */,
 				5F31459F1A30734D00F482A8 /* W010.png in Resources */,
 				5F3145891A30734D00F482A8 /* I003.png in Resources */,
-				2D1F23301900F86A00301D1E /* printsettings.xml in Resources */,
 				5F31458A1A30734D00F482A8 /* I004.png in Resources */,
 				5F3145911A30734D00F482A8 /* I012.png in Resources */,
 				5F31459D1A30734D00F482A8 /* W008.png in Resources */,
@@ -1249,6 +1254,7 @@
 				5F31459A1A30734D00F482A8 /* W005.png in Resources */,
 				5F3145961A30734D00F482A8 /* W002.png in Resources */,
 				2D1F23CC190104D900301D1E /* legal.html in Resources */,
+				7FF4EDAE1CCF074200CB13DB /* printsettings.xml in Resources */,
 				5F3145881A30734D00F482A8 /* I002.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1291,6 +1297,7 @@
 				2DA1AF5418E2EFCB00085F27 /* PrintSetting+Log.m in Sources */,
 				2DA1AEC518E2EF7D00085F27 /* PrinterDetails.m in Sources */,
 				2D13C5C9191CF38D001DC4FA /* PrinterLayout.m in Sources */,
+				7FAAD94D1CD56EB400FC668F /* printsettings_fw.c in Sources */,
 				2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */,
 				2D1F23A91900FF5800301D1E /* CXAlertButtonContainerView.m in Sources */,
 				2D1F23A71900FF5800301D1E /* CXAlertBackgroundWindow.m in Sources */,
@@ -1300,6 +1307,7 @@
 				2DA1AEE218E2EF8500085F27 /* MenuScrollView.m in Sources */,
 				2DA1AEDF18E2EF8500085F27 /* DefaultView.m in Sources */,
 				2DA1AEE618E2EF8500085F27 /* SearchResultCell.m in Sources */,
+				7FAAD94E1CD56EB400FC668F /* printsettings_gd.c in Sources */,
 				2DA1AF1718E2EF9600085F27 /* main.m in Sources */,
 				2D232D8418E53E6C008D06C8 /* PrintSettingsItemOptionCell.m in Sources */,
 				2DA1AEC718E2EF7D00085F27 /* PrintSetting.m in Sources */,
@@ -1809,6 +1817,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceApp/RISOSmartPrint-Prefix.pch";
@@ -1821,6 +1831,7 @@
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = RISOSmartPrint;
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1832,6 +1843,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmartDeviceApp/RISOSmartPrint-Prefix.pch";
@@ -1844,6 +1857,7 @@
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = RISOSmartPrint;
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};

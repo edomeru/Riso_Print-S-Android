@@ -22,7 +22,11 @@
 typedef enum {
     kColorModeAuto, /**< Auto */
     kColorModeFullColor, /**< Full Color */
-    kColorModeBlack /**< Black */
+// for ORPHIS FW start
+    //kColorModeBlack /**< Black */
+    kColorModeBlack, /**< Black */
+    kColorModeDual, /**< Dual Color */
+// for ORPHIS FW end
 } kColorMode;
 
 /**
@@ -42,7 +46,14 @@ typedef enum {
     kPaperSizeTabloid, /**< Tabloid */
     kPaperSizeLegal, /**< Legal */
     kPaperSizeLetter, /**< Letter */
-    kPaperSizeStatement /**< Statement */
+// for ORPHIS FW start
+    //kPaperSizeStatement /**< Statement */
+    kPaperSizeStatement, /**< Statement */
+    kPaperSizeLegal13, /**< Legal13 */
+    kPaperSize8K, /**< 8K */
+    kPaperSize16K, /**< 16K */
+// for ORPHIS FW end
+
 } kPaperSize;
 
 /**
