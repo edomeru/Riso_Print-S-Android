@@ -16,11 +16,12 @@
 
 #define SNMP_MANAGER "snmpmanager"
 #define BROADCAST_ADDRESS "255.255.255.255"
-#define COMMUNITY_NAME "public"
+#define COMMUNITY_NAME_DEFAULT "public"
 #define SESSION_TIMEOUT 10000000
 #define REQ_ID_DISCOVERY 0x000003
 #define IP_ADDRESS_LENGTH 128
 #define MIB_STRING_LENGTH 256
+#define COMMUNITY_NAME_LENGTH 32
 #define TIMEOUT 10
 #define IPV6_LINK_LOCAL_PREFIX "fe80"
 
@@ -44,6 +45,7 @@ struct snmp_context_s
     snmp_printer_added_callback printer_added_callback;
     snmp_device *device_list;
     char ip_address[IP_ADDRESS_LENGTH];
+    char community_name[COMMUNITY_NAME_LENGTH+1];
     int is_broadcast;
     
     caps_queue device_queue;
@@ -140,7 +142,7 @@ void *do_capability_check(void *parameter);
 int snmp_discovery_callback(int operation, struct snmp_session *host, int req_id, struct snmp_pdu *pdu, void *magic);
 
 // SNMP context accessors
-snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback);
+snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, const char *community_name);
 void snmp_context_free(snmp_context *context);
 int snmp_context_get_state(snmp_context *context);
 void snmp_context_set_state(snmp_context *context, int state);
@@ -221,8 +223,16 @@ void *do_discovery(void *parameter)
     
     // Setup session information
     session.peername = strdup(context->ip_address);
-    session.community = (u_char *) strdup(COMMUNITY_NAME);
-    session.community_len = strlen(COMMUNITY_NAME);
+    if(strlen(context->community_name) > 0 )
+    {
+        session.community = (u_char *) strdup(context->community_name);
+        session.community_len = strlen(context->community_name);
+    }
+    else
+    {
+        session.community = (u_char *) strdup(COMMUNITY_NAME_DEFAULT);
+        session.community_len = strlen(COMMUNITY_NAME_DEFAULT);
+    }
     session.timeout = SESSION_TIMEOUT;
     session.callback = snmp_discovery_callback;
     session.callback_magic = context;
@@ -445,10 +455,17 @@ int snmp_discovery_callback(int operation, struct snmp_session *host, int req_id
  MARK: SNMP context accessors
  */
 
-snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback)
+snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, const char* community_name)
 {
     snmp_context *context = (snmp_context *)malloc(sizeof(snmp_context));
     memset(context->ip_address, 0, IP_ADDRESS_LENGTH);
+    memset(context->community_name, 0, COMMUNITY_NAME_LENGTH + 1);
+    
+    if(community_name != NULL)
+    {
+        strncpy(context->community_name, community_name, COMMUNITY_NAME_LENGTH);
+    }
+    
     context->state = kSnmpStateInitialized;
     context->discovery_ended_callback = discovery_ended_callback;
     context->printer_added_callback = printer_added_callback;
@@ -792,8 +809,16 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device)
     
     // Initialize SNMPv1
     session.version = SNMP_VERSION_1;
-    session.community = (u_char *) strdup(COMMUNITY_NAME);
-    session.community_len = strlen(COMMUNITY_NAME);
+    if(strlen(context->community_name) > 0 )
+    {
+        session.community = (u_char *) strdup(context->community_name);
+        session.community_len = strlen(context->community_name);
+    }
+    else
+    {
+        session.community = (u_char *) strdup(COMMUNITY_NAME_DEFAULT);
+        session.community_len = strlen(COMMUNITY_NAME_DEFAULT);
+    }
     session.timeout = SESSION_TIMEOUT / MIB_INFO_COUNT;
     session.callback = 0;
     session.retries = 0;

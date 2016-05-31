@@ -1,5 +1,7 @@
 #include <pthread.h>
+#include <stdlib.h>
 #include "gtest/gtest.h"
+#include "fff.h"
 
 extern "C"
 {
@@ -7,6 +9,24 @@ extern "C"
 #include "net-snmp/net-snmp-config.h"
 #include "net-snmp/net-snmp-includes.h"
 }
+
+FAKE_VALUE_FUNC(netsnmp_session *, snmp_open, netsnmp_session *);
+FAKE_VOID_FUNC(init_snmp,const char *);
+FAKE_VALUE_FUNC(int, generate_Ku, const oid*, u_int, const u_char *, size_t, u_char *, size_t *);
+FAKE_VALUE_FUNC(int,read_objid,const char*, oid*, size_t*);
+FAKE_VALUE_FUNC(netsnmp_variable_list *, snmp_add_null_var, netsnmp_pdu *, const oid *, size_t);
+FAKE_VALUE_FUNC(int,snmp_close,netsnmp_session*);
+FAKE_VOID_FUNC(snmp_sess_perror,const char*, netsnmp_session*);
+FAKE_VALUE_FUNC(int,snmp_send,netsnmp_session *, netsnmp_pdu *);
+FAKE_VALUE_FUNC(int,snmp_select_info,int *, fd_set *, struct timeval*,int*);
+FAKE_VALUE_FUNC(int, snmp_synch_response,netsnmp_session *, netsnmp_pdu *,netsnmp_pdu **);
+FAKE_VALUE_FUNC(netsnmp_pdu*, snmp_pdu_create,int);
+FAKE_VOID_FUNC(snmp_free_pdu,netsnmp_pdu *);
+FAKE_VOID_FUNC(snmp_sess_init,netsnmp_session *);
+FAKE_VOID_FUNC(snmp_read,fd_set *);
+FAKE_VALUE_FUNC(int,snmp_oid_compare,const oid *, size_t, const oid *,size_t);
+FAKE_VOID_FUNC(snmp_timeout);
+oid      usmHMACMD5AuthProtocol[10];
 
 class SNMPTest : public testing::Test
 {
@@ -22,11 +42,40 @@ public:
 
     void SetUp()
     {
+        RESET_FAKE(snmp_open);
+        RESET_FAKE(init_snmp);
+        RESET_FAKE(generate_Ku);
+        RESET_FAKE(read_objid);
+        RESET_FAKE(snmp_add_null_var);
+        RESET_FAKE(snmp_close);
+        RESET_FAKE(snmp_sess_perror);
+        RESET_FAKE(snmp_send);
+        RESET_FAKE(snmp_select_info);
+        RESET_FAKE(snmp_synch_response);
+        RESET_FAKE(snmp_pdu_create);
+        RESET_FAKE(snmp_free_pdu);
+        RESET_FAKE(snmp_sess_init);
+        RESET_FAKE(snmp_read);
+        RESET_FAKE(snmp_oid_compare);
+        
+        FFF_RESET_HISTORY();
+        
+        snmp_open_fake.return_val = 0;
+        generate_Ku_fake.return_val = 0;
+        read_objid_fake.return_val=0;
+        snmp_close_fake.return_val=0;
+        snmp_send_fake.return_val=0;
+        snmp_select_info_fake.return_val=0;
+        snmp_synch_response_fake.return_val=0;
+        snmp_pdu_create_fake.return_val=0;
+        snmp_oid_compare_fake.return_val =0;
     }
 };
 
 #define IP_ADDRESS_LENGTH 128
 #define MIB_STRING_LENGTH 256
+#define COMMUNITY_NAME_LENGTH 32
+#define COMMUNITY_NAME "public"
 
 typedef struct
 {
@@ -41,6 +90,7 @@ struct snmp_context_s
     snmp_printer_added_callback printer_added_callback;
     snmp_device *device_list;
     char ip_address[IP_ADDRESS_LENGTH];
+    char community_name[COMMUNITY_NAME_LENGTH+1];
     
     caps_queue device_queue;
     
@@ -89,7 +139,7 @@ void added_callback(snmp_context *context, snmp_device *device)
 
 TEST_F(SNMPTest, ContextNew)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
 
     ASSERT_TRUE(context != 0);
     ASSERT_TRUE(context->ip_address != 0);
@@ -104,9 +154,28 @@ TEST_F(SNMPTest, ContextNew)
     snmp_context_free(context);
 }
 
+
+TEST_F(SNMPTest, ContextNew_CommunityName_NULL)
+{
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, NULL);
+    
+    ASSERT_TRUE(context != 0);
+    ASSERT_TRUE(context->ip_address != 0);
+    ASSERT_TRUE(strlen(context->ip_address) == 0);
+    ASSERT_TRUE(context->state == kSnmpStateInitialized);
+    ASSERT_TRUE(context->discovery_ended_callback == ended_callback);
+    ASSERT_TRUE(context->printer_added_callback == added_callback);
+    ASSERT_TRUE(context->device_list == 0);
+    ASSERT_TRUE(context->device_queue.first == 0);
+    ASSERT_TRUE(context->device_queue.current == 0);
+    ASSERT_TRUE(strlen(context->community_name) == 0);
+    
+    snmp_context_free(context);
+}
+
 TEST_F(SNMPTest, SetCallerData)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     
     char test_data[16];
     sprintf(test_data, "sample data");
@@ -120,7 +189,7 @@ TEST_F(SNMPTest, SetCallerData)
 
 TEST_F(SNMPTest, GetCallerData)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     
     char test_data[16];
     sprintf(test_data, "sample data");
@@ -133,7 +202,7 @@ TEST_F(SNMPTest, GetCallerData)
 
 TEST_F(SNMPTest, Cancel)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_cancel(context);
 
     ASSERT_TRUE(context->state == kSnmpStateCancelled);
@@ -192,7 +261,7 @@ extern "C" int snmp_context_get_state(snmp_context *context);
 
 TEST_F(SNMPTest, ContextGetState)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     context->state = kSnmpStateStarted;
     
     ASSERT_TRUE(snmp_context_get_state(context) == kSnmpStateStarted);
@@ -203,7 +272,7 @@ extern "C" void snmp_context_set_state(snmp_context *context, int state);
 
 TEST_F(SNMPTest, ContextSetState)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_context_set_state(context, kSnmpStateStarted);
     
     ASSERT_TRUE(context->state == kSnmpStateStarted);
@@ -214,7 +283,7 @@ extern "C" void snmp_context_device_add(snmp_context *context, snmp_device *devi
 
 TEST_F(SNMPTest, DeviceAdd_Empty)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device = snmp_device_new("192.168.1.1");
     snmp_context_device_add(context, device);
 
@@ -227,7 +296,7 @@ TEST_F(SNMPTest, DeviceAdd_Empty)
 
 TEST_F(SNMPTest, DeviceAdd_Duplicate)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device = snmp_device_new("192.168.1.1");
     snmp_device *duplicate = snmp_device_new("192.168.1.1");
     snmp_context_device_add(context, device);
@@ -242,7 +311,7 @@ TEST_F(SNMPTest, DeviceAdd_Duplicate)
 
 TEST_F(SNMPTest, DeviceAdd_Unique)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_context_device_add(context, device1);
@@ -258,7 +327,7 @@ TEST_F(SNMPTest, DeviceAdd_Unique)
 
 TEST_F(SNMPTest, DeviceAdd_Multiple)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_device *device3 = snmp_device_new("192.168.1.3");
@@ -279,7 +348,7 @@ extern "C" int snmp_context_device_find_with_ip(snmp_context *context, const cha
 
 TEST_F(SNMPTest, FindWithIP_Found)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_context_device_add(context, device1);
@@ -291,7 +360,7 @@ TEST_F(SNMPTest, FindWithIP_Found)
 
 TEST_F(SNMPTest, FindWithIP_NotFound)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_context_device_add(context, device1);
@@ -305,7 +374,7 @@ extern "C" int snmp_context_device_count(snmp_context *context);
 
 TEST_F(SNMPTest, Count)
 {
-    snmp_context *context = snmp_context_new(ended_callback, added_callback);
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, COMMUNITY_NAME);
     snmp_device *device1 = snmp_device_new("192.168.1.1");
     snmp_device *device2 = snmp_device_new("192.168.1.2");
     snmp_device *device3 = snmp_device_new("192.168.1.3");
@@ -323,3 +392,59 @@ TEST_F(SNMPTest, Count)
     ASSERT_TRUE(count3 == 2);
     ASSERT_TRUE(count4 == 3);
 }
+
+extern "C" void *do_discovery(void *parameter);
+
+TEST_F(SNMPTest, DoDiscoveryCommunityNameSet_Empty)
+{
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, "");
+    do_discovery(context);
+    netsnmp_session *session = snmp_open_fake.arg0_history[0];
+    ASSERT_TRUE(session != NULL);
+    ASSERT_TRUE(session->community != NULL);
+    char community_name[33];
+    memset(community_name, 0x00, sizeof(community_name));
+    memcpy(community_name, session->community, strlen((char *)session->community));
+    ASSERT_TRUE(strcmp(community_name, "public") == 0);
+}
+
+TEST_F(SNMPTest, DoDiscoveryCommunityNameSet_Value)
+{
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, "testValue");
+    do_discovery(context);
+    netsnmp_session *session = snmp_open_fake.arg0_history[0];
+    ASSERT_TRUE(session != NULL);
+    ASSERT_TRUE(session->community != NULL);
+    char community_name[33];
+    memset(community_name, 0x00, sizeof(community_name));
+    memcpy(community_name, session->community, strlen((char *)session->community));
+    ASSERT_TRUE(strcmp(community_name, "testValue") == 0);
+}
+
+TEST_F(SNMPTest, GetCapabilitiesCommunityNameSet_Empty)
+{
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, "");
+    do_discovery(context);
+    netsnmp_session *session = snmp_open_fake.arg0_history[0];
+    ASSERT_TRUE(session != NULL);
+    ASSERT_TRUE(session->community != NULL);
+    char community_name[33];
+    memset(community_name, 0x00, sizeof(community_name));
+    memcpy(community_name, session->community, strlen((char *)session->community));
+    ASSERT_TRUE(strcmp(community_name, "public") == 0);
+}
+
+TEST_F(SNMPTest, GetCapabilitiesCommunityNameSet_Value)
+{
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, "testValue");
+    do_discovery(context);
+    netsnmp_session *session = snmp_open_fake.arg0_history[0];
+    ASSERT_TRUE(session != NULL);
+    ASSERT_TRUE(session->community != NULL);
+    char community_name[33];
+    memset(community_name, 0x00, sizeof(community_name));
+    memcpy(community_name, session->community, strlen((char *)session->community));
+    ASSERT_TRUE(strcmp(community_name, "testValue") == 0);
+}
+
+
