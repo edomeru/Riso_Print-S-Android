@@ -10,7 +10,6 @@
 #import "PDFPageContentViewController.h"
 
 @interface PDFPageContentViewController (Test)
-@property (nonatomic, weak) IBOutlet UIImageView *imageView;
 @property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicatorView;
 @end
 
@@ -41,7 +40,6 @@
     
     GHAssertNotNil(viewController.view, @"");
     
-    GHAssertNotNil(viewController.imageView, @"");
     GHAssertNotNil(viewController.activityIndicatorView, @"");
 }
 
@@ -85,7 +83,6 @@
     
     GHAssertNotNil(viewController.activityIndicatorView, @"");
     GHAssertFalse(viewController.activityIndicatorView.isAnimating, @"");
-    GHAssertTrue(viewController.imageView.hidden, @"");
     GHAssertEquals(viewController.view.backgroundColor, [UIColor clearColor], @"");
 }
 
@@ -106,7 +103,5 @@
     [viewController setImage:testImage];
     
     GHAssertFalse(viewController.activityIndicatorView.isAnimating, @"");
-    GHAssertFalse(viewController.imageView.hidden, @"");
-    GHAssertEqualObjects(viewController.imageView.image, testImage, @"");
     GHAssertEqualObjects(viewController.image, testImage, @"");}
 @end

@@ -345,7 +345,9 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 
 - (void)updateBgTask {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [appDelegate endBgTask];
+    if([appDelegate respondsToSelector:@selector(endBgTask)]){
+        [appDelegate endBgTask];
+    }
 }
 
 @end

@@ -98,7 +98,7 @@
     for(int i = 0; i < printerTesDataCount; i++)
     {
         PrinterDetails *pd = [[PrinterDetails alloc] init];
-        pd.enBooklet = YES;
+        pd.enBookletFinishing = YES;
         pd.enFinisher23Holes = NO;
         pd.enFinisher24Holes = YES;
         pd.enStaple = YES;
@@ -410,12 +410,12 @@
     GHAssertNotNil(viewController.view, @"");
     
     Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex];
-    printer.enabled_booklet = [NSNumber numberWithBool:NO];
+    printer.enabled_booklet_finishing = [NSNumber numberWithBool:NO];
     GHAssertFalse([viewController isSettingSupported:KEY_BOOKLET],@"");
     GHAssertFalse([viewController isSettingSupported:KEY_BOOKLET_LAYOUT],@"");
     GHAssertFalse([viewController isSettingSupported:KEY_BOOKLET_FINISH],@"");
     
-    printer.enabled_booklet = [NSNumber numberWithBool:YES];
+    printer.enabled_booklet_finishing = [NSNumber numberWithBool:YES];
     GHAssertTrue([viewController isSettingSupported:KEY_BOOKLET],@"");
     GHAssertTrue([viewController isSettingSupported:KEY_BOOKLET_LAYOUT],@"");
     GHAssertTrue([viewController isSettingSupported:KEY_BOOKLET_FINISH],@"");

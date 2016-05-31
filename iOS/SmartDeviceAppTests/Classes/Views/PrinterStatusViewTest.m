@@ -53,39 +53,18 @@
 {
     PrinterStatusView* statusView = [[PrinterStatusView alloc] init];
     GHAssertNotNil(statusView, @"");
-    GHAssertFalse(statusView.onlineStatus, @"");
+    GHAssertFalse(statusView.isHighlighted, @"");
     
     [statusView setStatus:YES];
-    GHAssertTrue(statusView.onlineStatus, @"");
+    GHAssertTrue(statusView.isHighlighted, @"");
     
     [statusView setStatus:YES]; //repeat for coverage
-    GHAssertTrue(statusView.onlineStatus, @"");
+    GHAssertTrue(statusView.isHighlighted, @"");
     
     [statusView setStatus:NO];
-    GHAssertFalse(statusView.onlineStatus, @"");
+    GHAssertFalse(statusView.isHighlighted, @"");
 }
 
-- (void)test002_StatusHelperDelegate
-{
-    PrinterStatusView* statusView = [[PrinterStatusView alloc] init];
-    GHAssertNotNil(statusView, @"");
-    NSString* printerIP = @"192.168.0.197";
-
-    statusView.statusHelper = [[PrinterStatusHelper alloc] initWithPrinterIP:printerIP];
-    statusView.statusHelper.delegate = statusView;
-    
-    [statusView.statusHelper startPrinterStatusPolling];
-    [self waitForCompletion:5+1];
-    [statusView.statusHelper stopPrinterStatusPolling];
-    GHAssertNotNil(statusView.statusHelper, @"");
-    GHAssertFalse([statusView.statusHelper isPolling], @"");
-    
-    [statusView.statusHelper startPrinterStatusPolling];
-    [self waitForCompletion:5+1];
-    [statusView.statusHelper stopPrinterStatusPolling];
-    GHAssertNotNil(statusView.statusHelper, @"");
-    GHAssertFalse([statusView.statusHelper isPolling], @"");
-}
 
 #pragma mark - Utilities
 

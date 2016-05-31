@@ -23,12 +23,12 @@
 @interface LicenseAgreementViewControllerTest : GHTestCase
 {
     UIStoryboard* storyboard;
-    LegalViewController* controller;
+    LicenseAgreementViewController* controller;
 }
 
 @end
 
-@implementation LegalViewControllerTest
+@implementation LicenseAgreementViewControllerTest
 
 #pragma mark - Setup/TearDown Methods
 
@@ -101,17 +101,21 @@
     GHAssertTrue([ibActions containsObject:@"cancelAction:"], @"");
 }
 
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+//Suppress undeclared selector warning because setLicenseAgreement is meant to be private but needs to be tested in UT
+//http://stackoverflow.com/questions/6224976/how-to-get-rid-of-the-undeclared-selector-warning
+
 - (void)test003_LicenseAgreementState
 {
     
     GHTestLog(@"# CHECK: LicenseAgreement state. #");
     
-    [controller setLicenseAgreement:NO];
-    GHAssertTrue([controller hasConfirmedToLicenseAgreement]  == NO, @"");
+    [controller performSelector:@selector(setLicenseAgreement:) withObject:[NSNumber numberWithBool:NO]];
+    GHAssertTrue([LicenseAgreementViewController hasConfirmedToLicenseAgreement]  == NO, @"");
     
-    [controller setLicenseAgreement:YES];
-    GHAssertTrue([controller hasConfirmedToLicenseAgreement] , @"");
+    [controller performSelector:@selector(setLicenseAgreement:) withObject:[NSNumber numberWithBool:YES]];
+    GHAssertTrue([LicenseAgreementViewController hasConfirmedToLicenseAgreement] , @"");
 }
 
-
+#pragma clang diagnostic pop
 @end

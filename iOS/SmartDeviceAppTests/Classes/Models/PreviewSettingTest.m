@@ -73,7 +73,7 @@
     for (NSString *key in self.keys)
     {
         NSInteger value = [[previewSetting valueForKey:key] integerValue];
-        NSString *field = [NSString stringWithFormat:@"%@=%d\n", key, value];
+        NSString *field = [NSString stringWithFormat:@"%@=%ld\n", key, (long)value];
         NSRange range = [formattedString rangeOfString:field];
         GHAssertTrue(range.location != NSNotFound, @"Formatted string should have %@.", field);
     }
