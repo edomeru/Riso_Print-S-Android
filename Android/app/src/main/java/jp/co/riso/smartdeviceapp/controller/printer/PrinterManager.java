@@ -430,7 +430,7 @@ public class PrinterManager implements SNMPManagerCallback {
     public void startPrinterSearch() {
         mIsSearching = true;
         mIsCancelled = false;
-        mSNMPManager.initializeSNMPManager();
+        mSNMPManager.initializeSNMPManager(AppConstants.DEFAULT_COMMUNITY_NAME); // TODO: Use user-set community name
         mSNMPManager.deviceDiscovery();
     }
     
@@ -449,7 +449,7 @@ public class PrinterManager implements SNMPManagerCallback {
         
         mIsSearching = true;
         mIsCancelled = false;
-        mSNMPManager.initializeSNMPManager();
+        mSNMPManager.initializeSNMPManager(AppConstants.DEFAULT_COMMUNITY_NAME); // TODO: Use user-set community name
         mSNMPManager.manualDiscovery(ipAddress);
     }
     

@@ -20,7 +20,7 @@ public class SNMPManager {
     private WeakReference<SNMPManagerCallback> mCallbackRef = null;
     
     @SuppressWarnings("JniMissingFunction")
-    public native void initializeSNMPManager();
+    public native void initializeSNMPManager(String communityName);
     @SuppressWarnings("JniMissingFunction")
     public native void finalizeSNMPManager();
     @SuppressWarnings("JniMissingFunction")
