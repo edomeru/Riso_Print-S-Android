@@ -12,15 +12,18 @@ void end_callback(snmp_context *context, int result);
 void found_callback(snmp_context *context, snmp_device *device);
 
 JNIEXPORT void 
-Java_jp_co_riso_smartdeviceapp_common_SNMPManager_initializeSNMPManager(JNIEnv *env, jobject object)
+Java_jp_co_riso_smartdeviceapp_common_SNMPManager_initializeSNMPManager(JNIEnv *env, jobject object, jstring community_name)
 {
     // Create cache object
     CommonJNIState *state = (CommonJNIState *)malloc(sizeof(CommonJNIState));
     (*env)->GetJavaVM(env, &state->java_vm);
     state->instance = (*env)->NewGlobalRef(env, object);
 
+    // Create community name
+    const char *native_community_name = (*env)->GetStringUTFChars(env, community_name, 0);
+
     // Create snmp context
-    snmp_context *context = snmp_context_new(end_callback, found_callback);
+    snmp_context *context = snmp_context_new(end_callback, found_callback, native_community_name);
     snmp_context_set_caller_data(context, (void *)state);
     
     // Set context reference to java object
