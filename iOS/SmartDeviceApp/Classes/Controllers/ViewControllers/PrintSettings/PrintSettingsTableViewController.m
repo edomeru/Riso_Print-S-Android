@@ -371,6 +371,8 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
+    
     if(self.isRedrawFullSettingsTable == YES)
     {
         [self fillSupportedSettings];
