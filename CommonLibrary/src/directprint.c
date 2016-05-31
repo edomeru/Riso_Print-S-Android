@@ -888,8 +888,13 @@ void *do_raw_print(void *parameter)
 #if ENABLE_JOB_DUMP
             job_dump_write(dump_fd, buffer, read);
 #endif
-            
+
             print_job->progress += data_step;
+
+            if(print_job->progress >= 100.0f) {
+                print_job->progress = 99.99f;
+            }
+
             notify_callback(print_job, kJobStatusSending);
         }
         
