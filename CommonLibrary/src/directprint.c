@@ -722,7 +722,13 @@ void *do_lpr_print(void *parameter)
                 has_error = 1;
                 break;
             }
+
             print_job->progress += data_step;
+
+            if(print_job->progress >= 100.0f) {
+                print_job->progress = 99.99f;
+            }
+
             notify_callback(print_job, kJobStatusSending);
         }
         
