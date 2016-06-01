@@ -163,5 +163,9 @@
     <string name="ids_err_msg_storage_permission_not_allowed">ストレージのアクセスが必要です。\n\n次のダイアログで、「許可」または「OK」を選択してください。</string>
     <string name="ids_lbl_permission_information">%1$sは、印刷用のPDFファイルを開くためにストレージへのアクセスが必要です。\n\nストレージへのアクセスを許可するには、[設定]->[アプリ]->[%1$s]->[許可]で設定します。</string>
     <string name="ids_lbl_start">開始</string>
+    <string name="ids_lbl_search_printers_settings">検索設定</string>
+    <string name="ids_lbl_snmp_community_name">SNMPコミュニティ名</string>
+    <string name="ids_lbl_valid_community_name">有効な文字:\n\ta-z, A-Z, 0-9,,./:;@[¥]^_</string>
+    <string name="ids_err_msg_invalid_community_name">SNMPコミュニティ名を確認してください。</string>
 
 </resources>
