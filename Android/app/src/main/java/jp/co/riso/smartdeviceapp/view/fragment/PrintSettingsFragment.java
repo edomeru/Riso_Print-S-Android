@@ -49,7 +49,9 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     private static final String TAG_WAITING_DIALOG = "dialog_printing";
     private static final String TAG_MESSAGE_DIALOG = "dialog_message";
-    
+
+    private static final int PRINTJOB_SENT_PROGRESS_DIALOG_DELAY = 50;
+
     private DirectPrintManager mDirectPrintManager = null;
     
     private static final int MSG_PRINT = 0;
@@ -335,7 +337,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                         }
                     };
                     Timer timer = new Timer();
-                    timer.schedule(timerTask, 1000);
+                    timer.schedule(timerTask, PRINTJOB_SENT_PROGRESS_DIALOG_DELAY);
                     break;
                 case DirectPrintManager.PRINT_STATUS_SENDING:
                     if (mWaitingDialog != null) {

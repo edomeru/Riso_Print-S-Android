@@ -77,6 +77,9 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
 #define AZA_DEVICE_NAME_COUNT 3
 
+#define MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE 99.99f
+#define PRINTJOB_SENT_PROGRESS_PERCENTAGE 100.0f
+
 static const char *AZA_DEVICE_NAMES[] = {
     "RISO IS1000C-J",
     "RISO IS1000C-G",
@@ -697,7 +700,7 @@ void *do_lpr_print(void *parameter)
         
         // Calculate progress step
         unsigned long step_count = file_size / BUFFER_SIZE + 1;
-        float data_step = (99.0f / (float)step_count);
+        float data_step = (MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE / (float)step_count);
     
         // DATA FILE : Send
         size_t read = 0;
@@ -725,8 +728,8 @@ void *do_lpr_print(void *parameter)
 
             print_job->progress += data_step;
 
-            if(print_job->progress >= 100.0f) {
-                print_job->progress = 99.99f;
+            if(print_job->progress >= PRINTJOB_SENT_PROGRESS_PERCENTAGE) {
+                print_job->progress = MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE;
             }
 
             notify_callback(print_job, kJobStatusSending);
@@ -865,7 +868,7 @@ void *do_raw_print(void *parameter)
         
         // Calculate progress step
         unsigned long step_count = file_size / BUFFER_SIZE + 1;
-        float data_step = (99.0f / (float)step_count);
+        float data_step = (MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE / (float)step_count);
         
         // Send header
         send(sock_fd, pjl_header, strlen(pjl_header), 0);
@@ -898,8 +901,8 @@ void *do_raw_print(void *parameter)
 
             print_job->progress += data_step;
 
-            if(print_job->progress >= 100.0f) {
-                print_job->progress = 99.99f;
+            if(print_job->progress >= PRINTJOB_SENT_PROGRESS_PERCENTAGE) {
+                print_job->progress = MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE;
             }
 
             notify_callback(print_job, kJobStatusSending);
