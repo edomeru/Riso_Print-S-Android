@@ -914,8 +914,10 @@ void *do_raw_print(void *parameter)
         job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
 #endif
         print_job->progress = 100.0f;
+        notify_callback(print_job, kJobStatusSending);
+
+        wait(100); // Wait for 100ms to display 100% progress before notifying sent callback
         notify_callback(print_job, kJobStatusSent);
-        
     } while (0);
     
 #if ENABLE_JOB_DUMP

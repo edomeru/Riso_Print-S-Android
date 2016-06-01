@@ -8,6 +8,11 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import android.os.Bundle;
+import android.os.Message;
+import android.view.View;
+import android.widget.TextView;
+
 import java.util.Date;
 import java.util.Locale;
 
@@ -19,7 +24,6 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.NetUtils;
-import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
@@ -32,11 +36,7 @@ import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.os.Message;
-import android.view.View;
-import android.widget.TextView;
+import jp.co.riso.smartprint.R;
 
 /**
  * @class PrintSettingsFragment
@@ -330,7 +330,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                     break;
                 case DirectPrintManager.PRINT_STATUS_SENDING:
                     if (mWaitingDialog != null) {
-                        String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, Math.min((progress + 1),100.0f));
+                        String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, Math.min((progress),100.0f));
                         mWaitingDialog.setMessage(msg);
                     }
                     break;
