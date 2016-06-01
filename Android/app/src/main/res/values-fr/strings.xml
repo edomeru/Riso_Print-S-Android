@@ -164,5 +164,9 @@
     <string name="ids_err_msg_storage_permission_not_allowed">L\'accès à  stockage est nécessaire. \n\nDans la prochaine alerte de la boîte de dialogue qui apparaîtra, merci de cliquer sur \"Autoriser\" / \"OK\".</string>
     <string name="ids_lbl_permission_information">%1$s, vous pouvez ouvrez le fichier PDF pour impression.\nL\'accès à  stockage est nécessaire.\n\nPermet d\'accéder au stockage dans de dialogue dans l\'écran d\'Accueil ou Autorisations Settings écran: [Settings]-> [Application] -> [%1$s] -> [Autorisations].</string>
     <string name="ids_lbl_start">Démarrer</string>
+    <string name="ids_lbl_search_printers_settings">Chercher Réglages</string>
+    <string name="ids_lbl_snmp_community_name">Nom de Communauté SNMP</string>
+    <string name="ids_lbl_valid_community_name">Caractères valides:\n\ta-zA-Z0-9,./:;@[¥]^_</string>
+    <string name="ids_err_msg_invalid_community_name">Veuillez entrer une Nom de Communauté SNMP valide</string>
 
 </resources>

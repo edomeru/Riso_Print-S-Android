@@ -164,5 +164,9 @@
     <string name="ids_err_msg_storage_permission_not_allowed">Access to storage is needed to open PDF file.\n\nIn the next alert dialog that will appear, please tap the \"Allow\"/\"OK\" button.</string>
     <string name="ids_lbl_permission_information">%1$s lets you open a PDF file for printing using the Open-In feature.\nIn order to open a PDF file, access to the storage of the device is needed.\n\nYou can enable the storage permission when prompted in the Home screen or in the Permission Settings screen via [Settings] -> [Apps] -> [%1$s] -> [Permissions].</string>
     <string name="ids_lbl_start">Start</string>
+    <string name="ids_lbl_search_printers_settings">Search Settings</string>
+    <string name="ids_lbl_snmp_community_name">SNMP Community Name</string>
+    <string name="ids_lbl_valid_community_name">Valid characters are:\n\ta-zA-Z0-9,./:;@[¥]^_</string>
+    <string name="ids_err_msg_invalid_community_name">Please enter a SNMP community name with valid characters</string>
 
 </resources>
