@@ -765,6 +765,7 @@ void *do_lpr_print(void *parameter)
         
         // Notify success
         print_job->progress = 100.0f;
+        notify_callback(print_job, kJobStatusSending);
         notify_callback(print_job, kJobStatusSent);
     } while (0);
     
