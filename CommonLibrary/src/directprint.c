@@ -728,6 +728,7 @@ void *do_lpr_print(void *parameter)
 
             print_job->progress += data_step;
 
+            // To prevent user from seeing 100% progress before a successful print job, set to 99.99% instead
             if(print_job->progress >= PRINTJOB_SENT_PROGRESS_PERCENTAGE) {
                 print_job->progress = MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE;
             }
@@ -901,6 +902,7 @@ void *do_raw_print(void *parameter)
 
             print_job->progress += data_step;
 
+            // To prevent user from seeing 100% progress before a successful print job, set to 99.99% instead
             if(print_job->progress >= PRINTJOB_SENT_PROGRESS_PERCENTAGE) {
                 print_job->progress = MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE;
             }

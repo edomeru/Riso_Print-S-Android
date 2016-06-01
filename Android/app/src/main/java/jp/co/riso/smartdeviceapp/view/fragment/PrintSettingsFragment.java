@@ -50,7 +50,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     private static final String TAG_WAITING_DIALOG = "dialog_printing";
     private static final String TAG_MESSAGE_DIALOG = "dialog_message";
 
-    private static final int PRINTJOB_SENT_PROGRESS_DIALOG_DELAY = 50;
+    private static final int PRINTJOB_SENT_PROGRESS_DIALOG_DELAY = 50; // To allow user to see 100% progress percentage, enforce a 50ms delay before closing the progress dialog after a successful print job
 
     private DirectPrintManager mDirectPrintManager = null;
     

@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include "common.h"
 
-#define SAMPLE_COMMUNITY_NAME "public"
-
 void on_discovery_end(snmp_context *context, int result);
 
 int main(int argc, char *argv[])
