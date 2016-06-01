@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
@@ -316,7 +318,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - DirectPrintCallback
     // ================================================================================
     @Override
-    public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
+    public void onNotifyProgress(DirectPrintManager manager, final int status, float progress) {
         if (NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
             switch (status) {
                 case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
@@ -324,9 +326,16 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 case DirectPrintManager.PRINT_STATUS_ERROR_FILE:
                 case DirectPrintManager.PRINT_STATUS_ERROR:
                 case DirectPrintManager.PRINT_STATUS_SENT:
-                    Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
-                    newMessage.arg1 = status;
-                    mPauseableHandler.sendMessage(newMessage);
+                    TimerTask timerTask = new TimerTask() {
+                        @Override
+                        public void run() {
+                            Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
+                            newMessage.arg1 = status;
+                            mPauseableHandler.sendMessage(newMessage);
+                        }
+                    };
+                    Timer timer = new Timer();
+                    timer.schedule(timerTask, 1000);
                     break;
                 case DirectPrintManager.PRINT_STATUS_SENDING:
                     if (mWaitingDialog != null) {
