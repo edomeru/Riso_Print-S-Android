@@ -269,7 +269,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         switch(parentView.getId())
         {
-            case R.id.defaultPort:
+            case R.id.inputPort:
             {
                 PortSetting port = PortSetting.LPR;
                 switch (position) {
