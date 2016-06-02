@@ -116,6 +116,7 @@
 		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
 		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
 		31F5B69719248DDB002A29AD /* PrintSettingsPrinterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */; };
+		3EE0D0A81CFFCCDA00EC57BE /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 7FF4EDAD1CCF074200CB13DB /* printsettings.xml */; };
 		5F3145861A30734D00F482A8 /* I000.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145421A30734D00F482A8 /* I000.png */; };
 		5F3145871A30734D00F482A8 /* I001.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145441A30734D00F482A8 /* I001.png */; };
 		5F3145881A30734D00F482A8 /* I002.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145461A30734D00F482A8 /* I002.png */; };
@@ -356,7 +357,6 @@
 		6666D5721BE3147600D93CEE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC48185FDE8100810455 /* Images.xcassets */; };
 		6666D5741BE3147600D93CEE /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 		6666D5751BE3147600D93CEE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232B1900D69A00301D1E /* Main.storyboard */; };
-		6666D5761BE3147600D93CEE /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232F1900F86A00301D1E /* printsettings.xml */; };
 		66C5194E1BE760A600C05AB4 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */; };
 		66CABAE71BF9C85300B35BD3 /* PrintJobHistoryLayoutTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CABAE51BF9C7EE00B35BD3 /* PrintJobHistoryLayoutTest.m */; };
 		66D381301BFEE5FB00166215 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEEA18E2EF9600085F27 /* AppDelegate.m */; };
@@ -2059,6 +2059,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3EE0D0A81CFFCCDA00EC57BE /* printsettings.xml in Resources */,
 				6666D5501BE3147600D93CEE /* SmartDeviceApp.xcdatamodeld in Resources */,
 				6666D5511BE3147600D93CEE /* license.html in Resources */,
 				6666D5521BE3147600D93CEE /* I000.png in Resources */,
@@ -2097,7 +2098,6 @@
 				6666D5721BE3147600D93CEE /* Images.xcassets in Resources */,
 				6666D5741BE3147600D93CEE /* SmartDeviceApp-Settings.plist in Resources */,
 				6666D5751BE3147600D93CEE /* Main.storyboard in Resources */,
-				6666D5761BE3147600D93CEE /* printsettings.xml in Resources */,
 				6603A81F1BE1FB2F00DBD0F0 /* Localizable.strings in Resources */,
 				6603A7B31BE1F34800DBD0F0 /* TestPDF_3Pages_NoPass.pdf in Resources */,
 				6603A7B41BE1F34800DBD0F0 /* TestPDF_3Pages_Pass(None-123)-PrintingAllowed.pdf in Resources */,

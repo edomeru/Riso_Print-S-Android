@@ -200,15 +200,15 @@ void mock_success_snmp_device_discovery()
     snmp_device_get_name_fake.return_val = [self.testPrinterDetails.name UTF8String];
     
     // SUT
-    /*[sharedSNMPManager searchForPrinter:@"192.168.1.1"];
+    [sharedSNMPManager searchForPrinter:@"192.168.1.1"];
     
     // Verification
-    [NSThread sleepForTimeInterval:1];
+    [NSThread sleepForTimeInterval:3];
     GHAssertEquals((int)snmp_manual_discovery_fake.call_count, 1, @"snmp_manual_discovery must be called.");
     GHAssertEquals((int)snmp_device_get_ip_address_fake.call_count, 2, @"snmp_device_get_ip_address must be called.");
     GHAssertEquals((int)snmp_device_get_name_fake.call_count, 1, @"snmp_device_get_name must be called.");
     GHAssertNoThrow([self.mockObserver verify], @"");
-    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];*/
+    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
 }
 
 - (void)testSearchForPrinter_Broadcast
@@ -298,7 +298,7 @@ void mock_success_snmp_device_discovery()
     [sharedSNMPManager searchForAvailablePrinters];
     
     // Verification
-    [NSThread sleepForTimeInterval:1];
+    [NSThread sleepForTimeInterval:2];
     GHAssertEquals((int)snmp_device_discovery_fake.call_count, 1, @"snmp_device_discovery must be called.");
     GHAssertEquals((int)snmp_device_get_ip_address_fake.call_count, 2, @"snmp_device_get_ip_address must be called.");
     GHAssertEquals((int)snmp_device_get_name_fake.call_count, 1, @"snmp_device_get_name must be called.");

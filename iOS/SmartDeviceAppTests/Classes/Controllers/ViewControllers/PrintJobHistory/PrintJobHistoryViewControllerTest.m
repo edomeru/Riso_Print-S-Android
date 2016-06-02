@@ -553,6 +553,7 @@ const NSUInteger TEST_NUM_JOBS[TEST_NUM_PRINTERS] = {8, 5, 10, 1, 4, 6, 3, 7};
     GHAssertNotNil(groupWithDelete, @"");
     GHAssertEqualObjects(groupWithDelete, testIndexPath, @"");
     
+    [controller setValue:originalGroupsView forKey:@"groupsView"];
     [mockGroupsView stopMocking];
     [mockGroupCell stopMocking];
     
