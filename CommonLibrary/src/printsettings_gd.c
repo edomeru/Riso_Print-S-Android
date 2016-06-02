@@ -81,7 +81,7 @@ typedef enum
     kPjlCommandCount
 } kPjlCommand;
 
-const static char *printsetting_names[kPrintSettingsCount] =
+/*const static char *printsetting_names[kPrintSettingsCount] =
 {
     "colorMode",
     "orientation",
@@ -104,7 +104,7 @@ const static char *printsetting_names[kPrintSettingsCount] =
     "loginId",
     "pinCode",
     "securePrint"
-};
+};*/
 
 const static char *color_mode[] =
 {
@@ -227,11 +227,11 @@ const static char *off_on[] =
     "ON"
 };
 
-const static char *false_true[] =
+/*const static char *false_true[] =
 {
     "FALSE",
     "TRUE"
-};
+};*/
 
 const static char **pjl_values[kPjlCommandCount] =
 {
