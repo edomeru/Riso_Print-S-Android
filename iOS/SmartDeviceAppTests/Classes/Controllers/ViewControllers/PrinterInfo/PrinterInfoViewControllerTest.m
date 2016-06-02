@@ -25,7 +25,7 @@
 - (UILabel*)printerName;
 - (UILabel*)ipAddress;
 - (UISegmentedControl*)portSelection;
-- (UISwitch*)defaultPrinterSwitch;
+- (UISegmentedControl*)defaultPrinterSelection;
 
 @end
 
@@ -102,7 +102,7 @@
     GHAssertNotNil([controllerValid printerName], @"");
     GHAssertNotNil([controllerValid ipAddress], @"");
     GHAssertNotNil([controllerValid portSelection], @"");
-    GHAssertNotNil([controllerValid defaultPrinterSwitch], @"");
+    GHAssertNotNil([controllerValid defaultPrinterSelection], @"");
 }
 
 - (void)test002_IBActionsBinding
@@ -117,11 +117,11 @@
     GHAssertTrue([ibActions count] == 1, @"");
     GHAssertTrue([ibActions containsObject:@"selectPortAction:"], @"");
     
-    ibActions = [[controllerValid defaultPrinterSwitch] actionsForTarget:controllerValid
+    ibActions = [[controllerValid defaultPrinterSelection] actionsForTarget:controllerValid
                                                          forControlEvent:UIControlEventValueChanged];
     GHAssertNotNil(ibActions, @"");
     GHAssertTrue([ibActions count] == 1, @"");
-    GHAssertTrue([ibActions containsObject:@"defautltPrinterSwitchAction:"], @"");
+    GHAssertTrue([ibActions containsObject:@"defaultPrinterSelectionAction:"], @"");
 }
 
 - (void)test003_DisplayValidPrinter

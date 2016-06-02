@@ -10,11 +10,9 @@
 #import "SettingsViewController.h"
 
 @interface SettingsViewController (Testing)
-- (UITextField *) cardId;
+- (UITextField *)loginId;
 - (UIButton *) mainMenuButton;
 - (UIAlertView *)errorAlert;
-
-- (void) cardIDDidEndEditing:(NSString *)inputString;
 @end
 
 @interface SettingsViewControllerTest : GHTestCase { }
@@ -50,7 +48,7 @@
     [self performUIViewBindingTest:controller];
 }
 
-- (void)test003_cardIDDidEndEditing
+- (void)test003_textFieldDidEndEditing
 {
     UIStoryboard *storyboard;
     SettingsViewController *controller;
@@ -60,21 +58,11 @@
     [self performUIViewBindingTest:controller];
     
     NSString *validID = @"ValidID";
-    [controller cardId].text = validID;
-    [controller cardIDDidEndEditing:validID];
+    [controller loginId].text = validID;
+    [controller textFieldDidEndEditing:controller.loginId];
     
-    NSString *savedSetting = [[NSUserDefaults standardUserDefaults] objectForKey:@"SDA_CardReaderID"];
+    NSString *savedSetting = [[NSUserDefaults standardUserDefaults] objectForKey:@"LoginID"];
     GHAssertEqualStrings(savedSetting, validID, @"");
-    
-     NSString *invalidID = @"invalid ID$";
-    [controller cardId].text = invalidID;
-    
-    [controller cardIDDidEndEditing:invalidID];
-    savedSetting = [[NSUserDefaults standardUserDefaults] objectForKey:@"SDA_CardReaderID"];
-    GHAssertEqualStrings(savedSetting, validID, @"");
-    
-    GHAssertEqualStrings([controller cardId].text, validID, @"");
-    [[controller errorAlert] dismissWithClickedButtonIndex:0 animated:NO];
 }
 
 - (void)performUIViewBindingTest:(SettingsViewController *)controller
@@ -82,7 +70,7 @@
     [controller view];
     GHAssertNotNil(controller, @"");
     GHAssertNotNil(controller.view, @"");
-    GHAssertNotNil([controller cardId], @"");
+    GHAssertNotNil([controller loginId], @"");
     GHAssertNotNil([controller mainMenuButton], @"");
 }
 @end
