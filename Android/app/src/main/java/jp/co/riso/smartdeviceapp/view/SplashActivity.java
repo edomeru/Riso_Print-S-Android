@@ -108,6 +108,13 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             }
         } else {
             mDatabaseInitialized = true; //initialized if splash activity is not task root
+
+            // Fix for BTS19972: set content view splash activity layout when PDF is opened while user
+            // has not yet agreed to the license agreement
+            SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs",MODE_PRIVATE);
+            if (!preferences.getBoolean("licenseAgreementDone", false)){
+                setContentView(R.layout.activity_splash);
+            }
             
             if (getIntent() != null) {
                 String action = getIntent().getAction();
