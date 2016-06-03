@@ -108,6 +108,11 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     private Uri mIntentData;
     private InputStream mInputStream;
 
+    // BTS ID#20039: This flag controls if page index should reset to 1 on PDF
+    // initialization. Currently only reset after allowing storage permission to
+    // prevent setting to page zero when there is already a PDF file
+    private boolean shouldResetToFirstPageOnInitialize = false;
+
     @Override
     public int getViewLayout() {
         return R.layout.fragment_printpreview;
@@ -617,6 +622,12 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             switch (status) {
                 case PDFFileManager.PDF_OK:
                     setPrintPreviewViewDisplayed(getView(), true);
+
+                    if(shouldResetToFirstPageOnInitialize) {
+                        shouldResetToFirstPageOnInitialize = false;
+                        mPrintPreviewView.setCurrentPage(0);
+                        onIndexChanged(0);
+                    }
                     break;
                 default:
                     String message = getPdfErrorMessage(status);
@@ -768,6 +779,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         // permission was granted, run PDF initializations
                         initializePdfManagerAndRunAsync();
+                        shouldResetToFirstPageOnInitialize = true;
                     } else {
                         // permission was denied check if Print Settings is open
                         MainActivity activity = (MainActivity) getActivity();
