@@ -761,11 +761,11 @@ static CXAlertView *__cx_alert_current_view;
 	desiredSize.width=desiredSize.width-20;
 
 	UIFont *fnt=[self fontForButtonType:button.type];
-    //2015-11-23: a-link modification to resolve warning in 3rd-party library
+	//2015-11-23: a-link modification to resolve warning in 3rd-party library
 	//CGFloat btht=[button.title sizeWithFont:fnt constrainedToSize:desiredSize lineBreakMode:BT_LBM].height;
 	CGRect rect = [button.title boundingRectWithSize:desiredSize options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName:fnt} context:nil];
-    CGFloat btht = ceilf(rect.size.height);
-    
+	CGFloat btht = ceilf(rect.size.height);
+
 	return btht+22;
 }
 
