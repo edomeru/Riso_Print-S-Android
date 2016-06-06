@@ -25,7 +25,7 @@
 - (UILabel*)printerName;
 - (UILabel*)ipAddress;
 - (UISegmentedControl*)portSelection;
-- (UISwitch*)defaultPrinterSwitch;
+- (UISegmentedControl*)defaultPrinterSelection;
 
 @end
 
@@ -102,7 +102,7 @@
     GHAssertNotNil([controllerValid printerName], @"");
     GHAssertNotNil([controllerValid ipAddress], @"");
     GHAssertNotNil([controllerValid portSelection], @"");
-    GHAssertNotNil([controllerValid defaultPrinterSwitch], @"");
+    GHAssertNotNil([controllerValid defaultPrinterSelection], @"");
 }
 
 - (void)test002_IBActionsBinding
@@ -117,11 +117,11 @@
     GHAssertTrue([ibActions count] == 1, @"");
     GHAssertTrue([ibActions containsObject:@"selectPortAction:"], @"");
     
-    ibActions = [[controllerValid defaultPrinterSwitch] actionsForTarget:controllerValid
+    ibActions = [[controllerValid defaultPrinterSelection] actionsForTarget:controllerValid
                                                          forControlEvent:UIControlEventValueChanged];
     GHAssertNotNil(ibActions, @"");
     GHAssertTrue([ibActions count] == 1, @"");
-    GHAssertTrue([ibActions containsObject:@"defautltPrinterSwitchAction:"], @"");
+    GHAssertTrue([ibActions containsObject:@"defaultPrinterSelectionAction:"], @"");
 }
 
 - (void)test003_DisplayValidPrinter
@@ -157,7 +157,7 @@
     pd1.name = VALID_PRINTER_NAME;
     pd1.ip = VALID_PRINTER_IP;
     pd1.port = [NSNumber numberWithInt:1];
-    pd1.enBooklet = YES;
+    pd1.enBookletFinishing = YES;
     pd1.enStaple = NO;
     pd1.enFinisher23Holes = YES;
     pd1.enFinisher24Holes = NO;
@@ -174,7 +174,7 @@
     //pd2.name should be nil
     pd2.ip = INVALID_PRINTER_IP;
     pd2.port = [NSNumber numberWithInt:0];
-    pd2.enBooklet = YES;
+    pd2.enBookletFinishing = YES;
     pd2.enStaple = YES;
     pd2.enFinisher23Holes = NO;
     pd2.enFinisher24Holes = YES;

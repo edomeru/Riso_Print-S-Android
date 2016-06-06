@@ -50,7 +50,9 @@
     [self.alertView invalidateLayout];
 }
 
-- (NSUInteger)supportedInterfaceOrientations
+//2015-11-23: a-link modification to resolve warning in 3rd-party library
+//- (NSUInteger)supportedInterfaceOrientations
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskAll;
 }

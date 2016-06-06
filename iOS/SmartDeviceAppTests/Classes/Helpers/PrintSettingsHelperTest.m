@@ -62,7 +62,7 @@
                             [NSNumber numberWithInt:9999],
                             [NSNumber numberWithInt:3],
                             [NSNumber numberWithInt:13],
-                            [NSNumber numberWithInt:3],
+                            [NSNumber numberWithInt:2],
                             [NSNumber numberWithInt:7],
                             [NSNumber numberWithInt:5],
                             [NSNumber numberWithInt:3],
@@ -172,7 +172,7 @@
     
     for(NSString *key in expectedKeys)
     {
-        [self.previewSetting setValue:[NSNumber numberWithInt:abs(arc4random() %[[numValues objectForKey:key] intValue])]  forKey:key];
+        [self.previewSetting setValue:[NSNumber numberWithInt:arc4random() %[[numValues objectForKey:key] intValue]]  forKey:key];
     }
     
     for(NSString *key in expectedKeys)
@@ -189,7 +189,7 @@
     
     for(NSString *key in expectedKeys)
     {
-        [self.previewSetting setValue:[NSNumber numberWithInt:abs(arc4random() %[[numValues objectForKey:key] intValue])]  forKey:key];
+        [self.previewSetting setValue:[NSNumber numberWithInt:(arc4random() %[[numValues objectForKey:key] intValue])]  forKey:key];
     }
     
     GHAssertEquals((int)[observedKeys count], 0, @"no observed keys");
@@ -200,7 +200,7 @@
     PrintSetting *printSetting = (PrintSetting*)[DatabaseManager addObject:E_PRINTSETTING];
     for(NSString *key in expectedKeys)
     {
-        [printSetting setValue:[NSNumber numberWithInt:abs(arc4random() %[[numValues objectForKey:key] intValue])] forKey:key];
+        [printSetting setValue:[NSNumber numberWithInt:(arc4random() %[[numValues objectForKey:key] intValue])] forKey:key];
     }
     
      return printSetting;

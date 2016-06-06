@@ -8,13 +8,10 @@
 
 #import "TestAppDelegate.h"
 
-extern void __gcov_flush();
-
 @implementation TestAppDelegate
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    __gcov_flush();
     [super applicationWillTerminate:application];
 }
 

@@ -25,7 +25,7 @@
  * from background.
  * Used to determine open-in from background.
  */
-@property (nonatomic) BOOL isFromBackground;
+@property (nonatomic) BOOL isOpenInHandled;
 @property (nonatomic) UIBackgroundTaskIdentifier bgTask;
 
 @end
@@ -35,8 +35,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    self.isFromBackground = NO;
     
+    self.isOpenInHandled = NO;
     NSURL *url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
     if (url == nil)
     {
@@ -45,8 +45,12 @@
     }
     else
     {
+#if PREVIEW_DEBUG_MODE
+        NSLog(@"Open-In process in didFinishLaunchingWithOptions");
+#endif
         [[PDFFileManager sharedManager] setFileAvailableForLoad:YES];
         [[PDFFileManager sharedManager] setFileURL:url];
+        self.isOpenInHandled = YES;
     }
     return YES;
 }
@@ -54,14 +58,36 @@
 /*If Open-in, this method will be called */
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    if (self.isFromBackground)
+    /*IOS-9-001 Support Open-in from Slide Over panel
+      Solution for bug where in openURL is called again when performing open-in from slide over panel
+      Bug reference: http://www.openradar.me/22896662
+      During open-in the file to be opened is placed by the system in the App inbox and the url received is the path of the file in the App inbox. The file is then moved to the App Documents directory
+      In second call of openURL the file does not exist in the App inbox anymore since it is already moved in Documents in the first call.
+      To catch this, check if file does not exist in inbox and if url is the same as the url processed in the first call
+      Do not process if meets condition to be able retain the current file in the app*/
+    if(![[NSFileManager defaultManager] fileExistsAtPath:[url path]] && [[[[PDFFileManager sharedManager] fileURL] path] isEqual:[url path]])
     {
+#if PREVIEW_DEBUG_MODE
+        NSLog(@"Open-In openURL: url does not exist but is same as previous url");
+#endif
+        return YES;
+    }
+    
+    /*IOS-9-001 Support Open-in from Slide Over panel
+      To handle open-in fronm Slide-Over panel (available only in iPad models with iOS9), we must process file even if it's not from background since Slide-Over does not put the app to the background, but only to inactive state
+       Instead check if the open-in is already previously handled by other part of the app such as from the launch (didFinishLaunchingWithOptions)*/
+    if (!self.isOpenInHandled)
+    {
+#if PREVIEW_DEBUG_MODE
+        NSLog(@"Open-In process in openURL");
+#endif
         [[PDFFileManager sharedManager] setFileAvailableForLoad:YES];
         [[PDFFileManager sharedManager] setFileURL:url];
         
         // Reset view controllers when loading a new PDF
         UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:STORYBOARD_NAME bundle:[NSBundle mainBundle]];
         self.window.rootViewController = [mainStoryBoard instantiateInitialViewController];
+        self.isOpenInHandled = YES;
     }
     return YES;
 }
@@ -70,6 +96,9 @@
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    
+    /*IOS-9-001 Support Open-in from Slide Over panel. Reset the is open-in handled flag when the app will become inactive because when app is inactive, there is a posibility that it will be activated via open-in*/
+    self.isOpenInHandled = NO;
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
@@ -91,7 +120,6 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-    self.isFromBackground = YES;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application

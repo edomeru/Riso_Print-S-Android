@@ -58,6 +58,13 @@
  */
 @property (strong, nonatomic) NSIndexPath* jobWithDelete;
 
+#pragma mark - UI State Flags
+
+/**
+ * The flag that tracks if swipe left of cell that is already in delete state occurred
+ */
+@property (assign, nonatomic) BOOL reswipeLeftOccured;
+
 #pragma mark - Data Properties
 
 /** 
@@ -168,6 +175,7 @@
     
     // clear tracker for the delete button
     self.jobWithDelete = nil;
+    self.reswipeLeftOccured = NO;
     
     return cell;
 }
@@ -278,7 +286,10 @@
     
     // check if this is the same job
     if ((self.jobWithDelete != nil) && (self.jobWithDelete.row == jobIndexPath.row))
+    {
+        self.reswipeLeftOccured = YES;
         return;
+    }
     
     // check first if there are other groups with a delete button
     if ([self.delegate shouldPutDeleteJobButton:self.tag])
@@ -292,16 +303,23 @@
     }
 }
 
-- (void)removeDeleteButton
+- (BOOL)removeDeleteButton
 {
 #if DEBUG_LOG_PRINT_JOB_GROUP_VIEW
     NSLog(@"[INFO][PrintJobCell] canceling delete button for item=%ld", (long)self.jobWithDelete.row);
 #endif
+    if(self.reswipeLeftOccured)
+    {
+        self.reswipeLeftOccured = NO;//toggle flag
+        return NO;
+    }
 
     PrintJobItemCell* jobCell = (PrintJobItemCell*)[self.printJobsView cellForRowAtIndexPath:self.jobWithDelete];
     [jobCell markForDeletion:NO];
     
     self.jobWithDelete = nil;
+    
+    return YES;
 }
 
 - (void)colorHeader

@@ -17,18 +17,20 @@
 -(UIButton *)cancelBtn;
 -(UIButton *)okBtn;
 
+//expose private methods
+-(void) setLicenseAgreement:(BOOL) doesAgree;
 
 @end
 
 @interface LicenseAgreementViewControllerTest : GHTestCase
 {
     UIStoryboard* storyboard;
-    LegalViewController* controller;
+    LicenseAgreementViewController* controller;
 }
 
 @end
 
-@implementation LegalViewControllerTest
+@implementation LicenseAgreementViewControllerTest
 
 #pragma mark - Setup/TearDown Methods
 
@@ -44,7 +46,7 @@
     storyboard = [UIStoryboard storyboardWithName:storyboardTitle bundle:nil];
     GHAssertNotNil(storyboard, @"unable to retrieve storyboard file %@", storyboardTitle);
     
-    NSString* controllerName = @"LicenseAgreementViewController";
+    NSString* controllerName = @"LicenceAgreementViewController";
     controller = [storyboard instantiateViewControllerWithIdentifier:controllerName];
     GHAssertNotNil(controller, @"unable to instantiate controller (%@)", controllerName);
     GHAssertNotNil(controller.view, @"");
@@ -93,7 +95,7 @@
     GHAssertTrue([ibActions count]  == 1, @"");
     GHAssertTrue([ibActions containsObject:@"okAction:"], @"");
     
-    UIButton* cancelButton = [controller okBtn];
+    UIButton* cancelButton = [controller cancelBtn];
     ibActions = [cancelButton actionsForTarget:controller
                            forControlEvent:UIControlEventTouchUpInside];
     GHAssertNotNil(ibActions, @"");
@@ -107,11 +109,11 @@
     GHTestLog(@"# CHECK: LicenseAgreement state. #");
     
     [controller setLicenseAgreement:NO];
-    GHAssertTrue([controller hasConfirmedToLicenseAgreement]  == NO, @"");
+    GHAssertTrue([LicenseAgreementViewController hasConfirmedToLicenseAgreement]  == NO, @"");
     
     [controller setLicenseAgreement:YES];
-    GHAssertTrue([controller hasConfirmedToLicenseAgreement] , @"");
+    GHAssertTrue([LicenseAgreementViewController hasConfirmedToLicenseAgreement] , @"");
 }
 
-
+#pragma clang diagnostic pop
 @end
