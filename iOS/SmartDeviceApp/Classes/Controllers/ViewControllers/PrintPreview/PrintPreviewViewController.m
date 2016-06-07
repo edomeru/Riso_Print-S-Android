@@ -334,7 +334,7 @@
     //if phone and landscape, adjust the position of the page label and page scroll
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && self.pageNavArea.isHidden == NO)
     {
-        if(UIInterfaceOrientationIsPortrait(self.interfaceOrientation) ==UIInterfaceOrientationPortrait)
+        if(UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]) ==UIInterfaceOrientationPortrait)
         {
             self.pageNavAreaHeightConstraint.constant = 50;
             self.pageScrollLeftConstraint.constant = 20;
@@ -794,7 +794,7 @@
 
         CGFloat aspectRatio = size.width / size.height;
         CGSize pageRenderSize = [[UIScreen mainScreen] bounds].size;
-        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation) == YES)
+        if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]) == YES)
         {
             pageRenderSize = CGSizeMake(pageRenderSize.height, pageRenderSize.width);
         }

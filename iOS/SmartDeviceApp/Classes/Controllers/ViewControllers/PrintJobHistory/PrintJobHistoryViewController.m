@@ -152,13 +152,12 @@
     [self.groupsViewLayout invalidateColumnAssignments];
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
-        [self.groupsViewLayout setupForOrientation:self.interfaceOrientation
-                                         forDevice:UIUserInterfaceIdiomPad];
+        [self.groupsViewLayout setupForOrientation:[[UIApplication sharedApplication] statusBarOrientation]                                         forDevice:UIUserInterfaceIdiomPad];
         [self.emptyLabel setFont:[UIFont systemFontOfSize:25.0]];
     }
     else
     {
-        [self.groupsViewLayout setupForOrientation:self.interfaceOrientation
+        [self.groupsViewLayout setupForOrientation:[[UIApplication sharedApplication] statusBarOrientation]
                                          forDevice:UIUserInterfaceIdiomPhone];
         [self.emptyLabel setFont:[UIFont systemFontOfSize:20.0]];
     }

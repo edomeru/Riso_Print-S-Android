@@ -2855,7 +2855,7 @@
 				GCC_PREFIX_HEADER = "SmartDeviceApp/RISOSmartPrint-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "SmartDeviceApp/RISOSmartPrint-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../CommonLibrary/3rdParty/net-snmp/lib/ios\"",
@@ -2880,7 +2880,7 @@
 				GCC_PREFIX_HEADER = "SmartDeviceApp/RISOSmartPrint-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "SmartDeviceApp/RISOSmartPrint-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../CommonLibrary/3rdParty/net-snmp/lib/ios\"",
@@ -2970,7 +2970,7 @@
 					"$(PROJECT_DIR)/SmartDeviceAppTests/OCMock",
 				);
 				INFOPLIST_FILE = "SmartDeviceAppTests/RISOSmartPrintTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3020,7 +3020,7 @@
 					"$(PROJECT_DIR)/SmartDeviceAppTests/OCMock",
 				);
 				INFOPLIST_FILE = "SmartDeviceAppTests/RISOSmartPrintTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
