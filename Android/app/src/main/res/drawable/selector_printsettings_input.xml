@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/border_printsettings_input"
+    <item android:drawable="@drawable/printsettings_input"
           android:state_activated="true" />
-    <item android:drawable="@drawable/border_printsettings_input_disabled" />
+    <item android:drawable="@drawable/printsettings_input_disabled" />
 </selector>
