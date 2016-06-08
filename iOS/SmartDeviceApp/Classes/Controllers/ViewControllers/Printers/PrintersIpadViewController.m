@@ -210,6 +210,15 @@
     [cell.portSelection setSelectedSegmentIndex:[printer.port integerValue]];
     [cell.portSelection setEnabled:[printer.enabled_raw boolValue] forSegmentAtIndex:1];
     
+    if (![printer.enabled_raw boolValue])
+    {
+        cell.portSelection.userInteractionEnabled = NO;
+    }
+    else
+    {
+        cell.portSelection.userInteractionEnabled = YES;
+    }
+    
     cell.portSelection.tag = indexPath.row;
     cell.deleteButton.tag = indexPath.row;
     cell.deleteButton.delegate = nil;
