@@ -85,7 +85,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mAddPrinterView.mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
         mAddPrinterView.mSaveButton = view.findViewById(R.id.img_save_button);
         mAddPrinterView.mProgressBar = view.findViewById(R.id.actionbar_progressbar);
-        
+
         mAddPrinterView.mIpAddress.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.theme_light_1));
         mAddPrinterView.mIpAddress.setOnEditorActionListener(this);
         mAddPrinterView.mSaveButton.setOnClickListener(this);

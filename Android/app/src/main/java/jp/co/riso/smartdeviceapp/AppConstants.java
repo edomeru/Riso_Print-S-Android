@@ -63,7 +63,12 @@ public class AppConstants {
     public static final String PREF_KEY_AUTH_PIN_CODE = "pref_key_pin_code";
     /// Default PIN code
     public static final String PREF_DEFAULT_AUTH_PIN_CODE = "";
-    
+
+    /// SNMP Community Name
+    public static final String PREF_KEY_SNMP_COMMUNITY_NAME = "pref_key_snmp_community_name";
+    // Default SNMP Community Name
+    public static final String PREF_DEFAULT_SNMP_COMMUNITY_NAME = "public";
+
     /// Maximum printer count
     public static final int CONST_MAX_PRINTER_COUNT = 10;
     /// Ping timeout in milliseconds
@@ -87,9 +92,6 @@ public class AppConstants {
     public static final String PRINTER_MODEL_GD = "GD";
     public static final String PRINTER_MODEL_FW = "FW";
     public static final String PRINTER_MODEL_IS = "IS";
-
-    // Community Name
-    public static final String DEFAULT_COMMUNITY_NAME = "public";
 
     //Array of printer types
     public static final String[] PRINTER_TYPES = {PRINTER_MODEL_IS, PRINTER_MODEL_GD, PRINTER_MODEL_FW};

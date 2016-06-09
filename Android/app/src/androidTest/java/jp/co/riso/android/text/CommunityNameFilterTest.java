@@ -6,6 +6,7 @@ import android.widget.EditText;
 
 import junit.framework.TestCase;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
 public class CommunityNameFilterTest extends TestCase {
@@ -31,8 +32,8 @@ public class CommunityNameFilterTest extends TestCase {
     public void testFilter() {
         EditText editText = new EditText(SmartDeviceApp.getAppContext());
         editText.setFilters(new InputFilter[] {
-                new InputFilter.LengthFilter(8),
-                new CommunityNameFilter()
+                new InputFilter.LengthFilter(AppConstants.CONST_COMMUNITY_NAME_LIMIT),
+                new SnmpCommunityNameFilter()
         });
         editText.setText(INVALID_INPUT_TEXT);
         assertTrue(editText.getText().toString().isEmpty());
