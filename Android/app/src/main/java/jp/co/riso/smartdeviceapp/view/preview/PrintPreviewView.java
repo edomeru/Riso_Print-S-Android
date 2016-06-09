@@ -8,20 +8,6 @@
 
 package jp.co.riso.smartdeviceapp.view.preview;
 
-import java.lang.ref.WeakReference;
-import java.util.Locale;
-
-import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.android.util.ImageUtils;
-import jp.co.riso.android.util.Logger;
-import jp.co.riso.smartprint.R;
-import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ColorMode;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -34,20 +20,34 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.LruCache;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.widget.FrameLayout;
+
+import java.lang.ref.WeakReference;
+import java.util.Locale;
+
 import fi.harism.curl.CurlPage;
 import fi.harism.curl.CurlView;
+import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.ImageUtils;
+import jp.co.riso.android.util.Logger;
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ColorMode;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
+import jp.co.riso.smartprint.R;
 
 /**
  * @class PrintPreviewView
@@ -412,7 +412,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @param page New CurlView index
      */
     public void setCurrentPage(int page) {
-        mCurlView.setCurrentIndex(page);
+        if(page != getCurrentPage()) {
+            mCurlView.setCurrentIndex(page);
+            setZoomLevel(mZoomLevel);
+        }
     }
     
     /**
