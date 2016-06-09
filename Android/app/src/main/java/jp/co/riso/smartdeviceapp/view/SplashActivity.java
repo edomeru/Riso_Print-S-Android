@@ -81,53 +81,29 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         if (savedInstanceState != null) {
             mDatabaseInitialized = savedInstanceState.getBoolean(KEY_DB_INITIALIZED, mDatabaseInitialized);
         }
-        
-        if (isTaskRoot()) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
-            boolean dbIsOK = prefs.contains(AppConstants.PREF_KEY_DB_VERSION);
-            
-            if (!mDatabaseInitialized) {
-                if (!dbIsOK) {
-                    if (mInitTask == null) {
-                        mInitTask = new DBInitTask();
-                        mInitTask.execute();
-                    }
-                } else {
-                    mDatabaseInitialized = true;
-                }
-            }
-            
-            setContentView(R.layout.activity_splash);
-            
-            if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
-                if (!AppConstants.APP_SHOW_SPLASH && dbIsOK) {
-                    runMainActivity();
-                } else {
-                    mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);                    
-                }
-            }
-        } else {
-            mDatabaseInitialized = true; //initialized if splash activity is not task root
 
-            // Fix for BTS19972: set content view splash activity layout when PDF is opened while user
-            // has not yet agreed to the license agreement
-            SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs",MODE_PRIVATE);
-            if (!preferences.getBoolean("licenseAgreementDone", false)){
-                setContentView(R.layout.activity_splash);
-            }
-            
-            if (getIntent() != null) {
-                String action = getIntent().getAction();
-                
-                if (Intent.ACTION_VIEW.equals(action) ||
-                        Intent.ACTION_SEND.equals(action)) {
-                    runMainActivity();
-                    return;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
+        boolean dbIsOK = prefs.contains(AppConstants.PREF_KEY_DB_VERSION);
+
+        if (!mDatabaseInitialized) {
+            if (!dbIsOK) {
+                if (mInitTask == null) {
+                    mInitTask = new DBInitTask();
+                    mInitTask.execute();
                 }
+            } else {
+                mDatabaseInitialized = true;
             }
-            
-            // Do nothing if no action
-            finish();
+        }
+
+        setContentView(R.layout.activity_splash);
+
+        if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
+            if (!AppConstants.APP_SHOW_SPLASH && dbIsOK) {
+                runMainActivity();
+            } else {
+                mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
+            }
         }
     }
     
@@ -179,11 +155,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
      */
     private void runMainActivity() {
         Intent launchIntent;
-        
+
         SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs",MODE_PRIVATE);
         if (preferences.getBoolean("licenseAgreementDone",false)){
             //if user has already agreed to the license agreement
-            launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);   
+            launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         } else {
             //if user has not yet agreed to the license agreement
             TextView textView = (TextView) this.findViewById(R.id.actionBarTitle);
