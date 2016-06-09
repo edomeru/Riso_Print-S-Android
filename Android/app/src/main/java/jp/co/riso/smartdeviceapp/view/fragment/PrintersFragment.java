@@ -8,6 +8,20 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.os.Message;
+import android.os.Parcelable;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 
 import jp.co.riso.android.dialog.ConfirmDialogFragment;
@@ -29,19 +43,6 @@ import jp.co.riso.smartdeviceapp.view.printers.PrintersListView;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView;
 import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView.PrintersViewCallback;
 import jp.co.riso.smartprint.R;
-import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.os.Message;
-import android.os.Parcelable;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 /**
  * @class PrintersFragment
@@ -52,6 +53,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         PrinterArrayAdapterInterface {
     public static final String FRAGMENT_TAG_PRINTER_SEARCH = "fragment_printer_search";
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
+    public static final String FRAGMENT_TAG_PRINTER_SEARCH_SETTINGS = "fragment_tag_printer_search_settings";
     public final static String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
     public static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     public static final int MSG_ADD_NEW_PRINTER = 0x1;
@@ -141,6 +143,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         textView.setText(R.string.ids_lbl_printers);
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_add_button, R.drawable.selector_actionbar_add_printer, this);
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_search_button, R.drawable.selector_actionbar_printersearch, this);
+        addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_printer_search_settings_button, R.drawable.selector_actionbar_printersearchsettings, this);
         addActionMenuButton(view);
     }
     
@@ -219,6 +222,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         setDefaultSettingSelected(false);
         setIconState(R.id.menu_id_action_button, false);
         setIconState(R.id.menu_id_action_search_button, false);
+        setIconState(R.id.menu_id_printer_search_settings_button, false);
         setIconState(R.id.menu_id_action_add_button, false);
     }
     
@@ -255,7 +259,19 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         AddPrinterFragment fragment = new AddPrinterFragment();
         switchToFragment(fragment, FRAGMENT_TAG_ADD_PRINTER);
     }
-    
+
+    /**
+     * @brief Displays the Printer Search Settings Screen.
+     */
+    private void displaySearchPrinterFragment() {
+        if (isTablet()) {
+            setIconState(R.id.menu_id_printer_search_settings_button, true);
+        }
+
+        PrinterSearchSettingsFragment fragment = new PrinterSearchSettingsFragment();
+        switchToFragment(fragment, FRAGMENT_TAG_PRINTER_SEARCH_SETTINGS);
+    }
+
     /**
      * @brief Displays the Printer Info Screen.
      * 
@@ -418,6 +434,18 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     }
                 }
                 break;
+            case R.id.menu_id_printer_search_settings_button:
+                if (getActivity() != null && getActivity() instanceof MainActivity) {
+
+                    MainActivity activity = (MainActivity) getActivity();
+
+                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                        mPauseableHandler.sendEmptyMessage(R.id.menu_id_printer_search_settings_button);
+                    } else {
+                        activity.closeDrawers();
+                    }
+                }
+                break;
             case R.id.menu_id_action_button:
                 if (getActivity() != null && getActivity() instanceof MainActivity) {
                     mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
@@ -557,6 +585,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             case R.id.menu_id_action_add_button:
                 mPauseableHandler.pause();
                 displayAddPrinterFragment();
+                return;
+            case R.id.menu_id_printer_search_settings_button:
+                mPauseableHandler.pause();
+                displaySearchPrinterFragment();
                 return;
             case R.id.menu_id_action_button:
                 mPauseableHandler.pause();

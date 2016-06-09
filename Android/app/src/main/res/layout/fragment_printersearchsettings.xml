@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/SDALinearLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <include layout="@layout/actionbar_sub" />
+
+    <LinearLayout
+        android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/printersearchsettings_horizontal_padding"
+        android:paddingRight="@dimen/printersearchsettings_horizontal_padding"
+        android:background="@color/theme_light_3"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/printersearchsettings_item_space"
+            android:layout_marginLeft="@dimen/printersearchsettings_row_left_margin"
+            android:gravity="left"
+            android:textColor="@color/theme_dark_1"
+            android:text="@string/ids_lbl_snmp_community_name" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/inputSnmpCommunityName"
+            style="@style/BorderedEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/printersearchsettings_item_space"
+            android:layout_marginLeft="@dimen/printersearchsettings_row_left_margin"
+            android:background="@color/theme_light_1"
+            android:gravity="left"
+            android:singleLine="true"
+            android:hint="@string/ids_lbl_snmp_community_name"
+            android:textColor="@color/theme_dark_1" >
+        </EditText>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/printersearchsettings_item_space"
+            android:layout_marginLeft="@dimen/printersearchsettings_row_left_margin"
+            android:gravity="left"
+            android:textColor="@color/theme_dark_3"
+            android:text="@string/ids_lbl_valid_community_name" >
+        </TextView>
+    </LinearLayout>
+
+</jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>

@@ -103,4 +103,8 @@
     <dimen name="onboarding_logo_margin">32dp</dimen>
     <dimen name="onboarding_logo_padding_bottom">10dp</dimen>
 
+    <dimen name="printersearchsettings_horizontal_padding">15dp</dimen>
+    <dimen name="printersearchsettings_item_space">3dp</dimen>
+    <dimen name="printersearchsettings_row_left_margin">5dp</dimen>
+
 </resources>
