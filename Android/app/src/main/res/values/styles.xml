@@ -34,7 +34,7 @@
 　　　　    <item name="android:textAllCaps">false</item>
 　　　</style>
 
-	<style name="BorderedEditText" parent="@android:style/Widget.EditText">
+	<style name="SDAEditText" parent="@android:style/Widget.EditText">
 　　　         <item name="android:background">@drawable/selector_printsettings_input</item>
 　　　         <item name="android:gravity">center_vertical|center_horizontal</item>
 　　　         <item name="android:paddingBottom">@dimen/printsettings_input_padding_tb</item>
