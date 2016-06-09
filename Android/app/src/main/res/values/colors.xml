@@ -4,7 +4,8 @@
     <color name="bg_paper">#FFFFFF</color>
     
     <color name="theme_dark_1">#000000</color>
-    <color name="theme_dark_2">#242424</color> <!-- gray 4 -->
+    <color name="theme_dark_2">#242424</color> <!-- gray 5 -->
+    <color name="theme_dark_3">#464646</color> <!-- gray 4 -->
     
     <color name="theme_light_1">#FFFFFF</color>
     <color name="theme_light_2">#CDCDCD</color> <!-- gray 1 -->

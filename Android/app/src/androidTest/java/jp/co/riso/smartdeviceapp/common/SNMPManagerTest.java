@@ -32,7 +32,7 @@ public class SNMPManagerTest extends TestCase implements
 
         mSnmpManager = new SNMPManager();
         assertNotNull(mSnmpManager);
-        mSnmpManager.initializeSNMPManager(AppConstants.DEFAULT_COMMUNITY_NAME);
+        mSnmpManager.initializeSNMPManager(AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME);
         mOnEndDiscovery = false;
         mOnFoundDevice = false;
         testSetCallback_ValidCallback();

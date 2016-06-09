@@ -25,10 +25,9 @@
             android:layout_marginLeft="@dimen/printersearchsettings_row_left_margin"
             android:gravity="left"
             android:textColor="@color/theme_dark_1"
-            android:text="@string/ids_lbl_snmp_community_name" >
-        </TextView>
+            android:text="@string/ids_lbl_snmp_community_name" />
 
-        <EditText
+        <jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameEditText
             android:id="@+id/inputSnmpCommunityName"
             style="@style/BorderedEditText"
             android:layout_width="match_parent"
@@ -39,9 +38,7 @@
             android:background="@color/theme_light_1"
             android:gravity="left"
             android:singleLine="true"
-            android:hint="@string/ids_lbl_snmp_community_name"
-            android:textColor="@color/theme_dark_1" >
-        </EditText>
+            android:textColor="@color/theme_dark_1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -51,8 +48,7 @@
             android:layout_marginLeft="@dimen/printersearchsettings_row_left_margin"
             android:gravity="left"
             android:textColor="@color/theme_dark_3"
-            android:text="@string/ids_lbl_valid_community_name" >
-        </TextView>
+            android:text="@string/ids_lbl_valid_community_name" />
     </LinearLayout>
 
 </jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>
