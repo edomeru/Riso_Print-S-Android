@@ -8,8 +8,15 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import android.os.Bundle;
+import android.os.Message;
+import android.view.View;
+import android.widget.TextView;
+
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
@@ -19,7 +26,6 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.NetUtils;
-import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
@@ -32,11 +38,7 @@ import jp.co.riso.smartdeviceapp.model.Printer.PortSetting;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.os.Message;
-import android.view.View;
-import android.widget.TextView;
+import jp.co.riso.smartprint.R;
 
 /**
  * @class PrintSettingsFragment
@@ -47,7 +49,9 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     private static final String TAG_WAITING_DIALOG = "dialog_printing";
     private static final String TAG_MESSAGE_DIALOG = "dialog_message";
-    
+
+    private static final int PRINTJOB_SENT_PROGRESS_DIALOG_DELAY = 50; // To allow user to see 100% progress percentage, enforce a 50ms delay before closing the progress dialog after a successful print job
+
     private DirectPrintManager mDirectPrintManager = null;
     
     private static final int MSG_PRINT = 0;
@@ -316,7 +320,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // INTERFACE - DirectPrintCallback
     // ================================================================================
     @Override
-    public void onNotifyProgress(DirectPrintManager manager, int status, float progress) {
+    public void onNotifyProgress(DirectPrintManager manager, final int status, float progress) {
         if (NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
             switch (status) {
                 case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
@@ -324,13 +328,20 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 case DirectPrintManager.PRINT_STATUS_ERROR_FILE:
                 case DirectPrintManager.PRINT_STATUS_ERROR:
                 case DirectPrintManager.PRINT_STATUS_SENT:
-                    Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
-                    newMessage.arg1 = status;
-                    mPauseableHandler.sendMessage(newMessage);
+                    TimerTask timerTask = new TimerTask() {
+                        @Override
+                        public void run() {
+                            Message newMessage = Message.obtain(mPauseableHandler, MSG_PRINT);
+                            newMessage.arg1 = status;
+                            mPauseableHandler.sendMessage(newMessage);
+                        }
+                    };
+                    Timer timer = new Timer();
+                    timer.schedule(timerTask, PRINTJOB_SENT_PROGRESS_DIALOG_DELAY);
                     break;
                 case DirectPrintManager.PRINT_STATUS_SENDING:
                     if (mWaitingDialog != null) {
-                        String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, Math.min((progress + 1),100.0f));
+                        String msg = String.format(Locale.getDefault(), "%s %.2f%%", mPrintMsg, Math.min((progress),100.0f));
                         mWaitingDialog.setMessage(msg);
                     }
                     break;
