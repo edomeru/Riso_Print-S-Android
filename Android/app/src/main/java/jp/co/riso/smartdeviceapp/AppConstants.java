@@ -43,6 +43,8 @@ public class AppConstants {
     public static final int CONST_PIN_CODE_LIMIT = 8;
     /// Print Settings copies maximum length
     public static final int CONST_COPIES_LIMIT = 4;
+    /// Log-in ID maximum length
+    public static final int CONST_COMMUNITY_NAME_LIMIT = 32;
     
     /// Database version key for saving value to shared reference   
     public static final String PREF_KEY_DB_VERSION = "pref_db_version";
