@@ -8,7 +8,6 @@ INSERT INTO Printer (prn_id, prn_ip_address) VALUES (7, "192.168.2.4");
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (8, "Printer with a very long name specified for testing the ellipsis", "192.168.2.5"); 
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (9, "RISO Printer IPv6", "udp6:[2001::4:225:5cff:fe34:7c27%en0]"); 
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (10, "Printer number 10", "192.168.2.5");
-INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (10, "Printer number 10", "192.168.2.5");
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (11, "ORPHIS GD9630", "192.168.17.207");
 INSERT INTO Printer (prn_id, prn_name, prn_ip_address) VALUES (12, "ORPHIS FW5230", "192.168.17.209");
 
