@@ -155,10 +155,10 @@ public class PreviewTest extends AndroidTestCase {
     }
 
     public void testSort() {
-        assertEquals(0, Sort.PER_COPY.ordinal());
-        assertEquals(1, Sort.PER_PAGE.ordinal());
-        assertEquals(Sort.PER_COPY, Sort.valueOf("PER_COPY"));
+        assertEquals(0, Sort.PER_PAGE.ordinal());
+        assertEquals(1, Sort.PER_COPY.ordinal());
         assertEquals(Sort.PER_PAGE, Sort.valueOf("PER_PAGE"));
+        assertEquals(Sort.PER_COPY, Sort.valueOf("PER_COPY"));
     }
 
     public void testBookletFinish() {
