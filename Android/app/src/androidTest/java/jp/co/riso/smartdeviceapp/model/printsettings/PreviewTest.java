@@ -81,8 +81,8 @@ public class PreviewTest extends AndroidTestCase {
     public void testColorMode() {
         assertEquals(0, ColorMode.AUTO.ordinal());
         assertEquals(1, ColorMode.FULL_COLOR.ordinal());
-        assertEquals(2, ColorMode.DUAL_COLOR.ordinal());
-        assertEquals(3, ColorMode.MONOCHROME.ordinal());
+        assertEquals(2, ColorMode.MONOCHROME.ordinal());
+        assertEquals(3, ColorMode.DUAL_COLOR.ordinal());
         assertEquals(ColorMode.AUTO, ColorMode.valueOf("AUTO"));
         assertEquals(ColorMode.FULL_COLOR, ColorMode.valueOf("FULL_COLOR"));
         assertEquals(ColorMode.MONOCHROME, ColorMode.valueOf("MONOCHROME"));
@@ -155,10 +155,10 @@ public class PreviewTest extends AndroidTestCase {
     }
 
     public void testSort() {
-        assertEquals(0, Sort.PER_PAGE.ordinal());
-        assertEquals(1, Sort.PER_COPY.ordinal());
-        assertEquals(Sort.PER_PAGE, Sort.valueOf("PER_PAGE"));
+        assertEquals(0, Sort.PER_COPY.ordinal());
+        assertEquals(1, Sort.PER_PAGE.ordinal());
         assertEquals(Sort.PER_COPY, Sort.valueOf("PER_COPY"));
+        assertEquals(Sort.PER_PAGE, Sort.valueOf("PER_PAGE"));
     }
 
     public void testBookletFinish() {

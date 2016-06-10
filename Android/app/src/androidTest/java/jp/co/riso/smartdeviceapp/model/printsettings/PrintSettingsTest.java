@@ -398,7 +398,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testGetSort() {
-        assertEquals(Preview.Sort.PER_PAGE, mPrintSettings.getSort());
+        assertEquals(Preview.Sort.PER_COPY, mPrintSettings.getSort());
     }
 
     public void testIsBooklet() {
