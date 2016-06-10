@@ -139,8 +139,8 @@
 
                 type="list"
                 default="0" >
-                <option>ids_lbl_sort_percopy</option>
                 <option>ids_lbl_sort_perpage</option>
+                <option>ids_lbl_sort_percopy</option>
             </setting>
             <setting
                 name="booklet"
@@ -363,8 +363,8 @@
 
                 type="list"
                 default="0" >
-                <option>ids_lbl_sort_percopy</option>
                 <option>ids_lbl_sort_perpage</option>
+                <option>ids_lbl_sort_percopy</option>
             </setting>
             <setting
                 name="booklet"
@@ -587,8 +587,8 @@
 
                 type="list"
                 default="0" >
-                <option>ids_lbl_sort_percopy</option>
                 <option>ids_lbl_sort_perpage</option>
+                <option>ids_lbl_sort_percopy</option>
             </setting>
             <setting
                 name="booklet"
