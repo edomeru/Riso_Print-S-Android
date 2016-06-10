@@ -290,11 +290,7 @@ public class PrintSettings {
      * @retval MONOCHROME Gray scale color mode
      */
     public ColorMode getColorMode() {
-        int index = mSettingValues.get(TAG_COLOR_MODE);
-        if(mSettingMapKey != AppConstants.PRINTER_MODEL_FW && index == ColorMode.DUAL_COLOR.ordinal()){
-            index++;
-        }
-        return ColorMode.values()[index];
+        return ColorMode.values()[mSettingValues.get(TAG_COLOR_MODE)];
     }
     
     /**
@@ -336,11 +332,7 @@ public class PrintSettings {
      * @retval STATEMENT 140mm x 216mm
      */
     public PaperSize getPaperSize() {
-        int index = mSettingValues.get(TAG_PAPER_SIZE);
-        if(mSettingMapKey == AppConstants.PRINTER_MODEL_IS && (index == PaperSize.LEGAL13.ordinal() || index == PaperSize.LETTER.ordinal())){
-            index++;
-        }
-        return PaperSize.values()[index];
+        return PaperSize.values()[mSettingValues.get(TAG_PAPER_SIZE)];
     }
     
     /**
