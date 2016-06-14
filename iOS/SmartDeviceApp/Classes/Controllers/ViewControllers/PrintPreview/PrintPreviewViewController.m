@@ -553,6 +553,7 @@
     {
         [self.pageViewController setDoubleSided:NO];
     }
+    [self.pageViewController.view setUserInteractionEnabled:YES];
 }
 
 - (void)setupDisplayAspectRatio
