@@ -234,6 +234,7 @@
                 <option>ids_lbl_colormode_auto</option>
                 <option>ids_lbl_colormode_fullcolor</option>
                 <option>ids_lbl_colormode_black</option>
+                <option>ids_lbl_colormode_2color</option>
             </setting>
             <setting
                 name="orientation"
