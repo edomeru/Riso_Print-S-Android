@@ -114,14 +114,24 @@
         
         [self.portSelection setSelectedSegmentIndex:[self.printer.port integerValue]];
         [self.portSelection setEnabled:[self.printer.enabled_raw boolValue] forSegmentAtIndex:1];
+        if (![self.printer.enabled_raw boolValue])
+        {
+            self.portSelection.userInteractionEnabled = NO;
+        }
+        else
+        {
+            self.portSelection.userInteractionEnabled = YES;
+        }
         
         if(self.isDefaultPrinter == YES)
         {
             [self.defaultPrinterSelection setEnabled:NO forSegmentAtIndex:1];
+            self.defaultPrinterSelection.userInteractionEnabled = NO;
         }
         else
         {
             [self.defaultPrinterSelection setSelectedSegmentIndex:1];
+            self.defaultPrinterSelection.userInteractionEnabled = YES;
         }
     }
 }
@@ -152,6 +162,7 @@
         {
             self.isDefaultPrinter = true;
             [self.defaultPrinterSelection setEnabled:NO forSegmentAtIndex:1];
+            self.defaultPrinterSelection.userInteractionEnabled = NO;
         }
         else
         {
