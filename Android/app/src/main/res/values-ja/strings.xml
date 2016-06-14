@@ -42,7 +42,7 @@
     <string name="ids_lbl_choose_printer">プリンタを選択してください</string>
     <string name="ids_lbl_basic">基本</string>
     <string name="ids_lbl_colormode">カラーモード</string>
-    <string name="ids_lbl_colormode_auto">オート</string>
+    <string name="ids_lbl_colormode_auto">自動</string>
     <string name="ids_lbl_colormode_fullcolor">カラー</string>
     <string name="ids_lbl_colormode_black">白黒</string>
     <string name="ids_lbl_colormode_2color">2色</string>
@@ -80,7 +80,7 @@
     <string name="ids_lbl_papertype_cardij">ＩＪハガキ</string>
     <string name="ids_lbl_papertype_lwpaper">軽量紙</string>
     <string name="ids_lbl_inputtray">給紙トレイ選択</string>
-    <string name="ids_lbl_inputtray_auto">オート</string>
+    <string name="ids_lbl_inputtray_auto">自動</string>
     <string name="ids_lbl_inputtray_standard">給紙台</string>
     <string name="ids_lbl_inputtray_tray1">トレイ1</string>
     <string name="ids_lbl_inputtray_tray2">トレイ2</string>
@@ -121,7 +121,7 @@
     <string name="ids_lbl_punch_3holes">3穴</string>
     <string name="ids_lbl_punch_4holes">4穴</string>
     <string name="ids_lbl_outputtray">排紙先</string>
-    <string name="ids_lbl_outputtray_auto">オート</string>
+    <string name="ids_lbl_outputtray_auto">自動</string>
     <string name="ids_lbl_outputtray_facedown">フェイスダウン排紙トレイ</string>
     <string name="ids_lbl_outputtray_top">トップトレイ</string>
     <string name="ids_lbl_outputtray_stacking">スタックトレイ</string>
