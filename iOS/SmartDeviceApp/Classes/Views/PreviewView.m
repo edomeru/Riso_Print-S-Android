@@ -548,7 +548,8 @@
     if (panner.state == UIGestureRecognizerStateEnded)
     {
         self.position = position;
-        [self snap];
+        //20160624 - BTS 20133: Removed snap. This causes view to resize when panned after zooming and rotation
+        //[self snap];
     }
 }
 
