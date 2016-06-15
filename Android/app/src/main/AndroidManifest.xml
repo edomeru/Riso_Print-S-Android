@@ -13,7 +13,7 @@
         android:label="@string/ids_app_launcher_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="jp.co.riso.smartdeviceapp.view.SplashActivity"
+            android:name="jp.co.riso.smartdeviceapp.view.LauncherActivity"
             android:theme="@style/SplashTheme"
             android:configChanges="orientation|screenSize" >
             <intent-filter>
@@ -21,6 +21,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="jp.co.riso.smartdeviceapp.view.SplashActivity"
+            android:theme="@style/SplashTheme"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize" >
         </activity>
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.MainActivity" 
