@@ -180,7 +180,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        
+
         if (!isInEditMode()) {
             // Re-adjust the margin of the CurlView
             fitCurlView(l, t, r, b);
@@ -205,7 +205,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (mPtrIdx == INVALID_IDX) {
-                        if (mCurlView.isViewHit(ev.getX(), ev.getY())) {
+                        // BTS 20071: For two-page mode, since panning bounds already handles the limit,
+                        // no need to prevent panning when user touches gray area to align with iOS behavior
+                        // and prevent issues with viewHit calculation.
+                        if (mCurlView.isViewHit(ev.getX(), ev.getY()) || mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
                             mPtrIdx = ev.getActionIndex();
                             mPtrDownPos.set(ev.getX(), ev.getY());
                             mPtrLastPos.set(ev.getX(), ev.getY());
@@ -236,7 +239,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         mScaleDetector.onTouchEvent(ev);
-        
+
         if (!mScaleDetector.isInProgress() && ev.getPointerCount() == 1) {
             if (mZoomLevel == BASE_ZOOM_LEVEL) {
                 return mCurlView.dispatchTouchEvent(ev);
@@ -247,7 +250,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 return processTouchEvent(ev);
             }
         }
-        
+
         MotionEvent e = MotionEvent.obtain( SystemClock.uptimeMillis(),
                 SystemClock.uptimeMillis(), 
                 MotionEvent.ACTION_CANCEL, 
@@ -1636,4 +1639,3 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         }
     }
 }
- 
