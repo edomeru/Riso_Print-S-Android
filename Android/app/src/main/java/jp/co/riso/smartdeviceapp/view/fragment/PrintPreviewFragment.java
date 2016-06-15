@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.util.LruCache;
@@ -335,6 +336,21 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     initializePdfManagerAndRunAsync();
                 }
             } else if (mShouldDisplayExplanation) {
+                final MainActivity mainActivity = (MainActivity) getActivity();
+                final Handler handler = new Handler(Looper.getMainLooper());
+                final Runnable printSettingsDisposer = new Runnable() {
+                    @Override
+                    public void run() {
+                        showPrintSettingsButton(getView(), false);
+                        if(mainActivity.isDrawerOpen(Gravity.RIGHT)) {
+                            mainActivity.closeDrawers();
+                        }
+                    }
+                };
+                // Call with a no-delay handler since not calling inside
+                // a main looper handler does not close the drawer
+                handler.postDelayed(printSettingsDisposer, 0);
+
                 // Display an explanation to the user that the permission is needed
                 if (mConfirmDialogFragment == null) {
                     final String message = getActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed);
@@ -755,7 +771,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         fragment.setPrintSettings(mPrintSettings);
                         fragment.setFragmentForPrinting(true);
                         fragment.setTargetFragment(this, 0);
-                        
+
                         activity.openDrawer(Gravity.RIGHT, isTablet());
                     } else {
                         activity.closeDrawers();
