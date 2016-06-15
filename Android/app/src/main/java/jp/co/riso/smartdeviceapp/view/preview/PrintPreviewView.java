@@ -205,7 +205,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (mPtrIdx == INVALID_IDX) {
-                        if (mCurlView.isViewHit(ev.getX(), ev.getY())) {
+                        // BTS 20071: For two-page mode, since panning bounds already handles the limit,
+                        // no need to prevent panning when user touches gray area to align with iOS behavior
+                        // and prevent issues with viewHit calculation.
+                        if (mCurlView.isViewHit(ev.getX(), ev.getY()) || mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
                             mPtrIdx = ev.getActionIndex();
                             mPtrDownPos.set(ev.getX(), ev.getY());
                             mPtrLastPos.set(ev.getX(), ev.getY());
