@@ -87,7 +87,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     private static final int DEFAULT_KEY_INPUT_TRAY = 0;
     private static final int DEFAULT_KEY_IMPOSITION = 0;
     private static final int DEFAULT_KEY_IMPOSITION_ORDER = 0;
-    private static final int DEFAULT_KEY_SORT = 0;
+    private static final int DEFAULT_KEY_SORT = 1;
     private static final int DEFAULT_KEY_BOOKLET = 0;
     private static final int DEFAULT_KEY_BOOKLET_FINISH = 0;
     private static final int DEFAULT_KEY_BOOKLET_LAYOUT = 0;
