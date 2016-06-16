@@ -350,6 +350,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 // Call with a no-delay handler since not calling inside
                 // a main looper handler does not close the drawer
                 handler.postDelayed(printSettingsDisposer, 0);
+                mPdfManager.clearSandboxPDFName(getActivity());
 
                 // Display an explanation to the user that the permission is needed
                 if (mConfirmDialogFragment == null) {
@@ -634,7 +635,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public void onFileInitialized(int status) {
         if (!isDetached() && getView() != null) {
             setPrintPreviewViewDisplayed(getView(), false);
-            
+
             switch (status) {
                 case PDFFileManager.PDF_OK:
                     setPrintPreviewViewDisplayed(getView(), true);
@@ -737,7 +738,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             case R.id.view_id_print_button:
                 mPauseableHandler.pause();
                 PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
-                
+
                 if (printerManager.getDefaultPrinter() == PrinterManager.EMPTY_ID) {
                     String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
                     String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
@@ -752,9 +753,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     View v = (View) msg.obj;
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                         FragmentManager fm = getFragmentManager();
-                        
+
                         setIconState(v.getId(), true);
-                        
+
                         // Always make new
                         PrintSettingsFragment fragment = null;// (PrintSettingsFragment)
                                                               // fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
@@ -764,7 +765,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                             ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
                             ft.commit();
                         }
-                        
+
                         fragment.setPrinterId(mPrinterId);
                         fragment.setPdfPath(mPdfManager.getPath());
                         fragment.setPDFisLandscape(mPdfManager.isPDFLandscape());
