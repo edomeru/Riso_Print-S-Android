@@ -234,7 +234,7 @@ public class PrintSettings {
                 value = 2;
             }
 
-            if(key.equals(TAG_SORT)) {
+            if(key.equals(TAG_SORT) && mSettingMapKey == AppConstants.PRINTER_MODEL_IS) {
                 value ^= 1;
             }
 
