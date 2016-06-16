@@ -20,6 +20,8 @@ import jp.co.riso.smartdeviceapp.model.PrintJob;
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartprint.R;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
@@ -682,7 +684,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     // ================================================================================
     // INTERFACE - View.onTouchListener
     // ================================================================================
-   
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction();

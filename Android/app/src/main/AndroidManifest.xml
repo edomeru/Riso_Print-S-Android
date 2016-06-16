@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="jp.co.riso.smartprint" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+
     <application
         android:name="jp.co.riso.smartdeviceapp.SmartDeviceApp"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/ids_app_launcher_name"
         android:theme="@style/AppTheme" >
@@ -29,7 +30,7 @@
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.PDFHandlerActivity"
             android:launchMode="singleTask">
-            <intent-filter>
+            <intent-filter tools:ignore="GoogleAppIndexingWarning">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />

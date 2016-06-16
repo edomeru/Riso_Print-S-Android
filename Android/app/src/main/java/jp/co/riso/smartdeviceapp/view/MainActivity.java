@@ -9,6 +9,7 @@
 package jp.co.riso.smartdeviceapp.view;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -168,7 +169,8 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             Logger.logStopTime(this, this.getClass(), "AppLaunch");
         }
     }
-    
+
+    @SuppressLint("RtlHardcoded")
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -201,6 +203,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         mHandler.resume();
     }
 
+    @SuppressLint("RtlHardcoded")
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -273,6 +276,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 || message.what == MSG_CLEAR_ICON_STATES);
     }
 
+    @SuppressLint("RtlHardcoded")
     @Override
     public void processMessage(Message msg) {
         BaseFragment fragment = ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout));
@@ -349,7 +353,8 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 mMainLayout.setTranslationX(moveFactor);
             }
         }
-        
+
+        @SuppressLint("RtlHardcoded")
         @Override
         public void onDrawerStateChanged(int newState) {
             

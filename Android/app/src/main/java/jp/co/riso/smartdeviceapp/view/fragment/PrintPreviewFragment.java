@@ -9,6 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -339,6 +340,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 final MainActivity mainActivity = (MainActivity) getActivity();
                 final Handler handler = new Handler(Looper.getMainLooper());
                 final Runnable printSettingsDisposer = new Runnable() {
+                    @SuppressLint("RtlHardcoded")
                     @Override
                     public void run() {
                         showPrintSettingsButton(getView(), false);
@@ -730,7 +732,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public boolean storeMessage(Message msg) {
         return false;
     }
-    
+
     @Override
     public void processMessage(Message msg) {
         switch (msg.what) {
