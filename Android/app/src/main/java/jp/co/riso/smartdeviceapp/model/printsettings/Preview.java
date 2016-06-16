@@ -226,8 +226,8 @@ public class Preview {
      * @brief Sort print settings that defines how the print output will be sorted.
      */
     public enum Sort {
-        PER_PAGE, ///< To be grouped according to page
-        PER_COPY ///< To be sorted according to copy
+        PER_COPY, ///< To be sorted according to copy
+        PER_PAGE ///< To be grouped according to page
     }
     
     /**
