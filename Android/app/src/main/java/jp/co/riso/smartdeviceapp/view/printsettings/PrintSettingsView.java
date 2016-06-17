@@ -734,7 +734,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
             
             if (view instanceof EditText) {
-                ((EditText) view).setText(Integer.toString(value));
+                ((EditText) view).setText(String.format("%d", value));
             }
             
             if (view instanceof Switch) {
@@ -1907,11 +1907,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (v.getInputType() == InputType.TYPE_CLASS_NUMBER) {
             String value = v.getText().toString();
             if (value.isEmpty()) {
-                v.setText(Integer.toString(1));
+                v.setText("1");
             } else {
                 int val = Integer.parseInt(value);
                 if (val <= 0) {
-                    v.setText(Integer.toString(1));
+                    v.setText("1");
                 }
             }
         }

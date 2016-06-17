@@ -1,4 +1,5 @@
 <ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/viewFlipper">
@@ -103,7 +104,8 @@
                 android:background="@color/theme_color_1"
                 android:textColor="@color/theme_light_1"
                 android:layout_margin="@dimen/onboarding_button_margin"
-                android:padding="@dimen/onboarding_button_padding"/>
+                android:padding="@dimen/onboarding_button_padding"
+                tools:ignore="ButtonStyle"/>
 
             <Button
                 android:id="@+id/startButton"
@@ -116,7 +118,8 @@
                 android:background="@color/theme_color_1"
                 android:textColor="@color/theme_light_1"
                 android:layout_margin="@dimen/onboarding_button_margin"
-                android:padding="@dimen/onboarding_button_padding"/>
+                android:padding="@dimen/onboarding_button_padding"
+                tools:ignore="ButtonStyle"/>
         </LinearLayout>
     </RelativeLayout>
 

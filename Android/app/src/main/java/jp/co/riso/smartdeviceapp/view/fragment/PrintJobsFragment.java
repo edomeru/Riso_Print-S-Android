@@ -23,6 +23,8 @@ import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupList
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener;
 import jp.co.riso.smartprint.R;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -124,6 +126,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     // INTERFACE - View.onTouchListener
     // ================================================================================
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent e) {
         if (v.getId() == R.id.printJobContainer) {

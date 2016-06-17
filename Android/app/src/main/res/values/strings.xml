@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- THIS IS A GENERATED FILE , ANY CHANGES MADE TO THIS FILE WILL BE ERASED  -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Android default values -->
     <string name="default_textview">&#8230;</string>
@@ -36,7 +36,7 @@
     <string name="ids_lbl_owner_name">Owner</string>
     <string name="ids_lbl_authentication">Authentification</string>
     <string name="ids_lbl_print_settings">Print Settings</string>
-    <string name="ids_lbl_page_displayed" formatted="false">Page %d / %d</string>
+    <string name="ids_lbl_page_displayed" formatted="false" tools:ignore="StringFormatInvalid">Page %d / %d</string>
     <string name="ids_lbl_print">Print</string>
     <string name="ids_lbl_printer">Printer</string>
     <string name="ids_lbl_choose_printer">Choose printer</string>
