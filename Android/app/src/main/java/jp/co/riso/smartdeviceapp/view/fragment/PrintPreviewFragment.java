@@ -654,6 +654,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                     break;
             }
+
+            PDFFileManager.cleanupCachedPdf(getActivity());
         }
     }
     
