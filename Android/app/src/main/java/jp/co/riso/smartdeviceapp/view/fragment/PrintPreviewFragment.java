@@ -143,6 +143,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 } catch (FileNotFoundException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+                } catch (SecurityException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
             }
         }

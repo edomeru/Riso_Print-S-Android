@@ -484,7 +484,7 @@ public class PDFFileManager {
     public static Uri createTemporaryPdfFromContentUri(Context context, Uri contentUri) {
         if (contentUri != null) {
             try {
-                InputStream test = context.getContentResolver().openInputStream(contentUri);
+                InputStream contentInputStream = context.getContentResolver().openInputStream(contentUri);
 
                 File file = new File(context.getCacheDir(), AppConstants.CONST_TEMP_PDF_PATH);
                 if (file.exists()) {
@@ -495,7 +495,7 @@ public class PDFFileManager {
                 int bufferSize = 1024;
                 byte[] buffer = new byte[bufferSize];
                 int len = 0;
-                while ((len = test.read(buffer)) != -1) {
+                while ((len = contentInputStream.read(buffer)) != -1) {
                     output.write(buffer, 0, len);
                 }
 
