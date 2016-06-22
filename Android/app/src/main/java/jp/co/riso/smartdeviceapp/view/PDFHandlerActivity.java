@@ -29,7 +29,7 @@ public class PDFHandlerActivity extends Activity {
             intent.setClass(this, SplashActivity.class);
             String action = intent.getAction();
 
-            if (action.equals(Intent.ACTION_VIEW)) {
+            if (action != null && action.equals(Intent.ACTION_VIEW)) {
                 handleViewIntentData(intent);
             }
         } else {
@@ -43,10 +43,12 @@ public class PDFHandlerActivity extends Activity {
     private void handleViewIntentData(Intent intent) {
         Uri intentData = intent.getData();
 
-        if(intentData.getScheme().equals(FILE_SCHEME)) {
-            intent.setData(intentData);
-        } else { // load the PDF input stream from this activity only in order to handle special "content" URIs that cannot be opened by other activities (such as Gmail attachment URI)
-            intent.setData(PDFFileManager.createTemporaryPdfFromContentUri(this, intent.getData()));
+        if(intentData != null) {
+            if(intentData.getScheme().equals(FILE_SCHEME)) {
+                intent.setData(intentData);
+            } else { // load the PDF input stream from this activity only in order to handle special "content" URIs that cannot be opened by other activities (such as Gmail attachment URI)
+                intent.setData(PDFFileManager.createTemporaryPdfFromContentUri(this, intent.getData()));
+            }
         }
     }
 }
