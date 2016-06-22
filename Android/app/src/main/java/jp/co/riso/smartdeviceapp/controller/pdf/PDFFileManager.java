@@ -483,15 +483,18 @@ public class PDFFileManager {
      */
     public static Uri createTemporaryPdfFromContentUri(Context context, Uri contentUri) {
         if (contentUri != null) {
+            FileOutputStream output = null;
+            InputStream contentInputStream = null;
+
             try {
-                InputStream contentInputStream = context.getContentResolver().openInputStream(contentUri);
+                contentInputStream = context.getContentResolver().openInputStream(contentUri);
 
                 File file = new File(context.getCacheDir(), AppConstants.CONST_TEMP_PDF_PATH);
                 if (file.exists()) {
                     file.delete();
                 }
 
-                FileOutputStream output = new FileOutputStream(file);
+                output = new FileOutputStream(file);
                 int bufferSize = 1024;
                 byte[] buffer = new byte[bufferSize];
                 int len = 0;
@@ -502,6 +505,25 @@ public class PDFFileManager {
                 return Uri.fromFile(file);
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                // Separate try-catch to allow closing of "output" variable if contentInputStream throws an exception when closing
+                try {
+                    if (contentInputStream != null) {
+                        contentInputStream.close();
+                    }
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (output != null) {
+                        output.close();
+                    }
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
 
