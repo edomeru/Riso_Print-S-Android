@@ -10,26 +10,45 @@ package jp.co.riso.smartdeviceapp.view;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
-import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 
 public class PDFHandlerActivity extends Activity {
+
+    public static final String FILE_SCHEME = "file";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = AppUtils.createActivityIntent(this, SplashActivity.class);
-        Intent currentIntent = getIntent();
+        Intent intent = getIntent();
 
-        if(currentIntent != null) {
-            intent.setData(getIntent().getData());
-            intent.setAction(getIntent().getAction());
+        if(intent != null) {
+            intent.setClass(this, SplashActivity.class);
+            String action = intent.getAction();
+
+            if (action != null && action.equals(Intent.ACTION_VIEW)) {
+                handleViewIntentData(intent);
+            }
+        } else {
+            intent = new Intent(this, SplashActivity.class);
         }
 
         startActivity(intent);
-
         finish();
+    }
+
+    private void handleViewIntentData(Intent intent) {
+        Uri intentData = intent.getData();
+
+        if(intentData != null) {
+            if(intentData.getScheme().equals(FILE_SCHEME)) {
+                intent.setData(intentData);
+            } else { // load the PDF input stream from this activity only in order to handle special "content" URIs that cannot be opened by other activities (such as Gmail attachment URI)
+                intent.setData(PDFFileManager.createTemporaryPdfFromContentUri(this, intent.getData()));
+            }
+        }
     }
 }

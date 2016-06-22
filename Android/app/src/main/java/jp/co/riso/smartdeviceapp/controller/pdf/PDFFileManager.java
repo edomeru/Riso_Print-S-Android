@@ -8,7 +8,20 @@
 
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+
+import com.radaee.pdf.Document;
+import com.radaee.pdf.Matrix;
+import com.radaee.pdf.Page;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -16,16 +29,6 @@ import java.lang.ref.WeakReference;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-
-import com.radaee.pdf.Document;
-import com.radaee.pdf.Matrix;
-import com.radaee.pdf.Page;
 
 /**
  * @class PDFFileManager
@@ -467,6 +470,74 @@ public class PDFFileManager {
         }
         
         return bitmap;
+    }
+
+    /**
+     * Creates a temporary PDF file for content URIs (this does not
+     * require storage permission since it is within the app)
+     *
+     * This handles issues with some content URIs that only allow
+     * the handler activity to access it. (such as Gmail)
+     *
+     * @param context
+     */
+    public static Uri createTemporaryPdfFromContentUri(Context context, Uri contentUri) {
+        if (contentUri != null) {
+            FileOutputStream output = null;
+            InputStream contentInputStream = null;
+
+            try {
+                contentInputStream = context.getContentResolver().openInputStream(contentUri);
+
+                File file = new File(context.getCacheDir(), AppConstants.CONST_TEMP_PDF_PATH);
+                if (file.exists()) {
+                    file.delete();
+                }
+
+                output = new FileOutputStream(file);
+                int bufferSize = 1024;
+                byte[] buffer = new byte[bufferSize];
+                int len = 0;
+                while ((len = contentInputStream.read(buffer)) != -1) {
+                    output.write(buffer, 0, len);
+                }
+
+                return Uri.fromFile(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                // Separate try-catch to allow closing of "output" variable if contentInputStream throws an exception when closing
+                try {
+                    if (contentInputStream != null) {
+                        contentInputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (output != null) {
+                        output.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return contentUri;
+    }
+
+    /**
+     * Cleans up the temporary PDF file created for non-"file" intent URIs
+     *
+     * @param context
+     */
+    public static void cleanupCachedPdf(Context context) {
+        File file = new File(context.getCacheDir(), AppConstants.CONST_TEMP_PDF_PATH);
+        if (file.exists()) {
+            file.delete();
+        }
     }
     
     // ================================================================================
