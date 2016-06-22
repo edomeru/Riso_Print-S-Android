@@ -141,10 +141,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     ContentResolver c = this.getActivity().getContentResolver();
                     mInputStream = c.openInputStream(mIntentData);
                 } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (SecurityException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }

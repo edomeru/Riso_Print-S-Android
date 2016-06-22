@@ -512,7 +512,6 @@ public class PDFFileManager {
                         contentInputStream.close();
                     }
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
@@ -521,7 +520,6 @@ public class PDFFileManager {
                         output.close();
                     }
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
