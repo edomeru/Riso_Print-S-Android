@@ -414,9 +414,15 @@ void *do_capability_check(void *parameter)
                 continue;
             }
         }
-        
-        snmp_context_device_add(context, device);
-        snmp_call_add_callback(context, device);
+        //for non broadcast search, snmpv3 is being used to initially search device which does not use the community name string
+        // but uses snmp v2 to get the device name which uses the community name string
+        // if community name used for search did not match community name of device, the result is the device is found but was not able to get the device name
+        // to resolve this, do not add printer if the device name is not obtained
+        if (strlen(snmp_device_get_name(device)) > 0)
+        {
+            snmp_context_device_add(context, device);
+            snmp_call_add_callback(context, device);
+        }
     }
     
     return 0;
