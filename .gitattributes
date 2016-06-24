@@ -1,0 +1,15 @@
+# set default behavior in case collaborators don't have core.autocrlf set
+* text=auto
+
+# iOS-specific file attributes #
+*.m diff=objc
+*.h diff=objc
+
+# Android-specific file attributes #
+
+*.gitattributes export-ignore
+*.gitignore export-ignore
+Android/app/src/androidTest/ export-ignore
+
+
+
