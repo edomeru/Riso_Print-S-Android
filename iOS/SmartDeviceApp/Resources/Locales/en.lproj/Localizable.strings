@@ -156,6 +156,6 @@
 "IDS_LBL_PAPERSIZE_16K" = "16K";
 "IDS_LBL_PAPERSIZE_LEGAL14" = "Legal 8.5x14";
 "IDS_LBL_SNMP_COMMUNITY_NAME" = "SNMP Community Name";
-"IDS_LBL_VALID_COMMUNITY_NAME" = "Valid characters are:\n\ta-zA-Z0-9,./:;@[¥]^_";
+"IDS_LBL_VALID_COMMUNITY_NAME" = "Valid characters are:\n\ta-zA-Z0-9,./:;@[\\]^_";
 "IDS_ERR_MSG_INVALID_COMMUNITY_NAME" = "Please enter a SNMP community name with valid characters";
 

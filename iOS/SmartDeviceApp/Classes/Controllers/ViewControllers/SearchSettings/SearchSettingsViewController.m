@@ -137,7 +137,8 @@
     
     if (textField.text.length > 0)
     {
-        [AppSettingsHelper saveSNMPCommunityName:textField.text];
+        NSString *stringToSave = (textField.text.length > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN) ? [textField.text substringToIndex:SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN - 1] : textField.text;
+        [AppSettingsHelper saveSNMPCommunityName:stringToSave];
     }
     
     return YES;
@@ -148,36 +149,37 @@
 {
     if (textField.text.length > 0)
     {
-        [AppSettingsHelper saveSNMPCommunityName:textField.text];
+        NSString *stringToSave = (textField.text.length > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN) ? [textField.text substringToIndex:SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN - 1] : textField.text;
+        [AppSettingsHelper saveSNMPCommunityName:stringToSave];
     }
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    NSMutableCharacterSet *validCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
-    [validCharacters addCharactersInString:@",./:;@[¥]^_"];
+    NSString *numbers = @"0123456789";
+    NSString *alphabetsLowerCase = @"abcdefghijklmnopqrstuvwxyz";
+    NSString *symbols = @",./:;@[\\]^_";
+    NSString *validCharacterString = [NSString stringWithFormat: @"%@%@%@%@", numbers, alphabetsLowerCase, [alphabetsLowerCase uppercaseString], symbols];
+    
+    NSCharacterSet *validCharactersSet = [NSCharacterSet characterSetWithCharactersInString:validCharacterString];
     
     //ignore if:
     //-input has invalid characters
     //-input will exceed max chars
-    if ([string stringByTrimmingCharactersInSet:validCharacters].length > 0)
+    if ([string stringByTrimmingCharactersInSet:validCharactersSet].length > 0)
     {
         //show error if pasted string has invalid characters
-        //considered as paste if replacement string lengt is greater than 1 character
+        //considered as paste if replacement string length is greater than 1 character
         //if 1 chracter only, it is considered as keyboard input
         if (string.length > 1)
         {
             [AlertHelper displayResult:kAlertResultErrCommunityNameInvalidPaste
                              withTitle:kAlertTitleSearchSettings
-                           withDetails:nil];
+                             withDetails:nil];
         }
         return NO;
     }
-    if ((textField.text.length + string.length) > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN && string.length > 0)
-    {
-        return NO;
-    }
-    
+
     return YES;
 }
 
