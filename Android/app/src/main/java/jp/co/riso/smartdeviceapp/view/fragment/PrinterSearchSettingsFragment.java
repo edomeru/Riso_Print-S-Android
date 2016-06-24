@@ -120,7 +120,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
     // ================================================================================
 
     /**
-     * @brief Close the Add Printer screen
+     * @brief Close the Search Settings Printer screen
      */
     private void closeScreen() {
 

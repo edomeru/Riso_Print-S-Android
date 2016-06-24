@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class SnmpCommunityNameFilter implements InputFilter {
 
-    private static final String VALID_CHARACTERS = "^[a-zA-Z0-9,./:;@[\\\\]\\^_]*$";
+    private static final String VALID_CHARACTERS = "^[a-zA-Z0-9,./:;@\\[\\\\\\]\\^_]*$";
     private static final Pattern validPattern = Pattern.compile(VALID_CHARACTERS);
 
     @Override

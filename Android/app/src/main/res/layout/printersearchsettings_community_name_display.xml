@@ -30,4 +30,11 @@
         android:gravity="left"
         android:textColor="@color/theme_dark_1" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/printersearchsettings_community_name_divider_top_margin"
+        android:layout_marginBottom="@dimen/printersearchsettings_community_name_divider_bottom_margin"
+        android:background="@android:color/white"/>
+
 </LinearLayout>

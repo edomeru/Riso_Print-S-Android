@@ -389,7 +389,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     }
     
     // ================================================================================
-    // INTENAL Classes
+    // INTERNAL Classes
     // ================================================================================
     
     /**
