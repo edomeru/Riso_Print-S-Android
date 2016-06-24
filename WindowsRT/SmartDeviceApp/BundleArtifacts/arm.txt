@@ -1,7 +1,0 @@
-MainPackage=C:\work\Source\RISO_PRINT-S_src_winrt_1.0.7.3\WindowsRT\SmartDeviceApp\bin\ARM\Release\SmartDeviceApp_1.0.7.4_Bundle\SmartDeviceApp_1.0.7.4_ARM.appx
-SymbolPackage=C:\work\Source\RISO_PRINT-S_src_winrt_1.0.7.3\WindowsRT\SmartDeviceApp\AppPackages\SmartDeviceApp_1.0.7.4_Test\SmartDeviceApp_1.0.7.4_ARM.appxsym
-ResourcePack=C:\work\Source\RISO_PRINT-S_src_winrt_1.0.7.3\WindowsRT\SmartDeviceApp\bin\ARM\Release\SmartDeviceApp_1.0.7.4_Bundle\SmartDeviceApp_1.0.7.4_language-en.appx
-ResourcePack=C:\work\Source\RISO_PRINT-S_src_winrt_1.0.7.3\WindowsRT\SmartDeviceApp\bin\ARM\Release\SmartDeviceApp_1.0.7.4_Bundle\SmartDeviceApp_1.0.7.4_language-fr.appx
-ResourcePack=C:\work\Source\RISO_PRINT-S_src_winrt_1.0.7.3\WindowsRT\SmartDeviceApp\bin\ARM\Release\SmartDeviceApp_1.0.7.4_Bundle\SmartDeviceApp_1.0.7.4_language-ja.appx
-ResourcePack=C:\work\Source\RISO_PRINT-S_src_winrt_1.0.7.3\WindowsRT\SmartDeviceApp\bin\ARM\Release\SmartDeviceApp_1.0.7.4_Bundle\SmartDeviceApp_1.0.7.4_scale-140.appx
-ResourcePack=C:\work\Source\RISO_PRINT-S_src_winrt_1.0.7.3\WindowsRT\SmartDeviceApp\bin\ARM\Release\SmartDeviceApp_1.0.7.4_Bundle\SmartDeviceApp_1.0.7.4_scale-180.appx

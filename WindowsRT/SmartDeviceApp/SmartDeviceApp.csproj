@@ -14,8 +14,8 @@
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>SmartDeviceApp_StoreKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>EACDE4C2B40AFBC3EBFD75848411DBDA796FC36F</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>SmartDeviceApp_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>25FE49D5978C4079E724693A2BD02BB1D69F3A30</PackageCertificateThumbprint>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
@@ -392,6 +392,7 @@
     </None>
     <Content Include="Assets\en-US\help.html" />
     <Content Include="Assets\en-US\legal.html" />
+    <Content Include="Assets\fr-FR\license.html" />
     <Content Include="Assets\fr-FR\riso_logo.png" />
     <Content Include="Assets\fr-FR\title.png" />
     <Content Include="Assets\fr-FR\W000.png" />
@@ -420,6 +421,7 @@
     <Content Include="Assets\ja-JP\I010.png" />
     <Content Include="Assets\ja-JP\I011.png" />
     <Content Include="Assets\ja-JP\legal.html" />
+    <Content Include="Assets\ja-JP\license.html" />
     <Content Include="Assets\ja-JP\riso_logo.png" />
     <Content Include="Assets\ja-JP\title.png" />
     <Content Include="Assets\ja-JP\W000.png" />
@@ -444,7 +446,6 @@
     <PRIResource Include="Resources\Strings\fr-FR\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
-    <None Include="SmartDeviceApp_StoreKey.pfx" />
     <None Include="SmartDeviceApp_TemporaryKey.pfx" />
     <PRIResource Include="Resources\Strings\ja-JP\Resources.resw">
       <SubType>Designer</SubType>
@@ -455,7 +456,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\printsettings.xml" />
-    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Resources\Dummy\SampleData.sql" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-100.png" />
     <Content Include="Resources\Images\img_btn_add_printer_normal.scale-140.png" />
