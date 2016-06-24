@@ -29,7 +29,7 @@
 
         <jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameEditText
             android:id="@+id/inputSnmpCommunityName"
-            style="@style/BorderedEditText"
+            style="@style/SDAEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
