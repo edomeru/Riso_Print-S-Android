@@ -165,7 +165,7 @@
     <string name="ids_lbl_start">Démarrer</string>
     <string name="ids_lbl_search_printers_settings">Chercher Réglages</string>
     <string name="ids_lbl_snmp_community_name">Nom de Communauté SNMP</string>
-    <string name="ids_lbl_valid_community_name">Caractères valides:\n\ta-zA-Z0-9,./:;@[¥]^_</string>
+    <string name="ids_lbl_valid_community_name">Caractères valides:\n\ta-zA-Z0-9,./:;@[\\]^_</string>
     <string name="ids_err_msg_invalid_community_name">Veuillez entrer une Nom de Communauté SNMP valide</string>
 
 </resources>

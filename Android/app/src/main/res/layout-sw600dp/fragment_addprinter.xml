@@ -9,6 +9,10 @@
 
     <include layout="@layout/actionbar_sub" />
 
+    <jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameDisplayText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
