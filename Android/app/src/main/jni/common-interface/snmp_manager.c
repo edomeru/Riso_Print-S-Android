@@ -28,6 +28,8 @@ Java_jp_co_riso_smartdeviceapp_common_SNMPManager_initializeSNMPManager(JNIEnv *
     
     // Set context reference to java object
     (*env)->SetLongField(env, object, snmp_context_field_id, (jlong)context);
+
+    (*env)->ReleaseStringUTFChars(env, community_name, native_community_name);
 }
 
 JNIEXPORT void
