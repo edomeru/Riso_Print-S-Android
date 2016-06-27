@@ -10,8 +10,10 @@ package jp.co.riso.smartdeviceapp.controller.printer;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -24,6 +26,7 @@ import java.util.TimerTask;
 
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
@@ -430,7 +433,7 @@ public class PrinterManager implements SNMPManagerCallback {
     public void startPrinterSearch() {
         mIsSearching = true;
         mIsCancelled = false;
-        mSNMPManager.initializeSNMPManager();
+        mSNMPManager.initializeSNMPManager(getSnmpCommunityNameFromSharedPrefs());
         mSNMPManager.deviceDiscovery();
     }
     
@@ -449,7 +452,7 @@ public class PrinterManager implements SNMPManagerCallback {
         
         mIsSearching = true;
         mIsCancelled = false;
-        mSNMPManager.initializeSNMPManager();
+        mSNMPManager.initializeSNMPManager(getSnmpCommunityNameFromSharedPrefs());
         mSNMPManager.manualDiscovery(ipAddress);
     }
     
@@ -712,6 +715,12 @@ public class PrinterManager implements SNMPManagerCallback {
             mDatabaseManager.close();
         }
         return ret;
+    }
+
+    public String getSnmpCommunityNameFromSharedPrefs() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+
+        return sharedPreferences.getString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME);
     }
     
     /**

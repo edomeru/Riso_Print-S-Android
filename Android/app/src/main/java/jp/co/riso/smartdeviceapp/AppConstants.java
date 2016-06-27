@@ -43,6 +43,8 @@ public class AppConstants {
     public static final int CONST_PIN_CODE_LIMIT = 8;
     /// Print Settings copies maximum length
     public static final int CONST_COPIES_LIMIT = 4;
+    /// Log-in ID maximum length
+    public static final int CONST_COMMUNITY_NAME_LIMIT = 32;
     
     /// Database version key for saving value to shared reference   
     public static final String PREF_KEY_DB_VERSION = "pref_db_version";
@@ -61,7 +63,12 @@ public class AppConstants {
     public static final String PREF_KEY_AUTH_PIN_CODE = "pref_key_pin_code";
     /// Default PIN code
     public static final String PREF_DEFAULT_AUTH_PIN_CODE = "";
-    
+
+    /// SNMP Community Name
+    public static final String PREF_KEY_SNMP_COMMUNITY_NAME = "pref_key_snmp_community_name";
+    // Default SNMP Community Name
+    public static final String PREF_DEFAULT_SNMP_COMMUNITY_NAME = "public";
+
     /// Maximum printer count
     public static final int CONST_MAX_PRINTER_COUNT = 10;
     /// Ping timeout in milliseconds

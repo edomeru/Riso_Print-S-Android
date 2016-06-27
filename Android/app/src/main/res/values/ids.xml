@@ -4,6 +4,7 @@
     <item name="menu_id_action_search_button" type="id"/>
     <item name="menu_id_action_add_button" type="id"/>
     <item name="menu_id_action_print_settings_button" type="id"/>
+    <item name="menu_id_printer_search_settings_button" type="id"/>
     <item name="menu_id_back_button" type="id"/>
 
     <item name="view_id_print_button" type="id"/>

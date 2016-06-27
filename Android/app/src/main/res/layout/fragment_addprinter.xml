@@ -4,15 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/theme_light_3">
 
     <include layout="@layout/actionbar_sub" />
+
+    <jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameDisplayText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:id="@+id/rootView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/theme_light_3"
         android:orientation="vertical" >
 
         <LinearLayout

@@ -4,13 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:splitMotionEvents="false" >
+    android:splitMotionEvents="false"
+    android:background="@color/theme_light_3" >
 
     <include layout="@layout/actionbar_sub" />
 
+    <jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameDisplayText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <FrameLayout
         android:id="@+id/rootView"
-        android:background="@color/theme_light_3"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 

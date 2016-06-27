@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 
 public class SNMPManagerTest extends TestCase implements
@@ -31,7 +32,7 @@ public class SNMPManagerTest extends TestCase implements
 
         mSnmpManager = new SNMPManager();
         assertNotNull(mSnmpManager);
-        mSnmpManager.initializeSNMPManager();
+        mSnmpManager.initializeSNMPManager(AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME);
         mOnEndDiscovery = false;
         mOnFoundDevice = false;
         testSetCallback_ValidCallback();
