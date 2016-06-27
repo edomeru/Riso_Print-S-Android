@@ -20,10 +20,10 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import jp.co.riso.android.util.AppUtils;
@@ -64,6 +64,8 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
             public void onReceive(Context context, Intent intent) {
                 if(SnmpCommunityNameEditText.SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID.equals(intent.getAction())) {
                     showInvalidPasteErrorDialog();
+                } else if(SnmpCommunityNameEditText.SNMP_COMMUNITY_NAME_SAVE_ON_BACK_BROADCAST_ID.equals(intent.getAction())) {
+                    saveSnmpCommunityNameToSharedPrefs(snmpCommunityNameEditText != null ? snmpCommunityNameEditText.getText().toString() : AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME);
                 }
             }
         };
@@ -85,7 +87,17 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
     public void initializeView(View view, Bundle savedInstanceState) {
         snmpCommunityNameEditText = (SnmpCommunityNameEditText) view.findViewById(R.id.inputSnmpCommunityName);
         snmpCommunityNameEditText.setText(PrinterManager.getInstance(getActivity()).getSnmpCommunityNameFromSharedPrefs());
-        snmpCommunityNameEditText.addTextChangedListener(new SnmpCommunityNameTextWatcher());
+        snmpCommunityNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    saveSnmpCommunityNameToSharedPrefs(v.getText().toString());
+                }
+                return false;
+            }
+
+
+        });
 
         if (!isTablet()) {
             Point screenSize = AppUtils.getScreenDimensions(getActivity());
@@ -160,7 +172,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
 
         if(snmpCommunityName == null || snmpCommunityName.isEmpty()) {
-            snmpCommunityName = AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME;
+            snmpCommunityName = PrinterManager.getInstance(getActivity()).getSnmpCommunityNameFromSharedPrefs();
         }
 
         editor.putString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, snmpCommunityName);
@@ -185,22 +197,5 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         saveSnmpCommunityNameToSharedPrefs(snmpCommunityNameEditText.getText().toString());
-    }
-
-    private class SnmpCommunityNameTextWatcher implements TextWatcher {
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            saveSnmpCommunityNameToSharedPrefs(s.toString());
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-        }
     }
 }
