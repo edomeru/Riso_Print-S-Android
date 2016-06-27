@@ -171,11 +171,11 @@ const static char *multiup[] =
 {
     "OFF",
     "2PAGESLEFTRIGHT",
-    "2PAGESRIGHTLEFT",    
-    "4PAGESLEFTTOPBOTTOM",
+    "2PAGESRIGHTLEFT",
     "4PAGESLEFTTOPRIGHT",
+    "4PAGESLEFTTOPBOTTOM",
+    "4PAGESRIGHTTOPLEFT",
     "4PAGESRIGHTTOPBOTTOM",
-    "4PAGESRIGHTTOPLEFT",    
 };
 
 const static char *booklet[] =
@@ -598,7 +598,7 @@ void add_pjl_gd(char *pjl, char *appName, char *appVersion, setting_value values
                     direction = 1;
                 }
                 int order = 0;
-                if (imposition_order.int_value == 2 || imposition_order.int_value == 3)
+                if (imposition_order.int_value == 4 || imposition_order.int_value == 5)
                 {
                     order = 1;
                 }
@@ -617,25 +617,25 @@ void add_pjl_gd(char *pjl, char *appName, char *appVersion, setting_value values
                 }
                 else if (pagePerSheet == 1 && direction == 0 && order == 0)
                 {
-                    // Nup 4LeftTopToBottom
+                    // Nup 4LeftTopToRight
                     sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
                     strcat(pjl, pjl_line);
                 }
                 else if (pagePerSheet == 1 && direction == 0 && order == 1)
                 {
-                    // Nup 4LeftTopToRight
+                    // Nup 4LeftTopToBottom
                     sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
                     strcat(pjl, pjl_line);
                 }
                 else if (pagePerSheet == 1 && direction == 1 && order == 0)
                 {
-                    // Nup 4RightTopToBottom
+                    // Nup 4RightTopToLeft
                     sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][5]);
                     strcat(pjl, pjl_line);
                 }
                 else
                 {
-                    // Nup 4RightTopToLeft
+                    // Nup 4RightTopToBottom
                     sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][6]);
                     strcat(pjl, pjl_line);
                 }
