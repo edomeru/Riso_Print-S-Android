@@ -116,14 +116,14 @@
     //paste all valid character but can exceed total
     controllerIphone.snmpCommunityName.text = @"abcdefghijklmnopqrstuvwxyz";
     testString = @"1234567890";
-    GHAssertFalse([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
+    GHAssertTrue([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
                             replacementString:testString], @"");
 
     
     //type Valid character but already full
     controllerIphone.snmpCommunityName.text = @"abcdefghijklmnopqrstuvwxyz123456";
     testString = @"/";
-    GHAssertFalse([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
+    GHAssertTrue([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
                             replacementString:testString], @"");
     
     //Backspace when full
@@ -136,7 +136,7 @@
     
     //test all valid characters
     //valid symbols
-    testString = @",./:;@[¥]^_";
+    testString = @",./:;@[//]^_";
     GHAssertTrue([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
                            replacementString:testString], @"");
     
@@ -150,10 +150,23 @@
     GHAssertTrue([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
                            replacementString:testString], @"");
     
-    //numeroc characters
+    //numeric characters
     testString = @"1234567890";
     GHAssertTrue([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
                            replacementString:testString], @"");
+    
+    //test invalid
+    testString = @"¥%&#\"";
+    GHAssertFalse([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
+                           replacementString:testString], @"");
+    [self waitForCompletion:2]; //to see the alert
+    [self removeResultAlert];
+    
+    testString = @"ohayouおはよう";
+    GHAssertFalse([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
+                            replacementString:testString], @"");
+    [self waitForCompletion:2]; //to see the alert
+    [self removeResultAlert];
     
 }
 

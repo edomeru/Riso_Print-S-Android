@@ -29,12 +29,10 @@
 
 // expose private methods
 - (BOOL)setDefaultPrinter:(NSIndexPath*)indexPath;
-<<<<<<< HEAD
-- (IBAction)defaultPrinterSelectionAction:(id)sender;
-=======
 - (IBAction)defaultPrinterSwitchAction:(id)sender;
+- (IBAction)defaultPrinterSelectionAction:(id)sender;
 - (IBAction)unwindToPrinters:(UIStoryboardSegue *)sender;
->>>>>>> [RQM-1511-002][iOS]
+
 
 @end
 

@@ -224,7 +224,7 @@ void mock_success_snmp_device_discovery()
     [sharedSNMPManager searchForPrinter:@"192.168.1.1"];
     
     GHAssertEqualCStrings([testCommunityName cStringUsingEncoding:[NSString defaultCStringEncoding]], mockCommunityName, @"");
-    /*
+    
     // Verification
     [NSThread sleepForTimeInterval:3];
     GHAssertEquals((int)snmp_manual_discovery_fake.call_count, 1, @"snmp_manual_discovery must be called.");
