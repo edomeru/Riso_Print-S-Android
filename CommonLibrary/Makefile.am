@@ -15,7 +15,7 @@ tests_app_SOURCES = tests/main.cpp tests/printsettings_test.cpp tests/directprin
 tests_app_SOURCES += src/printsettings.c src/directprint.c src/snmp.c src/util.c
 tests_app_CFLAGS = -I3rdParty/net-snmp/include/@SUPPORTED_HOST@ -Iinclude -Isrc -fprofile-arcs -ftest-coverage -DIS_IN_UT
 tests_app_CXXFLAGS = -I3rdParty/net-snmp/include/@SUPPORTED_HOST@ -I. -Iinclude -Isrc -fprofile-arcs -ftest-coverage -DIS_IN_UT
-tests_app_LDFLAGS = -frprofile-arcs -fno-inline -lpthread
+tests_app_LDFLAGS = -fprofile-arcs -fno-inline -lpthread
 tests_app_LDADD = libgtest.la 3rdParty/net-snmp/lib/@SUPPORTED_HOST@/libnetsnmp.a
 
 CLEANFILES = *.gcda *.gcno src/*.gcda src/*.gcno tests/*.gcda tests/*.gcno

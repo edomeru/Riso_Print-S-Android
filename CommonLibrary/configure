@@ -2389,7 +2389,7 @@ test -n "$target_alias" &&
     NONENONEs,x,x, &&
   program_prefix=${target_alias}-
 
-am__api_version='1.14'
+am__api_version='1.15'
 
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
@@ -2561,8 +2561,8 @@ test "$program_suffix" != NONE &&
 ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
 program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
 
-# expand $ac_aux_dir to an absolute path
-am_aux_dir=`cd $ac_aux_dir && pwd`
+# Expand $ac_aux_dir to an absolute path.
+am_aux_dir=`cd "$ac_aux_dir" && pwd`
 
 if test x"${MISSING+set}" != xset; then
   case $am_aux_dir in
@@ -2581,7 +2581,7 @@ else
 $as_echo "$as_me: WARNING: 'missing' script is too old or missing" >&2;}
 fi
 
-if test x"${install_sh}" != xset; then
+if test x"${install_sh+set}" != xset; then
   case $am_aux_dir in
   *\ * | *\	*)
     install_sh="\${SHELL} '$am_aux_dir/install-sh'" ;;
@@ -2909,8 +2909,8 @@ MAKEINFO=${MAKEINFO-"${am_missing_run}makeinfo"}
 # <http://lists.gnu.org/archive/html/automake/2012-07/msg00014.html>
 mkdir_p='$(MKDIR_P)'
 
-# We need awk for the "check" target.  The system "awk" is bad on
-# some platforms.
+# We need awk for the "check" target (and possibly the TAP driver).  The
+# system "awk" is bad on some platforms.
 # Always define AMTAR for backward compatibility.  Yes, it's still used
 # in the wild :-(  We should find a proper way to deprecate it ...
 AMTAR='$${TAR-tar}'
@@ -2967,6 +2967,7 @@ END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
 fi
+
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -17342,7 +17343,7 @@ shlibpath_overrides_runpath=$shlibpath_overrides_runpath
 libname_spec=$lt_libname_spec
 
 # List of archive names.  First name is the real one, the rest are links.
-# The last name is the one that the linker finds with -lNAME
+# The last name is the one that the linker finds with -lNAME.
 library_names_spec=$lt_library_names_spec
 
 # The coded name of the library, if different from the real name.
@@ -17458,7 +17459,7 @@ allow_undefined_flag=$lt_allow_undefined_flag
 no_undefined_flag=$lt_no_undefined_flag
 
 # Flag to hardcode \$libdir into a binary during linking.
-# This must work even if \$libdir does not exist
+# This must work even if \$libdir does not exist.
 hardcode_libdir_flag_spec=$lt_hardcode_libdir_flag_spec
 
 # Whether we need a single "-rpath" flag with a separated argument.
@@ -17565,9 +17566,9 @@ ltmain="$ac_aux_dir/ltmain.sh"
   sed -e '/^func_dirname ()$/,/^} # func_dirname /c\
 func_dirname ()\
 {\
-\    case ${1} in\
-\      */*) func_dirname_result="${1%/*}${2}" ;;\
-\      *  ) func_dirname_result="${3}" ;;\
+\    case ${1} in\
+\      */*) func_dirname_result="${1%/*}${2}" ;;\
+\      *  ) func_dirname_result="${3}" ;;\
 \    esac\
 } # Extended-shell func_dirname implementation' "$cfgfile" > $cfgfile.tmp \
   && mv -f "$cfgfile.tmp" "$cfgfile" \
@@ -17588,10 +17589,10 @@ test 0 -eq $? || _lt_function_replace_fail=:
   sed -e '/^func_dirname_and_basename ()$/,/^} # func_dirname_and_basename /c\
 func_dirname_and_basename ()\
 {\
-\    case ${1} in\
-\      */*) func_dirname_result="${1%/*}${2}" ;;\
-\      *  ) func_dirname_result="${3}" ;;\
-\    esac\
+\    case ${1} in\
+\      */*) func_dirname_result="${1%/*}${2}" ;;\
+\      *  ) func_dirname_result="${3}" ;;\
+\    esac\
 \    func_basename_result="${1##*/}"\
 } # Extended-shell func_dirname_and_basename implementation' "$cfgfile" > $cfgfile.tmp \
   && mv -f "$cfgfile.tmp" "$cfgfile" \
@@ -17602,10 +17603,10 @@ test 0 -eq $? || _lt_function_replace_fail=:
   sed -e '/^func_stripname ()$/,/^} # func_stripname /c\
 func_stripname ()\
 {\
-\    # pdksh 5.2.14 does not do ${X%$Y} correctly if both X and Y are\
-\    # positional parameters, so assign one to ordinary parameter first.\
-\    func_stripname_result=${3}\
-\    func_stripname_result=${func_stripname_result#"${1}"}\
+\    # pdksh 5.2.14 does not do ${X%$Y} correctly if both X and Y are\
+\    # positional parameters, so assign one to ordinary parameter first.\
+\    func_stripname_result=${3}\
+\    func_stripname_result=${func_stripname_result#"${1}"}\
 \    func_stripname_result=${func_stripname_result%"${2}"}\
 } # Extended-shell func_stripname implementation' "$cfgfile" > $cfgfile.tmp \
   && mv -f "$cfgfile.tmp" "$cfgfile" \
@@ -17616,7 +17617,7 @@ test 0 -eq $? || _lt_function_replace_fail=:
   sed -e '/^func_split_long_opt ()$/,/^} # func_split_long_opt /c\
 func_split_long_opt ()\
 {\
-\    func_split_long_opt_name=${1%%=*}\
+\    func_split_long_opt_name=${1%%=*}\
 \    func_split_long_opt_arg=${1#*=}\
 } # Extended-shell func_split_long_opt implementation' "$cfgfile" > $cfgfile.tmp \
   && mv -f "$cfgfile.tmp" "$cfgfile" \
@@ -17627,7 +17628,7 @@ test 0 -eq $? || _lt_function_replace_fail=:
   sed -e '/^func_split_short_opt ()$/,/^} # func_split_short_opt /c\
 func_split_short_opt ()\
 {\
-\    func_split_short_opt_arg=${1#??}\
+\    func_split_short_opt_arg=${1#??}\
 \    func_split_short_opt_name=${1%"$func_split_short_opt_arg"}\
 } # Extended-shell func_split_short_opt implementation' "$cfgfile" > $cfgfile.tmp \
   && mv -f "$cfgfile.tmp" "$cfgfile" \
@@ -17638,9 +17639,9 @@ test 0 -eq $? || _lt_function_replace_fail=:
   sed -e '/^func_lo2o ()$/,/^} # func_lo2o /c\
 func_lo2o ()\
 {\
-\    case ${1} in\
-\      *.lo) func_lo2o_result=${1%.lo}.${objext} ;;\
-\      *)    func_lo2o_result=${1} ;;\
+\    case ${1} in\
+\      *.lo) func_lo2o_result=${1%.lo}.${objext} ;;\
+\      *)    func_lo2o_result=${1} ;;\
 \    esac\
 } # Extended-shell func_lo2o implementation' "$cfgfile" > $cfgfile.tmp \
   && mv -f "$cfgfile.tmp" "$cfgfile" \
@@ -17693,7 +17694,7 @@ test 0 -eq $? || _lt_function_replace_fail=:
   sed -e '/^func_append_quoted ()$/,/^} # func_append_quoted /c\
 func_append_quoted ()\
 {\
-\    func_quote_for_eval "${2}"\
+\    func_quote_for_eval "${2}"\
 \    eval "${1}+=\\\\ \\$func_quote_for_eval_result"\
 } # Extended-shell func_append_quoted implementation' "$cfgfile" > $cfgfile.tmp \
   && mv -f "$cfgfile.tmp" "$cfgfile" \
@@ -17800,7 +17801,7 @@ allow_undefined_flag=$lt_allow_undefined_flag_CXX
 no_undefined_flag=$lt_no_undefined_flag_CXX
 
 # Flag to hardcode \$libdir into a binary during linking.
-# This must work even if \$libdir does not exist
+# This must work even if \$libdir does not exist.
 hardcode_libdir_flag_spec=$lt_hardcode_libdir_flag_spec_CXX
 
 # Whether we need a single "-rpath" flag with a separated argument.

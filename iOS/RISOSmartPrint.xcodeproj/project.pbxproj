@@ -318,6 +318,10 @@
 		6603A8181BE1F83600DBD0F0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC06185FDD2100810455 /* UIKit.framework */; };
 		6603A8191BE1F84800DBD0F0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D0AEC04185FDD2100810455 /* CoreGraphics.framework */; };
 		6603A81F1BE1FB2F00DBD0F0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5FC7B518DA79EB00459B92 /* Localizable.strings */; };
+		66290AA11C093BCE0096A6A8 /* SearchSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66290AA01C093BCE0096A6A8 /* SearchSettingsViewController.m */; };
+		662F803E1C0D465D00732F6B /* AppSettingsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6637E33C1C070AD400174AD2 /* AppSettingsHelper.m */; };
+		662F80411C0D7A6000732F6B /* AppSettingsHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 662F803F1C0D79B000732F6B /* AppSettingsHelperTest.m */; };
+		6637E33D1C070AD400174AD2 /* AppSettingsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6637E33C1C070AD400174AD2 /* AppSettingsHelper.m */; };
 		664F90961BEB29D800EF5F10 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 664F90941BEB29D800EF5F10 /* InfoPlist.strings */; };
 		6666D54F1BE30CAE00D93CEE /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C90FB18F4FA57002A7F48 /* libCommon.a */; };
 		6666D5501BE3147600D93CEE /* SmartDeviceApp.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 2828313018C70699008B127C /* SmartDeviceApp.xcdatamodeld */; };
@@ -357,6 +361,8 @@
 		6666D5721BE3147600D93CEE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D0AEC48185FDE8100810455 /* Images.xcassets */; };
 		6666D5741BE3147600D93CEE /* SmartDeviceApp-Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2828313318C70699008B127C /* SmartDeviceApp-Settings.plist */; };
 		6666D5751BE3147600D93CEE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D1F232B1900D69A00301D1E /* Main.storyboard */; };
+		66AF640B1C09944500EE5101 /* SearchSettingsViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 66AF640A1C09944500EE5101 /* SearchSettingsViewControllerTest.m */; };
+		66AF640C1C09948800EE5101 /* SearchSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66290AA01C093BCE0096A6A8 /* SearchSettingsViewController.m */; };
 		66C5194E1BE760A600C05AB4 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6C913C18F53EA2002A7F48 /* libnetsnmp.a */; };
 		66CABAE71BF9C85300B35BD3 /* PrintJobHistoryLayoutTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CABAE51BF9C7EE00B35BD3 /* PrintJobHistoryLayoutTest.m */; };
 		66D381301BFEE5FB00166215 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AEEA18E2EF9600085F27 /* AppDelegate.m */; };
@@ -829,7 +835,13 @@
 		6603A7681BE1F34800DBD0F0 /* Swizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Swizzler.m; sourceTree = "<group>"; };
 		6603A7691BE1F34800DBD0F0 /* TestAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAppDelegate.h; sourceTree = "<group>"; };
 		6603A76A1BE1F34800DBD0F0 /* TestAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAppDelegate.m; sourceTree = "<group>"; };
+		66290A9F1C093BCE0096A6A8 /* SearchSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchSettingsViewController.h; sourceTree = "<group>"; };
+		66290AA01C093BCE0096A6A8 /* SearchSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchSettingsViewController.m; sourceTree = "<group>"; };
+		662F803F1C0D79B000732F6B /* AppSettingsHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppSettingsHelperTest.m; sourceTree = "<group>"; };
+		6637E33B1C070AD400174AD2 /* AppSettingsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppSettingsHelper.h; sourceTree = "<group>"; };
+		6637E33C1C070AD400174AD2 /* AppSettingsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppSettingsHelper.m; sourceTree = "<group>"; };
 		664F90951BEB29D800EF5F10 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		66AF640A1C09944500EE5101 /* SearchSettingsViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchSettingsViewControllerTest.m; sourceTree = "<group>"; };
 		66CABAE51BF9C7EE00B35BD3 /* PrintJobHistoryLayoutTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintJobHistoryLayoutTest.m; sourceTree = "<group>"; };
 		66CABAE81BF9D6BA00B35BD3 /* OCMFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMFunctions.h; sourceTree = "<group>"; };
 		66CABAE91BF9D6BA00B35BD3 /* OCMLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMLocation.h; sourceTree = "<group>"; };
@@ -1336,6 +1348,7 @@
 				28A9172D18E3BDF300BA5232 /* PrintJobHistory */,
 				2DA1AF0E18E2EF9600085F27 /* PrintPreview */,
 				2DA1AF1318E2EF9600085F27 /* PrintSettings */,
+				66290A9E1C093BCE0096A6A8 /* SearchSettings */,
 				2D1F23211900D57300301D1E /* Settings */,
 			);
 			path = ViewControllers;
@@ -1480,6 +1493,8 @@
 				2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */,
 				2D157BF918ED5B580034F953 /* XMLParser.h */,
 				2D157BFA18ED5B580034F953 /* XMLParser.m */,
+				6637E33B1C070AD400174AD2 /* AppSettingsHelper.h */,
+				6637E33C1C070AD400174AD2 /* AppSettingsHelper.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1575,6 +1590,7 @@
 				6603A6E61BE1F34800DBD0F0 /* PrintJobHistory */,
 				6603A6E81BE1F34800DBD0F0 /* PrintPreview */,
 				6603A6EB1BE1F34800DBD0F0 /* PrintSettings */,
+				66AF64091C09941000EE5101 /* SearchSettings */,
 				6603A6F01BE1F34800DBD0F0 /* Settings */,
 			);
 			path = ViewControllers;
@@ -1689,6 +1705,7 @@
 				6603A6FC1BE1F34800DBD0F0 /* RenderCacheTest.m */,
 				6603A6FD1BE1F34800DBD0F0 /* UIColorTest_Theme.m */,
 				6603A6FE1BE1F34800DBD0F0 /* XMLParserTest.m */,
+				662F803F1C0D79B000732F6B /* AppSettingsHelperTest.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1898,6 +1915,23 @@
 				6603A7641BE1F34800DBD0F0 /* TestPDF_3Pages_Pass(test123-None).pdf */,
 			);
 			path = TestData;
+			sourceTree = "<group>";
+		};
+		66290A9E1C093BCE0096A6A8 /* SearchSettings */ = {
+			isa = PBXGroup;
+			children = (
+				66290A9F1C093BCE0096A6A8 /* SearchSettingsViewController.h */,
+				66290AA01C093BCE0096A6A8 /* SearchSettingsViewController.m */,
+			);
+			path = SearchSettings;
+			sourceTree = "<group>";
+		};
+		66AF64091C09941000EE5101 /* SearchSettings */ = {
+			isa = PBXGroup;
+			children = (
+				66AF640A1C09944500EE5101 /* SearchSettingsViewControllerTest.m */,
+			);
+			path = SearchSettings;
 			sourceTree = "<group>";
 		};
 		66CABAE41BF9C7A400B35BD3 /* Layouts */ = {
@@ -2128,6 +2162,7 @@
 				2DA1AF6F18E2F1DA00085F27 /* PrinterStatusView.m in Sources */,
 				2DA1AEC618E2EF7D00085F27 /* PrintJob.m in Sources */,
 				2DA1AF7218E2F52300085F27 /* UIColor+Theme.m in Sources */,
+				66290AA11C093BCE0096A6A8 /* SearchSettingsViewController.m in Sources */,
 				280C096A192048DD00347991 /* PrintJobItemCell.m in Sources */,
 				2DA1AF6A18E2F08900085F27 /* PrintPreviewHelper.m in Sources */,
 				2DA1AF1E18E2EF9600085F27 /* UIViewController+Segue.m in Sources */,
@@ -2162,6 +2197,7 @@
 				2D232D7B18E5257C008D06C8 /* PrintSettingsHeaderCell.m in Sources */,
 				2D232D7518E51247008D06C8 /* PrintSettingsPrinterHeaderCell.m in Sources */,
 				2DA1AF1818E2EF9600085F27 /* ReplaceSegue.m in Sources */,
+				6637E33D1C070AD400174AD2 /* AppSettingsHelper.m in Sources */,
 				28D7B31618EE48D300FE15BA /* NSDate+Format.m in Sources */,
 				2DA1AEC418E2EF7D00085F27 /* Printer.m in Sources */,
 				2DA1AF6918E2F08900085F27 /* PrinterStatusHelper.m in Sources */,
@@ -2225,6 +2261,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				662F803E1C0D465D00732F6B /* AppSettingsHelper.m in Sources */,
+				66AF640C1C09948800EE5101 /* SearchSettingsViewController.m in Sources */,
 				66D381301BFEE5FB00166215 /* AppDelegate.m in Sources */,
 				6603A7BC1BE1F7A900DBD0F0 /* Printer+Log.m in Sources */,
 				6603A7BD1BE1F7A900DBD0F0 /* PrintJob+Log.m in Sources */,
@@ -2271,6 +2309,7 @@
 				6603A7E61BE1F7A900DBD0F0 /* SlidingViewController.m in Sources */,
 				6603A7E71BE1F7A900DBD0F0 /* UIViewController+Segue.m in Sources */,
 				6603A7E81BE1F7A900DBD0F0 /* HelpViewController.m in Sources */,
+				66AF640B1C09944500EE5101 /* SearchSettingsViewControllerTest.m in Sources */,
 				6603A7E91BE1F7A900DBD0F0 /* HomeViewController.m in Sources */,
 				6603A7EA1BE1F7A900DBD0F0 /* LicenseAgreementViewController.m in Sources */,
 				6603A7EB1BE1F7A900DBD0F0 /* LegalViewController.m in Sources */,
@@ -2332,6 +2371,7 @@
 				6603A76F1BE1F34800DBD0F0 /* LicenseAgreementViewControllerTest.m in Sources */,
 				6603A76E1BE1F34800DBD0F0 /* LegalViewControllerTest.m in Sources */,
 				6603A79D1BE1F34800DBD0F0 /* NSManagedObject+MagicalAggregation.m in Sources */,
+				662F80411C0D7A6000732F6B /* AppSettingsHelperTest.m in Sources */,
 				6603A7AF1BE1F34800DBD0F0 /* MagicalRecord.m in Sources */,
 				6603A7A51BE1F34800DBD0F0 /* NSManagedObjectContext+MagicalThreading.m in Sources */,
 				6603A76B1BE1F34800DBD0F0 /* AddPrinterViewControllerTest.m in Sources */,

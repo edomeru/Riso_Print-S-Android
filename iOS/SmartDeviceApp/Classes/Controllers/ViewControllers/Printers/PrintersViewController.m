@@ -11,6 +11,7 @@
 #import "PrinterSearchViewController.h"
 #import "PrinterInfoViewController.h"
 #import "PrintSettingsViewController.h"
+#import "SearchSettingsViewController.h"
 #import "PrinterManager.h"
 #import "PrinterDetails.h"
 #import "AlertHelper.h"
@@ -35,6 +36,11 @@
  * Reference to the printer search button on the header.
  */
 @property (weak, nonatomic) IBOutlet UIButton* printerSearchButton;
+
+/**
+ * Reference to the search settings button on the header.
+ */
+@property (weak, nonatomic) IBOutlet UIButton *searchSettingsButton;
 
 #pragma mark - Instance Methods
 
@@ -123,6 +129,12 @@
     }
 }
 
+- (IBAction)searchSettingsAction:(id)sender
+{
+    [self.searchSettingsButton setEnabled:NO];
+    [self performSegueTo:[SearchSettingsViewController class]];
+}
+
 #pragma mark - Segue
 
 - (IBAction)unwindToPrinters:(UIStoryboardSegue *)sender
@@ -164,6 +176,10 @@
         {
             [self reloadPrinters];
         }
+    }
+    else if([sender.sourceViewController isKindOfClass:[SearchSettingsViewController class]])
+    {
+        [self.searchSettingsButton setEnabled:YES];
     }
 }
 

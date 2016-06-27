@@ -49,6 +49,10 @@
             alertTitle = NSLocalizedString(IDS_LBL_LICENSE, @"");
             break;
             
+        case kAlertTitleSearchSettings:
+            alertTitle = NSLocalizedString(IDS_LBL_SEARCH_PRINTERS_SETTINGS, @"");
+            break;
+            
         case kAlertTitleDefault:
         default:
             alertTitle = NSLocalizedString(IDS_APP_NAME, @"");
@@ -106,8 +110,13 @@
         case kAlertResultPrintFailed:
             alertMsg = NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @"");
             break;
+            
         case kAlertResultErrorLicenseAgreementDisagree:
             alertMsg = NSLocalizedString(IDS_ERR_MSG_DISAGREE_TO_LICENSE, @"");
+            break;
+            
+        case kAlertResultErrCommunityNameInvalidPaste:
+            alertMsg = NSLocalizedString(IDS_ERR_MSG_INVALID_COMMUNITY_NAME, @"");
             break;
             
         case kAlertResultErrDB:

@@ -13,6 +13,7 @@
 #import "CXAlertView.h"
 #import "Swizzler.h"
 #import "PrinterManager.h"
+#import "AppSettingsHelper.h"
 #import "OCMock.h"
 
 @interface PrinterSearchViewController (UnitTest)
@@ -21,6 +22,7 @@
 
 - (UITableView*)searchResultsTable;
 - (UIRefreshControl*)refreshControl;
+- (UILabel*)communityNameDisplay;
 
 // expose private methods
 - (void)refreshScreen;
@@ -43,6 +45,7 @@
     UIStoryboard* storyboard;
     PrinterSearchViewController* controllerIphone;
     PrinterSearchViewController* controllerIpad;
+    NSString *testCommunityName;
     id mockPrinterManager;
 }
 
@@ -60,6 +63,10 @@
 // Run at start of all tests in the class
 - (void)setUpClass
 {
+    testCommunityName = @"testname";
+    id mockAppSettingsHelper = OCMClassMock([AppSettingsHelper class]);
+    [[[mockAppSettingsHelper stub] andReturn:testCommunityName] getSNMPCommunityName];
+    
     mockPrinterManager = OCMClassMock([PrinterManager class]);
     [[[mockPrinterManager stub] andReturn:mockPrinterManager] sharedPrinterManager];
     //[[[mockPrinterManager stub] andCall:@selector(mockSearchForAllPrinters) onObject:self] searchForAllPrinters];
@@ -77,6 +84,9 @@
     controllerIpad = [storyboard instantiateViewControllerWithIdentifier:controllerIpadName];
     GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
     GHAssertNotNil(controllerIpad.view, @"");
+    
+    [mockAppSettingsHelper stopMocking];
+
 }
 
 // Run at end of all tests in the class
@@ -109,6 +119,8 @@
     
     GHAssertNotNil([controllerIphone searchResultsTable], @"");
     GHAssertNil(controllerIphone.printersViewController, @"will only be non-nil on segue from Printers");
+    GHAssertNotNil([controllerIphone communityNameDisplay], @"");
+    GHAssertEqualStrings([[controllerIphone communityNameDisplay] text] , testCommunityName, @"");
     GHTestLog(@"-- get the first printer");
     //indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     //cell = (SearchResultCell*)[[controllerIphone searchResultsTable] cellForRowAtIndexPath:indexPath];
@@ -116,6 +128,8 @@
     
     GHAssertNotNil([controllerIpad searchResultsTable], @"");
     GHAssertNil(controllerIpad.printersViewController, @"will only be non-nil on segue from Printers");
+    GHAssertNotNil([controllerIpad communityNameDisplay], @"");
+    GHAssertEqualStrings([[controllerIpad communityNameDisplay] text] , testCommunityName, @"");
     //indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     //cell = (SearchResultCell*)[[controllerIphone searchResultsTable] cellForRowAtIndexPath:indexPath];
     //GHAssertNotNil(cell, @"");

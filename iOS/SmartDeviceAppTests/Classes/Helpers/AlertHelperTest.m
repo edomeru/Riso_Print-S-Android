@@ -37,7 +37,8 @@
                              [NSNumber numberWithInt:kAlertTitlePrintersAdd]: NSLocalizedString(IDS_LBL_ADD_PRINTER, @""),
                              [NSNumber numberWithInt:kAlertTitlePrintersSearch]: NSLocalizedString(IDS_LBL_SEARCH_PRINTERS, @""),
                              [NSNumber numberWithInt:kAlertTitlePrintJobHistory]: NSLocalizedString(IDS_LBL_PRINT_JOB_HISTORY, @""),
-                             [NSNumber numberWithInt:100]: NSLocalizedString(IDS_APP_NAME, @"")
+                             [NSNumber numberWithInt:100]: NSLocalizedString(IDS_APP_NAME, @""),
+                             [NSNumber numberWithInt:kAlertTitleSearchSettings]: NSLocalizedString(IDS_LBL_SEARCH_PRINTERS_SETTINGS, @"")
                              };
     
     self.resultDictionary = @{[NSNumber numberWithInt:kAlertResultInfoPrinterAdded]: NSLocalizedString(IDS_INFO_MSG_PRINTER_ADD_SUCCESSFUL, @""),
@@ -52,7 +53,8 @@
                               [NSNumber numberWithInt:kAlertResultFileCannotBeOpened]: NSLocalizedString(IDS_ERR_MSG_OPEN_FAILED, @""),
                               [NSNumber numberWithInt:kAlertResultPrintSuccessful]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_SUCCESSFUL, @""),
                               [NSNumber numberWithInt:kAlertResultPrintFailed]: NSLocalizedString(IDS_INFO_MSG_PRINT_JOB_FAILED, @""),
-                              [NSNumber numberWithInt:100]: NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @"")
+                              [NSNumber numberWithInt:100]: NSLocalizedString(IDS_ERR_MSG_DB_FAILURE, @""),
+                                [NSNumber numberWithInt:kAlertResultErrCommunityNameInvalidPaste]: NSLocalizedString(IDS_ERR_MSG_INVALID_COMMUNITY_NAME, @"")
                               };
     
     self.confirmTitleDictionary = @{[NSNumber numberWithInt:kAlertConfirmationDeleteAllJobs]: NSLocalizedString(IDS_INFO_MSG_DELETE_JOBS_TITLE, @""),

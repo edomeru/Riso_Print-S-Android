@@ -223,13 +223,19 @@ void *do_discovery(void *parameter)
     
     // Setup session information
     session.peername = strdup(context->ip_address);
+    
+    // Setup community name
     if(strlen(context->community_name) > 0 )
     {
+        // set community name from Application
         session.community = (u_char *) strdup(context->community_name);
         session.community_len = strlen(context->community_name);
     }
     else
     {
+        // Note: Handling of blank community name should be done in the Application side
+        // This handling is just to ensure that the default behavior (use public community name)
+        // is handled also in the common module in case Application fails to enforce it
         session.community = (u_char *) strdup(COMMUNITY_NAME_DEFAULT);
         session.community_len = strlen(COMMUNITY_NAME_DEFAULT);
     }
@@ -414,9 +420,12 @@ void *do_capability_check(void *parameter)
                 continue;
             }
         }
-        //for non broadcast search, snmpv3 is being used to initially search device which does not use the community name string
-        // but uses snmp v2 to get the device name which uses the community name string
-        // if community name used for search did not match community name of device, the result is the device is found but was not able to get the device name
+        
+        // For non-broadcast search (single IP), SNMP V3 is being used to initially search device.
+        // SNMP V3 does not use the community name string during search. (https://www.paessler.com/manuals/ipcheck_server_monitor/whatisansnmpcommunitystring)
+        // However process of querying device name uses SNMP V2 which uses the community name string
+        // For single IP search, if community name used for search did not match community name of device,
+        // the result is the device is found but was not able to get the device name
         // to resolve this, do not add printer if the device name is not obtained
         if (strlen(snmp_device_get_name(device)) > 0)
         {
@@ -815,6 +824,8 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device)
     
     // Initialize SNMPv1
     session.version = SNMP_VERSION_1;
+    
+    //Setup community name
     if(strlen(context->community_name) > 0 )
     {
         session.community = (u_char *) strdup(context->community_name);
@@ -822,6 +833,9 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device)
     }
     else
     {
+        // Note: Handling of blank community name should be done in the Application side
+        // This handling is just to ensure that the default behavior (use public community name)
+        // is handled also in the common module in case Application fails to enforce it
         session.community = (u_char *) strdup(COMMUNITY_NAME_DEFAULT);
         session.community_len = strlen(COMMUNITY_NAME_DEFAULT);
     }
