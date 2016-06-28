@@ -39,11 +39,6 @@ public class SnmpCommunityNameDisplayText extends LinearLayout {
         init(context);
     }
 
-    public SnmpCommunityNameDisplayText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
-    }
-
     private void init(Context context) {
         View view = View.inflate(context, R.layout.printersearchsettings_community_name_display, this);
 
