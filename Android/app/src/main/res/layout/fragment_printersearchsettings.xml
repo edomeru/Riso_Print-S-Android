@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:background="@color/theme_light_3">
+    android:orientation="vertical">
 
     <include layout="@layout/actionbar_sub" />
 
@@ -16,7 +15,8 @@
         android:paddingTop="@dimen/printersearchsettings_top_padding"
         android:paddingLeft="@dimen/printersearchsettings_horizontal_padding"
         android:paddingRight="@dimen/printersearchsettings_horizontal_padding"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:background="@color/theme_light_3">
 
         <TextView
             android:layout_width="wrap_content"
