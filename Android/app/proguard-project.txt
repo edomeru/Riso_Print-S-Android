@@ -19,6 +19,14 @@
 #   public *;
 #}
 
+# the Android Compatibility library references some classes that may not be present in all versions of the API
+-keep class android.support.** { *; }
+-dontwarn android.support.**
+
+# the RadaeePDF library references some classes that may not be present in all versions of the API
+-keep class com.radaee.** { *; }
+-dontwarn com.radaee.**
+
 # http://stackoverflow.com/questions/14123866/how-to-config-my-proguard-project-txt-file-to-remove-just-logs
 -assumenosideeffects class android.util.Log {
     public static int v(...);
