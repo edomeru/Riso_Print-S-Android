@@ -99,6 +99,7 @@
 
 - (void)setupScreen
 {
+    [self.snmpCommunityName setPlaceholder:NSLocalizedString(IDS_LBL_SNMP_COMMUNITY_NAME, "SNMP Community Name")];
     self.snmpCommunityName.text = [AppSettingsHelper getSNMPCommunityName];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
