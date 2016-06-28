@@ -11,7 +11,7 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
 public class CommunityNameFilterTest extends TestCase {
     private static final String INVALID_INPUT_TEXT = "!";
-    private static final String VALID_INPUT_TEXT = "¥";
+    private static final String VALID_INPUT_TEXT = "\\";
 
     public CommunityNameFilterTest(String name) {
         super(name);
