@@ -5,6 +5,10 @@
 
 #include "gtest/gtest.h"
 #include "fff.h"
+
+#define TEST_APP_NAME   "RISO-PRINT-S"
+#define TEST_APP_VER    "2.0.0"
+
 DEFINE_FFF_GLOBALS;
 
 FAKE_VALUE_FUNC(int, getaddrinfo, const char *, const char *, const struct addrinfo *, struct addrinfo **); 
@@ -94,6 +98,10 @@ struct addrinfo *DirectPrintTest::server_info_ = 0;
 
 struct directprint_job_s
 {
+    char *printer_name;
+    char *app_name;
+    char *app_version;
+    
     char *user_name;
     char *job_name;
     char *filename;
@@ -187,13 +195,16 @@ ssize_t recv_custom_fake(int socket, void *buffer, size_t length, int flags)
 
 TEST(DirectPrintTestJobTest, New)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "User name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     ASSERT_TRUE(job != 0);
     ASSERT_TRUE(strcmp(job_name, job->job_name) == 0);
@@ -213,7 +224,7 @@ TEST(DirectPrintTestJobTest, New)
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_free(job);
 
     //ASSERT_TRUE(job == 0);
@@ -221,6 +232,9 @@ TEST(DirectPrintTestJobTest, New)
 
 TEST(DirectPrintTestJobTest, CallerData)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -230,7 +244,7 @@ TEST(DirectPrintTestJobTest, CallerData)
     char test_data[16];
     strcpy(test_data, "TESTDATA");
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_set_caller_data(job, (void *)test_data);
     char *caller_data = (char *)directprint_job_get_caller_data(job);
 
@@ -241,13 +255,16 @@ TEST(DirectPrintTestJobTest, CallerData)
 
 TEST(DirectPrintTestJobTest, NotCancelled)
 {
-    const char *user_name = "Sample User Name"; 
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
+    const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     ASSERT_TRUE(job->cancel_print == 0);
 
@@ -256,13 +273,16 @@ TEST(DirectPrintTestJobTest, NotCancelled)
 
 TEST(DirectPrintTestJobTest, Cancelled)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_cancel(job);
 
     ASSERT_TRUE(job->cancel_print == 1);
@@ -280,13 +300,16 @@ TEST_F(DirectPrintTest, LPR_JobIsNull)
 
 TEST_F(DirectPrintTest, UserNameIsNull)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     free(job->user_name);
     job->user_name = 0;
@@ -299,13 +322,16 @@ TEST_F(DirectPrintTest, UserNameIsNull)
 #if 0
 TEST_F(DirectPrintTest, UserNameIsEmpty)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     int status = directprint_job_lpr_print(job);
     directprint_job_free(job);
@@ -316,13 +342,16 @@ TEST_F(DirectPrintTest, UserNameIsEmpty)
 
 TEST_F(DirectPrintTest, JobNameIsNull)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     free(job->job_name);
     job->job_name = 0;
@@ -335,13 +364,16 @@ TEST_F(DirectPrintTest, JobNameIsNull)
 
 TEST_F(DirectPrintTest, JobNameIsEmpty)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     int status = directprint_job_lpr_print(job);
     directprint_job_free(job);
@@ -351,13 +383,16 @@ TEST_F(DirectPrintTest, JobNameIsEmpty)
 
 TEST_F(DirectPrintTest, FileNameIsNull)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     free(job->filename);
     job->filename = 0;
@@ -369,13 +404,16 @@ TEST_F(DirectPrintTest, FileNameIsNull)
 
 TEST_F(DirectPrintTest, FileNameIsEmpty)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     int status = directprint_job_lpr_print(job);
     directprint_job_free(job);
@@ -385,13 +423,16 @@ TEST_F(DirectPrintTest, FileNameIsEmpty)
 
 TEST_F(DirectPrintTest, PrintSettingsIsNull)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     free(job->print_settings);
     job->print_settings = 0;
@@ -403,13 +444,16 @@ TEST_F(DirectPrintTest, PrintSettingsIsNull)
 
 TEST_F(DirectPrintTest, PrintSettingsIsEmpty)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     int status = directprint_job_lpr_print(job);
     directprint_job_free(job);
@@ -419,13 +463,16 @@ TEST_F(DirectPrintTest, PrintSettingsIsEmpty)
 
 TEST_F(DirectPrintTest, IPAddresIsNull)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     free(job->ip_address);
     job->ip_address = 0;
@@ -437,13 +484,16 @@ TEST_F(DirectPrintTest, IPAddresIsNull)
 
 TEST_F(DirectPrintTest, IPAddressIsEmpty)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     int status = directprint_job_lpr_print(job);
     directprint_job_free(job);
@@ -453,6 +503,9 @@ TEST_F(DirectPrintTest, IPAddressIsEmpty)
 
 TEST_F(DirectPrintTest, InvalidAddress)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -466,7 +519,7 @@ TEST_F(DirectPrintTest, InvalidAddress)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -494,31 +547,37 @@ TEST_F(DirectPrintTest, InvalidAddress)
 
 TEST_F(DirectPrintTest, IPv6Address_Global)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "2001:10::1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     
     int result = strcmp(ip_address, job->ip_address);
 
     directprint_job_free(job);
     
-    // IP Address should be used as is
+    //IP Address should be used as is
     ASSERT_EQ(result, 0);
 }
 
 TEST_F(DirectPrintTest, IPv6Address_LinkLocal)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "fe80:10::1";
     
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     
     int result = strcmp(ip_address, job->ip_address);
     int has_en0 = (strstr(job->ip_address, "%en0")) != 0;
@@ -535,6 +594,9 @@ TEST_F(DirectPrintTest, IPv6Address_LinkLocal)
 
 TEST_F(DirectPrintTest, CannotCreateSocket)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -549,7 +611,7 @@ TEST_F(DirectPrintTest, CannotCreateSocket)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -578,6 +640,9 @@ TEST_F(DirectPrintTest, CannotCreateSocket)
 
 TEST_F(DirectPrintTest, CannotStartConnect)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -594,7 +659,7 @@ TEST_F(DirectPrintTest, CannotStartConnect)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -624,6 +689,9 @@ TEST_F(DirectPrintTest, CannotStartConnect)
 
 TEST_F(DirectPrintTest, CannotConnect)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -640,7 +708,7 @@ TEST_F(DirectPrintTest, CannotConnect)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -670,6 +738,9 @@ TEST_F(DirectPrintTest, CannotConnect)
 
 TEST_F(DirectPrintTest, ConnectTimeout)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -687,7 +758,7 @@ TEST_F(DirectPrintTest, ConnectTimeout)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -718,6 +789,9 @@ TEST_F(DirectPrintTest, ConnectTimeout)
 
 TEST_F(DirectPrintTest, ConnectCannotComplete)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -736,7 +810,7 @@ TEST_F(DirectPrintTest, ConnectCannotComplete)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -770,6 +844,9 @@ TEST_F(DirectPrintTest, ConnectCannotComplete)
 
 TEST_F(DirectPrintTest, LPR_FileCannotOpen)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -790,7 +867,7 @@ TEST_F(DirectPrintTest, LPR_FileCannotOpen)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -826,6 +903,9 @@ TEST_F(DirectPrintTest, LPR_FileCannotOpen)
 
 TEST_F(DirectPrintTest, LPR_QueueInfoSendFailed)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -850,7 +930,7 @@ TEST_F(DirectPrintTest, LPR_QueueInfoSendFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -886,6 +966,9 @@ TEST_F(DirectPrintTest, LPR_QueueInfoSendFailed)
 
 TEST_F(DirectPrintTest, LPR_QueueInfoAckNone)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -912,7 +995,7 @@ TEST_F(DirectPrintTest, LPR_QueueInfoAckNone)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -949,6 +1032,9 @@ TEST_F(DirectPrintTest, LPR_QueueInfoAckNone)
 
 TEST_F(DirectPrintTest, LPR_QueueInfoAckFailed)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -975,7 +1061,7 @@ TEST_F(DirectPrintTest, LPR_QueueInfoAckFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1012,6 +1098,9 @@ TEST_F(DirectPrintTest, LPR_QueueInfoAckFailed)
 
 TEST_F(DirectPrintTest, LPR_ControlInfoSendFailed)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1038,7 +1127,7 @@ TEST_F(DirectPrintTest, LPR_ControlInfoSendFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1075,6 +1164,9 @@ TEST_F(DirectPrintTest, LPR_ControlInfoSendFailed)
 
 TEST_F(DirectPrintTest, LPR_ControlInfoAckNone)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1101,7 +1193,7 @@ TEST_F(DirectPrintTest, LPR_ControlInfoAckNone)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1139,6 +1231,9 @@ TEST_F(DirectPrintTest, LPR_ControlInfoAckNone)
 
 TEST_F(DirectPrintTest, LPR_ControlInfoAckFailed)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1165,7 +1260,7 @@ TEST_F(DirectPrintTest, LPR_ControlInfoAckFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1203,6 +1298,9 @@ TEST_F(DirectPrintTest, LPR_ControlInfoAckFailed)
 
 TEST_F(DirectPrintTest, LPR_ControlSendFailed)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1229,7 +1327,7 @@ TEST_F(DirectPrintTest, LPR_ControlSendFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1267,6 +1365,9 @@ TEST_F(DirectPrintTest, LPR_ControlSendFailed)
 
 TEST_F(DirectPrintTest, LPR_ControlAckNone)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1293,7 +1394,7 @@ TEST_F(DirectPrintTest, LPR_ControlAckNone)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1332,6 +1433,9 @@ TEST_F(DirectPrintTest, LPR_ControlAckNone)
 
 TEST_F(DirectPrintTest, LPR_ControlAckFailed)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1358,7 +1462,7 @@ TEST_F(DirectPrintTest, LPR_ControlAckFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1397,6 +1501,9 @@ TEST_F(DirectPrintTest, LPR_ControlAckFailed)
 
 TEST_F(DirectPrintTest, LPR_DataInfoSendFailed)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1423,7 +1530,7 @@ TEST_F(DirectPrintTest, LPR_DataInfoSendFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1464,6 +1571,9 @@ TEST_F(DirectPrintTest, LPR_DataInfoSendFailed)
 
 TEST_F(DirectPrintTest, LPR_DataInfoAckNone)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1490,7 +1600,7 @@ TEST_F(DirectPrintTest, LPR_DataInfoAckNone)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1530,6 +1640,9 @@ TEST_F(DirectPrintTest, LPR_DataInfoAckNone)
 
 TEST_F(DirectPrintTest, LPR_DataInfoAckFailed)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1556,7 +1669,7 @@ TEST_F(DirectPrintTest, LPR_DataInfoAckFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1596,6 +1709,9 @@ TEST_F(DirectPrintTest, LPR_DataInfoAckFailed)
 
 TEST_F(DirectPrintTest, LPR_DataAckNone)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1624,7 +1740,7 @@ TEST_F(DirectPrintTest, LPR_DataAckNone)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1668,7 +1784,9 @@ TEST_F(DirectPrintTest, LPR_DataAckNone)
 
 TEST_F(DirectPrintTest, LPR_DataAckFailed)
 {
-    const char *user_name = "Sample User Name";
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;    const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
@@ -1696,7 +1814,7 @@ TEST_F(DirectPrintTest, LPR_DataAckFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1740,7 +1858,10 @@ TEST_F(DirectPrintTest, LPR_DataAckFailed)
 
 TEST_F(DirectPrintTest, LPR_Success)
 {
-    const char *user_name = "Sample User Name";
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
+   const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
@@ -1768,7 +1889,7 @@ TEST_F(DirectPrintTest, LPR_Success)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_lpr_print(job);
 
     int callback_recevied;
@@ -1807,7 +1928,8 @@ TEST_F(DirectPrintTest, LPR_Success)
     ASSERT_EQ(kJobStatusSending, _status[6]);
     ASSERT_EQ(kJobStatusSending, _status[7]);
     ASSERT_EQ(kJobStatusSending, _status[8]);
-    ASSERT_EQ(kJobStatusSent, _status[9]);
+    ASSERT_EQ(kJobStatusSending, _status[9]);
+    ASSERT_EQ(kJobStatusSent, _status[10]);
 }
 
 // Raw
@@ -1816,13 +1938,16 @@ TEST_F(DirectPrintTest, Raw_CannotStartPrint)
 {
     // Note: All parameter checks are already tested using LPR, so only the branch will be tested here
     // user_name = empty
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
     const char *ip_address = "127.0.0.1";
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
 
     int status = directprint_job_raw_print(job);
     directprint_job_free(job);
@@ -1836,6 +1961,9 @@ TEST_F(DirectPrintTest, Raw_CannotConnect)
     // Note: All connection checks are already testes using LPR, os only the branch will be tested here
     // error = socket creation failed
     const char *user_name = "Sample User Name";
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
     const char *print_settings = "colorMode=0";
@@ -1849,7 +1977,7 @@ TEST_F(DirectPrintTest, Raw_CannotConnect)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_raw_print(job);
 
     int callback_recevied;
@@ -1880,6 +2008,9 @@ TEST_F(DirectPrintTest, Raw_CannotConnect)
 
 TEST_F(DirectPrintTest, Raw_FileCannotOpen)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1900,7 +2031,7 @@ TEST_F(DirectPrintTest, Raw_FileCannotOpen)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_raw_print(job);
 
     int callback_recevied;
@@ -1934,6 +2065,9 @@ TEST_F(DirectPrintTest, Raw_FileCannotOpen)
 
 TEST_F(DirectPrintTest, Raw_SendFailed)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -1958,7 +2092,7 @@ TEST_F(DirectPrintTest, Raw_SendFailed)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_raw_print(job);
 
     int callback_recevied;
@@ -1995,6 +2129,9 @@ TEST_F(DirectPrintTest, Raw_SendFailed)
 
 TEST_F(DirectPrintTest, Raw_Success)
 {
+    const char *printer_name = "RISO IS1000C-J";
+    const char *app_name = TEST_APP_NAME;
+    const char *app_version = TEST_APP_VER;
     const char *user_name = "Sample User Name";
     const char *job_name = "Sample Job Name";
     const char *filename = "Sample.pdf";
@@ -2019,7 +2156,7 @@ TEST_F(DirectPrintTest, Raw_Success)
     _callback_received = 0;
     pthread_mutex_init(&_mutex, 0);
 
-    directprint_job *job = directprint_job_new(user_name, job_name, filename, print_settings, ip_address, print_callback);
+    directprint_job *job = directprint_job_new(printer_name, app_name, app_version, user_name, job_name, filename, print_settings, ip_address, print_callback);
     directprint_job_raw_print(job);
 
     int callback_recevied;
@@ -2052,5 +2189,6 @@ TEST_F(DirectPrintTest, Raw_Success)
     ASSERT_EQ(kJobStatusConnected, _status[1]);
     ASSERT_EQ(kJobStatusSending, _status[2]);
     ASSERT_EQ(kJobStatusSending, _status[3]);
-    ASSERT_EQ(kJobStatusSent, _status[4]);
+    ASSERT_EQ(kJobStatusSending, _status[4]);
+    ASSERT_EQ(kJobStatusSent, _status[5]);
 }
