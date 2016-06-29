@@ -91,6 +91,7 @@ struct snmp_context_s
     snmp_device *device_list;
     char ip_address[IP_ADDRESS_LENGTH];
     char community_name[COMMUNITY_NAME_LENGTH+1];
+    int is_broadcast;
     
     caps_queue device_queue;
     
@@ -113,7 +114,6 @@ enum
     MIB_HW_CAP_5,
     MIB_HW_CAP_6,
     MIB_HW_CAP_7,
-    MIB_HW_CAP_8,
     MIB_INFO_COUNT
 };
 
@@ -421,10 +421,13 @@ TEST_F(SNMPTest, DoDiscoveryCommunityNameSet_Value)
     ASSERT_TRUE(strcmp(community_name, "testValue") == 0);
 }
 
+extern "C" int snmp_get_capabilities(snmp_context *context, snmp_device *device);
+
 TEST_F(SNMPTest, GetCapabilitiesCommunityNameSet_Empty)
 {
     snmp_context *context = snmp_context_new(ended_callback, added_callback, "");
-    do_discovery(context);
+    snmp_device *device = snmp_device_new("192.168.1.1");
+    snmp_get_capabilities(context, device);
     netsnmp_session *session = snmp_open_fake.arg0_history[0];
     ASSERT_TRUE(session != NULL);
     ASSERT_TRUE(session->community != NULL);
@@ -437,7 +440,8 @@ TEST_F(SNMPTest, GetCapabilitiesCommunityNameSet_Empty)
 TEST_F(SNMPTest, GetCapabilitiesCommunityNameSet_Value)
 {
     snmp_context *context = snmp_context_new(ended_callback, added_callback, "testValue");
-    do_discovery(context);
+    snmp_device *device = snmp_device_new("192.168.1.1");
+    snmp_get_capabilities(context, device);
     netsnmp_session *session = snmp_open_fake.arg0_history[0];
     ASSERT_TRUE(session != NULL);
     ASSERT_TRUE(session->community != NULL);
@@ -447,4 +451,40 @@ TEST_F(SNMPTest, GetCapabilitiesCommunityNameSet_Value)
     ASSERT_TRUE(strcmp(community_name, "testValue") == 0);
 }
 
+
+extern "C" void *do_capability_check(void *parameter);
+
+TEST_F(SNMPTest, DoCapabilityCheckDeviceHasName)
+{
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, "");
+    snmp_device *device = snmp_device_new("192.168.1.1");
+    sprintf(device->device_info[MIB_DEV_DESCR], "Test Name");
+    context->device_queue.first = device;
+    context->device_queue.current = device;
+    pthread_t caps_thread;
+    pthread_create(&caps_thread, 0, do_capability_check, context);
+    sleep(1);
+    
+    snmp_cancel(context);
+    pthread_join(caps_thread, 0);
+    
+    ASSERT_TRUE(context->device_list != 0);
+    ASSERT_TRUE(context->device_list == device);
+}
+
+TEST_F(SNMPTest, DoCapabilityCheckDeviceHasNoName)
+{
+    snmp_context *context = snmp_context_new(ended_callback, added_callback, "");
+    snmp_device *device = snmp_device_new("192.168.1.1");
+    context->device_queue.first = device;
+    context->device_queue.current = device;
+    pthread_t caps_thread;
+    pthread_create(&caps_thread, 0, do_capability_check, context);
+    sleep(1);
+    
+    snmp_cancel(context);
+    pthread_join(caps_thread, 0);
+    
+    ASSERT_TRUE(context->device_list == 0);
+}
 

@@ -24,7 +24,10 @@ const char *SETTING_NAMES[] =
     "finishingSide",
     "staple",
     "punch",
-    "outputTray"
+    "outputTray",
+    "loginId",
+    "pinCode",
+    "securePrint"
 };
 
 // Utitilty
@@ -88,7 +91,7 @@ TEST(PrintSettingsTest, InvalidFormat)
     
     char pjl[64];
     sprintf(pjl, "@PJL SET RKPRIVATEPRINTING=FALSE\x0d\x0a");
-    EXPECT_TRUE(strstr(output, pjl) != 0);
+    EXPECT_FALSE(strstr(output, pjl) != 0);
 }
 
 // Color Mode
@@ -819,6 +822,7 @@ TEST(PrintSettingsTest, OwnerOK_PinEmpty)
     strcpy(output, "");
     strcpy(input, "loginId=ownername\n");
     strcat(input, "pinCode=\n");
+    strcat(input, "securePrint=1\n");
 
     create_pjl(output, input);
 
@@ -836,6 +840,7 @@ TEST(PrintSettingsTest, OwnerOK_PinOK)
     strcpy(output, "");
     strcpy(input, "loginId=ownername\n");
     strcat(input, "pinCode=12345678\n");
+    strcat(input, "securePrint=1\n");
 
     create_pjl(output, input);
 
@@ -853,6 +858,7 @@ TEST(PrintSettingsTest, OwnerNG_PinOK)
     strcpy(output, "");
     strcpy(input, "loginId=\n");
     strcat(input, "pinCode=12345678\n");
+    strcat(input, "securePrint=1\n");
 
     create_pjl(output, input);
 
@@ -870,6 +876,7 @@ TEST(PrintSettingsTest, OwnerNG_PinNG)
     strcpy(output, "");
     strcpy(input, "loginId=\n");
     strcat(input, "pinCode=\n");
+    strcat(input, "securePrint=1\n");
 
     create_pjl(output, input);
 
