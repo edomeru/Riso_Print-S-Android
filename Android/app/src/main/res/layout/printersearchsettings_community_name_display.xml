@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/printersearchsettings_top_padding"
     android:paddingLeft="@dimen/printersearchsettings_horizontal_padding"
-    android:paddingRight="@dimen/printersearchsettings_horizontal_padding"
-    android:background="@color/theme_light_3">
+    android:paddingRight="@dimen/printersearchsettings_horizontal_padding">
 
     <TextView
         android:layout_width="wrap_content"

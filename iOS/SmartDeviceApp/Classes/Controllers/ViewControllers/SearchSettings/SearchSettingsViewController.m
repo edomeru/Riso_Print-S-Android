@@ -99,6 +99,7 @@
 
 - (void)setupScreen
 {
+    [self.snmpCommunityName setPlaceholder:NSLocalizedString(IDS_LBL_SNMP_COMMUNITY_NAME, "SNMP Community Name")];
     self.snmpCommunityName.text = [AppSettingsHelper getSNMPCommunityName];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -137,7 +138,7 @@
     
     if (textField.text.length > 0)
     {
-        NSString *stringToSave = (textField.text.length > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN) ? [textField.text substringToIndex:SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN - 1] : textField.text;
+        NSString *stringToSave = (textField.text.length > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN) ? [textField.text substringToIndex:SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN] : textField.text;
         [AppSettingsHelper saveSNMPCommunityName:stringToSave];
     }
     
@@ -149,7 +150,7 @@
 {
     if (textField.text.length > 0)
     {
-        NSString *stringToSave = (textField.text.length > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN) ? [textField.text substringToIndex:SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN - 1] : textField.text;
+        NSString *stringToSave = (textField.text.length > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN) ? [textField.text substringToIndex:SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN] : textField.text;
         [AppSettingsHelper saveSNMPCommunityName:stringToSave];
     }
 }
@@ -176,6 +177,7 @@
             [AlertHelper displayResult:kAlertResultErrCommunityNameInvalidPaste
                              withTitle:kAlertTitleSearchSettings
                              withDetails:nil];
+            [textField resignFirstResponder];
         }
         return NO;
     }

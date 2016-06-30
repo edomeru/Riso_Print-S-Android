@@ -140,6 +140,8 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libcommon_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libcommon_la_OBJECTS = src/libcommon_la-printsettings.lo \
+	src/libcommon_la-printsettings_fw.lo \
+	src/libcommon_la-printsettings_gd.lo \
 	src/libcommon_la-directprint.lo src/libcommon_la-snmp.lo
 libcommon_la_OBJECTS = $(am_libcommon_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -158,6 +160,8 @@ am_tests_app_OBJECTS = tests/tests_app-main.$(OBJEXT) \
 	tests/tests_app-snmp_test.$(OBJEXT) \
 	tests/tests_app-util_test.$(OBJEXT) \
 	src/tests_app-printsettings.$(OBJEXT) \
+	src/tests_app-printsettings_fw.$(OBJEXT) \
+	src/tests_app-printsettings_gd.$(OBJEXT) \
 	src/tests_app-directprint.$(OBJEXT) \
 	src/tests_app-snmp.$(OBJEXT) src/tests_app-util.$(OBJEXT)
 tests_app_OBJECTS = $(am_tests_app_OBJECTS)
@@ -580,15 +584,15 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libcommon.la
-libcommon_la_SOURCES = src/printsettings.h src/printsettings.c src/directprint.c src/snmp.c
+libcommon_la_SOURCES = src/printsettings.h src/printsettings.c src/printsettings_fw.c src/printsettings_gd.c src/directprint.c src/snmp.c
 libcommon_la_CFLAGS = -Iinclude -I3rdParty/net-snmp/include/@SUPPORTED_HOST@
 include_HEADERS = include/common.h
 check_LTLIBRARIES = libgtest.la
 libgtest_la_SOURCES = gtest/gtest-all.cc gtest/gtest.h
 tests_app_SOURCES = tests/main.cpp tests/printsettings_test.cpp \
 	tests/directprint_test.cpp tests/snmp_test.cpp \
-	tests/util_test.cpp src/printsettings.c src/directprint.c \
-	src/snmp.c src/util.c
+	tests/util_test.cpp src/printsettings.c src/printsettings_fw.c \
+	src/printsettings_gd.c src/directprint.c src/snmp.c src/util.c
 tests_app_CFLAGS = -I3rdParty/net-snmp/include/@SUPPORTED_HOST@ -Iinclude -Isrc -fprofile-arcs -ftest-coverage -DIS_IN_UT
 tests_app_CXXFLAGS = -I3rdParty/net-snmp/include/@SUPPORTED_HOST@ -I. -Iinclude -Isrc -fprofile-arcs -ftest-coverage -DIS_IN_UT
 tests_app_LDFLAGS = -fprofile-arcs -fno-inline -lpthread
@@ -701,6 +705,10 @@ src/$(DEPDIR)/$(am__dirstamp):
 	@: > src/$(DEPDIR)/$(am__dirstamp)
 src/libcommon_la-printsettings.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/libcommon_la-printsettings_fw.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/libcommon_la-printsettings_gd.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 src/libcommon_la-directprint.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/libcommon_la-snmp.lo: src/$(am__dirstamp) \
@@ -746,6 +754,10 @@ tests/tests_app-util_test.$(OBJEXT): tests/$(am__dirstamp) \
 	tests/$(DEPDIR)/$(am__dirstamp)
 src/tests_app-printsettings.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/tests_app-printsettings_fw.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/tests_app-printsettings_gd.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 src/tests_app-directprint.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/tests_app-snmp.$(OBJEXT): src/$(am__dirstamp) \
@@ -771,9 +783,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@gtest/$(DEPDIR)/gtest-all.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libcommon_la-directprint.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libcommon_la-printsettings.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libcommon_la-printsettings_fw.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libcommon_la-printsettings_gd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libcommon_la-snmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-directprint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-printsettings.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-printsettings_fw.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-printsettings_gd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-snmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/tests_app-util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/tests_app-directprint_test.Po@am__quote@
@@ -813,6 +829,20 @@ src/libcommon_la-printsettings.lo: src/printsettings.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcommon_la_CFLAGS) $(CFLAGS) -c -o src/libcommon_la-printsettings.lo `test -f 'src/printsettings.c' || echo '$(srcdir)/'`src/printsettings.c
 
+src/libcommon_la-printsettings_fw.lo: src/printsettings_fw.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcommon_la_CFLAGS) $(CFLAGS) -MT src/libcommon_la-printsettings_fw.lo -MD -MP -MF src/$(DEPDIR)/libcommon_la-printsettings_fw.Tpo -c -o src/libcommon_la-printsettings_fw.lo `test -f 'src/printsettings_fw.c' || echo '$(srcdir)/'`src/printsettings_fw.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libcommon_la-printsettings_fw.Tpo src/$(DEPDIR)/libcommon_la-printsettings_fw.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/printsettings_fw.c' object='src/libcommon_la-printsettings_fw.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcommon_la_CFLAGS) $(CFLAGS) -c -o src/libcommon_la-printsettings_fw.lo `test -f 'src/printsettings_fw.c' || echo '$(srcdir)/'`src/printsettings_fw.c
+
+src/libcommon_la-printsettings_gd.lo: src/printsettings_gd.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcommon_la_CFLAGS) $(CFLAGS) -MT src/libcommon_la-printsettings_gd.lo -MD -MP -MF src/$(DEPDIR)/libcommon_la-printsettings_gd.Tpo -c -o src/libcommon_la-printsettings_gd.lo `test -f 'src/printsettings_gd.c' || echo '$(srcdir)/'`src/printsettings_gd.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libcommon_la-printsettings_gd.Tpo src/$(DEPDIR)/libcommon_la-printsettings_gd.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/printsettings_gd.c' object='src/libcommon_la-printsettings_gd.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcommon_la_CFLAGS) $(CFLAGS) -c -o src/libcommon_la-printsettings_gd.lo `test -f 'src/printsettings_gd.c' || echo '$(srcdir)/'`src/printsettings_gd.c
+
 src/libcommon_la-directprint.lo: src/directprint.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcommon_la_CFLAGS) $(CFLAGS) -MT src/libcommon_la-directprint.lo -MD -MP -MF src/$(DEPDIR)/libcommon_la-directprint.Tpo -c -o src/libcommon_la-directprint.lo `test -f 'src/directprint.c' || echo '$(srcdir)/'`src/directprint.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libcommon_la-directprint.Tpo src/$(DEPDIR)/libcommon_la-directprint.Plo
@@ -840,6 +870,34 @@ src/tests_app-printsettings.obj: src/printsettings.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/printsettings.c' object='src/tests_app-printsettings.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -c -o src/tests_app-printsettings.obj `if test -f 'src/printsettings.c'; then $(CYGPATH_W) 'src/printsettings.c'; else $(CYGPATH_W) '$(srcdir)/src/printsettings.c'; fi`
+
+src/tests_app-printsettings_fw.o: src/printsettings_fw.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -MT src/tests_app-printsettings_fw.o -MD -MP -MF src/$(DEPDIR)/tests_app-printsettings_fw.Tpo -c -o src/tests_app-printsettings_fw.o `test -f 'src/printsettings_fw.c' || echo '$(srcdir)/'`src/printsettings_fw.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests_app-printsettings_fw.Tpo src/$(DEPDIR)/tests_app-printsettings_fw.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/printsettings_fw.c' object='src/tests_app-printsettings_fw.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -c -o src/tests_app-printsettings_fw.o `test -f 'src/printsettings_fw.c' || echo '$(srcdir)/'`src/printsettings_fw.c
+
+src/tests_app-printsettings_fw.obj: src/printsettings_fw.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -MT src/tests_app-printsettings_fw.obj -MD -MP -MF src/$(DEPDIR)/tests_app-printsettings_fw.Tpo -c -o src/tests_app-printsettings_fw.obj `if test -f 'src/printsettings_fw.c'; then $(CYGPATH_W) 'src/printsettings_fw.c'; else $(CYGPATH_W) '$(srcdir)/src/printsettings_fw.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests_app-printsettings_fw.Tpo src/$(DEPDIR)/tests_app-printsettings_fw.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/printsettings_fw.c' object='src/tests_app-printsettings_fw.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -c -o src/tests_app-printsettings_fw.obj `if test -f 'src/printsettings_fw.c'; then $(CYGPATH_W) 'src/printsettings_fw.c'; else $(CYGPATH_W) '$(srcdir)/src/printsettings_fw.c'; fi`
+
+src/tests_app-printsettings_gd.o: src/printsettings_gd.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -MT src/tests_app-printsettings_gd.o -MD -MP -MF src/$(DEPDIR)/tests_app-printsettings_gd.Tpo -c -o src/tests_app-printsettings_gd.o `test -f 'src/printsettings_gd.c' || echo '$(srcdir)/'`src/printsettings_gd.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests_app-printsettings_gd.Tpo src/$(DEPDIR)/tests_app-printsettings_gd.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/printsettings_gd.c' object='src/tests_app-printsettings_gd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -c -o src/tests_app-printsettings_gd.o `test -f 'src/printsettings_gd.c' || echo '$(srcdir)/'`src/printsettings_gd.c
+
+src/tests_app-printsettings_gd.obj: src/printsettings_gd.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -MT src/tests_app-printsettings_gd.obj -MD -MP -MF src/$(DEPDIR)/tests_app-printsettings_gd.Tpo -c -o src/tests_app-printsettings_gd.obj `if test -f 'src/printsettings_gd.c'; then $(CYGPATH_W) 'src/printsettings_gd.c'; else $(CYGPATH_W) '$(srcdir)/src/printsettings_gd.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests_app-printsettings_gd.Tpo src/$(DEPDIR)/tests_app-printsettings_gd.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/printsettings_gd.c' object='src/tests_app-printsettings_gd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -c -o src/tests_app-printsettings_gd.obj `if test -f 'src/printsettings_gd.c'; then $(CYGPATH_W) 'src/printsettings_gd.c'; else $(CYGPATH_W) '$(srcdir)/src/printsettings_gd.c'; fi`
 
 src/tests_app-directprint.o: src/directprint.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tests_app_CFLAGS) $(CFLAGS) -MT src/tests_app-directprint.o -MD -MP -MF src/$(DEPDIR)/tests_app-directprint.Tpo -c -o src/tests_app-directprint.o `test -f 'src/directprint.c' || echo '$(srcdir)/'`src/directprint.c
