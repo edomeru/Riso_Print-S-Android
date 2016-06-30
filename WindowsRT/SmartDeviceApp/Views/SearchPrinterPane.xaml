@@ -155,8 +155,8 @@
                          VerticalAlignment="Center"
                          HorizontalAlignment="Left"
                          IsEnabled="False"
-                         Width="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
-                         Background="{StaticResource BRUSH_White}"
+                         Width="{StaticResource SIZE_ListValue_TextboxWidth_Long}"                         
+                         BorderThickness="0"
                          Margin="20,10,0,0"/>
                     </StackPanel>
                 </Grid>
