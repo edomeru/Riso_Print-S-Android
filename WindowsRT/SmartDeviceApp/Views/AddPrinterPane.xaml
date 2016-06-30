@@ -196,7 +196,7 @@
                 <RowDefinition Height="80" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Vertical">
-                <TextBlock Text="{Binding Source=IDS_LBL_COMMUNITY_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
+                <TextBlock Text="{Binding Source=IDS_LBL_SNMP_COMMUNITY_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
                            Style="{StaticResource STYLE_TextKey}"
                            Margin="20,20,0,0" Width="320" />
                 <TextBox x:Name="snmpCommunityNameTextBox"
