@@ -48,6 +48,7 @@ namespace SmartDeviceApp.Converters
                         text = text.ToUpper();
                         break;
                 }
+                text = text.Replace("\\n", "\n");
                 return text;
             }
             catch (Exception ex)

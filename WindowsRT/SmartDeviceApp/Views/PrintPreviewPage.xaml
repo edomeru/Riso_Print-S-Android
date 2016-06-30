@@ -333,6 +333,7 @@
                           Button1PressedImage="ms-appx:///Resources/Images/img_btn_print_settings_pressed.png"
                           Button1Visibility="Visible"
                           Button2Visibility="Collapsed"
+                          Button3Visibility="Collapsed"
                           Loaded="OnViewControlLoaded">
         <controls:ViewControl.RightPaneContent>
             <local:PrintSettingsPane/>

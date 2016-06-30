@@ -53,6 +53,8 @@ namespace SmartDeviceApp.ViewModels
 
         private ViewOrientation _viewOrientation;
 
+        private SearchSettingsViewModel _searchSettingsViewModel;
+
         /// <summary>
         /// Constructor for AddPrinterViewModel.
         /// </summary>
@@ -63,6 +65,7 @@ namespace SmartDeviceApp.ViewModels
             _dataService = dataService;
             _navigationService = navigationService;
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+            _searchSettingsViewModel = new ViewModelLocator().SearchSettingsViewModel;
 
             IpAddress = "";
             IsProgressRingVisible = false;
@@ -91,7 +94,6 @@ namespace SmartDeviceApp.ViewModels
             {
                 _height = value;
                 OnPropertyChanged("Height");
-
             }
         }
 
@@ -106,6 +108,14 @@ namespace SmartDeviceApp.ViewModels
                 this._ipAddress = value;
                 OnPropertyChanged("IpAddress");
             }
+        }
+
+        /// <summary>
+        /// Holds the value of the SNMP Community Name used to check for the printer to be added
+        /// </summary>
+        public string SnmpCommunityName
+        {
+            get { return _searchSettingsViewModel.SnmpCommunityName; }
         }
 
         /// <summary>
@@ -312,12 +322,11 @@ namespace SmartDeviceApp.ViewModels
             // Add to printer controller
             IsButtonVisible = false;
             IsProgressRingVisible = true;
-            bool result = await AddPrinterHandler(IpAddress);
+            bool result = await AddPrinterHandler(IpAddress, SnmpCommunityName);
             if (result == false)
             {
                 setVisibilities();
             }
-
         }
 
         private void ClosePane()

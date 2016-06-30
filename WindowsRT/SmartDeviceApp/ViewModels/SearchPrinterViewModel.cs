@@ -52,6 +52,8 @@ namespace SmartDeviceApp.ViewModels
 
         private bool _isAdding;
 
+        private SearchSettingsViewModel _searchSettingsViewModel;
+
         /// <summary>
         /// Constructor for SearchPrinterViewModel.
         /// </summary>
@@ -63,14 +65,16 @@ namespace SmartDeviceApp.ViewModels
             _navigationService = navigationService;
 
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
+
             WillRefresh = false;
             NoPrintersFound = false;
             _isAdding = false;
+
+            _searchSettingsViewModel = new ViewModelLocator().SearchSettingsViewModel;
+
             //Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<VisibleRightPane>(this, (viewMode) => SetViewMode(viewMode));
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetSearchPane(viewOrientation));
-            
-            
         }
 
         private void ResetSearchPane(ViewOrientation viewOrientation)
@@ -82,7 +86,7 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
-        /// Holds the value for the height of the Add Printer pane.
+        /// Holds the value for the height of the Search Printer pane.
         /// </summary>
         public double Height
         {
@@ -91,8 +95,15 @@ namespace SmartDeviceApp.ViewModels
             {
                 _height = value;
                 OnPropertyChanged("Height");
-
             }
+        }
+
+        /// <summary>
+        /// Holds the value of the SNMP Community Name used to search for the printers
+        /// </summary>
+        public string SnmpCommunityName
+        {
+            get { return _searchSettingsViewModel.SnmpCommunityName; }
         }
 
         private async void SetViewMode(VisibleRightPane viewMode)
@@ -127,7 +138,6 @@ namespace SmartDeviceApp.ViewModels
                     }
                 }
             }
-            
         }
 
         /// <summary>
@@ -266,7 +276,7 @@ namespace SmartDeviceApp.ViewModels
             NoPrintersFound = false;
             if (NetworkController.IsConnectedToNetwork)
             {
-                SearchPrinterHandler();
+                SearchPrinterHandler(SnmpCommunityName);
             }
             else
             {
@@ -312,6 +322,4 @@ namespace SmartDeviceApp.ViewModels
             _viewControlViewModel.ViewMode = ViewMode.FullScreen;
         }
     }
-
-
 }

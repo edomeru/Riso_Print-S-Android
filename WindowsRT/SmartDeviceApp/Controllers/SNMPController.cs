@@ -73,7 +73,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void Initialize()
         {
-            Discovery = new SNMPDiscovery("public", SNMPConstants.BROADCAST_ADDRESS);
+            Discovery = new SNMPDiscovery(SNMPConstants.DEFAULT_COMMUNITY_NAME, SNMPConstants.BROADCAST_ADDRESS);
             Discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleDeviceDiscovered);
             Discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleTimeout);
         }
@@ -87,10 +87,12 @@ namespace SmartDeviceApp.Controllers
         /// Starts retrival of device capabilities
         /// </summary>
         /// <param name="ip"></param>
-        public void getDevice(string ip)
+        /// <param name="communityName"></param>
+        public void getDevice(string ip, string communityName = SNMPConstants.DEFAULT_COMMUNITY_NAME)
         {
             SNMPDevice device = new SNMPDevice(ip);
             //waiting = true;
+            device.CommunityName = communityName;
             device.snmpControllerCallBackGetCapability = new Action<SNMPDevice>(handleGetDevice);
             device.snmpControllerDeviceTimeOut = new Action<SNMPDevice>(handleAddTimeout);
             device.snmpControllerErrorCallbBack = new Action(handleError);

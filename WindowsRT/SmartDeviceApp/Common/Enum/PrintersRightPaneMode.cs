@@ -13,6 +13,7 @@ namespace SmartDeviceApp.Common.Enum
     {
         AddPrinter,
         SearchPrinter,
+        SearchSettings,
         PrintSettings
     }
 }
