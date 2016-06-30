@@ -564,4 +564,16 @@
   <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
     <value></value>
   </data>
+  <data name="IDS_LBL_SEARCH_PRINTERS_SETTINGS" xml:space="preserve">
+    <value>Chercher Réglages</value>
+  </data>
+  <data name="IDS_LBL_SNMP_COMMUNITY_NAME" xml:space="preserve">
+    <value>Nom de Communauté SNMP</value>
+  </data>
+  <data name="IDS_LBL_VALID_COMMUNITY_NAME" xml:space="preserve">
+	  <value>Caractères valides:\n\ta-zA-Z0-9,./:;@[\\]^_</value>
+  </data>
+  <data name="IDS_ERR_MSG_INVALID_COMMUNITY_NAME" xml:space="preserve">
+	  <value>Veuillez entrer une Nom de Communauté SNMP valide</value>
+  </data>
 </root>

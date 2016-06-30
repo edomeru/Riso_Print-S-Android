@@ -565,4 +565,16 @@
   <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
     <value></value>
   </data>
+  <data name="IDS_LBL_SEARCH_PRINTERS_SETTINGS" xml:space="preserve">
+    <value>Search Settings</value>
+  </data>
+  <data name="IDS_LBL_SNMP_COMMUNITY_NAME" xml:space="preserve">
+    <value>SNMP Community Name</value>
+  </data>
+  <data name="IDS_LBL_VALID_COMMUNITY_NAME" xml:space="preserve">
+	  <value>Valid characters are:\n\ta-zA-Z0-9,./:;@[\\]^_</value>
+  </data>
+  <data name="IDS_ERR_MSG_INVALID_COMMUNITY_NAME" xml:space="preserve">
+	  <value>Please enter a SNMP community name with valid characters</value>
+  </data>
 </root>
