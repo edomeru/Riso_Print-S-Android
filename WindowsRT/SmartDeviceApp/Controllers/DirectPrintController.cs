@@ -16,6 +16,7 @@ using System;
 using System.Text;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.ApplicationModel;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -49,19 +50,27 @@ namespace SmartDeviceApp.Controllers
         /// <param name="name">print job name</param>
         /// <param name="file">PDF file</param>
         /// <param name="ipAddress">IP address</param>
+        /// <param name="printerName">printer name</param>
         /// <param name="printSettings">print settings</param>
         /// <param name="progressEvent">progress event callback</param>
         /// <param name="resultEvent">print job event callback</param>
-        public DirectPrintController(string name, StorageFile file, string ipAddress,
-            PrintSettings printSettings, UpdatePrintJobProgress progressEvent,
+        public DirectPrintController(string name, StorageFile file, string ipAddress, 
+            string printerName, PrintSettings printSettings, UpdatePrintJobProgress progressEvent,
             SetPrintJobResult resultEvent)
         {
             UpdatePrintJobProgressEventHandler = progressEvent;
             SetPrintJobResultEventHandler = resultEvent;
-
+            
             _printJob = new DirectPrint.directprint_job();
 
+            _printJob.app_name = Package.Current.DisplayName;
+            _printJob.app_version = string.Format("{0}.{1}.{2}.{3}",
+                    Package.Current.Id.Version.Major,
+                    Package.Current.Id.Version.Minor,
+                    Package.Current.Id.Version.Build,
+                    Package.Current.Id.Version.Revision);
             _printJob.job_name = name;
+            _printJob.printer_name = printerName;
             //_printJob.filename = name; // TODO: (confirm) To be deleted
             _printJob.file = file;
             _printJob.print_settings = CreateStringFromPrintSettings(printSettings);

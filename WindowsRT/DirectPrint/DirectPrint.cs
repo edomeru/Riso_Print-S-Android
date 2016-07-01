@@ -19,12 +19,15 @@ namespace DirectPrint
 
     public class directprint_job
     {
+        public string app_name;
+        public string app_version;
         public string job_name;
         //public string filename; // TODO: to be deleted. replaced by file
         public StorageFile file;
         public string username;
         public string print_settings;
         public string ip_address;
+        public string printer_name;
         public directprint_callback callback;
         public progress_callback progress_callback;
 
@@ -53,6 +56,7 @@ namespace DirectPrint
         private const int BUFFER_SIZE = 4096;
 
         private const string QUEUE_NAME = "normal";
+        private const string QUEUE_NAME_FWGD ="lp";
         private const string HOST_NAME = "RISO PRINT-S";
 
         private const string PJL_ESCAPE = "\x1B%-12345X";
@@ -191,8 +195,23 @@ namespace DirectPrint
 
             // Prepare PJL header
             string pjl_header = "";
+            string queue_name = "";
             pjl_header += PJL_ESCAPE;
-            pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
+            if (isISSeries(print_job.printer_name))
+            {
+                pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
+                queue_name = QUEUE_NAME;
+            }
+            else if (isFWSeries(print_job.printer_name))
+            {
+                pjl_header += DirectPrintSettingsWrapper.create_pjl_fw_wrapper(print_job.print_settings, print_job.app_name, print_job.app_version);
+                queue_name = QUEUE_NAME_FWGD;
+            }
+            else
+            {
+                pjl_header += DirectPrintSettingsWrapper.create_pjl_gd_wrapper(print_job.print_settings, print_job.app_name, print_job.app_version);
+                queue_name = QUEUE_NAME_FWGD;
+            }
             pjl_header += PJL_LANGUAGE;
             byte[] pjl_header_bytes = System.Text.Encoding.UTF8.GetBytes(pjl_header);
             int pjl_header_size = pjl_header_bytes.Length;
@@ -227,9 +246,9 @@ namespace DirectPrint
 
             pos = 0;
             buffer[pos++] = 0x2;
-            for (i = 0; i < QUEUE_NAME.Length; i++)
+            for (i = 0; i < queue_name.Length; i++)
             {
-                buffer[pos++] = (byte)(QUEUE_NAME.ToCharArray()[i]);
+                buffer[pos++] = (byte)(queue_name.ToCharArray()[i]);
             }
             buffer[pos++] = (byte)'\n';
 
@@ -538,6 +557,51 @@ namespace DirectPrint
         {
             if (print_job != null) print_job.cancel_print = 1;
             triggerCallback(PRINT_STATUS_NO_NETWORK);
+        }
+
+        private bool isFWSeries(string printerName)
+        {
+            HashSet<string> fwNames = new HashSet<string> {
+                                "ORPHIS FW5230",
+                                "ORPHIS FW5230A",
+                                "ORPHIS FW5231",
+                                "ORPHIS FW2230",
+                                "ORPHIS FW1230",
+                                "ComColor FW5230",
+                                "ComColor FW5230R",
+                                "ComColor FW5231",
+                                "ComColor FW5231R",
+                                "ComColor FW5000",
+                                "ComColor FW5000R",
+                                "ComColor FW2230",
+                                "ComColor black FW1230",
+                                "ComColor black FW1230R",
+                                // China:
+                                "Shan Cai Yin Wang FW5230",
+                                "Shan Cai Yin Wang FW5230R",
+                                "Shan Cai Yin Wang FW5231",
+                                "Shan Cai Yin Wang FW2230 Wenjianhong",
+                                "Shan Cai Yin Wang FW2230 Lan",
+                                "Shan Cai Yin Wang black FW1230",
+                                "Shan Cai Yin Wang black FW1230R" };
+
+            bool isFW = fwNames.Contains(printerName);
+            fwNames.Clear();
+
+            return isFW;
+        }
+
+        private bool isISSeries(string printerName)
+        {
+            HashSet<string> isNames = new HashSet<string> {
+                                "RISO IS1000C-J",
+                                "RISO IS1000C-G",
+                                "RISO IS950C-G", };
+
+            bool isIS = isNames.Contains(printerName);
+            isNames.Clear();
+
+            return isIS;
         }
     }
 }
