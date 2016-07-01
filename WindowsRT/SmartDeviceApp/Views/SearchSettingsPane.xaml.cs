@@ -17,7 +17,9 @@ using System.Collections.ObjectModel;
 using SmartDeviceApp.Models;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Xaml.Interactivity;
 using SmartDeviceApp.Common.Enum;
+using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.ViewModels;
 using SmartDeviceApp.Converters;
 

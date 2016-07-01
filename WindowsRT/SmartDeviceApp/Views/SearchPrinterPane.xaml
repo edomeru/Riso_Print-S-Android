@@ -158,8 +158,9 @@
                          Width="{StaticResource SIZE_ListValue_TextboxWidth_Long}"                         
                          BorderThickness="0"
                          Margin="20,10,0,0"/>
-                    </StackPanel>
-                </Grid>
+                      <Rectangle HorizontalAlignment="Stretch" Fill="White" Height="1" Margin="15,8,15,0"/>
+                    </StackPanel>                
+                </Grid>                
 
                 <local:PullToRefreshListView HorizontalAlignment="Left" Width="{StaticResource SIZE_SidePaneWidth}" Margin="0,0,0,0" x:Name="NoPrintersFoundView"
                                              Visibility="{Binding DataContext.NoPrintersFound, ElementName=SearchPrinterPaneControl, Converter={StaticResource BooleanToVisibilityConverter}}"

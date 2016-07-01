@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -20,6 +21,7 @@ using GalaSoft.MvvmLight.Command;
 using SmartDeviceApp.Behaviors;
 using SmartDeviceApp.Common.Enum;
 using System.Text.RegularExpressions;
+using Windows.UI.ViewManagement;
 using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Controls
@@ -207,7 +209,7 @@ namespace SmartDeviceApp.Controls
             // Handle the paste event
             e.Handled = true;
 
-            var contents = Clipboard.GetContent();
+            var contents = Clipboard.GetContent();   
             if (contents.Contains(StandardDataFormats.Text))
             {
                 var text = await contents.GetTextAsync();
@@ -245,6 +247,10 @@ namespace SmartDeviceApp.Controls
                 case TextBoxBehavior.Alphanumeric:
                     behavior = new AlphanumericTextBoxBehavior();
                     behavior.Attach(((KeyTextBoxControl)obj).textBox);
+                    break;
+                case TextBoxBehavior.SnmpCommunityNameFilter:
+                    behavior = new SnmpCommunityNameTextBoxBehavior();
+                    behavior.Attach(((KeyTextBoxControl) obj).textBox);
                     break;
             }
         }

@@ -12,6 +12,7 @@ namespace SmartDeviceApp.Common.Enum
     public enum TextBoxBehavior
     {
         Numeric,
-        Alphanumeric
+        Alphanumeric,
+        SnmpCommunityNameFilter
     }
 }

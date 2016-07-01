@@ -114,6 +114,7 @@
     <Compile Include="Behaviors\AlphaNumericTextBoxBehavior.cs" />
     <Compile Include="Behaviors\NumericPasswordBehavior.cs" />
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
+    <Compile Include="Behaviors\SnmpCommunityNameTextBoxBehavior.cs" />
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
     <Compile Include="Common\Enum\MessageType.cs" />
     <Compile Include="Common\Enum\PrintJobResult.cs" />

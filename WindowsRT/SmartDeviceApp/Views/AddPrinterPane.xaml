@@ -207,6 +207,7 @@
                          Width="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
                          BorderThickness="0"
                          Margin="20,10,0,0"/>
+              <Rectangle HorizontalAlignment="Stretch" Fill="White" Height="1" Margin="15,8,15,0"/>
             </StackPanel>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <TextBox x:Name="ipTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTabStop="{Binding IsButtonVisible}"
