@@ -20,7 +20,10 @@
 
 #define PJL_COMMAND_VERSKION "2.00"
 #define PJL_IDENTIFIER "RISO_IJ_PJL"
-#define PJL_RIPCONTROL_FLAG "0"
+// Ver.2.0.0.3 start
+//#define PJL_RIPCONTROL_FLAG "0"
+#define PJL_RIPCONTROL_FLAG "2"
+// Ver.2.0.0.3 end
 #define PJL_SOFTWERENAME "RISO PRINT-S"
 
 typedef enum
@@ -202,18 +205,18 @@ const static char *finishing_side[] =
 const static char *staple[] =
 {
     "OFF",
-    "1STAPLE",
     "1STAPLELEFT",
     "1STAPLERIGHT",
-    "2STAPLES"
+    "2STAPLES",
+    "1STAPLE",
 };
 
 const static char *punch[] =
 {
     "OFF",
     "2HOLES",
+    "4HOLES",
     "3HOLES",
-    "4HOLES"
 };
 
 const static char *output_tray[] =
@@ -309,9 +312,16 @@ typedef struct
 extern void parse(char *settings, setting_value values[]);
 extern void parse_line(char *line, char *name, char *value);
 extern int get_setting_index(const char *name);
+// Ver.2.0.0.3 start
 void add_pjl_gd(char *pjl, char *appName, char *appVersion, setting_value values[], int command);
+//void add_pjl(char *pjl, char *printerName, setting_value values[], int command);
+// Ver.2.0.0.3 end
 
-void create_pjl_gd(char *pjl, char *settings, char *appName, char *appVersion)
+// Ver.2.0.0.3 start
+//void create_pjl_gd(char *pjl, char *settings, char *appName, char *appVersion)
+void create_pjl_gd(char *pjl, char *settings, char *printerName, char *appVersion)
+//void create_pjl_gd(char *pjl, char *settings, char *printerName)
+// Ver.2.0.0.3 end
 {
     if (strlen(settings) == 0)
     {
@@ -329,7 +339,11 @@ void create_pjl_gd(char *pjl, char *settings, char *appName, char *appVersion)
     
     for (int i = 0; i < kPjlCommandCount; i++)
     {
-        add_pjl_gd(pjl, appName, appVersion, values, i);
+        // Ver.2.0.0.3 start
+        //add_pjl_gd(pjl, appName, appVersion, values, i);
+        add_pjl_gd(pjl, printerName, appVersion, values, i);
+        //add_pjl(pjl, printerName, values, i);
+        // Ver.2.0.0.3 end
     }
     
     for (int i = 0; i < kPrintSettingsCount; i++)
@@ -410,8 +424,11 @@ int get_setting_index(const char *name)
     return -1;
 }
 */
-
-void add_pjl_gd(char *pjl, char *appName, char *appVersion, setting_value values[], int command)
+// Ver.2.0.0.3 start
+//void add_pjl_gd(char *pjl, char *appName, char *appVersion, setting_value values[], int command)
+void add_pjl_gd(char *pjl, char *printerName, char *appVersion, setting_value values[], int command)
+//void add_pjl(char *pjl, char *printerName, setting_value values[], int command)
+// Ver.2.0.0.3 end
 {
     char pjl_line[1024];
     switch (command)
@@ -727,41 +744,43 @@ void add_pjl_gd(char *pjl, char *appName, char *appVersion, setting_value values
             }
             else
             {
-                if (finishing_side.int_value == 0)
+                if (finishing_side.int_value == 0) // 左とじ
                 {
                     if (staple.int_value == 3)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
+                        //sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]); // 1STAPLELEFT
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]); // 1STAPLE
                     }
                     else if (staple.int_value == 4)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]); // 2STAPLES
                     }
                 }
-                else if (finishing_side.int_value == 2)
+                else if (finishing_side.int_value == 2) // 右とじ
                 {
                     if (staple.int_value == 3)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
+                        //sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]); // 1STAPLERIGHT
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]); // 1STAPLE
                     }
                     else if (staple.int_value == 4)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]); // 2STAPLES
                     }
                 }
-                else if (finishing_side.int_value == 1)
+                else if (finishing_side.int_value == 1) // 上とじ
                 {
                     if (staple.int_value == 1)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]); // 1STAPLELEFT
                     }
                     else if (staple.int_value == 2)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]); // 1STAPLERIGHT
                     }
                     else if (staple.int_value == 4)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]); // 2STAPLES
                     }
                 }
             }
@@ -775,6 +794,18 @@ void add_pjl_gd(char *pjl, char *appName, char *appVersion, setting_value values
             {
                 return;
             }
+            
+            // Ver.2.0.0.3 start
+            // 3holes Condition
+            if (strstr(printerName, "ORPHIS") == NULL)
+            {
+                if (punch.int_value == 1)
+                {
+                    punch.int_value += 1;
+                }
+            }
+            // Ver.2.0.0.3 end
+            
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][punch.int_value]);
             strcat(pjl, pjl_line);
             break;
@@ -786,6 +817,20 @@ void add_pjl_gd(char *pjl, char *appName, char *appVersion, setting_value values
             {
                 return;
             }
+            
+            // Ver.2.0.0.3　start
+            // フェイスダウン排紙トレイ　非表示時の処理
+            setting_value staple = values[kPrintSettingsStaple];
+            setting_value punch = values[kPrintSettingsPunch];
+            if (staple.int_value != 0 || punch.int_value != 0)
+            {
+                if (outputTray.int_value == 1)
+                {
+                    outputTray.int_value += 1;
+                }
+            }
+            // Ver.2.0.0.3 end
+            
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][outputTray.int_value]);
             strcat(pjl, pjl_line);
             break;
