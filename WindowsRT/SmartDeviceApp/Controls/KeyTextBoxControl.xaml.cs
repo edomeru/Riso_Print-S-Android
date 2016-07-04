@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using Microsoft.Xaml.Interactivity;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
@@ -20,9 +18,6 @@ using Windows.UI.Xaml.Navigation;
 using GalaSoft.MvvmLight.Command;
 using SmartDeviceApp.Behaviors;
 using SmartDeviceApp.Common.Enum;
-using System.Text.RegularExpressions;
-using Windows.UI.ViewManagement;
-using SmartDeviceApp.Common.Utilities;
 
 namespace SmartDeviceApp.Controls
 {
@@ -56,15 +51,6 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty TextBoxBehaviorProperty =
             DependencyProperty.Register("TextBoxBehavior", typeof(TextBoxBehavior), typeof(KeyTextBoxControl), new PropertyMetadata(TextBoxBehavior.Alphanumeric, SetTextBoxBehavior));
-
-        public static readonly DependencyProperty TextBoxValidValueProperty =
-            DependencyProperty.Register("TextBoxValidValue", typeof(string), typeof(KeyTextBoxControl), null);
-
-        public static readonly DependencyProperty TextBoxErrorLabelProperty =
-            DependencyProperty.Register("TextBoxErrorLabel", typeof(string), typeof(KeyTextBoxControl), null);
-
-        public static readonly DependencyProperty TextBoxErrorMessageProperty =
-            DependencyProperty.Register("TextBoxErrorMessage", typeof(string), typeof(KeyTextBoxControl), null);
 
         /// <summary>
         /// Text property of the Value element of the control.
@@ -112,33 +98,6 @@ namespace SmartDeviceApp.Controls
         }
 
         /// <summary>
-        /// The text box valid values
-        /// </summary>
-        public string TextBoxValidValue
-        {
-            get { return (string)GetValue(TextBoxValidValueProperty); }
-            set { SetValue(TextBoxValidValueProperty, value); }
-        }
-
-        /// <summary>
-        /// The text box error label
-        /// </summary>
-        public string TextBoxErrorLabel
-        {
-            get { return (string)GetValue(TextBoxErrorLabelProperty); }
-            set { SetValue(TextBoxErrorLabelProperty, value); }
-        }
-
-        /// <summary>
-        /// The text box error message
-        /// </summary>
-        public string TextBoxErrorMessage
-        {
-            get { return (string)GetValue(TextBoxErrorMessageProperty); }
-            set { SetValue(TextBoxErrorMessageProperty, value); }
-        }
-
-        /// <summary>
         /// Sets the focus to the textbox when any part of the button is tapped
         /// </summary>
         public ICommand SetFocus
@@ -165,7 +124,6 @@ namespace SmartDeviceApp.Controls
                 textBox.KeyUp += OnFinalizeTextBox;
                 textBox.TextChanged += (sender, e) => TextChanged(sender, context);
                 textBox.LostFocus += OnLostFocus;
-                textBox.Paste += OnPaste;
                 textBox.Width = TextBoxWidth;
                 textBox.TextAlignment = TextBoxAlignment;
                 textBox.MaxLength = TextBoxMaxLength;
@@ -204,28 +162,6 @@ namespace SmartDeviceApp.Controls
             FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
         }
 
-        private async void OnPaste(object sender, TextControlPasteEventArgs e)
-        {
-            // Handle the paste event
-            e.Handled = true;
-
-            var contents = Clipboard.GetContent();   
-            if (contents.Contains(StandardDataFormats.Text))
-            {
-                var text = await contents.GetTextAsync();
-                // Check if pasted text contains invalid characters
-                if (Regex.IsMatch(text, TextBoxValidValue))
-                {
-                    _textBox.Text.Insert(_textBox.SelectionStart, text);
-                }
-                else
-                {
-                    // Display warning message
-                    await DialogService.Instance.ShowError(TextBoxErrorMessage, TextBoxErrorLabel, "IDS_LBL_OK", null);
-                }
-            }
-        }
-
         private void OnFinalizeTextBox(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter)
@@ -247,10 +183,6 @@ namespace SmartDeviceApp.Controls
                 case TextBoxBehavior.Alphanumeric:
                     behavior = new AlphanumericTextBoxBehavior();
                     behavior.Attach(((KeyTextBoxControl)obj).textBox);
-                    break;
-                case TextBoxBehavior.SnmpCommunityNameFilter:
-                    behavior = new SnmpCommunityNameTextBoxBehavior();
-                    behavior.Attach(((KeyTextBoxControl) obj).textBox);
                     break;
             }
         }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,7 +17,7 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class SnmpCommunityNameTextBoxBehavior : DependencyObject, IBehavior
     {
-        private const string REGEX_SNMP_COMMUNITY_NAME_CHARS = "[^a-zA-Z0-9,./:;@\\[\\\\\\]\\^_]";
+        private const string REGEX_SNMP_COMMUNITY_NAME_CHARS = "^[a-zA-Z0-9,./:;@\\[\\\\\\]\\^_]*$";
 
         private string lastValidText;
 
@@ -43,6 +44,7 @@ namespace SmartDeviceApp.Common.Utilities
             lastValidText = textBox.Text;
             textBox.KeyDown += OnKeyDown;
             textBox.KeyUp += OnKeyUp;
+            textBox.Paste += Paste;
             textBox.TextChanged += OnTextChanged;
 
             textBox.IsTextPredictionEnabled = false;
@@ -62,6 +64,7 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 textBox.KeyDown -= OnKeyDown;
                 textBox.KeyUp -= OnKeyUp;
+                textBox.Paste -= Paste;
             }
         }
 
@@ -86,6 +89,19 @@ namespace SmartDeviceApp.Common.Utilities
             System.Diagnostics.Debug.WriteLine("Accepted");
         }
 
+        private async void Paste(object sender, TextControlPasteEventArgs e)
+        {           
+            TextBox textBox = (TextBox) sender;
+            var contents = Clipboard.GetContent();
+            var text = await contents.GetTextAsync();
+
+            if (!Regex.IsMatch(text, REGEX_SNMP_COMMUNITY_NAME_CHARS))
+            {
+                e.Handled = true; // set as handled to block appending to textbox
+                Messenger.Default.Send<MessageType>(MessageType.SnmpCommunityNamePasteInvalid);                
+            }
+        }
+
         /// <summary>
         /// Flag to check whether Shift key is pressed
         /// </summary>
@@ -102,7 +118,7 @@ namespace SmartDeviceApp.Common.Utilities
             // check if valid SNMP Community Name characters
             if (textBox != null && !string.IsNullOrWhiteSpace(REGEX_SNMP_COMMUNITY_NAME_CHARS))
             {
-                if (!Regex.IsMatch(textBox.Text, REGEX_SNMP_COMMUNITY_NAME_CHARS))
+                if (Regex.IsMatch(textBox.Text, REGEX_SNMP_COMMUNITY_NAME_CHARS))
                 {
                     // The text matches the regular expression.
                     lastValidText = textBox.Text;

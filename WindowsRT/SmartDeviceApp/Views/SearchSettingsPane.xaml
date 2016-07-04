@@ -195,22 +195,13 @@
                 <TextBlock Text="{Binding Source=IDS_LBL_SNMP_COMMUNITY_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
                            Style="{StaticResource STYLE_TextKey}"
                            Margin="20,20,0,0" Width="320" />
-                <controls:KeyTextBoxControl x:Name="snmpCommunityNameTextBox"
-                         ValueText="{Binding SnmpCommunityName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                         
-                         TextBoxBehavior="SnmpCommunityNameFilter"
-                         IconVisibility="Collapsed"
+                <TextBox x:Name="snmpCommunityNameTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTabStop="{Binding IsButtonVisible}"
                          VerticalAlignment="Center"
-                         HorizontalAlignment="Left"
-                        TextBoxValidValue="^*[a-zA-Z0-9,./:;@\\[\\\\\\]\\^_]$"
-                         TextBoxAlignment="Left"
-                         TextBoxErrorLabel="IDS_LBL_SEARCH_PRINTERS_SETTINGS"
-                         TextBoxErrorMessage="IDS_ERR_MSG_INVALID_COMMUNITY_NAME"
-                         TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
-                         TextBoxMaxLength="{StaticResource MAXLENGTH_SnmpCommunityName}"
-                         PressedColor="{StaticResource BRUSH_Purple1}"
-                         KeyPressedColor="{StaticResource BRUSH_White}"
+                         Style="{StaticResource IPAddressTextBoxStyle1}"
+                         Loaded="SnmpCommunityNameTextBox_Loaded"
+                         Margin="20,20,10,20"
                          Width="320"
-                         Margin="0,10,0,0"/>
+                         MaxLength="32"/>
                 <TextBlock Text="{Binding Source=IDS_LBL_VALID_COMMUNITY_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
                            Style="{StaticResource STYLE_TextSubTitle}"
                            Margin="20,20,0,0" Width="320" Height="80"/>

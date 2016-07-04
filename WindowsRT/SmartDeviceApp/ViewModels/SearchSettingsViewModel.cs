@@ -50,6 +50,7 @@ namespace SmartDeviceApp.ViewModels
             SnmpCommunityName = SNMP.SNMPConstants.DEFAULT_COMMUNITY_NAME;
 
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetSearchPane(viewOrientation));
+            Messenger.Default.Register<MessageType>(this, (strMsg) => HandleStringMessage(strMsg));
         }
 
         private void ResetSearchPane(ViewOrientation viewOrientation)
@@ -100,6 +101,14 @@ namespace SmartDeviceApp.ViewModels
                     _viewOrientation = value;
                     OnPropertyChanged("ViewOrientation");
                 }
+            }
+        }
+
+        private async Task HandleStringMessage(MessageType strMsg)
+        {
+            if (strMsg == MessageType.SnmpCommunityNamePasteInvalid)
+            {
+                await DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_COMMUNITY_NAME", "IDS_LBL_SEARCH_PRINTERS_SETTINGS", "IDS_LBL_OK", null);
             }
         }
     }

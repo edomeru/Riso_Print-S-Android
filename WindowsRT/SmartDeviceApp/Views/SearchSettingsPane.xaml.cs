@@ -58,5 +58,12 @@ namespace SmartDeviceApp.Views
             var titleHeight = ((GridLength)Application.Current.Resources["SIZE_TitleBarHeight"]).Value;
             ViewModel.Height = (double)((new SidePanesHeightConverter()).Convert(this, null, null, null)) - titleHeight;
         }
+
+        private void SnmpCommunityNameTextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            IBehavior behavior = null;
+            behavior = new SnmpCommunityNameTextBoxBehavior();
+            behavior.Attach((TextBox)sender);
+        }
     }
 }
