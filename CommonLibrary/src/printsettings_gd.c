@@ -113,8 +113,7 @@ const static char *color_mode[] =
 {
     "AUTO",
     "FIVECOLOR",
-    "GRAYSCALE",
-    "DUAL"
+    "GRAYSCALE"
 };
 
 const static char *orientation[] =
