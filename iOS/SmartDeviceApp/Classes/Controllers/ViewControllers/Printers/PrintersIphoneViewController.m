@@ -18,6 +18,7 @@
 #define SEGUE_TO_PRINTSETTINGS  @"PrintersIphone-PrintSettings"
 #define SEGUE_TO_ADD_PRINTER    @"PrintersIphone-AddPrinter"
 #define SEGUE_TO_PRINTER_SEARCH @"PrintersIphone-PrinterSearch"
+#define SEGUE_TO_PRINTER_SEARCH_SETTINGS @"PrintersIphone-SearchSettings"
 #define PRINTERCELL             @"PrinterCell"
 
 @interface PrintersIphoneViewController ()
@@ -470,6 +471,11 @@
             [self removeDeleteState];
     }
     else if ([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH])
+    {
+        if (self.toDeleteIndexPath != nil)
+            [self removeDeleteState];
+    }
+    else if ([segue.identifier isEqualToString:SEGUE_TO_PRINTER_SEARCH_SETTINGS])
     {
         if (self.toDeleteIndexPath != nil)
             [self removeDeleteState];
