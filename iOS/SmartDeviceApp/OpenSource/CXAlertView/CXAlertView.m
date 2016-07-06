@@ -874,7 +874,7 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
 	button.titleLabel.lineBreakMode=BT_LBM;
 //	[button setTitleEdgeInsets:UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0)];
 
-    CGFloat contentWidthOffset = 0.;
+    //CGFloat contentWidthOffset = 0.; //aLink-20150706: comment out to remove static code error
     [_buttons addObject:button];
     
     if ([_buttons count] == 1)
@@ -887,10 +887,10 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
 		// correct first button
 		CXAlertButtonItem *firstButton = [_buttons objectAtIndex:0];
 		firstButton.defaultRightLineVisible = _showButtonLine;
-        CGFloat lastFirstButtonWidth = CGRectGetWidth(firstButton.frame);
+        //CGFloat lastFirstButtonWidth = CGRectGetWidth(firstButton.frame); //aLink-20150706: comment out to remove static code error
 		CGRect newFrame = CGRectMake( 0, 0, self.containerWidth/2, CGRectGetHeight(firstButton.frame));
 		newFrame.origin.x = 0;
-        contentWidthOffset = lastFirstButtonWidth - CGRectGetWidth(newFrame);
+        //contentWidthOffset = lastFirstButtonWidth - CGRectGetWidth(newFrame); //aLink-20150706: comment out to remove static code error
         
 		if (self.isVisible) {
             CGRect buttonFrame = [self frameWithButtonTitile:title type:type];
