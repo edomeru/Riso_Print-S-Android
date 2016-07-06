@@ -277,6 +277,18 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
 {
     self.oldKeyWindow = [[UIApplication sharedApplication] keyWindow];
 
+    //Temporary fix for bug on alert not returning control to the main application window because it is getting its own window as old window
+    //If oldKeyWindow is equal to own alert window, set the main application window as the old key window
+    if(self.alertWindow == self.oldKeyWindow)
+    {
+        NSArray *windows = [[UIApplication sharedApplication] windows];
+        if (windows.count > 0)
+        {
+            UIWindow* mainWindow = [windows objectAtIndex:0];
+            self.oldKeyWindow = mainWindow;
+        }
+    }
+    
     if (![[CXAlertView sharedQueue] containsObject:self]) {
         [[CXAlertView sharedQueue] addObject:self];
     }
