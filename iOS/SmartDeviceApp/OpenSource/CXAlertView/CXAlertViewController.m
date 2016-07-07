@@ -80,10 +80,13 @@
 {
     return YES;
 }
-- (BOOL)prefersStatusBarHidden
+//SDA Fix: Comment out so visibility of status bar is not altered by alert during rotation
+/*
+ - (BOOL)prefersStatusBarHidden
 {
     return _rootViewControllerPrefersStatusBarHidden;
 }
+ */
 
 //SDA Fix: Added method override to keep status bar style when alert is shown
 - (UIStatusBarStyle)preferredStatusBarStyle
