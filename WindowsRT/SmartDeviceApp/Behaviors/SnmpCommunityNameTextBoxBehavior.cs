@@ -53,13 +53,7 @@ namespace SmartDeviceApp.Common.Utilities
             var inputScope = new InputScope();
             inputScope.Names.Add(new InputScopeName(InputScopeNameValue.Number));
             textBox.InputScope = inputScope;
-        }
-
-        private void OnLostFocus(object sender, RoutedEventArgs e)
-        {
-            TextBox textBox = (TextBox) sender;
-            SaveSnmpCommunityName(textBox.Text);
-        }
+        }        
 
         private void SaveSnmpCommunityName(string snmpCommunityName)
         {
@@ -119,6 +113,12 @@ namespace SmartDeviceApp.Common.Utilities
                 e.Handled = true; // set as handled to block appending to textbox
                 Messenger.Default.Send(new NotificationMessage<MessageType>(MessageType.SnmpCommunityNamePasteInvalid, null));
             }
+        }
+
+        private void OnLostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            SaveSnmpCommunityName(textBox.Text);
         }
 
         /// <summary>
