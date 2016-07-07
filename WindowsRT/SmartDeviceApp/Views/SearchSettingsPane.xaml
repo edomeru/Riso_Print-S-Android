@@ -195,7 +195,7 @@
                 <TextBlock Text="{Binding Source=IDS_LBL_SNMP_COMMUNITY_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
                            Style="{StaticResource STYLE_TextKey}"
                            Margin="20,20,0,0" Width="320" />
-                <TextBox x:Name="snmpCommunityNameTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTabStop="{Binding IsButtonVisible}"
+                <TextBox x:Name="snmpCommunityNameTextBox"  Text="{Binding SnmpCommunityName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTabStop="{Binding IsButtonVisible}"
                          VerticalAlignment="Center"
                          Style="{StaticResource IPAddressTextBoxStyle1}"
                          Loaded="SnmpCommunityNameTextBox_Loaded"

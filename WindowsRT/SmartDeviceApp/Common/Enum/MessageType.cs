@@ -13,6 +13,7 @@ namespace SmartDeviceApp.Common.Enum
     {
         AddPrinter,
         RightPageImageUpdated,
-        SnmpCommunityNamePasteInvalid
+        SnmpCommunityNamePasteInvalid,
+        SaveSnmpCommunityName
     }
 }

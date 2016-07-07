@@ -20,8 +20,6 @@ namespace SmartDeviceApp.ViewModels
 {
     public class SearchSettingsViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        private string _snmpCommunityName;
-
         private double _height;
 
         private ViewControlViewModel _viewControlViewModel;
@@ -33,10 +31,10 @@ namespace SmartDeviceApp.ViewModels
         /// </summary>
         public string SnmpCommunityName
         {
-            get { return _snmpCommunityName; }
+            get { return SettingController.Instance.GetSnmpCommunityName(); }
             set
             {
-                this._snmpCommunityName = value;
+                SettingController.Instance.SaveSnmpCommunityName(value);                
                 OnPropertyChanged("SnmpCommunityName");
             }
         }
@@ -47,10 +45,10 @@ namespace SmartDeviceApp.ViewModels
         public SearchSettingsViewModel()
         {
             _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-            SnmpCommunityName = SNMP.SNMPConstants.DEFAULT_COMMUNITY_NAME;
+            SnmpCommunityName = SettingController.Instance.GetSnmpCommunityName();
 
             Messenger.Default.Register<ViewOrientation>(this, (viewOrientation) => ResetSearchPane(viewOrientation));
-            Messenger.Default.Register<MessageType>(this, (strMsg) => HandleStringMessage(strMsg));
+            Messenger.Default.Register<NotificationMessage<MessageType>>(this, (notificationMessage) => HandleNotificationMessage(notificationMessage));            
         }
 
         private void ResetSearchPane(ViewOrientation viewOrientation)
@@ -104,11 +102,21 @@ namespace SmartDeviceApp.ViewModels
             }
         }
 
-        private async Task HandleStringMessage(MessageType strMsg)
+        /// <summary>
+        /// Handles notification messages sent via Light Messenger
+        /// Kindly note that since .Notification is always a string
+        /// and .Content type can be changed, the .Content is the
+        /// MessageType ID and the .Notification is the actual value
+        /// </summary>
+        private async Task HandleNotificationMessage(NotificationMessage<MessageType> notificationMessage)
         {
-            if (strMsg == MessageType.SnmpCommunityNamePasteInvalid)
+            if (notificationMessage.Content == MessageType.SnmpCommunityNamePasteInvalid)
             {
                 await DialogService.Instance.ShowError("IDS_ERR_MSG_INVALID_COMMUNITY_NAME", "IDS_LBL_SEARCH_PRINTERS_SETTINGS", "IDS_LBL_OK", null);
+            }
+            else if (notificationMessage.Content == MessageType.SaveSnmpCommunityName)
+            {
+                SnmpCommunityName = notificationMessage.Notification;
             }
         }
     }

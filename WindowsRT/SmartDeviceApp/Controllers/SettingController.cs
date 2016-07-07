@@ -13,6 +13,8 @@
 using SmartDeviceApp.ViewModels;
 using System;
 using Windows.Storage;
+using Microsoft.VisualBasic;
+using SNMP;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -36,6 +38,7 @@ namespace SmartDeviceApp.Controllers
 
         private const string KEY_SETTINGS_LICENSE_AGREEMENT_STATUS = "key_license_agreement_status";
         private const string KEY_SETTINGS_CARD_READER_CARD_ID = "key_card_reader_card_id";
+        private const string KEY_SETTINGS_SNMP_COMMUNITY_NAME = "key_settings_snmp_community_name";
 
         /// <summary>
         /// Log-in ID value
@@ -135,6 +138,36 @@ namespace SmartDeviceApp.Controllers
                 UpdateLocalSettings(KEY_SETTINGS_CARD_READER_CARD_ID, cardId.Trim(), cardId.GetType());
                 CardId = cardId;
             }
+        }
+
+        public string GetSnmpCommunityName()
+        {
+            string snmpCommunityName = SNMPConstants.DEFAULT_COMMUNITY_NAME;
+            var localSettings = ApplicationData.Current.LocalSettings;
+            string key = KEY_SETTINGS_SNMP_COMMUNITY_NAME;
+            if (localSettings.Values.ContainsKey(key))
+            {
+                try
+                {
+                    snmpCommunityName = Convert.ToString(localSettings.Values[key]);
+                }
+                catch
+                {
+                    snmpCommunityName = SNMPConstants.DEFAULT_COMMUNITY_NAME;
+                }
+            }
+
+            return snmpCommunityName;
+        }
+
+        public void SaveSnmpCommunityName(string snmpCommunityName)
+        {
+            if (String.IsNullOrEmpty(snmpCommunityName))
+            {
+                return;
+            }
+
+            UpdateLocalSettings(KEY_SETTINGS_SNMP_COMMUNITY_NAME, snmpCommunityName, snmpCommunityName.GetType());
         }
 
         /// <summary>

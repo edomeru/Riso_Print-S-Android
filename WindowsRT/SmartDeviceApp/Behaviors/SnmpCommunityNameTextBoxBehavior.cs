@@ -46,12 +46,24 @@ namespace SmartDeviceApp.Common.Utilities
             textBox.KeyUp += OnKeyUp;
             textBox.Paste += Paste;
             textBox.TextChanged += OnTextChanged;
+            textBox.LostFocus += OnLostFocus;
 
             textBox.IsTextPredictionEnabled = false;
 
             var inputScope = new InputScope();
             inputScope.Names.Add(new InputScopeName(InputScopeNameValue.Number));
             textBox.InputScope = inputScope;
+        }
+
+        private void OnLostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = (TextBox) sender;
+            SaveSnmpCommunityName(textBox.Text);
+        }
+
+        private void SaveSnmpCommunityName(string snmpCommunityName)
+        {
+            Messenger.Default.Send(new NotificationMessage<MessageType>(MessageType.SaveSnmpCommunityName, snmpCommunityName));
         }
 
         /// <summary>
@@ -65,6 +77,7 @@ namespace SmartDeviceApp.Common.Utilities
                 textBox.KeyDown -= OnKeyDown;
                 textBox.KeyUp -= OnKeyUp;
                 textBox.Paste -= Paste;
+                textBox.LostFocus -= OnLostFocus;
             }
         }
 
@@ -73,7 +86,13 @@ namespace SmartDeviceApp.Common.Utilities
             if (e.Key == VirtualKey.Shift)
             {
                 IsShiftPressed = false;
-            }            
+            }
+
+            if (e.Key == VirtualKey.Enter)
+            {
+                TextBox textBox = (TextBox) sender;
+                SaveSnmpCommunityName(textBox.Text);
+            }
         }
 
         private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
@@ -98,7 +117,7 @@ namespace SmartDeviceApp.Common.Utilities
             if (!Regex.IsMatch(text, REGEX_SNMP_COMMUNITY_NAME_CHARS))
             {
                 e.Handled = true; // set as handled to block appending to textbox
-                Messenger.Default.Send<MessageType>(MessageType.SnmpCommunityNamePasteInvalid);                
+                Messenger.Default.Send(new NotificationMessage<MessageType>(MessageType.SnmpCommunityNamePasteInvalid, null));
             }
         }
 
