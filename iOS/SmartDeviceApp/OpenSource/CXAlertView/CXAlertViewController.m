@@ -60,7 +60,9 @@
     [UIApplication sharedApplication].statusBarHidden = _rootViewControllerPrefersStatusBarHidden;
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+//SDA Fix:Replace deprecated method to remove warnings
+//- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+-(void) viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [self.alertView resetTransition];
     [self.alertView invalidateLayout];
@@ -71,10 +73,13 @@
     return UIInterfaceOrientationMaskAll;
 }
 
+//SDA Fix: Comment out deprecated method to remove static warnings
+/*
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
     return YES;
 }
+*/
 
 - (BOOL)shouldAutorotate
 {
