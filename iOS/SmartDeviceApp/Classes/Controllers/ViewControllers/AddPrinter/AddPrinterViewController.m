@@ -200,20 +200,23 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
         [self unwindFromOverTo:[self.parentViewController class]];
 }
 
--(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     //In iphone, if keyboard is already up when device is rotated to landscape, move the view up to prevent keyboard from covering textIP, move to original position when rotated back to portrait
-    if(!self.isIpad && self.textIP.isEditing)
-    {
-        if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation))
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context){
+        if(!self.isIpad && self.textIP.isEditing)
         {
-            [self moveViewUp:YES];
+            UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+            if (UIInterfaceOrientationIsLandscape(interfaceOrientation))
+            {
+                [self moveViewUp:YES];
+            }
+            else
+            {
+                [self moveViewUp:NO];
+            }
         }
-        else
-        {
-            [self moveViewUp:NO];
-        }
-    }
+    } completion:nil];
 }
 
 #pragma mark - Segue
