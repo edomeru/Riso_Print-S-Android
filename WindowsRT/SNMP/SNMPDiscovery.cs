@@ -102,10 +102,8 @@ namespace SNMP
 
                         Dictionary<string, string> identifier = values[0];
 
-                        string printerMibOid = identifier[SNMPConstants.KEY_OID];
-                        if (printerMibOid != null)
+                        if (isSupportedDevice(identifier[SNMPConstants.KEY_OID], identifier[SNMPConstants.KEY_VAL]))
                         {
-
                             string host = sender.ToString();
 
                             SNMPDevice snmpDevice = new SNMPDevice(host);
@@ -163,6 +161,23 @@ namespace SNMP
                     snmpControllerDiscoverTimeOut("255.255.255.255");
                 }
             }
+        }
+
+        /// <summary>
+        /// Checks if the device is a supported RISO device.
+        /// </summary>
+        /// <returns>true if supported, false otherwise</returns>
+        private bool isSupportedDevice(string printerOID, string printerDesc)
+        {
+            if (printerOID != null && printerDesc != null && printerOID.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
+            {
+                return printerDesc.Equals("RISO IS1000C-J") ||
+                   printerDesc.Equals("RISO IS1000C-G") ||
+                   printerDesc.Equals("RISO IS950C-G") ||
+                   printerDesc.Contains("FW") ||
+                   printerDesc.Contains("GD");
+            }
+            return false;
         }
 
     }

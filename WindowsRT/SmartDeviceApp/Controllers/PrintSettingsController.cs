@@ -127,10 +127,10 @@ namespace SmartDeviceApp.Controllers
                 _prevPinCode = null;
             }
 
-            RegisterPrintSettingValueChanged(screenName);
-
+            // Fixed latent bug: printer details is not set before updated the UI
             _printer = printer;
-
+            
+            RegisterPrintSettingValueChanged(screenName);
 
             if (_printSettings != currPrintSettings)
             {
