@@ -12,6 +12,7 @@ using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using SmartDeviceApp.Controllers;
 
 namespace SmartDeviceApp.Common.Utilities
 {
@@ -112,13 +113,22 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 e.Handled = true; // set as handled to block appending to textbox
                 Messenger.Default.Send(new NotificationMessage<MessageType>(MessageType.SnmpCommunityNamePasteInvalid, null));
+                ResetToLastValidText(textBox); // revert back to last valid text since onTextChange only handles already-truncated text (handling for special case where invalid character is out of bounds)
             }
         }
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = (TextBox)sender;
-            SaveSnmpCommunityName(textBox.Text);
+
+            if (!string.IsNullOrEmpty(textBox.Text))
+            {
+                SaveSnmpCommunityName(textBox.Text);
+            }
+            else
+            {
+                textBox.Text = SettingController.Instance.GetSnmpCommunityName(); // Reset to saved local setting value if textbox is empty
+            }         
         }
 
         /// <summary>
@@ -135,7 +145,7 @@ namespace SmartDeviceApp.Common.Utilities
             var textBox = AssociatedObject as TextBox;
 
             // check if valid SNMP Community Name characters
-            if (textBox != null && !string.IsNullOrWhiteSpace(REGEX_SNMP_COMMUNITY_NAME_CHARS))
+            if (textBox != null && !string.IsNullOrEmpty(textBox.Text) && !string.IsNullOrWhiteSpace(REGEX_SNMP_COMMUNITY_NAME_CHARS))
             {
                 if (Regex.IsMatch(textBox.Text, REGEX_SNMP_COMMUNITY_NAME_CHARS))
                 {
@@ -146,10 +156,18 @@ namespace SmartDeviceApp.Common.Utilities
                 {
                     // The text doesn't match the regular expression.
                     // Restore the last valid value.
-                    textBox.Text = lastValidText;
-                    textBox.SelectionStart = lastValidText.Length;
+                    ResetToLastValidText(textBox);
                 }
             }
+        }
+
+        private void ResetToLastValidText(TextBox textBox)
+        {
+            if (textBox != null)
+            {
+                textBox.Text = lastValidText;
+                textBox.SelectionStart = lastValidText.Length;
+            }            
         }
     }
 }
