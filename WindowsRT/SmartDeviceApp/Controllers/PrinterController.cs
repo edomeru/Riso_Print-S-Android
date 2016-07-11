@@ -350,13 +350,16 @@ namespace SmartDeviceApp.Controllers
                     }
                     else
                     {
-                        NetworkController.Instance.networkControllerPingStatusCallback = new Action<string, bool>(handleAddPrinterStatus);
-                        await NetworkController.Instance.pingDevice(ip);
+                        SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
+                        SNMPController.Instance.printerControllerAddPrinterCallback = new Action<string, string, bool, bool, List<string>>(handleAddPrinterStatus);
+                        SNMPController.Instance.printerControllerErrorCallBack = new Action(handleAddError);
+                        SNMPController.Instance.getDevice(ip);
                     }
                 }
                 else
                 {
-                    handleAddPrinterStatus("", true);
+                    _addPrinterViewModel.setVisibilities();
+                    _addPrinterViewModel.handleAddIsSuccessful(false);
                 }
             }
             else
@@ -678,23 +681,6 @@ namespace SmartDeviceApp.Controllers
             {
 
             }
-        }
-
-        private async void handleAddPrinterStatus(string ip, bool isError)
-        {
-            if (!isError)
-            {
-                _addPrinterViewModel.setVisibilities();
-                _addPrinterViewModel.handleAddIsSuccessful(false);
-            }
-            else
-            {
-                SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
-                SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
-                SNMPController.Instance.printerControllerErrorCallBack = new Action(handleAddError);
-                SNMPController.Instance.getDevice(ip);
-            }
-            return;
         }
 
         private async void handleOpenDefaultPrintSettings(Printer printer)
