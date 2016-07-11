@@ -127,7 +127,7 @@ namespace SmartDeviceApp.Controllers
                 _prevPinCode = null;
             }
 
-            // Fixed latent bug: printer details is not set before updated the UI
+            // Fixed latent bug: printer details is not set before updating the UI
             _printer = printer;
             
             RegisterPrintSettingValueChanged(screenName);
@@ -138,7 +138,7 @@ namespace SmartDeviceApp.Controllers
             }
 
 
-            LoadPrintSettingsOptions();
+            LoadPrintSettingsOptions(_printer.Name);
             FilterPrintSettingsUsingCapabilities();
             MergePrintSettings();
             ApplyPrintSettingConstraints();
@@ -291,40 +291,95 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSettingList Operations
 
-        private List<PrintSettingGroup> mainGroup = null;
-        private List<PrintSettingGroup> authGroup = null;
+        private Dictionary<string, List<PrintSettingGroup>> mainSettings = null;
+        private Dictionary<string, List<PrintSettingGroup>> authSettings = null;
+        private Dictionary<string, PrintSettingList> printSettings = null;
 
         /// <summary>
         /// Loads the initial print settings file
         /// </summary>
-        private void LoadPrintSettingsOptions()
+        private void LoadPrintSettingsOptions(string printerName)
         {
-            //initial loaders (load only once and reuse)
-            if (mainGroup == null) mainGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
-            if (authGroup == null) authGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML);
-            // Construct the PrintSettingList
-            if (_printSettingsViewModel.PrintSettingsList == null)
-            {
-                _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
+            // Set default printer type to IS
+            string printerType = PrintSettingConstant.PRINTER_TYPE_IS;
 
-                foreach (PrintSettingGroup g in mainGroup)
+            if (printerName != null && printerName.Contains(PrintSettingConstant.PRINTER_TYPE_FW))
+            {
+                printerType = PrintSettingConstant.PRINTER_TYPE_FW;
+            }
+            else if (printerName != null && printerName.Contains(PrintSettingConstant.PRINTER_TYPE_GD))
+            {
+                printerType = PrintSettingConstant.PRINTER_TYPE_GD;
+            }
+            else
+            {
+                // This is still check even if the default type is IS
+                // since the default value might changed in the future
+                foreach (string type in PrintSettingConstant.IS_PRINTERS)
                 {
-                    _printSettingsViewModel.PrintSettingsList.Add(g);
+                    if (printerName.Equals(type))
+                    {
+                        printerType = PrintSettingConstant.PRINTER_TYPE_IS;
+                        break;
+                    }
                 }
             }
 
-            //remove Authentication group temporarily
-            foreach (PrintSettingGroup g in authGroup)
+            // Parse xml file once
+            if (printSettings == null)
             {
-                _printSettingsViewModel.PrintSettingsList.Remove(g);
-            }
-
-            // Append Authentication group for Print Preview screen
-            if (_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
-            {
-                foreach (PrintSettingGroup g in authGroup)
+                mainSettings = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+                authSettings = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML);
+                printSettings = new Dictionary<string, PrintSettingList>();
+                
+                // For IS
+                PrintSettingList settings = new PrintSettingList();
+                foreach (PrintSettingGroup g in mainSettings[PrintSettingConstant.PRINTER_TYPE_IS])
                 {
-                    _printSettingsViewModel.PrintSettingsList.Add(g);
+                    settings.Add(g);
+                }
+                foreach (PrintSettingGroup g in authSettings[PrintSettingConstant.PRINTER_TYPE_IS])
+                {
+                    settings.Add(g);
+                }
+
+                printSettings.Add(PrintSettingConstant.PRINTER_TYPE_IS, settings);
+
+                // For GD
+                settings = new PrintSettingList();
+                foreach (PrintSettingGroup g in mainSettings[PrintSettingConstant.PRINTER_TYPE_GD])
+                {
+                    settings.Add(g);
+                }
+                foreach (PrintSettingGroup g in authSettings[PrintSettingConstant.PRINTER_TYPE_GD])
+                {
+                    settings.Add(g);
+                }
+                printSettings.Add(PrintSettingConstant.PRINTER_TYPE_GD, settings);
+
+                // For FW
+                settings = new PrintSettingList();
+                foreach (PrintSettingGroup g in mainSettings[PrintSettingConstant.PRINTER_TYPE_FW])
+                {
+                    settings.Add(g);
+                }
+                foreach (PrintSettingGroup g in authSettings[PrintSettingConstant.PRINTER_TYPE_FW])
+                {
+                    settings.Add(g);
+                }
+                printSettings.Add(PrintSettingConstant.PRINTER_TYPE_FW, settings);
+            }
+            // Construct the PrintSettingList
+            _printSettingsViewModel.PrintSettingsList = printSettings[printerType];
+
+            
+
+            // Remove Authentication group for Default Print Settings screen
+            if (!_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
+            {
+                foreach (PrintSettingGroup g in authSettings[printerType])
+                {
+                    _printSettingsViewModel.PrintSettingsList.Remove(g);
                 }
             }            
 
@@ -346,60 +401,67 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="path">XML file relative path from install location</param>
         /// <returns>list of print setting groups</returns>
-        private List<PrintSettingGroup> ParseXmlFile(string path)
+        private Dictionary<string, List<PrintSettingGroup>> ParseXmlFile(string path)
         {
+            Dictionary<string, List<PrintSettingGroup>> printSettings = new Dictionary<string, List<PrintSettingGroup>>();
             PrintSettingToValueConverter valueConverter = new PrintSettingToValueConverter();
             string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path, path);
             XDocument data = XDocument.Load(xmlPath);
 
-            var printSettingsData = from groupData in data.Descendants(PrintSettingConstant.KEY_GROUP)
-                                    select new PrintSettingGroup
-                                    {
-                                        Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
-                                        Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
-                                        PrintSettings = (
-                                            from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
-                                            select new PrintSetting
-                                            {
-                                                Name = (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
-                                                Text = (string)settingData.Attribute(PrintSettingConstant.KEY_TEXT),
-                                                Icon = (string)settingData.Attribute(PrintSettingConstant.KEY_ICON),
-                                                Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
-                                                    (string)settingData.Attribute(PrintSettingConstant.KEY_TYPE)),
-                                                Value = valueConverter.Convert(
-                                                    (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
-                                                    null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
-                                                    null),
-                                                Default = valueConverter.Convert(
-                                                    (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
-                                                    null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
-                                                    null),
-                                                Options = (
-                                                    from optionData in settingData.Elements(PrintSettingConstant.KEY_OPTION)
-                                                    select new PrintSettingOption
-                                                    {
-                                                        Text = (string)optionData.Value,
-                                                        Index = optionData.ElementsBeforeSelf().Count(),
-                                                        IsEnabled = true // To be updated later upon apply constraints
-                                                    }).ToList<PrintSettingOption>(),
-                                                IsEnabled = true,        // To be updated later upon apply constraints
-                                                IsValueDisplayed = true  // To be updated later upon apply constraints
-                                            }).ToList<PrintSetting>()
-                                    };
+            IEnumerable<XElement> types = data.Descendants(PrintSettingConstant.KEY_PRINTER_TYPE);
+            foreach (XElement type in types)
+            {
+                var printSettingsData = from groupData in type.Descendants(PrintSettingConstant.KEY_GROUP)
+                                        select new PrintSettingGroup
+                                        {
+                                            Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
+                                            Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
+                                            PrintSettings = (
+                                                from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
+                                                select new PrintSetting
+                                                {
+                                                    Name = (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                                    Text = (string)settingData.Attribute(PrintSettingConstant.KEY_TEXT),
+                                                    Icon = (string)settingData.Attribute(PrintSettingConstant.KEY_ICON),
+                                                    Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
+                                                        (string)settingData.Attribute(PrintSettingConstant.KEY_TYPE)),
+                                                    Value = valueConverter.Convert(
+                                                        (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                                        null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                                        null),
+                                                    Default = valueConverter.Convert(
+                                                        (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                                        null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                                        null),
+                                                    Options = (
+                                                        from optionData in settingData.Elements(PrintSettingConstant.KEY_OPTION)
+                                                        select new PrintSettingOption
+                                                        {
+                                                            Text = (string)optionData.Value,
+                                                            Index = optionData.ElementsBeforeSelf().Count(),
+                                                            IsEnabled = true // To be updated later upon apply constraints
+                                                        }).ToList<PrintSettingOption>(),
+                                                    IsEnabled = true,        // To be updated later upon apply constraints
+                                                    IsValueDisplayed = true  // To be updated later upon apply constraints
+                                                }).ToList<PrintSetting>()
+                                        };
 
-            PrintSettingGroup group = new PrintSettingGroup();
-            PrintSetting fakeSetting = new PrintSetting();
-            fakeSetting.Text = "blah";
-            group.Name = "Fake Group";
-            group.PrintSettings = new List<PrintSetting>();
-            group.PrintSettings.Add(fakeSetting);
+                PrintSettingGroup group = new PrintSettingGroup();
+                PrintSetting fakeSetting = new PrintSetting();
+                fakeSetting.Text = "blah";
+                group.Name = "Fake Group";
+                group.PrintSettings = new List<PrintSetting>();
+                group.PrintSettings.Add(fakeSetting);
 
-            //List<PrintSettingGroup> groupList = new List<PrintSettingGroup>();
-            //groupList.Add(group);
-            //return groupList;
-            List<PrintSettingGroup> groupList = printSettingsData.ToList<PrintSettingGroup>();
+                //List<PrintSettingGroup> groupList = new List<PrintSettingGroup>();
+                //groupList.Add(group);
+                //return groupList;
+                printSettings.Add((string)type.Attribute(PrintSettingConstant.KEY_ID), printSettingsData.ToList<PrintSettingGroup>());
+            }
+
+            
             //List<PrintSettingGroup> groupList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
-            return groupList;
+            return printSettings;
             //return printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
         }
 

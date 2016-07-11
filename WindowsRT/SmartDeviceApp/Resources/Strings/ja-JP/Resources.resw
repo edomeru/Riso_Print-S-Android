@@ -217,13 +217,16 @@
     <value>カラーモード</value>
   </data>
   <data name="IDS_LBL_COLORMODE_AUTO" xml:space="preserve">
-    <value>オート</value>
+    <value>自動</value>
   </data>
   <data name="IDS_LBL_COLORMODE_FULLCOLOR" xml:space="preserve">
     <value>カラー</value>
   </data>
   <data name="IDS_LBL_COLORMODE_BLACK" xml:space="preserve">
     <value>白黒</value>
+  </data>
+  <data name="IDS_LBL_COLORMODE_2COLOR" xml:space="preserve">
+    <value>2色</value>
   </data>
   <data name="IDS_LBL_NUMBER_OF_COPIES" xml:space="preserve">
     <value>部数</value>
@@ -279,6 +282,18 @@
   <data name="IDS_LBL_PAPERSIZE_STATEMENT" xml:space="preserve">
     <value>Statement</value>
   </data>
+  <data name="IDS_LBL_PAPERSIZE_LEGAL13" xml:space="preserve">
+    <value>Legal 8.5x13</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_8K" xml:space="preserve">
+    <value>8K</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_16K" xml:space="preserve">
+    <value>16K</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_LEGAL14" xml:space="preserve">
+    <value>Legal 8.5x14</value>
+  </data>
   <data name="IDS_LBL_SCALETOFIT" xml:space="preserve">
     <value>用紙にフィット</value>
   </data>
@@ -306,11 +321,14 @@
   <data name="IDS_LBL_PAPERTYPE_LWPAPER" xml:space="preserve">
     <value>軽量紙</value>
   </data>
+  <data name="IDS_LBL_PAPERTYPE_ROUGHPAPER" xml:space="preserve">
+    <value>更紙</value>
+  </data>
   <data name="IDS_LBL_INPUTTRAY" xml:space="preserve">
     <value>給紙トレイ選択</value>
   </data>
   <data name="IDS_LBL_INPUTTRAY_AUTO" xml:space="preserve">
-    <value>オート</value>
+    <value>自動</value>
   </data>
   <data name="IDS_LBL_INPUTTRAY_STANDARD" xml:space="preserve">
     <value>給紙台</value>
@@ -433,7 +451,7 @@
     <value>排紙先</value>
   </data>
   <data name="IDS_LBL_OUTPUTTRAY_AUTO" xml:space="preserve">
-    <value>オート</value>
+    <value>自動</value>
   </data>
   <data name="IDS_LBL_OUTPUTTRAY_FACEDOWN" xml:space="preserve">
     <value>フェイスダウン排紙トレイ</value>

@@ -225,6 +225,9 @@
   <data name="IDS_LBL_COLORMODE_BLACK" xml:space="preserve">
     <value>Noir</value>
   </data>
+  <data name="IDS_LBL_COLORMODE_2COLOR" xml:space="preserve">
+    <value>2 couleurs</value>
+  </data>
   <data name="IDS_LBL_NUMBER_OF_COPIES" xml:space="preserve">
     <value>Copies</value>
   </data>
@@ -279,6 +282,18 @@
   <data name="IDS_LBL_PAPERSIZE_STATEMENT" xml:space="preserve">
     <value>Statement</value>
   </data>
+  <data name="IDS_LBL_PAPERSIZE_LEGAL13" xml:space="preserve">
+    <value>Legal 8.5x13</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_8K" xml:space="preserve">
+    <value>8K</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_16K" xml:space="preserve">
+    <value>16K</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_LEGAL14" xml:space="preserve">
+    <value>Legal 8.5x14</value>
+  </data>
   <data name="IDS_LBL_SCALETOFIT" xml:space="preserve">
     <value>Ajuster au papier</value>
   </data>
@@ -305,6 +320,9 @@
   </data>
   <data name="IDS_LBL_PAPERTYPE_LWPAPER" xml:space="preserve">
     <value>Papier LW</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_ROUGHPAPER" xml:space="preserve">
+    <value>Papier brouillon</value>
   </data>
   <data name="IDS_LBL_INPUTTRAY" xml:space="preserve">
     <value>Bac d'entrée</value>

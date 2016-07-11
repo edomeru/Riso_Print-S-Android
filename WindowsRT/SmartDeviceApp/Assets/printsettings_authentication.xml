@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <printsettings>
-    <group
-        name="authentication"
-        text="ids_lbl_authentication" >
+    <printertype id="IS">
+        <group
+            name="authentication"
+            text="ids_lbl_authentication" >
+            <setting
+                name="securePrint"
+                dbkey=""
+                text="ids_lbl_secure_print"
+                icon="temp_img_printsettings_TBD"
+                type="boolean"
+                default="false" />
+            <setting
+                name="pinCode"
+                dbkey=""
+                text="ids_lbl_pin_code"
+                icon="temp_img_printsettings_TBD"
+                type="password"
+                default="" />
+        </group>
+    </printertype>
+    <printertype id="GD">
+      <group
+          name="authentication"
+          text="ids_lbl_authentication" >
         <setting
             name="securePrint"
             dbkey=""
@@ -17,5 +38,26 @@
             icon="temp_img_printsettings_TBD"
             type="password"
             default="" />
-    </group>
+      </group>
+    </printertype>
+    <printertype id="FW">
+      <group
+          name="authentication"
+          text="ids_lbl_authentication" >
+        <setting
+            name="securePrint"
+            dbkey=""
+            text="ids_lbl_secure_print"
+            icon="temp_img_printsettings_TBD"
+            type="boolean"
+            default="false" />
+        <setting
+            name="pinCode"
+            dbkey=""
+            text="ids_lbl_pin_code"
+            icon="temp_img_printsettings_TBD"
+            type="password"
+            default="" />
+      </group>
+    </printertype>
 </printsettings>
