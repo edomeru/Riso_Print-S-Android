@@ -11,6 +11,7 @@
 //
 
 using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Models;
 using System;
 using System.Text;
@@ -70,7 +71,7 @@ namespace SmartDeviceApp.Controllers
                     Package.Current.Id.Version.Build,
                     Package.Current.Id.Version.Revision);
             _printJob.job_name = name;
-            _printJob.printer_name = printerName;
+            _printJob.series_type = GetSeriesTypeFromPrinterName(printerName);
             //_printJob.filename = name; // TODO: (confirm) To be deleted
             _printJob.file = file;
             _printJob.print_settings = CreateStringFromPrintSettings(printSettings);
@@ -322,6 +323,25 @@ namespace SmartDeviceApp.Controllers
                 return SettingController.Instance.CardId;
             else
                 return "";
+        }
+
+        /// <summary>
+        /// Determines the printer model series based on the printer name
+        /// </summary>
+        /// <param name="printerName">printer name</param>
+        /// <returns>series type of the printer</returns>
+        private int GetSeriesTypeFromPrinterName(string printerName)
+        {
+            int seriesType = (int)DirectPrint.SeriesType.GD;
+            if (PrinterModelUtility.isFWSeries(printerName))
+            {
+                seriesType = (int)DirectPrint.SeriesType.FW;
+            }
+            else if (PrinterModelUtility.isISSeries(printerName))
+            {
+                seriesType = (int)DirectPrint.SeriesType.IS;
+            }
+            return seriesType;
         }
     }
 }

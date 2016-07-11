@@ -131,6 +131,7 @@
     <Compile Include="Common\Enum\PrintSettingsPaneMode.cs" />
     <Compile Include="Common\Enum\PrintersRightPaneMode.cs" />
     <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Common\Utilities\PrinterModelUtility.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\InputValidationUtility.cs" />
@@ -743,7 +744,7 @@
     <SDKReference Include="Microsoft.VCLibs, Version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT81, Version=3.8.7.4">
+    <SDKReference Include="SQLite.WinRT81, Version=3.13.0">
       <Name>SQLite for Windows Runtime %28Windows 8.1%29</Name>
     </SDKReference>
   </ItemGroup>
