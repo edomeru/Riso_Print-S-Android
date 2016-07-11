@@ -20,9 +20,14 @@ namespace SmartDeviceApp.Common.Utilities
     {
         private const string REGEX_SNMP_COMMUNITY_NAME_CHARS = "^[a-zA-Z0-9,./:;@\\[\\\\\\]\\^_]*$";
 
-        private string lastValidText;
+        private string _lastValidText;        
 
-        private int lastCaretPosition = 0;
+        /// <summary>
+        /// This prevents reverting back to the saved Snmp Community Name
+        /// and is useful for onPaste with invalid paste data since the 
+        /// alert triggers onLostFocus
+        /// </summary>
+        private Boolean _preventRevertOnLostFocus = false;
 
         /// <summary>
         /// Object which this behavior is associated to.
@@ -42,7 +47,7 @@ namespace SmartDeviceApp.Common.Utilities
 
             AssociatedObject = associatedObject;
 
-            lastValidText = textBox.Text;
+            _lastValidText = textBox.Text;
             textBox.KeyDown += OnKeyDown;
             textBox.KeyUp += OnKeyUp;
             textBox.Paste += Paste;
@@ -114,6 +119,7 @@ namespace SmartDeviceApp.Common.Utilities
                 e.Handled = true; // set as handled to block appending to textbox
                 Messenger.Default.Send(new NotificationMessage<MessageType>(MessageType.SnmpCommunityNamePasteInvalid, null));
                 ResetToLastValidText(textBox); // revert back to last valid text since onTextChange only handles already-truncated text (handling for special case where invalid character is out of bounds)
+                _preventRevertOnLostFocus = true;
             }
         }
 
@@ -125,10 +131,12 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 SaveSnmpCommunityName(textBox.Text);
             }
-            else
+            else if (!_preventRevertOnLostFocus)
             {
-                textBox.Text = SettingController.Instance.GetSnmpCommunityName(); // Reset to saved local setting value if textbox is empty
-            }         
+                textBox.Text = SettingController.Instance.GetSnmpCommunityName(); // Reset to saved local setting value if textbox is empty                
+            }
+
+            _preventRevertOnLostFocus = false;
         }
 
         /// <summary>
@@ -145,12 +153,12 @@ namespace SmartDeviceApp.Common.Utilities
             var textBox = AssociatedObject as TextBox;
 
             // check if valid SNMP Community Name characters
-            if (textBox != null && !string.IsNullOrEmpty(textBox.Text) && !string.IsNullOrWhiteSpace(REGEX_SNMP_COMMUNITY_NAME_CHARS))
+            if (textBox != null && !string.IsNullOrWhiteSpace(REGEX_SNMP_COMMUNITY_NAME_CHARS))
             {
                 if (Regex.IsMatch(textBox.Text, REGEX_SNMP_COMMUNITY_NAME_CHARS))
                 {
                     // The text matches the regular expression.
-                    lastValidText = textBox.Text;
+                    _lastValidText = textBox.Text;
                 }
                 else
                 {
@@ -165,8 +173,8 @@ namespace SmartDeviceApp.Common.Utilities
         {
             if (textBox != null)
             {
-                textBox.Text = lastValidText;
-                textBox.SelectionStart = lastValidText.Length;
+                textBox.Text = _lastValidText;
+                textBox.SelectionStart = _lastValidText.Length;
             }            
         }
     }
