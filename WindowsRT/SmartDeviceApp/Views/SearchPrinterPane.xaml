@@ -142,14 +142,10 @@
                     <TextBlock Text="{Binding Source=IDS_LBL_SNMP_COMMUNITY_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
                        Style="{StaticResource STYLE_TextKey}"
                        Margin="20,20,0,0" Width="320" />
-                    <TextBox x:Name="snmpCommunityNameTextBox"
-                     Text="{Binding SnmpCommunityName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Left"
-                     IsEnabled="False"
-                     Width="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
-                     BorderThickness="0"
-                     Margin="20,10,0,0"/>
+                  <TextBlock Text="{Binding SnmpCommunityName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                       Style="{StaticResource STYLE_TextSubTitle}"
+                       Width="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
+                       Margin="30,20,0,10"/>
                   <Rectangle HorizontalAlignment="Stretch" Fill="White" Height="1" Margin="15,8,15,0"/>
                 </StackPanel>
               
