@@ -29,6 +29,7 @@
             <EditText
                 android:id="@+id/inputIpAddress"
                 style="@style/SDAEditText"
+                android:inputType="textVisiblePassword"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
