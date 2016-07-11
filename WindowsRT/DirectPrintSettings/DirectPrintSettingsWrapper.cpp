@@ -75,7 +75,7 @@ void convertCharArrayToWChar(wchar_t** output, const char* input)
 }
 
 /*
- * Creates a string of PJL command based from print settings
+ * Creates a string of PJL commands for IS printers based from print settings
  */
 String^ DirectPrintSettingsWrapper::create_pjl_wrapper(String^ settings)
 {
@@ -101,6 +101,9 @@ String^ DirectPrintSettingsWrapper::create_pjl_wrapper(String^ settings)
     return printSettingsPjl;
 }
 
+/*
+ * Creates a string of PJL commands for FW printers based from print settings
+ */
 String^ DirectPrintSettingsWrapper::create_pjl_fw_wrapper(String^ settings, String^ appName, String ^appVersion)
 {
 	char pjl[BUFFER_SIZE];
@@ -136,6 +139,9 @@ String^ DirectPrintSettingsWrapper::create_pjl_fw_wrapper(String^ settings, Stri
 	return printSettingsPjl;
 }
 
+/*
+ * Creates a string of PJL commands for GD printers based from print settings
+ */
 String^ DirectPrintSettingsWrapper::create_pjl_gd_wrapper(String^ settings, String^ appName, String ^appVersion)
 {
 	char pjl[BUFFER_SIZE];

@@ -559,6 +559,11 @@ namespace DirectPrint
             triggerCallback(PRINT_STATUS_NO_NETWORK);
         }
 
+        /// <summary>
+        /// Checks if printer name belongs to the FW printer series
+        /// </summary>
+        /// <param name="printerName">printer name</param>
+        /// <returns>true when printer name is FW series, false otherwise</returns>
         private bool isFWSeries(string printerName)
         {
             HashSet<string> fwNames = new HashSet<string> {
@@ -591,6 +596,11 @@ namespace DirectPrint
             return isFW;
         }
 
+        /// <summary>
+        /// Checks if printer name belongs to the IS printer series
+        /// </summary>
+        /// <param name="printerName">printer name</param>
+        /// <returns>true when printer name is IS series, false otherwise</returns>
         private bool isISSeries(string printerName)
         {
             HashSet<string> isNames = new HashSet<string> {
