@@ -138,8 +138,8 @@
             icon="temp_img_printsettings_null"
             type="list"
             default="0" >
-            <option>ids_lbl_sort_perpage</option>
             <option>ids_lbl_sort_percopy</option>
+            <option>ids_lbl_sort_perpage</option>
         </setting>
         <setting
             name="booklet"
