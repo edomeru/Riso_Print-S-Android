@@ -201,7 +201,8 @@
                            Margin="20,20,0,0" Width="320" />
                 <TextBlock Text="{Binding SnmpCommunityName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource STYLE_TextSubTitle}"
-                         Width="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
+                         Width="320"
+                         TextWrapping="Wrap"
                          Margin="30,20,0,10"/>
               <Rectangle HorizontalAlignment="Stretch" Fill="White" Height="1" Margin="15,8,15,0"/>
             </StackPanel>
