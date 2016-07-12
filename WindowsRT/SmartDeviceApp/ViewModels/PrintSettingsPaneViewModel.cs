@@ -105,6 +105,12 @@ namespace SmartDeviceApp.ViewModels
             }
             if (viewMode == ViewMode.FullScreen && PrintSettingsPaneMode != PrintSettingsPaneMode.PrintSettings)
             {
+                if (PrintSettingsPaneMode == PrintSettingsPaneMode.PrintSettingOptions)
+                {
+                    //set the PrintSetting of the PrintSettingOptionsViewModel to null when closing the right pane 
+                    //to renew bindings in next open of the PrintSettingOption
+                    new ViewModelLocator().PrintSettingOptionsViewModel.PrintSetting = null;
+                }
                 PrintSettingsPaneMode = PrintSettingsPaneMode.PrintSettings;
             }
             SetPaneTitle();
