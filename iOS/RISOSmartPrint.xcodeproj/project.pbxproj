@@ -40,13 +40,10 @@
 		2D1F23731900FBF400301D1E /* PrinterCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5A18E2F02A00085F27 /* PrinterCollectionViewCell.m */; };
 		2D1F238C1900FC2000301D1E /* Printer+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF5018E2EFCB00085F27 /* Printer+Log.m */; };
 		2D1F23951900FCBB00301D1E /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23941900FCBB00301D1E /* Reachability.m */; };
-		2D1F23A71900FF5800301D1E /* CXAlertBackgroundWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23991900FF5800301D1E /* CXAlertBackgroundWindow.m */; };
 		2D1F23A91900FF5800301D1E /* CXAlertButtonContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F239B1900FF5800301D1E /* CXAlertButtonContainerView.m */; };
 		2D1F23AB1900FF5800301D1E /* CXAlertButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F239D1900FF5800301D1E /* CXAlertButtonItem.m */; };
 		2D1F23AD1900FF5800301D1E /* CXAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F239F1900FF5800301D1E /* CXAlertView.m */; };
 		2D1F23AF1900FF5800301D1E /* CXAlertViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23A11900FF5800301D1E /* CXAlertViewController.m */; };
-		2D1F23B11900FF5800301D1E /* LFDisplayBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23A31900FF5800301D1E /* LFDisplayBridge.m */; };
-		2D1F23B31900FF5800301D1E /* LFGlassView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23A51900FF5800301D1E /* LFGlassView.m */; };
 		2D1F23B71900FF6E00301D1E /* DirectPrintManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23B61900FF6E00301D1E /* DirectPrintManager.m */; };
 		2D1F23BC1901049400301D1E /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23BB1901049400301D1E /* HelpViewController.m */; };
 		2D1F23C11901049C00301D1E /* LegalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23C01901049C00301D1E /* LegalViewController.m */; };
@@ -116,6 +113,7 @@
 		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
 		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
 		31F5B69719248DDB002A29AD /* PrintSettingsPrinterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */; };
+		3ECF17A81D2C954400E09E37 /* CXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECF17A71D2C954400E09E37 /* CXBlurView.m */; };
 		3EE0D0A81CFFCCDA00EC57BE /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 7FF4EDAD1CCF074200CB13DB /* printsettings.xml */; };
 		5F3145861A30734D00F482A8 /* I000.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145421A30734D00F482A8 /* I000.png */; };
 		5F3145871A30734D00F482A8 /* I001.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145441A30734D00F482A8 /* I001.png */; };
@@ -305,13 +303,10 @@
 		6603A80A1BE1F7A900DBD0F0 /* RenderCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0D74C118F2887B002B5E40 /* RenderCache.m */; };
 		6603A80B1BE1F7A900DBD0F0 /* UIColor+Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1AF7118E2F52300085F27 /* UIColor+Theme.m */; };
 		6603A80C1BE1F7A900DBD0F0 /* XMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D157BFA18ED5B580034F953 /* XMLParser.m */; };
-		6603A80D1BE1F7A900DBD0F0 /* CXAlertBackgroundWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23991900FF5800301D1E /* CXAlertBackgroundWindow.m */; };
 		6603A80E1BE1F7A900DBD0F0 /* CXAlertButtonContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F239B1900FF5800301D1E /* CXAlertButtonContainerView.m */; };
 		6603A80F1BE1F7A900DBD0F0 /* CXAlertButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F239D1900FF5800301D1E /* CXAlertButtonItem.m */; };
 		6603A8101BE1F7A900DBD0F0 /* CXAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F239F1900FF5800301D1E /* CXAlertView.m */; };
 		6603A8111BE1F7A900DBD0F0 /* CXAlertViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23A11900FF5800301D1E /* CXAlertViewController.m */; };
-		6603A8121BE1F7A900DBD0F0 /* LFDisplayBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23A31900FF5800301D1E /* LFDisplayBridge.m */; };
-		6603A8131BE1F7A900DBD0F0 /* LFGlassView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23A51900FF5800301D1E /* LFGlassView.m */; };
 		6603A8141BE1F7A900DBD0F0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F23941900FCBB00301D1E /* Reachability.m */; };
 		6603A8151BE1F7A900DBD0F0 /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F231C1900D3C700301D1E /* SimplePing.m */; };
 		6603A8171BE1F82500DBD0F0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 282830FE18C7012B008B127C /* CoreData.framework */; };
@@ -466,8 +461,6 @@
 		2D1F232B1900D69A00301D1E /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		2D1F23931900FCBB00301D1E /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		2D1F23941900FCBB00301D1E /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		2D1F23981900FF5800301D1E /* CXAlertBackgroundWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertBackgroundWindow.h; sourceTree = "<group>"; };
-		2D1F23991900FF5800301D1E /* CXAlertBackgroundWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXAlertBackgroundWindow.m; sourceTree = "<group>"; };
 		2D1F239A1900FF5800301D1E /* CXAlertButtonContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertButtonContainerView.h; sourceTree = "<group>"; };
 		2D1F239B1900FF5800301D1E /* CXAlertButtonContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXAlertButtonContainerView.m; sourceTree = "<group>"; };
 		2D1F239C1900FF5800301D1E /* CXAlertButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertButtonItem.h; sourceTree = "<group>"; };
@@ -476,11 +469,6 @@
 		2D1F239F1900FF5800301D1E /* CXAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXAlertView.m; sourceTree = "<group>"; };
 		2D1F23A01900FF5800301D1E /* CXAlertViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXAlertViewController.h; sourceTree = "<group>"; };
 		2D1F23A11900FF5800301D1E /* CXAlertViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXAlertViewController.m; sourceTree = "<group>"; };
-		2D1F23A21900FF5800301D1E /* LFDisplayBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDisplayBridge.h; sourceTree = "<group>"; };
-		2D1F23A31900FF5800301D1E /* LFDisplayBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFDisplayBridge.m; sourceTree = "<group>"; };
-		2D1F23A41900FF5800301D1E /* LFGlassView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFGlassView.h; sourceTree = "<group>"; };
-		2D1F23A51900FF5800301D1E /* LFGlassView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFGlassView.m; sourceTree = "<group>"; };
-		2D1F23A61900FF5800301D1E /* LiveFrost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveFrost.h; sourceTree = "<group>"; };
 		2D1F23B51900FF6E00301D1E /* DirectPrintManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectPrintManager.h; sourceTree = "<group>"; };
 		2D1F23B61900FF6E00301D1E /* DirectPrintManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectPrintManager.m; sourceTree = "<group>"; };
 		2D1F23BA1901049400301D1E /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
@@ -621,6 +609,8 @@
 		31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListTableViewController.m; sourceTree = "<group>"; };
 		31F5B69519248DDB002A29AD /* PrintSettingsPrinterListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterListViewController.h; sourceTree = "<group>"; };
 		31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListViewController.m; sourceTree = "<group>"; };
+		3ECF17A61D2C954400E09E37 /* CXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXBlurView.h; sourceTree = "<group>"; };
+		3ECF17A71D2C954400E09E37 /* CXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXBlurView.m; sourceTree = "<group>"; };
 		5F3145431A30734D00F482A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/I000.png; sourceTree = "<group>"; };
 		5F3145451A30734D00F482A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/I001.png; sourceTree = "<group>"; };
 		5F3145471A30734D00F482A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/I002.png; sourceTree = "<group>"; };
@@ -1077,8 +1067,8 @@
 		2D1F23971900FF5800301D1E /* CXAlertView */ = {
 			isa = PBXGroup;
 			children = (
-				2D1F23981900FF5800301D1E /* CXAlertBackgroundWindow.h */,
-				2D1F23991900FF5800301D1E /* CXAlertBackgroundWindow.m */,
+				3ECF17A61D2C954400E09E37 /* CXBlurView.h */,
+				3ECF17A71D2C954400E09E37 /* CXBlurView.m */,
 				2D1F239A1900FF5800301D1E /* CXAlertButtonContainerView.h */,
 				2D1F239B1900FF5800301D1E /* CXAlertButtonContainerView.m */,
 				2D1F239C1900FF5800301D1E /* CXAlertButtonItem.h */,
@@ -1087,11 +1077,6 @@
 				2D1F239F1900FF5800301D1E /* CXAlertView.m */,
 				2D1F23A01900FF5800301D1E /* CXAlertViewController.h */,
 				2D1F23A11900FF5800301D1E /* CXAlertViewController.m */,
-				2D1F23A21900FF5800301D1E /* LFDisplayBridge.h */,
-				2D1F23A31900FF5800301D1E /* LFDisplayBridge.m */,
-				2D1F23A41900FF5800301D1E /* LFGlassView.h */,
-				2D1F23A51900FF5800301D1E /* LFGlassView.m */,
-				2D1F23A61900FF5800301D1E /* LiveFrost.h */,
 			);
 			path = CXAlertView;
 			sourceTree = "<group>";
@@ -2169,7 +2154,6 @@
 				2DA1AF1C18E2EF9600085F27 /* RootViewController.m in Sources */,
 				31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */,
 				28A9173018E3BE4200BA5232 /* PrintJobHistoryViewController.m in Sources */,
-				2D1F23B11900FF5800301D1E /* LFDisplayBridge.m in Sources */,
 				2DA1AF1618E2EF9600085F27 /* AppDelegate.m in Sources */,
 				2D1F238C1900FC2000301D1E /* Printer+Log.m in Sources */,
 				2DA1AF2518E2EF9600085F27 /* PDFPageContentViewController.m in Sources */,
@@ -2182,7 +2166,6 @@
 				7FAAD94D1CD56EB400FC668F /* printsettings_fw.c in Sources */,
 				2828313418C70699008B127C /* SmartDeviceApp.xcdatamodeld in Sources */,
 				2D1F23A91900FF5800301D1E /* CXAlertButtonContainerView.m in Sources */,
-				2D1F23A71900FF5800301D1E /* CXAlertBackgroundWindow.m in Sources */,
 				2D5AF0BB191E18DE0079510D /* CustomSegmentedControl.m in Sources */,
 				2DA1AF2118E2EF9600085F27 /* PrintersIpadViewController.m in Sources */,
 				2D157BF818ED5B3E0034F953 /* PrintSettingsHelper.m in Sources */,
@@ -2211,6 +2194,7 @@
 				2DA1AF2718E2EF9600085F27 /* PrintSettingsViewController.m in Sources */,
 				2D157BF518ED5A960034F953 /* PDFRenderOperation.m in Sources */,
 				2DA1AF2018E2EF9600085F27 /* PrinterInfoViewController.m in Sources */,
+				3ECF17A81D2C954400E09E37 /* CXBlurView.m in Sources */,
 				2DA1AF3518E2EF9C00085F27 /* PDFFileManager.m in Sources */,
 				28A9173918E3D55900BA5232 /* PrintJobHistoryGroupCell.m in Sources */,
 				94D9805A1A89DB49004B8B37 /* LicenseAgreementViewController.m in Sources */,
@@ -2236,7 +2220,6 @@
 				28738EBC18EC01C4004ABDAD /* PrintJob+Log.m in Sources */,
 				2DA1AF1A18E2EF9600085F27 /* SlideSegue.m in Sources */,
 				2DA1AF1F18E2EF9600085F27 /* HomeViewController.m in Sources */,
-				2D1F23B31900FF5800301D1E /* LFGlassView.m in Sources */,
 				2DA1AF6818E2F08900085F27 /* PListHelper.m in Sources */,
 				2D157C0118ED765F0034F953 /* PreviewView.m in Sources */,
 				2DA1AEC318E2EF7D00085F27 /* PreviewSetting.m in Sources */,
@@ -2346,13 +2329,10 @@
 				6603A80A1BE1F7A900DBD0F0 /* RenderCache.m in Sources */,
 				6603A80B1BE1F7A900DBD0F0 /* UIColor+Theme.m in Sources */,
 				6603A80C1BE1F7A900DBD0F0 /* XMLParser.m in Sources */,
-				6603A80D1BE1F7A900DBD0F0 /* CXAlertBackgroundWindow.m in Sources */,
 				6603A80E1BE1F7A900DBD0F0 /* CXAlertButtonContainerView.m in Sources */,
 				6603A80F1BE1F7A900DBD0F0 /* CXAlertButtonItem.m in Sources */,
 				6603A8101BE1F7A900DBD0F0 /* CXAlertView.m in Sources */,
 				6603A8111BE1F7A900DBD0F0 /* CXAlertViewController.m in Sources */,
-				6603A8121BE1F7A900DBD0F0 /* LFDisplayBridge.m in Sources */,
-				6603A8131BE1F7A900DBD0F0 /* LFGlassView.m in Sources */,
 				6603A8141BE1F7A900DBD0F0 /* Reachability.m in Sources */,
 				6603A8151BE1F7A900DBD0F0 /* SimplePing.m in Sources */,
 				6603A79E1BE1F34800DBD0F0 /* NSManagedObject+MagicalDataImport.m in Sources */,

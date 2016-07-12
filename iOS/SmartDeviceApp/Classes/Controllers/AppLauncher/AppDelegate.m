@@ -12,6 +12,7 @@
 #import "DirectPrintManager.h"
 #import "SNMPManager.h"
 #import "AlertHelper.h"
+#import "CXAlertViewController.h"
 
 #define PREVIEW_DEBUG_MODE 0
 #define PDF_END_PROCESSING_NOTIFICATION @"jp.alink-group.smartdeviceapp.endpdfprocessing"
@@ -84,10 +85,24 @@
         [[PDFFileManager sharedManager] setFileAvailableForLoad:YES];
         [[PDFFileManager sharedManager] setFileURL:url];
         
+        //Cancel ongoing print job if any
+        [DirectPrintManager cancelAll];
+
         // Reset view controllers when loading a new PDF
         UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:STORYBOARD_NAME bundle:[NSBundle mainBundle]];
         self.window.rootViewController = [mainStoryBoard instantiateInitialViewController];
         self.isOpenInHandled = YES;
+        
+        //Check if there is an alert shown in previous session and dismiss it
+        if (![self.window isKeyWindow])
+        {
+            UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+            if ([keyWindow.rootViewController isKindOfClass:[CXAlertViewController class]])
+            {
+                CXAlertView *alertView = ((CXAlertViewController *)keyWindow.rootViewController).alertView;
+                [alertView dismiss];
+            }
+        }
     }
     return YES;
 }
