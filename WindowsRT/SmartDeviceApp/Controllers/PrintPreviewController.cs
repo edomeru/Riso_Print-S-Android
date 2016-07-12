@@ -1223,6 +1223,7 @@ namespace SmartDeviceApp.Controllers
                         DocumentController.Instance.FileName,
                         DocumentController.Instance.PdfFile,
                         _selectedPrinter.IpAddress,
+                        _selectedPrinter.Name,
                         _currPrintSettings,
                         UpdatePrintJobProgress,
                         UpdatePrintJobResult);
