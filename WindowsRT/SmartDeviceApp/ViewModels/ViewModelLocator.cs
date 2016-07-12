@@ -177,6 +177,17 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
+        /// Gets the SearchSettingsViewModel instance
+        /// </summary>
+        public SearchSettingsViewModel SearchSettingsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SearchSettingsViewModel>();
+            }
+        }
+
+        /// <summary>
         /// Gets the AddPrinterViewModel instance
         /// </summary>
         public AddPrinterViewModel AddPrinterViewModel
@@ -215,6 +226,7 @@ namespace SmartDeviceApp.ViewModels
             SimpleIoc.Default.Register<SelectPrinterViewModel>();
             SimpleIoc.Default.Register<PrintSettingOptionsViewModel>();
             SimpleIoc.Default.Register<SearchPrinterViewModel>();
+            SimpleIoc.Default.Register<SearchSettingsViewModel>();
             SimpleIoc.Default.Register<AddPrinterViewModel>();
         }
 

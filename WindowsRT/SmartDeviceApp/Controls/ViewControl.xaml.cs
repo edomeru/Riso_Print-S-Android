@@ -59,12 +59,21 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty Button2PressedImageProperty =
            DependencyProperty.Register("Button2PressedImage", typeof(ImageSource), typeof(ViewControl), null);
-        
+
+        public static readonly DependencyProperty Button3ImageProperty =
+           DependencyProperty.Register("Button3Image", typeof(ImageSource), typeof(ViewControl), null);
+
+        public static readonly DependencyProperty Button3PressedImageProperty =
+           DependencyProperty.Register("Button3PressedImage", typeof(ImageSource), typeof(ViewControl), null);
+
         public static readonly DependencyProperty Button1VisibilityProperty =
            DependencyProperty.Register("Button1Visibility", typeof(Visibility), typeof(ViewControl), null);
         
         public static readonly DependencyProperty Button2VisibilityProperty =
            DependencyProperty.Register("Button2Visibility", typeof(Visibility), typeof(ViewControl), null);
+
+        public static readonly DependencyProperty Button3VisibilityProperty =
+           DependencyProperty.Register("Button3Visibility", typeof(Visibility), typeof(ViewControl), null);
 
         private SimpleOrientationSensor _orientationSensor;
         
@@ -73,20 +82,28 @@ namespace SmartDeviceApp.Controls
         /// </summary>
         public ViewControl()
         {
-            this.InitializeComponent();
-            Children = contentGrid.Children;
-            Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
-            Window.Current.SizeChanged += WindowSizeChanged;
-          
-            _orientationSensor = SimpleOrientationSensor.GetDefault();
-            if (_orientationSensor != null)
+            try
             {
-                _orientationSensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
-            }
+                this.InitializeComponent();
 
-            // Get initial orientation
-            ViewModel.ViewOrientation = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
-                ViewOrientation.Landscape : ViewOrientation.Portrait;
+                Children = contentGrid.Children;
+                Messenger.Default.Register<ViewMode>(this, (viewMode) => SetViewMode(viewMode));
+                Window.Current.SizeChanged += WindowSizeChanged;
+          
+                _orientationSensor = SimpleOrientationSensor.GetDefault();
+                if (_orientationSensor != null)
+                {
+                    _orientationSensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
+                }
+
+                // Get initial orientation
+                ViewModel.ViewOrientation = (Window.Current.Bounds.Width >= Window.Current.Bounds.Height) ?
+                    ViewOrientation.Landscape : ViewOrientation.Portrait;
+            }
+            catch
+            {
+                // Do nothing
+            }
         }
 
         /// <summary>
@@ -192,6 +209,24 @@ namespace SmartDeviceApp.Controls
         }
 
         /// <summary>
+        /// Imagesource for button3.
+        /// </summary>
+        public ImageSource Button3Image
+        {
+            get { return (ImageSource)GetValue(Button3ImageProperty); }
+            set { SetValue(Button3ImageProperty, value); }
+        }
+
+        /// <summary>
+        /// Imagesource for the pressed state of button3.
+        /// </summary>
+        public ImageSource Button3PressedImage
+        {
+            get { return (ImageSource)GetValue(Button3PressedImageProperty); }
+            set { SetValue(Button3PressedImageProperty, value); }
+        }
+
+        /// <summary>
         /// Visibility property for button1.
         /// </summary>
         public Visibility Button1Visibility
@@ -207,6 +242,15 @@ namespace SmartDeviceApp.Controls
         {
             get { return (Visibility)GetValue(Button2VisibilityProperty); }
             set { SetValue(Button2VisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Visibility property for button3.
+        /// </summary>
+        public Visibility Button3Visibility
+        {
+            get { return (Visibility)GetValue(Button3VisibilityProperty); }
+            set { SetValue(Button3VisibilityProperty, value); }
         }
 
         /// <summary>
@@ -240,6 +284,7 @@ namespace SmartDeviceApp.Controls
                 mainMenuButton.IsChecked = false;
                 if (button1.Visibility == Visibility.Visible) button1.IsChecked = false;
                 if (button2.Visibility == Visibility.Visible) button2.IsChecked = false;
+                if (button3.Visibility == Visibility.Visible) button3.IsChecked = false;
             }
 
             if (viewMode != ViewMode.Unknown)
@@ -284,6 +329,14 @@ namespace SmartDeviceApp.Controls
             if (Button2Visibility == Visibility.Visible)
             {
                 var imageWidth = (int)button2.ActualWidth;
+                if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(this, true);
+                maxTextWidth -= imageWidth;
+                maxTextWidth -= (int)defaultMargin;
+            }
+            // Button3 is visible
+            if (Button3Visibility == Visibility.Visible)
+            {
+                var imageWidth = (int)button3.ActualWidth;
                 if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(this, true);
                 maxTextWidth -= imageWidth;
                 maxTextWidth -= (int)defaultMargin;
@@ -351,6 +404,11 @@ namespace SmartDeviceApp.Controls
         }
 
         private void OnButton2Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void OnButton3Tapped(object sender, TappedRoutedEventArgs e)
         {
             e.Handled = true;
         }

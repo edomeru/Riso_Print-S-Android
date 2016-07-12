@@ -292,6 +292,9 @@ namespace SmartDeviceApp.ViewModels
                     case VisibleRightPane.Pane2:
                         RightPaneMode = PrintersRightPaneMode.AddPrinter;
                         break;
+                    case VisibleRightPane.Pane3:
+                        RightPaneMode = PrintersRightPaneMode.SearchSettings;
+                        break;
                 }
             }
         }

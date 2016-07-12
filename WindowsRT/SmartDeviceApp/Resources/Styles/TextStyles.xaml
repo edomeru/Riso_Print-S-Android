@@ -131,4 +131,13 @@
         <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
     </Style>
 
+    <Style x:Key="STYLE_TextSubTitle" TargetType="TextBlock" >
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Light"/>
+        <Setter Property="Foreground" Value="{StaticResource BRUSH_Gray4}"/>
+        <Setter Property="TextWrapping" Value="WrapWholeWords"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="MaxLines" Value="10"/>
+    </Style>
+
 </ResourceDictionary>

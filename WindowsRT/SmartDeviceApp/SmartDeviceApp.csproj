@@ -114,6 +114,7 @@
     <Compile Include="Behaviors\AlphaNumericTextBoxBehavior.cs" />
     <Compile Include="Behaviors\NumericPasswordBehavior.cs" />
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
+    <Compile Include="Behaviors\SnmpCommunityNameTextBoxBehavior.cs" />
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
     <Compile Include="Common\Enum\MessageType.cs" />
     <Compile Include="Common\Enum\PrintJobResult.cs" />
@@ -282,6 +283,7 @@
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\LicenseViewModel.cs" />
     <Compile Include="ViewModels\SearchPrinterViewModel.cs" />
+    <Compile Include="ViewModels\SearchSettingsViewModel.cs" />
     <Compile Include="ViewModels\SelectPrinterViewModel.cs" />
     <Compile Include="ViewModels\ViewControlViewModel.cs" />
     <Compile Include="ViewModels\JobsViewModel.cs" />
@@ -335,6 +337,9 @@
     </Compile>
     <Compile Include="Views\SearchPrinterPane.xaml.cs">
       <DependentUpon>SearchPrinterPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchSettingsPane.xaml.cs">
+      <DependentUpon>SearchSettingsPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SelectPrinterBox.xaml.cs">
       <DependentUpon>SelectPrinterBox.xaml</DependentUpon>
@@ -538,6 +543,12 @@
     <Content Include="Resources\Images\img_btn_search_printer_pressed.scale-100.png" />
     <Content Include="Resources\Images\img_btn_search_printer_pressed.scale-140.png" />
     <Content Include="Resources\Images\img_btn_search_printer_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_pressed.scale-180.png" />
     <Content Include="Resources\Images\img_btn_submenu.scale-100.png" />
     <Content Include="Resources\Images\img_btn_submenu.scale-140.png" />
     <Content Include="Resources\Images\img_btn_submenu.scale-180.png" />
@@ -703,6 +714,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SearchSettingsPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SelectPrinterBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -733,7 +748,7 @@
     <SDKReference Include="Microsoft.VCLibs, Version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT81, Version=3.8.7.4">
+    <SDKReference Include="SQLite.WinRT81, Version=3.8.7.3">
       <Name>SQLite for Windows Runtime %28Windows 8.1%29</Name>
     </SDKReference>
   </ItemGroup>

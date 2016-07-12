@@ -133,11 +133,23 @@
         </Path>
         <controls:SidePaneTitleControl Title="{Binding Source=IDS_LBL_SEARCH_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 
                                        Loaded="OnLoaded" Grid.Row ="0" Grid.Column="1"/>
-        <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource BRUSH_Gray4}" >
+        <Grid Grid.Row="2" Grid.Column="1" Background="{StaticResource BRUSH_Gray4}" >
             
 
             <!--CONTENTS HERE-->
             <StackPanel Height="{Binding DataContext.Height, ElementName=SearchPrinterPaneControl}" Width="400">
+                <StackPanel Orientation="Vertical" Background="{StaticResource BRUSH_Gray2}">
+                    <TextBlock Text="{Binding Source=IDS_LBL_SNMP_COMMUNITY_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
+                       Style="{StaticResource STYLE_TextKey}"
+                       Margin="20,20,0,0" Width="320" />
+                  <TextBlock Text="{Binding SnmpCommunityName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                       Style="{StaticResource STYLE_TextSubTitle}"
+                       Width="320"
+                       TextWrapping="Wrap"
+                       Margin="30,20,0,10"/>
+                  <Rectangle HorizontalAlignment="Stretch" Fill="White" Height="1" Margin="15,8,15,0"/>
+                </StackPanel>
+              
                 <Grid x:Name="ProgressGrid" Height="60" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ProgressRing x:Name="PrinterSearchProgressRing"  IsActive="True" Height="40" Margin="0,0,0,0" Width="{StaticResource SIZE_SidePaneWidth}" Visibility="{Binding DataContext.WillRefresh, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay,  ElementName=SearchPrinterPaneControl}" Foreground="White" Background="{StaticResource BRUSH_Gray4}"/>
                 </Grid>

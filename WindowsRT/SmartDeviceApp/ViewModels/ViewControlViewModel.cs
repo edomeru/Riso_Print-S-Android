@@ -26,11 +26,13 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _toggleMainMenuPane;
         private ICommand _togglePane1;
         private ICommand _togglePane2;
+        private ICommand _togglePane3;
         private ViewMode _viewMode;
         private ViewOrientation _viewOrientation;
         private ScreenMode _screenMode;        
         private bool _isPane1Visible = false;
         private bool _isPane2Visible = false;
+        private bool _isPane3Visible = false;
         private bool _tapHandled = false;
 
         /// <summary>
@@ -162,6 +164,24 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
+        /// Command for toggle third right pane
+        /// </summary>
+        public ICommand TogglePane3
+        {
+            get
+            {
+                if (_togglePane3 == null)
+                {
+                    _togglePane3 = new RelayCommand(
+                        () => TogglePane3Execute(),
+                        () => true
+                    );
+                }
+                return _togglePane3;
+            }
+        }
+
+        /// <summary>
         /// Gets/sets the visibility state of the first right pane.
         /// True when visible, false otherwise.
         /// </summary>
@@ -179,6 +199,16 @@ namespace SmartDeviceApp.ViewModels
         {
             get { return _isPane2Visible; }
             set { _isPane2Visible = value; }
+        }
+
+        /// <summary>
+        /// Gets/sets the visibility state of the third right pane.
+        /// True when visible, false otherwise.
+        /// </summary>
+        public bool IsPane3Visible
+        {
+            get { return _isPane3Visible; }
+            set { _isPane3Visible = value; }
         }
 
         private void ToggleMainMenuPaneExecute()
@@ -270,6 +300,11 @@ namespace SmartDeviceApp.ViewModels
                             ViewMode = ViewMode.FullScreen;
                             _isPane2Visible = false;
                         }
+                        else if (_isPane3Visible)
+                        {
+                            ViewMode = ViewMode.FullScreen;
+                            _isPane3Visible = false;
+                        }
                         // else do nothing; keep right pane visible
                         break;
                     }
@@ -305,6 +340,72 @@ namespace SmartDeviceApp.ViewModels
                 case ViewMode.RightPaneVisible_ResizedWidth:
                     {
                         if (_isPane2Visible)
+                        {
+                            ViewMode = ViewMode.FullScreen;
+                            _isPane2Visible = false;
+                        }
+                        else if (_isPane1Visible)
+                        {
+                            ViewMode = ViewMode.FullScreen;
+                            _isPane1Visible = false;
+                        }
+                        else if (_isPane3Visible)
+                        {
+                            ViewMode = ViewMode.FullScreen;
+                            _isPane3Visible = false;
+                        }
+                        // else, do nothing; keep right pane visible
+                        break;
+                    }
+            }
+        }
+
+        private void TogglePane3Execute()
+        {
+            switch (ViewMode)
+            {
+                case ViewMode.MainMenuPaneVisible:
+                    {
+                        // NOTE: Technically, this is not possible
+                        // Close main menu pane first then open right pane
+                        ViewMode = ViewMode.FullScreen;
+                        if (ScreenMode == ScreenMode.PrintPreview)
+                        {
+                            ViewMode = ViewMode.RightPaneVisible_ResizedWidth;
+                        }
+                        else
+                        {
+                            ViewMode = ViewMode.RightPaneVisible;
+                        }
+                        _isPane3Visible = true;
+                        Messenger.Default.Send<VisibleRightPane>(VisibleRightPane.Pane3);
+                        break;
+                    }
+
+                case ViewMode.FullScreen:
+                    {
+                        if (ScreenMode == ScreenMode.PrintPreview)
+                        {
+                            ViewMode = ViewMode.RightPaneVisible_ResizedWidth;
+                        }
+                        else
+                        {
+                            ViewMode = ViewMode.RightPaneVisible;
+                        }
+                        _isPane3Visible = true;
+                        Messenger.Default.Send<VisibleRightPane>(VisibleRightPane.Pane3);
+                        break;
+                    }
+
+                case ViewMode.RightPaneVisible:
+                case ViewMode.RightPaneVisible_ResizedWidth:
+                    {
+                        if (_isPane3Visible)
+                        {
+                            ViewMode = ViewMode.FullScreen;
+                            _isPane3Visible = false;
+                        }
+                        else if (_isPane2Visible)
                         {
                             ViewMode = ViewMode.FullScreen;
                             _isPane2Visible = false;

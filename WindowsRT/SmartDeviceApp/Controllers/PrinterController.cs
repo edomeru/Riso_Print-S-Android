@@ -32,14 +32,16 @@ namespace SmartDeviceApp.Controllers
         /// Add printer delegate
         /// </summary>
         /// <param name="ip">IP address</param>
+        /// <param name="communityName">The SNMP Community Name</param>
         /// <returns>true when printer is added, false otherwise</returns>
-        public delegate Task<bool> AddPrinterHandler(string ip);
+        public delegate Task<bool> AddPrinterHandler(string ip, string communityName);
         private AddPrinterHandler _addPrinterHandler;
 
         /// <summary>
         /// Automatic printer search delegate
+        /// <param name="communityName">The SNMP Community Name</param>
         /// </summary>
-        public delegate void SearchPrinterHandler();
+        public delegate void SearchPrinterHandler(string communityName);
         private SearchPrinterHandler _searchPrinterHandler;
 
         /// <summary>
@@ -110,6 +112,7 @@ namespace SmartDeviceApp.Controllers
 
         private PrintersViewModel _printersViewModel;
         private SearchPrinterViewModel _searchPrinterViewModel;
+        private SearchSettingsViewModel _searchSettingsViewModel;
         private AddPrinterViewModel _addPrinterViewModel;
         private PrintSettingsViewModel _printSettingsViewModel;
         private SelectPrinterViewModel _selectPrinterViewModel;
@@ -148,6 +151,7 @@ namespace SmartDeviceApp.Controllers
             _printerSearchList = new ObservableCollection<PrinterSearchItem>();
             _printersViewModel = new ViewModelLocator().PrintersViewModel;
             _searchPrinterViewModel = new ViewModelLocator().SearchPrinterViewModel;
+            _searchSettingsViewModel = new ViewModelLocator().SearchSettingsViewModel;
             _addPrinterViewModel = new ViewModelLocator().AddPrinterViewModel;
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _selectPrinterViewModel = new ViewModelLocator().SelectPrinterViewModel;
@@ -315,8 +319,9 @@ namespace SmartDeviceApp.Controllers
         /// Saves the new printer to the printer list.
         /// </summary>
         /// <param name="ip">IP Address of the new printer</param>
+        /// <param name="snmpCommunityName">SNMP Community Name used to check the printer capabilities</param>
         /// <returns>true if successfully added, else false</returns>
-        public async Task<bool> addPrinter(string ip)
+        public async Task<bool> addPrinter(string ip, string snmpCommunityName)
         {
 
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -353,7 +358,7 @@ namespace SmartDeviceApp.Controllers
                         SNMPController.Instance.printerControllerAddTimeout = new Action<string, string, List<string>>(handleAddTimeout);
                         SNMPController.Instance.printerControllerAddPrinterCallback = handleAddPrinterStatus;
                         SNMPController.Instance.printerControllerErrorCallBack = new Action(handleAddError);
-                        SNMPController.Instance.getDevice(ip);
+                        SNMPController.Instance.getDevice(ip, snmpCommunityName);
                     }
                 }
                 else
@@ -389,8 +394,9 @@ namespace SmartDeviceApp.Controllers
 
         /// <summary>
         /// Starts the search of printers in the network.
+        /// <param name="snmpCommunityName">The SNMP Community Name used for printer search</param>
         /// </summary>
-        public void searchPrinters()
+        public void searchPrinters(string snmpCommunityName)
         {
             //_searchPrinterViewModel.SetStateRefreshState();
             _printerSearchList.Clear();
@@ -404,8 +410,8 @@ namespace SmartDeviceApp.Controllers
 
             SNMPController.Instance.printerControllerTimeout = new Action<string>(handleSearchTimeout);
             SNMPController.Instance.printerControllerDiscoverCallback = new Action<PrinterSearchItem>(handleDeviceDiscovered);
+            SNMPController.Instance.Discovery.SnmpCommunityName = snmpCommunityName;
             SNMPController.Instance.startDiscover();
-
         }
 
         /// <summary>

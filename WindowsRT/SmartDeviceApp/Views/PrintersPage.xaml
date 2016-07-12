@@ -25,12 +25,16 @@
         <DataTemplate x:Key="TEMPLATE_SearchPrinterPane">
             <local:SearchPrinterPane x:Name="SearchPrinterPaneControl"/>
         </DataTemplate>
+        <DataTemplate x:Key="TEMPLATE_SearchSettingsPane">
+            <local:SearchSettingsPane/>
+        </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_PrintSettingsPane">
             <local:PrintSettingsPane x:Name="PrintSettingsPaneControl"/>
         </DataTemplate>
         <sel:PrintersRightPaneTemplateSelector x:Key="PrintersRightPaneTemplateSelector"
                                      AddPrinterPaneTemplate="{StaticResource TEMPLATE_AddPrinterPane}"
                                      SearchPrinterPaneTemplate="{StaticResource TEMPLATE_SearchPrinterPane}"
+                                     SearchSettingsPaneTemplate="{StaticResource TEMPLATE_SearchSettingsPane}"
                                      PrintSettingsPaneTemplate="{StaticResource TEMPLATE_PrintSettingsPane}"/>
         <Style x:Key="AdaptableGridViewStyle1" TargetType="local:AdaptableGridView">
             <Setter Property="Padding" Value="0,0,0,10"/>
@@ -104,11 +108,15 @@
                           Text="{Binding Source=IDS_LBL_PRINTERS, Converter={StaticResource ResourceStringToTextConverter}}" 
                           Button1Image="ms-appx:///Resources/Images/img_btn_search_printer_normal.scale-100.png" 
                           Button2Image="ms-appx:///Resources/Images/img_btn_add_printer_ok_normal.scale-100.png"
-                          
+                          Button3Image="ms-appx:///Resources/Images/img_btn_search_settings_normal.scale-100.png"
+
                           Button1PressedImage="ms-appx:///Resources/Images/img_btn_search_printer_pressed.scale-100.png"
                           Button2PressedImage="ms-appx:///Resources/Images/img_btn_add_printer_pressed.scale-100.png"
+                          Button3PressedImage="ms-appx:///Resources/Images/img_btn_search_settings_pressed.scale-100.png"
+
                           Button1Visibility="Visible"
                           Button2Visibility="Visible"
+                          Button3Visibility="Visible"
                           RightPaneContent="{Binding DataContext.RightPaneMode, ElementName=printersPage}"
                           RightPaneContentTemplateSelector="{StaticResource PrintersRightPaneTemplateSelector}" Grid.Row="0" Tag="{Binding}">
         <Grid Tag="{Binding}">

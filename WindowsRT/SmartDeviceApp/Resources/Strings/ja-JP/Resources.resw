@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -560,5 +560,17 @@
   </data>
   <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
     <value></value>
+  </data>
+  <data name="IDS_LBL_SEARCH_PRINTERS_SETTINGS" xml:space="preserve">
+    <value>検索設定</value>
+  </data>
+  <data name="IDS_LBL_SNMP_COMMUNITY_NAME" xml:space="preserve">
+    <value>SNMPコミュニティ名</value>
+  </data>
+  <data name="IDS_LBL_VALID_COMMUNITY_NAME" xml:space="preserve">
+	  <value>有効な文字：\na-zA-Z0-9, /:;. @ [\\] ^ _</value>
+  </data>
+  <data name="IDS_ERR_MSG_INVALID_COMMUNITY_NAME" xml:space="preserve">
+	  <value>SNMPコミュニティ名を確認してください。</value>
   </data>
 </root>

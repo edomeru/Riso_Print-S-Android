@@ -192,9 +192,21 @@
         <!--<Grid Margin="0,0,0,0">-->
         <Grid  Grid.Row="1" Grid.Column="1"  VerticalAlignment="Top" Height="{Binding DataContext.Height, ElementName=AddPrinterPaneControl}">
             <Grid.RowDefinitions>
+                <RowDefinition Height="120" />
                 <RowDefinition Height="80" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <StackPanel Grid.Row="0" Orientation="Vertical">
+                <TextBlock Text="{Binding Source=IDS_LBL_SNMP_COMMUNITY_NAME, Converter={StaticResource ResourceStringToTextConverter}}"
+                           Style="{StaticResource STYLE_TextKey}"
+                           Margin="20,20,0,0" Width="320" />
+                <TextBlock Text="{Binding SnmpCommunityName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource STYLE_TextSubTitle}"
+                         Width="320"
+                         TextWrapping="Wrap"
+                         Margin="30,20,0,10"/>
+              <Rectangle HorizontalAlignment="Stretch" Fill="White" Height="1" Margin="15,8,15,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <TextBox x:Name="ipTextBox"  Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTabStop="{Binding IsButtonVisible}"
                          VerticalAlignment="Center"
                          PlaceholderText="{Binding Source=IDS_LBL_IP_ADDRESS, Converter={StaticResource ResourceStringToTextConverter}}" Style="{StaticResource IPAddressTextBoxStyle1}"
