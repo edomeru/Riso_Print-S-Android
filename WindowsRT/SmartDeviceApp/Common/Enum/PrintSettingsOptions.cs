@@ -22,7 +22,8 @@ namespace SmartDeviceApp.Common.Enum
     {
         Auto,
         FullColor,
-        Mono
+        Mono,
+        DualColor
     }
 
     /// <summary>
@@ -61,7 +62,10 @@ namespace SmartDeviceApp.Common.Enum
         Tabloid,
         Legal,
         Letter,
-        Statement
+        Statement,
+        Legal13,
+        EightK,
+        SixteenK
     }
 
     /// <summary>
@@ -75,7 +79,8 @@ namespace SmartDeviceApp.Common.Enum
         MattCoated,
         HighQuality,
         CardIJ,
-        LWPaper
+        LWPaper,
+        RoughPaper
     }
 
     /// <summary>
@@ -170,6 +175,7 @@ namespace SmartDeviceApp.Common.Enum
     {
         Off,
         TwoHoles,
+        ThreeHoles,
         FourHoles
     }
 

@@ -20,6 +20,25 @@ namespace SmartDeviceApp.Common.Utilities
     public static class PrinterModelUtility
     {
         /// <summary>
+        /// Determines the printer model series based on the printer name
+        /// </summary>
+        /// <param name="printerName">printer name</param>
+        /// <returns>series type of the printer</returns>
+        public static int GetSeriesTypeFromPrinterName(string printerName)
+        {
+            int seriesType = (int)DirectPrint.SeriesType.GD;
+            if (PrinterModelUtility.isFWSeries(printerName))
+            {
+                seriesType = (int)DirectPrint.SeriesType.FW;
+            }
+            else if (PrinterModelUtility.isISSeries(printerName))
+            {
+                seriesType = (int)DirectPrint.SeriesType.IS;
+            }
+            return seriesType;
+        }
+
+        /// <summary>
         /// Checks if printer name belongs to the FW printer series
         /// </summary>
         /// <param name="printerName">printer name</param>
