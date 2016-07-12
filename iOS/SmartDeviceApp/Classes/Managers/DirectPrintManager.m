@@ -242,10 +242,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     NSString *app_name = @"IDS_APP_NAME";
 
     NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-    // Version 2.0.0.3 start
-    //NSString *build = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFundleVersion"];
-    NSString *build = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
-    // Version 2.0.0.3 end
+    NSString *build = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFundleVersion"];
     NSString *app_version = [NSString stringWithFormat:@"%@.%@", version, build];
     
     self.job = directprint_job_new([printer_name UTF8String], [app_name UTF8String], [app_version UTF8String], [loginId UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
