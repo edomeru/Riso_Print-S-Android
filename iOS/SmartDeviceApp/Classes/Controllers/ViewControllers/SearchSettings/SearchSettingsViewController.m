@@ -140,6 +140,7 @@
     {
         NSString *stringToSave = (textField.text.length > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN) ? [textField.text substringToIndex:SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN] : textField.text;
         [AppSettingsHelper saveSNMPCommunityName:stringToSave];
+        textField.text = stringToSave;
     }
     
     return YES;
