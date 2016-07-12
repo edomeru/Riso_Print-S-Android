@@ -74,7 +74,7 @@ namespace SmartDeviceApp.Controllers
             _printJob.series_type = GetSeriesTypeFromPrinterName(printerName);
             //_printJob.filename = name; // TODO: (confirm) To be deleted
             _printJob.file = file;
-            _printJob.print_settings = CreateStringFromPrintSettings(printSettings);
+            _printJob.print_settings = CreateStringFromPrintSettings(printSettings, printerName);
             _printJob.ip_address = ipAddress;
             _printJob.callback = new DirectPrint.directprint_callback(ReceiveResult);
             _printJob.progress_callback = new DirectPrint.progress_callback(UpdateProgress);
@@ -143,8 +143,9 @@ namespace SmartDeviceApp.Controllers
         /// Converts print settings into a string understood by DirectPrintSettings class
         /// </summary>
         /// <param name="printSettings">print settings</param>
+        /// <param name="printerName">printer name</param>
         /// <returns>converted print settings string</returns>
-        private string CreateStringFromPrintSettings(PrintSettings printSettings)
+        private string CreateStringFromPrintSettings(PrintSettings printSettings, String printerName)
         {
             StringBuilder builder = new StringBuilder();
 
@@ -230,9 +231,20 @@ namespace SmartDeviceApp.Controllers
             // Sort
             if (printSettings.Sort >= 0)
             {
-                builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
-                                             PrintSettingConstant.NAME_VALUE_SORT,
-                                             printSettings.Sort));
+                if (PrinterModelUtility.isISSeries(printerName))
+                {
+                    //special handling for IS, switch value
+                    int value = printSettings.Sort - 1;
+                    builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
+                             PrintSettingConstant.NAME_VALUE_SORT,
+                             Math.Abs(value)));
+                }
+                else
+                {
+                    builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
+                                                 PrintSettingConstant.NAME_VALUE_SORT,
+                                                 printSettings.Sort));
+                }
             }
 
             // Booklet
