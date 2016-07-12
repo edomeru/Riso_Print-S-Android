@@ -285,7 +285,6 @@
     <Compile Include="ViewModels\SelectPrinterViewModel.cs" />
     <Compile Include="ViewModels\ViewControlViewModel.cs" />
     <Compile Include="ViewModels\JobsViewModel.cs" />
-    <Compile Include="ViewModels\HelpViewModel.cs" />
     <Compile Include="ViewModels\LegalViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\PrintPreviewViewModel.cs" />
@@ -296,9 +295,6 @@
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\AddPrinterPane.xaml.cs">
       <DependentUpon>AddPrinterPane.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HelpPage.xaml.cs">
-      <DependentUpon>HelpPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\JobsPage.xaml.cs">
       <DependentUpon>JobsPage.xaml</DependentUpon>
@@ -378,7 +374,6 @@
     <Content Include="Assets\en-US\W014.png" />
     <Content Include="Assets\en-US\W015.png" />
     <Content Include="Assets\en-US\W016.png" />
-    <Content Include="Assets\fr-FR\Help.html" />
     <Content Include="Assets\fr-FR\I000.png" />
     <Content Include="Assets\fr-FR\I001.png" />
     <Content Include="Assets\fr-FR\I002.png" />
@@ -391,7 +386,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Assets\en-US\help.html" />
     <Content Include="Assets\en-US\legal.html" />
     <Content Include="Assets\fr-FR\license.html" />
     <Content Include="Assets\fr-FR\riso_logo.png" />
@@ -412,7 +406,6 @@
     <Content Include="Assets\fr-FR\W014.png" />
     <Content Include="Assets\fr-FR\W015.png" />
     <Content Include="Assets\fr-FR\W016.png" />
-    <Content Include="Assets\ja-JP\help.html" />
     <Content Include="Assets\ja-JP\I000.png" />
     <Content Include="Assets\ja-JP\I001.png" />
     <Content Include="Assets\ja-JP\I002.png" />
@@ -663,10 +656,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Views\AddPrinterPane.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HelpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
