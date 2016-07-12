@@ -26,13 +26,6 @@ namespace SmartDeviceApp.Common.Constants
         public const string KEY_TYPE            = "type";
         public const string KEY_DEFAULT         = "default";
         public const string KEY_OPTION          = "option";
-        public const string KEY_PRINTER_TYPE    = "printertype";
-        public const string KEY_ID              = "id";
-
-        // printsettings.xml Printer Types
-        public const string PRINTER_TYPE_IS = "IS";
-        public const string PRINTER_TYPE_FW = "FW";
-        public const string PRINTER_TYPE_GD = "GD";
 
         // printsettings.xml Name values
         public const string NAME_VALUE_COLOR_MODE        = "colorMode";
@@ -92,8 +85,6 @@ namespace SmartDeviceApp.Common.Constants
         // Copies Acceptable Values
         public const int COPIES_MIN = 1;
         public const int COPIES_MAX = 9999;
-
-        public static readonly string[] IS_PRINTERS = { "RISO IS1000C-J", "RISO IS1000C-G", "RISO IS950C-G" };
 
     }
 }

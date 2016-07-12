@@ -139,6 +139,8 @@ namespace SmartDeviceApp.Controllers
 
 
             LoadPrintSettingsOptions(_printer.Name);
+            _printSettingsViewModel.PrinterName = printer.Name;
+
             FilterPrintSettingsUsingCapabilities();
             MergePrintSettings();
             ApplyPrintSettingConstraints();
@@ -291,9 +293,9 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSettingList Operations
 
-        private Dictionary<string, List<PrintSettingGroup>> mainSettings = null;
-        private Dictionary<string, List<PrintSettingGroup>> authSettings = null;
-        private Dictionary<string, PrintSettingList> printSettings = null;
+        private List<PrintSettingGroup> mainGroup = null;
+        private List<PrintSettingGroup> authGroup = null;
+        private PrintSettingList printSettings = null;
 
         /// <summary>
         /// Loads the initial print settings file
@@ -301,83 +303,38 @@ namespace SmartDeviceApp.Controllers
         private void LoadPrintSettingsOptions(string printerName)
         {
             // Set default printer type to IS
-            string printerType = PrintSettingConstant.PRINTER_TYPE_IS;
+            int printerType = PrinterModelUtility.GetSeriesTypeFromPrinterName(printerName);
 
-            if (printerName != null && printerName.Contains(PrintSettingConstant.PRINTER_TYPE_FW))
-            {
-                printerType = PrintSettingConstant.PRINTER_TYPE_FW;
-            }
-            else if (printerName != null && printerName.Contains(PrintSettingConstant.PRINTER_TYPE_GD))
-            {
-                printerType = PrintSettingConstant.PRINTER_TYPE_GD;
-            }
-            else
-            {
-                // This is still check even if the default type is IS
-                // since the default value might changed in the future
-                foreach (string type in PrintSettingConstant.IS_PRINTERS)
-                {
-                    if (printerName.Equals(type))
-                    {
-                        printerType = PrintSettingConstant.PRINTER_TYPE_IS;
-                        break;
-                    }
-                }
-            }
-
-            // Parse xml file once
+            // Parse Print Settings XML once
             if (printSettings == null)
             {
-                mainSettings = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
-                authSettings = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML);
-                printSettings = new Dictionary<string, PrintSettingList>();
-                
-                // For IS
-                PrintSettingList settings = new PrintSettingList();
-                foreach (PrintSettingGroup g in mainSettings[PrintSettingConstant.PRINTER_TYPE_IS])
+                mainGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+                authGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML);
+                printSettings = new PrintSettingList();
+                foreach (PrintSettingGroup g in mainGroup)
                 {
-                    settings.Add(g);
+                    printSettings.Add(g);
                 }
-                foreach (PrintSettingGroup g in authSettings[PrintSettingConstant.PRINTER_TYPE_IS])
+                foreach (PrintSettingGroup g in authGroup)
                 {
-                    settings.Add(g);
+                    printSettings.Add(g);
                 }
-
-                printSettings.Add(PrintSettingConstant.PRINTER_TYPE_IS, settings);
-
-                // For GD
-                settings = new PrintSettingList();
-                foreach (PrintSettingGroup g in mainSettings[PrintSettingConstant.PRINTER_TYPE_GD])
-                {
-                    settings.Add(g);
-                }
-                foreach (PrintSettingGroup g in authSettings[PrintSettingConstant.PRINTER_TYPE_GD])
-                {
-                    settings.Add(g);
-                }
-                printSettings.Add(PrintSettingConstant.PRINTER_TYPE_GD, settings);
-
-                // For FW
-                settings = new PrintSettingList();
-                foreach (PrintSettingGroup g in mainSettings[PrintSettingConstant.PRINTER_TYPE_FW])
-                {
-                    settings.Add(g);
-                }
-                foreach (PrintSettingGroup g in authSettings[PrintSettingConstant.PRINTER_TYPE_FW])
-                {
-                    settings.Add(g);
-                }
-                printSettings.Add(PrintSettingConstant.PRINTER_TYPE_FW, settings);
             }
-            // Construct the PrintSettingList
-            _printSettingsViewModel.PrintSettingsList = printSettings[printerType];
-
             
-
+            // Load print settings for first time
+            if (_printSettingsViewModel.PrinterName == null) {
+                _printSettingsViewModel.PrintSettingsList = printSettings;
+                FilterPrintSettingsUsingModel(printerType);
+            }
+            else if (printerType != PrinterModelUtility.GetSeriesTypeFromPrinterName(_printSettingsViewModel.PrinterName))
+            {
+                FilterPrintSettingsUsingModel(printerType);
+            }
+            
             // Remove Authentication group for Default Print Settings screen
             if (!_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
             {
-                foreach (PrintSettingGroup g in authSettings[printerType])
+                foreach (PrintSettingGroup g in authGroup)
                 {
                     _printSettingsViewModel.PrintSettingsList.Remove(g);
                 }
@@ -401,68 +358,157 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         /// <param name="path">XML file relative path from install location</param>
         /// <returns>list of print setting groups</returns>
-        private Dictionary<string, List<PrintSettingGroup>> ParseXmlFile(string path)
+        private List<PrintSettingGroup> ParseXmlFile(string path)
         {
             Dictionary<string, List<PrintSettingGroup>> printSettings = new Dictionary<string, List<PrintSettingGroup>>();
             PrintSettingToValueConverter valueConverter = new PrintSettingToValueConverter();
             string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path, path);
             XDocument data = XDocument.Load(xmlPath);
 
-            IEnumerable<XElement> types = data.Descendants(PrintSettingConstant.KEY_PRINTER_TYPE);
-            foreach (XElement type in types)
-            {
-                var printSettingsData = from groupData in type.Descendants(PrintSettingConstant.KEY_GROUP)
-                                        select new PrintSettingGroup
-                                        {
-                                            Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
-                                            Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
-                                            PrintSettings = (
-                                                from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
-                                                select new PrintSetting
-                                                {
-                                                    Name = (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
-                                                    Text = (string)settingData.Attribute(PrintSettingConstant.KEY_TEXT),
-                                                    Icon = (string)settingData.Attribute(PrintSettingConstant.KEY_ICON),
-                                                    Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
-                                                        (string)settingData.Attribute(PrintSettingConstant.KEY_TYPE)),
-                                                    Value = valueConverter.Convert(
-                                                        (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
-                                                        null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
-                                                        null),
-                                                    Default = valueConverter.Convert(
-                                                        (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
-                                                        null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
-                                                        null),
-                                                    Options = (
-                                                        from optionData in settingData.Elements(PrintSettingConstant.KEY_OPTION)
-                                                        select new PrintSettingOption
-                                                        {
-                                                            Text = (string)optionData.Value,
-                                                            Index = optionData.ElementsBeforeSelf().Count(),
-                                                            IsEnabled = true // To be updated later upon apply constraints
-                                                        }).ToList<PrintSettingOption>(),
-                                                    IsEnabled = true,        // To be updated later upon apply constraints
-                                                    IsValueDisplayed = true  // To be updated later upon apply constraints
-                                                }).ToList<PrintSetting>()
-                                        };
+            var printSettingsData = from groupData in data.Descendants(PrintSettingConstant.KEY_GROUP)
+                                    select new PrintSettingGroup
+                                    {
+                                        Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
+                                        Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
+                                        PrintSettings = (
+                                            from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
+                                            select new PrintSetting
+                                            {
+                                                Name = (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                                Text = (string)settingData.Attribute(PrintSettingConstant.KEY_TEXT),
+                                                Icon = (string)settingData.Attribute(PrintSettingConstant.KEY_ICON),
+                                                Type = (PrintSettingType)Enum.Parse(typeof(PrintSettingType),
+                                                    (string)settingData.Attribute(PrintSettingConstant.KEY_TYPE)),
+                                                Value = valueConverter.Convert(
+                                                    (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                                    null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                                    null),
+                                                Default = valueConverter.Convert(
+                                                    (string)settingData.Attribute(PrintSettingConstant.KEY_DEFAULT),
+                                                    null, (string)settingData.Attribute(PrintSettingConstant.KEY_NAME),
+                                                    null),
+                                                Options = (
+                                                    from optionData in settingData.Elements(PrintSettingConstant.KEY_OPTION)
+                                                    select new PrintSettingOption
+                                                    {
+                                                        Text = (string)optionData.Value,
+                                                        Index = optionData.ElementsBeforeSelf().Count(),
+                                                        IsEnabled = true // To be updated later upon apply constraints
+                                                    }).ToList<PrintSettingOption>(),
+                                                IsEnabled = true,        // To be updated later upon apply constraints
+                                                IsValueDisplayed = true  // To be updated later upon apply constraints
+                                            }).ToList<PrintSetting>()
+                                    };
 
-                PrintSettingGroup group = new PrintSettingGroup();
-                PrintSetting fakeSetting = new PrintSetting();
-                fakeSetting.Text = "blah";
-                group.Name = "Fake Group";
-                group.PrintSettings = new List<PrintSetting>();
-                group.PrintSettings.Add(fakeSetting);
+            PrintSettingGroup group = new PrintSettingGroup();
+            PrintSetting fakeSetting = new PrintSetting();
+            fakeSetting.Text = "blah";
+            group.Name = "Fake Group";
+            group.PrintSettings = new List<PrintSetting>();
+            group.PrintSettings.Add(fakeSetting);
 
-                //List<PrintSettingGroup> groupList = new List<PrintSettingGroup>();
-                //groupList.Add(group);
-                //return groupList;
-                printSettings.Add((string)type.Attribute(PrintSettingConstant.KEY_ID), printSettingsData.ToList<PrintSettingGroup>());
-            }
-
-            
+            //List<PrintSettingGroup> groupList = new List<PrintSettingGroup>();
+            //groupList.Add(group);
+            //return groupList;
+            //printSettings.Add((string)type.Attribute(PrintSettingConstant.KEY_ID), printSettingsData.ToList<PrintSettingGroup>());
+            //}
             //List<PrintSettingGroup> groupList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
-            return printSettings;
+            return printSettingsData.ToList<PrintSettingGroup>();
             //return printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
+        }
+
+        /// <summary>
+        /// Removes or adds print setting and options depending on printer model
+        /// </summary>
+        private void FilterPrintSettingsUsingModel(int printerType)
+        {
+            if (printerType != (int)DirectPrint.SeriesType.FW)
+            {
+                // Remove Dual Color
+                PrintSetting colorModePrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_COLOR_MODE);
+                if (colorModePrintSetting != null)
+                {
+                    RemovePrintSettingOption(colorModePrintSetting, (int)ColorMode.DualColor);
+                }
+
+                // Remove Rough Paper
+                PrintSetting roughPaperPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
+                if (roughPaperPrintSetting != null)
+                {
+                    RemovePrintSettingOption(roughPaperPrintSetting, (int)PaperType.RoughPaper);
+                }
+
+                // Add Tray 3
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
+                {
+                    AddPrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray3, "ids_lbl_inputtray_tray3");
+                }
+
+                if (printerType == (int)DirectPrint.SeriesType.IS)
+                {
+                    // Remove Legal13, 8K, and 16K 
+                    PrintSetting paperSizePrintSetting =
+                        GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_SIZE);
+                    if (paperSizePrintSetting != null)
+                    {
+                        RemovePrintSettingOption(paperSizePrintSetting, (int)PaperSize.Legal13);
+                        RemovePrintSettingOption(paperSizePrintSetting, (int)PaperSize.EightK);
+                        RemovePrintSettingOption(paperSizePrintSetting, (int)PaperSize.SixteenK);
+                    }
+                }
+                else
+                {
+                    // Add Legal13, 8K, and 16K 
+                    PrintSetting paperSizePrintSetting =
+                        GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_SIZE);
+                    if (paperSizePrintSetting != null)
+                    {
+                        AddPrintSettingOption(paperSizePrintSetting, (int)PaperSize.Legal13, "ids_lbl_papersize_legal13");
+                        AddPrintSettingOption(paperSizePrintSetting, (int)PaperSize.EightK, "ids_lbl_papersize_8k");
+                        AddPrintSettingOption(paperSizePrintSetting, (int)PaperSize.SixteenK, "ids_lbl_papersize_16k");
+                    }
+                }
+            }
+            else
+            {
+                // Remove Tray 3
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
+                {
+                    RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray3);
+                }
+
+                // Add Dual Color
+                PrintSetting colorModePrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_COLOR_MODE);
+                if (colorModePrintSetting != null)
+                {
+                    AddPrintSettingOption(colorModePrintSetting, (int)ColorMode.DualColor, "ids_lbl_colormode_2color");
+                }
+
+                // Add Rough Paper
+                PrintSetting roughPaperPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
+                if (roughPaperPrintSetting != null)
+                {
+                    AddPrintSettingOption(roughPaperPrintSetting, (int)PaperType.RoughPaper, "ids_lbl_papertype_roughpaper");
+                }
+
+                // Add Legal13, 8K, and 16K 
+                PrintSetting paperSizePrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_SIZE);
+                if (paperSizePrintSetting != null)
+                {
+                    AddPrintSettingOption(paperSizePrintSetting, (int)PaperSize.Legal13, "ids_lbl_papersize_legal13");
+                    AddPrintSettingOption(paperSizePrintSetting, (int)PaperSize.EightK, "ids_lbl_papersize_8k");
+                    AddPrintSettingOption(paperSizePrintSetting, (int)PaperSize.SixteenK, "ids_lbl_papersize_16k");
+                }
+            }
         }
 
         /// <summary>
@@ -666,6 +712,25 @@ namespace SmartDeviceApp.Controllers
             if (printSettingOption != null)
             {
                 printSetting.Options.Remove(printSettingOption);
+            }
+        }
+
+        /// <summary>
+        /// Add a print setting option
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
+        /// <param name="index">option index</param>
+        private void AddPrintSettingOption(PrintSetting printSetting, int index, string text)
+        {
+            PrintSettingOption printSettingOption = printSetting.Options
+                .FirstOrDefault(setting => setting.Index == index);
+            if (printSettingOption == null)
+            {
+                printSettingOption = new PrintSettingOption();
+                printSettingOption.Text = text;
+                printSettingOption.Index = index;
+                printSettingOption.IsEnabled = true;
+                printSetting.Options.Add(printSettingOption);
             }
         }
 
