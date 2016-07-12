@@ -623,18 +623,21 @@
 
 #pragma mark - Rotation
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-    {
-        [self.groupsViewLayout setupForOrientation:toInterfaceOrientation
-                                         forDevice:UIUserInterfaceIdiomPad];
-    }
-    else
-    {
-        [self.groupsViewLayout setupForOrientation:toInterfaceOrientation
-                                         forDevice:UIUserInterfaceIdiomPhone];
-    }
+       [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context){
+           UIInterfaceOrientation toInterfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+           if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+           {
+               [self.groupsViewLayout setupForOrientation:toInterfaceOrientation
+                                                forDevice:UIUserInterfaceIdiomPad];
+           }
+           else
+           {
+               [self.groupsViewLayout setupForOrientation:toInterfaceOrientation
+                                                forDevice:UIUserInterfaceIdiomPhone];
+           }
+       } completion:nil];
 }
 
 @end
