@@ -10,6 +10,8 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="DirectPrintSettingsWrapper.cpp" />
     <ClCompile Include="..\..\CommonLibrary\src\printsettings.c" />
+    <ClCompile Include="..\..\CommonLibrary\src\printsettings_fw.c" />
+    <ClCompile Include="..\..\CommonLibrary\src\printsettings_gd.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
