@@ -121,7 +121,7 @@ namespace SNMP
         /// </summary>
         public void beginRetrieveCapabilities()
         {
-            System.Diagnostics.Debug.WriteLine("SNMPDeviice Begin Capability Retrieval for ip: ");
+            System.Diagnostics.Debug.WriteLine("SNMPDevice Begin Capability Retrieval for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
     
             //first, check if device is a supported RISO Printer
@@ -143,7 +143,7 @@ namespace SNMP
         void endRetrieveCapabilitiesSuccess()
         {        
             //callback to SNMPController
-            System.Diagnostics.Debug.WriteLine("SNMPDeviice success for ip: ");
+            System.Diagnostics.Debug.WriteLine("SNMPDevice success for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
            
             if (snmpControllerCallBackGetCapability != null)
@@ -155,7 +155,7 @@ namespace SNMP
 
         void endRetrieveCapabilitiesFailed()
         {
-            System.Diagnostics.Debug.WriteLine("SNMPDeviice failed for ip: ");
+            System.Diagnostics.Debug.WriteLine("SNMPDevice failed for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
 
             if (snmpControllerDeviceCallBack != null)
@@ -223,7 +223,7 @@ namespace SNMP
         private bool supportsMultiFunctionFinisher = false;
         private void receiveData(HostName sender, byte[] responsedata)
         {
-            System.Diagnostics.Debug.WriteLine("SNMPDeviice Receive Data for ip: ");
+            System.Diagnostics.Debug.WriteLine("SNMPDevice Receive Data for ip: ");
             System.Diagnostics.Debug.WriteLine(_ipAddress);
             SNMPMessage response = new SNMPMessage(responsedata);
 
@@ -281,7 +281,9 @@ namespace SNMP
                             {
                                 //supported RISO printer
                                 //AZA: RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G
-                                if (isRISOAZADevice())
+                                //DIO: *FW*
+                                //APS: *GD*
+                                if (isRISODevice())
                                 {
                                     isSupportedDevice = true;
 
@@ -293,7 +295,8 @@ namespace SNMP
                                 }
                                 else
                                 {
-                                    //endRetrieveCapabilitiesSuccess();
+                                    isSupportedDevice = false;
+                                    endRetrieveCapabilitiesSuccess();
                                 }
                             }
                         }
@@ -323,14 +326,16 @@ namespace SNMP
         }
 
         /// <summary>
-        /// Checks if the device is a RISO AZA device.
+        /// Checks if the device is a supported RISO device.
         /// </summary>
         /// <returns></returns>
-        public bool isRISOAZADevice()
+        public bool isRISODevice()
         {
             return this.Description.Equals("RISO IS1000C-J") ||
                    this.Description.Equals("RISO IS1000C-G") ||
-                   this.Description.Equals("RISO IS950C-G");
+                   this.Description.Equals("RISO IS950C-G") ||
+                   this.Description.Contains("FW") ||
+                   this.Description.Contains("GD");
         }
 
         private void timeoutHandler() //HostName sender, byte[] responsedata)
