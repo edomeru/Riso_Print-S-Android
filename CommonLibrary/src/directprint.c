@@ -515,8 +515,11 @@ void *do_lpr_print(void *parameter)
         setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
         setsockopt(sock_fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(struct timeval));
         //Suppress throwing sigpipes on socket so application will not crash when socket error occurs.
+
+#ifdef SO_NOSIGPIPE
         int no_sigpipe = 1;
         setsockopt(sock_fd, SOL_SOCKET, SO_NOSIGPIPE, (char *)&no_sigpipe, sizeof(no_sigpipe));
+#endif
         
         if (is_cancelled(print_job) == 1)
         {
@@ -852,8 +855,10 @@ void *do_raw_print(void *parameter)
         setsockopt(sock_fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(struct timeval));
         setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
         //Suppress throwing sigpipes on socket so application will not crash when socket error occurs.
+#ifdef SO_NOSIGPIPE
         int no_sigpipe = 1;
         setsockopt(sock_fd, SOL_SOCKET, SO_NOSIGPIPE, (char *)&no_sigpipe, sizeof(no_sigpipe));
+#endif
         
         if (is_cancelled(print_job) == 1)
         {
