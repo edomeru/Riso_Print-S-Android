@@ -320,17 +320,11 @@ namespace SmartDeviceApp.Controllers
                     printSettings.Add(g);
                 }
             }
-            
-            // Load print settings for first time
-            if (_printSettingsViewModel.PrinterName == null) {
-                _printSettingsViewModel.PrintSettingsList = printSettings;
-                FilterPrintSettingsUsingModel(printerType);
-            }
-            else if (printerType != PrinterModelUtility.GetSeriesTypeFromPrinterName(_printSettingsViewModel.PrinterName))
-            {
-                FilterPrintSettingsUsingModel(printerType);
-            }
-            
+
+            _printSettingsViewModel.PrinterName = printerName;
+            _printSettingsViewModel.PrintSettingsList = printSettings;
+            FilterPrintSettingsUsingModel(printerType);
+
             // Remove Authentication group for Default Print Settings screen
             if (!_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
             {
