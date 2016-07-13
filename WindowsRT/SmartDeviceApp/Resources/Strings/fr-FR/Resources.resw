@@ -274,7 +274,7 @@
     <value>Tabloid</value>
   </data>
   <data name="IDS_LBL_PAPERSIZE_LEGAL" xml:space="preserve">
-    <value>Legal</value>
+    <value>Legal 8.5x14</value>
   </data>
   <data name="IDS_LBL_PAPERSIZE_LETTER" xml:space="preserve">
     <value>Letter</value>
