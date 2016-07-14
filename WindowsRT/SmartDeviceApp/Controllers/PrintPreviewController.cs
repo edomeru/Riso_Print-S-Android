@@ -121,7 +121,7 @@ namespace SmartDeviceApp.Controllers
         private static int _currRightPageIndex;
         private static int _currLeftBackPageIndex;
         private static int _currRightBackPageIndex;
-        private bool _resetPrintSettings; // Flag used only when selected printer is deleted
+        private bool _resetPrintSettings;
         private bool _isPrintingEnabled;
 
         List<CancellationTokenSource> _cancellationTokenSourceQueue;
@@ -161,6 +161,12 @@ namespace SmartDeviceApp.Controllers
             _pageAreaGridLoadedEventHandler = new PageAreaGridLoadedEventHandler(InitializeGestures);
 
             _isPrintingEnabled = true;
+        }
+
+        public bool ResetPrintSettings
+        {
+            get { return _resetPrintSettings; }
+            set { _resetPrintSettings = value; }
         }
 
         /// <summary>
