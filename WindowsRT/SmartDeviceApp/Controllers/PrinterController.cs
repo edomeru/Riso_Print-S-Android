@@ -221,8 +221,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void RegisterPrintSettingValueChange()
         {
-            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);
-            PrintPreviewController.Instance.ResetPrintSettings = true;
+            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);            
         }
 
         /// <summary>
@@ -232,7 +231,7 @@ namespace SmartDeviceApp.Controllers
         {
             PrintSettingsController.Instance.UnregisterPrintSettingValueChanged(_screenName);
             PrintSettingsController.Instance.Uninitialize(_screenName);
-            PrintPreviewController.Instance.RegisterPrintSettingValueChange();
+            PrintPreviewController.Instance.ReinitializeSettings();
         }
 
         /// <summary>

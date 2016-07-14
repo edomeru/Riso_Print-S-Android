@@ -121,7 +121,7 @@ namespace SmartDeviceApp.Controllers
         private static int _currRightPageIndex;
         private static int _currLeftBackPageIndex;
         private static int _currRightBackPageIndex;
-        private bool _resetPrintSettings;
+        public bool _resetPrintSettings;
         private bool _isPrintingEnabled;
 
         List<CancellationTokenSource> _cancellationTokenSourceQueue;
@@ -161,12 +161,6 @@ namespace SmartDeviceApp.Controllers
             _pageAreaGridLoadedEventHandler = new PageAreaGridLoadedEventHandler(InitializeGestures);
 
             _isPrintingEnabled = true;
-        }
-
-        public bool ResetPrintSettings
-        {
-            get { return _resetPrintSettings; }
-            set { _resetPrintSettings = value; }
         }
 
         /// <summary>
@@ -354,6 +348,11 @@ namespace SmartDeviceApp.Controllers
                 _selectedPrinter = null;
                 await SetSelectedPrinterAndPrintSettings(NO_SELECTED_PRINTER_ID);
             }
+        }
+
+        public async Task ReinitializeSettings()
+        {
+            SetSelectedPrinterAndPrintSettings(_selectedPrinter.Id);
         }
 
         /// <summary>
