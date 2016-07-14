@@ -636,6 +636,7 @@ namespace SmartDeviceApp.Controllers
             }
             else
             {
+                AddPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
                 PrintSetting punchPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
                 if (punchPrintSetting != null)
@@ -660,6 +661,7 @@ namespace SmartDeviceApp.Controllers
                         RemovePrintSettingOption(punchPrintSetting, (int)Punch.FourHoles);
                     }
                 }
+                
             }
 
             PrintSetting outputTrayPrintSetting =
@@ -731,6 +733,12 @@ namespace SmartDeviceApp.Controllers
         /// <param name="printSetting">print setting</param>
         private void AddPrintSetting(string name)
         {
+            PrintSetting currentSetting = GetPrintSetting(name);
+            if (currentSetting != null)
+            {
+                return;
+            }
+                
             var query = fullSettings
                 .SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
                 .Where(ps => ps.Name == name);
@@ -744,11 +752,7 @@ namespace SmartDeviceApp.Controllers
                 .FirstOrDefault(group2 => group2.Name.Equals(settingGroup.Name));
             if (query2 != null)
             {
-                PrintSetting currentSetting = GetPrintSetting(name);
-                if (currentSetting == null)
-                {
-                    query2.PrintSettings.Insert(index, setting);
-                }
+                query2.PrintSettings.Insert(index, setting);
             }
         }
 
