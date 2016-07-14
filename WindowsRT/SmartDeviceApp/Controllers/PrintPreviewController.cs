@@ -352,10 +352,10 @@ namespace SmartDeviceApp.Controllers
 
         public async Task ReinitializeSettings()
         {
-            // Only reinitialize if there is already a PDF file
+            // Only reinitialize if there is alread
             if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
-                SetSelectedPrinterAndPrintSettings(_selectedPrinter.Id);
+                await SetSelectedPrinterAndPrintSettings(_selectedPrinter.Id);
             }            
         }
 
