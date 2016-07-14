@@ -317,7 +317,17 @@ namespace SmartDeviceApp.Controllers
                 {
                     _printSettingsViewModel.PrintSettingsList.Remove(g);
                 }
-            }            
+            }
+            else
+            {
+                foreach (PrintSettingGroup g in authGroup)
+                {
+                    if (!_printSettingsViewModel.PrintSettingsList.Contains(g))
+                    { 
+                        _printSettingsViewModel.PrintSettingsList.Add(g);
+                    }
+                }
+            }
 
 
 #if !PRINTSETTING_ORIENTATION

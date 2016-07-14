@@ -121,7 +121,7 @@ namespace SmartDeviceApp.Controllers
         private static int _currRightPageIndex;
         private static int _currLeftBackPageIndex;
         private static int _currRightBackPageIndex;
-        private bool _resetPrintSettings; // Flag used only when selected printer is deleted
+        public bool _resetPrintSettings;
         private bool _isPrintingEnabled;
 
         List<CancellationTokenSource> _cancellationTokenSourceQueue;
@@ -348,6 +348,15 @@ namespace SmartDeviceApp.Controllers
                 _selectedPrinter = null;
                 await SetSelectedPrinterAndPrintSettings(NO_SELECTED_PRINTER_ID);
             }
+        }
+
+        public async Task ReinitializeSettings()
+        {
+            // Only reinitialize if there is alread
+            if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
+            {
+                await SetSelectedPrinterAndPrintSettings(_selectedPrinter.Id);
+            }            
         }
 
         /// <summary>
