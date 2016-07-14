@@ -57,7 +57,6 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _listPrintersCommand;
         private double _printerValueTextWidth;
         private bool _isHitTestVisible = true; // Set all touch events to enabled initially
-        private string _printerName;
 
         private PrintSettingList _printSettingsList;
         private ICommand _selectPrintSetting;
@@ -102,22 +101,6 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _printerIpAddress = value;
                     RaisePropertyChanged("PrinterIpAddress");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets/sets the printer Name of the currently selected printer
-        /// </summary>
-        public string PrinterName
-        {
-            get { return _printerName; }
-            set
-            {
-                if (_printerName != value)
-                {
-                    _printerName = value;
-                    RaisePropertyChanged("PrinterName");
                 }
             }
         }

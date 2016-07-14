@@ -12,6 +12,7 @@
 
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Models;
 using System;
 using System.Text;
@@ -289,9 +290,15 @@ namespace SmartDeviceApp.Controllers
             // Punch
             if (printSettings.Punch >= 0)
             {
-                builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
-                                             PrintSettingConstant.NAME_VALUE_PUNCH,
-                                             printSettings.Punch));
+                //special handling for IS, adjust value if index is for 4 holes since 3 and 4 holes have same PJL for IS
+                int value = printSettings.Punch;
+                if (PrinterModelUtility.isISSeries(printerName) && value > (int)Punch.ThreeHoles)
+                {
+                    value--;
+                }
+               builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
+                                       PrintSettingConstant.NAME_VALUE_PUNCH,
+                                       value));
             }
 
             // Output Tray
