@@ -307,6 +307,7 @@ namespace SmartDeviceApp.Controllers
             {
                 printSettings = retrievePrintSettings();
             }
+
             _printSettingsViewModel.PrintSettingsList = printSettings;
 
             // Remove Authentication group for Default Print Settings screen
@@ -368,7 +369,7 @@ namespace SmartDeviceApp.Controllers
                                     {
                                         Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
                                         Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
-                                        PrintSettings = (
+                                        PrintSettings = new System.Collections.ObjectModel.ObservableCollection<PrintSetting>((
                                             from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
                                             select new PrintSetting
                                             {
@@ -395,14 +396,14 @@ namespace SmartDeviceApp.Controllers
                                                     }).ToList<PrintSettingOption>(),
                                                 IsEnabled = true,        // To be updated later upon apply constraints
                                                 IsValueDisplayed = true  // To be updated later upon apply constraints
-                                            }).ToList<PrintSetting>()
+                                            }).ToList<PrintSetting>())
                                     };
 
             PrintSettingGroup group = new PrintSettingGroup();
             PrintSetting fakeSetting = new PrintSetting();
             fakeSetting.Text = "blah";
             group.Name = "Fake Group";
-            group.PrintSettings = new List<PrintSetting>();
+            group.PrintSettings = new System.Collections.ObjectModel.ObservableCollection<PrintSetting>();
             group.PrintSettings.Add(fakeSetting);
 
             //List<PrintSettingGroup> groupList = new List<PrintSettingGroup>();
@@ -615,7 +616,10 @@ namespace SmartDeviceApp.Controllers
                         RemovePrintSettingOption(bookletFinishPrintSetting, (int)BookletFinishing.FoldAndStaple);
                     }
                 }
-                else
+            }
+            else
+            {
+                if (printer.EnabledStapler)
                 {
                     AddPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
                 }
@@ -734,11 +738,17 @@ namespace SmartDeviceApp.Controllers
             PrintSettingGroup settingGroup = fullSettings
                 .FirstOrDefault(group => group.PrintSettings.Contains(setting));
 
+            int index = settingGroup.PrintSettings.IndexOf(setting);
+
             var query2 = _printSettingsViewModel.PrintSettingsList
                 .FirstOrDefault(group2 => group2.Name.Equals(settingGroup.Name));
             if (query2 != null)
             {
-                query2.PrintSettings.Add(setting);
+                PrintSetting currentSetting = GetPrintSetting(name);
+                if (currentSetting == null)
+                {
+                    query2.PrintSettings.Insert(index, setting);
+                }
             }
         }
 

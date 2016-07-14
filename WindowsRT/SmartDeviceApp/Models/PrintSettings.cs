@@ -275,7 +275,7 @@ namespace SmartDeviceApp.Models
         /// <summary>
         /// Collection of print settings in a group
         /// </summary>
-        public List<PrintSetting> PrintSettings { get; set; }
+        public ObservableCollection<PrintSetting> PrintSettings { get; set; }
     }
 
     public class PrintSettingList : ObservableCollection<PrintSettingGroup>
