@@ -113,6 +113,7 @@
 		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
 		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
 		31F5B69719248DDB002A29AD /* PrintSettingsPrinterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */; };
+		3E3334761D38D154005791C2 /* CXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECF17A71D2C954400E09E37 /* CXBlurView.m */; };
 		3ECF17A81D2C954400E09E37 /* CXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECF17A71D2C954400E09E37 /* CXBlurView.m */; };
 		3EE0D0A81CFFCCDA00EC57BE /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 7FF4EDAD1CCF074200CB13DB /* printsettings.xml */; };
 		5F3145861A30734D00F482A8 /* I000.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145421A30734D00F482A8 /* I000.png */; };
@@ -2310,6 +2311,7 @@
 				6603A7F71BE1F7A900DBD0F0 /* PrintSettingsViewController.m in Sources */,
 				6603A7F81BE1F7A900DBD0F0 /* PrintSettingsPrinterListTableViewController.m in Sources */,
 				6603A7F91BE1F7A900DBD0F0 /* PrintSettingsPrinterViewController.m in Sources */,
+				3E3334761D38D154005791C2 /* CXBlurView.m in Sources */,
 				6603A7FA1BE1F7A900DBD0F0 /* SettingsViewController.m in Sources */,
 				6603A7FB1BE1F7A900DBD0F0 /* DatabaseManager.m in Sources */,
 				6603A7FC1BE1F7A900DBD0F0 /* DirectPrintManager.m in Sources */,

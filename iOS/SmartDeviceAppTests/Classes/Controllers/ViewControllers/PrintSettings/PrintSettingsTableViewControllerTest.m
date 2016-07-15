@@ -381,7 +381,7 @@
     
     Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex];
     printer.enabled_tray_face_down = [NSNumber numberWithBool:NO];
-    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_outputtray_facedown"],@"");
+    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_outputtray_facedown"],@"");
     
     printer.enabled_tray_face_down = [NSNumber numberWithBool:YES];
     GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_outputtray_facedown"],@"");
