@@ -1184,7 +1184,10 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     
     if ([option isEqualToString:@"ids_lbl_outputtray_facedown"])
     {
-        return  [self.printer.enabled_tray_face_down boolValue];
+        // Ver.2.0.0.4 Start
+        //return  [self.printer.enabled_tray_face_down boolValue];
+        return true; // face down tray is enables always.
+        // Ver.2.0.0.4 End
     }
     
     if ([option isEqualToString:@"ids_lbl_outputtray_top"])

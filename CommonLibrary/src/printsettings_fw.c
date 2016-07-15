@@ -61,12 +61,12 @@ typedef enum
     kPjlCommandSoftwereVersion,
     kPjlCommandColorMode,
     kPjlCommandOrientation,
-    // Ver.2.0.0.3 start
-    //kPjlCommandQuantity,
+    // Ver.2.0.0.5 start
     //kPjlCommandCopies,
-    kPjlCommandCopies,
+    //kPjlCommandQuantity,
     kPjlCommandQuantity,
-    // Ver.2.0.0.3 end
+    kPjlCommandCopies,
+    // Ver.2.0.0.5 end
     kPjlCommandDuplex,
     kPjlCommandDuplexBinding,
     kPjlCommandOutputPaperSize,
@@ -283,8 +283,12 @@ const static char *pjl_commands[kPjlCommandCount] =
     "RKSOFTWAREVERSION",
     "RKOUTPUTMODE",
     "ORIENTATION",
-    "COPIES",
+    // Ver.2.0.0.5 start
+    //"COPIES",
+    //"QTY",
     "QTY",
+    "COPIES",
+    // Ver.2.0.0.5 end
     "DUPLEX",
     "BINDING",
     "PAPER",
@@ -515,11 +519,14 @@ void add_pjl_fw(char *pjl, char *printerName, char *appVersion, setting_value va
             strcat(pjl, pjl_line);
             break;
         }
-        case kPjlCommandQuantity:
+        case kPjlCommandCopies:
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
-            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0)
+            // Ver.2.0.0.5 start
+            //if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1)
+            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0) // "sort_value.int_value == 0" UIで"部ごと"が指定された
+            // Ver.2.0.0.5 end
             {
                 return;
             }
@@ -527,11 +534,14 @@ void add_pjl_fw(char *pjl, char *printerName, char *appVersion, setting_value va
             strcat(pjl, pjl_line);
             break;
         }
-        case kPjlCommandCopies:
+        case kPjlCommandQuantity:
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
-            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1)
+            // Ver.2.0.0.5 start
+            //if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0)
+            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1) // "sort_value.int_value == 1" UIで"ページごと"が指定された
+                // Ver.2.0.0.5 end
             {
                 return;
             }
@@ -802,16 +812,15 @@ void add_pjl_fw(char *pjl, char *printerName, char *appVersion, setting_value va
                 return;
             }
             
-            // Ver.2.0.0.3 start
             // 3holes Condition
             if (strstr(printerName, "ORPHIS") == NULL)
             {
-                if (punch.int_value == 1)
+                //if (punch.int_value == 1)
+                if (punch.int_value == 2) // 4holes
                 {
                     punch.int_value += 1;
                 }
             }
-            // Ver.2.0.0.3 end
             
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][punch.int_value]);
             strcat(pjl, pjl_line);
