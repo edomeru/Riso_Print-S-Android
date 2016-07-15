@@ -221,7 +221,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void RegisterPrintSettingValueChange()
         {
-            PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);            
+          //  PrintSettingsController.Instance.RegisterPrintSettingValueChanged(_screenName);            
         }
 
         /// <summary>
