@@ -88,7 +88,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="screenName">name of active screen</param>
         /// <param name="printer">target printer</param>
         /// <returns>task</returns>
-        public async Task Initialize(string screenName, Printer printer)
+        public async Task Initialize(string screenName, Printer printer, PrintSettings printSetting)
         {
             PrintSettings currPrintSettings = null;// new PrintSettings();
 
@@ -105,8 +105,14 @@ namespace SmartDeviceApp.Controllers
             {
                 printSettingId = printer.PrintSettingId.Value;
             }
-            currPrintSettings = await GetPrintSettings(printSettingId);
-
+            if (printSetting == null)
+            {
+                currPrintSettings = await GetPrintSettings(printSettingId);
+            }
+            else
+            {
+                currPrintSettings = printSetting;
+            }
 #if !PRINTSETTING_ORIENTATION
             // Special handling: Set Orientation value based on first page of PDF
             if (screenName.Equals(ScreenMode.PrintPreview.ToString()))

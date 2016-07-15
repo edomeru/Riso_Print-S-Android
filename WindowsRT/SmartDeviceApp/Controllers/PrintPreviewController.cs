@@ -121,7 +121,7 @@ namespace SmartDeviceApp.Controllers
         private static int _currRightPageIndex;
         private static int _currLeftBackPageIndex;
         private static int _currRightBackPageIndex;
-        public bool _resetPrintSettings;
+        private bool _resetPrintSettings; // Flag used only when selected printer is deleted
         private bool _isPrintingEnabled;
 
         List<CancellationTokenSource> _cancellationTokenSourceQueue;
@@ -355,7 +355,7 @@ namespace SmartDeviceApp.Controllers
             // Only reinitialize if there is alread
             if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
             {
-                await SetSelectedPrinterAndPrintSettings(_selectedPrinter.Id);
+                await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter, _currPrintSettings);
             }            
         }
 
@@ -377,7 +377,7 @@ namespace SmartDeviceApp.Controllers
             }
 
             PrintSettingsController.Instance.Uninitialize(_screenName);
-            await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter);
+            await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter, null);
             _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             PrintSettingsController.Instance.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             ReloadCurrentPage();
