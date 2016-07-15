@@ -121,7 +121,7 @@ namespace SmartDeviceApp.Controllers
         private static int _currRightPageIndex;
         private static int _currLeftBackPageIndex;
         private static int _currRightBackPageIndex;
-        public bool _resetPrintSettings;
+        private bool _resetPrintSettings; // Flag used only when selected printer is deleted
         private bool _isPrintingEnabled;
 
         List<CancellationTokenSource> _cancellationTokenSourceQueue;
