@@ -694,7 +694,7 @@ namespace SmartDeviceApp.Controllers
         {
             //get new print settings
             PrintSettingsController.Instance.Uninitialize(_screenName);
-            await PrintSettingsController.Instance.Initialize(_screenName, printer);
+            await PrintSettingsController.Instance.Initialize(_screenName, printer, null);
         }
 
         private async void handleAddPrinterStatus(string ip, string name, bool isOnline, bool isSupported, List<string> capabilitesList)
