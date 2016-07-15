@@ -465,12 +465,18 @@ void *do_lpr_print(void *parameter)
     }
     else if (is_FWSeries(print_job->printer_name)) // FW Series
     {
-        create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        // Ver.2.0.0.3
+        //create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version);
+        //create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name);
         strcpy(queueName, QUEUE_NAME_FWGD);
     }
     else    // GD Series
     {
-        create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        // Ver.2.0.0.3
+        //create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        create_pjl_gd(pjl_header, print_job->print_settings, print_job->print_settings, print_job->app_version);
+        //reate_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name);
         strcpy(queueName, QUEUE_NAME_FWGD);
     }
     strcat(pjl_header, PJL_LANGUAGE);
@@ -809,11 +815,17 @@ void *do_raw_print(void *parameter)
     }
     else if (is_FWSeries(print_job->printer_name)) // FW Series
     {
+        // Ver.2.0.0.3 start
         create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        //create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name);
+        // Ver.2.0.0.3 end
     }
     else    // GD Series
     {
+        // Ver.2.0.0.3 start
         create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        //create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name);
+        // Ver.2.0.0.3 end
     }
     strcat(pjl_header, PJL_LANGUAGE);
     
