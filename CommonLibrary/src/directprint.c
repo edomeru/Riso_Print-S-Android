@@ -19,7 +19,7 @@
 #include "common.h"
 #include "printsettings.h"
 
-#define ENABLE_JOB_DUMP 1
+#define ENABLE_JOB_DUMP 0
 #if ENABLE_JOB_DUMP
 
 #define DUMP_DIR_NAME "_DUMP_"
