@@ -29,7 +29,8 @@
     <ListView x:Name="listView" 
               Grid.Row="1" Grid.Column="0"
               ItemsSource="{Binding Path=MainMenuItems}"
-              ItemContainerStyle="{StaticResource STYLE_ListViewItem}">
+              ItemContainerStyle="{StaticResource STYLE_ListViewItem}"
+              ScrollViewer.VerticalScrollMode="Disabled">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <local:MainMenuKeyControl Text="{Binding Text, Converter={StaticResource ResourceStringToTextConverter}, ConverterParameter=None}"
