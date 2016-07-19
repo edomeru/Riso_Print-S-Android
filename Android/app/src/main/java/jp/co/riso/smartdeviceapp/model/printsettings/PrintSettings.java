@@ -230,7 +230,7 @@ public class PrintSettings {
                 }
             }
 
-            if(mSettingMapKey == AppConstants.PRINTER_MODEL_IS && key.equals(TAG_PUNCH) && value == 3) {
+            if(key.equals(TAG_PUNCH) && value == 3) {
                 value = 2;
             }
 
