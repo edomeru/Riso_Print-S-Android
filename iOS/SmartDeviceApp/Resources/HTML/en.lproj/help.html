@@ -4,7 +4,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title>RISOスマートアプリ</title>
+    <title>RISO PRINT-S</title>
     <style type="text/css">
         <!--
         body{
@@ -118,20 +118,39 @@
 			padding-left:16px;
 			list-style:disc;
 		}
+		/* Header固定設定CSS */
+		div#headerArea {
+		    position: fixed !important;
+		    position: absolute;
+		    width: 100%;
+		    height: 180px;
+		    background-color: #fff;
+		    top:0;
+		}  
+		div#contentsArea{
+		    padding-top:160px;
+		    overflow: auto;
+		}  
+		div#contentsArea a[name]:not([href]) {
+		    margin-top: -180px;
+		    padding-top: 180px;
+		}  
+		/* Header固定設定CSS END */
         -->
     </style>
 </head>
-<body lang="en-us" bgcolor="#ffffff">
+<body lang="en-us" bgcolor="#ffffff"><div id="headerArea">
+    <p><a href="#top"><img border="0" src="btn_orphisfw.png" alt="btn_orphisfw.png"></a> <a href="#top2"><img border="0" src="btn_orphisex.png" alt="btn_orphisex.png"></a></p>
     <img border="0" src="title.png" alt="title.png">
     <hr />
-    <article data-language="en-us">
+     </div><div id="contentsArea"><article data-language="en-us">
   <h2>
-    <a name="top"></a>■Table Of Contents</h2>
+    <a name="top"></a>■Table Of Contents (ComColor FW Series / CoｍColor GD Series)</h2>
   <div class="tocs">
     <p>○<a href="#2">Introduction</a></p>
     <p>○<a href="#3">Usage Environment</a></p>
     <p>○<a href="#4">Installing RISO PRINT-S</a></p>
-    <p>○<a href="#5">Starting RISO PRINT-S and Opening the Main Manu</a></p>
+    <p>○<a href="#5">Starting RISO PRINT-S and Opening the Main Menu</a></p>
     <p>○<a href="#6">Registering/Managing Printers</a></p>
     <p>○<a href="#7">Previewing a PDF document</a></p>
     <p>○<a href="#8">Printing a PDF document from RISO PRINT-S</a></p>
@@ -160,48 +179,19 @@
   </div>
   <div class="section">
     <h3>Supported Languages</h3>
-    <p class="para" data-key="_jtxkevcgtz_1" data-id="1099" data-history="735" data-block="535">Japanese、English、French</p>
+    <p class="para" data-key="_jtxkevcgtz_1" data-id="1099" data-history="735" data-block="535">Japanese, English, French</p>
   </div>
   <div class="section">
     <h3>Printable Data</h3>
-    <p class="para" data-key="_jtxkevcgtz_3" data-id="11428" data-history="737" data-block="537">PDF*<sup>1</sup>versions 1.3、1.4、1.5、1.6、1.7*<sup>2</sup></p>
+    <p class="para" data-key="_jtxkevcgtz_3" data-id="11428" data-history="737" data-block="537">PDF<sup>1</sup>versions 1.3, 1.4, 1.5, 1.6, 1.7<sup>2</sup></p>
     <p class="para" data-key="_jtxkevcgtz_4" data-id="1105" data-history="738" data-block="538">
-      <span lang="EN-US">*1</span>: Encrypted PDF documents are not supported.</p>
+      <span lang="EN-US">1</span>: Encrypted PDF documents are not supported.</p>
     <p class="para" data-key="_jtxkevcgtz_5" data-id="1107" data-history="739" data-block="539">
-      <span lang="EN-US">*2</span>: Extended features are not supported.</p>
+      <span lang="EN-US">2</span>: Extended features are not supported.</p>
   </div>
   <div class="section">
     <h3>Output Destinations</h3>
-    <p class="para" data-key="_jtxkevctm6_1" data-id="11393" data-history="741" data-block="541">Printing can be output to the following ComColor Series printers with the external device controller connected.</p>
-    <div class="table">
-      <table>
-        <colgroup>
-          <col style="width: auto;">
-            <col style="width: auto;"></col>
-          </col>
-        </colgroup>
-        <tbody>
-          <tr>
-            <th>
-              <p class="para" data-key="_jtxp1wr8km_0" data-id="1113" data-history="742" data-block="542">Printers</p>
-            </th>
-            <th>
-              <p class="para" data-key="_jtxp1wr8km_1" data-id="1115" data-history="743" data-block="543">External device controller</p>
-            </th>
-          </tr>
-          <tr>
-            <td rowspan="1">
-              <p class="para" data-key="_jtxp1wr8km_2" data-id="11429" data-history="744" data-block="544">ComColor 9150 / 9150R /</p>
-              <p class="para" data-key="_jtxp1wr8km_4" data-id="11430" data-history="745" data-block="545">7150 / 7150R / 9110 / 9110R /</p>
-              <p class="para" data-key="_jtxp1wr8km_5" data-id="11431" data-history="746" data-block="546">7110 / 7110R / 3150 / 3150R / 3110 / 3110R</p>
-            </td>
-            <td rowspan="1">
-              <p class="para" data-key="_jtxp1wr8km_3" data-id="11394" data-history="747" data-block="547">ComColorExpress IS1000C / IS950C</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <p class="para" data-key="_jtxkevctm6_1" data-id="11393" data-history="741" data-block="541">Printing can be output to the following ComColor FW/GD Series printers with the PS Kit FG10 installed.</p>
   </div>
 </article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
   <h2>
@@ -235,11 +225,10 @@
           </div>
         </li>
       </ol>
-    </div>
   </div>
 </article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
   <h2>
-    <a name="5"></a>■Starting RISO PRINT-S and Opening the Main Manu</h2>
+    <a name="5"></a>■Starting RISO PRINT-S and Opening the Main Menu</h2>
   <p class="para" data-key="_jtxo85qbv0_0" data-id="1178" data-history="775" data-block="575">This section describes how to start RISO PRINT-S and open the main menu that contains the basic functions of RISO PRINT-S.</p>
   <div class="section">
     <h3>Starting RISO PRINT-S</h3>
@@ -303,7 +292,646 @@
               <p class="para" data-key="_jtxo860nw2_9" data-id="1206" data-history="790" data-block="590">Printers</p>
             </td>
             <td>
-              <p class="para" data-key="_jtxo860nw2_10" data-id="11402" data-history="791" data-block="591">Shows the [Printers] screen. You can manage the printers (search, register, delete printers, set as default, or change the default values of print settings). <a href="#6">For details, see "Registering/Managing Printers"</a></p>
+              <p class="para" data-key="_jtxo860nw2_10" data-id="11402" data-history="791" data-block="591">Shows the [Printers] screen. You can manage the printers (search, register, add or delete printers, set as default, or change the default values of print settings). <a href="#6">For details, see &quot;Registering/Managing Printers&quot;</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p class="para otherlang" data-key="_jtxo860nw2_11" data-id="1209" data-history="792" data-block="592">③</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_12" data-id="1211" data-history="793" data-block="593">Print Job History</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_13" data-id="11403" data-history="794" data-block="594">Shows the [Print Job History] screen. You can confirm printed jobs and the status results. Up to 100 jobs for each printer can be displayed. You can also delete unnecessary jobs in the job list.</p>
+              <p class="para" data-key="_jtxswtpau0_0" data-id="1215" data-history="795" data-block="595">You can confirm print job status with the following icons.</p>
+              <p class="para" data-key="_jtxp1x2l5i_0" data-id="1383" data-history="875" data-block="596">
+                <img src="I009.png" />　Indicates completed Jobs</p>
+              <p class="para" data-key="_jtxp1x2l5i_1" data-id="1384" data-history="876" data-block="597">
+                <img src="I010.png" />　Indicates jobs with errors</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p class="para otherlang" data-key="_jtxo860nw2_14" data-id="1220" data-history="798" data-block="598">④</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_15" data-id="1222" data-history="799" data-block="599">Settings</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_16" data-id="11404" data-history="800" data-block="600">Shows the [Settings] screen. You can specify the owner name. The owner name specified in this screen will be displayed on the [Owner] column in the RISO Console.</p>
+              <p class="para" data-key="_jtxp1x2l5i_2" data-id="1226" data-history="801" data-block="601">You can enter a name up to 20 characters long.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p class="para otherlang" data-key="_jtxo860nw2_17" data-id="1227" data-history="802" data-block="602">⑤</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_21" data-id="1234" data-history="806" data-block="606">Help</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_22" data-id="1236" data-history="807" data-block="607">Shows the [Help] screen. You can refer to the operations, settings, function details, and FAQ information of RISO PRINT-S.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p class="para otherlang" data-key="_jtxo860nw2_17" data-id="1227" data-history="802" data-block="602">⑥</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_21" data-id="1234" data-history="806" data-block="606">Legal</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_22" data-id="1236" data-history="807" data-block="607">Shows the [Legal] screen. You can confirm the license, trademark credit, and current version of RISO PRINT-S.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+  <h2>
+    <a name="6"></a>■Registering/Managing Printers</h2>
+  <p class="para" data-key="_jtxkevdy66_0" data-id="11405" data-history="843" data-block="643">
+    <span lang="EN-US">You have to register a printer to be used
+for printing PDF documents on RISO PRINT-S beforehand. You can add other
+printers, delete unnecessary printers, and change the default printer setting.
+The registered printers can be managed as required.</span>
+  </p>
+  <p class="para" data-key="_jtxp1x38cr_0" data-id="1310" data-history="844" data-block="644">Up to 10 printers can be registered.</p>
+  <div class="flow">
+    <ol>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxp1x38cr_1" data-id="11406" data-history="845" data-block="645">1.Turn on the power of the target printer.</h4>
+        </div>
+      </li>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxkevdy66_1" data-id="1314" data-history="846" data-block="646">2.Open the main menu on the [Home] screen.</h4>
+        </div>
+      </li>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxkevdy66_3" data-id="1316" data-history="847" data-block="647">3.Tap [Printers].</h4>
+          <div class="image">
+            <img src="W003.png" data-key="_jtxt8f9dwe_0" />
+          </div>
+          <p class="para" data-key="_jtxkevdy66_4" data-id="1318" data-history="848" data-block="648">The [Printers] screen appears. The list of available printers is displayed when printers have already been registered.</p>
+        </div>
+      </li>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxkevdy66_5" data-id="1385" data-history="877" data-block="652">4.Tap [<img src="I002.png" />] (Search) on the upper right corner of the [Printers] screen.</h4>
+          <div class="image">
+            <img src="W004.png" data-key="_jtxt8f9dwe_3" />
+          </div>
+          <p class="para" data-key="_jtxo865zvt_0" data-id="11407" data-history="853" data-block="653">The [Printer Search] screen appears.</p>
+        </div>
+      </li>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxkevemzh_0" data-id="1330" data-history="854" data-block="654">5.Tap [+] of the target printer.</h4>
+          <div class="image">
+            <img src="W005.png" data-key="_jtxt8f9dwe_4" />
+          </div>
+          <p class="para" data-key="_jtxo865zvt_1" data-id="1332" data-history="855" data-block="655">The printer is added in the list of [Printers] screen.</p>
+          <div class="image">
+            <img src="W004-1.png" data-key="_jtxt8f9dwe_1" />
+          </div>
+          <p class="para" data-key="_jtxp1x38cr_2" data-id="1320" data-history="849" data-block="649">You can confirm the status of printers with ○ on the left side of the printer names.</p>
+          <p class="para" data-key="_jtxp1x38cr_3" data-id="1322" data-history="850" data-block="650">Green: Online</p>
+          <p class="para" data-key="_jtxp1x38cr_4" data-id="1324" data-history="851" data-block="651">Gray: Offline</p>
+          <div class="recommendation">
+            <h4 data-key="_jtxsy8ts2z_0" data-id="1334" data-history="856" data-block="656">When the target printer cannot be found:</h4>
+            <p class="para" data-key="_jtxo867ff1_0" data-id="1335" data-history="857" data-block="657">You can manually add a printer by specifying the IP address.</p>
+            <p class="para" data-key="_jtxo867ff1_1" data-id="11408" data-history="878" data-block="658">Tap [<img src="I003.png" />] (add) on the upper right corner of the [Printers] screen. Tap the input field of the IP address on the [Add Printer] screen, and enter the IP address of the target printer, then tap [+].</p>
+            <div class="image">
+              <img src="W006.png" data-key="_jtxt8f9dwe_6" />
+            </div>
+            <p class="para" data-key="_jtxo867ff1_2" data-id="1339" data-history="859" data-block="659">The first added printer is automatically set as default of RISO PRINT-S.</p>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxo867ff1_3" data-id="1342" data-history="860" data-block="660">6.Change the default printer as required.</h4>
+          <div class="recommendation">
+            <h4 data-key="_jtxsy8unj2_0" data-id="1344" data-history="861" data-block="661">For tablet users:</h4>
+            <p class="para" data-key="_jtxo867ff1_5" data-id="11409" data-history="862" data-block="662">Tap [Yes] on [Set as Default Printer] of the printer to be set as default on [Printers] screen.</p>
+            <div class="image">
+              <img src="W007.png" data-key="_jtxt8f9dwe_7" />
+            </div>
+            <p class="para" data-key="_jtxo867ff1_6" data-id="1348" data-history="863" data-block="663">The selected printer is set as default and the printer name is highlighted in black.</p>
+          </div>
+          <div class="recommendation">
+            <h4 data-key="_jtxsy8unj2_2" data-id="1350" data-history="864" data-block="664">For smartphone users:</h4>
+            <p class="para" data-key="_jtxo867ff1_10" data-id="1387" data-history="879" data-block="665">Tap［<img src="I004.png" />］of a printer to be set as default on [Printers] screen.</p>
+            <div class="image">
+              <img src="W008.png" data-key="_jtxt8f9dwe_9" />
+            </div>
+            <p class="para" data-key="_jtxo867ff1_11" data-id="1353" data-history="866" data-block="666">[Printer Info] screen appears.</p>
+            <p class="para" data-key="_jtxo867ff1_12" data-id="1355" data-history="867" data-block="667">Tap [Yes] on [Set as Default Printer].</p>
+            <div class="image">
+              <img src="W009.png" data-key="_jtxt8f9dwe_10" />
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxo867ff1_14" data-id="1358" data-history="868" data-block="668">7.Configure the default print settings as required.</h4>
+          <p class="para" data-key="_jtxo867ff1_15" data-id="11410" data-history="869" data-block="669">The print settings to be configured here will be the default print settings owned by the selected printer. You can also configure print settings for each PDF document to be printed. <a href="#9">For details, see &quot;Configuring the Print Settings on RISO PRINT-S&quot;.</a></p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+  <h2>
+    <a name="7"></a>■Previewing a PDF document</h2>
+  <p class="para" data-key="_jtxo8622gz_0" data-id="11411" data-history="809" data-block="609">You have to open a PDF document with a viewer application before starting RISO PRINT-S.</p>
+    <div class="flow">
+      <ol>
+        <li>
+          <div class="stepItem">
+            <h4 data-key="_jtxp1x4yrm_1" data-id="1388" data-history="880" data-block="611">1.Open a target document with a viewer application, and tap [<img src="I005.png" />] on the upper right corner of the screen.</h4>
+          </div>
+        </li>
+        <li>
+          <div class="stepItem">
+            <h4 data-key="_jtxo8622gz_3" data-id="11435" data-history="812" data-block="612">2.Tap [Open In…] on the menu.</h4>
+            <div class="image">
+              <img src="W010.png" data-key="_jtxt8f9o4o_1" />
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="stepItem">
+            <h4 data-key="_jtxo8622gz_4" data-id="11446" data-history="881" data-block="613">3.Tap the [<img src="I000.png" />] (Open in RISO PRINT-S）icon.</h4>
+            <div class="image">
+              <img src="W011.png" data-key="_jtxxyqtii1_0" />
+            </div>
+            <p class="para" data-key="_jtxo8622gz_5" data-id="1250" data-history="814" data-block="614">The document is displayed on the preview area of RISO PRINT-S.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+  <h2>
+    <a name="8"></a>■Printing a PDF document from RISO PRINT-S</h2>
+  <div class="flow">
+    <ol>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxp1x783j_0" data-id="1392" data-history="884" data-block="626">1.Preview a PDF document, and tap [<img src="I008.png" />] (Print Settings）on the upper right corner of the screen.</h4>
+          <div class="image">
+            <img src="W014.png" data-key="_jtxt8f9w81_1" />
+          </div>
+          <p class="para" data-key="_jtxp1x783j_1" data-id="1276" data-history="827" data-block="627">The [Print Settings] screen appears.</p>
+        </div>
+      </li>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxp1x783j_2" data-id="1278" data-history="828" data-block="628">2.Select a target printer, and tap the [Print] button.</h4>
+          <div class="image">
+            <img src="W014-1.png" data-key="_jtxt8f9w81_2" />
+          </div>
+          <p class="para" data-key="_jtxswtqjjy_0" data-id="11414" data-history="829" data-block="629">A pop-up of printing progress appears to confirm current processing status.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+  <h2>
+    <a name="9"></a>■Configuring the Print Settings on RISO PRINT-S</h2>
+  <p class="para" data-key="_jtxo862teq_0" data-id="11415" data-history="831" data-block="631">You can configure the print settings like duplex print, imposition, punch, or staple on RISO PRINT-S for each PDF document or printer.</p>
+  <div class="section">
+    <h3>To configure the print settings of a PDF document currently displayed:</h3>
+    <p class="para" data-key="_jtxswtvial_1" data-id="1288" data-history="833" data-block="633">Configure the print settings for a PDF document currently displayed. The configured settings remains until other document is opened or the device power is turned off.</p>
+  </div>
+  <div class="flow">
+    <ol>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxo862teq_3" data-id="1393" data-history="885" data-block="634">1.Preview a PDF document, and tap the [<img src="I008.png" />] (Print Settings) button.</h4>
+          <div class="image">
+            <img src="W014.png" data-key="_jtxt8fa549_1" />
+          </div>
+          <p class="para" data-key="_jtxo862teq_4" data-id="11436" data-history="835" data-block="635">The [Print Settings] screen appears. <a href="#10">For details, see &quot;</a><a href="#10">Features of Print Settings&quot;</a></p>
+          <div class="image">
+            <img src="W015.png" data-key="_jtxt8fa549_2" />
+          </div>
+        </div>
+      </li>
+    </ol>
+  </div>
+  <div class="section">
+    <h3>To configure the default print settings of the printer currently selected:</h3>
+    <p class="para" data-key="_jtxswtvod6_1" data-id="11417" data-history="837" data-block="637">You can configure the default value of the print settings for each printer. The print setting value configured for the printer remains until it is changed. The value is not released even if the device power is turned off.</p>
+  </div>
+  <div class="flow">
+    <ol>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxo862teq_7" data-id="1298" data-history="838" data-block="638">1.Tap [Printers] on the main menu.</h4>
+          <p class="para" data-key="_jtxo862teq_8" data-id="1300" data-history="839" data-block="639">The list of registered printers appears.</p>
+        </div>
+      </li>
+      <li>
+        <div class="stepItem">
+          <h4 data-key="_jtxo862teq_9" data-id="1394" data-history="886" data-block="640">2.Tap the [<img src="I011.png" />] (Default Print Settings) button of the target printer.</h4>
+          <p class="para" data-key="_jtxo862teq_10" data-id="1304" data-history="841" data-block="641">The [Default Print Settings] screen appears. <a href="#10">For details, see &quot;Features of Print Settings&quot;</a></p>
+          <div class="image">
+            <img src="W016.png" data-key="_jtxt8fa549_4" />
+          </div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+  <h2>
+    <a name="10"></a>■Features of Print Settings</h2>
+  <p class="para" data-key="_jtxkevh5i9_0" data-id="945" data-history="658" data-block="458">The following print settings are provided on RISO PRINT-S. However, the available features vary depending on your printer and optional devices.</p>
+  <div class="table">
+    <table>
+      <colgroup>
+        <col style="width: auto;">
+          <col style="width: auto;">
+            <col style="width: auto;"></col>
+          </col>
+        </col>
+      </colgroup>
+      <tbody>
+        <tr>
+          <th colspan="2">
+            <p class="para" data-key="_jtxkgg2spr_0" data-id="947" data-history="659" data-block="459">Items</p>
+          </th>
+          <th>
+            <p class="para" data-key="_jtxkgg2spr_1" data-id="949" data-history="660" data-block="460">Contents</p>
+          </th>
+        </tr>
+        <tr>
+          <td rowspan="7">
+            <p class="para" data-key="_jtxkgg2spr_2" data-id="951" data-history="661" data-block="461">Basic</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_3" data-id="953" data-history="662" data-block="462">Color Mode</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_4" data-id="955" data-history="663" data-block="463">Sets the color mode.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_7" data-id="957" data-history="664" data-block="464">Copies</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_8" data-id="959" data-history="665" data-block="465">Enter the number of copies to be printed.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_9" data-id="961" data-history="666" data-block="466">Duplex print</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_10" data-id="963" data-history="667" data-block="467">Sets to the duplex printing mode.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_11" data-id="965" data-history="668" data-block="468">Paper Size</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_12" data-id="967" data-history="669" data-block="469">Selects the paper size to be used for printing.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_13" data-id="969" data-history="670" data-block="470">Scale to Fit</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_14" data-id="971" data-history="671" data-block="471">Expands/reduces printouts to fit the size set in [Paper Size].</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_15" data-id="973" data-history="672" data-block="472">Paper Type</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_16" data-id="975" data-history="673" data-block="473">Selects the paper type to be used for printing.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_17" data-id="977" data-history="674" data-block="474">Input Tray</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_18" data-id="979" data-history="675" data-block="475">Selects the input tray location of the paper to be used for printing.</p>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="2">
+            <p class="para" data-key="_jtxkgg2spr_19" data-id="981" data-history="676" data-block="476">Layout</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_20" data-id="983" data-history="677" data-block="477">Imposition</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_21" data-id="11418" data-history="678" data-block="478">Sets the number of pages to be printed on a sheet. You can select from [Off], [2 pages] and [4 pages].</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_22" data-id="987" data-history="679" data-block="479">Layout order</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_23" data-id="11419" data-history="680" data-block="480">Selects the order of pages to be printed on one sheet.</p>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="8">
+            <p class="para" data-key="_jtxkgg2spr_24" data-id="991" data-history="681" data-block="481">Finishing</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_25" data-id="993" data-history="682" data-block="482">Collate</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_26" data-id="995" data-history="683" data-block="483">Sets how printouts will be sorted for multiple copies.</p>
+            <p class="para" data-key="_jtxkgg2spr_27" data-id="997" data-history="684" data-block="484">・When [Group] is selected, [Staple] and [Booklet] will be disabled.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_29" data-id="1001" data-history="686" data-block="486">Booklet</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_30" data-id="1003" data-history="687" data-block="487">Sets whether to impose and print out in booklet format.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_31" data-id="1007" data-history="689" data-block="489">Booklet binding</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_32" data-id="1009" data-history="690" data-block="490">Selects the binding style when [Booklet] is set to on.</p>
+            <p class="para" data-key="_jtxp1x97xe_0" data-id="1011" data-history="691" data-block="491">You can also set the staple and folding.</p>
+            <p class="para" data-key="_jtxp1x97xe_1" data-id="1013" data-history="692" data-block="492">[Off]: Does not set the booklet binding.</p>
+            <p class="para" data-key="_jtxp1x97xe_2" data-id="1015" data-history="693" data-block="493">[Paper folding]: Outputs the paper with folding in half.</p>
+            <p class="para" data-key="_jtxp1x97xe_3" data-id="1017" data-history="694" data-block="494">[Fold + Staple]: Outputs the paper with folding in half and stapled.</p>
+            <p class="para" data-key="_jtxo863zh3_1" data-id="1005" data-history="688" data-block="488">・This setting is only available when the optional finisher is set on the printer.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_33" data-id="1019" data-history="695" data-block="495">Imposition direction</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_34" data-id="11420" data-history="696" data-block="496">Selects the order of pages when [Booklet] is set to on.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_35" data-id="1023" data-history="697" data-block="497">Binding side</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_36" data-id="1025" data-history="698" data-block="498">Selects the binding position to be stapled or punched.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_37" data-id="1027" data-history="699" data-block="499">Staple</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_38" data-id="1029" data-history="700" data-block="500">Sets whether to stale printouts. The stapled position differs depending on the setting of [Binding side].</p>
+            <p class="para" data-key="_jtxo863zh3_2" data-id="1031" data-history="701" data-block="501">・This setting is only available when the optional finisher is set on the printer.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_39" data-id="1033" data-history="702" data-block="502">Punch</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_40" data-id="1035" data-history="703" data-block="503">Sets whether to punch the printouts.</p>
+            <p class="para" data-key="_jtxo863zh3_3" data-id="1037" data-history="704" data-block="504">
+              <span>・</span>[Punch] cannot be set with [Booklet binding].</p>
+            <p class="para" data-key="_jtxp1x97xe_4" data-id="1039" data-history="705" data-block="505">
+              <span>・</span>This setting is only available when the optional finisher is set on the printer.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_41" data-id="1041" data-history="706" data-block="506">Output Tray</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_42" data-id="1043" data-history="707" data-block="507">Selects the tray location of the finished copies.</p>
+            <p class="para" data-key="_jtxp1x97xe_5" data-id="1045" data-history="708" data-block="508">When you select [Auto], the finished copies are automatically output to the suitable tray. Please select [Auto] for normal use.</p>
+            <p class="para" data-key="_jtxo863zh3_4" data-id="1047" data-history="709" data-block="509">・This setting is only available when the optional finisher is set on the printer.</p>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="2">
+            <p class="para" data-key="_jtxkgg2spr_43" data-id="1049" data-history="710" data-block="510">Authentication</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_44" data-id="1051" data-history="711" data-block="511">Secure Print</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_45" data-id="1053" data-history="712" data-block="512">Sets whether to assign a PIN code to the print job from RISO PRINT-S.</p>
+            <p class="para" data-key="_jtxp1x97xe_6" data-id="11421" data-history="713" data-block="513">Jobs with a PIN code are treated as waiting jobs (jobs awaiting commands). To print jobs with a PIN code, enter the PIN code on the operation panel of the printer.</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_46" data-id="1057" data-history="714" data-block="514">PIN Code</p>
+          </td>
+          <td>
+            <p class="para" data-key="_jtxkgg2spr_47" data-id="1059" data-history="715" data-block="515">Enter a PIN code of up to eight digits.</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+  <h2>
+    <a name="top2"></a>■Table Of Contents (ComColor Series)</h2>
+  <div class="tocs">
+    <p>○<a href="#20">Introduction</a></p>
+    <p>○<a href="#30">Usage Environment</a></p>
+    <p>○<a href="#40">Installing RISO PRINT-S</a></p>
+    <p>○<a href="#50">Starting RISO PRINT-S and Opening the Main Menu</a></p>
+    <p>○<a href="#60">Registering/Managing Printers</a></p>
+    <p>○<a href="#70">Previewing a PDF document</a></p>
+    <p>○<a href="#80">Printing a PDF document from RISO PRINT-S</a></p>
+    <p>○<a href="#90">Configuring the Print Settings on RISO PRINT-S</a></p>
+    <p>○<a href="#100">Features of Print Settings</a></p>
+    <p>○<a href="#11">Trademark Credits</a></p>
+  </div>
+  <p class="para tocread" data-key="_jtxklekmdu_0" data-id="921" data-history="646" data-block="446">●No part of this guide may be reproduced in whole or in part without the permission of RISO KAGAKU CORPORATION.</p>
+</article>
+<hr /><article data-language="en-us">
+  <h2>
+    <a name="20"></a>■Introduction</h2>
+  <p class="para" data-key="_jtxkeva2ot_0" data-id="937" data-history="654" data-block="454">RISO PRINT-S is an application to print PDF documents directory from tablets or smartphones.</p>
+  <p class="para" data-key="_jtxswttzjr_0" data-id="939" data-history="655" data-block="455">As a matter of course you can print PDF documents saved in your devices, you can also configure several print settings like duplex print, imposition, punch and staple by using RISO PRINT-S.</p>
+  <p class="para" data-key="_jtxkeva2ot_1" data-id="941" data-history="656" data-block="456">This guide describes how to install, use, and setup this application, and some restrictions. Read this guide before/during use of this application, or when you find something not to clear. Please make this guide useful for a long time with RISO PRINT-S.</p>
+</article><p class='toTop'><a href='#top2'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+  <h2>
+    <a name="30"></a>■Usage Environment</h2>
+  <div class="section">
+    <h3>System Configuration</h3>
+    <div class="image">
+      <img src="W000_EX.png" data-key="_jtxt8b49h5_0" />
+    </div>
+    <p class="para" data-key="_jtxp1wqpt6_1" data-id="1065" data-history="718" data-block="518">Wireless LAN (Wi-Fi) connection environment is required beforehand.</p>
+    <p class="para" data-key="_jtxp1wqpt6_2" data-id="1067" data-history="719" data-block="519">Please refer to the instructions prepared for your wireless LAN (Wi-Fi) environment to connect and configure it.</p>
+  </div>
+  <div class="section">
+    <h3>Supported Languages</h3>
+    <p class="para" data-key="_jtxkevcgtz_1" data-id="1099" data-history="735" data-block="535">Japanese, English, French</p>
+  </div>
+  <div class="section">
+    <h3>Printable Data</h3>
+    <p class="para" data-key="_jtxkevcgtz_3" data-id="11428" data-history="737" data-block="537">PDF*<sup>1</sup>versions 1.3, 1.4, 1.5, 1.6, 1.7*<sup>2</sup></p>
+    <p class="para" data-key="_jtxkevcgtz_4" data-id="1105" data-history="738" data-block="538">
+      <span lang="EN-US">*1</span>: Encrypted PDF documents are not supported.</p>
+    <p class="para" data-key="_jtxkevcgtz_5" data-id="1107" data-history="739" data-block="539">
+      <span lang="EN-US">*2</span>: Extended features are not supported.</p>
+  </div>
+  <div class="section">
+    <h3>Output Destinations</h3>
+    <p class="para" data-key="_jtxkevctm6_1" data-id="11393" data-history="741" data-block="541">Printing can be output to the following ComColor Series printers with the external device controller connected.</p>
+    <div class="table">
+      <table>
+        <colgroup>
+          <col style="width: auto;">
+            <col style="width: auto;"></col>
+          </col>
+        </colgroup>
+        <tbody>
+          <tr>
+            <th>
+              <p class="para" data-key="_jtxp1wr8km_0" data-id="1113" data-history="742" data-block="542">Printers</p>
+            </th>
+            <th>
+              <p class="para" data-key="_jtxp1wr8km_1" data-id="1115" data-history="743" data-block="543">External device controller</p>
+            </th>
+          </tr>
+          <tr>
+            <td rowspan="1">
+              <p class="para" data-key="_jtxp1wr8km_2" data-id="11429" data-history="744" data-block="544">ComColor 9150 / 9150R /</p>
+              <p class="para" data-key="_jtxp1wr8km_4" data-id="11430" data-history="745" data-block="545">7150 / 7150R / 9110 / 9110R /</p>
+              <p class="para" data-key="_jtxp1wr8km_5" data-id="11431" data-history="746" data-block="546">7110 / 7110R / 3150 / 3150R / 3110 / 3110R</p>
+            </td>
+            <td rowspan="1">
+              <p class="para" data-key="_jtxp1wr8km_3" data-id="11394" data-history="747" data-block="547">ComColorExpress IS1000C / IS950C</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article><p class='toTop'><a href='#top2'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+  <h2>
+    <a name="40"></a>■Installing RISO PRINT-S</h2>
+  <p class="para" data-key="_jtxkevd0uz_0" data-id="1127" data-history="749" data-block="549">Install RISO PRINT-S on your tablet or smartphone.</p>
+  <div class="section">
+    <div class="flow">
+      <ol>
+        <li>
+          <div class="stepItem">
+            <h4 data-key="_jtxo85kydl_2" data-id="1133" data-history="752" data-block="552">1.Open [App Store] on your iPhone or iPad, and search for [RISO PRINT-S].</h4>
+          </div>
+        </li>
+        <li>
+          <div class="stepItem">
+            <h4 data-key="_jtxo85kydl_3" data-id="1135" data-history="753" data-block="553">2.Tap [RISO PRINT-S] in the search results, and tap the [Free] button.</h4>
+            <p class="para" data-key="_jtxo85kydl_4" data-id="1137" data-history="754" data-block="554">The button is changed from [Free] to [Install].</p>
+          </div>
+        </li>
+        <li>
+          <div class="stepItem">
+            <h4 data-key="_jtxo85m0xj_0" data-id="1139" data-history="755" data-block="555">3.Tap the [Install] button.</h4>
+            <p class="para" data-key="_jtxo85m0xj_1" data-id="1141" data-history="756" data-block="556">The [Apple ID Sign in] screen appears.</p>
+          </div>
+        </li>
+        <li>
+          <div class="stepItem">
+            <h4 data-key="_jtxo85m0xj_2" data-id="1143" data-history="757" data-block="557">4.Enter your Apple ID and password.</h4>
+            <p class="para" data-key="_jtxo85m0xj_3" data-id="1378" data-history="870" data-block="558">Installation starts. When it is completed, the button is changed from [Install] to [Open], and [<img src="I000.png" />] (RISO PRINT-S) icon is added on the home screen.</p>
+            <p class="para otherlang" data-key="_jtxp1wrtf3_0" data-id="1146" data-history="759" data-block="559" />
+            <p class="para" data-key="_jtxp1wrtf3_1" data-id="1379" data-history="871" data-block="560">When you install RISO PRINT-S on multiple devices with the same Apple ID, the [<img src="I012.png" />] button is displayed instead of the [Free] button, and installation is automatically started.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</article><p class='toTop'><a href='#top2'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+  <h2>
+    <a name="50"></a>■Starting RISO PRINT-S and Opening the Main Menu</h2>
+  <p class="para" data-key="_jtxo85qbv0_0" data-id="1178" data-history="775" data-block="575">This section describes how to start RISO PRINT-S and open the main menu that contains the basic functions of RISO PRINT-S.</p>
+  <div class="section">
+    <h3>Starting RISO PRINT-S</h3>
+    <p class="para" data-key="_jtxo85qbv0_2" data-id="1381" data-history="873" data-block="577">Tap [<img src="I000.png" />] (RISO PRINT-S) icon on your device.</p>
+    <p class="para" data-key="_jtxo85qbv0_3" data-id="1184" data-history="778" data-block="578">RISO PRINT-S starts and the [Home] screen appears.</p>
+  </div>
+  <div class="list">
+    <ul class="list">
+      <li>
+        <p class="para" data-key="_jtxo85qbv0_4" data-id="11434" data-history="779" data-block="579">Please open a PDF document with other viewer application beforehand. <a href="#70">For details, see </a><a href="#70">“Previewing a PDF document”.</a></p>
+      </li>
+      <li>
+        <p class="para" data-key="_jtxo85qbv0_5" data-id="1188" data-history="780" data-block="580">When RISO PRINT-S is started after opening a PDF document, the document preview is displayed on the preview area of the [Home] screen.</p>
+        <div class="image">
+          <img src="W001_EX.png" data-key="_jtxt8f8s5z_1" />
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="section">
+    <h3>Main Menu</h3>
+    <p class="para" data-key="_jtxo860nw2_1" data-id="1382" data-history="874" data-block="582">Tap the [<img src="I001.png" />] (main menu) button on the upper left corner of the [Home] screen to display the main menu. Tapping the [<img src="I001.png" />] button switches the main menu to be displayed or hidden.</p>
+    <p class="para" data-key="_jtxo860nw2_2" data-id="1194" data-history="783" data-block="583">The basic functions of RISO PRINT-S are provided on the main menu.</p>
+    <div class="image">
+      <img src="W002_EX.png" data-key="_jtxt8f8s5z_4" />
+    </div>
+    <div class="table">
+      <table>
+        <colgroup>
+          <col style="width: auto;">
+            <col style="width: auto;">
+              <col style="width: auto;"></col>
+            </col>
+          </col>
+        </colgroup>
+        <tbody>
+          <tr>
+            <th colspan="2">
+              <p class="para" data-key="_jtxo860nw2_3" data-id="1196" data-history="784" data-block="584">Items</p>
+            </th>
+            <th>
+              <p class="para" data-key="_jtxo860nw2_4" data-id="1198" data-history="785" data-block="585">Contents</p>
+            </th>
+          </tr>
+          <tr>
+            <td>
+              <p class="para otherlang" data-key="_jtxo860nw2_5" data-id="1199" data-history="786" data-block="586">①</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_6" data-id="1201" data-history="787" data-block="587">Home</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_7" data-id="1203" data-history="788" data-block="588">Shows the [Home] screen. When a PDF document has already been opened, the document preview is displayed.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p class="para otherlang" data-key="_jtxo860nw2_8" data-id="1204" data-history="789" data-block="589">②</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_9" data-id="1206" data-history="790" data-block="590">Printers</p>
+            </td>
+            <td>
+              <p class="para" data-key="_jtxo860nw2_10" data-id="11402" data-history="791" data-block="591">Shows the [Printers] screen. You can manage the printers (search, register, delete printers, set as default, or change the default values of print settings). <a href="#60">For details, see "Registering/Managing Printers"</a></p>
             </td>
           </tr>
           <tr>
@@ -360,9 +988,9 @@
       </table>
     </div>
   </div>
-</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+</article><p class='toTop'><a href='#top2'>■Table Of Contents</a></p><hr/><article data-language="en-us">
   <h2>
-    <a name="6"></a>■Registering/Managing Printers</h2>
+    <a name="60"></a>■Registering/Managing Printers</h2>
   <p class="para" data-key="_jtxkevdy66_0" data-id="11405" data-history="843" data-block="643">
     <span lang="EN-US">You have to register a printer to be used
 for printing PDF documents on RISO PRINT-S beforehand. You can add other
@@ -386,7 +1014,7 @@ The registered printers can be managed as required.</span>
         <div class="stepItem">
           <h4 data-key="_jtxkevdy66_3" data-id="1316" data-history="847" data-block="647">3.Tap [Printers].</h4>
           <div class="image">
-            <img src="W003.png" data-key="_jtxt8f9dwe_0" />
+            <img src="W003_EX.png" data-key="_jtxt8f9dwe_0" />
           </div>
           <p class="para" data-key="_jtxkevdy66_4" data-id="1318" data-history="848" data-block="648">The [Printers] screen appears. The list of available printers is displayed when printers have already been registered.</p>
         </div>
@@ -395,7 +1023,7 @@ The registered printers can be managed as required.</span>
         <div class="stepItem">
           <h4 data-key="_jtxkevdy66_5" data-id="1385" data-history="877" data-block="652">4.Tap [<img src="I002.png" />] (Search) on the upper right corner of the [Printers] screen.</h4>
           <div class="image">
-            <img src="W004.png" data-key="_jtxt8f9dwe_3" />
+            <img src="W004_EX.png" data-key="_jtxt8f9dwe_3" />
           </div>
           <p class="para" data-key="_jtxo865zvt_0" data-id="11407" data-history="853" data-block="653">The [Printer Search] screen appears.</p>
         </div>
@@ -404,11 +1032,11 @@ The registered printers can be managed as required.</span>
         <div class="stepItem">
           <h4 data-key="_jtxkevemzh_0" data-id="1330" data-history="854" data-block="654">5.Tap [+] of the target printer.</h4>
           <div class="image">
-            <img src="W005.png" data-key="_jtxt8f9dwe_4" />
+            <img src="W005_EX.png" data-key="_jtxt8f9dwe_4" />
           </div>
           <p class="para" data-key="_jtxo865zvt_1" data-id="1332" data-history="855" data-block="655">The printer is added in the list of [Printers] screen.</p>
           <div class="image">
-            <img src="W004-1.png" data-key="_jtxt8f9dwe_1" />
+            <img src="W004-1_EX.png" data-key="_jtxt8f9dwe_1" />
           </div>
           <p class="para" data-key="_jtxp1x38cr_2" data-id="1320" data-history="849" data-block="649">You can confirm the status of printers with ○ on the left side of the printer names.</p>
           <p class="para" data-key="_jtxp1x38cr_3" data-id="1322" data-history="850" data-block="650">Green: Online</p>
@@ -418,7 +1046,7 @@ The registered printers can be managed as required.</span>
             <p class="para" data-key="_jtxo867ff1_0" data-id="1335" data-history="857" data-block="657">You can manually add a printer by specifying the IP address.</p>
             <p class="para" data-key="_jtxo867ff1_1" data-id="11408" data-history="878" data-block="658">Tap [<img src="I003.png" />] (add) on the upper right corner of the [Printers] screen. Tap the input field of the IP address on the [Add Printer] screen, and enter the IP address of the external device controller that is connected to the target printer, then tap [+].</p>
             <div class="image">
-              <img src="W006.png" data-key="_jtxt8f9dwe_6" />
+              <img src="W006_EX.png" data-key="_jtxt8f9dwe_6" />
             </div>
             <p class="para" data-key="_jtxo867ff1_2" data-id="1339" data-history="859" data-block="659">The first added printer is automatically set as default of RISO PRINT-S.</p>
           </div>
@@ -431,7 +1059,7 @@ The registered printers can be managed as required.</span>
             <h4 data-key="_jtxsy8unj2_0" data-id="1344" data-history="861" data-block="661">For tablet users:</h4>
             <p class="para" data-key="_jtxo867ff1_5" data-id="11409" data-history="862" data-block="662">Tap [Yes] on [Set as Default Printer] of the printer to be set as default on [Printers] screen.</p>
             <div class="image">
-              <img src="W007.png" data-key="_jtxt8f9dwe_7" />
+              <img src="W007_EX.png" data-key="_jtxt8f9dwe_7" />
             </div>
             <p class="para" data-key="_jtxo867ff1_6" data-id="1348" data-history="863" data-block="663">The selected printer is set as default and the printer name is highlighted in black.</p>
           </div>
@@ -439,12 +1067,12 @@ The registered printers can be managed as required.</span>
             <h4 data-key="_jtxsy8unj2_2" data-id="1350" data-history="864" data-block="664">For smartphone users:</h4>
             <p class="para" data-key="_jtxo867ff1_10" data-id="1387" data-history="879" data-block="665">Tap［<img src="I004.png" />］of a printer to be set as default on [Printers] screen.</p>
             <div class="image">
-              <img src="W008.png" data-key="_jtxt8f9dwe_9" />
+              <img src="W008_EX.png" data-key="_jtxt8f9dwe_9" />
             </div>
             <p class="para" data-key="_jtxo867ff1_11" data-id="1353" data-history="866" data-block="666">[Printer Info] screen appears.</p>
             <p class="para" data-key="_jtxo867ff1_12" data-id="1355" data-history="867" data-block="667">Tap [Yes] on [Set as Default Printer].</p>
             <div class="image">
-              <img src="W009.png" data-key="_jtxt8f9dwe_10" />
+              <img src="W009_EX.png" data-key="_jtxt8f9dwe_10" />
             </div>
           </div>
         </div>
@@ -452,15 +1080,16 @@ The registered printers can be managed as required.</span>
       <li>
         <div class="stepItem">
           <h4 data-key="_jtxo867ff1_14" data-id="1358" data-history="868" data-block="668">7.Configure the default print settings as required.</h4>
-          <p class="para" data-key="_jtxo867ff1_15" data-id="11410" data-history="869" data-block="669">The print settings to be configured here will be the default print settings owned by the selected printer. You can also configure print settings for each PDF document to be printed. <a href="#9">For details, see "Configuring the Print Settings on RISO PRINT-S".</a></p>
+          <p class="para" data-key="_jtxo867ff1_15" data-id="11410" data-history="869" data-block="669">The print settings to be configured here will be the default print settings owned by the selected printer. You can also configure print settings for each PDF document to be printed. <a href="#90">For details, see "Configuring the Print Settings on RISO PRINT-S".</a></p>
         </div>
       </li>
     </ol>
   </div>
-</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+</article><p class='toTop'><a href='#top2'>■Table Of Contents</a></p><hr/><article data-language="en-us">
   <h2>
-    <a name="7"></a>■Previewing a PDF document</h2>
+    <a name="70"></a>■Previewing a PDF document</h2>
   <p class="para" data-key="_jtxo8622gz_0" data-id="11411" data-history="809" data-block="609">You have to open a PDF document with a viewer application before starting RISO PRINT-S.</p>
+  <div class="section">
     <div class="flow">
       <ol>
         <li>
@@ -472,7 +1101,7 @@ The registered printers can be managed as required.</span>
           <div class="stepItem">
             <h4 data-key="_jtxo8622gz_3" data-id="11435" data-history="812" data-block="612">2.Tap [Open In…] on the menu.</h4>
             <div class="image">
-              <img src="W010.png" data-key="_jtxt8f9o4o_1" />
+              <img src="W010_EX.png" data-key="_jtxt8f9o4o_1" />
             </div>
           </div>
         </li>
@@ -480,7 +1109,7 @@ The registered printers can be managed as required.</span>
           <div class="stepItem">
             <h4 data-key="_jtxo8622gz_4" data-id="11446" data-history="881" data-block="613">3.Tap the [<img src="I000.png" />] (Open in RISO PRINT-S）icon.</h4>
             <div class="image">
-              <img src="W011.png" data-key="_jtxxyqtii1_0" />
+              <img src="W011_EX.png" data-key="_jtxxyqtii1_0" />
             </div>
             <p class="para" data-key="_jtxo8622gz_5" data-id="1250" data-history="814" data-block="614">The document is displayed on the preview area of RISO PRINT-S.</p>
           </div>
@@ -488,16 +1117,16 @@ The registered printers can be managed as required.</span>
       </ol>
     </div>
   </div>
-</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+</article><p class='toTop'><a href='#top2'>■Table Of Contents</a></p><hr/><article data-language="en-us">
   <h2>
-    <a name="8"></a>■Printing a PDF document from RISO PRINT-S</h2>
+    <a name="80"></a>■Printing a PDF document from RISO PRINT-S</h2>
   <div class="flow">
     <ol>
       <li>
         <div class="stepItem">
           <h4 data-key="_jtxp1x783j_0" data-id="1392" data-history="884" data-block="626">1.Preview a PDF document, and tap [<img src="I008.png" />] (Print Settings）on the upper right corner of the screen.</h4>
           <div class="image">
-            <img src="W014.png" data-key="_jtxt8f9w81_1" />
+            <img src="W014_EX.png" data-key="_jtxt8f9w81_1" />
           </div>
           <p class="para" data-key="_jtxp1x783j_1" data-id="1276" data-history="827" data-block="627">The [Print Settings] screen appears.</p>
         </div>
@@ -506,16 +1135,16 @@ The registered printers can be managed as required.</span>
         <div class="stepItem">
           <h4 data-key="_jtxp1x783j_2" data-id="1278" data-history="828" data-block="628">2.Select a target printer, and tap the [Print] button.</h4>
           <div class="image">
-            <img src="W014-1.png" data-key="_jtxt8f9w81_2" />
+            <img src="W014-1_EX.png" data-key="_jtxt8f9w81_2" />
           </div>
           <p class="para" data-key="_jtxswtqjjy_0" data-id="11414" data-history="829" data-block="629">A pop-up of printing progress appears to confirm current processing status.</p>
         </div>
       </li>
     </ol>
   </div>
-</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+</article><p class='toTop'><a href='#top2'>■Table Of Contents</a></p><hr/><article data-language="en-us">
   <h2>
-    <a name="9"></a>■Configuring the Print Settings on RISO PRINT-S</h2>
+    <a name="90"></a>■Configuring the Print Settings on RISO PRINT-S</h2>
   <p class="para" data-key="_jtxo862teq_0" data-id="11415" data-history="831" data-block="631">You can configure the print settings like duplex print, imposition, punch, or staple on RISO PRINT-S for each PDF document or printer.</p>
   <div class="section">
     <h3>To configure the print settings of a PDF document currently displayed:</h3>
@@ -527,11 +1156,11 @@ The registered printers can be managed as required.</span>
         <div class="stepItem">
           <h4 data-key="_jtxo862teq_3" data-id="1393" data-history="885" data-block="634">1.Preview a PDF document, and tap the [<img src="I008.png" />] (Print Settings) button.</h4>
           <div class="image">
-            <img src="W014.png" data-key="_jtxt8fa549_1" />
+            <img src="W014_EX.png" data-key="_jtxt8fa549_1" />
           </div>
-          <p class="para" data-key="_jtxo862teq_4" data-id="11436" data-history="835" data-block="635">The [Print Settings] screen appears. <a href="#10">For details, see "</a><a href="#10">Features of Print Settings"</a></p>
+          <p class="para" data-key="_jtxo862teq_4" data-id="11436" data-history="835" data-block="635">The [Print Settings] screen appears. <a href="#100">For details, see "</a><a href="#100">Features of Print Settings"</a></p>
           <div class="image">
-            <img src="W015.png" data-key="_jtxt8fa549_2" />
+            <img src="W015_EX.png" data-key="_jtxt8fa549_2" />
           </div>
         </div>
       </li>
@@ -552,17 +1181,17 @@ The registered printers can be managed as required.</span>
       <li>
         <div class="stepItem">
           <h4 data-key="_jtxo862teq_9" data-id="1394" data-history="886" data-block="640">2.Tap the [<img src="I011.png" />] (Default Print Settings) button of the target printer.</h4>
-          <p class="para" data-key="_jtxo862teq_10" data-id="1304" data-history="841" data-block="641">The [Default Print Settings] screen appears. <a href="#10">For details, see "Features of Print Settings"</a></p>
+          <p class="para" data-key="_jtxo862teq_10" data-id="1304" data-history="841" data-block="641">The [Default Print Settings] screen appears. <a href="#100">For details, see "Features of Print Settings"</a></p>
           <div class="image">
-            <img src="W016.png" data-key="_jtxt8fa549_4" />
+            <img src="W016_EX.png" data-key="_jtxt8fa549_4" />
           </div>
         </div>
       </li>
     </ol>
   </div>
-</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+</article><p class='toTop'><a href='#top2'>■Table Of Contents</a></p><hr/><article data-language="en-us">
   <h2>
-    <a name="10"></a>■Features of Print Settings</h2>
+    <a name="100"></a>■Features of Print Settings</h2>
   <p class="para" data-key="_jtxkevh5i9_0" data-id="945" data-history="658" data-block="458">The following print settings are provided on RISO PRINT-S. However, the available features vary depending on your printer and optional devices.</p>
   <div class="table">
     <table>
@@ -764,24 +1393,26 @@ The registered printers can be managed as required.</span>
       </tbody>
     </table>
   </div>
-</article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/><article data-language="en-us">
+</article><p class='toTop'><a href='#top2'>■Table Of Contents</a></p><hr/><article data-language="en-us">
   <h2>
     <a name="11"></a>■Trademark Credits</h2>
   <div class="list">
     <ul class="list">
       <li>
-        <p class="para" data-key="_jtxkgfzocf_0" data-id="927" data-history="649" data-block="449">iPhone, iPad, iTunes, AirPrint, AirPrint logo are trademarks of Apple Inc.</p>
+        <p class="para" data-key="_jtxkgfzocf_0" data-id="927" data-history="649" data-block="449">iPhone, iPad, iTunes, AirPrint and AirPrint logo are trademarks of Apple Inc.</p>
       </li>
       <li>
-        <p class="para" data-key="_jtxkgfzocf_3" data-id="933" data-history="652" data-block="452">All other product names and company names written in this guide are trademarks or registered trademarks of their respective companies.</p>
+        <p class="para" data-key="_jtxkgfzocf_3" data-id="933" data-history="652" data-block="452">Other corporate names and/or trademarks are either registered trademarks or trademarks of each company, respectively.</p>
       </li>
     </ul>
   </div>
 </article><p class='toTop'><a href='#top'>■Table Of Contents</a></p><hr/>
     <div class="footer">
         <img src="riso_logo.png" />
-        <p>© 2015 RISO KAGAKU CORPORATION</a></p>
-        <p>Ms6206-03-EN</p>
+        <p>© 2016 RISO KAGAKU CORPORATION</a></p>
+        <p>2016/7</a></p>
+        <p>Mi6304-53-EN</p>
     </div>
+  </div>
 </body>
 </html>

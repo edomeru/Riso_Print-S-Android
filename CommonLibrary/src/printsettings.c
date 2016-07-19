@@ -48,8 +48,12 @@ typedef enum
 {
     kPjlCommandColorMode,
     kPjlCommandOrientation,
-    kPjlCommandCopies,
+    // Ver.2.0.0.5 start
+    //kPjlCommandCopies,
+    //kPjlCommandQuantity,
     kPjlCommandQuantity,
+    kPjlCommandCopies,
+    // Ver.2.0.0.5 end
     kPjlCommandDuplex,
     kPjlCommandDuplexBinding,
     kPjlCommandOutputPaperSize,
@@ -227,6 +231,14 @@ const static char *false_true[] =
     "TRUE"
 };
 
+// Ver.2.0.0.6 start
+const static char *true_false[] =
+{
+    "TRUE",
+    "FALSE",
+};
+// Ver.2.0.0.6 end
+
 const static char **pjl_values[kPjlCommandCount] =
 {
     color_mode,
@@ -244,7 +256,10 @@ const static char **pjl_values[kPjlCommandCount] =
     nup_page_per_sheet,
     imposition_direction,
     nup_page_order,
-    false_true, // collate
+    // Ver.2.0.0.6 start
+    //false_true, // collate
+    true_false, // collate
+    // Ver.2.0.0.6 end
     booklet_finishing,
     finishing_side,
     staple,
@@ -260,8 +275,12 @@ const static char *pjl_commands[kPjlCommandCount] =
 {
     "RKOUTPUTMODE",
     "ORIENTATION",
-    "COPIES",
+    // Ver.2.0.0.5 start
+    //"COPIES",
+    //"QTY",
     "QTY",
+    "COPIES",
+    // Ver.2.0.0.5 end
     "DUPLEX",
     "BINDING",
     "PAPER",
@@ -448,7 +467,10 @@ void add_pjl(char *pjl, setting_value values[], int command)
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
-            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1)
+            // Ver.2.0.0.5 start
+            //if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1)
+            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0) // "sort_value.int_value == 0" UIで"部ごと"が指定された
+            // Ver.2.0.0.5 end
             {
                 return;
             }
@@ -460,7 +482,10 @@ void add_pjl(char *pjl, setting_value values[], int command)
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
-            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0)
+            // Ver.2.0.0.5 start
+            //if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0)
+            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1) // "sort_value.int_value == 1" UIで"ページごと"が指定された
+            // Ver.2.0.0.5 end
             {
                 return;
             }
