@@ -92,6 +92,11 @@ namespace SmartDeviceApp.Common.Utilities
             {
                 TextBox textBox = (TextBox) sender;
                 SaveSnmpCommunityName(textBox.Text);
+
+                //workaround to hide softkeyboard after printer search
+                //since we don't have direct control over the keyboard
+                textBox.IsEnabled = false;
+                textBox.IsEnabled = true;
             }
         }
 
