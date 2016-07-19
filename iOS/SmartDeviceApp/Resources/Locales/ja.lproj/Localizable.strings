@@ -156,5 +156,5 @@
 "IDS_LBL_PAPERSIZE_16K" = "16K";
 "IDS_LBL_PAPERSIZE_LEGAL14" = "Legal 8.5x14";
 "IDS_LBL_SNMP_COMMUNITY_NAME" = "SNMPコミュニティ名";
-"IDS_LBL_VALID_COMMUNITY_NAME" = "有効な文字:\n\ta-z, A-Z, 0-9,,./:;@[\\]^_";
+"IDS_LBL_VALID_COMMUNITY_NAME" = "有効な文字：\na-zA-Z0-9, /:;. @ [\\] ^ _";
 "IDS_ERR_MSG_INVALID_COMMUNITY_NAME" = "SNMPコミュニティ名を確認してください。";
