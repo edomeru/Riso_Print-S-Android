@@ -221,6 +221,7 @@ namespace SNMP
 
         private bool capabilityCheckStarted = false;
         private bool supportsMultiFunctionFinisher = false;
+        private bool isDescRetrieved = false;
         private void receiveData(HostName sender, byte[] responsedata)
         {
             System.Diagnostics.Debug.WriteLine("SNMPDevice Receive Data for ip: ");
@@ -269,6 +270,7 @@ namespace SNMP
                             else
                                 if (oid.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
                                 {
+                                    isDescRetrieved = true;
                                     this.Description = val;
                                 }
                                 else
@@ -277,7 +279,7 @@ namespace SNMP
                                         this._langfamily = 54;// (byte)val[0];
                                     }
 
-                            if (supportsMultiFunctionFinisher && this._langfamily == 54)
+                            if (supportsMultiFunctionFinisher && this._langfamily == 54 && isDescRetrieved)
                             {
                                 //supported RISO printer
                                 //AZA: RISO IS1000C-J, RISO IS1000C-G, or RISO IS950C-G
@@ -296,7 +298,7 @@ namespace SNMP
                                 else
                                 {
                                     isSupportedDevice = false;
-                                    endRetrieveCapabilitiesSuccess();
+                                    // endRetrieveCapabilitiesSuccess();
                                 }
                             }
                         }
