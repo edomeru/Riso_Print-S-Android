@@ -666,7 +666,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     case AUTO:
                         return true;
                     case FACEDOWN:
-                        return getPrinter().getConfig().isTrayFaceDownAvailable();
+                        //ver.2.0.1.2 We always display "Facedown" in the Output tray list(20160707 RISO Saito)
+                        //return getPrinter().getConfig().isTrayFaceDownAvailable();
+                        return true;
+                        //End
                     case TOP:
                         return getPrinter().getConfig().isTrayTopAvailable();
                     case STACKING:

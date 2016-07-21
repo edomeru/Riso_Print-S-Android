@@ -138,7 +138,7 @@
                 text="ids_lbl_sort"
 
                 type="list"
-                default="1" >
+                default="0" >
                 <option>ids_lbl_sort_percopy</option>
                 <option>ids_lbl_sort_perpage</option>
             </setting>
@@ -361,7 +361,7 @@
                 text="ids_lbl_sort"
 
                 type="list"
-                default="1" >
+                default="0" >
                 <option>ids_lbl_sort_percopy</option>
                 <option>ids_lbl_sort_perpage</option>
             </setting>
@@ -585,7 +585,7 @@
                 text="ids_lbl_sort"
 
                 type="list"
-                default="1" >
+                default="0" >
                 <option>ids_lbl_sort_percopy</option>
                 <option>ids_lbl_sort_perpage</option>
             </setting>

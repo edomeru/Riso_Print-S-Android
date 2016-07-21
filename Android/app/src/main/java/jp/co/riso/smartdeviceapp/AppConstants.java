@@ -32,7 +32,10 @@ public class AppConstants {
     /// PDF directory
     public static final String CONST_PDF_DIR = "pdfs";
     /// PDF temporary file name
-    public static final String CONST_TEMP_PDF_PATH = "temp.pdf";
+    //ver.2.0.2.2 If we can't get file name, the job name is "Unknown".(not "temp.pdf")(20160710 RISO Saito)
+    //public static final String CONST_TEMP_PDF_PATH = "temp.pdf";
+    public static final String CONST_TEMP_PDF_PATH = "Unknown";
+    //End
     
     /// Part of Memory to be allocated to Print. Value of Bit shift operator, Preview Size = TOTAL MEMORY >> APP_BMP_CACHE_PART
     public static final int APP_BMP_CACHE_PART = 4;
