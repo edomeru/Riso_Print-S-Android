@@ -104,7 +104,7 @@ String^ DirectPrintSettingsWrapper::create_pjl_wrapper(String^ settings)
 /*
  * Creates a string of PJL commands for FW printers based from print settings
  */
-String^ DirectPrintSettingsWrapper::create_pjl_fw_wrapper(String^ settings, String^ appName, String ^appVersion)
+String^ DirectPrintSettingsWrapper::create_pjl_fw_wrapper(String^ settings, String^ printerName, String ^appVersion)
 {
 	char pjl[BUFFER_SIZE];
 	memset(pjl, 0, BUFFER_SIZE);
@@ -114,15 +114,15 @@ String^ DirectPrintSettingsWrapper::create_pjl_fw_wrapper(String^ settings, Stri
 
 	convertWCharToCharArray(&strSettings, settings->Data());
 
-	char *strAppName = (char *)calloc(APP_NAME_SIZE, sizeof(char));
-	memset(strAppName, 0, APP_NAME_SIZE * sizeof(char));
-	convertWCharToCharArray(&strAppName, appName->Data());
+	char *strPrinterName = (char *)calloc(APP_NAME_SIZE, sizeof(char));
+	memset(strPrinterName, 0, APP_NAME_SIZE * sizeof(char));
+	convertWCharToCharArray(&strPrinterName, printerName->Data());
 
 	char *strAppVersion = (char *)calloc(APP_VERSION_SIZE, sizeof(char));
 	memset(strAppVersion, 0, APP_VERSION_SIZE * sizeof(char));
-	convertWCharToCharArray(&strAppName, appVersion->Data());
+	convertWCharToCharArray(&strAppVersion, appVersion->Data());
 
-	create_pjl_fw(pjl, strSettings, strAppName, strAppVersion);
+	create_pjl_fw(pjl, strSettings, strPrinterName, strAppVersion);
 
 	wchar_t *wcPjl = (wchar_t *)calloc(BUFFER_SIZE, sizeof(wchar_t));
 	memset(wcPjl, 0, BUFFER_SIZE * sizeof(wchar_t));
@@ -132,7 +132,7 @@ String^ DirectPrintSettingsWrapper::create_pjl_fw_wrapper(String^ settings, Stri
 	String^ printSettingsPjl = ref new String(wcPjl);
 
 	free(strSettings);
-	free(strAppName);
+	free(strPrinterName);
 	free(strAppVersion);
 	free(wcPjl);
 
@@ -142,7 +142,7 @@ String^ DirectPrintSettingsWrapper::create_pjl_fw_wrapper(String^ settings, Stri
 /*
  * Creates a string of PJL commands for GD printers based from print settings
  */
-String^ DirectPrintSettingsWrapper::create_pjl_gd_wrapper(String^ settings, String^ appName, String ^appVersion)
+String^ DirectPrintSettingsWrapper::create_pjl_gd_wrapper(String^ settings, String^ printerName, String ^appVersion)
 {
 	char pjl[BUFFER_SIZE];
 	memset(pjl, 0, BUFFER_SIZE);
@@ -152,15 +152,15 @@ String^ DirectPrintSettingsWrapper::create_pjl_gd_wrapper(String^ settings, Stri
 
 	convertWCharToCharArray(&strSettings, settings->Data());
 
-	char *strAppName = (char *)calloc(APP_NAME_SIZE, sizeof(char));
-	memset(strAppName, 0, APP_NAME_SIZE * sizeof(char));
-	convertWCharToCharArray(&strAppName, appName->Data());
+	char *strPrinterName = (char *)calloc(APP_NAME_SIZE, sizeof(char));
+	memset(strPrinterName, 0, APP_NAME_SIZE * sizeof(char));
+	convertWCharToCharArray(&strPrinterName, printerName->Data());
 
 	char *strAppVersion = (char *)calloc(APP_VERSION_SIZE, sizeof(char));
 	memset(strAppVersion, 0, APP_VERSION_SIZE * sizeof(char));
-	convertWCharToCharArray(&strAppName, appVersion->Data());
+	convertWCharToCharArray(&strAppVersion, appVersion->Data());
 
-	create_pjl_gd(pjl, strSettings, strAppName, strAppVersion);
+	create_pjl_gd(pjl, strSettings, strPrinterName, strAppVersion);
 
 	wchar_t *wcPjl = (wchar_t *)calloc(BUFFER_SIZE, sizeof(wchar_t));
 	memset(wcPjl, 0, BUFFER_SIZE * sizeof(wchar_t));
@@ -170,7 +170,7 @@ String^ DirectPrintSettingsWrapper::create_pjl_gd_wrapper(String^ settings, Stri
 	String^ printSettingsPjl = ref new String(wcPjl);
 
 	free(strSettings);
-	free(strAppName);
+	free(strPrinterName);
 	free(strAppVersion);
 	free(wcPjl);
 

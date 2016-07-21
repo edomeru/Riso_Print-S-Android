@@ -65,13 +65,13 @@ namespace SmartDeviceApp.Controllers
             
             _printJob = new DirectPrint.directprint_job();
 
-            _printJob.app_name = Package.Current.DisplayName;
             _printJob.app_version = string.Format("{0}.{1}.{2}.{3}",
                     Package.Current.Id.Version.Major,
                     Package.Current.Id.Version.Minor,
                     Package.Current.Id.Version.Build,
                     Package.Current.Id.Version.Revision);
             _printJob.job_name = name;
+            _printJob.printer_name = printerName;
             _printJob.series_type = PrinterModelUtility.GetSeriesTypeFromPrinterName(printerName);
             //_printJob.filename = name; // TODO: (confirm) To be deleted
             _printJob.file = file;
@@ -232,20 +232,10 @@ namespace SmartDeviceApp.Controllers
             // Sort
             if (printSettings.Sort >= 0)
             {
-                if (PrinterModelUtility.isISSeries(printerName))
-                {
-                    //special handling for IS, switch value
-                    int value = printSettings.Sort - 1;
-                    builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
-                             PrintSettingConstant.NAME_VALUE_SORT,
-                             Math.Abs(value)));
-                }
-                else
-                {
-                    builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
-                                                 PrintSettingConstant.NAME_VALUE_SORT,
-                                                 printSettings.Sort));
-                }
+               builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
+                                            PrintSettingConstant.NAME_VALUE_SORT,
+                                            printSettings.Sort));
+         
             }
 
             // Booklet
@@ -290,9 +280,9 @@ namespace SmartDeviceApp.Controllers
             // Punch
             if (printSettings.Punch >= 0)
             {
-                //special handling for IS, adjust value if index is for 4 holes since 3 and 4 holes have same PJL for IS
+                //adjust value if index is for 4 holes, since for IS 3 and 4 holes have same PJL; for other models, Direct Print module will adjust value in PJL based on printer name
                 int value = printSettings.Punch;
-                if (PrinterModelUtility.isISSeries(printerName) && value > (int)Punch.ThreeHoles)
+                if (value > (int)Punch.ThreeHoles)
                 {
                     value--;
                 }
