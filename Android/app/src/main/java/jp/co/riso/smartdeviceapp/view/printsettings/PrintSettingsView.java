@@ -1471,10 +1471,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         } else if (v.getId() == R.id.view_id_subview_printer_item) {
             if (mPrinterId != id) {
-                setPrinterId(id);
                 // TODO: get new printer settings
-                setPrintSettings(new PrintSettings(mPrinterId,  PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(mPrinterId)));
-                
+                setPrintSettings(new PrintSettings(id,  PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(id)));
+                setPrinterId(id);
+
                 if (mListener != null) {
                     mListener.onPrinterIdSelectedChanged(mPrinterId);
                     mListener.onPrintSettingsValueChanged(mPrintSettings);
