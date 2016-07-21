@@ -230,12 +230,8 @@ public class PrintSettings {
                 }
             }
 
-            if(mSettingMapKey == AppConstants.PRINTER_MODEL_IS && key.equals(TAG_PUNCH) && value == 3) {
+            if(key.equals(TAG_PUNCH) && value == 3) {
                 value = 2;
-            }
-
-            if(key.equals(TAG_SORT) && mSettingMapKey == AppConstants.PRINTER_MODEL_IS) {
-                value ^= 1;
             }
 
             strBuf.append(String.format(Locale.getDefault(), KEY_VAL_FORMAT, key, value));
