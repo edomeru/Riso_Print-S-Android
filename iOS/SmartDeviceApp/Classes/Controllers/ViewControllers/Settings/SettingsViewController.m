@@ -12,6 +12,7 @@
 #import "DefaultView.h"
 #import "PListHelper.h"
 #import "AppSettings.h"
+#import "ScreenLayoutHelper.h"
 
 #define LOGIN_ID_MAX_INPUT 20
 
@@ -92,12 +93,17 @@
     
     isContentOffset = NO;//set flag to indicate that content view is offset
     //Content occupies full width of screen only in iPhone Portrait.
-    //Otherwise it is centered horizontally centered in view.
+    //Otherwise it is centered horizontally centered in view
+    
     
     //If iPad, make the content view wider
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         self.contentViewWidthConstraint.constant += 200;
+    }
+    else
+    {
+        self.contentViewWidthConstraint.constant = [ScreenLayoutHelper getPortraitScreenWidth];
     }
 }
 

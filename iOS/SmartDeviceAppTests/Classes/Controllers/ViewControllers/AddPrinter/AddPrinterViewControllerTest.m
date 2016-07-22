@@ -24,11 +24,15 @@
 - (UIActivityIndicatorView*)progressIndicator;
 - (UILabel*)communityNameDisplay;
 - (NSLayoutConstraint *)viewTopConstraint;
+- (UIView *)inputView;
 
 // expose private methods
 - (void)addFullCapabilityPrinter:(NSString *)ipAddress;
 - (IBAction)onSave:(UIButton*)sender;
-- (void)moveViewUp:(BOOL)isUp;
+- (void)moveViewUpWithOffset:(CGFloat)offset;
+- (void)moveViewDownToNormal;
+- (void)keyboardDidShow:(NSNotification *)notif;
+- (void)keyboardDidHide:(NSNotification *)notif;
 
 @end
 
@@ -73,6 +77,8 @@
     GHAssertNotNil(controllerIpad, @"unable to instantiate controller (%@)", controllerIpadName);
     GHAssertNotNil(controllerIpad.view, @"");
     GHAssertFalse(controllerIpad.hasAddedPrinters, @"");
+    
+    [controllerIpad setValue:@(YES) forKey:@"isIpad"];
     
     [mockAppSettingsHelper stopMocking];
 }
@@ -342,201 +348,119 @@
         GHAssertTrue([pm deletePrinterAtIndex:0], @"");
 }
 
-- (void)test010_TextFieldDidBeginEditing_IphoneLandscape
+- (void)test010_moveView
 {
-    id mockControllerIphone = OCMPartialMock(controllerIphone);
-    [[mockControllerIphone expect] moveViewUp:YES];
-    
-    id mockSharedApplicatipon = OCMPartialMock([UIApplication sharedApplication]);
-    [[[mockSharedApplicatipon stub] andReturnValue:OCMOCK_VALUE(UIInterfaceOrientationLandscapeLeft)] statusBarOrientation];
-    
-    [mockControllerIphone textFieldDidBeginEditing:[mockControllerIphone textIP]];
-    
-    [mockControllerIphone verify];
-    
-    [mockControllerIphone stopMocking];
-    [mockSharedApplicatipon stopMocking];
-}
-
-- (void)test011_TextFieldDidBeginEditing_IphonePortrait_iPad
-{
-    //iPhone portrait
-    id mockControllerIphone = OCMPartialMock(controllerIphone);
-    [[mockControllerIphone reject] moveViewUp:OCMOCK_ANY];
-    
-    id mockSharedApplicatipon = OCMPartialMock([UIApplication sharedApplication]);
-    [[[mockSharedApplicatipon stub] andReturnValue:OCMOCK_VALUE(UIInterfaceOrientationPortrait)] statusBarOrientation];
-    
-    [mockControllerIphone textFieldDidBeginEditing:[mockControllerIphone textIP]];
-    
-    [mockControllerIphone verify];
-    
-    [mockControllerIphone stopMocking];
-    [mockSharedApplicatipon stopMocking];
-
-    //iPad
-    [controllerIpad setValue:[NSNumber numberWithBool:YES] forKey:@"isIpad"];
-    id mockControllerIpad = OCMPartialMock(controllerIpad);
-    
-    [[mockControllerIpad reject] moveViewUp:OCMOCK_ANY];
-    
-    [mockControllerIpad textFieldDidBeginEditing:[mockControllerIpad textIP]];
-    
-    [mockControllerIpad verify];
-    [mockControllerIpad stopMocking];
-}
-
-- (void)test012_moveUpView
-{
-    [controllerIphone moveViewUp:YES];
+    CGFloat testOffset = 5.0f;
+    [controllerIphone moveViewUpWithOffset:testOffset];
     
     //top view constraint is negative of textIP height
-    CGFloat diff = controllerIphone.viewTopConstraint.constant + controllerIphone.textIP.frame.size.height;
+    CGFloat diff = controllerIphone.viewTopConstraint.constant + testOffset;
     GHAssertTrue(fabs(diff) < 0.0001, @"");
     
-    [controllerIphone moveViewUp:NO];
-    GHAssertEquals(controllerIphone.viewTopConstraint.constant, 0.0, @"");
+    [controllerIphone moveViewDownToNormal];
+    GHAssertTrue(fabs(controllerIphone.viewTopConstraint.constant) < 0.0001, @"");
     
-    [controllerIphone moveViewUp:NO];
-    GHAssertEquals(controllerIphone.viewTopConstraint.constant, 0.0, @"");
-    
+    [controllerIphone moveViewDownToNormal];
+    GHAssertTrue(fabs(controllerIphone.viewTopConstraint.constant) < 0.0001, @"");
 }
 
-- (void)test013_WillRotateToInterfaceOrientation_Landscape
+- (void)test11_viewWillAppear
 {
-    UITextField *originalTextField = [controllerIphone textIP];
+    id mockNSNotificationCenter = OCMClassMock([NSNotificationCenter class]);
+    [[[[mockNSNotificationCenter stub] andReturn:mockNSNotificationCenter] classMethod] defaultCenter];
+    [[mockNSNotificationCenter expect] removeObserver:controllerIphone];
     
-    id mockTextIP = [OCMockObject niceMockForClass:[UITextField class]];
-    [[[mockTextIP stub] andReturnValue:OCMOCK_VALUE(YES)] isEditing];
-    [controllerIphone setValue:mockTextIP forKey:@"textIP"];
+    [controllerIphone viewWillDisappear:NO];
     
-    id mockControllerIphone = OCMPartialMock(controllerIphone);
-    [[mockControllerIphone expect] moveViewUp:YES];
-    
-    id mockSharedApplication = OCMClassMock([UIApplication class]);
-    [[[[mockSharedApplication stub] andReturn:mockSharedApplication] classMethod] sharedApplication];
-    [[[mockSharedApplication stub] andReturnValue:OCMOCK_VALUE(UIInterfaceOrientationLandscapeRight)] statusBarOrientation];
-    
-    __block void(^handler)(id<UIViewControllerTransitionCoordinatorContext>);
-    id mockTransitionCoordinator = OCMProtocolMock(@protocol(UIViewControllerTransitionCoordinator));
-    id mockTransitionCoordinatorContext = OCMProtocolMock(@protocol(UIViewControllerTransitionCoordinatorContext));
-    [[[mockTransitionCoordinator stub] andDo:
-      ^(NSInvocation *invocation){
-          
-          [invocation getArgument:&handler atIndex:2];
-          handler(mockTransitionCoordinatorContext);
-      }]animateAlongsideTransition:OCMOCK_ANY completion:OCMOCK_ANY];
-    
-    [mockControllerIphone viewWillTransitionToSize:CGSizeMake(1, 1) withTransitionCoordinator:mockTransitionCoordinator];
-    
-    handler = nil;
-    [mockControllerIphone verify];
-    
-    [mockTextIP stopMocking];
-    [mockControllerIphone stopMocking];
-    [mockTransitionCoordinatorContext stopMocking];
-    [mockTransitionCoordinator stopMocking];
-    [mockSharedApplication stopMocking];
-    [controllerIphone setValue:originalTextField forKey:@"textIP"];
+    [mockNSNotificationCenter verify];
+    [mockNSNotificationCenter stopMocking];
 }
 
-- (void)test014_WillRotateToInterfaceOrientation_Portrait
+- (void)test12_KeyboardDidShow_willMoveUp
 {
-    UITextField *originalTextField = [controllerIphone textIP];
+    CGRect testRect = CGRectMake(0, 200, 200 , 200);
+    NSDictionary *testUserInfo = [NSDictionary dictionaryWithObject:[NSValue valueWithCGRect:testRect] forKey:UIKeyboardFrameEndUserInfoKey];
+    id mockNSNotification = OCMClassMock([NSNotification class]);
+    [[[mockNSNotification stub] andReturn:testUserInfo] userInfo];
+    id mockInputView = OCMClassMock([UIView class]);
+    [[[mockInputView stub] andReturnValue:OCMOCK_VALUE(testRect)] convertRect:testRect fromView:nil];
+    UIView *originalInputView = [controllerIphone inputView];
+    [controllerIphone setValue:mockInputView forKey:@"inputView"];
     
-    id mockTextIP = [OCMockObject niceMockForClass:[UITextField class]];
-    [[[mockTextIP stub] andReturnValue:OCMOCK_VALUE(YES)] isEditing];
-    [controllerIphone setValue:mockTextIP forKey:@"textIP"];
+    CGRect originalTextFrame = controllerIphone.textIP.frame;
+    controllerIphone.textIP.frame = CGRectMake(0, 170, 100, 50);
     
-    id mockControllerIphone = OCMPartialMock(controllerIphone);
-    [[mockControllerIphone expect] moveViewUp:NO];
+    CGFloat testOffset = controllerIphone.textIP.frame.size.height + controllerIphone.textIP.frame.origin.y - testRect.origin.y + 8.0f;
     
-    __block void(^handler)(id<UIViewControllerTransitionCoordinatorContext>);
-    id mockTransitionCoordinator = OCMProtocolMock(@protocol(UIViewControllerTransitionCoordinator));
-    id mockTransitionCoordinatorContext = OCMProtocolMock(@protocol(UIViewControllerTransitionCoordinatorContext));
-    [[[mockTransitionCoordinator stub] andDo:
-       ^(NSInvocation *invocation){
-           
-           [invocation getArgument:&handler atIndex:2];
-           handler(mockTransitionCoordinatorContext);
-       }]animateAlongsideTransition:OCMOCK_ANY completion:OCMOCK_ANY];
+    [controllerIphone keyboardDidShow:mockNSNotification];
     
-    [mockControllerIphone viewWillTransitionToSize:CGSizeMake(1, 1) withTransitionCoordinator:mockTransitionCoordinator];
+    //top view constraint is negative of textIP height
+    CGFloat diff = controllerIphone.viewTopConstraint.constant + testOffset;
+    GHAssertTrueNoThrow(fabs(diff) < 0.0001, @"");
     
-    handler = nil;
-    [mockControllerIphone verify];
-    
-    [mockTextIP stopMocking];
-    [mockControllerIphone stopMocking];
-    [mockTransitionCoordinatorContext stopMocking];
-    [mockTransitionCoordinator stopMocking];
-    [controllerIphone setValue:originalTextField forKey:@"textIP"];
+    [controllerIphone setValue:originalInputView forKey:@"inputView"];
+    controllerIphone.viewTopConstraint.constant = 0;
+    controllerIphone.textIP.frame = originalTextFrame;
+    [mockInputView stopMocking];
+    [mockNSNotification stopMocking];
 }
 
-- (void)test015_WillRotateToInterfaceOrientation_NotEditing_NotIphone
+- (void)test13_KeyboardDidShow_willNotMoveUp
 {
-    //iPhone, Not editing
-    UITextField *originalTextField = [controllerIphone textIP];
+    CGRect testRect = CGRectMake(0, 200, 200 , 200);
+    NSDictionary *testUserInfo = [NSDictionary dictionaryWithObject:[NSValue valueWithCGRect:testRect] forKey:UIKeyboardFrameEndUserInfoKey];
+    id mockNSNotification = OCMClassMock([NSNotification class]);
+    [[[mockNSNotification stub] andReturn:testUserInfo] userInfo];
+    id mockInputView = OCMClassMock([UIView class]);
+    [[[mockInputView stub] andReturnValue:OCMOCK_VALUE(testRect)] convertRect:testRect fromView:nil];
+    UIView *originalInputView = [controllerIphone inputView];
+    [controllerIphone setValue:mockInputView forKey:@"inputView"];
     
-    id mockTextIP = [OCMockObject niceMockForClass:[UITextField class]];
-    [[[mockTextIP stub] andReturnValue:OCMOCK_VALUE(NO)] isEditing];
-    [controllerIphone setValue:mockTextIP forKey:@"textIP"];
+    CGRect originalTextFrame = controllerIphone.textIP.frame;
+    controllerIphone.textIP.frame = CGRectMake(0, 120, 100, 50);
     
-    id mockControllerIphone = OCMPartialMock(controllerIphone);
-    [[mockControllerIphone reject] moveViewUp:OCMOCK_ANY];
+    [controllerIphone keyboardDidShow:mockNSNotification];
     
-    __block void(^handler)(id<UIViewControllerTransitionCoordinatorContext>);
-    id mockTransitionCoordinator = OCMProtocolMock(@protocol(UIViewControllerTransitionCoordinator));
-    id mockTransitionCoordinatorContext = OCMProtocolMock(@protocol(UIViewControllerTransitionCoordinatorContext));
-    [[[mockTransitionCoordinator stub] andDo:
-      ^(NSInvocation *invocation){
-          
-          [invocation getArgument:&handler atIndex:2];
-          handler(mockTransitionCoordinatorContext);
-      }]animateAlongsideTransition:OCMOCK_ANY completion:OCMOCK_ANY];
+    //no movement
+    GHAssertTrueNoThrow(fabs(controllerIphone.viewTopConstraint.constant) < 0.0001, @"");
     
-    [mockControllerIphone viewWillTransitionToSize:CGSizeMake(1, 1) withTransitionCoordinator:mockTransitionCoordinator];
+    [controllerIphone setValue:originalInputView forKey:@"inputView"];
+    controllerIphone.viewTopConstraint.constant = 0;
+    controllerIphone.textIP.frame = originalTextFrame;
+    [mockInputView stopMocking];
+    [mockNSNotification stopMocking];
+}
+
+- (void)test14_KeyboardDidShow_iPad
+{
+    id mockNSNotification = OCMClassMock([NSNotification class]);
+    [[mockNSNotification reject] userInfo];
     
-    handler = nil;
-    [mockControllerIphone verify];
+    [controllerIpad keyboardDidShow:mockNSNotification];
     
-    [mockTextIP stopMocking];
-    [mockControllerIphone stopMocking];
-    [mockTransitionCoordinatorContext stopMocking];
-    [mockTransitionCoordinator stopMocking];
-    [controllerIphone setValue:originalTextField forKey:@"textIP"];
+    [mockNSNotification verify];
+    [mockNSNotification stopMocking];
+}
+
+- (void)test15_KeyboardDidHide
+{
+    controllerIphone.viewTopConstraint.constant = 30;
     
-    //iPad, editing
-    originalTextField = [controllerIpad textIP];
+    [controllerIphone keyboardDidHide:nil];
     
-    mockTextIP = [OCMockObject niceMockForClass:[UITextField class]];
-    [[[mockTextIP stub] andReturnValue:OCMOCK_VALUE(YES)] isEditing];
+    GHAssertTrueNoThrow(fabs(controllerIphone.viewTopConstraint.constant) < 0.0001, @"");
+}
+
+- (void)test16_KeyboardDidHide_iPad
+{
+    id mockController = OCMPartialMock(controllerIpad);
+    [[mockController reject] moveViewDownToNormal];
     
-    [controllerIpad setValue:mockTextIP forKey:@"textIP"];
-    [controllerIpad setValue:[NSNumber numberWithBool:YES] forKey:@"isIpad"];
+    [mockController keyboardDidHide:nil];
     
-    id mockControllerIpad = OCMPartialMock(controllerIpad);
-    [[mockControllerIpad reject] moveViewUp:OCMOCK_ANY];
+    [mockController verify];
     
-    mockTransitionCoordinator = OCMProtocolMock(@protocol(UIViewControllerTransitionCoordinator));
-    mockTransitionCoordinatorContext = OCMProtocolMock(@protocol(UIViewControllerTransitionCoordinatorContext));
-    [[[mockTransitionCoordinator stub] andDo:
-      ^(NSInvocation *invocation){
-          
-          [invocation getArgument:&handler atIndex:2];
-          handler(mockTransitionCoordinatorContext);
-      }]animateAlongsideTransition:OCMOCK_ANY completion:OCMOCK_ANY];
-    
-    [mockControllerIphone viewWillTransitionToSize:CGSizeMake(1, 1) withTransitionCoordinator:mockTransitionCoordinator];
-    
-    handler = nil;
-    [mockControllerIpad verify];
-    
-    [mockTextIP stopMocking];
-    [mockControllerIphone stopMocking];
-    [mockTransitionCoordinatorContext stopMocking];
-    [mockTransitionCoordinator stopMocking];
-    [controllerIpad setValue:originalTextField forKey:@"textIP"];
+    [mockController stopMocking];
 }
 
 #pragma mark - Utilities

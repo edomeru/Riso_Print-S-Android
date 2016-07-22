@@ -13,6 +13,7 @@
 #import "AlertHelper.h"
 #import "InputHelper.h"
 #import "AppSettingsHelper.h"
+#import "ScreenLayoutHelper.h"
 
 NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 
@@ -57,6 +58,16 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
  * Reference to the save (+) button.
  */
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
+
+/**
+ * Reference to the constraint of the content view for phones.
+ */
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *phoneContentViewWidthConstraint;
+
+/**
+ * Reference to the view containing the IP input
+ */
+@property (weak, nonatomic) IBOutlet UIView *inputView;
 
 /**
  * Flag that will be set to YES when the device is a tablet.
@@ -104,12 +115,18 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 - (BOOL)addFullCapabilityPrinter:(NSString *)ipAddress;
 
 /**
- * Moves the view by adjusting the top constraint to of the view that holds
+ * Moves the view by up adjusting the top constraint to of the view that holds
  * the snmp community name display. This is to be able to lift textIP field
+ * when it is covered by the keyboard
  *
- * @param isUp indicated whether to move the view up
+ * @param offset
  */
-- (void)moveViewUp:(BOOL)isUp;
+- (void)moveViewUpWithOffset:(CGFloat)offset;
+
+/**
+ * Moves the view down to normal location
+ */
+- (void)moveViewDownToNormal;
 
 /**
  * Responds to pressing the back (<) button in the header (for phones only).
@@ -163,6 +180,18 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     [super viewDidLoad];
     
     [self setupScreen];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector (keyboardDidShow:)
+                                                 name: UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector (keyboardDidHide:)
+                                                 name: UIKeyboardDidHideNotification object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning
@@ -187,9 +216,14 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     self.communityNameDisplay.text = [AppSettingsHelper getSNMPCommunityName];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
         self.isIpad = YES;
+    }
     else
+    {
         self.isIpad = NO;
+        self.phoneContentViewWidthConstraint.constant = [ScreenLayoutHelper getPortraitScreenWidth];
+    }
 }
 
 - (void)dismissScreen
@@ -198,25 +232,6 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
         [self close];
     else
         [self unwindFromOverTo:[self.parentViewController class]];
-}
-
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
-{
-    //In iphone, if keyboard is already up when device is rotated to landscape, move the view up to prevent keyboard from covering textIP, move to original position when rotated back to portrait
-    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context){
-        if(!self.isIpad && self.textIP.isEditing)
-        {
-            UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-            if (UIInterfaceOrientationIsLandscape(interfaceOrientation))
-            {
-                [self moveViewUp:YES];
-            }
-            else
-            {
-                [self moveViewUp:NO];
-            }
-        }
-    } completion:nil];
 }
 
 #pragma mark - Segue
@@ -454,9 +469,6 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 
 - (void)dismissKeypad
 {
-    //put the view back to normal when keypad is dismissed
-    [self moveViewUp:NO];
-    
     if (self.textIP.isEditing)
         [self.textIP resignFirstResponder];
 }
@@ -487,30 +499,55 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     return NO;
 }
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField
+- (void)moveViewUpWithOffset:(CGFloat)offset
 {
-    if (!self.isIpad)
+    self.viewTopConstraint.constant = -offset;
+    [UIView animateWithDuration:0.1f delay:0.0f options:UIViewAnimationOptionCurveLinear animations: ^(void){
+        [self.view layoutIfNeeded];
+    }completion:nil];
+}
+
+- (void)moveViewDownToNormal
+{
+    self.viewTopConstraint.constant = 0;
+    [UIView animateWithDuration:0.1f delay:0.0f options:UIViewAnimationOptionCurveLinear animations: ^(void){
+        [self.view layoutIfNeeded];
+    }completion:nil];
+}
+
+#pragma mark - Keyboard Notification Methods
+
+- (void)keyboardDidShow:(NSNotification *)notif
+{
+    if(self.isIpad)
     {
-        //if iphone and landscape, move up the view so the keyboard will not cover the text input
-        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-        if (UIInterfaceOrientationIsLandscape(orientation))
-        {
-            [self moveViewUp:YES];
-        }
+        return;
+    }
+    
+    // Get the rect of the keyboard.
+    NSDictionary* info = [notif userInfo];
+    NSValue* aValue = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
+    CGRect keyboardRect = [aValue CGRectValue];
+    CGRect keyboardFrameInInputView = [self.inputView convertRect:keyboardRect fromView:nil];
+    
+    CGFloat keyboardTopPosY = keyboardFrameInInputView.origin.y;
+    CGFloat textViewBottomPosY = self.textIP.frame.origin.y + self.textIP.bounds.size.height;
+
+    if (keyboardTopPosY < textViewBottomPosY)
+    {
+        [self moveViewUpWithOffset: (textViewBottomPosY - keyboardTopPosY) + 8.0f];
     }
 }
 
-- (void)moveViewUp:(BOOL)isUp
+- (void)keyboardDidHide:(NSNotification *)notif
 {
-    if (isUp)
+    if(self.isIpad)
     {
-        CGFloat offset = self.textIP.frame.size.height;
-        self.viewTopConstraint.constant = -offset;
+        return;
     }
-    else
-    {
-        self.viewTopConstraint.constant = 0;
-    }
+    
+    //put the view back to normal when keypad is dismissed
+    [self moveViewDownToNormal];
 }
 
 @end
