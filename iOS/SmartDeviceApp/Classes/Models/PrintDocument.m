@@ -82,10 +82,18 @@ static NSString *previewSettingContext = @"PreviewSettingContext";
 - (void)setPrinter:(Printer *)printer
 {
     _printer = printer;
-    if(self.previewSetting != nil && printer != nil)
+    if(self.previewSetting != nil)
     {
         PreviewSetting *previewSetting = self.previewSetting;
-        [PrintSettingsHelper copyPrintSettings:printer.printsetting toPreviewSetting:&previewSetting];
+        if (printer != nil)
+        {
+            [PrintSettingsHelper copyPrintSettings:printer.printsetting toPreviewSetting:&previewSetting];
+        }
+        else
+        {
+            //if no printer, set preview settings to specified standard defaults from the printsettings.xml
+            [PrintSettingsHelper copyDefaultPreviewSetting:&previewSetting];
+        }
     }
     
 #if GET_ORIENTATION_FROM_PDF_ENABLED

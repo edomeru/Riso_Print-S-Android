@@ -10,6 +10,7 @@
 #import "XMLParser.h"
 #import "PreviewSetting.h"
 #import "PrintSetting.h"
+#import "PrintPreviewHelper.h"
 
 #include "common.h"
 
@@ -129,6 +130,48 @@
     return defaultPreviewSetting;
 }
 
++ (void)copyDefaultPreviewSetting:(PreviewSetting **)previewSetting
+{
+    if(previewSetting == nil || *previewSetting == nil)
+    {
+        return;
+    }
+
+    NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
+    NSArray *groups = [printSettingsTree objectForKey:@"group"];
+    for (NSDictionary *group in groups)
+    {
+        NSArray *settings = [group objectForKey:@"setting"];
+        for (NSDictionary *setting in settings)
+        {
+            NSString *key = [setting objectForKey:@"name"];
+            NSString *type = [setting objectForKey:@"type"];
+            NSString *defaultValue = [setting objectForKey:@"default"];
+
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+            //the default orientation is the orientation of the first page of the PDF. do not override with value from the xml
+            if ([key isEqualToString:KEY_ORIENTATION])
+            {
+                continue;
+            }
+#endif
+            if ([(*previewSetting) respondsToSelector:NSSelectorFromString(key)] == NO)
+            {
+                continue;
+            }
+            
+            if ([type isEqualToString:@"list"] || [type isEqualToString:@"numeric"])
+            {
+                [(*previewSetting) setValue:[NSNumber numberWithInteger:[defaultValue integerValue]] forKey:key];
+            }
+            else
+            {
+                [(*previewSetting) setValue:[NSNumber numberWithBool:[defaultValue boolValue]] forKey:key];
+            }
+        }
+    }
+}
+
 + (void)copyDefaultPrintSettings:(PrintSetting **)printSetting
 {
     NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
@@ -173,6 +216,13 @@
         for (NSDictionary *setting in settings)
         {
             NSString *key = [setting objectForKey:@"name"];
+#if GET_ORIENTATION_FROM_PDF_ENABLED
+            //the default orientation is the orientation of the first page of the PDF. do not override with value print settings
+            if ([key isEqualToString:KEY_ORIENTATION])
+            {
+                continue;
+            }
+#endif
             [(*previewSetting) setValue:[printSetting valueForKey:key] forKey:key];
         }
     }

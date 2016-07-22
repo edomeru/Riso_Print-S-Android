@@ -36,7 +36,7 @@
     self.previewSetting = [[PreviewSetting alloc] init];
     expectedKeys = [NSArray arrayWithObjects:
                     @"colorMode",
-                    @"orientation",
+                   // @"orientation",
                     @"copies",
                     @"duplex",
                     @"paperSize",
@@ -58,7 +58,7 @@
     numValues = [NSDictionary dictionaryWithObjects:
                     [NSArray arrayWithObjects:
                             [NSNumber numberWithInt:3],
-                            [NSNumber numberWithInt:2],
+                         //   [NSNumber numberWithInt:2],
                             [NSNumber numberWithInt:9999],
                             [NSNumber numberWithInt:3],
                             [NSNumber numberWithInt:13],
@@ -81,7 +81,7 @@
     defaultValues =[NSDictionary dictionaryWithObjects:
                     [NSArray arrayWithObjects:
                         [NSNumber numberWithInt:0], //colormode
-                        [NSNumber numberWithInt:0], //orientation
+                       // [NSNumber numberWithInt:0], //orientation
                         [NSNumber numberWithInt:1], //copies
                         [NSNumber numberWithInt:0], //duplex
                         [NSNumber numberWithInt:2], //paper size
@@ -179,6 +179,17 @@
     {
         GHAssertNotNil([observedKeys objectForKey:key], [NSString stringWithFormat:@"observed preview setting key = %@", key]);
         GHAssertEquals([[self.previewSetting valueForKey:key] intValue], [[observedKeys objectForKey:key] intValue], [NSString stringWithFormat:@"observed preview setting value: key = %@", key]);
+    }
+}
+
+-(void)test007_copyDefaultPreviewSetting
+{
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    [PrintSettingsHelper copyDefaultPreviewSetting:&previewSetting];
+    
+    for(NSString *key in expectedKeys)
+    {
+         GHAssertEquals([[previewSetting valueForKey:key] intValue], [[defaultValues objectForKey:key] intValue], [NSString stringWithFormat:@"default value for print setting: key = %@", key]);
     }
 }
 
