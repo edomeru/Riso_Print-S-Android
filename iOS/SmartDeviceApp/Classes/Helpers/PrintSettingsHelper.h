@@ -32,6 +32,11 @@
 + (PreviewSetting *)defaultPreviewSetting;
 
 /**
+ * Copies the default print setting values from the printsettings.xml to the preview setting object
+ * @param printSetting - pointer to the destination print setting object
+ */+ (void)copyDefaultPreviewSetting:(PreviewSetting **)previewSetting;
+
+/**
  * Copies the default print setting values from the printsettings.xml to the Print setting object
  * @param printSetting - pointer to the destination print setting object
  */
