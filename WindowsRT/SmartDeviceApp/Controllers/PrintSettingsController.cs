@@ -259,6 +259,20 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
+        /// Register for change in screen mode
+        /// <param name="screenName">name of active screen</param>
+        public void RegisterScreenModeChange(String screenName)
+        { 
+             if (!string.IsNullOrEmpty(screenName))
+            {
+                _activeScreen = screenName;
+
+                // Show/hide other controls
+                _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
+            }
+        }
+
+        /// <summary>
         /// Unregister for print setting updates
         /// </summary>
         /// <param name="screenName">name of active screen</param>
