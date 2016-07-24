@@ -53,6 +53,8 @@ namespace SmartDeviceApp.Controllers
         private Printer _printer;
         private PrintSettings _printSettings;
         private PrintSettingList _printSettingList;
+        //Flag that ensures that there is only one print settings value changed event handler at a time
+        private bool _hasPrintSettingValueChangedHandler;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -67,7 +69,7 @@ namespace SmartDeviceApp.Controllers
 
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
-
+            _hasPrintSettingValueChangedHandler = false;
             // Set PrinterList in PrintSettingsViewModel only once (this will be the original list)
             new ViewModelLocator().PrintSettingsViewModel.PrinterList = PrinterController.Instance.PrinterList;
         }
@@ -253,8 +255,13 @@ namespace SmartDeviceApp.Controllers
                         _printSettingsViewModel.PrintSettingsList = _printSettingList;
                     }
                 }
-
-                PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+                
+                //do not add new handler if already has handler
+                if (!_hasPrintSettingValueChangedHandler)
+                {
+                    PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+                    _hasPrintSettingValueChangedHandler = true;
+                }
             }
         }
 
@@ -280,7 +287,12 @@ namespace SmartDeviceApp.Controllers
         {
             if (string.Equals(_activeScreen, screenName))
             {
-                PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+                //remove handler if there is a handler
+                if (_hasPrintSettingValueChangedHandler)
+                { 
+                    PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+                    _hasPrintSettingValueChangedHandler = false;
+                }
                 _activeScreen = null;
             }
         }
