@@ -93,7 +93,7 @@ static SNMPManager* sharedSNMPManager = nil;
 - (void)searchForPrinter:(NSString*)printerIP;
 {
 #if !DEBUG_SNMP_USE_FAKE_PRINTERS
-    const char *community_name = [[AppSettingsHelper getSNMPCommunityName] cStringUsingEncoding:[NSString defaultCStringEncoding]];
+    const char *community_name = [[AppSettingsHelper getSNMPCommunityName] cStringUsingEncoding:NSUTF8StringEncoding];
     snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback, community_name);
     snmp_manual_discovery(snmpContext, [printerIP UTF8String]);
 #else
@@ -128,7 +128,7 @@ static SNMPManager* sharedSNMPManager = nil;
 - (void)searchForAvailablePrinters
 {
 #if !DEBUG_SNMP_USE_FAKE_PRINTERS
-    const char *community_name = [[AppSettingsHelper getSNMPCommunityName] cStringUsingEncoding:[NSString defaultCStringEncoding]];
+    const char *community_name = [[AppSettingsHelper getSNMPCommunityName] cStringUsingEncoding:NSUTF8StringEncoding];
     snmpContext = snmp_context_new(&snmpDiscoveryEndedCallback, &snmpPrinterAddedCallback, community_name);
     snmp_device_discovery(snmpContext);
 #else

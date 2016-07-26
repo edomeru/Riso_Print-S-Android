@@ -160,7 +160,7 @@
 {
     NSString *numbers = @"0123456789";
     NSString *alphabetsLowerCase = @"abcdefghijklmnopqrstuvwxyz";
-    NSString *symbols = @",./:;@[\\]^_";
+    NSString *symbols = @",./:;@[\\]¥^_";
     NSString *validCharacterString = [NSString stringWithFormat: @"%@%@%@%@", numbers, alphabetsLowerCase, [alphabetsLowerCase uppercaseString], symbols];
     
     NSCharacterSet *validCharactersSet = [NSCharacterSet characterSetWithCharactersInString:validCharacterString];
