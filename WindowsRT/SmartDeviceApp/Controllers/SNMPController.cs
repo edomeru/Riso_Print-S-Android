@@ -162,7 +162,7 @@ namespace SmartDeviceApp.Controllers
                     printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") || (capabilitesList.ElementAt(2) == "true") || (capabilitesList.ElementAt(3) == "true");
                     printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true");
                     printer.EnabledPunchThree = (capabilitesList.ElementAt(3) == "true");
-                    printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true");
+                    printer.EnabledTrayFacedown = true;
                     //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
                     printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true");
                     printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true");

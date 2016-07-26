@@ -710,16 +710,6 @@ namespace SmartDeviceApp.Controllers
                 GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
             if (outputTrayPrintSetting != null)
             {
-                // prn_enabled_tray_facedown
-                if (printer.EnabledTrayFacedown)
-                {
-                     AddPrintSettingOption(outputTrayPrintSetting, PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY, (int)OutputTray.FaceDown);
-                }
-                else
-                {
-                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
-                }
-
                 // prn_enabled_tray_top
                 if (printer.EnabledTrayTop)
                 {
