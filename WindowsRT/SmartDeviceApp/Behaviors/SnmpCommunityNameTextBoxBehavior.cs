@@ -18,7 +18,7 @@ namespace SmartDeviceApp.Common.Utilities
 {
     public class SnmpCommunityNameTextBoxBehavior : DependencyObject, IBehavior
     {
-        private const string REGEX_SNMP_COMMUNITY_NAME_CHARS = "^[a-zA-Z0-9,./:;@\\[\\\\\\]\\^_]*$";
+        private const string REGEX_SNMP_COMMUNITY_NAME_CHARS = "^[a-zA-Z0-9,./:;@¥\\[\\\\\\]\\^_]*$";
 
         private string _lastValidText;        
 
