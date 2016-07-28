@@ -199,6 +199,15 @@
  */
 - (IBAction)tapAction:(id)sender;
 
+/**
+ * Adjust the position of the preview with respect to the center
+ * of the preview screen based on the maximum pan positions.
+ *
+ * @param position The CGpoint position to adjust
+ * @return the adjusted position
+ */
+- (CGPoint)adjustPreviewPosition:(CGPoint)position;
+
 @end
 
 @implementation PreviewView
@@ -300,6 +309,11 @@
     
     _pageContentView = pageContentView;
     [self setupPageContentView];
+}
+
+- (void)adjustPannedPosition
+{
+    self.position = [self adjustPreviewPosition:self.position];
 }
 
 #pragma mark - Helper Methods
@@ -541,9 +555,8 @@
     
     CGPoint translationInView = [panner translationInView:self];
     CGPoint position = CGPointMake(self.position.x + translationInView.x, self.position.y + translationInView.y);
-    self.xAlignConstraint.constant = position.x;
-    self.yAlignConstraint.constant = position.y;
-    [self layoutIfNeeded];
+    
+    position = [self adjustPreviewPosition:position];
     
     if (panner.state == UIGestureRecognizerStateEnded)
     {
@@ -571,6 +584,89 @@
         }];
     }
 }
-  
 
+- (CGPoint)adjustPreviewPosition:(CGPoint)position
+{
+    if (self.scale >1.0f)
+    {
+        CGSize containerSize = self.frame.size;
+        CGSize contentSize = self.contentView.frame.size;
+    
+        //do not allow pan if the content size is less than the container size
+        if (contentSize.width <  containerSize.width)
+        {
+            position.x = 0;
+        }
+        
+        if (contentSize.height <  containerSize.height)
+        {
+            position.x = 0;
+        }
+        
+        //allow position only up to the point where the invisible parts of the content is visible in the container
+        // maximum movement is only up to the difference of the the container size and the content size
+        CGFloat maxX = fabs(contentSize.width - containerSize.width) / 2.0f;
+        CGFloat maxY = fabs(contentSize.height - containerSize.height) / 2.0f;
+        
+        if(fabs(position.x) > maxX)
+        {
+            if(position.x < 0.0f)
+            {
+                position.x = maxX * -1.0f;
+            }
+            else
+            {
+                position.x = maxX;
+            }
+        }
+        
+        if(fabs(position.y) > maxY)
+        {
+            if(position.y < 0.0f)
+            {
+                position.y = maxY * -1.0f;
+            }
+            else
+            {
+                position.y = maxY;
+            }
+        }
+        
+        //if invisible page to the left or top is shown in the content, do not allow the non-invisible
+        //part to be panned out of the screen by allowing panning to the right or up to the point where the content view is centered in the container
+        if (self.isLeftBookendShown)
+        {
+            if (contentSize.width > contentSize.height && position.x > 0.0f)
+            {
+                position.x = 0.0f;
+            }
+            
+            if (contentSize.width < contentSize.height && position.y > 0.0f)
+            {
+                position.y = 0.0f;
+            }
+        }
+        
+        //if invisible page to the right  or bottom is shown in the content, do not allow the non-invisible
+        //part to be panned out of the screen by allowing panning to the left or down to the point where the content view is centered in the container
+        if (self.isRightBookendShown)
+        {
+            if (contentSize.width > contentSize.height && position.x < 0.0f)
+            {
+                position.x = 0.0f;
+            }
+            
+            if (contentSize.width < contentSize.height && position.y < 0.0f)
+            {
+                position.y = 0.0f;
+            }
+        }
+        
+        self.xAlignConstraint.constant = position.x;
+        self.yAlignConstraint.constant = position.y;
+        [self layoutIfNeeded];
+    }
+    
+    return position;
+}
 @end
