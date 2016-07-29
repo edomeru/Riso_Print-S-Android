@@ -23,6 +23,7 @@ using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Converters;
+using System.Threading.Tasks;
 
 namespace SmartDeviceApp.Controls
 {
@@ -80,7 +81,7 @@ namespace SmartDeviceApp.Controls
            DependencyProperty.Register("Button3Visibility", typeof(Visibility), typeof(ViewControl), null);
 
         private SimpleOrientationSensor _orientationSensor;
-        
+
         /// <summary>
         /// Constructor of ViewControl.
         /// </summary>
@@ -330,7 +331,7 @@ namespace SmartDeviceApp.Controls
                 maxTextWidth -= (int)defaultMargin;
             }
             // Button1 is visible
-            if (Button1Visibility == Visibility.Visible)
+            if (Button1Image != null && Button1Visibility == Visibility.Visible)
             {
                 Button1Width = (int)button1.ActualWidth;
                 if (Button1Width == 0) Button1Width = ImageConstant.GetIconImageWidth(this, true);
@@ -338,7 +339,7 @@ namespace SmartDeviceApp.Controls
                 maxTextWidth -= (int)defaultMargin;
             }
             // Button2 is visible
-            if (Button2Visibility == Visibility.Visible)
+            if (Button2Image != null && Button2Visibility == Visibility.Visible)
             {
                 var imageWidth = (int)button2.ActualWidth;
                 if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(this, true);
@@ -431,8 +432,8 @@ namespace SmartDeviceApp.Controls
         /// </summary>
         private void WindowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
         {
-            // Workaround to reset the view mode to force recalculation 
-            // of the view root width in ResizedViewWidthConverter
+            var newBound = new Windows.Foundation.Rect(0, 0, e.Size.Width, e.Size.Height);
+            ViewModel.ScreenBound = newBound;  
             var prevViewMode = ViewModel.ViewMode;
             ViewModel.ViewMode = ViewMode.Unknown;
             ViewModel.ViewMode = prevViewMode;
@@ -440,8 +441,9 @@ namespace SmartDeviceApp.Controls
 
         async private void OrientationChanged(object sender, SimpleOrientationSensorOrientationChangedEventArgs e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
+                await Task.Delay(350);
                 DisplayOrientation(e.Orientation);
             });
         }

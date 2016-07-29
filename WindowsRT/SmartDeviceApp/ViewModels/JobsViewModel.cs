@@ -19,6 +19,7 @@ using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Converters;
 using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Constants;
+using Windows.UI.Core;
 
 namespace SmartDeviceApp.ViewModels
 {
@@ -146,8 +147,7 @@ namespace SmartDeviceApp.ViewModels
                 {
                     _isPrintJobsListEmpty = value;
                     RaisePropertyChanged("IsPrintJobsListEmpty");
-                    if (_isPrintJobsListEmpty) IsProgressRingActive = false;
-                    else IsProgressRingActive = true;
+                    IsProgressRingActive = !_isPrintJobsListEmpty;
                 }
             }
         }
@@ -253,13 +253,15 @@ namespace SmartDeviceApp.ViewModels
         /// Gets/sets the width of the group text
         /// </summary>
         public double GroupTextWidth { get; set; }
-
+        private object ringLock = new Object();
         /// <summary>
         /// True when loading indicator is active, false otherwise
         /// </summary>
         public bool IsProgressRingActive
         {
-            get { return _isProgressRingActive; }
+            get {
+                return _isProgressRingActive;
+            }
             set
             {
                 if (_isProgressRingActive != value)
@@ -326,6 +328,10 @@ namespace SmartDeviceApp.ViewModels
 
         private void SetViewOrientation(ViewOrientation viewOrientation)
         {
+            if (Window.Current == null)
+                return;
+             Window.Current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
             if (!IsPrintJobsListEmpty) IsProgressRingActive = true;
             if (viewOrientation == ViewOrientation.Landscape)
             {
@@ -334,7 +340,8 @@ namespace SmartDeviceApp.ViewModels
             else if (viewOrientation == ViewOrientation.Portrait)
             {
                 MaxColumns = MAX_COLUMNS_PORTRAIT;
-            }            
+            }
+            });
         }
 
         private async void DeleteAllJobsExecute(int printerId)
