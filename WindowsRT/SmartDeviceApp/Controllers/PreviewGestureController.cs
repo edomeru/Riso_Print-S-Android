@@ -94,13 +94,7 @@ namespace SmartDeviceApp.Controllers
         private bool _manipulationCancel;
 
         private bool _deltaCalled;
-        public bool IsScaled
-        {
-            get
-            {
-                return _isScaled;
-            }
-        }
+
         /// <summary>
         /// PreviewGestureController class constructor
         /// </summary>
