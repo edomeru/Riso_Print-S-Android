@@ -112,9 +112,6 @@ namespace SmartDeviceApp
         /// <param name="args">Details about the launch request and process.</param>
         protected override async void OnFileActivated(FileActivatedEventArgs e)
         {
-            // Disable open document button in Home Screen
-            (new ViewModelLocator().HomeViewModel).EnabledOpenDocumentCommand = false;
-
             Frame rootFrame = Window.Current.Content as Frame;
             var frameIsNull = rootFrame == null;
             // Do not repeat app initialization when the Window already has content,
@@ -149,18 +146,7 @@ namespace SmartDeviceApp
             Window.Current.Activate();
 
             SettingController.ShowLicenseAgreement();
-
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-            Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-            {
-                if (frameIsNull)
-                {
-                    await Task.Delay(400);
-                }
-                await MainController.FileActivationHandler(e.Files[0] as Windows.Storage.StorageFile);      
-            });
-        
-             
+            MainController.OpenFileHandler(e.Files[0] as Windows.Storage.StorageFile);      
         }
 
         /// <summary>
