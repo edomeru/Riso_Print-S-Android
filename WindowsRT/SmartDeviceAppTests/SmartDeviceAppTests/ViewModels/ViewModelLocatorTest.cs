@@ -61,6 +61,12 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
+        public void Test_HelpViewModel()
+        {
+            Assert.IsNotNull(viewModelLocator.HelpViewModel);
+        }
+
+        [TestMethod]
         public void Test_LegalViewModel()
         {
             Assert.IsNotNull(viewModelLocator.LegalViewModel);

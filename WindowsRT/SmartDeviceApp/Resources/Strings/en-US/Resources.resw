@@ -478,6 +478,9 @@
   <data name="IDS_LBL_ON" xml:space="preserve">
     <value>On</value>
   </data>
+  <data name="IDS_LBL_HELP" xml:space="preserve">
+    <value>Help</value>
+  </data>
   <data name="IDS_LBL_LEGAL" xml:space="preserve">
     <value>Legal</value>
   </data>

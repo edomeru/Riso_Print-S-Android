@@ -16,6 +16,7 @@ namespace SmartDeviceApp.Common.Enum
         Printers,
         Jobs,
         Settings,
+        Help,
         Legal,
         License
     }

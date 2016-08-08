@@ -100,6 +100,17 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
+        /// Gets the HelpViewModel instance
+        /// </summary>
+        public HelpViewModel HelpViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<HelpViewModel>();
+            }
+        }
+
+        /// <summary>
         /// Gets the LegalViewModel instance
         /// </summary>
         public LegalViewModel LegalViewModel
@@ -219,6 +230,7 @@ namespace SmartDeviceApp.ViewModels
             SimpleIoc.Default.Register<PrintersViewModel>();
             SimpleIoc.Default.Register<JobsViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
+            SimpleIoc.Default.Register<HelpViewModel>();
             SimpleIoc.Default.Register<LegalViewModel>();
             SimpleIoc.Default.Register<LicenseViewModel>();
             SimpleIoc.Default.Register<PrintSettingsPaneViewModel>();

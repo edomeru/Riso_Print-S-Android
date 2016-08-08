@@ -187,6 +187,7 @@
     <Compile Include="ViewModels\ViewControlViewModelTest.cs" />
     <Compile Include="ViewModels\SettingsViewModelTest.cs" />
     <Compile Include="ViewModels\LegalViewModelTest.cs" />
+    <Compile Include="ViewModels\HelpViewModelTest.cs" />
     <Compile Include="ViewModels\HomeViewModelTest.cs" />
     <Compile Include="ViewModels\PrintSettingOptionsViewModelTest.cs" />
     <Compile Include="ViewModels\PrintSettingsViewModelTest.cs" />
