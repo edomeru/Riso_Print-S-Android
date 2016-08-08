@@ -336,6 +336,7 @@ namespace SmartDeviceApp.ViewModels
         private ICommand _goToPrintersPage;
         private ICommand _goToJobsPage;
         private ICommand _goToSettingsPage;
+        private ICommand _goToHelpPage;
         private ICommand _goToLegalPage;
         private ICommand _goToLicensePage;
 
@@ -436,6 +437,24 @@ namespace SmartDeviceApp.ViewModels
         }
 
         /// <summary>
+        /// Command to navigate to Help Screen
+        /// </summary>
+        public ICommand GoToHelpPage
+        {
+            get
+            {
+                if (_goToHelpPage == null)
+                {
+                    _goToHelpPage = new RelayCommand(
+                        () => GoToHelpPageExecute(),
+                        () => CanGoToHelpPage()
+                    );
+                }
+                return _goToHelpPage;
+            }
+        }
+
+        /// <summary>
         /// Command to navigate to Legal Screen
         /// </summary>
         public ICommand GoToLegalPage
@@ -478,6 +497,7 @@ namespace SmartDeviceApp.ViewModels
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_PRINTERS", GoToPrintersPage, false));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_PRINT_JOB_HISTORY", GoToJobsPage, false));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_SETTINGS", GoToSettingsPage, false));
+            MainMenuItems.Add(new MainMenuItem("IDS_LBL_HELP", GoToHelpPage, false));
             MainMenuItems.Add(new MainMenuItem("IDS_LBL_LEGAL", GoToLegalPage, false));
         }
 
@@ -513,6 +533,15 @@ namespace SmartDeviceApp.ViewModels
         private bool CanGoToSettingsPage()
         {
             if (ScreenMode == ScreenMode.Settings)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CanGoToHelpPage()
+        {
+            if (ScreenMode == ScreenMode.Help)
             {
                 return false;
             }
@@ -577,12 +606,20 @@ namespace SmartDeviceApp.ViewModels
             MainMenuItems[3].IsChecked = true;
         }
 
+        private void GoToHelpPageExecute()
+        {
+            _navigationService.Navigate(typeof(HelpPage));
+            ScreenMode = ScreenMode.Help;
+            ViewMode = ViewMode.FullScreen;
+            MainMenuItems[4].IsChecked = true;
+        }
+
         private void GoToLegalPageExecute()
         {
             _navigationService.Navigate(typeof(LegalPage));
             ScreenMode = ScreenMode.Legal;
             ViewMode = ViewMode.FullScreen;
-            MainMenuItems[4].IsChecked = true;
+            MainMenuItems[5].IsChecked = true;
         }
 
         private void GoToLicensePageExecute()

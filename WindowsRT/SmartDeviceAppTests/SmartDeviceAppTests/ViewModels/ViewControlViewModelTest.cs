@@ -223,6 +223,13 @@ namespace SmartDeviceAppTests.ViewModels
         }
 
         [TestMethod]
+        public void Test_GoToHelpPage()
+        {
+            //viewControlViewModel.GoToHelpPage.Execute(null);
+            Assert.IsNotNull(viewControlViewModel.GoToJobsPage);
+        }
+
+        [TestMethod]
         public void Test_GoToLegalPage()
         {
             //GoToLegalPage.Execute(null);
