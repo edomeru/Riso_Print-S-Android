@@ -140,6 +140,7 @@
     {
         NSString *stringToSave = (textField.text.length > SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN) ? [textField.text substringToIndex:SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN] : textField.text;
         [AppSettingsHelper saveSNMPCommunityName:stringToSave];
+        textField.text = stringToSave;
     }
     
     return YES;
@@ -159,7 +160,7 @@
 {
     NSString *numbers = @"0123456789";
     NSString *alphabetsLowerCase = @"abcdefghijklmnopqrstuvwxyz";
-    NSString *symbols = @",./:;@[\\]^_";
+    NSString *symbols = @",./:;@[\\]¥^_";
     NSString *validCharacterString = [NSString stringWithFormat: @"%@%@%@%@", numbers, alphabetsLowerCase, [alphabetsLowerCase uppercaseString], symbols];
     
     NSCharacterSet *validCharactersSet = [NSCharacterSet characterSetWithCharactersInString:validCharacterString];

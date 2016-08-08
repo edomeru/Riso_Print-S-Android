@@ -97,6 +97,24 @@
                 <Image x:Name="button2Image" Source="{Binding Button2Image, ElementName=viewControl}" Stretch="None"/>
             </Grid>
         </ControlTemplate>
+        <ControlTemplate x:Key="TEMPLATE_Button3" TargetType="ToggleButton">
+            <Grid>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal"/>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Source" Storyboard.TargetName="button3Image">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding Button3PressedImage, ElementName=viewControl}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Disabled"/>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <Image x:Name="button3Image" Source="{Binding Button3Image, ElementName=viewControl}" Stretch="None"/>
+            </Grid>
+        </ControlTemplate>
     </UserControl.Resources>
 
     <Grid Background="{StaticResource BRUSH_Gray1}">
@@ -290,6 +308,12 @@
                             Visibility="{Binding Button1Visibility, ElementName=viewControl}"
                             Style="{StaticResource STYLE_AlignRight}"
                             Tapped="OnButton1Tapped"/>
+                    <ToggleButton x:Name="button3"
+                            Command="{Binding TogglePane3}"
+                            Template="{StaticResource TEMPLATE_Button3}"
+                            Visibility="{Binding Button3Visibility, ElementName=viewControl}"
+                            Style="{StaticResource STYLE_AlignRight}"
+                            Tapped="OnButton3Tapped"/>
                 </StackPanel>
             </Grid>
             <Grid x:Name="contentGrid" Grid.Row="1"

@@ -130,6 +130,15 @@ namespace SmartDeviceApp.Common.Utilities
                 case (int)PaperSize.Statement:
                     targetSize = PrintSettingConstant.PAPER_SIZE_STATEMENT;
                     break;
+                case (int)PaperSize.Legal13:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_LEGAL13;
+                    break;
+                case (int)PaperSize.EightK:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_8K;
+                    break;
+                case (int)PaperSize.SixteenK:
+                    targetSize = PrintSettingConstant.PAPER_SIZE_16K;
+                    break;
                 case (int)PaperSize.A4:
                 default:
                     targetSize = PrintSettingConstant.PAPER_SIZE_A4;

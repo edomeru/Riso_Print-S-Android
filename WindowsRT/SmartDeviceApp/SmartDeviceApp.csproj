@@ -15,7 +15,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>SmartDeviceApp_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>25FE49D5978C4079E724693A2BD02BB1D69F3A30</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>A06CB23BBEA01DAA93F93F056CD018A3F3AF37D8</PackageCertificateThumbprint>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
@@ -114,6 +114,7 @@
     <Compile Include="Behaviors\AlphaNumericTextBoxBehavior.cs" />
     <Compile Include="Behaviors\NumericPasswordBehavior.cs" />
     <Compile Include="Behaviors\NumericTextBoxBehavior.cs" />
+    <Compile Include="Behaviors\SnmpCommunityNameTextBoxBehavior.cs" />
     <Compile Include="Common\Constants\PrintSettingConstant.cs" />
     <Compile Include="Common\Enum\MessageType.cs" />
     <Compile Include="Common\Enum\PrintJobResult.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Common\Enum\PrintSettingsPaneMode.cs" />
     <Compile Include="Common\Enum\PrintersRightPaneMode.cs" />
     <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Common\Utilities\PrinterModelUtility.cs" />
     <Compile Include="Common\Utilities\DefaultsUtility.cs" />
     <Compile Include="Common\Constants\ImageConstant.cs" />
     <Compile Include="Common\Utilities\InputValidationUtility.cs" />
@@ -281,6 +283,7 @@
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\LicenseViewModel.cs" />
     <Compile Include="ViewModels\SearchPrinterViewModel.cs" />
+    <Compile Include="ViewModels\SearchSettingsViewModel.cs" />
     <Compile Include="ViewModels\SelectPrinterViewModel.cs" />
     <Compile Include="ViewModels\ViewControlViewModel.cs" />
     <Compile Include="ViewModels\JobsViewModel.cs" />
@@ -339,6 +342,9 @@
     <Compile Include="Views\SearchPrinterPane.xaml.cs">
       <DependentUpon>SearchPrinterPane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SearchSettingsPane.xaml.cs">
+      <DependentUpon>SearchSettingsPane.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SelectPrinterBox.xaml.cs">
       <DependentUpon>SelectPrinterBox.xaml</DependentUpon>
     </Compile>
@@ -392,7 +398,6 @@
     </None>
     <Content Include="Assets\en-US\help.html" />
     <Content Include="Assets\en-US\legal.html" />
-    <Content Include="Assets\fr-FR\license.html" />
     <Content Include="Assets\fr-FR\riso_logo.png" />
     <Content Include="Assets\fr-FR\title.png" />
     <Content Include="Assets\fr-FR\W000.png" />
@@ -421,7 +426,6 @@
     <Content Include="Assets\ja-JP\I010.png" />
     <Content Include="Assets\ja-JP\I011.png" />
     <Content Include="Assets\ja-JP\legal.html" />
-    <Content Include="Assets\ja-JP\license.html" />
     <Content Include="Assets\ja-JP\riso_logo.png" />
     <Content Include="Assets\ja-JP\title.png" />
     <Content Include="Assets\ja-JP\W000.png" />
@@ -544,6 +548,12 @@
     <Content Include="Resources\Images\img_btn_search_printer_pressed.scale-100.png" />
     <Content Include="Resources\Images\img_btn_search_printer_pressed.scale-140.png" />
     <Content Include="Resources\Images\img_btn_search_printer_pressed.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_normal.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_normal.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_normal.scale-180.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_pressed.scale-100.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_pressed.scale-140.png" />
+    <Content Include="Resources\Images\img_btn_search_settings_pressed.scale-180.png" />
     <Content Include="Resources\Images\img_btn_submenu.scale-100.png" />
     <Content Include="Resources\Images\img_btn_submenu.scale-140.png" />
     <Content Include="Resources\Images\img_btn_submenu.scale-180.png" />
@@ -710,6 +720,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SearchPrinterPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchSettingsPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

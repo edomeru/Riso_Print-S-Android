@@ -21,5 +21,7 @@ namespace DirectPrint
     public:
 		DirectPrintSettingsWrapper();
 		static String^ create_pjl_wrapper(String^ settings);
+		static String^ create_pjl_fw_wrapper(String^ settings, String^ printerName, String ^appVersion);
+		static String^ create_pjl_gd_wrapper(String^ settings, String^ printerName, String ^appVersion);
     };
 }

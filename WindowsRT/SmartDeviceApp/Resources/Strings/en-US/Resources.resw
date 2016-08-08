@@ -229,6 +229,9 @@
   <data name="IDS_LBL_COLORMODE_BLACK" xml:space="preserve">
     <value>Black</value>
   </data>
+  <data name="IDS_LBL_COLORMODE_2COLOR" xml:space="preserve">
+    <value>Dual Color</value>
+  </data>
   <data name="IDS_LBL_NUMBER_OF_COPIES" xml:space="preserve">
     <value>Copies</value>
   </data>
@@ -275,13 +278,25 @@
     <value>Tabloid</value>
   </data>
   <data name="IDS_LBL_PAPERSIZE_LEGAL" xml:space="preserve">
-    <value>Legal</value>
+    <value>Legal 8.5x14</value>
   </data>
   <data name="IDS_LBL_PAPERSIZE_LETTER" xml:space="preserve">
     <value>Letter</value>
   </data>
   <data name="IDS_LBL_PAPERSIZE_STATEMENT" xml:space="preserve">
     <value>Statement</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_LEGAL13" xml:space="preserve">
+    <value>Legal 8.5x13</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_8K" xml:space="preserve">
+    <value>8K</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_16K" xml:space="preserve">
+    <value>16K</value>
+  </data>
+  <data name="IDS_LBL_PAPERSIZE_LEGAL14" xml:space="preserve">
+    <value>Legal 8.5x14</value>
   </data>
   <data name="IDS_LBL_SCALETOFIT" xml:space="preserve">
     <value>Scale to Fit</value>
@@ -309,6 +324,9 @@
   </data>
   <data name="IDS_LBL_PAPERTYPE_LWPAPER" xml:space="preserve">
     <value>LW Paper</value>
+  </data>
+  <data name="IDS_LBL_PAPERTYPE_ROUGHPAPER" xml:space="preserve">
+    <value>Rough Paper</value>
   </data>
   <data name="IDS_LBL_INPUTTRAY" xml:space="preserve">
     <value>Input Tray</value>
@@ -460,9 +478,6 @@
   <data name="IDS_LBL_ON" xml:space="preserve">
     <value>On</value>
   </data>
-  <data name="IDS_LBL_HELP" xml:space="preserve">
-    <value>Help</value>
-  </data>
   <data name="IDS_LBL_LEGAL" xml:space="preserve">
     <value>Legal</value>
   </data>
@@ -564,5 +579,17 @@
   </data>
   <data name="IDS_ERR_MSG_NOT_ENOUGH_SPACE" xml:space="preserve">
     <value></value>
+  </data>
+  <data name="IDS_LBL_SEARCH_PRINTERS_SETTINGS" xml:space="preserve">
+    <value>Search Settings</value>
+  </data>
+  <data name="IDS_LBL_SNMP_COMMUNITY_NAME" xml:space="preserve">
+    <value>SNMP Community Name</value>
+  </data>
+  <data name="IDS_LBL_VALID_COMMUNITY_NAME" xml:space="preserve">
+	  <value>Valid characters are:\na-zA-Z0-9,./:;@[\¥]^_</value>
+  </data>
+  <data name="IDS_ERR_MSG_INVALID_COMMUNITY_NAME" xml:space="preserve">
+	  <value>Please enter a SNMP community name with valid characters</value>
   </data>
 </root>

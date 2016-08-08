@@ -16,10 +16,17 @@ namespace SmartDeviceApp.Selectors
         /// Gets and sets the data template for Add Printer Pane
         /// </summary>
         public DataTemplate AddPrinterPaneTemplate { get; set; }
+
         /// <summary>
         /// Gets and sets the data template for Search Printer Pane
         /// </summary>
         public DataTemplate SearchPrinterPaneTemplate { get; set; }
+
+        /// <summary>
+        /// Gets and sets the data template for Search Settings Pane
+        /// </summary>
+        public DataTemplate SearchSettingsPaneTemplate { get; set; }
+
         /// <summary>
         /// Gets and sets the data template for Default Print Settings Pane
         /// </summary>
@@ -41,6 +48,9 @@ namespace SmartDeviceApp.Selectors
                             break;
                         case PrintersRightPaneMode.SearchPrinter:
                             template = SearchPrinterPaneTemplate;
+                            break;
+                        case PrintersRightPaneMode.SearchSettings:
+                            template = SearchSettingsPaneTemplate;
                             break;
                         case PrintersRightPaneMode.PrintSettings:
                             template = PrintSettingsPaneTemplate;

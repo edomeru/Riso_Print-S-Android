@@ -11,11 +11,14 @@
 //
 
 using SmartDeviceApp.Common.Constants;
+using SmartDeviceApp.Common.Utilities;
+using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Models;
 using System;
 using System.Text;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.ApplicationModel;
 
 namespace SmartDeviceApp.Controllers
 {
@@ -49,22 +52,30 @@ namespace SmartDeviceApp.Controllers
         /// <param name="name">print job name</param>
         /// <param name="file">PDF file</param>
         /// <param name="ipAddress">IP address</param>
+        /// <param name="printerName">printer name</param>
         /// <param name="printSettings">print settings</param>
         /// <param name="progressEvent">progress event callback</param>
         /// <param name="resultEvent">print job event callback</param>
-        public DirectPrintController(string name, StorageFile file, string ipAddress,
-            PrintSettings printSettings, UpdatePrintJobProgress progressEvent,
+        public DirectPrintController(string name, StorageFile file, string ipAddress, 
+            string printerName, PrintSettings printSettings, UpdatePrintJobProgress progressEvent,
             SetPrintJobResult resultEvent)
         {
             UpdatePrintJobProgressEventHandler = progressEvent;
             SetPrintJobResultEventHandler = resultEvent;
-
+            
             _printJob = new DirectPrint.directprint_job();
 
+            _printJob.app_version = string.Format("{0}.{1}.{2}.{3}",
+                    Package.Current.Id.Version.Major,
+                    Package.Current.Id.Version.Minor,
+                    Package.Current.Id.Version.Build,
+                    Package.Current.Id.Version.Revision);
             _printJob.job_name = name;
+            _printJob.printer_name = printerName;
+            _printJob.series_type = PrinterModelUtility.GetSeriesTypeFromPrinterName(printerName);
             //_printJob.filename = name; // TODO: (confirm) To be deleted
             _printJob.file = file;
-            _printJob.print_settings = CreateStringFromPrintSettings(printSettings);
+            _printJob.print_settings = CreateStringFromPrintSettings(printSettings, printerName);
             _printJob.ip_address = ipAddress;
             _printJob.callback = new DirectPrint.directprint_callback(ReceiveResult);
             _printJob.progress_callback = new DirectPrint.progress_callback(UpdateProgress);
@@ -133,8 +144,9 @@ namespace SmartDeviceApp.Controllers
         /// Converts print settings into a string understood by DirectPrintSettings class
         /// </summary>
         /// <param name="printSettings">print settings</param>
+        /// <param name="printerName">printer name</param>
         /// <returns>converted print settings string</returns>
-        private string CreateStringFromPrintSettings(PrintSettings printSettings)
+        private string CreateStringFromPrintSettings(PrintSettings printSettings, String printerName)
         {
             StringBuilder builder = new StringBuilder();
 
@@ -220,9 +232,10 @@ namespace SmartDeviceApp.Controllers
             // Sort
             if (printSettings.Sort >= 0)
             {
-                builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
-                                             PrintSettingConstant.NAME_VALUE_SORT,
-                                             printSettings.Sort));
+               builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
+                                            PrintSettingConstant.NAME_VALUE_SORT,
+                                            printSettings.Sort));
+         
             }
 
             // Booklet
@@ -267,9 +280,15 @@ namespace SmartDeviceApp.Controllers
             // Punch
             if (printSettings.Punch >= 0)
             {
-                builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
-                                             PrintSettingConstant.NAME_VALUE_PUNCH,
-                                             printSettings.Punch));
+                //adjust value if index is for 4 holes, since for IS 3 and 4 holes have same PJL; for other models, Direct Print module will adjust value in PJL based on printer name
+                int value = printSettings.Punch;
+                if (value > (int)Punch.ThreeHoles)
+                {
+                    value--;
+                }
+               builder.Append(string.Format(FORMAT_PRINT_SETTING_KVO,
+                                       PrintSettingConstant.NAME_VALUE_PUNCH,
+                                       value));
             }
 
             // Output Tray

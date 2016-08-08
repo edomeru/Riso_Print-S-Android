@@ -12,6 +12,7 @@ namespace SmartDeviceApp.Common.Enum
     public enum VisibleRightPane
     {
         Pane1,
-        Pane2
+        Pane2,
+        Pane3
     }
 }

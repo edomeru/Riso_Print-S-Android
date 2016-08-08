@@ -18,14 +18,14 @@ namespace SmartDeviceApp.Common.Constants
     {
 
         // printsettings.xml Keys
-        public const string KEY_GROUP   = "group";
-        public const string KEY_NAME    = "name";
-        public const string KEY_TEXT    = "text";
-        public const string KEY_SETTING = "setting";
-        public const string KEY_ICON    = "icon";
-        public const string KEY_TYPE    = "type";
-        public const string KEY_DEFAULT = "default";
-        public const string KEY_OPTION  = "option";
+        public const string KEY_GROUP           = "group";
+        public const string KEY_NAME            = "name";
+        public const string KEY_TEXT            = "text";
+        public const string KEY_SETTING         = "setting";
+        public const string KEY_ICON            = "icon";
+        public const string KEY_TYPE            = "type";
+        public const string KEY_DEFAULT         = "default";
+        public const string KEY_OPTION          = "option";
 
         // printsettings.xml Name values
         public const string NAME_VALUE_COLOR_MODE        = "colorMode";
@@ -66,6 +66,9 @@ namespace SmartDeviceApp.Common.Constants
         public static Size PAPER_SIZE_LEGAL      = new Size(216.0, 356.0);
         public static Size PAPER_SIZE_LETTER     = new Size(216.0, 280.0);
         public static Size PAPER_SIZE_STATEMENT  = new Size(140.0, 216.0);
+        public static Size PAPER_SIZE_LEGAL13    = new Size(216.0, 333.0);
+        public static Size PAPER_SIZE_8K         = new Size(270.0, 390.0);
+        public static Size PAPER_SIZE_16K        = new Size(195.0, 270.0);
 
         // Margin; in inches
         public const double MARGIN_IMPOSITION_EDGE          = 0;

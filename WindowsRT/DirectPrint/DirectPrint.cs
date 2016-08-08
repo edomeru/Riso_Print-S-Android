@@ -17,14 +17,24 @@ namespace DirectPrint
     public delegate void directprint_callback(int directprint_result);
     public delegate void progress_callback(float progress);
 
+    public enum SeriesType
+    {
+        IS = 0,
+        FW,
+        GD
+    };
+
     public class directprint_job
     {
+        public string app_version;
         public string job_name;
         //public string filename; // TODO: to be deleted. replaced by file
+        public string printer_name;
         public StorageFile file;
         public string username;
         public string print_settings;
         public string ip_address;
+        public int series_type;
         public directprint_callback callback;
         public progress_callback progress_callback;
 
@@ -53,6 +63,7 @@ namespace DirectPrint
         private const int BUFFER_SIZE = 4096;
 
         private const string QUEUE_NAME = "normal";
+        private const string QUEUE_NAME_FWGD ="lp";
         private const string HOST_NAME = "RISO PRINT-S";
 
         private const string PJL_ESCAPE = "\x1B%-12345X";
@@ -191,8 +202,23 @@ namespace DirectPrint
 
             // Prepare PJL header
             string pjl_header = "";
+            string queue_name = "";
             pjl_header += PJL_ESCAPE;
-            pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
+            if (print_job.series_type == (int) SeriesType.IS)
+            {
+                pjl_header += DirectPrintSettingsWrapper.create_pjl_wrapper(print_job.print_settings);
+                queue_name = QUEUE_NAME;
+            }
+            else if (print_job.series_type == (int)SeriesType.FW)
+            {
+                pjl_header += DirectPrintSettingsWrapper.create_pjl_fw_wrapper(print_job.print_settings, print_job.printer_name, print_job.app_version);
+                queue_name = QUEUE_NAME_FWGD;
+            }
+            else
+            {
+                pjl_header += DirectPrintSettingsWrapper.create_pjl_gd_wrapper(print_job.print_settings, print_job.printer_name, print_job.app_version);
+                queue_name = QUEUE_NAME_FWGD;
+            }
             pjl_header += PJL_LANGUAGE;
             byte[] pjl_header_bytes = System.Text.Encoding.UTF8.GetBytes(pjl_header);
             int pjl_header_size = pjl_header_bytes.Length;
@@ -227,9 +253,9 @@ namespace DirectPrint
 
             pos = 0;
             buffer[pos++] = 0x2;
-            for (i = 0; i < QUEUE_NAME.Length; i++)
+            for (i = 0; i < queue_name.Length; i++)
             {
-                buffer[pos++] = (byte)(QUEUE_NAME.ToCharArray()[i]);
+                buffer[pos++] = (byte)(queue_name.ToCharArray()[i]);
             }
             buffer[pos++] = (byte)'\n';
 

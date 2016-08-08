@@ -666,7 +666,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     case AUTO:
                         return true;
                     case FACEDOWN:
-                        return getPrinter().getConfig().isTrayFaceDownAvailable();
+                        //ver.2.0.1.2 We always display "Facedown" in the Output tray list(20160707 RISO Saito)
+                        //return getPrinter().getConfig().isTrayFaceDownAvailable();
+                        return true;
+                        //End
                     case TOP:
                         return getPrinter().getConfig().isTrayTopAvailable();
                     case STACKING:
@@ -1468,10 +1471,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         } else if (v.getId() == R.id.view_id_subview_printer_item) {
             if (mPrinterId != id) {
-                setPrinterId(id);
                 // TODO: get new printer settings
-                setPrintSettings(new PrintSettings(mPrinterId,  PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(mPrinterId)));
-                
+                setPrintSettings(new PrintSettings(id,  PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(id)));
+                setPrinterId(id);
+
                 if (mListener != null) {
                     mListener.onPrinterIdSelectedChanged(mPrinterId);
                     mListener.onPrintSettingsValueChanged(mPrintSettings);

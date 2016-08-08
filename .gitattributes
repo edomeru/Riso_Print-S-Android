@@ -7,6 +7,9 @@
 *.gitattributes export-ignore
 *.gitignore export-ignore
 Android/app/src/androidTest/ export-ignore
-
+iOS/SmartDeviceAppTests/ export-ignore
+iOS/_coverage/ export-ignore
+iOS/RunTests.sh export-ignore
+WindowsRT/SmartDeviceAppTests/ export-ignore
 
 

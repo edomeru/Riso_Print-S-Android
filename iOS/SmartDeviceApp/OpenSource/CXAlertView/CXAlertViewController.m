@@ -42,34 +42,56 @@
 {
     [super viewDidLoad];
     [self.alertView setup];
+    
+    [UIApplication sharedApplication].statusBarHidden = _rootViewControllerPrefersStatusBarHidden;
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [UIApplication sharedApplication].statusBarHidden = _rootViewControllerPrefersStatusBarHidden;
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    [UIApplication sharedApplication].statusBarHidden = _rootViewControllerPrefersStatusBarHidden;
+}
+
+//SDA Fix:Replace deprecated method to remove warnings
+//- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+-(void) viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [self.alertView resetTransition];
     [self.alertView invalidateLayout];
 }
 
-//2015-11-23: a-link modification to resolve warning in 3rd-party library
-//- (NSUInteger)supportedInterfaceOrientations
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskAll;
 }
 
+//SDA Fix: Comment out deprecated method to remove static warnings
+/*
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
     return YES;
 }
+*/
 
 - (BOOL)shouldAutorotate
 {
     return YES;
 }
-- (BOOL)prefersStatusBarHidden
+//SDA Fix: Comment out so visibility of status bar is not altered by alert during rotation
+/*
+ - (BOOL)prefersStatusBarHidden
 {
     return _rootViewControllerPrefersStatusBarHidden;
 }
+ */
 
 //SDA Fix: Added method override to keep status bar style when alert is shown
 - (UIStatusBarStyle)preferredStatusBarStyle

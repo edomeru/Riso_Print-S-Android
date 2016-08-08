@@ -136,7 +136,7 @@
     
     //test all valid characters
     //valid symbols
-    testString = @",./:;@[//]^_";
+    testString = @",./:;@[//]^_¥";
     GHAssertTrue([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
                            replacementString:testString], @"");
     
@@ -156,7 +156,7 @@
                            replacementString:testString], @"");
     
     //test invalid
-    testString = @"¥%&#\"";
+    testString = @"%&#\"";
     GHAssertFalse([controllerIphone textField:controllerIphone.snmpCommunityName shouldChangeCharactersInRange:testRange
                            replacementString:testString], @"");
     [self waitForCompletion:2]; //to see the alert

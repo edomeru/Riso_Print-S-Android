@@ -350,6 +350,15 @@ namespace SmartDeviceApp.Controllers
             }
         }
 
+        public async Task ReinitializeSettings()
+        {
+            // Only reinitialize if there is alread
+            if (DocumentController.Instance.Result == LoadDocumentResult.Successful)
+            {
+                await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter, _currPrintSettings);
+            }            
+        }
+
         /// <summary>
         /// Initializes the selected ptinter and retrives its print settings.
         /// </summary>
@@ -368,7 +377,7 @@ namespace SmartDeviceApp.Controllers
             }
 
             PrintSettingsController.Instance.Uninitialize(_screenName);
-            await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter);
+            await PrintSettingsController.Instance.Initialize(_screenName, _selectedPrinter, null);
             _currPrintSettings = PrintSettingsController.Instance.GetCurrentPrintSettings(_screenName);
             PrintSettingsController.Instance.RegisterUpdatePreviewEventHandler(_updatePreviewEventHandler);
             ReloadCurrentPage();
@@ -1223,6 +1232,7 @@ namespace SmartDeviceApp.Controllers
                         DocumentController.Instance.FileName,
                         DocumentController.Instance.PdfFile,
                         _selectedPrinter.IpAddress,
+                        _selectedPrinter.Name,
                         _currPrintSettings,
                         UpdatePrintJobProgress,
                         UpdatePrintJobResult);

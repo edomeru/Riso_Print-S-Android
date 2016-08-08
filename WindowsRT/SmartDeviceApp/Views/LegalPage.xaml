@@ -14,7 +14,8 @@
     <controls:ViewControl 
         Text="{Binding Source=IDS_LBL_LEGAL, Converter={StaticResource ResourceStringToTextConverter}}"
         Button1Visibility="Collapsed"
-        Button2Visibility="Collapsed">
+        Button2Visibility="Collapsed"
+        Button3Visibility="Collapsed">
         <WebView  DefaultBackgroundColor="Transparent" Loaded="WebView_Loaded" DOMContentLoaded="WebView_DOMContentLoaded">
             <WebView.Margin>
                 <Thickness Top="{StaticResource MARGIN_Default}"

@@ -11,7 +11,7 @@ namespace SNMP
     public class SNMPDiscovery
     {
         UDPSocket udpSocket;
-        string communityName;
+        private string _communityName;
         List<SNMPDevice> snmpDevices;
     
         string[] requestMIB;
@@ -37,11 +37,18 @@ namespace SNMP
         /// <summary>
         /// List of SNMP Devices discovered.
         /// </summary>
-        public List<SNMPDevice> SnmpDevices { 
+        public List<SNMPDevice> SnmpDevices
+        {
             get {
                 return snmpDevices;
                 } 
 
+        }
+
+        public string SnmpCommunityName
+        {
+            get { return _communityName; }
+            set { _communityName = value; }
         }
 
         /// <summary>
@@ -56,7 +63,7 @@ namespace SNMP
                 udpSocket.assignDelegate(receiveData);
         
                 snmpDevices = new List<SNMPDevice>();
-                communityName = readCommunityName;
+                _communityName = readCommunityName;
                 broadcastAddress = address;
                 requestMIB = new string[]{
                               //SNMPConstants.MIB_GETNEXTOID_4HOLES,//ijHardwareConnectStatus should be supported
@@ -72,7 +79,7 @@ namespace SNMP
         public void startDiscover()
         {
             snmpDevices.Clear();
-            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1,communityName,SNMPConstants.SNMP_GET_REQUEST,1,requestMIB);
+            SNMPMessage message = new SNMPMessage(SNMPConstants.SNMP_V1, SnmpCommunityName, SNMPConstants.SNMP_GET_REQUEST, 1, requestMIB);
     
             byte[] data = message.generateDataForTransmission();
     
@@ -102,10 +109,8 @@ namespace SNMP
 
                         Dictionary<string, string> identifier = values[0];
 
-                        string printerMibOid = identifier[SNMPConstants.KEY_OID];
-                        if (printerMibOid != null)
+                        if (isSupportedDevice(identifier[SNMPConstants.KEY_OID], identifier[SNMPConstants.KEY_VAL]))
                         {
-
                             string host = sender.ToString();
 
                             SNMPDevice snmpDevice = new SNMPDevice(host);
@@ -116,7 +121,7 @@ namespace SNMP
                             }
 
                             snmpDevice.IpAddress = host;
-                            snmpDevice.CommunityName = this.communityName;
+                            snmpDevice.CommunityName = _communityName;
                             snmpDevice.Description = identifier[SNMPConstants.KEY_VAL];
 
                             snmpDevices.Add(snmpDevice);
@@ -130,7 +135,7 @@ namespace SNMP
                             else // if printer search
                             {
 #if !DEBUG
-                                if (snmpDevice.isRISOAZADevice())//comment out to remove RISO filter
+                                if (snmpDevice.isRISODevice())//comment out to remove RISO filter
 #endif
                                 {
                                     snmpControllerDiscoverCallback(snmpDevice);
@@ -165,5 +170,21 @@ namespace SNMP
             }
         }
 
+        /// <summary>
+        /// Checks if the device is a supported RISO device.
+        /// </summary>
+        /// <returns>true if supported, false otherwise</returns>
+        private bool isSupportedDevice(string printerOID, string printerDesc)
+        {
+            if (printerOID != null && printerDesc != null && printerOID.StartsWith(SNMPConstants.MIB_GETNEXTOID_DESC))
+            {
+                return printerDesc.Equals("RISO IS1000C-J") ||
+                   printerDesc.Equals("RISO IS1000C-G") ||
+                   printerDesc.Equals("RISO IS950C-G") ||
+                   printerDesc.Contains("FW") ||
+                   printerDesc.Contains("GD");
+            }
+            return false;
+        }
     }
 }

@@ -53,6 +53,8 @@ namespace SmartDeviceApp.Controllers
         private Printer _printer;
         private PrintSettings _printSettings;
         private PrintSettingList _printSettingList;
+        //Flag that ensures that there is only one print settings value changed event handler at a time
+        private bool _hasPrintSettingValueChangedHandler;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
@@ -67,7 +69,7 @@ namespace SmartDeviceApp.Controllers
 
             _printSettingsViewModel = new ViewModelLocator().PrintSettingsViewModel;
             _printSettingValueChangedEventHandler = new PrintSettingValueChangedEventHandler(PrintSettingValueChanged);
-
+            _hasPrintSettingValueChangedHandler = false;
             // Set PrinterList in PrintSettingsViewModel only once (this will be the original list)
             new ViewModelLocator().PrintSettingsViewModel.PrinterList = PrinterController.Instance.PrinterList;
         }
@@ -88,7 +90,7 @@ namespace SmartDeviceApp.Controllers
         /// <param name="screenName">name of active screen</param>
         /// <param name="printer">target printer</param>
         /// <returns>task</returns>
-        public async Task Initialize(string screenName, Printer printer)
+        public async Task Initialize(string screenName, Printer printer, PrintSettings printSetting)
         {
             PrintSettings currPrintSettings = null;// new PrintSettings();
 
@@ -105,8 +107,14 @@ namespace SmartDeviceApp.Controllers
             {
                 printSettingId = printer.PrintSettingId.Value;
             }
-            currPrintSettings = await GetPrintSettings(printSettingId);
-
+            if (printSetting == null)
+            {
+                currPrintSettings = await GetPrintSettings(printSettingId);
+            }
+            else
+            {
+                currPrintSettings = printSetting;
+            }
 #if !PRINTSETTING_ORIENTATION
             // Special handling: Set Orientation value based on first page of PDF
             if (screenName.Equals(ScreenMode.PrintPreview.ToString()))
@@ -127,10 +135,10 @@ namespace SmartDeviceApp.Controllers
                 _prevPinCode = null;
             }
 
-            RegisterPrintSettingValueChanged(screenName);
-
+            // Fixed latent bug: printer details is not set before updating the UI
             _printer = printer;
-
+            
+            RegisterPrintSettingValueChanged(screenName);
 
             if (_printSettings != currPrintSettings)
             {
@@ -139,7 +147,9 @@ namespace SmartDeviceApp.Controllers
 
 
             LoadPrintSettingsOptions();
+
             FilterPrintSettingsUsingCapabilities();
+            FilterPrintSettingsUsingModel(PrinterModelUtility.GetSeriesTypeFromPrinterName(_printer.Name));
             MergePrintSettings();
             ApplyPrintSettingConstraints();
 
@@ -245,8 +255,27 @@ namespace SmartDeviceApp.Controllers
                         _printSettingsViewModel.PrintSettingsList = _printSettingList;
                     }
                 }
+                
+                //do not add new handler if already has handler
+                if (!_hasPrintSettingValueChangedHandler)
+                {
+                    PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+                    _hasPrintSettingValueChangedHandler = true;
+                }
+            }
+        }
 
-                PrintSettingUtility.PrintSettingValueChangedEventHandler += _printSettingValueChangedEventHandler;
+        /// <summary>
+        /// Register for change in screen mode
+        /// <param name="screenName">name of active screen</param>
+        public void RegisterScreenModeChange(String screenName)
+        { 
+             if (!string.IsNullOrEmpty(screenName))
+            {
+                _activeScreen = screenName;
+
+                // Show/hide other controls
+                _printSettingsViewModel.IsPrintPreview = screenName.Equals(ScreenMode.PrintPreview.ToString());
             }
         }
 
@@ -258,7 +287,12 @@ namespace SmartDeviceApp.Controllers
         {
             if (string.Equals(_activeScreen, screenName))
             {
-                PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+                //remove handler if there is a handler
+                if (_hasPrintSettingValueChangedHandler)
+                { 
+                    PrintSettingUtility.PrintSettingValueChangedEventHandler -= _printSettingValueChangedEventHandler;
+                    _hasPrintSettingValueChangedHandler = false;
+                }
                 _activeScreen = null;
             }
         }
@@ -291,42 +325,41 @@ namespace SmartDeviceApp.Controllers
 
         #region PrintSettingList Operations
 
-        private List<PrintSettingGroup> mainGroup = null;
-        private List<PrintSettingGroup> authGroup = null;
+        private static PrintSettingList fullSettings = retrievePrintSettings();
+        private PrintSettingList printSettings = null;
+        private static List<PrintSettingGroup> authGroup = null;
 
         /// <summary>
         /// Loads the initial print settings file
         /// </summary>
         private void LoadPrintSettingsOptions()
         {
-            //initial loaders (load only once and reuse)
-            if (mainGroup == null) mainGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
-            if (authGroup == null) authGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML);
-            // Construct the PrintSettingList
-            if (_printSettingsViewModel.PrintSettingsList == null)
+            // Parse Print Settings XML once
+            if (printSettings == null)
             {
-                _printSettingsViewModel.PrintSettingsList = new PrintSettingList();
-
-                foreach (PrintSettingGroup g in mainGroup)
-                {
-                    _printSettingsViewModel.PrintSettingsList.Add(g);
-                }
+                printSettings = retrievePrintSettings();
             }
 
-            //remove Authentication group temporarily
-            foreach (PrintSettingGroup g in authGroup)
-            {
-                _printSettingsViewModel.PrintSettingsList.Remove(g);
-            }
+            _printSettingsViewModel.PrintSettingsList = printSettings;
 
-            // Append Authentication group for Print Preview screen
-            if (_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
+            // Remove Authentication group for Default Print Settings screen
+            if (!_activeScreen.Equals(ScreenMode.PrintPreview.ToString()))
             {
                 foreach (PrintSettingGroup g in authGroup)
                 {
-                    _printSettingsViewModel.PrintSettingsList.Add(g);
+                    _printSettingsViewModel.PrintSettingsList.Remove(g);
                 }
-            }            
+            }
+            else
+            {
+                foreach (PrintSettingGroup g in authGroup)
+                {
+                    if (!_printSettingsViewModel.PrintSettingsList.Contains(g))
+                    { 
+                        _printSettingsViewModel.PrintSettingsList.Add(g);
+                    }
+                }
+            }
 
 
 #if !PRINTSETTING_ORIENTATION
@@ -341,13 +374,34 @@ namespace SmartDeviceApp.Controllers
             System.GC.Collect();
         }
 
+        private static PrintSettingList retrievePrintSettings()
+        {
+            PrintSettingList printSettings = new PrintSettingList();
+            List<PrintSettingGroup> mainGroup = null;
+
+            mainGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_XML);
+            authGroup = ParseXmlFile(FILE_PATH_ASSET_PRINT_SETTINGS_AUTH_XML);
+
+            foreach (PrintSettingGroup g in mainGroup)
+            {
+                printSettings.Add(g);
+            }
+            foreach (PrintSettingGroup g in authGroup)
+            {
+                printSettings.Add(g);
+            }
+
+            return printSettings;
+        }
+
         /// <summary>
         /// Reads an XML file and creates PrintSettingGroup
         /// </summary>
         /// <param name="path">XML file relative path from install location</param>
         /// <returns>list of print setting groups</returns>
-        private List<PrintSettingGroup> ParseXmlFile(string path)
+        private static List<PrintSettingGroup> ParseXmlFile(string path)
         {
+            Dictionary<string, List<PrintSettingGroup>> printSettings = new Dictionary<string, List<PrintSettingGroup>>();
             PrintSettingToValueConverter valueConverter = new PrintSettingToValueConverter();
             string xmlPath = Path.Combine(Package.Current.InstalledLocation.Path, path);
             XDocument data = XDocument.Load(xmlPath);
@@ -357,7 +411,7 @@ namespace SmartDeviceApp.Controllers
                                     {
                                         Name = (string)groupData.Attribute(PrintSettingConstant.KEY_NAME),
                                         Text = (string)groupData.Attribute(PrintSettingConstant.KEY_TEXT),
-                                        PrintSettings = (
+                                        PrintSettings = new System.Collections.ObjectModel.ObservableCollection<PrintSetting>((
                                             from settingData in groupData.Elements(PrintSettingConstant.KEY_SETTING)
                                             select new PrintSetting
                                             {
@@ -384,23 +438,126 @@ namespace SmartDeviceApp.Controllers
                                                     }).ToList<PrintSettingOption>(),
                                                 IsEnabled = true,        // To be updated later upon apply constraints
                                                 IsValueDisplayed = true  // To be updated later upon apply constraints
-                                            }).ToList<PrintSetting>()
+                                            }).ToList<PrintSetting>())
                                     };
 
             PrintSettingGroup group = new PrintSettingGroup();
             PrintSetting fakeSetting = new PrintSetting();
             fakeSetting.Text = "blah";
             group.Name = "Fake Group";
-            group.PrintSettings = new List<PrintSetting>();
+            group.PrintSettings = new System.Collections.ObjectModel.ObservableCollection<PrintSetting>();
             group.PrintSettings.Add(fakeSetting);
 
             //List<PrintSettingGroup> groupList = new List<PrintSettingGroup>();
             //groupList.Add(group);
             //return groupList;
-            List<PrintSettingGroup> groupList = printSettingsData.ToList<PrintSettingGroup>();
+            //printSettings.Add((string)type.Attribute(PrintSettingConstant.KEY_ID), printSettingsData.ToList<PrintSettingGroup>());
+            //}
             //List<PrintSettingGroup> groupList = printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
-            return groupList;
+            return printSettingsData.ToList<PrintSettingGroup>();
             //return printSettingsData.Cast<PrintSettingGroup>().ToList<PrintSettingGroup>();
+        }
+
+        /// <summary>
+        /// Removes or adds print setting and options depending on printer model
+        /// </summary>
+        private void FilterPrintSettingsUsingModel(int printerType)
+        {
+            if (printerType != (int)DirectPrint.SeriesType.FW)
+            {
+                // Remove Dual Color
+                PrintSetting colorModePrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_COLOR_MODE);
+                if (colorModePrintSetting != null)
+                {
+                    RemovePrintSettingOption(colorModePrintSetting, (int)ColorMode.DualColor);
+                }
+
+                // Remove Rough Paper
+                PrintSetting roughPaperPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
+                if (roughPaperPrintSetting != null)
+                {
+                    RemovePrintSettingOption(roughPaperPrintSetting, (int)PaperType.RoughPaper);
+                }
+
+                // Add Tray 3
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
+                {
+                    AddPrintSettingOption(inputTrayPrintSetting, PrintSettingConstant.NAME_VALUE_INPUT_TRAY, (int)InputTray.Tray3);
+                }
+
+                if (printerType == (int)DirectPrint.SeriesType.IS)
+                {
+                    // Remove Legal13, 8K, and 16K 
+                    PrintSetting paperSizePrintSetting =
+                        GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_SIZE);
+                    if (paperSizePrintSetting != null)
+                    {
+                        RemovePrintSettingOption(paperSizePrintSetting, (int)PaperSize.Legal13);
+                        RemovePrintSettingOption(paperSizePrintSetting, (int)PaperSize.EightK);
+                        RemovePrintSettingOption(paperSizePrintSetting, (int)PaperSize.SixteenK);
+                    }
+                }
+                else
+                {
+                    // Add Legal13, 8K, and 16K 
+                    PrintSetting paperSizePrintSetting =
+                        GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_SIZE);
+                    if (paperSizePrintSetting != null)
+                    {
+                        AddPrintSettingOption(paperSizePrintSetting, PrintSettingConstant.NAME_VALUE_PAPER_SIZE,
+                            (int)PaperSize.Legal13);
+                        AddPrintSettingOption(paperSizePrintSetting, PrintSettingConstant.NAME_VALUE_PAPER_SIZE,
+                            (int)PaperSize.EightK);
+                        AddPrintSettingOption(paperSizePrintSetting, PrintSettingConstant.NAME_VALUE_PAPER_SIZE,
+                            (int)PaperSize.SixteenK);
+                    }
+                }
+            }
+            else
+            {
+                // Remove Tray 3
+                PrintSetting inputTrayPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
+                if (inputTrayPrintSetting != null)
+                {
+                    RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray3);
+                }
+
+                // Add Dual Color
+                PrintSetting colorModePrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_COLOR_MODE);
+                if (colorModePrintSetting != null)
+                {
+                    AddPrintSettingOption(colorModePrintSetting, PrintSettingConstant.NAME_VALUE_COLOR_MODE,
+                        (int)ColorMode.DualColor);
+                }
+
+                // Add Rough Paper
+                PrintSetting roughPaperPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
+                if (roughPaperPrintSetting != null)
+                {
+                    AddPrintSettingOption(roughPaperPrintSetting, PrintSettingConstant.NAME_VALUE_PAPER_TYPE,
+                        (int)PaperType.RoughPaper);
+                }
+
+                // Add Legal13, 8K, and 16K 
+                PrintSetting paperSizePrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_SIZE);
+                if (paperSizePrintSetting != null)
+                {
+                    AddPrintSettingOption(paperSizePrintSetting, PrintSettingConstant.NAME_VALUE_PAPER_SIZE,
+                            (int)PaperSize.Legal13);
+                    AddPrintSettingOption(paperSizePrintSetting, PrintSettingConstant.NAME_VALUE_PAPER_SIZE,
+                        (int)PaperSize.EightK);
+                    AddPrintSettingOption(paperSizePrintSetting, PrintSettingConstant.NAME_VALUE_PAPER_SIZE,
+                        (int)PaperSize.SixteenK);
+                }
+            }
         }
 
         /// <summary>
@@ -422,44 +579,49 @@ namespace SmartDeviceApp.Controllers
             }
 
             // prn_enabled_paper_lw
-            if (!printer.EnabledPaperLW)
-            {
-                PrintSetting paperTypePrintSetting =
+            PrintSetting paperTypePrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_PAPER_TYPE);
-                if (paperTypePrintSetting != null)
+            if (paperTypePrintSetting != null)
+            {
+                if (printer.EnabledPaperLW)
+                {
+                    AddPrintSettingOption(paperTypePrintSetting, PrintSettingConstant.NAME_VALUE_PAPER_TYPE, (int)PaperType.LWPaper);
+                }
+                else
                 {
                     RemovePrintSettingOption(paperTypePrintSetting, (int)PaperType.LWPaper);
                 }
+                
             }
 
             // prn_enabled_feed_tray1
-            if (!printer.EnabledFeedTrayOne)
-            {
-                PrintSetting inputTrayPrintSetting =
+            PrintSetting inputTrayPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
-                if (inputTrayPrintSetting != null)
+            if (paperTypePrintSetting != null)
+            {
+                if (printer.EnabledFeedTrayOne)
+                {
+                    AddPrintSettingOption(inputTrayPrintSetting, PrintSettingConstant.NAME_VALUE_INPUT_TRAY, (int)InputTray.Tray1);
+                }
+                else
                 {
                     RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray1);
                 }
-            }
 
-            // prn_enabled_feed_tray2
-            if (!printer.EnabledFeedTrayTwo)
-            {
-                PrintSetting inputTrayPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
-                if (inputTrayPrintSetting != null)
+                if (printer.EnabledFeedTrayTwo)
+                {
+                    AddPrintSettingOption(inputTrayPrintSetting, PrintSettingConstant.NAME_VALUE_INPUT_TRAY, (int)InputTray.Tray2);
+                }
+                else
                 {
                     RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray2);
                 }
-            }
 
-            // prn_enabled_feed_tray3
-            if (!printer.EnabledFeedTrayThree)
-            {
-                PrintSetting inputTrayPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_INPUT_TRAY);
-                if (inputTrayPrintSetting != null)
+                if (printer.EnabledFeedTrayThree)
+                {
+                    AddPrintSettingOption(inputTrayPrintSetting, PrintSettingConstant.NAME_VALUE_INPUT_TRAY, (int)InputTray.Tray3);
+                }
+                else
                 {
                     RemovePrintSettingOption(inputTrayPrintSetting, (int)InputTray.Tray3);
                 }
@@ -475,40 +637,37 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSetting(bookletFinishPrintSetting);
                 }
             }
-
-            // prn_enabled_stapler
-            if (!printer.EnabledStapler)
+            else
             {
-                PrintSetting staplePrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
-                if (staplePrintSetting != null)
-                {
-                    RemovePrintSetting(staplePrintSetting);
-                }
-                PrintSetting bookletFinishPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
-                if (bookletFinishPrintSetting != null)
-                {
-                    RemovePrintSettingOption(bookletFinishPrintSetting, (int)BookletFinishing.FoldAndStaple);
-                }
+                AddPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
             }
 
-            // prn_enabled_punch3 and prn_enabled_punch4
-            if (printer.EnabledPunchThree && !printer.EnabledPunchFour) // Meaning punch3
+            // prn_enabled_stapler
+            PrintSetting staplePrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
+            if (staplePrintSetting != null)
             {
-                PrintSetting punchPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
-                if (punchPrintSetting != null)
+                if (!printer.EnabledStapler)
                 {
-                    PrintSettingOption punchFourPrintSettingOption =
-                        GetPrintSettingOption(punchPrintSetting, (int)Punch.FourHoles);
-                    if (punchFourPrintSettingOption != null)
+                    RemovePrintSetting(staplePrintSetting);
+
+                    PrintSetting bookletFinishPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_BOOKLET_FINISHING);
+                    if (bookletFinishPrintSetting != null)
                     {
-                        punchFourPrintSettingOption.Text = "ids_lbl_punch_3holes";
+                        RemovePrintSettingOption(bookletFinishPrintSetting, (int)BookletFinishing.FoldAndStaple);
                     }
                 }
             }
-            else if (!printer.EnabledPunchThree && !printer.EnabledPunchFour) // No punch
+            else
+            {
+                if (printer.EnabledStapler)
+                {
+                    AddPrintSetting(PrintSettingConstant.NAME_VALUE_STAPLE);
+                }
+            }
+
+            if (!printer.EnabledPunchThree && !printer.EnabledPunchFour) // No punch
             {
                 PrintSetting punchPrintSetting =
                     GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
@@ -517,42 +676,61 @@ namespace SmartDeviceApp.Controllers
                     RemovePrintSetting(punchPrintSetting);
                 }
             }
-
-            // prn_enabled_tray_facedown
-            if (!printer.EnabledTrayFacedown)
+            else
             {
-                PrintSetting outputTrayPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-                if (outputTrayPrintSetting != null)
+                AddPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
+                PrintSetting punchPrintSetting =
+                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_PUNCH);
+                if (punchPrintSetting != null)
                 {
-                    RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.FaceDown);
+                    // prn_enabled_punch3
+                    if (printer.EnabledPunchThree)
+                    {
+                        AddPrintSettingOption(punchPrintSetting, PrintSettingConstant.NAME_VALUE_PUNCH, (int)Punch.ThreeHoles);
+                    }
+                    else
+                    {
+                        RemovePrintSettingOption(punchPrintSetting, (int)Punch.ThreeHoles);
+                    }
+
+                    // prn_enabled_punch4
+                    if (printer.EnabledPunchFour)
+                    {
+                        AddPrintSettingOption(punchPrintSetting, PrintSettingConstant.NAME_VALUE_PUNCH, (int)Punch.FourHoles);
+                    }
+                    else
+                    {
+                        RemovePrintSettingOption(punchPrintSetting, (int)Punch.FourHoles);
+                    }
                 }
+                
             }
 
-            // prn_enabled_tray_top
-            if (!printer.EnabledTrayTop)
+            PrintSetting outputTrayPrintSetting =
+                GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
+            if (outputTrayPrintSetting != null)
             {
-                PrintSetting outputTrayPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-                if (outputTrayPrintSetting != null)
+                // prn_enabled_tray_top
+                if (printer.EnabledTrayTop)
+                {
+                    AddPrintSettingOption(outputTrayPrintSetting, PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY, (int)OutputTray.Top);
+                }
+                else
                 {
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Top);
                 }
-            }
-
-            // prn_enabled_tray_stack
-            if (!printer.EnabledTrayStack)
-            {
-                PrintSetting outputTrayPrintSetting =
-                    GetPrintSetting(PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY);
-                if (outputTrayPrintSetting != null)
+                // prn_enabled_tray_stack
+                if (printer.EnabledTrayStack)
+                {
+                    AddPrintSettingOption(outputTrayPrintSetting, PrintSettingConstant.NAME_VALUE_OUTPUT_TRAY, (int)OutputTray.Stacking);
+                }
+                else
                 {
                     RemovePrintSettingOption(outputTrayPrintSetting, (int)OutputTray.Stacking);
                 }
             }
 
             _printSettings = printSettings;
-            //_printSettingsMap[_activeScreen] = printSettings;
         }
 
         /// <summary>
@@ -582,6 +760,35 @@ namespace SmartDeviceApp.Controllers
         }
 
         /// <summary>
+        /// Adds a print setting from the group
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
+        private void AddPrintSetting(string name)
+        {
+            PrintSetting currentSetting = GetPrintSetting(name);
+            if (currentSetting != null)
+            {
+                return;
+            }
+                
+            var query = fullSettings
+                .SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
+                .Where(ps => ps.Name == name);
+            PrintSetting setting = query.FirstOrDefault();
+            PrintSettingGroup settingGroup = fullSettings
+                .FirstOrDefault(group => group.PrintSettings.Contains(setting));
+
+            int index = settingGroup.PrintSettings.IndexOf(setting);
+
+            var query2 = _printSettingsViewModel.PrintSettingsList
+                .FirstOrDefault(group2 => group2.Name.Equals(settingGroup.Name));
+            if (query2 != null)
+            {
+                query2.PrintSettings.Insert(index, setting);
+            }
+        }
+
+        /// <summary>
         /// Queries the print setting group based on print setting
         /// </summary>
         /// <param name="printSetting">print setting</param>
@@ -604,6 +811,34 @@ namespace SmartDeviceApp.Controllers
             if (printSettingOption != null)
             {
                 printSetting.Options.Remove(printSettingOption);
+            }
+        }
+
+        /// <summary>
+        /// Add a print setting option
+        /// </summary>
+        /// <param name="printSetting">print setting</param>
+        /// <param name="index">option index</param>
+        private void AddPrintSettingOption(PrintSetting printSetting, string name, int index)
+        {
+            PrintSettingOption printSettingOption = printSetting.Options
+                .FirstOrDefault(setting => setting.Index == index);
+            if (printSettingOption == null)
+            {
+                var query = fullSettings
+                    .SelectMany(printSettingGroup => printSettingGroup.PrintSettings)
+                    .Where(ps => ps.Name == name);
+
+                PrintSetting printSettingFull = query.FirstOrDefault();
+
+                PrintSettingOption printSettingOptionFromFull = printSettingFull.Options
+                    .FirstOrDefault(setting => setting.Index == index);
+
+                printSettingOption = new PrintSettingOption();
+                printSettingOption.Text = printSettingOptionFromFull.Text;
+                printSettingOption.Index = index;
+                printSettingOption.IsEnabled = true;
+                printSetting.Options.Add(printSettingOption);
             }
         }
 

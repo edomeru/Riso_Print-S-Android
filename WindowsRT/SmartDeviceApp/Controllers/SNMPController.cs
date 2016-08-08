@@ -73,7 +73,7 @@ namespace SmartDeviceApp.Controllers
         /// </summary>
         public void Initialize()
         {
-            Discovery = new SNMPDiscovery("public", SNMPConstants.BROADCAST_ADDRESS);
+            Discovery = new SNMPDiscovery(SNMPConstants.DEFAULT_COMMUNITY_NAME, SNMPConstants.BROADCAST_ADDRESS);
             Discovery.snmpControllerDiscoverCallback = new Action<SNMPDevice>(handleDeviceDiscovered);
             Discovery.snmpControllerDiscoverTimeOut = new Action<string>(handleTimeout);
         }
@@ -87,10 +87,12 @@ namespace SmartDeviceApp.Controllers
         /// Starts retrival of device capabilities
         /// </summary>
         /// <param name="ip"></param>
-        public void getDevice(string ip)
+        /// <param name="communityName"></param>
+        public void getDevice(string ip, string communityName = SNMPConstants.DEFAULT_COMMUNITY_NAME)
         {
             SNMPDevice device = new SNMPDevice(ip);
             //waiting = true;
+            device.CommunityName = communityName;
             device.snmpControllerCallBackGetCapability = new Action<SNMPDevice>(handleGetDevice);
             device.snmpControllerDeviceTimeOut = new Action<SNMPDevice>(handleAddTimeout);
             device.snmpControllerErrorCallbBack = new Action(handleError);
@@ -160,7 +162,7 @@ namespace SmartDeviceApp.Controllers
                     printer.EnabledStapler = (capabilitesList.ElementAt(1) == "true") || (capabilitesList.ElementAt(2) == "true") || (capabilitesList.ElementAt(3) == "true");
                     printer.EnabledPunchFour = (capabilitesList.ElementAt(2) == "true");
                     printer.EnabledPunchThree = (capabilitesList.ElementAt(3) == "true");
-                    printer.EnabledTrayFacedown = (capabilitesList.ElementAt(4) == "true");
+                    printer.EnabledTrayFacedown = true;
                     //printer.EnabledTrayAutostack = (capabilitesList.ElementAt(5) == "true")? true : false;
                     printer.EnabledTrayTop = (capabilitesList.ElementAt(6) == "true");
                     printer.EnabledTrayStack = (capabilitesList.ElementAt(7) == "true");

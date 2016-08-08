@@ -29,7 +29,8 @@
     <controls:ViewControl ChildrenDataContext="{Binding DataContext, ElementName=settingsPage}"
                           Text="{Binding Source=IDS_LBL_SETTINGS, Converter={StaticResource ResourceStringToTextConverter}}"
                           Button1Visibility="Collapsed"
-                          Button2Visibility="Collapsed">
+                          Button2Visibility="Collapsed"
+                          Button3Visibility="Collapsed">
         <StackPanel x:Name="settingsPane" Style="{StaticResource STYLE_SettingsPane}">
             <Grid Style="{StaticResource STYLE_ListHeaderGrid}">
                 <StackPanel Style="{StaticResource STYLE_StackLeft}">
@@ -43,7 +44,8 @@
                                         TextBoxMaxLength="{StaticResource MAXLENGTH_AuthenticationLoginId}"
                                         IconVisibility="Collapsed"
                                         SeparatorVisibility="Collapsed"
-                                        TextBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Long}"
+                                        Margin="30,0,25,0"
+                                        TextBoxWidth="{Binding Width, ElementName=settingsPane}"
                                         TextBoxAlignment="Left"
                                         PressedColor="{StaticResource BRUSH_Purple2}"
                                         KeyPressedColor="{StaticResource BRUSH_White}"/>

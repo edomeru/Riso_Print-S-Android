@@ -12,6 +12,8 @@ namespace SmartDeviceApp.Common.Enum
     public enum MessageType
     {
         AddPrinter,
-        RightPageImageUpdated
+        RightPageImageUpdated,
+        SnmpCommunityNamePasteInvalid,
+        SaveSnmpCommunityName
     }
 }
