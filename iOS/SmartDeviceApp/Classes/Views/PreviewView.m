@@ -587,7 +587,7 @@
 
 - (CGPoint)adjustPreviewPosition:(CGPoint)position
 {
-    if (self.scale >1.0f)
+    if (self.scale > 1.0f)
     {
         CGSize containerSize = self.frame.size;
         CGSize contentSize = self.contentView.frame.size;
@@ -595,16 +595,17 @@
         //do not allow pan if the content size is less than the container size
         if (contentSize.width <  containerSize.width)
         {
-            position.x = 0;
+            position.x = 0.0f;
         }
         
         if (contentSize.height <  containerSize.height)
         {
-            position.x = 0;
+            position.y = 0.0f;
         }
         
         //allow position only up to the point where the invisible parts of the content is visible in the container
         // maximum movement is only up to the difference of the the container size and the content size
+        // divided by 2 for for distance going to the left/right or t
         CGFloat maxX = fabs(contentSize.width - containerSize.width) / 2.0f;
         CGFloat maxY = fabs(contentSize.height - containerSize.height) / 2.0f;
         

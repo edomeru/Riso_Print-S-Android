@@ -8,6 +8,12 @@
 
 #import "PreviewView.h"
 #import <GHUnitIOS/GHUnit.h>
+#import "OCMock.h"
+
+@interface PreviewView (Test)
+
+- (CGPoint)adjustPreviewPosition:(CGPoint)position;
+@end
 
 @interface PreviewViewTest : GHTestCase
 
@@ -64,5 +70,97 @@
     GHAssertLessThanOrEqual(fabs(resultingRatio - aspectRatio), tolerance, @"");
 }
 #endif //DISABLE_FAILED_TESTS
+
+- (void)test003_adjustPreviewPosition
+{
+    CGPoint originalPosition = CGPointMake(0, 0);
+    
+    PreviewView *view = [[PreviewView alloc] initWithFrame:CGRectMake(0, 0, 200, 500)];
+    UIView *dummyContentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 600)];
+    [view setValue:dummyContentView forKey:@"contentView"];
+    
+    // scale is not greater than 1, retain
+    CGPoint newPosition = [view adjustPreviewPosition:originalPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(originalPosition, newPosition), @"");
+    
+    //scale is greater than 1, position greater than maxX
+    [view setValue:[NSNumber numberWithFloat:1.5] forKey:@"scale"];
+    CGPoint testPosition = CGPointMake(100, 25);
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(50, testPosition.y)), @"");
+    
+    testPosition = CGPointMake(-75, 25);
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(-50, testPosition.y)), @"");
+    
+    //scale is greater than 1, position greater than maxY
+    testPosition = CGPointMake(25, 75);
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(testPosition.x, 50)), @"");
+    
+    testPosition = CGPointMake(25, -75);
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(testPosition.x, -50)), @"");
+    
+    //scale is greater than 1, position not exceeding max
+    testPosition = CGPointMake(-30, 40);
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(testPosition.x, testPosition.y)), @"");
+    
+    //content width is less than container width
+    dummyContentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 150, 600)];
+    [view setValue:dummyContentView forKey:@"contentView"];
+    testPosition = CGPointMake(-20, 35);
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(0, testPosition.y)), @"");
+    
+    //content height is less than container height
+    dummyContentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 400, 300)];
+    [view setValue:dummyContentView forKey:@"contentView"];
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(testPosition.x, 0)), @"");
+    
+    //left bookend is shown
+    //book is horizontally flipping, width > height
+    view.isLeftBookendShown = YES;
+    testPosition = CGPointMake(20, 35);
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(0, 0)), @"");
+    //book is vertically flipping, width < height
+    dummyContentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 250, 600)];
+    [view setValue:dummyContentView forKey:@"contentView"];
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(testPosition.x, 0)), @"");
+
+    //right bookend is shown
+    view.isLeftBookendShown = NO;
+    view.isRightBookendShown = YES;
+    //book is horizontally flipping, width > height
+    dummyContentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 400, 300)];
+    [view setValue:dummyContentView forKey:@"contentView"];
+    testPosition = CGPointMake(-20, 35);
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(0, 0)), @"");
+    //book is vertically flipping, width < height
+    dummyContentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 250, 600)];
+    [view setValue:dummyContentView forKey:@"contentView"];
+    testPosition = CGPointMake(25, -35);
+    newPosition = [view adjustPreviewPosition:testPosition];
+    GHAssertTrueNoThrow(CGPointEqualToPoint(newPosition, CGPointMake(testPosition.x, 0)), @"");
+}
+
+- (void)test004_adjustPannedPosition
+{
+    CGPoint originalPosition = CGPointMake(0, 0);
+    PreviewView *view = [[PreviewView alloc] initWithFrame:CGRectMake(0, 0, 200, 500)];
+    [view setValue:[NSValue valueWithCGPoint:originalPosition] forKey:@"position"];
+    id mockPreviewView = OCMPartialMock(view);
+    [[mockPreviewView expect] adjustPreviewPosition:originalPosition];
+    
+    [mockPreviewView adjustPannedPosition];
+    
+    [mockPreviewView verify];
+    [mockPreviewView stopMocking];
+}
 
 @end
