@@ -9,8 +9,8 @@ android {
         applicationId "jp.co.riso.smartprint"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 2000100
-        versionName "v2.0.3.0"
+        versionCode 2000400
+        versionName "v2.0.4.0"
 
         testApplicationId "jp.co.riso.smartprint.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
