@@ -1,4 +1,4 @@
-//
+    //
 //  PrintPreviewViewController.m
 //  Tester
 //
@@ -1115,7 +1115,7 @@
                 self.previewView.isRightBookendShown = YES;
             }
         }
-        if(self.printDocument.currentPage == (self.totalPageNum - 1))
+        else if(self.printDocument.currentPage >= (self.totalPageNum - 1))
         {
             if (self.printDocument.previewSetting.finishingSide != kFinishingSideRight)
             {
