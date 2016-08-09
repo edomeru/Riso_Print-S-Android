@@ -30,6 +30,7 @@ using SmartDeviceApp.Controls;
 using SmartDeviceApp.Common.Base;
 using SmartDeviceApp.Controllers;
 using SmartDeviceApp.Converters;
+using Microsoft.Practices.ServiceLocation;
 
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
@@ -124,10 +125,19 @@ namespace SmartDeviceApp.Views
         {
             _gestureController.TargetControl = (AdaptableGridView)sender;
             var _viewControlViewModel = new ViewModelLocator().ViewControlViewModel;
-            var columns = (_viewControlViewModel.ViewOrientation == Common.Enum.ViewOrientation.Landscape) ? 3 : 2;
+            // Calculate the proper max rows or columns based on new size 
+            var maxWidth = 430;
+            var viewControl = ServiceLocator.Current.GetInstance<ViewControlViewModel>();
+            var columns = Convert.ToInt32(Math.Floor(viewControl.ScreenBound.Width / maxWidth));
+
             var defaultMargin = (double)Application.Current.Resources["MARGIN_Default"];
-            ((AdaptableGridView)_gestureController.TargetControl).ItemWidth = (double)((new PrintersListWidthConverter()).Convert(_viewControlViewModel.ViewMode, null,
-                new ViewItemParameters() { columns = columns, viewOrientation = _viewControlViewModel.ViewOrientation }, null));
+            var parameters =  new ViewItemParameters();
+            parameters.columns = columns;
+            parameters.viewOrientation  = _viewControlViewModel.ViewOrientation;
+            var convertedValue =  (double)((new PrintersListWidthConverter()).Convert(_viewControlViewModel.ViewMode, null,
+              parameters, null));
+
+            ((AdaptableGridView)_gestureController.TargetControl).ItemWidth = convertedValue;
         }
 
         private void PrintersGestureGrid_Loaded(object sender, RoutedEventArgs e)

@@ -23,6 +23,8 @@ using SmartDeviceApp.Common.Enum;
 using SmartDeviceApp.Common.Constants;
 using SmartDeviceApp.Common.Utilities;
 using SmartDeviceApp.Converters;
+using System.Threading.Tasks;
+using Windows.Graphics.Display;
 
 namespace SmartDeviceApp.Controls
 {
@@ -47,6 +49,10 @@ namespace SmartDeviceApp.Controls
         public static readonly DependencyProperty MainMenuButtonPressedImageProperty =
            DependencyProperty.Register("MainMenuButtonPressedImage", typeof(ImageSource), typeof(ViewControl), 
            new PropertyMetadata(new BitmapImage(new Uri("ms-appx:///Resources/Images/img_btn_main_menu_pressed.png"))));
+
+        public static readonly DependencyProperty MainMenuButtonImageProperty =
+           DependencyProperty.Register("MainMenuButtonImage", typeof(ImageSource), typeof(ViewControl),
+           new PropertyMetadata(new BitmapImage(new Uri("ms-appx:///Resources/Images/img_btn_main_menu_normal.png"))));
         
         public static readonly DependencyProperty Button1ImageProperty =
            DependencyProperty.Register("Button1Image", typeof(ImageSource), typeof(ViewControl), null);
@@ -76,7 +82,7 @@ namespace SmartDeviceApp.Controls
            DependencyProperty.Register("Button3Visibility", typeof(Visibility), typeof(ViewControl), null);
 
         private SimpleOrientationSensor _orientationSensor;
-        
+
         /// <summary>
         /// Constructor of ViewControl.
         /// </summary>
@@ -104,6 +110,10 @@ namespace SmartDeviceApp.Controls
             {
                 // Do nothing
             }
+
+            var orientation =  DisplayInformation.GetForCurrentView().CurrentOrientation;
+            // Get initial orientation
+            ViewModel.SetOrientation(orientation);
         }
 
         /// <summary>
@@ -171,7 +181,15 @@ namespace SmartDeviceApp.Controls
             get { return (ImageSource)GetValue(MainMenuButtonPressedImageProperty); }
             set { SetValue(MainMenuButtonPressedImageProperty, value); }
         }
-
+        /// <summary>
+        /// Imagesource for the pressed state of main menu button
+        /// This is a workaround to load image faster; if set directly in xaml, the image appears blank at first
+        /// </summary>
+        public ImageSource MainMenuButtonImage
+        {
+            get { return (ImageSource)GetValue(MainMenuButtonImageProperty); }
+            set { SetValue(MainMenuButtonImageProperty, value); }
+        }
         /// <summary>
         /// Imagesource for button1.
         /// </summary>
@@ -318,7 +336,7 @@ namespace SmartDeviceApp.Controls
                 maxTextWidth -= (int)defaultMargin;
             }
             // Button1 is visible
-            if (Button1Visibility == Visibility.Visible)
+            if (Button1Image != null && Button1Visibility == Visibility.Visible)
             {
                 Button1Width = (int)button1.ActualWidth;
                 if (Button1Width == 0) Button1Width = ImageConstant.GetIconImageWidth(this, true);
@@ -326,7 +344,7 @@ namespace SmartDeviceApp.Controls
                 maxTextWidth -= (int)defaultMargin;
             }
             // Button2 is visible
-            if (Button2Visibility == Visibility.Visible)
+            if (Button2Image != null && Button2Visibility == Visibility.Visible)
             {
                 var imageWidth = (int)button2.ActualWidth;
                 if (imageWidth == 0) imageWidth = ImageConstant.GetIconImageWidth(this, true);
@@ -417,25 +435,29 @@ namespace SmartDeviceApp.Controls
         /// Triggered when the window is snapped, reduced to a partial screen view by another app,
         /// or changed to full screen from a partial screen view
         /// </summary>
-        private void WindowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
+        async private void WindowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
         {
-            // Workaround to reset the view mode to force recalculation 
-            // of the view root width in ResizedViewWidthConverter
-            var prevViewMode = ViewModel.ViewMode;
-            ViewModel.ViewMode = ViewMode.Unknown;
-            ViewModel.ViewMode = prevViewMode;
+           await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+           {
+               await Task.Delay(200);
+               ViewModel.ScreenBound = Window.Current.Bounds;
+               var prevViewMode = ViewModel.ViewMode;
+               ViewModel.ViewMode = ViewMode.Unknown;
+               ViewModel.ViewMode = prevViewMode;
+               var orientation = DisplayInformation.GetForCurrentView().CurrentOrientation;
+               ViewModel.SetOrientation(orientation);
+           });
+            
         }
 
+  
         async private void OrientationChanged(object sender, SimpleOrientationSensorOrientationChangedEventArgs e)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                DisplayOrientation(e.Orientation);
-            });
+            
         }
 
         private void DisplayOrientation(SimpleOrientation orientation)
-        {        
+        {
             var viewOrientation = ViewModel.ViewOrientation; // Initialize to previous value
             switch (orientation)
             {

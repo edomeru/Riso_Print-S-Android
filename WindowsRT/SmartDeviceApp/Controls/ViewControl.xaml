@@ -58,7 +58,7 @@
                         <VisualState x:Name="Disabled"/>
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
-                <Image x:Name="mainMenuButtonImage" Source="ms-appx:///Resources/Images/img_btn_main_menu_normal.png" Stretch="None"/>
+                <Image x:Name="mainMenuButtonImage" Source="{Binding MainMenuButtonImage, ElementName=viewControl}" Stretch="None"/>
             </Grid>
         </ControlTemplate>
         <ControlTemplate x:Key="TEMPLATE_Button1" TargetType="ToggleButton">
