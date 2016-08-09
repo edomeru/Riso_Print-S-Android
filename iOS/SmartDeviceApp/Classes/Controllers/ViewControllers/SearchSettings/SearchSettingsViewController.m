@@ -10,6 +10,7 @@
 #import "UIViewController+Segue.h"
 #import "AppSettingsHelper.h"
 #import "AlertHelper.h"
+#import "ScreenLayoutHelper.h"
 
 
 #define SEARCHSETTINGS_COMMUNITY_NAME_MAX_LEN   32
@@ -22,6 +23,11 @@
  * Reference to the textfield for the SNMP Community Name.
  */
 @property (weak, nonatomic) IBOutlet UITextField *snmpCommunityName;
+
+/**
+ * Reference to the constraint of the content view for phones.
+ */
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *phoneContentViewWidthConstraint;
 
 /**
  * Flag that will be set to YES when the device is a tablet.
@@ -103,9 +109,14 @@
     self.snmpCommunityName.text = [AppSettingsHelper getSNMPCommunityName];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    {
         self.isIpad = YES;
+    }
     else
+    {
         self.isIpad = NO;
+        self.phoneContentViewWidthConstraint.constant = [ScreenLayoutHelper getPortraitScreenWidth];
+    }
 }
 
 - (void)dismissScreen

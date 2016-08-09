@@ -2076,7 +2076,6 @@
                                     <constraint firstAttribute="trailing" secondItem="9Mj-OE-0E5" secondAttribute="trailing" constant="8" id="Q5q-dY-LuM"/>
                                     <constraint firstItem="tIK-E0-fXu" firstAttribute="leading" secondItem="xuD-Td-Rsy" secondAttribute="leading" constant="16" id="Q74-Uj-SmY"/>
                                     <constraint firstItem="9Mj-OE-0E5" firstAttribute="top" secondItem="d0h-ty-JAA" secondAttribute="bottom" constant="4" id="c5b-LL-qTw"/>
-                                    <constraint firstAttribute="width" constant="320" id="fYY-tY-4hc"/>
                                     <constraint firstItem="d0h-ty-JAA" firstAttribute="leading" secondItem="xuD-Td-Rsy" secondAttribute="leading" constant="24" id="hvj-Xj-85E"/>
                                     <constraint firstAttribute="trailing" secondItem="d0h-ty-JAA" secondAttribute="trailing" constant="8" id="m7f-fb-EfG"/>
                                     <constraint firstItem="9Mj-OE-0E5" firstAttribute="leading" secondItem="xuD-Td-Rsy" secondAttribute="leading" constant="8" id="rjw-ip-bUy"/>
@@ -2181,6 +2180,7 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="uTH-dB-3AV" secondAttribute="trailing" id="LDY-XO-YcD"/>
                             <constraint firstAttribute="centerX" secondItem="QjV-Lm-YW6" secondAttribute="centerX" id="SdM-5y-16p"/>
+                            <constraint firstItem="QjV-Lm-YW6" firstAttribute="width" secondItem="xuD-Td-Rsy" secondAttribute="width" id="SgV-4s-zyl"/>
                             <constraint firstItem="QjV-Lm-YW6" firstAttribute="top" secondItem="xuD-Td-Rsy" secondAttribute="bottom" id="ba8-v9-BRh"/>
                             <constraint firstItem="uTH-dB-3AV" firstAttribute="leading" secondItem="aQq-6G-YBu" secondAttribute="leading" id="cnG-zK-ZKE"/>
                             <constraint firstItem="xuD-Td-Rsy" firstAttribute="centerX" secondItem="aQq-6G-YBu" secondAttribute="centerX" id="iQR-yn-wUK"/>
@@ -2196,6 +2196,8 @@
                     <size key="freeformSize" width="320" height="548"/>
                     <connections>
                         <outlet property="communityNameDisplay" destination="d0h-ty-JAA" id="COX-Ql-0kz"/>
+                        <outlet property="inputView" destination="QjV-Lm-YW6" id="AWy-LH-EnS"/>
+                        <outlet property="phoneContentViewWidthConstraint" destination="4wv-QS-2F7" id="rEV-OU-5lc"/>
                         <outlet property="progressIndicator" destination="g0d-xd-vqb" id="DYM-Vl-dGh"/>
                         <outlet property="saveButton" destination="ydC-sb-GhE" id="YK4-g5-xR4"/>
                         <outlet property="textIP" destination="Ok1-kX-gI3" id="EM3-d6-PEG"/>
@@ -2328,6 +2330,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="548"/>
                     <connections>
+                        <outlet property="phoneContentViewWidthConstraint" destination="b0i-FX-rTH" id="I0k-Pd-mHU"/>
                         <outlet property="snmpCommunityName" destination="TNO-HH-JB3" id="DAR-Ti-dYN"/>
                         <segue destination="HnC-9P-KC3" kind="unwind" identifier="UnwindFromOverToPrintersIphone" unwindAction="unwindToPrinters:" id="FQ6-cv-X2V"/>
                     </connections>
