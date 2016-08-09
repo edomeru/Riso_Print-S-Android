@@ -68,6 +68,22 @@ typedef enum
 @property (nonatomic) CGFloat minScale;
 
 /**
+ * Flag that indicates if the container is currently showing a "bookend" at the Left or Top half part
+ * The bookend is the invisible page on the other half of the first page of a preview in book layout
+ * which gives the illusion of a closed book showing the first page as cover page
+ * Flag is used so that first page in book layout will not be panned out of the screen
+ */
+@property (nonatomic) BOOL isLeftBookendShown;
+
+/**
+ * Flag that indicates if the container is currently showing a "bookend" at the Right or Bottom half part
+ * The bookend is the invisible page on the other half of the last page of a preview in book layout
+ * which gives the illusion of a closed book showing the last page as the back cover page
+ * Flag is used so that last page in book layout will not be panned out of the screen
+ */
+@property (nonatomic) BOOL isRightBookendShown;
+
+/**
  * Delegate.
  * Delegate that will handle zoom events
  */
@@ -83,6 +99,12 @@ typedef enum
  * @param aspectRatio Aspect Ratio of the view (W:H).
  */
 - (void)setPreviewWithOrientation:(kPreviewViewOrientation)orientation aspectRatio:(CGFloat)ratio;
+
+/**
+ * Adjust the current position based on current frame and content view sizes
+ * Called during device rotation
+ */
+- (void)adjustPannedPosition;
 @end
 
 /**

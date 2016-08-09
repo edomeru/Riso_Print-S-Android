@@ -50,6 +50,7 @@
 - (UIViewController *)nextViewController:(NSInteger)index;
 - (UIViewController *)previousViewController:(NSInteger)index;
 - (PDFPageContentViewController *)viewControllerAtIndex:(NSInteger)index;
+- (void)setPreviewBookendStates;
 @end
 
 @interface PrintPreviewControllerTest : GHTestCase
@@ -848,4 +849,66 @@
 }
 #endif //DISABLE_FAILED_TESTS
 
+- (void)test26_setPreviewBookendStates
+{
+    [[PDFFileManager sharedManager] setFileURL:testURL];
+    [[PDFFileManager sharedManager] setupDocument];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintPreviewViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    
+    GHAssertNotNil(viewController.view, @"");
+    
+    //change the print document so as not to trigger observer
+    PrintDocument *printDocument = [[PrintDocument alloc] initWithURL:previewURL name:[testURL lastPathComponent]];
+    viewController.printDocument = printDocument;
+    viewController.totalPageNum = 3;
+    
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    printDocument.previewSetting = previewSetting;
+    
+    previewSetting.finishingSide = kFinishingSideLeft;
+    [viewController setupPageviewControllerWithBindSetting];
+    
+    GHAssertFalseNoThrow(viewController.previewView.isLeftBookendShown, @"");
+    GHAssertFalseNoThrow(viewController.previewView.isRightBookendShown, @"");
+    
+    previewSetting.duplex = kDuplexSettingShortEdge;
+    previewSetting.booklet = YES;
+    viewController.totalPageNum = 4;
+    
+    [viewController setupPageviewControllerWithBindSetting];
+    [viewController setPreviewBookendStates];
+    GHAssertTrueNoThrow(viewController.previewView.isLeftBookendShown, @"");
+    GHAssertFalseNoThrow(viewController.previewView.isRightBookendShown, @"");
+    
+    previewSetting.finishingSide = kFinishingSideRight;
+    [viewController setupPageviewControllerWithBindSetting];
+    [viewController setPreviewBookendStates];
+    GHAssertFalseNoThrow(viewController.previewView.isLeftBookendShown, @"");
+    GHAssertTrueNoThrow(viewController.previewView.isRightBookendShown, @"");
+    
+    viewController.printDocument.currentPage = 3;
+    [viewController setPreviewBookendStates];
+    GHAssertTrueNoThrow(viewController.previewView.isLeftBookendShown, @"");
+    GHAssertFalseNoThrow(viewController.previewView.isRightBookendShown, @"");
+    
+    previewSetting.finishingSide = kFinishingSideLeft;
+    [viewController setupPageviewControllerWithBindSetting];
+    printDocument.currentPage = 3;
+    [viewController setPreviewBookendStates];
+    GHAssertFalseNoThrow(viewController.previewView.isLeftBookendShown, @"");
+    GHAssertTrueNoThrow(viewController.previewView.isRightBookendShown, @"");
+    
+    
+    previewSetting.duplex = kDuplexSettingOff;
+    previewSetting.booklet = NO;
+    previewSetting.finishingSide = kFinishingSideRight;
+    viewController.printDocument.currentPage = 0;
+     viewController.totalPageNum = 3;
+    [viewController setupPageviewControllerWithBindSetting];
+    [viewController setPreviewBookendStates];
+    GHAssertFalseNoThrow(viewController.previewView.isLeftBookendShown, @"");
+    GHAssertFalseNoThrow(viewController.previewView.isRightBookendShown, @"");
+}
 @end

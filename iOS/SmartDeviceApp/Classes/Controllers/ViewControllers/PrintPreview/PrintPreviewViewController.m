@@ -1,4 +1,4 @@
-//
+    //
 //  PrintPreviewViewController.m
 //  Tester
 //
@@ -273,6 +273,11 @@
  */
 - (BOOL)isNonPreviewableSetting:(NSString *)settingKey;
 
+/**
+ * Sets the flags of the preview view if bookends are currrently being shown
+ */
+- (void)setPreviewBookendStates;
+
 @end
 
 @implementation PrintPreviewViewController
@@ -356,6 +361,15 @@
     [self.view layoutIfNeeded];
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    //adjust the position of the preview when preview is scaled during rotation
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context){
+            [self.previewView adjustPannedPosition];
+        }
+     completion:nil];
+}
+
 - (void)dealloc
 {
     if (self.printDocument.delegate == self)
@@ -427,6 +441,7 @@
 
     [self setupPageviewControllerWithBindSetting];
     [self.pageScroll setValue:self.printDocument.currentPage + 1 animated:NO];
+    [self setPreviewBookendStates];
     [self goToPage:self.printDocument.currentPage];
 }
 
@@ -652,6 +667,8 @@
     }
     
     [self.pageViewController setViewControllers:viewControllerArray direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+    //adjust the position of the preview to handle scenario when switching page will show the next page completely panned out of the screen
+    [self.previewView adjustPannedPosition];
 }
 
 - (UIViewController *)nextViewController:(NSInteger)index
@@ -878,6 +895,7 @@
         } else {
             self.printDocument.currentPage =  viewController.pageIndex;
         }
+        [self setPreviewBookendStates];
         [self setupPageLabel];
         [self.pageScroll setValue:self.printDocument.currentPage + 1];
     }
@@ -953,6 +971,8 @@
     
     //reset-up page view controller with new bind setting
     [self setupPageviewControllerWithBindSetting];
+    
+    [self setPreviewBookendStates];
     
     [self goToPage:self.printDocument.currentPage];
     
@@ -1035,6 +1055,7 @@
     }
     
     self.printDocument.currentPage = pageNumber - 1;
+    [self setPreviewBookendStates];
     [self setupPageLabel];
     
     UITouch *touch = [event.allTouches anyObject];
@@ -1071,9 +1092,41 @@
     self.printDocument.currentPage = pageNumber - 1;
     //update page in view, page number label. slider thumb position
     [self goToPage:self.printDocument.currentPage];
+    [self setPreviewBookendStates];
     [self setupPageLabel];
     
     [self.pageScroll setValue:pageNumber animated:YES];
+}
+
+- (void)setPreviewBookendStates
+{
+    self.previewView.isLeftBookendShown = NO;
+    self.previewView.isRightBookendShown = NO;
+    if (self.pageViewController.isDoubleSided)
+    {
+        if(self.printDocument.currentPage == 0)
+        {
+            if (self.printDocument.previewSetting.finishingSide != kFinishingSideRight)
+            {
+                self.previewView.isLeftBookendShown = YES;
+            }
+            else
+            {
+                self.previewView.isRightBookendShown = YES;
+            }
+        }
+        else if(self.printDocument.currentPage >= (self.totalPageNum - 1))
+        {
+            if (self.printDocument.previewSetting.finishingSide != kFinishingSideRight)
+            {
+                self.previewView.isRightBookendShown  = YES;
+            }
+            else
+            {
+                self.previewView.isLeftBookendShown = YES;
+            }
+        }
+    }
 }
 
 @end

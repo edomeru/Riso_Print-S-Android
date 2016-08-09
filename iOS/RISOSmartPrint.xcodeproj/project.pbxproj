@@ -113,6 +113,7 @@
 		31908CCD192A11FA00272563 /* PrintSettingsPrinterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31908CCC192A11FA00272563 /* PrintSettingsPrinterViewController.m */; };
 		31F32CD918F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */; };
 		31F5B69719248DDB002A29AD /* PrintSettingsPrinterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */; };
+		3E16DD481D3F14E800C67B5A /* ScreenLayoutHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E16DD471D3F14E800C67B5A /* ScreenLayoutHelper.m */; };
 		3E3334761D38D154005791C2 /* CXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECF17A71D2C954400E09E37 /* CXBlurView.m */; };
 		3E3760651D3DBCFC00EEF9F8 /* btn_orphisex.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E37603B1D3DBCFC00EEF9F8 /* btn_orphisex.png */; };
 		3E3760661D3DBCFC00EEF9F8 /* btn_orphisex.psd in Resources */ = {isa = PBXBuildFile; fileRef = 3E37603D1D3DBCFC00EEF9F8 /* btn_orphisex.psd */; };
@@ -156,6 +157,8 @@
 		3E3760AE1D3DBE0000EEF9F8 /* W014-1_EX.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E37605F1D3DBCFC00EEF9F8 /* W014-1_EX.png */; };
 		3E3760B51D3DBE1D00EEF9F8 /* W015_EX.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3760611D3DBCFC00EEF9F8 /* W015_EX.png */; };
 		3E3760B61D3DBE2200EEF9F8 /* W016_EX.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E3760631D3DBCFC00EEF9F8 /* W016_EX.png */; };
+		3E73F5481D580EC2008C8A49 /* ScreenLayoutHelperTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E73F5471D580EC2008C8A49 /* ScreenLayoutHelperTest.m */; };
+		3ECB41CA1D485267005AB4F7 /* ScreenLayoutHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E16DD471D3F14E800C67B5A /* ScreenLayoutHelper.m */; };
 		3ECF17A81D2C954400E09E37 /* CXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ECF17A71D2C954400E09E37 /* CXBlurView.m */; };
 		3EE0D0A81CFFCCDA00EC57BE /* printsettings.xml in Resources */ = {isa = PBXBuildFile; fileRef = 7FF4EDAD1CCF074200CB13DB /* printsettings.xml */; };
 		5F3145861A30734D00F482A8 /* I000.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3145421A30734D00F482A8 /* I000.png */; };
@@ -652,6 +655,8 @@
 		31F32CD818F7B9E500E2E0B9 /* PrintSettingsPrinterListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListTableViewController.m; sourceTree = "<group>"; };
 		31F5B69519248DDB002A29AD /* PrintSettingsPrinterListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintSettingsPrinterListViewController.h; sourceTree = "<group>"; };
 		31F5B69619248DDB002A29AD /* PrintSettingsPrinterListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintSettingsPrinterListViewController.m; sourceTree = "<group>"; };
+		3E16DD461D3F14E800C67B5A /* ScreenLayoutHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenLayoutHelper.h; sourceTree = "<group>"; };
+		3E16DD471D3F14E800C67B5A /* ScreenLayoutHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenLayoutHelper.m; sourceTree = "<group>"; };
 		3E37603C1D3DBCFC00EEF9F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/btn_orphisex.png; sourceTree = "<group>"; };
 		3E37603E1D3DBCFC00EEF9F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/btn_orphisex.psd; sourceTree = "<group>"; };
 		3E3760401D3DBCFC00EEF9F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/btn_orphisfw.png; sourceTree = "<group>"; };
@@ -715,6 +720,7 @@
 		3E3760B41D3DBE1900EEF9F8 /* fr */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fr; path = fr.lproj/W015_EX.png; sourceTree = "<group>"; };
 		3E3760B71D3DBE2500EEF9F8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ja; path = ja.lproj/W016_EX.png; sourceTree = "<group>"; };
 		3E3760B81D3DBE2700EEF9F8 /* fr */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fr; path = fr.lproj/W016_EX.png; sourceTree = "<group>"; };
+		3E73F5471D580EC2008C8A49 /* ScreenLayoutHelperTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenLayoutHelperTest.m; sourceTree = "<group>"; };
 		3ECF17A61D2C954400E09E37 /* CXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXBlurView.h; sourceTree = "<group>"; };
 		3ECF17A71D2C954400E09E37 /* CXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CXBlurView.m; sourceTree = "<group>"; };
 		5F3145431A30734D00F482A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = en; path = en.lproj/I000.png; sourceTree = "<group>"; };
@@ -1607,6 +1613,8 @@
 				2D157BFA18ED5B580034F953 /* XMLParser.m */,
 				6637E33B1C070AD400174AD2 /* AppSettingsHelper.h */,
 				6637E33C1C070AD400174AD2 /* AppSettingsHelper.m */,
+				3E16DD461D3F14E800C67B5A /* ScreenLayoutHelper.h */,
+				3E16DD471D3F14E800C67B5A /* ScreenLayoutHelper.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1818,6 +1826,7 @@
 				6603A6FD1BE1F34800DBD0F0 /* UIColorTest_Theme.m */,
 				6603A6FE1BE1F34800DBD0F0 /* XMLParserTest.m */,
 				662F803F1C0D79B000732F6B /* AppSettingsHelperTest.m */,
+				3E73F5471D580EC2008C8A49 /* ScreenLayoutHelperTest.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -2308,6 +2317,7 @@
 				2800D043193567BD002FA1D4 /* SearchingIndicator.m in Sources */,
 				2D1F231D1900D3C700301D1E /* SimplePing.m in Sources */,
 				2DA1AF3718E2EF9C00085F27 /* SNMPManager.m in Sources */,
+				3E16DD481D3F14E800C67B5A /* ScreenLayoutHelper.m in Sources */,
 				2D1F23B71900FF6E00301D1E /* DirectPrintManager.m in Sources */,
 				2D232D9618E57DB0008D06C8 /* PrintSettingsItemInputCell.m in Sources */,
 				2D1F23951900FCBB00301D1E /* Reachability.m in Sources */,
@@ -2418,6 +2428,7 @@
 				66D381301BFEE5FB00166215 /* AppDelegate.m in Sources */,
 				6603A7BC1BE1F7A900DBD0F0 /* Printer+Log.m in Sources */,
 				6603A7BD1BE1F7A900DBD0F0 /* PrintJob+Log.m in Sources */,
+				3ECB41CA1D485267005AB4F7 /* ScreenLayoutHelper.m in Sources */,
 				6603A7BE1BE1F7A900DBD0F0 /* PrintSetting+Log.m in Sources */,
 				6603A7BF1BE1F7A900DBD0F0 /* DefaultPrinter.m in Sources */,
 				6603A7C01BE1F7A900DBD0F0 /* PreviewSetting.m in Sources */,
@@ -2525,6 +2536,7 @@
 				6603A7AF1BE1F34800DBD0F0 /* MagicalRecord.m in Sources */,
 				6603A7A51BE1F34800DBD0F0 /* NSManagedObjectContext+MagicalThreading.m in Sources */,
 				6603A76B1BE1F34800DBD0F0 /* AddPrinterViewControllerTest.m in Sources */,
+				3E73F5481D580EC2008C8A49 /* ScreenLayoutHelperTest.m in Sources */,
 				6603A7901BE1F34800DBD0F0 /* PrintDocumentTest.m in Sources */,
 				6603A7791BE1F34800DBD0F0 /* PrintSettingsTableViewControllerTest.m in Sources */,
 				6603A7A91BE1F34800DBD0F0 /* MagicalRecord+Actions.m in Sources */,
