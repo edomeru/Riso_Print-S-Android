@@ -93,18 +93,11 @@ namespace SmartDeviceApp.Behaviors
         private void OnKeyUp(object sender, KeyRoutedEventArgs e)
         {
             var passwordBox = AssociatedObject as PasswordTextbox;
-            // Note: Shift + another key are regarded as separate KeyDown events for
-            // certain keys e.g. $, #, &
-            // Need to ignore event when shift is pressed
-            var shiftKeyState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Shift);
-            var shouldPreventShift = (Windows.Globalization.Language.CurrentInputMethodLanguageTag !=
-                                    FRENCH_INPUT_LANGUAGE_CODE) &&
-                                   (shiftKeyState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down; // prevent shift when language is not French
 
             var textLength = passwordBox.OriginalText.Length;
             var caretPosition = passwordBox.SelectionStart;
             // Check if key is numeric
-            if (e.Key >= VirtualKey.Number0 && e.Key <= VirtualKey.Number9 && !shouldPreventShift && textLength < 8)
+            if (e.Key >= VirtualKey.Number0 && e.Key <= VirtualKey.Number9 && !shouldPreventShift() && textLength < 8)
             {
                 int key = (int)e.Key;
                 if (caretPosition < passwordBox.OriginalText.Length)
@@ -151,20 +144,27 @@ namespace SmartDeviceApp.Behaviors
 
         private void OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            // Note: Shift + another key are regarded as separate KeyDown events for
-            // certain keys e.g. $, #, &
-            // Need to ignore event when shift is pressed
-            var shiftKeyState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Shift);
-            var shouldPreventShift = (Windows.Globalization.Language.CurrentInputMethodLanguageTag != FRENCH_INPUT_LANGUAGE_CODE) && (shiftKeyState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
-            // prevent shift when language is not French
-
           // Check if key is numeric
-            if (e.Key >= VirtualKey.Number0 && e.Key <= VirtualKey.Number9 && !shouldPreventShift)
+            if (e.Key >= VirtualKey.Number0 && e.Key <= VirtualKey.Number9 && !shouldPreventShift())
             {
                 // Do nothing, let OnTextChanged handle event
                 return;
             }
             e.Handled = true; // Ignore key
+        }
+
+        // Note: Shift + another key are regarded as separate KeyDown events for
+        // certain keys e.g. $, #, &
+        // Need to ignore event when shift is pressed
+        // For French keyboards, it is the opposite: pressing shift outputs the numbers and not pressing outputs the symbols
+        private bool shouldPreventShift()
+        {
+            var shiftKeyState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Shift);
+
+            var isShiftPressed = (shiftKeyState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
+            var isFrench = Windows.Globalization.Language.CurrentInputMethodLanguageTag == FRENCH_INPUT_LANGUAGE_CODE;
+
+            return (!isFrench && isShiftPressed) || (isFrench && !isShiftPressed);
         }
 
         /// <summary>
