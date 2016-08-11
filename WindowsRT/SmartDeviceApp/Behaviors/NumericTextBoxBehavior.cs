@@ -17,6 +17,13 @@ namespace SmartDeviceApp.Behaviors
     {
         private const string REGEX_NUMERIC = "^[0-9]*$";
 
+        // BCP-47 Code for French taken from CurrentInputMethodLanguageTag
+        // References:
+        // https://tools.ietf.org/html/bcp47)
+        // https://msdn.microsoft.com/library/windows/apps/hh700658
+
+        private const string FRENCH_INPUT_LANGUAGE_CODE = "fr-FR"; 
+
         private string lastValidText;
 
         /// <summary>
@@ -52,9 +59,12 @@ namespace SmartDeviceApp.Behaviors
             // certain keys e.g. $, #, &
             // Need to ignore event when shift is pressed
             var shiftKeyState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Shift);
-            var isShiftPressed = (shiftKeyState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
+            var shouldPreventShift = (Windows.Globalization.Language.CurrentInputMethodLanguageTag !=
+                                    FRENCH_INPUT_LANGUAGE_CODE) &&
+                                   (shiftKeyState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down; // prevent shift when language is not French
+
             // Check if key is numeric
-            if (e.Key >= VirtualKey.Number0 && e.Key <= VirtualKey.Number9 && !isShiftPressed)
+            if (e.Key >= VirtualKey.Number0 && e.Key <= VirtualKey.Number9 && !shouldPreventShift)
             {
                 // Do nothing, let OnTextChanged handle event
                 return;
