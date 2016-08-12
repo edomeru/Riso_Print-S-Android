@@ -185,7 +185,7 @@ namespace SmartDeviceApp.Controllers
         /// <summary>
         /// Gets the license agreement status
         /// </summary>
-        private static bool GetLicenseAgreementStatus()
+        public static bool GetLicenseAgreementStatus()
         {
             bool isLicenseAgreed;
             var localSettings = ApplicationData.Current.LocalSettings;            

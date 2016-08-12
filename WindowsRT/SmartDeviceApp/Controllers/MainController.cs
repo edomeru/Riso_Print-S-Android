@@ -56,7 +56,7 @@ namespace SmartDeviceApp.Controllers
             {
                 return;
             }
-            if (currentFile != null)
+            if (SettingController.GetLicenseAgreementStatus())
             {
                 await FileActivationHandler(file);
             }
