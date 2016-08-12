@@ -17,6 +17,13 @@ namespace SmartDeviceApp.Behaviors
     {
         private const string REGEX_NUMERIC = "^[0-9]*$";
 
+        // BCP-47 Code for French taken from CurrentInputMethodLanguageTag
+        // References:
+        // https://tools.ietf.org/html/bcp47)
+        // https://msdn.microsoft.com/library/windows/apps/hh700658
+
+        private const string FRENCH_INPUT_LANGUAGE_CODE = "fr-FR"; 
+
         private string lastValidText;
 
         /// <summary>
@@ -48,13 +55,8 @@ namespace SmartDeviceApp.Behaviors
 
         private void OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            // Note: Shift + another key are regarded as separate KeyDown events for
-            // certain keys e.g. $, #, &
-            // Need to ignore event when shift is pressed
-            var shiftKeyState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Shift);
-            var isShiftPressed = (shiftKeyState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
             // Check if key is numeric
-            if (e.Key >= VirtualKey.Number0 && e.Key <= VirtualKey.Number9 && !isShiftPressed)
+            if (e.Key >= VirtualKey.Number0 && e.Key <= VirtualKey.Number9 && !shouldPreventShift())
             {
                 // Do nothing, let OnTextChanged handle event
                 return;
@@ -81,6 +83,20 @@ namespace SmartDeviceApp.Behaviors
                     textBox.SelectionStart = (caretPosition > 0) ? caretPosition - 1 : 0;
                 }
             }
+        }
+
+        // Note: Shift + another key are regarded as separate KeyDown events for
+        // certain keys e.g. $, #, &
+        // Need to ignore event when shift is pressed
+        // For French keyboards, it is the opposite: pressing shift outputs the numbers and not pressing outputs the symbols
+        private bool shouldPreventShift()
+        {
+            var shiftKeyState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Shift);
+
+            var isShiftPressed = (shiftKeyState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
+            var isFrench = Windows.Globalization.Language.CurrentInputMethodLanguageTag == FRENCH_INPUT_LANGUAGE_CODE;
+
+            return (!isFrench && isShiftPressed) || (isFrench && !isShiftPressed);
         }
 
         /// <summary>
