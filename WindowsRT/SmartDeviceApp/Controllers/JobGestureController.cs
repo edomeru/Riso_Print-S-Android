@@ -232,9 +232,19 @@ namespace SmartDeviceApp.Controllers
                 {
                     VisualStateManager.GoToState(jobListHeader, "Pressed", true);
                 }
-                jobListHeader.IsChecked = !jobListHeader.IsChecked; // Manually toggle the button
-                ((PrintJobGroup)jobListHeader.DataContext).IsCollapsed = jobListHeader.IsChecked.Value;
-                
+            	
+                //toggle state of currently tapped print job
+                var data = (PrintJobGroup)jobListHeader.DataContext;
+                if (jobListHeader.IsChecked.Value)
+                {
+                    VisualStateManager.GoToState(jobListHeader as ToggleButton, "Checked", true);
+                    data.IsCollapsed = false;
+                }
+                else
+                {
+                    VisualStateManager.GoToState(jobListHeader as ToggleButton, "Checked", false);
+                    data.IsCollapsed = true;
+                }                
             }
         }
         private List<ToggleButton> _groupButtons;
