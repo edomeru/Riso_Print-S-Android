@@ -38,7 +38,7 @@ namespace SmartDeviceApp.Controls
         }
 
         public static readonly DependencyProperty IsBackgroundButtonEnabledProperty =
-            DependencyProperty.Register("IsBackgroundButtonEnabled", typeof(bool), typeof(KeyToggleButtonControl), new PropertyMetadata(true, SetBGButtonEnable));
+            DependencyProperty.Register("IsBackgroundButtonEnabled", typeof(bool), typeof(KeyTextBoxControl), new PropertyMetadata(true, SetBGButtonEnable));
         
         public new static readonly DependencyProperty ValueTextProperty =
             DependencyProperty.Register("ValueText", typeof(string), typeof(KeyTextBoxControl), new PropertyMetadata(false, SetValueText));
@@ -75,10 +75,10 @@ namespace SmartDeviceApp.Controls
         private static void SetBGButtonEnable(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var value = bool.Parse(e.NewValue.ToString());
-            KeyToggleSwitchControl obj = d as KeyToggleSwitchControl;
+            KeyTextBoxControl obj = d as KeyTextBoxControl;
             if (value)
             {
-                obj.Command = obj.ToggleSwitchCommand;
+                obj.Command = obj.SetFocus;
             }
             else
             {
