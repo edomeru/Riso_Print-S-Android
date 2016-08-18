@@ -30,6 +30,7 @@
             <controls:KeyTextBoxControl Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                         ValueText="{Binding Path=Value, Converter={StaticResource IntToStringConverter}, Mode=TwoWay}"
                                         utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
+                                        IsBackgroundButtonEnabled="false"
                                         TextBoxBehavior="Numeric"
                                         IconVisibility="Collapsed"
                                         SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
@@ -39,13 +40,14 @@
                                         TextBoxMaxLength="{StaticResource MAXLENGTH_Copies}"
                                         Width="{Binding Width, ElementName=printSettingsBox}"
                                         IsEnabled="{Binding Path=IsEnabled}"
-                                        PressedColor="{StaticResource BRUSH_Purple1}"/>
+                                        PressedColor="{StaticResource BRUSH_Gray2}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemPasswordBox">
             <controls:KeyPasswordBoxControl IsListItem="True"
                                             Text="{Binding Path=Text, Converter={StaticResource ResourceStringToTextConverter}}"
                                             ValueText="{Binding Path=Value, Mode=TwoWay}"
                                             utility:PrintSettingUtility.PrintSettingValueChanged="{Binding Path=Value}"
+                                            IsBackgroundButtonEnabled="false"
                                             IconVisibility="Collapsed"
                                             SeparatorVisibility="{Binding Converter={StaticResource PrintSettingToSeparatorVisibilityConverter}}"
                                             PasswordBoxWidth="{StaticResource SIZE_ListValue_TextboxWidth_Short}"
@@ -53,7 +55,7 @@
                                             PasswordBoxBehavior="Numeric"
                                             Width="{Binding Width, ElementName=printSettingsBox}"
                                             IsEnabled="{Binding Path=IsEnabled}"
-                                            PressedColor="{StaticResource BRUSH_Purple1}"/>
+                                            PressedColor="{StaticResource BRUSH_Gray2}"/>
         </DataTemplate>
         <DataTemplate x:Key="TEMPLATE_ListViewItemList">
             <controls:KeyValueControl x:Name="listViewItemList"

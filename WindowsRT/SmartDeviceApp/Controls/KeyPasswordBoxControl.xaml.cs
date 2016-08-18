@@ -39,6 +39,9 @@ namespace SmartDeviceApp.Controls
             this.Command = SetFocus;
         }
 
+        public static readonly DependencyProperty IsBackgroundButtonEnabledProperty =
+            DependencyProperty.Register("IsBackgroundButtonEnabled", typeof(bool), typeof(KeyPasswordBoxControl), new PropertyMetadata(true, SetBGButtonEnable));
+
         public new static readonly DependencyProperty ValueTextProperty =
             DependencyProperty.Register("ValueText", typeof(string), typeof(KeyPasswordBoxControl), new PropertyMetadata(false, SetValueText));
 
@@ -50,6 +53,37 @@ namespace SmartDeviceApp.Controls
 
         public static readonly DependencyProperty PasswordBoxBehaviorProperty =
             DependencyProperty.Register("PasswordBoxBehavior", typeof(TextBoxBehavior), typeof(KeyTextBoxControl), new PropertyMetadata(TextBoxBehavior.Alphanumeric, SetPasswordBoxBehavior));
+
+        /// <summary>
+        /// Binded to the Yes ToggleButton.
+        /// </summary>
+        public bool IsBackgroundButtonEnabled
+        {
+            set
+            {
+                if (value)
+                {
+                    this.Command = SetFocus;
+                }
+                else
+                {
+                    this.Command = null;
+                }
+            }
+        }
+        private static void SetBGButtonEnable(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = bool.Parse(e.NewValue.ToString());
+            KeyPasswordBoxControl obj = d as KeyPasswordBoxControl;
+            if (value)
+            {
+                obj.Command = obj.SetFocus;
+            }
+            else
+            {
+                obj.Command = null;
+            }
+        }
 
         /// <summary>
         /// Text property of the Value element of the control.
