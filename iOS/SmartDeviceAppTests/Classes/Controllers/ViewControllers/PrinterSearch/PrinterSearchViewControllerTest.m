@@ -308,6 +308,32 @@
     GHAssertTrue([[cellIpad separator] isHidden], @"");
 }
 
+- (void)test007_viewDidAppearIOS10
+{
+    [controllerIphone setValue:@(YES) forKey:@"isIOS10"];
+    id mockController = OCMPartialMock(controllerIphone);
+    [[mockController expect] refreshScreen];
+    
+    [mockController viewDidAppear:NO];
+    
+    [mockController verify];
+    
+    [mockController stopMocking];
+}
+
+- (void)test008_viewDidAppearNotIOS10
+{
+    [controllerIphone setValue:@(NO) forKey:@"isIOS10"];
+    id mockController = OCMPartialMock(controllerIphone);
+    [[mockController reject] refreshScreen];
+    
+    [mockController viewDidAppear:NO];
+    
+    [mockController verify];
+    
+    [mockController stopMocking];
+}
+
 #pragma mark - Utilities
 
 - (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
