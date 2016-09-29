@@ -108,7 +108,7 @@ void mock_success_snmp_device_discovery()
     
     self.testPrinterDetails = [[PrinterDetails alloc] init];
     self.testPrinterDetails.ip = @"192.168.1.1";
-    self.testPrinterDetails.name = @"RISO Printer 1";
+    self.testPrinterDetails.name = @"ORPHIS GD1";
 }
 
 // Run at end of all tests in the class
@@ -144,7 +144,7 @@ void mock_success_snmp_device_discovery()
 {
     if (self.mockObserver != nil)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:self.self.mockObserver];
+        [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
         self.mockObserver = nil;
     }
 }
@@ -182,7 +182,7 @@ void mock_success_snmp_device_discovery()
     GHAssertEqualCStrings([testCommunityName cStringUsingEncoding:[NSString defaultCStringEncoding]], mockCommunityName, @"");
     
     // Verification
-    [NSThread sleepForTimeInterval:1];
+    [NSThread sleepForTimeInterval:2];
     GHAssertEquals((int)snmp_manual_discovery_fake.call_count, 1, @"snmp_manual_discovery must be called.");
     GHAssertEquals((int)snmp_device_get_ip_address_fake.call_count, 0, @"snmp_device_get_ip_address must not be called.");
     GHAssertEquals((int)snmp_device_get_name_fake.call_count, 0, @"snmp_device_get_name must not be called.");
@@ -286,7 +286,7 @@ void mock_success_snmp_device_discovery()
     GHAssertEqualCStrings([testCommunityName cStringUsingEncoding:[NSString defaultCStringEncoding]], mockCommunityName, @"");
     
     // Verification
-    [NSThread sleepForTimeInterval:1];
+    [NSThread sleepForTimeInterval:3];
     GHAssertEquals((int)snmp_device_discovery_fake.call_count, 1, @"snmp_device_discovery must be called.");
     GHAssertEquals((int)snmp_device_get_ip_address_fake.call_count, 0, @"snmp_device_get_ip_address must not be called.");
     GHAssertEquals((int)snmp_device_get_name_fake.call_count, 0, @"snmp_device_get_name must not be called.");
@@ -355,7 +355,7 @@ void mock_success_snmp_device_discovery()
     [sharedSNMPManager cancelSearch];
     
     // Verification
-    [NSThread sleepForTimeInterval:1];
+    [NSThread sleepForTimeInterval:2];
     GHAssertEquals((int)snmp_cancel_fake.call_count, 1, @"snmp_cancel must be called.");
     GHAssertThrows([self.mockObserver verify], @"");
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
@@ -377,7 +377,7 @@ void mock_success_snmp_device_discovery()
     [sharedSNMPManager cancelSearch];
     
     // Verification
-    [NSThread sleepForTimeInterval:1];
+    [NSThread sleepForTimeInterval:2];
     GHAssertEquals((int)snmp_cancel_fake.call_count, 0, @"snmp_cancel must not be called.");
     GHAssertThrows([self.mockObserver verify], @"");
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
