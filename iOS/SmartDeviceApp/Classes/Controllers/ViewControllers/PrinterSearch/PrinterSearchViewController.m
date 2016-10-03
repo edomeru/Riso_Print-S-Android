@@ -39,6 +39,11 @@
  */
 @property (readwrite, assign, nonatomic) BOOL hasAddedPrinters;
 
+/**
+ * Flag that indicates if device is iOS 10.
+ */
+@property (readwrite, assign, nonatomic) BOOL isIOS10;
+
 #if SORT_SEARCH_RESULTS
 /**
  * A list of the names of the printers searched from the network that
@@ -208,7 +213,15 @@
     [super viewDidLoad];
     
     [self setupScreen];
-    [self refreshScreen];
+    
+    //call refresh in this timing only if not iOS 10. Refresh control is not shown if done in this timing
+    //http://stackoverflow.com/questions/39489263/ios-10-0-uirefreshcontrol-not-showing-indicator
+    NSOperatingSystemVersion iOS10 = (NSOperatingSystemVersion){10,0,0};
+    self.isIOS10 = [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:iOS10];
+    if (!self.isIOS10)
+    {
+        [self refreshScreen];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -252,6 +265,21 @@
 - (IBAction)onBack:(UIBarButtonItem *)sender
 {
     [self dismissScreen];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if (self.isIOS10)
+    {
+        // for iOS 10 refresh control can be shown if done in this timing
+        [self refreshScreen];
+        if ([NetworkManager isConnectedToLocalWifi])
+        {
+            //simulate pull to refresh action, needed to trigger showing of refresh control even if there is no printer found
+            [self.searchResultsTable setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height)];
+        }
+    }
 }
 
 #pragma mark - Screen Actions

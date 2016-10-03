@@ -30,6 +30,7 @@ static RootViewController *container;
 
 - (void)awakeFromNib
 {
+    [super awakeFromNib];
     container = self;
 }
 

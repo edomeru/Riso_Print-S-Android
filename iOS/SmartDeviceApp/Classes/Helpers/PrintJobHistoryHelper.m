@@ -178,11 +178,11 @@
 + (void)populateWithTestData
 {
     // TEST DATA CONSTANTS
-    NSString* TEST_PRINTER_NAME = @"PrintJob Test Printer 123456789 123456789 123456789 123456789 123456789";
+    NSString* TEST_PRINTER_NAME = @"ORPHIS GD-Test";
     NSString* TEST_PRINTER_IP = @"999.99.9";
     NSString* TEST_JOB_NAME = @"Test Job abcdef abcdef abcdef abcdef abcdef abcdef abcdef";
-    const NSUInteger TEST_NUM_PRINTERS = 8;
-    const NSUInteger TEST_NUM_JOBS[TEST_NUM_PRINTERS] = {8, 5, 10, 1, 4, 6, 3, 7};
+    const NSUInteger TEST_NUM_PRINTERS = 9;
+    const NSUInteger TEST_NUM_JOBS[TEST_NUM_PRINTERS] = {8, 5, 10, 1, 4, 6, 3, 7, 12};
     
     PrinterManager* pm = [PrinterManager sharedPrinterManager];
     
