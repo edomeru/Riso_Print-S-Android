@@ -348,7 +348,8 @@ void *do_discovery(void *parameter)
                 break;
             }
         }
-        else
+        //always enforce the timeout regardless of value of fds
+        //else
         {
             time_t current_time;
             time(&current_time);
