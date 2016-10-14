@@ -224,10 +224,19 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     NSString *fileName = self.printDocument.name;
     NSString *ipAddress = [self.printDocument.printer ip_address];
     NSString *printSettings = [self.printDocument.previewSetting formattedString];
+    
     NSString* loginId = [[NSUserDefaults standardUserDefaults] valueForKey:KEY_APPSETTINGS_LOGIN_ID];
     if (loginId == nil)
     {
         loginId = @"";
+    }
+
+    // PC名
+    UIDevice *dev =[UIDevice currentDevice];
+    NSString* host_name = dev.name;
+    if (host_name == nil)
+    {
+        host_name = @"";
     }
     
     // for ORPHIS FW start;
@@ -248,7 +257,10 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     // Version 2.0.0.3 end
     NSString *app_version = [NSString stringWithFormat:@"%@.%@", version, build];
     
-    self.job = directprint_job_new([printer_name UTF8String], [app_name UTF8String], [app_version UTF8String], [loginId UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
+    // ホスト名出力処理の追加 Start
+    //self.job = directprint_job_new([printer_name UTF8String], [app_name UTF8String], [app_version UTF8String], [loginId UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
+    self.job = directprint_job_new([printer_name UTF8String], [host_name UTF8String], [app_name UTF8String], [app_version UTF8String], [loginId UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
+    // ホスト名出力処理の追加 End
     // for ORPHIS FW end;
     
     directprint_job_set_caller_data(self.job, (void *)CFBridgingRetain(self));

@@ -3,7 +3,7 @@
 //  SmartDeviceApp
 //
 //  Created by a-LINK Group.
-//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
+//  Copyright (c) 2016 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #include <stdio.h>
@@ -126,6 +126,11 @@ struct directprint_job_s
     // for ORPHIS FW end
     
     char *user_name;
+    
+     // ホスト名出力処理の追加 Start
+    char *host_name;
+    // ホスト名出力処理の追加 END
+
     char *job_name;
     char *filename;
     char *print_settings;
@@ -147,9 +152,6 @@ int directprint_job_raw_print(directprint_job *print_job);
 void directprint_job_cancel(directprint_job *print_job);
 
 // Direct print job accessors
-directprint_job *directprint_job_new(const char *printer_name, const char *app_name, const char *app_version,
-                                     const char *user_name, const char *job_name, const char *filename,
-                                     const char *print_settings, const char *ip_address, directprint_callback callback);
 void directprint_job_free(directprint_job *print_job);
 void *directprint_job_get_caller_data(directprint_job *print_job);
 void directprint_job_set_caller_data(directprint_job *print_job, void *caller_data);
@@ -175,9 +177,14 @@ void job_dump_write(FILE *file, void *buffer, size_t buffer_len);
 /**
  Public Methods
  */
-directprint_job *directprint_job_new(const char *printer_name, const char *app_name, const char *app_version,
+// ホスト名出力処理の追加 Start
+//directprint_job *directprint_job_new(const char *printer_name, const char *app_name, const char *app_version,
+//                                     const char *user_name, const char *job_name, const char *filename,
+//                                     const char *print_settings, const char *ip_address, directprint_callback callback)
+directprint_job *directprint_job_new(const char *printer_name, const char *host_name, const char *app_name, const char *app_version,
                                      const char *user_name, const char *job_name, const char *filename,
                                      const char *print_settings, const char *ip_address, directprint_callback callback)
+// ホスト名出力処理の追加 End
 {
     directprint_job *print_job = (directprint_job *)malloc(sizeof(directprint_job));
     print_job->app_name = strdup(app_name);
@@ -187,6 +194,9 @@ directprint_job *directprint_job_new(const char *printer_name, const char *app_n
     print_job->filename = strdup(filename);
     print_job->print_settings = strdup(print_settings);
     print_job->printer_name = strdup(printer_name);
+// ホスト名出力処理の追加 Start
+    print_job->host_name = strdup(host_name);
+// ホスト名出力処理の追加 End
     
     // IP address check
     struct in6_addr ip_v6;
@@ -228,6 +238,11 @@ void directprint_job_free(directprint_job *print_job)
     free(print_job->print_settings);
     free(print_job->ip_address);
     free(print_job->printer_name);
+    // ホスト名出力処理の追加 Start
+    free(print_job->host_name);
+    free(print_job->user_name); // 処理漏れのため追加
+    // ホスト名出力処理の追加 End
+    
     free(print_job);
 }
 
@@ -282,10 +297,17 @@ int can_start_print(directprint_job *print_job)
     {
         return 0;
     }
+    // ホスト名出力処理の追加 Start
+    if (print_job->host_name == 0)
+    {
+        return 0;
+    }
+    // ホスト名出力処理の追加 End
     if (print_job->user_name == 0)
     {
         return 0;
     }
+
     if (print_job->job_name == 0 || strlen(print_job->job_name) <= 0)
     {
         return 0;
@@ -465,16 +487,12 @@ void *do_lpr_print(void *parameter)
     }
     else if (is_FWSeries(print_job->printer_name)) // FW Series
     {
-        // Ver.2.0.0.3
-        //create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
-        create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version);
-        //create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name);
+        create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
         strcpy(queueName, QUEUE_NAME_FWGD);
     }
     else    // GD Series
     {
-        //create_pjl_gd(pjl_header, print_job->print_settings, print_job->print_settings, print_job->app_version);
-        create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version);
+        create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
         strcpy(queueName, QUEUE_NAME_FWGD);
     }
     strcat(pjl_header, PJL_LANGUAGE);
@@ -814,16 +832,20 @@ void *do_raw_print(void *parameter)
     else if (is_FWSeries(print_job->printer_name)) // FW Series
     {
         // Ver.2.0.0.3 start
-        create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        //create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
         //create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name);
         // Ver.2.0.0.3 end
     }
     else    // GD Series
     {
         // Ver.2.0.0.3 start
-        create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        //create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
         //create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name);
         // Ver.2.0.0.3 end
+        
+        create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
+        
     }
     strcat(pjl_header, PJL_LANGUAGE);
     
