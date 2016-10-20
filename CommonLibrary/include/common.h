@@ -34,9 +34,16 @@ enum kJobStatus
     kJobStatusSent
 };
 
-directprint_job *directprint_job_new(const char *printer_name, const char *app_name, const char *app_version,
+// ホスト名出力処理の追加 Start
+// ・重複するdirectprint.c側の宣言はメンテ効率化のため削除した。
+//directprint_job *directprint_job_new(const char *printer_name, const char *app_name, const char *app_version,
+ //                                    const char *user_name, const char *job_name, const char *filename,
+ //                                    const char *print_settings, const char *ip_address, directprint_callback callback);
+directprint_job *directprint_job_new(const char *printer_name, const char *host_name, const char *app_name, const char *app_version,
                                      const char *user_name, const char *job_name, const char *filename,
                                      const char *print_settings, const char *ip_address, directprint_callback callback);
+// ホスト名出力処理の追加 End
+
 void directprint_job_free(directprint_job *print_job);
 void *directprint_job_get_caller_data(directprint_job *print_job);
 void directprint_job_set_caller_data(directprint_job *print_job, void *caller_data);
