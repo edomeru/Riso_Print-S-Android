@@ -528,6 +528,9 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
     [self.titleLabel removeFromSuperview];
     self.titleLabel = nil;
 
+    //SDA Fix: Hide alert window before removing from super view so it will
+    //not obstruct view even if garbage collection lags
+    self.alertWindow.hidden = YES;
     [self.alertWindow removeFromSuperview];
     self.alertWindow = nil;
     self.layoutDirty = NO;
