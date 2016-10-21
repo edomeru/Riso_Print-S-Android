@@ -105,6 +105,7 @@ void snmp_context_free(snmp_context *context);
 void snmp_device_discovery(snmp_context *context);
 void snmp_manual_discovery(snmp_context *context, const char *ip_address);
 void snmp_cancel(snmp_context *context);
+void snmp_stop_sessions(); //calls a stop to all sessions, forcing all snmp api to quit their processing and proceed to cleanup
 void *snmp_context_get_caller_data(snmp_context *context);
 void snmp_context_set_caller_data(snmp_context *context, void *caller_data);
 

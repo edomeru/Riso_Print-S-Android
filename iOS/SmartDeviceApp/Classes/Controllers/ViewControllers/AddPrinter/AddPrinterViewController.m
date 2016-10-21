@@ -14,6 +14,8 @@
 #import "InputHelper.h"
 #import "AppSettingsHelper.h"
 #import "ScreenLayoutHelper.h"
+#import "DeviceLockObserver.h"
+#import "NotificationNames.h"
 
 NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 
@@ -186,12 +188,18 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector (keyboardDidHide:)
                                                  name: UIKeyboardDidHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector (deviceLockEventDidNotify)
+                                                 name: NOTIF_DEVICE_LOCK object:nil];
+
+    [[DeviceLockObserver sharedObserver] startObserver];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[DeviceLockObserver sharedObserver] stopObserver];
 }
 
 - (void)didReceiveMemoryWarning
@@ -244,7 +252,7 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
         NSLog(@"[INFO][AddPrinter] canceling search");
 #endif
-        [self.printerManager stopSearching];
+        [self.printerManager stopSearching:YES];
     }
 }
 
@@ -548,6 +556,17 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     
     //put the view back to normal when keypad is dismissed
     [self moveViewDownToNormal];
+}
+
+- (void)deviceLockEventDidNotify
+{
+    if ([self.progressIndicator isAnimating])
+    {
+        [self.printerManager stopSearching:YES];
+        [self.progressIndicator stopAnimating];
+        [self.saveButton setHidden:NO];
+        [self.textIP setEnabled:YES];
+    }
 }
 
 @end
