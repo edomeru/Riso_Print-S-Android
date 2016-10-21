@@ -191,8 +191,10 @@
 /**
  * Terminates an ongoing printer search operation.
  * If the search is cancelled, the search delegate methods will not be anymore called.
+ * 
+ * @param stopSessions indicate if will perform an immediate stop of the current SNMP Sessions
  */
-- (void)stopSearching;
+- (void)stopSearching:(BOOL)stopSessions;
 
 #pragma mark - Printer Utilities
 

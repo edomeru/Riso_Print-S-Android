@@ -1,9 +1,9 @@
 //
 //  ScreenLayoutHelper.h
-//  RISOSmartPrint
+//  SmartDeviceApp
 //
-//  Created by Prnsoft on 7/20/16.
-//  Copyright © 2016 aLink. All rights reserved.
+//  Created by a-LINK Group.
+//  Copyright (c) 2016 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

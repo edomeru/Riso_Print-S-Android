@@ -524,6 +524,11 @@ void snmp_cancel(snmp_context *context)
     pthread_join(context->main_thread, 0);
 }
 
+void snmp_stop_sessions()
+{
+    snmp_close_sessions();
+}
+
 int snmp_context_get_state(snmp_context *context)
 {
     int state;

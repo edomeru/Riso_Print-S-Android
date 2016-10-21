@@ -268,6 +268,11 @@ static SNMPManager* sharedSNMPManager = nil;
     });
 }
 
+- (void)stopSearch
+{
+    snmp_stop_sessions();
+}
+
 @end
 
 #pragma mark - Net-SNMP Callbacks
@@ -306,3 +311,5 @@ static void snmpPrinterAddedCallback(snmp_context* context, snmp_device* device)
     SNMPManager* manager = [SNMPManager sharedSNMPManager];
     [manager addRealPrinter:device];
 }
+
+

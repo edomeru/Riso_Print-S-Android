@@ -255,7 +255,7 @@
             NSLog(@"[INFO][PrinterSearch] canceling search");
 #endif
             self.isSearching = NO;
-            [self.printerManager stopSearching];
+            [self.printerManager stopSearching:NO];
             
             return;
         }

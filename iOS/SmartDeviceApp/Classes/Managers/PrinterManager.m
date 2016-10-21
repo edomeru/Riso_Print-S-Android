@@ -360,7 +360,7 @@ static PrinterManager* sharedPrinterManager = nil;
     // results of the search should be handled by the notification observers
 }
 
-- (void)stopSearching
+- (void)stopSearching:(BOOL)stopSessions
 {
 #if DEBUG_LOG_PRINTER_MANAGER
     NSLog(@"[INFO][PM] stop waiting for notifications");
@@ -368,6 +368,12 @@ static PrinterManager* sharedPrinterManager = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     SNMPManager* snmpManager = [SNMPManager sharedSNMPManager];
+    
+    if(stopSessions)
+    {
+        [snmpManager stopSearch];
+    }
+    
     [snmpManager cancelSearch];
 }
 
