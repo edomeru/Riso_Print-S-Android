@@ -277,7 +277,7 @@
         if ([NetworkManager isConnectedToLocalWifi])
         {
             //simulate pull to refresh action, needed to trigger showing of refresh control even if there is no printer found
-            [self.searchResultsTable setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height)];
+            [self.searchResultsTable setContentOffset:CGPointMake(0, -HEIGHT_WHILE_REFRESHING)];
         }
     }
 }
@@ -313,7 +313,7 @@
                   forControlEvents:UIControlEventValueChanged];
     
     // fix for initial tint color of the searching indicator in iOS7
-    [self.searchResultsTable setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height)];
+    [self.searchResultsTable setContentOffset:CGPointMake(0, -HEIGHT_WHILE_REFRESHING)];
 }
 
 - (void)refreshScreen
@@ -592,7 +592,7 @@
     [self.refreshControl beginRefreshing];
     
     // fix for the table view not moving to its proper place after the refresh indicator appears
-    [self.searchResultsTable setContentOffset:CGPointMake(0, self.refreshControl.frame.size.height)];
+    [self.searchResultsTable setContentOffset:CGPointMake(0, HEIGHT_WHILE_REFRESHING)];
     
     // prevent repeated pull-to-refresh
     [self.searchResultsTable setBounces:NO];
