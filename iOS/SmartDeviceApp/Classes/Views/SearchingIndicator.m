@@ -73,8 +73,9 @@
     [self setBackgroundColor:[UIColor gray4ThemeColor]];
     [self setTintColor:[UIColor whiteThemeColor]];
 
-    // adjust frame (fix for the frame extending the height of the swipe-down gesture in iOS7)
-    if (self.frame.size.height > HEIGHT_WHILE_REFRESHING)
+    // adjust frame if not approximately equal to the determined height while refreshing
+    CGFloat diff = self.frame.size.height - HEIGHT_WHILE_REFRESHING;
+    if (fabs(diff) > 0.0001)
     {
         [self setFrameIsInvalid:YES];
         [self layoutIfNeeded]; // will call drawRect:
