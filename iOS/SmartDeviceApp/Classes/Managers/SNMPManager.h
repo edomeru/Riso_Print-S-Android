@@ -73,4 +73,8 @@
  */
 - (void)cancelSearch;
 
+/**
+ * Call to stop to search immediately and not wait for timeout.
+ */
+- (void)stopSearch;
 @end
