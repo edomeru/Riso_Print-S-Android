@@ -40,12 +40,11 @@ FAKE_VOID_FUNC6(CFNotificationCenterAddObserver, CFNotificationCenterRef, const 
 - (void)setUp
 {
     self.receivedNotification = YES;
-}
-
--(void)tearDownClass
-{
+    
     RESET_FAKE(CFNotificationCenterRemoveEveryObserver);
     RESET_FAKE(CFNotificationCenterAddObserver);
+    
+    FFF_RESET_HISTORY();
 }
 
 - (void)testSharedObserverInstance

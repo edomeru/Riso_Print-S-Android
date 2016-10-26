@@ -33,6 +33,8 @@
 - (void)moveViewDownToNormal;
 - (void)keyboardDidShow:(NSNotification *)notif;
 - (void)keyboardDidHide:(NSNotification *)notif;
+- (void)stopSearch;
+- (void)deviceLockEventDidNotify;
 
 @end
 
@@ -463,19 +465,41 @@
     [mockController stopMocking];
 }
 
-- (void) test17_stopSearchStopSessions
+- (void)test17_stopSearchStopSessions
 {
     id mockPrinterManager = OCMClassMock([PrinterManager class]);
     [[mockPrinterManager expect] stopSearching:YES];
     PrinterManager *originalManager = [controllerIphone valueForKey:@"printerManager"];
-    
-    
+
     [controllerIphone setValue:mockPrinterManager forKey:@"printerManager"];
+    
+    [controllerIphone stopSearch];
     
     [mockPrinterManager verify];
     [mockPrinterManager stopMocking];
     
+    [controllerIphone setValue:originalManager forKey:@"printerManager"];
+}
+
+- (void)test18_testDeviceLockEventDidNotify
+{
+    [controllerIphone.saveButton setHidden:YES];
+    [controllerIphone.textIP setEnabled:NO];
     
+    [controllerIphone deviceLockEventDidNotify];
+    
+    GHAssertTrueNoThrow(controllerIphone.saveButton.hidden, @"");
+    GHAssertFalseNoThrow([controllerIphone.textIP isEnabled], @"");
+    
+    [controllerIphone.progressIndicator startAnimating];
+
+    GHAssertTrueNoThrow([controllerIphone.progressIndicator isAnimating], @"");
+    
+    [controllerIphone deviceLockEventDidNotify];
+    
+    GHAssertFalseNoThrow([controllerIphone.progressIndicator isAnimating], @"");
+    GHAssertFalseNoThrow(controllerIphone.saveButton.hidden, @"");
+    GHAssertTrueNoThrow([controllerIphone.textIP isEnabled], @"");
 }
 
 #pragma mark - Utilities
