@@ -23,5 +23,6 @@
     #import "CoreData+MagicalRecord.h"
 
     #define DISABLE_FAILED_TESTS 1
+    #define SDA_UNIT_TEST
 
 #endif

@@ -664,18 +664,39 @@
     // Mock
     id mockSNMPManager = [OCMockObject partialMockForObject:[SNMPManager sharedSNMPManager]];
     [[mockSNMPManager expect] cancelSearch];
+    [[mockSNMPManager reject] stopSearch];
     id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
     [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
     
     // SUT
     PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
     sharedPrinterManager.searchDelegate = self;
-    [sharedPrinterManager stopSearching];
+    [sharedPrinterManager stopSearching:NO];
     
     // Verification
     GHAssertNoThrow([mockSNMPManager verify], @"");
     [mockSNMPManager stopMocking];
 }
+
+- (void)testStopSearching_StopSessions
+{
+    // Mock
+    id mockSNMPManager = [OCMockObject partialMockForObject:[SNMPManager sharedSNMPManager]];
+    [[mockSNMPManager expect] cancelSearch];
+    [[mockSNMPManager expect] stopSearch];
+    id mockDatabaseManager = [OCMockObject mockForClass:[DatabaseManager class]];
+    [[[mockDatabaseManager stub] andReturn:nil] getObjects:E_DEFAULTPRINTER usingFilter:nil];
+    
+    // SUT
+    PrinterManager *sharedPrinterManager = [PrinterManager sharedPrinterManager];
+    sharedPrinterManager.searchDelegate = self;
+    [sharedPrinterManager stopSearching:YES];
+    
+    // Verification
+    GHAssertNoThrow([mockSNMPManager verify], @"");
+    [mockSNMPManager stopMocking];
+}
+
 
 - (void)testIsAtMaximumPrinters_YES
 {

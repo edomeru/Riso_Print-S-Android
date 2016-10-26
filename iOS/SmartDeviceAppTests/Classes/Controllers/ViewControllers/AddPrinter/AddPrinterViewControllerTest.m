@@ -463,6 +463,21 @@
     [mockController stopMocking];
 }
 
+- (void) test17_stopSearchStopSessions
+{
+    id mockPrinterManager = OCMClassMock([PrinterManager class]);
+    [[mockPrinterManager expect] stopSearching:YES];
+    PrinterManager *originalManager = [controllerIphone valueForKey:@"printerManager"];
+    
+    
+    [controllerIphone setValue:mockPrinterManager forKey:@"printerManager"];
+    
+    [mockPrinterManager verify];
+    [mockPrinterManager stopMocking];
+    
+    
+}
+
 #pragma mark - Utilities
 
 - (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg
