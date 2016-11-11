@@ -252,7 +252,7 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 #if DEBUG_LOG_ADD_PRINTER_SCREEN
         NSLog(@"[INFO][AddPrinter] canceling search");
 #endif
-        [self.printerManager stopSearching:YES];
+        [self stopSearch];
     }
 }
 
@@ -562,10 +562,24 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 {
     if ([self.progressIndicator isAnimating])
     {
-        [self.printerManager stopSearching:YES];
+        [self stopSearch];
         [self.progressIndicator stopAnimating];
         [self.saveButton setHidden:NO];
         [self.textIP setEnabled:YES];
+    }
+}
+
+- (void)stopSearch
+{
+    NSOperatingSystemVersion iOS10 = (NSOperatingSystemVersion){10,0,0};
+    BOOL isIOS10 = [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:iOS10];
+    if (isIOS10)
+    {
+       [self.printerManager stopSearching:YES];
+    }
+    else
+    {
+        [self.printerManager stopSearching:NO];
     }
 }
 

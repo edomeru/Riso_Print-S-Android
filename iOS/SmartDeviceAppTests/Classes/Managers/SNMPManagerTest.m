@@ -23,6 +23,7 @@ FAKE_VOID_FUNC(snmp_context_free);
 FAKE_VOID_FUNC(snmp_manual_discovery);
 FAKE_VOID_FUNC(snmp_device_discovery);
 FAKE_VOID_FUNC(snmp_cancel);
+FAKE_VOID_FUNC(snmp_stop_sessions);
 
 FAKE_VALUE_FUNC(snmp_device *, snmp_device_new);
 FAKE_VOID_FUNC(snmp_device_free);
@@ -126,6 +127,7 @@ void mock_success_snmp_device_discovery()
     RESET_FAKE(snmp_manual_discovery);
     RESET_FAKE(snmp_device_discovery);
     RESET_FAKE(snmp_cancel);
+    RESET_FAKE(snmp_stop_sessions);
 
     RESET_FAKE(snmp_device_new);
     RESET_FAKE(snmp_device_free);
@@ -382,6 +384,16 @@ void mock_success_snmp_device_discovery()
     GHAssertThrows([self.mockObserver verify], @"");
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
 }
+
+- (void)testStopSessions
+{
+     SNMPManager *sharedSNMPManager = [SNMPManager sharedSNMPManager];
+    
+    [sharedSNMPManager stopSearch];
+    
+    GHAssertEquals((int)snmp_stop_sessions_fake.call_count, 1, @"snmp_stop_sessions must be called");
+}
+
 
 #pragma mark - Mock Methods
 

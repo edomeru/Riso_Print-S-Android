@@ -9,7 +9,13 @@
 #import "DeviceLockObserver.h"
 #import "NotificationNames.h"
 
-static char* const lockObserver = "SDALockObserver";
+#ifdef SDA_UNIT_TEST
+#define STATIC
+#else
+#define STATIC static
+#endif
+
+STATIC char* const lockObserver = "SDALockObserver";
 
 @interface DeviceLockObserver ()
 
@@ -57,7 +63,7 @@ static char* const lockObserver = "SDALockObserver";
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_DEVICE_LOCK object:nil];
 }
 
-static void lockStateChangedNotification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+STATIC void lockStateChangedNotification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
     [[DeviceLockObserver sharedObserver] notifyLockEvent];
 }
