@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
+import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.MemoryUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -80,6 +82,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private static final String TAG_PERMISSION_DIALOG = "external_storage_tag";
     private static final String KEY_EXTERNAL_STORAGE_DIALOG_OPEN = "key_external_storage_dialog_open";
+    private static final String KEY_SCREEN_SIZE = "screen_size";
 
     private PDFFileManager mPdfManager = null;
     
@@ -253,7 +256,16 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mPrintPreviewView.setPdfManager(mPdfManager);
         //mPrintPreviewView.setShow3Punch(isPrinterJapanese());
         mPrintPreviewView.setPrintSettings(mPrintSettings);
+
+        // Clear mBmpCache when Display Size is changed dynamically (Screen Zoom in Android 7)
+        if (savedInstanceState != null) {
+            Point oldScreen = savedInstanceState.getParcelable(KEY_SCREEN_SIZE);
+            if (!AppUtils.getScreenDimensions(getActivity()).equals(oldScreen)) {
+                mBmpCache.evictAll();
+            }
+        }
         mPrintPreviewView.setBmpCache(mBmpCache);
+
         mPrintPreviewView.setListener(this);
         mPrintPreviewView.setPans(mPanX, mPanY);
         mPrintPreviewView.setZoomLevel(mZoomLevel);
@@ -314,6 +326,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         if (mPrintPreviewView != null) {
             mCurrentPage = mPrintPreviewView.getCurrentPage();
             outState.putInt(KEY_CURRENT_PAGE, mCurrentPage);
+            outState.putParcelable(KEY_SCREEN_SIZE, AppUtils.getScreenDimensions(getActivity()));
         }
         outState.putBoolean(KEY_EXTERNAL_STORAGE_DIALOG_OPEN, mIsPermissionDialogOpen);
     }
