@@ -533,7 +533,7 @@
                 <option>ids_lbl_papertype_cardij</option>
                 <option>ids_lbl_papertype_lwpaper</option>
                 <option>ids_lbl_papertype_roughpaper</option>
-                <option>ids_lbl_papertype_plainplemium</option>
+                <option>ids_lbl_papertype_plain_premium</option>
             </setting>
             <setting
                 name="inputTray"
