@@ -260,7 +260,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         // Clear mBmpCache when Display Size is changed dynamically (Screen Zoom in Android 7)
         if (savedInstanceState != null) {
             Point oldScreen = savedInstanceState.getParcelable(KEY_SCREEN_SIZE);
-            if (!AppUtils.getScreenDimensions(getActivity()).equals(oldScreen)) {
+            if (!AppUtils.getScreenDimensions(getActivity()).equals(oldScreen)
+                    && mBmpCache != null) {
                 mBmpCache.evictAll();
             }
         }
