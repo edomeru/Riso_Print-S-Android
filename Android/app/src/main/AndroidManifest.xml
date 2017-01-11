@@ -12,6 +12,7 @@
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/ids_app_launcher_name"
+        android:resizeableActivity="false"
         android:theme="@style/AppTheme" >
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.SplashActivity"
