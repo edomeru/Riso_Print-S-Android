@@ -167,5 +167,6 @@
     <string name="ids_lbl_snmp_community_name">SNMPコミュニティ名</string>
     <string name="ids_lbl_valid_community_name">有効な文字：\na-zA-Z0-9, /:;. @ [\\¥] ^ _</string>
     <string name="ids_err_msg_invalid_community_name">SNMPコミュニティ名を確認してください。</string>
+    <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
 
 </resources>

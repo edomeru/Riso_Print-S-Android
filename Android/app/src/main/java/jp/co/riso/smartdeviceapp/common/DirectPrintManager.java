@@ -41,8 +41,10 @@ public class DirectPrintManager {
      * @param ipAddress IP address of the printer.
      */
     @SuppressWarnings("JniMissingFunction")
-    private native void initializeDirectPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress);
-
+    // Ver.2.0.4.2 Start
+    //private native void initializeDirectPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress);
+    private native void initializeDirectPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress, String hostName);
+    // Ver.2.0.4.2 End
     /**
      * @brief Finalizes Direct Print.
      */
@@ -85,16 +87,27 @@ public class DirectPrintManager {
      * @param fileName File name of the PDF.
      * @param printSetting Formatted string of the print settings.
      * @param ipAddress IP address of the printer.
+     * @param hostName The name of the industrial design.
      * 
      * @retval true Print execution is started
      * @retval false Print not executed
      */
+    // Ver.2..0.4.2 Start
+    /*
     public boolean executeLPRPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress) {
         if (printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || jobName.isEmpty()
                 || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
             return false;
         }
-        initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress);
+      initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress);
+    */
+    public boolean executeLPRPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress, String hostName) {
+        if (printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || hostName == null || jobName.isEmpty()
+                || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty() || hostName.isEmpty()) {
+            return false;
+        }
+        initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName);
+        // Ver.2.0.4.2 End
         if (isPrinting()) {
             lprPrint();
             return true;
@@ -110,16 +123,30 @@ public class DirectPrintManager {
      * @param fileName File name of the PDF.
      * @param printSetting Formatted string of the print settings.
      * @param ipAddress IP address of the printer.
-     * 
+     * @param hostName The name of the industrial design.
+     *
      * @retval true Print execution is started
      * @retval false Print not executed
      */
+    // Ver.2.0.4.2 Start
+    /*
     public boolean executeRAWPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress) {
         if (printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null
                 || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty()) {
             return false;
         }
+
         initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress);
+    */
+
+    public boolean executeRAWPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress, String hostName) {
+        if (printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || hostName == null
+                || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty() || hostName.isEmpty()) {
+            return false;
+        }
+
+        initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName);
+        // Ver.2.0.4.2 End
         if (isPrinting()) {
             rawPrint();
             return true;

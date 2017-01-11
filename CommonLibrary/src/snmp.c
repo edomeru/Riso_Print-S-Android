@@ -348,8 +348,7 @@ void *do_discovery(void *parameter)
                 break;
             }
         }
-        //always enforce the timeout regardless of value of fds
-        //else
+        else
         {
             time_t current_time;
             time(&current_time);
@@ -522,11 +521,6 @@ void snmp_cancel(snmp_context *context)
 {
     snmp_context_set_state(context, kSnmpStateCancelled);
     pthread_join(context->main_thread, 0);
-}
-
-void snmp_stop_sessions()
-{
-    snmp_close_sessions();
 }
 
 int snmp_context_get_state(snmp_context *context)

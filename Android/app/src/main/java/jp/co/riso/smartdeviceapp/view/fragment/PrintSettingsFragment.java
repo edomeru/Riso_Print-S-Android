@@ -256,13 +256,22 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         String appName = getResources().getString(R.string.ids_app_name);
         String appVersion = AppUtils.getApplicationVersion(SmartDeviceApp.getAppContext());
         String userName = AppUtils.getOwnerName();
+        // Ver.2.0.4.2 Start
+        String hostName = android.os.Build.MODEL;
+        // Ver.2.0.4.2 End
         boolean ret = false;
-        
+
         String formattedString = printSettings.formattedString(mPDFisLandscape);
         if (printer.getPortSetting() == PortSetting.LPR) {
-            ret = mDirectPrintManager.executeLPRPrint(printer.getName(), appName, appVersion, userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
+            // Ver.2.0.4.2 Start
+            //ret = mDirectPrintManager.executeLPRPrint(printer.getName(), appName, appVersion, userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
+            ret = mDirectPrintManager.executeLPRPrint(printer.getName(), appName, appVersion, userName, jobname, mPdfPath, formattedString, printer.getIpAddress(), hostName);
+            // Ver.2.0.4.2 End
         } else {
-            ret = mDirectPrintManager.executeRAWPrint(printer.getName(), appName, appVersion, userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
+            // Ver.2.0.4.2 Start
+            //ret = mDirectPrintManager.executeRAWPrint(printer.getName(), appName, appVersion, userName, jobname, mPdfPath, formattedString, printer.getIpAddress());
+            ret = mDirectPrintManager.executeRAWPrint(printer.getName(), appName, appVersion, userName, jobname, mPdfPath, formattedString, printer.getIpAddress(), hostName);
+            // Ver.2.0.4.2 End
         }
         if (ret) {
             btnMsg = getResources().getString(R.string.ids_lbl_cancel);

@@ -167,5 +167,6 @@
     <string name="ids_lbl_snmp_community_name">SNMP Community Name</string>
     <string name="ids_lbl_valid_community_name">Valid characters are:\na-zA-Z0-9,./:;@[\\¥]^_</string>
     <string name="ids_err_msg_invalid_community_name">Please enter a SNMP community name with valid characters</string>
+    <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
 
 </resources>
