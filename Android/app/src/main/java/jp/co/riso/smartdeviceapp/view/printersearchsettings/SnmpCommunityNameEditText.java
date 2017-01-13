@@ -10,6 +10,8 @@ package jp.co.riso.smartdeviceapp.view.printersearchsettings;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.ClipboardManager;
 import android.text.InputFilter;
@@ -19,6 +21,7 @@ import android.widget.EditText;
 
 import jp.co.riso.android.text.SnmpCommunityNameFilter;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 
 public class SnmpCommunityNameEditText extends EditText {
 
@@ -78,7 +81,20 @@ public class SnmpCommunityNameEditText extends EditText {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
             Intent intent = new Intent(SNMP_COMMUNITY_NAME_SAVE_ON_BACK_BROADCAST_ID);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            // Save community name in shared prefs keyboard is dismissed via back button
+            saveValueToSharedPrefs(this.getText().toString());
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    public void saveValueToSharedPrefs(String snmpCommunityName) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+
+        if(snmpCommunityName == null || snmpCommunityName.isEmpty()) {
+            snmpCommunityName = PrinterManager.getInstance(context).getSnmpCommunityNameFromSharedPrefs();
+        }
+
+        editor.putString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, snmpCommunityName);
+        editor.commit();
     }
 }

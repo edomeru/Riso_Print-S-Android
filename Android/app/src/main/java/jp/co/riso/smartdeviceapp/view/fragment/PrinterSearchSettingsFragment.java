@@ -15,10 +15,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.KeyEvent;
 import android.view.View;
@@ -169,14 +167,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
     }
 
     private void saveSnmpCommunityNameToSharedPrefs(String snmpCommunityName) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-
-        if(snmpCommunityName == null || snmpCommunityName.isEmpty()) {
-            snmpCommunityName = PrinterManager.getInstance(getActivity()).getSnmpCommunityNameFromSharedPrefs();
-        }
-
-        editor.putString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, snmpCommunityName);
-        editor.commit();
+        snmpCommunityNameEditText.saveValueToSharedPrefs(snmpCommunityName);
     }
 
     // ================================================================================
