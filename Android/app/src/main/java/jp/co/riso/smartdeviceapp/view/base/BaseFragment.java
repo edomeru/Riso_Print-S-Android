@@ -273,4 +273,11 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
                 break;
         }
     }
+
+    /**
+    * Called when the fragment is closed/hidden as a right drawer
+     */
+    public void onRightFragmentDrawerClosed() {
+        onPause();
+    }
 }

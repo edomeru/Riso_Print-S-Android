@@ -390,7 +390,8 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
             fragment.clearIconStates();
             if (mDrawerLayout.findViewById(R.id.rightLayout) == view) {
-                getFragmentManager().findFragmentById(R.id.rightLayout).onPause();
+                BaseFragment rightFragment = ((BaseFragment) getFragmentManager().findFragmentById(R.id.rightLayout));
+                rightFragment.onRightFragmentDrawerClosed();
             }
             getFragmentManager().findFragmentById(R.id.mainLayout).onResume();
             

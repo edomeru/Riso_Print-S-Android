@@ -198,4 +198,11 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
         super.onDetach();
         saveSnmpCommunityNameToSharedPrefs(snmpCommunityNameEditText.getText().toString());
     }
+
+    @Override
+    public void onRightFragmentDrawerClosed() {
+        super.onRightFragmentDrawerClosed();
+        // Save community name in shared prefs when Printer Search Settings drawer is closed
+        saveSnmpCommunityNameToSharedPrefs(snmpCommunityNameEditText.getText().toString());
+    }
 }
