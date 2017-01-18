@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 25
@@ -20,10 +19,6 @@ android {
         }
     }
 
-    jacoco {
-        version '0.7.2.201409121644'
-    }
-
     sourceSets.main {
         jni.srcDirs = [] //disables automatic ndk-build call in order to use custom Android.mk
         jniLibs.srcDir 'src/main/libs'
@@ -31,6 +26,7 @@ android {
 
     buildTypes {
         debug {
+            apply plugin: 'jacoco'
             testCoverageEnabled true
         }
         release {
@@ -48,7 +44,6 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:25.1.0'
-    compile 'org.jacoco:org.jacoco.build:0.7.2.201409121644'
     compile files('libs/com.radaee.pdfex_view.jar')
     androidTestCompile files('libs/the-missing-android-xml-junit-test-runner-release-1.3_2.jar')
 }
@@ -125,6 +120,7 @@ task generateJacocoTestReport(type: JacocoReport) {
     sourceDirectories = files(coverageSourceDirs)
     additionalSourceDirs = files(coverageSourceDirs)
     executionData = files('build/outputs/code-coverage/connected/coverage.ec')
+    dependsOn connectedCheck
 }
 
 task testReport(type: TestReport) {
