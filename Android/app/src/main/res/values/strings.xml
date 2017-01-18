@@ -160,7 +160,7 @@
     <string name="ids_lbl_agree">Agree</string>
     <string name="ids_lbl_disagree">Disagree</string>
     <string name="ids_err_msg_disagree_to_license">User must agree to License Agreement to continue using the app</string>
-    <string name="ids_err_msg_storage_permission_not_allowed">Access to storage is needed to open PDF file.\n\nIn the next alert dialog that will appear, please tap the \"Allow\"/\"OK\" button.</string>
+    <string name="ids_err_msg_storage_permission_not_allowed">Access to storage is needed to open.\n\nIn the next dialog that will appear, please tap the \"Allow/OK\" button.</string>
     <string name="ids_lbl_permission_information">%1$s lets you open a PDF file for printing using the Open-In feature.\nIn order to open a PDF file, access to the storage of the device is needed.\n\nYou can enable the storage permission when prompted in the Home screen or in the Permission Settings screen via [Settings] -> [Apps] -> [%1$s] -> [Permissions].</string>
     <string name="ids_lbl_start">Start</string>
     <string name="ids_lbl_search_printers_settings">Search Settings</string>
