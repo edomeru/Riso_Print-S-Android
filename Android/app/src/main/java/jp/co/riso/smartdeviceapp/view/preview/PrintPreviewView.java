@@ -1490,7 +1490,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                     }
                 }
                 
-                float scale = 1.0f / getPagesPerSheet();
+                float scale = 1.0f;
                 int curIndex = i + beginIndex;
                 Bitmap page = mPdfManager.getPageBitmap(curIndex, scale, flipX, flipY);
                 
