@@ -127,7 +127,7 @@ struct directprint_job_s
     
     char *user_name;
     
-     // ホスト名出力処理の追加 Start
+    // ホスト名出力処理の追加 Start
     char *host_name;
     // ホスト名出力処理の追加 END
 
