@@ -61,8 +61,8 @@ public class Preview {
         LETTER(216.0f, 280.0f), ///< 216mm x 280mm
         STATEMENT(140.0f, 216.0f), ///< 140mm x 216mm
         LEGAL13(216.0f, 330.0f), ///< 216mm x 330mm
-        HACHIKAI(270.0f, 390.0f), ///< 270mm x 390mm
-        JUROKUKAI(195.0f, 270.0f); ///< 195mm x 270mm
+        HACHIKAI(267.0f, 388.0f), ///< 267mm x 388mm
+        JUROKUKAI(194.0f, 267.0f); ///< 194mm x 267mm
         
         private final float mWidth;
         private final float mHeight;

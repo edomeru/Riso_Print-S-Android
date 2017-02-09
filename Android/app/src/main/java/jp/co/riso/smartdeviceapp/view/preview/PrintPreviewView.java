@@ -1404,6 +1404,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
             
+            int pagesDisplayed = getPagesPerSheet() * (getFacesPerPaper() / 2);
+            
             int paperWidth = bmp.getWidth();
             int paperHeight = bmp.getHeight();
             
@@ -1490,7 +1492,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                     }
                 }
                 
-                float scale = 1.0f;
+                float scale = 1.0f / getPagesPerSheet();
                 int curIndex = i + beginIndex;
                 Bitmap page = mPdfManager.getPageBitmap(curIndex, scale, flipX, flipY);
                 
@@ -1499,6 +1501,9 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                             convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth(), canvas.getHeight()),
                             convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth(), canvas.getHeight())
                     };
+                    
+                    dim[0] = (int) Math.sqrt((dim[0] * dim[0] / (float)pagesDisplayed));
+                    dim[1] = (int) Math.sqrt((dim[1] * dim[1] / (float)pagesDisplayed));
                     
                     int x = left;
                     int y = top;
