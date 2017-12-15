@@ -528,11 +528,19 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (tag.equals(PrintSettings.TAG_IMPOSITION)) {
             if (value == Imposition.OFF.ordinal()) {
                 updateValueWithConstraints(PrintSettings.TAG_IMPOSITION_ORDER, ImpositionOrder.L_R.ordinal());
-            } else if (mPrintSettings.isBooklet()){
-                updateValueWithConstraints(PrintSettings.TAG_BOOKLET, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET));
-                updateValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH));
-                updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
-            }
+
+                } else if (mPrintSettings.isBooklet()){
+                    updateValueWithConstraints(PrintSettings.TAG_BOOKLET, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET));
+                    updateValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_FINISH));
+                    updateValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT, getDefaultValueWithConstraints(PrintSettings.TAG_BOOKLET_LAYOUT));
+
+                // Ver.2.0.4.7 Start
+                // Duplex is set in OFF if imposition is changed to ON when booklet is ON (2017.01.17 RISO Saito)
+                updateValueWithConstraints(PrintSettings.TAG_DUPLEX, getDefaultValueWithConstraints(PrintSettings.TAG_DUPLEX));
+                // Ver.2.0.4.7 End
+                }
+
+
             if (value == Imposition.TWO_UP.ordinal()) {
                 if (prevValue == Imposition.FOUR_UP.ordinal()) {
                     int impositionOrderValue = mPrintSettings.getImpositionOrder().ordinal();

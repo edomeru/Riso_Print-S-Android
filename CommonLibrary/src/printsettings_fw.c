@@ -18,12 +18,9 @@
 #define PJL_COMMAND_STR "@PJL SET %s=%s\x0d\x0a"
 #define PJL_COMMAND_INT "@PJL SET %s=%d\x0d\x0a"
 
-#define PJL_COMMAND_VERSKION "2.00"
+#define PJL_COMMAND_VERSKION "2.10"
 #define PJL_IDENTIFIER "RISO_IJ_PJL"
-// Ver.2.0.1.1 Start
-//#define PJL_RIPCONTROL_FLAG "0"
-#define PJL_RIPCONTROL_FLAG "2"
-// End
+#define PJL_RIPCONTROL_FLAG "10"
 #define PJL_SOFTWERENAME "RISO PRINT-S"
 
 typedef enum

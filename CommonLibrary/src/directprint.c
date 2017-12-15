@@ -80,6 +80,12 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE 99.99f
 #define PRINTJOB_SENT_PROGRESS_PERCENTAGE 100.0f
 
+/** @def
+* UTF-8の16進数変換の際に使用する定数
+* 文字一文字あたりに必要な最大バイト数
+*/
+#define STRING_MAX_BYTE 6
+
 static const char *AZA_DEVICE_NAMES[] = {
     "RISO IS1000C-J",
     "RISO IS1000C-G",
@@ -177,14 +183,14 @@ void job_dump_write(FILE *file, void *buffer, size_t buffer_len);
 /**
  Public Methods
  */
-// ホスト名出力処理の追加 Start
-//directprint_job *directprint_job_new(const char *printer_name, const char *app_name, const char *app_version,
-//                                     const char *user_name, const char *job_name, const char *filename,
-//                                     const char *print_settings, const char *ip_address, directprint_callback callback)
+/**
+* @brief Android(java)のコードから、印刷設定等を受け取り、print-job構造体を作成する関数
+* @param プリンター名、ホスト名、アプリ名、アプリバージョン、ユーザ名、ジョブ名、ファイル名、印刷設定、IPアドレス、コールバック
+* @return 構造体print_job
+*/
 directprint_job *directprint_job_new(const char *printer_name, const char *host_name, const char *app_name, const char *app_version,
                                      const char *user_name, const char *job_name, const char *filename,
                                      const char *print_settings, const char *ip_address, directprint_callback callback)
-// ホスト名出力処理の追加 End
 {
     directprint_job *print_job = (directprint_job *)malloc(sizeof(directprint_job));
     print_job->app_name = strdup(app_name);
@@ -194,9 +200,33 @@ directprint_job *directprint_job_new(const char *printer_name, const char *host_
     print_job->filename = strdup(filename);
     print_job->print_settings = strdup(print_settings);
     print_job->printer_name = strdup(printer_name);
-// ホスト名出力処理の追加 Start
-    print_job->host_name = strdup(host_name);
-// ホスト名出力処理の追加 End
+    //print_job->host_name = strdup(host_name);
+
+	// Mantis 71487 Start
+	char* memo;
+	char* hex_string;
+
+	memo = (char *)calloc(strlen(host_name) * STRING_MAX_BYTE + 1, sizeof(char));
+	if (memo == NULL){
+		directprint_job_free(print_job);
+		return NULL;
+	}
+	hex_string = (char *)calloc(STRING_MAX_BYTE + 1, sizeof(char));
+	if (hex_string == NULL){
+		directprint_job_free(print_job);
+		return NULL;
+	}
+	int i;
+	for (i = 0; host_name[i] != NULL; i++){
+		sprintf(hex_string, "%x", host_name[i] & 0x0000FF);
+		memo = strcat(memo, hex_string);
+	}
+
+	print_job->host_name = strdup(memo);
+	
+	free(hex_string);
+	free(memo);
+	// Mantis 71487 End
     
     // IP address check
     struct in6_addr ip_v6;

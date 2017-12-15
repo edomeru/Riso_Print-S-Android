@@ -1494,17 +1494,21 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 
                 float scale = 1.0f / getPagesPerSheet();
                 int curIndex = i + beginIndex;
+
                 Bitmap page = mPdfManager.getPageBitmap(curIndex, scale, flipX, flipY);
-                
+
                 if (page != null) {
                     int dim[] = new int[] {
                             convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth(), canvas.getHeight()),
                             convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth(), canvas.getHeight())
-                    };
-                    
-                    dim[0] = (int) Math.sqrt((dim[0] * dim[0] / (float)pagesDisplayed));
-                    dim[1] = (int) Math.sqrt((dim[1] * dim[1] / (float)pagesDisplayed));
-                    
+                       };
+
+                	// Ver.2.0.4.7 Start
+                    // approximate calculation doesn't need. When Nup is on, scale to fit.(2017.01.13 RISO Saito)
+                    //dim[0] = (int) Math.sqrt((dim[0] * dim[0] / (float)pagesDisplayed));
+                    //dim[1] = (int) Math.sqrt((dim[1] * dim[1] / (float)pagesDisplayed));
+                    // Ver.2.0.4.7 End
+
                     int x = left;
                     int y = top;
                     float rotate = 0.0f;
@@ -1529,8 +1533,15 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         width = bottom - top;
                         height = right - left;
                     }
-                    
-                    if (mPrintSettings.isScaleToFit()) {
+
+                    // Ver.2.0.4.7 Start
+                	// If images are protruded, scale to fit.(when 2up or 4up) (2017.01.13 RISO Saito)
+                    //if (mPrintSettings.isScaleToFit() ) {
+                    //if (mPrintSettings.isScaleToFit() || ( getPagesPerSheet() != 1 && dim[0] > width ) || ( getPagesPerSheet() != 1 && dim[1] > height)) {
+                    // When Nup or Booklet is on, scale to fit.(2017.01.16 RISO Saito)
+                    if (mPrintSettings.isScaleToFit() ||  getPagesPerSheet() != 1 ||  mPrintSettings.isBooklet() ){
+                    // Ver.2.0.4.7 End
+
                         dim = AppUtils.getFitToAspectRatioSize(mPdfManager.getPageWidth(curIndex), mPdfManager.getPageHeight(curIndex), width, height);
                         // For Fit-XY
                         //dim[0] = width;
@@ -1577,6 +1588,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         x += (dim[0] / 2);
                         y += (dim[1] / 2);
                     }
+
                     float drawScale = dim[0] / (float)page.getWidth();
                     ImageUtils.renderBmpToCanvas(page, canvas, shouldDisplayColor(), x, y, rotate, drawScale);
                     
