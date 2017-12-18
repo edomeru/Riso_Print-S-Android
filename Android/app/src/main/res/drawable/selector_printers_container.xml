@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" 
-    xmlns:smartdeviceapp="http://schemas.android.com/apk/res-auto/jp.co.riso.smartdeviceapp.view.printers.PrintersContainerItem">
+    xmlns:smartdeviceapp="http://schemas.android.com/apk/res-auto">
 
     <item android:drawable="@color/theme_color_2" smartdeviceapp:state_delete="true"/>
     <item android:drawable="@color/theme_color_2" android:state_pressed="true"/>
