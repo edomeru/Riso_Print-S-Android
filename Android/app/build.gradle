@@ -10,7 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 2000601
-        versionName "v2.0.6.1"
+        versionName "v2.0.7.0"
 
         testApplicationId "jp.co.riso.smartprint.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -92,12 +92,12 @@ task generateJacocoTestReport(type: JacocoReport) {
     reports {
         xml{
             enabled true
-            destination (new File("${buildDir}/reports/jacoco/jacoco.xml"))
+            destination file("${buildDir}/reports/jacoco/jacoco.xml")
         }
         csv.enabled false
         html{
             enabled true
-            destination (new File("${buildDir}/jacocoHtml"))
+            destination file("${buildDir}/jacocoHtml")
         }
     }
 
