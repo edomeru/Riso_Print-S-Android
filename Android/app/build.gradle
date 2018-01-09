@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'jacoco'
 
+jacoco {
+    toolVersion = "0.7.2.201409121644"
+}
+
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
@@ -18,10 +22,6 @@ android {
         ndk {
             moduleName "common"
         }
-    }
-
-    jacoco {
-        version '0.7.2.201409121644'
     }
 
     sourceSets.main {
@@ -81,7 +81,7 @@ tasks.withType(JavaCompile) {
 clean.dependsOn ndkClean
 
 // coverage
-task generateJacocoTestReport(type: JacocoReport) {
+task generateJacocoTestReport(type: JacocoReport, dependsOn: ['createDebugCoverageReport', 'testDebugUnitTest']) {
 
     def coverageSourceDirs = [
             'src/main/java'
