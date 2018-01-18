@@ -830,9 +830,11 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      */
     protected void setPrintSettings(PrintSettings printSettings) {
         boolean initializeViews = true;
+        boolean clearAuthValues = false;
         if(mPrintSettings != null){
             if(!mPrintSettings.getSettingMapKey().equalsIgnoreCase(printSettings.getSettingMapKey())) {
                 mPrintSettingsLayout.removeAllViews();
+                clearAuthValues = true;
             }
             else {
                 initializeViews = false;
@@ -840,18 +842,16 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
         mPrintSettings = new PrintSettings(printSettings);
 
-        if (mPrintSettings != null) {
-            if (initializeViews) {
-                initializePrintSettingsControls();
-                initializeAuthenticationSettingsView();
-                initializeAuthenticationValues();
-            }
-            
-            Set<String> keySet = PrintSettings.sSettingsMaps.get(printSettings.getSettingMapKey()).keySet();
-            
-            for (String key : keySet) {
-                updateDisplayedValue(key);
-            }
+        if (initializeViews) {
+            initializePrintSettingsControls();
+            initializeAuthenticationSettingsView();
+            initializeAuthenticationValues(clearAuthValues);
+        }
+
+        Set<String> keySet = PrintSettings.sSettingsMaps.get(printSettings.getSettingMapKey()).keySet();
+
+        for (String key : keySet) {
+            updateDisplayedValue(key);
         }
     }
     
@@ -1158,14 +1158,29 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
 
     /**
      * @brief Initialize the authentication setting values
+     *
+     * @param shouldClear true if the authentication values must be cleared
      */
-    private void initializeAuthenticationValues() {
+    private void initializeAuthenticationValues(boolean shouldClear) {
         EditText pinCodeEditText = (EditText) mMainView.findViewById(R.id.view_id_pin_code_edit_text);
-        pinCodeEditText.setText("");
-        
         Switch securePrintSwitch = (Switch) mMainView.findViewById(R.id.view_id_secure_print_switch);
-        securePrintSwitch.setChecked(false);
-        setSecurePrintEnabled(false);
+
+        if (shouldClear) {
+            pinCodeEditText.setText("");
+            securePrintSwitch.setChecked(false);
+            setSecurePrintEnabled(false);
+        } else {
+            // Fix for BTS23939 (retain if DefaultPrintSettings is re-opened, shared prefs is always cleared when app is opened)
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            boolean isSecurePrint = prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
+            String pin = prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
+
+            if (isSecurePrint) {
+                pinCodeEditText.setText(pin);
+            }
+            securePrintSwitch.setChecked(isSecurePrint);
+            setSecurePrintEnabled(isSecurePrint);
+        }
     }
     
     // ================================================================================
