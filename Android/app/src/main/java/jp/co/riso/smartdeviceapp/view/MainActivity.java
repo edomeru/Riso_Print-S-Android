@@ -11,13 +11,11 @@ package jp.co.riso.smartdeviceapp.view;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -40,9 +38,7 @@ import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
-import jp.co.riso.smartdeviceapp.view.fragment.HelpFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
-import jp.co.riso.smartdeviceapp.view.fragment.LegalFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
 import jp.co.riso.smartprint.R;
@@ -215,7 +211,17 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             fragment.clearIconStates();
         }
     }
-    
+
+    @Override
+    public void onBackPressed() {
+       if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            closeDrawers();
+        } else {
+            super.onBackPressed();
+        }
+
+    }
+
     // ================================================================================
     // Public Functions
     // ================================================================================
