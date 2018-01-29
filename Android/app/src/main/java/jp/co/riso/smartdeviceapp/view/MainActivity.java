@@ -214,7 +214,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
 
     @Override
     public void onBackPressed() {
-       if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+       if (mDrawerLayout.isDrawerOpen(Gravity.LEFT) || mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
             closeDrawers();
         } else {
             super.onBackPressed();
