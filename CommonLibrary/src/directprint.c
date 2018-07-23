@@ -529,12 +529,13 @@ void *do_lpr_print(void *parameter)
     long pjl_header_size = strlen(pjl_header);
     
     // Prepare PJL footer
-    char pjl_footer[256];
-    pjl_footer[0] = 0;
-    strcat(pjl_footer, PJL_ESCAPE);
-    strcat(pjl_footer, PJL_EOJ);
-    strcat(pjl_footer, PJL_ESCAPE);
-    long pjl_footer_size = strlen(pjl_footer);
+    //Mantis77780のためコメントアウト
+    //char pjl_footer[256];
+    //pjl_footer[0] = 0;
+    //strcat(pjl_footer, PJL_ESCAPE);
+    //strcat(pjl_footer, PJL_EOJ);
+    //strcat(pjl_footer, PJL_ESCAPE);
+    //long pjl_footer_size = strlen(pjl_footer);
     
     if (is_cancelled(print_job) == 1)
     {
@@ -711,7 +712,7 @@ void *do_lpr_print(void *parameter)
         dp_fseek(fd, 0L, SEEK_SET);
         
         // DATA FILE INFO : Prepare
-        size_t total_data_size = file_size + pjl_header_size + pjl_footer_size;
+        size_t total_data_size = file_size + pjl_header_size; //Mantis77780のためコメントアウト + pjl_footer_size;
         char data_file_len_str[32];
         sprintf(data_file_len_str, "%ld", (long)total_data_size);
         len = strlen(data_file_len_str);
@@ -802,15 +803,16 @@ void *do_lpr_print(void *parameter)
         {
             break;
         }
-        
-        send_size = send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
+        //Mantis77780のためコメントアウト
+        //send_size = send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
 #if ENABLE_JOB_DUMP
-        job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
+        //job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
 #endif
-        if (send_size != strlen(pjl_footer)) {
-            notify_callback(print_job, kJobStatusErrorSending);
-            break;
-        }
+        //if (send_size != strlen(pjl_footer)) {
+        //    notify_callback(print_job, kJobStatusErrorSending);
+        //}
+        //    break;
+        //}
         notify_callback(print_job, kJobStatusSending);
         
         pos = 0;
@@ -880,11 +882,12 @@ void *do_raw_print(void *parameter)
     strcat(pjl_header, PJL_LANGUAGE);
     
     // Prepare PJL footer
-    char pjl_footer[256];
-    pjl_footer[0] = 0;
-    strcat(pjl_footer, PJL_ESCAPE);
-    strcat(pjl_footer, PJL_EOJ);
-    strcat(pjl_footer, PJL_ESCAPE);
+    //Mantis77780のためコメントアウト
+    //char pjl_footer[256];
+    //pjl_footer[0] = 0;
+    //strcat(pjl_footer, PJL_ESCAPE);
+    //strcat(pjl_footer, PJL_EOJ);
+    //strcat(pjl_footer, PJL_ESCAPE);
     
     if (is_cancelled(print_job) == 1)
     {
@@ -987,10 +990,10 @@ void *do_raw_print(void *parameter)
         {
             break;
         }
-        
-        send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
+        //Mantis77780のためコメントアウト
+        //send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
 #if ENABLE_JOB_DUMP
-        job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
+        //job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
 #endif
         print_job->progress = 100.0f;
         notify_callback(print_job, kJobStatusSending);
