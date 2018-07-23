@@ -85,6 +85,7 @@
     <string name="ids_lbl_inputtray_tray1">Bac d\'alimentation1</string>
     <string name="ids_lbl_inputtray_tray2">Bac d\'alimentation2</string>
     <string name="ids_lbl_inputtray_tray3">Bac d\'alimentation3</string>
+    <string name="ids_lbl_inputtray_external">Extra 2000 Sheets</string>
     <string name="ids_lbl_layout">Mise en page</string>
     <string name="ids_lbl_imposition">Imposition</string>
     <string name="ids_lbl_imposition_2up">2 pages</string>

@@ -91,6 +91,8 @@ static const char *MIB_REQUESTS[] = {
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.1", // Tray face-down
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.3", // Tray top
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.4", // Tray stack
+    "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.25", // External feeder
+    "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.26", // Finisher 0 holes
 };
 
 #define AZA_DEVICE_NAME_COUNT 3

@@ -61,6 +61,8 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
@@ -338,7 +340,55 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     return (!isPunch && !isFold);
             }
         }
-        
+
+        if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
+            boolean isExternal = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY) == InputTray.EXTERNAL_FEEDER.ordinal();
+            switch (PaperSize.values()[value]) {
+                case A3:
+                case A3W:
+                    return !isExternal;
+                case A4:
+                    return true;
+                case A5:
+                case A6:
+                case B4:
+                    return !isExternal;
+                case B5:
+                    return true;
+                case B6:
+                case FOOLSCAP:
+                case TABLOID:
+                case LEGAL:
+                    return !isExternal;
+                case LETTER:
+                    return true;
+                case STATEMENT:
+                case LEGAL13:
+                case HACHIKAI:
+                    return !isExternal;
+                case JUROKUKAI:
+            }
+        }
+
+        if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
+            // if paper size is equal to A4, B5, Letter, or 16k
+            boolean isPaperSupported = (mPrintSettings.getPaperSize() == PaperSize.A4 ||
+                    mPrintSettings.getPaperSize() == PaperSize.B5 ||
+                    mPrintSettings.getPaperSize() == PaperSize.LETTER ||
+                    mPrintSettings.getPaperSize() == PaperSize.JUROKUKAI);
+            switch (InputTray.values()[value]) {
+                case AUTO:
+                case STANDARD:
+                case TRAY1:
+                case TRAY2:
+                case TRAY3:
+                    return true;
+                case EXTERNAL_FEEDER:
+                    return isPaperSupported;
+            }
+        }
+
+
         return true;
     }
     
@@ -580,6 +630,28 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 int outputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_OUTPUT_TRAY);
                 if (outputTrayValue != OutputTray.AUTO.ordinal()) {
                     updateValueWithConstraints(PrintSettings.TAG_OUTPUT_TRAY, getDefaultValueWithConstraints(PrintSettings.TAG_OUTPUT_TRAY));
+                }
+            }
+        }
+
+        // Constraint #7 Paper Size - Input Tray (External)
+        if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
+            int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
+            if (value != PaperSize.A4.ordinal() && value != PaperSize.B5.ordinal() &&
+                    value != PaperSize.LETTER.ordinal() && value != PaperSize.JUROKUKAI.ordinal()) {
+                if (inputTrayValue == InputTray.EXTERNAL_FEEDER.ordinal()) {
+                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray.AUTO.ordinal());
+                }
+            }
+        }
+
+        // Constraint #8 Input Tray (External) - Paper Size
+        if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
+            int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
+            if (value == InputTray.EXTERNAL_FEEDER.ordinal()) {
+                if (paperSizeValue != PaperSize.A4.ordinal() && paperSizeValue != PaperSize.B5.ordinal() &&
+                        paperSizeValue != PaperSize.LETTER.ordinal() && paperSizeValue != PaperSize.JUROKUKAI.ordinal()) {
+                    updateValueWithConstraints(PrintSettings.TAG_PAPER_SIZE, PaperSize.A4.ordinal());
                 }
             }
         }

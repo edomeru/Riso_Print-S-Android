@@ -85,6 +85,7 @@
     <string name="ids_lbl_inputtray_tray1">Tray 1</string>
     <string name="ids_lbl_inputtray_tray2">Tray 2</string>
     <string name="ids_lbl_inputtray_tray3">Tray 3</string>
+    <string name="ids_lbl_inputtray_external">Extra 2000 Sheets</string>
     <string name="ids_lbl_layout">Layout</string>
     <string name="ids_lbl_imposition">Imposition</string>
     <string name="ids_lbl_imposition_2up">2 pages</string>

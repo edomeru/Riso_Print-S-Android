@@ -85,6 +85,7 @@
     <string name="ids_lbl_inputtray_tray1">トレイ1</string>
     <string name="ids_lbl_inputtray_tray2">トレイ2</string>
     <string name="ids_lbl_inputtray_tray3">トレイ3</string>
+    <string name="ids_lbl_inputtray_external">増設2000枚給紙</string>
     <string name="ids_lbl_layout">レイアウト</string>
     <string name="ids_lbl_imposition">面付け</string>
     <string name="ids_lbl_imposition_2up">2面</string>

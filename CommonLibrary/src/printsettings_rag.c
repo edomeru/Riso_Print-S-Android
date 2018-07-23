@@ -1,9 +1,9 @@
 //
-//  printsettings.c
+//  printsettings_rag.c
 //  SmartDeviceApp
 //
-//  Created by a-LINK Group.
-//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
+//  Created by RISO KAGAKU CORPORATION.
+//  Copyright (c) 2016 RISO KAGAKU CORPORATION. All rights reserved.
 //
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
@@ -17,6 +17,11 @@
 
 #define PJL_COMMAND_STR "@PJL SET %s=%s\x0d\x0a"
 #define PJL_COMMAND_INT "@PJL SET %s=%d\x0d\x0a"
+
+#define PJL_COMMAND_VERSKION "2.10"
+#define PJL_IDENTIFIER "RISO_IJ_PJL"
+#define PJL_RIPCONTROL_FLAG "10"
+#define PJL_SOFTWERENAME "RISO PRINT-S"
 
 typedef enum
 {
@@ -46,22 +51,32 @@ typedef enum
 
 typedef enum
 {
+    kPjlCommandPjlVersion,
+    kPjlCommandPjlIdentifier,
+    kPjlCommandRipControlFlag,
+	 // Ver.2.0.4.2 Start
+    kPjlCommandHostName,
+    // Ver.2.0.4.2 End
+    kPjlCommandSoftwereName,
+    kPjlCommandSoftwereVersion,
     kPjlCommandColorMode,
     kPjlCommandOrientation,
+    // Ver.2.0.2.3 Start
+    //kPjlCommandQuantity,
+    //kPjlCommandCopies,
     kPjlCommandCopies,
     kPjlCommandQuantity,
+    // End
     kPjlCommandDuplex,
     kPjlCommandDuplexBinding,
     kPjlCommandOutputPaperSize,
     kPjlCommandScaleToFit,
+    kPjlCommandZoomRate,
     kPJLCommandPaperType,
     kPjlCommandInputTray,
     kPjlCommandInputTrayMediaSource,
-    kPjlCommandImposition,
-    kPjlCommandNupPagePerSheet,
-    kPjlCommandImpositionDirection,
-    kPjlCommandNupPageOrder,
-    kPjlCommandCollate,
+    kPjlCommandMultiup,
+    kPjlCommandBooklet,
     kPjlCommandBookletFinishing,
     kPjlCommandFinishingSide,
     kPjlCommandStaple,
@@ -73,7 +88,7 @@ typedef enum
     kPjlCommandCount
 } kPjlCommand;
 
-const static char *printsetting_names[kPrintSettingsCount] =
+/*const static char *printsetting_names[kPrintSettingsCount] =
 {
     "colorMode",
     "orientation",
@@ -96,13 +111,14 @@ const static char *printsetting_names[kPrintSettingsCount] =
     "loginId",
     "pinCode",
     "securePrint"
-};
+};*/
 
 const static char *color_mode[] =
 {
     "AUTO",
-    "COLOR",
-    "MONOCHROME"
+    "FULLCOLOR",
+    "GRAYSCALE",
+    "DUAL",
 };
 
 const static char *orientation[] =
@@ -131,18 +147,26 @@ const static char *paper_size[] =
     "TABLOID",
     "LEGAL",
     "LETTER",
-    "STATEMENT"
+    "STATEMENT",
+    "PHLEGAL",
+    "HACHIKAI",
+    "JUROKUKAI",
 };
 
 const static char *paper_type[] =
 {
-    "ANY",
-    "PLAIN",
-    "IJPAPER",
-    "MATTCOATED",
-    "HIGH-QUALITY",
-    "CARD-IJ",
-    "LWPAPER"
+    "AUTO",
+    "STANDARD",
+    "HC",
+    "HCMATTED",
+    "HIGHQUALITY2",
+    "POSTCARDJ",
+    "LIGHT",
+    "RECYCLED",
+    //"CRIMPED"
+	// Ver.2.0.4.6 Start
+	"PLAINPREMIUM"
+	// End
 };
 
 const static char *input_tray_media_source[] =
@@ -154,48 +178,42 @@ const static char *input_tray_media_source[] =
     "EXTERNALFEEDER"
 };
 
-const static char *imposition[] =
+const static char *multiup[] =
 {
-    "SIMPLE",
-    "BOOKLET",
-    "NUP"
+    "OFF",
+    "2PAGESLEFTRIGHT",
+    "2PAGESRIGHTLEFT",
+    "4PAGESLEFTTOPRIGHT",
+    "4PAGESLEFTTOPBOTTOM",
+    "4PAGESRIGHTTOPLEFT",
+    "4PAGESRIGHTTOPBOTTOM",
 };
 
-const static char *nup_page_per_sheet[] =
+const static char *booklet[] =
 {
-    "2",
-    "4"
-};
-
-const static char *imposition_direction[] =
-{
-    "FORWARD",
-    "REVERSE"
-};
-
-const static char *nup_page_order[] =
-{
-    "HORIZONTAL",
-    "VERTICAL"
+    "OFF",
+    "LEFTBINDING",
+    "RIGHTBINDING"
 };
 
 const static char *booklet_finishing[] =
 {
-    "NONFOLD",
-    "HALF",
-    "HALFSTAPLE"
+    "OFF",
+    "2-FOLD",
+    "2-FOLDANDSTAPLE"
 };
 
 const static char *finishing_side[] =
 {
-    "LEFT",
-    "TOP",
-    "RIGHT"
+    "LEFTBINDING",
+    "TOPBINDING",
+    "RIGHTBINDING"
 };
 
 const static char *staple[] =
 {
-    "NONSTAPLE",
+    "OFF",
+    "1STAPLE",
     "1STAPLELEFT",
     "1STAPLERIGHT",
     "2STAPLES"
@@ -203,17 +221,18 @@ const static char *staple[] =
 
 const static char *punch[] =
 {
-    "NONPUNCH",
+    "OFF",
     "2HOLES",
-    "3-4HOLES"
+    "3HOLES",
+    "4HOLES"
 };
 
 const static char *output_tray[] =
 {
     "AUTO",
     "FACEDOWN",
-    "TOP",
-    "STACKING"
+    "UPPER",
+    "STACKER"
 };
 
 const static char *off_on[] =
@@ -222,14 +241,22 @@ const static char *off_on[] =
     "ON"
 };
 
-const static char *false_true[] =
+/*const static char *false_true[] =
 {
     "FALSE",
     "TRUE"
-};
+};*/
 
 const static char **pjl_values[kPjlCommandCount] =
 {
+    0,
+    0,
+    0,
+	// Ver.2.0.4.2 Start
+	0,
+	// End
+    0,
+    0,
     color_mode,
     orientation,
     0,
@@ -237,52 +264,60 @@ const static char **pjl_values[kPjlCommandCount] =
     off_on,  // duplex
     duplex_binding,
     paper_size,
-    false_true, // scale to fit
+    off_on, // scale to fit
+    0,
     paper_type,
     off_on, // input tray
     input_tray_media_source,
-    imposition,
-    nup_page_per_sheet,
-    imposition_direction,
-    nup_page_order,
-    false_true, // collate
+    multiup,
+    booklet,
     booklet_finishing,
     finishing_side,
     staple,
     punch,
     output_tray,
     0,
-    false_true,
+    off_on,
     0
 };
 
 
 const static char *pjl_commands[kPjlCommandCount] =
 {
+    "RKPJLVERSION",
+    "RKPJLIDENTIFIER",
+    "RKRIPCONTROLFLAG",
+	// Ver.2.0.4.2 Start
+	"RKHOSTNAME",
+	// End
+     "RKSOFTWARENAME",
+    "RKSOFTWAREVERSION",
     "RKOUTPUTMODE",
     "ORIENTATION",
+    // Ver.2.0.2.3 Start
+    //"QTY",
+    //"COPIES",
     "COPIES",
     "QTY",
+    // End
     "DUPLEX",
     "BINDING",
     "PAPER",
-    "RKSCALETOFIT",
+    "RKMANUALZOOM",
+    "RKZOOMRATE",
     "MEDIATYPE",
     "AUTOSELECT",
     "MEDIASOURCE",
-    "RKIMPOSITION",
-    "RKNUPPAGESPERSHEET",
-    "RKIMPOSITIONDIRECTION",
-    "RKNUPPAGEORDER",
-    "RKCOLLATE",
-    "RKFOLDMODE",
-    "RKFINISHSIDE",
+    "RKMULTIUP",
+    "RKBOOKLET",
+    "RKBOOKLETBINDING",
+    "RKBINDING",
     "RKSTAPLEMODE",
     "RKPUNCHMODE",
-    "OUTBIN",
-    "RKOWNERNAME",
-    "RKPRIVATEPRINTING",
-    "RKPRIVATEPRINTINGBOXNUMBER"
+    "RKOUTPUTTRAY",
+    "USERNAME",
+    "RKSECRETNUM",
+    "PASSWORD"
 };
 
 typedef struct
@@ -292,12 +327,11 @@ typedef struct
     char *str_value;
 } setting_value;
 
-void parse(char *settings, setting_value values[]);
-void parse_line(char *line, char *name, char *value);
-int get_setting_index(const char *name);
-void add_pjl(char *pjl, setting_value values[], int command);
-
-void create_pjl(char *pjl, char *settings)
+extern void parse(char *settings, setting_value values[]);
+extern void parse_line(char *line, char *name, char *value);
+extern int get_setting_index(const char *name);
+void add_pjl_rag(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command);
+void create_pjl_rag(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion)
 {
     if (strlen(settings) == 0)
     {
@@ -315,7 +349,7 @@ void create_pjl(char *pjl, char *settings)
     
     for (int i = 0; i < kPjlCommandCount; i++)
     {
-        add_pjl(pjl, values, i);
+    	add_pjl_rag(pjl, printerName, hostName, appVersion, values, i);
     }
     
     for (int i = 0; i < kPrintSettingsCount; i++)
@@ -327,6 +361,7 @@ void create_pjl(char *pjl, char *settings)
     }
 }
 
+/*
 void parse(char *settings, setting_value values[])
 {
     char *current_line = settings;
@@ -394,12 +429,57 @@ int get_setting_index(const char *name)
     }
     return -1;
 }
+*/
 
-void add_pjl(char *pjl, setting_value values[], int command)
+void add_pjl_rag(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command)
+// Ver.2.0.4.2 End
+//void add_pjl(char *pjl, char *printerName, setting_value values[], int command)
+// Ver.2.0.0.3 end
 {
     char pjl_line[1024];
     switch (command)
     {
+        case kPjlCommandPjlVersion:
+        {
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], PJL_COMMAND_VERSKION);
+            strcat(pjl, pjl_line);
+            break;
+        }
+        case kPjlCommandPjlIdentifier:
+        {
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], PJL_IDENTIFIER);
+            strcat(pjl, pjl_line);
+            break;
+        }
+        case kPjlCommandRipControlFlag:
+        {
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], PJL_RIPCONTROL_FLAG);
+            strcat(pjl, pjl_line);
+            break;
+        }
+		// Ver.2.0.4.2 Start
+		case kPjlCommandHostName:
+		{
+			sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], hostName);
+            strcat(pjl, pjl_line);
+            break;
+		}
+		// End
+        case kPjlCommandSoftwereName:
+        {
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], PJL_SOFTWERENAME);
+            strcat(pjl, pjl_line);
+            break;
+        }
+        case kPjlCommandSoftwereVersion:
+        {
+            // Ver.2.0.0.3 start
+            //sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], PJL_COMMAND_VERSKION);
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], appVersion);
+            // Ver.2.0.0.3 end            
+            strcat(pjl, pjl_line);
+            break;
+        }
         case kPjlCommandColorMode:
         {
             setting_value value = values[kPrintSettingsColorMode];
@@ -445,23 +525,29 @@ void add_pjl(char *pjl, setting_value values[], int command)
             strcat(pjl, pjl_line);
             break;
         }
-        case kPjlCommandCopies:
+        case kPjlCommandQuantity:
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
+            // Ver.2.0.2.3 Start
+        	//if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0)
             if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1)
-            {
+        	// End
+        	{
                 return;
             }
             sprintf(pjl_line, PJL_COMMAND_INT, pjl_commands[command], value.int_value);
             strcat(pjl, pjl_line);
             break;
         }
-        case kPjlCommandQuantity:
+        case kPjlCommandCopies:
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
+        	// Ver.2.0.2.3 Start
+        	//if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1)
             if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0)
+        	// End
             {
                 return;
             }
@@ -487,7 +573,15 @@ void add_pjl(char *pjl, setting_value values[], int command)
             {
                 return;
             }
-            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][value.int_value]);
+            int index = value.int_value == 1 ? 0 : 1;
+            
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][index]);
+            strcat(pjl, pjl_line);
+            break;
+        }
+        case kPjlCommandZoomRate:
+        {
+            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], "100");
             strcat(pjl, pjl_line);
             break;
         }
@@ -525,128 +619,98 @@ void add_pjl(char *pjl, setting_value values[], int command)
             strcat(pjl, pjl_line);
             break;
         }
-        case kPjlCommandImposition:
-        {
-            setting_value imposition = values[kPrintSettingsImposition];
-            setting_value booklet = values[kPrintSettingsBooklet];
-            if (imposition.set == 0 || booklet.set == 0)
-            {
-                return;
-            }
-            if (imposition.int_value == 0 && booklet.int_value == 0)
-            {
-                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][0]);
-                strcat(pjl, pjl_line);
-            }
-            else if (imposition.int_value == 0 && booklet.int_value == 1)
-            {
-                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
-                strcat(pjl, pjl_line);
-            }
-            else if ((imposition.int_value == 1 || imposition.int_value == 2) && booklet.int_value == 0)
-            {
-                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]);
-                strcat(pjl, pjl_line);
-            }
-            break;
-        }
-        case kPjlCommandNupPagePerSheet:
-        {
-            setting_value imposition = values[kPrintSettingsImposition];
-            setting_value booklet = values[kPrintSettingsBooklet];
-            if (imposition.set == 0 || booklet.set == 0)
-            {
-                return;
-            }
-            if (booklet.int_value == 1 || (imposition.int_value == 0 && booklet.int_value == 0))
-            {
-                return;
-            }
-            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][imposition.int_value - 1]);
-            strcat(pjl, pjl_line);
-            break;
-        }
-        case kPjlCommandImpositionDirection:
+        case kPjlCommandMultiup:
         {
             setting_value imposition = values[kPrintSettingsImposition];
             setting_value booklet = values[kPrintSettingsBooklet];
             setting_value imposition_order = values[kPrintSettingsImpositionOrder];
-            setting_value booklet_layout = values[kPrintSettingsBookletLayout];
-            if (imposition.set == 0 || booklet.set == 0 || imposition_order.set == 0 || booklet_layout.set == 0)
+            if (imposition.set == 0)
             {
                 return;
             }
-            if (imposition.int_value == 1 && booklet.int_value == 0)
+            
+            if ((imposition.int_value == 1 || imposition.int_value == 2) && booklet.int_value == 0)
             {
-                // 2-up
-                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][imposition_order.int_value]);
-                strcat(pjl, pjl_line);
-            }
-            else if (imposition.int_value == 2 && booklet.int_value == 0)
-            {
-                // 4-up
+                int pagePerSheet = imposition.int_value - 1;    // 0:2UP, 1:4UP
                 int direction = 0;
                 if ((imposition_order.int_value % 2) > 0)
                 {
                     direction = 1;
                 }
-                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][direction]);
-                strcat(pjl, pjl_line);
-            }
-            else if (booklet.int_value == 1 && imposition.int_value == 0)
-            {
-                // Booklet
-                int direction = 0;
-                if (booklet_layout.int_value == 1)
-                {
-                    direction = 1;
-                }
-                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][direction]);
-                strcat(pjl, pjl_line);
-            }
-            break;
-        }
-        case kPjlCommandNupPageOrder:
-        {
-            setting_value imposition = values[kPrintSettingsImposition];
-            setting_value booklet = values[kPrintSettingsBooklet];
-            setting_value imposition_order = values[kPrintSettingsImpositionOrder];
-            setting_value booklet_layout = values[kPrintSettingsBookletLayout];
-            if (imposition.set == 0 || booklet.set == 0 || imposition_order.set == 0 || booklet_layout.set == 0)
-            {
-                return;
-            }
-            if (imposition.int_value == 2 && booklet.int_value == 0)
-            {
-                // 4-up
-                int direction = 0;
+                int order = 0;
                 if (imposition_order.int_value == 4 || imposition_order.int_value == 5)
                 {
-                    direction = 1;
+                    order = 1;
                 }
-                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][direction]);
-                strcat(pjl, pjl_line);
-            }
-            if (booklet.int_value == 1 && imposition.int_value == 0)
-            {
-                // Booklet
-                if (booklet_layout.int_value == 2)
+                
+                if (pagePerSheet == 0 && direction == 0)
                 {
+                    // Nup 2LeftToRight
                     sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
                     strcat(pjl, pjl_line);
                 }
+                else if (pagePerSheet == 0 && direction == 1)
+                {
+                    // Nup 2RightToLeft
+                    sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]);
+                    strcat(pjl, pjl_line);
+                }
+                else if (pagePerSheet == 1 && direction == 0 && order == 0)
+                {
+                    // Nup 4LeftTopToRight
+                    sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
+                    strcat(pjl, pjl_line);
+                }
+                else if (pagePerSheet == 1 && direction == 0 && order == 1)
+                {
+                    // Nup 4LeftTopToBottom
+                    sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
+                    strcat(pjl, pjl_line);
+                }
+                else if (pagePerSheet == 1 && direction == 1 && order == 0)
+                {
+                    // Nup 4RightTopToLeft
+                    sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][5]);
+                    strcat(pjl, pjl_line);
+                }
+                else
+                {
+                    // Nup 4RightTopToBottom
+                    sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][6]);
+                    strcat(pjl, pjl_line);
+                }
+            }
+            else
+            {
+                // Nup OFF
+                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][0]);
+                strcat(pjl, pjl_line);
             }
             break;
         }
-        case kPjlCommandCollate:
+        case kPjlCommandBooklet:
         {
-            setting_value sort = values[kPrintSettingsSort];
-            if (sort.set == 0)
+            setting_value imposition = values[kPrintSettingsImposition];
+            setting_value booklet = values[kPrintSettingsBooklet];
+            setting_value booklet_layout = values[kPrintSettingsBookletLayout];
+            
+            if (booklet.set == 0)
             {
                 return;
             }
-            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][sort.int_value]);
-            strcat(pjl, pjl_line);
+            
+            if (imposition.int_value == 0 && booklet.int_value == 1)
+            {
+                // booklet ON
+                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][booklet_layout.int_value + 1]);
+                strcat(pjl, pjl_line);
+            }
+            else
+            {
+                // booklet OFF
+                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][0]);
+                strcat(pjl, pjl_line);
+            }
             break;
         }
         case kPjlCommandBookletFinishing:
@@ -711,33 +775,33 @@ void add_pjl(char *pjl, setting_value values[], int command)
                     }
                     else if (staple.int_value == 4)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
                     }
                 }
                 else if (finishing_side.int_value == 2)
                 {
                     if (staple.int_value == 3)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
                     }
                     else if (staple.int_value == 4)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
                     }
                 }
                 else if (finishing_side.int_value == 1)
                 {
                     if (staple.int_value == 1)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]);
                     }
                     else if (staple.int_value == 2)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
                     }
                     else if (staple.int_value == 4)
                     {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
+                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
                     }
                 }
             }
@@ -771,6 +835,7 @@ void add_pjl(char *pjl, setting_value values[], int command)
             setting_value loginId = values[kPrintSettingsLoginId];
             if (loginId.set == 0)
             {
+                
                 return;
             }
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], loginId.str_value);
@@ -802,3 +867,4 @@ void add_pjl(char *pjl, setting_value values[], int command)
         }
     }
 }
+
