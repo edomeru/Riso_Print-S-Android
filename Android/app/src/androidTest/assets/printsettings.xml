@@ -308,6 +308,7 @@
                 <option>ids_lbl_papertype_highquality</option>
                 <option>ids_lbl_papertype_cardij</option>
                 <option>ids_lbl_papertype_lwpaper</option>
+                <option>ids_lbl_papertype_crimped</option>
             </setting>
             <setting
                 name="inputTray"
@@ -770,7 +771,6 @@
                 <option>ids_lbl_inputtray_standard</option>
                 <option>ids_lbl_inputtray_tray1</option>
                 <option>ids_lbl_inputtray_tray2</option>
-                <option>ids_lbl_inputtray_tray3</option>
                 <option>ids_lbl_inputtray_external</option>
             </setting>
         </group>

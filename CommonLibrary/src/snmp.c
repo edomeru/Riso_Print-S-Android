@@ -30,6 +30,8 @@
 #define SNMPV3_USER "risosnmp"
 #define SNMPV3_PASS "risosnmp"
 
+#define RAG_PRINTER_TYPE "RAG"
+
 #define DETECT_ALL_DEVICES 0  // 0 for RISO only
 
 typedef struct
@@ -653,7 +655,7 @@ int snmp_device_get_series(snmp_device *device)
         }
     }
 
-    if (strstr(device->device_info[MIB_DEV_DESCR], "RAG") != NULL)
+    if (strstr(device->device_info[MIB_DEV_DESCR], RAG_PRINTER_TYPE) != NULL)
     {
         // RAG Series
         return kPrinterSeriesRAG;
