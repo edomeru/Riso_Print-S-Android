@@ -232,6 +232,22 @@ public class PrinterTest extends TestCase {
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FW);
     }
 
+    public void testGetPrinterType_RAG() {
+        Printer printer = new Printer("RISO IS950C-RAG", "");
+        String printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_RAG);
+
+        printer = new Printer("ORPHIS RAG", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_RAG);
+
+        printer = new Printer("ComColor RAG", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_RAG);
+    }
+
     // ================================================================================
     // Tests - getPortSetting
     // ================================================================================
@@ -326,5 +342,7 @@ public class PrinterTest extends TestCase {
         printer.getConfig().isTrayTopAvailable();
         printer.getConfig().isTrayStackAvailable();
         printer.getConfig().isTrayTopAvailable();
+        printer.getConfig().isExternalFeederAvailable();
+        printer.getConfig().isPunch0Available();
     }
 }
