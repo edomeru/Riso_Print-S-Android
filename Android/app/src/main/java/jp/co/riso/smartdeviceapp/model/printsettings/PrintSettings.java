@@ -40,6 +40,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -338,7 +339,20 @@ public class PrintSettings {
     public PaperSize getPaperSize() {
         return PaperSize.values()[mSettingValues.get(TAG_PAPER_SIZE)];
     }
-    
+
+    /**
+     * @brief Retrieves InputTray_RAG setting value i.e. tray location of input paper.
+     *
+     * @retval AUTO
+     * @retval STANDARD
+     * @retval TRAY1
+     * @retval TRAY2
+     * @retval EXTERNAL_FEEDER
+     */
+    public InputTray_RAG getInputTray() {
+        return InputTray_RAG.values()[mSettingValues.get(TAG_INPUT_TRAY)];
+    }
+
     /**
      * @brief Retrieves ScaleToFit setting value i.e. whether PDF page will be scaled to fit the whole page.
      * 

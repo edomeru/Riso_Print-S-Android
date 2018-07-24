@@ -174,7 +174,6 @@ const static char *input_tray_media_source[] =
     "STANDARD",
     "TRAY1",
     "TRAY2",
-    "TRAY3",
     "EXTERNALFEEDER"
 };
 

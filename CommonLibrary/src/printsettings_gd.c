@@ -164,7 +164,7 @@ const static char *paper_type[] =
     "POSTCARDJ",
     "LIGHT",
     "RECYCLED",
-    //"CRIMPED"
+    "CRIMPED"
 };
 
 const static char *input_tray_media_source[] =
