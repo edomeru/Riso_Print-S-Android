@@ -648,11 +648,17 @@ int snmp_device_get_series(snmp_device *device)
     {
         if (strcmp(FW_DEVICE_NAMES[i], device->device_info[MIB_DEV_DESCR]) == 0)
         {
-            // IS Series
+            // FW Series
             return kPrinterSeriesFW;
         }
     }
-    
+
+    if (strstr(device->device_info[MIB_DEV_DESCR], "RAG") != NULL)
+    {
+        // RAG Series
+        return kPrinterSeriesRAG;
+    }
+
     return kPrinterSeriesGD;
 }
 
