@@ -653,6 +653,12 @@ public class PrinterManager implements SNMPManagerCallback {
                 case SNMPManager.SNMP_CAPABILITY_RAW:
                     printer.getConfig().setRawAvailable(capabilities[i]);
                     break;
+                case SNMPManager.SNMP_CAPABILITY_EXTERNAL_FEEDER:
+                    printer.getConfig().setExternalFeederAvailable(capabilities[i]);
+                    break;
+                case SNMPManager.SNMP_CAPABILITY_FINISH_0:
+                    printer.getConfig().setPunch0Available(capabilities[i]);
+                    break;
             }
         }
     }

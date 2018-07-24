@@ -87,6 +87,8 @@ typedef enum
     kSnmpCapabilityTrayStack,
     kSnmpCapabilityLPR,
     kSnmpCapabilityRaw,
+    kSnmpCapabilityExternalFeeder,
+    kSnmpCapabilityFin0Holes,
     kSnmpCapabilityCount
 } kSnmpCapability;
 
