@@ -388,7 +388,7 @@ public class Printer implements Parcelable {
          * @retval false Punch is disabled
          */
         public boolean isPunchAvailable() {
-            return mPunch0Available && (mPunch3Available || mPunch4Available);
+            return !mPunch0Available && (mPunch3Available || mPunch4Available);
         }
         
         /**
