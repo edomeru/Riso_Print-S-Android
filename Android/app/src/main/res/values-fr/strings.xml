@@ -169,6 +169,5 @@
     <string name="ids_err_msg_invalid_community_name">Veuillez entrer une Nom de Communauté SNMP valide</string>
     <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
     <string name="ids_lbl_inputtray_external">Extra 2000 Sheets</string>
-    <string name="ids_lbl_papertype_crimped">Crimped</string>
 
 </resources>
