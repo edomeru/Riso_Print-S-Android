@@ -27,11 +27,15 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @brief Helper class for opening, creating and managing the database.
  */
 public class DatabaseManager extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 2; ///< current database version of the application
+    private static final int DATABASE_VERSION_01 = 1;
+    private static final int DATABASE_VERSION_02 = 2;   ///< current database version of the application
+
+    public static final int DATABASE_VERSION = AppConstants.DEBUG_LOWER_DB_VERSION ? DATABASE_VERSION_01 : DATABASE_VERSION_02;
     
     private static final String DATABASE_NAME = "SmartDeviceAppDB.sqlite";
     private static final String DATABASE_SQL = "db/SmartDeviceAppDB.sql";
-    
+    private static final String DATABASE_SQLv2 = "db/SmartDeviceAppDBv2.sql";
+
     private static final String INITIALIZE_SQL = "db/initializeDB.sql"; // for testing only
     
     private Context mContext;
@@ -59,30 +63,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Logger.logInfo(DatabaseManager.class, "onCreate - Begin");
-        
-        String sqlString = AppUtils.getFileContentsFromAssets(mContext, DATABASE_SQL);
-        String[] separated = sqlString.split(";");
-        
-        for (int i = 0; i < separated.length; i++) {
-            try {
-                db.execSQL(separated[i]);
-            } catch (SQLException e) {
-                continue;   
-            }
+
+        // initial database structure
+        executeSqlCommandFromScript(db, DATABASE_SQL);
+
+        if (DATABASE_VERSION > DATABASE_VERSION_01) {   // For database v2
+            executeSqlCommandFromScript(db, DATABASE_SQLv2);
         }
         
         /* for testing only */
         if (AppConstants.INITIAL_DB) {
-            sqlString = AppUtils.getFileContentsFromAssets(mContext, INITIALIZE_SQL);
-            separated = sqlString.split(";");
-            
-            for (int i = 0; i < separated.length; i++) {
-                try {
-                    db.execSQL(separated[i]);
-                } catch (SQLException e) {
-                    continue;
-                }
-            }
+            executeSqlCommandFromScript(db, INITIALIZE_SQL);
             
             if (AppConstants.FOR_PERF_LOGS) {
                 
@@ -108,15 +99,33 @@ public class DatabaseManager extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Logger.logInfo(DatabaseManager.class, "onUpgrade - Begin (" + oldVersion + "=>" + newVersion + ")");
-        if (newVersion > oldVersion) {
-            // Add capability columns for External Feeder and Punch 0
-            db.execSQL("ALTER TABLE " + KeyConstants.KEY_SQL_PRINTER_TABLE + " ADD COLUMN " +
-                    KeyConstants.KEY_SQL_PRINTER_EXTERNALFEEDER + " BOOL NOT NULL DEFAULT 0;");
-            db.execSQL("ALTER TABLE " + KeyConstants.KEY_SQL_PRINTER_TABLE + " ADD COLUMN " +
-                    KeyConstants.KEY_SQL_PRINTER_PUNCH0 + " BOOL NOT NULL DEFAULT 0;");
+
+        // For database v2
+        if (oldVersion < DATABASE_VERSION_02) {
+            executeSqlCommandFromScript(db, DATABASE_SQLv2);
         }
         // Should not happen for now
         Logger.logInfo(DatabaseManager.class, "onUpgrade - End");
+    }
+
+    /**
+     * @brief Executes the SQL script from the given path to SQL script file
+     *
+     * @param db SQLiteDatabase object
+     * @param sqlScript Path to SQL Script file
+     *
+     */
+    public void executeSqlCommandFromScript(SQLiteDatabase db, String sqlScript) {
+        String sqlString = AppUtils.getFileContentsFromAssets(mContext, sqlScript);
+        String[] separated = sqlString.split(";");
+
+        for (int i = 0; i < separated.length; i++) {
+            try {
+                db.execSQL(separated[i]);
+            } catch (SQLException e) {
+                continue;
+            }
+        }
     }
     
     /**
