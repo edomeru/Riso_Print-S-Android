@@ -18,6 +18,8 @@ public class AppConstants {
     public static final boolean DEBUG = false;
     /// Flag for creating initial database
     public static final boolean INITIAL_DB = false;
+    /// Flag for debug database lower version
+    public static final boolean DEBUG_LOWER_DB_VERSION = false;
     /// Flag for creating performance log
     public static final boolean FOR_PERF_LOGS = false;
     
