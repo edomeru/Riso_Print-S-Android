@@ -341,36 +341,31 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
+        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
             boolean isExternal = mPrintSettings.getInputTray() == InputTray_RAG.EXTERNAL_FEEDER;
             switch (PaperSize.values()[value]) {
+                case A4:
+                case B5:
+                case LETTER:
+                case JUROKUKAI:
+                    return true;
                 case A3:
                 case A3W:
-                    return !isExternal;
-                case A4:
-                    return true;
                 case A5:
                 case A6:
                 case B4:
-                    return !isExternal;
-                case B5:
-                    return true;
                 case B6:
                 case FOOLSCAP:
                 case TABLOID:
                 case LEGAL:
-                    return !isExternal;
-                case LETTER:
-                    return true;
                 case STATEMENT:
                 case LEGAL13:
                 case HACHIKAI:
                     return !isExternal;
-                case JUROKUKAI:
             }
         }
 
-        if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
+        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
             // if paper size is equal to A4, B5, Letter, or 16k
             boolean isPaperSupported = (mPrintSettings.getPaperSize() == PaperSize.A4 ||
                     mPrintSettings.getPaperSize() == PaperSize.B5 ||
@@ -632,19 +627,18 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        // Constraint #7 Paper Size - Input Tray (External)
-        if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
+        // Constraint #7 Paper Size - Input Tray (External) for RAG series
+        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
             int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
             if (value != PaperSize.A4.ordinal() && value != PaperSize.B5.ordinal() &&
-                    value != PaperSize.LETTER.ordinal() && value != PaperSize.JUROKUKAI.ordinal()) {
-                if (inputTrayValue == InputTray_RAG.EXTERNAL_FEEDER.ordinal()) {
-                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_RAG.AUTO.ordinal());
-                }
+                    value != PaperSize.LETTER.ordinal() && value != PaperSize.JUROKUKAI.ordinal() &&
+                    inputTrayValue == InputTray_RAG.EXTERNAL_FEEDER.ordinal()) {
+                updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_RAG.AUTO.ordinal());
             }
         }
 
-        // Constraint #8 Input Tray (External) - Paper Size
-        if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
+        // Constraint #8 Input Tray (External) - Paper Size for RAG series
+        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
             int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
             if (value == InputTray_RAG.EXTERNAL_FEEDER.ordinal()) {
                 if (paperSizeValue != PaperSize.A4.ordinal() && paperSizeValue != PaperSize.B5.ordinal() &&
@@ -729,7 +723,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * @brief Hides options disabled based on printer capabilities
-     * @note Currently only supported by Output Tray and Punch
+     * @note Currently only supported by Output Tray, Punch, and Input Tray
      * 
      * @param name Print settings tag name
      * @param value Value of the option to be checked

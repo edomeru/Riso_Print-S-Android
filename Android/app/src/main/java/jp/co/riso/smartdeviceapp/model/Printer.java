@@ -302,7 +302,7 @@ public class Printer implements Parcelable {
             mTrayTopAvailable = true;
             mTrayStackAvailable = true;
             mExternalFeederAvailable = false;
-            mPunch0Available = true;
+            mPunch0Available = false;
         }
         
         /**
@@ -508,8 +508,8 @@ public class Printer implements Parcelable {
         /**
          * @brief Determines the Punch capability of the device.
          *
-         * @retval true Punch is enabled
-         * @retval false Punch is disabled
+         * @retval true Punch is disabled
+         * @retval false Punch is enabled
          */
         public boolean isPunch0Available() {
             return mPunch0Available;

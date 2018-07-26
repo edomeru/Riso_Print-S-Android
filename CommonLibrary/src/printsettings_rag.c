@@ -3,7 +3,7 @@
 //  SmartDeviceApp
 //
 //  Created by RISO KAGAKU CORPORATION.
-//  Copyright (c) 2016 RISO KAGAKU CORPORATION. All rights reserved.
+//  Copyright (c) 2018 RISO KAGAKU CORPORATION. All rights reserved.
 //
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
@@ -54,19 +54,13 @@ typedef enum
     kPjlCommandPjlVersion,
     kPjlCommandPjlIdentifier,
     kPjlCommandRipControlFlag,
-	 // Ver.2.0.4.2 Start
     kPjlCommandHostName,
-    // Ver.2.0.4.2 End
     kPjlCommandSoftwereName,
     kPjlCommandSoftwereVersion,
     kPjlCommandColorMode,
     kPjlCommandOrientation,
-    // Ver.2.0.2.3 Start
-    //kPjlCommandQuantity,
-    //kPjlCommandCopies,
     kPjlCommandCopies,
     kPjlCommandQuantity,
-    // End
     kPjlCommandDuplex,
     kPjlCommandDuplexBinding,
     kPjlCommandOutputPaperSize,
@@ -87,31 +81,6 @@ typedef enum
     kPjlCommandPrivatePrintingBoxNumber,
     kPjlCommandCount
 } kPjlCommand;
-
-/*const static char *printsetting_names[kPrintSettingsCount] =
-{
-    "colorMode",
-    "orientation",
-    "copies",
-    "duplex",
-    "paperSize",
-    "scaleToFit",
-    "paperType",
-    "inputTray",
-    "imposition",
-    "impositionOrder",
-    "sort",
-    "booklet",
-    "bookletFinish",
-    "bookletLayout",
-    "finishingSide",
-    "staple",
-    "punch",
-    "outputTray",
-    "loginId",
-    "pinCode",
-    "securePrint"
-};*/
 
 const static char *color_mode[] =
 {
@@ -163,10 +132,7 @@ const static char *paper_type[] =
     "POSTCARDJ",
     "LIGHT",
     "RECYCLED",
-    //"CRIMPED"
-	// Ver.2.0.4.6 Start
 	"PLAINPREMIUM"
-	// End
 };
 
 const static char *input_tray_media_source[] =
@@ -212,9 +178,9 @@ const static char *finishing_side[] =
 const static char *staple[] =
 {
     "OFF",
-    "1STAPLE",
     "1STAPLELEFT",
     "1STAPLERIGHT",
+    "1STAPLE",
     "2STAPLES"
 };
 
@@ -240,20 +206,12 @@ const static char *off_on[] =
     "ON"
 };
 
-/*const static char *false_true[] =
-{
-    "FALSE",
-    "TRUE"
-};*/
-
 const static char **pjl_values[kPjlCommandCount] =
 {
     0,
     0,
     0,
-	// Ver.2.0.4.2 Start
 	0,
-	// End
     0,
     0,
     color_mode,
@@ -286,19 +244,13 @@ const static char *pjl_commands[kPjlCommandCount] =
     "RKPJLVERSION",
     "RKPJLIDENTIFIER",
     "RKRIPCONTROLFLAG",
-	// Ver.2.0.4.2 Start
 	"RKHOSTNAME",
-	// End
      "RKSOFTWARENAME",
     "RKSOFTWAREVERSION",
     "RKOUTPUTMODE",
     "ORIENTATION",
-    // Ver.2.0.2.3 Start
-    //"QTY",
-    //"COPIES",
     "COPIES",
     "QTY",
-    // End
     "DUPLEX",
     "BINDING",
     "PAPER",
@@ -360,80 +312,7 @@ void create_pjl_rag(char *pjl, char *settings, char *printerName, char *hostName
     }
 }
 
-/*
-void parse(char *settings, setting_value values[])
-{
-    char *current_line = settings;
-    char *next = strchr(current_line, '\n');
-    while (next != 0)
-    {
-        long line_length = next - current_line + 1;
-        char *line = (char *)calloc(line_length, sizeof(char));
-        strncpy(line, current_line, line_length - 1);
-        
-        char name[64];
-        char value[1024];
-        parse_line(line, name, value);
-        
-        int setting_index = get_setting_index(name);
-        if (setting_index != -1)
-        {
-            values[setting_index].set = 1;
-            if (setting_index == kPrintSettingsLoginId || setting_index == kPrintSettingsPinCode)
-            {
-                values[setting_index].str_value = strdup(value);
-            }
-            else
-            {
-                int value_index;
-                sscanf(value, "%d", &value_index);
-                values[setting_index].int_value = value_index;
-            }
-        }
-        
-        free(line);
-        
-        current_line = next + 1;
-        next = strchr(current_line, '\n');
-    }
-}
-
-void parse_line(char *line, char *name, char *value)
-{
-    char *eq = strchr(line, '=');
-    if (eq == 0)
-    {
-        return;
-    }
-    long name_length = eq - line + 1;
-    unsigned long value_length = strlen(eq + 1) + 1;
-    
-    memset(name, 0, 64);
-    strncpy(name, line, name_length - 1);
-    name[name_length] = 0;
-    
-    memset(value, 0, 1024);
-    strncpy(value, eq + 1, value_length - 1);
-    value[value_length] = 0;
-}
-
-int get_setting_index(const char *name)
-{
-    for (int i = 0; i < kPrintSettingsCount; i++)
-    {
-        if (strcmp(name, printsetting_names[i]) == 0)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-*/
-
 void add_pjl_rag(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command)
-// Ver.2.0.4.2 End
-//void add_pjl(char *pjl, char *printerName, setting_value values[], int command)
-// Ver.2.0.0.3 end
 {
     char pjl_line[1024];
     switch (command)
@@ -456,14 +335,12 @@ void add_pjl_rag(char *pjl, char *printerName, char *hostName, char *appVersion,
             strcat(pjl, pjl_line);
             break;
         }
-		// Ver.2.0.4.2 Start
 		case kPjlCommandHostName:
 		{
 			sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], hostName);
             strcat(pjl, pjl_line);
             break;
 		}
-		// End
         case kPjlCommandSoftwereName:
         {
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], PJL_SOFTWERENAME);
@@ -472,10 +349,7 @@ void add_pjl_rag(char *pjl, char *printerName, char *hostName, char *appVersion,
         }
         case kPjlCommandSoftwereVersion:
         {
-            // Ver.2.0.0.3 start
-            //sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], PJL_COMMAND_VERSKION);
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], appVersion);
-            // Ver.2.0.0.3 end            
             strcat(pjl, pjl_line);
             break;
         }
@@ -528,10 +402,7 @@ void add_pjl_rag(char *pjl, char *printerName, char *hostName, char *appVersion,
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
-            // Ver.2.0.2.3 Start
-        	//if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0)
             if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1)
-        	// End
         	{
                 return;
             }
@@ -543,10 +414,7 @@ void add_pjl_rag(char *pjl, char *printerName, char *hostName, char *appVersion,
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
-        	// Ver.2.0.2.3 Start
-        	//if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1)
             if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0)
-        	// End
             {
                 return;
             }
@@ -766,43 +634,7 @@ void add_pjl_rag(char *pjl, char *printerName, char *hostName, char *appVersion,
             }
             else
             {
-                if (finishing_side.int_value == 0)
-                {
-                    if (staple.int_value == 3)
-                    {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
-                    }
-                    else if (staple.int_value == 4)
-                    {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
-                    }
-                }
-                else if (finishing_side.int_value == 2)
-                {
-                    if (staple.int_value == 3)
-                    {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][1]);
-                    }
-                    else if (staple.int_value == 4)
-                    {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
-                    }
-                }
-                else if (finishing_side.int_value == 1)
-                {
-                    if (staple.int_value == 1)
-                    {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][2]);
-                    }
-                    else if (staple.int_value == 2)
-                    {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][3]);
-                    }
-                    else if (staple.int_value == 4)
-                    {
-                        sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][4]);
-                    }
-                }
+                sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][staple.int_value]);
             }
             strcat(pjl, pjl_line);
             break;

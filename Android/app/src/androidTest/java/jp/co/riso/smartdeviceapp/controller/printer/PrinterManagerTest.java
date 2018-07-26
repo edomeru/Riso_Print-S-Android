@@ -1259,6 +1259,12 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             assertEquals(printerType, AppConstants.PRINTER_MODEL_FW);
             mPrinterManager.removePrinter(printer);
 
+            printer = new Printer("ORPHIS RAG100", "192.168.0.4");
+            mPrinterManager.savePrinterToDB(printer, true);
+            printerType =  mPrinterManager.getPrinterType(printer.getId());
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_RAG);
+            mPrinterManager.removePrinter(printer);
+
             int nonExistentId = 2;
             if(mPrinterManager.getPrinterCount() > 0) {
                 nonExistentId += mPrinterManager.getSavedPrintersList().get(mPrinterManager.getPrinterCount() - 1).getId();
