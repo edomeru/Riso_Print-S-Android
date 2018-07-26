@@ -27,7 +27,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @brief Helper class for opening, creating and managing the database.
  */
 public class DatabaseManager extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 1; ///< current database version of the application
+    public static final int DATABASE_VERSION = 2; ///< current database version of the application
     
     private static final String DATABASE_NAME = "SmartDeviceAppDB.sqlite";
     private static final String DATABASE_SQL = "db/SmartDeviceAppDB.sql";
@@ -108,6 +108,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Logger.logInfo(DatabaseManager.class, "onUpgrade - Begin (" + oldVersion + "=>" + newVersion + ")");
+        if (newVersion > oldVersion) {
+            // Add capability columns for External Feeder and Punch 0
+            db.execSQL("ALTER TABLE " + KeyConstants.KEY_SQL_PRINTER_TABLE + " ADD COLUMN " +
+                    KeyConstants.KEY_SQL_PRINTER_EXTERNALFEEDER + " BOOL NOT NULL DEFAULT 0;");
+            db.execSQL("ALTER TABLE " + KeyConstants.KEY_SQL_PRINTER_TABLE + " ADD COLUMN " +
+                    KeyConstants.KEY_SQL_PRINTER_PUNCH0 + " BOOL NOT NULL DEFAULT 0;");
+        }
         // Should not happen for now
         Logger.logInfo(DatabaseManager.class, "onUpgrade - End");
     }
