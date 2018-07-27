@@ -693,6 +693,20 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
                 supported = 1;
             }
             break;
+        case kSnmpCapabilityExternalFeeder:
+            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0) {
+                supported = 1;
+            } else {
+                supported = 0;
+            }
+            break;
+        case kSnmpCapabilityFin0Holes:
+            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0) {
+                supported = 1;
+            } else {
+                supported = 0;
+            }
+            break;
         default:
             if (strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0)
             {
