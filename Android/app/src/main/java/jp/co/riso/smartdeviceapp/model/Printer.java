@@ -257,6 +257,11 @@ public class Printer implements Parcelable {
             return;
         }
 
+        if(mName.contains(AppConstants.PRINTER_MODEL_RAG)){
+            mPrinterType = AppConstants.PRINTER_MODEL_RAG;
+            return;
+        }
+
         mPrinterType =  AppConstants.PRINTER_MODEL_IS;
         actualPrinterTypeInvalid = true;
     }
@@ -280,7 +285,9 @@ public class Printer implements Parcelable {
         private boolean mTrayFaceDownAvailable;
         private boolean mTrayTopAvailable;
         private boolean mTrayStackAvailable;
-        
+        private boolean mExternalFeederAvailable;
+        private boolean mPunch0Available;
+
         /**
          * @brief Config Constructor.
          */
@@ -294,6 +301,8 @@ public class Printer implements Parcelable {
             mTrayFaceDownAvailable = true;
             mTrayTopAvailable = true;
             mTrayStackAvailable = true;
+            mExternalFeederAvailable = false;
+            mPunch0Available = false;
         }
         
         /**
@@ -379,7 +388,7 @@ public class Printer implements Parcelable {
          * @retval false Punch is disabled
          */
         public boolean isPunchAvailable() {
-            return mPunch3Available || mPunch4Available;
+            return !mPunch0Available && (mPunch3Available || mPunch4Available);
         }
         
         /**
@@ -476,7 +485,45 @@ public class Printer implements Parcelable {
         public void setTrayStackAvailable(boolean trayStackAvailable) {
             this.mTrayStackAvailable = trayStackAvailable;
         }
-        
+
+        /**
+         * @brief Determines the External Feeder input tray capability of the device.
+         *
+         * @retval true External Feeder is enabled
+         * @retval false External Feeder is disabled
+         */
+        public boolean isExternalFeederAvailable() {
+            return mExternalFeederAvailable;
+        }
+
+        /**
+         * @brief Updates the value of mExternalFeederAvailable.
+         *
+         * @param externalFeederAvailable Enable/Disable Punch capability
+         */
+        public void setExternalFeederAvailable(boolean externalFeederAvailable) {
+            this.mExternalFeederAvailable = externalFeederAvailable;
+        }
+
+        /**
+         * @brief Determines the Punch capability of the device.
+         *
+         * @retval true Punch is disabled
+         * @retval false Punch is enabled
+         */
+        public boolean isPunch0Available() {
+            return mPunch0Available;
+        }
+
+        /**
+         * @brief Updates the value of mPunch0Available.
+         *
+         * @param punch0Available Enable/Disable Punch capability
+         */
+        public void setPunch0Available(boolean punch0Available) {
+            this.mPunch0Available = punch0Available;
+        }
+
         /**
          * @brief Saves the value of all class members to a Parcel.
          * 
@@ -484,7 +531,8 @@ public class Printer implements Parcelable {
          */
         public void writeToParcel(Parcel out) {
             boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletFinishingAvailable, mStaplerAvailable, mPunch3Available,
-                    mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable };
+                    mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable,
+                    mExternalFeederAvailable, mPunch0Available };
             
             out.writeBooleanArray(config);
         }
@@ -496,7 +544,8 @@ public class Printer implements Parcelable {
          */
         public void readFromParcel(Parcel in) {
             boolean[] config = new boolean[] { mLprAvailable, mRawAvailable, mBookletFinishingAvailable, mStaplerAvailable, mPunch3Available,
-                    mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable };
+                    mPunch4Available, mTrayFaceDownAvailable, mTrayTopAvailable, mTrayStackAvailable,
+                    mExternalFeederAvailable, mPunch0Available };
             
             in.readBooleanArray(config);
             mConfig.mLprAvailable = config[0];
@@ -508,6 +557,8 @@ public class Printer implements Parcelable {
             mConfig.mTrayFaceDownAvailable = config[6];
             mConfig.mTrayTopAvailable = config[7];
             mConfig.mTrayStackAvailable = config[8];
+            mConfig.mExternalFeederAvailable = config[9];
+            mConfig.mPunch0Available = config[10];
         }
     }
 }

@@ -31,6 +31,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -116,6 +117,17 @@ public class PreviewTest extends AndroidTestCase {
     public void testPaperSizeGetHeight() {
         assertEquals(420.0f, PaperSize.A3.getHeight());
         assertEquals(297.0f, PaperSize.A4.getHeight());
+    }
+
+    public void testInputTray() {
+        assertEquals(0, Preview.InputTray_RAG.AUTO.ordinal());
+        assertEquals(1, Preview.InputTray_RAG.STANDARD.ordinal());
+        assertEquals(2, Preview.InputTray_RAG.TRAY1.ordinal());
+        assertEquals(3, Preview.InputTray_RAG.TRAY2.ordinal());
+        assertEquals(5, InputTray_RAG.EXTERNAL_FEEDER.ordinal());
+        assertEquals(Preview.InputTray_RAG.AUTO, Preview.InputTray_RAG.valueOf("AUTO"));
+        assertEquals(InputTray_RAG.STANDARD, Preview.InputTray_RAG.valueOf("STANDARD"));
+        assertEquals(Preview.InputTray_RAG.EXTERNAL_FEEDER, InputTray_RAG.valueOf("EXTERNAL_FEEDER"));
     }
 
     public void testImpositionValueOf() {

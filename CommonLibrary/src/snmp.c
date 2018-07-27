@@ -30,6 +30,8 @@
 #define SNMPV3_USER "risosnmp"
 #define SNMPV3_PASS "risosnmp"
 
+#define RAG_PRINTER_TYPE "RAG"
+
 #define DETECT_ALL_DEVICES 0  // 0 for RISO only
 
 typedef struct
@@ -91,6 +93,8 @@ static const char *MIB_REQUESTS[] = {
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.1", // Tray face-down
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.3", // Tray top
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.4", // Tray stack
+    "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.25", // External feeder
+    "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.26", // Finisher 0 holes
 };
 
 #define AZA_DEVICE_NAME_COUNT 3
@@ -646,11 +650,17 @@ int snmp_device_get_series(snmp_device *device)
     {
         if (strcmp(FW_DEVICE_NAMES[i], device->device_info[MIB_DEV_DESCR]) == 0)
         {
-            // IS Series
+            // FW Series
             return kPrinterSeriesFW;
         }
     }
-    
+
+    if (strstr(device->device_info[MIB_DEV_DESCR], RAG_PRINTER_TYPE) != NULL)
+    {
+        // RAG Series
+        return kPrinterSeriesRAG;
+    }
+
     return kPrinterSeriesGD;
 }
 
@@ -681,6 +691,20 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
                         (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin24Holes]) > 0))
             {
                 supported = 1;
+            }
+            break;
+        case kSnmpCapabilityExternalFeeder:
+            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0) {
+                supported = 1;
+            } else {
+                supported = 0;
+            }
+            break;
+        case kSnmpCapabilityFin0Holes:
+            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0) {
+                supported = 1;
+            } else {
+                supported = 0;
             }
             break;
         default:

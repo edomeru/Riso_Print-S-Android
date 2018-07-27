@@ -96,7 +96,18 @@ public class Preview {
             return mHeight;
         }
     }
-    
+
+    /**
+     * @brief InputTray_RAG print settings for RAG series that refers to the tray location of input paper.
+     */
+    public enum InputTray_RAG {
+        AUTO,  ///< Auto Tray
+        STANDARD,  ///< Standard Tray
+        TRAY1,  ///< Tray 1
+        TRAY2, ///< Tray 2
+        EXTERNAL_FEEDER, ///< External 2000 sheets
+    }
+
     /**
      * @brief Imposition print settings that determines the number of pages to print per sheet.
      */

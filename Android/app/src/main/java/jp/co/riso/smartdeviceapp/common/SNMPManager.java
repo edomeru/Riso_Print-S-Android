@@ -48,6 +48,10 @@ public class SNMPManager {
     public static final int SNMP_CAPABILITY_LPR = 7;
     /// Raw print capability 
     public static final int SNMP_CAPABILITY_RAW = 8;
+    /// External feeder capability
+    public static final int SNMP_CAPABILITY_EXTERNAL_FEEDER = 9;
+    /// Punch 0 holes capability
+    public static final int SNMP_CAPABILITY_FINISH_0 = 10;
     
     /**
      * @brief Sets the callback function for the SNMP Manager.

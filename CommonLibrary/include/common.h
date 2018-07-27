@@ -87,6 +87,8 @@ typedef enum
     kSnmpCapabilityTrayStack,
     kSnmpCapabilityLPR,
     kSnmpCapabilityRaw,
+    kSnmpCapabilityExternalFeeder,
+    kSnmpCapabilityFin0Holes,
     kSnmpCapabilityCount
 } kSnmpCapability;
 
@@ -97,6 +99,7 @@ typedef enum
     kPrinterSeriesIS,
     kPrinterSeriesFW,
     kPrinterSeriesGD,
+    kPrinterSeriesRAG,
     kDeviceSeriesCount
 } kPrinterSeries;
 
