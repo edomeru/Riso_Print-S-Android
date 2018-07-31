@@ -124,7 +124,7 @@ public class PreviewTest extends AndroidTestCase {
         assertEquals(1, Preview.InputTray_RAG.STANDARD.ordinal());
         assertEquals(2, Preview.InputTray_RAG.TRAY1.ordinal());
         assertEquals(3, Preview.InputTray_RAG.TRAY2.ordinal());
-        assertEquals(5, InputTray_RAG.EXTERNAL_FEEDER.ordinal());
+        assertEquals(4, InputTray_RAG.EXTERNAL_FEEDER.ordinal());
         assertEquals(Preview.InputTray_RAG.AUTO, Preview.InputTray_RAG.valueOf("AUTO"));
         assertEquals(InputTray_RAG.STANDARD, Preview.InputTray_RAG.valueOf("STANDARD"));
         assertEquals(Preview.InputTray_RAG.EXTERNAL_FEEDER, InputTray_RAG.valueOf("EXTERNAL_FEEDER"));

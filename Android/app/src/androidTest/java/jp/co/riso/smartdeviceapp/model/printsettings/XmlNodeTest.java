@@ -95,7 +95,7 @@ public class XmlNodeTest extends AndroidTestCase {
             XmlNode g = mGroupList.get(i);
             String attribName = g.getAttributeValue("name");
             String attribText = g.getAttributeValue("text");
-            switch(i%AppConstants.PRINTER_TYPES.length) {
+            switch(i%(AppConstants.PRINTER_TYPES.length-1)) {
                 case 0:
                     assertEquals("basic", attribName);
                     assertEquals("ids_lbl_basic", attribText);
