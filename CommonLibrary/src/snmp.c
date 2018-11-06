@@ -71,6 +71,8 @@ enum
     MIB_HW_CAP_5,
     MIB_HW_CAP_6,
     MIB_HW_CAP_7,
+    MIB_HW_CAP_8,
+    MIB_HW_CAP_9,
     MIB_INFO_COUNT
 };
 
@@ -93,8 +95,8 @@ static const char *MIB_REQUESTS[] = {
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.1", // Tray face-down
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.3", // Tray top
     "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.4", // Tray stack
-    "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.25", // External feeder
-    "1.3.6.1.4.1.24807.1.2.1.2.2.1.2.26", // Finisher 0 holes
+    "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.25", // External feeder
+    "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.26", // Finisher 0 holes
 };
 
 #define AZA_DEVICE_NAME_COUNT 3
@@ -694,14 +696,14 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
             }
             break;
         case kSnmpCapabilityExternalFeeder:
-            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0) {
+            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_8]) > 0) {
                 supported = 1;
             } else {
                 supported = 0;
             }
             break;
         case kSnmpCapabilityFin0Holes:
-            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0) {
+            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_9]) > 0) {
                 supported = 1;
             } else {
                 supported = 0;
