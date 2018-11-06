@@ -104,6 +104,11 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         assertEquals(mPdfManager.getPath(), "/this/is/a/path");
         assertEquals(mPdfManager.getFileName(), "path");
     }
+
+    public void testSetPdfFilename() {
+        mPdfManager.setFileName("test.pdf");
+        assertEquals(mPdfManager.getFileName(), "test.pdf");
+    }
     
     //================================================================================
     // Tests - getSandboxPath
