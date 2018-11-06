@@ -46,6 +46,7 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.MemoryUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -112,6 +113,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     private boolean mShouldDisplayExplanation;
     private Uri mIntentData;
     private InputStream mInputStream;
+    private String mFilenameFromContent = null;
 
     // BTS ID#20039: This flag controls if page index should reset to 1 on PDF
     // initialization. Currently only reset after allowing storage permission to
@@ -143,6 +145,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 try {
                     ContentResolver c = this.getActivity().getContentResolver();
                     mInputStream = c.openInputStream(mIntentData);
+                    mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (SecurityException e) {
@@ -655,6 +658,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
             switch (status) {
                 case PDFFileManager.PDF_OK:
+                    if (mFilenameFromContent != null) {
+                        mPdfManager.setFileName(mFilenameFromContent);
+                    }
                     setPrintPreviewViewDisplayed(getView(), true);
 
                     if(shouldResetToFirstPageOnInitialize) {
