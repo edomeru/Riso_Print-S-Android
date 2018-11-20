@@ -1742,7 +1742,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             int width = getResources().getDimensionPixelSize(R.dimen.printsettings_input_width);
             params.width = width;
             
-            final EditText editText = (EditText) li.inflate(R.layout.printsettings_input_edittext, null);
+            EditText editText = (EditText) li.inflate(R.layout.printsettings_input_edittext, null);
             editText.setActivated(true);
             editText.setLayoutParams(params);
             editText.setTag(tag);
@@ -1752,14 +1752,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             });
             editText.addTextChangedListener(new EditTextWatcher(tag, 1));
             editText.setOnEditorActionListener(this);
-            // move cursor at end of text
-            editText.post(new Runnable() {
-                @Override
-                public void run() {
-                    editText.setSelection(editText.getText().toString().length());
-                }
-            });
-
+            
             return editText;
         } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_LIST)) {
             params.height = LayoutParams.MATCH_PARENT;
