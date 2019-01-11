@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
+import com.radaee.pdf.Global;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -36,7 +38,10 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     
     protected void setUp() throws Exception {
         super.setUp();
-        
+
+        //Initialize Radaee
+        Global.Init(getActivity());
+
         mPdfPath = getAssetPath("PDF-squarish.pdf");
         mPdfPageCount = 36; // page count of mPdfPath file
         
