@@ -1573,7 +1573,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                         }
                     }
                     
-                    canvas.save(Canvas.CLIP_SAVE_FLAG);
+                    canvas.save();
                     canvas.clipRect(left, top, right + 1, bottom + 1);
                     
                     /*
