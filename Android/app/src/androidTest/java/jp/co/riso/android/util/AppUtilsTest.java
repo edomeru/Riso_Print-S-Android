@@ -11,8 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.os.LocaleList;
 import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.Display;
@@ -302,10 +306,34 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
     
     public void testGetLocalizedAssetRelativePath_Valid_ja() {
-        Locale.setDefault(Locale.JAPANESE);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            Locale.setDefault(Locale.JAPANESE);
+        } else {
+            Locale locale = new Locale("ja");
+            Resources res = getActivity().getResources();
+            Configuration config = res.getConfiguration();
+
+            config.setLocale(locale);
+            LocaleList list = new LocaleList(locale);
+            LocaleList.setDefault(list);
+            getActivity().createConfigurationContext(config);
+        }
+
         String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), FOLDER, RESOURCE);
         
         assertEquals(RELATIVE_PATH_JA, localized);
+
+        // Revert to EN locale
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
+            Locale locale = new Locale("en");
+            Resources res = getActivity().getResources();
+            Configuration config = res.getConfiguration();
+
+            config.setLocale(locale);
+            LocaleList list = new LocaleList(locale);
+            LocaleList.setDefault(list);
+            getActivity().createConfigurationContext(config);
+        }
     }
     
     public void testGetLocalizedAssetRelativePath_Valid_missingLocale() {
@@ -362,10 +390,34 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testGetLocalizedAssetFullPath_Valid_ja() {
-        Locale.setDefault(Locale.JAPANESE);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            Locale.setDefault(Locale.JAPANESE);
+        } else {
+            Locale locale = new Locale("ja");
+            Resources res = getActivity().getResources();
+            Configuration config = res.getConfiguration();
+
+            config.setLocale(locale);
+            LocaleList list = new LocaleList(locale);
+            LocaleList.setDefault(list);
+            getActivity().createConfigurationContext(config);
+        }
+
         String localized = AppUtils.getLocalizedAssetFullPath(getActivity(), FOLDER, RESOURCE);
         
         assertEquals(FULL_PATH_JA, localized);
+
+        // Revert to EN locale
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
+            Locale locale = new Locale("en");
+            Resources res = getActivity().getResources();
+            Configuration config = res.getConfiguration();
+
+            config.setLocale(locale);
+            LocaleList list = new LocaleList(locale);
+            LocaleList.setDefault(list);
+            getActivity().createConfigurationContext(config);
+        }
     }
 
     public void testGetLocalizedAssetFullPath_Valid_missingLocale() {
