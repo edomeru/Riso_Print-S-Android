@@ -1,42 +1,57 @@
 package com.radaee.pdf;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import jp.co.riso.smartprint.R;
-import android.app.Activity;
+import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
-//import android.telephony.TelephonyManager;
-//import android.net.wifi.WifiInfo;
-//import android.net.wifi.WifiManager;
 import android.os.Environment;
 
-import com.radaee.pdfex.PDFRecent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
+import jp.co.riso.smartprint.R;
 
 /**
  * class for Global setting.
  * 
  * @author Radaee
- * @version 1.1
+ * @version 3.50
  */
-public class Global {
+public class Global
+{
+	private static int mLicenseType = 1;
+	private static String mCompany = "RISO KAGAKU CORPORATION";
+	private static String mEmail = "zhang@riso.co.jp";
+	private static String mKey = "J7GEIT-JYKWMH-NRHUWW-T0WD5S-GH0FFJ-GT61BP";
+
+	public static boolean Init(Context ctx)
+    {
+        //second para is license type
+        //            0 means standard license.
+        //            1 means professional license
+        //            2 means premium license
+        //3rd para is company name string(not package name)
+        //4th para is mail
+        //5th para is key string
+        //the package name got by native C/C++ library, not by pass parameter.
+		boolean res = Init( (ContextWrapper)ctx, mLicenseType, mCompany, mEmail, mKey);
+		return res;
+	}
 	/**
 	 * get version string from library.
 	 * @return version string, like: "201401"
 	 */
 	private static native String getVersion();
 	private static native void setCMapsPath(String cmaps, String umaps);
+	private static native boolean setCMYKICCPath(String path);
 	private static native void fontfileListStart();
 	private static native void fontfileListAdd(String font_file);
 	private static native void fontfileListEnd();
 	private static native void loadStdFont( int index, String path );
+    private static native int recommandedRenderMode();
+    public static native float sqrtf(float v);
 
 	/**
 	 * map a face name to another name.<br/>
@@ -199,121 +214,27 @@ public class Global {
 	 * @param hide
 	 *            true to hide, false to show.
 	 */
-	private static native void hideAnnots(boolean hide);
+	public static native void hideAnnots(boolean hide);
 
-	/**
-	 * lock Bitmap object, and get a handle.
-	 * 
-	 * @param bitmap
-	 *            Bitmap object.
-	 * @return hand handle value.
-	 */
-	public static native int lockBitmap(Bitmap bitmap);
-
-	/**
-	 * unlock Bitmap object, and free the handle.
-	 * 
-	 * @param bitmap
-	 *            Bitmap object that passed to lockBitmap.
-	 * @param bmp
-	 *            handle value, that returned by lockBitmap.
-	 */
-	public static native void unlockBitmap(Bitmap bitmap, int bmp);
-	/**
-	 * draw Bitmap object to a dib
-	 * @param dib
-	 * @param bmp handle value, that returned by lockBitmap.
-	 * @param x
-	 * @param y
-	 */
-	public static native void drawBmpToDIB( int dib, int bmp, int x, int y );
-	/**
-	 * draw a dib to another dib
-	 * @param dst_dib
-	 * @param src_dib
-	 * @param x
-	 * @param y
-	 */
-	public static native void drawToDIB( int dst_dib, int src_dib, int x, int y );
-	/**
-	 * draw dib to bmp.
-	 * 
-	 * @param bmp
-	 *            handle value, that returned by lockBitmap.
-	 * @param dib
-	 * @param x
-	 *            origin position in bmp.
-	 * @param y
-	 *            origin position in bmp.
-	 */
-	public static native void drawToBmp(int bmp, int dib, int x, int y);
-	/**
-	 * draw dib to bmp, with scale
-	 * @param bmp
-	 * @param dib
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	public static native void drawToBmp2(int bmp, int dib, int x, int y, int w, int h);
-
-	/**
-	 * fill solid rectangle to bmp.
-	 * 
-	 * @param bmp
-	 *            handle value, that returned by lockBitmap.
-	 * @param color
-	 *            the color to fill, formatted: 0xAARRGGBB, AA: alpha value.
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param mode
-	 * <br/>
-	 *            0: mix color by source pixels with alpha channel. <br/>
-	 *            1: replace pixels.
-	 */
-	public static native void drawRect(int bmp, int color, int x, int y,
-			int width, int height, int mode);
-	public static native void drawRectToDIB( int dib, int color, int x, int y, int width, int height, int mode );
-
-	/**
-	 * invert all colors for locked bmp.
-	 * 
-	 * @param bmp
-	 *            handle value, that returned by lockBitmap.
-	 */
-	public static native void invertBmp(int bmp);
-
+	private static native void drawScroll(Bitmap bmp, long dib1, long dib2, int x, int y, int style, int back_side_clr);
 	/**
 	 * not used for developer
 	 */
-	public static native void drawScroll(Bitmap bmp, int dib1, int dib2, int x,
-			int y, int style);
+	public static void DrawScroll(Bitmap bmp, DIB dib1, DIB dib2, int x, int y, int style, int back_side_clr)
+	{
+		drawScroll(bmp, dib1.hand, dib2.hand, x, y, style, back_side_clr);
+	}
 
-	/**
-	 * create or resize dib, and reset all pixels in dib.<br/>
-	 * if dib is 0, function create a new dib object.<br/>
-	 * otherwise function resize the dib object.
-	 */
-	public static native int dibGet(int dib, int width, int height);
-
-	/**
-	 * free dib object.
-	 */
-	public static native int dibFree(int dib);
-
-	private static native void toDIBPoint(int matrix, float[] ppoint,
+	private static native void toDIBPoint(long matrix, float[] ppoint,
 			float[] dpoint);
 
-	private static native void toPDFPoint(int matrix, float[] dpoint,
+	private static native void toPDFPoint(long matrix, float[] dpoint,
 			float[] ppoint);
 
-	private static native void toDIBRect(int matrix, float[] prect,
+	private static native void toDIBRect(long matrix, float[] prect,
 			float[] drect);
 
-	private static native void toPDFRect(int matrix, float[] drect,
+	private static native void toPDFRect(long matrix, float[] drect,
 			float[] prect);
 
 	/**
@@ -323,12 +244,7 @@ public class Global {
 	 * @param color
 	 *            formated as 0xAARRGGBB
 	 */
-	private static native void setAnnotTransparency(int color);
-
-	/**
-	 * not used for developer
-	 */
-	public static PDFRecent recentFiles = null;
+	public static native void setAnnotTransparency(int color);
 
 	/**
 	 * color for ink annotation
@@ -347,14 +263,36 @@ public class Global {
 	 */
 	public static int selColor = 0x400000C0;// selection color
 	/**
-	 * is text selection start from right to left in one line?
+	 * Use selection icons (markers).
 	 */
-	public static boolean selRTOL = false;
+	public static boolean useSelIcons = true;
+	/**
+	 * Annotation transparency color
+	 */
+	public static int annotTransparencyColor = 0x200040FF;
+	/**
+	 * find primary color.
+	 */
+	public static int findPrimaryColor = 0x400000FF;// find primary color
+	/**
+	 * find secondary color.
+	 */
+	public static int findSecondaryColor = 0x40404040;// find secondary color
 	/**
 	 * max zoom level; valid values: [2, 5]
 	 */
 	public static float zoomLevel = 3;
 	public static float zoomStep = 1;
+	/**
+	 * can't be neg value. 15 means 15x(2000%) zooming.
+	 * Starting from version 3.12beta2 (which introduces enhancements in transparency composing and color blending)
+	 * we recommend using 11 as the max level, higher levels will reduce performance
+	 */
+	public static float layoutZoomLevel = 11;
+	/**
+	 * can't be neg value. 2 means 2x(200%) zooming. when zoom value greater than this, it clip pages as many small bitmaps.
+	 */
+	public static float layoutZoomLevelClip = 2.5f;
 	/**
 	 * fling distance: 0.5-2
 	 */
@@ -366,6 +304,7 @@ public class Global {
 	/**
 	 * default view:<br/>
 	 * 0:vertical<br/>
+	 * 1:horizontal<br/>
 	 * 2:scroll<br/>
 	 * 3:single<br/>
 	 * 4:SingleEx<br/>
@@ -384,22 +323,104 @@ public class Global {
 
 	/**
 	 * temp path, able after Init() invoked
+	 * debug_mode, show or remove "Avail Mem" watermark
+	 * save_thumb_in_cache, save pdf first page in cache storage
 	 */
 	public static String tmp_path = null;
-	public static boolean need_time_span = true;
+	/**
+	 * Thumb view background color
+	 */
+	public static int thumbViewBgColor = 0x40CCCCCC;
+	/**
+	 * Thumb grid view's background color
+	 */
+	public static int thumbGridBgColor = 0xFFCCCCCC;
+	/**
+	 * Thumb view height in dp, i.e. 100 = 100dp
+	 */
+	public static int thumbViewHeight = 100;
+	/**
+	 * Thumb grid view's element height in dp, i.e. 100 = 100dp
+	 */
+	public static int thumbGridElementHeight = 150;
+	/**
+	 * Thumb grid view's element gap (the vertical/horizontal spacing)
+	 */
+	public static int thumbGridElementGap = 10;
+	/**
+	 * Thumb grid view's render mode, 0:full screen 1:justify center
+	 */
+	public static int thumbGridViewMode = 0;
+	/**
+	 * Reader view background color
+	 */
+	public static int readerViewBgColor = 0xFFCCCCCC;
+	/**
+	 * navigation mode, 0:thumbnail view 1:seekbar view
+	 */
+	public static int navigationMode = 1;
+	public static boolean debug_mode = true;
+	public static boolean highlight_annotation = true;
+	public static boolean save_thumb_in_cache = true;
+	/**
+	 * enables/disables right to left navigation
+	 */
+	public static boolean rtol = false;
+	/**
+	 * is text selection start from right to left in one line?
+	 */
+	public static boolean selRTOL = false;
+    /**
+     * enables or disable cache during rendering
+     */
+    public static boolean cacheEnabled = true;
+	public static boolean trustAllHttpsHosts = false;
+    public static int highlight_color = 0xFFFFFF00;//yellow
+    public static int underline_color = 0xFF0000C0;//black blue
+    public static int strikeout_color = 0xFFC00000;//black red
+    public static int squiggle_color = 0xFF00C000;//black green
+	public static String sAnnotAuthor; //if valorized, will be used to set the annotation author while its creation
 
-	static private void load_std_font(String asset_name, AssetManager assets, File dir)
+	public static boolean sEnableGraphicalSignature = true;
+	public static boolean sFitSignatureToField = true; //if true, the blank space will be trimmed from the signature bitmap
+	public static String sSignPadDescr = "Sign Here";
+
+	public static boolean sExecuteAnnotJS = true;
+	/**
+	 *Annot Rect params
+	 */
+	public static float rect_annot_width = 3;
+	public static int rect_annot_color = 0x80FF0000;
+	public static int rect_annot_fill_color = 0x800000FF;
+
+    /**
+     *Annot Ellipse params
+     */
+    public static float ellipse_annot_width = 3;
+    public static int ellipse_annot_color = 0x80FF0000;
+    public static int ellipse_annot_fill_color = 0x800000FF;
+
+    /**
+     *Annot Line params
+     */
+    public static float line_annot_width = 3;
+    public static int line_annot_style1 = 1;
+    public static int line_annot_style2 = 0;
+    public static int line_annot_color = 0x80FF0000;
+    public static int line_annot_fill_color = 0x800000FF;
+
+	public static boolean fit_different_page_size = false;
+
+	static private void load_file(Resources res, int res_id, File save_file)
 	{
-        String fonts_path = dir.getAbsolutePath() + "/" + asset_name;
-        int read;
-		File sub = new File(fonts_path);
-		byte buf[] = new byte[4096];
-		if( !sub.exists() )
+		if( !save_file.exists() )
 		{
 			try
 	    	{
-				InputStream src = assets.open(asset_name);
-    			FileOutputStream dst = new FileOutputStream( new File(fonts_path) );
+		        int read;
+				byte buf[] = new byte[4096];
+				InputStream src = res.openRawResource(res_id );
+    			FileOutputStream dst = new FileOutputStream( save_file );
    				while( (read = src.read( buf )) > 0 )
    					dst.write( buf, 0, read );
    				dst.close();
@@ -411,123 +432,96 @@ public class Global {
 			{
 			}
 		}
-		sub = null;
-		loadStdFont( 13, fonts_path );
 	}
-	/**
-	 * global initialize function. it load JNI library and write some data to
-	 * memory.
-	 * 
-	 * @param act
-	 *            Activity object, must be called super.onCreate().
-	 */
-	public static void Init(Activity act)
+	static private void load_std_font(Resources res, int res_id, int index, File dst)
 	{
-		/*
-		 * String devID =
-		 * ((TelephonyManager)act.getSystemService(act.TELEPHONY_SERVICE
-		 * )).getDeviceId(); if( devID == null ) { WifiManager wm =
-		 * (WifiManager)act.getSystemService(act.WIFI_SERVICE); if( wm != null )
-		 * { WifiInfo wi = wm.getConnectionInfo(); if( wi != null ) devID =
-		 * wi.getMacAddress(); } }
-		 */
-		// load library
+		load_file(res, res_id, dst);
+		loadStdFont( index, dst.getPath() );
+	}
+    static private void load_truetype_font(Resources res, int res_id, File dst)
+    {
+        load_file(res, res_id, dst);
+        fontfileListAdd( dst.getPath() );
+    }
+	static private boolean load_cmyk_icc(Resources res, int res_id, File dst)
+	{
+		load_file(res, res_id, dst);
+		return setCMYKICCPath(dst.getPath());
+	}
+	static private void load_cmaps(Resources res, int res_cmap, File dst_cmap, int res_umap, File dst_umap)
+	{
+		load_file(res, res_cmap, dst_cmap);
+		load_file(res, res_umap, dst_umap);
+		setCMapsPath(dst_cmap.getPath(), dst_umap.getPath());
+	}
+	static private void save_font(String path, String out)
+	{
+		File file = new File(path);
+		if(!file.exists()) return;
+		try {
+			FileInputStream fi = new FileInputStream(file);
+			FileOutputStream fo = new FileOutputStream(out);
+			byte[] data = new byte[4096];
+			int read = 0;
+			while((read = fi.read(data)) > 0)
+				fo.write(data, 0, read);
+			fo.close();
+			fi.close();
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+	}
+	static private boolean ms_init = false;
+	/**
+	 * global initialize function. it load JNI library and write some data to memory.
+	 * @param act Context object must derived from CoontextWrapper, native get package name from this Activity, and then check package name.
+	 * @param license_type 0: standard license, 1: professional license, 2: premium license.
+	 * @param company_name
+	 * @param mail
+	 * @param serial
+	 * @return
+	 */
+	public static boolean Init(ContextWrapper act, int license_type, String company_name, String mail, String serial)
+	{
+		if(ms_init) return true;
+		if( act == null ) return false;
+ 		// load library
 		System.loadLibrary("rdpdf");
-
-		// save assets to files path for application.
-		// assets mainly include encoding map data.
-		AssetManager assets = act.getAssets();
-		byte buf[] = new byte[4096];
-		File sub;
-		int read;
-		File files = act.getFilesDir();
-		String cmaps_path = files.getAbsolutePath() + "/cmaps";// get destiny
-																// cmaps file
-																// path
-		String umaps_path = files.getAbsolutePath() + "/umaps";// get destiny
-																// umaps file
-																// path
-
-		load_std_font( "pdfviewer/rdf013", assets, files );
+		// save resource to sand-box for application.
+		File files = new File(act.getFilesDir(), "rdres");
+		if (!files.exists())// not exist? make it!
+			files.mkdir();
+		Resources res = act.getResources();
+        load_std_font( res, R.raw.rdf013, 13, new File(files, "rdf013") );
+		load_cmyk_icc( res, R.raw.cmyk_rgb, new File(files, "cmyk_rgb") );
+		load_cmaps( res, R.raw.cmaps, new File(files, "cmaps"), R.raw.umaps, new File(files, "umaps") );
 
 		// create temporary dictionary, to save media or attachment data.
-		File sdDir = Environment.getExternalStorageDirectory();
-		if (Environment.getExternalStorageState().equals(
-				Environment.MEDIA_MOUNTED)) {
-			tmp_path = sdDir.toString() + "/rdtmp";
-			File dir = new File(tmp_path);
-			if (!dir.exists())// not exist? make it!
-				dir.mkdir();
-			else if (!dir.isDirectory())
-				tmp_path = sdDir.getAbsolutePath();
-		} else if (sdDir != null)
-			tmp_path = sdDir.getAbsolutePath();// not mount? get sdcard path
+		File sdDir = act.getExternalFilesDir("");
+		//File sdDir = Environment.getExternalStorageDirectory();
+        File ftmp;
+		if (sdDir != null)
+            ftmp = new File(sdDir, "rdtmp");
 		else
-			tmp_path = files.getAbsolutePath() + "/rdtmp";
-		files = null;
-		Global.RemoveTmp();// clear temporary dictionary
-		files = new File(tmp_path);
-		files.mkdir();
-		files = null;
+            ftmp = new File(act.getFilesDir(), "rdtmp");
+		if (!ftmp.exists())// not exist? make it!
+            ftmp.mkdir();
+		tmp_path = ftmp.getPath();
 
-		// save cmaps data from assets to files path
-		sub = new File(cmaps_path);
-		if (!sub.exists()) {
-			try {
-				InputStream src;
-
-				FileOutputStream dst = new FileOutputStream(
-						new File(cmaps_path));
-
-				src = assets.open("pdfviewer/cmaps1");
-				while ((read = src.read(buf)) > 0)
-					dst.write(buf, 0, read);
-				src.close();
-				src = null;
-				src = assets.open("pdfviewer/cmaps2");
-				while ((read = src.read(buf)) > 0)
-					dst.write(buf, 0, read);
-				src.close();
-				src = null;
-
-				dst.close();
-				dst = null;
-				src = null;
-			} catch (Exception e) {
-			}
+		switch(license_type)
+		{
+		case 1:
+			ms_init = activeProfessional(act, company_name, mail, serial);
+			break;
+		case 2:
+			ms_init = activePremium(act, company_name, mail, serial);
+			break;
+		default:
+			ms_init = activeStandard(act, company_name, mail, serial);
+			break;
 		}
-		sub = null;
-
-		// save umaps data from assets to files path
-		sub = new File(umaps_path);
-		if (!sub.exists()) {
-			try {
-				InputStream src;
-
-				FileOutputStream dst = new FileOutputStream(
-						new File(umaps_path));
-
-				src = assets.open("pdfviewer/umaps1");
-				while ((read = src.read(buf)) > 0)
-					dst.write(buf, 0, read);
-				src.close();
-				src = null;
-				src = assets.open("pdfviewer/umaps2");
-				while ((read = src.read(buf)) > 0)
-					dst.write(buf, 0, read);
-				src.close();
-				src = null;
-
-				dst.close();
-				dst = null;
-				src = null;
-			} catch (Exception e) {
-			}
-		}
-		sub = null;
-
-		buf = null;
-		assets = null;
 
 		// active library, or WaterMark will displayed on each page.
 		// boolean succeeded = activeStandard(act, "radaee",
@@ -536,8 +530,6 @@ public class Global {
 		// "radaee_com@yahoo.cn", "Z5A7JV-5WQAJY-9ZOU9E-OQ31K2-FADG6Z-XEBCAO" );
 		//boolean succeeded = activePremium(act, "radaee", "radaee_com@yahoo.cn",
 		//		"LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
-		boolean succeeded = activeProfessional(act, "RISO KAGAKU CORPORATION",
-				"zhang@riso.co.jp", "J7GEIT-JYKWMH-NRHUWW-T0WD5S-GH0FFJ-GT61BP");
 
 		// active library, or WaterMark will displayed on each page.
 		// these active function is binding to version string "201401".
@@ -549,122 +541,249 @@ public class Global {
 		// boolean succeeded = activePremiumForVer(act, "Radaee", "radaeepdf@gmail.com",
 		//		"Q6EL00-BTB1EG-H3CRUZ-WAJQ9H-5R5V9L-KM0Y1L");
 
-		// set cmaps and umaps data.
-		setCMapsPath(cmaps_path, umaps_path);
-		
-		// add system external fonts.
-		fontfileListStart();
-		fontfileListAdd("/system/fonts/DroidSans.ttf");
-		
-		//workaround for android 5.0
-		String fallBackPath = SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR) + "/droidsansfallback.ttf";
-		
-		File fallBackFile1 = new File("/system/fonts/DroidSansFallback.ttf");
-		File fallBackFile2 = new File(fallBackPath);
-		if(fallBackFile1.exists()) {
-		    fontfileListAdd("/system/fonts/DroidSansFallback.ttf");
-		} else if(fallBackFile2.exists()){
-		    fontfileListAdd(fallBackPath);
-		} else {		    
-	        InputStream in = SmartDeviceApp.getAppContext().getResources().openRawResource(R.raw.droidsansfallback);
-	        FileOutputStream out;
-	        try {
-	            out = new FileOutputStream(fallBackPath);
-	            byte[] buff = new byte[1024];
-	            int r = 0;
-
-	            try {
-	               while ((r = in.read(buff)) > 0) {
-	                  out.write(buff, 0, r);
-	               }
-	            } catch (IOException e) {
-	                // TODO Auto-generated catch block
-	                e.printStackTrace();
-	            } finally {
-	                 try {
-	                    in.close();
-	                    out.close();
-	                } catch (IOException e) {
-	                    // TODO Auto-generated catch block
-	                    e.printStackTrace();
-	                }                 
-	            }
-	        } catch (FileNotFoundException e) {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	        }
-		    
-		    fontfileListAdd(fallBackPath);
-		}
-
+		// add external fonts from system and resource
+		fontfileListStart();//this method create empty font list
+		fontfileListAdd("/system/fonts/DroidSans.ttf");//load from system fonts.
+		//save_font("/system/fonts/DroidSans.ttf", "/sdcard/DroidSans.ttf");
 		fontfileListAdd("/system/fonts/Roboto-Regular.ttf");
-		//fontfileListAdd("/system/fonts/DroidSansFallback.ttf");
-		fontfileListEnd();
+		//save_font("/system/fonts/Roboto-Regular.ttf", "/sdcard/Roboto-Regular.ttf");
+
+		fontfileListAdd("/system/fonts/DroidSansFallback.ttf");
+		fontfileListAdd("/system/fonts/DroidSansChinese.ttf");
+		//save_font("/system/fonts/DroidSansFallback.ttf", "/sdcard/DroidSansFallback.ttf");
+        fontfileListAdd("/system/fonts/NotoSansSC-Regular.otf");
+		//save_font("/system/fonts/NotoSansSC-Regular.otf", "/sdcard/NotoSansSC-Regular.otf");
+        fontfileListAdd("/system/fonts/NotoSansTC-Regular.otf");
+		//save_font("/system/fonts/NotoSansTC-Regular.otf", "/sdcard/NotoSansTC-Regular.otf");
+        fontfileListAdd("/system/fonts/NotoSansJP-Regular.otf");
+        fontfileListAdd("/system/fonts/NotoSansKR-Regular.otf");
+		fontfileListAdd("/system/fonts/NotoSansCJK-Regular.ttc");
+		//fontfileListAdd("/system/fonts/NotoSansHebrew-Regular.ttf");
+        load_truetype_font( res, R.raw.arimo, new File(files, "arimo.ttf") );//load from APP resource
+        load_truetype_font( res, R.raw.arimob, new File(files, "arimob.ttf") );
+        load_truetype_font( res, R.raw.arimoi, new File(files, "arimoi.ttf") );
+        load_truetype_font( res, R.raw.arimobi, new File(files, "arimobi.ttf") );
+        load_truetype_font( res, R.raw.tinos, new File(files, "tinos.ttf") );
+        load_truetype_font( res, R.raw.tinosb, new File(files, "tinosb.ttf") );
+        load_truetype_font( res, R.raw.tinosi, new File(files, "tinosi.ttf") );
+        load_truetype_font( res, R.raw.tinosbi, new File(files, "tinosbi.ttf") );
+        load_truetype_font( res, R.raw.cousine, new File(files, "cousine.ttf") );
+        load_truetype_font( res, R.raw.cousineb, new File(files, "cousineb.ttf") );
+        load_truetype_font( res, R.raw.cousinei, new File(files, "cousinei.ttf") );
+        load_truetype_font( res, R.raw.cousinebi, new File(files, "cousinebi.ttf") );
+        load_truetype_font( res, R.raw.symbol, new File(files, "symbol.ttf") );//Symbol Neu for Powerline
+		load_truetype_font( res, R.raw.amiri_regular, new File(files, "amiriRegular.ttf") );//arabic
+		fontfileListEnd();//this method parser all added font files, and extract font names, to init font mapping list.
+
+        // using resource fonts to replace type1 fonts.H
+        fontfileMapping("Arial",                    "Arimo");
+        fontfileMapping("Arial Bold",              "Arimo Bold");
+        fontfileMapping("Arial BoldItalic",       "Arimo Bold Italic");
+        fontfileMapping("Arial Italic",            "Arimo Italic");
+        fontfileMapping("Arial,Bold",              "Arimo Bold");
+        fontfileMapping("Arial,BoldItalic",       "Arimo Bold Italic");
+        fontfileMapping("Arial,Italic",            "Arimo Italic");
+        fontfileMapping("Arial-Bold",              "Arimo Bold");
+        fontfileMapping("Arial-BoldItalic",       "Arimo Bold Italic");
+        fontfileMapping("Arial-Italic",            "Arimo Italic");
+        fontfileMapping("ArialMT",                  "Arimo");
+        fontfileMapping("Calibri",                  "Arimo");
+        fontfileMapping("Calibri Bold",            "Arimo Bold");
+        fontfileMapping("Calibri BoldItalic",      "Arimo Bold Italic");
+        fontfileMapping("Calibri Italic",           "Arimo Italic");
+        fontfileMapping("Calibri,Bold",             "Arimo Bold");
+        fontfileMapping("Calibri,BoldItalic",      "Arimo Bold Italic");
+        fontfileMapping("Calibri,Italic",           "Arimo Italic");
+        fontfileMapping("Calibri-Bold",             "Arimo Bold");
+        fontfileMapping("Calibri-BoldItalic",      "Arimo Bold Italic");
+        fontfileMapping("Calibri-Italic",           "Arimo Italic");
+        fontfileMapping("Helvetica",                "Arimo");
+        fontfileMapping("Helvetica Bold",          "Arimo Bold");
+        fontfileMapping("Helvetica BoldItalic",   "Arimo Bold Italic");
+        fontfileMapping("Helvetica Italic",        "Arimo Italic");
+        fontfileMapping("Helvetica,Bold",          "Arimo,Bold");
+        fontfileMapping("Helvetica,BoldItalic",   "Arimo Bold Italic");
+        fontfileMapping("Helvetica,Italic",        "Arimo Italic");
+        fontfileMapping("Helvetica-Bold",          "Arimo Bold");
+        fontfileMapping("Helvetica-BoldItalic",   "Arimo Bold Italic");
+        fontfileMapping("Helvetica-Italic",        "Arimo Italic");
+        fontfileMapping("Garamond",                    "Tinos");
+        fontfileMapping("Garamond,Bold",              "Tinos Bold");
+        fontfileMapping("Garamond,BoldItalic",       "Tinos Bold Italic");
+        fontfileMapping("Garamond,Italic",            "Tinos Italic");
+        fontfileMapping("Garamond-Bold",              "Tinos Bold");
+        fontfileMapping("Garamond-BoldItalic",       "Tinos Bold Italic");
+        fontfileMapping("Garamond-Italic",            "Tinos Italic");
+        fontfileMapping("Times",                    "Tinos");
+        fontfileMapping("Times,Bold",              "Tinos Bold");
+        fontfileMapping("Times,BoldItalic",       "Tinos Bold Italic");
+        fontfileMapping("Times,Italic",            "Tinos Italic");
+        fontfileMapping("Times-Bold",              "Tinos Bold");
+        fontfileMapping("Times-BoldItalic",       "Tinos Bold Italic");
+        fontfileMapping("Times-Italic",            "Tinos Italic");
+        fontfileMapping("Times-Roman",             "Tinos");
+        fontfileMapping("Times New Roman",                "Tinos");
+        fontfileMapping("Times New Roman,Bold",          "Tinos Bold");
+        fontfileMapping("Times New Roman,BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("Times New Roman,Italic",        "Tinos Italic");
+        fontfileMapping("Times New Roman-Bold",          "Tinos Bold");
+        fontfileMapping("Times New Roman-BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("Times New Roman-Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRoman",                "Tinos");
+        fontfileMapping("TimesNewRoman,Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRoman,BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRoman,Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRoman-Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRoman-BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRoman-Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRomanPS",                "Tinos");
+        fontfileMapping("TimesNewRomanPS,Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRomanPS,BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRomanPS,Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRomanPS-Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRomanPS-BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRomanPS-Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRomanPSMT",                "Tinos");
+        fontfileMapping("TimesNewRomanPSMT,Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRomanPSMT,BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRomanPSMT,Italic",        "Tinos Italic");
+        fontfileMapping("TimesNewRomanPSMT-Bold",          "Tinos Bold");
+        fontfileMapping("TimesNewRomanPSMT-BoldItalic",   "Tinos Bold Italic");
+        fontfileMapping("TimesNewRomanPSMT-Italic",        "Tinos Italic");
+        fontfileMapping("Courier",                        "Cousine");
+        fontfileMapping("Courier Bold",                  "Cousine Bold");
+        fontfileMapping("Courier BoldItalic",           "Cousine Bold Italic");
+        fontfileMapping("Courier Italic",                "Cousine Italic");
+        fontfileMapping("Courier,Bold",                  "Cousine Bold");
+        fontfileMapping("Courier,BoldItalic",           "Cousine Bold Italic");
+        fontfileMapping("Courier,Italic",                "Cousine Italic");
+        fontfileMapping("Courier-Bold",                  "Cousine Bold");
+        fontfileMapping("Courier-BoldItalic",           "Cousine Bold Italic");
+        fontfileMapping("Courier-Italic",                "Cousine Italic");
+        fontfileMapping("Courier New",                    "Cousine");
+        fontfileMapping("Courier New Bold",              "Cousine Bold");
+        fontfileMapping("Courier New BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("Courier New Italic",            "Cousine Italic");
+        fontfileMapping("Courier New,Bold",              "Cousine Bold");
+        fontfileMapping("Courier New,BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("Courier New,Italic",            "Cousine Italic");
+        fontfileMapping("Courier New-Bold",              "Cousine Bold");
+        fontfileMapping("Courier New-BoldItalic",       "Cousine Bold Italic");
+        fontfileMapping("Courier New-Italic",            "Cousine Italic");
+        fontfileMapping("CourierNew",                     "Cousine");
+        fontfileMapping("CourierNew Bold",               "Cousine Bold");
+        fontfileMapping("CourierNew BoldItalic",        "Cousine Bold Italic");
+        fontfileMapping("CourierNew Italic",             "Cousine Italic");
+        fontfileMapping("CourierNew,Bold",               "Cousine Bold");
+        fontfileMapping("CourierNew,BoldItalic",        "Cousine Bold Italic");
+        fontfileMapping("CourierNew,Italic",             "Cousine Italic");
+        fontfileMapping("CourierNew-Bold",               "Cousine Bold");
+        fontfileMapping("CourierNew-BoldItalic",        "Cousine Bold Italic");
+        fontfileMapping("CourierNew-Italic",             "Cousine Italic");
+        fontfileMapping("Symbol",                          "Symbol Neu for Powerline");
+        fontfileMapping("Symbol,Bold",                    "Symbol Neu for Powerline");
+        fontfileMapping("Symbol,BoldItalic",             "Symbol Neu for Powerline");
+        fontfileMapping("Symbol,Italic",                  "Symbol Neu for Powerline");
+
+		String face_name = null;
 		int face_first = 0;
 		int face_count = getFaceCount();
-		String face_name = null;
-		while (face_first < face_count) {
+		while (face_first < face_count)
+		{
 			face_name = getFaceName(face_first);
-			if (face_name != null)
-				break;
+			//Log.d("------Fonts------", "----face name = " + face_name);
+			if (face_name != null) break;
 			face_first++;
 		}
-		// set default font for fixed width font.
-		if (!setDefaultFont(null, "Roboto-Regular", true) && face_name != null)
+
+        // start default font config:
+        // all default font applied is only working when font is not embed in PDF file.
+        // and non-embed font can't match external font by font name.
+
+        // we using Arimo as default font with empty collection
+        // Arimo is better EUR languages than DroidSansFallback.
+        // but DroidSansFallback is better than Arimo, when display CJK chars.
+        // empty collection also appears on CJK PDF files.
+        // to choice between Arimo and DroidSansFallback, depends on APP usage.
+        // set default font for fixed width font with empty collection.
+		if (!setDefaultFont(null, "Arimo", true) &&
+            !setDefaultFont(null, "DroidSansFallback", true) && face_name != null)
 		{
-			if( !setDefaultFont(null, "DroidSans", true) )
-				setDefaultFont(null, face_name, true);
+			setDefaultFont(null, face_name, true);
 		}
-		// set default font for non-fixed width font.
-		if (!setDefaultFont(null, "Roboto-Regular", false) && face_name != null)
+		// set default font for non-fixed width font with empty collection.
+		if (!setDefaultFont(null, "Arimo", false) &&
+            !setDefaultFont(null, "DroidSansFallback", false) && face_name != null)
 		{
-			if( !setDefaultFont(null, "DroidSans", false) )
-				setDefaultFont(null, face_name, false);
+    		setDefaultFont(null, face_name, false);
 		}
 
-		// set default font for Chinese simplified language.
-		if (!setDefaultFont("GB1", "DroidSansFallback", true)
-				&& face_name != null)
-			setDefaultFont(null, face_name, true);
-		if (!setDefaultFont("GB1", "DroidSansFallback", false)
-				&& face_name != null)
-			setDefaultFont(null, face_name, false);
+        // for CJK default font setting:
+        // first try using DroidSansFallback.
+        // if DroidSansFallback not exist, we using NotoSans.
+        // NotoSans not good support CJK,
+        // it split Chinese Japanese Korean for each. that has some problems.
+        // the problem is: Japanese not including some Chinese chars, which is required for Japanese.
+        // Korean has the same problem.
+        // both DroidSansFallback and NotoSans has risk to use.
+        // because some user root the device and replace the font with other fonts.
+        // the best CJK support is: add a CJK font to resource, and load from resource.
+        // but this make APP large.
 
-		// set default font for Chinese traditional language.
-		if (!setDefaultFont("CNS1", "DroidSansFallback", true)
-				&& face_name != null)
-			setDefaultFont(null, face_name, true);
-		if (!setDefaultFont("CNS1", "DroidSansFallback", false)
-				&& face_name != null)
-			setDefaultFont(null, face_name, false);
+		// set default font for Simplified Chinese. 简体
+		if (!setDefaultFont("GB1", "DroidSansFallback", true) &&
+			!setDefaultFont("GB1", "Noto Sans CJK SC Regular", true) &&
+			!setDefaultFont("GB1", "DroidSansChinese", true) &&
+            !setDefaultFont("GB1", "Noto Sans SC Regular", true) && face_name != null)
+			setDefaultFont("GB1", face_name, true);
+		if (!setDefaultFont("GB1", "DroidSansFallback", false) &&
+			!setDefaultFont("GB1", "Noto Sans CJK SC Regular", false) &&
+            !setDefaultFont("GB1", "Noto Sans SC Regular", false) && face_name != null)
+			setDefaultFont("GB1", face_name, false);
+
+		// set default font for Traditional Chinese. 繁體
+		if (!setDefaultFont("CNS1", "DroidSansFallback", true) &&
+			!setDefaultFont("GB1", "Noto Sans CJK TC Regular", true) &&
+            !setDefaultFont("CNS1", "Noto Sans TC Regular", true) && face_name != null)
+			setDefaultFont("CNS1", face_name, true);
+		if (!setDefaultFont("CNS1", "DroidSansFallback", false) &&
+			!setDefaultFont("GB1", "Noto Sans CJK TC Regular", false) &&
+            !setDefaultFont("CNS1", "Noto Sans TC Regular", false) && face_name != null)
+			setDefaultFont("CNS1", face_name, false);
 
 		// set default font for Japanese.
-		if (!setDefaultFont("Japan1", "DroidSansFallback", true)
-				&& face_name != null)
-			setDefaultFont(null, face_name, true);
-		if (!setDefaultFont("Japan1", "DroidSansFallback", false)
-				&& face_name != null)
-			setDefaultFont(null, face_name, false);
+		if (!setDefaultFont("Japan1", "DroidSansFallback", true) &&
+			!setDefaultFont("GB1", "Noto Sans CJK JP Regular", true) &&
+            !setDefaultFont("Japan1", "Noto Sans JP Regular", true) && face_name != null)
+			setDefaultFont("Japan1", face_name, true);
+		if (!setDefaultFont("Japan1", "DroidSansFallback", false) &&
+			!setDefaultFont("GB1", "Noto Sans CJK JP Regular", false) &&
+            !setDefaultFont("Japan1", "Noto Sans JP Regular", false) && face_name != null)
+			setDefaultFont("Japan1", face_name, false);
 
 		// set default font for Korean.
-		if (!setDefaultFont("Korea1", "DroidSansFallback", true)
-				&& face_name != null)
-			setDefaultFont(null, face_name, true);
-		if (!setDefaultFont("Korea1", "DroidSansFallback", false)
-				&& face_name != null)
-			setDefaultFont(null, face_name, false);
-
-		if (!setAnnotFont("DroidSansFallback") && face_name != null) {
-			setAnnotFont(face_name);
-		}
+		if (!setDefaultFont("Korea1", "DroidSansFallback", true) &&
+			!setDefaultFont("GB1", "Noto Sans CJK KR Regular", true) &&
+            !setDefaultFont("Korea1", "Noto Sans KR Regular", true) && face_name != null)
+			setDefaultFont("Korea1", face_name, true);
+		if (!setDefaultFont("Korea1", "DroidSansFallback", false) &&
+			!setDefaultFont("GB1", "Noto Sans CJK KR Regular", false) &&
+            !setDefaultFont("Korea1", "Noto Sans KR Regular", false) && face_name != null)
+			setDefaultFont("Korea1", face_name, false);
 
 		// set text font for edit-box and combo-box editing.
-		if (!setAnnotFont("DroidSansFallback") && face_name != null) {
-			setAnnotFont(face_name);
-		}
+        // first we try using DroidSansFallback, which has large code range include CJK,
+        // but not good support france, german and some EUR languages.
+        // if DroidSansFallback not exits, we using Arimo, loading from resource, which has good support EUR languages.
+		// For arabic support use setAnnotFont("Amiri-Regular")
+        if (//!setAnnotFont("DroidSansFallback") &&
+            !setAnnotFont("Arimo") && face_name != null) {
+            setAnnotFont(face_name);
+        }
 
 		// set configure to default value
 		default_config();
+		return ms_init;
 	}
 
 	/**
@@ -673,16 +792,18 @@ public class Global {
 	public static void default_config()
 	{
 		selColor = 0x400000C0;// selection color
+		findPrimaryColor = 0x400000FF;// find primary color
+		findSecondaryColor = 0x40404040;// find secondary color
 		fling_dis = 1.0f;// 0.5-2
-		fling_speed = 0.1f;// 0.05 - 0.2
+        fling_speed = 0.1f;// 0.05 - 0.2
 		def_view = 0;// 0,1,2,3,4,5,6 0:vertical 1:horizon 2:curl effect 3:single
 						// 4:SingleEx 5:Reflow, 6:show 2 page as 1 page in land
 						// scape mode
-		render_mode = 1;// 0,1,2 0:draft 1:normal 2:best
+		render_mode = recommandedRenderMode();// 0,1,2 0:draft 1:normal 2:best with over print support.
 		dark_mode = false;// dark mode
 		zoomLevel = 3;
-		need_time_span = true;
-		setAnnotTransparency(0x200040FF);
+		//hideAnnots(true);
+		setAnnotTransparency(annotTransparencyColor);
 	}
 
 	/**
@@ -826,16 +947,26 @@ public class Global {
 	}
 
 	/**
-	 * remove all tmp files that "pdfex" library generated.
+	 * remove all tmp files that generated when user click multi-media annotations.
 	 */
-	public static void RemoveTmp() {
-		File tmp = new File(tmp_path);
-		File files[] = tmp.listFiles();
-		if (files != null) {
-			int index;
-			for (index = 0; index < files.length; index++)
-				files[index].delete();
-			tmp.delete();
+	public static void RemoveTmp()
+	{
+		try
+		{
+			File tmp = new File(tmp_path);
+			File files[] = tmp.listFiles();
+			if (files != null)
+			{
+				for (int index = 0; index < files.length; index++)
+					files[index].delete();
+			}
 		}
+		catch(Exception e)
+		{
+		}
+	}
+
+	public static boolean isLicenseActivated() { //Nermeen
+		return ms_init;
 	}
 }
