@@ -54,10 +54,10 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:28.0.0'
-    compile 'org.jacoco:org.jacoco.build:0.7.2.201409121644'
-    compile files('libs/com.radaee.pdfex_view.jar')
-    androidTestCompile files('libs/the-missing-android-xml-junit-test-runner-release-1.3_2.jar')
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'org.jacoco:org.jacoco.build:0.7.2.201409121644'
+    implementation files('libs/com.radaee.pdfex_view.jar')
+    androidTestImplementation files('libs/the-missing-android-xml-junit-test-runner-release-1.3_2.jar')
 }
 
 // Returns NDK build command based on development OS
