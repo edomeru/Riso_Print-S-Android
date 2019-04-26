@@ -104,6 +104,20 @@ public class PDFFileManager {
     }
     
     /**
+     * @brief Sets the current filename of the PDF and saves to preferences
+     *
+     * @return Filename of the PDF (with extension)
+     */
+    public void setFileName(String filename) {
+        mFileName = filename;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString(PDFFileManager.KEY_SANDBOX_PDF_NAME, filename);
+        edit.apply();
+    }
+
+    /**
      * @brief Sets the PDF to be processed.
      * 
      * @param path Path of the PDF to be opened.
