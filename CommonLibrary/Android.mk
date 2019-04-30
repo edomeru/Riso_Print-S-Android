@@ -2,8 +2,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libnetsnmp-prebuilt
-LOCAL_SRC_FILES := 3rdParty/net-snmp/lib/android/libnetsnmp.a
-include $(PREBUILT_STATIC_LIBRARY)
+LOCAL_SRC_FILES := 3rdParty/net-snmp/lib/android/$(TARGET_ARCH_ABI)/libsnmp.so
+include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcommon-static

@@ -191,7 +191,7 @@ public class PDFFileManager {
             mDocument.Open(mPath, null);
         }
         
-        if (!mDocument.is_opened()) {
+        if (!mDocument.IsOpened()) {
             mDocument.Open(mPath, null);
         }
         
@@ -229,7 +229,7 @@ public class PDFFileManager {
         }
         
         // Make sure document is opened
-        if (!mDocument.is_opened()) {
+        if (!mDocument.IsOpened()) {
             mDocument.Open(mPath, null);
         }
         
@@ -433,7 +433,7 @@ public class PDFFileManager {
         }
         
         // Make sure document is opened
-        if (!mDocument.is_opened()) {
+        if (!mDocument.IsOpened()) {
             mDocument.Open(mPath, null);
         }
         
@@ -585,7 +585,7 @@ public class PDFFileManager {
      * @retval PDF_INVALID_PATH(-10)
      */
     protected synchronized int openDocument(String path) {
-        if (mDocument.is_opened()) {
+        if (mDocument.IsOpened()) {
             closeDocument();
         }
         
@@ -663,7 +663,7 @@ public class PDFFileManager {
      * @brief Closes the document
      */
     protected synchronized void closeDocument() {
-        if (mDocument.is_opened()) {
+        if (mDocument.IsOpened()) {
             mDocument.Close();
         }
     }
