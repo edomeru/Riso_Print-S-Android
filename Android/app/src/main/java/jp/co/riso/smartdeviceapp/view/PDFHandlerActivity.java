@@ -18,6 +18,7 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 public class PDFHandlerActivity extends Activity {
 
     public static final String FILE_SCHEME = "file";
+    public static final String CONTENT_SCHEME = "content";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class PDFHandlerActivity extends Activity {
         Uri intentData = intent.getData();
 
         if(intentData != null) {
-            if(intentData.getScheme().equals(FILE_SCHEME)) {
+            if(intentData.getScheme().equals(FILE_SCHEME) || intentData.getScheme().equals(CONTENT_SCHEME)) {
                 intent.setData(intentData);
             } else { // load the PDF input stream from this activity only in order to handle special "content" URIs that cannot be opened by other activities (such as Gmail attachment URI)
                 intent.setData(PDFFileManager.createTemporaryPdfFromContentUri(this, intent.getData()));

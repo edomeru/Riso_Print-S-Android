@@ -2,6 +2,7 @@
 package jp.co.riso.android.util;
 
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.test.ActivityInstrumentationTestCase2;
 
 import java.io.File;
@@ -85,6 +86,27 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
         try {
             FileUtils.copy(mSrcFile, null);
         } catch (IOException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    // ================================================================================
+    // Tests - get filename
+    // ================================================================================
+
+    public void testGetFilename() {
+        try {
+            String pdfPath = getAssetPath(TEST_SRC_FILE);
+
+            mSrcFile = new File(pdfPath);
+            if (mSrcFile == null) {
+                fail();
+            }
+
+            assertEquals(FileUtils.getFileName(SmartDeviceApp.getAppContext(), Uri.fromFile(mSrcFile)), TEST_SRC_FILE);
+        } catch (NullPointerException e) {
             fail();
         } catch (Exception e) {
             fail();
