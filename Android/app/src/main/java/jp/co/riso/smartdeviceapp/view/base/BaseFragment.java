@@ -31,6 +31,7 @@ import android.widget.ImageView;
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
     private static final String KEY_ICON_STATE = "icon_state";
     private static final String KEY_ICON_ID = "icon_id";
+    private static final String KEY_SELECTED_MENU_ITEM = "selected_menu_item";
     
     private boolean mIconState = false;
     private int mIconId = 0;
@@ -117,6 +118,38 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         outState.putBoolean(KEY_ICON_STATE, mIconState);
         outState.putInt(KEY_ICON_ID, mIconId);
         mIconIdToRestore = mIconId;
+
+        // Get selected menu item and store it in bundle
+        View parentView = getView();
+        int selectedChildId = -1;
+        if (parentView != null) {
+            ViewGroup rightActionLayout = parentView.findViewById(R.id.rightActionLayout);
+
+            if (rightActionLayout == null) return;
+
+            for (int idx = 0; idx < rightActionLayout.getChildCount(); idx++) {
+                View child = rightActionLayout.getChildAt(idx);
+                if (child.isSelected()) {
+                    selectedChildId = child.getId();
+                    break;
+                }
+            }
+        }
+        outState.putInt(KEY_SELECTED_MENU_ITEM, selectedChildId);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState == null) return;
+
+        // Retrieve selected menu item
+        // If value retrieved is -1, there is no selected menu item
+        int selectedChildId = savedInstanceState.getInt(KEY_SELECTED_MENU_ITEM);
+        if (selectedChildId != -1) {
+            setIconState(selectedChildId, true);
+        }
     }
     
     // ================================================================================
