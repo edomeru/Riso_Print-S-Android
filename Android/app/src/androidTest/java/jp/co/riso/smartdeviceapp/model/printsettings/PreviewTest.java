@@ -31,8 +31,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_LIO;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG_LIO;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -121,25 +120,14 @@ public class PreviewTest extends AndroidTestCase {
     }
 
     public void testInputTray() {
-        assertEquals(0, InputTray_RAG.AUTO.ordinal());
-        assertEquals(1, InputTray_RAG.STANDARD.ordinal());
-        assertEquals(2, InputTray_RAG.TRAY1.ordinal());
-        assertEquals(3, InputTray_RAG.TRAY2.ordinal());
-        assertEquals(4, InputTray_RAG.EXTERNAL_FEEDER.ordinal());
-        assertEquals(InputTray_RAG.AUTO, InputTray_RAG.valueOf("AUTO"));
-        assertEquals(InputTray_RAG.STANDARD, InputTray_RAG.valueOf("STANDARD"));
-        assertEquals(InputTray_RAG.EXTERNAL_FEEDER, InputTray_RAG.valueOf("EXTERNAL_FEEDER"));
-    }
-
-    public void testInputTrayLIO() {
-        assertEquals(0, InputTray_LIO.AUTO.ordinal());
-        assertEquals(1, InputTray_LIO.STANDARD.ordinal());
-        assertEquals(2, InputTray_LIO.TRAY1.ordinal());
-        assertEquals(3, InputTray_LIO.TRAY2.ordinal());
-        assertEquals(4, InputTray_LIO.EXTERNAL_FEEDER.ordinal());
-        assertEquals(InputTray_LIO.AUTO, InputTray_LIO.valueOf("AUTO"));
-        assertEquals(InputTray_LIO.STANDARD, InputTray_LIO.valueOf("STANDARD"));
-        assertEquals(InputTray_LIO.EXTERNAL_FEEDER, InputTray_LIO.valueOf("EXTERNAL_FEEDER"));
+        assertEquals(0, InputTray_RAG_LIO.AUTO.ordinal());
+        assertEquals(1, InputTray_RAG_LIO.STANDARD.ordinal());
+        assertEquals(2, InputTray_RAG_LIO.TRAY1.ordinal());
+        assertEquals(3, InputTray_RAG_LIO.TRAY2.ordinal());
+        assertEquals(4, InputTray_RAG_LIO.EXTERNAL_FEEDER.ordinal());
+        assertEquals(InputTray_RAG_LIO.AUTO, InputTray_RAG_LIO.valueOf("AUTO"));
+        assertEquals(InputTray_RAG_LIO.STANDARD, InputTray_RAG_LIO.valueOf("STANDARD"));
+        assertEquals(InputTray_RAG_LIO.EXTERNAL_FEEDER, InputTray_RAG_LIO.valueOf("EXTERNAL_FEEDER"));
     }
 
     public void testImpositionValueOf() {

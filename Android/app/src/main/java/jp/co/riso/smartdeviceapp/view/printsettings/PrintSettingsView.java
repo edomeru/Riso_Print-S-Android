@@ -61,8 +61,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_LIO;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG_LIO;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
@@ -342,8 +341,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
-            boolean isExternal = mPrintSettings.getInputTray() == InputTray_RAG.EXTERNAL_FEEDER;
+        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && isPrinterRagOrLio(getPrinter())) {
+            boolean isExternal = mPrintSettings.getInputTray() == InputTray_RAG_LIO.EXTERNAL_FEEDER;
             switch (PaperSize.values()[value]) {
                 case A4:
                 case B5:
@@ -367,13 +366,13 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
+        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && isPrinterRagOrLio(getPrinter())) {
             // if paper size is equal to A4, B5, Letter, or 16k
             boolean isPaperSupported = (mPrintSettings.getPaperSize() == PaperSize.A4 ||
                     mPrintSettings.getPaperSize() == PaperSize.B5 ||
                     mPrintSettings.getPaperSize() == PaperSize.LETTER ||
                     mPrintSettings.getPaperSize() == PaperSize.JUROKUKAI);
-            switch (InputTray_RAG.values()[value]) {
+            switch (InputTray_RAG_LIO.values()[value]) {
                 case AUTO:
                 case STANDARD:
                 case TRAY1:
@@ -383,54 +382,21 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     return isPaperSupported;
             }
         }
-
-        if (getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_LIO)) {
-
-            if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
-                boolean isExternal = mPrintSettings.getInputTrayLIO() == InputTray_LIO.EXTERNAL_FEEDER;
-                switch (PaperSize.values()[value]) {
-                    case A4:
-                    case B5:
-                    case LETTER:
-                    case JUROKUKAI:
-                        return true;
-                    case A3:
-                    case A3W:
-                    case SRA3:
-                    case A5:
-                    case A6:
-                    case B4:
-                    case B6:
-                    case FOOLSCAP:
-                    case TABLOID:
-                    case LEGAL:
-                    case STATEMENT:
-                    case LEGAL13:
-                    case HACHIKAI:
-                        return !isExternal;
-                }
-
-            } else if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
-                // if paper size is equal to A4, B5, Letter, or 16k
-                boolean isPaperSupported = (mPrintSettings.getPaperSize() == PaperSize.A4 ||
-                        mPrintSettings.getPaperSize() == PaperSize.B5 ||
-                        mPrintSettings.getPaperSize() == PaperSize.LETTER ||
-                        mPrintSettings.getPaperSize() == PaperSize.JUROKUKAI);
-                switch (InputTray_LIO.values()[value]) {
-                    case AUTO:
-                    case STANDARD:
-                    case TRAY1:
-                    case TRAY2:
-                        return true;
-                    case EXTERNAL_FEEDER:
-                        return isPaperSupported;
-                }
-            }
-        }
-
         return true;
     }
-    
+
+    /**
+     * @brief Determines if the printer is of the RAG or LIO series
+     *
+     * @param printer Printer object
+     *
+     * @return Default value for the tag
+     */
+    private boolean isPrinterRagOrLio(Printer printer) {
+        return printer.getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG) ||
+                printer.getPrinterType().equals(AppConstants.PRINTER_MODEL_LIO);
+    }
+
     /**
      * @brief Gets the default value of a setting.
      * 
@@ -674,43 +640,22 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
 
         // Constraint #7 Paper Size - Input Tray (External) for RAG or LIO series
-        if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
-
-            if (getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
-                int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
-                if (value != PaperSize.A4.ordinal() && value != PaperSize.B5.ordinal() &&
-                        value != PaperSize.LETTER.ordinal() && value != PaperSize.JUROKUKAI.ordinal() &&
-                        inputTrayValue == InputTray_RAG.EXTERNAL_FEEDER.ordinal()) {
-                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_RAG.AUTO.ordinal());
-                }
-            } else if (getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_LIO)) {
-                int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
-                if (value != PaperSize.A4.ordinal() && value != PaperSize.B5.ordinal() &&
-                        value != PaperSize.LETTER.ordinal() && value != PaperSize.JUROKUKAI.ordinal() &&
-                        inputTrayValue == InputTray_LIO.EXTERNAL_FEEDER.ordinal()) {
-                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_LIO.AUTO.ordinal());
-                }
+        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && isPrinterRagOrLio(getPrinter())) {
+            int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
+            if (value != PaperSize.A4.ordinal() && value != PaperSize.B5.ordinal() &&
+                    value != PaperSize.LETTER.ordinal() && value != PaperSize.JUROKUKAI.ordinal() &&
+                    inputTrayValue == InputTray_RAG_LIO.EXTERNAL_FEEDER.ordinal()) {
+                updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_RAG_LIO.AUTO.ordinal());
             }
         }
 
         // Constraint #8 Input Tray (External) - Paper Size for RAG or LIO series
-        if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
-
-            if (getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
-                int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
-                if (value == InputTray_RAG.EXTERNAL_FEEDER.ordinal()) {
-                    if (paperSizeValue != PaperSize.A4.ordinal() && paperSizeValue != PaperSize.B5.ordinal() &&
-                            paperSizeValue != PaperSize.LETTER.ordinal() && paperSizeValue != PaperSize.JUROKUKAI.ordinal()) {
-                        updateValueWithConstraints(PrintSettings.TAG_PAPER_SIZE, PaperSize.A4.ordinal());
-                    }
-                }
-            } else if (getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_LIO)) {
-                int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
-                if (value == InputTray_LIO.EXTERNAL_FEEDER.ordinal()) {
-                    if (paperSizeValue != PaperSize.A4.ordinal() && paperSizeValue != PaperSize.B5.ordinal() &&
-                            paperSizeValue != PaperSize.LETTER.ordinal() && paperSizeValue != PaperSize.JUROKUKAI.ordinal()) {
-                        updateValueWithConstraints(PrintSettings.TAG_PAPER_SIZE, PaperSize.A4.ordinal());
-                    }
+        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && isPrinterRagOrLio(getPrinter())) {
+            int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
+            if (value == InputTray_RAG_LIO.EXTERNAL_FEEDER.ordinal()) {
+                if (paperSizeValue != PaperSize.A4.ordinal() && paperSizeValue != PaperSize.B5.ordinal() &&
+                        paperSizeValue != PaperSize.LETTER.ordinal() && paperSizeValue != PaperSize.JUROKUKAI.ordinal()) {
+                    updateValueWithConstraints(PrintSettings.TAG_PAPER_SIZE, PaperSize.A4.ordinal());
                 }
             }
         }
@@ -826,21 +771,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         return getPrinter().getConfig().isPunch4Available();
                 }
             }
-            if (getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG) &&
+            if (isPrinterRagOrLio(getPrinter()) &&
                     name.equals(PrintSettings.TAG_INPUT_TRAY)) {
-                switch (InputTray_RAG.values()[value]) {
-                    case AUTO:
-                    case STANDARD:
-                    case TRAY1:
-                    case TRAY2:
-                        return true;
-                    case EXTERNAL_FEEDER:
-                        return getPrinter().getConfig().isExternalFeederAvailable();
-                }
-            }
-            if (getPrinter().getPrinterType().equals(AppConstants.PRINTER_MODEL_LIO) &&
-                    name.equals(PrintSettings.TAG_INPUT_TRAY)) {
-                switch (InputTray_LIO.values()[value]) {
+                switch (InputTray_RAG_LIO.values()[value]) {
                     case AUTO:
                     case STANDARD:
                     case TRAY1:
@@ -1284,7 +1217,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         });
         
         editText.addTextChangedListener(new PinCodeTextWatcher());
-        
+
         titleText = getResources().getString(R.string.ids_lbl_pin_code);
         addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, false);
         

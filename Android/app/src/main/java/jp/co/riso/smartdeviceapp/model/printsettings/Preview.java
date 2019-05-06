@@ -99,20 +99,9 @@ public class Preview {
     }
 
     /**
-     * @brief InputTray_RAG print settings for RAG series that refers to the tray location of input paper.
+     * @brief InputTray_RAG_LIO print settings for RAG / LIO series that refers to the tray location of input paper.
      */
-    public enum InputTray_RAG {
-        AUTO,  ///< Auto Tray
-        STANDARD,  ///< Standard Tray
-        TRAY1,  ///< Tray 1
-        TRAY2, ///< Tray 2
-        EXTERNAL_FEEDER, ///< External 2000 sheets
-    }
-
-    /**
-     * @brief InputTray_LIO print settings for LIO series that refers to the tray location of input paper.
-     */
-    public enum InputTray_LIO {
+    public enum InputTray_RAG_LIO {
         AUTO,  ///< Auto Tray
         STANDARD,  ///< Standard Tray
         TRAY1,  ///< Tray 1
