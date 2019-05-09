@@ -273,7 +273,7 @@ public class PreviewTest extends AndroidTestCase {
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
         }
-        assertEquals(optionsList.size(), PaperSize.values().length-3); // Only tests IS
+        assertEquals(optionsList.size(), PaperSize.values().length-4); // Only tests IS
     }
 
     public void testImposition_XML() {
