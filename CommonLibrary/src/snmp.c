@@ -690,7 +690,8 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
         case kSnmpCapabilityStapler:
             if ((strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityStapler]) > 0) ||
                         (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin23Holes]) > 0) ||
-                        (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin24Holes]) > 0))
+                        (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin24Holes]) > 0) ||
+                        (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin0Holes]) > 0))//Mantis82960
             {
                 supported = 1;
             }

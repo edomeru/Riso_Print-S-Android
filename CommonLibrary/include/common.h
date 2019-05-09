@@ -82,13 +82,13 @@ typedef enum
     kSnmpCapabilityStapler,
     kSnmpCapabilityFin23Holes,
     kSnmpCapabilityFin24Holes,
+    kSnmpCapabilityFin0Holes, //Mantis82960
     kSnmpCapabilityTrayFaceDown,
     kSnmpCapabilityTrayTop,
     kSnmpCapabilityTrayStack,
     kSnmpCapabilityLPR,
     kSnmpCapabilityRaw,
     kSnmpCapabilityExternalFeeder,
-    kSnmpCapabilityFin0Holes,
     kSnmpCapabilityCount
 } kSnmpCapability;
 

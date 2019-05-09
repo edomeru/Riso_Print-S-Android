@@ -13,7 +13,7 @@ CREATE TABLE Printer (
   prn_enabled_tray_facedown BOOL NOT NULL DEFAULT 1,
   prn_enabled_tray_top BOOL NOT NULL DEFAULT 1,
   prn_enabled_tray_stack BOOL NOT NULL DEFAULT 1,
-  FOREIGN KEY(pst_id) REFERENCES PrintSetting(pst_id)
+  FOREIGN KEY(pst_id) REFERENCES PrintSetting(pst_id) 
 );
 
 CREATE TABLE PrintSetting (
