@@ -49,6 +49,7 @@ public class Preview {
     public enum PaperSize {
         A3(297.0f, 420.0f), ///< 297mm x 420mm
         A3W(316.0f, 460.0f), ///< 316mm x 460mm
+        SRA3(320.0f, 450.0f), ///< 320mm x 450mm
         A4(210.0f, 297.0f), ///< 210mm x 297mm
         A5(148.0f, 210.0f), ///< 148mm x 210mm
         A6(105.0f, 148.0f), ///< 105mm x 148mm

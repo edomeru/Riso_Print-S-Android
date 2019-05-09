@@ -352,6 +352,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     return true;
                 case A3:
                 case A3W:
+                case SRA3:
                 case A5:
                 case A6:
                 case B4:
@@ -395,6 +396,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         return true;
                     case A3:
                     case A3W:
+                    case SRA3:
                     case A5:
                     case A6:
                     case B4:

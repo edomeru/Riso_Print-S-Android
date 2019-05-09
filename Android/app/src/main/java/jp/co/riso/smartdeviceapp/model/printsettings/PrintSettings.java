@@ -325,6 +325,7 @@ public class PrintSettings {
      * 
      * @retval A3 297mm x 420mm
      * @retval A3W 316mm x 460mm
+     * @retval SRA3 320mm x 450mm
      * @retval A4 210mm x 297mm
      * @retval A5 148mm x 210mm
      * @retval A6 105mm x 148mm
