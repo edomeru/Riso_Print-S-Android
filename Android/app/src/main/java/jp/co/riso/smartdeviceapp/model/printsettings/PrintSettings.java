@@ -41,6 +41,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_LIO;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -351,6 +352,19 @@ public class PrintSettings {
      */
     public InputTray_RAG getInputTray() {
         return InputTray_RAG.values()[mSettingValues.get(TAG_INPUT_TRAY)];
+    }
+
+    /**
+     * @brief Retrieves InputTray_LIO setting value i.e. tray location of input paper.
+     *
+     * @retval AUTO
+     * @retval STANDARD
+     * @retval TRAY1
+     * @retval TRAY2
+     * @retval EXTERNAL_FEEDER
+     */
+    public InputTray_LIO getInputTrayLIO() {
+        return InputTray_LIO.values()[mSettingValues.get(TAG_INPUT_TRAY)];
     }
 
     /**

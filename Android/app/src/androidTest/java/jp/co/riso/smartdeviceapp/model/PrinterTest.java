@@ -248,6 +248,22 @@ public class PrinterTest extends TestCase {
         assertEquals(printerType, AppConstants.PRINTER_MODEL_RAG);
     }
 
+    public void testGetPrinterType_LIO() {
+        Printer printer = new Printer("RISO IS950C-LIO", "");
+        String printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_LIO);
+
+        printer = new Printer("ORPHIS LIO", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_LIO);
+
+        printer = new Printer("ComColor LIO", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_LIO);
+    }
+
     // ================================================================================
     // Tests - getPortSetting
     // ================================================================================

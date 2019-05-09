@@ -262,6 +262,11 @@ public class Printer implements Parcelable {
             return;
         }
 
+        if (mName.contains(AppConstants.PRINTER_MODEL_LIO)) {
+            mPrinterType = AppConstants.PRINTER_MODEL_LIO;
+            return;
+        }
+
         mPrinterType =  AppConstants.PRINTER_MODEL_IS;
         actualPrinterTypeInvalid = true;
     }

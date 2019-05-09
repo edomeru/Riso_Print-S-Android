@@ -81,6 +81,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define PRINTJOB_SENT_PROGRESS_PERCENTAGE 100.0f
 
 #define RAG_PRINTER_TYPE "RAG"
+#define LIO_PRINTER_TYPE "LIO"
 
 /** @def
 * UTF-8の16進数変換の際に使用する定数
@@ -527,6 +528,11 @@ void *do_lpr_print(void *parameter)
         create_pjl_rag(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
         strcpy(queueName, QUEUE_NAME_FWGDRAG);
     }
+    else if (strstr(print_job->printer_name, LIO_PRINTER_TYPE) != NULL)   // LIO Series
+    {
+        create_pjl_lio(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+        strcpy(queueName, QUEUE_NAME_FWGDRAG);
+    }
     else    // GD Series
     {
         create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
@@ -879,6 +885,10 @@ void *do_raw_print(void *parameter)
     else if (strstr(print_job->printer_name, RAG_PRINTER_TYPE) != NULL) // RAG Series
     {
         create_pjl_rag(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
+    }
+    else if (strstr(print_job->printer_name, LIO_PRINTER_TYPE) != NULL) // LIO Series
+    {
+        create_pjl_lio(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
     }
     else    // GD Series
     {
