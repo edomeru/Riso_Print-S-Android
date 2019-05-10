@@ -93,7 +93,19 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         return sSharedMngr;
     }
-    
+
+    /**
+     * @brief Determines if the printer is of the RAG or LIO series
+     *
+     * @param printer Printer object
+     *
+     * @return True if the printers if of the RAG or LIO series, false otherwise
+     */
+    public static boolean isPrinterRagOrLio(Printer printer) {
+        return printer.getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG) ||
+                printer.getPrinterType().equals(AppConstants.PRINTER_MODEL_LIO);
+    }
+
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -658,14 +670,14 @@ public class PrinterManager implements SNMPManagerCallback {
                     printer.getConfig().setRawAvailable(capabilities[i]);
                     break;
                 case SNMPManager.SNMP_CAPABILITY_EXTERNAL_FEEDER:
-                    if (printer.getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
+                    if (isPrinterRagOrLio(printer)) {
                         printer.getConfig().setExternalFeederAvailable(capabilities[i]);
                     } else {
                         printer.getConfig().setExternalFeederAvailable(false);
                     }
                     break;
                 case SNMPManager.SNMP_CAPABILITY_FINISH_0:
-                    if (printer.getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG)) {
+                    if (isPrinterRagOrLio(printer)) {
                         printer.getConfig().setPunch0Available(capabilities[i]);
                     } else {
                         printer.getConfig().setPunch0Available(false);
