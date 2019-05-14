@@ -718,7 +718,7 @@
                 text="ids_lbl_papersize"
 
                 type="list"
-                default="2" >
+                default="3" >
                 <option>ids_lbl_papersize_a3</option>
                 <option>ids_lbl_papersize_a3w</option>
                 <option>ids_lbl_papersize_sra3</option>
@@ -945,7 +945,7 @@
                 text="ids_lbl_papersize"
 
                 type="list"
-                default="2" >
+                default="3" >
                 <option>ids_lbl_papersize_a3</option>
                 <option>ids_lbl_papersize_a3w</option>
                 <option>ids_lbl_papersize_sra3</option>
