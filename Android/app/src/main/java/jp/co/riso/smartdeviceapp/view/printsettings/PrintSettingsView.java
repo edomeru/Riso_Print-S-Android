@@ -341,7 +341,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && PrinterManager.isPrinterRagOrLio(getPrinter())) {
+        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
             boolean isExternal = mPrintSettings.getInputTray() == InputTray_RAG_LIO.EXTERNAL_FEEDER;
             switch (PaperSize.values()[value]) {
                 case A4:
@@ -366,7 +366,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && PrinterManager.isPrinterRagOrLio(getPrinter())) {
+        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
             // if paper size is equal to A4, B5, Letter, or 16k
             boolean isPaperSupported = (mPrintSettings.getPaperSize() == PaperSize.A4 ||
                     mPrintSettings.getPaperSize() == PaperSize.B5 ||
@@ -628,7 +628,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
 
         // Constraint #7 Paper Size - Input Tray (External) for RAG or LIO series
-        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && PrinterManager.isPrinterRagOrLio(getPrinter())) {
+        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
             int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
             if (value != PaperSize.A4.ordinal() && value != PaperSize.B5.ordinal() &&
                     value != PaperSize.LETTER.ordinal() && value != PaperSize.JUROKUKAI.ordinal() &&
@@ -638,7 +638,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         }
 
         // Constraint #8 Input Tray (External) - Paper Size for RAG or LIO series
-        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && PrinterManager.isPrinterRagOrLio(getPrinter())) {
+        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
             int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
             if (value == InputTray_RAG_LIO.EXTERNAL_FEEDER.ordinal()) {
                 if (paperSizeValue != PaperSize.A4.ordinal() && paperSizeValue != PaperSize.B5.ordinal() &&
@@ -759,7 +759,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         return getPrinter().getConfig().isPunch4Available();
                 }
             }
-            if (PrinterManager.isPrinterRagOrLio(getPrinter()) &&
+            if ((getPrinter().isPrinterRag() || getPrinter().isPrinterLio()) &&
                     name.equals(PrintSettings.TAG_INPUT_TRAY)) {
                 switch (InputTray_RAG_LIO.values()[value]) {
                     case AUTO:

@@ -106,7 +106,6 @@ const static char *paper_size[] =
 {
     "A3",
     "A3W",
-    "SRA3",
     "A4",
     "A5",
     "A6",

@@ -348,6 +348,7 @@ public class PrintSettings {
      * @retval STANDARD
      * @retval TRAY1
      * @retval TRAY2
+     * @retval TRAY3
      * @retval EXTERNAL_FEEDER
      */
     public InputTray_RAG_LIO getInputTray() {

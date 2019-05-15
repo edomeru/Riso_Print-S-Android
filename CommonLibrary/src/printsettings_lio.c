@@ -85,7 +85,7 @@ typedef enum
 const static char *color_mode[] =
 {
     "AUTO",
-    "FULLCOLOR",
+    "FIVECOLOR",
     "GRAYSCALE",
     "DUAL",
 };
@@ -141,6 +141,7 @@ const static char *input_tray_media_source[] =
     "STANDARD",
     "TRAY1",
     "TRAY2",
+    "TRAY3",
     "EXTERNALFEEDER"
 };
 
