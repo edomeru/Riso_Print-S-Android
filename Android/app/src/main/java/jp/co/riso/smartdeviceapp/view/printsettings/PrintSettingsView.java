@@ -378,6 +378,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 case TRAY1:
                 case TRAY2:
                     return true;
+                case TRAY3:
+                    return getPrinter().isPrinterLio();
                 case EXTERNAL_FEEDER:
                     return isPaperSupported;
             }
@@ -767,6 +769,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     case TRAY1:
                     case TRAY2:
                         return true;
+                    case TRAY3:
+                        return getPrinter().isPrinterLio();
                     case EXTERNAL_FEEDER:
                         return getPrinter().getConfig().isExternalFeederAvailable();
                 }
