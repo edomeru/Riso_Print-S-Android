@@ -704,14 +704,16 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
             }
             break;
         case kSnmpCapabilityExternalFeeder:
-            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_8]) > 0) {
+            if ((snmp_device_get_series(device) == kPrinterSeriesRAG || snmp_device_get_series(device) == kPrinterSeriesLIO) && 
+                strlen(device->device_info[MIB_HW_CAP_8]) > 0) {
                 supported = 1;
             } else {
                 supported = 0;
             }
             break;
         case kSnmpCapabilityFin0Holes:
-            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_9]) > 0) {
+            if ((snmp_device_get_series(device) == kPrinterSeriesRAG || snmp_device_get_series(device) == kPrinterSeriesLIO) && 
+                strlen(device->device_info[MIB_HW_CAP_9]) > 0) {
                 supported = 1;
             } else {
                 supported = 0;
