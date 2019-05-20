@@ -86,7 +86,7 @@ const static char *color_mode[] =
 {
     "AUTO",
     "FIVECOLOR",
-    "GRAYSCALE",
+    "GRAYSCALE2",
     "DUAL",
 };
 
