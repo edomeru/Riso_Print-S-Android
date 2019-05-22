@@ -100,6 +100,7 @@ typedef enum
     kPrinterSeriesFW,
     kPrinterSeriesGD,
     kPrinterSeriesRAG,
+    kPrinterSeriesLIO,
     kDeviceSeriesCount
 } kPrinterSeries;
 

@@ -56,6 +56,7 @@
     <string name="ids_lbl_papersize">Format papier</string>
     <string name="ids_lbl_papersize_a3">A3</string>
     <string name="ids_lbl_papersize_a3w">A3W</string>
+    <string name="ids_lbl_papersize_sra3">SRA3</string>
     <string name="ids_lbl_papersize_a4">A4</string>
     <string name="ids_lbl_papersize_a5">A5</string>
     <string name="ids_lbl_papersize_a6">A6</string>

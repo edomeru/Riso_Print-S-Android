@@ -98,7 +98,8 @@ public class AppConstants {
     public static final String PRINTER_MODEL_FW = "FW";
     public static final String PRINTER_MODEL_IS = "IS";
     public static final String PRINTER_MODEL_RAG = "RAG";
+    public static final String PRINTER_MODEL_LIO = "LIO";
 
     //Array of printer types
-    public static final String[] PRINTER_TYPES = {PRINTER_MODEL_IS, PRINTER_MODEL_GD, PRINTER_MODEL_FW, PRINTER_MODEL_RAG};
+    public static final String[] PRINTER_TYPES = {PRINTER_MODEL_IS, PRINTER_MODEL_GD, PRINTER_MODEL_FW, PRINTER_MODEL_RAG, PRINTER_MODEL_LIO};
 }

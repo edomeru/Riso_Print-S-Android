@@ -31,7 +31,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG_LIO;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -120,14 +120,32 @@ public class PreviewTest extends AndroidTestCase {
     }
 
     public void testInputTray() {
-        assertEquals(0, Preview.InputTray_RAG.AUTO.ordinal());
-        assertEquals(1, Preview.InputTray_RAG.STANDARD.ordinal());
-        assertEquals(2, Preview.InputTray_RAG.TRAY1.ordinal());
-        assertEquals(3, Preview.InputTray_RAG.TRAY2.ordinal());
-        assertEquals(4, InputTray_RAG.EXTERNAL_FEEDER.ordinal());
-        assertEquals(Preview.InputTray_RAG.AUTO, Preview.InputTray_RAG.valueOf("AUTO"));
-        assertEquals(InputTray_RAG.STANDARD, Preview.InputTray_RAG.valueOf("STANDARD"));
-        assertEquals(Preview.InputTray_RAG.EXTERNAL_FEEDER, InputTray_RAG.valueOf("EXTERNAL_FEEDER"));
+        assertEquals(0, InputTray_RAG_LIO.AUTO.ordinal());
+        assertEquals(1, InputTray_RAG_LIO.STANDARD.ordinal());
+        assertEquals(2, InputTray_RAG_LIO.TRAY1.ordinal());
+        assertEquals(3, InputTray_RAG_LIO.TRAY2.ordinal());
+        assertEquals(4, InputTray_RAG_LIO.TRAY3.ordinal());
+        assertEquals(5, InputTray_RAG_LIO.EXTERNAL_FEEDER.ordinal());
+        assertEquals(InputTray_RAG_LIO.AUTO, InputTray_RAG_LIO.valueOf("AUTO"));
+        assertEquals(InputTray_RAG_LIO.STANDARD, InputTray_RAG_LIO.valueOf("STANDARD"));
+        assertEquals(InputTray_RAG_LIO.EXTERNAL_FEEDER, InputTray_RAG_LIO.valueOf("EXTERNAL_FEEDER"));
+
+        assertEquals(InputTray_RAG_LIO.AUTO, InputTray_RAG_LIO.valuesRAG()[0]);
+        assertEquals(InputTray_RAG_LIO.STANDARD, InputTray_RAG_LIO.valuesRAG()[1]);
+        assertEquals(InputTray_RAG_LIO.TRAY1, InputTray_RAG_LIO.valuesRAG()[2]);
+        assertEquals(InputTray_RAG_LIO.TRAY2, InputTray_RAG_LIO.valuesRAG()[3]);
+        assertEquals(InputTray_RAG_LIO.EXTERNAL_FEEDER, InputTray_RAG_LIO.valuesRAG()[4]);
+
+        assertEquals(InputTray_RAG_LIO.AUTO, InputTray_RAG_LIO.valuesLIO()[0]);
+        assertEquals(InputTray_RAG_LIO.STANDARD, InputTray_RAG_LIO.valuesLIO()[1]);
+        assertEquals(InputTray_RAG_LIO.TRAY1, InputTray_RAG_LIO.valuesLIO()[2]);
+        assertEquals(InputTray_RAG_LIO.TRAY2, InputTray_RAG_LIO.valuesLIO()[3]);
+        assertEquals(InputTray_RAG_LIO.TRAY3, InputTray_RAG_LIO.valuesLIO()[4]);
+        assertEquals(InputTray_RAG_LIO.EXTERNAL_FEEDER, InputTray_RAG_LIO.valuesLIO()[5]);
+
+        assertEquals(InputTray_RAG_LIO.AUTO, InputTray_RAG_LIO.valueOf("AUTO"));
+        assertEquals(InputTray_RAG_LIO.STANDARD, InputTray_RAG_LIO.valueOf("STANDARD"));
+        assertEquals(InputTray_RAG_LIO.EXTERNAL_FEEDER, InputTray_RAG_LIO.valueOf("EXTERNAL_FEEDER"));
     }
 
     public void testImpositionValueOf() {
@@ -273,7 +291,7 @@ public class PreviewTest extends AndroidTestCase {
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
         }
-        assertEquals(optionsList.size(), PaperSize.values().length-3); // Only tests IS
+        assertEquals(optionsList.size(), PaperSize.values().length-4); // Only tests IS
     }
 
     public void testImposition_XML() {

@@ -49,6 +49,7 @@ public class Preview {
     public enum PaperSize {
         A3(297.0f, 420.0f), ///< 297mm x 420mm
         A3W(316.0f, 460.0f), ///< 316mm x 460mm
+        SRA3(320.0f, 450.0f), ///< 320mm x 450mm
         A4(210.0f, 297.0f), ///< 210mm x 297mm
         A5(148.0f, 210.0f), ///< 148mm x 210mm
         A6(105.0f, 148.0f), ///< 105mm x 148mm
@@ -95,17 +96,56 @@ public class Preview {
         public float getHeight() {
             return mHeight;
         }
+
+        /**
+         * @brief Retrieves an array of paper size options for RAG series
+         *
+         * @return Paper size options array
+         */
+        public static PaperSize[] valuesRAG() {
+            return new PaperSize[] {A3, A3W, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
+        }
+
+        /**
+         * @brief Retrieves an array of paper size options for LIO series
+         *
+         * @return Paper size options array
+         */
+        public static PaperSize[] valuesLIO() {
+            return new PaperSize[] {A3, A3W, SRA3, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
+        }
+
+
     }
 
     /**
-     * @brief InputTray_RAG print settings for RAG series that refers to the tray location of input paper.
+     * @brief InputTray_RAG_LIO print settings for RAG / LIO series that refers to the tray location of input paper.
      */
-    public enum InputTray_RAG {
+    public enum InputTray_RAG_LIO {
         AUTO,  ///< Auto Tray
         STANDARD,  ///< Standard Tray
         TRAY1,  ///< Tray 1
         TRAY2, ///< Tray 2
-        EXTERNAL_FEEDER, ///< External 2000 sheets
+        TRAY3, ///< Tray 3
+        EXTERNAL_FEEDER; ///< External 2000 sheets
+
+        /**
+         * @brief Retrieves an array of input tray options for RAG series
+         *
+         * @return Input tray options array
+         */
+        public static InputTray_RAG_LIO[] valuesRAG() {
+            return new InputTray_RAG_LIO[] {AUTO, STANDARD, TRAY1, TRAY2, EXTERNAL_FEEDER};
+        }
+
+        /**
+         * @brief Retrieves an array of input tray options for LIO series
+         *
+         * @return Input tray options array
+         */
+        public static InputTray_RAG_LIO[] valuesLIO() {
+            return new InputTray_RAG_LIO[] {AUTO, STANDARD, TRAY1, TRAY2, TRAY3, EXTERNAL_FEEDER};
+        }
     }
 
     /**

@@ -229,6 +229,24 @@ public class Printer implements Parcelable {
     }
 
     /**
+     * @brief Determines if the printer is of the RAG series
+     *
+     * @return True if the printers if of the RAG series, false otherwise
+     */
+    public boolean isPrinterRag() {
+        return getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG);
+    }
+
+    /**
+     * @brief Determines if the printer is of the LIO series
+     *
+     * @return True if the printers if of the LIO series, false otherwise
+     */
+    public boolean isPrinterLio() {
+        return getPrinterType().equals(AppConstants.PRINTER_MODEL_LIO);
+    }
+
+    /**
      * @brief Initializes the printer's printer type based on the printer's model (name) .
      */
     private void initializePrinterType(){
@@ -259,6 +277,11 @@ public class Printer implements Parcelable {
 
         if(mName.contains(AppConstants.PRINTER_MODEL_RAG)){
             mPrinterType = AppConstants.PRINTER_MODEL_RAG;
+            return;
+        }
+
+        if (mName.contains(AppConstants.PRINTER_MODEL_LIO)) {
+            mPrinterType = AppConstants.PRINTER_MODEL_LIO;
             return;
         }
 

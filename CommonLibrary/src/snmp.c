@@ -31,6 +31,7 @@
 #define SNMPV3_PASS "risosnmp"
 
 #define RAG_PRINTER_TYPE "RAG"
+#define LIO_PRINTER_TYPE "LIO"
 
 #define DETECT_ALL_DEVICES 0  // 0 for RISO only
 
@@ -663,6 +664,12 @@ int snmp_device_get_series(snmp_device *device)
         return kPrinterSeriesRAG;
     }
 
+    if (strstr(device->device_info[MIB_DEV_DESCR], LIO_PRINTER_TYPE) != NULL)
+    {
+        // LIO Series
+        return kPrinterSeriesLIO;
+    }
+
     return kPrinterSeriesGD;
 }
 
@@ -697,14 +704,16 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
             }
             break;
         case kSnmpCapabilityExternalFeeder:
-            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_8]) > 0) {
+            if ((snmp_device_get_series(device) == kPrinterSeriesRAG || snmp_device_get_series(device) == kPrinterSeriesLIO) && 
+                strlen(device->device_info[MIB_HW_CAP_8]) > 0) {
                 supported = 1;
             } else {
                 supported = 0;
             }
             break;
         case kSnmpCapabilityFin0Holes:
-            if (snmp_device_get_series(device) == kPrinterSeriesRAG && strlen(device->device_info[MIB_HW_CAP_9]) > 0) {
+            if ((snmp_device_get_series(device) == kPrinterSeriesRAG || snmp_device_get_series(device) == kPrinterSeriesLIO) && 
+                strlen(device->device_info[MIB_HW_CAP_9]) > 0) {
                 supported = 1;
             } else {
                 supported = 0;
