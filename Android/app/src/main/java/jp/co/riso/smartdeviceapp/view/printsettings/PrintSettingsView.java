@@ -68,6 +68,8 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import jp.co.riso.smartprint.R;
 
+import static jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG_LIO.TRAY3;
+
 /**
  * @class PrintSettingsView
  * 
@@ -341,37 +343,35 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
+        // Enum adjustments for printers where some options in LIO (e.g. SRA3) are not available (e.g. RAG)
+        int adjustment = 0;
+        if (getPrinter().isPrinterRag()) {
+            adjustment = 1;
+        }
+
         if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
-            boolean isExternal = mPrintSettings.getInputTray() == InputTray_RAG_LIO.EXTERNAL_FEEDER;
-            switch (PaperSize.values()[value]) {
+            boolean isExternal =
+                    mPrintSettings.getInputTray().ordinal() + adjustment == InputTray_RAG_LIO.EXTERNAL_FEEDER.ordinal();
+            switch (PaperSize.values()[value + adjustment]) {
                 case A4:
                 case B5:
                 case LETTER:
                 case JUROKUKAI:
                     return true;
-                case A3:
-                case A3W:
-                case SRA3:
-                case A5:
-                case A6:
-                case B4:
-                case B6:
-                case FOOLSCAP:
-                case TABLOID:
-                case LEGAL:
-                case STATEMENT:
-                case LEGAL13:
-                case HACHIKAI:
+                default:
                     return !isExternal;
             }
         }
 
         if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
+
             // if paper size is equal to A4, B5, Letter, or 16k
-            boolean isPaperSupported = (mPrintSettings.getPaperSize() == PaperSize.A4 ||
-                    mPrintSettings.getPaperSize() == PaperSize.B5 ||
-                    mPrintSettings.getPaperSize() == PaperSize.LETTER ||
-                    mPrintSettings.getPaperSize() == PaperSize.JUROKUKAI);
+            int paperSizeInt = mPrintSettings.getPaperSize().ordinal();
+            boolean isPaperSupported = (paperSizeInt + adjustment == PaperSize.A4.ordinal() ||
+                    paperSizeInt + adjustment == PaperSize.B5.ordinal() ||
+                    paperSizeInt + adjustment == PaperSize.LETTER.ordinal() ||
+                    paperSizeInt + adjustment == PaperSize.JUROKUKAI.ordinal());
+
             switch (InputTray_RAG_LIO.values()[value]) {
                 case AUTO:
                 case STANDARD:
@@ -379,7 +379,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 case TRAY2:
                     return true;
                 case TRAY3:
-                    return getPrinter().isPrinterLio();
+                    // TRAY3 is treated as EXTERNAL_FEEDER for RAG
+                    return getPrinter().isPrinterLio() || (getPrinter().isPrinterRag() && isPaperSupported);
                 case EXTERNAL_FEEDER:
                     return isPaperSupported;
             }
@@ -770,7 +771,13 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     case TRAY2:
                         return true;
                     case TRAY3:
-                        return getPrinter().isPrinterLio();
+                        if (getPrinter().isPrinterLio()) {
+                            return true;
+                        }
+                        if (getPrinter().isPrinterRag()) {
+                            // TRAY3 is treated as EXTERNAL_FEEDER for RAG
+                            return getPrinter().getConfig().isExternalFeederAvailable();
+                        }
                     case EXTERNAL_FEEDER:
                         return getPrinter().getConfig().isExternalFeederAvailable();
                 }
