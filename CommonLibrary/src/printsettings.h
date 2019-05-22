@@ -18,14 +18,11 @@ void create_pjl(char *pjl, char *settings);
 //void create_pjl_gd(char *pjl, char *settings, char *printerName, char *appVersion);
 // Ver.2.0.4.2 End
 // Ver.3.0.0.2 Start
-// void create_pjl_fw(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion);
-// void create_pjl_gd(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion);
-// void create_pjl_rag(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion);
-// Ver.3.0.0.2 End
-// Ver.4.0.0.0 Start
 void create_pjl_fw(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion);
 void create_pjl_gd(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion);
 void create_pjl_rag(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion);
+// Ver.3.0.0.2 End
+// Ver.4.0.0.0 Start
 void create_pjl_lio(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion);
 // Ver.4.0.0.0 End
 // Ver.2.0.0.3 Start

@@ -3,7 +3,7 @@
 //  SmartDeviceApp
 //
 //  Created by RISO KAGAKU CORPORATION.
-//  Copyright (c) 2018 RISO KAGAKU CORPORATION. All rights reserved.
+//  Copyright (c) 2019 RISO KAGAKU CORPORATION. All rights reserved.
 //
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
@@ -131,9 +131,7 @@ const static char *paper_type[] =
     "HCMATTED",
     "HIGHQUALITY2",
     "POSTCARDJ",
-    "LIGHT",
-    "RECYCLED",
-	"PLAINPREMIUM"
+    "LIGHT"
 };
 
 const static char *input_tray_media_source[] =
