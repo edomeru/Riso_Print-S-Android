@@ -96,6 +96,26 @@ public class Preview {
         public float getHeight() {
             return mHeight;
         }
+
+        /**
+         * @brief Retrieves an array of paper size options for RAG series
+         *
+         * @return Paper size options array
+         */
+        public static PaperSize[] valuesRAG() {
+            return new PaperSize[] {A3, A3W, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
+        }
+
+        /**
+         * @brief Retrieves an array of paper size options for LIO series
+         *
+         * @return Paper size options array
+         */
+        public static PaperSize[] valuesLIO() {
+            return new PaperSize[] {A3, A3W, SRA3, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
+        }
+
+
     }
 
     /**
@@ -107,7 +127,25 @@ public class Preview {
         TRAY1,  ///< Tray 1
         TRAY2, ///< Tray 2
         TRAY3, ///< Tray 3
-        EXTERNAL_FEEDER, ///< External 2000 sheets
+        EXTERNAL_FEEDER; ///< External 2000 sheets
+
+        /**
+         * @brief Retrieves an array of input tray options for RAG series
+         *
+         * @return Input tray options array
+         */
+        public static InputTray_RAG_LIO[] valuesRAG() {
+            return new InputTray_RAG_LIO[] {AUTO, STANDARD, TRAY1, TRAY2, EXTERNAL_FEEDER};
+        }
+
+        /**
+         * @brief Retrieves an array of input tray options for LIO series
+         *
+         * @return Input tray options array
+         */
+        public static InputTray_RAG_LIO[] valuesLIO() {
+            return new InputTray_RAG_LIO[] {AUTO, STANDARD, TRAY1, TRAY2, TRAY3, EXTERNAL_FEEDER};
+        }
     }
 
     /**

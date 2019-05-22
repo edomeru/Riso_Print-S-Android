@@ -129,6 +129,23 @@ public class PreviewTest extends AndroidTestCase {
         assertEquals(InputTray_RAG_LIO.AUTO, InputTray_RAG_LIO.valueOf("AUTO"));
         assertEquals(InputTray_RAG_LIO.STANDARD, InputTray_RAG_LIO.valueOf("STANDARD"));
         assertEquals(InputTray_RAG_LIO.EXTERNAL_FEEDER, InputTray_RAG_LIO.valueOf("EXTERNAL_FEEDER"));
+
+        assertEquals(InputTray_RAG_LIO.AUTO, InputTray_RAG_LIO.valuesRAG()[0]);
+        assertEquals(InputTray_RAG_LIO.STANDARD, InputTray_RAG_LIO.valuesRAG()[1]);
+        assertEquals(InputTray_RAG_LIO.TRAY1, InputTray_RAG_LIO.valuesRAG()[2]);
+        assertEquals(InputTray_RAG_LIO.TRAY2, InputTray_RAG_LIO.valuesRAG()[3]);
+        assertEquals(InputTray_RAG_LIO.EXTERNAL_FEEDER, InputTray_RAG_LIO.valuesRAG()[4]);
+
+        assertEquals(InputTray_RAG_LIO.AUTO, InputTray_RAG_LIO.valuesLIO()[0]);
+        assertEquals(InputTray_RAG_LIO.STANDARD, InputTray_RAG_LIO.valuesLIO()[1]);
+        assertEquals(InputTray_RAG_LIO.TRAY1, InputTray_RAG_LIO.valuesLIO()[2]);
+        assertEquals(InputTray_RAG_LIO.TRAY2, InputTray_RAG_LIO.valuesLIO()[3]);
+        assertEquals(InputTray_RAG_LIO.TRAY3, InputTray_RAG_LIO.valuesLIO()[4]);
+        assertEquals(InputTray_RAG_LIO.EXTERNAL_FEEDER, InputTray_RAG_LIO.valuesLIO()[5]);
+
+        assertEquals(InputTray_RAG_LIO.AUTO, InputTray_RAG_LIO.valueOf("AUTO"));
+        assertEquals(InputTray_RAG_LIO.STANDARD, InputTray_RAG_LIO.valueOf("STANDARD"));
+        assertEquals(InputTray_RAG_LIO.EXTERNAL_FEEDER, InputTray_RAG_LIO.valueOf("EXTERNAL_FEEDER"));
     }
 
     public void testImpositionValueOf() {

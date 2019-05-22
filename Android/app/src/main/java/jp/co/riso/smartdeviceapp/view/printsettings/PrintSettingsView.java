@@ -68,8 +68,6 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
 import jp.co.riso.smartprint.R;
 
-import static jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG_LIO.TRAY3;
-
 /**
  * @class PrintSettingsView
  * 
@@ -343,46 +341,55 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        // Enum adjustments for printers where some options in LIO (e.g. SRA3) are not available (e.g. RAG)
-        int adjustment = 0;
-        if (getPrinter().isPrinterRag()) {
-            adjustment = 1;
-        }
+        if (getPrinter().isPrinterRag() || getPrinter().isPrinterLio()) {
 
-        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
-            boolean isExternal =
-                    mPrintSettings.getInputTray().ordinal() + adjustment == InputTray_RAG_LIO.EXTERNAL_FEEDER.ordinal();
-            switch (PaperSize.values()[value + adjustment]) {
-                case A4:
-                case B5:
-                case LETTER:
-                case JUROKUKAI:
-                    return true;
-                default:
-                    return !isExternal;
+            /* Specify the input tray and paper size arrays to be used */
+            InputTray_RAG_LIO[] inputTrayOptions;
+            PaperSize[] paperSizeOptions;
+
+            if (getPrinter().isPrinterRag()) {
+                inputTrayOptions = InputTray_RAG_LIO.valuesRAG();
+                paperSizeOptions = PaperSize.valuesRAG();
+
+            } else {
+                inputTrayOptions = InputTray_RAG_LIO.valuesLIO();
+                paperSizeOptions = PaperSize.valuesLIO();
             }
-        }
 
-        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
+            if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
+                boolean isExternal =
+                        inputTrayOptions[mPrintSettings.getInputTray().ordinal()] == InputTray_RAG_LIO.EXTERNAL_FEEDER;
+                switch (paperSizeOptions[value]) {
+                    case A4:
+                    case B5:
+                    case LETTER:
+                    case JUROKUKAI:
+                        return true;
+                    default:
+                        return !isExternal;
+                }
+            }
 
-            // if paper size is equal to A4, B5, Letter, or 16k
-            int paperSizeInt = mPrintSettings.getPaperSize().ordinal();
-            boolean isPaperSupported = (paperSizeInt + adjustment == PaperSize.A4.ordinal() ||
-                    paperSizeInt + adjustment == PaperSize.B5.ordinal() ||
-                    paperSizeInt + adjustment == PaperSize.LETTER.ordinal() ||
-                    paperSizeInt + adjustment == PaperSize.JUROKUKAI.ordinal());
+            if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
 
-            switch (InputTray_RAG_LIO.values()[value]) {
-                case AUTO:
-                case STANDARD:
-                case TRAY1:
-                case TRAY2:
-                    return true;
-                case TRAY3:
-                    // TRAY3 is treated as EXTERNAL_FEEDER for RAG
-                    return getPrinter().isPrinterLio() || (getPrinter().isPrinterRag() && isPaperSupported);
-                case EXTERNAL_FEEDER:
-                    return isPaperSupported;
+                // if paper size is equal to A4, B5, Letter, or 16k
+                int paperSizeInt = mPrintSettings.getPaperSize().ordinal();
+                boolean isPaperSupported = (paperSizeOptions[paperSizeInt] == PaperSize.A4 ||
+                        paperSizeOptions[paperSizeInt] == PaperSize.B5 ||
+                        paperSizeOptions[paperSizeInt] == PaperSize.LETTER ||
+                        paperSizeOptions[paperSizeInt] == PaperSize.JUROKUKAI);
+
+                switch (inputTrayOptions[value]) {
+                    case AUTO:
+                    case STANDARD:
+                    case TRAY1:
+                    case TRAY2:
+                        return true;
+                    case TRAY3:
+                        return getPrinter().isPrinterLio();
+                    case EXTERNAL_FEEDER:
+                        return isPaperSupported;
+                }
             }
         }
         return true;
@@ -630,23 +637,43 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        // Constraint #7 Paper Size - Input Tray (External) for RAG or LIO series
-        if (tag.equals(PrintSettings.TAG_PAPER_SIZE) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
-            int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
-            if (value != PaperSize.A4.ordinal() && value != PaperSize.B5.ordinal() &&
-                    value != PaperSize.LETTER.ordinal() && value != PaperSize.JUROKUKAI.ordinal() &&
-                    inputTrayValue == InputTray_RAG_LIO.EXTERNAL_FEEDER.ordinal()) {
-                updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_RAG_LIO.AUTO.ordinal());
-            }
-        }
+        if (getPrinter().isPrinterRag() || getPrinter().isPrinterLio()) {
 
-        // Constraint #8 Input Tray (External) - Paper Size for RAG or LIO series
-        if (tag.equals(PrintSettings.TAG_INPUT_TRAY) && (getPrinter().isPrinterRag() || getPrinter().isPrinterLio())) {
-            int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
-            if (value == InputTray_RAG_LIO.EXTERNAL_FEEDER.ordinal()) {
-                if (paperSizeValue != PaperSize.A4.ordinal() && paperSizeValue != PaperSize.B5.ordinal() &&
-                        paperSizeValue != PaperSize.LETTER.ordinal() && paperSizeValue != PaperSize.JUROKUKAI.ordinal()) {
-                    updateValueWithConstraints(PrintSettings.TAG_PAPER_SIZE, PaperSize.A4.ordinal());
+            /* Specify the input tray and paper size arrays to be used */
+            InputTray_RAG_LIO[] inputTrayOptions;
+            PaperSize[] paperSizeOptions;
+
+            if (getPrinter().isPrinterRag()) {
+                inputTrayOptions = InputTray_RAG_LIO.valuesRAG();
+                paperSizeOptions = PaperSize.valuesRAG();
+
+            } else {
+                inputTrayOptions = InputTray_RAG_LIO.valuesLIO();
+                paperSizeOptions = PaperSize.valuesLIO();
+            }
+
+            // Constraint #7 Paper Size - Input Tray (External) for RAG or LIO series
+            if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
+                int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
+                if (paperSizeOptions[value] != PaperSize.A4 &&
+                        paperSizeOptions[value] != PaperSize.B5 &&
+                        paperSizeOptions[value] != PaperSize.LETTER &&
+                        paperSizeOptions[value] != PaperSize.JUROKUKAI &&
+                        inputTrayOptions[inputTrayValue] == InputTray_RAG_LIO.EXTERNAL_FEEDER) {
+                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_RAG_LIO.AUTO.ordinal());
+                }
+            }
+
+            // Constraint #8 Input Tray (External) - Paper Size for RAG or LIO series
+            if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
+                int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
+                if (inputTrayOptions[value] == InputTray_RAG_LIO.EXTERNAL_FEEDER) {
+                    if (paperSizeOptions[paperSizeValue] != PaperSize.A4 &&
+                            paperSizeOptions[paperSizeValue] != PaperSize.B5 &&
+                            paperSizeOptions[paperSizeValue] != PaperSize.LETTER &&
+                            paperSizeOptions[paperSizeValue] != PaperSize.JUROKUKAI) {
+                        updateValueWithConstraints(PrintSettings.TAG_PAPER_SIZE, PaperSize.A4.ordinal());
+                    }
                 }
             }
         }
@@ -762,24 +789,30 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         return getPrinter().getConfig().isPunch4Available();
                 }
             }
-            if ((getPrinter().isPrinterRag() || getPrinter().isPrinterLio()) &&
-                    name.equals(PrintSettings.TAG_INPUT_TRAY)) {
-                switch (InputTray_RAG_LIO.values()[value]) {
-                    case AUTO:
-                    case STANDARD:
-                    case TRAY1:
-                    case TRAY2:
-                        return true;
-                    case TRAY3:
-                        if (getPrinter().isPrinterLio()) {
+            if (name.equals(PrintSettings.TAG_INPUT_TRAY)) {
+                if (getPrinter().isPrinterRag()) {
+                    switch (InputTray_RAG_LIO.valuesRAG()[value]) {
+                        case AUTO:
+                        case STANDARD:
+                        case TRAY1:
+                        case TRAY2:
                             return true;
-                        }
-                        if (getPrinter().isPrinterRag()) {
-                            // TRAY3 is treated as EXTERNAL_FEEDER for RAG
+                        case EXTERNAL_FEEDER:
                             return getPrinter().getConfig().isExternalFeederAvailable();
-                        }
-                    case EXTERNAL_FEEDER:
-                        return getPrinter().getConfig().isExternalFeederAvailable();
+                    }
+                }
+                if (getPrinter().isPrinterLio()) {
+                    switch (InputTray_RAG_LIO.valuesLIO()[value]) {
+                        case AUTO:
+                        case STANDARD:
+                        case TRAY1:
+                        case TRAY2:
+                            return true;
+                        case TRAY3:
+                            return getPrinter().isPrinterLio();
+                        case EXTERNAL_FEEDER:
+                            return getPrinter().getConfig().isExternalFeederAvailable();
+                    }
                 }
             }
         }
