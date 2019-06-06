@@ -6,3 +6,9 @@ WindowsRT/SmartDeviceApp.opensdf
 WindowsRT/SmartDeviceApp.sdf
 WindowsRT/Debug/
 WindowsRT/DirectPrintSettings/Debug/
+SNMPLibraryBuilder/SNMPDiscoveryApp/.gradle/
+SNMPLibraryBuilder/SNMPDiscoveryApp/.idea/
+SNMPLibraryBuilder/SNMPDiscoveryApp/app/.externalNativeBuild/
+SNMPLibraryBuilder/SNMPDiscoveryApp/app/build/
+SNMPLibraryBuilder/SNMPDiscoveryApp/build/
+Android/app/src/main/libs/

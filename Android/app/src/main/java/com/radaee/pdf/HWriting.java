@@ -10,16 +10,17 @@ so the line in HWriting will not in same width.
 @author Radaee
 @version 1.1
 */
+@Deprecated
 public class HWriting
 {
-	protected int hand = 0;
+	protected long hand = 0;
 	private Bitmap m_bmp;
 	private static native int create( int w, int h, float min_w, float max_w, int clr_r, int clr_g, int clr_b );
-	private static native void onDown( int hand, float x, float y );
-	private static native void onMove( int hand, float x, float y );
-	private static native void onUp( int hand, float x, float y );
-	private static native void onDraw( int hand, int bmp );
-	private static native void destroy( int hand );
+	private static native void onDown( long hand, float x, float y );
+	private static native void onMove( long hand, float x, float y );
+	private static native void onUp( long hand, float x, float y );
+	private static native void onDraw( long hand, long bmp );
+	private static native void destroy( long hand );
 	/**
 	 * constructor for hand-writing.
 	 * @param w width of cache.
@@ -42,7 +43,10 @@ public class HWriting
 	{
 		destroy( hand );
 		hand = 0;
-		m_bmp.recycle();
+        if(m_bmp != null) {
+            m_bmp.recycle();
+            m_bmp = null;
+        }
 	}
 	/**
 	 * call when click down
@@ -75,8 +79,14 @@ public class HWriting
 	 * draw to locked bitmap handle.
 	 * @param bmp, obtained by Global.lockBitmap()
 	 */
-	public void OnDraw( int bmp )
+	public void OnDraw( BMP bmp )
 	{
-		onDraw( hand, bmp );
+		onDraw( hand, bmp.hand );
 	}
+    @Override
+    protected void finalize() throws Throwable
+    {
+        Destroy();
+        super.finalize();
+    }
 }
