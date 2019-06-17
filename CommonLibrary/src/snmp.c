@@ -720,6 +720,9 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
             }
             break;
         default:
+            if (capability > kSnmpCapabilityFin0Holes) {
+                capability -= 1;
+            }
             if (strlen(device->device_info[MIB_HW_CAP_1 + capability]) > 0)
             {
                 supported = 1;
