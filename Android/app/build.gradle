@@ -6,15 +6,14 @@ jacoco {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "jp.co.riso.smartprint"
         minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 2010000
-        versionName "v2.1.0.0"
+        targetSdkVersion 29
+        versionCode 2020000
+        versionName "v2.2.0.0"
 
         testApplicationId "jp.co.riso.smartprint.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
