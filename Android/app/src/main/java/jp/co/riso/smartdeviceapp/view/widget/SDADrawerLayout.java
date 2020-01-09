@@ -11,7 +11,7 @@ package jp.co.riso.smartdeviceapp.view.widget;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartprint.R;
 import android.content.Context;
-import android.support.v4.widget.DrawerLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;

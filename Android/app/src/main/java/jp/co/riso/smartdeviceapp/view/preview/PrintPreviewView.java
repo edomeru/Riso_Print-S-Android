@@ -21,7 +21,7 @@ import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.LruCache;
 import android.view.GestureDetector;

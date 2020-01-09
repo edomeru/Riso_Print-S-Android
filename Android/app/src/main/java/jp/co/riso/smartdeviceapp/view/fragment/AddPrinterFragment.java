@@ -14,7 +14,7 @@ import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.InputFilter;
 import android.view.Gravity;
 import android.view.KeyEvent;

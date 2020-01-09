@@ -32,7 +32,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
