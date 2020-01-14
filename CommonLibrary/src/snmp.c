@@ -286,7 +286,11 @@ void *do_discovery(void *parameter)
         
         free(session.peername);
         free(session.community);
-        
+        /* Check if it is necessary to free the security name to prevent memory leaks */
+        if (session.securityName != 0)
+        {
+            free(session.securityName);
+        }
         snmp_call_end_callback(context, -1);
         
         return 0;
@@ -313,6 +317,11 @@ void *do_discovery(void *parameter)
         snmp_close(ss);
         free(session.peername);
         free(session.community);
+        /* Check if it is necessary to free the security name to prevent memory leaks */
+        if (session.securityName != 0)
+        {
+            free(session.securityName);
+        }
         snmp_call_end_callback(context, -1);
         
         return 0;

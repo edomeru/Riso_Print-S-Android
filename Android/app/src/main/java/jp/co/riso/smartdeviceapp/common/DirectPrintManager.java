@@ -10,7 +10,12 @@ package jp.co.riso.smartdeviceapp.common;
 
 import java.lang.ref.WeakReference;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
 /**
  * @class DirectPrintManager
@@ -30,7 +35,8 @@ public class DirectPrintManager {
     public static final int PRINT_STATUS_CONNECTED = 2; ///< Connected to the printer
     public static final int PRINT_STATUS_SENDING = 3; ///< Sending file to the printer
     public static final int PRINT_STATUS_SENT = 4; ///< File is successfully sent to the printer
-    
+    public static final int PRINT_STATUS_JOB_NUM_UPDATE = 5; ///< Update job number - LPR print retry
+
     /**
      * @brief Initializes Direct Print.
      * 
@@ -43,8 +49,12 @@ public class DirectPrintManager {
     @SuppressWarnings("JniMissingFunction")
     // Ver.2.0.4.2 Start
     //private native void initializeDirectPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress);
-    private native void initializeDirectPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress, String hostName);
+    //private native void initializeDirectPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress, String hostName);
     // Ver.2.0.4.2 End
+    // Ver.2.2.0.0 Start
+    private native void initializeDirectPrint(String printerName, String appName, String appVersion, String userName, String jobName, String fileName, String printSetting, String ipAddress, String hostName, int jobNumber);
+    // Ver.2.2.0.0 End
+
     /**
      * @brief Finalizes Direct Print.
      */
@@ -106,8 +116,16 @@ public class DirectPrintManager {
                 || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty() || hostName.isEmpty()) {
             return false;
         }
-        initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName);
+        //initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName);
         // Ver.2.0.4.2 End
+        // Ver.2.2.0.0 Start
+
+        // LPR Cancel Fix: Set a unique job number for print job (0-999)
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        int jobNumber = preferences.getInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);
+        updateJobNumber();
+        initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName, jobNumber);
+        // Ver.2.2.0.0 End
         if (isPrinting()) {
             lprPrint();
             return true;
@@ -145,8 +163,12 @@ public class DirectPrintManager {
             return false;
         }
 
-        initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName);
+        // initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName);
         // Ver.2.0.4.2 End
+        // Ver.2.2.0.0 Start
+        // Set job number to default (1)
+        initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName, 1);
+        // Ver.2.2.0.0 End
         if (isPrinting()) {
             rawPrint();
             return true;
@@ -192,13 +214,31 @@ public class DirectPrintManager {
             case DirectPrintManager.PRINT_STATUS_ERROR:
             case DirectPrintManager.PRINT_STATUS_SENT:
                 finalizeDirectPrint();
+                break;
+            case DirectPrintManager.PRINT_STATUS_JOB_NUM_UPDATE:    // Status only returned on LPR print
+                updateJobNumber();
+                break;
         }
         
         if (mCallbackRef != null && mCallbackRef.get() != null) {
             mCallbackRef.get().onNotifyProgress(this, status, progress);
         }
     }
-    
+
+    /**
+     * @brief Notify progress. Called when printing status and progress is updated.
+     *
+     */
+    private void updateJobNumber(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        int jobNumber = preferences.getInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);     // current job number
+        int nextJobNumber = (jobNumber + 1) % (AppConstants.CONST_MAX_JOB_NUMBER + 1);      // increment job number (0-999)
+        editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, nextJobNumber);
+        editor.commit();
+    }
+
+
     // ================================================================================
     // Internal classes
     // ================================================================================

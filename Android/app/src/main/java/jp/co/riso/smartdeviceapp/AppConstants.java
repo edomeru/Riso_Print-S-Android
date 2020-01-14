@@ -72,6 +72,14 @@ public class AppConstants {
     // Default SNMP Community Name
     public static final String PREF_DEFAULT_SNMP_COMMUNITY_NAME = "public";
 
+    //  LPR Print
+    // Job Number Counter
+    public static final String PREF_KEY_JOB_NUMBER_COUNTER = "job_number_counter";
+    // Default Job Number Counter - Start at 0
+    public static final int PREF_DEFAULT_JOB_NUMBER_COUNTER = 0;
+    // Max Job Number
+    public static final int CONST_MAX_JOB_NUMBER = 999;
+
     /// Maximum printer count
     public static final int CONST_MAX_PRINTER_COUNT = 10;
     /// Ping timeout in milliseconds

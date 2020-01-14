@@ -12,8 +12,11 @@ void print_callback(directprint_job *print_job, int status, float progress);
 JNIEXPORT void 
 // Ver.2.0.4.2 Start
 //Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(JNIEnv *env, jobject object, jstring printer_name, jstring app_name,  jstring app_version,  jstring user_name, jstring job_name, jstring file_name, jstring print_setting, jstring ip_address)
-Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(JNIEnv *env, jobject object, jstring printer_name, jstring app_name,  jstring app_version,  jstring user_name, jstring job_name, jstring file_name, jstring print_setting, jstring ip_address, jstring host_name)
+//Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(JNIEnv *env, jobject object, jstring printer_name, jstring app_name,  jstring app_version,  jstring user_name, jstring job_name, jstring file_name, jstring print_setting, jstring ip_address, jstring host_name)
 // Ver.2.0.4.2 End
+// Ver.2.2.0.0 Start
+Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(JNIEnv *env, jobject object, jstring printer_name, jstring app_name,  jstring app_version,  jstring user_name, jstring job_name, jstring file_name, jstring print_setting, jstring ip_address, jstring host_name, jint job_number)
+// Ver.2.2.0.0 End
 {
     // Create cache object
     CommonJNIState *state = (CommonJNIState *)malloc(sizeof(CommonJNIState));
@@ -32,11 +35,17 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(J
     // Ver.2.0.4.2 Start
     const char *native_host_name = (*env)->GetStringUTFChars(env, host_name, 0);
     // Ver.2.0.4.2 End
+    // Ver.2.2.0.0 Start
+    const int native_job_number = (int)job_number;
+    // Ver.2.2.0.0 End
 
     // Ver.2.0.4.2 Start
     //directprint_job *job = directprint_job_new(native_printer_name, native_app_name, native_app_version, native_user_name, native_job_name, native_file_name, native_print_setting, native_ip_address, print_callback);
-    directprint_job *job = directprint_job_new(native_printer_name, native_host_name, native_app_name, native_app_version, native_user_name, native_job_name, native_file_name, native_print_setting, native_ip_address, print_callback);
+    //directprint_job *job = directprint_job_new(native_printer_name, native_host_name, native_app_name, native_app_version, native_user_name, native_job_name, native_file_name, native_print_setting, native_ip_address, print_callback);
     // Ver.2.0.4.2 End
+    // Ver.2.2.0.0 Start
+    directprint_job *job = directprint_job_new(native_printer_name, native_host_name, native_app_name, native_app_version, native_user_name, native_job_number, native_job_name, native_file_name, native_print_setting, native_ip_address, print_callback);
+    // Ver.2.2.0.0 End
     (*env)->ReleaseStringUTFChars(env, printer_name, native_printer_name);
     // Ver.2.0.4.2 Start
     (*env)->ReleaseStringUTFChars(env, host_name, native_host_name);

@@ -357,6 +357,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 case DirectPrintManager.PRINT_STATUS_STARTED:
                 case DirectPrintManager.PRINT_STATUS_CONNECTING:
                 case DirectPrintManager.PRINT_STATUS_CONNECTED:
+                case DirectPrintManager.PRINT_STATUS_JOB_NUM_UPDATE:
                     break;
             }
         } else {
