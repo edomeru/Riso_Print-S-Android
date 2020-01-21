@@ -12,3 +12,6 @@ SNMPLibraryBuilder/SNMPDiscoveryApp/app/.externalNativeBuild/
 SNMPLibraryBuilder/SNMPDiscoveryApp/app/build/
 SNMPLibraryBuilder/SNMPDiscoveryApp/build/
 Android/app/src/main/libs/
+Android/.idea/caches/build_file_checksums.ser
+Android/.idea/codeStyles/Project.xml
+Android/.idea/caches/gradle_models.ser
