@@ -1,4 +1,4 @@
-    //
+//
 //  directprint.c
 //  SmartDeviceApp
 //
@@ -120,6 +120,17 @@ static const char *FW_DEVICE_NAMES[] = {
     "Shan Cai Yin Wang black FW1230R",
 };
 
+#define FW_DEVICE_NAME_COUNT 21
+#define MAX_NUM_PRINT_RETRIES 1
+#define MAX_JOB_NUM_VALUE 999
+
+enum kPrintType
+{
+    kPrintTypeUnknown = -1,
+    kPrintTypeLPR = 0,
+    kPrintTypeRAW = 1,
+};
+
 /**
  Print Job
  */
@@ -137,6 +148,7 @@ struct directprint_job_s
     char *host_name;
     // ホスト名出力処理の追加 END
 
+    int job_num;
     char *job_name;
     char *filename;
     char *print_settings;
@@ -147,6 +159,8 @@ struct directprint_job_s
     pthread_mutex_t mutex;
     float progress;
     int cancel_print;
+    int retry_print;
+    enum kPrintType print_type;
     
     void *caller_data;
     
@@ -189,7 +203,7 @@ void job_dump_write(FILE *file, void *buffer, size_t buffer_len);
 * @return 構造体print_job
 */
 directprint_job *directprint_job_new(const char *printer_name, const char *host_name, const char *app_name, const char *app_version,
-                                     const char *user_name, const char *job_name, const char *filename,
+                                     const char *user_name, int job_num, const char *job_name, const char *filename,
                                      const char *print_settings, const char *ip_address, directprint_callback callback)
 {
     directprint_job *print_job = (directprint_job *)malloc(sizeof(directprint_job));
@@ -200,6 +214,7 @@ directprint_job *directprint_job_new(const char *printer_name, const char *host_
     print_job->filename = strdup(filename);
     print_job->print_settings = strdup(print_settings);
     print_job->printer_name = strdup(printer_name);
+    print_job->job_num = job_num;
     //print_job->host_name = strdup(host_name);
 
 	// Mantis 71487 Start
@@ -252,6 +267,8 @@ directprint_job *directprint_job_new(const char *printer_name, const char *host_
     print_job->callback = callback;
     
     print_job->cancel_print = 0;
+    print_job->retry_print = 0;
+    print_job->print_type = kPrintTypeUnknown;
     print_job->progress = 0.0f;
     pthread_mutex_init(&print_job->mutex, 0);
     
@@ -456,6 +473,25 @@ void notify_callback(directprint_job *print_job, int status)
         return;
     }
     
+    if (status <= kJobStatusError)
+    {
+        print_job->retry_print += 1;
+        
+        /* Do not send an error status on a retry of an LPR print job. */
+        /* Instead, inform the application that the job number will be incremented. */
+        if ((print_job->print_type == kPrintTypeLPR) &&
+            (print_job->retry_print <= MAX_NUM_PRINT_RETRIES))
+        {
+            status = kJobStatusJobNumUpdate;
+            /* Increment the job number */
+            print_job->job_num = (print_job->job_num + 1) % (MAX_JOB_NUM_VALUE + 1);
+        }
+    }
+    else if (status == kJobStatusSent)
+    {
+        print_job->retry_print = 0;
+    }
+
     if (print_job->callback != 0)
     {
         print_job->callback(print_job, status, print_job->progress);
@@ -505,7 +541,9 @@ void *do_lpr_print(void *parameter)
 {
     directprint_job *print_job = (directprint_job *)parameter;
     char queueName[64];
-    
+    // Set Print Type
+    print_job->print_type = kPrintTypeLPR;
+
     // Prepare PJL header
     char pjl_header[2048];
     pjl_header[0] = 0;
@@ -629,8 +667,9 @@ void *do_lpr_print(void *parameter)
         char dname[128];
         char cname[128];
         char control_file[1024];
-        sprintf(dname, "dfA%d%s", 1, HOST_NAME);
-        sprintf(cname, "cfA%d%s", 1, HOST_NAME);
+        sprintf(dname, "dfA%03d%s", print_job->job_num, HOST_NAME);
+        sprintf(cname, "cfA%03d%s", print_job->job_num, HOST_NAME);
+        
         sprintf(control_file, "H%s\nP%s\nJ%s\nf%s\nU%s\nN%s\n", HOST_NAME, print_job->user_name, print_job->job_name, dname, dname, print_job->job_name);
         
         // CONTROL FILE INFO :  Prepare
@@ -760,7 +799,8 @@ void *do_lpr_print(void *parameter)
         // Calculate progress step
         unsigned long step_count = file_size / BUFFER_SIZE + 1;
         float data_step = (MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE / (float)step_count);
-    
+        float progress = 0.0f;
+        
         // DATA FILE : Send
         size_t read = 0;
         send(sock_fd, pjl_header, strlen(pjl_header), 0);
@@ -785,7 +825,15 @@ void *do_lpr_print(void *parameter)
                 break;
             }
 
-            print_job->progress += data_step;
+            if (print_job->progress > progress)
+            {
+                progress += data_step;
+            }
+            else
+            {
+                print_job->progress += data_step;
+                progress = 100.0f;
+            }
 
             // To prevent user from seeing 100% progress before a successful print job, set to 99.99% instead
             if(print_job->progress >= PRINTJOB_SENT_PROGRESS_PERCENTAGE) {
@@ -846,13 +894,21 @@ void *do_lpr_print(void *parameter)
     }
     close(sock_fd);
     free(buffer);
+    
+    /* Retry only once */
+    if ((print_job->retry_print > 0) && (print_job->retry_print <= MAX_NUM_PRINT_RETRIES))
+    {
+        pthread_create(&print_job->main_thread, 0, do_lpr_print, (void *)print_job);
+    }
     return 0;
 }
 
 void *do_raw_print(void *parameter)
 {
     directprint_job *print_job = (directprint_job *)parameter;
-    
+    // Set Print Type
+    print_job->print_type = kPrintTypeRAW;
+
     // Prepare PJL header
     char pjl_header[2048];
     pjl_header[0] = 0;

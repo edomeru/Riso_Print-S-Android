@@ -1,8 +1,13 @@
 
 package jp.co.riso.smartdeviceapp.common;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<MainActivity> {
@@ -134,6 +139,58 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
         }
 
         assertFalse(callback.mCalled);
+    }
+
+    public void testDirectPrint_JobIDIncrement() {
+        // Set Job ID
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);
+        editor.commit();
+
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "orientation=0", "192.168.1.206", "hostname");
+
+        //wait for response
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        int newJobNum = preferences.getInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);
+
+        assertNotSame(newJobNum, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);
+    }
+
+    public void testDirectPrint_JobIDMaxNumber() {
+        // Set Job ID
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.CONST_MAX_JOB_NUMBER);
+        editor.commit();
+
+        MockCallback callback = new MockCallback();
+        mgr.setCallback(callback);
+        mgr.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "orientation=0", "192.168.1.206", "hostname");
+
+        //wait for response
+        while (mgr.isPrinting()) {
+            //wait for response
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+
+        int newJobNum = preferences.getInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);
+        // Retry increment (Max + 2)
+        assertEquals(1, newJobNum);
     }
     
     // ================================================================================
