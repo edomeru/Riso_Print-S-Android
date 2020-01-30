@@ -8,19 +8,19 @@
 
 package jp.co.riso.smartdeviceapp.view.base;
 
-import java.io.File;
-import java.io.IOException;
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Point;
+import android.hardware.display.DisplayManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
 
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.android.util.FileUtils;
-import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
-import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartprint.R;
-import android.app.Activity;
-import android.graphics.Point;
-import android.os.Bundle;
-import android.os.Debug;
-import android.util.DebugUtils;
 
 /**
  * @class BaseActivity
@@ -29,12 +29,43 @@ import android.util.DebugUtils;
  */
 public abstract class BaseActivity extends Activity {
 
+    private int systemUIFlags;      // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         onCreateContent(savedInstanceState);
-    }       
+
+        /* V2.2 BUG: Display bug occurs only on Android 10 Phones with 2-3 button system navigation enabled when device is rotated from landscape to reverse landscape.
+         * Fix:
+         *  - Detect display rotation (landscape to reverse landscape rotation not handled in `onConfigurationChanged()`
+         *  - Hide system navigation bar upon rotation (this allows the app to cover the whole screen's width)
+         *  - Display system navigation bar again immediately
+         */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !isTablet()) {
+            View decorView = getWindow().getDecorView();
+            systemUIFlags = decorView.getSystemUiVisibility();
+            DisplayManager.DisplayListener mDisplayListener = new DisplayManager.DisplayListener() {
+                @Override
+                public void onDisplayAdded(int displayId) {
+                }
+
+                @Override
+                public void onDisplayRemoved(int displayId) {
+                }
+
+                @Override
+                public void onDisplayChanged(int displayId) {
+                    handleSystemUIRotation();
+                }
+            };
+            DisplayManager displayManager = (DisplayManager) SmartDeviceApp.getAppContext().getSystemService(Context.DISPLAY_SERVICE);
+            if (displayManager != null) {
+                displayManager.registerDisplayListener(mDisplayListener, new Handler());
+            }
+        }
+    }
     
     // ================================================================================
     // Abstract Functions
@@ -46,7 +77,27 @@ public abstract class BaseActivity extends Activity {
      * @param savedInstanceState Bundle which contains a saved state during recreation
      */
     protected abstract void onCreateContent(Bundle savedInstanceState);
-    
+
+    // ================================================================================
+    // Private Functions
+    // ================================================================================
+
+    private void handleSystemUIRotation() {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(systemUIFlags | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);       // Hide system navigation bar
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    View decorView = getWindow().getDecorView();
+                    decorView.setSystemUiVisibility(systemUIFlags | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);         // Show system navigation bar
+                }
+            }, 10);
+        }
+    }
+
     // ================================================================================
     // Public Functions
     // ================================================================================
