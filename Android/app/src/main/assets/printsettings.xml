@@ -668,7 +668,7 @@
             </setting>
         </group>
     </printertype>
-    <printertype id="RAG">
+    <printertype id="FT">
         <group
             name="basic"
             text="ids_lbl_basic" >
@@ -894,7 +894,7 @@
             </setting>
         </group>
     </printertype>
-    <printertype id="LIO">
+    <printertype id="GL">
         <group
             name="basic"
             text="ids_lbl_basic" >

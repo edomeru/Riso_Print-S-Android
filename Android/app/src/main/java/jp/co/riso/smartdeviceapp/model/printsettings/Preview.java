@@ -98,20 +98,20 @@ public class Preview {
         }
 
         /**
-         * @brief Retrieves an array of paper size options for RAG series
+         * @brief Retrieves an array of paper size options for FT series
          *
          * @return Paper size options array
          */
-        public static PaperSize[] valuesRAG() {
+        public static PaperSize[] valuesFT() {
             return new PaperSize[] {A3, A3W, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
         }
 
         /**
-         * @brief Retrieves an array of paper size options for LIO series
+         * @brief Retrieves an array of paper size options for GL series
          *
          * @return Paper size options array
          */
-        public static PaperSize[] valuesLIO() {
+        public static PaperSize[] valuesGL() {
             return new PaperSize[] {A3, A3W, SRA3, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
         }
 
@@ -119,9 +119,9 @@ public class Preview {
     }
 
     /**
-     * @brief InputTray_RAG_LIO print settings for RAG / LIO series that refers to the tray location of input paper.
+     * @brief InputTray_FT_GL print settings for FT / GL series that refers to the tray location of input paper.
      */
-    public enum InputTray_RAG_LIO {
+    public enum InputTray_FT_GL {
         AUTO,  ///< Auto Tray
         STANDARD,  ///< Standard Tray
         TRAY1,  ///< Tray 1
@@ -130,21 +130,21 @@ public class Preview {
         EXTERNAL_FEEDER; ///< External 2000 sheets
 
         /**
-         * @brief Retrieves an array of input tray options for RAG series
+         * @brief Retrieves an array of input tray options for FT series
          *
          * @return Input tray options array
          */
-        public static InputTray_RAG_LIO[] valuesRAG() {
-            return new InputTray_RAG_LIO[] {AUTO, STANDARD, TRAY1, TRAY2, EXTERNAL_FEEDER};
+        public static InputTray_FT_GL[] valuesFT() {
+            return new InputTray_FT_GL[] {AUTO, STANDARD, TRAY1, TRAY2, EXTERNAL_FEEDER};
         }
 
         /**
-         * @brief Retrieves an array of input tray options for LIO series
+         * @brief Retrieves an array of input tray options for GL series
          *
          * @return Input tray options array
          */
-        public static InputTray_RAG_LIO[] valuesLIO() {
-            return new InputTray_RAG_LIO[] {AUTO, STANDARD, TRAY1, TRAY2, TRAY3, EXTERNAL_FEEDER};
+        public static InputTray_FT_GL[] valuesGL() {
+            return new InputTray_FT_GL[] {AUTO, STANDARD, TRAY1, TRAY2, TRAY3, EXTERNAL_FEEDER};
         }
     }
 

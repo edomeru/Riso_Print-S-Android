@@ -229,21 +229,21 @@ public class Printer implements Parcelable {
     }
 
     /**
-     * @brief Determines if the printer is of the RAG series
+     * @brief Determines if the printer is of the FT series
      *
-     * @return True if the printers if of the RAG series, false otherwise
+     * @return True if the printers if of the FT series, false otherwise
      */
-    public boolean isPrinterRag() {
-        return getPrinterType().equals(AppConstants.PRINTER_MODEL_RAG);
+    public boolean isPrinterFT() {
+        return getPrinterType().equals(AppConstants.PRINTER_MODEL_FT);
     }
 
     /**
-     * @brief Determines if the printer is of the LIO series
+     * @brief Determines if the printer is of the GL series
      *
-     * @return True if the printers if of the LIO series, false otherwise
+     * @return True if the printers if of the GL series, false otherwise
      */
-    public boolean isPrinterLio() {
-        return getPrinterType().equals(AppConstants.PRINTER_MODEL_LIO);
+    public boolean isPrinterGl() {
+        return getPrinterType().equals(AppConstants.PRINTER_MODEL_GL);
     }
 
     /**
@@ -275,13 +275,13 @@ public class Printer implements Parcelable {
             return;
         }
 
-        if(mName.contains(AppConstants.PRINTER_MODEL_RAG)){
-            mPrinterType = AppConstants.PRINTER_MODEL_RAG;
+        if(mName.contains(AppConstants.PRINTER_MODEL_FT)){
+            mPrinterType = AppConstants.PRINTER_MODEL_FT;
             return;
         }
 
-        if (mName.contains(AppConstants.PRINTER_MODEL_LIO)) {
-            mPrinterType = AppConstants.PRINTER_MODEL_LIO;
+        if (mName.contains(AppConstants.PRINTER_MODEL_GL)) {
+            mPrinterType = AppConstants.PRINTER_MODEL_GL;
             return;
         }
 

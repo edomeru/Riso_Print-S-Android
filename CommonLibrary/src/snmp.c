@@ -30,8 +30,8 @@
 #define SNMPV3_USER "risosnmp"
 #define SNMPV3_PASS "risosnmp"
 
-#define RAG_PRINTER_TYPE "RAG"
-#define LIO_PRINTER_TYPE "LIO"
+#define FT_PRINTER_TYPE "FT"
+#define GL_PRINTER_TYPE "GL"
 
 #define DETECT_ALL_DEVICES 0  // 0 for RISO only
 
@@ -658,16 +658,16 @@ int snmp_device_get_series(snmp_device *device)
         }
     }
 
-    if (strstr(device->device_info[MIB_DEV_DESCR], RAG_PRINTER_TYPE) != NULL)
+    if (strstr(device->device_info[MIB_DEV_DESCR], FT_PRINTER_TYPE) != NULL)
     {
-        // RAG Series
-        return kPrinterSeriesRAG;
+        // FT Series
+        return kPrinterSeriesFT;
     }
 
-    if (strstr(device->device_info[MIB_DEV_DESCR], LIO_PRINTER_TYPE) != NULL)
+    if (strstr(device->device_info[MIB_DEV_DESCR], GL_PRINTER_TYPE) != NULL)
     {
-        // LIO Series
-        return kPrinterSeriesLIO;
+        // GL Series
+        return kPrinterSeriesGL;
     }
 
     return kPrinterSeriesGD;
@@ -698,13 +698,13 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
             if ((strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityStapler]) > 0) ||
                         (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin23Holes]) > 0) ||
                         (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin24Holes]) > 0) ||
-                        (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin0Holes]) > 0))//Mantis82960
+                        (strlen(device->device_info[MIB_HW_CAP_9]) > 0))//Mantis82960
             {
                 supported = 1;
             }
             break;
         case kSnmpCapabilityExternalFeeder:
-            if ((snmp_device_get_series(device) == kPrinterSeriesRAG || snmp_device_get_series(device) == kPrinterSeriesLIO) && 
+            if ((snmp_device_get_series(device) == kPrinterSeriesFT || snmp_device_get_series(device) == kPrinterSeriesGL) && 
                 strlen(device->device_info[MIB_HW_CAP_8]) > 0) {
                 supported = 1;
             } else {
@@ -712,7 +712,7 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
             }
             break;
         case kSnmpCapabilityFin0Holes:
-            if ((snmp_device_get_series(device) == kPrinterSeriesRAG || snmp_device_get_series(device) == kPrinterSeriesLIO) && 
+            if ((snmp_device_get_series(device) == kPrinterSeriesFT || snmp_device_get_series(device) == kPrinterSeriesGL) && 
                 strlen(device->device_info[MIB_HW_CAP_9]) > 0) {
                 supported = 1;
             } else {

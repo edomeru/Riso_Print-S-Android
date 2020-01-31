@@ -61,7 +61,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_RAG_LIO;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_GL;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
@@ -341,24 +341,24 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (getPrinter().isPrinterRag() || getPrinter().isPrinterLio()) {
+        if (getPrinter().isPrinterFT() || getPrinter().isPrinterGl()) {
 
             /* Specify the input tray and paper size arrays to be used */
-            InputTray_RAG_LIO[] inputTrayOptions;
+            InputTray_FT_GL[] inputTrayOptions;
             PaperSize[] paperSizeOptions;
 
-            if (getPrinter().isPrinterRag()) {
-                inputTrayOptions = InputTray_RAG_LIO.valuesRAG();
-                paperSizeOptions = PaperSize.valuesRAG();
+            if (getPrinter().isPrinterFT()) {
+                inputTrayOptions = InputTray_FT_GL.valuesFT();
+                paperSizeOptions = PaperSize.valuesFT();
 
             } else {
-                inputTrayOptions = InputTray_RAG_LIO.valuesLIO();
-                paperSizeOptions = PaperSize.valuesLIO();
+                inputTrayOptions = InputTray_FT_GL.valuesGL();
+                paperSizeOptions = PaperSize.valuesGL();
             }
 
             if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
                 boolean isExternal =
-                        inputTrayOptions[mPrintSettings.getInputTray().ordinal()] == InputTray_RAG_LIO.EXTERNAL_FEEDER;
+                        inputTrayOptions[mPrintSettings.getInputTray().ordinal()] == InputTray_FT_GL.EXTERNAL_FEEDER;
                 switch (paperSizeOptions[value]) {
                     case A4:
                     case B5:
@@ -386,7 +386,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     case TRAY2:
                         return true;
                     case TRAY3:
-                        return getPrinter().isPrinterLio();
+                        return getPrinter().isPrinterGl();
                     case EXTERNAL_FEEDER:
                         return isPaperSupported;
                 }
@@ -637,37 +637,37 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (getPrinter().isPrinterRag() || getPrinter().isPrinterLio()) {
+        if (getPrinter().isPrinterFT() || getPrinter().isPrinterGl()) {
 
             /* Specify the input tray and paper size arrays to be used */
-            InputTray_RAG_LIO[] inputTrayOptions;
+            InputTray_FT_GL[] inputTrayOptions;
             PaperSize[] paperSizeOptions;
 
-            if (getPrinter().isPrinterRag()) {
-                inputTrayOptions = InputTray_RAG_LIO.valuesRAG();
-                paperSizeOptions = PaperSize.valuesRAG();
+            if (getPrinter().isPrinterFT()) {
+                inputTrayOptions = InputTray_FT_GL.valuesFT();
+                paperSizeOptions = PaperSize.valuesFT();
 
             } else {
-                inputTrayOptions = InputTray_RAG_LIO.valuesLIO();
-                paperSizeOptions = PaperSize.valuesLIO();
+                inputTrayOptions = InputTray_FT_GL.valuesGL();
+                paperSizeOptions = PaperSize.valuesGL();
             }
 
-            // Constraint #7 Paper Size - Input Tray (External) for RAG or LIO series
+            // Constraint #7 Paper Size - Input Tray (External) for FT or GL series
             if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
                 int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
                 if (paperSizeOptions[value] != PaperSize.A4 &&
                         paperSizeOptions[value] != PaperSize.B5 &&
                         paperSizeOptions[value] != PaperSize.LETTER &&
                         paperSizeOptions[value] != PaperSize.JUROKUKAI &&
-                        inputTrayOptions[inputTrayValue] == InputTray_RAG_LIO.EXTERNAL_FEEDER) {
-                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_RAG_LIO.AUTO.ordinal());
+                        inputTrayOptions[inputTrayValue] == InputTray_FT_GL.EXTERNAL_FEEDER) {
+                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_FT_GL.AUTO.ordinal());
                 }
             }
 
-            // Constraint #8 Input Tray (External) - Paper Size for RAG or LIO series
+            // Constraint #8 Input Tray (External) - Paper Size for FT or GL series
             if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
                 int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
-                if (inputTrayOptions[value] == InputTray_RAG_LIO.EXTERNAL_FEEDER) {
+                if (inputTrayOptions[value] == InputTray_FT_GL.EXTERNAL_FEEDER) {
                     if (paperSizeOptions[paperSizeValue] != PaperSize.A4 &&
                             paperSizeOptions[paperSizeValue] != PaperSize.B5 &&
                             paperSizeOptions[paperSizeValue] != PaperSize.LETTER &&
@@ -790,8 +790,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 }
             }
             if (name.equals(PrintSettings.TAG_INPUT_TRAY)) {
-                if (getPrinter().isPrinterRag()) {
-                    switch (InputTray_RAG_LIO.valuesRAG()[value]) {
+                if (getPrinter().isPrinterFT()) {
+                    switch (InputTray_FT_GL.valuesFT()[value]) {
                         case AUTO:
                         case STANDARD:
                         case TRAY1:
@@ -801,15 +801,15 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                             return getPrinter().getConfig().isExternalFeederAvailable();
                     }
                 }
-                if (getPrinter().isPrinterLio()) {
-                    switch (InputTray_RAG_LIO.valuesLIO()[value]) {
+                if (getPrinter().isPrinterGl()) {
+                    switch (InputTray_FT_GL.valuesGL()[value]) {
                         case AUTO:
                         case STANDARD:
                         case TRAY1:
                         case TRAY2:
                             return true;
                         case TRAY3:
-                            return getPrinter().isPrinterLio();
+                            return getPrinter().isPrinterGl();
                         case EXTERNAL_FEEDER:
                             return getPrinter().getConfig().isExternalFeederAvailable();
                     }

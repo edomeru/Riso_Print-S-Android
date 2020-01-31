@@ -1,9 +1,9 @@
 //
-//  printsettings_lio.c
+//  printsettings_ft.c
 //  SmartDeviceApp
 //
 //  Created by RISO KAGAKU CORPORATION.
-//  Copyright (c) 2019 RISO KAGAKU CORPORATION. All rights reserved.
+//  Copyright (c) 2018 RISO KAGAKU CORPORATION. All rights reserved.
 //
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
@@ -85,9 +85,9 @@ typedef enum
 const static char *color_mode[] =
 {
     "AUTO",
-    "FIVECOLOR",
+    "FULLCOLOR",
     "GRAYSCALE",
-    "DUAL2",
+    "DUAL",
 };
 
 const static char *orientation[] =
@@ -106,7 +106,6 @@ const static char *paper_size[] =
 {
     "A3",
     "A3W",
-    "SRA3",
     "A4",
     "A5",
     "A6",
@@ -131,7 +130,9 @@ const static char *paper_type[] =
     "HCMATTED",
     "HIGHQUALITY2",
     "POSTCARDJ",
-    "LIGHT"
+    "LIGHT",
+    "RECYCLED",
+	"PLAINPREMIUM"
 };
 
 const static char *input_tray_media_source[] =
@@ -139,7 +140,6 @@ const static char *input_tray_media_source[] =
     "STANDARD",
     "TRAY1",
     "TRAY2",
-    "TRAY3",
     "EXTERNALFEEDER"
 };
 
@@ -281,8 +281,8 @@ typedef struct
 extern void parse(char *settings, setting_value values[]);
 extern void parse_line(char *line, char *name, char *value);
 extern int get_setting_index(const char *name);
-void add_pjl_lio(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command);
-void create_pjl_lio(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion)
+void add_pjl_ft(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command);
+void create_pjl_ft(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion)
 {
     if (strlen(settings) == 0)
     {
@@ -300,7 +300,7 @@ void create_pjl_lio(char *pjl, char *settings, char *printerName, char *hostName
     
     for (int i = 0; i < kPjlCommandCount; i++)
     {
-    	add_pjl_lio(pjl, printerName, hostName, appVersion, values, i);
+    	add_pjl_ft(pjl, printerName, hostName, appVersion, values, i);
     }
     
     for (int i = 0; i < kPrintSettingsCount; i++)
@@ -312,7 +312,7 @@ void create_pjl_lio(char *pjl, char *settings, char *printerName, char *hostName
     }
 }
 
-void add_pjl_lio(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command)
+void add_pjl_ft(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command)
 {
     char pjl_line[1024];
     switch (command)
