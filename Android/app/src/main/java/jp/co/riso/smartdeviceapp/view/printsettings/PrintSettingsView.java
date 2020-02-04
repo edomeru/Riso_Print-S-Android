@@ -1657,6 +1657,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             switchView.setOnCheckedChangeListener(this);
             switchView.setTag(tag);
             switchView.setLayoutParams(params);
+            switchView.setTextOff(getResources().getString(R.string.ids_lbl_off).toUpperCase());
+            switchView.setTextOn(getResources().getString(R.string.ids_lbl_on).toUpperCase());
             return switchView;
         } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_NUMERIC)) {
             int margin = getResources().getDimensionPixelSize(R.dimen.printsettings_icon_setting_padding);
