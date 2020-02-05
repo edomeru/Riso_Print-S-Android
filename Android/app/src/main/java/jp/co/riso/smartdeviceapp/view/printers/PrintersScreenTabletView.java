@@ -608,14 +608,14 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
                             ViewHolder viewHolder = (ViewHolder) parentView.getTag();
                             Printer printer = (Printer) viewHolder.mIpAddress.getTag();
                                                         
-                            if (mPrinterManager.getDefaultPrinter() == printer.getId())                            {
+                            if (mPrinterManager.getDefaultPrinter() == printer.getId()) {
                                 return;
                             }
                             if (mPrinterManager.setDefaultPrinter(printer)) {
                                 setPrinterViewToDefault(viewHolder);
                             } else {
-                                InfoDialogFragment info = InfoDialogFragment.newInstance(getContext().getString(R.string.ids_lbl_printers),
-                                        getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
+                                InfoDialogFragment info = InfoDialogFragment.newInstance(R.string.ids_lbl_printers,
+                                        R.string.ids_err_msg_db_failure, R.string.ids_lbl_ok);
                                 DialogUtils.displayDialog((Activity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
                             }
                         }

@@ -161,10 +161,10 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         } else if (isTablet()) {
             return;
         }
-        String title = getResources().getString(R.string.ids_lbl_add_printer);
-        String msg = getResources().getString(R.string.ids_info_msg_printer_add_successful);
+        int title = R.string.ids_lbl_add_printer;
+        int msg = R.string.ids_info_msg_printer_add_successful;
 
-        ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
+        ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, R.string.ids_lbl_ok, 0);
         info.setTargetFragment(this, 0);
         
         if (getActivity() != null && getActivity() instanceof MainActivity) {
@@ -188,30 +188,30 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 return;
             }
         }
-        String title = getResources().getString(R.string.ids_lbl_add_printer);
-        String errMsg = null;
+        int title = R.string.ids_lbl_add_printer;
+        int errMsg = 0;
         DialogFragment info = null;
         
         switch (err) {
             case ERR_INVALID_IP_ADDRESS:
-                errMsg = getResources().getString(R.string.ids_err_msg_invalid_ip_address);
+                errMsg = R.string.ids_err_msg_invalid_ip_address;
                 break;
             case ERR_CAN_NOT_ADD_PRINTER:
-                errMsg = getResources().getString(R.string.ids_err_msg_cannot_add_printer);
+                errMsg = R.string.ids_err_msg_cannot_add_printer;
                 break;
             case ERR_PRINTER_ADDED_WARNING:
-                errMsg = getResources().getString(R.string.ids_info_msg_warning_cannot_find_printer);
+                errMsg = R.string.ids_info_msg_warning_cannot_find_printer;
                 break;
             case ERR_DB_FAILURE:
-                errMsg = getResources().getString(R.string.ids_err_msg_db_failure);
+                errMsg = R.string.ids_err_msg_db_failure;
                 break;
         }
         
         if(err == ERR_PRINTER_ADDED_WARNING) {
-            info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok), null);
+            info = ConfirmDialogFragment.newInstance(title, errMsg, R.string.ids_lbl_ok, 0);
             info.setTargetFragment(this, 0);
         } else {
-            info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));    
+            info = InfoDialogFragment.newInstance(title, errMsg, R.string.ids_lbl_ok);
         }
         DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }

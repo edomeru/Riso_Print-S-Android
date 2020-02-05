@@ -232,22 +232,22 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
         
         if (printer == null || printSettings == null) {
-            String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
-            String btnMsg = getString(R.string.ids_lbl_ok);
+            int strMsg = R.string.ids_err_msg_no_selected_printer;
+            int btnMsg = R.string.ids_lbl_ok;
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
             DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
             return;
         }
         
         if (!NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
-            String strMsg = getString(R.string.ids_err_msg_network_error);
-            String btnMsg = getString(R.string.ids_lbl_ok);
+            int strMsg = R.string.ids_err_msg_network_error;
+            int btnMsg = R.string.ids_lbl_ok;
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
             DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
             return;
         }
         
-        String btnMsg = null;
+        int btnMsg = 0;
         String jobname = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
         
         mDirectPrintManager = new DirectPrintManager();
@@ -274,13 +274,13 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             // Ver.2.0.4.2 End
         }
         if (ret) {
-            btnMsg = getResources().getString(R.string.ids_lbl_cancel);
-            mWaitingDialog = WaitingDialogFragment.newInstance(null, mPrintMsg, true, btnMsg);
+            btnMsg = R.string.ids_lbl_cancel;
+            mWaitingDialog = WaitingDialogFragment.newInstance(null, mPrintMsg, true, getString(btnMsg));
             mWaitingDialog.setTargetFragment(this, REQUEST_CODE_CANCEL);
             DialogUtils.displayDialog(getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
         } else {
-            String strMsg = getString(R.string.ids_info_msg_print_job_failed);
-            btnMsg = getString(R.string.ids_lbl_ok);
+            int strMsg = R.string.ids_info_msg_print_job_failed;
+            btnMsg = R.string.ids_lbl_ok;
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
             DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
         }
@@ -304,19 +304,19 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
                 String filename = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
                 InfoDialogFragment fragment = null;
-                String strMsg = null;
-                String btnMsg = null;
+                int strMsg = 0;
+                int btnMsg = 0;
                 
                 if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
                     
-                    strMsg = getString(R.string.ids_info_msg_print_job_successful);
-                    btnMsg = getString(R.string.ids_lbl_ok);
+                    strMsg = R.string.ids_info_msg_print_job_successful;
+                    btnMsg = R.string.ids_lbl_ok;
                 } else {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.ERROR);
                     
-                    strMsg = getString(R.string.ids_info_msg_print_job_failed);
-                    btnMsg = getString(R.string.ids_lbl_ok);
+                    strMsg = R.string.ids_info_msg_print_job_failed;
+                    btnMsg = R.string.ids_lbl_ok;
                 }
                 // Show dialog
                 fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);

@@ -46,8 +46,8 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
      * 
      * @return ConfirmDialogFragment instance
      */
-    public static ConfirmDialogFragment newInstance(String message, String buttonPosTitle, String buttonNegTitle) {
-        return ConfirmDialogFragment.newInstance(null, message, buttonPosTitle, buttonNegTitle);
+    public static ConfirmDialogFragment newInstance(int message, int buttonPosTitle, int buttonNegTitle) {
+        return ConfirmDialogFragment.newInstance(0, message, buttonPosTitle, buttonNegTitle);
     }
     
     /**
@@ -60,15 +60,15 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
      * 
      * @return ConfirmDialogFragment instance
      */
-    public static ConfirmDialogFragment newInstance(String title, String message, String buttonPosTitle, String buttonNegTitle) {
+    public static ConfirmDialogFragment newInstance(int title, int message, int buttonPosTitle, int buttonNegTitle) {
         ConfirmDialogFragment dialog = new ConfirmDialogFragment();
         
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        args.putString(KEY_TITLE, title);
-        args.putString(KEY_MESSAGE, message);
-        args.putString(KEY_POS_BUTTON, buttonPosTitle);
-        args.putString(KEY_NEG_BUTTON, buttonNegTitle);
+        args.putInt(KEY_TITLE, title);
+        args.putInt(KEY_MESSAGE, message);
+        args.putInt(KEY_POS_BUTTON, buttonPosTitle);
+        args.putInt(KEY_NEG_BUTTON, buttonNegTitle);
         
         dialog.setArguments(args);
         
@@ -82,27 +82,27 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        String title = getArguments().getString(KEY_TITLE);
-        String message = getArguments().getString(KEY_MESSAGE);
-        String buttonPosTitle = getArguments().getString(KEY_POS_BUTTON);
-        String buttonNegTitle = getArguments().getString(KEY_NEG_BUTTON);
+        int title = getArguments().getInt(KEY_TITLE);
+        int message = getArguments().getInt(KEY_MESSAGE);
+        int buttonPosTitle = getArguments().getInt(KEY_POS_BUTTON);
+        int buttonNegTitle = getArguments().getInt(KEY_NEG_BUTTON);
         
         ContextThemeWrapper newContext = new ContextThemeWrapper(getActivity(), android.R.style.TextAppearance_Holo_DialogWindowTitle);
         AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
         
-        if (title != null) {
+        if (title != 0) {
             builder.setTitle(title);
         }
         
-        if (message != null) {
+        if (message != 0) {
             builder.setMessage(message);
         }
         
-        if (buttonPosTitle != null) {
+        if (buttonPosTitle != 0) {
             builder.setPositiveButton(buttonPosTitle, this);
         }
         
-        if (buttonNegTitle != null) {
+        if (buttonNegTitle != 0) {
             builder.setNegativeButton(buttonNegTitle, this);
         }
         
@@ -135,7 +135,7 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
             listener.onCancel();
         }
     }
-    
+
     // ================================================================================
     // Internal Classes
     // ================================================================================

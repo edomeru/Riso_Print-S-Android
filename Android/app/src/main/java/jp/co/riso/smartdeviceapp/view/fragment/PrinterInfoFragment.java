@@ -291,8 +291,8 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                             if (mPrinterManager.setDefaultPrinter(mPrinter)) {
                                 mDefaultPrinterAdapter.isNoDisabled = true;
                             } else {
-                                InfoDialogFragment info = InfoDialogFragment.newInstance(getActivity().getString(R.string.ids_lbl_printer_info),
-                                        getActivity().getString(R.string.ids_err_msg_db_failure), getActivity().getString(R.string.ids_lbl_ok));
+                                InfoDialogFragment info = InfoDialogFragment.newInstance(R.string.ids_lbl_printer_info,
+                                        R.string.ids_err_msg_db_failure, R.string.ids_lbl_ok);
                                 DialogUtils.displayDialog(getActivity(), KEY_PRINTER_INFO_ERR_DIALOG, info);
                             }
                         }
