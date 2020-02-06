@@ -429,8 +429,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 updatePageLabel();
             }
         }
-
-
     }
     
     // ================================================================================
