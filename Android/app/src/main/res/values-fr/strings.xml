@@ -168,5 +168,6 @@
     <string name="ids_lbl_valid_community_name">Caractères valides:\na-zA-Z0-9,./:;@[\\¥]^_</string>
     <string name="ids_err_msg_invalid_community_name">Veuillez entrer une Nom de Communauté SNMP valide</string>
     <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
+    <string name="ids_err_msg_uri_permission_expired">Erreur d\'accès du fichier a été rencontré. Veuillez sélectionner un fichier et réessayer.</string>
 
 </resources>
