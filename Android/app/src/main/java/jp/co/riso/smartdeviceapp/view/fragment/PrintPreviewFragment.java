@@ -150,8 +150,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     e.printStackTrace();
                 } catch (SecurityException e) {
                     e.printStackTrace();
-                    String message = getResources().getString(R.string.ids_err_msg_uri_permission_expired);
-                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    int message = R.string.ids_err_msg_uri_permission_expired;
+                    int button = R.string.ids_lbl_ok;
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 }
             }
@@ -260,8 +260,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         e.printStackTrace();
                     } catch (SecurityException e) {
                         e.printStackTrace();
-                        String message = getResources().getString(R.string.ids_err_msg_uri_permission_expired);
-                        String button = getResources().getString(R.string.ids_lbl_ok);
+                        int message = R.string.ids_err_msg_uri_permission_expired;
+                        int button = R.string.ids_lbl_ok;
                         DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                         return;
                     }
