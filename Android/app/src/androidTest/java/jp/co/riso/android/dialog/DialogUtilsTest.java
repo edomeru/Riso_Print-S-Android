@@ -2,6 +2,8 @@
 package jp.co.riso.android.dialog;
 
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartprint.R;
+
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
@@ -9,8 +11,8 @@ import android.view.WindowManager;
 
 public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivity> {
     private static final String TAG = "DialogUtilsTest";
-    private static final String MSG = "message";
-    private static final String BUTTON_TITLE = "OK";
+    private static final int MSG = R.string.ids_app_name;
+    private static final int BUTTON_TITLE = R.string.ids_lbl_ok;
 
     public DialogUtilsTest() {
         super(MainActivity.class);

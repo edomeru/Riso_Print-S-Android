@@ -374,9 +374,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
                 // Display an explanation to the user that the permission is needed
                 if (mConfirmDialogFragment == null) {
-                    final String message = getActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed);
-                    final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
-                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
+                    final int message = R.string.ids_err_msg_storage_permission_not_allowed;
+                    final int positiveButton = R.string.ids_lbl_ok;
+                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, 0);
                     mConfirmDialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
                     DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                 }
@@ -578,19 +578,19 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * @retval ids_err_msg_open_failed Open failed status
      * @retval Empty No error status
      */
-    private String getPdfErrorMessage(int status) {
+    private int getPdfErrorMessage(int status) {
         switch (status) {
             case PDFFileManager.PDF_ENCRYPTED:
-                return getResources().getString(R.string.ids_err_msg_pdf_encrypted);
+                return R.string.ids_err_msg_pdf_encrypted;
             case PDFFileManager.PDF_PRINT_RESTRICTED:
-                return getResources().getString(R.string.ids_err_msg_pdf_printing_not_allowed);
+                return R.string.ids_err_msg_pdf_printing_not_allowed;
             case PDFFileManager.PDF_OPEN_FAILED:
-                return getResources().getString(R.string.ids_err_msg_open_failed);
+                return R.string.ids_err_msg_open_failed;
             case PDFFileManager.PDF_NOT_ENOUGH_FREE_SPACE:
-                return getResources().getString(R.string.ids_err_msg_not_enough_space);
+                return R.string.ids_err_msg_not_enough_space;
         }
         
-        return "";
+        return 0;
     }
     
     // ================================================================================
@@ -670,8 +670,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     }
                     break;
                 default:
-                    String message = getPdfErrorMessage(status);
-                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    int message = getPdfErrorMessage(status);
+                    int button = R.string.ids_lbl_ok;
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                     break;
             }
@@ -765,9 +765,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
 
                 if (printerManager.getDefaultPrinter() == PrinterManager.EMPTY_ID) {
-                    String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
-                    String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
-                    String btnMsg = getString(R.string.ids_lbl_ok);
+                    int titleMsg = R.string.ids_lbl_print_settings;
+                    int strMsg = R.string.ids_err_msg_no_selected_printer;
+                    int btnMsg = R.string.ids_lbl_ok;
                     InfoDialogFragment fragment = InfoDialogFragment.newInstance(titleMsg, strMsg, btnMsg);
                     DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
                     mPauseableHandler.resume();

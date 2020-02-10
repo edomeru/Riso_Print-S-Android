@@ -1,6 +1,9 @@
 package jp.co.riso.android.dialog;
 
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartprint.R;
+
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -14,9 +17,9 @@ import android.widget.TextView;
 public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     private static final String TAG = "InfoDialogFragmentTest";
-    private static final String TITLE = "title";
-    private static final String MSG = "message";
-    private static final String BUTTON_TITLE = "OK";
+    private static final int TITLE = R.string.ids_app_name;
+    private static final int MSG = R.string.ids_app_name;
+    private static final int BUTTON_TITLE = R.string.ids_lbl_ok;
     private MainActivity mActivity;
 
     public InfoDialogFragmentTest() {
@@ -40,7 +43,7 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     public void testNewInstance_WithNull() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(null, null) ;
+        InfoDialogFragment info = InfoDialogFragment.newInstance(0, 0) ;
         assertNotNull(info);
         info.show(mActivity.getFragmentManager(), TAG);
         waitFewSeconds();
@@ -74,12 +77,12 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
 
         View msg = dialog.findViewById(android.R.id.message);
         assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
 
         Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
 
         assertNotNull(b);
-        assertEquals(BUTTON_TITLE, b.getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE), b.getText());
         info.dismissAllowingStateLoss();
     }
 
@@ -101,18 +104,18 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
 
         View msg = dialog.findViewById(android.R.id.message);
         assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
 
         int titleId = mActivity.getResources().getIdentifier("alertTitle", "id", "android");
         assertFalse(titleId == 0);
         View title = dialog.findViewById(titleId);
         assertNotNull(title);
-        assertEquals(TITLE, ((TextView) title).getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(TITLE), ((TextView) title).getText());
 
         Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
 
         assertNotNull(b);
-        assertEquals(BUTTON_TITLE, b.getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE), b.getText());
         info.dismissAllowingStateLoss();
     }
 

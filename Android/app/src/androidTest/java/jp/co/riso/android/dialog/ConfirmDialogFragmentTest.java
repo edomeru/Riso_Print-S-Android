@@ -1,7 +1,10 @@
 package jp.co.riso.android.dialog;
 
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartprint.R;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
@@ -18,10 +21,10 @@ import android.widget.TextView;
 
 public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<MainActivity> {
     private static final String TAG = "ConfirmDialogFragmentTest";
-    private static final String TITLE = "title";
-    private static final String MSG = "message";
-    private static final String POSITIVE_BUTTON = "OK";
-    private static final String NEGATIVE_BUTTON = "cancel";
+    private static final int TITLE = R.string.ids_app_name;
+    private static final int MSG = R.string.ids_app_name;
+    private static final int POSITIVE_BUTTON = R.string.ids_lbl_ok;
+    private static final int NEGATIVE_BUTTON = R.string.ids_lbl_cancel;
 
     private MainActivity mActivity;
 
@@ -50,7 +53,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testNewInstance_WithNull() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(null, null, null) ;
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(0, 0, 0) ;
         assertNotNull(c);
         c.show(mActivity.getFragmentManager(), TAG);
         waitFewSeconds();
@@ -83,7 +86,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         View msg = dialog.findViewById(android.R.id.message);
         assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
 
         Button pos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         Button neg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
@@ -91,8 +94,8 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(pos);
         assertNotNull(neg);
 
-        assertEquals(POSITIVE_BUTTON, pos.getText());
-        assertEquals(NEGATIVE_BUTTON, neg.getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON), pos.getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON), neg.getText());
         c.dismissAllowingStateLoss();
     }
 
@@ -112,13 +115,13 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         View msg = dialog.findViewById(android.R.id.message);
         assertNotNull(msg);
-        assertEquals(MSG, ((TextView) msg).getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
 
         int titleId = mActivity.getResources().getIdentifier("alertTitle", "id", "android");
         assertFalse(titleId == 0);
         View title = dialog.findViewById(titleId);
         assertNotNull(title);
-        assertEquals(TITLE, ((TextView) title).getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(TITLE), ((TextView) title).getText());
 
         Button pos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         Button neg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
@@ -126,8 +129,8 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(pos);
         assertNotNull(neg);
 
-        assertEquals(POSITIVE_BUTTON, pos.getText());
-        assertEquals(NEGATIVE_BUTTON, neg.getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON), pos.getText());
+        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON), neg.getText());
 
         c.dismissAllowingStateLoss();
     }
