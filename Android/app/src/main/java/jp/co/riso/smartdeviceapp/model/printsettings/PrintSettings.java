@@ -40,7 +40,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_GL;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_OIS_GL;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -342,7 +342,7 @@ public class PrintSettings {
     }
 
     /**
-     * @brief Retrieves InputTray_FT_GL setting value i.e. tray location of input paper.
+     * @brief Retrieves InputTray_FT_OIS_GL setting value i.e. tray location of input paper.
      *
      * @retval AUTO
      * @retval STANDARD
@@ -351,8 +351,8 @@ public class PrintSettings {
      * @retval TRAY3
      * @retval EXTERNAL_FEEDER
      */
-    public InputTray_FT_GL getInputTray() {
-        return InputTray_FT_GL.values()[mSettingValues.get(TAG_INPUT_TRAY)];
+    public InputTray_FT_OIS_GL getInputTray() {
+        return InputTray_FT_OIS_GL.values()[mSettingValues.get(TAG_INPUT_TRAY)];
     }
 
     /**

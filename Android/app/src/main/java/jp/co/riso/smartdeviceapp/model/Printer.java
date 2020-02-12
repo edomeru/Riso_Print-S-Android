@@ -229,12 +229,12 @@ public class Printer implements Parcelable {
     }
 
     /**
-     * @brief Determines if the printer is of the FT series
+     * @brief Determines if the printer is of the FT or OIS series
      *
-     * @return True if the printers if of the FT series, false otherwise
+     * @return True if the printers if of the FT or OIS series, false otherwise
      */
-    public boolean isPrinterFT() {
-        return getPrinterType().equals(AppConstants.PRINTER_MODEL_FT);
+    public boolean isPrinterFTorOIS() {
+        return getPrinterType().equals(AppConstants.PRINTER_MODEL_FT);      // Classify OIS as FT model
     }
 
     /**
@@ -275,8 +275,8 @@ public class Printer implements Parcelable {
             return;
         }
 
-        if(mName.contains(AppConstants.PRINTER_MODEL_FT)){
-            mPrinterType = AppConstants.PRINTER_MODEL_FT;
+        if(mName.contains(AppConstants.PRINTER_MODEL_FT) || mName.contains(AppConstants.PRINTER_MODEL_OIS)){
+            mPrinterType = AppConstants.PRINTER_MODEL_FT;       // Classify OIS as FT model
             return;
         }
 

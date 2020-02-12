@@ -32,6 +32,7 @@
 
 #define FT_PRINTER_TYPE "FT"
 #define GL_PRINTER_TYPE "GL"
+#define OIS_PRINTER_TYPE "OIS"
 
 #define DETECT_ALL_DEVICES 0  // 0 for RISO only
 
@@ -658,9 +659,10 @@ int snmp_device_get_series(snmp_device *device)
         }
     }
 
-    if (strstr(device->device_info[MIB_DEV_DESCR], FT_PRINTER_TYPE) != NULL)
+    if (strstr(device->device_info[MIB_DEV_DESCR], FT_PRINTER_TYPE) != NULL ||
+        strstr(device->device_info[MIB_DEV_DESCR], OIS_PRINTER_TYPE) != NULL)
     {
-        // FT Series
+        // FT Series / OIS Series
         return kPrinterSeriesFT;
     }
 
