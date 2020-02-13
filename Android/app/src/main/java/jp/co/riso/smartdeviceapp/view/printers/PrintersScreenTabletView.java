@@ -570,7 +570,10 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
                 
                 return true;
             case MSG_ADD_PRINTER:
-                addToTabletPrinterScreen((Printer) msg.obj, msg.arg1 > 0);
+                // BUG#10003: Check if printer to add already exists OR is added already on printers list view to avoid adding multiple views for the same printer
+                if (!mPrinterManager.isExists((Printer) msg.obj) || getChildCount() != mPrinterManager.getPrinterCount()) {
+                    addToTabletPrinterScreen((Printer) msg.obj, msg.arg1 > 0);
+                }
                 return true;
         }
         return false;
