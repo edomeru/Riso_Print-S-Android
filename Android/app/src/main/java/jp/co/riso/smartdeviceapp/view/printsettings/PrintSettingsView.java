@@ -1108,6 +1108,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         switchView.setLayoutParams(params);
         switchView.setId(R.id.view_id_secure_print_switch);
         switchView.setOnCheckedChangeListener(this);
+        switchView.setTextOff(getResources().getString(R.string.ids_lbl_off).toUpperCase());
+        switchView.setTextOn(getResources().getString(R.string.ids_lbl_on).toUpperCase());
             
         String titleText = getResources().getString(R.string.ids_lbl_secure_print);
         addAuthenticationItemView(itemsGroup, titleText, switchView, KEY_TAG_SECURE_PRINT, true);
