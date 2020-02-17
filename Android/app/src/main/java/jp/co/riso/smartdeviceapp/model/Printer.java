@@ -242,7 +242,7 @@ public class Printer implements Parcelable {
      *
      * @return True if the printers if of the GL series, false otherwise
      */
-    public boolean isPrinterGl() {
+    public boolean isPrinterGL() {
         return getPrinterType().equals(AppConstants.PRINTER_MODEL_GL);
     }
 

@@ -341,7 +341,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (getPrinter().isPrinterFTorOIS() || getPrinter().isPrinterGl()) {
+        if (getPrinter().isPrinterFTorOIS() || getPrinter().isPrinterGL()) {
 
             /* Specify the input tray and paper size arrays to be used */
             InputTray_FT_OIS_GL[] inputTrayOptions;
@@ -386,7 +386,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     case TRAY2:
                         return true;
                     case TRAY3:
-                        return getPrinter().isPrinterGl();
+                        return getPrinter().isPrinterGL();
                     case EXTERNAL_FEEDER:
                         return isPaperSupported;
                 }
@@ -637,7 +637,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (getPrinter().isPrinterFTorOIS() || getPrinter().isPrinterGl()) {
+        if (getPrinter().isPrinterFTorOIS() || getPrinter().isPrinterGL()) {
 
             /* Specify the input tray and paper size arrays to be used */
             InputTray_FT_OIS_GL[] inputTrayOptions;
@@ -801,7 +801,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                             return getPrinter().getConfig().isExternalFeederAvailable();
                     }
                 }
-                if (getPrinter().isPrinterGl()) {
+                if (getPrinter().isPrinterGL()) {
                     switch (InputTray_FT_OIS_GL.valuesGL()[value]) {
                         case AUTO:
                         case STANDARD:
@@ -809,7 +809,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         case TRAY2:
                             return true;
                         case TRAY3:
-                            return getPrinter().isPrinterGl();
+                            return getPrinter().isPrinterGL();
                         case EXTERNAL_FEEDER:
                             return getPrinter().getConfig().isExternalFeederAvailable();
                     }
