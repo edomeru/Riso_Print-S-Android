@@ -1109,7 +1109,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         boolean capabilities[] = new boolean[] {
                 true, true, true, true, true, true, true, true, true, true
         };
-        Printer target = new Printer("test LIO", "ip");
+        Printer target = new Printer("test GL", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);
         
         assertTrue(target.getConfig().isBookletFinishingAvailable());
@@ -1128,7 +1128,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         boolean capabilities[] = new boolean[] {
                 false, false, false, false, false, false, false, false, false, false
         };
-        Printer target = new Printer("test LIO", "ip");
+        Printer target = new Printer("test GL", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);
         
         assertFalse(target.getConfig().isBookletFinishingAvailable());
@@ -1261,16 +1261,22 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             assertEquals(printerType, AppConstants.PRINTER_MODEL_FW);
             mPrinterManager.removePrinter(printer);
 
-            printer = new Printer("ORPHIS RAG100", "192.168.0.4");
+            printer = new Printer("ORPHIS FT100", "192.168.0.4");
             mPrinterManager.savePrinterToDB(printer, true);
             printerType =  mPrinterManager.getPrinterType(printer.getId());
-            assertEquals(printerType, AppConstants.PRINTER_MODEL_RAG);
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
             mPrinterManager.removePrinter(printer);
 
-            printer = new Printer("ORPHIS LIO200", "192.168.0.5");
+            printer = new Printer("ORPHIS GL200", "192.168.0.5");
             mPrinterManager.savePrinterToDB(printer, true);
             printerType =  mPrinterManager.getPrinterType(printer.getId());
-            assertEquals(printerType, AppConstants.PRINTER_MODEL_LIO);
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_GL);
+            mPrinterManager.removePrinter(printer);
+
+            printer = new Printer("ORPHIS OIS300", "192.168.0.4");
+            mPrinterManager.savePrinterToDB(printer, true);
+            printerType =  mPrinterManager.getPrinterType(printer.getId());
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
             mPrinterManager.removePrinter(printer);
 
             int nonExistentId = 2;
