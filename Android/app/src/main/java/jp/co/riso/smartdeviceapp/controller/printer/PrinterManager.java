@@ -93,7 +93,7 @@ public class PrinterManager implements SNMPManagerCallback {
         }
         return sSharedMngr;
     }
-    
+
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -255,7 +255,9 @@ public class PrinterManager implements SNMPManagerCallback {
                 boolean trayFaceDownAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYFACEDOWN);
                 boolean trayTopAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYTOP);
                 boolean trayStackAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_TRAYSTACK);
-                
+                boolean externalFeederAvailable = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_EXTERNALFEEDER);
+                boolean punch0Available = DatabaseManager.getBooleanFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_PUNCH0);
+
                 printer.getConfig().setLprAvailable(lprAvailable);
                 printer.getConfig().setRawAvailable(rawAvailable);
                 printer.getConfig().setBookletFinishingAvailable(bookletFinishingAvailable);
@@ -265,6 +267,8 @@ public class PrinterManager implements SNMPManagerCallback {
                 printer.getConfig().setTrayFaceDownAvailable(trayFaceDownAvailable);
                 printer.getConfig().setTrayTopAvailable(trayTopAvailable);
                 printer.getConfig().setTrayStackAvailable(trayStackAvailable);
+                printer.getConfig().setExternalFeederAvailable(externalFeederAvailable);
+                printer.getConfig().setPunch0Available(punch0Available);
                 mPrinterList.add(printer);
             } while (cursor.moveToNext());
             
@@ -653,6 +657,20 @@ public class PrinterManager implements SNMPManagerCallback {
                 case SNMPManager.SNMP_CAPABILITY_RAW:
                     printer.getConfig().setRawAvailable(capabilities[i]);
                     break;
+                case SNMPManager.SNMP_CAPABILITY_EXTERNAL_FEEDER:
+                    if (printer.isPrinterFTorOIS() || printer.isPrinterGL()) {
+                        printer.getConfig().setExternalFeederAvailable(capabilities[i]);
+                    } else {
+                        printer.getConfig().setExternalFeederAvailable(false);
+                    }
+                    break;
+                case SNMPManager.SNMP_CAPABILITY_FINISH_0:
+                    if (printer.isPrinterFTorOIS() || printer.isPrinterGL()) {
+                        printer.getConfig().setPunch0Available(capabilities[i]);
+                    } else {
+                        printer.getConfig().setPunch0Available(false);
+                    }
+                    break;
             }
         }
     }
@@ -688,6 +706,8 @@ public class PrinterManager implements SNMPManagerCallback {
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYFACEDOWN, (printer.getConfig().isTrayFaceDownAvailable() ? 1 : 0));
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYTOP, (printer.getConfig().isTrayTopAvailable() ? 1 : 0));
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_TRAYSTACK, (printer.getConfig().isTrayStackAvailable() ? 1 : 0));
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_EXTERNALFEEDER, (printer.getConfig().isExternalFeederAvailable() ? 1 : 0));
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PUNCH0, (printer.getConfig().isPunch0Available() ? 1 : 0));
 
         if (!mDatabaseManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {
             mDatabaseManager.close();

@@ -65,7 +65,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define BUFFER_SIZE 4096
 
 #define QUEUE_NAME "normal"
-#define QUEUE_NAME_FWGD "lp"
+#define QUEUE_NAME_FWGDFTGL "lp"
 #define HOST_NAME "RISO PRINT-S"
 
 #define PJL_ESCAPE "\x1B%-12345X"
@@ -79,6 +79,10 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
 #define MAX_PRINTJOB_UNFINISHED_PROGRESS_PERCENTAGE 99.99f
 #define PRINTJOB_SENT_PROGRESS_PERCENTAGE 100.0f
+
+#define FT_PRINTER_TYPE "FT"
+#define GL_PRINTER_TYPE "GL"
+#define OIS_PRINTER_TYPE "OIS"
 
 /** @def
 * UTF-8の16進数変換の際に使用する定数
@@ -556,12 +560,23 @@ void *do_lpr_print(void *parameter)
     else if (is_FWSeries(print_job->printer_name)) // FW Series
     {
         create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
-        strcpy(queueName, QUEUE_NAME_FWGD);
+        strcpy(queueName, QUEUE_NAME_FWGDFTGL);
+    }
+    else if (strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL ||
+             strstr(print_job->printer_name, OIS_PRINTER_TYPE) != NULL)     // FT Series / OIS Series
+    {
+        create_pjl_ft(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+        strcpy(queueName, QUEUE_NAME_FWGDFTGL);
+    }
+    else if (strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL)   // GL Series
+    {
+        create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+        strcpy(queueName, QUEUE_NAME_FWGDFTGL);
     }
     else    // GD Series
     {
         create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
-        strcpy(queueName, QUEUE_NAME_FWGD);
+        strcpy(queueName, QUEUE_NAME_FWGDFTGL);
     }
     strcat(pjl_header, PJL_LANGUAGE);
     long pjl_header_size = strlen(pjl_header);
@@ -924,6 +939,15 @@ void *do_raw_print(void *parameter)
         create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
         //create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name);
         // Ver.2.0.0.3 end
+    }
+    else if (strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL ||
+             strstr(print_job->printer_name, OIS_PRINTER_TYPE) != NULL)     // FT Series / OIS Series
+    {
+        create_pjl_ft(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
+    }
+    else if (strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) // GL Series
+    {
+        create_pjl_gl(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
     }
     else    // GD Series
     {

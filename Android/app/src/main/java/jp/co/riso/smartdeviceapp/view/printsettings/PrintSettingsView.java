@@ -61,6 +61,8 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_OIS_GL;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 import jp.co.riso.smartdeviceapp.model.printsettings.XmlNode;
@@ -338,10 +340,61 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     return (!isPunch && !isFold);
             }
         }
-        
+
+        if (getPrinter().isPrinterFTorOIS() || getPrinter().isPrinterGL()) {
+
+            /* Specify the input tray and paper size arrays to be used */
+            InputTray_FT_OIS_GL[] inputTrayOptions;
+            PaperSize[] paperSizeOptions;
+
+            if (getPrinter().isPrinterFTorOIS()) {
+                inputTrayOptions = InputTray_FT_OIS_GL.valuesFT_OIS();
+                paperSizeOptions = PaperSize.valuesFT_OIS();
+
+            } else {
+                inputTrayOptions = InputTray_FT_OIS_GL.valuesGL();
+                paperSizeOptions = PaperSize.valuesGL();
+            }
+
+            if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
+                boolean isExternal =
+                        inputTrayOptions[mPrintSettings.getInputTray().ordinal()] == InputTray_FT_OIS_GL.EXTERNAL_FEEDER;
+                switch (paperSizeOptions[value]) {
+                    case A4:
+                    case B5:
+                    case LETTER:
+                    case JUROKUKAI:
+                        return true;
+                    default:
+                        return !isExternal;
+                }
+            }
+
+            if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
+
+                // if paper size is equal to A4, B5, Letter, or 16k
+                int paperSizeInt = mPrintSettings.getPaperSize().ordinal();
+                boolean isPaperSupported = (paperSizeOptions[paperSizeInt] == PaperSize.A4 ||
+                        paperSizeOptions[paperSizeInt] == PaperSize.B5 ||
+                        paperSizeOptions[paperSizeInt] == PaperSize.LETTER ||
+                        paperSizeOptions[paperSizeInt] == PaperSize.JUROKUKAI);
+
+                switch (inputTrayOptions[value]) {
+                    case AUTO:
+                    case STANDARD:
+                    case TRAY1:
+                    case TRAY2:
+                        return true;
+                    case TRAY3:
+                        return getPrinter().isPrinterGL();
+                    case EXTERNAL_FEEDER:
+                        return isPaperSupported;
+                }
+            }
+        }
         return true;
     }
-    
+
     /**
      * @brief Gets the default value of a setting.
      * 
@@ -583,6 +636,47 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 }
             }
         }
+
+        if (getPrinter().isPrinterFTorOIS() || getPrinter().isPrinterGL()) {
+
+            /* Specify the input tray and paper size arrays to be used */
+            InputTray_FT_OIS_GL[] inputTrayOptions;
+            PaperSize[] paperSizeOptions;
+
+            if (getPrinter().isPrinterFTorOIS()) {
+                inputTrayOptions = InputTray_FT_OIS_GL.valuesFT_OIS();
+                paperSizeOptions = PaperSize.valuesFT_OIS();
+
+            } else {
+                inputTrayOptions = InputTray_FT_OIS_GL.valuesGL();
+                paperSizeOptions = PaperSize.valuesGL();
+            }
+
+            // Constraint #7 Paper Size - Input Tray (External) for FT or GL series
+            if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
+                int inputTrayValue = mPrintSettings.getValue(PrintSettings.TAG_INPUT_TRAY);
+                if (paperSizeOptions[value] != PaperSize.A4 &&
+                        paperSizeOptions[value] != PaperSize.B5 &&
+                        paperSizeOptions[value] != PaperSize.LETTER &&
+                        paperSizeOptions[value] != PaperSize.JUROKUKAI &&
+                        inputTrayOptions[inputTrayValue] == InputTray_FT_OIS_GL.EXTERNAL_FEEDER) {
+                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_FT_OIS_GL.AUTO.ordinal());
+                }
+            }
+
+            // Constraint #8 Input Tray (External) - Paper Size for FT or GL series
+            if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
+                int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
+                if (inputTrayOptions[value] == InputTray_FT_OIS_GL.EXTERNAL_FEEDER) {
+                    if (paperSizeOptions[paperSizeValue] != PaperSize.A4 &&
+                            paperSizeOptions[paperSizeValue] != PaperSize.B5 &&
+                            paperSizeOptions[paperSizeValue] != PaperSize.LETTER &&
+                            paperSizeOptions[paperSizeValue] != PaperSize.JUROKUKAI) {
+                        updateValueWithConstraints(PrintSettings.TAG_PAPER_SIZE, PaperSize.A4.ordinal());
+                    }
+                }
+            }
+        }
     }
     
     // ================================================================================
@@ -659,7 +753,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     /**
      * @brief Hides options disabled based on printer capabilities
-     * @note Currently only supported by Output Tray and Punch
+     * @note Currently only supported by Output Tray, Punch, and Input Tray
      * 
      * @param name Print settings tag name
      * @param value Value of the option to be checked
@@ -693,6 +787,32 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         return getPrinter().getConfig().isPunch3Available();
                     case HOLES_4:
                         return getPrinter().getConfig().isPunch4Available();
+                }
+            }
+            if (name.equals(PrintSettings.TAG_INPUT_TRAY)) {
+                if (getPrinter().isPrinterFTorOIS()) {
+                    switch (InputTray_FT_OIS_GL.valuesFT_OIS()[value]) {
+                        case AUTO:
+                        case STANDARD:
+                        case TRAY1:
+                        case TRAY2:
+                            return true;
+                        case EXTERNAL_FEEDER:
+                            return getPrinter().getConfig().isExternalFeederAvailable();
+                    }
+                }
+                if (getPrinter().isPrinterGL()) {
+                    switch (InputTray_FT_OIS_GL.valuesGL()[value]) {
+                        case AUTO:
+                        case STANDARD:
+                        case TRAY1:
+                        case TRAY2:
+                            return true;
+                        case TRAY3:
+                            return getPrinter().isPrinterGL();
+                        case EXTERNAL_FEEDER:
+                            return getPrinter().getConfig().isExternalFeederAvailable();
+                    }
                 }
             }
         }
@@ -1131,7 +1251,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         });
         
         editText.addTextChangedListener(new PinCodeTextWatcher());
-        
+
         titleText = getResources().getString(R.string.ids_lbl_pin_code);
         addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, false);
         

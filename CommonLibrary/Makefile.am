@@ -1,5 +1,5 @@
 lib_LTLIBRARIES = libcommon.la
-libcommon_la_SOURCES = src/printsettings.h src/printsettings.c src/printsettings_fw.c src/printsettings_gd.c src/directprint.c src/snmp.c
+libcommon_la_SOURCES = src/printsettings.h src/printsettings.c src/printsettings_fw.c src/printsettings_gd.c src/printsettings_ft.c rc/printsettings_gl.c src/directprint.c src/snmp.c
 libcommon_la_CFLAGS = -Iinclude -I3rdParty/net-snmp/include/@SUPPORTED_HOST@
 include_HEADERS = include/common.h
 
@@ -12,7 +12,7 @@ libgtest_la_SOURCES = gtest/gtest-all.cc gtest/gtest.h
 
 check_PROGRAMS = tests_app
 tests_app_SOURCES = tests/main.cpp tests/printsettings_test.cpp tests/directprint_test.cpp tests/snmp_test.cpp tests/util_test.cpp
-tests_app_SOURCES += src/printsettings.c src/printsettings_fw.c src/printsettings_gd.c src/directprint.c src/snmp.c src/util.c
+tests_app_SOURCES += src/printsettings.c src/printsettings_fw.c src/printsettings_gd.c src/printsettings_ft.c src/printsettings_gl.c src/directprint.c src/snmp.c src/util.c
 tests_app_CFLAGS = -I3rdParty/net-snmp/include/@SUPPORTED_HOST@ -Iinclude -Isrc -fprofile-arcs -ftest-coverage -DIS_IN_UT
 tests_app_CXXFLAGS = -I3rdParty/net-snmp/include/@SUPPORTED_HOST@ -I. -Iinclude -Isrc -fprofile-arcs -ftest-coverage -DIS_IN_UT
 tests_app_LDFLAGS = -fprofile-arcs -fno-inline -lpthread

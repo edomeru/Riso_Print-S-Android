@@ -232,6 +232,54 @@ public class PrinterTest extends TestCase {
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FW);
     }
 
+    public void testGetPrinterType_FT() {
+        Printer printer = new Printer("RISO IS950C-FT", "");
+        String printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
+
+        printer = new Printer("ORPHIS FT", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
+
+        printer = new Printer("ComColor FT", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
+    }
+
+    public void testGetPrinterType_GL() {
+        Printer printer = new Printer("RISO IS950C-GL", "");
+        String printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_GL);
+
+        printer = new Printer("ORPHIS GL", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_GL);
+
+        printer = new Printer("ComColor GL", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_GL);
+    }
+
+    public void testGetPrinterType_OIS() {
+        Printer printer = new Printer("RISO IS950C-OIS", "");
+        String printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
+
+        printer = new Printer("ORPHIS OIS", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
+
+        printer = new Printer("ComColor OIS", "");
+
+        printerType = printer.getPrinterType();
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
+    }
+
     // ================================================================================
     // Tests - getPortSetting
     // ================================================================================
@@ -326,5 +374,7 @@ public class PrinterTest extends TestCase {
         printer.getConfig().isTrayTopAvailable();
         printer.getConfig().isTrayStackAvailable();
         printer.getConfig().isTrayTopAvailable();
+        printer.getConfig().isExternalFeederAvailable();
+        printer.getConfig().isPunch0Available();
     }
 }

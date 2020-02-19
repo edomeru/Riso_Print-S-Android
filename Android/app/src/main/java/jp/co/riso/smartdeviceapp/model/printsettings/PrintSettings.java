@@ -40,6 +40,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Imposition;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_OIS_GL;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -323,6 +324,7 @@ public class PrintSettings {
      * 
      * @retval A3 297mm x 420mm
      * @retval A3W 316mm x 460mm
+     * @retval SRA3 320mm x 450mm
      * @retval A4 210mm x 297mm
      * @retval A5 148mm x 210mm
      * @retval A6 105mm x 148mm
@@ -338,7 +340,21 @@ public class PrintSettings {
     public PaperSize getPaperSize() {
         return PaperSize.values()[mSettingValues.get(TAG_PAPER_SIZE)];
     }
-    
+
+    /**
+     * @brief Retrieves InputTray_FT_OIS_GL setting value i.e. tray location of input paper.
+     *
+     * @retval AUTO
+     * @retval STANDARD
+     * @retval TRAY1
+     * @retval TRAY2
+     * @retval TRAY3
+     * @retval EXTERNAL_FEEDER
+     */
+    public InputTray_FT_OIS_GL getInputTray() {
+        return InputTray_FT_OIS_GL.values()[mSettingValues.get(TAG_INPUT_TRAY)];
+    }
+
     /**
      * @brief Retrieves ScaleToFit setting value i.e. whether PDF page will be scaled to fit the whole page.
      * 

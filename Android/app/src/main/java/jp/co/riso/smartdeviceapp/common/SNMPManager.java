@@ -38,16 +38,20 @@ public class SNMPManager {
     public static final int SNMP_CAPABILITY_FINISH_2_3 = 2;
     /// Punch 4 holes capability
     public static final int SNMP_CAPABILITY_FINISH_2_4 = 3;
+    /// Punch 0 holes capability
+    public static final int SNMP_CAPABILITY_FINISH_0 = 4;
     /// Tray face down capability
-    public static final int SNMP_CAPABILITY_TRAY_FACE_DOWN = 4;
+    public static final int SNMP_CAPABILITY_TRAY_FACE_DOWN = 5;
     /// Tray top capability
-    public static final int SNMP_CAPABILITY_TRAY_TOP = 5;
+    public static final int SNMP_CAPABILITY_TRAY_TOP = 6;
     /// Tray stack capability
-    public static final int SNMP_CAPABILITY_TRAY_STACK = 6;
+    public static final int SNMP_CAPABILITY_TRAY_STACK = 7;
     /// LPR print capability
-    public static final int SNMP_CAPABILITY_LPR = 7;
+    public static final int SNMP_CAPABILITY_LPR = 8;
     /// Raw print capability 
-    public static final int SNMP_CAPABILITY_RAW = 8;
+    public static final int SNMP_CAPABILITY_RAW = 9;
+    /// External feeder capability
+    public static final int SNMP_CAPABILITY_EXTERNAL_FEEDER = 10;
     
     /**
      * @brief Sets the callback function for the SNMP Manager.
