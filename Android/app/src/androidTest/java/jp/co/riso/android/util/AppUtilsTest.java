@@ -309,18 +309,14 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             Locale.setDefault(Locale.JAPANESE);
         } else {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                Locale.setDefault(Locale.JAPANESE);
-            } else {
-                Locale locale = new Locale("ja");
-                Resources res = getActivity().getResources();
-                Configuration config = res.getConfiguration();
+            Locale locale = new Locale("ja");
+            Resources res = getActivity().getResources();
+            Configuration config = res.getConfiguration();
 
-                config.setLocale(locale);
-                LocaleList list = new LocaleList(locale);
-                LocaleList.setDefault(list);
-                getActivity().createConfigurationContext(config);
-            }
+            config.setLocale(locale);
+            LocaleList list = new LocaleList(locale);
+            LocaleList.setDefault(list);
+            getActivity().createConfigurationContext(config);
         }
 
         String localized = AppUtils.getLocalizedAssetRelativePath(getActivity(), FOLDER, RESOURCE);

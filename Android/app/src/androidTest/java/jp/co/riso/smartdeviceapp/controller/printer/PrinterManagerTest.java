@@ -1107,7 +1107,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     }
     public void testSetupPrinterConfig_allAvailable() {
         boolean capabilities[] = new boolean[] {
-                true, true, true, true, true, true, true, true, true, true
+                true, true, true, true, true, true, true, true, true, true, true
         };
         Printer target = new Printer("test GL", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);
@@ -1117,6 +1117,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         assertTrue(target.getConfig().isPunch3Available());
         assertTrue(target.getConfig().isPunch4Available());
         assertTrue(target.getConfig().isPunch0Available());
+        assertTrue(target.getConfig().isExternalFeederAvailable());
         assertTrue(target.getConfig().isTrayFaceDownAvailable());
         assertTrue(target.getConfig().isTrayStackAvailable());
         assertTrue(target.getConfig().isTrayTopAvailable());
@@ -1126,7 +1127,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testSetupPrinterConfig_allFalse() {
         boolean capabilities[] = new boolean[] {
-                false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false
         };
         Printer target = new Printer("test GL", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);
@@ -1136,6 +1137,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         assertFalse(target.getConfig().isPunch3Available());
         assertFalse(target.getConfig().isPunch4Available());
         assertFalse(target.getConfig().isPunch0Available());
+        assertFalse(target.getConfig().isExternalFeederAvailable());
         assertFalse(target.getConfig().isTrayFaceDownAvailable());
         assertFalse(target.getConfig().isTrayStackAvailable());
         assertFalse(target.getConfig().isTrayTopAvailable());
