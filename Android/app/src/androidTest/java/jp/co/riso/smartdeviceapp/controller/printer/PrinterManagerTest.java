@@ -1107,15 +1107,17 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     }
     public void testSetupPrinterConfig_allAvailable() {
         boolean capabilities[] = new boolean[] {
-                true, true, true, true, true, true, true, true, true
+                true, true, true, true, true, true, true, true, true, true, true
         };
-        Printer target = new Printer("test", "ip");
+        Printer target = new Printer("test GL", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);
         
         assertTrue(target.getConfig().isBookletFinishingAvailable());
         assertTrue(target.getConfig().isStaplerAvailable());
         assertTrue(target.getConfig().isPunch3Available());
         assertTrue(target.getConfig().isPunch4Available());
+        assertTrue(target.getConfig().isPunch0Available());
+        assertTrue(target.getConfig().isExternalFeederAvailable());
         assertTrue(target.getConfig().isTrayFaceDownAvailable());
         assertTrue(target.getConfig().isTrayStackAvailable());
         assertTrue(target.getConfig().isTrayTopAvailable());
@@ -1125,15 +1127,17 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testSetupPrinterConfig_allFalse() {
         boolean capabilities[] = new boolean[] {
-                false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false
         };
-        Printer target = new Printer("test", "ip");
+        Printer target = new Printer("test GL", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);
         
         assertFalse(target.getConfig().isBookletFinishingAvailable());
         assertFalse(target.getConfig().isStaplerAvailable());
         assertFalse(target.getConfig().isPunch3Available());
         assertFalse(target.getConfig().isPunch4Available());
+        assertFalse(target.getConfig().isPunch0Available());
+        assertFalse(target.getConfig().isExternalFeederAvailable());
         assertFalse(target.getConfig().isTrayFaceDownAvailable());
         assertFalse(target.getConfig().isTrayStackAvailable());
         assertFalse(target.getConfig().isTrayTopAvailable());
@@ -1257,6 +1261,24 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             mPrinterManager.savePrinterToDB(printer, true);
             printerType =  mPrinterManager.getPrinterType(printer.getId());
             assertEquals(printerType, AppConstants.PRINTER_MODEL_FW);
+            mPrinterManager.removePrinter(printer);
+
+            printer = new Printer("ORPHIS FT100", "192.168.0.4");
+            mPrinterManager.savePrinterToDB(printer, true);
+            printerType =  mPrinterManager.getPrinterType(printer.getId());
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
+            mPrinterManager.removePrinter(printer);
+
+            printer = new Printer("ORPHIS GL200", "192.168.0.5");
+            mPrinterManager.savePrinterToDB(printer, true);
+            printerType =  mPrinterManager.getPrinterType(printer.getId());
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_GL);
+            mPrinterManager.removePrinter(printer);
+
+            printer = new Printer("ORPHIS OIS300", "192.168.0.4");
+            mPrinterManager.savePrinterToDB(printer, true);
+            printerType =  mPrinterManager.getPrinterType(printer.getId());
+            assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
             mPrinterManager.removePrinter(printer);
 
             int nonExistentId = 2;

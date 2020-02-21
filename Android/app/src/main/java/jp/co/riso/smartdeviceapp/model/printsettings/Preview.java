@@ -49,6 +49,7 @@ public class Preview {
     public enum PaperSize {
         A3(297.0f, 420.0f), ///< 297mm x 420mm
         A3W(316.0f, 460.0f), ///< 316mm x 460mm
+        SRA3(320.0f, 450.0f), ///< 320mm x 450mm
         A4(210.0f, 297.0f), ///< 210mm x 297mm
         A5(148.0f, 210.0f), ///< 148mm x 210mm
         A6(105.0f, 148.0f), ///< 105mm x 148mm
@@ -95,8 +96,58 @@ public class Preview {
         public float getHeight() {
             return mHeight;
         }
+
+        /**
+         * @brief Retrieves an array of paper size options for FT and OIS series
+         *
+         * @return Paper size options array
+         */
+        public static PaperSize[] valuesFT_OIS() {
+            return new PaperSize[] {A3, A3W, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
+        }
+
+        /**
+         * @brief Retrieves an array of paper size options for GL series
+         *
+         * @return Paper size options array
+         */
+        public static PaperSize[] valuesGL() {
+            return new PaperSize[] {A3, A3W, SRA3, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
+        }
+
+
     }
-    
+
+    /**
+     * @brief InputTray_FT_OIS_GL print settings for FT / OIS / GL series that refers to the tray location of input paper.
+     */
+    public enum InputTray_FT_OIS_GL {
+        AUTO,  ///< Auto Tray
+        STANDARD,  ///< Standard Tray
+        TRAY1,  ///< Tray 1
+        TRAY2, ///< Tray 2
+        TRAY3, ///< Tray 3
+        EXTERNAL_FEEDER; ///< External 2000 sheets
+
+        /**
+         * @brief Retrieves an array of input tray options for FT and OIS series
+         *
+         * @return Input tray options array
+         */
+        public static InputTray_FT_OIS_GL[] valuesFT_OIS() {
+            return new InputTray_FT_OIS_GL[] {AUTO, STANDARD, TRAY1, TRAY2, EXTERNAL_FEEDER};
+        }
+
+        /**
+         * @brief Retrieves an array of input tray options for GL series
+         *
+         * @return Input tray options array
+         */
+        public static InputTray_FT_OIS_GL[] valuesGL() {
+            return new InputTray_FT_OIS_GL[] {AUTO, STANDARD, TRAY1, TRAY2, TRAY3, EXTERNAL_FEEDER};
+        }
+    }
+
     /**
      * @brief Imposition print settings that determines the number of pages to print per sheet.
      */

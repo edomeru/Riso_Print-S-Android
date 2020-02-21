@@ -56,6 +56,7 @@
     <string name="ids_lbl_papersize">Paper Size</string>
     <string name="ids_lbl_papersize_a3">A3</string>
     <string name="ids_lbl_papersize_a3w">A3W</string>
+    <string name="ids_lbl_papersize_sra3">SRA3</string>
     <string name="ids_lbl_papersize_a4">A4</string>
     <string name="ids_lbl_papersize_a5">A5</string>
     <string name="ids_lbl_papersize_a6">A6</string>
@@ -168,6 +169,7 @@
     <string name="ids_lbl_valid_community_name">Valid characters are:\na-zA-Z0-9,./:;@[\\¥]^_</string>
     <string name="ids_err_msg_invalid_community_name">Please enter a SNMP community name with valid characters</string>
     <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
+    <string name="ids_lbl_inputtray_external">Additional Tray</string>
     <string name="ids_err_msg_uri_permission_expired">File access error was encountered. Please select file and try again.</string>
 
 </resources>

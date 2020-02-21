@@ -18,6 +18,8 @@ public class AppConstants {
     public static final boolean DEBUG = false;
     /// Flag for creating initial database
     public static final boolean INITIAL_DB = false;
+    /// Flag for debug database lower version
+    public static final boolean DEBUG_LOWER_DB_VERSION = false;
     /// Flag for creating performance log
     public static final boolean FOR_PERF_LOGS = false;
     
@@ -103,7 +105,11 @@ public class AppConstants {
     public static final String PRINTER_MODEL_GD = "GD";
     public static final String PRINTER_MODEL_FW = "FW";
     public static final String PRINTER_MODEL_IS = "IS";
+    public static final String PRINTER_MODEL_FT = "FT";
+    public static final String PRINTER_MODEL_GL = "GL";
+    public static final String PRINTER_MODEL_OIS = "OIS";       // As of V4.1.0.0, OIS model will be classified under FT since they have the same print settings
 
+    // TODO: Add OIS in PRINTER_TYPES and add a separate entry for OIS model in `printsettings.xml` file if there are changes in print settings that differentiate it to FT
     //Array of printer types
-    public static final String[] PRINTER_TYPES = {PRINTER_MODEL_IS, PRINTER_MODEL_GD, PRINTER_MODEL_FW};
+    public static final String[] PRINTER_TYPES = {PRINTER_MODEL_IS, PRINTER_MODEL_GD, PRINTER_MODEL_FW, PRINTER_MODEL_FT, PRINTER_MODEL_GL};
 }

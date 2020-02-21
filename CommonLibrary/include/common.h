@@ -83,11 +83,13 @@ typedef enum
     kSnmpCapabilityStapler,
     kSnmpCapabilityFin23Holes,
     kSnmpCapabilityFin24Holes,
+    kSnmpCapabilityFin0Holes, //Mantis82960
     kSnmpCapabilityTrayFaceDown,
     kSnmpCapabilityTrayTop,
     kSnmpCapabilityTrayStack,
     kSnmpCapabilityLPR,
     kSnmpCapabilityRaw,
+    kSnmpCapabilityExternalFeeder,
     kSnmpCapabilityCount
 } kSnmpCapability;
 
@@ -98,6 +100,8 @@ typedef enum
     kPrinterSeriesIS,
     kPrinterSeriesFW,
     kPrinterSeriesGD,
+    kPrinterSeriesFT,
+    kPrinterSeriesGL,
     kDeviceSeriesCount
 } kPrinterSeries;
 
