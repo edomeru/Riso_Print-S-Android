@@ -336,6 +336,9 @@
 - (void)clearHeader
 {
     UIColor* normalColor = [UIColor blackThemeColor];
+    if (@available(iOS 13.0, *)) {
+        normalColor = [UIColor colorNamed:@"color_black_gray5"];
+    }
     [self.groupName setBackgroundColor:normalColor];
     [self.groupIP setBackgroundColor:normalColor];
     [self.groupIndicator setBackgroundColor:normalColor];

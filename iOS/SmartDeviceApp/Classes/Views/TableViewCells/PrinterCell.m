@@ -98,11 +98,21 @@
 - (void)setCellStyleForDefaultCell
 {
     self.isDefaultPrinterCell = YES;
-    [self.contentView setBackgroundColor:[UIColor gray4ThemeColor]];
-    [self.printerName setTextColor:[UIColor whiteThemeColor]];
-    [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
+
+    if (@available(iOS 13.0, *)) {
+        [self.contentView setBackgroundColor:[UIColor colorNamed:@"color_gray5_gray3"]];
+        [self.printerName setTextColor:[UIColor colorNamed:@"color_white_black"]];
+        [self.ipAddress setTextColor:[UIColor colorNamed:@"color_white_black"]];
+        [self.separator setBackgroundColor:[UIColor colorNamed:@"color_gray5_gray3"]];
+    } else {
+        [self.contentView setBackgroundColor:[UIColor gray4ThemeColor]];
+        [self.printerName setTextColor:[UIColor whiteThemeColor]];
+        [self.ipAddress setTextColor:[UIColor whiteThemeColor]];
+        [self.separator setBackgroundColor:[UIColor gray4ThemeColor]];
+    }
+
+
     [self.disclosureImage setHidden: NO];
-    [self.separator setBackgroundColor:[UIColor gray4ThemeColor]];
     [self cancelDeleteButton];
 }
 
@@ -110,9 +120,17 @@
 {
     self.isDefaultPrinterCell = NO;
     UIColor *bgColor = [UIColor gray1ThemeColor];
+
+    if (@available(iOS 13.0, *)) {
+        bgColor = [UIColor colorNamed:@"color_gray1_gray6"];
+        [self.printerName setTextColor:[UIColor colorNamed:@"color_black_white"]];
+        [self.ipAddress setTextColor:[UIColor colorNamed:@"color_black_white"]];
+    } else {
+        [self.printerName setTextColor:[UIColor blackThemeColor]];
+        [self.ipAddress setTextColor:[UIColor blackThemeColor]];
+    }
+
     [self.contentView setBackgroundColor:bgColor];
-    [self.printerName setTextColor:[UIColor blackThemeColor]];
-    [self.ipAddress setTextColor:[UIColor blackThemeColor]];
     [self.disclosureImage setHidden: NO];
     [self.separator setBackgroundColor:[UIColor whiteThemeColor]];
     [self cancelDeleteButton];

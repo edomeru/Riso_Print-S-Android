@@ -49,6 +49,7 @@
 "IDS_LBL_PAPERSIZE" = "Format papier";
 "IDS_LBL_PAPERSIZE_A3" = "A3";
 "IDS_LBL_PAPERSIZE_A3W" = "A3W";
+"IDS_LBL_PAPERSIZE_SRA3" = "SRA3";
 "IDS_LBL_PAPERSIZE_A4" = "A4";
 "IDS_LBL_PAPERSIZE_A5" = "A5";
 "IDS_LBL_PAPERSIZE_A6" = "A6";
@@ -69,12 +70,14 @@
 "IDS_LBL_PAPERTYPE_HIGHQUALITY" = "Hte qualité";
 "IDS_LBL_PAPERTYPE_CARDIJ" = "Carte IJ";
 "IDS_LBL_PAPERTYPE_LWPAPER" = "Papier LW";
+"IDS_LBL_PAPERTYPE_PLAIN_PREMIUM" = "Plain (premium)";//
 "IDS_LBL_INPUTTRAY" = "Bac d'entrée";
 "IDS_LBL_INPUTTRAY_AUTO" = "Auto";
 "IDS_LBL_INPUTTRAY_STANDARD" = "Bac standard";
 "IDS_LBL_INPUTTRAY_TRAY1" = "Bac d'alimentation1";
 "IDS_LBL_INPUTTRAY_TRAY2" = "Bac d'alimentation2";
 "IDS_LBL_INPUTTRAY_TRAY3" = "Bac d'alimentation3";
+"IDS_LBL_INPUTTRAY_EXTERNAL" = "Bac supplémentaire";
 "IDS_LBL_LAYOUT" = "Mise en page";
 "IDS_LBL_IMPOSITION" = "Imposition";
 "IDS_LBL_IMPOSITION_2UP" = "2 pages";

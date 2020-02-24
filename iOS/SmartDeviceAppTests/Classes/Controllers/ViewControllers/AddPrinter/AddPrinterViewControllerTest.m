@@ -481,27 +481,6 @@
     [controllerIphone setValue:originalManager forKey:@"printerManager"];
 }
 
-- (void)test18_testDeviceLockEventDidNotify
-{
-    [controllerIphone.saveButton setHidden:YES];
-    [controllerIphone.textIP setEnabled:NO];
-    
-    [controllerIphone deviceLockEventDidNotify];
-    
-    GHAssertTrueNoThrow(controllerIphone.saveButton.hidden, @"");
-    GHAssertFalseNoThrow([controllerIphone.textIP isEnabled], @"");
-    
-    [controllerIphone.progressIndicator startAnimating];
-
-    GHAssertTrueNoThrow([controllerIphone.progressIndicator isAnimating], @"");
-    
-    [controllerIphone deviceLockEventDidNotify];
-    
-    GHAssertFalseNoThrow([controllerIphone.progressIndicator isAnimating], @"");
-    GHAssertFalseNoThrow(controllerIphone.saveButton.hidden, @"");
-    GHAssertTrueNoThrow([controllerIphone.textIP isEnabled], @"");
-}
-
 #pragma mark - Utilities
 
 - (BOOL)waitForCompletion:(NSTimeInterval)timeoutSecs withMessage:(NSString*)msg

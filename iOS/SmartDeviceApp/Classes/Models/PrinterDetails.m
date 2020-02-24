@@ -22,5 +22,7 @@
 @synthesize enTrayFaceDown;
 @synthesize enTrayStacking;
 @synthesize enTrayTop;
+@synthesize enExternalFeeder;
+@synthesize enFinisher0Hole;
 
 @end

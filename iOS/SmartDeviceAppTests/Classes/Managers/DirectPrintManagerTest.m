@@ -39,6 +39,7 @@ int print_OK()
 
 int print_NG()
 {
+    printProgressCallback(0, kJobStatusJobNumUpdate, 20.0f);
     printProgressCallback(0, kJobStatusErrorSending, 20.0f);
     return 1;
 }
@@ -85,7 +86,7 @@ void *get_caller_data()
     RESET_FAKE(directprint_job_free);
     RESET_FAKE(directprint_job_get_caller_data);
     RESET_FAKE(directprint_job_set_caller_data);
-    
+
     FFF_RESET_HISTORY();
     
     directprint_job_new_fake.return_val = (directprint_job *)1;
@@ -233,7 +234,7 @@ void *get_caller_data()
     [manager printDocumentViaLPR];
     
     // Verification
-    [self waitForStatus:kGHUnitWaitStatusFailure timeout:20.0f];
+    [self waitForStatus:kGHUnitWaitStatusFailure timeout:40.0f];
     GHAssertEquals(added_result, 0, @"PrintJobHistory result should be 0");
     [mockPDFFileManager stopMocking];
 }
@@ -442,7 +443,10 @@ void *get_caller_data()
     [[mockCXAlertView stub] setDidDismissHandler:OCMOCK_ANY];
     [[[mockCXAlertView stub] andDo:^(NSInvocation *invocation){
         CXAlertView *alertView = invocation.target;
-        buttonHandler(alertView, nil);
+        if (buttonHandler)
+        {
+            buttonHandler(alertView, nil);
+        }
         [self notify:kGHUnitWaitStatusCancelled];
     }] show];
     [[mockCXAlertView stub] dismiss];

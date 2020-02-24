@@ -326,6 +326,188 @@
     GHAssertEquals(viewController.previewSetting.finishingSide,expectedSelectedIndex , @"");
 }
 
+-(void)test007_isApplicableOption_InputTray_FT
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsOptionTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+
+    viewController.printerName = @"PRINTER FT SERIES";
+    viewController.previewSetting = previewSetting;
+    viewController.key = KEY_INPUT_TRAY;
+
+    NSDictionary *setting = [self getSettingsForKey:KEY_INPUT_TRAY];
+    NSArray *options = [setting objectForKey:@"option"];
+
+    viewController.previewSetting.paperSize = kPaperSizeA3;
+    for(NSDictionary *option in options)
+    {
+        NSString *optionString = [option objectForKey:@"content-body"];
+        BOOL retVal = [viewController isApplicableOption:optionString];
+        if(![optionString isEqualToString:@"ids_lbl_inputtray_external"])
+        {
+            GHAssertTrue(retVal, @"");
+        }
+        else
+        {
+            GHAssertFalse(retVal, @"");
+        }
+    }
+}
+
+-(void)test007_isApplicableOption_InputTray_GL
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsOptionTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    
+    viewController.printerName = @"PRINTER GL SERIES";
+    viewController.previewSetting = previewSetting;
+    viewController.key = KEY_INPUT_TRAY;
+    
+    NSDictionary *setting = [self getSettingsForKey:KEY_INPUT_TRAY];
+    NSArray *options = [setting objectForKey:@"option"];
+    
+    viewController.previewSetting.paperSize = kPaperSizeSRA3;
+    for(NSDictionary *option in options)
+    {
+        NSString *optionString = [option objectForKey:@"content-body"];
+        BOOL retVal = [viewController isApplicableOption:optionString];
+        if(![optionString isEqualToString:@"ids_lbl_inputtray_external"])
+        {
+            GHAssertTrue(retVal, @"");
+        }
+        else
+        {
+            GHAssertFalse(retVal, @"");
+        }
+    }
+}
+
+-(void)test008_isApplicableOption_PaperSize_FT
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsOptionTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+
+    viewController.printerName = @"PRINTER FT SERIES";
+    viewController.previewSetting = previewSetting;
+    viewController.key = KEY_PAPER_SIZE;
+
+    NSDictionary *setting = [self getSettingsForKey:KEY_PAPER_SIZE];
+    NSArray *options = [setting objectForKey:@"option"];
+
+    viewController.previewSetting.inputTray = kInputTrayFTGLExternal - 1;
+    for(NSDictionary *option in options)
+    {
+        NSString *optionString = [option objectForKey:@"content-body"];
+        BOOL retVal = [viewController isApplicableOption:optionString];
+        if([optionString isEqualToString:@"ids_lbl_papersize_a4"] ||
+           [optionString isEqualToString:@"ids_lbl_papersize_b5"] ||
+           [optionString isEqualToString:@"ids_lbl_papersize_letter"] ||
+           [optionString isEqualToString:@"ids_lbl_papersize_16K"])
+        {
+            GHAssertTrue(retVal, @"");
+        }
+        else
+        {
+            GHAssertFalse(retVal, @"");
+        }
+    }
+}
+
+-(void)test008_isApplicableOption_PaperSize_GL
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsOptionTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+    
+    viewController.printerName = @"PRINTER GL SERIES";
+    viewController.previewSetting = previewSetting;
+    viewController.key = KEY_PAPER_SIZE;
+    
+    NSDictionary *setting = [self getSettingsForKey:KEY_PAPER_SIZE];
+    NSArray *options = [setting objectForKey:@"option"];
+    
+    viewController.previewSetting.inputTray = kInputTrayFTGLExternal;
+    for(NSDictionary *option in options)
+    {
+        NSString *optionString = [option objectForKey:@"content-body"];
+        BOOL retVal = [viewController isApplicableOption:optionString];
+        if([optionString isEqualToString:@"ids_lbl_papersize_a4"] ||
+           [optionString isEqualToString:@"ids_lbl_papersize_b5"] ||
+           [optionString isEqualToString:@"ids_lbl_papersize_letter"] ||
+           [optionString isEqualToString:@"ids_lbl_papersize_16K"])
+        {
+            GHAssertTrue(retVal, @"");
+        }
+        else
+        {
+            GHAssertFalse(retVal, @"");
+        }
+    }
+}
+
+-(void)test009_isApplicableOption_InputTray_OIS
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsOptionTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+
+    viewController.printerName = @"PRINTER OIS SERIES";
+    viewController.previewSetting = previewSetting;
+    viewController.key = KEY_INPUT_TRAY;
+
+    NSDictionary *setting = [self getSettingsForKey:KEY_INPUT_TRAY];
+    NSArray *options = [setting objectForKey:@"option"];
+
+    viewController.previewSetting.paperSize = kPaperSizeA3;
+    for(NSDictionary *option in options)
+    {
+        NSString *optionString = [option objectForKey:@"content-body"];
+        BOOL retVal = [viewController isApplicableOption:optionString];
+        if(![optionString isEqualToString:@"ids_lbl_inputtray_external"])
+        {
+            GHAssertTrue(retVal, @"");
+        }
+        else
+        {
+            GHAssertFalse(retVal, @"");
+        }
+    }
+}
+
+-(void)test010_isApplicableOption_PaperSize_OIS
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    PrintSettingsOptionTableViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+    PreviewSetting *previewSetting = [[PreviewSetting alloc] init];
+
+    viewController.printerName = @"PRINTER OIS SERIES";
+    viewController.previewSetting = previewSetting;
+    viewController.key = KEY_PAPER_SIZE;
+
+    NSDictionary *setting = [self getSettingsForKey:KEY_PAPER_SIZE];
+    NSArray *options = [setting objectForKey:@"option"];
+
+    viewController.previewSetting.inputTray = kInputTrayFTGLExternal - 1;
+    for(NSDictionary *option in options)
+    {
+        NSString *optionString = [option objectForKey:@"content-body"];
+        BOOL retVal = [viewController isApplicableOption:optionString];
+        if([optionString isEqualToString:@"ids_lbl_papersize_a4"] ||
+           [optionString isEqualToString:@"ids_lbl_papersize_b5"] ||
+           [optionString isEqualToString:@"ids_lbl_papersize_letter"] ||
+           [optionString isEqualToString:@"ids_lbl_papersize_16K"])
+        {
+            GHAssertTrue(retVal, @"");
+        }
+        else
+        {
+            GHAssertFalse(retVal, @"");
+        }
+    }
+}
 
 - (NSDictionary *) getSettingsForKey:(NSString *) key
 {

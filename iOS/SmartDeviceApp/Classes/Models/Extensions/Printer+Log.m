@@ -26,6 +26,8 @@
     [msg appendFormat:@"\n   enabled_tray_face_down=%ld", (long)[self.enabled_tray_face_down integerValue]];
     [msg appendFormat:@"\n   enabled_tray_stacking=%ld", (long)[self.enabled_tray_stacking integerValue]];
     [msg appendFormat:@"\n   enabled_tray_top=%ld", (long)[self.enabled_tray_top integerValue]];
+    [msg appendFormat:@"\n   enabled_external_feeder=%ld", (long)[self.enabled_external_feeder integerValue]];
+    [msg appendFormat:@"\n   enabled_finisher_0_hole=%ld", (long)[self.enabled_finisher_0_hole integerValue]];
     if (self.printsetting != nil)
 #if DEBUG_LOG_PRINTSETTING_MODEL
         [self.printsetting log];

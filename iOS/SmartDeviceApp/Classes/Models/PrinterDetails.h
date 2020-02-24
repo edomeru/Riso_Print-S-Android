@@ -78,6 +78,16 @@
 @property (assign, nonatomic) BOOL enTrayTop;
 
 /**
+ * Printer capability (External Feeder Input Tray).
+ */
+@property (assign, nonatomic) BOOL enExternalFeeder;
+
+/**
+ * Printer capability (Punch disabled).
+ */
+@property (assign, nonatomic) BOOL enFinisher0Hole;
+
+/**
  * Flag whether the printer was found during search (SNMP).
  */
 @property (assign, nonatomic) BOOL isPrinterFound;

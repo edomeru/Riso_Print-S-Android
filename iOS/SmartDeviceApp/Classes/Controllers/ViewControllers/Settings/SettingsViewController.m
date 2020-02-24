@@ -38,6 +38,8 @@
  */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewWidthConstraint;
 
+@property (weak, nonatomic) IBOutlet UIView *mainContent;
+
 /**
  * Responds to pressing the main menu button in the header.
  * Displays the Main Menu panel.
@@ -74,7 +76,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
+    if (@available(iOS 13.0, *)) {
+        self.mainContent.backgroundColor = [UIColor colorNamed:@"color_gray1_gray4"];
+        self.contentView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray6"];
+        self.loginId.backgroundColor = [UIColor colorNamed:@"color_text_field"];
+    }
+
     // Set placeholder
     self.loginId.placeholder = NSLocalizedString(IDS_LBL_OWNER_NAME, @"");
     

@@ -34,7 +34,11 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
-    self.contentView.backgroundColor = [UIColor gray2ThemeColor];
+    if (@available(iOS 13.0, *)) {
+        self.contentView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray5"];
+    } else {
+        self.contentView.backgroundColor = [UIColor gray2ThemeColor];
+    }
     self.radioImageView.highlighted = selected;
 }
 
@@ -48,7 +52,11 @@
     }
     else
     {
-        self.contentView.backgroundColor = [UIColor gray2ThemeColor];
+        if (@available(iOS 13.0, *)) {
+            self.contentView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray5"];
+        } else {
+            self.contentView.backgroundColor = [UIColor gray2ThemeColor];
+        }
     }
 }
 

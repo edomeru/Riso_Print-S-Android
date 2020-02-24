@@ -37,6 +37,11 @@
  */
 @property (weak, nonatomic) IBOutlet UIButton* addIcon;
 
+/**
+ * Flag whether the printer found is a new printer.
+*/
+@property (nonatomic) BOOL isNewPrinter;
+
 @end
 
 @implementation SearchResultCell
@@ -58,11 +63,18 @@
 //implementation #2 : create view in storyboard, then just set hidden attribute here
     [self.oldIcon setHidden:NO];
     [self.addIcon setHidden:YES];
-    
+
+    if (@available(iOS 13.0, *)) {
+        self.contentView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray5"];
+        self.printerName.textColor = [UIColor colorNamed:@"color_black_white"];
+        self.printerIP.textColor = [UIColor colorNamed:@"color_black_white"];
+    }
+
     [self setSelectionStyle:UITableViewCellSelectionStyleNone]; //disable cell selection
     self.selectedBackgroundView = nil;
     self.printerName.highlightedTextColor = [UIColor blackThemeColor];
     self.printerIP.highlightedTextColor = [UIColor blackThemeColor];
+    self.isNewPrinter = NO;
 }
 
 - (void)setCellAsNewResult
@@ -73,12 +85,19 @@
 //implementation #2 : create view in storyboard, then just set hidden attribute here
     [self.oldIcon setHidden:YES];
     [self.addIcon setHidden:NO];
-    
-    UIView* highlightColor = [[UIView alloc] init];
+
+    if (@available(iOS 13.0, *)) {
+        self.contentView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray5"];
+        self.printerName.textColor = [UIColor colorNamed:@"color_black_white"];
+        self.printerIP.textColor = [UIColor colorNamed:@"color_black_white"];
+    }
+
+    UIView *highlightColor = [UIView new];
     highlightColor.backgroundColor = [UIColor purple1ThemeColor]; //same color of oldIcon
     self.selectedBackgroundView = highlightColor;
     self.printerName.highlightedTextColor = [UIColor whiteThemeColor];
     self.printerIP.highlightedTextColor = [UIColor whiteThemeColor];
+    self.isNewPrinter = YES;
 }
 
 - (void)setContentsUsingName:(NSString*)printerName usingIP:(NSString*)printerIP
@@ -103,6 +122,24 @@
         [self.separator setHidden:YES];
     else
         [self.separator setHidden:NO];
+}
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    [super setHighlighted:highlighted animated:animated];
+
+    if (highlighted && self.isNewPrinter)
+    {
+        self.contentView.backgroundColor = [UIColor purple1ThemeColor];
+    }
+    else
+    {
+        if (@available(iOS 13.0, *)) {
+            self.contentView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray5"];
+        } else {
+            self.contentView.backgroundColor = [UIColor gray2ThemeColor];
+        }
+    }
 }
 
 @end

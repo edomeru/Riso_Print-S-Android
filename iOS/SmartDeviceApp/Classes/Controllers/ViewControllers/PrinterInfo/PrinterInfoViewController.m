@@ -17,6 +17,11 @@
 @interface PrinterInfoViewController ()
 
 /**
+ * Reference to the content view.
+*/
+@property (weak, nonatomic) IBOutlet UIView *contentView;
+
+/**
  * Reference to the label displaying the printer's name.
  */
 @property (weak, nonatomic) IBOutlet UILabel *printerName;
@@ -88,7 +93,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
+    if (@available(iOS 13.0, *)) {
+        self.contentView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray5"];
+    }
+
     [self.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_LPR, @"LPR") forSegmentAtIndex:0];
     [self.portSelection setTitle:NSLocalizedString(IDS_LBL_PORT_RAW, @"RAW") forSegmentAtIndex:1];
     

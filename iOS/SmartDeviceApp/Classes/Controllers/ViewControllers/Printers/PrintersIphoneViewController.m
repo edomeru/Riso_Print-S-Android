@@ -125,6 +125,14 @@
 
 @end
 
+/**
+ * Flag that signifies whether the device is rotating or not.
+ * When rotating, scrollViewDidScroll is triggered, which in turn calls removeDeleteState.
+ * To prevent unintentional removal of delete state, do not process the call to scrollViewDidScroll
+ * if this flag is set to true.
+ */
+BOOL isRotating;
+
 @implementation PrintersIphoneViewController
 
 #pragma mark - Lifecycle
@@ -142,7 +150,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
+    if (@available(iOS 13.0, *)) {
+        self.tableView.backgroundColor = [UIColor  colorNamed:@"color_gray1_gray6"];
+    }
+
     UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self action:@selector(tapTableViewAction:)];
     [self.tableView addGestureRecognizer:tap];
@@ -267,6 +279,10 @@
 
 - (void)scrollViewDidScroll:(UIScrollView*)scrollView
 {
+    if (isRotating) {
+        return;
+    }
+
     //if a cell is in delete state, remove delete state
     if(self.toDeleteIndexPath != nil)
     {
@@ -612,6 +628,18 @@
         [cell setCellToBeDeletedState:NO];
         self.toDeleteIndexPath = nil;
     }
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    isRotating = true;
+
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        isRotating = false;
+    }];
+    
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
 @end

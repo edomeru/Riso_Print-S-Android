@@ -15,7 +15,8 @@ typedef enum
 {
     kPlistUintValMaxPrinters, /**< Maximum number of saved printers. */
     kPlistUintValMaxPrintJobsPerPrinter, /**< Maximum number of saved print jobs per printer. */
-    
+    kPlistUintValMaxJobNum, /**<Maximum job number value>*/
+    kPlistUintValNextJobNum, /**<The next job number to be assigned to a print job> */
 } kPlistUintVal;
 
 
@@ -30,5 +31,12 @@ typedef enum
  * @return value for the specified key
  */
 + (NSUInteger)readUint:(kPlistUintVal)type;
+
+/**
+* Wrapper for writing an unsigned int value to the property list.
+* @param NSUInteger value
+* @param kPlistUintVal key
+*/
++ (void)setUint:(NSUInteger)value forType:(kPlistUintVal)type;
 
 @end

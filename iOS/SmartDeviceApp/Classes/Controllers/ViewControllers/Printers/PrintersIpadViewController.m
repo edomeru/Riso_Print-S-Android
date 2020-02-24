@@ -145,7 +145,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-   
+
+    if (@available(iOS 13.0, *)) {
+       self.collectionView.backgroundColor = [UIColor  colorNamed:@"color_gray1_gray6"];
+   }
+
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     self.statusHelpers = [[NSMutableArray alloc] init];

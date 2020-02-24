@@ -16,6 +16,4 @@
 #define NOTIF_SNMP_ADD      @"jp.alink-group.sda.snmp-add"
 #define NOTIF_SNMP_END      @"jp.alink-group.sda.snmp-end"
 
-#define NOTIF_DEVICE_LOCK   @"jp.alink-group.sda.devicelock"
-
 #endif

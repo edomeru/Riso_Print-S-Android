@@ -68,9 +68,13 @@
 - (void)beginRefreshing
 {
     [self setNeedsDisplay];
-    
+
     // adjust colors
-    [self setBackgroundColor:[UIColor gray4ThemeColor]];
+    if (@available(iOS 13.0, *)) {
+        [self setBackgroundColor:[UIColor colorNamed:@"color_gray5_gray6"]];
+    } else {
+        [self setBackgroundColor:[UIColor gray4ThemeColor]];
+    }
     [self setTintColor:[UIColor whiteThemeColor]];
 
     // adjust frame if not approximately equal to the determined height while refreshing
@@ -89,9 +93,13 @@
     [self setNeedsDisplay];
     
     // adjust colors
-    [self setBackgroundColor:[UIColor gray2ThemeColor]];
+    if (@available(iOS 13.0, *)) {
+        [self setBackgroundColor:[UIColor colorNamed:@"color_gray2_gray5"]];
+    } else {
+        [self setBackgroundColor:[UIColor gray2ThemeColor]];
+    }
     [self setTintColor:[UIColor gray2ThemeColor]];
-    
+
     [super endRefreshing];
 }
 

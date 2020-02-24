@@ -9,7 +9,7 @@
 #import <GHUnitIOS/GHUnit.h>
 #import "OCMock.h"
 #import "ScreenLayoutHelper.h"
-
+#import "IPhoneXHelper.h"
 
 @interface ScreenLayoutHelperTest : GHTestCase
 
@@ -19,38 +19,38 @@
 
 - (void)testGetPortraitScreenWidth_Portrait
 {
-    CGFloat expectedWidth = 200.0f;
-    //mock screen rect
-    CGRect screenRect = CGRectMake(0, 0, expectedWidth, 500.0f);
-    
-    id mockUIScreen = OCMClassMock([UIScreen class]);
-    [[[mockUIScreen stub] andReturnValue:OCMOCK_VALUE(screenRect)] bounds];
-    [[[[mockUIScreen stub] andReturn:mockUIScreen] classMethod] mainScreen];
-    
+    if (![IPhoneXHelper isDeviceIPhoneX]) {
+        CGFloat expectedWidth = 200.0f;
+        //mock screen rect
+        CGRect screenRect = CGRectMake(0, 0, expectedWidth, 500.0f);
 
-    CGFloat screenWidth = [ScreenLayoutHelper getPortraitScreenWidth];
+        UIScreen* mainScreen = [UIScreen mainScreen];
+        id mockUIScreen = [OCMockObject partialMockForObject:mainScreen];
+        [[[mockUIScreen stub] andReturnValue:OCMOCK_VALUE(screenRect)] bounds];
 
-    GHAssertTrueNoThrow(fabs(expectedWidth - screenWidth) < 0.00001, @"");
-    
-    [mockUIScreen stopMocking];
+        CGFloat screenWidth = [ScreenLayoutHelper getPortraitScreenWidth];
+        [mockUIScreen stopMocking];
+
+        GHAssertTrueNoThrow(fabs(expectedWidth - screenWidth) < 0.00001, @"");
+    }
 }
 
 - (void)testGetPortraitScreenWidth_Landscape
 {
-    CGFloat expectedWidth = 200.0f;
-    //mock screen rect
-    CGRect screenRect = CGRectMake(0, 0, 500.0f, expectedWidth);
-    
-    id mockUIScreen = OCMClassMock([UIScreen class]);
-    [[[mockUIScreen stub] andReturnValue:OCMOCK_VALUE(screenRect)] bounds];
-    [[[[mockUIScreen stub] andReturn:mockUIScreen] classMethod] mainScreen];
-    
-    
-    CGFloat screenWidth = [ScreenLayoutHelper getPortraitScreenWidth];
-    
-    GHAssertTrueNoThrow(fabs(expectedWidth - screenWidth) < 0.00001, @"");
-    
-    [mockUIScreen stopMocking];
+    if (![IPhoneXHelper isDeviceIPhoneX]) {
+        CGFloat expectedWidth = 200.0f;
+        //mock screen rect
+        CGRect screenRect = CGRectMake(0, 0, 500.0f, expectedWidth);
+
+        UIScreen* mainScreen = [UIScreen mainScreen];
+        id mockUIScreen = [OCMockObject partialMockForObject:mainScreen];
+        [[[mockUIScreen stub] andReturnValue:OCMOCK_VALUE(screenRect)] bounds];
+
+        CGFloat screenWidth = [ScreenLayoutHelper getPortraitScreenWidth];
+        [mockUIScreen stopMocking];
+
+        GHAssertTrueNoThrow(fabs(expectedWidth - screenWidth) < 0.00001, @"");
+    }
 }
 
 

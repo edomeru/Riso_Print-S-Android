@@ -47,10 +47,16 @@
 - (void)setBackgroundColors
 {
     UIView* normalBackground = [[UIView alloc] init];
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         normalBackground.backgroundColor = [UIColor gray2ThemeColor];
-    else
-        normalBackground.backgroundColor = [UIColor gray1ThemeColor];
+    } else {
+        if (@available(iOS 13.0, *)) {
+            normalBackground.backgroundColor = [UIColor colorNamed:@"color_gray1_gray6"];
+            self.name.textColor = [UIColor colorNamed:@"color_black_white"];
+        } else {
+            normalBackground.backgroundColor = [UIColor gray1ThemeColor];
+        }
+    }
     self.backgroundView = normalBackground;
     
     UIView* highlightedBackground = [[UIView alloc] init];
@@ -80,10 +86,16 @@
     {
         self.timestamp.hidden = NO;
         [self.name setTextColor:[UIColor blackColor]];
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             [self.backgroundView setBackgroundColor:[UIColor gray2ThemeColor]];
-        else
-            [self.backgroundView setBackgroundColor:[UIColor gray1ThemeColor]];
+        } else {
+            if (@available(iOS 13.0, *)) {
+                self.backgroundView.backgroundColor = [UIColor colorNamed:@"color_gray1_gray6"];
+                self.name.textColor = [UIColor colorNamed:@"color_black_white"];
+            } else {
+                self.backgroundView.backgroundColor = [UIColor gray1ThemeColor];
+            }
+        }
         [self cancelDeleteButton];
     }
 }

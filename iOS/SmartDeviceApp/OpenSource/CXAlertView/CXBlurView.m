@@ -52,8 +52,9 @@
 #pragma mark - PB
 - (void)blur
 {
+    __weak CXBlurView *weakSelf = self;
     [UIView animateWithDuration:0.3 animations:^{
-        _backgroundView.alpha = 0.7;
+        weakSelf.backgroundView.alpha = 0.7;
     }];
 }
 

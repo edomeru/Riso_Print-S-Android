@@ -178,7 +178,10 @@ static SNMPManager* sharedSNMPManager = nil;
 
     // parse the printer name, IP, and capabilities
     PrinterDetails* pd = [[PrinterDetails alloc] init];
-    pd.name = [NSString stringWithFormat:@"%s", snmp_device_get_name(device)];
+    
+    // Mantis:68382
+    pd.name = [[NSString alloc] initWithUTF8String:snmp_device_get_name(device)];
+    
     pd.ip = [NSString stringWithFormat:@"%s", snmp_device_get_ip_address(device)];
     pd.port = [NSNumber numberWithInt:0];
     pd.enBookletFinishing = (snmp_device_get_capability_status(device, kSnmpCapabilityBookletFinishing) > 0 ? YES : NO);
@@ -190,6 +193,8 @@ static SNMPManager* sharedSNMPManager = nil;
     pd.enTrayFaceDown = (snmp_device_get_capability_status(device, kSnmpCapabilityTrayFaceDown) > 0 ? YES : NO);
     pd.enTrayStacking = (snmp_device_get_capability_status(device, kSnmpCapabilityTrayStack) > 0 ? YES : NO);
     pd.enTrayTop = (snmp_device_get_capability_status(device, kSnmpCapabilityTrayTop) > 0 ? YES : NO);
+    pd.enExternalFeeder = (snmp_device_get_capability_status(device, kSnmpCapabilityExternalFeeder) > 0 ? YES : NO);
+    pd.enFinisher0Hole = (snmp_device_get_capability_status(device, kSnmpCapabilityFin0Holes) > 0 ? YES : NO);
     pd.isPrinterFound = YES;
 #if DEBUG_LOG_SNMP_MANAGER
     NSLog(@"[INFO][SNMPM] name=%@", pd.name);
@@ -204,6 +209,8 @@ static SNMPManager* sharedSNMPManager = nil;
     NSLog(@"[INFO][SNMPM] enTrayFaceDown=%@", pd.enTrayFaceDown ? @"YES" : @"NO");
     NSLog(@"[INFO][SNMPM] enTrayStacking=%@", pd.enTrayStacking ? @"YES" : @"NO");
     NSLog(@"[INFO][SNMPM] enTrayTop=%@", pd.enTrayTop ? @"YES" : @"NO");
+    NSLog(@"[INFO][SNMPM] enExternalFeeder=%@", pd.enExternalFeeder ? @"YES" : @"NO");
+    NSLog(@"[INFO][SNMPM] enFinisher0Hole=%@", pd.enFinisher0Hole ? @"YES" : @"NO");
 #endif
     
     // notify observer that a printer was found (background thread)
@@ -236,6 +243,8 @@ static SNMPManager* sharedSNMPManager = nil;
     pd.enTrayFaceDown = YES;
     pd.enTrayStacking = YES;
     pd.enTrayTop = YES;
+    pd.enExternalFeeder = YES;
+    pd.enFinisher0Hole = YES;
     pd.isPrinterFound = YES;
 #if DEBUG_LOG_SNMP_MANAGER
     NSLog(@"[INFO][SNMPM] name=%@", pd.name);

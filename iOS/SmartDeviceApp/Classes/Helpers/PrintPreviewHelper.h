@@ -36,6 +36,7 @@ typedef enum {
 typedef enum {
     kPaperSizeA3, /**< A3 */
     kPaperSizeA3W, /**< A3W */
+    kPaperSizeSRA3, /**< SRA3 */
     kPaperSizeA4, /**< A4 */
     kPaperSizeA5, /**< A5 */
     kPaperSizeA6, /**< A6 */
@@ -55,6 +56,19 @@ typedef enum {
 // for ORPHIS FW end
 
 } kPaperSize;
+
+/**
+ * List of possible values for Input Tray option of FT / GL series.
+ * Selects the tray location for input paper.
+ */
+typedef enum {
+    kInputTrayFTGLAuto, /**< Auto */
+    kInputTrayFTGLStandard, /**< Standard  */
+    kInputTrayFTGLTray1, /**< Tray 1 */
+    kInputTrayFTGLTray2, /**< Tray 2  */
+    kInputTrayFTGLTray3, /**< Tray 3  */
+    kInputTrayFTGLExternal /**< Extra 2000 Sheets */
+}kInputTrayFTGL;
 
 /**
  * List of possible value for Imposition option.

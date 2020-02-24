@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="hxC-Qh-95c"/>
+                        <viewControllerLayoutGuide type="bottom" id="AL8-lR-wZh"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashImage" translatesAutoresizingMaskIntoConstraints="NO" id="fgf-81-VTM">
+                                <rect key="frame" x="64" y="96" width="247" height="475"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="fgf-81-VTM" firstAttribute="top" secondItem="hxC-Qh-95c" secondAttribute="bottom" constant="72" id="CZa-Xz-XUw">
+                                <variation key="heightClass=regular-widthClass=compact" constant="96"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="288"/>
+                            </constraint>
+                            <constraint firstItem="fgf-81-VTM" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" constant="36" id="Cmy-jc-mOu">
+                                <variation key="heightClass=regular-widthClass=compact" constant="48"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="144"/>
+                            </constraint>
+                            <constraint firstItem="AL8-lR-wZh" firstAttribute="top" secondItem="fgf-81-VTM" secondAttribute="bottom" constant="72" id="Q63-pT-GXr">
+                                <variation key="heightClass=regular-widthClass=compact" constant="96"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="288"/>
+                            </constraint>
+                            <constraint firstAttribute="trailingMargin" secondItem="fgf-81-VTM" secondAttribute="trailing" constant="36" id="n0I-fd-gpG">
+                                <variation key="heightClass=regular-widthClass=compact" constant="48"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="144"/>
+                            </constraint>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="SplashImage" width="160" height="60"/>
+    </resources>
+</document>

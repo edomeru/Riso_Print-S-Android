@@ -163,6 +163,7 @@ const static char *paper_type[] =
     "POSTCARDJ",
     "LIGHT",
     "RECYCLED",
+    "PLAINPREMIUM"
     //"CRIMPED"
 	// Ver.2.0.4.6 Start
 	"PLAINPREMIUM"

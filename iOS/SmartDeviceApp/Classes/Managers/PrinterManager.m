@@ -106,7 +106,7 @@ static PrinterManager* sharedPrinterManager = nil;
     {
         return NO;
     }
-    [PrintSettingsHelper copyDefaultPrintSettings:&defaultPrintSettings];
+    [PrintSettingsHelper copyDefaultPrintSettings:&defaultPrintSettings printerName:printerDetails.name];
     
     // create a Printer object
     Printer* newPrinter = (Printer*)[DatabaseManager addObject:E_PRINTER];
@@ -127,7 +127,9 @@ static PrinterManager* sharedPrinterManager = nil;
     newPrinter.enabled_tray_face_down = [NSNumber numberWithBool:printerDetails.enTrayFaceDown];
     newPrinter.enabled_tray_stacking = [NSNumber numberWithBool:printerDetails.enTrayStacking];
     newPrinter.enabled_tray_top = [NSNumber numberWithBool:printerDetails.enTrayTop];
-    
+    newPrinter.enabled_external_feeder = [NSNumber numberWithBool:printerDetails.enExternalFeeder];
+    newPrinter.enabled_finisher_0_hole = [NSNumber numberWithBool:printerDetails.enFinisher0Hole];
+
     // attach the PrintSetting to the Printer
     newPrinter.printsetting = defaultPrintSettings;
     
@@ -388,7 +390,7 @@ static PrinterManager* sharedPrinterManager = nil;
     // get the printer details
     NSDictionary *userInfo = [notif userInfo];
     PrinterDetails* printerInfoCapabilities = (PrinterDetails*)[userInfo objectForKey:@"printerDetails"];
-    
+
     // check if this is a new printer
     __weak PrinterManager* weakSelf = self;
     if ([self isIPAlreadyRegistered:printerInfoCapabilities.ip])
@@ -449,6 +451,43 @@ static PrinterManager* sharedPrinterManager = nil;
             return YES;
     }
     
+    return NO;
+}
+
+- (BOOL)isPrinterModelValid:(NSString*)printerName
+{
+    // IS series
+    if ([PrintSettingsHelper isISSeries:printerName])
+    {
+        return YES;
+    }
+
+    // GD Series
+    if ([PrintSettingsHelper isGDSeries:printerName])
+    {
+        return YES;
+    }
+
+    // FW Series
+    if ([PrintSettingsHelper isFWSeries:printerName])
+    {
+        return YES;
+    }
+    
+    // FT Series
+    if ([PrintSettingsHelper isFTSeries:printerName])
+    {
+        return YES;
+    }
+    
+    // GL Series
+    if ([PrintSettingsHelper isGLSeries:printerName])
+    {
+        return YES;
+    }
+
+    // TODO: Add new printer models checking here
+
     return NO;
 }
 

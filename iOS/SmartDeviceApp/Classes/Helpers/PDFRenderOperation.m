@@ -460,8 +460,8 @@
     CGContextScaleCTM(contextRef, 1.0f, -1.0f);
     CGContextTranslateCTM(contextRef, 0.0f, -size.height);
     
-    if (self.previewSetting.scaleToFit == YES)
-    {
+    if (self.previewSetting.scaleToFit == YES || self.previewSetting.imposition == kImposition2Pages || self.previewSetting.imposition == kImposition4pages || self.previewSetting.booklet == YES)
+    {//mantis0069025 面つけが選択されている、小冊子製本ONなら用紙にフィットさせる
         // Pick a scale that will fit the PDF to expected size
         CGFloat xScale = size.width / pdfRect.size.width;
         CGFloat yScale = size.height / pdfRect.size.height;

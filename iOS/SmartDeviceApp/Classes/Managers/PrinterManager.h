@@ -215,4 +215,12 @@
  */
 - (BOOL)isIPAlreadyRegistered:(NSString*)printerIP;
 
+/**
+ * Checks if the printer is supported (based on printer name).
+ *
+ * @param printerName the printer name to check
+ * @return YES if the printer is supported, NO otherwise
+ */
+- (BOOL)isPrinterModelValid:(NSString*)printerName;
+
 @end

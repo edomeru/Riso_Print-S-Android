@@ -21,7 +21,10 @@
 #define PJL_COMMAND_VERSKION "2.10"
 #define PJL_IDENTIFIER "RISO_IJ_PJL"
 #define PJL_RIPCONTROL_FLAG "10"
+<<<<<<< HEAD
 // End
+=======
+>>>>>>> a451516b88069c9dc61b6c7cd4ad19d1911b0888
 #define PJL_SOFTWERENAME "RISO PRINT-S"
 
 typedef enum

@@ -39,22 +39,6 @@
 
     BOOL isOpenInHandled = [[appDelegate valueForKey:@"isOpenInHandled"] boolValue];
     GHAssertFalse(isOpenInHandled, @"");
-
-    /*Test with URL*/
-    NSURL *testURL  = [[NSBundle mainBundle] URLForResource:@"TestPDF_3Pages_NoPass" withExtension:@"pdf"];
-    [testDictionary setValue:testURL forKey:UIApplicationLaunchOptionsURLKey];
-    //expect these methods to be called with arguments
-    [[mockPDFFileManager expect] setFileAvailableForLoad:YES];
-    [[mockPDFFileManager expect] setFileURL:testURL];
-    //call method under test
-    [appDelegate application:nil didFinishLaunchingWithOptions:testDictionary];
-    //verify if expected methods are called
-    [mockPDFFileManager verify];
-
-    isOpenInHandled = [[appDelegate valueForKey:@"isOpenInHandled"] boolValue];
-    GHAssertTrue(isOpenInHandled, @"");
-    
-    [mockPDFFileManager stopMocking];
 }
 
 -(void)testOpenURL

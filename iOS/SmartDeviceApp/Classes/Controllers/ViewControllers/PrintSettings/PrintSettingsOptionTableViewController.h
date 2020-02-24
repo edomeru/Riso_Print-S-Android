@@ -25,4 +25,9 @@
  */
 @property (nonatomic, weak) PreviewSetting *previewSetting;
 
+/**
+ * Reference to the printer name.
+ */
+@property (nonatomic, weak) NSString *printerName;
+
 @end

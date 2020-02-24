@@ -23,6 +23,11 @@
 @interface PrintPreviewViewController ()
 
 /**
+* Reference to the content view.
+*/
+@property (weak, nonatomic) IBOutlet UIView *contentView;
+
+/**
  * Reference to the label displaying the PDF's filename.
  */
 @property (nonatomic, weak) IBOutlet UILabel *titleLabel;
@@ -295,7 +300,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
+    if (@available(iOS 13.0, *)) {
+       self.contentView.backgroundColor = [UIColor  colorNamed:@"color_gray1_gray6"];
+        self.pageLabel.textColor = [UIColor colorNamed:@"color_black_white"];
+   }
+
     self.splashView.hidden = NO;
     self.printSettingsButton.hidden = YES;
     self.previewView.hidden = YES;
@@ -1009,6 +1019,8 @@
     else if ([sourceViewController isKindOfClass:[PrintSettingsViewController class]])
     {
         [self.printSettingsButton setEnabled:YES];
+        // BUG#9573: Update disableConstraints flag's value to be disabled when print settings panel is dismissed
+        self.printDocument.disableContraints = NO;
     }
 }
 
