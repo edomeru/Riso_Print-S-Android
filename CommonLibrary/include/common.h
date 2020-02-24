@@ -52,13 +52,6 @@ void directprint_job_cancel(directprint_job *print_job);
 int directprint_job_lpr_print(directprint_job *print_job);
 int directprint_job_raw_print(directprint_job *print_job);
 
-/*
- * UTF8 16進数変換
- * [in] 変換前文字列
- * [out] 変換後文字列 or NULL失敗
- */
-char* ConvertUTF8String(char* str);
-
 /**
  SNMP
  */
@@ -117,7 +110,6 @@ void snmp_context_free(snmp_context *context);
 void snmp_device_discovery(snmp_context *context);
 void snmp_manual_discovery(snmp_context *context, const char *ip_address);
 void snmp_cancel(snmp_context *context);
-void snmp_stop_sessions(void); //calls a stop to all sessions, forcing all snmp api to quit their processing and proceed to cleanup
 void *snmp_context_get_caller_data(snmp_context *context);
 void snmp_context_set_caller_data(snmp_context *context, void *caller_data);
 

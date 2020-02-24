@@ -75,20 +75,10 @@ const float AnimationDuration = 0.3f;
     }
     slidingView.userInteractionEnabled = YES;
     
-    // If a notch mask view is visible, include its width when preparing the constraints
-    CGFloat leftNotchMaskViewWidth = 0;
-    CGFloat rightNotchMaskViewWidth = 0;
-    if (!container.leftNotchMaskView.isHidden) {
-        leftNotchMaskViewWidth = container.leftNotchMaskView.frame.size.width;
-    }
-    else if (!container.rightNotchMaskView.isHidden) {
-        rightNotchMaskViewWidth = container.rightNotchMaskView.frame.size.width;
-    }
-
     // Reset constraints
     slidingConstraint.constant = 0;
-    container.leftMainConstraint.constant = 0 + leftNotchMaskViewWidth;
-    container.rightMainConstraint.constant = 0 + rightNotchMaskViewWidth;
+    container.leftMainConstraint.constant = 0;
+    container.rightMainConstraint.constant = 0;
     [container.view layoutIfNeeded];
     CGRect slidingFrame = CGRectMake(0, 0, slidingView.frame.size.width, slidingView.frame.size.height);
 
@@ -97,12 +87,6 @@ const float AnimationDuration = 0.3f;
     slidingViewController.view.frame = slidingFrame;
     [slidingView addSubview:slidingViewController.view];
     slidingConstraint.constant = -slidingFrame.size.width;
-    if (slidingViewController.slideDirection == SlideLeft) {
-        slidingConstraint.constant += leftNotchMaskViewWidth;
-    }
-    else {
-        slidingConstraint.constant += rightNotchMaskViewWidth;
-    }
     [container.view layoutIfNeeded];
     
     // Prepare animation
@@ -111,19 +95,17 @@ const float AnimationDuration = 0.3f;
     {
         if (slidingViewController.isFixedSize == YES)
         {
-            container.rightMainConstraint.constant = -slidingFrame.size.width - leftNotchMaskViewWidth;
+            container.rightMainConstraint.constant = -slidingFrame.size.width;
         }
-        container.leftMainConstraint.constant = slidingFrame.size.width + leftNotchMaskViewWidth;
-        slidingConstraint.constant += leftNotchMaskViewWidth;
+        container.leftMainConstraint.constant = slidingFrame.size.width;
     }
     else
     {
         if (slidingViewController.isFixedSize == YES)
         {
-            container.leftMainConstraint.constant = -slidingFrame.size.width - rightNotchMaskViewWidth;
+            container.leftMainConstraint.constant = -slidingFrame.size.width;
         }
-        container.rightMainConstraint.constant = slidingFrame.size.width + rightNotchMaskViewWidth;
-        slidingConstraint.constant += rightNotchMaskViewWidth;
+        container.rightMainConstraint.constant = slidingFrame.size.width;
     }
     
     [UIView animateWithDuration:AnimationDuration animations:^
@@ -150,16 +132,6 @@ const float AnimationDuration = 0.3f;
     RootViewController *container = (RootViewController *) mainViewController.parentViewController;
     CGRect slidingFrame = slidingViewContoller.view.frame;
     
-    // If a notch mask view is visible, include its width when preparing the constraints
-    CGFloat leftNotchMaskViewWidth = 0;
-    CGFloat rightNotchMaskViewWidth = 0;
-    if (!container.leftNotchMaskView.isHidden) {
-        leftNotchMaskViewWidth = container.leftNotchMaskView.frame.size.width;
-    }
-    else if (!container.rightNotchMaskView.isHidden) {
-        rightNotchMaskViewWidth = container.rightNotchMaskView.frame.size.width;
-    }
-    
     NSLayoutConstraint *slidingConstraint;
     // Prepare constraints
     if (slidingViewContoller.slideDirection == SlideLeft)
@@ -175,14 +147,12 @@ const float AnimationDuration = 0.3f;
     slidingConstraint.constant = -slidingFrame.size.width;
     if (slidingViewContoller.slideDirection == SlideLeft)
     {
-        container.leftMainConstraint.constant = 0 + leftNotchMaskViewWidth;
-        container.rightMainConstraint.constant = 0 + rightNotchMaskViewWidth;
-        slidingConstraint.constant += leftNotchMaskViewWidth;
+        container.leftMainConstraint.constant = 0;
+        container.rightMainConstraint.constant = 0;
     } else
     {
-        container.rightMainConstraint.constant = 0 + rightNotchMaskViewWidth;
-        container.leftMainConstraint.constant = 0 + leftNotchMaskViewWidth;
-        slidingConstraint.constant -= rightNotchMaskViewWidth;
+        container.rightMainConstraint.constant = 0;
+        container.leftMainConstraint.constant = 0;
     }
     
     [UIView animateWithDuration:AnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^

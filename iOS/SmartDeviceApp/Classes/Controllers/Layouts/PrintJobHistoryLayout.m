@@ -7,7 +7,6 @@
 //
 
 #import "PrintJobHistoryLayout.h"
-#import "IPhoneXHelper.h"
 
 @interface PrintJobHistoryLayout ()
 
@@ -241,11 +240,6 @@
             else
             {
                 self.groupWidth = screenRect.size.width;
-            }
-            
-            // Include width of notch mask view if device is iPhone X
-            if ([IPhoneXHelper isDeviceIPhoneX]) {
-                self.groupWidth -= [IPhoneXHelper sensorHousingHeight];
             }
             
             self.interGroupSpacingY = 2.0f;

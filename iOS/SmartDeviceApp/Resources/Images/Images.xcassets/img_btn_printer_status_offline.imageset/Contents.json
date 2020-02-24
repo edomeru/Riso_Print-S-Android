@@ -2,17 +2,16 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "img_btn_printer_status_offline.png",
-      "scale" : "1x"
+      "scale" : "1x",
+      "filename" : "img_btn_printer_status_offline.png"
     },
     {
       "idiom" : "universal",
-      "filename" : "img_btn_printer_status_offline_2x.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "img_btn_printer_status_offline_2x.png"
     },
     {
       "idiom" : "universal",
-      "filename" : "img_btn_printer_status_offline_3x.png",
       "scale" : "3x"
     }
   ],

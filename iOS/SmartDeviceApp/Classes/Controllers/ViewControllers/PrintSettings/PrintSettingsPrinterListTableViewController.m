@@ -60,10 +60,6 @@
 {
     [super viewDidLoad];
 
-    if (@available(iOS 13.0, *)) {
-        self.tableView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray5"];
-    }
-
     self.printerManager = [PrinterManager sharedPrinterManager];
     self.printDocument = [[PDFFileManager sharedManager] printDocument];
     self.statusHelpers = [[NSMutableArray alloc] init];

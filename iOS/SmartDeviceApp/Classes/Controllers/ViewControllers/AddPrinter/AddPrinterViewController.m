@@ -14,7 +14,7 @@
 #import "InputHelper.h"
 #import "AppSettingsHelper.h"
 #import "ScreenLayoutHelper.h"
-#import "BackgroundObserver.h"
+#import "DeviceLockObserver.h"
 #import "NotificationNames.h"
 
 NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
@@ -70,16 +70,6 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
  * Reference to the view containing the IP input
  */
 @property (weak, nonatomic) IBOutlet UIView *inputView;
-
-/**
- * Reference to the view containing the SNMP Community Name
-*/
-@property (weak, nonatomic) IBOutlet UIView *snmpView;
-
-/**
- * Reference to the UILabel for SNMP Community Name.
-*/
-@property (weak, nonatomic) IBOutlet UILabel *communityNameLabel;
 
 /**
  * Flag that will be set to YES when the device is a tablet.
@@ -198,21 +188,18 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector (keyboardDidHide:)
                                                  name: UIKeyboardDidHideNotification object:nil];
-    // 20170602 v.2.0.7.1
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector (backgroundEventDidNotify) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector (deviceLockEventDidNotify)
+                                                 name: NOTIF_DEVICE_LOCK object:nil];
 
-    
-    
-    
-
-    [[BackgroundObserver sharedObserver] startObserver];
+    [[DeviceLockObserver sharedObserver] startObserver];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[BackgroundObserver sharedObserver] stopObserver];
+    [[DeviceLockObserver sharedObserver] stopObserver];
 }
 
 - (void)didReceiveMemoryWarning
@@ -224,15 +211,6 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
 
 - (void)setupScreen
 {
-    if (@available(iOS 13.0, *)) {
-        self.snmpView.backgroundColor = [UIColor  colorNamed:@"color_gray2_gray5"];
-        self.inputView.backgroundColor = [UIColor  colorNamed:@"color_gray2_gray5"];
-        self.textIP.backgroundColor = [UIColor colorNamed:@"color_text_field"];
-        self.communityNameLabel.textColor = [UIColor colorNamed:@"color_black_white"];
-        self.communityNameDisplay.textColor = [UIColor colorNamed:@"color_black_white"];
-        self.view.backgroundColor = [UIColor colorNamed:@"color_gray1_gray4"];
-    }
-
     // setup properties
     self.printerManager = [PrinterManager sharedPrinterManager];
     self.printerManager.searchDelegate = self;
@@ -473,21 +451,6 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     NSLog(@"[INFO][AddPrinter] received NEW printer with IP=%@", printerDetails.ip);
     NSLog(@"[INFO][AddPrinter] updating UI");
 #endif
-
-#if !DEBUG_SNMP_USE_FAKE_PRINTERS
-    // check if printer model is valid
-    if (![self.printerManager isPrinterModelValid:printerDetails.name])
-    {
-        // display printer not found (same with Android)
-        [AlertHelper displayResult:kAlertResultErrPrinterNotFound
-                         withTitle:kAlertTitlePrintersAdd
-                       withDetails:nil
-                withDismissHandler:^(CXAlertView *alertView) {
-                    [self dismissScreen];
-                }];
-        return;
-    }
-#endif
     
     if ([self.printerManager registerPrinter:printerDetails])
     {
@@ -595,7 +558,7 @@ NSString *const BROADCAST_ADDRESS = @"255.255.255.255";
     [self moveViewDownToNormal];
 }
 
-- (void)backgroundEventDidNotify
+- (void)deviceLockEventDidNotify
 {
     if ([self.progressIndicator isAnimating])
     {

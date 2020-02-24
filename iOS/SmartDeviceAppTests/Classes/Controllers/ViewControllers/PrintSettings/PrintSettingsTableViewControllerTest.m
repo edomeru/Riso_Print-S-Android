@@ -108,8 +108,6 @@
         pd.enTrayStacking = YES;
         pd.enTrayFaceDown = YES;
         pd.enTrayTop = YES;
-        pd.enExternalFeeder = YES;
-        pd.enFinisher0Hole = NO;    // value = NO to not affect other tests
         if(i == noNameIndex)
         {
             pd.name = @"";;
@@ -331,20 +329,6 @@
     
     GHAssertNotNil(viewController.view, @"");
 
-    Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex];
-    printer.enabled_finisher_0_hole = [NSNumber numberWithBool:YES];
-    GHAssertFalse([viewController isSettingSupported:KEY_PUNCH], @"");
-
-    printer.enabled_finisher_0_hole = [NSNumber numberWithBool:NO];
-    printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:NO];
-    printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:NO];
-    GHAssertFalse([viewController isSettingSupported:KEY_PUNCH], @"");
-
-    printer.enabled_finisher_0_hole = [NSNumber numberWithBool:NO];
-    printer.enabled_finisher_2_3_holes = [NSNumber numberWithBool:NO];
-    printer.enabled_finisher_2_4_holes = [NSNumber numberWithBool:YES];
-    GHAssertTrue([viewController isSettingSupported:KEY_PUNCH], @"");
-
 #ifndef DISABLE_FAILED_TESTS
     Printer *printer = [[PrinterManager sharedPrinterManager] getPrinterAtIndex:testPrinterIndex];
     printer.enabled_booklet_finishing = [NSNumber numberWithBool:NO];
@@ -431,12 +415,6 @@
     GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_2holes"],@"");
     GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_punch_4holes"],@"");
     GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_punch_3holes"],@"");
-
-    printer.enabled_external_feeder = [NSNumber numberWithBool:YES];
-    GHAssertTrue([viewController isSettingOptionSupported:@"ids_lbl_inputtray_external"], @"");
-
-    printer.enabled_external_feeder = [NSNumber numberWithBool:NO];
-    GHAssertFalse([viewController isSettingOptionSupported:@"ids_lbl_inputtray_external"], @"");
 }
 
 -(void)test006_isSettingEnabled

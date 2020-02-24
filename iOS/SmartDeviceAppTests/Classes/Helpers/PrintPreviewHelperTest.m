@@ -21,7 +21,6 @@
 {
     CGSize A3WSize;
     CGSize A3Size;
-    CGSize SRA3Size;
     CGSize A4Size;
     CGSize A5Size;
     CGSize A6Size;
@@ -45,7 +44,6 @@
 {
     A3WSize = CGSizeMake(895.748, 1303.937);
     A3Size = CGSizeMake(841.890, 1190.551);
-    SRA3Size = CGSizeMake(907.087, 1275.591);
     A4Size = CGSizeMake(595.276, 841.890);
     A5Size = CGSizeMake(419.528, 595.276);
     A6Size = CGSizeMake(297.638, 419.528);
@@ -98,10 +96,6 @@
     expectedValue = A3Size.width/A3Size.height;
     actualValue = [PrintPreviewHelper getAspectRatioForPaperSize:kPaperSizeA3];
     GHAssertLessThanOrEqual(fabs(actualValue - expectedValue),diffThreshold,@"A3Size aspect ratio");
-    //SRA3
-    expectedValue = SRA3Size.width/SRA3Size.height;
-    actualValue = [PrintPreviewHelper getAspectRatioForPaperSize:kPaperSizeSRA3];
-    GHAssertLessThanOrEqual(fabs(actualValue - expectedValue),diffThreshold,@"SRA3Size aspect ratio");
     //A4
     expectedValue = A4Size.width/A4Size.height;
     actualValue = [PrintPreviewHelper getAspectRatioForPaperSize:kPaperSizeA4];
@@ -162,11 +156,6 @@
     actualValue = [PrintPreviewHelper getPaperDimensions:kPaperSizeA3 isLandscape:NO];
     GHAssertLessThanOrEqual(fabs(actualValue.width - expectedValue.width),diffThreshold,@"A3Size width");
     GHAssertLessThanOrEqual(fabs(actualValue.height - expectedValue.height),diffThreshold,@"A3Size height");
-    //SRA3
-    expectedValue = SRA3Size;
-    actualValue = [PrintPreviewHelper getPaperDimensions:kPaperSizeSRA3 isLandscape:NO];
-    GHAssertLessThanOrEqual(fabs(actualValue.width - expectedValue.width),diffThreshold,@"SRA3Size width");
-    GHAssertLessThanOrEqual(fabs(actualValue.height - expectedValue.height),diffThreshold,@"SRA3Size height");
     //A4
     expectedValue = A4Size;
     actualValue = [PrintPreviewHelper getPaperDimensions:kPaperSizeA4 isLandscape:NO];
@@ -233,11 +222,6 @@
     actualValue = [PrintPreviewHelper getPaperDimensions:kPaperSizeA3 isLandscape:YES];
     GHAssertLessThanOrEqual(fabs(actualValue.width - expectedValue.height),diffThreshold,@"A3Size Landscape width");
     GHAssertLessThanOrEqual(fabs(actualValue.height - expectedValue.width),diffThreshold,@"A3Size Landscape height");
-    //SRA3 Landscape
-    expectedValue = SRA3Size;
-    actualValue = [PrintPreviewHelper getPaperDimensions:kPaperSizeSRA3 isLandscape:YES];
-    GHAssertLessThanOrEqual(fabs(actualValue.width - expectedValue.height),diffThreshold,@"SRA3Size Landscape width");
-    GHAssertLessThanOrEqual(fabs(actualValue.height - expectedValue.width),diffThreshold,@"SRA3Size Landscape height");
     //A4 Landscape
     expectedValue = A4Size;
     actualValue = [PrintPreviewHelper getPaperDimensions:kPaperSizeA4 isLandscape:YES];

@@ -25,11 +25,7 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
-    if (@available(iOS 13.0, *)) {
-        self.contentView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray5"];
-    } else {
-        self.contentView.backgroundColor = [UIColor gray2ThemeColor];
-    }
+    self.contentView.backgroundColor = [UIColor gray2ThemeColor];
 }
 
 @end

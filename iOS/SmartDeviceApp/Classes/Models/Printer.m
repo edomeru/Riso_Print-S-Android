@@ -22,8 +22,6 @@
 @dynamic enabled_tray_face_down;
 @dynamic enabled_tray_stacking;
 @dynamic enabled_tray_top;
-@dynamic enabled_external_feeder;
-@dynamic enabled_finisher_0_hole;
 @dynamic ip_address;
 @dynamic name;
 @dynamic port;

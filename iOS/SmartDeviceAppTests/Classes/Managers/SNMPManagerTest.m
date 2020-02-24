@@ -17,18 +17,16 @@
 #include "fff.h"
 DEFINE_FFF_GLOBALS;
 
+FAKE_VOID_FUNC(snmp_manual_search);
 FAKE_VALUE_FUNC(snmp_context *, snmp_context_new, snmp_discovery_ended_callback, snmp_printer_added_callback, const char*);
 FAKE_VOID_FUNC(snmp_context_free);
 FAKE_VOID_FUNC(snmp_manual_discovery);
 FAKE_VOID_FUNC(snmp_device_discovery);
 FAKE_VOID_FUNC(snmp_cancel);
 FAKE_VOID_FUNC(snmp_stop_sessions);
-FAKE_VALUE_FUNC(void*, snmp_context_get_caller_data, snmp_context *);
-FAKE_VOID_FUNC(snmp_context_set_caller_data, snmp_context *, void*);
 
 FAKE_VALUE_FUNC(snmp_device *, snmp_device_new);
 FAKE_VOID_FUNC(snmp_device_free);
-FAKE_VALUE_FUNC(int, snmp_device_get_series);
 FAKE_VALUE_FUNC(int, snmp_device_get_capability_status);
 FAKE_VALUE_FUNC(const char *, snmp_device_get_ip_address);
 FAKE_VALUE_FUNC(const char *, snmp_device_get_name);
@@ -90,7 +88,6 @@ void mock_success_snmp_device_discovery()
 
 @property (nonatomic, strong) PrinterDetails *testPrinterDetails;
 @property (nonatomic, strong) id mockObserver;
-@property (nonatomic, strong) id mockObserver2;
 
 @end
 
@@ -124,18 +121,16 @@ void mock_success_snmp_device_discovery()
 // Run before each test method
 - (void)setUp
 {
+    RESET_FAKE(snmp_manual_search);
     RESET_FAKE(snmp_context_new);
     RESET_FAKE(snmp_context_free);
     RESET_FAKE(snmp_manual_discovery);
     RESET_FAKE(snmp_device_discovery);
     RESET_FAKE(snmp_cancel);
     RESET_FAKE(snmp_stop_sessions);
-    RESET_FAKE(snmp_context_get_caller_data);
-    RESET_FAKE(snmp_context_set_caller_data);
 
     RESET_FAKE(snmp_device_new);
     RESET_FAKE(snmp_device_free);
-    RESET_FAKE(snmp_device_get_series);
     RESET_FAKE(snmp_device_get_capability_status);
     RESET_FAKE(snmp_device_get_ip_address);
     RESET_FAKE(snmp_device_get_name);
@@ -153,11 +148,6 @@ void mock_success_snmp_device_discovery()
     {
         [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
         self.mockObserver = nil;
-    }
-    if (self.mockObserver2 != nil)
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver2];
-        self.mockObserver2 = nil;
     }
 }
 
@@ -208,8 +198,7 @@ void mock_success_snmp_device_discovery()
     
     // Mock
     self.mockObserver = [OCMockObject observerMock];
-    self.mockObserver2 = [OCMockObject observerMock];
-    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver2 name:NOTIF_SNMP_END object:sharedSNMPManager];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_END object:sharedSNMPManager];
     [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_ADD object:sharedSNMPManager];
     [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_ADD object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
         PrinterDetails *pd = [userInfo objectForKey:@"printerDetails"];
@@ -223,7 +212,7 @@ void mock_success_snmp_device_discovery()
         }
         return YES;
     }]];
-    [[self.mockObserver2 expect] notificationWithName:NOTIF_SNMP_END object:[SNMPManager sharedSNMPManager] userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_END object:[SNMPManager sharedSNMPManager] userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
         NSNumber *result = [userInfo objectForKey:@"result"];
         return ([result boolValue] == YES);
     }]];
@@ -245,7 +234,6 @@ void mock_success_snmp_device_discovery()
     GHAssertEquals((int)snmp_device_get_name_fake.call_count, 1, @"snmp_device_get_name must be called.");
     GHAssertNoThrow([self.mockObserver verify], @"");
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
-    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver2];
 }
 
 - (void)testSearchForPrinter_Broadcast
@@ -314,8 +302,7 @@ void mock_success_snmp_device_discovery()
     
     // Mock
     self.mockObserver = [OCMockObject observerMock];
-    self.mockObserver2 = [OCMockObject observerMock];
-    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver2 name:NOTIF_SNMP_END object:sharedSNMPManager];
+    [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_END object:sharedSNMPManager];
     [[NSNotificationCenter defaultCenter] addMockObserver:self.mockObserver name:NOTIF_SNMP_ADD object:sharedSNMPManager];
     [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_ADD object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
         PrinterDetails *pd = [userInfo objectForKey:@"printerDetails"];
@@ -329,7 +316,7 @@ void mock_success_snmp_device_discovery()
         }
         return YES;
     }]];
-    [[self.mockObserver2 expect] notificationWithName:NOTIF_SNMP_END object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
+    [[self.mockObserver expect] notificationWithName:NOTIF_SNMP_END object:sharedSNMPManager userInfo:[OCMArg checkWithBlock:^BOOL(NSDictionary *userInfo){
         NSNumber *result = [userInfo objectForKey:@"result"];
         return ([result boolValue] == YES);
     }]];
@@ -351,7 +338,6 @@ void mock_success_snmp_device_discovery()
     GHAssertEquals((int)snmp_device_get_name_fake.call_count, 1, @"snmp_device_get_name must be called.");
     GHAssertNoThrow([self.mockObserver verify], @"");
     [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver];
-    [[NSNotificationCenter defaultCenter] removeObserver:self.mockObserver2];
 }
 
 - (void)testCancelSearch_Searching

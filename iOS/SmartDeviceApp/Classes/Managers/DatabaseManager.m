@@ -160,11 +160,7 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
     NSPersistentStoreCoordinator* coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil)
     {
-        /* BUG#7056: Change concurrency type from NSMainQueueConcurrencyType to NSPrivateQueueConcurrencyType
-         * to allow to perform multiple operations on database concurrently on private queue
-         * https://stackoverflow.com/questions/25812268/core-data-error-exception-was-caught-during-core-data-change-processing
-         */
-        sharedManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        sharedManagedObjectContext = [[NSManagedObjectContext alloc] init];
         [sharedManagedObjectContext setPersistentStoreCoordinator:coordinator];
     }
     
@@ -183,14 +179,10 @@ static NSManagedObjectModel* sharedManagedObjectModel = nil;
     NSError* error = nil;
     sharedPersistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc]
                                         initWithManagedObjectModel:[self managedObjectModel]];
-    // Automatically map data core migration
-    NSDictionary* options = [NSDictionary dictionaryWithObjectsAndKeys:
-                             [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
-                             [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
     if (![sharedPersistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
                                                         configuration:nil
                                                                   URL:storeURL
-                                                              options:options
+                                                              options:nil
                                                                 error:&error])
     {
 #if DEBUG_LOG_DATABASE_MANAGER

@@ -50,7 +50,10 @@
                           printSettingsFilePath = NULL;
                       }
                       
-                      if ([self isISSeries:printerName])
+                      if ([printerName isEqualToString:@"RISO IS1000C-J"] ||
+                          [printerName isEqualToString:@"RISO IS1000C-G"] ||
+                          [printerName isEqualToString:@"RISO IS950C-G"]
+                          )
                       {
                           printSettingsFilePath = [[NSBundle mainBundle] pathForResource:@"printsettings" ofType:@"xml"];
                       }
@@ -169,7 +172,7 @@
     }
 }
 
-+ (void)copyDefaultPrintSettings:(PrintSetting **)printSetting printerName:(NSString *)name
++ (void)copyDefaultPrintSettings:(PrintSetting **)printSetting
 {
     NSDictionary *printSettingsTree = [PrintSettingsHelper sharedPrintSettingsTree];
     NSArray *groups = [printSettingsTree objectForKey:@"group"];
@@ -180,14 +183,7 @@
         {
             NSString *key = [setting objectForKey:@"name"];
             NSString *type = [setting objectForKey:@"type"];
-            
-            /* Get printer-specific defaultValue, if defined */
-            NSString *defaultValue = [setting objectForKey:[NSString stringWithFormat:@"default%@",[self getPrinterType:name]]];
-            /* If printer-specific defaultValue is nil, use value from "default" */
-            if (defaultValue == nil)
-            {
-                defaultValue = [setting objectForKey:@"default"];
-            }
+            NSString *defaultValue = [setting objectForKey:@"default"];
             
             if ([(*printSetting) respondsToSelector:NSSelectorFromString(key)] == NO)
             {
@@ -268,93 +264,4 @@
         }
     }
 }
-
-+ (NSString *)getPrinterType:(NSString *)printerName
-{
-    if ([self isISSeries:printerName])
-    {
-        return @"IS";
-    }
-    else if ([self isFWSeries:printerName])
-    {
-        return @"FW";
-    }
-    else if([self isGDSeries:printerName])
-    {
-        return @"GD";
-    }
-    else if([self isFTSeries:printerName])
-    {
-        return @"FT";
-    }
-    else if([self isGLSeries:printerName])
-    {
-        return @"GL";
-    }
-    else
-    {
-        return @"";
-    }
-}
-
-+ (BOOL)isISSeries:(NSString *)printerName
-{
-    if([printerName isEqualToString:@"RISO IS1000C-J"] ||
-       [printerName isEqualToString:@"RISO IS1000C-G"] ||
-       [printerName isEqualToString:@"RISO IS950C-G"])
-    {
-        return YES;
-    }
-
-    return NO;
-}
-
-+ (BOOL)isFWSeries:(NSString *)printerName
-{
-    NSRange SearchResult = [printerName rangeOfString:@" FW"];
-    if(SearchResult.location == NSNotFound){
-        return NO;
-    }
-
-    return YES;
-}
-
-+ (BOOL)isGDSeries:(NSString *)printerName
-{
-    NSRange SearchResult = [printerName rangeOfString:@" GD"];
-    if(SearchResult.location == NSNotFound){
-        return NO;
-    }
-
-    return YES;
-}
-
-+ (BOOL)isFTSeries:(NSString *)printerName
-{
-    NSRange SearchResult = [printerName rangeOfString:@" FT"];
-    if(SearchResult.location == NSNotFound){
-        SearchResult = [printerName rangeOfString:@" OIS"];
-        if(SearchResult.location == NSNotFound){
-            return NO;
-        }
-    }
-
-    return YES;
-}
-
-+ (BOOL)isGLSeries:(NSString *)printerName
-{
-    NSRange SearchResult = [printerName rangeOfString:@" GL"];
-    if (SearchResult.location == NSNotFound) {
-        return NO;
-    }
-    
-    return YES;
-}
-
-+ (BOOL)isFTorGLSeries: (NSString *) printerName
-{
-    return [self isFTSeries:printerName] || [self isGLSeries:printerName];
-}
-
 @end

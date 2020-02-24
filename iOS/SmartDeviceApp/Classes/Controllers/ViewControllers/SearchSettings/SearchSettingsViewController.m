@@ -20,16 +20,6 @@
 #pragma mark - UI Properties
 
 /**
- * Reference to the content view..
-*/
-@property (weak, nonatomic) IBOutlet UIView *contentView;
-
-/**
- * Reference to the SNMP Community Name Label.
-*/
-@property (weak, nonatomic) IBOutlet UILabel *communityNameLabel;
-
-/**
  * Reference to the textfield for the SNMP Community Name.
  */
 @property (weak, nonatomic) IBOutlet UITextField *snmpCommunityName;
@@ -115,13 +105,6 @@
 
 - (void)setupScreen
 {
-    if (@available(iOS 13.0, *)) {
-        self.contentView.backgroundColor = [UIColor  colorNamed:@"color_gray2_gray5"];
-        self.communityNameLabel.textColor = [UIColor colorNamed:@"color_black_white"];
-        self.snmpCommunityName.backgroundColor = [UIColor colorNamed:@"color_text_field"];
-        self.view.backgroundColor = [UIColor colorNamed:@"color_gray1_gray4"];
-    }
-
     [self.snmpCommunityName setPlaceholder:NSLocalizedString(IDS_LBL_SNMP_COMMUNITY_NAME, "SNMP Community Name")];
     self.snmpCommunityName.text = [AppSettingsHelper getSNMPCommunityName];
     

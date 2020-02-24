@@ -35,13 +35,6 @@
             NSNumber *value = [self valueForKey:key];
             if ([type isEqualToString:@"list"] || [type isEqualToString:@"numeric"])
             {
-                /*
-                 * BUG #7237: If Punch is set to 3 holes on the Print Settings, PJL command is RKPUNCHMODE=4HOLES
-                 * Fix: If selected option is 3 holes, set index of 3HOLES (index 3 as of v3.1.0.0) from common lib PJL settings as value for punch
-                 */
-                if ([key isEqualToString:KEY_PUNCH] && self.isPunch3Selected) {
-                    value = [NSNumber numberWithInt:([value intValue]+1)];
-                }
                 item = [NSString stringWithFormat:@"%@=%d\n", key, [value intValue]];
             }
             else

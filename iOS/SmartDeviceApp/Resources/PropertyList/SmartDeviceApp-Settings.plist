@@ -6,9 +6,5 @@
 	<integer>10</integer>
 	<key>PrintJob_MaxCountPerPrinter</key>
 	<integer>100</integer>
-	<key>PrintJob_MaxNum</key>
-	<integer>999</integer>
-	<key>PrintJob_Num</key>
-	<integer>0</integer>
 </dict>
 </plist>

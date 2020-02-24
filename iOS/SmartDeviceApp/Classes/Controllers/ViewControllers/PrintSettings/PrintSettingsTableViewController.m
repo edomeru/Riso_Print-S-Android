@@ -28,8 +28,6 @@
 #import "UIViewController+Segue.h"
 #import "PrintJobHistoryViewController.h"
 #import "NetworkManager.h"
-#import "IPhoneXHelper.h"
-#import "PrintSettingsHelper.h"
 
 #define SETTING_HEADER_CELL @"SettingHeaderCell"
 #define SETTING_ITEM_OPTION_CELL @"SettingItemOptionCell"
@@ -153,16 +151,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 - (void)applyPunchConstraint;
 
 /**
- * Updates affected print settings based on the Paper Size setting.
- */
-- (void)applyPaperSizeConstraint;
-
-/**
- * Updates affected print settings based on the Input Tray setting.
- */
-- (void)applyInputTrayConstraint;
-
-/**
  * Determines which print settings are to be updated because of the specified setting.
  *
  * @param key the updated print setting
@@ -206,7 +194,21 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
  * @param settingKey the string name of the print setting
  * @return YES if supported, NO otherwise
  */
--(BOOL)isSettingSupportedISFWGDFTGL:(NSString *)option;
+-(BOOL)isSettingSupportedISFWGD:(NSString *)option;
+
+/**
+ * Checks if the printer name is IS Series.
+ *
+ * @return YES if IS Series, NO otherwise
+ */
+- (BOOL)isISSeries;
+
+/**
+ * Checks if the printer name is FW Series.
+ *
+ * @return YES if FW Series, NO otherwise
+ */
+- (BOOL)isFWSeries;
 // for ORPHIS FW end
 
 /**
@@ -285,11 +287,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    if (@available(iOS 13.0, *)) {
-        self.tableView.backgroundColor = [UIColor colorNamed:@"color_gray2_gray5"];
-    }
-
+    
     // Get printer and print settings data to display
     if (self.printerIndex == nil)
     {
@@ -387,12 +385,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         [self reloadRowsForIndexPathsToUpdate];
     }
-}
-
-- (void)viewSafeAreaInsetsDidChange
-{
-    [super viewSafeAreaInsetsDidChange];
-    [self adjustScrollViewIndicatorInsets];
 }
 
 - (void)didReceiveMemoryWarning
@@ -790,7 +782,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         PrintSettingsOptionTableViewController *optionsController = segue.destinationViewController;
         optionsController.setting = self.currentSetting;
         optionsController.previewSetting = self.previewSetting;
-        optionsController.printerName = self.printer.name;
     }
 }
 
@@ -873,16 +864,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 #if PUNCH_3_4_BINDING_SIDE_CONSTRAINT_ENABLED
         [self applyFinishingWithOrientationConstraint];
 #endif
-    }
-
-    if([key isEqualToString:KEY_PAPER_SIZE] == YES)
-    {
-        [self applyPaperSizeConstraint];
-    }
-
-    if([key isEqualToString:KEY_INPUT_TRAY] == YES)
-    {
-        [self applyInputTrayConstraint];
     }
 }
 
@@ -1060,28 +1041,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     }
 }
 
-// Paper Size against Input Tray (External Feeder) Constraint
-- (void)applyPaperSizeConstraint
-{
-    if ([PrintSettingsHelper isFTorGLSeries:self.printer.name] && self.previewSetting.inputTray == kInputTrayFTGLExternal &&
-        self.previewSetting.paperSize != kPaperSizeA4 && self.previewSetting.paperSize != kPaperSizeB5 &&
-        self.previewSetting.paperSize != kPaperSizeLetter && self.previewSetting.paperSize != kPaperSize16K)
-    {
-        [self setOptionSettingToDefaultValue:KEY_INPUT_TRAY];
-    }
-}
-
-// Input Tray (External Feeder) against Paper Size Constraint
-- (void)applyInputTrayConstraint
-{
-    if ([PrintSettingsHelper isFTorGLSeries:self.printer.name] && self.previewSetting.inputTray == kInputTrayFTGLExternal &&
-        self.previewSetting.paperSize != kPaperSizeA4 && self.previewSetting.paperSize != kPaperSizeB5 &&
-        self.previewSetting.paperSize != kPaperSizeLetter && self.previewSetting.paperSize != kPaperSize16K)
-    {
-        [self setOptionSettingToDefaultValue:KEY_PAPER_SIZE];
-    }
-}
-
 #pragma mark - Update Settings
 
 - (void)setState:(BOOL)isEnabled forSettingKey:(NSString*)key
@@ -1098,12 +1057,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
         else if ([cell isKindOfClass:[PrintSettingsItemInputCell class]])
         {
             [(PrintSettingsItemInputCell *)cell setEnabled:isEnabled];
-            
-            if (@available(iOS 11, *)) {
-                // Reload row for the change in the textfield's appearance to reflect
-                [self addToIndexToUpdate:indexPath];
-                [self reloadRowsForIndexPathsToUpdate];
-            }
         }
     }
 }
@@ -1246,67 +1199,80 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     {
         return [self.printer.enabled_tray_stacking boolValue];
     }
-
-    if ([option isEqualToString:@"ids_lbl_inputtray_external"]) {
-        return [self.printer.enabled_external_feeder boolValue];
-    }
-
+    
     // for ORPHIS FW start
-    return [self isSettingSupportedISFWGDFTGL:option];
+    return [self isSettingSupportedISFWGD:option];
     // for ORPHIS FW end
     
     return YES;
 }
 
-- (BOOL)isSettingSupportedISFWGDFTGL:(NSString *)option
+- (BOOL)isISSeries
+{
+    if([self.printer.name isEqualToString:@"RISO IS1000C-J"] ||
+       [self.printer.name isEqualToString:@"RISO IS1000C-G"] ||
+       [self.printer.name isEqualToString:@"RISO IS950C-G"])
+    {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)isFWSeries
+{
+    if ([self.printer.name isEqualToString:@"ORPHIS FW5230"] ||
+        [self.printer.name isEqualToString:@"ORPHIS FW5230A"] ||
+        [self.printer.name isEqualToString:@"ORPHIS FW5231"] ||
+        [self.printer.name isEqualToString:@"ORPHIS FW2230"] ||
+        [self.printer.name isEqualToString:@"ORPHIS FW1230"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5230"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5230R"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5231"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5231R"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5000"] ||
+        [self.printer.name isEqualToString:@"ComColor FW5000R"] ||
+        [self.printer.name isEqualToString:@"ComColor FW2230"] ||
+        [self.printer.name isEqualToString:@"ComColor black FW1230"] ||
+        [self.printer.name isEqualToString:@"ComColor black FW1230R"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW5230"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW5230R"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW5231"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW2230 Wenjianhong"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang FW2230 Lan"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang black FW1230"] ||
+        [self.printer.name isEqualToString:@"Shan Cai Yin Wang black FW1230R"]
+        )
+    {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)isSettingSupportedISFWGD:(NSString *)option
 {
     // for ORPHIS FW start
-    if ([PrintSettingsHelper isISSeries:self.printer.name])
+    if ([self isISSeries])
     {
     if([option isEqualToString:@"ids_lbl_papertype_roughpaper"] ||
-       [option isEqualToString:@"ids_lbl_papersize_sra3"] ||
        [option isEqualToString:@"ids_lbl_papersize_legal13"] ||
        [option isEqualToString:@"ids_lbl_papersize_8K"] ||
        [option isEqualToString:@"ids_lbl_papersize_16K"] ||
-       [option isEqualToString:@"ids_lbl_colormode_2color"]  ||
-       [option isEqualToString:@"ids_lbl_papertype_plain_premium"] ||
-       [option isEqualToString:@"ids_lbl_inputtray_external"])
+       [option isEqualToString:@"ids_lbl_colormode_2color"] )
         {
             return NO;
         }
     }
-    else if ([PrintSettingsHelper isFWSeries:self.printer.name])
+    else if ([self isFWSeries])
     {
-        if([option isEqualToString:@"ids_lbl_papersize_sra3"] ||
-           [option isEqualToString:@"ids_lbl_inputtray_tray3"] ||
-           [option isEqualToString:@"ids_lbl_inputtray_external"])
-        {
-            return NO;
-        }
-    }
-    else if ([PrintSettingsHelper isFTSeries:self.printer.name])
-    {
-        if([option isEqualToString:@"ids_lbl_papersize_sra3"] ||
-           [option isEqualToString:@"ids_lbl_inputtray_tray3"])
-        {
-            return NO;
-        }
-    }
-    else if ([PrintSettingsHelper isGLSeries:self.printer.name])
-    {
-        if([option isEqualToString:@"ids_lbl_papertype_roughpaper"] ||
-           [option isEqualToString:@"ids_lbl_papertype_plain_premium"])
+        if([option isEqualToString:@"ids_lbl_inputtray_tray3"])
         {
             return NO;
         }
     }
     else // GD Series
     {
-        if([option isEqualToString:@"ids_lbl_papersize_sra3"] ||
-           [option isEqualToString:@"ids_lbl_papertype_roughpaper"] ||
-           [option isEqualToString:@"ids_lbl_colormode_2color"] ||
-           [option isEqualToString:@"ids_lbl_papertype_plain_premium"] ||
-           [option isEqualToString:@"ids_lbl_inputtray_external"])
+        if([option isEqualToString:@"ids_lbl_papertype_roughpaper"] ||
+           [option isEqualToString:@"ids_lbl_colormode_2color"] )
         {
             return NO;
         }
@@ -1329,7 +1295,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
     
     if([settingKey isEqualToString:KEY_PUNCH])
     {
-        return (![self.printer.enabled_finisher_0_hole boolValue] && ([self.printer.enabled_finisher_2_3_holes boolValue] || [self.printer.enabled_finisher_2_4_holes boolValue]));
+        return ([self.printer.enabled_finisher_2_3_holes boolValue] || [self.printer.enabled_finisher_2_4_holes boolValue]);
     }
     
     if([settingKey isEqualToString:KEY_STAPLE])
@@ -1361,13 +1327,7 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
 {
     if([self.indexPathsToUpdate count] > 0)
     {
-        // Set reload animation for the PIN code textfield to UITableViewRowAnimationNone for consistency with pre-iOS 11 behavior
-        if (([self.indexPathsToUpdate count] == 1) && (self.indexPathsToUpdate.firstObject == [self.indexPathsForSettings objectForKey:KEY_PIN_CODE])) {
-            [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationNone];
-        }
-        else {
-            [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationFade];
-        }
+        [self.tableView reloadRowsAtIndexPaths:self.indexPathsToUpdate withRowAnimation:UITableViewRowAnimationFade];
         [self.indexPathsToUpdate removeAllObjects];
     }
 }
@@ -1416,25 +1376,6 @@ static NSString *printSettingsPrinterContext = @"PrintSettingsPrinterContext";
             }
         }
         [self.supportedSettings addObject:effectiveSettings];
-    }
-}
-
-- (void)adjustScrollViewIndicatorInsets
-{
-    /**
-     * When running on an iPhone X in landscape left mode, the Print Settings table view's scroll indicator
-     * has an excessive right inset. To fix this, set the right inset to the correct value whenever the device's
-     * orientation is landscape left.
-     */
-    if (@available(iOS 11, *)) {
-        if ([IPhoneXHelper isDeviceIPhoneX]) {
-            if (UIDevice.currentDevice.orientation == UIDeviceOrientationLandscapeLeft || UIDevice.currentDevice.orientation == UIDeviceOrientationLandscapeRight) {
-                self.tableView.scrollIndicatorInsets = UIEdgeInsetsMake(self.tableView.scrollIndicatorInsets.top, self.tableView.scrollIndicatorInsets.left, self.tableView.scrollIndicatorInsets.bottom, -self.parentViewController.view.safeAreaInsets.right);
-            }
-            else {
-                self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
-            }
-        }
     }
 }
 

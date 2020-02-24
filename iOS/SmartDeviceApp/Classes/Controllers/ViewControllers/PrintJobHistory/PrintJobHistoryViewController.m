@@ -143,11 +143,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    if (@available(iOS 13.0, *)) {
-        self.groupsView.backgroundColor = [UIColor colorNamed:@"color_gray1_gray6"];
-    }
-
+    
     self.listPrintJobHistoryGroups = [PrintJobHistoryHelper preparePrintJobHistoryGroups];
     self.emptyLabel.hidden = ([self.listPrintJobHistoryGroups count] == 0 ? NO : YES);
     

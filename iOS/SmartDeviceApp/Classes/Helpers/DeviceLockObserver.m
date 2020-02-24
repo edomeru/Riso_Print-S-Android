@@ -5,8 +5,8 @@
 //  Created by a-LINK Group.
 //  Copyright (c) 2016 RISO KAGAKU CORPORATION. All rights reserved.
 //
-#import "AddPrinterViewController.h"
-#import "BackgroundObserver.h"
+
+#import "DeviceLockObserver.h"
 #import "NotificationNames.h"
 
 #ifdef SDA_UNIT_TEST
@@ -17,7 +17,7 @@
 
 STATIC char* const lockObserver = "SDALockObserver";
 
-@interface BackgroundObserver ()
+@interface DeviceLockObserver ()
 
 /**
  * Flag to indicated if the device lock observer is already observing
@@ -26,15 +26,15 @@ STATIC char* const lockObserver = "SDALockObserver";
 
 @end
 
-@implementation BackgroundObserver
+@implementation DeviceLockObserver
 
-+(BackgroundObserver *)sharedObserver
++(DeviceLockObserver *)sharedObserver
 {
-    static BackgroundObserver *sharedObserver = nil;
+    static DeviceLockObserver *sharedObserver = nil;
     
     if(sharedObserver == nil)
     {
-        sharedObserver= [[BackgroundObserver alloc] init];
+        sharedObserver= [[DeviceLockObserver alloc] init];
     }
     return sharedObserver;
 }
@@ -46,9 +46,8 @@ STATIC char* const lockObserver = "SDALockObserver";
         return;
     }
     
-    // Mantis 72278
-    NSNotification *notification = [NSNotification notificationWithName:UIApplicationDidEnterBackgroundNotification object:self];
-    [[NSNotificationCenter defaultCenter] postNotification:notification];
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (void *)lockObserver, lockStateChangedNotification,
+                                    CFSTR("com.apple.springboard.lockstate"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
     
     self.isObserving = YES;
 }
@@ -59,7 +58,6 @@ STATIC char* const lockObserver = "SDALockObserver";
     self.isObserving = NO;
 }
 
-/* Mantis 72278 未使用のためコメントアウト
 - (void)notifyLockEvent
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIF_DEVICE_LOCK object:nil];
@@ -69,5 +67,4 @@ STATIC void lockStateChangedNotification(CFNotificationCenterRef center, void *o
 {
     [[DeviceLockObserver sharedObserver] notifyLockEvent];
 }
-*/
 @end

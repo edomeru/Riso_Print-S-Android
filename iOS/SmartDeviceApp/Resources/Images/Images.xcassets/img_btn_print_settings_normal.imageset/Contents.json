@@ -2,17 +2,16 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "img_btn_print_settings_normal.png",
-      "scale" : "1x"
+      "scale" : "1x",
+      "filename" : "img_btn_print_settings_normal.png"
     },
     {
       "idiom" : "universal",
-      "filename" : "img_btn_print_settings_normal_2x.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "img_btn_print_settings_normal_2x.png"
     },
     {
       "idiom" : "universal",
-      "filename" : "img_btn_print_settings_normal_3x.png",
       "scale" : "3x"
     }
   ],

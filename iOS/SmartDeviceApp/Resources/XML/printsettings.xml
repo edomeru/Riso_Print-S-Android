@@ -49,11 +49,9 @@
             text="ids_lbl_papersize"
             icon="temp_img_printsettings_papersize"
             type="list"
-            default="2"
-            defaultGL="3" >
+            default="2" >
             <option>ids_lbl_papersize_a3</option>
             <option>ids_lbl_papersize_a3w</option>
-            <option>ids_lbl_papersize_sra3</option>
             <option>ids_lbl_papersize_a4</option>
             <option>ids_lbl_papersize_a5</option>
             <option>ids_lbl_papersize_a6</option>
@@ -94,7 +92,6 @@
             <option>ids_lbl_papertype_lwpaper</option>
             <!-- for ORPHIS FW start -->
             <option>ids_lbl_papertype_roughpaper</option>
-            <option>ids_lbl_papertype_plain_premium</option>
             <!-- for ORPHIS FW end -->
         </setting>
         <setting
@@ -109,9 +106,6 @@
             <option>ids_lbl_inputtray_tray1</option>
             <option>ids_lbl_inputtray_tray2</option>
             <option>ids_lbl_inputtray_tray3</option>
-            <!-- for FT start -->
-            <option>ids_lbl_inputtray_external</option>
-            <!-- for FT end -->
         </setting>
     </group>
     <group

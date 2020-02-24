@@ -60,7 +60,7 @@
 - (void)setUp
 {
     // Default details
-    self.testPrinterDetails.name = @"ORPHIS GD1";
+    self.testPrinterDetails.name = @"Default Printer Name";
     self.testPrinterDetails.ip = @"192.168.1.1";
     self.testPrinterDetails.port = [NSNumber numberWithInt:0];
     self.testPrinterDetails.enBookletFinishing = YES;
@@ -72,8 +72,6 @@
     self.testPrinterDetails.enTrayFaceDown = YES;
     self.testPrinterDetails.enTrayStacking = YES;
     self.testPrinterDetails.enTrayTop = YES;
-    self.testPrinterDetails.enExternalFeeder = NO;
-    self.testPrinterDetails.enFinisher0Hole = NO;
     
     self.testPrintSetting.colorMode = [NSNumber numberWithInt:0];
     self.testPrintSetting.orientation = [NSNumber numberWithInt:0];

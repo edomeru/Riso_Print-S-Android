@@ -15,7 +15,6 @@
 #import "UIColor+Theme.h"
 #import "AlertHelper.h"
 #import "PrintJobHistoryHelper.h"
-#import "PListHelper.h"
 #import "AppSettings.h"
 #import "AppDelegate.h"
 #include "common.h"
@@ -23,7 +22,6 @@
 #define PROGRESS_WIDTH 280.0f
 #define PROGRESS_HEIGHT 70.0f
 #define PROGRESS_FORMAT @"%.2f%%"
-#define DEFAULT_JOB_NUM 0
 
 static NSLock *lock = nil;
 static NSMutableArray *taskList = nil;
@@ -66,23 +64,11 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 @property (nonatomic, assign) BOOL isPrinting;
 
 /**
- * If there are some voiced point and semi-voiced point in String(Japanese language), Strings normalize.
- * input : str(Before conversion)
- * output : When there are not any voiced point and semi-voiced point in String
- *          ->str(Before conversion)
- *          When there are some voiced point and semi-voised point in String
- *         -> result string that done normalization
- */
-- (NSString *)doNormalization:(NSString *)str;
-
-/**
  * Creates the print job that will be sent to the printer.
  * The print job is created using the Direct Print common library.\n
  * After the print job is created, the printing progress popup is displayed.
- *
- * @param isLpr indicate whether or not the print job is via LPR
  */
-- (void)preparePrintJob:(BOOL)isLpr;
+- (void)preparePrintJob;
 
 /**
  * Prepares the contents of the {@link alertView}.
@@ -217,7 +203,7 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 - (void)printDocumentViaLPR
 {
     self.isPrinting = YES;
-    [self preparePrintJob: YES];
+    [self preparePrintJob];
     [DirectPrintManager addTask:self];
     directprint_job_lpr_print(self.job);
 }
@@ -225,61 +211,12 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 - (void)printDocumentViaRaw
 {
     self.isPrinting = YES;
-    [self preparePrintJob: NO];
+    [self preparePrintJob];
     [DirectPrintManager addTask:self];
     directprint_job_raw_print(self.job);
 }
 
-//Mantis 73321
-//If there are some voiced point and semi-voiced point in String(Japanese language), Strings normalize.
-//input : str(Before conversion)
-//output : When there are not any voiced point and semi-voiced point in String
-//         ->str(Before conversion)
-//         When there are some voiced point and semi-voised point in String
-//         -> result string that done normalization
-- (NSString *)doNormalization:(NSString *)str
-{
-    NSString *result;
-    unsigned long len = [str length];
-    int i=0;
-    unsigned int count=0;//count voiced point and semi-voiced point
-    unichar StringCode[len];
-    unichar StringCodeResult[len];
-    
-    //convert string to string code
-    for(i=0;i<len;i++){
-        StringCode[i] = [str characterAtIndex:i];
-    }
-    
-    //do CanonicalMapping
-    for(i=0;i<len;i++){
-        /* Prevent [i-count] when i = 0 to prevent an array out of bounds exception (array[-1]) */
-        if ((i > 0) && (StringCode[i] == 0x3099 || StringCode[i] == 0x309a)) {//voiced point or semi-voiced point
-            //count voiced point and semi-voiced point
-            count++;
-            //convert string code to string
-            NSString *buf = [NSString stringWithFormat:@"%C%C",StringCode[i-1],StringCode[i]];
-            //do CanonicalMapping
-            buf = [buf precomposedStringWithCanonicalMapping];
-            //shift count
-            StringCodeResult[i-count] = [buf characterAtIndex:0];
-        }
-        else{
-            StringCodeResult[i-count] = StringCode[i];
-        }
-    }
-    
-    //convert string code to string
-    len = len - count;
-    result = [NSString stringWithFormat:@"%C", StringCodeResult[0]];
-    for(i=1;i<len;i++){
-        result = [NSString stringWithFormat:@"%@%C", result, StringCodeResult[i]];
-    }
-
-    return result;
-}
-
-- (void)preparePrintJob:(BOOL)isLpr
+- (void)preparePrintJob
 {
     self.printDocument = [[PDFFileManager sharedManager] printDocument];
     
@@ -314,41 +251,17 @@ void printProgressCallback(directprint_job *job, int status, float progress);
     NSString *app_name = @"IDS_APP_NAME";
 
     NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    // Version 2.0.0.3 start
+    //NSString *build = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFundleVersion"];
     NSString *build = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+    // Version 2.0.0.3 end
     NSString *app_version = [NSString stringWithFormat:@"%@.%@", version, build];
-    NSUInteger jobNum = DEFAULT_JOB_NUM;
     
-    if (isLpr)
-    {
-        NSUInteger maxNum = [PListHelper readUint:kPlistUintValMaxJobNum];
-        jobNum = [PListHelper readUint:kPlistUintValNextJobNum];
-        NSUInteger nextJobNum = (jobNum + 1) % (maxNum + 1);
-        [PListHelper setUint:nextJobNum forType:kPlistUintValNextJobNum];
-    }
-    
-    //Mantis73321
-    //Since Unicode may hold voiced points or semi-voiced points as one character,
-    //If there are some voiced points and semi-voised points,
-    //Converts a voiced it to a synthesized character string.
-    //(Measures against garbled characters)
-    fileName = [self doNormalization:fileName];
-    self.job = directprint_job_new(
-                                   [printer_name  UTF8String],
-                                   [host_name UTF8String],
-                                   [app_name UTF8String],
-                                   [app_version UTF8String],
-                                   [loginId UTF8String],
-                                   (int)jobNum,
-                                   [fileName UTF8String],
-                                   [fullPath UTF8String],
-                                   [printSettings UTF8String],
-                                   [ipAddress UTF8String], printProgressCallback);
-    
-    if(self.job == nil){
-        self.isPrinting = NO;
-        [AlertHelper displayResult:kAlertResultPrintFailed withTitle:kAlertTitleDefault withDetails:nil];
-        return;
-    }
+    // ホスト名出力処理の追加 Start
+    //self.job = directprint_job_new([printer_name UTF8String], [app_name UTF8String], [app_version UTF8String], [loginId UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
+    self.job = directprint_job_new([printer_name UTF8String], [host_name UTF8String], [app_name UTF8String], [app_version UTF8String], [loginId UTF8String], [fileName UTF8String], [fullPath UTF8String], [printSettings UTF8String], [ipAddress UTF8String], printProgressCallback);
+    // ホスト名出力処理の追加 End
+    // for ORPHIS FW end;
     
     directprint_job_set_caller_data(self.job, (void *)CFBridgingRetain(self));
     UIView *progressView = [self createProgressView];
@@ -446,13 +359,10 @@ void printProgressCallback(directprint_job *job, int status, float progress);
 }
 
 - (void)updateBgTask {
-    // RQM-1902-003 (iOS13 Support): Fix warning -[UIApplication delegate] must be used from main thread only
-    dispatch_async(dispatch_get_main_queue(), ^{
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        if([appDelegate respondsToSelector:@selector(endBgTask)]){
-            [appDelegate endBgTask];
-        }
-    });
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if([appDelegate respondsToSelector:@selector(endBgTask)]){
+        [appDelegate endBgTask];
+    }
 }
 
 @end
@@ -482,12 +392,5 @@ void printProgressCallback(directprint_job *job, int status, float progress)
         CFBridgingRelease(callerData);
         [DirectPrintManager removeTask:manager];
         directprint_job_free(job);
-    }
-    else if (status == kJobStatusJobNumUpdate)
-    {
-        NSUInteger maxNum = [PListHelper readUint:kPlistUintValMaxJobNum];
-        NSUInteger jobNum = [PListHelper readUint:kPlistUintValNextJobNum];
-        NSUInteger nextJobNum = (jobNum + 1) % (maxNum + 1);
-        [PListHelper setUint:nextJobNum forType:kPlistUintValNextJobNum];
     }
 }

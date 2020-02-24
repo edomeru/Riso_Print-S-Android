@@ -8,12 +8,12 @@
 #import <Foundation/Foundation.h>
 
 
-@interface BackgroundObserver : NSObject
+@interface DeviceLockObserver : NSObject
 
 /**
  * Return the shared instance of the device lock observer
  */
-+ (BackgroundObserver *)sharedObserver;
++ (DeviceLockObserver *)sharedObserver;
 
 /**
  * Start device lock observer

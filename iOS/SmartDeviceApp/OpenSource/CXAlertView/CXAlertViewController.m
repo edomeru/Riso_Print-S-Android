@@ -7,7 +7,6 @@
 //
 
 #import "CXAlertViewController.h"
-#import "UIColor+Theme.h"
 
 @interface CXAlertView ()
 
@@ -98,19 +97,6 @@
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
-}
-
-//SDA Fix: Added handling for OS theme change
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
-{
-    [super traitCollectionDidChange:previousTraitCollection];
-
-    if (@available(iOS 13.0, *)) {
-        if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
-            UIColor *bgColor = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight ? [UIColor whiteThemeColor] : [UIColor gray4ThemeColor];
-            [self.alertView setViewBackgroundColor:bgColor];
-        }
-    }
 }
 
 @end

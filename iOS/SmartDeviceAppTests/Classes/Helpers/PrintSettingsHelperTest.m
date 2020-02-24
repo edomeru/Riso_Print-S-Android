@@ -146,7 +146,7 @@
 -(void)test003_copyDefaultPrintSettings
 {
     PrintSetting *printSetting = (PrintSetting*)[DatabaseManager addObject:E_PRINTSETTING];
-    [PrintSettingsHelper copyDefaultPrintSettings:&printSetting printerName:@"ORPHIS FW1234"];
+    [PrintSettingsHelper copyDefaultPrintSettings:&printSetting];
     
     for(NSString *key in expectedKeys)
     {

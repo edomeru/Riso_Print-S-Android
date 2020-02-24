@@ -92,17 +92,7 @@
 
 #pragma mark - UI Properties
 
-/**
- * Reference to the SNMP Community Name view.
-*/
-@property (weak, nonatomic) IBOutlet UIView *snmpView;
-
-/**
- * Reference to the SNMP Community Name label.
-*/
-@property (weak, nonatomic) IBOutlet UILabel *snmpNameLabel;
-
-/**
+/** 
  * Reference to the animated searching indicator.
  * This is displayed while the printer search is ongoing.
  */
@@ -296,13 +286,6 @@
 
 - (void)setupScreen
 {
-    if (@available(iOS 13.0, *)) {
-        self.searchResultsTable.backgroundColor = [UIColor  colorNamed:@"color_gray2_gray5"];
-        self.snmpView.backgroundColor = [UIColor  colorNamed:@"color_gray2_gray5"];
-        self.snmpNameLabel.textColor = [UIColor colorNamed:@"color_black_white"];
-        self.communityNameDisplay.textColor = [UIColor colorNamed:@"color_black_white"];
-    }
-    
     // setup properties
     self.printerManager = [PrinterManager sharedPrinterManager];
     self.printerManager.searchDelegate = self;
@@ -450,15 +433,7 @@
     NSLog(@"[INFO][PrinterSearch] received NEW printer with IP=%@", printerDetails.ip);
     NSLog(@"[INFO][PrinterSearch] updating UI");
 #endif
-
-#if !DEBUG_SNMP_USE_FAKE_PRINTERS
-    // check if printer model is valid
-    if (![self.printerManager isPrinterModelValid:printerDetails.name])
-    {
-        return;
-    }
-#endif
-
+    
 #if SORT_SEARCH_RESULTS
     // save the printer name and IP
     [self.listNewPrinterNames addObject:printerDetails.name];
@@ -485,14 +460,6 @@
 #if DEBUG_LOG_PRINTER_SEARCH_SCREEN
     NSLog(@"[INFO][PrinterSearch] received OLD printer with IP=%@", printerIP);
     NSLog(@"[INFO][PrinterSearch] updating UI");
-#endif
-
-#if !DEBUG_SNMP_USE_FAKE_PRINTERS
-    // check if printer model is valid
-    if (![self.printerManager isPrinterModelValid:printerName])
-    {
-        return;
-    }
 #endif
 
 #if SORT_SEARCH_RESULTS

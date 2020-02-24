@@ -8,13 +8,7 @@
 
 #import "PListHelper.h"
 
-#define SDA_PROP_LIST       @"SmartDeviceApp-Settings"
-#define PROP_LIST_TYPE      @"plist"
-
-#define KEY_MAX_PRINTERS    @"Printer_MaxCount"
-#define KEY_MAX_PRINT_JOBS  @"PrintJob_MaxCountPerPrinter"
-#define KEY_MAX_JOB_NO      @"PrintJob_MaxNum"
-#define KEY_NEXT_JOB_NO     @"PrintJob_Num"
+#define SDA_PROP_LIST   @"SmartDeviceApp-Settings"
 
 static NSDictionary* sharedSettingsDict = nil;
 
@@ -26,12 +20,6 @@ static NSDictionary* sharedSettingsDict = nil;
  */
 + (void)setSharedSettingsDict;
 
-/**
- * Gets the file path of the SmartDeviceApp Settings property list.
- * This method is called when reading from and writing to the file.
-*/
-+ (NSString*)path:(BOOL)shouldBeLocal;
-
 @end
 
 @implementation PListHelper
@@ -40,79 +28,42 @@ static NSDictionary* sharedSettingsDict = nil;
 
 + (void)setSharedSettingsDict
 {
-    if (sharedSettingsDict == nil)
-    {
-        sharedSettingsDict = [[NSMutableDictionary alloc] initWithContentsOfFile:[self path: NO]];
-        if (sharedSettingsDict == nil)
-        {
-#if DEBUG_LOG_PLIST_HELPER
-            NSLog(@"[ERROR][PListUtils] plist file error or invalid contents for dictionary (%@)", SDA_PROP_LIST);
-#endif
-        }
-    }
-}
-
-+ (NSString*)path:(BOOL)shouldBeLocal
-{
-    NSArray* availablePaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    NSString* localFilePath = [[[availablePaths objectAtIndex:0] stringByAppendingPathComponent:SDA_PROP_LIST] stringByAppendingPathExtension:PROP_LIST_TYPE];
-    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:localFilePath];
-    if (shouldBeLocal || fileExists)
-    {
-        return localFilePath;
-    }
-
-    NSString* pathToSettingsPlist = [[NSBundle mainBundle] pathForResource:SDA_PROP_LIST ofType:PROP_LIST_TYPE];
+    NSString* pathToSettingsPlist = [[NSBundle mainBundle] pathForResource:SDA_PROP_LIST ofType:@"plist"];
     if (pathToSettingsPlist == nil)
     {
 #if DEBUG_LOG_PLIST_HELPER
         NSLog(@"[ERROR][PListUtils] plist file (%@) not found", SDA_PROP_LIST);
 #endif
-        // To prevent possible crashes, set pathToSettingsPlist to an empty string
-        pathToSettingsPlist = @"";
+        //TODO: to prevent possible crashes, set sharedSettingsDict to an empty dictionary?
     }
-    return pathToSettingsPlist;
+
+    sharedSettingsDict = [[NSDictionary alloc] initWithContentsOfFile:pathToSettingsPlist];
+    if (sharedSettingsDict == nil)
+    {
+#if DEBUG_LOG_PLIST_HELPER
+        NSLog(@"[ERROR][PListUtils] plist file error or invalid contents for dictionary (%@)", SDA_PROP_LIST);
+#endif
+        //TODO: to prevent possible crashes, set sharedSettingsDict to an empty dictionary?
+    }
 }
 
 #pragma mark - Readers
 
 + (NSUInteger)readUint:(kPlistUintVal)type
 {
-    [self setSharedSettingsDict];
+    if (sharedSettingsDict == nil)
+        [self setSharedSettingsDict];
     
     switch (type)
     {
         case kPlistUintValMaxPrinters:
-            return [[sharedSettingsDict objectForKey:KEY_MAX_PRINTERS] unsignedIntegerValue];
+            return [[sharedSettingsDict objectForKey:@"Printer_MaxCount"] unsignedIntegerValue];
             
         case kPlistUintValMaxPrintJobsPerPrinter:
-            return [[sharedSettingsDict objectForKey:KEY_MAX_PRINT_JOBS] unsignedIntegerValue];
-        
-        case kPlistUintValMaxJobNum:
-            return [[sharedSettingsDict objectForKey:KEY_MAX_JOB_NO] unsignedIntegerValue];
-
-        case kPlistUintValNextJobNum:
-            return [[sharedSettingsDict objectForKey:KEY_NEXT_JOB_NO] unsignedIntegerValue];
-
+            return [[sharedSettingsDict objectForKey:@"PrintJob_MaxCountPerPrinter"] unsignedIntegerValue];
+            
         default:
             return 0;
-    }
-}
-
-+ (void)setUint:(NSUInteger)value forType:(kPlistUintVal)type
-{
-    [self setSharedSettingsDict];
-    
-    switch (type)
-    {
-        case kPlistUintValNextJobNum:
-            [sharedSettingsDict setValue:[NSNumber numberWithInteger: value] forKey:KEY_NEXT_JOB_NO];
-            [sharedSettingsDict writeToFile:[self path: YES] atomically:YES];
-            break;
-
-        default:
-            /* Do nothing */
-            break;
     }
 }
 

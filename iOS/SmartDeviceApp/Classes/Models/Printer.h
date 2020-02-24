@@ -67,16 +67,6 @@
 @property (nonatomic, retain) NSNumber* enabled_tray_top;
 
 /**
- * Flag if the printer's input tray option for external feeder is enabled.
- */
-@property (nonatomic, retain) NSNumber* enabled_external_feeder;
-
-/**
- * Flag if the printer's punch option is disabled.
- */
-@property (nonatomic, retain) NSNumber* enabled_finisher_0_hole;
-
-/**
  * The IP address of the printer.
  */
 @property (nonatomic, retain) NSString* ip_address;

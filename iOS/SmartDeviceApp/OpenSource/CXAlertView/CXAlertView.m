@@ -162,14 +162,8 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^ {
         CXAlertView *appearance = [self appearance];
-        // SDA Fix: RQM-1902-003 - Adjust color to support dark theme
-        if (@available(iOS 13.0, *)) {
-            appearance.viewBackgroundColor = [UIColor colorNamed:@"color_white_gray5"];
-            appearance.titleColor = [UIColor colorNamed:@"color_black_white"];
-        } else {
-            appearance.viewBackgroundColor = [UIColor whiteColor];
-            appearance.titleColor = [UIColor blackColor];
-        }
+        appearance.viewBackgroundColor = [UIColor whiteColor];
+        appearance.titleColor = [UIColor blackColor];
         appearance.titleFont = [UIFont boldSystemFontOfSize:20];
         appearance.buttonFont = [UIFont systemFontOfSize:[UIFont buttonFontSize]];
         appearance.buttonColor = [UIColor colorWithRed:0.0f green:0.5f blue:1.0f alpha:1.0f];
@@ -207,12 +201,7 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
     messageLabel.textAlignment = NSTextAlignmentCenter;
     messageLabel.backgroundColor = [UIColor clearColor];
     messageLabel.font = [UIFont systemFontOfSize:14.0];
-    // SDA Fix: RQM-1902-003 - Adjust color to support dark theme
-    if (@available(iOS 13.0, *)) {
-        messageLabel.textColor = [UIColor colorNamed:@"color_black_white"];
-    } else {
-        messageLabel.textColor = [UIColor blackColor];
-    }
+    messageLabel.textColor = [UIColor blackColor];
     messageLabel.numberOfLines = 0;
     messageLabel.text = message;
     messageLabel.frame = CGRectMake( self.vericalPadding, 0, self.containerWidth - self.vericalPadding*2, [self heightWithText:message font:messageLabel.font]);
@@ -560,11 +549,10 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
     _containerView.transform = CGAffineTransformIdentity;
     _blurView.transform = CGAffineTransformIdentity;
     if (_updateAnimated) {
-        __weak CXAlertView *weakSelf = self;
         _updateAnimated = NO;
         [UIView animateWithDuration:0.3 animations:^{
-            weakSelf.containerView.frame = CGRectMake(left, top, self.containerWidth, height);
-            weakSelf.blurView.frame = CGRectMake(left, top, self.containerWidth, height);
+            _containerView.frame = CGRectMake(left, top, self.containerWidth, height);
+            _blurView.frame = CGRectMake(left, top, self.containerWidth, height);
         }];
     }
     else {
@@ -769,31 +757,19 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
         }
     };
 
-    /* SDA FIX (20171121):
-     * A bug exists in CXAlertView where the next instance in its sharedQueue is shown
-     * before the existing CXAlertBackgroundWindow is set to nil if the animated flag in
-     * hideBackgroundAnimated: is true. As a result, when two alert views are shown in
-     * succession, (e.g. open invalid file > don't click the OK button > open another
-     * invalid file), the CXAlertBackgroundWindow disappears completely instead of being
-     * reinitialized for the second alert view.
-     * As a quick workaround, do not choose the animated option when hiding the background
-     * to instantly remove it before the new alert view is shown.
-     */
     if (isVisible) {
         [CXAlertView setAnimating:YES];
         [self transitionOutCompletion:dismissComplete];
 
         if ([CXAlertView sharedQueue].count == 1) {
-            // SDA fix. See note above (20171121) for details
-            [CXAlertView hideBackgroundAnimated:NO];
+            [CXAlertView hideBackgroundAnimated:YES];
         }
 
     } else {
         dismissComplete();
 
         if ([CXAlertView sharedQueue].count == 0) {
-            // SDA fix. See note above (20171121) for details
-            [CXAlertView hideBackgroundAnimated:NO];
+            [CXAlertView hideBackgroundAnimated:YES];
         }
     }
 
@@ -803,7 +779,6 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
 // Transition
 - (void)transitionInCompletion:(void(^)(void))completion
 {
-    __weak CXAlertView *weakSelf = self;
     _containerView.alpha = 0;
     _containerView.transform = CGAffineTransformMakeScale(1.2, 1.2);
 
@@ -812,14 +787,14 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
 
     [UIView animateWithDuration:0.3
                      animations:^{
-                         weakSelf.containerView.alpha = 1.;
-                         weakSelf.containerView.transform = CGAffineTransformMakeScale(1.0,1.0);
+                         _containerView.alpha = 1.;
+                         _containerView.transform = CGAffineTransformMakeScale(1.0,1.0);
 
-                         weakSelf.blurView.alpha = 1.;
-                         weakSelf.blurView.transform = CGAffineTransformMakeScale(1.0,1.0);
+                         _blurView.alpha = 1.;
+                         _blurView.transform = CGAffineTransformMakeScale(1.0,1.0);
                      }
                      completion:^(BOOL finished) {
-                         [weakSelf.blurView blur];
+                         [_blurView blur];
                          if (completion) {
                              completion();
                          }
@@ -828,14 +803,13 @@ static BOOL __cx_statsu_prefersStatusBarHidden;
 
 - (void)transitionOutCompletion:(void(^)(void))completion
 {
-    __weak CXAlertView *weakSelf = self;
     [UIView animateWithDuration:0.25
                      animations:^{
-                         weakSelf.containerView.alpha = 0;
-                         weakSelf.containerView.transform = CGAffineTransformMakeScale(0.9,0.9);
+                         _containerView.alpha = 0;
+                         _containerView.transform = CGAffineTransformMakeScale(0.9,0.9);
 
-                         weakSelf.blurView.alpha = 0.9;
-                         weakSelf.blurView.transform = CGAffineTransformMakeScale(0.9,0.9);
+                         _blurView.alpha = 0.9;
+                         _blurView.transform = CGAffineTransformMakeScale(0.9,0.9);
                      }
                      completion:^(BOOL finished) {
                          if (completion) {

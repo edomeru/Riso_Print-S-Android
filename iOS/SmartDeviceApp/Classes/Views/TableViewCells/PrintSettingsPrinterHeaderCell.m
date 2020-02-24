@@ -46,13 +46,8 @@
     }
     else
     {
-        if (@available(iOS 13.0, *)) {
-            self.contentView.backgroundColor = [UIColor colorNamed:@"color_white_gray2"];
-            self.printText.textColor = [UIColor colorNamed:@"color_black_white"];
-        } else {
-            self.contentView.backgroundColor = [UIColor whiteThemeColor];
-            self.printText.textColor = [UIColor blackThemeColor];
-        }
+        self.contentView.backgroundColor = [UIColor whiteThemeColor];
+        self.printText.textColor = [UIColor blackThemeColor];
     }
 }
 

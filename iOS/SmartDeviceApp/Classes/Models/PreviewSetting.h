@@ -11,7 +11,6 @@
 #define KEY_ORIENTATION         @"orientation"
 #define KEY_COPIES              @"copies"
 #define KEY_DUPLEX              @"duplex"
-#define KEY_PAPER_SIZE          @"paperSize"
 #define KEY_IMPOSITION          @"imposition"
 #define KEY_IMPOSITION_ORDER    @"impositionOrder"
 #define KEY_BOOKLET             @"booklet"
@@ -206,10 +205,5 @@
  * for use in PJL generation.
  */
 @property (nonatomic, weak, readonly) NSString *formattedString;
-
-/**
- * Flag that indicates whether Punch 3 Hole is selected.
- */
-@property (nonatomic) BOOL isPunch3Selected;
 
 @end
