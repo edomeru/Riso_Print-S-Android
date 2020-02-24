@@ -16,7 +16,6 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <sys/time.h>
 #include "common.h"
 #include "printsettings.h"
 
@@ -86,9 +85,9 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define OIS_PRINTER_TYPE "OIS"
 
 /** @def
- * ホスト名UTF-8の16進数変換の際に使用する定数
- * 文字一文字あたりに必要な最大バイト数
- */
+* UTF-8の16進数変換の際に使用する定数
+* 文字一文字あたりに必要な最大バイト数
+*/
 #define STRING_MAX_BYTE 6
 
 static const char *AZA_DEVICE_NAMES[] = {
@@ -98,14 +97,31 @@ static const char *AZA_DEVICE_NAMES[] = {
 };
 
 #define FW_DEVICE_NAME_COUNT 21
-#define MAX_NUM_PRINT_RETRIES 1
-#define MAX_JOB_NUM_VALUE 999
 
-enum kPrintType
-{
-    kPrintTypeUnknown = -1,
-    kPrintTypeLPR = 0,
-    kPrintTypeRAW = 1,
+static const char *FW_DEVICE_NAMES[] = {
+    // Japan, Overseas or Korea:
+    "ORPHIS FW5230",
+    "ORPHIS FW5230A",
+    "ORPHIS FW5231",
+    "ORPHIS FW2230",
+    "ORPHIS FW1230",
+    "ComColor FW5230",
+    "ComColor FW5230R",
+    "ComColor FW5231",
+    "ComColor FW5231R",
+    "ComColor FW5000",
+    "ComColor FW5000R",
+    "ComColor FW2230",
+    "ComColor black FW1230",
+    "ComColor black FW1230R",
+    // China:
+    "Shan Cai Yin Wang FW5230",
+    "Shan Cai Yin Wang FW5230R",
+    "Shan Cai Yin Wang FW5231",
+    "Shan Cai Yin Wang FW2230 Wenjianhong",
+    "Shan Cai Yin Wang FW2230 Lan",
+    "Shan Cai Yin Wang black FW1230",
+    "Shan Cai Yin Wang black FW1230R",
 };
 
 #define FW_DEVICE_NAME_COUNT 21
@@ -185,71 +201,51 @@ void job_dump_write(FILE *file, void *buffer, size_t buffer_len);
 /**
  Public Methods
  */
+/**
+* @brief Android(java)のコードから、印刷設定等を受け取り、print-job構造体を作成する関数
+* @param プリンター名、ホスト名、アプリ名、アプリバージョン、ユーザ名、ジョブ名、ファイル名、印刷設定、IPアドレス、コールバック
+* @return 構造体print_job
+*/
 directprint_job *directprint_job_new(const char *printer_name, const char *host_name, const char *app_name, const char *app_version,
                                      const char *user_name, int job_num, const char *job_name, const char *filename,
                                      const char *print_settings, const char *ip_address, directprint_callback callback)
 {
     directprint_job *print_job = (directprint_job *)malloc(sizeof(directprint_job));
-    if(print_job == NULL){
-        return NULL;
-    }
     print_job->app_name = strdup(app_name);
-    if(print_job->app_name == NULL){
-        directprint_job_free(print_job);
-        return NULL;
-    }
     print_job->app_version = strdup(app_version);
-    if(print_job->app_version == NULL){
-        directprint_job_free(print_job);
-        return NULL;
-    }
     print_job->user_name = strdup(user_name);
-    if(print_job->user_name == NULL){
-        directprint_job_free(print_job);
-        return NULL;
-    }
     print_job->job_name = strdup(job_name);
-    if(print_job->job_name == NULL){
-        directprint_job_free(print_job);
-        return NULL;
-    }
     print_job->filename = strdup(filename);
-    if(print_job->filename == NULL){
-        directprint_job_free(print_job);
-        return NULL;
-    }
     print_job->print_settings = strdup(print_settings);
-    if(print_job->print_settings == NULL){
-        directprint_job_free(print_job);
-        return NULL;
-    }
     print_job->printer_name = strdup(printer_name);
-    if(print_job->printer_name == NULL){
-        directprint_job_free(print_job);
-        return NULL;
-    }
-    print_job->host_name = strdup(host_name);
-    if(print_job->host_name == NULL){
-        directprint_job_free(print_job);
-        return NULL;
-    }
     print_job->job_num = job_num;
-    // Mantis 71486 start
-    char* host_namebuf = ConvertUTF8String(print_job->host_name);
-    if(host_namebuf == NULL){
-        directprint_job_free(print_job);
-        return NULL;
-    }
-    /* To prevent memory leaks, free the allocated pointer before reassigning. */
-    if (print_job->host_name != NULL)
-    {
-        free(print_job->host_name);
-        print_job->host_name = NULL;
-    }
-    print_job->host_name = strdup(host_namebuf);
-    /* To prevent memory leaks, free the buffer pointer. */
-    free(host_namebuf);
-    // Mantis 71486 end
+    //print_job->host_name = strdup(host_name);
+
+	// Mantis 71487 Start
+	char* memo;
+	char* hex_string;
+
+	memo = (char *)calloc(strlen(host_name) * STRING_MAX_BYTE + 1, sizeof(char));
+	if (memo == NULL){
+		directprint_job_free(print_job);
+		return NULL;
+	}
+	hex_string = (char *)calloc(STRING_MAX_BYTE + 1, sizeof(char));
+	if (hex_string == NULL){
+		directprint_job_free(print_job);
+		return NULL;
+	}
+	int i;
+	for (i = 0; host_name[i] != NULL; i++){
+		sprintf(hex_string, "%x", host_name[i] & 0x0000FF);
+		memo = strcat(memo, hex_string);
+	}
+
+	print_job->host_name = strdup(memo);
+	
+	free(hex_string);
+	free(memo);
+	// Mantis 71487 End
     
     // IP address check
     struct in6_addr ip_v6;
@@ -282,65 +278,22 @@ directprint_job *directprint_job_new(const char *printer_name, const char *host_
     
     return print_job;
 }
-/*
- * UTF8 16進数変換
- * [in] 変換前文字列
- * [out] 変換後文字列 or NULL失敗
- */
-char* ConvertUTF8String(char* str){
-    // Mantis 71486 Start
-    char* buf = (char *)calloc(strlen(str) * STRING_MAX_BYTE + 1, sizeof(char));
-    if (buf == NULL){
-        return NULL;
-    }
-    //1文字あたりの最大バイト数(6)の領域を確保
-    char* hex = (char *)malloc(STRING_MAX_BYTE + 1);
-    if (hex == NULL){
-        free(buf);
-        return NULL;
-    }
-    for (int i = 0; str[i] != (char)NULL; i++){
-        sprintf(hex, "%x", str[i] & 0x0000FF);
-        buf = strcat(buf, hex);
-    }
-    char* resultStr = strdup(buf);
-    free(hex);
-    free(buf);
-    
-    return resultStr;
-    // Mantis 71486 End
-}
 
 void directprint_job_free(directprint_job *print_job)
 {
     pthread_mutex_destroy(&print_job->mutex);
-    if(print_job->app_name != NULL){
-        free(print_job->app_name);
-    }
-    if(print_job->app_version != NULL){
-        free(print_job->app_version);
-    }
-    if(print_job->job_name != NULL){
-        free(print_job->job_name);
-    }
-    if(print_job->job_name != NULL){
-        free(print_job->filename);
-    }
-    if(print_job->print_settings != NULL){
-        free(print_job->print_settings);
-    }
-    if(print_job->ip_address != NULL){
-        free(print_job->ip_address);
-    }
-    if(print_job->printer_name != NULL){
-        free(print_job->printer_name);
-    }
-    if(print_job->host_name != NULL){
-        free(print_job->host_name);
-    }
-    if(print_job->user_name != NULL){
-        free(print_job->user_name);
-    }
+    free(print_job->app_name);
+    free(print_job->app_version);
+    free(print_job->job_name);
+    free(print_job->filename);
+    free(print_job->print_settings);
+    free(print_job->ip_address);
+    free(print_job->printer_name);
+    // ホスト名出力処理の追加 Start
+    free(print_job->host_name);
+    free(print_job->user_name); // 処理漏れのため追加
+    // ホスト名出力処理の追加 End
+    
     free(print_job);
 }
 
@@ -573,11 +526,15 @@ int is_ISSeries(const char* printer_name)
 
 int is_FWSeries(const char* printer_name)
 {
-    // Mantis:68382
-    if(strstr(printer_name," FW") != NULL){//printer_nameに「 FW」があるならば
-        return 1;
-    }
+    int index = 0;
     
+    for (index = 0; index < FW_DEVICE_NAME_COUNT; index++)
+    {
+        if (strcmp(FW_DEVICE_NAMES[index], printer_name) == 0)
+        {
+            return 1;
+        }
+    }
     return 0;
 }
 
@@ -605,13 +562,13 @@ void *do_lpr_print(void *parameter)
         create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
         strcpy(queueName, QUEUE_NAME_FWGDFTGL);
     }
-    else if ((strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL) ||
-             (strstr(print_job->printer_name, OIS_PRINTER_TYPE) != NULL)) // FT Series / OIS Series
+    else if (strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL ||
+             strstr(print_job->printer_name, OIS_PRINTER_TYPE) != NULL)     // FT Series / OIS Series
     {
         create_pjl_ft(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
         strcpy(queueName, QUEUE_NAME_FWGDFTGL);
     }
-    else if (strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) // GL Series
+    else if (strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL)   // GL Series
     {
         create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
         strcpy(queueName, QUEUE_NAME_FWGDFTGL);
@@ -624,15 +581,14 @@ void *do_lpr_print(void *parameter)
     strcat(pjl_header, PJL_LANGUAGE);
     long pjl_header_size = strlen(pjl_header);
     
-    //Mantis 77780 PJLフッダーは不要なためコメントアウト
     // Prepare PJL footer
+    //Mantis77780のためコメントアウト
     //char pjl_footer[256];
     //pjl_footer[0] = 0;
     //strcat(pjl_footer, PJL_ESCAPE);
     //strcat(pjl_footer, PJL_EOJ);
     //strcat(pjl_footer, PJL_ESCAPE);
     //long pjl_footer_size = strlen(pjl_footer);
-    //Mantis 77780 end
     
     if (is_cancelled(print_job) == 1)
     {
@@ -810,7 +766,7 @@ void *do_lpr_print(void *parameter)
         dp_fseek(fd, 0L, SEEK_SET);
         
         // DATA FILE INFO : Prepare
-        size_t total_data_size = file_size + pjl_header_size;
+        size_t total_data_size = file_size + pjl_header_size; //Mantis77780のためコメントアウト + pjl_footer_size;
         char data_file_len_str[32];
         sprintf(data_file_len_str, "%ld", (long)total_data_size);
         len = strlen(data_file_len_str);
@@ -910,16 +866,16 @@ void *do_lpr_print(void *parameter)
         {
             break;
         }
-        //Mantis 77780 PJLフッダーは不要なためコメントアウト
+        //Mantis77780のためコメントアウト
         //send_size = send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
 #if ENABLE_JOB_DUMP
         //job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
 #endif
         //if (send_size != strlen(pjl_footer)) {
         //    notify_callback(print_job, kJobStatusErrorSending);
+        //}
         //    break;
         //}
-        //Mantis 77780 end
         notify_callback(print_job, kJobStatusSending);
         
         pos = 0;
@@ -979,41 +935,39 @@ void *do_raw_print(void *parameter)
     else if (is_FWSeries(print_job->printer_name)) // FW Series
     {
         // Ver.2.0.0.3 start
-//        create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
+        //create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        create_pjl_fw(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
+        //create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name);
         // Ver.2.0.0.3 end
-        // Ver.3.0.0.0 start
-        create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version, print_job->host_name);
-        // Ver.3.0.0.0 end
-
     }
-    else if ((strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL) ||
-             (strstr(print_job->printer_name, OIS_PRINTER_TYPE) != NULL)) // FT Series / OIS Series
+    else if (strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL ||
+             strstr(print_job->printer_name, OIS_PRINTER_TYPE) != NULL)     // FT Series / OIS Series
     {
-        create_pjl_ft(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version, print_job->host_name);
+        create_pjl_ft(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
     }
     else if (strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) // GL Series
     {
-        create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version, print_job->host_name);
+        create_pjl_gl(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
     }
     else    // GD Series
     {
         // Ver.2.0.0.3 start
-//        create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
+        //create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version);
+        //create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name);
         // Ver.2.0.0.3 end
-        // Ver.3.0.0.0 start
-        create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version, print_job->host_name);
-        // Ver.3.0.0.0 end
+        
+        create_pjl_gd(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
+        
     }
     strcat(pjl_header, PJL_LANGUAGE);
     
-    //Mantis 77780 PJLフッダーは不要なためコメントアウト
     // Prepare PJL footer
+    //Mantis77780のためコメントアウト
     //char pjl_footer[256];
     //pjl_footer[0] = 0;
     //strcat(pjl_footer, PJL_ESCAPE);
     //strcat(pjl_footer, PJL_EOJ);
     //strcat(pjl_footer, PJL_ESCAPE);
-    //Mantis 77780 end
     
     if (is_cancelled(print_job) == 1)
     {
@@ -1116,12 +1070,10 @@ void *do_raw_print(void *parameter)
         {
             break;
         }
-        
-        //Mantis 77780 PJLフッダーは不要なためコメントアウト
+        //Mantis77780のためコメントアウト
         //send(sock_fd, pjl_footer, strlen(pjl_footer), 0);
 #if ENABLE_JOB_DUMP
         //job_dump_write(dump_fd, pjl_footer, strlen(pjl_footer));
-        //Mantis 77780 end
 #endif
         print_job->progress = 100.0f;
         notify_callback(print_job, kJobStatusSending);

@@ -40,6 +40,10 @@ public final class KeyConstants {
     public static final String KEY_SQL_PRINTER_TRAYTOP = "prn_enabled_tray_top";
     /// SQL key for printer tray stack capability
     public static final String KEY_SQL_PRINTER_TRAYSTACK = "prn_enabled_tray_stack";
+    /// SQL key for printer external feeder capability
+    public static final String KEY_SQL_PRINTER_EXTERNALFEEDER = "prn_enabled_external_feeder";
+    /// SQL key for printer punch 0 holes capability
+    public static final String KEY_SQL_PRINTER_PUNCH0= "prn_enabled_punch0";
     /// SQL key for printer table
     public static final String KEY_SQL_PRINTER_TABLE = "Printer";
     /// SQL key for default printer table

@@ -30,11 +30,11 @@
 #define SNMPV3_USER "risosnmp"
 #define SNMPV3_PASS "risosnmp"
 
-#define DETECT_ALL_DEVICES 0  // 0 for RISO only
-
 #define FT_PRINTER_TYPE "FT"
 #define GL_PRINTER_TYPE "GL"
 #define OIS_PRINTER_TYPE "OIS"
+
+#define DETECT_ALL_DEVICES 0  // 0 for RISO only
 
 typedef struct
 {
@@ -668,19 +668,19 @@ int snmp_device_get_series(snmp_device *device)
         }
     }
 
-    if ((strstr(device->device_info[MIB_DEV_DESCR], FT_PRINTER_TYPE) != NULL) ||
-        (strstr(device->device_info[MIB_DEV_DESCR], OIS_PRINTER_TYPE) != NULL))
+    if (strstr(device->device_info[MIB_DEV_DESCR], FT_PRINTER_TYPE) != NULL ||
+        strstr(device->device_info[MIB_DEV_DESCR], OIS_PRINTER_TYPE) != NULL)
     {
         // FT Series / OIS Series
         return kPrinterSeriesFT;
     }
-    
+
     if (strstr(device->device_info[MIB_DEV_DESCR], GL_PRINTER_TYPE) != NULL)
     {
         // GL Series
         return kPrinterSeriesGL;
     }
-    
+
     return kPrinterSeriesGD;
 }
 
@@ -709,14 +709,13 @@ int snmp_device_get_capability_status(snmp_device *device, int capability)
             if ((strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityStapler]) > 0) ||
                         (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin23Holes]) > 0) ||
                         (strlen(device->device_info[MIB_HW_CAP_1 + kSnmpCapabilityFin24Holes]) > 0) ||
-                        (strlen(device->device_info[MIB_HW_CAP_9]) > 0)
-                )//Mantis82960 マルチフィニッシャ0穴時に、ステープルを設定可能にする
+                        (strlen(device->device_info[MIB_HW_CAP_9]) > 0))//Mantis82960
             {
                 supported = 1;
             }
             break;
         case kSnmpCapabilityExternalFeeder:
-            if ((snmp_device_get_series(device) == kPrinterSeriesFT || snmp_device_get_series(device) == kPrinterSeriesGL) &&
+            if ((snmp_device_get_series(device) == kPrinterSeriesFT || snmp_device_get_series(device) == kPrinterSeriesGL) && 
                 strlen(device->device_info[MIB_HW_CAP_8]) > 0) {
                 supported = 1;
             } else {

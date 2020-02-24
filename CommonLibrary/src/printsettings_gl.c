@@ -59,8 +59,8 @@ typedef enum
     kPjlCommandSoftwereVersion,
     kPjlCommandColorMode,
     kPjlCommandOrientation,
-    kPjlCommandQuantity,
     kPjlCommandCopies,
+    kPjlCommandQuantity,
     kPjlCommandDuplex,
     kPjlCommandDuplexBinding,
     kPjlCommandOutputPaperSize,
@@ -181,15 +181,15 @@ const static char *staple[] =
     "1STAPLELEFT",
     "1STAPLERIGHT",
     "1STAPLE",
-    "2STAPLES",
+    "2STAPLES"
 };
 
 const static char *punch[] =
 {
     "OFF",
     "2HOLES",
-    "4HOLES",
     "3HOLES",
+    "4HOLES"
 };
 
 const static char *output_tray[] =
@@ -211,7 +211,7 @@ const static char **pjl_values[kPjlCommandCount] =
     0,
     0,
     0,
-    0,
+	0,
     0,
     0,
     color_mode,
@@ -244,13 +244,13 @@ const static char *pjl_commands[kPjlCommandCount] =
     "RKPJLVERSION",
     "RKPJLIDENTIFIER",
     "RKRIPCONTROLFLAG",
-    "RKHOSTNAME",
-    "RKSOFTWARENAME",
+	"RKHOSTNAME",
+     "RKSOFTWARENAME",
     "RKSOFTWAREVERSION",
     "RKOUTPUTMODE",
     "ORIENTATION",
-    "QTY",
     "COPIES",
+    "QTY",
     "DUPLEX",
     "BINDING",
     "PAPER",
@@ -281,10 +281,8 @@ typedef struct
 extern void parse(char *settings, setting_value values[]);
 extern void parse_line(char *line, char *name, char *value);
 extern int get_setting_index(const char *name);
-
 void add_pjl_gl(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command);
-
-void create_pjl_gl(char *pjl, char *settings, char *printerName, char* hostName, char *appVersion)
+void create_pjl_gl(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion)
 {
     if (strlen(settings) == 0)
     {
@@ -302,7 +300,7 @@ void create_pjl_gl(char *pjl, char *settings, char *printerName, char* hostName,
     
     for (int i = 0; i < kPjlCommandCount; i++)
     {
-        add_pjl_gl(pjl, printerName, hostName, appVersion, values, i);
+    	add_pjl_gl(pjl, printerName, hostName, appVersion, values, i);
     }
     
     for (int i = 0; i < kPrintSettingsCount; i++)
@@ -314,7 +312,7 @@ void create_pjl_gl(char *pjl, char *settings, char *printerName, char* hostName,
     }
 }
 
-void add_pjl_gl(char *pjl, char *printerName, char* hostName, char *appVersion, setting_value values[], int command)
+void add_pjl_gl(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command)
 {
     char pjl_line[1024];
     switch (command)
@@ -337,12 +335,12 @@ void add_pjl_gl(char *pjl, char *printerName, char* hostName, char *appVersion, 
             strcat(pjl, pjl_line);
             break;
         }
-        case kPjlCommandHostName:
-        {
-            sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], hostName);
+		case kPjlCommandHostName:
+		{
+			sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], hostName);
             strcat(pjl, pjl_line);
             break;
-        }
+		}
         case kPjlCommandSoftwereName:
         {
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], PJL_SOFTWERENAME);
@@ -400,23 +398,23 @@ void add_pjl_gl(char *pjl, char *printerName, char* hostName, char *appVersion, 
             strcat(pjl, pjl_line);
             break;
         }
-        case kPjlCommandCopies:
+        case kPjlCommandQuantity:
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
-            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0) // "sort_value.int_value == 0" UIで"部ごと"が指定された
-            {
+            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1)
+        	{
                 return;
             }
             sprintf(pjl_line, PJL_COMMAND_INT, pjl_commands[command], value.int_value);
             strcat(pjl, pjl_line);
             break;
         }
-        case kPjlCommandQuantity:
+        case kPjlCommandCopies:
         {
             setting_value value = values[kPrintSettingsCopies];
             setting_value sort_value = values[kPrintSettingsSort];
-            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 1) // "sort_value.int_value == 1" UIで"ページごと"が指定された
+            if (value.set == 0 || sort_value.set == 0 || sort_value.int_value == 0)
             {
                 return;
             }
@@ -648,16 +646,6 @@ void add_pjl_gl(char *pjl, char *printerName, char* hostName, char *appVersion, 
             {
                 return;
             }
-            
-            // 3holes Condition
-            if (strstr(printerName, "ORPHIS") == NULL)
-            {
-                if (punch.int_value == 2) // 4holes
-                {
-                    punch.int_value += 1;
-                }
-            }
-            
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][punch.int_value]);
             strcat(pjl, pjl_line);
             break;
@@ -669,18 +657,6 @@ void add_pjl_gl(char *pjl, char *printerName, char* hostName, char *appVersion, 
             {
                 return;
             }
-            
-            // フェイスダウン排紙トレイ　非表示時の処理
-            // パンチの場合のみ、値を1加算する
-            setting_value punch = values[kPrintSettingsPunch];
-            if (punch.int_value != 0)
-            {
-                if (outputTray.int_value == 1)
-                {
-                    outputTray.int_value += 1;
-                }
-            }
-            
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][outputTray.int_value]);
             strcat(pjl, pjl_line);
             break;
@@ -722,3 +698,4 @@ void add_pjl_gl(char *pjl, char *printerName, char* hostName, char *appVersion, 
         }
     }
 }
+
