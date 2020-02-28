@@ -82,7 +82,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
 #define FT_PRINTER_TYPE "FT"
 #define GL_PRINTER_TYPE "GL"
-#define OIS_PRINTER_TYPE "OIS"
+#define CEREZONA_PRINTER_TYPE "CEREZONA S"
 
 /** @def
 * UTF-8の16進数変換の際に使用する定数
@@ -563,7 +563,7 @@ void *do_lpr_print(void *parameter)
         strcpy(queueName, QUEUE_NAME_FWGDFTGL);
     }
     else if (strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL ||
-             strstr(print_job->printer_name, OIS_PRINTER_TYPE) != NULL)     // FT Series / OIS Series
+             strstr(print_job->printer_name, CEREZONA_PRINTER_TYPE) != NULL)     // FT Series / CEREZONA S Series
     {
         create_pjl_ft(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
         strcpy(queueName, QUEUE_NAME_FWGDFTGL);
@@ -941,7 +941,7 @@ void *do_raw_print(void *parameter)
         // Ver.2.0.0.3 end
     }
     else if (strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL ||
-             strstr(print_job->printer_name, OIS_PRINTER_TYPE) != NULL)     // FT Series / OIS Series
+             strstr(print_job->printer_name, CEREZONA_PRINTER_TYPE) != NULL)     // FT Series / CEREZONA S Series
     {
         create_pjl_ft(pjl_header, print_job->print_settings, print_job->app_name, print_job->app_version, print_job->host_name);
     }

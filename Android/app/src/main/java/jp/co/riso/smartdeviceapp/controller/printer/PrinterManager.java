@@ -658,14 +658,14 @@ public class PrinterManager implements SNMPManagerCallback {
                     printer.getConfig().setRawAvailable(capabilities[i]);
                     break;
                 case SNMPManager.SNMP_CAPABILITY_EXTERNAL_FEEDER:
-                    if (printer.isPrinterFTorOIS() || printer.isPrinterGL()) {
+                    if (printer.isPrinterFTorCEREZONA_S() || printer.isPrinterGL()) {
                         printer.getConfig().setExternalFeederAvailable(capabilities[i]);
                     } else {
                         printer.getConfig().setExternalFeederAvailable(false);
                     }
                     break;
                 case SNMPManager.SNMP_CAPABILITY_FINISH_0:
-                    if (printer.isPrinterFTorOIS() || printer.isPrinterGL()) {
+                    if (printer.isPrinterFTorCEREZONA_S() || printer.isPrinterGL()) {
                         printer.getConfig().setPunch0Available(capabilities[i]);
                     } else {
                         printer.getConfig().setPunch0Available(false);

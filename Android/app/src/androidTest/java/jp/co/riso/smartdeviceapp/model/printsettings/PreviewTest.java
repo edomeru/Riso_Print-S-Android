@@ -31,7 +31,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_OIS_GL;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_GL_CEREZONA_S;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -120,32 +120,32 @@ public class PreviewTest extends AndroidTestCase {
     }
 
     public void testInputTray() {
-        assertEquals(0, InputTray_FT_OIS_GL.AUTO.ordinal());
-        assertEquals(1, InputTray_FT_OIS_GL.STANDARD.ordinal());
-        assertEquals(2, InputTray_FT_OIS_GL.TRAY1.ordinal());
-        assertEquals(3, InputTray_FT_OIS_GL.TRAY2.ordinal());
-        assertEquals(4, InputTray_FT_OIS_GL.TRAY3.ordinal());
-        assertEquals(5, InputTray_FT_OIS_GL.EXTERNAL_FEEDER.ordinal());
-        assertEquals(InputTray_FT_OIS_GL.AUTO, InputTray_FT_OIS_GL.valueOf("AUTO"));
-        assertEquals(InputTray_FT_OIS_GL.STANDARD, InputTray_FT_OIS_GL.valueOf("STANDARD"));
-        assertEquals(InputTray_FT_OIS_GL.EXTERNAL_FEEDER, InputTray_FT_OIS_GL.valueOf("EXTERNAL_FEEDER"));
+        assertEquals(0, Preview.InputTray_FT_GL_CEREZONA_S.AUTO.ordinal());
+        assertEquals(1, InputTray_FT_GL_CEREZONA_S.STANDARD.ordinal());
+        assertEquals(2, InputTray_FT_GL_CEREZONA_S.TRAY1.ordinal());
+        assertEquals(3, InputTray_FT_GL_CEREZONA_S.TRAY2.ordinal());
+        assertEquals(4, InputTray_FT_GL_CEREZONA_S.TRAY3.ordinal());
+        assertEquals(5, Preview.InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER.ordinal());
+        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.AUTO, InputTray_FT_GL_CEREZONA_S.valueOf("AUTO"));
+        assertEquals(InputTray_FT_GL_CEREZONA_S.STANDARD, InputTray_FT_GL_CEREZONA_S.valueOf("STANDARD"));
+        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER, InputTray_FT_GL_CEREZONA_S.valueOf("EXTERNAL_FEEDER"));
 
-        assertEquals(InputTray_FT_OIS_GL.AUTO, InputTray_FT_OIS_GL.valuesFT_OIS()[0]);
-        assertEquals(InputTray_FT_OIS_GL.STANDARD, InputTray_FT_OIS_GL.valuesFT_OIS()[1]);
-        assertEquals(InputTray_FT_OIS_GL.TRAY1, InputTray_FT_OIS_GL.valuesFT_OIS()[2]);
-        assertEquals(InputTray_FT_OIS_GL.TRAY2, InputTray_FT_OIS_GL.valuesFT_OIS()[3]);
-        assertEquals(InputTray_FT_OIS_GL.EXTERNAL_FEEDER, InputTray_FT_OIS_GL.valuesFT_OIS()[4]);
+        assertEquals(InputTray_FT_GL_CEREZONA_S.AUTO, Preview.InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[0]);
+        assertEquals(InputTray_FT_GL_CEREZONA_S.STANDARD, InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[1]);
+        assertEquals(InputTray_FT_GL_CEREZONA_S.TRAY1, Preview.InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[2]);
+        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.TRAY2, InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[3]);
+        assertEquals(InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER, Preview.InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[4]);
 
-        assertEquals(InputTray_FT_OIS_GL.AUTO, InputTray_FT_OIS_GL.valuesGL()[0]);
-        assertEquals(InputTray_FT_OIS_GL.STANDARD, InputTray_FT_OIS_GL.valuesGL()[1]);
-        assertEquals(InputTray_FT_OIS_GL.TRAY1, InputTray_FT_OIS_GL.valuesGL()[2]);
-        assertEquals(InputTray_FT_OIS_GL.TRAY2, InputTray_FT_OIS_GL.valuesGL()[3]);
-        assertEquals(InputTray_FT_OIS_GL.TRAY3, InputTray_FT_OIS_GL.valuesGL()[4]);
-        assertEquals(InputTray_FT_OIS_GL.EXTERNAL_FEEDER, InputTray_FT_OIS_GL.valuesGL()[5]);
+        assertEquals(InputTray_FT_GL_CEREZONA_S.AUTO, InputTray_FT_GL_CEREZONA_S.valuesGL()[0]);
+        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.STANDARD, Preview.InputTray_FT_GL_CEREZONA_S.valuesGL()[1]);
+        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.TRAY1, InputTray_FT_GL_CEREZONA_S.valuesGL()[2]);
+        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.TRAY2, InputTray_FT_GL_CEREZONA_S.valuesGL()[3]);
+        assertEquals(InputTray_FT_GL_CEREZONA_S.TRAY3, InputTray_FT_GL_CEREZONA_S.valuesGL()[4]);
+        assertEquals(InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER, Preview.InputTray_FT_GL_CEREZONA_S.valuesGL()[5]);
 
-        assertEquals(InputTray_FT_OIS_GL.AUTO, InputTray_FT_OIS_GL.valueOf("AUTO"));
-        assertEquals(InputTray_FT_OIS_GL.STANDARD, InputTray_FT_OIS_GL.valueOf("STANDARD"));
-        assertEquals(InputTray_FT_OIS_GL.EXTERNAL_FEEDER, InputTray_FT_OIS_GL.valueOf("EXTERNAL_FEEDER"));
+        assertEquals(InputTray_FT_GL_CEREZONA_S.AUTO, Preview.InputTray_FT_GL_CEREZONA_S.valueOf("AUTO"));
+        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.STANDARD, InputTray_FT_GL_CEREZONA_S.valueOf("STANDARD"));
+        assertEquals(InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER, InputTray_FT_GL_CEREZONA_S.valueOf("EXTERNAL_FEEDER"));
     }
 
     public void testImpositionValueOf() {

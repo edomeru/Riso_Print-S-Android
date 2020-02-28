@@ -107,9 +107,9 @@ public class AppConstants {
     public static final String PRINTER_MODEL_IS = "IS";
     public static final String PRINTER_MODEL_FT = "FT";
     public static final String PRINTER_MODEL_GL = "GL";
-    public static final String PRINTER_MODEL_OIS = "OIS";       // As of V4.1.0.0, OIS model will be classified under FT since they have the same print settings
+    public static final String PRINTER_MODEL_CEREZONA_S = "CEREZONA S";       // As of V4.1.0.0, CEREZONA S model will be classified under FT since they have the same print settings
 
-    // TODO: Add OIS in PRINTER_TYPES and add a separate entry for OIS model in `printsettings.xml` file if there are changes in print settings that differentiate it to FT
+    // TODO: Add CEREZONA S in PRINTER_TYPES and add a separate entry for CEREZONA S model in `printsettings.xml` file if there are changes in print settings that differentiate it to FT
     //Array of printer types
     public static final String[] PRINTER_TYPES = {PRINTER_MODEL_IS, PRINTER_MODEL_GD, PRINTER_MODEL_FW, PRINTER_MODEL_FT, PRINTER_MODEL_GL};
 }
