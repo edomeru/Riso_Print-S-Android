@@ -264,17 +264,12 @@ public class PrinterTest extends TestCase {
         assertEquals(printerType, AppConstants.PRINTER_MODEL_GL);
     }
 
-    public void testGetPrinterType_OIS() {
-        Printer printer = new Printer("RISO IS950C-OIS", "");
+    public void testGetPrinterType_CEREZONA_S() {
+        Printer printer = new Printer("RISO CEREZONA S", "");
         String printerType = printer.getPrinterType();
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
 
-        printer = new Printer("ORPHIS OIS", "");
-
-        printerType = printer.getPrinterType();
-        assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
-
-        printer = new Printer("ComColor OIS", "");
+        printer = new Printer("RISO CEREZONA S200", "");
 
         printerType = printer.getPrinterType();
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);

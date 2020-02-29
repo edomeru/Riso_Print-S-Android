@@ -229,12 +229,12 @@ public class Printer implements Parcelable {
     }
 
     /**
-     * @brief Determines if the printer is of the FT or OIS series
+     * @brief Determines if the printer is of the FT or CEREZONA S series
      *
-     * @return True if the printers if of the FT or OIS series, false otherwise
+     * @return True if the printers if of the FT or CEREZONA S series, false otherwise
      */
-    public boolean isPrinterFTorOIS() {
-        return getPrinterType().equals(AppConstants.PRINTER_MODEL_FT);      // Classify OIS as FT model
+    public boolean isPrinterFTorCEREZONA_S() {
+        return getPrinterType().equals(AppConstants.PRINTER_MODEL_FT);      // Classify CEREZONA S as FT model
     }
 
     /**
@@ -275,8 +275,8 @@ public class Printer implements Parcelable {
             return;
         }
 
-        if(mName.contains(AppConstants.PRINTER_MODEL_FT) || mName.contains(AppConstants.PRINTER_MODEL_OIS)){
-            mPrinterType = AppConstants.PRINTER_MODEL_FT;       // Classify OIS as FT model
+        if(mName.contains(AppConstants.PRINTER_MODEL_FT) || mName.contains(AppConstants.PRINTER_MODEL_CEREZONA_S)){
+            mPrinterType = AppConstants.PRINTER_MODEL_FT;       // Classify CEREZONA S as FT model
             return;
         }
 

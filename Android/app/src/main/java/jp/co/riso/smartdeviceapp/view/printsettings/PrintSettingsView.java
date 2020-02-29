@@ -53,6 +53,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusC
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartdeviceapp.model.printsettings.Group;
 import jp.co.riso.smartdeviceapp.model.printsettings.Option;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletFinish;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Duplex;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.FinishingSide;
@@ -61,7 +62,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_OIS_GL;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_GL_CEREZONA_S;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
@@ -341,24 +342,24 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (getPrinter().isPrinterFTorOIS() || getPrinter().isPrinterGL()) {
+        if (getPrinter().isPrinterFTorCEREZONA_S() || getPrinter().isPrinterGL()) {
 
             /* Specify the input tray and paper size arrays to be used */
-            InputTray_FT_OIS_GL[] inputTrayOptions;
+            InputTray_FT_GL_CEREZONA_S[] inputTrayOptions;
             PaperSize[] paperSizeOptions;
 
-            if (getPrinter().isPrinterFTorOIS()) {
-                inputTrayOptions = InputTray_FT_OIS_GL.valuesFT_OIS();
-                paperSizeOptions = PaperSize.valuesFT_OIS();
+            if (getPrinter().isPrinterFTorCEREZONA_S()) {
+                inputTrayOptions = Preview.InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S();
+                paperSizeOptions = PaperSize.valuesFT_CEREZONA_S();
 
             } else {
-                inputTrayOptions = InputTray_FT_OIS_GL.valuesGL();
+                inputTrayOptions = InputTray_FT_GL_CEREZONA_S.valuesGL();
                 paperSizeOptions = PaperSize.valuesGL();
             }
 
             if (tag.equals(PrintSettings.TAG_PAPER_SIZE)) {
                 boolean isExternal =
-                        inputTrayOptions[mPrintSettings.getInputTray().ordinal()] == InputTray_FT_OIS_GL.EXTERNAL_FEEDER;
+                        inputTrayOptions[mPrintSettings.getInputTray().ordinal()] == InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER;
                 switch (paperSizeOptions[value]) {
                     case A4:
                     case B5:
@@ -637,18 +638,18 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
 
-        if (getPrinter().isPrinterFTorOIS() || getPrinter().isPrinterGL()) {
+        if (getPrinter().isPrinterFTorCEREZONA_S() || getPrinter().isPrinterGL()) {
 
             /* Specify the input tray and paper size arrays to be used */
-            InputTray_FT_OIS_GL[] inputTrayOptions;
+            Preview.InputTray_FT_GL_CEREZONA_S[] inputTrayOptions;
             PaperSize[] paperSizeOptions;
 
-            if (getPrinter().isPrinterFTorOIS()) {
-                inputTrayOptions = InputTray_FT_OIS_GL.valuesFT_OIS();
-                paperSizeOptions = PaperSize.valuesFT_OIS();
+            if (getPrinter().isPrinterFTorCEREZONA_S()) {
+                inputTrayOptions = InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S();
+                paperSizeOptions = PaperSize.valuesFT_CEREZONA_S();
 
             } else {
-                inputTrayOptions = InputTray_FT_OIS_GL.valuesGL();
+                inputTrayOptions = Preview.InputTray_FT_GL_CEREZONA_S.valuesGL();
                 paperSizeOptions = PaperSize.valuesGL();
             }
 
@@ -659,15 +660,15 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         paperSizeOptions[value] != PaperSize.B5 &&
                         paperSizeOptions[value] != PaperSize.LETTER &&
                         paperSizeOptions[value] != PaperSize.JUROKUKAI &&
-                        inputTrayOptions[inputTrayValue] == InputTray_FT_OIS_GL.EXTERNAL_FEEDER) {
-                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, InputTray_FT_OIS_GL.AUTO.ordinal());
+                        inputTrayOptions[inputTrayValue] == InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER) {
+                    updateValueWithConstraints(PrintSettings.TAG_INPUT_TRAY, Preview.InputTray_FT_GL_CEREZONA_S.AUTO.ordinal());
                 }
             }
 
             // Constraint #8 Input Tray (External) - Paper Size for FT or GL series
             if (tag.equals(PrintSettings.TAG_INPUT_TRAY)) {
                 int paperSizeValue = mPrintSettings.getPaperSize().ordinal();
-                if (inputTrayOptions[value] == InputTray_FT_OIS_GL.EXTERNAL_FEEDER) {
+                if (inputTrayOptions[value] == InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER) {
                     if (paperSizeOptions[paperSizeValue] != PaperSize.A4 &&
                             paperSizeOptions[paperSizeValue] != PaperSize.B5 &&
                             paperSizeOptions[paperSizeValue] != PaperSize.LETTER &&
@@ -790,8 +791,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 }
             }
             if (name.equals(PrintSettings.TAG_INPUT_TRAY)) {
-                if (getPrinter().isPrinterFTorOIS()) {
-                    switch (InputTray_FT_OIS_GL.valuesFT_OIS()[value]) {
+                if (getPrinter().isPrinterFTorCEREZONA_S()) {
+                    switch (InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[value]) {
                         case AUTO:
                         case STANDARD:
                         case TRAY1:
@@ -802,7 +803,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     }
                 }
                 if (getPrinter().isPrinterGL()) {
-                    switch (InputTray_FT_OIS_GL.valuesGL()[value]) {
+                    switch (Preview.InputTray_FT_GL_CEREZONA_S.valuesGL()[value]) {
                         case AUTO:
                         case STANDARD:
                         case TRAY1:

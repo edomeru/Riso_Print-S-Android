@@ -98,11 +98,11 @@ public class Preview {
         }
 
         /**
-         * @brief Retrieves an array of paper size options for FT and OIS series
+         * @brief Retrieves an array of paper size options for FT and CEREZONA S series
          *
          * @return Paper size options array
          */
-        public static PaperSize[] valuesFT_OIS() {
+        public static PaperSize[] valuesFT_CEREZONA_S() {
             return new PaperSize[] {A3, A3W, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
         }
 
@@ -119,9 +119,9 @@ public class Preview {
     }
 
     /**
-     * @brief InputTray_FT_OIS_GL print settings for FT / OIS / GL series that refers to the tray location of input paper.
+     * @brief InputTray_FT_GL_CEREZONA_S print settings for FT / GL / CEREZONA S series that refers to the tray location of input paper.
      */
-    public enum InputTray_FT_OIS_GL {
+    public enum InputTray_FT_GL_CEREZONA_S {
         AUTO,  ///< Auto Tray
         STANDARD,  ///< Standard Tray
         TRAY1,  ///< Tray 1
@@ -130,12 +130,12 @@ public class Preview {
         EXTERNAL_FEEDER; ///< External 2000 sheets
 
         /**
-         * @brief Retrieves an array of input tray options for FT and OIS series
+         * @brief Retrieves an array of input tray options for FT and CEREZONA S series
          *
          * @return Input tray options array
          */
-        public static InputTray_FT_OIS_GL[] valuesFT_OIS() {
-            return new InputTray_FT_OIS_GL[] {AUTO, STANDARD, TRAY1, TRAY2, EXTERNAL_FEEDER};
+        public static InputTray_FT_GL_CEREZONA_S[] valuesFT_CEREZONA_S() {
+            return new InputTray_FT_GL_CEREZONA_S[] {AUTO, STANDARD, TRAY1, TRAY2, EXTERNAL_FEEDER};
         }
 
         /**
@@ -143,8 +143,8 @@ public class Preview {
          *
          * @return Input tray options array
          */
-        public static InputTray_FT_OIS_GL[] valuesGL() {
-            return new InputTray_FT_OIS_GL[] {AUTO, STANDARD, TRAY1, TRAY2, TRAY3, EXTERNAL_FEEDER};
+        public static InputTray_FT_GL_CEREZONA_S[] valuesGL() {
+            return new InputTray_FT_GL_CEREZONA_S[] {AUTO, STANDARD, TRAY1, TRAY2, TRAY3, EXTERNAL_FEEDER};
         }
     }
 

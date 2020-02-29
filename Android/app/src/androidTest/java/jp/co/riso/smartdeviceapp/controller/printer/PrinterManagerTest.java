@@ -1275,7 +1275,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             assertEquals(printerType, AppConstants.PRINTER_MODEL_GL);
             mPrinterManager.removePrinter(printer);
 
-            printer = new Printer("ORPHIS OIS300", "192.168.0.4");
+            printer = new Printer("RISO CEREZONA S200", "192.168.0.4");
             mPrinterManager.savePrinterToDB(printer, true);
             printerType =  mPrinterManager.getPrinterType(printer.getId());
             assertEquals(printerType, AppConstants.PRINTER_MODEL_FT);
