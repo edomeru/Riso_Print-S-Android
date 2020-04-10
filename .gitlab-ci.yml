@@ -1,0 +1,138 @@
+
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+stages:
+  - build
+
+variables:
+  LC_ALL: "en_US.UTF-8"
+  LANG: "en_US.UTF-8"
+  ANDROID_HOME: "/Users/build/Library/Android/sdk"
+  ANDROID_NDK_HOME: "/Users/build/Desktop/Android/android-ndk-r10e"
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# before_script:
+#   - gem install bundler
+#   - bundle install
+# --------------------------------------------------------------
+build: 
+  script: 
+    - cd Android
+    - echo $ANDROID_HOME
+    - echo $ANDROID_NDK_HOME
+    - chmod +x gradlew
+    - bundle exec fastlane dev_build
+    - mkdir ../builds
+    - cp -rf app/build/outputs/apk ../builds
+
+  stage: build
+  tags: 
+    - android
+    - sda
+
+  artifacts:
+    paths:
+      - builds
+    expire_in: 2 hrs
+  only: 
+    - /^develop.*/
+
+dev_build: 
+  script: 
+    - cd Android
+    - echo $ANDROID_HOME
+    - echo $ANDROID_NDK_HOME
+    - chmod +x gradlew
+    - bundle exec fastlane dev_build
+    - mkdir ../builds
+    - cp -rf app/build/outputs/apk ../builds
+
+  stage: build
+  tags: 
+    - android
+    - sda
+
+  artifacts:
+    paths:
+      - builds
+    expire_in: 2 hrs
+  when: manual
+
+build_dump_enable:
+  script: 
+    # change  ENABLE_JOB_DUMP from 0 to 1 in directprint.c
+    - perl -pi -w -e 's/#define ENABLE_JOB_DUMP 0/#define ENABLE_JOB_DUMP 1/g;' CommonLibrary/src/directprint.c 
+    - cd Android
+    - echo $ANDROID_HOME
+    - echo $ANDROID_NDK_HOME
+    - chmod +x gradlew
+    - bundle exec fastlane dev_build
+    - mkdir ../builds
+    - cp -rf app/build/outputs/apk ../builds
+  stage: build
+  tags: 
+    - android
+    - sda
+
+  artifacts:
+    paths:
+      - builds
+    expire_in: 2 hrs
+  
+  when: manual
+
+
+
+android_release_package:
+  script: 
+    - git remote set-url --push origin "http://jenkins:prnsoft1234@192.168.1.61/$CI_PROJECT_PATH.git" 
+    - git checkout $CI_BUILD_REF_NAME
+    - git pull
+    - cd Android
+    - echo $CI_COMMIT_BRANCH
+    - echo $CI_COMMIT_REF_NAME
+    - bundle exec fastlane run android_set_version_from_ci 
+    - git config --global user.name "RISO_SDA_CI"
+    - git config --global user.email "ci@alink-group.co.jp"
+    - git add app/build.gradle
+    - word=$(git status -s) 
+    - echo $word
+    - if [ $"word:0:1" != "?" ]; then git commit -m "Update version" && git push origin HEAD --follow-tags && exit 0 ; fi
+
+    - cd $CI_PROJECT_DIR
+    - echo $ANDROID_HOME
+    - echo $ANDROID_NDK_HOME
+
+    - cd Android
+    - chmod +x gradlew
+    - bundle exec fastlane release_build
+    - mkdir $CI_PROJECT_DIR/BIN
+    - cp -rf app/build/outputs/apk/release/app-release.apk $CI_PROJECT_DIR/BIN/RISO-PRINT-S.apk
+
+    # change  ENABLE_JOB_DUMP from 0 to 1 in directprint.c
+    - perl -pi -w -e 's/#define ENABLE_JOB_DUMP 0/#define ENABLE_JOB_DUMP 1/g;' $CI_PROJECT_DIR/CommonLibrary/src/directprint.c 
+    - bundle exec fastlane release_build
+    - cp -rf app/build/outputs/apk/release/app-release.apk $CI_PROJECT_DIR/BIN/RISO-PRINT-S_dump_enabled.apk
+
+
+    - cd $CI_PROJECT_DIR
+    - git archive --worktree-attributes -o "src.zip" --format=zip $CI_COMMIT_SHORT_SHA "Android" "CommonLibrary"
+    - unzip  -q -o src.zip -d SRC  
+    - cd SRC
+    - find Android -type f -print0 | xargs -0 unix2dos
+    - find CommonLibrary -type f -print0 | xargs -0 unix2dos
+    - zip -r "RISO-PRINT-S.zip" .
+  
+  stage: build
+  tags: 
+    - android
+    - sda
+
+  artifacts:
+    paths:
+      - BIN
+      - SRC/RISO-PRINT-S.zip
+    expire_in: 2 mos
+  only: 
+    - /^release.*/
+
+

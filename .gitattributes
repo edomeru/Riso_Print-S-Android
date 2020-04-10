@@ -12,4 +12,10 @@ iOS/_coverage/ export-ignore
 iOS/RunTests.sh export-ignore
 WindowsRT/SmartDeviceAppTests/ export-ignore
 
-
+Android/.idea/ export-ignore
+Android/gradlew.bat export-ignore
+Android/gradle/wrapper/gradle-wrapper.properties export-ignore
+Android/fastlane/ export-ignore
+Android/storefiles/ export-ignore
+Android/Gemfile export-ignore
+Android/Gemfile.lock export-ignore
