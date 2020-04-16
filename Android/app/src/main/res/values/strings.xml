@@ -171,5 +171,7 @@
     <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
     <string name="ids_lbl_inputtray_external">Additional Tray</string>
     <string name="ids_err_msg_uri_permission_expired">File access error was encountered. Please select file and try again.</string>
+    <string name="ids_lbl_select_document">Select Document</string>
+    <string name="ids_err_msg_write_external_storage_permission_not_granted">Permission to write to external storage is not granted. This permission is needed in order to download file. Please make sure that [Storage Permission] is ON.</string>
 
 </resources>
