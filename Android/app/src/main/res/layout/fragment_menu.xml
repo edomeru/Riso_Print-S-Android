@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:splitMotionEvents="false"
+    android:background="@color/theme_dark_1"
+    android:layout_marginRight="@dimen/drawer_margin" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/actionbar_height"
+        android:background="@color/theme_color_2"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/home_title_padding"
+        android:text="@string/ids_app_name"
+        android:textAllCaps="false"
+        android:textColor="@color/theme_light_1"
+        android:textSize="@dimen/font_size_large" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+       <LinearLayout
+            android:id="@+id/rootView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+           <FrameLayout
+               android:id="@+id/homeButton"
+               style="@style/HomeMenuButton"
+               android:layout_width="match_parent">
+
+               <TextView
+                   style="@style/HomeMenuButtonText"
+                   android:text="@string/ids_lbl_home"
+                   android:textAllCaps="false" />
+
+               <View
+                   android:layout_width="match_parent"
+                   android:layout_height="@dimen/separator_size"
+                   android:layout_gravity="bottom"
+                   android:background="@drawable/selector_home_separator"
+                   android:duplicateParentState="true" />
+           </FrameLayout>
+
+           <FrameLayout
+                android:id="@+id/printPreviewButton"
+                style="@style/HomeMenuButton" >
+
+               <TextView
+                   style="@style/HomeMenuButtonText"
+                   android:text="@string/ids_lbl_print_preview"
+                   android:textAllCaps="false" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_size"
+                    android:layout_gravity="bottom"
+                    android:duplicateParentState="true"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+            
+            <FrameLayout
+                android:id="@+id/printersButton"
+                style="@style/HomeMenuButton" >
+
+                <TextView
+                    style="@style/HomeMenuButtonText"
+                    android:text="@string/ids_lbl_printers"
+                    android:textAllCaps="false" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_size"
+                    android:layout_gravity="bottom"
+                    android:duplicateParentState="true"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+    
+            <FrameLayout
+                android:id="@+id/printJobsButton"
+                style="@style/HomeMenuButton" >
+
+                <TextView
+                    style="@style/HomeMenuButtonText"
+                    android:text="@string/ids_lbl_print_job_history"
+                    android:textAllCaps="false" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_size"
+                    android:layout_gravity="bottom"
+                    android:duplicateParentState="true"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+    
+            <FrameLayout
+                android:id="@+id/settingsButton"
+                style="@style/HomeMenuButton" >
+
+                <TextView
+                    style="@style/HomeMenuButtonText"
+                    android:text="@string/ids_lbl_settings"
+                    android:textAllCaps="false" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_size"
+                    android:layout_gravity="bottom"
+                    android:duplicateParentState="true"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+    
+            <FrameLayout
+                android:id="@+id/helpButton"
+                style="@style/HomeMenuButton" >
+
+                <TextView
+                    style="@style/HomeMenuButtonText"
+                    android:text="@string/ids_lbl_help"
+                    android:textAllCaps="false" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_size"
+                    android:layout_gravity="bottom"
+                    android:duplicateParentState="true"
+                    android:background="@drawable/selector_home_separator" />
+            </FrameLayout>
+    
+            <FrameLayout
+                android:id="@+id/legalButton"
+                style="@style/HomeMenuButton" >
+
+                <TextView
+                    style="@style/HomeMenuButtonText"
+                    android:text="@string/ids_lbl_legal"
+                    android:textAllCaps="false" />
+
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

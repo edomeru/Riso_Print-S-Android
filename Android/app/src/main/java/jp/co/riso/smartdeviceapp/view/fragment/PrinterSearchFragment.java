@@ -161,9 +161,10 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
      * @brief Display error dialog during failed printer search
      */
     private void dialogErrCb() {
-        int title = R.string.ids_lbl_search_printers;
-        int errMsg = R.string.ids_err_msg_network_error;
-        DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, R.string.ids_lbl_ok);
+        String title = getResources().getString(R.string.ids_lbl_search_printers);
+        String errMsg = null;
+        errMsg = getResources().getString(R.string.ids_err_msg_network_error);
+        DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
 
         DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
     }
@@ -284,15 +285,15 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         }
         DialogFragment info = null;
 
-        int title = R.string.ids_lbl_search_printers;
-        int msg = 0;
+        String title = getResources().getString(R.string.ids_lbl_search_printers);
+        String msg = null;
         if (!mPrinterManager.savePrinterToDB(printer, true)) {
             ret = -1;
-            msg = R.string.ids_err_msg_db_failure;
-            info = InfoDialogFragment.newInstance(title, msg, R.string.ids_lbl_ok);
+            msg = getResources().getString(R.string.ids_err_msg_db_failure);
+            info = InfoDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok));
         } else {
-            msg = R.string.ids_info_msg_printer_add_successful;
-            info = ConfirmDialogFragment.newInstance(title, msg, R.string.ids_lbl_ok, 0);
+            msg = getResources().getString(R.string.ids_info_msg_printer_add_successful);
+            info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
             info.setTargetFragment(this, 0);
         }
         

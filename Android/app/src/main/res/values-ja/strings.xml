@@ -173,5 +173,12 @@
     <string name="ids_err_msg_uri_permission_expired">ファイルアクセスエラーが発生しました。 ファイルを選択して、もう一度試してください。</string>
     <string name="ids_lbl_select_document">ドキュメントを選択</string>
     <string name="ids_err_msg_write_external_storage_permission_not_granted">外部ストレージへの書き込みが許可されていません。ファイルをダウンロードするために必要です。[ストレージの権限] がオンになっていることを確認してください。</string>
+    <string name="ids_err_msg_conversion_failed">PDFへのファイル変換に失敗しました。</string>
+    <string name="ids_err_msg_invalid_file_selection">複数のファイルを選択する場合は、サポートされている画像ファイルのみ選択してください。</string>
+    <string name="ids_err_msg_txt_size_limit">選択したテキストファイルがファイルサイズの上限を超えています。 ファイルサイズが5MB未満のテキストファイルを選択してください。</string>
+    <string name="ids_err_msg_permission">ファイルにアクセス時にエラーが発生しました。ファイルの数を減らすか、またはサイズの大きなファイルを減らして、再試行してください。</string>
+    <string name="ids_info_msg_converting">変換中...</string>
+    <string name="ids_info_msg_image">画像</string>
+    <string name="ids_info_msg_initializing">初期化中...</string>
 
 </resources>

@@ -121,4 +121,7 @@ public class AppConstants {
 
     // Image captured filename
     public static final String CONST_IMAGE_CAPTURED_FILENAME = "Captured_Image.jpg";
+
+    // File size limit for text files (5MB)
+    public static final int TEXT_FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 }

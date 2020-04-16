@@ -232,22 +232,22 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         }
         
         if (printer == null || printSettings == null) {
-            int strMsg = R.string.ids_err_msg_no_selected_printer;
-            int btnMsg = R.string.ids_lbl_ok;
+            String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
+            String btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
             DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
             return;
         }
         
         if (!NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
-            int strMsg = R.string.ids_err_msg_network_error;
-            int btnMsg = R.string.ids_lbl_ok;
+            String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
+            String btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
             DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
             return;
         }
         
-        int btnMsg = 0;
+        String btnMsg = null;
         String jobname = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
         
         mDirectPrintManager = new DirectPrintManager();
@@ -274,13 +274,13 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             // Ver.2.0.4.2 End
         }
         if (ret) {
-            btnMsg = R.string.ids_lbl_cancel;
-            mWaitingDialog = WaitingDialogFragment.newInstance(null, mPrintMsg, true, getString(btnMsg));
+            btnMsg = getString(R.string.ids_lbl_cancel);
+            mWaitingDialog = WaitingDialogFragment.newInstance(null, mPrintMsg, true, btnMsg);
             mWaitingDialog.setTargetFragment(this, REQUEST_CODE_CANCEL);
             DialogUtils.displayDialog(getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
         } else {
-            int strMsg = R.string.ids_info_msg_print_job_failed;
-            btnMsg = R.string.ids_lbl_ok;
+            String strMsg = getString(R.string.ids_info_msg_print_job_failed);
+            btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
             DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
         }
@@ -300,23 +300,23 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         switch (message.what) {
             case MSG_PRINT:
                 DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
-                
+
                 PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
                 String filename = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
                 InfoDialogFragment fragment = null;
-                int strMsg = 0;
-                int btnMsg = 0;
-                
+                String strMsg = null;
+                String btnMsg = null;
+
                 if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
-                    
-                    strMsg = R.string.ids_info_msg_print_job_successful;
-                    btnMsg = R.string.ids_lbl_ok;
+
+                    strMsg = getString(R.string.ids_info_msg_print_job_successful);
+                    btnMsg = getString(R.string.ids_lbl_ok);
                 } else {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.ERROR);
-                    
-                    strMsg = R.string.ids_info_msg_print_job_failed;
-                    btnMsg = R.string.ids_lbl_ok;
+
+                    strMsg = getString(R.string.ids_info_msg_print_job_failed);
+                    btnMsg = getString(R.string.ids_lbl_ok);
                 }
                 // Show dialog
                 fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
