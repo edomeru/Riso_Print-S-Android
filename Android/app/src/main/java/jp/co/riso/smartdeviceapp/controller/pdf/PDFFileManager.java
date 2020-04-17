@@ -685,6 +685,15 @@ public class PDFFileManager {
         
         @Override
         protected Integer doInBackground(String... params) {
+            if (contentInputStream != null) {
+                // do file copy in background
+                File destFile = new File(sandboxPath);
+                try {
+                    FileUtils.copy(contentInputStream, destFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             
             if (inputFile == null){
                 inputFile = params[0];
@@ -735,7 +744,6 @@ public class PDFFileManager {
                 File destFile = new File(sandboxPath);
                 try {
                     destFile.createNewFile();
-                    FileUtils.copy(contentInputStream, destFile);
                     inputFile = destFile.getPath();
                     
                     setPDF(destFile.getPath());

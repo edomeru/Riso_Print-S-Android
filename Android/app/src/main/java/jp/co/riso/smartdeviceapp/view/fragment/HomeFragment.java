@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -29,15 +28,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 import jp.co.riso.android.dialog.ConfirmDialogFragment;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.FileUtils;
-import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -53,8 +49,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     // flags for file types picked
     public static final int PDF_FROM_PICKER = 0;
     public static final int TEXT_FROM_PICKER = -1;
-    public static final int IMAGE_FROM_PICKER = -2;
-    public static final int IMAGES_FROM_PICKER = -3;
 
     public static final String FRAGMENT_TAG_DIALOG = "file_error_dialog";
     private final int REQUEST_FILE = 1;
@@ -68,9 +62,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private ImageButton buttonTapped = null;
     // to prevent double tap
     private long lastClickTime = 0;
-
-    private Uri imageCapturedUri = null;
-    private File photoFile;
 
     private boolean checkPermission = false;
 
@@ -147,20 +138,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         }
     }
 
-    private File createImageFile() {
-        File image = new File(getActivity().getCacheDir(), AppConstants.CONST_IMAGE_CAPTURED_FILENAME);
-        if (image.exists()) {
-            image.delete();
-        }
-        try {
-            image.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return image;
-    }
-
     private void setOnClickListeners(View view) {
         fileButton = view.findViewById(R.id.fileButton);
 
@@ -199,12 +176,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         Intent intent = new Intent(getActivity(), PDFHandlerActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.putExtra(AppConstants.EXTRA_FILE_FROM_PICKER, fileType);
-
-        if (fileType == IMAGES_FROM_PICKER) {
-            intent.setClipData(clipData);
-        } else {
-            intent.setData(data);
-        }
+        intent.setData(data);
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

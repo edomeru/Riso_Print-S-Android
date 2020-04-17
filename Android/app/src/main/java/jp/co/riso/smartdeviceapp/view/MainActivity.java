@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -35,6 +36,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.Logger;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -149,7 +151,8 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     @Override
     protected void onDestroy() {
         //Debug.waitForDebugger();
-        if (isFinishing()){
+        // do not delete if from Home screen picker
+        if (isFinishing() && (getIntent() != null && getIntent().getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 1) < 0)) {
             // delete PDF cache
             File file = new File(PDFFileManager.getSandboxPath());
             try {
@@ -227,7 +230,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         } else {
             super.onBackPressed();
         }
-
     }
 
     // ================================================================================

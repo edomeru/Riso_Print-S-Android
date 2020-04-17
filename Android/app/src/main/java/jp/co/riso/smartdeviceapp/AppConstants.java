@@ -119,9 +119,6 @@ public class AppConstants {
     // Intent extra key for flag if file is not pdf and from picker
     public static final String EXTRA_FILE_FROM_PICKER = "file_from_picker";
 
-    // Image captured filename
-    public static final String CONST_IMAGE_CAPTURED_FILENAME = "Captured_Image.jpg";
-
     // File size limit for text files (5MB)
     public static final int TEXT_FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 }

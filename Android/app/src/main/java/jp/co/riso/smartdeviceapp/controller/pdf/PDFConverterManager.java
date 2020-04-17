@@ -8,12 +8,9 @@
 
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
-import android.content.ClipData;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
@@ -51,8 +48,6 @@ public class PDFConverterManager {
 
     // Conversion Types
     public static final String CONVERSION_TEXT = "TEXT";
-    public static final String CONVERSION_IMAGE = "IMAGE";
-    public static final String CONVERSION_IMAGES = "IMAGES";
 
     // PostScript Point Values
     private int A4_WIDTH = 595;
@@ -65,7 +60,6 @@ public class PDFConverterManager {
     private WeakReference<PDFConverterManagerInterface> mInterfaceRef;
 
     private Uri mUri = null;
-    private ClipData mClipData = null;
     private File mDestFile = null;
     private Context mContext;
 
@@ -78,26 +72,6 @@ public class PDFConverterManager {
     public PDFConverterManager(Context context, PDFConverterManagerInterface pdfConverterManagerInterface) {
         this.mContext = context;
         mInterfaceRef = new WeakReference<PDFConverterManagerInterface>(pdfConverterManagerInterface);
-    }
-
-    /**
-     * @brief Sets the URI of image file to convert and sets conversion flag.
-     *
-     * @param data URI of image file.
-     */
-    public void setImageFile(Uri data) {
-        mUri = data;
-        this.mConversionFlag = CONVERSION_IMAGE;
-    }
-
-    /**
-     * @brief Sets the Clipdata of image files to convert and sets conversion flag.
-     *
-     * @param data Clipdata of image files.
-     */
-    public void setImageFile(ClipData data) {
-        mClipData = data;
-        this.mConversionFlag = CONVERSION_IMAGES;
     }
 
     /**
@@ -254,45 +228,6 @@ public class PDFConverterManager {
     }
 
     /**
-     * @brief Draws bitmap to PDFDocument page
-     *
-     * @param bitmap Bitmap to be drawn
-     * @param rect Rect of PDF page
-     * @param document PdfDocument
-     * @param pageNumber page number of PDF
-     */
-    private void drawBitmapToPage(Bitmap bitmap, Rect rect, PdfDocument document, int pageNumber) {
-        bitmap = getScaledBitmap(bitmap, rect.width() - 2 * MARGIN_SIZE, rect.height() - 2 * MARGIN_SIZE);
-
-        if (mPdfConversionTask.isCancelled()) {
-            return;
-        }
-
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(rect.width(), rect.height(), pageNumber).create();
-        PdfDocument.Page page = document.startPage(pageInfo);
-        Canvas canvas = page.getCanvas();
-
-        Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
-        canvas.drawPaint(paint);
-        paint.setColor(Color.BLUE);
-
-        if (mPdfConversionTask.isCancelled()) {
-            document.finishPage(page);
-            return;
-        }
-
-        // center image horizontally and vertically
-        int leftMargin = (rect.width() - bitmap.getWidth()) / 2;
-        int topMargin = (rect.height() - bitmap.getHeight()) / 2;
-        canvas.drawBitmap(bitmap, leftMargin, topMargin, null);
-        bitmap.recycle();
-        bitmap = null;
-
-        document.finishPage(page);
-    }
-
-    /**
      * @brief Draws text to PDFDocument page
      *
      * @param pageText Text to be drawn
@@ -333,29 +268,6 @@ public class PDFConverterManager {
         document.finishPage(page);
 
         return !mPdfConversionTask.isCancelled();
-    }
-
-    /**
-     * @brief Obtain scaled bitmap maintaining aspect ratio.
-     *
-     * @param bitmap Image bitmap.
-     * @param maxWidth Maximum image width.
-     * @param maxHeight Maximum image height.
-     *
-     * @return Scaled bitmap.
-     */
-    private Bitmap getScaledBitmap(Bitmap bitmap, int maxWidth, int maxHeight) {
-        float ratioBitmap = (float) bitmap.getWidth() / (float) bitmap.getHeight();
-        float ratioMax = (float) maxWidth / (float) maxHeight;
-
-        int finalWidth = maxWidth;
-        int finalHeight = maxHeight;
-        if (ratioMax > ratioBitmap) {
-            finalWidth = (int) ((float) maxHeight * ratioBitmap);
-        } else {
-            finalHeight = (int) ((float) maxWidth / ratioBitmap);
-        }
-        return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, false);
     }
 
     // ================================================================================
