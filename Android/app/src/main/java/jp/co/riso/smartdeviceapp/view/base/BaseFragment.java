@@ -235,8 +235,10 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
      * @param viewId View id to be associated with the menu button
      * @param imageResId Image resource id of the menu button
      * @param listener OnClickListener of the menu button
+     *
+     * @return menu button added
      */
-    public void addMenuButton(View v, int layoutId, int viewId, int imageResId, View.OnClickListener listener) {
+    public View addMenuButton(View v, int layoutId, int viewId, int imageResId, View.OnClickListener listener) {
         LayoutInflater li = LayoutInflater.from(v.getContext());
         ImageView button = (ImageView) li.inflate(R.layout.actionbar_button, null);
         button.setId(viewId);
@@ -246,6 +248,8 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         int width = ((BaseActivity) getActivity()).getActionBarHeight();
         ViewGroup layout = (ViewGroup) v.findViewById(layoutId);
         layout.addView(button, width, LayoutParams.MATCH_PARENT);
+
+        return button;
     }
     
     /**

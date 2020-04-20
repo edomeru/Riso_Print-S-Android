@@ -9,10 +9,13 @@
 package jp.co.riso.smartdeviceapp.view;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 
 public class PDFHandlerActivity extends Activity {
@@ -27,11 +30,21 @@ public class PDFHandlerActivity extends Activity {
         Intent intent = getIntent();
 
         if(intent != null) {
-            intent.setClass(this, SplashActivity.class);
-            String action = intent.getAction();
+            // From Home Screen file picker
+            if (intent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 1) < 1) {
+                boolean hasNewData = intent.getData() != null || intent.getClipData() != null;
+                PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
+                PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), hasNewData);
 
-            if (action != null && action.equals(Intent.ACTION_VIEW)) {
+                intent.setClass(this, MainActivity.class);
                 handleViewIntentData(intent);
+            } else {
+                intent.setClass(this, SplashActivity.class);
+                String action = intent.getAction();
+
+                if (action != null && (action.equals(Intent.ACTION_VIEW) || action.equals(Intent.ACTION_SEND_MULTIPLE))) {
+                    handleViewIntentData(intent);
+                }
             }
         } else {
             intent = new Intent(this, SplashActivity.class);
@@ -43,6 +56,7 @@ public class PDFHandlerActivity extends Activity {
 
     private void handleViewIntentData(Intent intent) {
         Uri intentData = intent.getData();
+        ClipData intentClipData = intent.getClipData();
 
         if(intentData != null) {
             if(intentData.getScheme().equals(FILE_SCHEME) || intentData.getScheme().equals(CONTENT_SCHEME)) {
@@ -50,6 +64,8 @@ public class PDFHandlerActivity extends Activity {
             } else { // load the PDF input stream from this activity only in order to handle special "content" URIs that cannot be opened by other activities (such as Gmail attachment URI)
                 intent.setData(PDFFileManager.createTemporaryPdfFromContentUri(this, intent.getData()));
             }
+        } else if (intentClipData != null) {
+            intent.setClipData(intentClipData);
         }
     }
 }
