@@ -165,7 +165,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     mPdfConverterManager = new PDFConverterManager(SmartDeviceApp.getAppContext(),this);
                 }
                 // Check text file
-                else if (mIntentData != null && FileUtils.getMimeType(getActivity(), mIntentData).equals(AppConstants.DOC_TYPES[1])) {
+                if (mIntentData != null && FileUtils.getMimeType(getActivity(), mIntentData).equals(AppConstants.DOC_TYPES[1])) {
                     mPdfConverterManager.setTextFile(mIntentData);
                     mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
                 } else {    // Invalid format
