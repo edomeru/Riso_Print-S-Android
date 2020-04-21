@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2018 RISO, Inc. All rights reserved.
  *
  * HomeFragment.java
  * SmartDeviceApp
@@ -8,241 +8,210 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import jp.co.riso.smartprint.R;
-import jp.co.riso.smartdeviceapp.view.MainActivity;
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
+import java.util.Arrays;
+
+import jp.co.riso.android.dialog.ConfirmDialogFragment;
+import jp.co.riso.android.dialog.DialogUtils;
+import jp.co.riso.android.dialog.InfoDialogFragment;
+import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity;
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
+import jp.co.riso.smartprint.R;
 
 /**
  * @class HomeFragment
- * 
- * @brief Web fragment class for Home Screen.
+ *
+ * @brief Fragment which contains the Home Screen
  */
-public class HomeFragment extends BaseFragment implements View.OnClickListener {
-    
-    /// Print Preview Screen
-    public static final int STATE_PRINTPREVIEW = 0;
-    /// Printers Screen
-    public static final int STATE_PRINTERS = 1;
-    /// Print Jobs Screen
-    public static final int STATE_PRINTJOBS = 2;
-    /// Settings Screen
-    public static final int STATE_SETTINGS = 3;
-    /// Help Screen
-    public static final int STATE_HELP = 4;
-    /// Legal Screen
-    public static final int STATE_LEGAL = 5;
-    
-    /// Home Fragment key state
-    public static final String KEY_STATE = "HomeFragment_State";
-    
-    public static int MENU_ITEMS[] = {
-        R.id.printPreviewButton,
-        R.id.printersButton,
-        R.id.printJobsButton,
-        R.id.settingsButton,
-        R.id.helpButton,
-        R.id.legalButton
-    };
-    
-    public static String FRAGMENT_TAGS[] = {
-        "fragment_printpreview",
-        "fragment_printers",
-        "fragment_printjobs",
-        "fragment_settings",
-        "fragment_help",
-        "fragment_legal"
-    };
-    
-    public int mState = STATE_PRINTPREVIEW;
-    
+public class HomeFragment extends BaseFragment implements View.OnClickListener, ConfirmDialogFragment.ConfirmDialogListener {
+
+    // flags for file types picked
+    public static final int PDF_FROM_PICKER = 0;
+    public static final int TEXT_FROM_PICKER = -1;
+
+    public static final String FRAGMENT_TAG_DIALOG = "file_error_dialog";
+    private final int REQUEST_FILE = 1;
+    private final int REQUEST_WRITE_EXTERNAL_STORAGE = 4;
+
+    private LinearLayout homeButtons;
+    private ImageButton fileButton;
+
+    private static final String TAG_PERMISSION_DIALOG = "external_storage_tag";
+    private ConfirmDialogFragment mConfirmDialogFragment = null;
+    private ImageButton buttonTapped = null;
+    // to prevent double tap
+    private long lastClickTime = 0;
+
+    private boolean checkPermission = false;
+
     @Override
     public int getViewLayout() {
         return R.layout.fragment_home;
     }
-    
+
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-        
+
     }
-    
+
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.printPreviewButton).setOnClickListener(this);
-        view.findViewById(R.id.printersButton).setOnClickListener(this);
-        view.findViewById(R.id.printJobsButton).setOnClickListener(this);
-        view.findViewById(R.id.settingsButton).setOnClickListener(this);
-        view.findViewById(R.id.helpButton).setOnClickListener(this);
-        view.findViewById(R.id.legalButton).setOnClickListener(this);
-        
-        if (savedInstanceState == null) {
-            // No states were saved
-            //setCurrentState(STATE_PRINTPREVIEW, false);
-            mState = STATE_PRINTPREVIEW;
-        } else {
-            mState = savedInstanceState.getInt(KEY_STATE, STATE_PRINTERS);
-            // No need to restore the fragment state as this is already handled
-        }
-        setSelectedButton(view, mState);
+        homeButtons = view.findViewById(R.id.homeButtons);
+        setOnClickListeners(view);
     }
-    
+
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        //This has no custom action bar
+        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        textView.setText(R.string.ids_lbl_home);
+
+        addActionMenuButton(view);
     }
-    
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        
-        outState.putInt(KEY_STATE, mState);
-    }
-    
-    // ================================================================================
-    // Private Methods
-    // ================================================================================
-    
-    /**
-     * @brief This method sets the state of the selected button.
-     * 
-     * @param view Parent view
-     * @param state Fragment state
-     */
-    private void setSelectedButton(View view, int state) {
-        if (view == null) {
-            return;
-        }
-        if (state < 0 || state >= MENU_ITEMS.length) {
-            return;
-        }
-        
-        for (int i = 0; i < MENU_ITEMS.length; i++) {
-            view.findViewById(MENU_ITEMS[i]).setSelected(false);
-            view.findViewById(MENU_ITEMS[i]).setClickable(true);
-        }
-        
-        view.findViewById(MENU_ITEMS[state]).setSelected(true);
-        view.findViewById(MENU_ITEMS[state]).setClickable(false);
-    }
-    
-    /**
-     * @brief This method sets the state of the Home Fragment.
-     * 
-     * @param state Fragment state
-     */
-    private void setCurrentState(int state) {
-        setCurrentState(state, true);
-    }
-    
-    /**
-     * @brief This method sets the state of the Home Fragment.
-     * 
-     * @param state Fragment state
-     * @param animate Animate changes in layout
-     */
-    private void setCurrentState(int state, boolean animate) {
-        if (mState != state) {
-            setSelectedButton(getView(), state);
-            switchToFragment(state, animate);
-            mState = state;
-        }
-        
-        if (getActivity() instanceof MainActivity) {
-            MainActivity activity = (MainActivity) getActivity();
-            activity.closeDrawers();
-        }
-    }
-    
-    /**
-     * @brief Switch to fragment.
-     * 
-     * @param state Fragment state
-     * @param animate Animate changes in layout
-     */
-    private void switchToFragment(int state, boolean animate) {
-        FragmentManager fm = getFragmentManager();
-        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        
-        FragmentTransaction ft = fm.beginTransaction();
-        
-        Fragment container = fm.findFragmentById(R.id.mainLayout);
-        if (container != null) {
-            if (container.getRetainInstance()) {
-                ft.detach(container);
-            } else {
-                ft.remove(container);
-            }
-        }
-        
-        String tag = FRAGMENT_TAGS[state];
-        
-        // Check retained fragments
-        BaseFragment fragment = (BaseFragment) fm.findFragmentByTag(tag);
-        if (fragment == null) {
-            switch (state) {
-                case STATE_PRINTPREVIEW:
-                    fragment = new PrintPreviewFragment();
-                    break;
-                case STATE_PRINTERS:
-                    fragment = new PrintersFragment();
-                    break;
-                case STATE_PRINTJOBS:
-                    fragment = new PrintJobsFragment();
-                    break;
-                case STATE_SETTINGS:
-                    fragment = new SettingsFragment();
-                    break;
-                case STATE_HELP:
-                    fragment = new HelpFragment();
-                    break;
-                case STATE_LEGAL:
-                    fragment = new LegalFragment();
-                    break;
-            }
-            
-            ft.add(R.id.mainLayout, fragment, tag);
-        } else {
-            ft.attach(fragment);
-        }
-        
-        if (fragment instanceof BaseFragment) {
-            setIconState(R.id.menu_id_action_button, true);
-        }
-        
-        ft.commit();
-    }
-    
-    // ================================================================================
-    // INTERFACE - View.OnClickListener
-    // ================================================================================
-    
+
     @Override
     public void onClick(View v) {
+        super.onClick(v);
         switch (v.getId()) {
-            case R.id.printPreviewButton:
-                setCurrentState(STATE_PRINTPREVIEW);
-                break;
-            case R.id.printersButton:
-                setCurrentState(STATE_PRINTERS);
-                break;
-            case R.id.printJobsButton:
-                setCurrentState(STATE_PRINTJOBS);
-                break;
-            case R.id.settingsButton:
-                setCurrentState(STATE_SETTINGS);
-                break;
-            case R.id.helpButton:
-                setCurrentState(STATE_HELP);
-                break;
-            case R.id.legalButton:
-                setCurrentState(STATE_LEGAL);
-                break;
-            default:
+            case R.id.fileButton:
+                buttonTapped = fileButton;
+                checkPermission = checkPermission(true);
+                if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                    // prevent double tap
+                    lastClickTime = SystemClock.elapsedRealtime();
+                    Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    filePickerIntent.setType("*/*");
+                    filePickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.DOC_TYPES);
+                    startActivityForResult(Intent.createChooser(filePickerIntent, getString(R.string.ids_lbl_select_document)), REQUEST_FILE);
+                }
                 break;
         }
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        LinearLayout mainView = getView().findViewById(R.id.contentView);
+        mainView.removeView(homeButtons);
+
+        LinearLayout newView = (LinearLayout)View.inflate(getActivity(), R.layout.home_buttons, null);
+        newView.setLayoutParams(homeButtons.getLayoutParams());
+
+        mainView.addView(newView);
+        homeButtons = newView;
+        setOnClickListeners(homeButtons);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_FILE && resultCode == Activity.RESULT_OK && data != null) {
+            String contentType = FileUtils.getMimeType(getActivity(), data.getData());
+            if (contentType == null || Arrays.asList(AppConstants.DOC_TYPES).indexOf(contentType) == -1) {
+                String message = getResources().getString(R.string.ids_err_msg_open_failed);
+                String button = getResources().getString(R.string.ids_lbl_ok);
+                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+            } else {
+                int fileType = contentType.equals(AppConstants.DOC_TYPES[0]) ? PDF_FROM_PICKER : TEXT_FROM_PICKER;
+                openFile(data.getData(), null, fileType);
+            }
+        }
+    }
+
+    private void setOnClickListeners(View view) {
+        fileButton = view.findViewById(R.id.fileButton);
+
+        fileButton.setOnClickListener(this);
+    }
+
+    private boolean checkPermission(boolean isStorage) {
+        if (isStorage && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (mConfirmDialogFragment == null) {
+                        final String message = getActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed);
+                        final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
+                        mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
+                        mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
+                        DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
+                    }
+                } else {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @brief Opens file in app
+     *
+     * @param data File uri
+     * @param clipData Clip data for multiple selected files
+     * @param fileType File type
+     */
+    private void openFile(Uri data, ClipData clipData, int fileType) {
+        Intent intent = new Intent(getActivity(), PDFHandlerActivity.class);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.putExtra(AppConstants.EXTRA_FILE_FROM_PICKER, fileType);
+        intent.setData(data);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_WRITE_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, start picker intent
+                    if (buttonTapped != null) {
+                        buttonTapped.performClick();
+                    }
+                }
+
+                if(!checkPermission && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                    String message = getResources().getString(R.string.ids_err_msg_write_external_storage_permission_not_granted);
+                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                }
+                break;
+        }
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    public void onConfirm() {
+        mConfirmDialogFragment = null;
+        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+    }
+
+    @Override
+    public void onCancel() {
+        mConfirmDialogFragment = null;
+    }
 }
+

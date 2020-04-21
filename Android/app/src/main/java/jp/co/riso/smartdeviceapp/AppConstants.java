@@ -112,4 +112,13 @@ public class AppConstants {
     // TODO: Add CEREZONA S in PRINTER_TYPES and add a separate entry for CEREZONA S model in `printsettings.xml` file if there are changes in print settings that differentiate it to FT
     //Array of printer types
     public static final String[] PRINTER_TYPES = {PRINTER_MODEL_IS, PRINTER_MODEL_GD, PRINTER_MODEL_FW, PRINTER_MODEL_FT, PRINTER_MODEL_GL};
+
+    // Supported document types
+    public static final String[] DOC_TYPES = {"application/pdf", "text/plain"};
+
+    // Intent extra key for flag if file is not pdf and from picker
+    public static final String EXTRA_FILE_FROM_PICKER = "file_from_picker";
+
+    // File size limit for text files (5MB)
+    public static final int TEXT_FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 }

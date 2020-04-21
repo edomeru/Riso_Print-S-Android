@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -219,23 +220,31 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
         
         Uri data = null;
+        ClipData clipData = null;
+        Intent intent = getIntent();
         if (getIntent() != null) {
             String action = getIntent().getAction();
             
             if (Intent.ACTION_VIEW.equals(action)) {
                 data = getIntent().getData();
             } else if (Intent.ACTION_SEND.equals(action)) {
-                data = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());
+                if (getIntent().getExtras().get(Intent.EXTRA_STREAM) != null) {
+                    data = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());
+                }
+            } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+                clipData = getIntent().getClipData();
             }
         }
-        
 
         // Notify PDF File Data that there is a new PDF
         PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext());
-        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), data != null);
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), data != null || clipData != null);
         
         if (data != null) {
             launchIntent.setData(data);
+        } else if (clipData != null) {
+            launchIntent.setClipData(clipData);
+            launchIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
         } else {
             // delete PDF cache
             File file = new File(PDFFileManager.getSandboxPath());

@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -35,10 +36,12 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.Logger;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
+import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment;
 import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout;
 import jp.co.riso.smartprint.R;
@@ -66,6 +69,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     private ViewGroup mMainLayout = null;
     private ViewGroup mLeftLayout = null;
     private ViewGroup mRightLayout = null;
+    private MenuFragment menuFragment = null;
     private ActionBarDrawerToggle mDrawerToggle = null;
     private boolean mResizeView = false;
     
@@ -80,7 +84,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             Logger.logStartTime(this, this.getClass(), "AppLaunch");
         }
 
-        if (getIntent() != null && getIntent().getData() != null) { // check if Open-In
+        if (getIntent() != null && (getIntent().getData() != null || getIntent().getClipData() != null)) { // check if Open-In
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 // permission is granted, initialize Radaee (uses external storage)
@@ -117,9 +121,15 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         if (savedInstanceState == null) {
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            
-            ft.add(R.id.mainLayout, new PrintPreviewFragment(), HomeFragment.FRAGMENT_TAGS[HomeFragment.STATE_PRINTPREVIEW]);
-            ft.add(R.id.leftLayout, new HomeFragment());
+
+            if (getIntent() != null && (getIntent().getData() != null || getIntent().getClipData() != null)) {
+                ft.add(R.id.mainLayout, new PrintPreviewFragment(), MenuFragment.FRAGMENT_TAGS[MenuFragment.STATE_PRINTPREVIEW]);
+            } else {
+                ft.add(R.id.mainLayout, new HomeFragment(), MenuFragment.FRAGMENT_TAGS[MenuFragment.STATE_HOME]);
+            }
+
+            menuFragment = new MenuFragment();
+            ft.add(R.id.leftLayout, menuFragment);
             
             ft.commit();
         } else {
@@ -141,7 +151,8 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     @Override
     protected void onDestroy() {
         //Debug.waitForDebugger();
-        if (isFinishing()){
+        // do not delete if from Home screen picker
+        if (isFinishing() && (getIntent() != null && getIntent().getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 1) < 0)) {
             // delete PDF cache
             File file = new File(PDFFileManager.getSandboxPath());
             try {
@@ -219,7 +230,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         } else {
             super.onBackPressed();
         }
-
     }
 
     // ================================================================================
@@ -425,5 +435,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             Global.Init(this);
             isRadaeeInitialized = true;
         }
+    }
+
+    /**
+     * @brief Helper method to get MenuFragment instance
+     */
+    public MenuFragment getMenuFragment() {
+        return menuFragment;
     }
 }

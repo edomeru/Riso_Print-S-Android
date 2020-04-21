@@ -325,9 +325,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      */
     private boolean isMaxPrinterCountReached() {
         if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
-            int title = R.string.ids_lbl_printers;
-            int errMsg = R.string.ids_err_msg_max_printer_count;
-            InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, R.string.ids_lbl_ok);
+            String title = getResources().getString(R.string.ids_lbl_printers);
+            String errMsg = null;
+            errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
+            InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
             DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
             return true;
         }
@@ -396,10 +397,10 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      * @brief Display dialog during failed database access.
      */
     private void dialogErrCb() {
-        int title = R.string.ids_lbl_printers;
-        int errMsg = R.string.ids_err_msg_db_failure;
-        
-        DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, R.string.ids_lbl_ok);
+        String title = getResources().getString(R.string.ids_lbl_printers);
+        String errMsg = getResources().getString(R.string.ids_err_msg_db_failure);
+
+        DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
         DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
     }
     
@@ -473,12 +474,13 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void onPrinterDeleteClicked(Printer printer) {
-        int title = R.string.ids_lbl_printer;
-        int errMsg = R.string.ids_info_msg_delete_jobs;
-        
+        String title = getResources().getString(R.string.ids_lbl_printer);
+        String errMsg = getResources().getString(R.string.ids_info_msg_delete_jobs);
+
         DialogFragment info = null;
-        
-        info = ConfirmDialogFragment.newInstance(title, errMsg, R.string.ids_lbl_ok, R.string.ids_lbl_cancel);
+
+        info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok),
+                getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
         mDeletePrinter = printer;
         DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);

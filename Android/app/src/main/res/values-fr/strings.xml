@@ -171,5 +171,14 @@
     <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
     <string name="ids_lbl_inputtray_external">Bac supplémentaire</string>
     <string name="ids_err_msg_uri_permission_expired">Erreur d\'accès du fichier a été rencontré. Veuillez sélectionner un fichier et réessayer.</string>
+    <string name="ids_lbl_select_document">Sélectionner un document</string>
+    <string name="ids_err_msg_write_external_storage_permission_not_granted">L\'autorisation d\'écrire sur un stockage externe n\'est pas accordée. Cette autorisation est nécessaire pour télécharger le fichier. Assurez-vous que [Autorisation de stockage] est sur activé.</string>
+    <string name="ids_err_msg_conversion_failed">La conversion du fichier au format PDF a échoué.</string>
+    <string name="ids_err_msg_invalid_file_selection">Veuillez sélectionner les fichiers image pris en charge uniquement pour la sélection de plusieurs fichiers.</string>
+    <string name="ids_err_msg_txt_size_limit">Le fichier texte sélectionné dépasse la taille maximale autorisée. Veuillez sélectionner un fichier texte dont la taille est inférieure à 5 Mo.</string>
+    <string name="ids_err_msg_permission">Une erreur d\'accès au fichier s\'est produite. Veuillez sélectionner moins de fichiers ou réduire la taille du fichier et essayez à nouveau.</string>
+    <string name="ids_info_msg_converting">Conversion en cours...</string>
+    <string name="ids_info_msg_image">Image</string>
+    <string name="ids_info_msg_initializing">Initialisation...</string>
 
 </resources>

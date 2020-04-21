@@ -39,6 +39,7 @@ public class WaitingDialogFragment extends DialogFragment {
     private static final String KEY_NEG_BUTTON = "negButton";
     
     private static final OnKeyListener sCancelBackButtonListener;
+    private WaitingDialogListener mListener = null;
     
     static {
         sCancelBackButtonListener = new OnKeyListener() {
@@ -142,8 +143,10 @@ public class WaitingDialogFragment extends DialogFragment {
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
         if (getTargetFragment() instanceof WaitingDialogListener) {
-            WaitingDialogListener listener = (WaitingDialogListener) getTargetFragment();
-            listener.onCancel();
+            if (mListener == null) {
+                mListener = (WaitingDialogListener) getTargetFragment();
+            }
+            mListener.onCancel();
         }
     }
     
@@ -174,6 +177,14 @@ public class WaitingDialogFragment extends DialogFragment {
             ProgressDialog dialog = (ProgressDialog) getDialog();
             dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(buttonText);
         }
+    }
+
+    // ================================================================================
+    // Public methods
+    // ================================================================================
+
+    public void setListener(WaitingDialogListener listener) {
+        mListener = listener;
     }
     
     // ================================================================================

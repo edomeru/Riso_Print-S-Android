@@ -8,10 +8,12 @@
 
 package jp.co.riso.android.util;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
+import android.webkit.MimeTypeMap;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,14 +24,14 @@ import java.io.OutputStream;
 
 /**
  * @class FileUtils
- * 
+ *
  * @brief Utility class for file operations
  */
 public class FileUtils {
-    
+
     /**
      * @brief Copy a file.
-     * 
+     *
      * @param src Source file
      * @param dst Destination file
      */
@@ -39,21 +41,21 @@ public class FileUtils {
         }
         InputStream in = new FileInputStream(src);
         OutputStream out = new FileOutputStream(dst);
-        
+
         // Transfer bytes from in to out
         byte[] buf = new byte[1024];
         int len;
         while ((len = in.read(buf)) > 0) {
             out.write(buf, 0, len);
         }
-        
+
         in.close();
         out.close();
     }
-    
+
     /**
      * @brief Copy a file from inputstream.
-     * 
+     *
      * @param in Source inputstream
      * @param dst Destination file
      */
@@ -62,23 +64,46 @@ public class FileUtils {
             return;
         }
         OutputStream out = new FileOutputStream(dst);
-        
+
         // Transfer bytes from in to out
         byte[] buf = new byte[1024];
         int len;
         while ((len = in.read(buf)) > 0) {
             out.write(buf, 0, len);
         }
-        
+
         in.close();
         out.close();
     }
-    
-    
+
+
     public static void delete(File src) throws IOException {
-        
+
         src.delete();
-        
+
+    }
+
+    /**
+     * @brief Determines the mime type of a file uri
+     *
+     * @param context Application context
+     * @param uri File uri
+     * @return Mime type of file
+     */
+    public static String getMimeType(Context context, Uri uri) {
+        String mimeType = "";
+
+        if (context != null && uri != null && uri.getScheme() != null) {
+            if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+                ContentResolver cr = context.getContentResolver();
+                mimeType = cr.getType(uri);
+            } else {
+                String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
+            }
+        }
+
+        return mimeType == null ? "" : mimeType;
     }
 
     /**
@@ -86,27 +111,71 @@ public class FileUtils {
      *
      * @param context Application context
      * @param uri File uri
+     * @param isPdfFilename flag to convert file extension to pdf
      * @return Filename
      */
-    public static String getFileName(Context context, Uri uri) {
+    public static String getFileName(Context context, Uri uri, boolean isPdfFilename) {
         String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+
+        if (context != null && uri != null && uri.getScheme() != null) {
+            if (uri.getScheme().equals("content")) {
+                Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+                try {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    }
+                } finally {
+                    if (cursor != null) {
+                        cursor.close();
+                    }
                 }
-            } finally {
-                cursor.close();
             }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
+            if (result == null && uri.getPath() != null) {
+                result = uri.getPath();
+                int cut = result.lastIndexOf('/');
+                if (cut != -1) {
+                    result = result.substring(cut + 1);
+                }
+            }
+
+            if (isPdfFilename && result != null) {
+                // replace file extension with .pdf
+                if (!result.endsWith(".pdf")) {
+                    String filename = result.substring(0, result.lastIndexOf('.'));
+                    result = filename + ".pdf";
+                }
             }
         }
         return result;
+    }
+
+    /**
+     * @brief Gets the file size from uri
+     *
+     * @param context Application context
+     * @param uri File uri
+     * @return file size
+     */
+    public static int getFileSize(Context context, Uri uri) {
+        int filesize = 0;
+
+        if (context != null && uri != null && uri.getScheme() != null) {
+            if (uri.getScheme().equals("content")) {
+                Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+                try {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        filesize = cursor.getInt(cursor.getColumnIndex(OpenableColumns.SIZE));
+                    }
+                } finally {
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                }
+            } else if (uri.getPath() != null){
+                File file = new File(uri.getPath());
+                filesize = (int) file.length();
+            }
+        }
+        return filesize;
     }
 }

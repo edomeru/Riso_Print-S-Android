@@ -67,9 +67,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private PrintJobsLayoutListener mLayoutListener;
     private RelativeLayout mPrintJobGroupLayout;
     private boolean mIsCollapsed = false;
-    private int mTitle;
-    private int mErrorMessage;
-    private int mOkText;
+    private String mTitle;
+    private String mErrorMessage;
+    private String mOkText;
     private Handler mHandler;
     private LinearLayout mJobsLayout;
     private int mRowHeight;
@@ -276,13 +276,13 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      */
     private void init() {
         if (!isInEditMode()) {
-            mTitle = R.string.ids_info_msg_delete_jobs_title;
-            mOkText = R.string.ids_lbl_ok;
-            mErrorMessage = R.string.ids_err_msg_db_failure;
+            mTitle = getResources().getString(R.string.ids_info_msg_delete_jobs_title);
+            mOkText = getResources().getString(R.string.ids_lbl_ok);
+            mErrorMessage = getResources().getString(R.string.ids_err_msg_db_failure);
             setOrientation(VERTICAL);
             mRowHeight = getResources().getDimensionPixelSize(R.dimen.printjob_row_height);
             mSeparatorHeight = getResources().getDimensionPixelSize(R.dimen.separator_size);
-            
+
             ((Activity) getContext()).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
