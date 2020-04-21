@@ -30,17 +30,6 @@
                 android:scaleType="fitEnd"
                 android:src="@drawable/img_home_icon" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="0.5"
-                android:background="@drawable/border_topbottom"
-                android:gravity="center"
-                android:text="@string/ids_lbl_open_in_android"
-                android:textAllCaps="false"
-                android:textColor="@color/theme_color_2"
-                android:textSize="@dimen/font_size_large" />
         </LinearLayout>
 
         <LinearLayout
