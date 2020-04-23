@@ -34,6 +34,7 @@ import jp.co.riso.android.dialog.ConfirmDialogFragment;
 import jp.co.riso.android.dialog.DialogUtils;
 import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
@@ -49,13 +50,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     // flags for file types picked
     public static final int PDF_FROM_PICKER = 0;
     public static final int TEXT_FROM_PICKER = -1;
+    public static final int IMAGE_FROM_PICKER = -2;
+    public static final int IMAGES_FROM_PICKER = -3;
 
     public static final String FRAGMENT_TAG_DIALOG = "file_error_dialog";
     private final int REQUEST_FILE = 1;
+    private final int REQUEST_PHOTO = 2;
     private final int REQUEST_WRITE_EXTERNAL_STORAGE = 4;
 
     private LinearLayout homeButtons;
-    private ImageButton fileButton;
+    private ImageButton fileButton, photosButton;
 
     private static final String TAG_PERMISSION_DIALOG = "external_storage_tag";
     private ConfirmDialogFragment mConfirmDialogFragment = null;
@@ -105,6 +109,19 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     startActivityForResult(Intent.createChooser(filePickerIntent, getString(R.string.ids_lbl_select_document)), REQUEST_FILE);
                 }
                 break;
+            case R.id.photosButton:
+                buttonTapped = photosButton;
+                checkPermission = checkPermission(true);
+                if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                    // prevent double tap
+                    lastClickTime = SystemClock.elapsedRealtime();
+                    Intent photosPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    photosPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    photosPickerIntent.setType("*/*");
+                    photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES);
+                    startActivityForResult(Intent.createChooser(photosPickerIntent, getString(R.string.ids_lbl_select_photos)), REQUEST_PHOTO);
+                }
+                break;
         }
     }
 
@@ -135,13 +152,33 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 int fileType = contentType.equals(AppConstants.DOC_TYPES[0]) ? PDF_FROM_PICKER : TEXT_FROM_PICKER;
                 openFile(data.getData(), null, fileType);
             }
+        }  else if (requestCode == REQUEST_PHOTO && resultCode == Activity.RESULT_OK && data != null) {
+            if (data.getClipData() != null) { // multiple image files
+                if (!ImageUtils.isImageFileSupported(getActivity(), data.getClipData())) {
+                    String message = getResources().getString(R.string.ids_err_msg_open_failed);
+                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                } else {
+                    openFile(null, data.getClipData(), IMAGES_FROM_PICKER);
+                }
+            } else {    // single image file
+                if (!ImageUtils.isImageFileSupported(getActivity(), data.getData())) {
+                    String message = getResources().getString(R.string.ids_err_msg_open_failed);
+                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                } else {
+                    openFile(data.getData(), null, IMAGE_FROM_PICKER);
+                }
+            }
         }
     }
 
     private void setOnClickListeners(View view) {
         fileButton = view.findViewById(R.id.fileButton);
+        photosButton = view.findViewById(R.id.photosButton);
 
         fileButton.setOnClickListener(this);
+        photosButton.setOnClickListener(this);
     }
 
     private boolean checkPermission(boolean isStorage) {
@@ -176,7 +213,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         Intent intent = new Intent(getActivity(), PDFHandlerActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.putExtra(AppConstants.EXTRA_FILE_FROM_PICKER, fileType);
-        intent.setData(data);
+
+        if (fileType == IMAGES_FROM_PICKER) {
+            intent.setClipData(clipData);
+        } else {
+            intent.setData(data);
+        }
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

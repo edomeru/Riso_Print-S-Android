@@ -52,6 +52,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.android.util.MemoryUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -164,8 +165,20 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 if (mPdfConverterManager == null) {
                     mPdfConverterManager = new PDFConverterManager(SmartDeviceApp.getAppContext(),this);
                 }
-                // Check text file
-                if (mIntentData != null && FileUtils.getMimeType(getActivity(), mIntentData).equals(AppConstants.DOC_TYPES[1])) {
+                // Check if multiple images
+                if (clipData != null) {
+                    mPdfConverterManager.setImageFile(clipData);
+                    if (clipData.getItemCount() > 1) {
+                        mFilenameFromContent = AppConstants.MULTI_IMAGE_PDF_FILENAME;
+                    } else {
+                        mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), clipData.getItemAt(0).getUri(), true);
+                    }
+                }   // Check if single image
+                else if (mIntentData != null && ImageUtils.isImageFileSupported(getActivity(), mIntentData)) {
+                    mPdfConverterManager.setImageFile(mIntentData);
+                    mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                } // Check text file
+                else if (mIntentData != null && FileUtils.getMimeType(getActivity(), mIntentData).equals(AppConstants.DOC_TYPES[1])) {
                     mPdfConverterManager.setTextFile(mIntentData);
                     mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
                 } else {    // Invalid format

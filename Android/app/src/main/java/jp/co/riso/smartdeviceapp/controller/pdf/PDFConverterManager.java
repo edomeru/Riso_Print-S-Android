@@ -8,9 +8,12 @@
 
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
+import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
@@ -25,10 +28,12 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 
 import jp.co.riso.android.util.FileUtils;
+import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.model.Pagination;
 import jp.co.riso.smartprint.R;
@@ -48,6 +53,8 @@ public class PDFConverterManager {
 
     // Conversion Types
     public static final String CONVERSION_TEXT = "TEXT";
+    public static final String CONVERSION_IMAGE = "IMAGE";
+    public static final String CONVERSION_IMAGES = "IMAGES";
 
     // PostScript Point Values
     private int A4_WIDTH = 595;
@@ -60,6 +67,7 @@ public class PDFConverterManager {
     private WeakReference<PDFConverterManagerInterface> mInterfaceRef;
 
     private Uri mUri = null;
+    private ClipData mClipData = null;
     private File mDestFile = null;
     private Context mContext;
 
@@ -72,6 +80,26 @@ public class PDFConverterManager {
     public PDFConverterManager(Context context, PDFConverterManagerInterface pdfConverterManagerInterface) {
         this.mContext = context;
         mInterfaceRef = new WeakReference<PDFConverterManagerInterface>(pdfConverterManagerInterface);
+    }
+
+    /**
+     * @brief Sets the URI of image file to convert and sets conversion flag.
+     *
+     * @param data URI of image file.
+     */
+    public void setImageFile(Uri data) {
+        mUri = data;
+        this.mConversionFlag = CONVERSION_IMAGE;
+    }
+
+    /**
+     * @brief Sets the Clipdata of image files to convert and sets conversion flag.
+     *
+     * @param data Clipdata of image files.
+     */
+    public void setImageFile(ClipData data) {
+        mClipData = data;
+        this.mConversionFlag = CONVERSION_IMAGES;
     }
 
     /**
@@ -187,6 +215,194 @@ public class PDFConverterManager {
     }
 
     /**
+     * @brief Converts image file to PDF.
+     */
+    public int convertImageToPDF() {
+        Rect rect = new Rect(0, 0, A4_WIDTH, A4_HEIGHT);
+        Bitmap bitmap = null;
+        File tempImgFile = null;
+        try {
+            // check if file from photo picker google drive (account-specified)
+            // save a copy of image file
+//            if (mUri.getAuthority() != null && mUri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
+//                tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
+//                InputStream input = mContext.getContentResolver().openInputStream(mUri);
+//                FileUtils.copy(input, tempImgFile);
+//                if (input != null) {
+//                    input.close();
+//                }
+//                mUri = Uri.fromFile(tempImgFile);
+//            }
+            bitmap = ImageUtils.getBitmapFromUri(mContext, mUri);
+            bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap, mUri);
+            if (bitmap == null) {
+                return CONVERSION_FAILED;
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return CONVERSION_SECURITY_ERROR;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CONVERSION_FAILED;
+        } finally {
+            // delete temp image file if exists
+            if (tempImgFile != null) {
+                try {
+                    FileUtils.delete(tempImgFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (mPdfConversionTask.isCancelled()) {
+            return 0;
+        }
+
+        // check if image is landscape
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        if (width > height) {
+            rect = new Rect(0, 0, A4_HEIGHT, A4_WIDTH);
+        }
+
+        mInterfaceRef.get().onNotifyProgress(1, 1, false);
+        PdfDocument document = new PdfDocument();
+
+        if (mPdfConversionTask.isCancelled()) {
+            return 0;
+        }
+
+        drawBitmapToPage(bitmap, rect, document, 1);
+
+        if (mPdfConversionTask.isCancelled()) {
+            return 0;
+        }
+
+        try {
+            this.createDestFile(mContext);
+
+            if (mPdfConversionTask.isCancelled()) {
+                return 0;
+            }
+
+            document.writeTo(new FileOutputStream(getDestFile()));
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return CONVERSION_SECURITY_ERROR;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CONVERSION_FAILED;
+        } finally {
+            document.close();
+        }
+        return CONVERSION_OK;
+    }
+
+    /**
+     * @brief Converts image files to PDF.
+     */
+    public int convertImagesToPDF() {
+        try {
+            // Check first if all files are supported image files
+            if (!ImageUtils.isImageFileSupported(mContext, mClipData)) {
+                return CONVERSION_UNSUPPORTED;
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return CONVERSION_SECURITY_ERROR;
+        }
+
+        Rect rect = new Rect(0, 0, A4_WIDTH, A4_HEIGHT);
+        Bitmap bitmap = null;
+
+        PdfDocument document = new PdfDocument();
+        for (int i=0;i<mClipData.getItemCount();i+=1) {
+            mInterfaceRef.get().onNotifyProgress(i+1, mClipData.getItemCount(), false);
+
+            File tempImgFile = null;
+            try {
+                Uri uri = mClipData.getItemAt(i).getUri();
+//                // check if file from photo picker google drive (account-specified)
+//                // save a copy of image file
+//                if (uri.getAuthority() != null && uri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
+//                    tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
+//                    InputStream input = mContext.getContentResolver().openInputStream(uri);
+//                    FileUtils.copy(input, tempImgFile);
+//                    if (input != null) {
+//                        input.close();
+//                    }
+//                    uri = Uri.fromFile(tempImgFile);
+//                }
+                bitmap = ImageUtils.getBitmapFromUri(mContext, uri);
+                bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap, uri);
+                if (bitmap == null) {
+                    return CONVERSION_FAILED;
+                }
+            } catch (SecurityException e) {
+                e.printStackTrace();
+                return CONVERSION_SECURITY_ERROR;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return CONVERSION_FAILED;
+            } finally {
+                // delete temp image file if exists
+                if (tempImgFile != null) {
+                    try {
+                        FileUtils.delete(tempImgFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            if (mPdfConversionTask.isCancelled()) {
+                return 0;
+            }
+
+            // check first image orientation
+            if (i == 0) {
+                // check if image is landscape (only the first image will be considered)
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+                if (width > height) {
+                    rect = new Rect(0, 0, A4_HEIGHT, A4_WIDTH);
+                }
+            }
+            if (mPdfConversionTask.isCancelled()) {
+                document.close();
+                return 0;
+            }
+
+            drawBitmapToPage(bitmap, rect, document, i+1);
+
+            if (mPdfConversionTask.isCancelled()) {
+                document.close();
+                return 0;
+            }
+        }
+
+        try {
+            this.createDestFile(mContext);
+
+            if (mPdfConversionTask.isCancelled()) {
+                return 0;
+            }
+
+            document.writeTo(new FileOutputStream(getDestFile()));
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return CONVERSION_SECURITY_ERROR;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CONVERSION_FAILED;
+        } finally {
+            document.close();
+        }
+        return CONVERSION_OK;
+    }
+
+    /**
      * @brief Initializes conversion task asynchronously.
      */
     public void initializeAsync() {
@@ -219,6 +435,45 @@ public class PDFConverterManager {
     }
 
     /**
+     * @brief Draws bitmap to PDFDocument page
+     *
+     * @param bitmap Bitmap to be drawn
+     * @param rect Rect of PDF page
+     * @param document PdfDocument
+     * @param pageNumber page number of PDF
+     */
+    private void drawBitmapToPage(Bitmap bitmap, Rect rect, PdfDocument document, int pageNumber) {
+        bitmap = getScaledBitmap(bitmap, rect.width() - 2 * MARGIN_SIZE, rect.height() - 2 * MARGIN_SIZE);
+
+        if (mPdfConversionTask.isCancelled()) {
+            return;
+        }
+
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(rect.width(), rect.height(), pageNumber).create();
+        PdfDocument.Page page = document.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        canvas.drawPaint(paint);
+        paint.setColor(Color.BLUE);
+
+        if (mPdfConversionTask.isCancelled()) {
+            document.finishPage(page);
+            return;
+        }
+
+        // center image horizontally and vertically
+        int leftMargin = (rect.width() - bitmap.getWidth()) / 2;
+        int topMargin = (rect.height() - bitmap.getHeight()) / 2;
+        canvas.drawBitmap(bitmap, leftMargin, topMargin, null);
+        bitmap.recycle();
+        bitmap = null;
+
+        document.finishPage(page);
+    }
+
+    /**
      * @brief Obtain the destination file.
      *
      * @return Destination file.
@@ -226,6 +481,8 @@ public class PDFConverterManager {
     public File getDestFile() {
         return mDestFile;
     }
+
+
 
     /**
      * @brief Draws text to PDFDocument page
@@ -270,6 +527,29 @@ public class PDFConverterManager {
         return !mPdfConversionTask.isCancelled();
     }
 
+    /**
+     * @brief Obtain scaled bitmap maintaining aspect ratio.
+     *
+     * @param bitmap Image bitmap.
+     * @param maxWidth Maximum image width.
+     * @param maxHeight Maximum image height.
+     *
+     * @return Scaled bitmap.
+     */
+    private Bitmap getScaledBitmap(Bitmap bitmap, int maxWidth, int maxHeight) {
+        float ratioBitmap = (float) bitmap.getWidth() / (float) bitmap.getHeight();
+        float ratioMax = (float) maxWidth / (float) maxHeight;
+
+        int finalWidth = maxWidth;
+        int finalHeight = maxHeight;
+        if (ratioMax > ratioBitmap) {
+            finalWidth = (int) ((float) maxHeight * ratioBitmap);
+        } else {
+            finalHeight = (int) ((float) maxWidth / ratioBitmap);
+        }
+        return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, false);
+    }
+
     // ================================================================================
     // Internal classes
     // ================================================================================
@@ -290,6 +570,12 @@ public class PDFConverterManager {
             switch (conversionType) {
                 case CONVERSION_TEXT:
                     status = convertTextToPDF();
+                    break;
+                case CONVERSION_IMAGE:
+                    status = convertImageToPDF();
+                    break;
+                case CONVERSION_IMAGES:
+                    status = convertImagesToPDF();
                     break;
             }
 

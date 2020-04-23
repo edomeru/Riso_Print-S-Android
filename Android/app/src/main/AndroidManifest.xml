@@ -38,6 +38,11 @@
 
                 <data android:mimeType="application/pdf" />
                 <data android:mimeType="text/plain" />
+                <data android:mimeType="image/png" />
+                <data android:mimeType="image/jpg" />
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/gif" />
+                <data android:mimeType="image/x-ms-bmp" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -46,6 +51,26 @@
 
                 <data android:mimeType="application/pdf" />
                 <data android:mimeType="text/plain" />
+                <data android:mimeType="image/png" />
+                <data android:mimeType="image/jpg" />
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/gif" />
+                <data android:mimeType="image/x-ms-bmp" />
+                <data android:mimeType="image/bmp" />
+                <data android:mimeType="image/x-windows-bmp" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/png" />
+                <data android:mimeType="image/jpg" />
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/gif" />
+                <data android:mimeType="image/x-ms-bmp" />
+                <data android:mimeType="image/bmp" />
+                <data android:mimeType="image/x-windows-bmp" />
             </intent-filter>
         </activity>
     </application>

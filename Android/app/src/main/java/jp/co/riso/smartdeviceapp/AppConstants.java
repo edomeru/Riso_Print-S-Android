@@ -116,8 +116,14 @@ public class AppConstants {
     // Supported document types
     public static final String[] DOC_TYPES = {"application/pdf", "text/plain"};
 
+    // Supported image types
+    public static final String[] IMAGE_TYPES = {"image/png", "image/jpeg", "image/jpg", "image/gif", "image/x-ms-bmp", "image/bmp", "image/x-windows-bmp"};
+
     // Intent extra key for flag if file is not pdf and from picker
     public static final String EXTRA_FILE_FROM_PICKER = "file_from_picker";
+
+    // PDF filename for converted multiple images
+    public static final String MULTI_IMAGE_PDF_FILENAME = "MultiPage_Images.pdf";
 
     // File size limit for text files (5MB)
     public static final int TEXT_FILE_SIZE_LIMIT = 5 * 1024 * 1024;
