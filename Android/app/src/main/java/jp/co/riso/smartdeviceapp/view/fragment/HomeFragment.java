@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -27,7 +28,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import jp.co.riso.android.dialog.ConfirmDialogFragment;
@@ -36,6 +40,7 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.view.ImageCapturedActivity;
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartprint.R;
@@ -56,16 +61,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public static final String FRAGMENT_TAG_DIALOG = "file_error_dialog";
     private final int REQUEST_FILE = 1;
     private final int REQUEST_PHOTO = 2;
+    private final int REQUEST_CAMERA = 3;
     private final int REQUEST_WRITE_EXTERNAL_STORAGE = 4;
 
     private LinearLayout homeButtons;
-    private ImageButton fileButton, photosButton;
+    private ImageButton fileButton, photosButton, cameraButton;
 
     private static final String TAG_PERMISSION_DIALOG = "external_storage_tag";
     private ConfirmDialogFragment mConfirmDialogFragment = null;
     private ImageButton buttonTapped = null;
     // to prevent double tap
     private long lastClickTime = 0;
+
+    private Uri imageCapturedUri = null;
+    private File photoFile;
 
     private boolean checkPermission = false;
 
@@ -122,6 +131,25 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     startActivityForResult(Intent.createChooser(photosPickerIntent, getString(R.string.ids_lbl_select_photos)), REQUEST_PHOTO);
                 }
                 break;
+            case R.id.cameraButton:
+                buttonTapped = cameraButton;
+                checkPermission = checkPermission(true);
+                if (checkPermission  && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                    // prevent double tap
+                    lastClickTime = SystemClock.elapsedRealtime();
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        photoFile = createImageFile();
+                        if (photoFile != null) {
+                            imageCapturedUri = FileProvider.getUriForFile(getActivity(), AppConstants.IMAGE_CAPTURED_FILE_AUTHORITY, photoFile);
+                            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageCapturedUri);
+                            startActivityForResult(cameraIntent, REQUEST_CAMERA);
+                        } else {
+                            showMemoryError();
+                        }
+                    }
+                }
+                break;
         }
     }
 
@@ -171,14 +199,41 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 }
             }
         }
+        else if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            if (imageCapturedUri != null) {
+                if (photoFile.length() > photoFile.getUsableSpace() - AppConstants.CONST_FREE_SPACE_BUFFER) {
+                    showMemoryError();
+                } else {
+                    Intent intent = new Intent(getActivity(), ImageCapturedActivity.class);
+                    intent.setData(imageCapturedUri);
+                    startActivity(intent);
+                }
+            }
+        }
+    }
+
+    private File createImageFile() {
+        File image = new File(getActivity().getCacheDir(), AppConstants.CONST_IMAGE_CAPTURED_FILENAME);
+        if (image.exists()) {
+            image.delete();
+        }
+        try {
+            image.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return image;
     }
 
     private void setOnClickListeners(View view) {
         fileButton = view.findViewById(R.id.fileButton);
         photosButton = view.findViewById(R.id.photosButton);
+        cameraButton = view.findViewById(R.id.cameraButton);
 
         fileButton.setOnClickListener(this);
         photosButton.setOnClickListener(this);
+        cameraButton.setOnClickListener(this);
     }
 
     private boolean checkPermission(boolean isStorage) {
@@ -222,6 +277,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    /**
+     * @brief Shows device out of memory error
+     *
+     */
+    private void showMemoryError() {
+        String message = getResources().getString(R.string.ids_err_msg_img_too_large);
+        String button = getResources().getString(R.string.ids_lbl_ok);
+        DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
     }
 
     @Override

@@ -181,5 +181,10 @@
     <string name="ids_info_msg_converting">Converting...</string>
     <string name="ids_info_msg_image">Image</string>
     <string name="ids_info_msg_initializing">Initializing...</string>
+    <string name="ids_lbl_img_captured">Captured Image</string>
+    <string name="ids_lbl_img_edit_title">Edit Photo</string>
+    <string name="ids_err_msg_img_too_large">Image file is too large.</string>
+    <string name="ids_lbl_preview">Preview</string>
+    <string name="ids_lbl_img_edit">Edit</string>
 
 </resources>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:splitMotionEvents="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        android:paddingTop="48dp"
+        android:splitMotionEvents="false">
+
+        <ImageButton
+            android:id="@+id/fileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="12dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/roundcorner"
+            android:maxHeight="200dp"
+            android:maxWidth="150dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/selector_home_file" />
+
+        <ImageButton
+            android:id="@+id/photosButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="12dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/roundcorner"
+            android:maxHeight="200dp"
+            android:maxWidth="150dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/selector_home_photo" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="48dp"
+        android:paddingLeft="64dp"
+        android:paddingRight="64dp"
+        android:paddingTop="12dp"
+        android:splitMotionEvents="false"
+        android:weightSum="1">
+
+        <ImageButton
+            android:id="@+id/cameraButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_weight=".5"
+            android:adjustViewBounds="true"
+            android:background="@drawable/roundcorner"
+            android:maxHeight="200dp"
+            android:maxWidth="150dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/selector_home_camera" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+</LinearLayout>

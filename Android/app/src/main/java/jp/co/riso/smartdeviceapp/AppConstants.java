@@ -127,4 +127,13 @@ public class AppConstants {
 
     // File size limit for text files (5MB)
     public static final int TEXT_FILE_SIZE_LIMIT = 5 * 1024 * 1024;
+
+    // Image captured filename
+    public static final String CONST_IMAGE_CAPTURED_FILENAME = "Captured_Image.jpg";
+
+    // Cropped image filename
+    public static final String CONST_CROPPED_DIRECTORY = "/cropped_images";
+
+    // File provider authority
+    public static final String IMAGE_CAPTURED_FILE_AUTHORITY = "jp.co.riso.smartdeviceapp.fileprovider";
 }

@@ -77,6 +77,21 @@
                 <data android:mimeType="image/x-windows-bmp" />
             </intent-filter>
         </activity>
+        <activity android:name="jp.co.riso.smartdeviceapp.view.ImageCapturedActivity" />
+        <activity android:name="jp.co.riso.smartdeviceapp.view.EditPhotoActivity" />
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="jp.co.riso.smartdeviceapp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>
