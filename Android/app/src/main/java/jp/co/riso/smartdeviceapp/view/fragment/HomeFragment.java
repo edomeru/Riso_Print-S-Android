@@ -198,8 +198,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     openFile(data.getData(), null, IMAGE_FROM_PICKER);
                 }
             }
-        }
-        else if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
             if (imageCapturedUri != null) {
                 if (photoFile.length() > photoFile.getUsableSpace() - AppConstants.CONST_FREE_SPACE_BUFFER) {
                     showMemoryError();

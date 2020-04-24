@@ -39,3 +39,8 @@
 -keep public class jp.co.riso.smartdeviceapp.common.** {
     public protected private *;
 }
+
+# https://github.com/Yalantis/uCrop
+-dontwarn com.yalantis.ucrop**
+-keep class com.yalantis.ucrop** { *; }
+-keep interface com.yalantis.ucrop** { *; }
