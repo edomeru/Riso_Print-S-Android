@@ -29,6 +29,7 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 
@@ -224,15 +225,15 @@ public class PDFConverterManager {
         try {
             // check if file from photo picker google drive (account-specified)
             // save a copy of image file
-//            if (mUri.getAuthority() != null && mUri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
-//                tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
-//                InputStream input = mContext.getContentResolver().openInputStream(mUri);
-//                FileUtils.copy(input, tempImgFile);
-//                if (input != null) {
-//                    input.close();
-//                }
-//                mUri = Uri.fromFile(tempImgFile);
-//            }
+            if (mUri.getAuthority() != null && mUri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
+                tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
+                InputStream input = mContext.getContentResolver().openInputStream(mUri);
+                FileUtils.copy(input, tempImgFile);
+                if (input != null) {
+                    input.close();
+                }
+                mUri = Uri.fromFile(tempImgFile);
+            }
             bitmap = ImageUtils.getBitmapFromUri(mContext, mUri);
             bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap, mUri);
             if (bitmap == null) {
@@ -323,17 +324,17 @@ public class PDFConverterManager {
             File tempImgFile = null;
             try {
                 Uri uri = mClipData.getItemAt(i).getUri();
-//                // check if file from photo picker google drive (account-specified)
-//                // save a copy of image file
-//                if (uri.getAuthority() != null && uri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
-//                    tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
-//                    InputStream input = mContext.getContentResolver().openInputStream(uri);
-//                    FileUtils.copy(input, tempImgFile);
-//                    if (input != null) {
-//                        input.close();
-//                    }
-//                    uri = Uri.fromFile(tempImgFile);
-//                }
+                // check if file from photo picker google drive (account-specified)
+                // save a copy of image file
+                if (uri.getAuthority() != null && uri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
+                    tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
+                    InputStream input = mContext.getContentResolver().openInputStream(uri);
+                    FileUtils.copy(input, tempImgFile);
+                    if (input != null) {
+                        input.close();
+                    }
+                    uri = Uri.fromFile(tempImgFile);
+                }
                 bitmap = ImageUtils.getBitmapFromUri(mContext, uri);
                 bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap, uri);
                 if (bitmap == null) {
