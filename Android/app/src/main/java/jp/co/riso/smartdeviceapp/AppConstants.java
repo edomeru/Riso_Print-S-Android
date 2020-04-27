@@ -136,4 +136,10 @@ public class AppConstants {
 
     // File provider authority
     public static final String IMAGE_CAPTURED_FILE_AUTHORITY = "jp.co.riso.smartdeviceapp.fileprovider";
+
+    // Google Drive (account-specified) URI authority
+    public static final String GOOGLE_DRIVE_URI_AUTHORITY = "com.google.android.apps.docs.storage";
+
+    // Temporary copy of image file - filename
+    public static final String TEMP_IMG_FILENAME = "TMP_IMG";
 }
