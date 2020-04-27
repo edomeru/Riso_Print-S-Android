@@ -225,15 +225,15 @@ public class PDFConverterManager {
         try {
             // check if file from photo picker google drive (account-specified)
             // save a copy of image file
-//            if (mUri.getAuthority() != null && mUri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
-//                tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
-//                InputStream input = mContext.getContentResolver().openInputStream(mUri);
-//                FileUtils.copy(input, tempImgFile);
-//                if (input != null) {
-//                    input.close();
-//                }
-//                mUri = Uri.fromFile(tempImgFile);
-//            }
+            if (mUri.getAuthority() != null && mUri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
+                tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
+                InputStream input = mContext.getContentResolver().openInputStream(mUri);
+                FileUtils.copy(input, tempImgFile);
+                if (input != null) {
+                    input.close();
+                }
+                mUri = Uri.fromFile(tempImgFile);
+            }
             bitmap = ImageUtils.getBitmapFromUri(mContext, mUri);
             bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap, mUri);
             if (bitmap == null) {
