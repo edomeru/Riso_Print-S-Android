@@ -98,7 +98,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     private PDFConverterManager mPdfConverterManager = null;
 
     private int mPrinterId = PrinterManager.EMPTY_ID;
-    private int mSelectedGCPPrinterIndex = -1;
     private PrintSettings mPrintSettings;
 
     private PrintPreviewView mPrintPreviewView = null;
@@ -449,7 +448,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
 
-        if (mSelectedGCPPrinterIndex == -1 && !printerManager.isExists(mPrinterId)) {
+        if (!printerManager.isExists(mPrinterId)) {
             setPrintId(printerManager.getDefaultPrinter());
             String printerType = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(mPrinterId);
 
@@ -513,22 +512,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * @param printerId ID of the printer to be set
      */
     public void setPrintId(int printerId) {
-        mSelectedGCPPrinterIndex = -1;
         mPrinterId = printerId;
-        if (mPrintPreviewView != null) {
-            //mPrintPreviewView.setShow3Punch(isPrinterJapanese());
-            mPrintPreviewView.refreshView();
-        }
-    }
-
-    /**
-     * @brief Sets GCP Printer index
-     *
-     * @param printerIndex index of GCP printer to be set
-     */
-    public void setGCPPrinterIndex(int printerIndex) {
-        //mPrinterId = PrinterManager.EMPTY_ID;
-        mSelectedGCPPrinterIndex = printerIndex;
         if (mPrintPreviewView != null) {
             //mPrintPreviewView.setShow3Punch(isPrinterJapanese());
             mPrintPreviewView.refreshView();
@@ -709,42 +693,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
         menuFragment.hasPDFfile = false;
         menuFragment.setCurrentState(MenuFragment.STATE_HOME);
-    }
-
-    private void openPrintSettingsFragment(View view){
-        if (getActivity() != null && getActivity() instanceof MainActivity) {
-            MainActivity activity = (MainActivity) getActivity();
-            View v = view;
-            if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                FragmentManager fm = getFragmentManager();
-
-                setIconState(v.getId(), true);
-
-                // Always make new
-                PrintSettingsFragment fragment = null;// (PrintSettingsFragment)
-                // fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
-                if (fragment == null) {
-                    FragmentTransaction ft = fm.beginTransaction();
-                    fragment = new PrintSettingsFragment();
-                    ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
-                    ft.commit();
-                }
-
-                //set both local  printer ids even if they have empty values
-                //must set printer id even if gcp is selected because this will be the fallback printer
-                //if both or any of the  id is empty, it is still ok to set because it will just mean that there is no selected printer
-                fragment.setPrinterId(mPrinterId);
-                fragment.setPdfPath(mPdfManager.getPath());
-                fragment.setPDFisLandscape(mPdfManager.isPDFLandscape());
-                fragment.setPrintSettings(mPrintSettings);
-                fragment.setFragmentForPrinting(true);
-                fragment.setTargetFragment(this, 0);
-
-                activity.openDrawer(Gravity.RIGHT, isTablet());
-            } else {
-                activity.closeDrawers();
-            }
-        }
     }
 
     // ================================================================================
@@ -976,46 +924,44 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
 
                 if (printerManager.getDefaultPrinter() == PrinterManager.EMPTY_ID) {
-
-//                    if (GoogleAccessManager.getInstance().hasSignedInAccount()){
-//                        if (mSelectedGCPPrinterIndex == -1) {
-//                            String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
-//                            String strMsg = getResources().getString(R.string.ids_info_gcp_printers_only);
-//                            String posBtnLbl = getResources().getString(R.string.ids_lbl_ok);
-//                            String negBtnLbl = getResources().getString(R.string.ids_lbl_cancel);
-//                            ConfirmDialogFragment fragment = ConfirmDialogFragment.newInstance(titleMsg, strMsg, posBtnLbl, negBtnLbl);
-//                            final View view = (View) msg.obj;
-//                            fragment.setListener(new ConfirmDialogFragment.ConfirmDialogListener() {
-//                                @Override
-//                                public void onConfirm() {
-//                                    openPrintSettingsFragment(view);
-//                                }
-//
-//                                @Override
-//                                public void onCancel() {
-//                                    //do nothing
-//                                    mPauseableHandler.resume();
-//                                }
-//                            });
-//
-//                            DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
-//
-//                            return;
-//                        }
-//
-//                    }else {
-                        String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
-                        String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
-                        String btnMsg = getString(R.string.ids_lbl_ok);
-                        InfoDialogFragment fragment = InfoDialogFragment.newInstance(titleMsg, strMsg, btnMsg);
-                        DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
-                        mPauseableHandler.resume();
-                        return;
-//                    }
+                    String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
+                    String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
+                    String btnMsg = getString(R.string.ids_lbl_ok);
+                    InfoDialogFragment fragment = InfoDialogFragment.newInstance(titleMsg, strMsg, btnMsg);
+                    DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                    mPauseableHandler.resume();
+                    return;
                 }
+                if (getActivity() != null && getActivity() instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    View v = (View) msg.obj;
+                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                        FragmentManager fm = getFragmentManager();
 
-                openPrintSettingsFragment((View) msg.obj);
+                        setIconState(v.getId(), true);
 
+                        // Always make new
+                        PrintSettingsFragment fragment = null;// (PrintSettingsFragment)
+                        // fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
+                        if (fragment == null) {
+                            FragmentTransaction ft = fm.beginTransaction();
+                            fragment = new PrintSettingsFragment();
+                            ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
+                            ft.commit();
+                        }
+
+                        fragment.setPrinterId(mPrinterId);
+                        fragment.setPdfPath(mPdfManager.getPath());
+                        fragment.setPDFisLandscape(mPdfManager.isPDFLandscape());
+                        fragment.setPrintSettings(mPrintSettings);
+                        fragment.setFragmentForPrinting(true);
+                        fragment.setTargetFragment(this, 0);
+
+                        activity.openDrawer(Gravity.RIGHT, isTablet());
+                    } else {
+                        activity.closeDrawers();
+                    }
+                }
                 break;
             case R.id.menu_id_action_button:
                 mPauseableHandler.pause();
