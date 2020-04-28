@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.model.AspectRatio;
@@ -35,9 +36,9 @@ public class EditPhotoActivity extends Activity {
         options.setToolbarTitle(getResources().getString(R.string.ids_lbl_img_edit_title));
         options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
         options.setCompressionQuality(100);
-        options.setStatusBarColor(getResources().getColor(R.color.theme_dark_1, null));
-        options.setToolbarColor(getResources().getColor(R.color.theme_color_2, null));
-        options.setActiveWidgetColor(getResources().getColor(R.color.theme_color_2, null));
+        options.setStatusBarColor(ContextCompat.getColor(this, R.color.theme_dark_1));
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.theme_color_2));
+        options.setActiveWidgetColor(ContextCompat.getColor(this, R.color.theme_color_2));
         options.setAspectRatioOptions(0, new AspectRatio(null, 3, 4));
 
         UCrop.of(imageUri, destUri)
