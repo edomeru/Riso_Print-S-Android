@@ -173,6 +173,7 @@
     <string name="ids_err_msg_uri_permission_expired">File access error was encountered. Please select file and try again.</string>
     <string name="ids_lbl_select_document">Select Document</string>
     <string name="ids_lbl_select_photos">Select Photos</string>
+    <string name="ids_lbl_capture_photo">Capture Photo</string>
     <string name="ids_err_msg_write_external_storage_permission_not_granted">Permission to write to external storage is not granted. This permission is needed in order to download file. Please make sure that [Storage Permission] is ON.</string>
     <string name="ids_err_msg_conversion_failed">File conversion to PDF failed.</string>
     <string name="ids_err_msg_invalid_file_selection">Please select supported image files only for multiple file selection.</string>

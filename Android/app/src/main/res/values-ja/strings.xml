@@ -171,8 +171,9 @@
     <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
     <string name="ids_lbl_inputtray_external">増設トレイ</string>
     <string name="ids_err_msg_uri_permission_expired">ファイルアクセスエラーが発生しました。 ファイルを選択して、もう一度試してください。</string>
-    <string name="ids_lbl_select_document">ドキュメントを選択</string>
-    <string name="ids_lbl_select_photos">写真を選択</string>
+    <string name="ids_lbl_select_document">文書を選ぶ</string>
+    <string name="ids_lbl_select_photos">写真を選ぶ</string>
+    <string name="ids_lbl_capture_photo">写真を撮る</string>
     <string name="ids_err_msg_write_external_storage_permission_not_granted">外部ストレージへの書き込みが許可されていません。ファイルをダウンロードするために必要です。[ストレージの権限] がオンになっていることを確認してください。</string>
     <string name="ids_err_msg_conversion_failed">PDFへのファイル変換に失敗しました。</string>
     <string name="ids_err_msg_invalid_file_selection">複数のファイルを選択する場合は、サポートされている画像ファイルのみ選択してください。</string>

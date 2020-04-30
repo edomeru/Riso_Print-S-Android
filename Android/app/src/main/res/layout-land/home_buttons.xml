@@ -2,42 +2,56 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_weight="1"
-    android:gravity="center"
-    android:orientation="horizontal"
-    android:padding="24dp"
+    android:orientation="vertical"
     android:splitMotionEvents="false">
 
-    <ImageButton
-        android:id="@+id/fileButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_weight="1"
-        android:background="@drawable/roundcorner"
-        android:scaleType="fitCenter"
-        android:src="@drawable/selector_home_file" />
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingTop="24dp"
+        android:splitMotionEvents="false">
 
-    <ImageButton
-        android:id="@+id/photosButton"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_weight="1"
-        android:background="@drawable/roundcorner"
-        android:scaleType="fitCenter"
-        android:src="@drawable/selector_home_photo" />
+        <Button
+            android:id="@+id/fileButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="6dp"
+            android:background="@android:color/background_light"
+            android:gravity="start|center_vertical"
+            android:drawableStart="@drawable/selector_home_file"
+            android:text="@string/ids_lbl_select_document"
+            android:textColor="@color/theme_color_1"
+            android:textSize="@dimen/font_size_large" />
 
-    <ImageButton
-        android:id="@+id/cameraButton"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_weight="1"
-        android:background="@android:color/background_light"
-        android:scaleType="fitCenter"
-        android:src="@drawable/selector_home_camera" />
+        <Button
+            android:id="@+id/photosButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="6dp"
+            android:background="@android:color/background_light"
+            android:gravity="start|center_vertical"
+            android:drawableStart="@drawable/selector_home_photo"
+            android:text="@string/ids_lbl_select_photos"
+            android:textColor="@color/theme_color_1"
+            android:textSize="@dimen/font_size_large" />
+
+        <Button
+            android:id="@+id/cameraButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="6dp"
+            android:background="@android:color/background_light"
+            android:gravity="start|center_vertical"
+            android:drawableStart="@drawable/selector_home_camera"
+            android:text="@string/ids_lbl_capture_photo"
+            android:textColor="@color/theme_color_1"
+            android:textSize="@dimen/font_size_large" />
+    </LinearLayout>
 </LinearLayout>

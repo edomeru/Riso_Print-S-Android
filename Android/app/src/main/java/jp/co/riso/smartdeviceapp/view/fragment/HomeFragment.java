@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,16 +68,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private final int REQUEST_CAMERA_STORAGE_PERMISSION = 5;
 
     private LinearLayout homeButtons;
-    private ImageButton fileButton, photosButton, cameraButton;
+    private Button fileButton, photosButton, cameraButton;
 
     private static final String TAG_PERMISSION_DIALOG = "external_storage_tag";
     private ConfirmDialogFragment mConfirmDialogFragment = null;
-    private ImageButton buttonTapped = null;
+    private Button buttonTapped = null;
     // to prevent double tap
     private long lastClickTime = 0;
-
-    private Uri imageCapturedUri = null;
-    private File photoFile;
 
     private boolean checkPermission = false;
 

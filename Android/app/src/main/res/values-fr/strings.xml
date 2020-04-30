@@ -173,6 +173,7 @@
     <string name="ids_err_msg_uri_permission_expired">Erreur d\'accès du fichier a été rencontré. Veuillez sélectionner un fichier et réessayer.</string>
     <string name="ids_lbl_select_document">Sélectionner un document</string>
     <string name="ids_lbl_select_photos">Sélectionnez des photos</string>
+    <string name="ids_lbl_capture_photo">Prendre une photo</string>
     <string name="ids_err_msg_write_external_storage_permission_not_granted">L\'autorisation d\'écrire sur un stockage externe n\'est pas accordée. Cette autorisation est nécessaire pour télécharger le fichier. Assurez-vous que [Autorisation de stockage] est sur activé.</string>
     <string name="ids_err_msg_conversion_failed">La conversion du fichier au format PDF a échoué.</string>
     <string name="ids_err_msg_invalid_file_selection">Veuillez sélectionner les fichiers image pris en charge uniquement pour la sélection de plusieurs fichiers.</string>
