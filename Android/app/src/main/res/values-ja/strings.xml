@@ -182,7 +182,6 @@
     <string name="ids_info_msg_image">画像</string>
     <string name="ids_info_msg_initializing">初期化中...</string>
     <string name="ids_lbl_img_captured">キャプチャされた画像</string>
-    <string name="ids_lbl_img_edit_title">写真を編集する</string>
     <string name="ids_err_msg_img_too_large">画像ファイルが大きすぎます。</string>
     <string name="ids_lbl_preview">プレビュー</string>
     <string name="ids_lbl_img_edit">編集</string>

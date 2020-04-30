@@ -175,7 +175,12 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 }   // Check if single image
                 else if (mIntentData != null && ImageUtils.isImageFileSupported(getActivity(), mIntentData)) {
                     mPdfConverterManager.setImageFile(mIntentData);
-                    mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                    // check if captured image from camera
+                    if (fileFromPickerFlag == HomeFragment.IMAGE_FROM_CAMERA) {
+                        mFilenameFromContent = AppConstants.CONST_IMAGE_CAPTURED_FILENAME;
+                    } else {
+                        mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                    }
                 } // Check text file
                 else if (mIntentData != null && FileUtils.getMimeType(getActivity(), mIntentData).equals(AppConstants.DOC_TYPES[1])) {
                     mPdfConverterManager.setTextFile(mIntentData);
