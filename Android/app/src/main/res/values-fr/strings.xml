@@ -186,5 +186,7 @@
     <string name="ids_err_msg_img_too_large">Le fichier image est trop volumineux.</string>
     <string name="ids_lbl_preview">Aperçu</string>
     <string name="ids_lbl_img_edit">Éditer</string>
+    <string name="ids_err_msg_camera_permission_not_allowed">L\'accès à la caméra et le stockage sont nécessaires pour ouvrir.\n\nDans la ou les prochaines boîtes de dialogue, appuyez sur le bouton "Autoriser/OK".</string>
+    <string name="ids_err_msg_camera_permission_not_granted">L\'autorisation de caméra et / ou de stockage n\'est pas accordée. Ces autorisations sont nécessaires pour capturer et enregistrer une image. Assurez-vous que [Permission caméra] et [Permission de stockage] sont activés.</string>
 
 </resources>

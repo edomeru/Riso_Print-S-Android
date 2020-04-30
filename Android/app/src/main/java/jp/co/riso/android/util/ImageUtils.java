@@ -32,7 +32,6 @@ import java.util.List;
 import androidx.exifinterface.media.ExifInterface;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.view.EditPhotoActivity;
 
 /**
  * @class ImageUtils
@@ -40,6 +39,7 @@ import jp.co.riso.smartdeviceapp.view.EditPhotoActivity;
  * @brief Utility class for image operations
  */
 public final class ImageUtils {
+    public static final int A4_WIDTH = 595, A4_HEIGHT = 842;
     
     /**
      * @brief Render Bitmap to Canvas.
@@ -202,8 +202,8 @@ public final class ImageUtils {
         final int width = options.outWidth;
         int inSampleSize = 1;
 
-        int reqWidth = height > width ? EditPhotoActivity.A4_WIDTH : EditPhotoActivity.A4_HEIGHT;
-        int reqHeight = height > width ? EditPhotoActivity.A4_HEIGHT : EditPhotoActivity.A4_WIDTH;
+        int reqWidth = height > width ? A4_WIDTH : A4_HEIGHT;
+        int reqHeight = height > width ? A4_HEIGHT : A4_WIDTH;
 
         if (height > reqHeight || width > reqWidth) {
 

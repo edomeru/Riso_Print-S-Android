@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -28,7 +27,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +38,12 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.view.ImageCapturedActivity;
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartprint.R;
+
+import com.scanlibrary.ScanActivity;
+import com.scanlibrary.ScanConstants;
 
 /**
  * @class HomeFragment
@@ -57,12 +57,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public static final int TEXT_FROM_PICKER = -1;
     public static final int IMAGE_FROM_PICKER = -2;
     public static final int IMAGES_FROM_PICKER = -3;
+    public static final int IMAGE_FROM_CAMERA = -4;
 
     public static final String FRAGMENT_TAG_DIALOG = "file_error_dialog";
     private final int REQUEST_FILE = 1;
     private final int REQUEST_PHOTO = 2;
     private final int REQUEST_CAMERA = 3;
     private final int REQUEST_WRITE_EXTERNAL_STORAGE = 4;
+    private final int REQUEST_CAMERA_STORAGE_PERMISSION = 5;
 
     private LinearLayout homeButtons;
     private ImageButton fileButton, photosButton, cameraButton;
@@ -133,21 +135,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 break;
             case R.id.cameraButton:
                 buttonTapped = cameraButton;
-                checkPermission = checkPermission(true);
-                if (checkPermission  && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                checkPermission = checkPermission(false);
+                if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
                     // prevent double tap
                     lastClickTime = SystemClock.elapsedRealtime();
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                        photoFile = createImageFile();
-                        if (photoFile != null) {
-                            imageCapturedUri = FileProvider.getUriForFile(getActivity(), AppConstants.IMAGE_CAPTURED_FILE_AUTHORITY, photoFile);
-                            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageCapturedUri);
-                            startActivityForResult(cameraIntent, REQUEST_CAMERA);
-                        } else {
-                            showMemoryError();
-                        }
-                    }
+                    Intent intent = new Intent(getActivity(), ScanActivity.class);
+                    intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, ScanConstants.OPEN_CAMERA);
+                    startActivityForResult(intent, REQUEST_CAMERA);
                 }
                 break;
         }
@@ -199,15 +193,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 }
             }
         } else if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
-            if (imageCapturedUri != null) {
-                if (photoFile.length() > photoFile.getUsableSpace() - AppConstants.CONST_FREE_SPACE_BUFFER) {
-                    showMemoryError();
-                } else {
-                    Intent intent = new Intent(getActivity(), ImageCapturedActivity.class);
-                    intent.setData(imageCapturedUri);
-                    startActivity(intent);
-                }
-            }
+            Uri imageUri = data.getExtras().getParcelable(ScanConstants.SCANNED_RESULT);
+            Intent previewIntent = new Intent(getActivity(), PDFHandlerActivity.class);
+            previewIntent.setAction(Intent.ACTION_VIEW);
+            previewIntent.putExtra(AppConstants.EXTRA_FILE_FROM_PICKER, HomeFragment.IMAGE_FROM_CAMERA);
+            previewIntent.setData(imageUri);
+
+            previewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(previewIntent);
         }
     }
 
@@ -235,8 +228,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         cameraButton.setOnClickListener(this);
     }
 
-    private boolean checkPermission(boolean isStorage) {
-        if (isStorage && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private boolean checkPermission(boolean isStorageOnly) {
+        if (isStorageOnly && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -249,6 +242,22 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     }
                 } else {
                     requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+                }
+            }
+            return false;
+        } else if (!isStorageOnly && (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (mConfirmDialogFragment == null) {
+                        final String message = getActivity().getString(R.string.ids_err_msg_camera_permission_not_allowed);
+                        final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
+                        mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
+                        mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
+                        DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
+                    }
+                } else {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_STORAGE_PERMISSION);
                 }
             }
             return false;
@@ -305,6 +314,22 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 }
                 break;
+            case REQUEST_CAMERA_STORAGE_PERMISSION:
+                // camera(0) and storage(1) permission
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, start picker intent
+                    if (buttonTapped != null) {
+                        buttonTapped.performClick();
+                    }
+                }
+
+                if(!checkPermission && (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) &&
+                        !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))){
+                    String message = getResources().getString(R.string.ids_err_msg_camera_permission_not_granted);
+                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                }
+                break;
         }
     }
 
@@ -312,7 +337,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     @TargetApi(Build.VERSION_CODES.M)
     public void onConfirm() {
         mConfirmDialogFragment = null;
-        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+        if (buttonTapped == this.cameraButton) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_STORAGE_PERMISSION);
+        } else {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
     }
 
     @Override

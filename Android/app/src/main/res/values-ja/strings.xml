@@ -186,5 +186,7 @@
     <string name="ids_err_msg_img_too_large">画像ファイルが大きすぎます。</string>
     <string name="ids_lbl_preview">プレビュー</string>
     <string name="ids_lbl_img_edit">編集</string>
+    <string name="ids_err_msg_camera_permission_not_allowed">カメラとストレージへのアクセスは開くために必要です。\n\n表示される次のダイアログで[許可/ OK]ボタンをタップしてください。</string>
+    <string name="ids_err_msg_camera_permission_not_granted">カメラおよび/またはストレージへのアクセス許可が付与されていません。 これらの権限は、画像をキャプチャして保存するために必要です。 [カメラ許可]と[ストレージの権限]がONになっていることを確認してください。</string>
 
 </resources>
