@@ -131,12 +131,6 @@ public class AppConstants {
     // Image captured filename
     public static final String CONST_IMAGE_CAPTURED_FILENAME = "Captured_Image.jpg";
 
-    // Cropped image filename
-    public static final String CONST_CROPPED_DIRECTORY = "/cropped_images";
-
-    // File provider authority
-    public static final String IMAGE_CAPTURED_FILE_AUTHORITY = "jp.co.riso.smartdeviceapp.fileprovider";
-
     // Google Drive (account-specified) URI authority
     public static final String GOOGLE_DRIVE_URI_AUTHORITY = "com.google.android.apps.docs.storage";
 
