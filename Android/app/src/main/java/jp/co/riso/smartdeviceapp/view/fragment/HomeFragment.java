@@ -68,11 +68,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private final int REQUEST_CAMERA_STORAGE_PERMISSION = 5;
 
     private LinearLayout homeButtons;
-    private Button fileButton, photosButton, cameraButton;
+    private LinearLayout fileButton, photosButton, cameraButton;
 
     private static final String TAG_PERMISSION_DIALOG = "external_storage_tag";
     private ConfirmDialogFragment mConfirmDialogFragment = null;
-    private Button buttonTapped = null;
+    private LinearLayout buttonTapped = null;
     // to prevent double tap
     private long lastClickTime = 0;
 

@@ -5,58 +5,111 @@
     android:orientation="vertical"
     android:splitMotionEvents="false">
 
+    <!--
+        For home buttons, LinearLayout with ImageView and TextView is used.
+         Cannot use ImageView as is because it cannot contain a text.
+         Cannot use Button (with drawableLeft) as is because the image cannot be resized.
+     -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="6dp"
         android:paddingTop="24dp"
         android:splitMotionEvents="false">
 
-        <Button
+        <LinearLayout
             android:id="@+id/fileButton"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
             android:background="@android:color/background_light"
-            android:gravity="start|center_vertical"
-            android:drawableStart="@drawable/selector_home_file"
-            android:text="@string/ids_lbl_select_document"
-            android:textColor="@color/theme_color_1"
-            android:textSize="@dimen/font_size_large" />
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:layout_weight="1">
 
-        <Button
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:src="@drawable/selector_home_file"
+                android:tint="@color/theme_color_1"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center_vertical"
+                android:text="@string/ids_lbl_select_document"
+                android:textColor="@color/theme_color_1"
+                android:textSize="@dimen/font_size_large" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/photosButton"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
             android:background="@android:color/background_light"
-            android:gravity="start|center_vertical"
-            android:drawableStart="@drawable/selector_home_photo"
-            android:text="@string/ids_lbl_select_photos"
-            android:textColor="@color/theme_color_1"
-            android:textSize="@dimen/font_size_large" />
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:layout_weight="1">
 
-        <Button
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:src="@drawable/selector_home_photo"
+                android:tint="@color/theme_color_1"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center_vertical"
+                android:text="@string/ids_lbl_select_photos"
+                android:textColor="@color/theme_color_1"
+                android:textSize="@dimen/font_size_large" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/cameraButton"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
             android:background="@android:color/background_light"
-            android:gravity="start|center_vertical"
-            android:drawableStart="@drawable/selector_home_camera"
-            android:text="@string/ids_lbl_capture_photo"
-            android:textColor="@color/theme_color_1"
-            android:textSize="@dimen/font_size_large" />
-    </LinearLayout>
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:layout_weight="1">
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="4" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:src="@drawable/selector_home_camera"
+                android:tint="@color/theme_color_1"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center_vertical"
+                android:text="@string/ids_lbl_capture_photo"
+                android:textColor="@color/theme_color_1"
+                android:textSize="@dimen/font_size_large" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+
+    </LinearLayout>
 </LinearLayout>
