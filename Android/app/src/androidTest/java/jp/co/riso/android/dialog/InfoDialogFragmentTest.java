@@ -43,7 +43,8 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     public void testNewInstance_WithNull() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(0, 0) ;
+        InfoDialogFragment info = InfoDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(0),
+                SmartDeviceApp.getAppContext().getResources().getString(0));
         assertNotNull(info);
         info.show(mActivity.getFragmentManager(), TAG);
         waitFewSeconds();
@@ -60,7 +61,8 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     public void testNewInstance_WithMessage() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(MSG, BUTTON_TITLE) ;
+        InfoDialogFragment info = InfoDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.getAppContext().getResources().getString((BUTTON_TITLE)));
         assertNotNull(info);
         info.show(mActivity.getFragmentManager(), TAG);
         waitFewSeconds();
@@ -87,7 +89,9 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     public void testNewInstance_WithTitle() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(TITLE, MSG, BUTTON_TITLE) ;
+        InfoDialogFragment info = InfoDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(TITLE),
+                SmartDeviceApp.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE));
         assertNotNull(info);
         info.show(mActivity.getFragmentManager(), TAG);
         waitFewSeconds();

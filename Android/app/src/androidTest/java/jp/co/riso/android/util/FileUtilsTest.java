@@ -105,7 +105,7 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
                 fail();
             }
 
-            assertEquals(FileUtils.getFileName(SmartDeviceApp.getAppContext(), Uri.fromFile(mSrcFile)), TEST_SRC_FILE);
+            assertEquals(FileUtils.getFileName(SmartDeviceApp.getAppContext(), Uri.fromFile(mSrcFile), true), TEST_SRC_FILE);
         } catch (NullPointerException e) {
             fail();
         } catch (Exception e) {

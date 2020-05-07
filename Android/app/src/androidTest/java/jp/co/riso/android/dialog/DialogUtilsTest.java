@@ -1,6 +1,7 @@
 
 package jp.co.riso.android.dialog;
 
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartprint.R;
 
@@ -38,7 +39,8 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     public void testDisplayDialog() {
-        InfoDialogFragment d = InfoDialogFragment.newInstance(MSG, BUTTON_TITLE);
+        InfoDialogFragment d = InfoDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE));
         DialogUtils.displayDialog(getActivity(), TAG, d);
         waitFewSeconds();
         Fragment dialog = getActivity().getFragmentManager().findFragmentByTag(TAG);
@@ -48,7 +50,8 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
     }
 
     public void testDismissDialog() {
-        InfoDialogFragment d = InfoDialogFragment.newInstance(MSG, BUTTON_TITLE);
+        InfoDialogFragment d = InfoDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE));
         DialogUtils.displayDialog(getActivity(), TAG, d);
         waitFewSeconds();
         Fragment dialog = getActivity().getFragmentManager().findFragmentByTag(TAG);
