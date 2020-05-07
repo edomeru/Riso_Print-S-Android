@@ -43,8 +43,7 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     public void testNewInstance_WithNull() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(0),
-                SmartDeviceApp.getAppContext().getResources().getString(0));
+        InfoDialogFragment info = InfoDialogFragment.newInstance(null, null);
         assertNotNull(info);
         info.show(mActivity.getFragmentManager(), TAG);
         waitFewSeconds();

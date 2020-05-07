@@ -53,9 +53,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testNewInstance_WithNull() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(0),
-                SmartDeviceApp.getAppContext().getResources().getString(0),
-                SmartDeviceApp.getAppContext().getResources().getString(0));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(null, null, null);
         assertNotNull(c);
         c.show(mActivity.getFragmentManager(), TAG);
         waitFewSeconds();
