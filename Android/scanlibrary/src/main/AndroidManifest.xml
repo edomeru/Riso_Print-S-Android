@@ -16,6 +16,7 @@
             android:configChanges="orientation|screenSize">
         </activity>
 
+        <!-- aLINK edit: Migrate file provider to Android X -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.scanlibrary.provider"
