@@ -33,6 +33,7 @@ public class PickImageFragment extends Fragment {
     private ImageButton galleryButton;
     private Uri fileUri;
     private IScanner scanner;
+    private String imagePath;
 
     @Override
     public void onAttach(Activity activity) {
@@ -51,6 +52,12 @@ public class PickImageFragment extends Fragment {
     }
 
     private void init() {
+        // aLINK edit - Start
+        // getExternalStorageDirectory() is deprecated from Android Q.
+        // https://developer.android.com/reference/android/os/Environment#getExternalStorageDirectory()
+        // Temporarily use external cache directory
+        imagePath = getActivity().getApplicationContext().getExternalCacheDir() + "/scanSample";
+        // aLINK edit - End
         cameraButton = (ImageButton) view.findViewById(R.id.cameraButton);
         cameraButton.setOnClickListener(new CameraButtonClickListener());
         galleryButton = (ImageButton) view.findViewById(R.id.selectButton);
@@ -64,7 +71,8 @@ public class PickImageFragment extends Fragment {
 
     private void clearTempImages() {
         try {
-            File tempFolder = new File(ScanConstants.IMAGE_PATH);
+//            File tempFolder = new File(ScanConstants.IMAGE_PATH);
+            File tempFolder = new File(imagePath);
             for (File f : tempFolder.listFiles())
                 f.delete();
         } catch (Exception e) {
@@ -134,7 +142,9 @@ public class PickImageFragment extends Fragment {
         clearTempImages();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new
                 Date());
-        File file = new File(ScanConstants.IMAGE_PATH, "IMG_" + timeStamp +
+//        File file = new File(ScanConstants.IMAGE_PATH, "IMG_" + timeStamp +
+//                ".jpg");
+        File file = new File(imagePath, "IMG_" + timeStamp +
                 ".jpg");
         fileUri = Uri.fromFile(file);
         return file;
