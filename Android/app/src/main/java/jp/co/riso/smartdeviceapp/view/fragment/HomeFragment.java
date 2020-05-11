@@ -202,20 +202,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         }
     }
 
-    private File createImageFile() {
-        File image = new File(getActivity().getCacheDir(), AppConstants.CONST_IMAGE_CAPTURED_FILENAME);
-        if (image.exists()) {
-            image.delete();
-        }
-        try {
-            image.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return image;
-    }
-
     private void setOnClickListeners(View view) {
         fileButton = view.findViewById(R.id.fileButton);
         photosButton = view.findViewById(R.id.photosButton);
