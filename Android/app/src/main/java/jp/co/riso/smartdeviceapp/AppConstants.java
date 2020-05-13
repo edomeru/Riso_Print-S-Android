@@ -129,7 +129,7 @@ public class AppConstants {
     public static final int TEXT_FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 
     // Image captured filename
-    public static final String CONST_IMAGE_CAPTURED_FILENAME = "Captured_Image.jpg";
+    public static final String CONST_IMAGE_CAPTURED_FILENAME = "Captured_Image.pdf";
 
     // Google Drive (account-specified) URI authority
     public static final String GOOGLE_DRIVE_URI_AUTHORITY = "com.google.android.apps.docs.storage";
