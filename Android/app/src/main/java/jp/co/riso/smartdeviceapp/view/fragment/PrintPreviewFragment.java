@@ -170,7 +170,11 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     if (clipData.getItemCount() > 1) {
                         mFilenameFromContent = AppConstants.MULTI_IMAGE_PDF_FILENAME;
                     } else {
-                        mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), clipData.getItemAt(0).getUri(), true);
+                        try {
+                            mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), clipData.getItemAt(0).getUri(), true);
+                        } catch (SecurityException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }   // Check if single image
                 else if (mIntentData != null && ImageUtils.isImageFileSupported(getActivity(), mIntentData)) {
@@ -179,12 +183,20 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     if (fileFromPickerFlag == HomeFragment.IMAGE_FROM_CAMERA) {
                         mFilenameFromContent = AppConstants.CONST_IMAGE_CAPTURED_FILENAME;
                     } else {
-                        mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                        try {
+                            mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                        } catch (SecurityException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } // Check text file
                 else if (mIntentData != null && FileUtils.getMimeType(getActivity(), mIntentData).equals(AppConstants.DOC_TYPES[1])) {
                     mPdfConverterManager.setTextFile(mIntentData);
-                    mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                    try {
+                        mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    }
                 } else {    // Invalid format
                     mPdfConverterManager = null;
                 }
