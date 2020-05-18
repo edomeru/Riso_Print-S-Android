@@ -264,6 +264,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         if (isTaskRoot()) {
             flags |= Intent.FLAG_ACTIVITY_NO_ANIMATION;
         }
+
+        // https://stackoverflow.com/questions/41743978/permission-denial-media-documents-provider
+        // Propagate permission to MainActivity so that when data/clipData gets Allowed from
+        // SplashActivity (when user selects file from Open In), URI can be accessed
+        flags |= Intent.FLAG_GRANT_READ_URI_PERMISSION;
         
         launchIntent.setFlags(flags);
         
