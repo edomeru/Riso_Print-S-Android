@@ -772,6 +772,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void onFileInitialized(int status) {
+        Intent intent = getActivity().getIntent();
         if (!isDetached() && getView() != null && !hasConversionError) {
             setPrintPreviewViewDisplayed(getView(), false);
 
@@ -793,6 +794,12 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
 
+                    // If there are any initialization errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
+                    mPdfManager.clearSandboxPDFName(getActivity());
+                    intent.setAction(null);
+                    intent.setClipData(null);
+                    intent.setData(null);
+
                     transitionToHomeScreen();
                     break;
             }
@@ -807,13 +814,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void onFileConverted(int status) {
+        Intent intent = getActivity().getIntent();
         if (!isDetached() && getView() != null) {
             switch (status) {
                 case PDFConverterManager.CONVERSION_OK:
                     DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
                     mIntentData = Uri.fromFile(mPdfConverterManager.getDestFile());
                     // prevent conversion repeatedly on app reopen
-                    Intent intent = getActivity().getIntent();
                     intent.setAction(null);
                     intent.setClipData(null);
                     intent.setData(mIntentData);
@@ -826,6 +833,12 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String message = getConversionErrorMessage(status);
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+
+                    // If there are any initialization errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
+                    mPdfManager.clearSandboxPDFName(getActivity());
+                    intent.setAction(null);
+                    intent.setClipData(null);
+                    intent.setData(null);
 
                     transitionToHomeScreen();
                     break;

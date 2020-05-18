@@ -171,11 +171,11 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
      * @param animate Animate changes in layout
      */
     private void setCurrentState(int state, boolean animate) {
-        if (mState != state) {
+        //if (mState != state) {
             setSelectedButton(getView(), state);
             switchToFragment(state, animate);
             mState = state;
-        }
+        //}
 
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
