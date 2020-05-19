@@ -705,6 +705,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         if (menuFragment == null) {
             FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
             menuFragment = new MenuFragment();
+            // When MenuFragment gets destroyed due to config change such as changing permissions
+            // from Settings, the state gets reset to default as well.
+            // Since we know we are in PrintPreview, set the current state to PrintPreview
+            menuFragment.mState = MenuFragment.STATE_PRINTPREVIEW;
             ft.replace(R.id.leftLayout, menuFragment, "fragment_menu");
             ft.commit();
         }

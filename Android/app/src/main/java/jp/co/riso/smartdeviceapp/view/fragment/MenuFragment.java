@@ -141,7 +141,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         }
 
         for (int i = 0; i < MENU_ITEMS.length; i++) {
-            if (i == 1 && !hasPDFfile) {
+            if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(false);
                 view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4));
@@ -171,11 +171,11 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
      * @param animate Animate changes in layout
      */
     private void setCurrentState(int state, boolean animate) {
-        //if (mState != state) {
+        if (mState != state) {
             setSelectedButton(getView(), state);
             switchToFragment(state, animate);
             mState = state;
-        //}
+        }
 
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
