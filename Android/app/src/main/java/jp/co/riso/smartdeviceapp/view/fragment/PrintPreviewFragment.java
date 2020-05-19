@@ -170,7 +170,11 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     if (clipData.getItemCount() > 1) {
                         mFilenameFromContent = AppConstants.MULTI_IMAGE_PDF_FILENAME;
                     } else {
-                        mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), clipData.getItemAt(0).getUri(), true);
+                        try {
+                            mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), clipData.getItemAt(0).getUri(), true);
+                        } catch (SecurityException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }   // Check if single image
                 else if (mIntentData != null && ImageUtils.isImageFileSupported(getActivity(), mIntentData)) {
@@ -179,12 +183,20 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     if (fileFromPickerFlag == HomeFragment.IMAGE_FROM_CAMERA) {
                         mFilenameFromContent = AppConstants.CONST_IMAGE_CAPTURED_FILENAME;
                     } else {
-                        mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                        try {
+                            mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                        } catch (SecurityException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } // Check text file
                 else if (mIntentData != null && FileUtils.getMimeType(getActivity(), mIntentData).equals(AppConstants.DOC_TYPES[1])) {
                     mPdfConverterManager.setTextFile(mIntentData);
-                    mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                    try {
+                        mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, true);
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    }
                 } else {    // Invalid format
                     mPdfConverterManager = null;
                 }
@@ -693,6 +705,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         if (menuFragment == null) {
             FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
             menuFragment = new MenuFragment();
+            // When MenuFragment gets destroyed due to config change such as changing permissions
+            // from Settings, the state gets reset to default as well.
+            // Since we know we are in PrintPreview, set the current state to PrintPreview
+            menuFragment.mState = MenuFragment.STATE_PRINTPREVIEW;
             ft.replace(R.id.leftLayout, menuFragment, "fragment_menu");
             ft.commit();
         }
@@ -760,6 +776,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void onFileInitialized(int status) {
+        Intent intent = getActivity().getIntent();
         if (!isDetached() && getView() != null && !hasConversionError) {
             setPrintPreviewViewDisplayed(getView(), false);
 
@@ -781,6 +798,12 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
 
+                    // If there are any initialization errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
+                    mPdfManager.clearSandboxPDFName(getActivity());
+                    intent.setAction(null);
+                    intent.setClipData(null);
+                    intent.setData(null);
+
                     transitionToHomeScreen();
                     break;
             }
@@ -795,13 +818,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void onFileConverted(int status) {
+        Intent intent = getActivity().getIntent();
         if (!isDetached() && getView() != null) {
             switch (status) {
                 case PDFConverterManager.CONVERSION_OK:
                     DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
                     mIntentData = Uri.fromFile(mPdfConverterManager.getDestFile());
                     // prevent conversion repeatedly on app reopen
-                    Intent intent = getActivity().getIntent();
                     intent.setAction(null);
                     intent.setClipData(null);
                     intent.setData(mIntentData);
@@ -814,6 +837,12 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String message = getConversionErrorMessage(status);
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+
+                    // If there are any initialization errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
+                    mPdfManager.clearSandboxPDFName(getActivity());
+                    intent.setAction(null);
+                    intent.setClipData(null);
+                    intent.setData(null);
 
                     transitionToHomeScreen();
                     break;

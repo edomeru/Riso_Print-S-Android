@@ -114,16 +114,22 @@ public class FileUtils {
      * @param isPdfFilename flag to convert file extension to pdf
      * @return Filename
      */
-    public static String getFileName(Context context, Uri uri, boolean isPdfFilename) {
+    public static String getFileName(Context context, Uri uri, boolean isPdfFilename) throws SecurityException {
         String result = null;
 
         if (context != null && uri != null && uri.getScheme() != null) {
             if (uri.getScheme().equals("content")) {
-                Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+                Cursor cursor = null;
                 try {
+                    // Content resolver query can return a SecurityException
+                    // E.g.: When there is a PDF from image/text in PrintPreview, then suddenly user Denied Storage from Settings
+                    // PrintPreviewFragment will repeat conversion using the same Intent data, but this time the permission is not granted anymore
+                    cursor = context.getContentResolver().query(uri, null, null, null, null);
                     if (cursor != null && cursor.moveToFirst()) {
                         result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                     }
+                } catch (SecurityException e) {
+                    throw new SecurityException();
                 } finally {
                     if (cursor != null) {
                         cursor.close();

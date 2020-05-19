@@ -271,16 +271,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         startActivity(intent);
     }
 
-    /**
-     * @brief Shows device out of memory error
-     *
-     */
-    private void showMemoryError() {
-        String message = getResources().getString(R.string.ids_err_msg_img_too_large);
-        String button = getResources().getString(R.string.ids_lbl_ok);
-        DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
