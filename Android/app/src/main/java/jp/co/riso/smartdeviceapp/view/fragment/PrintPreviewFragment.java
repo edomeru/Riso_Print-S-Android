@@ -389,6 +389,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mPrintPreviewView.freeResources();
             mPrintPreviewView = null;
         }
+
+        // When there is an ongoing PDF conversion and user selects file from Open-In,
+        // onDestroyView() gets called. Stop ongoing conversion.
+        if (mWaitingDialog != null) {
+            mPdfConverterManager = null;
+            DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
+        }
     }
 
     @Override
@@ -776,7 +783,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void onFileInitialized(int status) {
-        Intent intent = getActivity().getIntent();
         if (!isDetached() && getView() != null && !hasConversionError) {
             setPrintPreviewViewDisplayed(getView(), false);
 
@@ -798,8 +804,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
 
-                    // If there are any initialization errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
-                    mPdfManager.clearSandboxPDFName(getActivity());
+                    // If there are any initialization/ conversion errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
+                    Intent intent = getActivity().getIntent();
                     intent.setAction(null);
                     intent.setClipData(null);
                     intent.setData(null);
@@ -838,8 +844,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
 
-                    // If there are any initialization errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
-                    mPdfManager.clearSandboxPDFName(getActivity());
+                    // If there are any initialization/ conversion errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
                     intent.setAction(null);
                     intent.setClipData(null);
                     intent.setData(null);
