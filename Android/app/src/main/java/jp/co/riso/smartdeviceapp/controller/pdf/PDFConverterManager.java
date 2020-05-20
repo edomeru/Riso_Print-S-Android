@@ -585,15 +585,21 @@ public class PDFConverterManager {
 
         @Override
         protected void onPreExecute() {
-            mInterfaceRef.get().onNotifyProgress(mContext.getResources().getString(R.string.ids_info_msg_initializing));
+            if (mInterfaceRef != null && mInterfaceRef.get() != null ) {
+                if (!mPdfConversionTask.isCancelled()) {
+                    mInterfaceRef.get().onNotifyProgress(mContext.getResources().getString(R.string.ids_info_msg_initializing));
+                }
+            }
         }
 
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
 
-            if (mInterfaceRef != null && mInterfaceRef.get() != null) {
-                mInterfaceRef.get().onFileConverted(result);
+            if (mInterfaceRef != null && mInterfaceRef.get() != null ) {
+                if (!mPdfConversionTask.isCancelled()) {
+                    mInterfaceRef.get().onFileConverted(result);
+                }
             }
         }
     }

@@ -392,7 +392,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         // When there is an ongoing PDF conversion and user selects file from Open-In,
         // onDestroyView() gets called. Stop ongoing conversion.
-        if (mWaitingDialog != null) {
+        if (mWaitingDialog != null && mPdfConverterManager != null) {
+            mPdfConverterManager.cancel();
             mPdfConverterManager = null;
             DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
         }
