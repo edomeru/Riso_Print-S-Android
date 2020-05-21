@@ -395,7 +395,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         if (mWaitingDialog != null && mPdfConverterManager != null) {
             mPdfConverterManager.cancel();
             mPdfConverterManager = null;
-            DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
+            mWaitingDialog = null;
         }
     }
 
