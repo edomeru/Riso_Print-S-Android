@@ -170,7 +170,6 @@
     <string name="ids_err_msg_invalid_community_name">Please enter a SNMP community name with valid characters</string>
     <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
     <string name="ids_lbl_inputtray_external">Additional Tray</string>
-    <string name="ids_err_msg_uri_permission_expired">File access error was encountered. Please select file and try again.</string>
     <string name="ids_lbl_select_document">Select Document</string>
     <string name="ids_lbl_select_photos">Select Photos</string>
     <string name="ids_lbl_capture_photo">Capture Photo</string>

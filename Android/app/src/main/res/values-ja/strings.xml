@@ -170,7 +170,6 @@
     <string name="ids_err_msg_invalid_community_name">SNMPコミュニティ名を確認してください。</string>
     <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
     <string name="ids_lbl_inputtray_external">増設トレイ</string>
-    <string name="ids_err_msg_uri_permission_expired">ファイルアクセスエラーが発生しました。 ファイルを選択して、もう一度試してください。</string>
     <string name="ids_lbl_select_document">文書を選ぶ</string>
     <string name="ids_lbl_select_photos">写真を選ぶ</string>
     <string name="ids_lbl_capture_photo">写真を撮る</string>
