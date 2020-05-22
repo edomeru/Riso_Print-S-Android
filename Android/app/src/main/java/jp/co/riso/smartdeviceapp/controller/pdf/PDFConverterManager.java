@@ -219,6 +219,16 @@ public class PDFConverterManager {
      * @brief Converts image file to PDF.
      */
     public int convertImageToPDF() {
+        try {
+            // Check first if image is supported
+            if (!ImageUtils.isImageFileSupported(mContext, mClipData)) {
+                return CONVERSION_UNSUPPORTED;
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return CONVERSION_SECURITY_ERROR;
+        }
+
         Rect rect = new Rect(0, 0, A4_WIDTH, A4_HEIGHT);
         Bitmap bitmap = null;
         File tempImgFile = null;
