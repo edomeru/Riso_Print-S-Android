@@ -221,7 +221,7 @@ public class PDFConverterManager {
     public int convertImageToPDF() {
         try {
             // Check first if image is supported
-            if (!ImageUtils.isImageFileSupported(mContext, mClipData)) {
+            if (!ImageUtils.isImageFileSupported(mContext, mUri)) {
                 return CONVERSION_UNSUPPORTED;
             }
         } catch (SecurityException e) {
