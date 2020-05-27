@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -166,7 +167,7 @@ public class PDFConverterManager {
             if (mPdfConversionTask.isCancelled()) {
                 return 0;
             }
-        } catch (SecurityException e) {
+        } catch (SecurityException | FileNotFoundException e) {
             e.printStackTrace();
             return CONVERSION_SECURITY_ERROR;
         }  catch (OutOfMemoryError | Exception e) {
@@ -249,7 +250,7 @@ public class PDFConverterManager {
             if (bitmap == null) {
                 return CONVERSION_FAILED;
             }
-        } catch (SecurityException e) {
+        } catch (SecurityException | FileNotFoundException e) {
             e.printStackTrace();
             return CONVERSION_SECURITY_ERROR;
         } catch (Exception e) {
@@ -350,7 +351,7 @@ public class PDFConverterManager {
                 if (bitmap == null) {
                     return CONVERSION_FAILED;
                 }
-            } catch (SecurityException e) {
+            } catch (SecurityException | FileNotFoundException e) {
                 e.printStackTrace();
                 return CONVERSION_SECURITY_ERROR;
             } catch (Exception e) {
