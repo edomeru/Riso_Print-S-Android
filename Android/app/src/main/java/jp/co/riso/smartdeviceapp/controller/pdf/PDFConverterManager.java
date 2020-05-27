@@ -52,6 +52,7 @@ public class PDFConverterManager {
     public static final int CONVERSION_UNSUPPORTED = -2; ///< Unsupported file format
     public static final int CONVERSION_EXCEED_TEXT_FILE_SIZE_LIMIT = -3; ///< Text file to be converted exceeds file size limit
     public static final int CONVERSION_SECURITY_ERROR = -4; ///< URI Permission limitation
+    public static final int CONVERSION_FILE_NOT_FOUND = -5; ///< Not Found, No Internet
 
     // Conversion Types
     public static final String CONVERSION_TEXT = "TEXT";
@@ -167,9 +168,12 @@ public class PDFConverterManager {
             if (mPdfConversionTask.isCancelled()) {
                 return 0;
             }
-        } catch (SecurityException | FileNotFoundException e) {
+        } catch (SecurityException e) {
             e.printStackTrace();
             return CONVERSION_SECURITY_ERROR;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return CONVERSION_FILE_NOT_FOUND;
         }  catch (OutOfMemoryError | Exception e) {
             e.printStackTrace();
             return CONVERSION_FAILED;
@@ -250,10 +254,13 @@ public class PDFConverterManager {
             if (bitmap == null) {
                 return CONVERSION_FAILED;
             }
-        } catch (SecurityException | FileNotFoundException e) {
+        } catch (SecurityException e) {
             e.printStackTrace();
             return CONVERSION_SECURITY_ERROR;
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return CONVERSION_FILE_NOT_FOUND;
+        }  catch (Exception e) {
             e.printStackTrace();
             return CONVERSION_FAILED;
         } finally {
@@ -351,10 +358,13 @@ public class PDFConverterManager {
                 if (bitmap == null) {
                     return CONVERSION_FAILED;
                 }
-            } catch (SecurityException | FileNotFoundException e) {
+            } catch (SecurityException e) {
                 e.printStackTrace();
                 return CONVERSION_SECURITY_ERROR;
-            } catch (Exception e) {
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return CONVERSION_FILE_NOT_FOUND;
+            }  catch (Exception e) {
                 e.printStackTrace();
                 return CONVERSION_FAILED;
             } finally {
