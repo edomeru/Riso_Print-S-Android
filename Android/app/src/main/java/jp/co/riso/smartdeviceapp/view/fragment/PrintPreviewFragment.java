@@ -699,6 +699,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 return getResources().getString(R.string.ids_err_msg_txt_size_limit);
             case PDFConverterManager.CONVERSION_SECURITY_ERROR:
                 return getResources().getString(R.string.ids_err_msg_permission);
+            case PDFConverterManager.CONVERSION_FILE_NOT_FOUND:
+                return getResources().getString(R.string.ids_err_msg_open_failed);
         }
 
         return "";
