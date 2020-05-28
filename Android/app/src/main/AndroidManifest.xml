@@ -48,6 +48,8 @@
                 <data android:mimeType="image/jpeg" />
                 <data android:mimeType="image/gif" />
                 <data android:mimeType="image/x-ms-bmp" />
+                <data android:mimeType="image/bmp" />
+                <data android:mimeType="image/x-windows-bmp" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
