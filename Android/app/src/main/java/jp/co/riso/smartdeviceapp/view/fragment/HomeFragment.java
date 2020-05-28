@@ -267,7 +267,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             intent.setData(data);
         }
 
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(intent);
     }
 
