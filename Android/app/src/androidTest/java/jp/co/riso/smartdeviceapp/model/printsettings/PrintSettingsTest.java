@@ -380,7 +380,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testGetPaperSize() {
-        assertEquals(Preview.PaperSize.SRA3, mPrintSettings.getPaperSize());
+        assertEquals(Preview.PaperSize.A4, mPrintSettings.getPaperSize());
     }
 
     public void testIsScaleToFit() {
