@@ -188,8 +188,8 @@ const static char *punch[] =
 {
     "OFF",
     "2HOLES",
+    "4HOLES",
     "3HOLES",
-    "4HOLES"
 };
 
 const static char *output_tray[] =
@@ -646,6 +646,16 @@ void add_pjl_ft(char *pjl, char *printerName, char *hostName, char *appVersion, 
             {
                 return;
             }
+            
+            // 3holes Condition
+            if (strstr(printerName, "ORPHIS") == NULL)
+            {
+                if (punch.int_value == 2) // 4holes
+                {
+                    punch.int_value += 1;
+                }
+            }
+            
             sprintf(pjl_line, PJL_COMMAND_STR, pjl_commands[command], pjl_values[command][punch.int_value]);
             strcat(pjl, pjl_line);
             break;
