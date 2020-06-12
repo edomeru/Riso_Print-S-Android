@@ -340,7 +340,7 @@ public class PrintSettings {
      * @retval STATEMENT 140mm x 216mm
      */
     public PaperSize getPaperSize() {
-        return adjustPaperSizeBasedOnPrinterType();
+        return getPaperSizeOnPrinter();
     }
 
     /**
@@ -348,7 +348,7 @@ public class PrintSettings {
      *
      * @retval PaperSize
      */
-    private PaperSize adjustPaperSizeBasedOnPrinterType() {
+    private PaperSize getPaperSizeOnPrinter() {
         int paperSizeIndex = mSettingValues.get(TAG_PAPER_SIZE);
 
         // Need to know if printer type is GL or non-GL as GL printer has an added paper size SRA3
@@ -356,7 +356,7 @@ public class PrintSettings {
         if (mSettingMapKey.equals(AppConstants.PRINTER_MODEL_GL)) {
             return Preview.PaperSize.valuesGL()[paperSizeIndex];
         } else {
-            return Preview.PaperSize.valuesFT_CEREZONA_S()[paperSizeIndex];
+            return Preview.PaperSize.valuesDefault()[paperSizeIndex];
         }
     }
 
