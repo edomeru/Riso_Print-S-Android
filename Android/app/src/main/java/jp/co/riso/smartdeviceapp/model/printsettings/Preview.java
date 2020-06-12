@@ -98,11 +98,11 @@ public class Preview {
         }
 
         /**
-         * @brief Retrieves an array of paper size options for FT and CEREZONA S series
+         * @brief Retrieves an array of paper size default options
          *
          * @return Paper size options array
          */
-        public static PaperSize[] valuesFT_CEREZONA_S() {
+        public static PaperSize[] valuesDefault() {
             return new PaperSize[] {A3, A3W, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
         }
 
@@ -114,8 +114,6 @@ public class Preview {
         public static PaperSize[] valuesGL() {
             return new PaperSize[] {A3, A3W, SRA3, A4, A5, A6, B4, B5, B6, FOOLSCAP, TABLOID, LEGAL, LETTER, STATEMENT, LEGAL13, HACHIKAI, JUROKUKAI};
         }
-
-
     }
 
     /**
