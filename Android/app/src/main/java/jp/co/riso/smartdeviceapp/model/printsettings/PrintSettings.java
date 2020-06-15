@@ -232,9 +232,12 @@ public class PrintSettings {
             }
 
             // RM #356 Fix: Align with CommonLibrary for 3-Holes Condition
-            // Reference: a4cf4de0dcf95940fb5a86af7dd3bc872dd4f96a
-            if (key.equals(TAG_PUNCH) && value == 3) {
-                value = 2;
+            if (key.equals(TAG_PUNCH)) {
+                if (getPunch() == Punch.HOLES_3) {
+                    value = 3;  // Common Library: 3Holes
+                } else if (getPunch() == Punch.HOLES_4) {
+                    value = 2; // Common Library: 4Holes
+                }
             }
 
             if(key.equals(TAG_SORT) && mSettingMapKey == AppConstants.PRINTER_MODEL_IS) {
