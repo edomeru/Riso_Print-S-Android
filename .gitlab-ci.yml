@@ -120,6 +120,8 @@ android_release_package:
     - cd SRC
     - find Android -type f -print0 | xargs -0 unix2dos
     - find CommonLibrary -type f -print0 | xargs -0 unix2dos
+    - find CommonLibrary/build-aux/test-driver -type f -print0 | xargs -0 unix2dos -f
+    - find CommonLibrary/Makefile.in -type f -print0 | xargs -0 unix2dos -f
     - zip -r "RISO-PRINT-S.zip" .
   
   stage: build
