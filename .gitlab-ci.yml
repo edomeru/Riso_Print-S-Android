@@ -84,7 +84,7 @@ build_dump_enable:
 
 android_release_package:
   script: 
-    - git remote set-url --push origin "http://jenkins:prnsoft1234@192.168.1.61/$CI_PROJECT_PATH.git" 
+    - git remote set-url --push origin "http://ci:prnsoft1234@192.168.1.168/$CI_PROJECT_PATH.git" 
     - git checkout $CI_BUILD_REF_NAME
     - git pull
     - cd Android
