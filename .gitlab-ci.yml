@@ -8,7 +8,7 @@ variables:
   LC_ALL: "en_US.UTF-8"
   LANG: "en_US.UTF-8"
   ANDROID_HOME: "/Users/build/Library/Android/sdk"
-  ANDROID_NDK_HOME: "/Users/build/Desktop/Android/android-ndk-r10e"
+  ANDROID_NDK_HOME: "/Users/build/Desktop/Android/android-ndk-r21d"
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # before_script:
 #   - gem install bundler
