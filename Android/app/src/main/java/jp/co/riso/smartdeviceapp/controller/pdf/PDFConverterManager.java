@@ -527,8 +527,11 @@ public class PDFConverterManager {
         Canvas canvas = page.getCanvas();
 
         // get text per line
-        StaticLayout staticLayout = new StaticLayout(pageText, textPaint,
-                rect.width() - 2 * MARGIN_SIZE, Layout.Alignment.ALIGN_NORMAL, 1, 1, true);
+        StaticLayout.Builder builder = StaticLayout.Builder.obtain(pageText, 0, pageText.length(), textPaint, rect.width() - 2 * MARGIN_SIZE)
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(1, 1)
+            .setIncludePad(true);
+        StaticLayout staticLayout = builder.build();
 
         String pageString = staticLayout.getText().toString();
 

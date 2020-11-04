@@ -144,7 +144,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(false);
-                view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4));
+                view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4, null));
             } else {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(true);
