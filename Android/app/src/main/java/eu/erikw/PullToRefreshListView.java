@@ -513,7 +513,7 @@ public class PullToRefreshListView extends ListView{
                 }
             }
 
-            getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            getViewTreeObserver().removeOnGlobalLayoutListener(this);
         }
     }
 
