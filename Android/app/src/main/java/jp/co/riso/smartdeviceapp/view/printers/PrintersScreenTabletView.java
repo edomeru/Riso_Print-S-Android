@@ -30,6 +30,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Handler.Callback;
+import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -350,7 +351,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
      */
     private void init(Context context) {
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
-        mHandler = new Handler(this);
+        mHandler = new Handler(Looper.myLooper(), this);
     }
     
     /**

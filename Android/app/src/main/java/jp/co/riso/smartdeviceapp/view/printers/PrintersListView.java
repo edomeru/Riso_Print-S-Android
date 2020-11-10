@@ -16,6 +16,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler.Callback;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -204,7 +205,7 @@ public class PrintersListView extends ListView implements Callback {
      */
     private void init() {
         mDeleteAnimation = new DisplayDeleteAnimation();
-        mHandler = new Handler(this);
+        mHandler = new Handler(Looper.myLooper(), this);
     }
     
     /**

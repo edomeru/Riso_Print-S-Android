@@ -219,9 +219,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             }
         }
 
-        mHandler = new Handler(this);
+        mHandler = new Handler(Looper.myLooper(), this);
         if (mPauseableHandler == null) {
-            mPauseableHandler = new PauseableHandler(this);
+            mPauseableHandler = new PauseableHandler(Looper.myLooper(), this);
         }
 
         // Initialize PDF File Manager if it has not been previously initialized yet

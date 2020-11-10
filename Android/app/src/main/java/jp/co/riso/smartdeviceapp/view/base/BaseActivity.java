@@ -16,6 +16,7 @@ import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import jp.co.riso.android.util.AppUtils;
@@ -62,7 +63,7 @@ public abstract class BaseActivity extends Activity {
             };
             DisplayManager displayManager = (DisplayManager) SmartDeviceApp.getAppContext().getSystemService(Context.DISPLAY_SERVICE);
             if (displayManager != null) {
-                displayManager.registerDisplayListener(mDisplayListener, new Handler());
+                displayManager.registerDisplayListener(mDisplayListener, new Handler(Looper.myLooper()));
             }
         }
     }
@@ -86,7 +87,7 @@ public abstract class BaseActivity extends Activity {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(systemUIFlags | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);       // Hide system navigation bar
 
-        Handler handler = new Handler();
+        Handler handler = new Handler(Looper.myLooper());
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

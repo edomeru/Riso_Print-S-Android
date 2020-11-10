@@ -28,6 +28,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Handler.Callback;
+import android.os.Looper;
 import android.os.Message;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
@@ -286,7 +287,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             ((Activity) getContext()).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mHandler = new Handler(PrintJobsGroupView.this);
+                    mHandler = new Handler(Looper.myLooper(),PrintJobsGroupView.this);
                 }
             });
         }

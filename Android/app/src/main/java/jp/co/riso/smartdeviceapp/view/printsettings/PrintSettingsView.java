@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -164,7 +165,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         mPrinterManager.setUpdateStatusCallback(this);
         
-        mHandler = new Handler(this);
+        mHandler = new Handler(Looper.myLooper(),this);
         loadPrintersList();
         
         initializeMainView();

@@ -31,6 +31,7 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 import androidx.core.content.ContextCompat;
 import android.view.View;
@@ -74,7 +75,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             mPrinter = new ArrayList<Printer>();
         }
         if (mPauseableHandler == null) {
-            mPauseableHandler = new PauseableHandler(this);
+            mPauseableHandler = new PauseableHandler(Looper.myLooper(), this);
         }
         mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(), R.layout.printersearch_container_item, mPrinter);
         mPrinterSearchAdapter.setSearchAdapterInterface(this);

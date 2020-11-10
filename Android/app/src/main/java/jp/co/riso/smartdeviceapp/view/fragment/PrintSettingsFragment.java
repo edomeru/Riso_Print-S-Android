@@ -9,6 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
@@ -83,7 +84,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             mPrintSettings = new PrintSettings();
         }
         if (mPauseableHandler == null) {
-            mPauseableHandler = new PauseableHandler(this);
+            mPauseableHandler = new PauseableHandler(Looper.myLooper(), this);
         }
         
         mPrintMsg = getResources().getString(R.string.ids_info_msg_printing);

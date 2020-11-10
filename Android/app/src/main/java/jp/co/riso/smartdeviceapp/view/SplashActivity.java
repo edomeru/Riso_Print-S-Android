@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -75,7 +76,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     protected void onCreateContent(Bundle savedInstanceState) {
 
         if (mHandler == null) {
-            mHandler = new PauseableHandler(this);
+            mHandler = new PauseableHandler(Looper.myLooper(), this);
         }
         
         mDatabaseInitialized = false;
