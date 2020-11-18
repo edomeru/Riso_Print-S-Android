@@ -136,4 +136,10 @@ public class AppConstants {
 
     // Temporary copy of image file - filename
     public static final String TEMP_IMG_FILENAME = "TMP_IMG";
+
+    // PMS Ports
+    public static final int CONST_PORT_HTTP = 80;
+    public static final int CONST_PORT_LPR = 515;
+    public static final int CONST_PORT_RAW = 9100;
+
 }

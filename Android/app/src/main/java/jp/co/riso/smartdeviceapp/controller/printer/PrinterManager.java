@@ -564,18 +564,13 @@ public class PrinterManager implements SNMPManagerCallback {
      */
     public boolean isOnline(String ipAddress) {
         InetAddress inetIpAddress = null;
-        try {
-            if (ipAddress == null) {
-                return false;
-            }
-            if (NetUtils.isIPv6Address(ipAddress)) {
-                return NetUtils.connectToIpv6Address(ipAddress, inetIpAddress);
-            } else {
-                inetIpAddress = InetAddress.getByName(ipAddress);
-            }
-            return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
-        } catch (Exception e) {
+        if (ipAddress == null) {
             return false;
+        }
+        if (NetUtils.isIPv6Address(ipAddress)) {
+            return NetUtils.connectToIpv6Address(ipAddress, inetIpAddress);
+        } else {
+            return NetUtils.connectToIpv4Address(ipAddress);
         }
     }
     

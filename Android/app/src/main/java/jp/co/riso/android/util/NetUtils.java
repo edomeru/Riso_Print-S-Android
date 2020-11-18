@@ -10,7 +10,10 @@ package jp.co.riso.android.util;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -76,6 +79,44 @@ public class NetUtils {
             return false;
         }
         return IPV4_MULTICAST_PATTERN.matcher(ipAddress).matches();
+    }
+
+    /**
+     * @brief Check an IP Address if it is reachable. <br>
+     *
+     * Checks if the IPv4 Address is reachable
+     *
+     * @param ipAddress IPv4 Address
+     *
+     * @retval true IPv4 Address is reachable
+     * @retval false IPv4 address is not reachable
+     */
+    public static boolean connectToIpv4Address(String ipAddress) {
+        if (ipAddress == null) {
+            return false;
+        }
+
+        SocketAddress sockAddr = new InetSocketAddress(ipAddress, AppConstants.CONST_PORT_HTTP);
+        Socket sock = new Socket();
+        boolean isReachable;
+
+        try {
+            sock.connect(sockAddr, AppConstants.CONST_TIMEOUT_PING);
+            isReachable = true;
+        } catch (Exception e) {
+            isReachable = false;
+        } finally {
+            try {
+                if (sock != null) {
+                    sock.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return isReachable;
+        
     }
     
     /**
