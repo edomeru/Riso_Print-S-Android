@@ -2,6 +2,8 @@
 package jp.co.riso.android.os.pauseablehandler;
 
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+
+import android.os.Looper;
 import android.os.Message;
 import android.test.ActivityInstrumentationTestCase2;
 
@@ -30,7 +32,7 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
     }
 
     public void testConstructor_NullCallback() {
-        PauseableHandler handler = new PauseableHandler(null);
+        PauseableHandler handler = new PauseableHandler(Looper.myLooper(), null);
         assertNotNull(handler);
     }
 
@@ -38,7 +40,7 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(null);
+                mHandler = new PauseableHandler(Looper.myLooper(), null);
 
                 Message msg = Message.obtain(mHandler, MESSAGE);
                 mHandler.sendMessage(msg); //will call handleMessage
@@ -53,7 +55,7 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(null);
+                mHandler = new PauseableHandler(Looper.myLooper(), null);
 
                 Message msg = Message.obtain(mHandler, MESSAGE);
                 mHandler.sendMessage(msg); //will call handleMessage
@@ -69,7 +71,7 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(null);
+                mHandler = new PauseableHandler(Looper.myLooper(), null);
 
                 Message msg = Message.obtain(mHandler, MESSAGE);
                 mHandler.pause();

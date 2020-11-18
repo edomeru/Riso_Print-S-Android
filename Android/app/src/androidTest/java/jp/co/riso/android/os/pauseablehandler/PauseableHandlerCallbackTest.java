@@ -2,6 +2,8 @@
 package jp.co.riso.android.os.pauseablehandler;
 
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+
+import android.os.Looper;
 import android.os.Message;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
@@ -41,7 +43,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
 
     public void testConstructor_WithCallback() {
         mCallback = new MockCallback();
-        PauseableHandler handler = new PauseableHandler(mCallback);
+        PauseableHandler handler = new PauseableHandler(Looper.myLooper(), mCallback);
         assertNotNull(handler);
     }
 
@@ -50,7 +52,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(mCallback);
+                mHandler = new PauseableHandler(Looper.myLooper(), mCallback);
                 Message msg = Message.obtain(mHandler, MESSAGE_FORSTORING);
 
                 mHandler.sendMessage(msg);
@@ -64,7 +66,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(mCallback);
+                mHandler = new PauseableHandler(Looper.myLooper(), mCallback);
                 Message msg = Message.obtain(mHandler, MESSAGE_FORSTORING);
                 mHandler.pause();
                 mHandler.sendMessage(msg);
@@ -97,7 +99,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(mCallback);
+                mHandler = new PauseableHandler(Looper.myLooper(), mCallback);
                 Message msg = Message.obtain(mHandler, MESSAGE_DONOTSTORE);
                 mHandler.sendMessage(msg); //will call handleMessage
                 assertTrue(mHandler.hasMessages(MESSAGE_DONOTSTORE));
@@ -114,7 +116,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(mCallback);
+                mHandler = new PauseableHandler(Looper.myLooper(), mCallback);
                 Message msg = Message.obtain(mHandler, MESSAGE_DONOTSTORE);
                 mHandler.sendMessageDelayed(msg, 1000); //will call handleMessage
                 assertTrue(mHandler.hasMessages(MESSAGE_DONOTSTORE));
@@ -139,7 +141,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(mCallback);
+                mHandler = new PauseableHandler(Looper.myLooper(), mCallback);
 
                 Message msg = Message.obtain(mHandler, MESSAGE_FORSTORING);
                 mHandler.pause();
@@ -169,7 +171,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(mCallback);
+                mHandler = new PauseableHandler(Looper.myLooper(), mCallback);
 
                 Message msg = Message.obtain(mHandler, MESSAGE_FORSTORING);
                 mHandler.pause();
@@ -209,7 +211,7 @@ public class PauseableHandlerCallbackTest extends ActivityInstrumentationTestCas
         getInstrumentation().runOnMainSync(new Runnable(){
             @Override
             public void run(){
-                mHandler = new PauseableHandler(mCallback);
+                mHandler = new PauseableHandler(Looper.myLooper(), mCallback);
 
                 Message msg = Message.obtain(mHandler, MESSAGE_FORSTORING);
                 mHandler.sendMessageDelayed(msg, 1000);
