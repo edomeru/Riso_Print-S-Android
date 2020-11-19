@@ -107,9 +107,7 @@ public class NetUtils {
             isReachable = false;
         } finally {
             try {
-                if (sock != null) {
-                    sock.close();
-                }
+                sock.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
