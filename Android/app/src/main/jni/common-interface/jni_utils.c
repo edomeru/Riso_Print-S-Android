@@ -3,6 +3,7 @@
 #include <android/log.h>
 #include "common.h"
 #include "common_manager.h"
+#include <stdlib.h>
 
 #define LOG_TAG "JNI_UTILS"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)

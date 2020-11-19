@@ -7,8 +7,8 @@ stages:
 variables:
   LC_ALL: "en_US.UTF-8"
   LANG: "en_US.UTF-8"
-  ANDROID_HOME: "/Users/build/Library/Android/sdk"
-  ANDROID_NDK_HOME: "/Users/build/Desktop/Android/android-ndk-r10e"
+  ANDROID_SDK_ROOT: "/Users/build/Library/Android/sdk"
+  ANDROID_NDK_HOME: "$ANDROID_SDK_ROOT/ndk/21.3.6528147"
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # before_script:
 #   - gem install bundler
@@ -17,7 +17,7 @@ variables:
 build: 
   script: 
     - cd Android
-    - echo $ANDROID_HOME
+    - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
     - bundle exec fastlane dev_build
@@ -39,7 +39,7 @@ build:
 dev_build: 
   script: 
     - cd Android
-    - echo $ANDROID_HOME
+    - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
     - bundle exec fastlane dev_build
@@ -62,7 +62,7 @@ build_dump_enable:
     # change  ENABLE_JOB_DUMP from 0 to 1 in directprint.c
     - perl -pi -w -e 's/#define ENABLE_JOB_DUMP 0/#define ENABLE_JOB_DUMP 1/g;' CommonLibrary/src/directprint.c 
     - cd Android
-    - echo $ANDROID_HOME
+    - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
     - bundle exec fastlane dev_build
@@ -99,7 +99,7 @@ android_release_package:
     - if [ $"word:0:1" != "?" ]; then git commit -m "Update version" && git push origin HEAD --follow-tags && exit 0 ; fi
 
     - cd $CI_PROJECT_DIR
-    - echo $ANDROID_HOME
+    - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
 
     - cd Android
