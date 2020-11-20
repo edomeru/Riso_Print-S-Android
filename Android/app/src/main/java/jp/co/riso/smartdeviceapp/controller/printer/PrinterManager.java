@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
@@ -564,13 +565,22 @@ public class PrinterManager implements SNMPManagerCallback {
      */
     public boolean isOnline(String ipAddress) {
         InetAddress inetIpAddress = null;
-        if (ipAddress == null) {
+        try {
+            if (ipAddress == null) {
+                return false;
+            }
+            if (NetUtils.isIPv6Address(ipAddress)) {
+                return NetUtils.connectToIpv6Address(ipAddress, inetIpAddress);
+            } else {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    return NetUtils.connectToIpv4Address(ipAddress);
+                } else {
+                    inetIpAddress = InetAddress.getByName(ipAddress);
+                    return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
+                }
+            }
+        } catch (Exception e) {
             return false;
-        }
-        if (NetUtils.isIPv6Address(ipAddress)) {
-            return NetUtils.connectToIpv6Address(ipAddress, inetIpAddress);
-        } else {
-            return NetUtils.connectToIpv4Address(ipAddress);
         }
     }
     
