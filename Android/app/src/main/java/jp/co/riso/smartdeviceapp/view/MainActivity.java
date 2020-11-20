@@ -13,13 +13,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
-import androidx.legacy.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import android.view.Gravity;
@@ -105,8 +104,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         mLeftLayout.getLayoutParams().width = getDrawerWidth();
         mRightLayout.getLayoutParams().width = getDrawerWidth();
         
-        mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.drawable.img_btn_main_menu_normal, R.string.default_content_description,
-                R.string.default_content_description);
+        mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.string.default_content_description, R.string.default_content_description);
         
         // Set the drawer toggle as the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -337,13 +335,13 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
          * 
          * @param activity Activity
          * @param drawerLayout Drawer layout
-         * @param drawerImageRes Drawer image resource
          * @param openDrawerContentDescRes Drawer content description resource
          * @param closeDrawerContentDescRes Drawer content description resource
          */
-        public SDAActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, int drawerImageRes, int openDrawerContentDescRes,
+        public SDAActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, int openDrawerContentDescRes,
                 int closeDrawerContentDescRes) {
-            super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
+            super(activity, drawerLayout, openDrawerContentDescRes, closeDrawerContentDescRes);
+
         }
         
         @Override
