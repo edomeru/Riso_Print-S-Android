@@ -11,6 +11,7 @@ import java.lang.ref.WeakReference;
 import java.util.Vector;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 /**
@@ -36,7 +37,8 @@ public class PauseableHandler extends Handler {
      * @brief Creates a PausableHander instance
      * @param callback Listener for PauseableHandler events
      */
-    public PauseableHandler(PauseableHandlerCallback callback) {
+    public PauseableHandler(Looper looper, PauseableHandlerCallback callback) {
+        super(looper, null);
         mCallBack = new WeakReference<PauseableHandlerCallback>(callback);
     }
     

@@ -236,7 +236,7 @@ directprint_job *directprint_job_new(const char *printer_name, const char *host_
 		return NULL;
 	}
 	int i;
-	for (i = 0; host_name[i] != NULL; i++){
+	for (i = 0; host_name[i] != '\0'; i++){
 		sprintf(hex_string, "%x", host_name[i] & 0x0000FF);
 		memo = strcat(memo, hex_string);
 	}

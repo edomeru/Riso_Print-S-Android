@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.content.ContextCompat;
@@ -90,7 +91,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 initializeRadaee();
             }
         }
-        mHandler = new PauseableHandler(this);
+        mHandler = new PauseableHandler(Looper.myLooper(), this);
         
         setContentView(R.layout.activity_main);
         

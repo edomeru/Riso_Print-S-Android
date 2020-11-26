@@ -13,7 +13,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.text.ClipboardManager;
+import android.content.ClipboardManager;
+import android.content.ClipData;
 import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -66,7 +67,8 @@ public class SnmpCommunityNameEditText extends EditText {
 
     private void onTextPaste() {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        CharSequence clipboardText = clipboard.getText();
+        ClipData clipData = clipboard.getPrimaryClip();
+        CharSequence clipboardText = clipData.getItemAt(0).getText();
         CharSequence originalText = getText();
 
         if(!snmpCommunityNameFilter.isValid(clipboardText)) {

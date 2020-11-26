@@ -13,6 +13,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 import androidx.core.content.ContextCompat;
 import android.text.InputFilter;
@@ -76,7 +77,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         mPrinterManager.setPrinterSearchCallback(this);
         mAddPrinterView = new ViewHolder();
         if (mPauseableHandler == null) {
-            mPauseableHandler = new PauseableHandler(this);
+            mPauseableHandler = new PauseableHandler(Looper.myLooper(), this);
         }
     }
     

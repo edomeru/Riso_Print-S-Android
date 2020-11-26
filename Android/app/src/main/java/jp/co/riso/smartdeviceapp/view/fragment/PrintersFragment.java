@@ -14,6 +14,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.view.Gravity;
@@ -90,7 +91,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         if (mPauseableHandler == null) {
-            mPauseableHandler = new PauseableHandler(this);
+            mPauseableHandler = new PauseableHandler(Looper.myLooper(), this);
         }
         mUpdateOnlineStatus = new Runnable() {
             @Override

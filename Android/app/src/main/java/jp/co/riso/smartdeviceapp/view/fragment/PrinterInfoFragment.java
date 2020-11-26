@@ -27,6 +27,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
@@ -68,7 +69,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
-        mPauseableHandler = new PauseableHandler(this);
+        mPauseableHandler = new PauseableHandler(Looper.myLooper(), this);
     }
     
     @Override

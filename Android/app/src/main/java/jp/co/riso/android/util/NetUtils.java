@@ -24,6 +24,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.os.Build;
 
 /**
@@ -190,23 +191,20 @@ public class NetUtils {
         
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean result = false;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            result = (wifi != null && wifi.isConnected());
-        } else {
-            Network[] networks = connManager.getAllNetworks();
-            NetworkInfo networkInfo;
-            Network network;
-            for (int i = 0; i < networks.length; i++){
-                network = networks[i];
-                networkInfo = connManager.getNetworkInfo(network);
-                if ((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
-                        (networkInfo.getState().equals(NetworkInfo.State.CONNECTED))) {
-                    result = true;
-                    break;
-                }
+
+        Network[] networks = connManager.getAllNetworks();
+        NetworkInfo networkInfo;
+        Network network;
+        for (int i = 0; i < networks.length; i++){
+            network = networks[i];
+            networkInfo = connManager.getNetworkInfo(network);
+            if ((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
+                    (networkInfo.getState().equals(NetworkInfo.State.CONNECTED))) {
+                result = true;
+                break;
             }
         }
+
         return result;
     }
     

@@ -61,7 +61,11 @@ public class Pagination {
      * @brief Compute pagination
      */
     private void layout() {
-        final StaticLayout layout = new StaticLayout(mText, mPaint, mWidth, Layout.Alignment.ALIGN_NORMAL, mSpacingMult, mSpacingAdd, mIncludePad);
+        StaticLayout.Builder builder = StaticLayout.Builder.obtain(mText, 0, mText.length(), mPaint, mWidth)
+                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                .setLineSpacing(mSpacingAdd, mSpacingMult)
+                .setIncludePad(mIncludePad);
+        final StaticLayout layout = builder.build();
 
         final int lines = layout.getLineCount();
         final CharSequence text = layout.getText();
