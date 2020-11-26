@@ -90,6 +90,9 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             "0.0.0.0",
             "192.168.0.1"
     };
+
+    private static final String IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.x.x";
+
     private final String[] IPv6_VALID_ADDRESS = {
             "1:2:3:4:5:6:7:8",
             "1:2:3:4:5:6:7::",
@@ -404,6 +407,52 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         turnWifiOn();
         // wifi is ON
         assertEquals(true, NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext()));
+    }
+
+    // ================================================================================
+    // Tests - connectToIpv4Address
+    // ================================================================================
+
+    public void testConnectToIpv4Address_OfflineIpv4Address() {
+        try {
+            boolean isReachable = true;
+
+            isReachable = NetUtils.connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS);
+            assertEquals(false, isReachable);
+
+            mSignal.await(500, TimeUnit.MILLISECONDS);
+
+        } catch (NullPointerException e) {
+            fail(); // Error should not be thrown
+        } catch (InterruptedException e) {
+            fail(); // Error should not be thrown
+        }
+    }
+
+    public void testConnectToIpv4Address_NullIpAddress() {
+        try {
+            NetUtils.connectToIpv4Address(null);
+
+            mSignal.await(500, TimeUnit.MILLISECONDS);
+        } catch (NullPointerException e) {
+            fail(); // Error should not be thrown
+        } catch (InterruptedException e) {
+            fail(); // Error should not be thrown
+        }
+    }
+
+    public void testConnectToIpv4Address_WifiDisabled() {
+        try {
+            turnWifi(false);
+            boolean isReachable = true;
+
+            isReachable = NetUtils.connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS);
+            assertEquals(false, isReachable);
+
+            turnWifiOn();
+        } catch (NullPointerException e) {
+            fail(); // Error should not be thrown
+        }
     }
 
     // ================================================================================
