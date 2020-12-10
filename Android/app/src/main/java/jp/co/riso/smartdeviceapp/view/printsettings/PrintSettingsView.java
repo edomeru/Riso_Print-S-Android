@@ -1465,7 +1465,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         mSubView.setTag(v.getTag());
         
         if (v.getTag().toString().equals(KEY_TAG_PRINTER)) {
-            String title = getResources().getString(R.string.ids_lbl_printer);
+            String title = getResources().getString(R.string.ids_lbl_printers);
             addSubviewOptionsTitle(title, false, -1);
             
             if (mPrintersList != null) {
