@@ -84,7 +84,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             boolean isOpenIn = (activity.getIntent() != null && (activity.getIntent().getData() != null || activity.getIntent().getClipData() != null));
             boolean isInSandbox = (PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext()) != null);
             hasPDFfile = (isInSandbox || isOpenIn);
-            hasWritePermission = (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+            hasWritePermission = (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
         }
     }
 
