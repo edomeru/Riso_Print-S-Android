@@ -52,6 +52,13 @@ void directprint_job_cancel(directprint_job *print_job);
 int directprint_job_lpr_print(directprint_job *print_job);
 int directprint_job_raw_print(directprint_job *print_job);
 
+/*
+ * UTF8 16進数変換
+ * [in] 変換前文字列
+ * [out] 変換後文字列 or NULL失敗
+ */
+char* ConvertUTF8String(char* str);
+
 /**
  SNMP
  */

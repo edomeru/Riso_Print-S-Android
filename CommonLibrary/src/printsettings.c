@@ -298,7 +298,8 @@ void add_pjl(char *pjl, setting_value values[], int command);
 
 void create_pjl(char *pjl, char *settings)
 {
-    if (strlen(settings) == 0)
+    // RM 496 Fix: Check input if null, return
+    if (!settings || strlen(settings) == 0)
     {
         return;
     }
@@ -386,7 +387,7 @@ int get_setting_index(const char *name)
 {
     for (int i = 0; i < kPrintSettingsCount; i++)
     {
-        if (strcmp(name, printsetting_names[i]) == 0)
+        if (name && (strcmp(name, printsetting_names[i]) == 0))
         {
             return i;
         }
