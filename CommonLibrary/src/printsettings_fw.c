@@ -346,7 +346,8 @@ void create_pjl_fw(char *pjl, char *settings, char *printerName, char *hostName,
 //void create_pjl_fw(char *pjl, char *settings, char *printerName)
 // Ver.2.0.0.3 end
 {
-    if (strlen(settings) == 0)
+    // RM 496 Fix: Check input if null, return
+    if (!settings || strlen(settings) == 0 || !printerName || !hostName || !appVersion)
     {
         return;
     }

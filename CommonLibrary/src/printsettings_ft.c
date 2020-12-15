@@ -284,7 +284,8 @@ extern int get_setting_index(const char *name);
 void add_pjl_ft(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command);
 void create_pjl_ft(char *pjl, char *settings, char *printerName, char *hostName, char *appVersion)
 {
-    if (strlen(settings) == 0)
+    // RM 496 Fix: Check input if null, return
+    if (!settings || strlen(settings) == 0 || !printerName || !hostName || !appVersion)
     {
         return;
     }

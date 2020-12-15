@@ -1,5 +1,5 @@
 //
-//  printsettings_fw.c
+//  printsettings_gd.c
 //  SmartDeviceApp
 //
 //  Created by RISO KAGAKU CORPORATION.
@@ -327,13 +327,8 @@ typedef struct
 extern void parse(char *settings, setting_value values[]);
 extern void parse_line(char *line, char *name, char *value);
 extern int get_setting_index(const char *name);
-// Ver.2.0.0.3 start
-// Ver.2.0.4.2 Start
-//void add_pjl_gd(char *pjl, char *appName, char *appVersion, setting_value values[], int command);
-void add_pjl_gd(char *pjl, char *appName, char *hostName, char *appVersion, setting_value values[], int command);
-// Ver.2.0.4.2 End
-//void add_pjl(char *pjl, char *printerName, setting_value values[], int command);
-// Ver.2.0.0.3 end
+
+void add_pjl_gd(char *pjl, char *printerName, char *hostName, char *appVersion, setting_value values[], int command);
 
 // Ver.2.0.0.3 start
 //void create_pjl_gd(char *pjl, char *settings, char *appName, char *appVersion)
@@ -344,7 +339,8 @@ void create_pjl_gd(char *pjl, char *settings, char *printerName, char *hostName,
 //void create_pjl_gd(char *pjl, char *settings, char *printerName)
 // Ver.2.0.0.3 end
 {
-    if (strlen(settings) == 0)
+    // RM 496 Fix: Check input if null, return
+    if (!settings || strlen(settings) == 0 || !printerName || !hostName || !appVersion)
     {
         return;
     }
