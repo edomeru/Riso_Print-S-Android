@@ -8,11 +8,14 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+import androidx.core.content.ContextCompat;
 
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
@@ -67,6 +70,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
     public int mState = STATE_HOME;
     boolean hasPDFfile = false;
+    boolean hasWritePermission = false;
 
     @Override
     public int getViewLayout() {
@@ -80,6 +84,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             boolean isOpenIn = (activity.getIntent() != null && (activity.getIntent().getData() != null || activity.getIntent().getClipData() != null));
             boolean isInSandbox = (PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext()) != null);
             hasPDFfile = (isInSandbox || isOpenIn);
+            hasWritePermission = (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
         }
     }
 
@@ -96,7 +101,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         if (savedInstanceState == null) {
             // No states were saved
             //setCurrentState(STATE_PRINTPREVIEW, false);
-            mState = hasPDFfile ? STATE_PRINTPREVIEW : STATE_HOME;
+            mState = (hasPDFfile && hasWritePermission) ? STATE_PRINTPREVIEW : STATE_HOME;
         } else {
             mState = savedInstanceState.getInt(KEY_STATE, STATE_HOME);
             // No need to restore the fragment state as this is already handled
@@ -141,10 +146,15 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         }
 
         for (int i = 0; i < MENU_ITEMS.length; i++) {
-            if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
+            if (i == STATE_PRINTPREVIEW) {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
-                view.findViewById(MENU_ITEMS[i]).setClickable(false);
-                view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4, null));
+                if (hasPDFfile && hasWritePermission) {
+                    view.findViewById(MENU_ITEMS[i]).setClickable(true);
+                    view.findViewById(MENU_ITEMS[i]).setBackground(getResources().getDrawable(R.drawable.selector_home_menuitem, null));
+                } else {
+                    view.findViewById(MENU_ITEMS[i]).setClickable(false);
+                    view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4, null));
+                }
             } else {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(true);

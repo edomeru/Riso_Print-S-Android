@@ -726,6 +726,27 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         menuFragment.setCurrentState(MenuFragment.STATE_HOME);
     }
 
+    /**
+     * @brief Transitions Screen to Preview
+     */
+    private void transitionToPreviewScreen() {
+        MainActivity activity = (MainActivity) getActivity();
+        MenuFragment menuFragment = activity.getMenuFragment();
+        if (menuFragment == null) {
+            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+            menuFragment = new MenuFragment();
+            // When MenuFragment gets destroyed due to config change such as changing permissions
+            // from Settings, the state gets reset to default as well.
+            // Since we know we are in PrintPreview, set the current state to PrintPreview
+            menuFragment.mState = MenuFragment.STATE_PRINTPREVIEW;
+            ft.replace(R.id.leftLayout, menuFragment, "fragment_menu");
+            ft.commit();
+        }
+        menuFragment.hasPDFfile = true;
+        menuFragment.hasWritePermission = true;
+        menuFragment.setCurrentState(MenuFragment.STATE_PRINTPREVIEW);
+    }
+
     // ================================================================================
     // Page Control functions
     // ================================================================================
@@ -1026,6 +1047,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         }
                         initializePdfManagerAndRunAsync();
                         shouldResetToFirstPageOnInitialize = true;
+                        transitionToPreviewScreen();
                     } else {
                         // permission was denied check if Print Settings is open
                         MainActivity activity = (MainActivity) getActivity();
