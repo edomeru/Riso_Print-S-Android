@@ -175,7 +175,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         }  else if (requestCode == REQUEST_PHOTO && resultCode == Activity.RESULT_OK && data != null) {
             if (data.getClipData() != null) { // multiple image files
                 if (!ImageUtils.isImageFileSupported(getActivity(), data.getClipData())) {
-                    String message = getResources().getString(R.string.ids_err_msg_open_failed);
+                    String message = getResources().getString(R.string.ids_err_msg_invalid_file_selection);
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 } else {
@@ -183,7 +183,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 }
             } else {    // single image file
                 if (!ImageUtils.isImageFileSupported(getActivity(), data.getData())) {
-                    String message = getResources().getString(R.string.ids_err_msg_open_failed);
+                    String message = getResources().getString(R.string.ids_err_msg_invalid_file_selection);
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 } else {
