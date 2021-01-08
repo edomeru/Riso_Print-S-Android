@@ -19,7 +19,10 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
+// aLINK edit - Start
+// android.os.AsyncTask was deprecated in API level 30.
+// Use threading instead
+// aLINK edit - End
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -169,7 +172,11 @@ public class ScanFragment extends Fragment {
         public void onClick(View v) {
             Map<Integer, PointF> points = polygonView.getPoints();
             if (isScanPointsValid(points)) {
-                new ScanAsyncTask(points).execute();
+                // aLINK edit - Start
+                // android.os.AsyncTask was deprecated in API level 30.
+                // Use threading instead
+                new ScanAsyncTask(points).start();
+                // aLINK edit - End
             } else {
                 showErrorDialog();
             }
@@ -216,7 +223,11 @@ public class ScanFragment extends Fragment {
         return _bitmap;
     }
 
-    private class ScanAsyncTask extends AsyncTask<Void, Void, Bitmap> {
+    // aLINK edit - Start
+    // android.os.AsyncTask was deprecated in API level 30.
+    // Use threading instead
+    private class ScanAsyncTask extends Thread {
+    // aLINK edit - End
 
         private Map<Integer, PointF> points;
 
@@ -224,26 +235,21 @@ public class ScanFragment extends Fragment {
             this.points = points;
         }
 
+        // aLINK edit - Start
+        // android.os.AsyncTask was deprecated in API level 30.
+        // Use threading instead
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        public void run() {
             showProgressDialog(getString(R.string.scanning));
-        }
 
-        @Override
-        protected Bitmap doInBackground(Void... params) {
             Bitmap bitmap =  getScannedBitmap(original, points);
             Uri uri = Utils.getUri(getActivity(), bitmap);
             scanner.onScanFinish(uri);
-            return bitmap;
-        }
 
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
             bitmap.recycle();
             dismissDialog();
         }
+        // aLINK edit - End
     }
 
     protected void showProgressDialog(String message) {
