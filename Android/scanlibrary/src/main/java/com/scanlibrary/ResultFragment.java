@@ -1,8 +1,14 @@
 package com.scanlibrary;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+// aLINK edit - Start
+// android.app.Fragment was deprecated in API level 28
+// Use androidx.fragment.app.Fragment instead
+import androidx.fragment.app.Fragment;
+// android.app.FragmentManager was deprecated in API level 28
+// Use androidx.fragment.app.FragmentManager instead
+import androidx.fragment.app.FragmentManager;
+// aLINK edit - End
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;

@@ -1,8 +1,19 @@
 package com.scanlibrary;
 
-import android.app.Activity;
+// aLINK edit - Start
+// android.app.Activity was not compatible with androidx.fragment.app.FragmentManager
+// Use androidx.fragment.app.FragmentActivity instead
+import androidx.fragment.app.FragmentActivity;
+// aLINK edit - End
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
+// aLINK edit - Start
+// android.app.FragmentTransaction was deprecated in API level 28
+// Use androidx.fragment.app.FragmentTransaction instead
+import androidx.fragment.app.FragmentTransaction;
+// android.app.FragmentManager was deprecated in API level 28
+// Use androidx.fragment.app.FragmentManager instead
+import androidx.fragment.app.FragmentManager;
+// aLINK edit - End
 import android.content.ComponentCallbacks2;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -12,7 +23,11 @@ import android.os.Bundle;
 /**
  * Created by jhansi on 28/03/15.
  */
-public class ScanActivity extends Activity implements IScanner, ComponentCallbacks2 {
+// aLINK edit - Start
+// android.app.Activity was not compatible with androidx.fragment.app.FragmentManager
+// Use androidx.fragment.app.FragmentActivity instead
+public class ScanActivity extends FragmentActivity implements IScanner, ComponentCallbacks2 {
+// aLINK edit - End
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +44,12 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
         Bundle bundle = new Bundle();
         bundle.putInt(ScanConstants.OPEN_INTENT_PREFERENCE, getPreferenceContent());
         fragment.setArguments(bundle);
-        android.app.FragmentManager fragmentManager = getFragmentManager();
+        // aLINK edit - Start
+        // android.app.FragmentManager was deprecated in API level 28
+        // Call the getSupportFragmentManager() API to get androidx.fragment.app.FragmentManager
+        // instead of android.app.FragmentManager
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // aLINK edit - End
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.content, fragment);
         fragmentTransaction.commit();
@@ -45,7 +65,12 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
         Bundle bundle = new Bundle();
         bundle.putParcelable(ScanConstants.SELECTED_BITMAP, uri);
         fragment.setArguments(bundle);
-        android.app.FragmentManager fragmentManager = getFragmentManager();
+        // aLINK edit - Start
+        // android.app.FragmentManager was deprecated in API level 28
+        // Call the getSupportFragmentManager() API to get androidx.fragment.app.FragmentManager
+        // instead of android.app.FragmentManager
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // aLINK edit - End
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.content, fragment);
         // aLINK edit: do not add the pick image fragment to back stack
@@ -59,7 +84,12 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
         Bundle bundle = new Bundle();
         bundle.putParcelable(ScanConstants.SCANNED_RESULT, uri);
         fragment.setArguments(bundle);
-        android.app.FragmentManager fragmentManager = getFragmentManager();
+        // aLINK edit - Start
+        // android.app.FragmentManager was deprecated in API level 28
+        // Call the getSupportFragmentManager() API to get androidx.fragment.app.FragmentManager
+        // instead of android.app.FragmentManager
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // aLINK edit - End
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.content, fragment);
         fragmentTransaction.addToBackStack(ResultFragment.class.toString());

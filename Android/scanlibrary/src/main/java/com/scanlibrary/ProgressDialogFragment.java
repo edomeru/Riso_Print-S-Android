@@ -2,8 +2,14 @@ package com.scanlibrary;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.DialogFragment;
+// aLINK edit - Start
+// android.app.DialogFragment was deprecated in API level 28
+// Use androidx.fragment.app.DialogFragment instead
+import androidx.fragment.app.DialogFragment;
+// android.app.ProgressDialog was deprecated in API level 26
+// Use a progress indicator like ProgressBar instead
 import android.app.ProgressDialog;
+// aLINK edit - End
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
