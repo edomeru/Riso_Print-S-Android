@@ -11,7 +11,7 @@ package jp.co.riso.smartdeviceapp.view.printersearchsettings;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;

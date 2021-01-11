@@ -14,7 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Matrix;

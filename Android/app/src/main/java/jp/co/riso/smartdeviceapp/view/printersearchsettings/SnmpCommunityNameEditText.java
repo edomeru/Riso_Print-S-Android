@@ -11,7 +11,7 @@ package jp.co.riso.smartdeviceapp.view.printersearchsettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.content.ClipboardManager;
 import android.content.ClipData;
