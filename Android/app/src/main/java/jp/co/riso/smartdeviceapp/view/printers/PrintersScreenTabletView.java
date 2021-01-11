@@ -47,6 +47,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
  * @class PrintersScreenTabletView
  * 
@@ -620,7 +622,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
                             } else {
                                 InfoDialogFragment info = InfoDialogFragment.newInstance(getContext().getString(R.string.ids_lbl_printers),
                                         getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
-                                DialogUtils.displayDialog((Activity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
+                                DialogUtils.displayDialog((AppCompatActivity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
                             }
                         }
                         break;

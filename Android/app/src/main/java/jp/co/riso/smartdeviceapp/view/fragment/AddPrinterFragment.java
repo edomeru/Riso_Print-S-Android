@@ -8,9 +8,10 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Looper;
@@ -169,7 +170,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         info.setTargetFragment(this, 0);
         
         if (getActivity() != null && getActivity() instanceof MainActivity) {
-            DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
+            DialogUtils.displayDialog((AppCompatActivity)getActivity(), KEY_ADD_PRINTER_DIALOG, info);
         }
     }
     
@@ -214,7 +215,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         } else {
             info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
         }
-        DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
+        DialogUtils.displayDialog((AppCompatActivity)getActivity(), KEY_ADD_PRINTER_DIALOG, info);
     }
     
     /**
@@ -233,7 +234,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 });
             }
         } else {
-            FragmentManager fm = getFragmentManager();
+            FragmentManager fm = getParentFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             
             if (fm.getBackStackEntryCount() > 0) {

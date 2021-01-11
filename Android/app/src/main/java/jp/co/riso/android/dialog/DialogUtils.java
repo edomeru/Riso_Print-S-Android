@@ -8,10 +8,10 @@
 
 package jp.co.riso.android.dialog;
 
-import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * @class DialogUtils
@@ -27,10 +27,10 @@ public final class DialogUtils {
      * @param activity Activity where the fragment resides
      * @param tag The tag of fragment for removal
      */
-    private static void removeDialogFragment(FragmentTransaction ft, Activity activity, String tag) {
+    private static void removeDialogFragment(FragmentTransaction ft, AppCompatActivity activity, String tag) {
         
         // Get the fragment
-        Fragment prev = activity.getFragmentManager().findFragmentByTag(tag);
+        Fragment prev = activity.getSupportFragmentManager().findFragmentByTag(tag);
         
         // Remove the fragment if found
         if (prev != null) {
@@ -45,10 +45,10 @@ public final class DialogUtils {
      * @param tag The assigned tag of the fragment to be added
      * @param newFragment DialogFragment object to be added
      */
-    public static void displayDialog(Activity activity, String tag, DialogFragment newFragment) {
+    public static void displayDialog(AppCompatActivity activity, String tag, DialogFragment newFragment) {
         
         // Create a fragment transaction
-        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         
         // Remove any instances of fragment
         removeDialogFragment(ft, activity, tag);
@@ -63,10 +63,10 @@ public final class DialogUtils {
      * @param activity Activity where the fragment resides
      * @param tag The tag of fragment for removal
      */
-    public static void dismissDialog(Activity activity, String tag) {
+    public static void dismissDialog(AppCompatActivity activity, String tag) {
         
         // Create a fragment transaction
-        FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         
         // Remove the fragment
         removeDialogFragment(ft, activity, tag);

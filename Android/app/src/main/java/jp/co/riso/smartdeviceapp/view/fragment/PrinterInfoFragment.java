@@ -23,8 +23,10 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.DefaultPrinterArrayAdapter;
 import jp.co.riso.smartprint.R;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Looper;
@@ -209,7 +211,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                         View v = (View) msg.obj;
-                        FragmentManager fm = getFragmentManager();
+                        FragmentManager fm = getParentFragmentManager();
                         setIconState(v.getId(), true);
                         mPrintSettingsFragment = null;
                         
@@ -233,7 +235,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                 break;
             case R.id.menu_id_back_button:
                 mPauseableHandler.pause();
-                FragmentManager fm = getFragmentManager();
+                FragmentManager fm = getParentFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 
                 if (fm.getBackStackEntryCount() > 0) {
@@ -294,7 +296,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                             } else {
                                 InfoDialogFragment info = InfoDialogFragment.newInstance(getActivity().getString(R.string.ids_lbl_printer_info),
                                         getActivity().getString(R.string.ids_err_msg_db_failure), getActivity().getString(R.string.ids_lbl_ok));
-                                DialogUtils.displayDialog(getActivity(), KEY_PRINTER_INFO_ERR_DIALOG, info);
+                                DialogUtils.displayDialog((AppCompatActivity)getActivity(), KEY_PRINTER_INFO_ERR_DIALOG, info);
                             }
                         }
                         break;

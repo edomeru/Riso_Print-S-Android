@@ -14,6 +14,8 @@ import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
@@ -236,7 +238,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
             String btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
-            DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+            DialogUtils.displayDialog((AppCompatActivity)getActivity(), TAG_MESSAGE_DIALOG, fragment);
             return;
         }
         
@@ -244,7 +246,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             String strMsg = getString(R.string.ids_err_msg_network_error);
             String btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
-            DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+            DialogUtils.displayDialog((AppCompatActivity)getActivity(), TAG_MESSAGE_DIALOG, fragment);
             return;
         }
         
@@ -278,12 +280,12 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             btnMsg = getString(R.string.ids_lbl_cancel);
             mWaitingDialog = WaitingDialogFragment.newInstance(null, mPrintMsg, true, btnMsg);
             mWaitingDialog.setTargetFragment(this, REQUEST_CODE_CANCEL);
-            DialogUtils.displayDialog(getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
+            DialogUtils.displayDialog((AppCompatActivity)getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
         } else {
             String strMsg = getString(R.string.ids_info_msg_print_job_failed);
             btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
-            DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+            DialogUtils.displayDialog((AppCompatActivity)getActivity(), TAG_MESSAGE_DIALOG, fragment);
         }
     }
     
@@ -300,7 +302,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     public void processMessage(Message message) {
         switch (message.what) {
             case MSG_PRINT:
-                DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
+                DialogUtils.dismissDialog((AppCompatActivity)getActivity(), TAG_WAITING_DIALOG);
 
                 PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
                 String filename = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
@@ -321,7 +323,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                 }
                 // Show dialog
                 fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
-                DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                DialogUtils.displayDialog((AppCompatActivity)getActivity(), TAG_MESSAGE_DIALOG, fragment);
                 break;
         }
     }

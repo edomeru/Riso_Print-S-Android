@@ -27,12 +27,14 @@ import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface;
 import jp.co.riso.smartprint.R;
 import android.animation.ValueAnimator;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -167,7 +169,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         errMsg = getResources().getString(R.string.ids_err_msg_network_error);
         DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
 
-        DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
+        DialogUtils.displayDialog((AppCompatActivity)getActivity(), KEY_PRINTER_ERR_DIALOG, info);
     }
     
     /**
@@ -178,7 +180,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             MainActivity activity = (MainActivity) getActivity();
             activity.closeDrawers();
         } else {
-            FragmentManager fm = getFragmentManager();
+            FragmentManager fm = getParentFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             if (fm.getBackStackEntryCount() > 0) {
                 fm.popBackStack();
@@ -298,7 +300,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             info.setTargetFragment(this, 0);
         }
         
-        DialogUtils.displayDialog(getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
+        DialogUtils.displayDialog((AppCompatActivity)getActivity(), KEY_SEARCHED_PRINTER_DIALOG, info);
         return ret;
     }
 

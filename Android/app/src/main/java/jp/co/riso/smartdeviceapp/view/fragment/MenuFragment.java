@@ -9,9 +9,9 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.Manifest;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -123,7 +123,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
     public Fragment getCurrentStateFragment(){
         String tag = FRAGMENT_TAGS[mState];
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         return fm.findFragmentByTag(tag);
     }
 
@@ -200,7 +200,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
      * @param animate Animate changes in layout
      */
     private void switchToFragment(int state, boolean animate) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         FragmentTransaction ft = fm.beginTransaction();
