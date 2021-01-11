@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.string.default_content_description, R.string.default_content_description);
         
         // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         
         if (getActionBar() != null) {
