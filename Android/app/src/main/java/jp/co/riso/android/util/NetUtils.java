@@ -26,6 +26,7 @@ import jp.co.riso.smartdeviceapp.AppConstants;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.os.Build;
@@ -43,6 +44,8 @@ public class NetUtils {
     private static final Pattern IPV6_LINK_LOCAL_PATTERN;
     private static final Pattern IPV6_IPv4_DERIVED_PATTERN;
     private static final List<String> IPV6_INTERFACE_NAMES;
+
+    public static boolean isNetworkConnected = false;
     
     // ================================================================================
     // Public Methods
@@ -205,16 +208,39 @@ public class NetUtils {
      * @retval true Connected to network
      * @retval false Not connected to network
      */
-    protected static boolean isNetworkAvailable(Context context) {
+    public static boolean isNetworkAvailable(Context context) {
         if (context == null) {
             return false;
         }
-        
+
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            try {
+                NetworkRequest.Builder builder = new NetworkRequest.Builder();
+                connManager.registerNetworkCallback(builder.build(), new ConnectivityManager.NetworkCallback() {
+                            @Override
+                            public void onAvailable(Network network) {
+                                isNetworkConnected = true;
+                            }
+                            @Override
+                            public void onLost(Network network) {
+                                isNetworkConnected = false;
+                            }
+                        }
+                );
+                isNetworkConnected = false;
+            } catch (Exception e) {
+                isNetworkConnected = false;
+            }
+        } else {
+            NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
+            isNetworkConnected = (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+        }
+
+        return isNetworkConnected;
     }
-    
+
     /**
      * @brief Determines wi-fi connectivity.
      * 
@@ -232,13 +258,10 @@ public class NetUtils {
         boolean result = false;
 
         Network[] networks = connManager.getAllNetworks();
-        NetworkInfo networkInfo;
-        Network network;
-        for (int i = 0; i < networks.length; i++){
-            network = networks[i];
-            networkInfo = connManager.getNetworkInfo(network);
-            if ((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
-                    (networkInfo.getState().equals(NetworkInfo.State.CONNECTED))) {
+
+        for (Network network : networks) {
+            NetworkCapabilities capabilities = connManager.getNetworkCapabilities(network);
+            if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                 result = true;
                 break;
             }
