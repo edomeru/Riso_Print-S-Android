@@ -11,10 +11,8 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -145,7 +143,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
         // dismiss permission alert dialog if showing
-        DialogUtils.dismissDialog((AppCompatActivity) getActivity(), TAG_PERMISSION_DIALOG);
+        DialogUtils.dismissDialog(getActivity(), TAG_PERMISSION_DIALOG);
         setRetainInstance(true);
 
         if (savedInstanceState != null) {
@@ -435,7 +433,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     == PackageManager.PERMISSION_GRANTED) {
                 // to enable PDF display when Storage permission is switched from disabled to enabled
                 if (mConfirmDialogFragment != null) {
-                    DialogUtils.dismissDialog((AppCompatActivity) getActivity(), TAG_PERMISSION_DIALOG);
+                    DialogUtils.dismissDialog(getActivity(), TAG_PERMISSION_DIALOG);
                 }
                 if (mPdfConverterManager != null && !mIsConverterInitialized) {
                     initializePdfConverterAndRunAsync();
@@ -467,7 +465,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
                     mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
                     mConfirmDialogFragment.setTargetFragment(PrintPreviewFragment.this, 0);
-                    DialogUtils.displayDialog((AppCompatActivity) getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
+                    DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                 }
             }
         }
@@ -715,7 +713,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         MainActivity activity = (MainActivity) getActivity();
         MenuFragment menuFragment = activity.getMenuFragment();
         if (menuFragment == null) {
-            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
             menuFragment = new MenuFragment();
             // When MenuFragment gets destroyed due to config change such as changing permissions
             // from Settings, the state gets reset to default as well.
@@ -735,7 +733,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         MainActivity activity = (MainActivity) getActivity();
         MenuFragment menuFragment = activity.getMenuFragment();
         if (menuFragment == null) {
-            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
             menuFragment = new MenuFragment();
             // When MenuFragment gets destroyed due to config change such as changing permissions
             // from Settings, the state gets reset to default as well.
@@ -828,7 +826,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 default:
                     String message = getPdfErrorMessage(status);
                     String button = getResources().getString(R.string.ids_lbl_ok);
-                    DialogUtils.displayDialog((AppCompatActivity) getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
 
                     // If there are any initialization/ conversion errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
                     Intent intent = getActivity().getIntent();
@@ -854,7 +852,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         if (!isDetached() && getView() != null) {
             switch (status) {
                 case PDFConverterManager.CONVERSION_OK:
-                    DialogUtils.dismissDialog((AppCompatActivity) getActivity(), TAG_WAITING_DIALOG);
+                    DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
                     mIntentData = Uri.fromFile(mPdfConverterManager.getDestFile());
                     // prevent conversion repeatedly on app reopen
                     intent.setAction(null);
@@ -864,11 +862,11 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     mPdfConverterManager = null;
                     break;
                 default:
-                    DialogUtils.dismissDialog((AppCompatActivity) getActivity(), TAG_WAITING_DIALOG);
+                    DialogUtils.dismissDialog(getActivity(), TAG_WAITING_DIALOG);
                     hasConversionError = true;
                     String message = getConversionErrorMessage(status);
                     String button = getResources().getString(R.string.ids_lbl_ok);
-                    DialogUtils.displayDialog((AppCompatActivity) getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
 
                     // If there are any initialization/ conversion errors, ensure that any data gets deleted as this is checked in MenuFragment (sidebar)
                     intent.setAction(null);
@@ -900,7 +898,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         } else {
             mWaitingDialog = WaitingDialogFragment.newInstance(null, message, true, getString(R.string.ids_lbl_cancel));
             mWaitingDialog.setTargetFragment(this, 1);
-            DialogUtils.displayDialog((AppCompatActivity) getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
+            DialogUtils.displayDialog(getActivity(), TAG_WAITING_DIALOG, mWaitingDialog);
         }
     }
 
@@ -993,7 +991,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
                     String btnMsg = getString(R.string.ids_lbl_ok);
                     InfoDialogFragment fragment = InfoDialogFragment.newInstance(titleMsg, strMsg, btnMsg);
-                    DialogUtils.displayDialog((AppCompatActivity) getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                    DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
                     mPauseableHandler.resume();
                     return;
                 }
@@ -1001,7 +999,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     MainActivity activity = (MainActivity) getActivity();
                     View v = (View) msg.obj;
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        FragmentManager fm = getParentFragmentManager();
+                        FragmentManager fm = getFragmentManager();
 
                         setIconState(v.getId(), true);
 
@@ -1063,7 +1061,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
                     String message = getResources().getString(R.string.ids_err_msg_write_external_storage_permission_not_granted);
                     String button = getResources().getString(R.string.ids_lbl_ok);
-                    DialogUtils.displayDialog((AppCompatActivity) getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 }
 
                 return;

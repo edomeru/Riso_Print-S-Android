@@ -45,8 +45,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 /**
  * @class PrintJobsGroupView
  * 
@@ -175,7 +173,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mPrintJobGroupLayout.findViewById(R.id.printJobGroupDelete).setSelected(false);
             // show dialog
             InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
-            DialogUtils.displayDialog((AppCompatActivity) getContext(), TAG, errordialog);
+            DialogUtils.displayDialog((Activity) getContext(), TAG, errordialog);
         }
     }
     
@@ -193,7 +191,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         } else {
             // show dialog
             InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
-            DialogUtils.displayDialog((AppCompatActivity) getContext(), TAG, errordialog);
+            DialogUtils.displayDialog((Activity) getContext(), TAG, errordialog);
         }
         // clears delete state
         mLayoutListener.onDeleteJob();

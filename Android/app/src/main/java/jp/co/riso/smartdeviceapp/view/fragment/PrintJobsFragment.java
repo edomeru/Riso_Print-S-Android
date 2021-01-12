@@ -29,8 +29,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import android.view.MotionEvent;
 import android.view.View;
@@ -175,7 +173,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         } else {
             mConfirmDialog = ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg);
             mConfirmDialog.setTargetFragment(this, 0);
-            DialogUtils.displayDialog((AppCompatActivity) getActivity(), TAG, mConfirmDialog);
+            DialogUtils.displayDialog(getActivity(), TAG, mConfirmDialog);
             return true;
         }
     }

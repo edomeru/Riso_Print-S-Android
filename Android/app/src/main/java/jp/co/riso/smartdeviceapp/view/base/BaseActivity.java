@@ -19,8 +19,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartprint.R;
@@ -30,7 +28,7 @@ import jp.co.riso.smartprint.R;
  * 
  * @brief Base activity class
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends Activity {
 
     private int systemUIFlags;      // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
 

@@ -21,13 +21,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import jp.co.riso.android.dialog.ConfirmDialogFragment;
@@ -164,7 +167,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             if (contentType == null || Arrays.asList(AppConstants.DOC_TYPES).indexOf(contentType) == -1) {
                 String message = getResources().getString(R.string.ids_err_msg_open_failed);
                 String button = getResources().getString(R.string.ids_lbl_ok);
-                DialogUtils.displayDialog((AppCompatActivity)getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
             } else {
                 int fileType = contentType.equals(AppConstants.DOC_TYPES[0]) ? PDF_FROM_PICKER : TEXT_FROM_PICKER;
                 openFile(data.getData(), null, fileType);
@@ -174,7 +177,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 if (!ImageUtils.isImageFileSupported(getActivity(), data.getClipData())) {
                     String message = getResources().getString(R.string.ids_err_msg_invalid_file_selection);
                     String button = getResources().getString(R.string.ids_lbl_ok);
-                    DialogUtils.displayDialog((AppCompatActivity)getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 } else {
                     openFile(null, data.getClipData(), IMAGES_FROM_PICKER);
                 }
@@ -182,7 +185,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 if (!ImageUtils.isImageFileSupported(getActivity(), data.getData())) {
                     String message = getResources().getString(R.string.ids_err_msg_invalid_file_selection);
                     String button = getResources().getString(R.string.ids_lbl_ok);
-                    DialogUtils.displayDialog((AppCompatActivity)getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 } else {
                     openFile(data.getData(), null, IMAGE_FROM_PICKER);
                 }
@@ -219,7 +222,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
                         mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
                         mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
-                        DialogUtils.displayDialog((AppCompatActivity)getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
+                        DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                     }
                 } else {
                     requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
@@ -235,7 +238,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
                         mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
                         mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
-                        DialogUtils.displayDialog((AppCompatActivity)getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
+                        DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                     }
                 } else {
                     requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_STORAGE_PERMISSION);
@@ -282,7 +285,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 if(!checkPermission && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
                     String message = getResources().getString(R.string.ids_err_msg_write_external_storage_permission_not_granted);
                     String button = getResources().getString(R.string.ids_lbl_ok);
-                    DialogUtils.displayDialog((AppCompatActivity)getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 }
                 break;
             case REQUEST_CAMERA_STORAGE_PERMISSION:
@@ -298,7 +301,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))){
                     String message = getResources().getString(R.string.ids_err_msg_camera_permission_not_granted);
                     String button = getResources().getString(R.string.ids_lbl_ok);
-                    DialogUtils.displayDialog((AppCompatActivity)getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 }
                 break;
         }

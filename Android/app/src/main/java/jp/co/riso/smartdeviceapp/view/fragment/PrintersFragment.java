@@ -9,11 +9,9 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.app.Activity;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Looper;
@@ -302,7 +300,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      * @param tag Fragment tag
      */
     private void switchToFragment(BaseFragment fragment, String tag) {
-        FragmentManager fm = getParentFragmentManager();
+        FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         
         if (isTablet()) {
@@ -332,7 +330,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             String errMsg = null;
             errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
             InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
-            DialogUtils.displayDialog((AppCompatActivity) getActivity(), KEY_PRINTER_ERR_DIALOG, info);
+            DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
             return true;
         }
         return false;
@@ -404,7 +402,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         String errMsg = getResources().getString(R.string.ids_err_msg_db_failure);
 
         DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
-        DialogUtils.displayDialog((AppCompatActivity) getActivity(), KEY_PRINTER_ERR_DIALOG, info);
+        DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
     }
     
     // ================================================================================
@@ -486,7 +484,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
         mDeletePrinter = printer;
-        DialogUtils.displayDialog((AppCompatActivity) getActivity(), KEY_PRINTERS_DIALOG, info);
+        DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
     }
     
     @Override
