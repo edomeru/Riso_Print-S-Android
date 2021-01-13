@@ -39,3 +39,13 @@
 -keep public class jp.co.riso.smartdeviceapp.common.** {
     public protected private *;
 }
+
+# RM769 Fix: to keep string and drawable resources in release APK -- start
+-keep public class jp.co.riso.smartprint.R$string {
+    public static final int *;
+}
+
+-keep public class jp.co.riso.smartprint.R$drawable {
+    public static final int *;
+}
+# RM769 Fix -- end
