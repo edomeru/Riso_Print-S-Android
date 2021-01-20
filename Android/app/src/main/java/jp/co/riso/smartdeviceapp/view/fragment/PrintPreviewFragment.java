@@ -1032,6 +1032,14 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         if (activity.isDrawerOpen(Gravity.RIGHT)) {
                             activity.closeDrawers();
                         }
+
+                        // Q&A188#1/RM775/RM786 Fix: Clear PDF before transition to Home Screen -- start
+                        Intent intent = getActivity().getIntent();
+                        intent.setAction(null);
+                        intent.setClipData(null);
+                        intent.setData(null);
+						// Q&A188#1/RM775/RM786 Fix -- end
+
                         transitionToHomeScreen();
                     }
                 }
