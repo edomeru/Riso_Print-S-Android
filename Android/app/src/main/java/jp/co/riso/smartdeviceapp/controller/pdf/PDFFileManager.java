@@ -30,6 +30,9 @@ import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
+import android.system.ErrnoException;
+import static android.system.OsConstants.ENOSPC;
+
 /**
  * @class PDFFileManager
  * 
@@ -692,6 +695,13 @@ public class PDFFileManager {
                     FileUtils.copy(contentInputStream, destFile);
                 } catch (IOException e) {
                     e.printStackTrace();
+
+                    // RM 784 Fix: Flag "No space left in device" exception -- start
+                    int errNo = ((ErrnoException)e.getCause()).errno;
+                    if (errNo == ENOSPC) {
+                        return PDF_NOT_ENOUGH_FREE_SPACE;
+                    }
+                    // RM 784 Fix -- end
                 }
             }
             
