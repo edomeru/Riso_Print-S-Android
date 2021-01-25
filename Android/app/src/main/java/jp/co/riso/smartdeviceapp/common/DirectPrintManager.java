@@ -11,7 +11,6 @@ package jp.co.riso.smartdeviceapp.common;
 import java.lang.ref.WeakReference;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
@@ -263,7 +262,7 @@ public class DirectPrintManager {
      * 
      * @brief Async Task for Canceling Direct Print
      */
-    public class DirectPrintCancelTask extends AsyncTask<Void, Void, Void> {
+    public class DirectPrintCancelTask extends BaseTask<Void, Void> {
         private DirectPrintManager mManager;
         
         /**

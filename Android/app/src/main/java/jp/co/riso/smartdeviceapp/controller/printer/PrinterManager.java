@@ -12,7 +12,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -28,6 +27,7 @@ import java.util.TimerTask;
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
@@ -508,7 +508,7 @@ public class PrinterManager implements SNMPManagerCallback {
         if(ipAddress == null) {
             return;
         }
-        new UpdateOnlineStatusTask(view, ipAddress).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new UpdateOnlineStatusTask(view, ipAddress).execute();
     }
     
     /**
@@ -882,7 +882,7 @@ public class PrinterManager implements SNMPManagerCallback {
      *
      * AsyncTask that updates changes the online status image.
      */
-    class UpdateOnlineStatusTask extends AsyncTask<Object, View, Boolean> {
+    class UpdateOnlineStatusTask extends BaseTask<Object, Boolean> {
         private WeakReference<View> mViewRef = null;
         private String mIpAddress = null;
         

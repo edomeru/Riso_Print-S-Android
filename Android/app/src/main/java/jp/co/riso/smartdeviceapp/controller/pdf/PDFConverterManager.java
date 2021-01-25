@@ -37,6 +37,7 @@ import java.lang.ref.WeakReference;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 import jp.co.riso.smartdeviceapp.model.Pagination;
 import jp.co.riso.smartprint.R;
 
@@ -585,7 +586,7 @@ public class PDFConverterManager {
      * @brief Background task which converts files to PDF.
      * The PDF is saved to the sandbox.
      */
-    private class PDFConversionTask extends AsyncTask<String, Void, Integer> {
+    private class PDFConversionTask extends BaseTask<String, Integer> {
 
         @Override
         protected Integer doInBackground(String... params) {

@@ -19,7 +19,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
@@ -41,6 +40,7 @@ import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.BookletLayout;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ColorMode;
@@ -1156,7 +1156,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * 
      * @brief Background task which performs rendering of PDF pages.
      */
-    private class PDFRenderTask extends AsyncTask<Void, Void, Void> {
+    private class PDFRenderTask extends BaseTask<Void, Void> {
         private WeakReference<CurlPage> mCurlPageRef;
         private WeakReference<Object> mHandlerRef;
         private int mWidth;

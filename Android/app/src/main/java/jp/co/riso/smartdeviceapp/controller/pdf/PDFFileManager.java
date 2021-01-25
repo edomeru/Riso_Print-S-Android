@@ -13,7 +13,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 import com.radaee.pdf.Document;
@@ -29,6 +28,7 @@ import java.lang.ref.WeakReference;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 
 import android.system.ErrnoException;
 import static android.system.OsConstants.ENOSPC;
@@ -681,7 +681,7 @@ public class PDFFileManager {
      * @brief Background task which initialized the PDF.
      * The PDF is copied to the sandbox.
      */
-    private class PDFInitTask extends AsyncTask<String, Void, Integer> {
+    private class PDFInitTask extends BaseTask<String, Integer> {
         
         String sandboxPath = PDFFileManager.getSandboxPath();
         String inputFile = null;
