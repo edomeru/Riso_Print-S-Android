@@ -19,18 +19,16 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StatFs;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 import jp.co.riso.android.dialog.ConfirmDialogFragment;
@@ -39,6 +37,7 @@ import jp.co.riso.android.dialog.InfoDialogFragment;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartprint.R;
@@ -137,9 +136,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
                     // prevent double tap
                     lastClickTime = SystemClock.elapsedRealtime();
-                    Intent intent = new Intent(getActivity(), ScanActivity.class);
-                    intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, ScanConstants.OPEN_CAMERA);
-                    startActivityForResult(intent, REQUEST_CAMERA);
+
+                    // RM 789 Fix: Add checking of available internal storage before opening External Camera Application
+                    if (getAvailableStorageInBytes() > AppConstants.CONST_FREE_SPACE_BUFFER) {
+                        Intent intent = new Intent(getActivity(), ScanActivity.class);
+                        intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, ScanConstants.OPEN_CAMERA);
+                        startActivityForResult(intent, REQUEST_CAMERA);
+                    } else {
+                        // RM 789 Fix - Start
+                        // Display Error Message if internal storage is less than Free Space Buffer
+                        String message = getResources().getString(R.string.ids_err_msg_not_enough_space);
+                        String button = getResources().getString(R.string.ids_lbl_ok);
+                        DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                        // RM 789 Fix - End
+                    }
                 }
                 break;
         }
@@ -322,5 +332,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public void onCancel() {
         mConfirmDialogFragment = null;
     }
+
+    // RM 789 Fix - Start
+    /**
+     * @brief Gets Available Internal Storage Size
+     *
+     * @return Remaining Internal Storage Size (in Bytes)
+     */
+    private long getAvailableStorageInBytes() {
+        long bytesAvailable;
+        StatFs stat = new StatFs(SmartDeviceApp.getAppContext().getFilesDir().getPath());
+        bytesAvailable = stat.getBlockSizeLong() * stat.getAvailableBlocksLong();
+        Log.d("RISO Print-S", "bytesAvailable:" + bytesAvailable);
+        return bytesAvailable;
+    }
+    // RM 789 Fix - End
 }
 
