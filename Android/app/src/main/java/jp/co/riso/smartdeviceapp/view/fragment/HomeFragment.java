@@ -340,10 +340,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
      * @return Remaining Internal Storage Size (in Bytes)
      */
     private long getAvailableStorageInBytes() {
-        long bytesAvailable;
         StatFs stat = new StatFs(SmartDeviceApp.getAppContext().getFilesDir().getPath());
-        bytesAvailable = stat.getBlockSizeLong() * stat.getAvailableBlocksLong();
-        Log.d("RISO Print-S", "bytesAvailable:" + bytesAvailable);
+        long bytesAvailable = stat.getBlockSizeLong() * stat.getAvailableBlocksLong();
+        Log.d(HomeFragment.class.getSimpleName(), "bytesAvailable:" + bytesAvailable);
         return bytesAvailable;
     }
     // RM 789 Fix - End
