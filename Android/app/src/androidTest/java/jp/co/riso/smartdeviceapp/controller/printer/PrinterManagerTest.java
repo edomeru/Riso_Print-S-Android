@@ -4,7 +4,6 @@ package jp.co.riso.smartdeviceapp.controller.printer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ImageView;
@@ -990,7 +989,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testUpdateOnlineStatusTask_EmptyIpAddress() {
 
         mPrinterManager.new UpdateOnlineStatusTask(null, "")
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                .execute();
         
         try {
             // Wait and Check if Address is OFFLINE
@@ -1006,7 +1005,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testUpdateOnlineStatusTask_ValidOfflineParameters() {
 
         mPrinterManager.new UpdateOnlineStatusTask(mImageView, IPV4_OFFLINE_PRINTER_ADDRESS)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                .execute();
         try {
             // Wait and Check if Address is OFFLINE
             getInstrumentation().waitForIdleSync();
@@ -1020,7 +1019,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testUpdateOnlineStatusTask_ValidIpv4OnlineParameters() {
 
         mPrinterManager.new UpdateOnlineStatusTask(mImageView, IPV4_ONLINE_PRINTER_ADDRESS)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                .execute();
         try {
             // Wait and Check if Address is ONLINE
             getInstrumentation().waitForIdleSync();
@@ -1040,7 +1039,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
         assertNotNull(ipv6Addr);
         mPrinterManager.new UpdateOnlineStatusTask(mImageView, ipv6Addr)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                .execute();
         try {
             // Wait and Check if Address is ONLINE
             getInstrumentation().waitForIdleSync();
