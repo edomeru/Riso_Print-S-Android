@@ -29,7 +29,7 @@
     <dimen name="printsettings_icon_width">20dp</dimen>
     <dimen name="printsettings_print_width">32dp</dimen>
     
-    <dimen name="printsettings_list_value_width">180dp</dimen>
+    <dimen name="printsettings_list_value_width">185dp</dimen>
     <dimen name="printsettings_separator_padding">40dp</dimen>
     <dimen name="printsettings_input_width">80dp</dimen>
     <dimen name="printsettings_input_pincode_width">120dp</dimen>
