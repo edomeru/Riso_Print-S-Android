@@ -43,7 +43,7 @@
     
     <fraction name="drawer_width_percentage">85%</fraction>
     <dimen name="drawer_width_min">240dp</dimen>
-    <dimen name="drawer_width_max">320dp</dimen>
+    <dimen name="drawer_width_max">330dp</dimen>
     <dimen name="drawer_margin">1dp</dimen>
     
     <fraction name="preview_view_drop_shadow_percentage">2%</fraction>
