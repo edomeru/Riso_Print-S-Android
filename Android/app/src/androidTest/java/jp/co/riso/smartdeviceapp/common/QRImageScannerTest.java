@@ -75,6 +75,7 @@ public class QRImageScannerTest extends ActivityInstrumentationTestCase2<MainAct
         QRImageScanner.QRImageScanResultCallback callback = new MockCallback();
         boolean result = QRImageScanner.capture(activity, previewView, callback);
         waitUntilTimeout(5);
+        QRImageScanner.stop(activity);
         assertTrue(result);
     }
 
@@ -84,7 +85,30 @@ public class QRImageScannerTest extends ActivityInstrumentationTestCase2<MainAct
         QRImageScanner.QRImageScanResultCallback callback = new MockCallback();
         boolean result = QRImageScanner.capture(activity, previewView, callback);
         waitUntilTimeout(5);
+        QRImageScanner.stop(activity);
         assertTrue(result);
+    }
+
+    // ================================================================================
+    // Tests - close
+    // ================================================================================
+    public void testClose_CameraCaptureStarted() {
+        FragmentActivity activity = getActivity();
+        PreviewView previewView = new PreviewView(activity);
+        QRImageScanner.QRImageScanResultCallback callback = new MockCallback();
+        boolean result = QRImageScanner.capture(activity, previewView, callback);
+        waitUntilTimeout(5);
+        QRImageScanner.stop(activity);
+        assertTrue(result);
+        waitUntilTimeout(5);
+        assertNull(QRImageScanner.sCameraProviderFuture);
+        assertNull(QRImageScanner.sCameraProvider);
+    }
+
+    public void testClose_NoCameraCapture() {
+        QRImageScanner.stop(getActivity());
+        assertNull(QRImageScanner.sCameraProviderFuture);
+        assertNull(QRImageScanner.sCameraProvider);
     }
 
     // ================================================================================

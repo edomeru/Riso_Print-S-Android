@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import jp.co.riso.android.dialog.ConfirmDialogFragment;
@@ -33,6 +34,7 @@ public class QRScanFragment extends BaseFragment implements View.OnClickListener
     private static final int REQUEST_CAMERA = 1;
 
     private PreviewView mViewFinder;
+    private ProgressBar mProgressBar;
     private TextView mTextView;
     private PrinterManager mPrinterManager;
     private boolean mPermissionDenied = false;
@@ -60,8 +62,11 @@ public class QRScanFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mViewFinder = view.findViewById(R.id.viewFinder);
-        mTextView = view.findViewById(R.id.resultText);
+        mViewFinder = view.findViewById(R.id.qr_view_finder);
+        mProgressBar = view.findViewById(R.id.qr_progress_bar);
+        mTextView = view.findViewById(R.id.qr_result_text);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mTextView.setVisibility(View.INVISIBLE);
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
@@ -118,14 +123,18 @@ public class QRScanFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void onScanQRCode(String result) {
-        // Display the result
-        mTextView.setText(result);
-
         // If the previous QR code scan results are still being processed, ignore the new results.
         // The new results are likely a repeat of the previous / processing results
         if (mPrinterManager.isSearching() || mAdded || mError || (result == null)) {
             return;
         }
+
+        // Display the result
+        getActivity().runOnUiThread(() -> {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mTextView.setVisibility(View.VISIBLE);
+            mTextView.setText(result);
+        });
 
         // Confirm that the result is an IP address
         String ipAddress = JniUtils.validateIpAddress(result);
@@ -195,6 +204,7 @@ public class QRScanFragment extends BaseFragment implements View.OnClickListener
         FragmentManager fm = getFragmentManager();
         if (fm != null) {
             FragmentTransaction ft = fm.beginTransaction();
+            QRImageScanner.stop(getActivity());
 
             if (fm.getBackStackEntryCount() > 0) {
                 fm.popBackStack();
@@ -226,10 +236,14 @@ public class QRScanFragment extends BaseFragment implements View.OnClickListener
      * @brief Finish processing the QR code scan results
      */
     private void finishProcessing() {
+        // This method should already be running in the UI thread (from confirm dialog callback)
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mTextView.setVisibility(View.INVISIBLE);
+        mTextView.setText("");
+
         if (mAdded) {
             closeScreen();
         }
         mError = false;
-        mTextView.setText("");
     }
 }

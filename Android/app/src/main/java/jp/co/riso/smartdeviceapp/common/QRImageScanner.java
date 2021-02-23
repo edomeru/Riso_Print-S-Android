@@ -31,6 +31,9 @@ import java.util.concurrent.Executor;
 public class QRImageScanner implements ImageAnalysis.Analyzer {
     private static final String SCHEME = "://";
 
+    public static ListenableFuture<ProcessCameraProvider> sCameraProviderFuture = null;
+    public static ProcessCameraProvider sCameraProvider = null;
+
     /**
      * @interface QRImageScanner.QRImageScanResultCallback
      *
@@ -67,10 +70,10 @@ public class QRImageScanner implements ImageAnalysis.Analyzer {
         Executor mainExecutor = ContextCompat.getMainExecutor(context);
         QRImageScanner imageScanner = new QRImageScanner(callback);
 
-        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(context);
-        cameraProviderFuture.addListener(() -> {
+        sCameraProviderFuture = ProcessCameraProvider.getInstance(context);
+        sCameraProviderFuture.addListener(() -> {
             try {
-                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                sCameraProvider = sCameraProviderFuture.get();
 
                 LifecycleOwner owner = activity;
 
@@ -82,14 +85,33 @@ public class QRImageScanner implements ImageAnalysis.Analyzer {
                 ImageAnalysis imageAnalyzer = (new ImageAnalysis.Builder()).build();
                 imageAnalyzer.setAnalyzer(mainExecutor, imageScanner);
 
-                cameraProvider.unbindAll();
-                cameraProvider.bindToLifecycle(owner, cameraSelector, preview,  imageAnalyzer);
+                sCameraProvider.unbindAll();
+                sCameraProvider.bindToLifecycle(owner, cameraSelector, preview,  imageAnalyzer);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }, mainExecutor);
         return true;
+    }
+
+    /**
+     * @brief Stop camera capture for QR code scanning
+     * @param activity The lifecycle owner
+     */
+    public static void stop(FragmentActivity activity) {
+        if (sCameraProvider != null) {
+            Context context = activity.getApplicationContext();
+            Executor mainExecutor = ContextCompat.getMainExecutor(context);
+            mainExecutor.execute(() -> {
+                sCameraProvider.unbindAll();
+                sCameraProvider = null;
+            });
+        }
+        if (sCameraProviderFuture != null) {
+            sCameraProviderFuture.cancel(true);
+            sCameraProviderFuture = null;
+        }
     }
 
     // ================================================================================
@@ -120,12 +142,13 @@ public class QRImageScanner implements ImageAnalysis.Analyzer {
             for (Barcode barcode: barcodeList) {
                 if (mCallback != null) {
                     String rawValue = barcode.getRawValue();
+                    // No need to check if rawValue is null; barcodeList will be empty on invalid scan
                     // Remove any URL schema from the result
                     String[] temp = rawValue.split(SCHEME);
                     if (temp.length > 0) {
                         rawValue = temp[temp.length - 1];
                     }
-                    mCallback.onScanQRCode(rawValue);
+                    mCallback.onScanQRCode(rawValue.trim());
                 }
             }
         }).addOnFailureListener(e -> e.printStackTrace());
