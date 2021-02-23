@@ -1,6 +1,12 @@
-package jp.co.riso.smartdeviceapp.common;
+/*
+ * Copyright (c) 2021 RISO, Inc. All rights reserved.
+ *
+ * BaseTask.java
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
 
-import android.app.Activity;
+package jp.co.riso.smartdeviceapp.common;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -8,8 +14,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
 public abstract class BaseTask<T, R> {
     private static ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -28,37 +32,35 @@ public abstract class BaseTask<T, R> {
     }
 
     public void execute(final T... params) {
-        final Activity activity = SmartDeviceApp.getActivity();
-
         mFuture = new FutureTask<>(new Callable<Void>() {
             @Override
             public Void call() throws InterruptedException {
                 mLatch = new CountDownLatch(1);
-                activity.runOnUiThread(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         preExecute();
                     }
-                });
+                }).start();
                 mLatch.await();
 
                 mLatch = new CountDownLatch(1);
-                activity.runOnUiThread(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         R result = executeInBackground(params);
                         mResult.add(result);
                     }
-                });
+                }).start();
                 mLatch.await();
 
                 mLatch = null;
-                activity.runOnUiThread(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         onPostExecute(mResult.get(0));
                     }
-                });
+                }).start();
                 return null;
             }
         });

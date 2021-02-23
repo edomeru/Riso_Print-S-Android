@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.controller.printer;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -905,16 +906,22 @@ public class PrinterManager implements SNMPManagerCallback {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-            
-            if (mViewRef != null && mViewRef.get() != null) {
-                ImageView view = (ImageView) mViewRef.get();
-                if (result) {
-                    view.setImageResource(R.drawable.img_btn_printer_status_online);
-                } else {
-                    view.setImageResource(R.drawable.img_btn_printer_status_offline);
+
+            final boolean isOnline = result;
+            final Activity activity = SmartDeviceApp.getActivity();
+            activity.runOnUiThread((new Runnable() {
+                @Override
+                public void run() {
+                    if (mViewRef != null && mViewRef.get() != null) {
+                        ImageView view = (ImageView) mViewRef.get();
+                        if (isOnline) {
+                            view.setImageResource(R.drawable.img_btn_printer_status_online);
+                        } else {
+                            view.setImageResource(R.drawable.img_btn_printer_status_offline);
+                        }
+                    }
                 }
-            }
+            }));
         }
-        
     }
 }

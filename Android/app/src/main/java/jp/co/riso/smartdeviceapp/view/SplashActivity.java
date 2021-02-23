@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -341,7 +342,13 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                 if (mHandler.hasStoredMessage(MESSAGE_RUN_MAINACTIVITY)) {
                     mDatabaseInitialized = true;
                 } else {
-                    runMainActivity();
+                    final Activity activity = SmartDeviceApp.getActivity();
+                    activity.runOnUiThread((new Runnable() {
+                        @Override
+                        public void run() {
+                            runMainActivity();
+                        }
+                    }));
                 }
             }
         }
