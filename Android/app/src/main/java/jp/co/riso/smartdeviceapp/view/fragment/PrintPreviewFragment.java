@@ -11,8 +11,8 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -713,7 +713,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         MainActivity activity = (MainActivity) getActivity();
         MenuFragment menuFragment = activity.getMenuFragment();
         if (menuFragment == null) {
-            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             menuFragment = new MenuFragment();
             // When MenuFragment gets destroyed due to config change such as changing permissions
             // from Settings, the state gets reset to default as well.

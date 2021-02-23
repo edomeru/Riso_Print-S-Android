@@ -11,7 +11,7 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
+import androidx.fragment.app.FragmentActivity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -172,7 +172,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_FILE && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == REQUEST_FILE && resultCode == FragmentActivity.RESULT_OK && data != null) {
             String contentType = FileUtils.getMimeType(getActivity(), data.getData());
             if (contentType == null || Arrays.asList(AppConstants.DOC_TYPES).indexOf(contentType) == -1) {
                 String message = getResources().getString(R.string.ids_err_msg_open_failed);
@@ -182,7 +182,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 int fileType = contentType.equals(AppConstants.DOC_TYPES[0]) ? PDF_FROM_PICKER : TEXT_FROM_PICKER;
                 openFile(data.getData(), null, fileType);
             }
-        }  else if (requestCode == REQUEST_PHOTO && resultCode == Activity.RESULT_OK && data != null) {
+        }  else if (requestCode == REQUEST_PHOTO && resultCode == FragmentActivity.RESULT_OK && data != null) {
             if (data.getClipData() != null) { // multiple image files
                 if (!ImageUtils.isImageFileSupported(getActivity(), data.getClipData())) {
                     String message = getResources().getString(R.string.ids_err_msg_invalid_file_selection);
@@ -200,7 +200,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     openFile(data.getData(), null, IMAGE_FROM_PICKER);
                 }
             }
-        } else if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQUEST_CAMERA && resultCode == FragmentActivity.RESULT_OK) {
             Uri imageUri = data.getExtras().getParcelable(ScanConstants.SCANNED_RESULT);
             Intent previewIntent = new Intent(getActivity(), PDFHandlerActivity.class);
             previewIntent.setAction(Intent.ACTION_VIEW);

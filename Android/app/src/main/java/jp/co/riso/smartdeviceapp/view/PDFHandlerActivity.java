@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
-import android.app.Activity;
+import androidx.fragment.app.FragmentActivity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
@@ -18,7 +18,7 @@ import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 
-public class PDFHandlerActivity extends Activity {
+public class PDFHandlerActivity extends FragmentActivity {
 
     public static final String FILE_SCHEME = "file";
     public static final String CONTENT_SCHEME = "content";

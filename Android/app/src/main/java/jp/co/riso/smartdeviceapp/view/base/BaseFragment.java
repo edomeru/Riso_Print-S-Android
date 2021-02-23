@@ -13,7 +13,7 @@ import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.ActionBar.LayoutParams;
-import android.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,6 +29,7 @@ import android.widget.ImageView;
  * @brief Base fragment class
  */
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
+    private static final String CHROME_BOOK = "org.chromium.arc.device_management";
     private static final String KEY_ICON_STATE = "icon_state";
     private static final String KEY_ICON_ID = "icon_id";
     private static final String KEY_SELECTED_MENU_ITEM = "selected_menu_item";
@@ -218,6 +219,20 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         return getResources().getBoolean(R.bool.is_tablet_land);
     }
     
+    /**
+     * @brief Checks whether the device is a Chrome Book.
+     *
+     * @retval true Device is a chrome book
+     * @retval false Device is a tablet or phone
+     */
+    public boolean isChromeBook() {
+        if (getActivity() == null) {
+            return false;
+        }
+
+       return  getActivity().getPackageManager().hasSystemFeature(CHROME_BOOK);
+    }
+
     /**
      * @brief Adds an action menu button which by defaults draws the left drawer.
      * 

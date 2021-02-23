@@ -5,8 +5,8 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartprint.R;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import android.content.DialogInterface;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
@@ -45,10 +45,10 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
     public void testNewInstance_WithNull() {
         InfoDialogFragment info = InfoDialogFragment.newInstance(null, null);
         assertNotNull(info);
-        info.show(mActivity.getFragmentManager(), TAG);
+        info.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
 
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -63,10 +63,10 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
         InfoDialogFragment info = InfoDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
                 SmartDeviceApp.getAppContext().getResources().getString((BUTTON_TITLE)));
         assertNotNull(info);
-        info.show(mActivity.getFragmentManager(), TAG);
+        info.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
 
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -92,10 +92,10 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
                 SmartDeviceApp.getAppContext().getResources().getString(MSG),
                 SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE));
         assertNotNull(info);
-        info.show(mActivity.getFragmentManager(), TAG);
+        info.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
 
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 

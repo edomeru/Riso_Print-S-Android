@@ -19,7 +19,7 @@ import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsLayoutListener;
 import jp.co.riso.smartprint.R;
-import android.app.Activity;
+import androidx.fragment.app.FragmentActivity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -469,7 +469,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         super.onLayout(changed, l, t, r, b);
         
         if (mInitialFlag) {
-            Point screenSize = AppUtils.getScreenDimensions((Activity) getContext());
+            Point screenSize = AppUtils.getScreenDimensions((FragmentActivity) getContext());
             createColumns(screenSize.x);
             mInitialFlag = false;
         }

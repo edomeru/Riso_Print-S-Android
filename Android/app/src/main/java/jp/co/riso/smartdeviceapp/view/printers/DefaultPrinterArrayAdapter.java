@@ -1,7 +1,7 @@
 package jp.co.riso.smartdeviceapp.view.printers;
 
 import jp.co.riso.smartprint.R;
-import android.app.Activity;
+import androidx.fragment.app.FragmentActivity;
 import android.content.Context;
 import androidx.core.content.ContextCompat;
 import android.view.View;
@@ -16,7 +16,7 @@ import android.widget.TextView;
  */
 public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
 
-    private Activity activity;
+    private FragmentActivity activity;
     
     public boolean isNoDisabled;
     
@@ -28,7 +28,7 @@ public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
      */
     public DefaultPrinterArrayAdapter(Context context, int resource) {
         super(context, resource);
-        this.activity = (Activity)context;
+        this.activity = (FragmentActivity)context;
         this.isNoDisabled = false;
     }
 

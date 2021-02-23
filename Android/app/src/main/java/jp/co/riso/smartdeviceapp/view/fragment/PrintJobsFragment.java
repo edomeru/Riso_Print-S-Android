@@ -25,7 +25,7 @@ import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener;
 import jp.co.riso.smartprint.R;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import androidx.fragment.app.FragmentActivity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -287,7 +287,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
                     pm.setRefreshFlag(false);
                 }
                 
-                ((Activity) mContextRef.get()).runOnUiThread(new Runnable() {
+                ((FragmentActivity) mContextRef.get()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (mPrintJobsList.isEmpty()) {

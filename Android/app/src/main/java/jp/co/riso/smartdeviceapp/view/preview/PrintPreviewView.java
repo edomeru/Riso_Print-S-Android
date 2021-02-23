@@ -9,7 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.preview;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import androidx.fragment.app.FragmentActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -994,7 +994,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         final long currentTime = System.currentTimeMillis();
         final float initialZoom = mZoomLevel;
         final float targetZoom = zoomLevel;
-        final Activity targetActivity = (Activity) getContext();
+        final FragmentActivity targetActivity = (FragmentActivity) getContext();
 
         Thread thread = new Thread(new Runnable() {
             
