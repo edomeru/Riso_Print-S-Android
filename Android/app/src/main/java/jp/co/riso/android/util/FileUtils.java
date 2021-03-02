@@ -126,7 +126,10 @@ public class FileUtils {
                     // PrintPreviewFragment will repeat conversion using the same Intent data, but this time the permission is not granted anymore
                     cursor = context.getContentResolver().query(uri, null, null, null, null);
                     if (cursor != null && cursor.moveToFirst()) {
-                        result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                        int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                        if (index >= 0) {
+                            result = cursor.getString(index);
+                        }
                     }
                 } catch (SecurityException e) {
                     throw new SecurityException();
