@@ -145,9 +145,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         textView.setText(R.string.ids_lbl_printers);
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_add_button, R.drawable.selector_actionbar_add_printer, this);
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_search_button, R.drawable.selector_actionbar_printersearch, this);
-        if (!isChromeBook()) {
-            addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_printer_search_settings_button, R.drawable.selector_actionbar_printersearchsettings, this);
-        }
+        addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_printer_search_settings_button, R.drawable.selector_actionbar_printersearchsettings, this);
         addActionMenuButton(view);
     }
     
