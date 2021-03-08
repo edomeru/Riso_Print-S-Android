@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
-import androidx.fragment.app.FragmentActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -149,8 +149,8 @@ public final class AppUtils {
      * 
      * @param activity Valid activity
      */
-    public static void hideSoftKeyboard(FragmentActivity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(FragmentActivity.INPUT_METHOD_SERVICE);
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (activity.getCurrentFocus() != null) {
             imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -167,7 +167,7 @@ public final class AppUtils {
      * 
      * @return Screen dimensions
      */
-    public static Point getScreenDimensions(FragmentActivity activity) {
+    public static Point getScreenDimensions(Activity activity) {
         if (activity == null) {
             return null;
         }

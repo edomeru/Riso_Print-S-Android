@@ -8,7 +8,7 @@
 
 package jp.co.riso.android.util;
 
-import androidx.fragment.app.FragmentActivity;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
@@ -27,7 +27,7 @@ public class MemoryUtils {
      * 
      * @return Cache size
      */
-    public static int getCacheSizeBasedOnMemoryClass(FragmentActivity activity) {
+    public static int getCacheSizeBasedOnMemoryClass(Activity activity) {
         if (activity == null) {
             return 0;
         }

@@ -8,9 +8,9 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Looper;

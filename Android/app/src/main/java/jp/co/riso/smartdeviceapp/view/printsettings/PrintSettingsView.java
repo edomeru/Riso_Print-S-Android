@@ -8,7 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.printsettings;
 
-import androidx.fragment.app.FragmentActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -189,7 +189,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         
-        AppUtils.hideSoftKeyboard((FragmentActivity) getContext());
+        AppUtils.hideSoftKeyboard((Activity) getContext());
         return super.onInterceptTouchEvent(ev);
         
     }

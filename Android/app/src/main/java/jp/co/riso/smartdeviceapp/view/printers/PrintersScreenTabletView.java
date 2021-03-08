@@ -24,7 +24,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment;
-import androidx.fragment.app.FragmentActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -157,7 +157,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         final int childCount = getChildCount();
         
-        Point screenSize = AppUtils.getScreenDimensions((FragmentActivity) getContext());
+        Point screenSize = AppUtils.getScreenDimensions((Activity) getContext());
         
         int numberOfColumn = Math.max(screenSize.x / mWidth, MIN_COLUMN);
         int margin = (screenSize.x - mWidth * numberOfColumn) / 2;
@@ -620,7 +620,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
                             } else {
                                 InfoDialogFragment info = InfoDialogFragment.newInstance(getContext().getString(R.string.ids_lbl_printers),
                                         getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
-                                DialogUtils.displayDialog((FragmentActivity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
+                                DialogUtils.displayDialog((Activity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
                             }
                         }
                         break;

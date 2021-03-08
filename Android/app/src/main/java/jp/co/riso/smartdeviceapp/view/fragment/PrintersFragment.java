@@ -8,10 +8,10 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Looper;
@@ -56,7 +56,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public static final String FRAGMENT_TAG_ADD_PRINTER = "fragment_add_printer";
     public static final String FRAGMENT_TAG_PRINTER_SEARCH_SETTINGS = "fragment_tag_printer_search_settings";
     public final static String FRAGMENT_TAG_PRINTER_INFO = "fragment_printer_info";
-    public static final String FRAGMENT_TAG_QR_SCANNER = "fragment_q_r_scan";
     public static final String KEY_PRINTER_ERR_DIALOG = "printer_err_dialog";
     public static final int MSG_ADD_NEW_PRINTER = 0x1;
     public static final int MSG_SUBMENU_BUTTON = 0x2;
@@ -144,7 +143,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printers);
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_add_button, R.drawable.selector_actionbar_add_printer, this);
-        addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_search_button, R.drawable.selector_actionbar_printersearch, this);
+		if (!isChromeBook()) {
+            addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_search_button, R.drawable.selector_actionbar_printersearch, this);
+		}
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_printer_search_settings_button, R.drawable.selector_actionbar_printersearchsettings, this);
         addActionMenuButton(view);
     }
@@ -248,22 +249,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     }
     
     /**
-     * @brief Displays the QR Scan Screen.
-     */
-    private void displayQRScanFragment() {
-        if (isMaxPrinterCountReached()) {
-            mPauseableHandler.resume();
-            return;
-        }
-        if (isTablet()) {
-            setIconState(R.id.menu_id_action_search_button, true);
-        }
-
-        QRScanFragment fragment = new QRScanFragment();
-        slideOverFragment(getFragmentManager().beginTransaction(), fragment, FRAGMENT_TAG_QR_SCANNER);
-    }
-
-    /**
      * @brief Displays the Add Printer Screen.
      */
     private void displayAddPrinterFragment() {
@@ -328,24 +313,13 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 activity.openDrawer(Gravity.RIGHT);
             }
         } else {
-            slideOverFragment(ft, fragment, tag);
+            ft.setCustomAnimations(R.animator.left_slide_in, R.animator.left_slide_out, R.animator.right_slide_in, R.animator.right_slide_out);
+            ft.addToBackStack(null);
+            ft.replace(R.id.mainLayout, fragment, tag);
+            ft.commit();
         }
     }
-
-    /**
-     * @brief Switch to a fragment by sliding over
-     *
-     * @param ft Fragment transactions
-     * @param fragment Fragment object
-     * @param tag Fragment tag
-     */
-    private void slideOverFragment(FragmentTransaction ft, BaseFragment fragment, String tag) {
-        ft.setCustomAnimations(R.animator.left_slide_in, R.animator.left_slide_out, R.animator.right_slide_in, R.animator.right_slide_out);
-        ft.addToBackStack(null);
-        ft.replace(R.id.mainLayout, fragment, tag);
-        ft.commit();
-    }
-
+    
     /**
      * @brief Determines if the maximum number of saved printers is reached.
      * 
@@ -512,7 +486,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
         mDeletePrinter = printer;
-        DialogUtils.displayDialog(getActivity(), KEY_PRINTERS_DIALOG, info);
+        DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
     }
     
     @Override
@@ -609,11 +583,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 break;
             case R.id.menu_id_action_search_button:
                 mPauseableHandler.pause();
-                if (isChromeBook()) {
-                    displayQRScanFragment();
-                } else {
-                    displayPrinterSearchFragment();
-                }
+                displayPrinterSearchFragment();
                 return;
             case R.id.menu_id_action_add_button:
                 mPauseableHandler.pause();

@@ -9,8 +9,8 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
 import android.app.AlertDialog;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

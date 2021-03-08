@@ -22,7 +22,7 @@ import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartprint.R;
 
 import android.annotation.SuppressLint;
-import androidx.fragment.app.FragmentActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -173,7 +173,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mPrintJobGroupLayout.findViewById(R.id.printJobGroupDelete).setSelected(false);
             // show dialog
             InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
-            DialogUtils.displayDialog((FragmentActivity) getContext(), TAG, errordialog);
+            DialogUtils.displayDialog((Activity) getContext(), TAG, errordialog);
         }
     }
     
@@ -190,8 +190,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             animateDeleteJob(mJobsLayout.findViewWithTag(job));
         } else {
             // show dialog
-            InfoDialogFragment errorDialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
-            DialogUtils.displayDialog((FragmentActivity) getContext(), TAG, errorDialog);
+            InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
+            DialogUtils.displayDialog((Activity) getContext(), TAG, errordialog);
         }
         // clears delete state
         mLayoutListener.onDeleteJob();
@@ -268,7 +268,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      * @return Computed animation duration 
      */    
     public int getAnimationDuration(int originalHeight) {
-        int newHeight = Math.min(originalHeight, AppUtils.getScreenDimensions((FragmentActivity) getContext()).y);
+        int newHeight = Math.min(originalHeight, AppUtils.getScreenDimensions((Activity) getContext()).y);
         return (int) (newHeight * DURATION_MULTIPLIER);
     }
     
@@ -284,7 +284,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mRowHeight = getResources().getDimensionPixelSize(R.dimen.printjob_row_height);
             mSeparatorHeight = getResources().getDimensionPixelSize(R.dimen.separator_size);
 
-            ((FragmentActivity) getContext()).runOnUiThread(new Runnable() {
+            ((Activity) getContext()).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mHandler = new Handler(Looper.myLooper(),PrintJobsGroupView.this);

@@ -5,8 +5,8 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartprint.R;
 
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.WindowManager;
 
@@ -43,7 +43,7 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
                 SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE));
         DialogUtils.displayDialog(getActivity(), TAG, d);
         waitFewSeconds();
-        Fragment dialog = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
+        Fragment dialog = getActivity().getFragmentManager().findFragmentByTag(TAG);
         assertTrue(dialog instanceof DialogFragment);
         assertTrue(((DialogFragment) dialog).getShowsDialog());
         assertTrue(((DialogFragment) dialog).getDialog().isShowing());
@@ -54,7 +54,7 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
                 SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE));
         DialogUtils.displayDialog(getActivity(), TAG, d);
         waitFewSeconds();
-        Fragment dialog = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
+        Fragment dialog = getActivity().getFragmentManager().findFragmentByTag(TAG);
         assertTrue(dialog instanceof DialogFragment);
         assertTrue(((DialogFragment) dialog).getShowsDialog());
         assertTrue(((DialogFragment) dialog).getDialog().isShowing());
@@ -63,7 +63,7 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
         waitFewSeconds();
         assertNull(((DialogFragment) dialog).getDialog());
 
-        dialog = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
+        dialog = getActivity().getFragmentManager().findFragmentByTag(TAG);
 
         assertNull(dialog);
     }

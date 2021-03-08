@@ -10,9 +10,9 @@ package jp.co.riso.smartdeviceapp.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -118,7 +118,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         // Begin Fragments
         if (savedInstanceState == null) {
-            FragmentManager fm = getSupportFragmentManager();
+            FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
 
             if (getIntent() != null && (getIntent().getData() != null || getIntent().getClipData() != null)) {
@@ -216,7 +216,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         mDrawerToggle.onConfigurationChanged(newConfig);
         
-        BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.mainLayout);
+        BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
         if (!mDrawerLayout.isDrawerOpen(Gravity.RIGHT) && !mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
             fragment.clearIconStates();
         }
@@ -294,7 +294,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     @SuppressLint("RtlHardcoded")
     @Override
     public void processMessage(Message msg) {
-        BaseFragment fragment = ((BaseFragment) getSupportFragmentManager().findFragmentById(R.id.mainLayout));
+        BaseFragment fragment = ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout));
         boolean gravityLeft = (msg.arg1 == Gravity.LEFT);
         
         switch (msg.what){
@@ -339,7 +339,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
          * @param openDrawerContentDescRes Drawer content description resource
          * @param closeDrawerContentDescRes Drawer content description resource
          */
-        public SDAActionBarDrawerToggle(FragmentActivity activity, DrawerLayout drawerLayout, int openDrawerContentDescRes,
+        public SDAActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, int openDrawerContentDescRes,
                 int closeDrawerContentDescRes) {
             super(activity, drawerLayout, openDrawerContentDescRes, closeDrawerContentDescRes);
 
@@ -402,13 +402,13 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             super.onDrawerClosed(view);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 
-            BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.mainLayout);
+            BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
             fragment.clearIconStates();
             if (mDrawerLayout.findViewById(R.id.rightLayout) == view) {
-                BaseFragment rightFragment = ((BaseFragment) getSupportFragmentManager().findFragmentById(R.id.rightLayout));
+                BaseFragment rightFragment = ((BaseFragment) getFragmentManager().findFragmentById(R.id.rightLayout));
                 rightFragment.onRightFragmentDrawerClosed();
             }
-            getSupportFragmentManager().findFragmentById(R.id.mainLayout).onResume();
+            getFragmentManager().findFragmentById(R.id.mainLayout).onResume();
             
         }
         
@@ -418,10 +418,10 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             
             if (mDrawerLayout.findViewById(R.id.rightLayout) == drawerView) {
-                getSupportFragmentManager().findFragmentById(R.id.rightLayout).onResume();
+                getFragmentManager().findFragmentById(R.id.rightLayout).onResume();
             }
             if (!mResizeView) {
-                getSupportFragmentManager().findFragmentById(R.id.mainLayout).onPause();
+                getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
             }
         }
     }

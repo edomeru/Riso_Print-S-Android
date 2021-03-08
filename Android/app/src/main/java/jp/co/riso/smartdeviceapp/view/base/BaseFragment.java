@@ -13,7 +13,7 @@ import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.ActionBar.LayoutParams;
-import androidx.fragment.app.DialogFragment;
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -230,7 +230,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
             return false;
         }
 
-       return  getActivity().getPackageManager().hasSystemFeature(CHROME_BOOK);
+       return getActivity().getPackageManager().hasSystemFeature(CHROME_BOOK);
     }
 
     /**
