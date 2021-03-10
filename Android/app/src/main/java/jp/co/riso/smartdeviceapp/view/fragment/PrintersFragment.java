@@ -8,10 +8,11 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Looper;
@@ -300,7 +301,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      * @param tag Fragment tag
      */
     private void switchToFragment(BaseFragment fragment, String tag) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         
         if (isTablet()) {
@@ -484,7 +485,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
         mDeletePrinter = printer;
-        DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
+        DialogUtils.displayDialog((FragmentActivity) getActivity(), KEY_PRINTERS_DIALOG, info);
     }
     
     @Override
