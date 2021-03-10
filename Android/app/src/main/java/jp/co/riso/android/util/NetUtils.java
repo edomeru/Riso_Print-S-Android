@@ -234,11 +234,25 @@ public class NetUtils {
                 isNetworkConnected = false;
             }
         } else {
-            NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-            isNetworkConnected = (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+            // Retain this part to support API below 28
+            isNetworkConnected = isNetworkConnectedForSDK27(connManager);
         }
 
         return isNetworkConnected;
+    }
+
+    /**
+     * @brief Determines network connectivity for SDK 27 and below.
+     *
+     * @param connManager Connectivity Manager
+     *
+     * @retval true Connected to network
+     * @retval false Not connected to network
+     */
+    @SuppressWarnings("deprecation")
+    private static boolean isNetworkConnectedForSDK27(ConnectivityManager connManager) {
+        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
+        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
     }
 
     /**
