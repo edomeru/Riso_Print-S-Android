@@ -208,12 +208,23 @@ public class NetUtils {
         if (context == null) {
             return false;
         }
-        
+
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+        boolean result = false;
+
+        Network[] networks = connManager.getAllNetworks();
+
+        for (Network network : networks) {
+            NetworkCapabilities capabilities = connManager.getNetworkCapabilities(network);
+            if (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
     }
-    
+
     /**
      * @brief Determines wi-fi connectivity.
      * 
