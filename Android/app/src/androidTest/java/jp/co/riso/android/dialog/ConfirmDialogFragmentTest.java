@@ -5,10 +5,10 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartprint.R;
 
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
@@ -55,9 +55,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     public void testNewInstance_WithNull() {
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(null, null, null);
         assertNotNull(c);
-        c.show(mActivity.getFragmentManager(), TAG);
+        c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -75,9 +75,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
-        c.show(mActivity.getFragmentManager(), TAG);
+        c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -107,9 +107,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
-        c.show(mActivity.getFragmentManager(), TAG);
+        c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -145,9 +145,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
-        c.show(mActivity.getFragmentManager(), TAG);
+        c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -173,9 +173,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
-        c.show(mActivity.getFragmentManager(), TAG);
+        c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -209,10 +209,10 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(c);
         c.setTargetFragment(new MockCallback(), 1);
 
-        c.show(mActivity.getFragmentManager(), TAG);
+        c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
 
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -246,11 +246,11 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
         c.setTargetFragment(new MockCallback(), 1);
-        c.show(mActivity.getFragmentManager(), TAG);
+        c.show(mActivity.getSupportFragmentManager(), TAG);
 
         waitFewSeconds();
 
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -268,7 +268,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         }
 
         assertNull(((DialogFragment) fragment).getDialog());
-        assertNull(mActivity.getFragmentManager().findFragmentByTag(TAG));
+        assertNull(mActivity.getSupportFragmentManager().findFragmentByTag(TAG));
 
         checkCallbackCalled();
     }
@@ -285,12 +285,12 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
         c.setTargetFragment(new MockCallback(), 1);
-        c.show(getActivity().getFragmentManager(), TAG);
+        c.show(getActivity().getSupportFragmentManager(), TAG);
 
         waitFewSeconds();
 
 
-        Fragment fragment = getActivity().getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
 
@@ -305,7 +305,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         waitFewSeconds();
 
         assertNull(((DialogFragment) fragment).getDialog());
-        assertNull(getActivity().getFragmentManager().findFragmentByTag(TAG));
+        assertNull(getActivity().getSupportFragmentManager().findFragmentByTag(TAG));
 
         assertTrue(mCallbackCalled);
     }
