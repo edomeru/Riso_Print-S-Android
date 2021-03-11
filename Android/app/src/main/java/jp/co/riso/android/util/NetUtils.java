@@ -195,7 +195,8 @@ public class NetUtils {
         }
         return validatedIp;
     }
-    
+
+    // *** This method is unused. isWifiAvailable() method is instead used for checking of connectivity.
     /**
      * @brief Determines network connectivity.
      * 
@@ -204,7 +205,7 @@ public class NetUtils {
      * @retval true Connected to network
      * @retval false Not connected to network
      */
-    protected static boolean isNetworkAvailable(Context context) {
+    /* protected static boolean isNetworkAvailable(Context context) {
         if (context == null) {
             return false;
         }
@@ -224,6 +225,7 @@ public class NetUtils {
 
         return result;
     }
+    */
 
     /**
      * @brief Determines wi-fi connectivity.
