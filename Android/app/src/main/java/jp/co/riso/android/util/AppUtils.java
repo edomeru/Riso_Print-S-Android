@@ -187,13 +187,27 @@ public final class AppUtils {
             size.y = bounds.height() - (insets.top + insets.bottom);
         } else {
             // Retain this part to support API below 30
-            Display display = activity.getWindowManager().getDefaultDisplay();
-            display.getSize(size);
+            size = getScreenDimensionsForSDK29(activity, size);
         }
 
         return size;
     }
-    
+
+    /**
+     * @brief Gets the Screen Dimensions of the Device for API 29 and below.
+     *
+     * @param activity Valid activity
+     * @param size Point
+     *
+     * @return Screen dimensions
+     */
+    @SuppressWarnings("deprecation")
+    public static Point getScreenDimensionsForSDK29(Activity activity, Point size) {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        return size;
+    }
+
     /**
      * @brief Get file contents from assets.
      * 

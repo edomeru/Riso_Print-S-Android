@@ -28,8 +28,6 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.net.NetworkRequest;
-import android.os.Build;
 
 /**
  * @class NetUtils
@@ -45,8 +43,6 @@ public class NetUtils {
     private static final Pattern IPV6_IPv4_DERIVED_PATTERN;
     private static final List<String> IPV6_INTERFACE_NAMES;
 
-    public static boolean isNetworkConnected = false;
-    
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -208,39 +204,16 @@ public class NetUtils {
      * @retval true Connected to network
      * @retval false Not connected to network
      */
-    public static boolean isNetworkAvailable(Context context) {
+    protected static boolean isNetworkAvailable(Context context) {
         if (context == null) {
             return false;
         }
-
+        
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            try {
-                NetworkRequest.Builder builder = new NetworkRequest.Builder();
-                connManager.registerNetworkCallback(builder.build(), new ConnectivityManager.NetworkCallback() {
-                            @Override
-                            public void onAvailable(Network network) {
-                                isNetworkConnected = true;
-                            }
-                            @Override
-                            public void onLost(Network network) {
-                                isNetworkConnected = false;
-                            }
-                        }
-                );
-                isNetworkConnected = false;
-            } catch (Exception e) {
-                isNetworkConnected = false;
-            }
-        } else {
-            NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-            isNetworkConnected = (activeNetworkInfo != null && activeNetworkInfo.isConnected());
-        }
-
-        return isNetworkConnected;
+        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
+        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
     }
-
+    
     /**
      * @brief Determines wi-fi connectivity.
      * 
