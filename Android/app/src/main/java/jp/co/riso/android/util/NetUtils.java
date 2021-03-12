@@ -195,7 +195,8 @@ public class NetUtils {
         }
         return validatedIp;
     }
-    
+
+    // *** This method is unused. isWifiAvailable() method is instead used for checking of connectivity.
     /**
      * @brief Determines network connectivity.
      * 
@@ -204,16 +205,28 @@ public class NetUtils {
      * @retval true Connected to network
      * @retval false Not connected to network
      */
-    protected static boolean isNetworkAvailable(Context context) {
+    /* protected static boolean isNetworkAvailable(Context context) {
         if (context == null) {
             return false;
         }
-        
+
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+        boolean result = false;
+
+        Network[] networks = connManager.getAllNetworks();
+
+        for (Network network : networks) {
+            NetworkCapabilities capabilities = connManager.getNetworkCapabilities(network);
+            if (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
     }
-    
+    */
+
     /**
      * @brief Determines wi-fi connectivity.
      * 
