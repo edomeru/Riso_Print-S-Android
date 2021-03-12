@@ -365,35 +365,35 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             fail(); // Error should not be thrown
         }
     }
-    
+
+    // *** This method is unused. isWifiAvailable() method is instead used for checking of connectivity.
     // ================================================================================
     // Tests - isNetworkAvailable
     // ================================================================================
-
+    /*
     public void testIsNetworkAvailable_NullContext() {
         assertEquals(false, NetUtils.isNetworkAvailable(null));
     }
 
-    
-/*    public void testIsNetworkAvailable_WithoutConnection() {
+    public void testIsNetworkAvailable_WithoutConnection() {
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
         turnWifi(false);
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             // ignored
-        }  
+        }
         // wifi is OFF
         assertEquals(false, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
     }
-*/
+
     public void testIsNetworkAvailable_WithConnection() {
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
         turnWifiOn();
         // wifi is ON
         assertEquals(true, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
     }
-    
+    */
     // ================================================================================
     // Tests - isWifiAvailable
     // ================================================================================
