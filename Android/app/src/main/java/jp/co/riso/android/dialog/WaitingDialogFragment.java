@@ -93,8 +93,7 @@ public class WaitingDialogFragment extends DialogFragment {
         final String title = getArguments().getString(KEY_TITLE);
         final String message = getArguments().getString(KEY_MESSAGE);
         final String negButton = getArguments().getString(KEY_NEG_BUTTON);
-        
-        boolean cancelable = getArguments().getBoolean(KEY_CANCELABLE);
+        final boolean cancelable = getArguments().getBoolean(KEY_CANCELABLE);
 
         ContextThemeWrapper newContext = new ContextThemeWrapper(getActivity(), android.R.style.TextAppearance_Holo_DialogWindowTitle);
         AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
