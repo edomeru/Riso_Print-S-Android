@@ -42,7 +42,7 @@ dev_build:
     - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
-    - bundle exec fastlane dev_build
+    - bundle exec fastlane release_build
     - mkdir ../builds
     - cp -rf app/build/outputs/apk ../builds
 
@@ -65,7 +65,7 @@ build_dump_enable:
     - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
-    - bundle exec fastlane dev_build
+    - bundle exec fastlane release_build
     - mkdir ../builds
     - cp -rf app/build/outputs/apk ../builds
   stage: build
