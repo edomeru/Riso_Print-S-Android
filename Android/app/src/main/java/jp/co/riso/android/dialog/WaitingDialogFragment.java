@@ -8,14 +8,17 @@
 
 package jp.co.riso.android.dialog;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
+import android.widget.TextView;
+
+import jp.co.riso.smartprint.R;
 
 /**
  * @class WaitingDialogFragment
@@ -87,45 +90,47 @@ public class WaitingDialogFragment extends DialogFragment {
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        String title = getArguments().getString(KEY_TITLE);
-        String message = getArguments().getString(KEY_MESSAGE);
-        String negButton = getArguments().getString(KEY_NEG_BUTTON);
-        
-        boolean cancelable = getArguments().getBoolean(KEY_CANCELABLE);
+        final String title = getArguments().getString(KEY_TITLE);
+        final String message = getArguments().getString(KEY_MESSAGE);
+        final String negButton = getArguments().getString(KEY_NEG_BUTTON);
+        final boolean cancelable = getArguments().getBoolean(KEY_CANCELABLE);
 
         ContextThemeWrapper newContext = new ContextThemeWrapper(getActivity(), android.R.style.TextAppearance_Holo_DialogWindowTitle);
-        final ProgressDialog dialog = new ProgressDialog(newContext);
-        
+        AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
+        builder.setView(R.layout.progress_dialog);
         if (title != null) {
-            dialog.setTitle(title);
+            builder.setTitle(title);
         }
-        
-        if (message != null) {
-            dialog.setMessage(message);
-        }
-        
+
+        final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setIndeterminate(true);
         // http://developer.android.com/reference/android/app/DialogFragment.html#setCancelable(boolean)
         setCancelable(cancelable);
-        
+
         if (!cancelable) {
             // Disable the back button
             dialog.setOnKeyListener(sCancelBackButtonListener);
         } else {
             dialog.setButton(DialogInterface.BUTTON_NEGATIVE, negButton, new DialogInterface.OnClickListener() {
-                
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
                 }
             });
-            
         }
-        
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                if (message != null) {
+                    ((TextView) dialog.findViewById(R.id.progressText)).setText(message);
+                }
+            }
+        });
+
         return dialog;
     }
-    
+
     @Override
     public void onDestroyView() {
         Dialog dialog = getDialog();
@@ -163,8 +168,8 @@ public class WaitingDialogFragment extends DialogFragment {
                 @Override
                 public void run() {
                     if (getDialog() != null) {
-                        ProgressDialog dialog = (ProgressDialog) getDialog();
-                        dialog.setMessage(msg);
+                        AlertDialog dialog = (AlertDialog) getDialog();
+                        ((TextView) dialog.findViewById(R.id.progressText)).setText(msg);
                     }
                 }
             });
@@ -174,7 +179,7 @@ public class WaitingDialogFragment extends DialogFragment {
     
     public void setButtonText(final String buttonText){
         if (getDialog() != null) {
-            ProgressDialog dialog = (ProgressDialog) getDialog();
+            AlertDialog dialog = (AlertDialog) getDialog();
             dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(buttonText);
         }
     }
