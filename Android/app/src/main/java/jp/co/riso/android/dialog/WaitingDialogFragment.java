@@ -9,6 +9,8 @@
 package jp.co.riso.android.dialog;
 
 import androidx.fragment.app.DialogFragment;
+
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
