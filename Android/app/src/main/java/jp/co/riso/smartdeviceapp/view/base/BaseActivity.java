@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -46,7 +48,12 @@ public abstract class BaseActivity extends Activity {
          */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !isTablet()) {
             View decorView = getWindow().getDecorView();
-            systemUIFlags = decorView.getSystemUiVisibility();
+
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                // 031521 - For API Level 30 deprecation
+                onCreateForSDK29(decorView);
+            }
+
             DisplayManager.DisplayListener mDisplayListener = new DisplayManager.DisplayListener() {
                 @Override
                 public void onDisplayAdded(int displayId) {
@@ -84,6 +91,38 @@ public abstract class BaseActivity extends Activity {
     // ================================================================================
 
     private void handleSystemUIRotation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // 031521 - For API Level 30 deprecation
+            getWindow().setDecorFitsSystemWindows(false);
+
+            if (getWindow().getInsetsController() != null) {
+                // Hide system navigation bar
+                getWindow().getInsetsController().hide(WindowInsets.Type.navigationBars());
+                getWindow().getInsetsController().setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+
+                Handler handler = new Handler(Looper.myLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Show system navigation bar
+                        getWindow().setDecorFitsSystemWindows(true);
+                        getWindow().getInsetsController().show(WindowInsets.Type.navigationBars());
+                    }
+                }, 10);
+            }
+        } else {
+            // 031521 - For API Level 30 deprecation
+            handleSystemUIRotationForSDK29();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void onCreateForSDK29(View decorView) {
+        systemUIFlags = decorView.getSystemUiVisibility();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void handleSystemUIRotationForSDK29() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(systemUIFlags | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);       // Hide system navigation bar
 
