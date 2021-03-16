@@ -113,7 +113,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     lastClickTime = SystemClock.elapsedRealtime();
                     Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
                     filePickerIntent.setType("*/*");
-                    filePickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.DOC_TYPES);
+                    if (!isChromeBook()) {
+                        filePickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.DOC_TYPES);
+                    }
                     startActivityForResult(Intent.createChooser(filePickerIntent, getString(R.string.ids_lbl_select_document)), REQUEST_FILE);
                 }
                 break;
@@ -126,7 +128,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     Intent photosPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
                     photosPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                     photosPickerIntent.setType("*/*");
-                    photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES);
+                    if (!isChromeBook()) {
+                        photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES);
+                    }
                     startActivityForResult(Intent.createChooser(photosPickerIntent, getString(R.string.ids_lbl_select_photos)), REQUEST_PHOTO);
                 }
                 break;
