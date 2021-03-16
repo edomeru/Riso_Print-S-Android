@@ -48,8 +48,7 @@ public abstract class BaseTask<T, R> {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        R result = executeInBackground(params);
-                        mResult.add(result);
+                        executeInBackground(params);
                     }
                 }).start();
                 mLatch.await();
@@ -72,10 +71,10 @@ public abstract class BaseTask<T, R> {
         mLatch.countDown();
     }
 
-    private R executeInBackground(T... params) {
+    private void executeInBackground(T... params) {
         R result = doInBackground(params);
+        mResult.add(result);
         mLatch.countDown();
-        return result;
     }
 
     protected void onPreExecute() {}
