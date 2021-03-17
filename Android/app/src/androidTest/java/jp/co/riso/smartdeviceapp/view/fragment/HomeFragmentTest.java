@@ -97,10 +97,10 @@ public class HomeFragmentTest {
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result);
 
         // prepare button to be clicked
-        final View selectDocumentButton = new LinearLayout(intentsTestRule.getActivity());
-        selectDocumentButton.setId(R.id.photosButton);
+        final View selectPhotosButton = new LinearLayout(intentsTestRule.getActivity());
+        selectPhotosButton.setId(R.id.photosButton);
 
-        homeFragment.onClick(selectDocumentButton);
+        homeFragment.onClick(selectPhotosButton);
 
         // check intent that was sent
         Intent selectPhotosIntent = Intents.getIntents().get(0);
