@@ -24,6 +24,8 @@ import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment;
+
+import androidx.fragment.app.FragmentActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
@@ -620,7 +622,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
                             } else {
                                 InfoDialogFragment info = InfoDialogFragment.newInstance(getContext().getString(R.string.ids_lbl_printers),
                                         getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
-                                DialogUtils.displayDialog((Activity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
+                                DialogUtils.displayDialog((FragmentActivity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
                             }
                         }
                         break;

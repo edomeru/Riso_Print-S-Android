@@ -8,9 +8,9 @@
 
 package jp.co.riso.smartdeviceapp.view.base;
 
+import androidx.fragment.app.FragmentActivity;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
@@ -28,7 +28,7 @@ import jp.co.riso.smartprint.R;
  * 
  * @brief Base activity class
  */
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends FragmentActivity {
 
     private int systemUIFlags;      // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
 
