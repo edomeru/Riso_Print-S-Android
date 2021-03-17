@@ -8,11 +8,12 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -35,8 +36,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -713,7 +712,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         MainActivity activity = (MainActivity) getActivity();
         MenuFragment menuFragment = activity.getMenuFragment();
         if (menuFragment == null) {
-            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             menuFragment = new MenuFragment();
             // When MenuFragment gets destroyed due to config change such as changing permissions
             // from Settings, the state gets reset to default as well.
@@ -978,7 +977,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     MainActivity activity = (MainActivity) getActivity();
                     View v = (View) msg.obj;
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        FragmentManager fm = getFragmentManager();
+                        FragmentManager fm = activity.getSupportFragmentManager();
 
                         setIconState(v.getId(), true);
 

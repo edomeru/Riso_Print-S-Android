@@ -8,14 +8,14 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.ContextCompat;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
-import androidx.core.content.ContextCompat;
 import android.text.InputFilter;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -233,7 +233,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 });
             }
         } else {
-            FragmentManager fm = getFragmentManager();
+            FragmentManager fm = getParentFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             
             if (fm.getBackStackEntryCount() > 0) {

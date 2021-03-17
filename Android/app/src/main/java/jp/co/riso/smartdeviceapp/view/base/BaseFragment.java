@@ -12,8 +12,9 @@ import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+
+import androidx.fragment.app.DialogFragment;
 import android.app.ActionBar.LayoutParams;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
