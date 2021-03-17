@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,20 +43,10 @@ public class HomeFragmentTest {
                 fm.executePendingTransactions();
             }
         });
-
-        // wait to allow adding of fragment to activity to finish
-        waitFewSeconds();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
         assertTrue(fm.findFragmentByTag(TAG) instanceof HomeFragment);
         return (HomeFragment) fm.findFragmentByTag(TAG);
-    }
-
-    private void waitFewSeconds() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Test
@@ -68,7 +59,7 @@ public class HomeFragmentTest {
     public void onClickSelectDocument() {
         HomeFragment homeFragment = initHomeFragment();
 
-        // stubs the activity result to prevent launching of OS picker
+        // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, null);
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result);
@@ -100,7 +91,7 @@ public class HomeFragmentTest {
     public void onClickSelectPhotos() {
         HomeFragment homeFragment = initHomeFragment();
 
-        // stubs the activity result to prevent launching of OS picker
+        // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, null);
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result);
