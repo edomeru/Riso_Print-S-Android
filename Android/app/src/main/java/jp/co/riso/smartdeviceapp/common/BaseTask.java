@@ -19,8 +19,10 @@ public abstract class BaseTask<T, R> {
     private static ExecutorService executor = Executors.newSingleThreadExecutor();
     private FutureTask<Void> mFuture = null;
     private CountDownLatch mLatch = null;
-    private ArrayList<R> mResult = new ArrayList();
     private Boolean mCancelled = false;
+
+    @SuppressWarnings("unchecked")     // R is defined in BaseTask implementation
+    private ArrayList<R> mResult = new ArrayList();
 
     public Boolean isCancelled() {
         return mCancelled;
@@ -31,6 +33,7 @@ public abstract class BaseTask<T, R> {
         mCancelled = true;
     }
 
+    @SuppressWarnings("unchecked")     // T is defined in BaseTask implementation
     public void execute(final T... params) {
         mFuture = new FutureTask<>(new Callable<Void>() {
             @Override
@@ -71,6 +74,7 @@ public abstract class BaseTask<T, R> {
         mLatch.countDown();
     }
 
+    @SuppressWarnings("unchecked")     // T is defined in BaseTask implementation
     private void executeInBackground(T... params) {
         R result = doInBackground(params);
         mResult.add(result);
@@ -78,6 +82,9 @@ public abstract class BaseTask<T, R> {
     }
 
     protected void onPreExecute() {}
+
+    @SuppressWarnings("unchecked")     // T is defined in BaseTask implementation
     protected abstract R doInBackground(T... params);
+
     protected void onPostExecute(R result) {}
 }
