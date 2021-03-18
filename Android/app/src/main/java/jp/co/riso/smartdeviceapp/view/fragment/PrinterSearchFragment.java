@@ -26,18 +26,20 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter;
 import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface;
 import jp.co.riso.smartprint.R;
+
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.ContextCompat;
 import android.animation.ValueAnimator;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
-import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
 
@@ -178,7 +180,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
             MainActivity activity = (MainActivity) getActivity();
             activity.closeDrawers();
         } else {
-            FragmentManager fm = getFragmentManager();
+            FragmentManager fm = getParentFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             if (fm.getBackStackEntryCount() > 0) {
                 fm.popBackStack();

@@ -21,6 +21,7 @@ import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult;
 import jp.co.riso.smartdeviceapp.model.Printer;
 import jp.co.riso.smartprint.R;
 
+import androidx.fragment.app.FragmentActivity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -173,7 +174,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mPrintJobGroupLayout.findViewById(R.id.printJobGroupDelete).setSelected(false);
             // show dialog
             InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
-            DialogUtils.displayDialog((Activity) getContext(), TAG, errordialog);
+            DialogUtils.displayDialog((FragmentActivity) getContext(), TAG, errordialog);
         }
     }
     
@@ -191,7 +192,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         } else {
             // show dialog
             InfoDialogFragment errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText);
-            DialogUtils.displayDialog((Activity) getContext(), TAG, errordialog);
+            DialogUtils.displayDialog((FragmentActivity) getContext(), TAG, errordialog);
         }
         // clears delete state
         mLayoutListener.onDeleteJob();

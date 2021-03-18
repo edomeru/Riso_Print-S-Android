@@ -23,8 +23,9 @@ import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment;
 import jp.co.riso.smartdeviceapp.view.printers.DefaultPrinterArrayAdapter;
 import jp.co.riso.smartprint.R;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Looper;
@@ -209,7 +210,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                     
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                         View v = (View) msg.obj;
-                        FragmentManager fm = getFragmentManager();
+                        FragmentManager fm = getParentFragmentManager();
                         setIconState(v.getId(), true);
                         mPrintSettingsFragment = null;
                         
@@ -233,7 +234,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                 break;
             case R.id.menu_id_back_button:
                 mPauseableHandler.pause();
-                FragmentManager fm = getFragmentManager();
+                FragmentManager fm = getParentFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 
                 if (fm.getBackStackEntryCount() > 0) {
