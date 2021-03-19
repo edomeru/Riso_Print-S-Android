@@ -47,11 +47,9 @@ public abstract class BaseActivity extends FragmentActivity {
          *  - Display system navigation bar again immediately
          */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !isTablet()) {
-            View decorView = getWindow().getDecorView();
-
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                 // 031521 - For API Level 30 deprecation
-                onCreateForSDK29(decorView);
+                getSystemUIFlagsForSDK29();
             }
 
             DisplayManager.DisplayListener mDisplayListener = new DisplayManager.DisplayListener() {
@@ -93,10 +91,9 @@ public abstract class BaseActivity extends FragmentActivity {
     private void handleSystemUIRotation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // 031521 - For API Level 30 deprecation
-            getWindow().setDecorFitsSystemWindows(false);
-
             if (getWindow().getInsetsController() != null) {
                 // Hide system navigation bar
+                getWindow().setDecorFitsSystemWindows(false);
                 getWindow().getInsetsController().hide(WindowInsets.Type.navigationBars());
                 getWindow().getInsetsController().setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
 
@@ -117,7 +114,8 @@ public abstract class BaseActivity extends FragmentActivity {
     }
 
     @SuppressWarnings("deprecation")
-    private void onCreateForSDK29(View decorView) {
+    private void getSystemUIFlagsForSDK29() {
+        View decorView = getWindow().getDecorView();
         systemUIFlags = decorView.getSystemUiVisibility();
     }
 
