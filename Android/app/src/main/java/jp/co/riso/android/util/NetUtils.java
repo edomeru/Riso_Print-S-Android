@@ -26,9 +26,7 @@ import jp.co.riso.smartdeviceapp.AppConstants;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
-import android.net.NetworkInfo;
-import android.net.NetworkRequest;
-import android.os.Build;
+import android.net.NetworkCapabilities;
 
 /**
  * @class NetUtils
@@ -43,7 +41,7 @@ public class NetUtils {
     private static final Pattern IPV6_LINK_LOCAL_PATTERN;
     private static final Pattern IPV6_IPv4_DERIVED_PATTERN;
     private static final List<String> IPV6_INTERFACE_NAMES;
-    
+
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -196,7 +194,8 @@ public class NetUtils {
         }
         return validatedIp;
     }
-    
+
+    // *** This method is unused. isWifiAvailable() method is instead used for checking of connectivity.
     /**
      * @brief Determines network connectivity.
      * 
@@ -205,16 +204,28 @@ public class NetUtils {
      * @retval true Connected to network
      * @retval false Not connected to network
      */
-    protected static boolean isNetworkAvailable(Context context) {
+    /* protected static boolean isNetworkAvailable(Context context) {
         if (context == null) {
             return false;
         }
-        
+
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+        boolean result = false;
+
+        Network[] networks = connManager.getAllNetworks();
+
+        for (Network network : networks) {
+            NetworkCapabilities capabilities = connManager.getNetworkCapabilities(network);
+            if (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
     }
-    
+    */
+
     /**
      * @brief Determines wi-fi connectivity.
      * 
@@ -232,13 +243,10 @@ public class NetUtils {
         boolean result = false;
 
         Network[] networks = connManager.getAllNetworks();
-        NetworkInfo networkInfo;
-        Network network;
-        for (int i = 0; i < networks.length; i++){
-            network = networks[i];
-            networkInfo = connManager.getNetworkInfo(network);
-            if ((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
-                    (networkInfo.getState().equals(NetworkInfo.State.CONNECTED))) {
+
+        for (Network network : networks) {
+            NetworkCapabilities capabilities = connManager.getNetworkCapabilities(network);
+            if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                 result = true;
                 break;
             }

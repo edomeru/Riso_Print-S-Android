@@ -22,8 +22,9 @@ import java.util.IllegalFormatException;
 import java.util.Locale;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
+
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 
 /**
  * @class Logger
@@ -365,7 +366,7 @@ public class Logger {
      * 
      * @brief Async Task for deleting a directory
      */
-    public class DeleteTask extends AsyncTask<Context, Void, Void> {
+    public class DeleteTask extends BaseTask<Context, Void> {
         int count = 0;
         double time = 0;
         

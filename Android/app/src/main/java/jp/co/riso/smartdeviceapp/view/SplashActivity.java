@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -17,12 +18,11 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.AndroidRuntimeException;
 import android.view.ContextThemeWrapper;
@@ -46,6 +46,7 @@ import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
@@ -320,7 +321,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
      * 
      * @brief Async task for initializing database.
      */
-    private class DBInitTask extends AsyncTask<Void, Void, Void> {
+    private class DBInitTask extends BaseTask<Void, Void> {
         
         @Override
         protected Void doInBackground(Void... params) {
@@ -341,7 +342,13 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                 if (mHandler.hasStoredMessage(MESSAGE_RUN_MAINACTIVITY)) {
                     mDatabaseInitialized = true;
                 } else {
-                    runMainActivity();
+                    final Activity activity = SmartDeviceApp.getActivity();
+                    activity.runOnUiThread((new Runnable() {
+                        @Override
+                        public void run() {
+                            runMainActivity();
+                        }
+                    }));
                 }
             }
         }

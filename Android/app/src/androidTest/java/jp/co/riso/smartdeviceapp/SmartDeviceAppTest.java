@@ -2,7 +2,7 @@
 package jp.co.riso.smartdeviceapp;
 
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.test.ApplicationTestCase;
 
 public class SmartDeviceAppTest extends ApplicationTestCase<SmartDeviceApp> {

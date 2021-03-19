@@ -3,7 +3,7 @@ package jp.co.riso.smartdeviceapp.controller.pdf;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.radaee.pdf.Global;

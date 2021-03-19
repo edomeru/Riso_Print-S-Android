@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,7 +18,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -37,6 +37,8 @@ import java.lang.ref.WeakReference;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 import jp.co.riso.smartdeviceapp.model.Pagination;
 import jp.co.riso.smartprint.R;
 
@@ -585,7 +587,7 @@ public class PDFConverterManager {
      * @brief Background task which converts files to PDF.
      * The PDF is saved to the sandbox.
      */
-    private class PDFConversionTask extends AsyncTask<String, Void, Integer> {
+    private class PDFConversionTask extends BaseTask<String, Integer> {
 
         @Override
         protected Integer doInBackground(String... params) {
@@ -620,11 +622,19 @@ public class PDFConverterManager {
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
 
-            if (mInterfaceRef != null && mInterfaceRef.get() != null ) {
-                if (!mPdfConversionTask.isCancelled()) {
-                    mInterfaceRef.get().onFileConverted(result);
+            final Integer mResult = result;
+            final Activity activity = SmartDeviceApp.getActivity();
+
+            activity.runOnUiThread((new Runnable() {
+                @Override
+                public void run() {
+                    if (mInterfaceRef != null && mInterfaceRef.get() != null ) {
+                        if (!mPdfConversionTask.isCancelled()) {
+                            mInterfaceRef.get().onFileConverted(mResult);
+                        }
+                    }
                 }
-            }
+            }));
         }
     }
 }

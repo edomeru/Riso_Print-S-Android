@@ -28,14 +28,17 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Insets;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.view.WindowMetrics;
 import android.view.inputmethod.InputMethodManager;
 
 /**
@@ -171,15 +174,40 @@ public final class AppUtils {
         if (activity == null) {
             return null;
         }
-        
-        Display display = activity.getWindowManager().getDefaultDisplay();
+
         Point size = new Point();
-        
-        display.getSize(size);
-        
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowMetrics metrics = activity.getWindowManager().getCurrentWindowMetrics();
+            WindowInsets windowInsets = metrics.getWindowInsets();
+            Insets insets = windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars() | WindowInsets.Type.displayCutout());
+            Rect bounds = metrics.getBounds();
+
+            size.x = bounds.width() - (insets.right + insets.left);
+            size.y = bounds.height() - (insets.top + insets.bottom);
+        } else {
+            // Retain this part to support API below 30
+            size = getScreenDimensionsForSDK29(activity, size);
+        }
+
         return size;
     }
-    
+
+    /**
+     * @brief Gets the Screen Dimensions of the Device for API 29 and below.
+     *
+     * @param activity Valid activity
+     * @param size Point
+     *
+     * @return Screen dimensions
+     */
+    @SuppressWarnings("deprecation")
+    public static Point getScreenDimensionsForSDK29(Activity activity, Point size) {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        return size;
+    }
+
     /**
      * @brief Get file contents from assets.
      * 

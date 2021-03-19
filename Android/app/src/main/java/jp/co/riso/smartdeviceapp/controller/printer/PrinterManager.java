@@ -8,13 +8,13 @@
 
 package jp.co.riso.smartdeviceapp.controller.printer;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -28,6 +28,7 @@ import java.util.TimerTask;
 import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 import jp.co.riso.smartdeviceapp.common.SNMPManager;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
@@ -508,7 +509,7 @@ public class PrinterManager implements SNMPManagerCallback {
         if(ipAddress == null) {
             return;
         }
-        new UpdateOnlineStatusTask(view, ipAddress).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new UpdateOnlineStatusTask(view, ipAddress).execute();
     }
     
     /**
@@ -882,7 +883,7 @@ public class PrinterManager implements SNMPManagerCallback {
      *
      * AsyncTask that updates changes the online status image.
      */
-    class UpdateOnlineStatusTask extends AsyncTask<Object, View, Boolean> {
+    class UpdateOnlineStatusTask extends BaseTask<Object, Boolean> {
         private WeakReference<View> mViewRef = null;
         private String mIpAddress = null;
         
@@ -905,16 +906,22 @@ public class PrinterManager implements SNMPManagerCallback {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-            
-            if (mViewRef != null && mViewRef.get() != null) {
-                ImageView view = (ImageView) mViewRef.get();
-                if (result) {
-                    view.setImageResource(R.drawable.img_btn_printer_status_online);
-                } else {
-                    view.setImageResource(R.drawable.img_btn_printer_status_offline);
+
+            final boolean isOnline = result;
+            final Activity activity = SmartDeviceApp.getActivity();
+            activity.runOnUiThread((new Runnable() {
+                @Override
+                public void run() {
+                    if (mViewRef != null && mViewRef.get() != null) {
+                        ImageView view = (ImageView) mViewRef.get();
+                        if (isOnline) {
+                            view.setImageResource(R.drawable.img_btn_printer_status_online);
+                        } else {
+                            view.setImageResource(R.drawable.img_btn_printer_status_offline);
+                        }
+                    }
                 }
-            }
+            }));
         }
-        
     }
 }

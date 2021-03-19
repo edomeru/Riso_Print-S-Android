@@ -8,13 +8,13 @@
 
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Matrix;
@@ -29,6 +29,10 @@ import java.lang.ref.WeakReference;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
+
+import android.system.ErrnoException;
+import static android.system.OsConstants.ENOSPC;
 
 /**
  * @class PDFFileManager
@@ -678,7 +682,7 @@ public class PDFFileManager {
      * @brief Background task which initialized the PDF.
      * The PDF is copied to the sandbox.
      */
-    private class PDFInitTask extends AsyncTask<String, Void, Integer> {
+    private class PDFInitTask extends BaseTask<String, Integer> {
         
         String sandboxPath = PDFFileManager.getSandboxPath();
         String inputFile = null;
@@ -692,6 +696,13 @@ public class PDFFileManager {
                     FileUtils.copy(contentInputStream, destFile);
                 } catch (IOException e) {
                     e.printStackTrace();
+
+                    // RM 784 Fix: Flag "No space left in device" exception -- start
+                    int errNo = ((ErrnoException)e.getCause()).errno;
+                    if (errNo == ENOSPC) {
+                        return PDF_NOT_ENOUGH_FREE_SPACE;
+                    }
+                    // RM 784 Fix -- end
                 }
             }
             
@@ -757,15 +768,23 @@ public class PDFFileManager {
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
+
+            final Integer mResult = result;
             
             if (result != PDF_CANCELLED) {
                 if (result != PDF_OK) {
                     setPDF(null);
                 }
-                
-                if (mInterfaceRef != null && mInterfaceRef.get() != null) {
-                    mInterfaceRef.get().onFileInitialized(result);
-                }
+
+                final Activity activity = SmartDeviceApp.getActivity();
+                activity.runOnUiThread((new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mInterfaceRef != null && mInterfaceRef.get() != null) {
+                            mInterfaceRef.get().onFileInitialized(mResult);
+                        }
+                    }
+               }));
             }
         }
     }

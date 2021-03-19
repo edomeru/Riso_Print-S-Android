@@ -3,11 +3,12 @@ package jp.co.riso.android.dialog;
 
 import jp.co.riso.android.dialog.WaitingDialogFragment.WaitingDialogListener;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartprint.R;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
@@ -41,7 +42,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     protected void setUp() throws Exception {
         super.setUp();
         mActivity = getActivity();
-        fm = mActivity.getFragmentManager();
+        fm = mActivity.getSupportFragmentManager();
         mCallbackCalled = false;
         
         wakeUpScreen();
@@ -195,7 +196,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(((DialogFragment) fragment).getDialog());
         assertNotNull(fm.findFragmentByTag(TAG));
 
-        View msg = dialog.findViewById(android.R.id.message);
+        View msg = dialog.findViewById(R.id.progressText);
         assertNotNull(msg);
         assertEquals("new message", ((TextView) msg).getText());
 
@@ -226,7 +227,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(dialog);
         assertTrue(dialog.isShowing());
         assertTrue(((DialogFragment) fragment).isCancelable());
-        View msg = dialog.findViewById(android.R.id.message);
+        View msg = dialog.findViewById(R.id.progressText);
         assertNotNull(msg);
         assertEquals(MSG, ((TextView) msg).getText());
         dialog.dismiss();

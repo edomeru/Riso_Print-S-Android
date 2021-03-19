@@ -8,11 +8,12 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -35,8 +36,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -713,7 +712,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         MainActivity activity = (MainActivity) getActivity();
         MenuFragment menuFragment = activity.getMenuFragment();
         if (menuFragment == null) {
-            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             menuFragment = new MenuFragment();
             // When MenuFragment gets destroyed due to config change such as changing permissions
             // from Settings, the state gets reset to default as well.
@@ -724,27 +723,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
         menuFragment.hasPDFfile = false;
         menuFragment.setCurrentState(MenuFragment.STATE_HOME);
-    }
-
-    /**
-     * @brief Transitions Screen to Preview
-     */
-    private void transitionToPreviewScreen() {
-        MainActivity activity = (MainActivity) getActivity();
-        MenuFragment menuFragment = activity.getMenuFragment();
-        if (menuFragment == null) {
-            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-            menuFragment = new MenuFragment();
-            // When MenuFragment gets destroyed due to config change such as changing permissions
-            // from Settings, the state gets reset to default as well.
-            // Since we know we are in PrintPreview, set the current state to PrintPreview
-            menuFragment.mState = MenuFragment.STATE_PRINTPREVIEW;
-            ft.replace(R.id.leftLayout, menuFragment, "fragment_menu");
-            ft.commit();
-        }
-        menuFragment.hasPDFfile = true;
-        menuFragment.hasWritePermission = true;
-        menuFragment.setCurrentState(MenuFragment.STATE_PRINTPREVIEW);
     }
 
     // ================================================================================
@@ -999,7 +977,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     MainActivity activity = (MainActivity) getActivity();
                     View v = (View) msg.obj;
                     if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        FragmentManager fm = getFragmentManager();
+                        FragmentManager fm = activity.getSupportFragmentManager();
 
                         setIconState(v.getId(), true);
 
@@ -1047,13 +1025,20 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         }
                         initializePdfManagerAndRunAsync();
                         shouldResetToFirstPageOnInitialize = true;
-                        transitionToPreviewScreen();
                     } else {
                         // permission was denied check if Print Settings is open
                         MainActivity activity = (MainActivity) getActivity();
                         if (activity.isDrawerOpen(Gravity.RIGHT)) {
                             activity.closeDrawers();
                         }
+
+                        // Q&A188#1/RM775/RM786 Fix: Clear PDF before transition to Home Screen -- start
+                        Intent intent = getActivity().getIntent();
+                        intent.setAction(null);
+                        intent.setClipData(null);
+                        intent.setData(null);
+						// Q&A188#1/RM775/RM786 Fix -- end
+
                         transitionToHomeScreen();
                     }
                 }
