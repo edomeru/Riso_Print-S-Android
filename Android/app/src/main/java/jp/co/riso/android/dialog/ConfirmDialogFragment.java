@@ -38,6 +38,7 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
     private static final String KEY_NEG_BUTTON = "negButton";
 
     private ConfirmDialogListener mListener = null;
+    private AlertDialog mAlertDialog = null;
 
     /**
      * @brief Creates a ConfirmDialogFragment instance.
@@ -108,10 +109,8 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
             builder.setNegativeButton(buttonNegTitle, this);
         }
 
-        AlertDialog dialog = null;
-        dialog = builder.create();
-
-        return dialog;
+        mAlertDialog = builder.create();
+        return mAlertDialog;
     }
 
     @Override
@@ -150,6 +149,10 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         mListener = listener;
     }
 
+    public boolean isShowing()
+    {
+        return ((mAlertDialog != null) && mAlertDialog.isShowing());
+    }
     // ================================================================================
     // Internal Classes
     // ================================================================================
