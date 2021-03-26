@@ -168,7 +168,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         String confirmMsg = getResources().getString(R.string.ids_lbl_ok);
         String cancelMsg = getResources().getString(R.string.ids_lbl_cancel);
         
-        if (mConfirmDialog != null && mConfirmDialog.isShowing()) {
+        if (((mConfirmDialog != null) && mConfirmDialog.isShowing()) || (mPrintGroupToDelete == null)) {
             return false;
         } else {
             mConfirmDialog = ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg);
