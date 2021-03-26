@@ -122,9 +122,11 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
             switch (which) {
                 case Dialog.BUTTON_POSITIVE:
                     mListener.onConfirm();
+                    mAlertDialog = null;
                     break;
                 case Dialog.BUTTON_NEGATIVE:
                     mListener.onCancel();
+                    mAlertDialog = null;
                     break;
             }
         }
@@ -138,6 +140,7 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         }
         if (mListener != null) {
             mListener.onCancel();
+            mAlertDialog = null;
         }
     }
 
@@ -151,7 +154,10 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
 
     public boolean isShowing()
     {
-        return ((mAlertDialog != null) && mAlertDialog.isShowing());
+        if (mAlertDialog != null) {
+            return mAlertDialog.isShowing();
+        }
+        return false;
     }
     // ================================================================================
     // Internal Classes
