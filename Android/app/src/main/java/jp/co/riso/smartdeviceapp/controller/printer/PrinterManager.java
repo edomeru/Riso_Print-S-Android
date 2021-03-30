@@ -109,7 +109,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * @retval true Save to Database is successful
      * @retval false Save to Database has failed
      */
-    public boolean savePrinterToDB(Printer printer, boolean isOnline) {
+    public synchronized boolean savePrinterToDB(Printer printer, boolean isOnline) {
         if (printer == null || isExists(printer)) {
             return false;
         }
@@ -222,7 +222,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * 
      * @return List of Saved Printer objects
      */
-    public List<Printer> getSavedPrintersList() {
+    public synchronized List<Printer> getSavedPrintersList() {
         if (mPrinterList.size() != 0) {
             return mPrinterList;
         }
