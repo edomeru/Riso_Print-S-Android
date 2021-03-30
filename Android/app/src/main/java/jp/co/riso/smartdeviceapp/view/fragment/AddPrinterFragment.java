@@ -162,14 +162,17 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         } else if (isTablet()) {
             return;
         }
-        String title = getResources().getString(R.string.ids_lbl_add_printer);
-        String msg = getResources().getString(R.string.ids_info_msg_printer_add_successful);
 
-        ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
-        info.setTargetFragment(this, 0);
-        
-        if (getActivity() != null && getActivity() instanceof MainActivity) {
-            DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
+        if (isAdded()) {
+            String title = getResources().getString(R.string.ids_lbl_add_printer);
+            String msg = getResources().getString(R.string.ids_info_msg_printer_add_successful);
+
+            ConfirmDialogFragment info = ConfirmDialogFragment.newInstance(title, msg, getResources().getString(R.string.ids_lbl_ok), null);
+            info.setTargetFragment(this, 0);
+
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                DialogUtils.displayDialog(getActivity(), KEY_ADD_PRINTER_DIALOG, info);
+            }
         }
     }
     
@@ -232,16 +235,20 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                     }
                 });
             }
-        } else {
+        } else if (isAdded()) {
             FragmentManager fm = getParentFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            
+
             if (fm.getBackStackEntryCount() > 0) {
                 fm.popBackStack();
                 ft.commit();
+                fm.executePendingTransactions();
             }
         }
-        AppUtils.hideSoftKeyboard(getActivity());
+
+        if (getActivity() != null) {
+            AppUtils.hideSoftKeyboard(getActivity());
+        }
     }
     
     /**
