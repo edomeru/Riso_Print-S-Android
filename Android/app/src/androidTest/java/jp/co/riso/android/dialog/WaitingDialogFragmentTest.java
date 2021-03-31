@@ -28,8 +28,6 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     private MainActivity mActivity;
     private FragmentManager fm;
 
-    private boolean mCallbackCalled = false;
-
     public WaitingDialogFragmentTest() {
         super(MainActivity.class);
     }
@@ -43,7 +41,6 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         super.setUp();
         mActivity = getActivity();
         fm = mActivity.getSupportFragmentManager();
-        mCallbackCalled = false;
         
         wakeUpScreen();
     }
@@ -110,7 +107,10 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE);
         assertNotNull(w);
-        w.setTargetFragment(new MockCallback(), 1);
+
+        MockCallback mockCallback = new MockCallback();
+        fm.beginTransaction().add(mockCallback, null).commit();
+        w.setTargetFragment(mockCallback, 1);
         w.show(fm, TAG);
         waitFewSeconds();
 
@@ -138,8 +138,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNull(((DialogFragment) fragment).getDialog());
         assertNull(fm.findFragmentByTag(TAG));
 
-        assertTrue(mCallbackCalled);
-
+        assertTrue(mockCallback.isCancelCalled());
     }
 
     public void testOnCancel() {
@@ -150,7 +149,10 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE);
         assertNotNull(w);
-        w.setTargetFragment(new MockCallback(), 1);
+
+        MockCallback mockCallback = new MockCallback();
+        fm.beginTransaction().add(mockCallback, null).commit();
+        w.setTargetFragment(mockCallback, 1);
         w.show(fm, TAG);
 
         waitFewSeconds();
@@ -171,7 +173,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNull(((DialogFragment) fragment).getDialog());
         assertNull(fm.findFragmentByTag(TAG));
 
-        assertTrue(mCallbackCalled);
+        assertTrue(mockCallback.isCancelCalled());
     }
 
     public void testSetMessage() {
@@ -307,23 +309,4 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         waitFewSeconds();
     }
-
-    // ================================================================================
-    // Internal Class
-    // ================================================================================
-
-    // for testing only
-    @SuppressLint("ValidFragment")
-    public class MockCallback extends Fragment implements WaitingDialogListener {
-
-        public MockCallback() {
-        }
-
-        @Override
-        public void onCancel() {
-            mCallbackCalled = true;
-        }
-
-    }
-
 }
