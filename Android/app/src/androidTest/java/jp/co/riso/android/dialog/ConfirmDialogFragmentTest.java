@@ -195,11 +195,6 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnClick_PositiveListener() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
@@ -236,11 +231,6 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnClick_NegativeListener() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
@@ -277,11 +267,6 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnCancel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(TITLE),
                 SmartDeviceApp.getAppContext().getResources().getString(MSG),
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
@@ -358,5 +343,35 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         });
 
         waitFewSeconds();
+    }
+
+    //================================================================================
+    // Internal Classes
+    //================================================================================
+
+    // for testing only
+    @SuppressLint("ValidFragment")
+    public static class MockCallback extends Fragment implements ConfirmDialogListener {
+
+        private boolean isConfirmCalled = false;
+        private boolean isCancelCalled = false;
+
+        public boolean isConfirmCalled() {
+            return isConfirmCalled;
+        }
+
+        public boolean isCancelCalled() {
+            return isCancelCalled;
+        }
+
+        @Override
+        public void onConfirm() {
+            isConfirmCalled = true;
+        }
+
+        @Override
+        public void onCancel() {
+            isCancelCalled = true;
+        }
     }
 }
