@@ -100,11 +100,6 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnClick() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE);
         assertNotNull(w);
 
@@ -142,11 +137,6 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnCancel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE);
         assertNotNull(w);
 
@@ -308,5 +298,25 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         });
 
         waitFewSeconds();
+    }
+
+    //================================================================================
+    // Internal Classes
+    //================================================================================
+
+    // for testing only
+    @SuppressLint("ValidFragment")
+    public static class MockCallback extends Fragment implements WaitingDialogListener {
+
+        private boolean isCancelCalled = false;
+
+        public boolean isCancelCalled() {
+            return isCancelCalled;
+        }
+
+        @Override
+        public void onCancel() {
+            isCancelCalled = true;
+        }
     }
 }
