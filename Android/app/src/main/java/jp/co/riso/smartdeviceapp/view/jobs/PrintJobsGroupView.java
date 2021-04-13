@@ -624,13 +624,13 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     }
     
     /**
-     * @brief Displays delete print jobs dialog when the delete button is clicked.
+     * @brief Displays delete print jobs dialog when the delete all button is clicked.
      * 
      * @param v Delete view clicked
      */
     private void deleteJobGroup(View v) {
+        mGroupListener.setPrinterToDelete(this, mPrinter);
         if (mGroupListener.showDeleteDialog()) {
-            mGroupListener.setPrinterToDelete(this, mPrinter);
             v.findViewById(R.id.printJobGroupDelete).setSelected(true);
         }
     }
