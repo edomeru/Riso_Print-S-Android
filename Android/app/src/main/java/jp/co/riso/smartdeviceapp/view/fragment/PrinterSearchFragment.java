@@ -261,8 +261,11 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
                 if (!mPrinterManager.isSearching()) {
                     return;
                 }
-                if(mPrinter.contains(printer)) {
-                    return;
+                for (int i = 0; i < mPrinter.size(); i++) {
+                    if (mPrinter.get(i).getIpAddress().equals(printer.getIpAddress())) {
+                        mPrinter.set(i, printer);
+                        return;
+                    }
                 }
                 mPrinter.add(printer);
                 mPrinterSearchAdapter.notifyDataSetChanged();

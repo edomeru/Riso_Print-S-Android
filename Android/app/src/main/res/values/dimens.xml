@@ -30,7 +30,7 @@
     <dimen name="printsettings_icon_width">20dp</dimen>
     <dimen name="printsettings_print_width">32dp</dimen>
     
-    <dimen name="printsettings_list_value_width">180dp</dimen>
+    <dimen name="printsettings_list_value_width">185dp</dimen>
     <dimen name="printsettings_separator_padding">40dp</dimen>
     <dimen name="printsettings_input_width">80dp</dimen>
     <dimen name="printsettings_input_pincode_width">120dp</dimen>
@@ -44,7 +44,7 @@
     
     <fraction name="drawer_width_percentage">85%</fraction>
     <dimen name="drawer_width_min">240dp</dimen>
-    <dimen name="drawer_width_max">320dp</dimen>
+    <dimen name="drawer_width_max">330dp</dimen>
     <dimen name="drawer_margin">1dp</dimen>
     
     <fraction name="preview_view_drop_shadow_percentage">2%</fraction>
