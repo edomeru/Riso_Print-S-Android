@@ -139,11 +139,8 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     public boolean onKeyUp(int keyCode) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_ENTER:
-                if (mAddPrinterView.mIpAddress.isFocused()) {
-                    startManualSearch();
-                    return true;
-                }
-                return false;
+                startManualSearch();
+                return true;
             default:
                 return super.onKeyUp(keyCode);
         }
