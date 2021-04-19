@@ -134,6 +134,17 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         super.onResume();        
         mPauseableHandler.resume();
     }
+
+    @Override
+    public boolean onKeyUp(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_ENTER:
+                startManualSearch();
+                return true;
+            default:
+                return super.onKeyUp(keyCode);
+        }
+    }
     
     // ================================================================================
     // Private Methods

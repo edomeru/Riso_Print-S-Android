@@ -295,6 +295,17 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         mIconState = false;
         mIconId = 0;
     }
+
+    /**
+     * @brief Translates key press from activity to fragment
+     *
+     * @param keyCode Key that was pressed
+     *
+     * @return If key press was handled
+     */
+    public boolean onKeyUp(int keyCode) {
+        return false;
+    };
     
     // ================================================================================
     // INTERFACE - View.OnLayoutChangeListener
