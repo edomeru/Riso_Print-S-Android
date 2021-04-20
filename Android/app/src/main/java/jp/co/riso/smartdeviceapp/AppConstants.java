@@ -142,4 +142,6 @@ public class AppConstants {
     public static final int CONST_PORT_LPR = 515;
     public static final int CONST_PORT_RAW = 9100;
 
+    // For checking if chromebook
+    public static final String CHROME_BOOK = "org.chromium.arc.device_management";
 }

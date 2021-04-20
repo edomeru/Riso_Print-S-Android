@@ -3,12 +3,16 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.Instrumentation;
+import android.content.ContentProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 //import androidx.test.core.app.ApplicationProvider;
+import androidx.core.content.ContextCompat;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
@@ -21,6 +25,8 @@ import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartprint.R;
 
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
@@ -29,6 +35,8 @@ import static junit.framework.TestCase.assertNotNull;
 public class HomeFragmentTest {
     //private final Context context = ApplicationProvider.getApplicationContext();
     private final String TAG = "HOME_FRAGMENT";
+    private final String REQUEST_PERMISSIONS = "android.content.pm.action.REQUEST_PERMISSIONS";
+    private final String REQUEST_PERMISSIONS_NAMES = "android.content.pm.extra.REQUEST_PERMISSIONS_NAMES";
 
     @Rule
     public IntentsTestRule<MainActivity> intentsTestRule = new IntentsTestRule<>(MainActivity.class);
@@ -70,6 +78,20 @@ public class HomeFragmentTest {
 
         homeFragment.onClick(selectDocumentButton);
 
+        // if no permission yet, intent for permission request will be sent instead
+        // TODO: add mocking of permission check
+        if (ContextCompat.checkSelfPermission(intentsTestRule.getActivity(),
+                WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+            Intent permissionRequestIntent = Intents.getIntents().get(0);
+            assertNotNull(permissionRequestIntent);
+            assertEquals(permissionRequestIntent.getAction(), REQUEST_PERMISSIONS);
+
+            String[] permissions = permissionRequestIntent.getStringArrayExtra(REQUEST_PERMISSIONS_NAMES);
+            assertEquals(permissions.length, 1);
+            assertEquals(permissions[0], WRITE_EXTERNAL_STORAGE);
+            return;
+        }
+
         // check intent that was sent
         Intent selectDocumentIntent = Intents.getIntents().get(0);
         assertNotNull(selectDocumentIntent);
@@ -101,6 +123,20 @@ public class HomeFragmentTest {
         selectPhotosButton.setId(R.id.photosButton);
 
         homeFragment.onClick(selectPhotosButton);
+
+        // if no permission yet, intent for permission request will be sent instead
+        // TODO: add mocking of permission check
+        if (ContextCompat.checkSelfPermission(intentsTestRule.getActivity(),
+                WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+            Intent permissionRequestIntent = Intents.getIntents().get(0);
+            assertNotNull(permissionRequestIntent);
+            assertEquals(permissionRequestIntent.getAction(), REQUEST_PERMISSIONS);
+
+            String[] permissions = permissionRequestIntent.getStringArrayExtra(REQUEST_PERMISSIONS_NAMES);
+            assertEquals(permissions.length, 1);
+            assertEquals(permissions[0], WRITE_EXTERNAL_STORAGE);
+            return;
+        }
 
         // check intent that was sent
         Intent selectPhotosIntent = Intents.getIntents().get(0);

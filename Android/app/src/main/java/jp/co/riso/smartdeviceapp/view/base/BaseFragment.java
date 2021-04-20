@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view.base;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.Logger;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.ActionBar.LayoutParams;
@@ -29,7 +30,6 @@ import android.widget.ImageView;
  * @brief Base fragment class
  */
 public abstract class BaseFragment extends DialogFragment implements View.OnLayoutChangeListener, View.OnClickListener {
-    private static final String CHROME_BOOK = "org.chromium.arc.device_management";
     private static final String KEY_ICON_STATE = "icon_state";
     private static final String KEY_ICON_ID = "icon_id";
     private static final String KEY_SELECTED_MENU_ITEM = "selected_menu_item";
@@ -230,7 +230,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
             return false;
         }
 
-       return getActivity().getPackageManager().hasSystemFeature(CHROME_BOOK);
+       return getActivity().getPackageManager().hasSystemFeature(AppConstants.CHROME_BOOK);
     }
 
     /**
