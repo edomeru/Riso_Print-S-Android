@@ -23,6 +23,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -228,6 +229,20 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             closeDrawers();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            // only Enter Key Press is handled so far
+            case KeyEvent.KEYCODE_ENTER:
+                int layoutId = mDrawerLayout.isDrawerOpen(Gravity.RIGHT) ? R.id.rightLayout :
+                    mDrawerLayout.isDrawerOpen(Gravity.LEFT) ? R.id.leftLayout : R.id.mainLayout;
+                BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(layoutId);
+                return fragment.onKeyUp(keyCode);
+            default:
+                return super.onKeyUp(keyCode, event);
         }
     }
 
