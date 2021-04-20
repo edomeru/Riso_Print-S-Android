@@ -153,7 +153,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      *
      * @param printer Searched printer
      */
-    private void dialogCb(Printer printer) {
+    private synchronized void dialogCb(Printer printer) {
         if (isTablet() && getActivity() != null && getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
             if (!activity.isDrawerOpen(Gravity.RIGHT)) {
