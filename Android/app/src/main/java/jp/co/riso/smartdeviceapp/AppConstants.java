@@ -134,6 +134,12 @@ public class AppConstants {
     // Google Drive (account-specified) URI authority
     public static final String GOOGLE_DRIVE_URI_AUTHORITY = "com.google.android.apps.docs.storage";
 
+    // OneDrive URI authority
+    public static final String ONE_DRIVE_URI_AUTHORITY = "com.microsoft.skydrive.content.external";
+
+    // URI authorities that need temp image
+    public static final String[] TEMP_IMAGE_URI_AUTHORITIES = {GOOGLE_DRIVE_URI_AUTHORITY, ONE_DRIVE_URI_AUTHORITY};
+
     // Temporary copy of image file - filename
     public static final String TEMP_IMG_FILENAME = "TMP_IMG";
 
