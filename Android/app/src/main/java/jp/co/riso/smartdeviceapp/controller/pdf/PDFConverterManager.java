@@ -186,6 +186,7 @@ public class PDFConverterManager {
             e.printStackTrace();
             return CONVERSION_FAILED;
         } finally {
+            // delete temp text file if exists
             if (tempTxtFile != null) {
                 try {
                     FileUtils.delete(tempTxtFile);
