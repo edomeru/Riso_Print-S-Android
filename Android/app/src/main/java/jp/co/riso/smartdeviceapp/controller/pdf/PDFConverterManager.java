@@ -136,15 +136,8 @@ public class PDFConverterManager {
         textPaint.setAntiAlias(true);
         textPaint.setColor(Color.BLACK);
 
-        File tempTxtFile = null;
         // Get text file content
         try {
-            // check if it is needed to store file in temp file
-            if (isUriAuthorityAnyOf(mUri, AppConstants.TXT_URI_AUTHORITIES)) {
-                tempTxtFile = copyInputStreamToTempFile(mUri);
-                mUri = Uri.fromFile(tempTxtFile);
-            }
-
             ParcelFileDescriptor parcelFileDescriptor = mContext.getContentResolver().openFileDescriptor(mUri, "r");
             FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
             InputStreamReader inputStream = new InputStreamReader(new FileInputStream(fileDescriptor));
@@ -184,15 +177,6 @@ public class PDFConverterManager {
         }  catch (OutOfMemoryError | Exception e) {
             e.printStackTrace();
             return CONVERSION_FAILED;
-        } finally {
-            // delete temp text file if exists
-            if (tempTxtFile != null) {
-                try {
-                    FileUtils.delete(tempTxtFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
         PdfDocument document = new PdfDocument();
@@ -254,9 +238,15 @@ public class PDFConverterManager {
         Bitmap bitmap = null;
         File tempImgFile = null;
         try {
-            // check if it is needed to store file in temp file
-            if (isUriAuthorityAnyOf(mUri, AppConstants.IMG_URI_AUTHORITIES)) {
-                tempImgFile = copyInputStreamToTempFile(mUri);
+            // check if file from photo picker google drive (account-specified)
+            // save a copy of image file
+            if (mUri.getAuthority() != null && mUri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
+                tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
+                InputStream input = mContext.getContentResolver().openInputStream(mUri);
+                FileUtils.copy(input, tempImgFile);
+                if (input != null) {
+                    input.close();
+                }
                 mUri = Uri.fromFile(tempImgFile);
             }
             bitmap = ImageUtils.getBitmapFromUri(mContext, mUri);
@@ -352,9 +342,15 @@ public class PDFConverterManager {
             File tempImgFile = null;
             try {
                 Uri uri = mClipData.getItemAt(i).getUri();
-                // check if it is needed to store file in temp file
-                if (isUriAuthorityAnyOf(uri, AppConstants.IMG_URI_AUTHORITIES)) {
-                    tempImgFile = copyInputStreamToTempFile(uri);
+                // check if file from photo picker google drive (account-specified)
+                // save a copy of image file
+                if (uri.getAuthority() != null && uri.getAuthority().equals(AppConstants.GOOGLE_DRIVE_URI_AUTHORITY)) {
+                    tempImgFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
+                    InputStream input = mContext.getContentResolver().openInputStream(uri);
+                    FileUtils.copy(input, tempImgFile);
+                    if (input != null) {
+                        input.close();
+                    }
                     uri = Uri.fromFile(tempImgFile);
                 }
                 bitmap = ImageUtils.getBitmapFromUri(mContext, uri);
@@ -577,43 +573,6 @@ public class PDFConverterManager {
             finalHeight = (int) ((float) maxWidth / ratioBitmap);
         }
         return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, false);
-    }
-
-    /**
-     * @brief Create temporary file from input stream
-     *
-     * @param uri URI of input stream
-     *
-     * @return tempFile The temporary file created from the input stream
-     */
-    private File copyInputStreamToTempFile(Uri uri) throws IOException {
-        File tempFile = new File(mContext.getCacheDir(), AppConstants.TEMP_COPY_FILENAME);
-        InputStream input = mContext.getContentResolver().openInputStream(uri);
-        FileUtils.copy(input, tempFile);
-        if (input != null) {
-            input.close();
-        }
-        return tempFile;
-    }
-
-    /**
-     * @brief Checks if URI authority is equal to any of listed authorities
-     *
-     * @param uri URI to check
-     * @param authorities List of authorities to check against (can be 1)
-     *
-     * @return If URI authority is equal to any of the listed authorities
-     */
-    private boolean isUriAuthorityAnyOf(Uri uri, String[] authorities) {
-        if (uri.getAuthority() == null) {
-            return false;
-        }
-        for (String authority : authorities) {
-            if (uri.getAuthority().equals(authority)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     // ================================================================================
