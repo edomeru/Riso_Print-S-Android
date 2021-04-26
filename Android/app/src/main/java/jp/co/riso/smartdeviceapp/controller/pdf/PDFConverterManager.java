@@ -22,7 +22,6 @@ import android.os.ParcelFileDescriptor;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -140,8 +139,11 @@ public class PDFConverterManager {
         File tempTxtFile = null;
         // Get text file content
         try {
-            if (isUriAuthorityAnyOf(mUri, new String[]{AppConstants.ONE_DRIVE_URI_AUTHORITY})) {
-                mUri = getUriOfTempFile(mUri, tempTxtFile);
+            // check if file is from one drive (account-specified)
+            // save a copy of text file for PDF conversion
+            if (isUriAuthorityAnyOf(mUri, AppConstants.TXT_URI_AUTHORITIES)) {
+                tempTxtFile = createTempFile(mUri);
+                mUri = Uri.fromFile(tempTxtFile);
             }
 
             ParcelFileDescriptor parcelFileDescriptor = mContext.getContentResolver().openFileDescriptor(mUri, "r");
@@ -252,10 +254,11 @@ public class PDFConverterManager {
         Bitmap bitmap = null;
         File tempImgFile = null;
         try {
-            // check if file from photo picker google drive (account-specified)
-            // save a copy of image file
-            if (isUriAuthorityAnyOf(mUri, AppConstants.TEMP_IMAGE_URI_AUTHORITIES)) {
-                mUri = getUriOfTempFile(mUri, tempImgFile);
+            // check if file from photo picker google drive or one drive (account-specified)
+            // save a copy of image file for PDF conversion
+            if (isUriAuthorityAnyOf(mUri, AppConstants.IMG_URI_AUTHORITIES)) {
+                tempImgFile = createTempFile(mUri);
+                mUri = Uri.fromFile(tempImgFile);
             }
             bitmap = ImageUtils.getBitmapFromUri(mContext, mUri);
             bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap, mUri);
@@ -350,10 +353,11 @@ public class PDFConverterManager {
             File tempImgFile = null;
             try {
                 Uri uri = mClipData.getItemAt(i).getUri();
-                // check if file from photo picker google drive (account-specified)
-                // save a copy of image file
-                if (isUriAuthorityAnyOf(uri, AppConstants.TEMP_IMAGE_URI_AUTHORITIES)) {
-                    uri = getUriOfTempFile(uri, tempImgFile);
+                // check if file from photo picker google drive or one drive (account-specified)
+                // save a copy of image file for PDF conversion
+                if (isUriAuthorityAnyOf(uri, AppConstants.IMG_URI_AUTHORITIES)) {
+                    tempImgFile = createTempFile(uri);
+                    uri = Uri.fromFile(tempImgFile);
                 }
                 bitmap = ImageUtils.getBitmapFromUri(mContext, uri);
                 bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap, uri);
@@ -578,25 +582,24 @@ public class PDFConverterManager {
     }
 
     /**
-     * @brief Obtain URI of temporary file based on input stream
+     * @brief Create temporary file from input stream
      *
      * @param uri URI of input stream
-     * @param tempFile Filename of temporary file
      *
-     * @return URI of temporary file
+     * @return tempFile The temporary file created from the input stream
      */
-    private Uri getUriOfTempFile(Uri uri, File tempFile) throws IOException {
-        tempFile = new File(mContext.getCacheDir(), AppConstants.TEMP_IMG_FILENAME);
+    private File createTempFile(Uri uri) throws IOException {
+        File tempFile = new File(mContext.getCacheDir(), AppConstants.TEMP_COPY_FILENAME);
         InputStream input = mContext.getContentResolver().openInputStream(uri);
         FileUtils.copy(input, tempFile);
         if (input != null) {
             input.close();
         }
-        return Uri.fromFile(tempFile);
+        return tempFile;
     }
 
     /**
-     * @brief Checks if the URI has authority equal to any of list
+     * @brief Checks if URI authority is equal to any of listed authorities
      *
      * @param uri URI to check
      * @param authorities List of authorities to check against (can be 1)
