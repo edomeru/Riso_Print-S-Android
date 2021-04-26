@@ -142,7 +142,7 @@ public class AppConstants {
     // add URI authorities here for cloud storage that need temporary copy for image/images to PDF conversion
     public static final String[] IMG_URI_AUTHORITIES = {GOOGLE_DRIVE_URI_AUTHORITY, ONE_DRIVE_URI_AUTHORITY};
 
-    // Temporary copy of image file - filename
+    // Temporary copy of image/text file - filename
     public static final String TEMP_COPY_FILENAME = "TMP_COPY";
 
     // PMS Ports
