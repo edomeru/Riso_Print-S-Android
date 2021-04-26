@@ -139,10 +139,9 @@ public class PDFConverterManager {
         File tempTxtFile = null;
         // Get text file content
         try {
-            // check if file is from one drive (account-specified)
-            // save a copy of text file for PDF conversion
+            // check if it is needed to store file in temp file
             if (isUriAuthorityAnyOf(mUri, AppConstants.TXT_URI_AUTHORITIES)) {
-                tempTxtFile = createTempFile(mUri);
+                tempTxtFile = copyInputStreamToTempFile(mUri);
                 mUri = Uri.fromFile(tempTxtFile);
             }
 
@@ -255,10 +254,9 @@ public class PDFConverterManager {
         Bitmap bitmap = null;
         File tempImgFile = null;
         try {
-            // check if file from photo picker google drive or one drive (account-specified)
-            // save a copy of image file for PDF conversion
+            // check if it is needed to store file in temp file
             if (isUriAuthorityAnyOf(mUri, AppConstants.IMG_URI_AUTHORITIES)) {
-                tempImgFile = createTempFile(mUri);
+                tempImgFile = copyInputStreamToTempFile(mUri);
                 mUri = Uri.fromFile(tempImgFile);
             }
             bitmap = ImageUtils.getBitmapFromUri(mContext, mUri);
@@ -354,10 +352,9 @@ public class PDFConverterManager {
             File tempImgFile = null;
             try {
                 Uri uri = mClipData.getItemAt(i).getUri();
-                // check if file from photo picker google drive or one drive (account-specified)
-                // save a copy of image file for PDF conversion
+                // check if it is needed to store file in temp file
                 if (isUriAuthorityAnyOf(uri, AppConstants.IMG_URI_AUTHORITIES)) {
-                    tempImgFile = createTempFile(uri);
+                    tempImgFile = copyInputStreamToTempFile(uri);
                     uri = Uri.fromFile(tempImgFile);
                 }
                 bitmap = ImageUtils.getBitmapFromUri(mContext, uri);
@@ -589,7 +586,7 @@ public class PDFConverterManager {
      *
      * @return tempFile The temporary file created from the input stream
      */
-    private File createTempFile(Uri uri) throws IOException {
+    private File copyInputStreamToTempFile(Uri uri) throws IOException {
         File tempFile = new File(mContext.getCacheDir(), AppConstants.TEMP_COPY_FILENAME);
         InputStream input = mContext.getContentResolver().openInputStream(uri);
         FileUtils.copy(input, tempFile);
@@ -604,6 +601,8 @@ public class PDFConverterManager {
      *
      * @param uri URI to check
      * @param authorities List of authorities to check against (can be 1)
+     *
+     * @return If URI authority is equal to any of the listed authorities
      */
     private boolean isUriAuthorityAnyOf(Uri uri, String[] authorities) {
         if (uri.getAuthority() == null) {
