@@ -147,7 +147,7 @@
     <string name="ids_err_msg_max_printer_count">Saved Printer reached maximum count.</string>
     <string name="ids_err_msg_no_selected_printer">Please register a printer.</string>
     <string name="ids_err_msg_pdf_wrong_password">Please check the password you entered.</string>
-    <string name="ids_err_msg_open_failed">Failed to open file. Please select a valid file and ensure that the file is accessible.</string>
+    <string name="ids_err_msg_open_failed">Failed to open file. Please select a valid file and ensure that the file is accessible, or that there is enough free space on the device.</string>
     <string name="ids_err_msg_pdf_encrypted">PDF Encryption is not supported.</string>
     <string name="ids_err_msg_pdf_printing_not_allowed">File does not allow printing.</string>
     <string name="ids_err_msg_file_too_large">File size is too large.</string>

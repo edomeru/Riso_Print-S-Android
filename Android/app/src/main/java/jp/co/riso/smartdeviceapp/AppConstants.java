@@ -131,11 +131,19 @@ public class AppConstants {
     // Image captured filename
     public static final String CONST_IMAGE_CAPTURED_FILENAME = "Captured_Image.pdf";
 
+    // add URI authorities here for cloud storage that need temporary copy for text/image to PDF conversion
+    // i.e. when text/image Open-In from cloud storage fails with CONVERSION_FILE_NOT_FOUND error
     // Google Drive (account-specified) URI authority
     public static final String GOOGLE_DRIVE_URI_AUTHORITY = "com.google.android.apps.docs.storage";
+    // OneDrive URI authority
+    public static final String ONE_DRIVE_URI_AUTHORITY = "com.microsoft.skydrive.content.external";
+    // add URI authorities here for cloud storage that need temporary copy for text to PDF conversion
+    public static final String[] TXT_URI_AUTHORITIES = {ONE_DRIVE_URI_AUTHORITY};
+    // add URI authorities here for cloud storage that need temporary copy for image/images to PDF conversion
+    public static final String[] IMG_URI_AUTHORITIES = {GOOGLE_DRIVE_URI_AUTHORITY, ONE_DRIVE_URI_AUTHORITY};
 
-    // Temporary copy of image file - filename
-    public static final String TEMP_IMG_FILENAME = "TMP_IMG";
+    // Temporary copy of image/text file - filename
+    public static final String TEMP_COPY_FILENAME = "TMP_COPY";
 
     // PMS Ports
     public static final int CONST_PORT_HTTP = 80;

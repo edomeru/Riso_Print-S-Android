@@ -147,7 +147,7 @@
     <string name="ids_err_msg_max_printer_count">Le nombre d\'imprimantes enregistrées a atteint le maximum</string>
     <string name="ids_err_msg_no_selected_printer">Veuillez enregistrer une imprimante</string>
     <string name="ids_err_msg_pdf_wrong_password">Veuillez vérifier le mot de passe que vous avez saisi</string>
-    <string name="ids_err_msg_open_failed">Échec de l\'ouverture du fichier. Veuillez sélectionner un fichier valide et assurez-vous que le fichier est accessible.</string>
+    <string name="ids_err_msg_open_failed">Échec de l\'ouverture du fichier. Veuillez sélectionner un fichier valide et assurez-vous que le fichier est accessible ou qu\'il y a suffisamment d\'espace libre sur l\'appareil.</string>
     <string name="ids_err_msg_pdf_encrypted">Le chiffrement PDF n\'est pas pris en charge.</string>
     <string name="ids_err_msg_pdf_printing_not_allowed">File does not allow printing.</string>
     <string name="ids_err_msg_file_too_large">La taille du fichier est trop importante</string>
