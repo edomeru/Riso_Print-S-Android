@@ -28,15 +28,23 @@ public abstract class BaseWebFragment extends BaseFragment {
 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mWebView = (SDAWebView) view.findViewById(R.id.contentWebView);
+        mWebView = view.findViewById(R.id.contentWebView);
         
         configureWebView(mWebView);
-        mWebView.loadUrl(getUrlString());
+
+        if (isChromeBook() && savedInstanceState != null) {
+            mWebView.restoreState(savedInstanceState);
+        } else {
+            mWebView.loadUrl(getUrlString());
+        }
     }
     
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (isChromeBook()) {
+            mWebView.saveState(outState);
+        }
     }
     
     /**
