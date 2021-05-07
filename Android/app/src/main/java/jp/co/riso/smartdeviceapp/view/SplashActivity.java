@@ -57,7 +57,7 @@ import jp.co.riso.smartprint.R;
  * 
  * @brief Splash activity class.
  */
-public class SplashActivity extends BaseActivity implements PauseableHandlerCallback, OnTouchListener {
+public class SplashActivity extends BaseActivity implements PauseableHandlerCallback, View.OnClickListener {
     
     /// Message ID for running main activity
     public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
@@ -193,11 +193,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             
             Button agreebutton = (Button)buttonLayout.findViewById(R.id.licenseAgreeButton);
             agreebutton.setText(R.string.ids_lbl_agree);
-            agreebutton.setOnTouchListener(this);
+            agreebutton.setOnClickListener(this);
             
             Button disagreebutton = (Button)buttonLayout.findViewById(R.id.licenseDisagreeButton);
             disagreebutton.setText(R.string.ids_lbl_disagree);
-            disagreebutton.setOnTouchListener(this);
+            disagreebutton.setOnClickListener(this);
 
 
             ViewFlipper vf = (ViewFlipper) findViewById( R.id.viewFlipper);
@@ -360,78 +360,76 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
 
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP){
-            switch (v.getId()) {
-                case R.id.licenseAgreeButton:
-                    // save to shared preferences
-                    SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs", MODE_PRIVATE);
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.licenseAgreeButton:
+                // save to shared preferences
+                SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs", MODE_PRIVATE);
 
-                    SharedPreferences.Editor edit = preferences.edit();
-                    edit.putBoolean("licenseAgreementDone", true);
-                    //edit.putBoolean("licenseAgreementDone",false);
-                    edit.apply();
+                SharedPreferences.Editor edit = preferences.edit();
+                edit.putBoolean("licenseAgreementDone", true);
+                //edit.putBoolean("licenseAgreementDone",false);
+                edit.apply();
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        // show permission onboarding screens
-                        findViewById(R.id.settingsButton).setOnTouchListener(this);
-                        findViewById(R.id.startButton).setOnTouchListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // show permission onboarding screens
+                    findViewById(R.id.settingsButton).setOnClickListener(this);
+                    findViewById(R.id.startButton).setOnClickListener(this);
 
-                        TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
-                        infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
-                        ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
-                    } else {
-                        // start home screen
-                        runMainActivity();
-                    }
-                    return true;
-
-                case R.id.licenseDisagreeButton:
-
-                    // alert box
-                    String title = getString(R.string.ids_lbl_license);
-                    String message = getString(R.string.ids_err_msg_disagree_to_license);
-                    String buttonTitle = getString(R.string.ids_lbl_ok);
-
-                    ContextThemeWrapper newContext = new ContextThemeWrapper(this, android.R.style.TextAppearance_Holo_DialogWindowTitle);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
-
-                    if (title != null) {
-                        builder.setTitle(title);
-                    }
-
-                    if (message != null) {
-                        builder.setMessage(message);
-                    }
-
-                    if (buttonTitle != null) {
-                        builder.setNegativeButton(buttonTitle, null);
-                    }
-
-                    AlertDialog dialog = null;
-                    dialog = builder.create();
-
-                    dialog.show();
-
-                    return true;
-                case R.id.startButton:
-                    // start Home Screen
+                    TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
+                    infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
+                    ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
+                } else {
+                    // start home screen
                     runMainActivity();
-                    return true;
-                case R.id.settingsButton:
-                    // Go to Settings screen screen
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivityForResult(intent, DUMMY_REQUEST_CODE);
-                    return true;
-                default:
-                    v.performClick();
-            }
+                }
+                break;
+
+            case R.id.licenseDisagreeButton:
+
+                // alert box
+                String title = getString(R.string.ids_lbl_license);
+                String message = getString(R.string.ids_err_msg_disagree_to_license);
+                String buttonTitle = getString(R.string.ids_lbl_ok);
+
+                ContextThemeWrapper newContext = new ContextThemeWrapper(this, android.R.style.TextAppearance_Holo_DialogWindowTitle);
+                AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
+
+                if (title != null) {
+                    builder.setTitle(title);
+                }
+
+                if (message != null) {
+                    builder.setMessage(message);
+                }
+
+                if (buttonTitle != null) {
+                    builder.setNegativeButton(buttonTitle, null);
+                }
+
+                AlertDialog dialog = null;
+                dialog = builder.create();
+
+                dialog.show();
+                break;
+
+            case R.id.startButton:
+                // start Home Screen
+                runMainActivity();
+                break;
+
+            case R.id.settingsButton:
+                // Go to Settings screen screen
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivityForResult(intent, DUMMY_REQUEST_CODE);
+                break;
+
+            default:
+                v.performClick();
         }
-        
-        return false;
     }
 
     @Override
