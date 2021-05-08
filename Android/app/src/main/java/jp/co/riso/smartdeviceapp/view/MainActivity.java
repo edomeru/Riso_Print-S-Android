@@ -236,8 +236,6 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_ENTER:
-            case KeyEvent.KEYCODE_DPAD_LEFT:
-            case KeyEvent.KEYCODE_DPAD_RIGHT:
                 int layoutId = mDrawerLayout.isDrawerOpen(Gravity.RIGHT) ? R.id.rightLayout :
                     mDrawerLayout.isDrawerOpen(Gravity.LEFT) ? R.id.leftLayout : R.id.mainLayout;
                 BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(layoutId);

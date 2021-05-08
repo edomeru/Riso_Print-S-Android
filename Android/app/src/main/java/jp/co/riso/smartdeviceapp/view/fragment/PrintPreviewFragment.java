@@ -77,7 +77,7 @@ import jp.co.riso.smartprint.R;
  */
 public class PrintPreviewFragment extends BaseFragment implements Callback, PDFFileManagerInterface, PDFConverterManagerInterface,
         PreviewControlsListener, OnSeekBarChangeListener, PauseableHandlerCallback, ConfirmDialogFragment.ConfirmDialogListener,
-        WaitingDialogFragment.WaitingDialogListener {
+        WaitingDialogFragment.WaitingDialogListener, View.OnKeyListener, View.OnFocusChangeListener {
 
     /// Tag used to identify the error dialog
     public static final String FRAGMENT_TAG_DIALOG = "pdf_error_dialog";
@@ -357,6 +357,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
         mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
         mSeekBar.setOnSeekBarChangeListener(this);
+        mSeekBar.setOnKeyListener(this);
+        mSeekBar.setOnFocusChangeListener(this);
 
         if (mCurrentPage != 0) {
             mPrintPreviewView.setCurrentPage(mCurrentPage);
@@ -511,6 +513,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
             mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
             mSeekBar.setOnSeekBarChangeListener(this);
+            mSeekBar.setOnKeyListener(this);
+            mSeekBar.setOnFocusChangeListener(this);
 
             if (mPageControls.getVisibility() == View.VISIBLE) {
                 updateSeekBar();
@@ -765,28 +769,33 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mPageLabel.setText(mPrintPreviewView.getPageString());
     }
 
-    /**
-     * @brief Handle left and right arrow key release to update the page preview
-     *
-     * @param keyCode Key that was released
-     *
-     * @return If key release was handled
-     */
-    @Override
-    public boolean onKeyUp(int keyCode) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_DPAD_RIGHT:
-            case KeyEvent.KEYCODE_DPAD_LEFT:
-                if (mSeekBar.isFocused() ||
-                    // when seekbar range limits are exceeded, keyboard arrows will move focus to other buttons
-                    // so we can't check isFocused anymore but instead check the seekbar progress
-                    mSeekBar.getProgress() == 0 || mSeekBar.getProgress() == mSeekBar.getMax()) {
-                    mPrintPreviewView.setCurrentPage(mSeekBar.getProgress());
-                    return true;
-                }
+    // ================================================================================
+    // INTERFACE - View.OnKeyListener
+    // ================================================================================
 
-            default:
-                return super.onKeyUp(keyCode);
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (v.getId() == R.id.pageSlider && event.getAction() == KeyEvent.ACTION_UP &&
+            (keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT))
+        {
+            mPrintPreviewView.setCurrentPage(mSeekBar.getProgress());
+        }
+        return false;
+    }
+
+    // ================================================================================
+    // INTERFACE - View.OnFocusChangeListener
+    // ================================================================================
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        // when limits are reached, arrow keys will move the focus to other buttons instead of calling onKey
+        // if focus moves out of page slider, update page to 1st or last page
+        if (v.getId() == R.id.pageSlider && !hasFocus) {
+            int progress = mSeekBar.getProgress();
+            if (progress == 0 || progress == mSeekBar.getMax()) {
+                mPrintPreviewView.setCurrentPage(progress);
+            }
         }
     }
 
