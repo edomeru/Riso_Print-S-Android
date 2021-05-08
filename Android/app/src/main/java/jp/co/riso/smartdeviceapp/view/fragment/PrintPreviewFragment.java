@@ -29,6 +29,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.LruCache;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -743,6 +744,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         mSeekBar.setMax(0);
         mSeekBar.setMax(pageCount);
+        // keyboard increment is updated based on range so this must be reset when range changes
+        mSeekBar.setKeyProgressIncrement(1);
         updateSeekBarProgress(currentPage);
     }
 
@@ -760,6 +763,31 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      */
     private void updatePageLabel() {
         mPageLabel.setText(mPrintPreviewView.getPageString());
+    }
+
+    /**
+     * @brief Handle left and right arrow key release to update the page preview
+     *
+     * @param keyCode Key that was released
+     *
+     * @return If key release was handled
+     */
+    @Override
+    public boolean onKeyUp(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                if (mSeekBar.isFocused() ||
+                    // when seekbar range limits are exceeded, keyboard arrows will move focus to other buttons
+                    // so we can't check isFocused anymore but instead check the seekbar progress
+                    mSeekBar.getProgress() == 0 || mSeekBar.getProgress() == mSeekBar.getMax()) {
+                    mPrintPreviewView.setCurrentPage(mSeekBar.getProgress());
+                    return true;
+                }
+
+            default:
+                return super.onKeyUp(keyCode);
+        }
     }
 
     // ================================================================================
