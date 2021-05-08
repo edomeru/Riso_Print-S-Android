@@ -70,10 +70,11 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_finalizeDirectPrint(JNI
     jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
     if (m_job != 0)
     {
-        directprint_job *job = (directprint_job *)m_job;
-        CommonJNIState *state = (CommonJNIState *)directprint_job_get_caller_data(job);
-        (*env)->DeleteGlobalRef(env, state->instance);
-        free(state);
+        // RM 856 Fix: Move free state to directprint_job_free()
+        //directprint_job *job = (directprint_job *)m_job;
+        //CommonJNIState *state = (CommonJNIState *)directprint_job_get_caller_data(job);
+        //(*env)->DeleteGlobalRef(env, state->instance);
+        //free(state);
         // RM 496 Fix: Move directprint_job_free to directprint.c
         //directprint_job_free(job);
         (*env)->SetLongField(env, object, dp_job_field_id, 0);
