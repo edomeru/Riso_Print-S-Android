@@ -235,12 +235,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
+            // only Enter Key Press is handled so far
             case KeyEvent.KEYCODE_ENTER:
                 int layoutId = mDrawerLayout.isDrawerOpen(Gravity.RIGHT) ? R.id.rightLayout :
                     mDrawerLayout.isDrawerOpen(Gravity.LEFT) ? R.id.leftLayout : R.id.mainLayout;
                 BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(layoutId);
                 return fragment.onKeyUp(keyCode);
-
             default:
                 return super.onKeyUp(keyCode, event);
         }
