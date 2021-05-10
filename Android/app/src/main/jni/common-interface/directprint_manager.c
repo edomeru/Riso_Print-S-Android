@@ -22,7 +22,9 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(J
     // Create cache object
     CommonJNIState *state = (CommonJNIState *)malloc(sizeof(CommonJNIState));
     (*env)->GetJavaVM(env, &state->java_vm);
-    state->instance = (*env)->NewGlobalRef(env, object);
+    // RM 856 Fix: Change global reference to weak reference so that it can be deleted elsewhere
+    // The state is set in directprint.c via directprint_job_set_caller_data() and deleted in that module.
+    state->instance = (*env)->NewWeakGlobalRef(env, object);
 
     // Create direct print job
     const char *native_printer_name =  (*env)->GetStringUTFChars(env, printer_name, 0);
