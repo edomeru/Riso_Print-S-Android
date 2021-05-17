@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/printjob_row_height"
         android:background="@drawable/selector_jobs_groupheader"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical"
+        android:nextFocusRight="@id/printJobGroupDelete" >
 
         <ImageView
             android:id="@+id/printJobGroupCollapse"
@@ -70,7 +71,8 @@
             android:paddingRight="@dimen/printjob_delgroupbtn_padding_side"
             android:text="@string/ids_lbl_delete_all"
             android:textAllCaps="false"
-            android:textColor="@drawable/selector_jobs_deletealltextcolor" />
+            android:textColor="@drawable/selector_jobs_deletealltextcolor"
+            android:nextFocusLeft="@id/printJobsGroupLayout" />
     </RelativeLayout>
 
     <View

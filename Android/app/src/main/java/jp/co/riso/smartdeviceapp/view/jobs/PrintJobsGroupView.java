@@ -367,7 +367,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             printJobError.setVisibility(VISIBLE);
             printJobSuccess.setVisibility(GONE);
         }
-        
+
+        tempView.setOnClickListener(this);
+
         mJobsLayout.addView(tempView);
         
         // AppUtils.changeChildrenFont((ViewGroup) tempView, SmartDeviceApp.getAppFont());
@@ -671,13 +673,38 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.printJobGroupDelete:
-                deleteJobGroup(v);
+                // if delete button is visible, hide that instead of handling the click
+                if (mLayoutListener.isDeleteMode()) {
+                    mLayoutListener.hideDeleteButton();
+                } else {
+                    deleteJobGroup(v);
+                }
                 break;
             case R.id.printJobDeleteBtn:
                 mGroupListener.showDeleteDialog();
                 break;
             case R.id.printJobsGroupLayout:
-                toggleGroupView(v);
+                // if delete button is visible, hide that instead of handling the click
+                if (mLayoutListener.isDeleteMode()) {
+                    mLayoutListener.hideDeleteButton();
+                } else {
+                    toggleGroupView(v);
+                }
+                break;
+            case R.id.printJobRow:
+                View deleteBtn = v.findViewById(R.id.printJobDeleteBtn);
+                if (deleteBtn != null) {
+                    if (deleteBtn.getVisibility() == GONE) {
+                        mLayoutListener.showDeleteButton(this, v);
+                        // if still not visible, means a delete button is already visible
+                        // hide that button, similar to touch
+                        if (deleteBtn.getVisibility() == GONE) {
+                            mLayoutListener.hideDeleteButton();
+                        }
+                    } else {
+                        mLayoutListener.hideDeleteButton();
+                    }
+                }
                 break;
         }
     }
@@ -785,7 +812,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     }
     
     /**
-     * @interface PrintJobsGroupListener
+     * @interface PrintJobsLayoutListener
      * 
      * @brief Interface for PrintJobsGroupView events such as animate and delete.
      */
@@ -811,5 +838,25 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
          * @brief Called when a print job is deleted
          */
         public void onDeleteJob();
+
+        /**
+         * @brief Called to show the print job delete button
+         *
+         * @param pj Print job group view which contains the item to animate
+         * @param view Print job item to show the delete button for
+         */
+        public void showDeleteButton(PrintJobsGroupView pj, View view);
+
+        /**
+         * @brief Called to hide the print job delete button
+         */
+        public void hideDeleteButton();
+
+        /**
+         * @brief Check if delete mode is ongoing i.e. a delete button is shown
+         *
+         * @return True if delete mode is ongoing
+         */
+        public boolean isDeleteMode();
     }
 }
