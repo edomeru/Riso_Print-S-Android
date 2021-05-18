@@ -93,7 +93,9 @@ public class CurlPage {
 		// original Bitmap to it more efficiently? Immutable bitmap anyone?
 		Bitmap bitmapTex = Bitmap.createBitmap(newW, newH, bitmap.getConfig());
 		Canvas c = new Canvas(bitmapTex);
-		c.drawBitmap(bitmap, 0, 0, null);
+		if (bitmap.isRecycled() == false) {
+			c.drawBitmap(bitmap, 0, 0, null);
+		}
 
 		// Calculate final texture coordinates.
 		float texX = (float) w / newW;
