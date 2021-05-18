@@ -23,6 +23,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -174,6 +175,19 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        // if using trackpad/mouse, placing the cursor near the right edge of the scrollview shows the scrollbar
+        // this has an overlap with the scrollview which blocks tap actions on the setting items
+        // to keep behavior consistent with phone/tablet, hide on tap but show while dragging
+        if (ev.isFromSource(InputDevice.SOURCE_MOUSE)) {
+            View currentScrollView = mMainView.isEnabled() ?
+                    mPrintSettingsScrollView : mSubScrollView;
+            if (ev.getAction() == MotionEvent.ACTION_MOVE) {
+                currentScrollView.setVerticalScrollBarEnabled(true);
+            } else if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+                currentScrollView.setVerticalScrollBarEnabled(false);
+            }
+        }
+
         View view = mMainView.findViewWithTag(PrintSettings.TAG_COPIES);
         if (view != null && view instanceof EditText) {
             if (!AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
@@ -191,7 +205,20 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         AppUtils.hideSoftKeyboard((Activity) getContext());
         return super.onInterceptTouchEvent(ev);
-        
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        // scrolling with mouse wheel must be handled here
+        if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+            View currentScrollView = mMainView.isEnabled() ?
+                    mPrintSettingsScrollView : mSubScrollView;
+            if (event.getActionMasked() == MotionEvent.ACTION_SCROLL) {
+                currentScrollView.setVerticalScrollBarEnabled(true);
+            }
+        }
+
+        return super.onGenericMotionEvent(event);
     }
     
     /**
