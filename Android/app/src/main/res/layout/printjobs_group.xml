@@ -10,6 +10,8 @@
         android:layout_height="@dimen/printjob_row_height"
         android:background="@drawable/selector_jobs_groupheader"
         android:gravity="center_vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
         android:nextFocusRight="@id/printJobGroupDelete" >
 
         <ImageView

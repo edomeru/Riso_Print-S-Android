@@ -225,6 +225,31 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mGroupListener.setDeletePrintJob(null, null);
         }
     }
+
+    /**
+     * @brief After a print job is deleted, move focus to next print job if present,
+     *          if it is the last print job, move focus to the previous print job
+     */
+    public void focusNextPrintJob() {
+        if (mViewToDelete != null) {
+            View nextFocus = mViewToDelete.focusSearch(FOCUS_DOWN);
+            if (nextFocus == null) {
+                nextFocus = mViewToDelete.focusSearch(FOCUS_UP);
+            }
+            if (nextFocus != null) {
+                nextFocus.requestFocus();
+            }
+        }
+    }
+
+    /**
+     * @brief After delete is cancelled, return focus to the print job
+     */
+    public void returnFocusToPrintJob() {
+        if (mViewToDelete != null) {
+            mViewToDelete.requestFocus();
+        }
+    }
     
     /**
      * @brief Retrieves a print job row layout if a swipe is valid within the row. 
@@ -692,18 +717,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                 }
                 break;
             case R.id.printJobRow:
-                View deleteBtn = v.findViewById(R.id.printJobDeleteBtn);
-                if (deleteBtn != null) {
-                    if (deleteBtn.getVisibility() == GONE) {
-                        mLayoutListener.showDeleteButton(this, v);
-                        // if still not visible, means a delete button is already visible
-                        // hide that button, similar to touch
-                        if (deleteBtn.getVisibility() == GONE) {
-                            mLayoutListener.hideDeleteButton();
-                        }
-                    } else {
-                        mLayoutListener.hideDeleteButton();
-                    }
+                if (mLayoutListener.isDeleteMode()) {
+                    mLayoutListener.hideDeleteButton();
+                } else {
+                    mLayoutListener.showDeleteButton(this, v);
                 }
                 break;
         }
