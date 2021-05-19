@@ -233,7 +233,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     public void focusNextPrintJob() {
         if (mViewToDelete != null) {
             View nextFocus = mViewToDelete.focusSearch(FOCUS_DOWN);
-            if (nextFocus == null) {
+            // focus can move beyond the print job group so check if a child of the group
+            if (nextFocus == null || nextFocus.getParent() != mJobsLayout) {
                 nextFocus = mViewToDelete.focusSearch(FOCUS_UP);
             }
             if (nextFocus != null) {
