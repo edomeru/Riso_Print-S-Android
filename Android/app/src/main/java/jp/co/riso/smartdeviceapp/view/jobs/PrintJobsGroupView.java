@@ -225,6 +225,32 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mGroupListener.setDeletePrintJob(null, null);
         }
     }
+
+    /**
+     * @brief After a print job is deleted, move focus to next print job if present,
+     *          if it is the last print job, move focus to the previous print job
+     */
+    public void focusNextPrintJob() {
+        if (mViewToDelete != null) {
+            View nextFocus = mViewToDelete.focusSearch(FOCUS_DOWN);
+            // focus can move beyond the print job group so check if a child of the group
+            if (nextFocus == null || nextFocus.getParent() != mJobsLayout) {
+                nextFocus = mViewToDelete.focusSearch(FOCUS_UP);
+            }
+            if (nextFocus != null) {
+                nextFocus.requestFocus();
+            }
+        }
+    }
+
+    /**
+     * @brief After delete is cancelled, return focus to the print job
+     */
+    public void returnFocusToPrintJob() {
+        if (mViewToDelete != null) {
+            mViewToDelete.requestFocus();
+        }
+    }
     
     /**
      * @brief Retrieves a print job row layout if a swipe is valid within the row. 
@@ -367,7 +393,9 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             printJobError.setVisibility(VISIBLE);
             printJobSuccess.setVisibility(GONE);
         }
-        
+
+        tempView.setOnClickListener(this);
+
         mJobsLayout.addView(tempView);
         
         // AppUtils.changeChildrenFont((ViewGroup) tempView, SmartDeviceApp.getAppFont());
@@ -671,13 +699,30 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.printJobGroupDelete:
-                deleteJobGroup(v);
+                // if delete button is visible, hide that instead of handling the click
+                if (mLayoutListener.isDeleteMode()) {
+                    mLayoutListener.hideDeleteButton();
+                } else {
+                    deleteJobGroup(v);
+                }
                 break;
             case R.id.printJobDeleteBtn:
                 mGroupListener.showDeleteDialog();
                 break;
             case R.id.printJobsGroupLayout:
-                toggleGroupView(v);
+                // if delete button is visible, hide that instead of handling the click
+                if (mLayoutListener.isDeleteMode()) {
+                    mLayoutListener.hideDeleteButton();
+                } else {
+                    toggleGroupView(v);
+                }
+                break;
+            case R.id.printJobRow:
+                if (mLayoutListener.isDeleteMode()) {
+                    mLayoutListener.hideDeleteButton();
+                } else {
+                    mLayoutListener.showDeleteButton(this, v);
+                }
                 break;
         }
     }
@@ -785,7 +830,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     }
     
     /**
-     * @interface PrintJobsGroupListener
+     * @interface PrintJobsLayoutListener
      * 
      * @brief Interface for PrintJobsGroupView events such as animate and delete.
      */
@@ -811,5 +856,25 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
          * @brief Called when a print job is deleted
          */
         public void onDeleteJob();
+
+        /**
+         * @brief Called to show the print job delete button
+         *
+         * @param pj Print job group view which contains the item to animate
+         * @param view Print job item to show the delete button for
+         */
+        public void showDeleteButton(PrintJobsGroupView pj, View view);
+
+        /**
+         * @brief Called to hide the print job delete button
+         */
+        public void hideDeleteButton();
+
+        /**
+         * @brief Check if delete mode is ongoing i.e. a delete button is shown
+         *
+         * @return True if delete mode is ongoing
+         */
+        public boolean isDeleteMode();
     }
 }
