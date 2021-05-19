@@ -211,8 +211,13 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 
 	@Override
 	public void onPageSizeChanged(int width, int height) {
-		mPageBitmapWidth = width;
-		mPageBitmapHeight = height;
+		// Use only the maximum size for rendering the bitmaps
+		if (width > mPageBitmapWidth) {
+			mPageBitmapWidth = width;
+		}
+		if (height > mPageBitmapHeight) {
+			mPageBitmapHeight = height;
+		}
 		setZoomLevel(mZoomLevel);
 		setPans(mPanX, mPanY);
 		updatePages();
