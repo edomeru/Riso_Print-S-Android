@@ -216,6 +216,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     @Override
     public void onConfirm() {
         if (mPrintGroupToDelete != null) {
+            mPrintGroupToDelete.focusNextPrintJob();
             if (mPrinterToDelete != null) {
                 mPrintGroupToDelete.onDeleteJobGroup();
                 setPrinterToDelete(null, null);
@@ -231,6 +232,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     @Override
     public void onCancel() {
         if (mPrintGroupToDelete != null) {
+            mPrintGroupToDelete.returnFocusToPrintJob();
             if (mPrinterToDelete != null) {
                 mPrintGroupToDelete.onCancelDeleteGroup();
                 setPrinterToDelete(null, null);

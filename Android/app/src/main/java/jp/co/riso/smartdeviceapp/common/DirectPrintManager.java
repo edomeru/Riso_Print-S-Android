@@ -278,7 +278,7 @@ public class DirectPrintManager {
         @Override
         protected Void doInBackground(Void... params) {
             mManager.cancel();
-            finalizeDirectPrint();
+            mManager.finalizeDirectPrint();
             return null;
         }
 

@@ -137,7 +137,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             mPrintGroupWithDelete.clearDeleteButton();
         }
     }
-    
+
     /**
      * @brief Resets the PrintJobsView.
      */
@@ -539,7 +539,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     }
     
     // ================================================================================
-    // INTERFACE - PrintJobsGroupDeleteListener
+    // INTERFACE - PrintJobsLayoutListener
     // ================================================================================
     
     @Override
@@ -580,7 +580,22 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     public void onDeleteJob() {
         endDelete(false);
     }
-    
+
+    @Override
+    public void showDeleteButton(PrintJobsGroupView pj, View view) {
+        beginDelete(pj, view, true);
+    }
+
+    @Override
+    public void hideDeleteButton() {
+        endDelete(true);
+    }
+
+    @Override
+    public boolean isDeleteMode() {
+        return mDeleteMode;
+    }
+
     // ================================================================================
     // Internal Classes
     // ================================================================================
