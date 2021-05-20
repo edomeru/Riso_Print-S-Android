@@ -231,6 +231,9 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             } else if (Intent.ACTION_SEND.equals(action)) {
                 if (getIntent().getExtras().get(Intent.EXTRA_STREAM) != null) {
                     data = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());
+                } else {
+                    // An invalid intent was sent by the third party app
+                    launchIntent.putExtra(Intent.EXTRA_TEXT, AppConstants.ERR_KEY_INVALID_INTENT);
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
                 clipData = getIntent().getClipData();

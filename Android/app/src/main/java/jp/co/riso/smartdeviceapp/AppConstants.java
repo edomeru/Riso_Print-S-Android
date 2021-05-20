@@ -150,6 +150,8 @@ public class AppConstants {
     public static final int CONST_PORT_LPR = 515;
     public static final int CONST_PORT_RAW = 9100;
 
+    // Error for invalid intent data from third party app
+    public static final String ERR_KEY_INVALID_INTENT = "error_key_invalid_intent";
     // For checking if chromebook
     public static final String CHROME_BOOK = "org.chromium.arc.device_management";
 }
