@@ -89,7 +89,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 String text = (String) extras.get(Intent.EXTRA_TEXT);
-                if (text.equals(AppConstants.ERR_KEY_INVALID_INTENT)) {
+                if ((text != null) && text.equals(AppConstants.ERR_KEY_INVALID_INTENT)) {
                     intent.removeExtra(Intent.EXTRA_TEXT);
                     // Display error message that an invalid intent was sent by a third-party app
                     String message = getResources().getString(R.string.ids_err_msg_invalid_contents_android);
