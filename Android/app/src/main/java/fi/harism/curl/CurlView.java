@@ -97,6 +97,7 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 	private float mZoomLevel = 1.0f;
 	private float mPanX = 0.0f;
 	private float mPanY = 0.0f;
+	public boolean mUseCachedBitmaps = true;
 
 	/**
 	 * Default constructor.
@@ -214,9 +215,13 @@ public class CurlView extends GLSurfaceView implements View.OnTouchListener,
 		// Use only the maximum size for rendering the bitmaps
 		if (width > mPageBitmapWidth) {
 			mPageBitmapWidth = width;
+			mPageBitmapHeight = height;
+			mUseCachedBitmaps = false;
 		}
 		if (height > mPageBitmapHeight) {
+			mPageBitmapWidth = width;
 			mPageBitmapHeight = height;
+			mUseCachedBitmaps = false;
 		}
 		setZoomLevel(mZoomLevel);
 		setPans(mPanX, mPanY);
