@@ -3,6 +3,8 @@
     <item android:drawable="@android:color/transparent"
           android:state_pressed="true" />
     <item android:drawable="@drawable/focus_highlight"
+        android:state_focused="true" />
+    <item android:drawable="@drawable/focus_highlight"
         android:state_selected="true" />
     <item android:drawable="@android:color/transparent" />
 </selector>
