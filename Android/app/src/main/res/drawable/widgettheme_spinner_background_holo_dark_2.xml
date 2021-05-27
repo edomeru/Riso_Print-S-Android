@@ -19,7 +19,8 @@
           android:drawable="@drawable/widgettheme_spinner_disabled_holo_dark_2" />
     <item android:state_pressed="true"
           android:drawable="@drawable/widgettheme_spinner_pressed_holo_dark_2" />
-    <item android:state_pressed="false" android:state_focused="true"
-          android:drawable="@drawable/widgettheme_spinner_focused_holo_dark_2" />
+    <!-- disabled focused item because this overwrites the theme -->
+    <!--item android:state_pressed="false" android:state_focused="true"
+          android:drawable="@drawable/widgettheme_spinner_focused_holo_dark_2" /-->
     <item android:drawable="@drawable/widgettheme_spinner_default_holo_dark_2" />
 </selector>

@@ -15,4 +15,8 @@
     <color name="theme_color_1">#8541D8</color>
     <color name="theme_color_2">#5207B6</color>
     <color name="bg_delete_button">#F84B4B</color>
+
+    <!-- Focus highlight color from Android SDK colors_holo.xml -->
+    <color name="holo_blue_dark_1">#4d0099cc</color> <!-- 30% opacity -->
+    <color name="holo_blue_dark_2">#800099cc</color> <!-- 50% opacity -->
 </resources>
