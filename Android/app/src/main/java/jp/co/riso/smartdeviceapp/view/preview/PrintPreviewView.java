@@ -1121,9 +1121,10 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             boolean GET_FROM_CACHE = true;
             
             Bitmap cachedPages[] = null;
-            if (GET_FROM_CACHE) {
+            if (GET_FROM_CACHE && mCurlView.mUseCachedBitmaps) {
                 cachedPages = getBitmapsFromCacheForPage(index);
             } else {
+                mCurlView.mUseCachedBitmaps = true;
                 PDFRenderTask task = new PDFRenderTask(page, width, height, index, page.createNewHandler());
                 cachedPages = task.getRenderBitmaps();
             }
