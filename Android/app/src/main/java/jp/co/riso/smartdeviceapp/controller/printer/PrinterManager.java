@@ -572,7 +572,8 @@ public class PrinterManager implements SNMPManagerCallback {
             if (NetUtils.isIPv6Address(ipAddress)) {
                 return NetUtils.connectToIpv6Address(ipAddress, inetIpAddress);
             } else {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                //if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {//
+                if (true) { // test WA for NG in QE
                     return NetUtils.connectToIpv4Address(ipAddress);
                 } else {
                     inetIpAddress = InetAddress.getByName(ipAddress);
