@@ -18,7 +18,7 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // aLINK edit: set supported orientation to portrait only
-        // RM#907 for chromebook, do not set to portrait immediately to allow camera to rotate
+        // aLINK edit: RM#907 for chromebook, do not set to portrait immediately to allow camera to rotate
         if (!isChromeBook()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
@@ -44,7 +44,7 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
 
     @Override
     public void onBitmapSelect(Uri uri) {
-        // RM#907 for chromebook, set to portrait only after photo is captured
+        // aLINK edit: RM#907 for chromebook, set to portrait only after photo is captured
         if (isChromeBook()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
@@ -124,7 +124,10 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
         }
     }
 
+
     /**
+     * aLink edit: add chrome book checker to use for chrome book specific behavior
+     *
      * @brief Check if device is chrome book
      *
      * @retval true Device is a chrome book

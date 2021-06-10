@@ -11,7 +11,7 @@
     <application
         android:largeHeap="true"
         android:hardwareAccelerated="true">
-        <!-- RM#907 screenLayout needed to handle rotation for chromebook, and as recommended by Android docs -->
+        <!-- aLINK edit: RM#907 screenLayout needed to handle rotation for chromebook, and as recommended by Android docs -->
         <activity
             android:name=".ScanActivity"
             android:configChanges="orientation|screenSize|screenLayout">
