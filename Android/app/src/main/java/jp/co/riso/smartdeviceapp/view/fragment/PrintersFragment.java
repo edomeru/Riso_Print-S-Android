@@ -371,7 +371,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     targetView = mListView.getChildAt(i).findViewById(R.id.img_onOff);
                 }
             }
-            if (targetView != null) {
+            if (targetView != null &&
+                // RM#914 add safety checking for access to mPrinter array list
+                mPrinter.size() > (i + position)) {
                 mPrinterManager.updateOnlineStatus(mPrinter.get(i + position).getIpAddress(), targetView);
             }
         }
