@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.os.Message;
 import androidx.core.content.ContextCompat;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -270,7 +271,14 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         viewHolder.mSaveButton.setVisibility(View.GONE);
         viewHolder.mProgressBar.setVisibility(View.VISIBLE);
         viewHolder.mIpAddress.setTextColor(ContextCompat.getColor(getActivity(), R.color.theme_light_4));
-        viewHolder.mIpAddress.setFocusable(false);
+
+        // #RM908 for chromeOS, setFocusable(false) somehow causes virtual keyboard to reappear after printer is added
+        // use alternative way to disable IP address field which does cause the same problem
+        if (isChromeBook()) {
+            viewHolder.mIpAddress.setInputType(InputType.TYPE_NULL);
+        } else {
+            viewHolder.mIpAddress.setFocusable(false);
+        }
         
     }
     
