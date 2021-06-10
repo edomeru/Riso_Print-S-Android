@@ -126,7 +126,7 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
 
 
     /**
-     * aLink edit: add chrome book checker to use for chrome book specific behavior
+     * aLINK edit: add chrome book checker to use for chrome book specific behavior
      *
      * @brief Check if device is chrome book
      *

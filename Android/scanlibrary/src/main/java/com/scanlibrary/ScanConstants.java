@@ -19,6 +19,6 @@ public class ScanConstants {
 
     public final static String SELECTED_BITMAP = "selectedBitmap";
 
-    // RM#907 for checking if chromebook
+    // aLINK edit: RM#907 for checking if chromebook
     public final static String CHROME_BOOK = "org.chromium.arc.device_management";
 }
