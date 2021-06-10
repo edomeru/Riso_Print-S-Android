@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.os.Message;
 import androidx.core.content.ContextCompat;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -95,7 +96,11 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         if (mPrinterManager.isSearching()) {
             setViewToDisable(mAddPrinterView);
         }
-        if (!isTablet()) {
+
+        // RM#911 when display size is changed, layout can change from tablet to phone
+        // if layout is phone, also check if fragment is currently open in the right drawer
+        // if it is, do not expand to fit the screen to prevent clipping
+        if (!isTablet() && !isOnRightDrawer()) {
             Point screenSize = AppUtils.getScreenDimensions(getActivity());
             View rootView = view.findViewById(R.id.rootView);
             if (rootView == null) {
@@ -114,8 +119,11 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_add_printer);
-        
-        if (isTablet()) {
+
+        // RM#911 when display size is changed, layout can change from tablet to phone
+        // even if layout is not tablet, check if fragment is currently open in the right drawer
+        // if it is, use action bar for tablet
+        if (isTablet() || isOnRightDrawer()) {
             int leftTextPadding = (int) getResources().getDimension(R.dimen.home_title_padding);            
             textView.setPadding(leftTextPadding, 0, 0, 0);
         } else {
@@ -270,7 +278,14 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         viewHolder.mSaveButton.setVisibility(View.GONE);
         viewHolder.mProgressBar.setVisibility(View.VISIBLE);
         viewHolder.mIpAddress.setTextColor(ContextCompat.getColor(getActivity(), R.color.theme_light_4));
-        viewHolder.mIpAddress.setFocusable(false);
+
+        // #RM908 for chromeOS, setFocusable(false) somehow causes virtual keyboard to reappear after printer is added
+        // use alternative way to disable IP address field which does cause the same problem
+        if (isChromeBook()) {
+            viewHolder.mIpAddress.setInputType(InputType.TYPE_NULL);
+        } else {
+            viewHolder.mIpAddress.setFocusable(false);
+        }
         
     }
     
