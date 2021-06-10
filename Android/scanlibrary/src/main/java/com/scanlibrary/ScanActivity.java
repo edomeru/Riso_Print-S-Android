@@ -124,6 +124,12 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
         }
     }
 
+    /**
+     * @brief Check if device is chrome book
+     *
+     * @retval true Device is a chrome book
+     * @retval false Device is a tablet or phone
+     */
     private boolean isChromeBook() {
         return getPackageManager().hasSystemFeature(ScanConstants.CHROME_BOOK);
     }
