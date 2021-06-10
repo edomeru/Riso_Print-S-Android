@@ -15,6 +15,7 @@ import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.app.ActionBar.LayoutParams;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -203,6 +204,20 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         }
         
         return getResources().getBoolean(R.bool.is_tablet);
+    }
+
+    /**
+     * @brief Checks whether the fragment is on the right drawer
+     *
+     * @retval true Fragment is on the right drawer
+     * @retval false Fragment is not on the right drawer
+     */
+    public boolean isOnRightDrawer() {
+        FragmentManager fm = getFragmentManager();
+        if (fm != null) {
+            return this == fm.findFragmentById(R.id.rightLayout);
+        }
+        return false;
     }
     
     /**
