@@ -18,7 +18,10 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // aLINK edit: set supported orientation to portrait only
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        // RM#907 for chromebook, do not set to portrait immediately to allow camera to rotate
+        if (!isChromeBook()) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         // end
         setContentView(R.layout.scan_layout);
         init();
@@ -41,6 +44,11 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
 
     @Override
     public void onBitmapSelect(Uri uri) {
+        // RM#907 for chromebook, set to portrait only after photo is captured
+        if (isChromeBook()) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
         ScanFragment fragment = new ScanFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(ScanConstants.SELECTED_BITMAP, uri);
@@ -114,6 +122,10 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
                 */
                 break;
         }
+    }
+
+    private boolean isChromeBook() {
+        return getPackageManager().hasSystemFeature(ScanConstants.CHROME_BOOK);
     }
 
     public native Bitmap getScannedBitmap(Bitmap bitmap, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);

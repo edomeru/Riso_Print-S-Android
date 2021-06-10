@@ -18,4 +18,7 @@ public class ScanConstants {
             .getExternalStorageDirectory().getPath() + "/scanSample";
 
     public final static String SELECTED_BITMAP = "selectedBitmap";
+
+    // RM#907 for checking if chromebook
+    public static final String CHROME_BOOK = "org.chromium.arc.device_management";
 }
