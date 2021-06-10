@@ -1271,6 +1271,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         editText.setLayoutParams(params);
         
         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        // RM#918 for chromebook, this is also needed to make virtual keyboard numeric only
+        editText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(AppConstants.CONST_PIN_CODE_LIMIT)
         });
