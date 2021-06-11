@@ -441,10 +441,15 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 				mPageRectLeft.offset(0, mPageRectRight.height());
 			}
 
-			// Ignore the view margins when determining the image size
-			// (The page rectangles above are still used to render the page)
-			int bitmapW = mViewportHeight;
-			int bitmapH = mViewportWidth;
+			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect.width());
+			int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect.height());
+			boolean isViewLandscape = (mViewportWidth > mViewportHeight);
+			boolean isBmpLandscape = (bitmapW > bitmapH);
+			// Remove the margins from the image size if the page and view orientation does not match
+			if (isBmpLandscape != isViewLandscape) {
+				bitmapW = mViewportHeight;
+				bitmapH = mViewportWidth;
+			}
 			mObserver.onPageSizeChanged(bitmapW, bitmapH);
 		} else if (mViewMode == SHOW_TWO_PAGES) {
 			mPageRectRight.set(mViewRect);
@@ -468,10 +473,15 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 				mPageRectRight.bottom = mPageRectLeft.top;
 			}
 
-			// Ignore the view margins when determining the image size
-			// (The page rectangles above are still used to render the page)
-			int bitmapW = mViewportHeight;
-			int bitmapH = mViewportWidth;
+			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect.width());
+			int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect.height());
+			boolean isViewLandscape = (mViewportWidth > mViewportHeight);
+			boolean isBmpLandscape = (bitmapW > bitmapH);
+			// Remove the margins from the image size if the page and view orientation does not match
+			if (isBmpLandscape != isViewLandscape) {
+				bitmapW = mViewportHeight;
+				bitmapH = mViewportWidth;
+			}
 			mObserver.onPageSizeChanged(bitmapW, bitmapH);
 		}
 	}
