@@ -3,6 +3,7 @@ package com.scanlibrary;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -54,6 +55,20 @@ public class ScanFragment extends Fragment {
         view = inflater.inflate(R.layout.scan_fragment_layout, null);
         init();
         return view;
+    }
+
+    // aLINK edit: reset crop frame during configuration changes
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        sourceFrame.post(new Runnable() {
+            @Override
+            public void run() {
+                if (original != null) {
+                    setBitmap(original);
+                }
+            }
+        });
     }
 
     public ScanFragment() {

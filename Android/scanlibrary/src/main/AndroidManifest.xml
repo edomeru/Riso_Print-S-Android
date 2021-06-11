@@ -12,9 +12,10 @@
         android:largeHeap="true"
         android:hardwareAccelerated="true">
         <!-- aLINK edit: RM#907 screenLayout needed to handle rotation for chromebook, and as recommended by Android docs -->
+        <!-- aLINK edit: RM#912 smallestScreenSize and density is needed to handle display size change -->
         <activity
             android:name=".ScanActivity"
-            android:configChanges="orientation|screenSize|screenLayout">
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|density">
         </activity>
 
         <!-- aLINK edit: Migrate file provider to Android X -->
