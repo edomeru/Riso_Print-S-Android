@@ -441,11 +441,14 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 				mPageRectLeft.offset(0, mPageRectRight.height());
 			}
 
-			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect.width());
-			int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect.height());
+			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
+					.width());
+			int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect
+					.height());
+			// aLINK add: disregard the view margins in calculating the image size
 			boolean isViewLandscape = (mViewportWidth > mViewportHeight);
 			boolean isBmpLandscape = (bitmapW > bitmapH);
-			// Remove the margins from the image size
+
 			if (isBmpLandscape != isViewLandscape) {
 				bitmapW = mViewportHeight;
 				bitmapH = mViewportWidth;
@@ -453,6 +456,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 				bitmapW = mViewportWidth;
 				bitmapH = mViewportHeight;
 			}
+			// end
 			mObserver.onPageSizeChanged(bitmapW, bitmapH);
 		} else if (mViewMode == SHOW_TWO_PAGES) {
 			mPageRectRight.set(mViewRect);
@@ -476,11 +480,14 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 				mPageRectRight.bottom = mPageRectLeft.top;
 			}
 
-			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect.width());
-			int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect.height());
+			int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
+					.width());
+			int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect
+					.height());
+			// aLINK add: disregard the view margins in calculating the image size
 			boolean isViewLandscape = (mViewportWidth > mViewportHeight);
 			boolean isBmpLandscape = (bitmapW > bitmapH);
-			// Remove the margins from the image size
+
 			if (isBmpLandscape != isViewLandscape) {
 				bitmapW = mViewportHeight;
 				bitmapH = mViewportWidth;
@@ -488,6 +495,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 				bitmapW = mViewportWidth;
 				bitmapH = mViewportHeight;
 			}
+			// end
 			mObserver.onPageSizeChanged(bitmapW, bitmapH);
 		}
 	}
