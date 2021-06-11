@@ -57,18 +57,20 @@ public class ScanFragment extends Fragment {
         return view;
     }
 
-    // aLINK edit: reset crop frame during configuration changes
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        sourceFrame.post(new Runnable() {
-            @Override
-            public void run() {
-                if (original != null) {
-                    setBitmap(original);
+        // aLINK edit: RM#912 for chromebook, reset crop frame during configuration changes
+        if (Utils.isChromeBook(getActivity())) {
+            sourceFrame.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (original != null) {
+                        setBitmap(original);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public ScanFragment() {
