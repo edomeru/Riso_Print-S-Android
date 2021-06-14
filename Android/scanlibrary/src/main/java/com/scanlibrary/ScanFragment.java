@@ -153,6 +153,11 @@ public class ScanFragment extends Fragment {
     private class ScanButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            // aLINK edit: RM#923 prevent onClick by Enter key when ScanFragment is not on top
+            if (!(getFragmentManager().findFragmentById(R.id.content) instanceof ScanFragment)) {
+                return;
+            }
+
             Map<Integer, PointF> points = polygonView.getPoints();
             if (isScanPointsValid(points)) {
                 new ScanAsyncTask(points).execute();
