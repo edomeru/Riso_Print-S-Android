@@ -1278,6 +1278,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         });
         
         editText.addTextChangedListener(new PinCodeTextWatcher());
+        editText.setOnEditorActionListener(this);
 
         titleText = getResources().getString(R.string.ids_lbl_pin_code);
         addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, false);
@@ -2219,6 +2220,15 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (actionId == EditorInfo.IME_ACTION_DONE) {
             checkEditTextValue(v);
             return false;
+        }
+
+        // RM#910 for chromebook, virtual keyboard has ENTER key instead of DONE key
+        // it must be consumed (return true) to prevent focus from moving
+        // it must also be hidden manually
+        if (actionId == EditorInfo.IME_NULL) {
+            checkEditTextValue(v);
+            AppUtils.hideSoftKeyboard((Activity) getContext());
+            return true;
         }
         return false;
     }
