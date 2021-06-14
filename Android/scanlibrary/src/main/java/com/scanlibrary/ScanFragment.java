@@ -3,6 +3,7 @@ package com.scanlibrary;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.scanlibrary.Utils.isChromeBook;
 
 /**
  * Created by jhansi on 29/03/15.
@@ -89,6 +92,12 @@ public class ScanFragment extends Fragment {
     }
 
     private void init() {
+        // aLINK edit: RM#907 for chromebook, set to portrait only after photo is captured
+        // aLINK edit: RM#912 must be set to portrait here so orientation is also updated on fragment reset
+        if (isChromeBook(getActivity())) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
         sourceImageView = (ImageView) view.findViewById(R.id.sourceImageView);
         scanButton = (Button) view.findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new ScanButtonClickListener());
