@@ -60,21 +60,31 @@ public class ScanFragment extends Fragment {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // aLINK edit: RM#912 for chromebook, reset crop frame during configuration changes
+        // aLINK edit: RM#912 for chromebook, reset the fragment when configuration changes
+        // reset of fragment is needed because layout need to adjust to new config correctly
         if (Utils.isChromeBook(getActivity())) {
-            sourceFrame.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (original != null) {
-                        setBitmap(original);
+            final FragmentManager fm = getFragmentManager();
+            if (this == fm.findFragmentById(R.id.content)) {
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ScanFragment newScanFragment = new ScanFragment();
+                        newScanFragment.passBitmap(original);
+                        fm.beginTransaction()
+                                .replace(R.id.content, newScanFragment)
+                                .commit();
                     }
-                }
-            });
+                });
+            }
         }
     }
 
     public ScanFragment() {
 
+    }
+
+    public void passBitmap(Bitmap bitmap) {
+        original = bitmap;
     }
 
     private void init() {
@@ -86,7 +96,9 @@ public class ScanFragment extends Fragment {
         sourceFrame.post(new Runnable() {
             @Override
             public void run() {
-                original = getBitmap();
+                if (original == null) {
+                    original = getBitmap();
+                }
                 if (original != null) {
                     setBitmap(original);
                 }
