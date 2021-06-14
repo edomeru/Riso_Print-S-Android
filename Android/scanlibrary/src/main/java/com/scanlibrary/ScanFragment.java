@@ -57,11 +57,11 @@ public class ScanFragment extends Fragment {
         return view;
     }
 
+    // aLINK edit: RM#912 for chromebook, reset the fragment when configuration changes
+    // reset of fragment is needed because layout need to adjust to new config correctly
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // aLINK edit: RM#912 for chromebook, reset the fragment when configuration changes
-        // reset of fragment is needed because layout need to adjust to new config correctly
         if (Utils.isChromeBook(getActivity())) {
             final FragmentManager fm = getFragmentManager();
             if (this == fm.findFragmentById(R.id.content)) {
@@ -83,6 +83,7 @@ public class ScanFragment extends Fragment {
 
     }
 
+    // aLINK edit: RM#912 for chromebook, for passing the bitmap when resetting the fragment
     public void passBitmap(Bitmap bitmap) {
         original = bitmap;
     }
@@ -96,6 +97,7 @@ public class ScanFragment extends Fragment {
         sourceFrame.post(new Runnable() {
             @Override
             public void run() {
+                // aLINK edit: RM#912 when fragment is reset due to display change the bitmap is available
                 if (original == null) {
                     original = getBitmap();
                 }
