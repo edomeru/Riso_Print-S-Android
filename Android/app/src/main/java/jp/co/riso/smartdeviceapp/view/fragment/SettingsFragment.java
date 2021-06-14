@@ -21,8 +21,10 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -53,6 +55,18 @@ public class SettingsFragment extends BaseFragment {
         editText.setActivated(true);
         editText.setText(prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID));
         editText.addTextChangedListener(new SharedPreferenceTextWatcher(getActivity(), AppConstants.PREF_KEY_LOGIN_ID));
+
+        // RM#910 for chromebook, virtual keyboard must be hidden manually after ENTER is pressed
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_NULL) {
+                    AppUtils.hideSoftKeyboard(getActivity());
+                    return true;
+                }
+                return false;
+            }
+        });
 
         filterArray = new InputFilter[] {
                 new InputFilter.LengthFilter(AppConstants.CONST_LOGIN_ID_LIMIT)
@@ -86,7 +100,7 @@ public class SettingsFragment extends BaseFragment {
         super.onConfigurationChanged(newConfig);
         resizeView(getView());
     }
-    
+
     // ================================================================================
     // Private Methods
     // ================================================================================

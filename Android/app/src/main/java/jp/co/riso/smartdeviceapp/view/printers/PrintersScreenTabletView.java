@@ -164,8 +164,10 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
         for (int i = 0, y = 0; i < childCount; y++) {
             for (int x = 0; x < numberOfColumn; x++) {
                 View child = getChildAt(i);
-                
-                if (child == null) {
+
+                // RM#914 getChildCount() sometimes returns incorrect value (duplicates printer count)
+				// add checking based on actual printer list size
+                if (child == null || (i >= mPrinterList.size())) {
                     return;
                 }
                 MarginLayoutParams lps = (MarginLayoutParams) child.getLayoutParams();

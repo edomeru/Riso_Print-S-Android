@@ -88,8 +88,12 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
         snmpCommunityNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE) {
-                    saveSnmpCommunityNameToSharedPrefs(v.getText().toString());
+                if (actionId == EditorInfo.IME_ACTION_DONE ||
+                    // RM#910 for chromebook, virtual keyboard has ENTER key instead of DONE key
+                    actionId == EditorInfo.IME_NULL) {
+                        saveSnmpCommunityNameToSharedPrefs(v.getText().toString());
+                        // RM#910 for chromebook, virtual keyboard must be hidden manually after ENTER key is pressed
+                        AppUtils.hideSoftKeyboard(getActivity());
                 }
                 return false;
             }
@@ -97,7 +101,10 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
 
         });
 
-        if (!isTablet()) {
+        // RM#911 when display size is changed, layout can change from tablet to phone
+        // if layout is phone, also check if fragment is not currently open in the right drawer
+        // if it is, do not expand to fit the screen to prevent clipping
+        if (!isTablet() && !isOnRightDrawer()) {
             Point screenSize = AppUtils.getScreenDimensions(getActivity());
             View rootView = view.findViewById(R.id.rootView);
             if (rootView == null) {
@@ -116,8 +123,11 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
         TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_search_printers_settings);
-        
-        if (isTablet()) {
+
+        // RM#911 when display size is changed, layout can change from tablet to phone
+        // even if layout is not tablet, check if fragment is currently open in the right drawer
+        // if it is, use action bar for tablet
+        if (isTablet() || isOnRightDrawer()) {
             int leftTextPadding = (int) getResources().getDimension(R.dimen.home_title_padding);            
             textView.setPadding(leftTextPadding, 0, 0, 0);
         } else {

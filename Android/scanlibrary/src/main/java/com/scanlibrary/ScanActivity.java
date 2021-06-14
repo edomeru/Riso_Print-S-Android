@@ -9,6 +9,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
+import static com.scanlibrary.Utils.isChromeBook;
+
 /**
  * Created by jhansi on 28/03/15.
  */
@@ -18,7 +20,10 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // aLINK edit: set supported orientation to portrait only
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        // aLINK edit: RM#907 for chromebook, do not set to portrait immediately to allow camera to rotate
+        if (!isChromeBook(this)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         // end
         setContentView(R.layout.scan_layout);
         init();

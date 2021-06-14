@@ -1271,11 +1271,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         editText.setLayoutParams(params);
         
         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        // RM#918 for chromebook, this is also needed to make virtual keyboard numeric only
+        editText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(AppConstants.CONST_PIN_CODE_LIMIT)
         });
         
         editText.addTextChangedListener(new PinCodeTextWatcher());
+        editText.setOnEditorActionListener(this);
 
         titleText = getResources().getString(R.string.ids_lbl_pin_code);
         addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, false);
@@ -2217,6 +2220,15 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (actionId == EditorInfo.IME_ACTION_DONE) {
             checkEditTextValue(v);
             return false;
+        }
+
+        // RM#910 for chromebook, virtual keyboard has ENTER key instead of DONE key
+        // it must be consumed (return true) to prevent focus from moving
+        // it must also be hidden manually
+        if (actionId == EditorInfo.IME_NULL) {
+            checkEditTextValue(v);
+            AppUtils.hideSoftKeyboard((Activity) getContext());
+            return true;
         }
         return false;
     }
