@@ -445,6 +445,18 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 					.width());
 			int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect
 					.height());
+			// aLINK add: disregard the view margins in calculating the image size
+			boolean isViewLandscape = (mViewportWidth > mViewportHeight);
+			boolean isBmpLandscape = (bitmapW > bitmapH);
+
+			if (isBmpLandscape != isViewLandscape) {
+				bitmapW = mViewportHeight;
+				bitmapH = mViewportWidth;
+			} else {
+				bitmapW = mViewportWidth;
+				bitmapH = mViewportHeight;
+			}
+			// end
 			mObserver.onPageSizeChanged(bitmapW, bitmapH);
 		} else if (mViewMode == SHOW_TWO_PAGES) {
 			mPageRectRight.set(mViewRect);
@@ -472,6 +484,18 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
 					.width());
 			int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect
 					.height());
+			// aLINK add: disregard the view margins in calculating the image size
+			boolean isViewLandscape = (mViewportWidth > mViewportHeight);
+			boolean isBmpLandscape = (bitmapW > bitmapH);
+
+			if (isBmpLandscape != isViewLandscape) {
+				bitmapW = mViewportHeight;
+				bitmapH = mViewportWidth;
+			} else {
+				bitmapW = mViewportWidth;
+				bitmapH = mViewportHeight;
+			}
+			// end
 			mObserver.onPageSizeChanged(bitmapW, bitmapH);
 		}
 	}
