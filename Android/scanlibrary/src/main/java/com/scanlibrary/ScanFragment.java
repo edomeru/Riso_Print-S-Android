@@ -3,6 +3,8 @@ package com.scanlibrary;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -25,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.scanlibrary.Utils.isChromeBook;
 
 /**
  * Created by jhansi on 29/03/15.
@@ -56,11 +60,44 @@ public class ScanFragment extends Fragment {
         return view;
     }
 
+    // aLINK edit: RM#912 for chromebook, reset the fragment when configuration changes
+    // reset of fragment is needed because layout need to adjust to new config correctly
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (Utils.isChromeBook(getActivity())) {
+            final FragmentManager fm = getFragmentManager();
+            if (this == fm.findFragmentById(R.id.content)) {
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ScanFragment newScanFragment = new ScanFragment();
+                        newScanFragment.passBitmap(original);
+                        fm.beginTransaction()
+                                .replace(R.id.content, newScanFragment)
+                                .commit();
+                    }
+                });
+            }
+        }
+    }
+
     public ScanFragment() {
 
     }
 
+    // aLINK edit: RM#912 for chromebook, for passing the bitmap when resetting the fragment
+    public void passBitmap(Bitmap bitmap) {
+        original = bitmap;
+    }
+
     private void init() {
+        // aLINK edit: RM#907 for chromebook, set to portrait only after photo is captured
+        // aLINK edit: RM#912 must be set to portrait here so orientation is also updated on fragment reset
+        if (isChromeBook(getActivity())) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
         sourceImageView = (ImageView) view.findViewById(R.id.sourceImageView);
         scanButton = (Button) view.findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new ScanButtonClickListener());
@@ -69,7 +106,10 @@ public class ScanFragment extends Fragment {
         sourceFrame.post(new Runnable() {
             @Override
             public void run() {
-                original = getBitmap();
+                // aLINK edit: RM#912 when fragment is reset due to display change the bitmap is available
+                if (original == null) {
+                    original = getBitmap();
+                }
                 if (original != null) {
                     setBitmap(original);
                 }
