@@ -572,12 +572,8 @@ public class PrinterManager implements SNMPManagerCallback {
             if (NetUtils.isIPv6Address(ipAddress)) {
                 return NetUtils.connectToIpv6Address(ipAddress, inetIpAddress);
             } else {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                    return NetUtils.connectToIpv4Address(ipAddress);
-                } else {
-                    inetIpAddress = InetAddress.getByName(ipAddress);
-                    return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
-                }
+                // RM#901 use socket connect to check printer online status
+                return NetUtils.connectToIpv4Address(ipAddress);
             }
         } catch (Exception e) {
             return false;
