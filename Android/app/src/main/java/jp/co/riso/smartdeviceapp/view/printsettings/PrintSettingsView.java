@@ -2083,7 +2083,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      */
     private void checkEditTextValue(TextView v) {
         if (v.getInputType() == InputType.TYPE_CLASS_NUMBER &&
-                // RM#10 + RM#18 if text input is for PIN code do not attempt to reset
+                // RM#910 + RM#918 if text input is for PIN code do not attempt to reset
                 v.getId() != R.id.view_id_pin_code_edit_text) {
             String value = v.getText().toString();
             if (value.isEmpty()) {
