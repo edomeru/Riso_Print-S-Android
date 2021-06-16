@@ -2228,8 +2228,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         // it must be consumed (return true) to prevent focus from moving
         // it must also be hidden manually
         if (actionId == EditorInfo.IME_NULL) {
-            checkEditTextValue(v);
-            AppUtils.hideSoftKeyboard((Activity) getContext());
+            if (event != null && event.getAction() == KeyEvent.ACTION_UP) {
+                checkEditTextValue(v);
+                AppUtils.hideSoftKeyboard((Activity) getContext());
+            }
             return true;
         }
         return false;
