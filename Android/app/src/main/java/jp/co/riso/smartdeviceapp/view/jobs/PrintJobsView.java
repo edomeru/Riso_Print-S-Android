@@ -295,8 +295,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         pjView.setOrientation(VERTICAL);
         
         int col = getSmallestColumn();
-        mColumns.get(col).addView(pjView, groupParams);
-        mColumnsHeight[col] += pjView.getGroupHeight() + groupParams.topMargin; // update column height
+        // RM#942 safety check when accessing columns to prevent crash of screen or app
+        if (mColumns.size() > col) {
+            mColumns.get(col).addView(pjView, groupParams);
+            mColumnsHeight[col] += pjView.getGroupHeight() + groupParams.topMargin; // update column height
+        }
     }
     
     /**
