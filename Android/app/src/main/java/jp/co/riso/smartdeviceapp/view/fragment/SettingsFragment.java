@@ -61,7 +61,9 @@ public class SettingsFragment extends BaseFragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_NULL) {
-                    AppUtils.hideSoftKeyboard(getActivity());
+                    if (event != null && event.getAction() == KeyEvent.ACTION_UP) {
+                        AppUtils.hideSoftKeyboard(getActivity());
+                    }
                     return true;
                 }
                 return false;
