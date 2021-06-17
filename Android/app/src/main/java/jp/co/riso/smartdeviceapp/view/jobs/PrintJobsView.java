@@ -222,6 +222,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         
         mThread = new ViewCreationThread();
         mThread.start();
+        try {
+            mThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     
     /**
