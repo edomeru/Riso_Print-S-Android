@@ -223,6 +223,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         
         mThread = new ViewCreationThread();
         mThread.start();
+        // RM#942 thread join need to prevent race condition which causes print job groups to be doubled
         try {
             mThread.join();
         } catch (InterruptedException e) {
