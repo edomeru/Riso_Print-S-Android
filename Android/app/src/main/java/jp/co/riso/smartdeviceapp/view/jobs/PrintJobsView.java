@@ -24,6 +24,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -301,10 +302,24 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         
         int col = getSmallestColumn();
         // RM#942 safety check when accessing columns to prevent crash of screen or app
-        if (mColumns.size() > col) {
+        // also check if total print job groups already equal to number of printers to prevent doubling of jobs
+        if (mColumns.size() > col && getTotalPrintJobGroups() < mPrinters.size()) {
             mColumns.get(col).addView(pjView, groupParams);
             mColumnsHeight[col] += pjView.getGroupHeight() + groupParams.topMargin; // update column height
         }
+    }
+
+    /**
+     * @brief Get total number of print job groups
+     *
+     * @return total number of print job groups already assigned to columns
+     */
+    private int getTotalPrintJobGroups() {
+        int total = 0;
+        for (int i = 0; i < mColumns.size(); i++) {
+            total += mColumns.get(i).getChildCount();
+        }
+        return total;
     }
     
     /**
