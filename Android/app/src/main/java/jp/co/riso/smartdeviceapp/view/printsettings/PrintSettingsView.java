@@ -2082,7 +2082,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @param v TextView to be edited
      */
     private void checkEditTextValue(TextView v) {
-        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER) {
+        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER &&
+                // RM#910 + RM#918 if text input is for PIN code do not attempt to reset
+                v.getId() != R.id.view_id_pin_code_edit_text) {
             String value = v.getText().toString();
             if (value.isEmpty()) {
                 v.setText("1");
@@ -2226,8 +2228,10 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         // it must be consumed (return true) to prevent focus from moving
         // it must also be hidden manually
         if (actionId == EditorInfo.IME_NULL) {
-            checkEditTextValue(v);
-            AppUtils.hideSoftKeyboard((Activity) getContext());
+            if (event != null && event.getAction() == KeyEvent.ACTION_UP) {
+                checkEditTextValue(v);
+                AppUtils.hideSoftKeyboard((Activity) getContext());
+            }
             return true;
         }
         return false;

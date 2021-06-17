@@ -88,12 +88,15 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
         snmpCommunityNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE ||
-                    // RM#910 for chromebook, virtual keyboard has ENTER key instead of DONE key
-                    actionId == EditorInfo.IME_NULL) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    saveSnmpCommunityNameToSharedPrefs(v.getText().toString());
+                } else if (actionId == EditorInfo.IME_NULL) {
+                    // RM#910 for chromebook, virtual keyboard must be hidden manually after ENTER key is pressed
+                    if (event != null && event.getAction() == KeyEvent.ACTION_UP) {
                         saveSnmpCommunityNameToSharedPrefs(v.getText().toString());
-                        // RM#910 for chromebook, virtual keyboard must be hidden manually after ENTER key is pressed
                         AppUtils.hideSoftKeyboard(getActivity());
+                    }
+                    return true;
                 }
                 return false;
             }
