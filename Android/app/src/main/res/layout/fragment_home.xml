@@ -11,13 +11,46 @@
     <FrameLayout
         android:id="@+id/rootView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="16dp"
+        android:layout_height="match_parent">
+        <!-- android:paddingBottom="16dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:paddingTop="24dp">
+        android:paddingTop="24dp" -->
 
+        <!-- hide new feature support - START -->
         <LinearLayout
+            android:id="@+id/openInView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/preview_logo_margin"
+            android:paddingRight="@dimen/preview_logo_margin" >
+
+            <ImageView
+                android:layout_width="@dimen/splash_logo_width"
+                android:layout_height="@dimen/splash_logo_height"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="0.5"
+                android:contentDescription="@string/default_content_description"
+                android:scaleType="fitEnd"
+                android:src="@drawable/img_home_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="0.5"
+                android:background="@drawable/border_topbottom"
+                android:gravity="center"
+                android:text="@string/ids_lbl_open_in_android"
+                android:textAllCaps="false"
+                android:textColor="@color/theme_color_2"
+                android:textSize="@dimen/font_size_large" />
+        </LinearLayout>
+        <!-- hide new feature support - END -->
+
+        <!--LinearLayout
             android:id="@+id/contentView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -50,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-        </LinearLayout>
+        </LinearLayout -->
 
     </FrameLayout>
 
