@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 30
+    // aLINK edit: update build tools version to latest
     buildToolsVersion '30.0.3'
 
     defaultConfig {
