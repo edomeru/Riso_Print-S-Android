@@ -12,25 +12,26 @@
         android:id="@+id/rootView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-        <!-- hide new feature support - minor layout changes to center the logo - START >
+        <!-- hide new feature support - remove padding - START >
         android:paddingBottom="16dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="24dp" -->
-        <!-- hide new feature support - minor layout changes to center the logo - END -->
+        <!-- hide new feature support - remove padding - END -->
 
+        <!-- hide new feature support - change contentView height and gravity to center the logo -->
         <LinearLayout
             android:id="@+id/contentView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center">
 
             <LinearLayout
                 android:id="@+id/openInView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="top|center"
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/preview_logo_margin"
                 android:paddingRight="@dimen/preview_logo_margin">

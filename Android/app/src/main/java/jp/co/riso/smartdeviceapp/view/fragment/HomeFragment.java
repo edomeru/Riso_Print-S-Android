@@ -176,7 +176,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        LinearLayout mainView = getView().findViewById(R.id.contentView);
+        // hide new feature support - do not relayout home buttons during config change
+        /*LinearLayout mainView = getView().findViewById(R.id.contentView);
         mainView.removeView(homeButtons);
 
         LinearLayout newView = (LinearLayout)View.inflate(getActivity(), R.layout.home_buttons, null);
@@ -184,7 +185,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
         mainView.addView(newView);
         homeButtons = newView;
-        setOnClickListeners(homeButtons);
+        setOnClickListeners(homeButtons);*/
     }
 
     @Override
