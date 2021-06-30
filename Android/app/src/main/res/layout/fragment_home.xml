@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,50 +10,21 @@
     <FrameLayout
         android:id="@+id/rootView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <!-- android:paddingBottom="16dp"
+        android:layout_height="match_parent" >
+        <!-- hide new feature support - remove padding to center the logo - START >
+        android:paddingBottom="16dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="24dp" -->
+        <!-- hide new feature support - remove padding to center the logo - END -->
 
-        <!-- hide new feature support - START -->
+        <!-- hide new feature support - change contentView gravity to center the logo -->
         <LinearLayout
-            android:id="@+id/openInView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/preview_logo_margin"
-            android:paddingRight="@dimen/preview_logo_margin" >
-
-            <ImageView
-                android:layout_width="@dimen/splash_logo_width"
-                android:layout_height="@dimen/splash_logo_height"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="0.5"
-                android:contentDescription="@string/default_content_description"
-                android:scaleType="fitEnd"
-                android:src="@drawable/img_home_icon" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="0.5"
-                android:background="@drawable/border_topbottom"
-                android:gravity="center"
-                android:text="@string/ids_lbl_open_in_android"
-                android:textAllCaps="false"
-                android:textColor="@color/theme_color_2"
-                android:textSize="@dimen/font_size_large" />
-        </LinearLayout>
-        <!-- hide new feature support - END -->
-
-        <!--LinearLayout
             android:id="@+id/contentView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
 
             <LinearLayout
                 android:id="@+id/openInView"
@@ -74,6 +44,19 @@
                     android:scaleType="fitEnd"
                     android:src="@drawable/img_home_icon" />
 
+                <!-- hide new feature support - open document label - START -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/border_topbottom"
+                    android:gravity="center"
+                    android:text="@string/ids_lbl_open_in_android"
+                    android:textAllCaps="false"
+                    android:textColor="@color/theme_color_2"
+                    android:textSize="@dimen/font_size_large" />
+                <!-- hide new feature support - open document label - END -->
             </LinearLayout>
 
             <include
@@ -81,9 +64,10 @@
                 layout="@layout/home_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:visibility="gone" /> <!-- hide new feature support - hide home buttons -->
 
-        </LinearLayout -->
+        </LinearLayout>
 
     </FrameLayout>
 

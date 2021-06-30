@@ -66,10 +66,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private final int REQUEST_WRITE_EXTERNAL_STORAGE = 4;
     private final int REQUEST_CAMERA_STORAGE_PERMISSION = 5;
 
-    // hide new feature support - START
-    //private LinearLayout homeButtons;
+    private LinearLayout homeButtons;
     private LinearLayout fileButton, photosButton, cameraButton;
-    // hide new feature support - END
 
     private static final String TAG_PERMISSION_DIALOG = "external_storage_tag";
     private ConfirmDialogFragment mConfirmDialogFragment = null;
@@ -104,10 +102,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        // hide new feature support - START
-        //homeButtons = view.findViewById(R.id.homeButtons);
-        //setOnClickListeners(view);
-        // hide new feature support - END
+        homeButtons = view.findViewById(R.id.homeButtons);
+        setOnClickListeners(view);
     }
 
     @Override
@@ -180,17 +176,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        // hide new feature support - START
-        //LinearLayout mainView = getView().findViewById(R.id.contentView);
-        //mainView.removeView(homeButtons);
+        // hide new feature support - do not relayout home buttons during config change
+        /*LinearLayout mainView = getView().findViewById(R.id.contentView);
+        mainView.removeView(homeButtons);
 
-        //LinearLayout newView = (LinearLayout)View.inflate(getActivity(), R.layout.home_buttons, null);
-        //newView.setLayoutParams(homeButtons.getLayoutParams());
+        LinearLayout newView = (LinearLayout)View.inflate(getActivity(), R.layout.home_buttons, null);
+        newView.setLayoutParams(homeButtons.getLayoutParams());
 
-        //mainView.addView(newView);
-        //homeButtons = newView;
-        //setOnClickListeners(homeButtons);
-        // hide new feature support - END
+        mainView.addView(newView);
+        homeButtons = newView;
+        setOnClickListeners(homeButtons);*/
     }
 
     @Override
@@ -235,17 +230,15 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         }
     }
 
-    // hide new feature support - START
-    //private void setOnClickListeners(View view) {
-    //    fileButton = view.findViewById(R.id.fileButton);
-    //    photosButton = view.findViewById(R.id.photosButton);
-    //    cameraButton = view.findViewById(R.id.cameraButton);
+    private void setOnClickListeners(View view) {
+        fileButton = view.findViewById(R.id.fileButton);
+        photosButton = view.findViewById(R.id.photosButton);
+        cameraButton = view.findViewById(R.id.cameraButton);
 
-    //    fileButton.setOnClickListener(this);
-    //    photosButton.setOnClickListener(this);
-    //    cameraButton.setOnClickListener(this);
-    //}
-    // hide new feature support - END
+        fileButton.setOnClickListener(this);
+        photosButton.setOnClickListener(this);
+        cameraButton.setOnClickListener(this);
+    }
 
     private boolean checkPermission(boolean isStorageOnly) {
         if (isStorageOnly && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
