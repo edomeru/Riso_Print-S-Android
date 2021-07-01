@@ -322,9 +322,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
-        c.show(mActivity.getFragmentManager(), TAG);
+        c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
         assertTrue(c.isShowing());
