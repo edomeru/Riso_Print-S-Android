@@ -53,11 +53,10 @@ public class Utils {
     // Reference:
     // https://github.com/coroutineDispatcher/pocket_treasure/blob/master/gallery_module/src/main/java/com/sxhardha/gallery_module/image/FullImageFragment.kt
     public static Uri getUri(Context context, Bitmap bitmap) {
-        String relativeLocation = context.getExternalFilesDir(null).getPath();
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation);
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, ScanConstants.IMAGE_RELATIVE_PATH);
             contentValues.put(MediaStore.MediaColumns.IS_PENDING, 1);
         }
         Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -88,6 +87,7 @@ public class Utils {
         } else {
             ImageDecoder.Source source = ImageDecoder.createSource(context.getContentResolver(), uri);
             bitmap = ImageDecoder.decodeBitmap(source);
+            bitmap = bitmap.copy(ScanConstants.BITMAP_CONFIG, true);
         }
         // aLINK edit - End
         return bitmap;
