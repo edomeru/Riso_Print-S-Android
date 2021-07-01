@@ -1,8 +1,8 @@
 package com.scanlibrary;
 
+import android.os.Environment;
 // aLINK edit - Start
-// Environment.getExternalStorageDirectory() was deprecated in API level 29.
-//import android.os.Environment;
+import android.graphics.Bitmap;
 // aLINK edit - End
 
 /**
@@ -26,4 +26,11 @@ public class ScanConstants {
     // aLINK edit - End
 
     public final static String SELECTED_BITMAP = "selectedBitmap";
+
+    // aLINK edit - Start
+    // From Android 10, Media Scanner can't be used on custom paths
+    public final static String IMAGE_RELATIVE_PATH = Environment.DIRECTORY_PICTURES + "/SDA";
+    // Used to convert default Bitmap.Config.HARDWARE to supported config
+    public final static Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
+    // aLINK edit - End
 }
