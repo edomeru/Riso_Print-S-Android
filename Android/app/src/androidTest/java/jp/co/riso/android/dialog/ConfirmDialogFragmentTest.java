@@ -28,8 +28,6 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
     private MainActivity mActivity;
 
-    private boolean mCallbackCalled;
-
     public ConfirmDialogFragmentTest() {
         super(MainActivity.class);
 
@@ -43,7 +41,6 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     protected void setUp() throws Exception {
         super.setUp();
         mActivity = getActivity();
-        mCallbackCalled = false;
         wakeUpScreen();
     }
 
@@ -198,16 +195,14 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnClick_PositiveListener() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
-        c.setTargetFragment(new MockCallback(), 1);
+
+        MockCallback mockCallback = new MockCallback();
+        mActivity.getSupportFragmentManager().beginTransaction().add(mockCallback, null).commit();
+        c.setTargetFragment(mockCallback, 1);
 
         c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
@@ -230,22 +225,20 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         }
 
         assertNull(((DialogFragment) fragment).getDialog());
-        assertNull(mActivity.getFragmentManager().findFragmentByTag(TAG));
+        assertNull(mActivity.getSupportFragmentManager().findFragmentByTag(TAG));
 
-        checkCallbackCalled();
+        assertTrue(mockCallback.isConfirmCalled());
     }
 
     public void testOnClick_NegativeListener() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
-        c.setTargetFragment(new MockCallback(), 1);
+
+        MockCallback mockCallback = new MockCallback();
+        mActivity.getSupportFragmentManager().beginTransaction().add(mockCallback, null).commit();
+        c.setTargetFragment(mockCallback, 1);
         c.show(mActivity.getSupportFragmentManager(), TAG);
 
         waitFewSeconds();
@@ -270,25 +263,22 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNull(((DialogFragment) fragment).getDialog());
         assertNull(mActivity.getSupportFragmentManager().findFragmentByTag(TAG));
 
-        checkCallbackCalled();
+        assertTrue(mockCallback.isCancelCalled());
     }
 
     public void testOnCancel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(TITLE),
                 SmartDeviceApp.getAppContext().getResources().getString(MSG),
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
-        c.setTargetFragment(new MockCallback(), 1);
+
+        MockCallback mockCallback = new MockCallback();
+        mActivity.getSupportFragmentManager().beginTransaction().add(mockCallback, null).commit();
+        c.setTargetFragment(mockCallback, 1);
         c.show(getActivity().getSupportFragmentManager(), TAG);
 
         waitFewSeconds();
-
 
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
@@ -307,7 +297,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNull(((DialogFragment) fragment).getDialog());
         assertNull(getActivity().getSupportFragmentManager().findFragmentByTag(TAG));
 
-        assertTrue(mCallbackCalled);
+        assertTrue(mockCallback.isCancelCalled());
     }
 
     public void testIsShowing_Null() {
@@ -332,9 +322,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
                 SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
                 SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
-        c.show(mActivity.getFragmentManager(), TAG);
+        c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
-        Fragment fragment = mActivity.getFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = mActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         assertTrue(fragment instanceof DialogFragment);
         assertTrue(((DialogFragment) fragment).getShowsDialog());
         assertTrue(c.isShowing());
@@ -358,10 +348,6 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     //================================================================================
     // Private methods
     //================================================================================
-
-    private void checkCallbackCalled() {
-        assertTrue(mCallbackCalled);
-    }
 
     // wait some seconds so that you can see the change on emulator/device.
     private void waitFewSeconds(){
@@ -394,15 +380,27 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
     // for testing only
     @SuppressLint("ValidFragment")
-    public class MockCallback extends Fragment implements ConfirmDialogListener {
+    public static class MockCallback extends Fragment implements ConfirmDialogListener {
+
+        private boolean isConfirmCalled = false;
+        private boolean isCancelCalled = false;
+
+        public boolean isConfirmCalled() {
+            return isConfirmCalled;
+        }
+
+        public boolean isCancelCalled() {
+            return isCancelCalled;
+        }
+
         @Override
         public void onConfirm() {
-            mCallbackCalled = true;
+            isConfirmCalled = true;
         }
 
         @Override
         public void onCancel() {
-            mCallbackCalled = true;
+            isCancelCalled = true;
         }
     }
 }

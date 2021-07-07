@@ -75,6 +75,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     @SuppressWarnings("unused") // AppConstant.APP_SHOW_SPLASH is a config setting
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
+        setContentView(R.layout.activity_splash);
 
         if (mHandler == null) {
             mHandler = new PauseableHandler(Looper.myLooper(), this);
@@ -98,8 +99,6 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                 mDatabaseInitialized = true;
             }
         }
-
-        setContentView(R.layout.activity_splash);
 
         if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
             if (!AppConstants.APP_SHOW_SPLASH && dbIsOK) {
