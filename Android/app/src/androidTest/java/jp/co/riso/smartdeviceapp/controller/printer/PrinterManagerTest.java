@@ -1314,7 +1314,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         mSignal.countDown();
     }
     
-    public class MockedDatabaseManager extends DatabaseManager {
+    public static class MockedDatabaseManager extends DatabaseManager {
         private boolean mInsert = false;
         
         public MockedDatabaseManager(Context context) {

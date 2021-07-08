@@ -356,7 +356,7 @@ public class Logger {
         }
         
         Logger logger = new Logger();
-        DeleteTask task = (logger.new DeleteTask());
+        DeleteTask task = (new DeleteTask());
         
         task.execute(context);
     }
@@ -366,7 +366,7 @@ public class Logger {
      * 
      * @brief Async Task for deleting a directory
      */
-    public class DeleteTask extends BaseTask<Context, Void> {
+    public static class DeleteTask extends BaseTask<Context, Void> {
         int count = 0;
         double time = 0;
         

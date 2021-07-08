@@ -670,7 +670,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
      * 
      * @brief Printers Screen view holder for tablet.
      */
-    public class ViewHolder {
+    public static class ViewHolder {
         private ImageView mOnlineIndicator;
         private TextView mPrinterName;
         private Button mDeleteButton;

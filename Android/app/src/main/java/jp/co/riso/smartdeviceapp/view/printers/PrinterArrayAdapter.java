@@ -260,7 +260,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
      * 
      * @brief Printers Screen view holder for phone.
      */
-    public class ViewHolder {
+    public static class ViewHolder {
         private TextView mPrinterName;
         private TextView mIpAddress;
         private Button mDeleteButton;

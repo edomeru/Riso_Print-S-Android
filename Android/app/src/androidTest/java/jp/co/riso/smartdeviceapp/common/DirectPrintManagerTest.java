@@ -358,7 +358,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     // Internal Classes
     //================================================================================
 
-    private class MockCallback implements DirectPrintCallback {
+    private static class MockCallback implements DirectPrintCallback {
         
         public boolean mCalled = false;
         

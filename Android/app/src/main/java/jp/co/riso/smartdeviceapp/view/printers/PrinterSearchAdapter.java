@@ -127,7 +127,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
      * 
      * @brief Printer Search Screen view holder.
      */
-    public class ViewHolder {
+    public static class ViewHolder {
         public ImageView mAddedIndicator;
         public TextView mPrinterName;
         public TextView mIpAddress;

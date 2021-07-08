@@ -401,7 +401,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      * 
      * @brief Add Printer Screen view holder
      */
-    public class ViewHolder {
+    public static class ViewHolder {
         private EditText mIpAddress;
         private View mProgressBar;
         private View mSaveButton;

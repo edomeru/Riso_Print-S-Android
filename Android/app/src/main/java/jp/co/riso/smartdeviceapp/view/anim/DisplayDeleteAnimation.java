@@ -114,7 +114,7 @@ public class DisplayDeleteAnimation {
      * 
      * @brief Listener class that hides the view and displays other views after animation end
      */
-    public class HideOnFadeAnimationListener implements Animation.AnimationListener {
+    public static class HideOnFadeAnimationListener implements Animation.AnimationListener {
         private WeakReference<View> mRowViewReference = null;
         private WeakReference<View> mViewReference = null;
         private int[] mIdsReference = null;

@@ -119,7 +119,7 @@ public class SettingsFragment extends BaseFragment {
      * 
      * @brief Class for monitoring changes in text values
      */
-    private class SharedPreferenceTextWatcher implements TextWatcher {
+    private static class SharedPreferenceTextWatcher implements TextWatcher {
         private Context mContext;
         private String mPrefKey;
         
