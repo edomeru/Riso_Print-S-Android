@@ -43,7 +43,7 @@ public class Setting extends XmlNode {
     public Setting(Node settingNode) {
         super(settingNode);
         
-        mOptions = new ArrayList<Option>();
+        mOptions = new ArrayList<>();
         
         NodeList optionsList = settingNode.getChildNodes();
         for (int i = 1; i < optionsList.getLength(); i += 2) {

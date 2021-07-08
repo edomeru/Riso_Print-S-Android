@@ -84,7 +84,7 @@ public class PrintSettings {
      *                    based on printer type
      */
     public PrintSettings(String printerType) {
-        mSettingValues = new HashMap<String, Integer>();
+        mSettingValues = new HashMap<>();
         mSettingMapKey = printerType;
 
         //Use IS as default settings map
@@ -110,7 +110,7 @@ public class PrintSettings {
      */
     public PrintSettings(PrintSettings printSettings) {
         mSettingMapKey = printSettings.getSettingMapKey();
-        mSettingValues = new HashMap<String, Integer>();
+        mSettingValues = new HashMap<>();
         
         for (String key : printSettings.getSettingValues().keySet()) {
             mSettingValues.put(key, printSettings.getSettingValues().get(key));

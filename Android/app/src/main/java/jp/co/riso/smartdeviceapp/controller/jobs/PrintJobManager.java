@@ -97,7 +97,7 @@ public class PrintJobManager {
      * @return List of PrintJob objects
      */
     public List<PrintJob> getPrintJobs() {
-        List<PrintJob> printJobs = new ArrayList<PrintJob>();
+        List<PrintJob> printJobs = new ArrayList<>();
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, C_ORDERBY_DATE);
         
         if (c != null) {
@@ -125,7 +125,7 @@ public class PrintJobManager {
      * @return List of Printer objects
      */
     public List<Printer> getPrintersWithJobs() {
-        List<Printer> printers = new ArrayList<Printer>();
+        List<Printer> printers = new ArrayList<>();
         
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, C_SEL_PRN_ID, null, null, null, KeyConstants.KEY_SQL_PRINTER_ID);
         

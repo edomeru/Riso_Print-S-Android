@@ -85,7 +85,7 @@ public class DirectPrintManager {
      * @param callback Callback function
      */
     public void setCallback(DirectPrintCallback callback) {
-        mCallbackRef = new WeakReference<DirectPrintCallback>(callback);
+        mCallbackRef = new WeakReference<>(callback);
     }
     
     /**

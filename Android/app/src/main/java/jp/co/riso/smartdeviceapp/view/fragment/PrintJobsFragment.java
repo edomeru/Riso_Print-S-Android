@@ -52,7 +52,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private LoadPrintJobsTask mLoadPrintJobsTask;
     private List<PrintJob> mPrintJobs;
     private List<Printer> mPrinters;
-    private List<Printer> mCollapsedPrinters = new ArrayList<Printer>();
+    private List<Printer> mCollapsedPrinters = new ArrayList<>();
     private PrintJob mPrintJobToDelete;
     private Printer mPrinterToDelete;
     private ConfirmDialogFragment mConfirmDialog;
@@ -266,12 +266,12 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
          * @param printers List of Printer objects
          */
         public LoadPrintJobsTask(Context context, List<PrintJob> printJobs, List<Printer> printers) {
-            mContextRef = new WeakReference<Context>(context);
+            mContextRef = new WeakReference<>(context);
             if (printJobs != null) {
-                mPrintJobsList = new ArrayList<PrintJob>(printJobs);
+                mPrintJobsList = new ArrayList<>(printJobs);
             }
             if (printers != null) {
-                mPrintersList = new ArrayList<Printer>(printers);
+                mPrintersList = new ArrayList<>(printers);
             }
         }
         

@@ -125,7 +125,7 @@ public class DisplayDeleteAnimation {
          * @param view Delete button
          */
         public void setView(View view) {
-            mViewReference = new WeakReference<View>(view);
+            mViewReference = new WeakReference<>(view);
         }
         
         /**
@@ -134,7 +134,7 @@ public class DisplayDeleteAnimation {
          * @param view Row view or parent view of the delete button
          */
         public void setRowView(View view) {
-            mRowViewReference = new WeakReference<View>(view);
+            mRowViewReference = new WeakReference<>(view);
         }
 
         /**

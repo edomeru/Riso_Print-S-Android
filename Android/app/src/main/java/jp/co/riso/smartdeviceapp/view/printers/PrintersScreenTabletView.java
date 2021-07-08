@@ -300,7 +300,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
      * @param callback Callback function
      */
     public void setPrintersViewCallback (PrintersViewCallback callback) {
-        mCallbackRef = new WeakReference<PrintersViewCallback>(callback);
+        mCallbackRef = new WeakReference<>(callback);
     }
     
     /**
@@ -468,7 +468,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
         else
             viewHolder.mDefaultPrinter.setSelection(1,  true);//no
                 
-        ArrayAdapter<String> portAdapter = new ArrayAdapter<String>(getContext(), R.layout.printerinfo_port_item);
+        ArrayAdapter<String> portAdapter = new ArrayAdapter<>(getContext(), R.layout.printerinfo_port_item);
         // Assumption is that LPR is always available
         portAdapter.add(getContext().getString(R.string.ids_lbl_port_lpr));
         if (printer.getConfig().isRawAvailable()) {

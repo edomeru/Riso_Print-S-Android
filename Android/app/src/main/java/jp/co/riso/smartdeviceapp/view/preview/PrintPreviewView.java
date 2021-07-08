@@ -1161,8 +1161,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
          * @param handler Handler object which determines whether the page is valid or not.
          */
         public PDFRenderTask(CurlPage page, int width, int height, int index, Object handler) {
-            mCurlPageRef = new WeakReference<CurlPage>(page);
-            mHandlerRef = new WeakReference<Object>(handler);
+            mCurlPageRef = new WeakReference<>(page);
+            mHandlerRef = new WeakReference<>(handler);
             mWidth = width;
             mHeight = height;
             mIndex = index;

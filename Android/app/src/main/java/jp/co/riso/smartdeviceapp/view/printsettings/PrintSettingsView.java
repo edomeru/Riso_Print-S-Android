@@ -229,7 +229,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      */
     public void saveState(Bundle outState) {
         // Create String list of collapsed headers
-        ArrayList<String> selectedTitles = new ArrayList<String>();
+        ArrayList<String> selectedTitles = new ArrayList<>();
         for (int i = 0; i < mPrintSettingsTitles.size(); i++) {
             if (mPrintSettingsTitles.get(i).isSelected()) {
                 selectedTitles.add((String) mPrintSettingsTitles.get(i).getTag());
@@ -1067,7 +1067,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @return Option strings
      */
     private Object[] getOptionsStrings(String name, List<Option> options) {
-        ArrayList<String> optionsStrings = new ArrayList<String>();
+        ArrayList<String> optionsStrings = new ArrayList<>();
         
         for (Option option : options) {
             String value = option.getTextContent();
@@ -1178,7 +1178,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
        if(mPrintSettings == null){
             return;
         }
-        mPrintSettingsTitles = new ArrayList<LinearLayout>();
+        mPrintSettingsTitles = new ArrayList<>();
 
         if (PrintSettings.sGroupListMap.get(mPrintSettings.getSettingMapKey()) != null) {
             for (Group group : PrintSettings.sGroupListMap.get(mPrintSettings.getSettingMapKey())) {

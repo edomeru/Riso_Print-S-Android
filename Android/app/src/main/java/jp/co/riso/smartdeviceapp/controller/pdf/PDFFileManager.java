@@ -85,7 +85,7 @@ public class PDFFileManager {
      */
     public PDFFileManager(PDFFileManagerInterface pdfFileManagerInterface) {
         mDocument = new Document();
-        mInterfaceRef = new WeakReference<PDFFileManagerInterface>(pdfFileManagerInterface);
+        mInterfaceRef = new WeakReference<>(pdfFileManagerInterface);
         setPDF(null);
     }
     

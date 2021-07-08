@@ -120,7 +120,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      * @param layoutListener Layout listener
      */
     public void setData(List<PrintJob> printJobs, Printer printer, PrintJobsGroupListener groupListener, PrintJobsLayoutListener layoutListener) {
-        this.mPrintJobs = new ArrayList<PrintJob>(printJobs);
+        this.mPrintJobs = new ArrayList<>(printJobs);
         this.mPrinter = printer;
         this.mGroupListener = groupListener;
         this.mLayoutListener = layoutListener;

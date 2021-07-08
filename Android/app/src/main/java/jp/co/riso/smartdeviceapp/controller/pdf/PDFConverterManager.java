@@ -84,7 +84,7 @@ public class PDFConverterManager {
      */
     public PDFConverterManager(Context context, PDFConverterManagerInterface pdfConverterManagerInterface) {
         this.mContext = context;
-        mInterfaceRef = new WeakReference<PDFConverterManagerInterface>(pdfConverterManagerInterface);
+        mInterfaceRef = new WeakReference<>(pdfConverterManagerInterface);
     }
 
     /**

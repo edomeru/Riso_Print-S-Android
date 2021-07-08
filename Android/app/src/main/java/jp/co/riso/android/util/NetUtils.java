@@ -276,7 +276,7 @@ public class NetUtils {
         }
         if (isIPv6Address(ipAddress)) {
             ipAddrBuilder = new StringBuilder();
-            ipv6part = new ArrayList<String>(Arrays.asList(ipAddress.split("\\:")));
+            ipv6part = new ArrayList<>(Arrays.asList(ipAddress.split("\\:")));
             if (isIPv6Ipv4DerivedAddress(ipAddress)) {
                 ipv4Addr = ipv6part.get(ipv6part.size() - 1);
                 ipv6part.remove(ipv4Addr);
@@ -449,7 +449,7 @@ public class NetUtils {
     private static List<String> initializeIpv6InterfaceList() {
         String localInterface = "wlan0";
         
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         try {
             List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (int i = 0; i < interfaces.size(); i++) {

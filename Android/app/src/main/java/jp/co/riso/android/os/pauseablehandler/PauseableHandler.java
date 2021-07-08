@@ -25,7 +25,7 @@ import android.os.Message;
 public class PauseableHandler extends Handler {
     
     /// Message Queue Buffer
-    final Vector<Message> mMessageQueueBuffer = new Vector<Message>();
+    final Vector<Message> mMessageQueueBuffer = new Vector<>();
     
     /// Flag indicating the paused state
     private boolean mPaused = false;
@@ -39,7 +39,7 @@ public class PauseableHandler extends Handler {
      */
     public PauseableHandler(Looper looper, PauseableHandlerCallback callback) {
         super(looper, null);
-        mCallBack = new WeakReference<PauseableHandlerCallback>(callback);
+        mCallBack = new WeakReference<>(callback);
     }
     
     /**

@@ -27,7 +27,7 @@ public class IpAddressFilter implements InputFilter {
      */
     public IpAddressFilter() {
         String validChars = "1234567890abcdefABCDEF.:";
-        mCharSet = new HashSet<Character>();
+        mCharSet = new HashSet<>();
         for (int i = 0; i < validChars.length(); i++) {
             mCharSet.add(validChars.charAt(i));
         }

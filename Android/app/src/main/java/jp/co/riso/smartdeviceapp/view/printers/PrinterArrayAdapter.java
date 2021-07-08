@@ -118,7 +118,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
      * @param callback Callback function
      */
     public void setPrintersArrayAdapterInterface (PrinterArrayAdapterInterface callback) {
-        mCallbackRef = new WeakReference<PrinterArrayAdapterInterface>(callback);
+        mCallbackRef = new WeakReference<>(callback);
     }
       
     /**

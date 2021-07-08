@@ -77,7 +77,7 @@ public class PrinterManager implements SNMPManagerCallback {
             databaseManager = new DatabaseManager(context);
         }
         mDatabaseManager = databaseManager;
-        mPrinterList = new ArrayList<Printer>();
+        mPrinterList = new ArrayList<>();
         mSNMPManager = new SNMPManager();
         mSNMPManager.setCallback(this);
     }
@@ -520,7 +520,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * @param printerSearchCallback Printer search callback function
      */
     public void setPrinterSearchCallback(PrinterSearchCallback printerSearchCallback) {
-        mPrinterSearchCallback = new WeakReference<PrinterSearchCallback>(printerSearchCallback);
+        mPrinterSearchCallback = new WeakReference<>(printerSearchCallback);
     }
     
     /**
@@ -531,7 +531,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * @param printersCallback Printers screen callback function
      */
     public void setPrintersCallback(PrintersCallback printersCallback) {
-        mPrintersCallback = new WeakReference<PrintersCallback>(printersCallback);
+        mPrintersCallback = new WeakReference<>(printersCallback);
     }
     
     /**
@@ -542,7 +542,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * @param updateStatusCallback Update online status callback function
      */
     public void setUpdateStatusCallback(UpdateStatusCallback updateStatusCallback) {
-        mUpdateStatusCallback = new WeakReference<UpdateStatusCallback>(updateStatusCallback);
+        mUpdateStatusCallback = new WeakReference<>(updateStatusCallback);
     }
     
     /**
@@ -891,7 +891,7 @@ public class PrinterManager implements SNMPManagerCallback {
          * @brief Instantiate UpdateOnlineStatusTask.
          */
         public UpdateOnlineStatusTask(View view, String ipAddress) {
-            mViewRef = new WeakReference<View>(view);
+            mViewRef = new WeakReference<>(view);
             mIpAddress = ipAddress;
         }
         

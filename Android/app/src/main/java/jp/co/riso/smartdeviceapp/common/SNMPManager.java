@@ -59,7 +59,7 @@ public class SNMPManager {
      * @param callback Callback function
      */
     public void setCallback(SNMPManagerCallback callback) {
-        mCallbackRef = new WeakReference<SNMPManagerCallback>(callback);
+        mCallbackRef = new WeakReference<>(callback);
     }
     
     /**

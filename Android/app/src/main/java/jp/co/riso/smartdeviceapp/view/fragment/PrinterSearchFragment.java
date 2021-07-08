@@ -74,7 +74,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         if (savedInstanceState != null) {
             mPrinter = savedInstanceState.getParcelableArrayList(KEY_SEARCHED_PRINTER_LIST);
         } else {
-            mPrinter = new ArrayList<Printer>();
+            mPrinter = new ArrayList<>();
         }
         if (mPauseableHandler == null) {
             mPauseableHandler = new PauseableHandler(Looper.myLooper(), this);

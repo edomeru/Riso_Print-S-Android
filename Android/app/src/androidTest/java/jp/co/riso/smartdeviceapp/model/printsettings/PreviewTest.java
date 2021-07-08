@@ -251,7 +251,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testColorMode_XML() {
         NodeList optionsNodeList  = mSettingList.item(0).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
         
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -262,7 +262,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testOrientation_XML() {
         NodeList optionsNodeList  = mSettingList.item(1).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -272,7 +272,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testDuplex_XML() {
         NodeList optionsNodeList  = mSettingList.item(3).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -282,7 +282,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testPaperSize_XML() {
         NodeList optionsNodeList  = mSettingList.item(4).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -292,7 +292,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testImposition_XML() {
         NodeList optionsNodeList  = mSettingList.item(8).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -302,7 +302,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testImpositionOrder_XML() {
         NodeList optionsNodeList  = mSettingList.item(9).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -312,7 +312,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testSort_XML() {
         NodeList optionsNodeList  = mSettingList.item(10).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -322,7 +322,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testBookletFinish_XML() {
         NodeList optionsNodeList  = mSettingList.item(12).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -332,7 +332,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testBookletLayout_XML() {
         NodeList optionsNodeList  = mSettingList.item(13).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 ;
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -342,7 +342,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testFinishingSide_XML() {
         NodeList optionsNodeList  = mSettingList.item(14).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -352,7 +352,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testStaple_XML() {
         NodeList optionsNodeList  = mSettingList.item(15).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
@@ -362,7 +362,7 @@ public class PreviewTest extends AndroidTestCase {
 
     public void testPunch_XML() {
         NodeList optionsNodeList  = mSettingList.item(16).getChildNodes();
-        List<Option> optionsList = new ArrayList<Option>();
+        List<Option> optionsList = new ArrayList<>();
 
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));

@@ -36,7 +36,7 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
         super(activityClass);
     }
     private static final String TAG = "SettingTest";
-    private List<Setting> mSettingList = new ArrayList<Setting>();
+    private List<Setting> mSettingList = new ArrayList<>();
 
     @Override
     protected void setUp() throws Exception {
@@ -117,7 +117,7 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
         assertNotNull(printSettingsContent);
 
         NodeList settingList = printSettingsContent.getElementsByTagName("setting");
-        List<Setting> invalidSettingList = new ArrayList<Setting>();
+        List<Setting> invalidSettingList = new ArrayList<>();
         // looping through all item nodes <item>
         for (int i = 0; i < settingList.getLength(); i++) {
             Setting setting = new Setting(settingList.item(i));
@@ -146,7 +146,7 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
         assertNotNull(printSettingsContent);
 
         NodeList settingList = printSettingsContent.getElementsByTagName("setting");
-        List<Setting> invalidSettingList = new ArrayList<Setting>();
+        List<Setting> invalidSettingList = new ArrayList<>();
         // looping through all item nodes <item>
         for (int i = 0; i < settingList.getLength(); i++) {
             Setting setting = new Setting(settingList.item(i));

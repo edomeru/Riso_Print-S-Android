@@ -28,7 +28,7 @@ public class InvalidCharacterFilter implements InputFilter {
      * @param invalidChars Invalid characters in string format
      */
     public InvalidCharacterFilter(String invalidChars) {
-        mCharSet = new HashSet<Character>();
+        mCharSet = new HashSet<>();
         if (invalidChars == null) {
             return;
         }

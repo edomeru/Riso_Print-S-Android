@@ -39,11 +39,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private static final int MIN_COLUMNS = 2;
     
     private WeakReference<PrintJobsViewListener> mListenerRef;
-    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
-    private List<Printer> mPrinters = new ArrayList<Printer>();
-    private List<Printer> mCollapsedPrinters = new ArrayList<Printer>();
-    private List<LinearLayout> mColumns = new ArrayList<LinearLayout>();
-    private List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<PrintJobsGroupView>();
+    private List<PrintJob> mPrintJobs = new ArrayList<>();
+    private List<Printer> mPrinters = new ArrayList<>();
+    private List<Printer> mCollapsedPrinters = new ArrayList<>();
+    private List<LinearLayout> mColumns = new ArrayList<>();
+    private List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<>();
     private PrintJobsGroupView mPrintGroupWithDelete;
     private DisplayDeleteAnimation mDeleteAnimation;
     private PrintJobsGroupListener mGroupListener;
@@ -100,10 +100,10 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * @param viewListener PrintJobsViewListener
      */
     public void setData(List<PrintJob> printJobs, List<Printer> printers, PrintJobsGroupListener groupListener, PrintJobsViewListener viewListener) {
-        this.mPrintJobs = new ArrayList<PrintJob>(printJobs);
-        this.mPrinters = new ArrayList<Printer>(printers);
+        this.mPrintJobs = new ArrayList<>(printJobs);
+        this.mPrinters = new ArrayList<>(printers);
         this.mGroupListener = groupListener;
-        this.mListenerRef = new WeakReference<PrintJobsViewListener>(viewListener);
+        this.mListenerRef = new WeakReference<>(viewListener);
         reset();
     }
     
