@@ -430,11 +430,11 @@ public class PDFFileManager {
         
         if (CONST_KEEP_DOCUMENT_CLOSED) {
             mDocument.Open(mPath, null);
-        } else {
+        } // else {
             // TODO: re-check: For temporary fix of bug
             // mDocument.Close(); // This will clear the buffer
             // mDocument.Open(mSandboxPath, null);
-        }
+        // }
         
         // Make sure document is opened
         if (!mDocument.IsOpened()) {

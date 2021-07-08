@@ -2157,9 +2157,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             if (mListener != null) {
                 mListener.onPrintSettingsValueChanged(mPrintSettings);
             }
-        } else {
+        } // else {
             // cancel onCheckedChanged?
-        }
+        // }
     }
     
     // ================================================================================
