@@ -400,7 +400,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             return false;
         }
         
-        int coords[] = new int[2];
+        int[] coords = new int[2];
         boolean dragged = (mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
         boolean contains1;
         boolean contains2;
@@ -484,7 +484,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        int coords[] = new int[2];
+        int[] coords = new int[2];
         if (mDeleteMode) {
             
             if (mDeleteView != null) {

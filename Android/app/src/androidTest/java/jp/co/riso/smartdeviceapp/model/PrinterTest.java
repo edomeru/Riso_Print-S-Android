@@ -42,7 +42,7 @@ public class PrinterTest extends TestCase {
     
     public void testConstructor_Parcel() {
         Printer printer = new Printer(PRINTER_NAME, PRINTER_ADDRESS);
-        Printer printerArray[] = new Printer[2];
+        Printer[] printerArray = new Printer[2];
         
         // Create parcelable object and put to Bundle
         Bundle bundlePut = new Bundle();
@@ -74,7 +74,7 @@ public class PrinterTest extends TestCase {
     // ================================================================================
     
     public void testNewArray_Parcel() {        
-        Printer printer[] = Printer.CREATOR.newArray(2);
+        Printer[] printer = Printer.CREATOR.newArray(2);
         assertNotNull(printer);
     }
     

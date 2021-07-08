@@ -1080,7 +1080,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
     public void testSetupPrinterConfig_allAvailable() {
-        boolean capabilities[] = new boolean[] {
+        boolean[] capabilities = new boolean[] {
                 true, true, true, true, true, true, true, true, true, true, true
         };
         Printer target = new Printer("test GL", "ip");
@@ -1100,7 +1100,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     }
     
     public void testSetupPrinterConfig_allFalse() {
-        boolean capabilities[] = new boolean[] {
+        boolean[] capabilities = new boolean[] {
                 false, false, false, false, false, false, false, false, false, false, false
         };
         Printer target = new Printer("test GL", "ip");
@@ -1120,7 +1120,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     }
     
     public void testSetupPrinterConfig_Incomplete() {
-        boolean capabilities[] = new boolean[] {
+        boolean[] capabilities = new boolean[] {
                 false
         };
         Printer target = new Printer("test", "ip");

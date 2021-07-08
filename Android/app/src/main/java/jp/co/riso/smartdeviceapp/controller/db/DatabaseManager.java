@@ -246,7 +246,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         int rowsNum = 0;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            String whereArgs[] = null;
+            String[] whereArgs = null;
             
             if (whereArg != null && !whereArg.isEmpty()) {
                 whereArgs = new String[] { whereArg };
@@ -301,7 +301,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @retval false Delete has failed.
      */
     public boolean delete(String table, String whereClause, String whereArg) {
-        String whereArgs[] = null;
+        String[] whereArgs = null;
         if (whereArg != null && !whereArg.isEmpty()) {
             whereArgs = new String[] { whereArg };
         }

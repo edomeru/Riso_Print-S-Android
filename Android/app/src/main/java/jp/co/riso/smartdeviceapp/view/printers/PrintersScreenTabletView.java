@@ -184,7 +184,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        int coords[] = new int[2];
+        int[] coords = new int[2];
         if (mSelectedPrinter != null) {
             mSelectedPrinter = null;
         }

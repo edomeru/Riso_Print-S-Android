@@ -45,7 +45,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     /// Menu Fragment key state
     public static final String KEY_STATE = "MenuFragment_State";
 
-    public static int MENU_ITEMS[] = {
+    public static int[] MENU_ITEMS = {
             R.id.homeButton,
             R.id.printPreviewButton,
             R.id.printersButton,
@@ -55,7 +55,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             R.id.legalButton
     };
 
-    public static String FRAGMENT_TAGS[] = {
+    public static String[] FRAGMENT_TAGS = {
             "fragment_home",
             "fragment_printpreview",
             "fragment_printers",

@@ -241,7 +241,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             return null;
         }
         
-        int coords[] = new int[2];
+        int[] coords = new int[2];
         for (int i = 0; i < mJobsLayout.getChildCount(); i++) {
             View view = mJobsLayout.getChildAt(i);
             

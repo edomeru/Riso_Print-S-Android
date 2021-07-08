@@ -999,7 +999,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
                 mIsPermissionDialogOpen = false; // the request returned a result hence dialog is closed

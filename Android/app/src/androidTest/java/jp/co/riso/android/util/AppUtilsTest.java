@@ -589,7 +589,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         int destWidth = 80;
         int destHeight = 80;
         
-        int newDimensions[] = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
+        int[] newDimensions = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
         
         assertTrue(newDimensions.length == 2);
         assertEquals(newDimensions[0] / (float)newDimensions[1], srcWidth / srcHeight, 0.0001f);
@@ -604,7 +604,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         int destWidth = 80;
         int destHeight = 80;
         
-        int newDimensions[] = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
+        int[] newDimensions = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
 
         assertTrue(newDimensions.length == 2);
         assertEquals(newDimensions[0] / (float)newDimensions[1], srcWidth / srcHeight, 0.0001f);
@@ -619,7 +619,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         int destWidth = 80;
         int destHeight = 80;
         
-        int newDimensions[] = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
+        int[] newDimensions = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
 
         assertTrue(newDimensions.length == 2);
         assertEquals(newDimensions[0] / (float)newDimensions[1], srcWidth / srcHeight, 0.0001f);
@@ -634,7 +634,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         int destWidth = 80;
         int destHeight = 80;
         
-        int newDimensions[] = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
+        int[] newDimensions = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
         
         assertTrue(newDimensions.length == 2);
         assertEquals(newDimensions[0] / (float)newDimensions[1], srcWidth / srcHeight, 0.0001f);
