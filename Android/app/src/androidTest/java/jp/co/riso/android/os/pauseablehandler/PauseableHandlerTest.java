@@ -37,30 +37,24 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
     }
 
     public void testHandleMessage() {
-        getInstrumentation().runOnMainSync(new Runnable(){
-            @Override
-            public void run(){
-                mHandler = new PauseableHandler(Looper.myLooper(), null);
+        getInstrumentation().runOnMainSync((Runnable) () -> {
+            mHandler = new PauseableHandler(Looper.myLooper(), null);
 
-                Message msg = Message.obtain(mHandler, MESSAGE);
-                mHandler.sendMessage(msg); //will call handleMessage
-                assertTrue(mHandler.hasMessages(MESSAGE));
-            }
+            Message msg = Message.obtain(mHandler, MESSAGE);
+            mHandler.sendMessage(msg); //will call handleMessage
+            assertTrue(mHandler.hasMessages(MESSAGE));
         });
         getInstrumentation().waitForIdleSync();
         assertFalse(mHandler.hasMessages(MESSAGE));
     }
 
     public void testHasStoredMessage() {
-        getInstrumentation().runOnMainSync(new Runnable(){
-            @Override
-            public void run(){
-                mHandler = new PauseableHandler(Looper.myLooper(), null);
+        getInstrumentation().runOnMainSync((Runnable) () -> {
+            mHandler = new PauseableHandler(Looper.myLooper(), null);
 
-                Message msg = Message.obtain(mHandler, MESSAGE);
-                mHandler.sendMessage(msg); //will call handleMessage
-                assertTrue(mHandler.hasStoredMessage(MESSAGE));
-            }
+            Message msg = Message.obtain(mHandler, MESSAGE);
+            mHandler.sendMessage(msg); //will call handleMessage
+            assertTrue(mHandler.hasStoredMessage(MESSAGE));
         });
         getInstrumentation().waitForIdleSync();
         assertFalse(mHandler.hasStoredMessage(MESSAGE));
@@ -68,18 +62,15 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
 
     public void testHandleMessage_PauseResume() {
 
-        getInstrumentation().runOnMainSync(new Runnable(){
-            @Override
-            public void run(){
-                mHandler = new PauseableHandler(Looper.myLooper(), null);
+        getInstrumentation().runOnMainSync((Runnable) () -> {
+            mHandler = new PauseableHandler(Looper.myLooper(), null);
 
-                Message msg = Message.obtain(mHandler, MESSAGE);
-                mHandler.pause();
-                mHandler.sendMessage(msg); //will call handleMessage
-                assertTrue(mHandler.hasStoredMessage(MESSAGE));
+            Message msg = Message.obtain(mHandler, MESSAGE);
+            mHandler.pause();
+            mHandler.sendMessage(msg); //will call handleMessage
+            assertTrue(mHandler.hasStoredMessage(MESSAGE));
 
-                assertTrue(mHandler.hasMessages(MESSAGE));
-            }
+            assertTrue(mHandler.hasMessages(MESSAGE));
         });
 
         getInstrumentation().waitForIdleSync();
@@ -87,12 +78,7 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
         assertFalse(mHandler.hasStoredMessage(MESSAGE));
         assertFalse(mHandler.hasMessages(MESSAGE));
 
-        getInstrumentation().runOnMainSync(new Runnable(){
-            @Override
-            public void run(){
-                mHandler.resume();
-            }
-        });
+        getInstrumentation().runOnMainSync((Runnable) () -> mHandler.resume());
         getInstrumentation().waitForIdleSync();
 
         // no effect since message is already processed

@@ -341,12 +341,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                     mDatabaseInitialized = true;
                 } else {
                     final Activity activity = SmartDeviceApp.getActivity();
-                    activity.runOnUiThread((new Runnable() {
-                        @Override
-                        public void run() {
-                            runMainActivity();
-                        }
-                    }));
+                    activity.runOnUiThread((() -> runMainActivity()));
                 }
             }
         }

@@ -378,19 +378,16 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             final int layoutState = newState;
             
             // https://code.google.com/p/android/issues/detail?id=60671
-            mDrawerLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (layoutState == DrawerLayout.STATE_IDLE) {
-                        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
-                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
-                        } else if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
-                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
-                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
-                        } else {
-                            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                        }
+            mDrawerLayout.post((Runnable) () -> {
+                if (layoutState == DrawerLayout.STATE_IDLE) {
+                    if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+                        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+                    } else if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+                        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+                        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
+                    } else {
+                        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                     }
                 }
             });

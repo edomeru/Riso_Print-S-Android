@@ -82,16 +82,11 @@ public class DialogUtilsTest extends ActivityInstrumentationTestCase2<MainActivi
     }
     
     private void wakeUpScreen() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getActivity().getWindow().addFlags(
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-            }
-        });
+        getActivity().runOnUiThread((Runnable) () -> getActivity().getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED));
 
         waitFewSeconds();
     }

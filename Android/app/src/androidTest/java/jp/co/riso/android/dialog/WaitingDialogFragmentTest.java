@@ -266,12 +266,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     // ================================================================================
 
     private void performClick(final Button button) throws Throwable {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                button.performClick();
-            }
-        });
+        mActivity.runOnUiThread((Runnable) () -> button.performClick());
         waitFewSeconds();
     }
 
@@ -285,16 +280,11 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
     
     private void wakeUpScreen() {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mActivity.getWindow().addFlags(
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-            }
-        });
+        mActivity.runOnUiThread((Runnable) () -> mActivity.getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED));
 
         waitFewSeconds();
     }

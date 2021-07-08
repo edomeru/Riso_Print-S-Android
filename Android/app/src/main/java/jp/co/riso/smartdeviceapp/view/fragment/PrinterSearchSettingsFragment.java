@@ -85,16 +85,11 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
     public void initializeView(View view, Bundle savedInstanceState) {
         snmpCommunityNameEditText = view.findViewById(R.id.inputSnmpCommunityName);
         snmpCommunityNameEditText.setText(PrinterManager.getInstance(getActivity()).getSnmpCommunityNameFromSharedPrefs());
-        snmpCommunityNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE) {
-                    saveSnmpCommunityNameToSharedPrefs(v.getText().toString());
-                }
-                return false;
+        snmpCommunityNameEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if(actionId == EditorInfo.IME_ACTION_DONE) {
+                saveSnmpCommunityNameToSharedPrefs(v.getText().toString());
             }
-
-
+            return false;
         });
 
         if (!isTablet()) {
@@ -133,12 +128,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
         if (isTablet()) {
             if (getActivity() != null && getActivity() instanceof MainActivity) {
                 final MainActivity activity = (MainActivity) getActivity();
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.closeDrawers();
-                    }
-                });
+                activity.runOnUiThread((Runnable) () -> activity.closeDrawers());
             }
         } else {
             FragmentManager fm = getParentFragmentManager();

@@ -123,15 +123,12 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         assertEquals(View.GONE, deleteButton.getVisibility());
         assertEquals(View.VISIBLE, otherButton.getVisibility());
         assertEquals(View.VISIBLE, tv.getVisibility());
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mActivity.getWindow().addContentView(
-                        ll, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                LayoutParams.MATCH_PARENT));
-                DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
-                mDeleteAnimation.beginDeleteModeOnView(ll, true, 1, 2, 3);
-            }
+        mActivity.runOnUiThread((Runnable) () -> {
+            mActivity.getWindow().addContentView(
+                    ll, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                            LayoutParams.MATCH_PARENT));
+            DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
+            mDeleteAnimation.beginDeleteModeOnView(ll, true, 1, 2, 3);
         });
         waitInMilliseconds(1000);
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
@@ -166,16 +163,13 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         assertEquals(View.GONE, deleteButton.getVisibility());
         assertEquals(View.VISIBLE, otherButton.getVisibility());
         assertEquals(View.VISIBLE, tv.getVisibility());
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mActivity.getWindow().addContentView(
-                        ll, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                LayoutParams.MATCH_PARENT));
-                DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
-                mDeleteAnimation.beginDeleteModeOnView(ll, true, 1, 2, 3);
-                mDeleteAnimation.beginDeleteModeOnView(ll, true, 1, 2, 3);
-            }
+        mActivity.runOnUiThread((Runnable) () -> {
+            mActivity.getWindow().addContentView(
+                    ll, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                            LayoutParams.MATCH_PARENT));
+            DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
+            mDeleteAnimation.beginDeleteModeOnView(ll, true, 1, 2, 3);
+            mDeleteAnimation.beginDeleteModeOnView(ll, true, 1, 2, 3);
         });
 
         waitInMilliseconds(1000);
@@ -194,19 +188,15 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
 
         ll.addView(deleteButton);
         assertEquals(View.VISIBLE, deleteButton.getVisibility());
-        mActivity.runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                // ll.addView(deleteButton);
-                mActivity.getWindow().addContentView(
-                        ll,
-                        new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                LayoutParams.MATCH_PARENT));
-                // assertEquals(View.VISIBLE, deleteButton.getVisibility());
-                DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
-                mDeleteAnimation.endDeleteMode(ll, true, 1);
-            }
+        mActivity.runOnUiThread((Runnable) () -> {
+            // ll.addView(deleteButton);
+            mActivity.getWindow().addContentView(
+                    ll,
+                    new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                            LayoutParams.MATCH_PARENT));
+            // assertEquals(View.VISIBLE, deleteButton.getVisibility());
+            DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
+            mDeleteAnimation.endDeleteMode(ll, true, 1);
         });
 
         waitInMilliseconds(1000);
@@ -291,16 +281,13 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         assertEquals(View.GONE, tv.getVisibility());
 
 
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mActivity.getWindow().addContentView(
-                        ll,
-                        new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                LayoutParams.MATCH_PARENT));
-                DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
-                mDeleteAnimation.endDeleteMode(ll, true, 1, 2, 3);
-            }
+        mActivity.runOnUiThread((Runnable) () -> {
+            mActivity.getWindow().addContentView(
+                    ll,
+                    new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                            LayoutParams.MATCH_PARENT));
+            DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
+            mDeleteAnimation.endDeleteMode(ll, true, 1, 2, 3);
         });
 
         waitInMilliseconds(1000);
@@ -338,17 +325,14 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
         assertEquals(View.GONE, tv.getVisibility());
 
 
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mActivity.getWindow().addContentView(
-                        ll,
-                        new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                LayoutParams.MATCH_PARENT));
-                DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
-                mDeleteAnimation.endDeleteMode(ll, true, 1, 2, 3);
-                mDeleteAnimation.endDeleteMode(ll, true, 1, 2, 3);
-            }
+        mActivity.runOnUiThread((Runnable) () -> {
+            mActivity.getWindow().addContentView(
+                    ll,
+                    new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                            LayoutParams.MATCH_PARENT));
+            DisplayDeleteAnimation mDeleteAnimation = new DisplayDeleteAnimation();
+            mDeleteAnimation.endDeleteMode(ll, true, 1, 2, 3);
+            mDeleteAnimation.endDeleteMode(ll, true, 1, 2, 3);
         });
 
         waitInMilliseconds(1000);
@@ -374,16 +358,11 @@ public class DisplayDeleteAnimationTest extends ActivityInstrumentationTestCase2
     }
 
     private void wakeUpScreen() {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mActivity.getWindow().addFlags(
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-            }
-        });
+        mActivity.runOnUiThread((Runnable) () -> mActivity.getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED));
 
         waitInMilliseconds(2000);
     }

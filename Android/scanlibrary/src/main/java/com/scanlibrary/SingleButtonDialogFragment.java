@@ -35,13 +35,8 @@ public class SingleButtonDialogFragment extends DialogFragment {
                 .setCancelable(isCancelable)
                 .setMessage(message)
                 .setPositiveButton(positiveButtonTitle,
-                        new DialogInterface.OnClickListener() {
+                        (dialog, which) -> {
 
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-
-                            }
                         });
 
         return builder.create();

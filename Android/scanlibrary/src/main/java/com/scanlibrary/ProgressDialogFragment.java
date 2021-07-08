@@ -76,19 +76,13 @@ public class ProgressDialogFragment extends DialogFragment {
 		// aLINK edit - End
 
 		// Disable the back button
-		OnKeyListener keyListener = new OnKeyListener() {
+		OnKeyListener keyListener = (dialog1, keyCode, event) -> {
 
-			@Override
-			public boolean onKey(DialogInterface dialog, int keyCode,
-					KeyEvent event) {
-
-				if (keyCode == KeyEvent.KEYCODE_BACK) {
-					return true;
-				}
-				return false; 
-			}
- 
-		};
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                return true;
+            }
+            return false;
+        };
 		dialog.setOnKeyListener(keyListener);
 		return dialog;
 	}

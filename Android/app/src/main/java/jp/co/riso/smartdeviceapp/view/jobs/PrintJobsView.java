@@ -658,14 +658,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
                 
                 mPrintGroupViews.add(pjView);
                 mGroupViewCtr = j;
-                PrintJobsView.this.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        placeInColumns(pjView);
-                        if (mGroupViewCtr == mPrinters.size()-1) {
-                            if (mListenerRef != null && mListenerRef.get() != null) {
-                                mListenerRef.get().onLoadFinished();
-                            }
+                PrintJobsView.this.post(() -> {
+                    placeInColumns(pjView);
+                    if (mGroupViewCtr == mPrinters.size()-1) {
+                        if (mListenerRef != null && mListenerRef.get() != null) {
+                            mListenerRef.get().onLoadFinished();
                         }
                     }
                 });

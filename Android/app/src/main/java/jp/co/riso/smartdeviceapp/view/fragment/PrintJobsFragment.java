@@ -287,18 +287,15 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
                     pm.setRefreshFlag(false);
                 }
                 
-                ((Activity) mContextRef.get()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mPrintJobsList.isEmpty()) {
-                            showEmptyText();
-                        } else {
-                            mPrintJobs = new ArrayList<PrintJob>(mPrintJobsList);
-                            mPrinters = new ArrayList<Printer>(mPrintersList);
-                            
-                            if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList.isEmpty() && !mPrintersList.isEmpty()) {
-                                mPrintJobsView.setData(mPrintJobsList, mPrintersList, PrintJobsFragment.this, PrintJobsFragment.this);
-                            }
+                ((Activity) mContextRef.get()).runOnUiThread(() -> {
+                    if (mPrintJobsList.isEmpty()) {
+                        showEmptyText();
+                    } else {
+                        mPrintJobs = new ArrayList<PrintJob>(mPrintJobsList);
+                        mPrinters = new ArrayList<Printer>(mPrintersList);
+
+                        if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList.isEmpty() && !mPrintersList.isEmpty()) {
+                            mPrintJobsView.setData(mPrintJobsList, mPrintersList, PrintJobsFragment.this, PrintJobsFragment.this);
                         }
                     }
                 });

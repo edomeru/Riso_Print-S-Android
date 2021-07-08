@@ -443,14 +443,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             } else if (mShouldDisplayExplanation) {
                 final MainActivity mainActivity = (MainActivity) getActivity();
                 final Handler handler = new Handler(Looper.getMainLooper());
-                final Runnable printSettingsDisposer = new Runnable() {
-                    @SuppressLint("RtlHardcoded")
-                    @Override
-                    public void run() {
-                        showPrintSettingsButton(getView(), false);
-                        if(mainActivity.isDrawerOpen(Gravity.RIGHT)) {
-                            mainActivity.closeDrawers();
-                        }
+                final Runnable printSettingsDisposer = () -> {
+                    showPrintSettingsButton(getView(), false);
+                    if(mainActivity.isDrawerOpen(Gravity.RIGHT)) {
+                        mainActivity.closeDrawers();
                     }
                 };
                 // Call with a no-delay handler since not calling inside
@@ -887,12 +883,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     @Override
     public void onIndexChanged(int index) {
         updateSeekBarProgress(index);
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updatePageLabel();
-            }
-        });
+        getActivity().runOnUiThread((Runnable) () -> updatePageLabel());
     }
 
     @Override

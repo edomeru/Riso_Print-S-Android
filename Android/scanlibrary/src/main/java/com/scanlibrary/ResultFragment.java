@@ -95,10 +95,7 @@ public class ResultFragment extends Fragment {
             // aLINK edit - Start
             // android.os.AsyncTask was deprecated in API level 30.
             // Use threading instead
-            new Thread(new Runnable() {
-            // aLINK edit - End
-                @Override
-                public void run() {
+            new Thread(() -> {
                     try {
                         Intent data = new Intent();
                         Bitmap bitmap = transformed;
@@ -110,21 +107,14 @@ public class ResultFragment extends Fragment {
                         getActivity().setResult(Activity.RESULT_OK, data);
                         original.recycle();
                         System.gc();
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                dismissDialog();
-                                getActivity().finish();
-                            }
+                        getActivity().runOnUiThread((Runnable) () -> {
+                            dismissDialog();
+                            getActivity().finish();
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-            // aLINK edit - Start
-            // android.os.AsyncTask was deprecated in API level 30.
-            // Use threading instead
-            }).start();
+                }).start();
             // aLINK edit - End
         }
     }
@@ -136,36 +126,27 @@ public class ResultFragment extends Fragment {
             // aLINK edit - Start
             // android.os.AsyncTask was deprecated in API level 30.
             // Use threading instead
-            new Thread(new Runnable() {
             // aLINK edit - End
-                @Override
-                public void run() {
+// aLINK edit - Start
+// android.os.AsyncTask was deprecated in API level 30.
+// Use threading instead
+            new Thread(() -> {
                     try {
                         transformed = ((ScanActivity) getActivity()).getBWBitmap(original);
                     } catch (final OutOfMemoryError e) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                transformed = original;
-                                scannedImageView.setImageBitmap(original);
-                                e.printStackTrace();
-                                dismissDialog();
-                                onClick(v);
-                            }
+                        getActivity().runOnUiThread((Runnable) () -> {
+                            transformed = original;
+                            scannedImageView.setImageBitmap(original);
+                            e.printStackTrace();
+                            dismissDialog();
+                            onClick(v);
                         });
                     }
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            scannedImageView.setImageBitmap(transformed);
-                            dismissDialog();
-                        }
+                    getActivity().runOnUiThread((Runnable) () -> {
+                        scannedImageView.setImageBitmap(transformed);
+                        dismissDialog();
                     });
-                }
-            // aLINK edit - Start
-            // android.os.AsyncTask was deprecated in API level 30.
-            // Use threading instead
-            }).start();
+                }).start();
             // aLINK edit - End
         }
     }
@@ -177,36 +158,27 @@ public class ResultFragment extends Fragment {
             // aLINK edit - Start
             // android.os.AsyncTask was deprecated in API level 30.
             // Use threading instead
-            new Thread(new Runnable() {
             // aLINK edit - End
-                @Override
-                public void run() {
+// aLINK edit - Start
+// android.os.AsyncTask was deprecated in API level 30.
+// Use threading instead
+            new Thread(() -> {
                     try {
                         transformed = ((ScanActivity) getActivity()).getMagicColorBitmap(original);
                     } catch (final OutOfMemoryError e) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                transformed = original;
-                                scannedImageView.setImageBitmap(original);
-                                e.printStackTrace();
-                                dismissDialog();
-                                onClick(v);
-                            }
+                        getActivity().runOnUiThread((Runnable) () -> {
+                            transformed = original;
+                            scannedImageView.setImageBitmap(original);
+                            e.printStackTrace();
+                            dismissDialog();
+                            onClick(v);
                         });
                     }
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            scannedImageView.setImageBitmap(transformed);
-                            dismissDialog();
-                        }
+                    getActivity().runOnUiThread((Runnable) () -> {
+                        scannedImageView.setImageBitmap(transformed);
+                        dismissDialog();
                     });
-                }
-            // aLINK edit - Start
-            // android.os.AsyncTask was deprecated in API level 30.
-            // Use threading instead
-            }).start();
+                }).start();
             // aLINK edit - End
         }
     }
@@ -233,36 +205,27 @@ public class ResultFragment extends Fragment {
             // aLINK edit - Start
             // android.os.AsyncTask was deprecated in API level 30.
             // Use threading instead
-            new Thread(new Runnable() {
             // aLINK edit - End
-                @Override
-                public void run() {
+// aLINK edit - Start
+// android.os.AsyncTask was deprecated in API level 30.
+// Use threading instead
+            new Thread(() -> {
                     try {
                         transformed = ((ScanActivity) getActivity()).getGrayBitmap(original);
                     } catch (final OutOfMemoryError e) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                transformed = original;
-                                scannedImageView.setImageBitmap(original);
-                                e.printStackTrace();
-                                dismissDialog();
-                                onClick(v);
-                            }
+                        getActivity().runOnUiThread((Runnable) () -> {
+                            transformed = original;
+                            scannedImageView.setImageBitmap(original);
+                            e.printStackTrace();
+                            dismissDialog();
+                            onClick(v);
                         });
                     }
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            scannedImageView.setImageBitmap(transformed);
-                            dismissDialog();
-                        }
+                    getActivity().runOnUiThread((Runnable) () -> {
+                        scannedImageView.setImageBitmap(transformed);
+                        dismissDialog();
                     });
-                }
-            // aLINK edit - Start
-            // android.os.AsyncTask was deprecated in API level 30.
-            // Use threading instead
-            }).start();
+                }).start();
             // aLINK edit - End
         }
     }
