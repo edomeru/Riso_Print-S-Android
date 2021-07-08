@@ -55,6 +55,6 @@ public class MemoryUtils {
         MemoryInfo mi = new MemoryInfo();
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         activityManager.getMemoryInfo(mi);
-        return (mi.availMem / 1048576L);
+        return (mi.availMem / 1048576.0f);
     }
 }

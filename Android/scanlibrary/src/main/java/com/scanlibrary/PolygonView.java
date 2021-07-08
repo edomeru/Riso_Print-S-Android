@@ -155,18 +155,18 @@ public class PolygonView extends FrameLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        canvas.drawLine(pointer1.getX() + (pointer1.getWidth() / 2), pointer1.getY() + (pointer1.getHeight() / 2), pointer3.getX() + (pointer3.getWidth() / 2), pointer3.getY() + (pointer3.getHeight() / 2), paint);
-        canvas.drawLine(pointer1.getX() + (pointer1.getWidth() / 2), pointer1.getY() + (pointer1.getHeight() / 2), pointer2.getX() + (pointer2.getWidth() / 2), pointer2.getY() + (pointer2.getHeight() / 2), paint);
-        canvas.drawLine(pointer2.getX() + (pointer2.getWidth() / 2), pointer2.getY() + (pointer2.getHeight() / 2), pointer4.getX() + (pointer4.getWidth() / 2), pointer4.getY() + (pointer4.getHeight() / 2), paint);
-        canvas.drawLine(pointer3.getX() + (pointer3.getWidth() / 2), pointer3.getY() + (pointer3.getHeight() / 2), pointer4.getX() + (pointer4.getWidth() / 2), pointer4.getY() + (pointer4.getHeight() / 2), paint);
-        midPointer13.setX(pointer3.getX() - ((pointer3.getX() - pointer1.getX()) / 2));
-        midPointer13.setY(pointer3.getY() - ((pointer3.getY() - pointer1.getY()) / 2));
-        midPointer24.setX(pointer4.getX() - ((pointer4.getX() - pointer2.getX()) / 2));
-        midPointer24.setY(pointer4.getY() - ((pointer4.getY() - pointer2.getY()) / 2));
-        midPointer34.setX(pointer4.getX() - ((pointer4.getX() - pointer3.getX()) / 2));
-        midPointer34.setY(pointer4.getY() - ((pointer4.getY() - pointer3.getY()) / 2));
-        midPointer12.setX(pointer2.getX() - ((pointer2.getX() - pointer1.getX()) / 2));
-        midPointer12.setY(pointer2.getY() - ((pointer2.getY() - pointer1.getY()) / 2));
+        canvas.drawLine(pointer1.getX() + (pointer1.getWidth() / 2.0f), pointer1.getY() + (pointer1.getHeight() / 2.0f), pointer3.getX() + (pointer3.getWidth() / 2.0f), pointer3.getY() + (pointer3.getHeight() / 2.0f), paint);
+        canvas.drawLine(pointer1.getX() + (pointer1.getWidth() / 2.0f), pointer1.getY() + (pointer1.getHeight() / 2.0f), pointer2.getX() + (pointer2.getWidth() / 2.0f), pointer2.getY() + (pointer2.getHeight() / 2.0f), paint);
+        canvas.drawLine(pointer2.getX() + (pointer2.getWidth() / 2.0f), pointer2.getY() + (pointer2.getHeight() / 2.0f), pointer4.getX() + (pointer4.getWidth() / 2.0f), pointer4.getY() + (pointer4.getHeight() / 2.0f), paint);
+        canvas.drawLine(pointer3.getX() + (pointer3.getWidth() / 2.0f), pointer3.getY() + (pointer3.getHeight() / 2.0f), pointer4.getX() + (pointer4.getWidth() / 2.0f), pointer4.getY() + (pointer4.getHeight() / 2.0f), paint);
+        midPointer13.setX(pointer3.getX() - ((pointer3.getX() - pointer1.getX()) / 2.0f));
+        midPointer13.setY(pointer3.getY() - ((pointer3.getY() - pointer1.getY()) / 2.0f));
+        midPointer24.setX(pointer4.getX() - ((pointer4.getX() - pointer2.getX()) / 2.0f));
+        midPointer24.setY(pointer4.getY() - ((pointer4.getY() - pointer2.getY()) / 2.0f));
+        midPointer34.setX(pointer4.getX() - ((pointer4.getX() - pointer3.getX()) / 2.0f));
+        midPointer34.setY(pointer4.getY() - ((pointer4.getY() - pointer3.getY()) / 2.0f));
+        midPointer12.setX(pointer2.getX() - ((pointer2.getX() - pointer1.getX()) / 2.0f));
+        midPointer12.setY(pointer2.getY() - ((pointer2.getY() - pointer1.getY()) / 2.0f));
     }
 
     private ImageView getImageView(int x, int y) {
