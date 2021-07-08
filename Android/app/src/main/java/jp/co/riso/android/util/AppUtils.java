@@ -199,7 +199,6 @@ public final class AppUtils {
      *
      * @return Screen dimensions
      */
-    @SuppressWarnings("deprecation")
     public static Point getScreenDimensionsForSDK29(Activity activity, Point size) {
         Display display = activity.getWindowManager().getDefaultDisplay();
         display.getSize(size);

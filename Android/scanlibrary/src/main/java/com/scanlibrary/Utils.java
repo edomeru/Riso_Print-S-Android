@@ -76,7 +76,6 @@ public class Utils {
     }
     // aLINK edit - End
 
-    @SuppressWarnings("deprecation")
     public static Bitmap getBitmap(Context context, Uri uri) throws IOException {
         Bitmap bitmap;
         // aLINK edit - Start

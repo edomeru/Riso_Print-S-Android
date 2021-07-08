@@ -110,13 +110,11 @@ public abstract class BaseActivity extends FragmentActivity {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private void getSystemUIFlagsForSDK29() {
         View decorView = getWindow().getDecorView();
         systemUIFlags = decorView.getSystemUiVisibility();
     }
 
-    @SuppressWarnings("deprecation")
     private void handleSystemUIRotationForSDK29() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(systemUIFlags | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);       // Hide system navigation bar
