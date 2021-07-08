@@ -1435,7 +1435,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         // TODO: iconID
         LinearLayout item = createItem(str, sub, true, iconId, withSeparator, view);
         item.setId(itemId);
-        item.setTag(Integer.valueOf(tagValue));
+        item.setTag(tagValue);
         item.setOnClickListener(this);
         
         mSubOptionsLayout.addView(item);
@@ -1604,7 +1604,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 
                 Object[] options = (Object[]) mSubView.getTag(ID_TAG_SUB_OPTIONS);
                 for (int i = 0; i < options.length; i++) {
-                    View view = mSubView.findViewWithTag(Integer.valueOf(i));
+                    View view = mSubView.findViewWithTag(i);
                     // Some views may be hidden
                     if (view != null) {
                         View subView = view.findViewById(R.id.view_id_subview_status);
@@ -1625,7 +1625,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 
                 for (int i = 0; i < mPrintersList.size(); i++) {
                     Printer printer = mPrintersList.get(i);
-                    View view = mSubView.findViewWithTag(Integer.valueOf(printer.getId()));
+                    View view = mSubView.findViewWithTag(printer.getId());
                     View subView = view.findViewById(R.id.view_id_subview_status);
                     subView.setSelected(mPrinterId == printer.getId());
                 }
@@ -2173,7 +2173,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             if (mSubView == null) {
                 return;
             }
-            View view = mSubView.findViewWithTag(Integer.valueOf(printer.getId()));
+            View view = mSubView.findViewWithTag(printer.getId());
             if (view != null) {
                 View imageView = view.findViewById(R.id.menuIcon);
                 mPrinterManager.updateOnlineStatus(printer.getIpAddress(), imageView);
