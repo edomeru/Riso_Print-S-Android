@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <printsettings>
     <group
-        name="basic"
+        name="basic
         text="ids_lbl_basic" >
         <setting
             name="colorMode"
