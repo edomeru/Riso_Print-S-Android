@@ -355,9 +355,7 @@ public class Logger {
             return;
         }
         
-        Logger logger = new Logger();
         DeleteTask task = (new DeleteTask());
-        
         task.execute(context);
     }
     

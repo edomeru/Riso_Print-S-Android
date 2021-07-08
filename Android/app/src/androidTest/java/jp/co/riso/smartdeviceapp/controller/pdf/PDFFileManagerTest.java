@@ -517,7 +517,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     // Tests - close
     //================================================================================
 
-    public void tesCloseDocument_Opened() {
+    public void testCloseDocument_Opened() {
         mPdfManager.setPDF(mPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OK);
@@ -529,7 +529,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         }
     }
 
-    public void tesCloseDocument_NotOpened() {
+    public void testCloseDocument_NotOpened() {
         try {
             mPdfManager.setPDF(mPdfPath);
             mPdfManager.closeDocument();

@@ -16,7 +16,6 @@ import java.lang.ref.WeakReference;
  * @brief Manager responsible for SNMP operations. 
  */
 public class SNMPManager {
-    public long mContext = 0;
     private WeakReference<SNMPManagerCallback> mCallbackRef = null;
     
     @SuppressWarnings("JniMissingFunction")

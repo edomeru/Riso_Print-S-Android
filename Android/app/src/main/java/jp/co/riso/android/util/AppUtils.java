@@ -335,7 +335,6 @@ public final class AppUtils {
                 changeChildrenFont((ViewGroup) v.getChildAt(i), font);
             } else {
                 try {
-                    Object[] nullArgs = null;
                     // Test whether setTypeface and getTypeface methods exists
                     Method methodTypeFace = v.getChildAt(i).getClass().getMethod("setTypeface", Typeface.class, Integer.TYPE);
                     // With getTypeface we'll get back the style (Bold, Italic...) set in XML

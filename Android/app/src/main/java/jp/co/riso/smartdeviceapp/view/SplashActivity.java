@@ -222,17 +222,17 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         Uri data = null;
         ClipData clipData = null;
         Intent intent = getIntent();
-        if (getIntent() != null) {
-            String action = getIntent().getAction();
+        if (intent != null) {
+            String action = intent.getAction();
             
             if (Intent.ACTION_VIEW.equals(action)) {
-                data = getIntent().getData();
+                data = intent.getData();
             } else if (Intent.ACTION_SEND.equals(action)) {
-                if (getIntent().getExtras().get(Intent.EXTRA_STREAM) != null) {
-                    data = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());
+                if (intent.getExtras().get(Intent.EXTRA_STREAM) != null) {
+                    data = Uri.parse(intent.getExtras().get(Intent.EXTRA_STREAM).toString());
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
-                clipData = getIntent().getClipData();
+                clipData = intent.getClipData();
             }
         }
 

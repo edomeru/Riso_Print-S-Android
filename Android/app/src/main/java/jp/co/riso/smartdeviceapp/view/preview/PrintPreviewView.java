@@ -1391,7 +1391,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
             
-            int pagesDisplayed = getPagesPerSheet() * (getFacesPerPaper() / 2);
+            //int pagesDisplayed = getPagesPerSheet() * (getFacesPerPaper() / 2);
             
             int paperWidth = bmp.getWidth();
             int paperHeight = bmp.getHeight();
