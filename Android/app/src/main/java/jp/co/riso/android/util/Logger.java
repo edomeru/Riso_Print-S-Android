@@ -74,7 +74,7 @@ public class Logger {
         sTimeLog.clear();
         sMemoryLog.clear();
         
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmdd-HHmmssSS", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmssSS", Locale.getDefault());
         sStringFolder = dateFormat.format(new Date());
     }
     
