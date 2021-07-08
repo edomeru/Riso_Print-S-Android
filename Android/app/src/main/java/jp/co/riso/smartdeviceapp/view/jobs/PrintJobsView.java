@@ -607,7 +607,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         /**
          * @brief Called after loading initial views
          */
-        public void onLoadFinished();
+        void onLoadFinished();
     }
     
     /**

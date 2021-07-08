@@ -2295,14 +2295,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
          * 
          * @param printerId printer ID
          */
-        public void onPrinterIdSelectedChanged(int printerId);
+        void onPrinterIdSelectedChanged(int printerId);
 
         /**
          * @brief Print Settings Value Changed Callback
          * 
          * @param printSettings Print settings
          */
-        public void onPrintSettingsValueChanged(PrintSettings printSettings);
+        void onPrintSettingsValueChanged(PrintSettings printSettings);
         
         /**
          * @brief Print Execution Callback
@@ -2310,6 +2310,6 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
          * @param printer Printer object
          * @param printSettings Print settings
          */
-        public void onPrint(Printer printer, PrintSettings printSettings);
+        void onPrint(Printer printer, PrintSettings printSettings);
     }
 }

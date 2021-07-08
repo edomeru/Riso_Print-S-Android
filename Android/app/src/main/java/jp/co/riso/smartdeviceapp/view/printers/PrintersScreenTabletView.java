@@ -658,7 +658,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
          * 
          * @param printer Printer to be deleted
          */
-        public void onPrinterDeleteClicked(Printer printer);
+        void onPrinterDeleteClicked(Printer printer);
     }
     
     // ================================================================================

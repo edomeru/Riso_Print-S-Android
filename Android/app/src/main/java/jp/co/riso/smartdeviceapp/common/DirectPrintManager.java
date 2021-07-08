@@ -254,7 +254,7 @@ public class DirectPrintManager {
          * @param status Print status
          * @param progress Printing progress percentage
          */
-        public void onNotifyProgress(DirectPrintManager manager, int status, float progress);
+        void onNotifyProgress(DirectPrintManager manager, int status, float progress);
     }
     
     /**

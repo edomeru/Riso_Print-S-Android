@@ -187,6 +187,6 @@ public class WaitingDialogFragment extends DialogFragment {
         /**
          * @brief Called when the button is clicked or when dialog is cancelled
          */
-        public void onCancel();
+        void onCancel();
     }
 }

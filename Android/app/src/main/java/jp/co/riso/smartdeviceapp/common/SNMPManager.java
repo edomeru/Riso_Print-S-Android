@@ -97,7 +97,7 @@ public class SNMPManager {
          * @param manager SNMP Manager
          * @param result Result of device discovery
          */
-        public void onEndDiscovery(SNMPManager manager, int result);
+        void onEndDiscovery(SNMPManager manager, int result);
         
         /**
          * @brief Callback called when a device is found during device discovery
@@ -107,7 +107,7 @@ public class SNMPManager {
          * @param name Device Name 
          * @param capabilities Device capabilities
          */
-        public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities);
+        void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities);
     }
     
     static {

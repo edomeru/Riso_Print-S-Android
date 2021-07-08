@@ -153,7 +153,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
          * @retval 0 Success
          * @retval -1 Error
          */
-        public int onAddPrinter(Printer printer);
+        int onAddPrinter(Printer printer);
     }
     
     // ================================================================================

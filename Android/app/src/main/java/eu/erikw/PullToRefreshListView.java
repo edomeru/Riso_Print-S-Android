@@ -57,17 +57,17 @@ public class PullToRefreshListView extends ListView{
         /**
          * Method to be called when a refresh is requested
          */
-        public void onRefresh();
+        void onRefresh();
         
         /**
          * Method to be called when the header margin is adjusted
          */
-        public void onHeaderAdjusted(int margin);
+        void onHeaderAdjusted(int margin);
         
         /**
          * Method to be called on bounce back header animation
          */
-        public void onBounceBackHeader(int duration);
+        void onBounceBackHeader(int duration);
         
     }
 

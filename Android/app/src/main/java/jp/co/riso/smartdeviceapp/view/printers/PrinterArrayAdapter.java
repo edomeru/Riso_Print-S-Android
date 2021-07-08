@@ -241,14 +241,14 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
          * 
          * @param printer Printer to be deleted
          */
-        public void onPrinterDeleteClicked(Printer printer);
+        void onPrinterDeleteClicked(Printer printer);
         
         /**
          * @brief Display the PrinterInfoFragment of the corresponding printer item clicked.
          * 
          * @param printer PrinterInfoFragment to be displayed
          */
-        public void onPrinterListClicked(Printer printer);
+        void onPrinterListClicked(Printer printer);
     }
     
     // ================================================================================

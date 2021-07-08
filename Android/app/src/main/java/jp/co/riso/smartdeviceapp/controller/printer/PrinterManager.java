@@ -823,14 +823,14 @@ public class PrinterManager implements SNMPManagerCallback {
          * 
          * @param printer Printer object
          */
-        public void onPrinterAdd(Printer printer);
+        void onPrinterAdd(Printer printer);
         
         /**
          * @brief On Search End callback. <br>
          *
          * Callback called at the end of Printer Search
          */
-        public void onSearchEnd();
+        void onSearchEnd();
     }
     
     // ================================================================================
@@ -851,7 +851,7 @@ public class PrinterManager implements SNMPManagerCallback {
          * @param printer Printer object
          * @param isOnline Printer online status            
          */
-        public void onAddedNewPrinter(Printer printer, boolean isOnline);
+        void onAddedNewPrinter(Printer printer, boolean isOnline);
     }
     
     // ================================================================================
@@ -869,7 +869,7 @@ public class PrinterManager implements SNMPManagerCallback {
         /**
          * @brief Callback to update the online status
          */
-        public void updateOnlineStatus();
+        void updateOnlineStatus();
     }
     
     // ================================================================================

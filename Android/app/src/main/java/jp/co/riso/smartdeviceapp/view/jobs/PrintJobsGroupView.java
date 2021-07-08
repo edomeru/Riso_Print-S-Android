@@ -739,14 +739,14 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
          * 
          * @param printer Printer object of the print job group to be removed
          */
-        public void deletePrinterFromList(Printer printer);
+        void deletePrinterFromList(Printer printer);
         
         /**
          * @brief Called when a print job is deleted
          * 
          * @param printJob PrintJob object to be removed
          */
-        public void deleteJobFromList(PrintJob printJob);
+        void deleteJobFromList(PrintJob printJob);
         
         /**
          * @brief Called when a print job group is expanded/collapsed
@@ -754,7 +754,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
          * @param printer Printer object of the print job group
          * @param isCollapsed Collapse state
          */
-        public void setCollapsed(Printer printer, boolean isCollapsed);
+        void setCollapsed(Printer printer, boolean isCollapsed);
         
         /**
          * @brief Callback for setting print job to be deleted
@@ -762,7 +762,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
          * @param printJobsGroupView PrintJobsGroupView containing the PrintJob to be deleted
          * @param job PrintJob to be deleted
          */
-        public void setDeletePrintJob(PrintJobsGroupView printJobsGroupView, PrintJob job);
+        void setDeletePrintJob(PrintJobsGroupView printJobsGroupView, PrintJob job);
         
         /**
          * @brief Callback for setting print job group to be deleted
@@ -770,12 +770,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
          * @param printJobsGroupView PrintJobsGroupView of the job group to be deleted 
          * @param printer Printer of the print job group to be deleted
          */
-        public void setPrinterToDelete(PrintJobsGroupView printJobsGroupView, Printer printer);
+        void setPrinterToDelete(PrintJobsGroupView printJobsGroupView, Printer printer);
         
         /**
          * @brief Called when a delete button is clicked
          */
-        public boolean showDeleteDialog();
+        boolean showDeleteDialog();
     }
     
     /**
@@ -789,7 +789,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
          * 
          * @param printJobsGroupView Print job group to be removed
          */
-        public void deletePrintJobsGroup(PrintJobsGroupView printJobsGroupView);
+        void deletePrintJobsGroup(PrintJobsGroupView printJobsGroupView);
         
         /**
          * @brief Called when animating a print job group
@@ -799,11 +799,11 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
          * @param durationMultiplier Duration multiplier for the animation
          * @param down Direction of animation; if true views translates downwards, else upwards
          */
-        public void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean down);
+        void animateGroups(PrintJobsGroupView printJobsGroupView, int totalHeight, float durationMultiplier, boolean down);
         
         /**
          * @brief Called when a print job is deleted
          */
-        public void onDeleteJob();
+        void onDeleteJob();
     }
 }
