@@ -596,7 +596,6 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 mPauseableHandler.pause();
                 MainActivity activity = (MainActivity) getActivity();
                 activity.openDrawer(Gravity.LEFT);
-                return;
         }
     }
 }
