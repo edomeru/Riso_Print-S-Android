@@ -34,18 +34,12 @@ public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
 
     @Override
     public boolean areAllItemsEnabled() {
-        if(this.isNoDisabled)
-            return false;
-        
-        return true;
+        return !this.isNoDisabled;
     }
 
     @Override
     public boolean isEnabled(int position) {
-        if(position == 1 && this.isNoDisabled)
-            return false;
-        
-        return true;
+        return ((position != 1) || !this.isNoDisabled);
     }
 
     @Override
