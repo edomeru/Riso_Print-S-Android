@@ -503,7 +503,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     @Override
     public void onConfirm() {
         if (isTablet()) {
-            boolean relayout = mDeletePrinter.getId() == mPrinterManager.getDefaultPrinter() ? true : false;
+            boolean relayout = (mDeletePrinter.getId() == mPrinterManager.getDefaultPrinter());
             
             if (mPrinterManager.removePrinter(mDeletePrinter)) {
                 mPrinterTabletView.confirmDeletePrinterView(relayout);

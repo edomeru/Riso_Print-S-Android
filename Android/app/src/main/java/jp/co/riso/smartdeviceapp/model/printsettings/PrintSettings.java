@@ -387,7 +387,7 @@ public class PrintSettings {
      * @retval false PDF page will not be scaled
      */
     public boolean isScaleToFit() {
-        return (mSettingValues.get(TAG_SCALE_TO_FIT) == 1) ? true : false;
+        return (mSettingValues.get(TAG_SCALE_TO_FIT) == 1);
     }
     
     /**
@@ -432,7 +432,7 @@ public class PrintSettings {
      * @retval false not in booklet format
      */
     public boolean isBooklet() {
-        return (mSettingValues.get(TAG_BOOKLET) == 1) ? true : false;
+        return (mSettingValues.get(TAG_BOOKLET) == 1);
     }
     
     /**
