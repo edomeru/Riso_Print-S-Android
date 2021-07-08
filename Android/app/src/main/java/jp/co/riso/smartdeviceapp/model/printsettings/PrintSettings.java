@@ -248,7 +248,7 @@ public class PrintSettings {
                 }
             }
 
-            if(key.equals(TAG_SORT) && mSettingMapKey == AppConstants.PRINTER_MODEL_IS) {
+            if(key.equals(TAG_SORT) && mSettingMapKey.equals(AppConstants.PRINTER_MODEL_IS)) {
                 value ^= 1;
             }
 
