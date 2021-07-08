@@ -261,9 +261,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     public void restoreState(Bundle savedInstanceState) {
         // Collapse the headers retrieved from the saved bundle
         String selectedTitle[] = savedInstanceState.getStringArray(KEY_SELECTED_TITLES);
-        for (int i = 0; i < selectedTitle.length; i++) {
-            if (mMainView.findViewWithTag(selectedTitle[i]) != null) {
-                collapseControl(mMainView.findViewWithTag(selectedTitle[i]), false);
+        for (String s : selectedTitle) {
+            if (mMainView.findViewWithTag(s) != null) {
+                collapseControl(mMainView.findViewWithTag(s), false);
             }
         }
         

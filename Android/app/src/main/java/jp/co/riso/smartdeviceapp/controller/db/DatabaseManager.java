@@ -119,9 +119,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String sqlString = AppUtils.getFileContentsFromAssets(mContext, sqlScript);
         String[] separated = sqlString.split(";");
 
-        for (int i = 0; i < separated.length; i++) {
+        for (String s : separated) {
             try {
-                db.execSQL(separated[i]);
+                db.execSQL(s);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

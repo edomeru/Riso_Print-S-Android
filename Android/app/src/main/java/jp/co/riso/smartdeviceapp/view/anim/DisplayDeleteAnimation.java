@@ -36,9 +36,9 @@ public class DisplayDeleteAnimation {
     public void beginDeleteModeOnView(View view, boolean animate, int deleteId, int... ids) {
         
         View deleteButton = view.findViewById(deleteId);
-        
-        for (int i = 0; i < ids.length; i++) {
-            View viewToHide = view.findViewById(ids[i]);
+
+        for (int id : ids) {
+            View viewToHide = view.findViewById(id);
             if (viewToHide != null) {
                 viewToHide.setVisibility(View.GONE);
             }
@@ -94,9 +94,9 @@ public class DisplayDeleteAnimation {
                 
             } else {
                 deleteButton.setVisibility(View.GONE);
-                
-                for (int i = 0; i < ids.length; i++) {
-                    View viewToHide = view.findViewById(ids[i]);
+
+                for (int id : ids) {
+                    View viewToHide = view.findViewById(id);
                     if (viewToHide != null) {
                         viewToHide.setVisibility(View.VISIBLE);
                     }
@@ -154,13 +154,13 @@ public class DisplayDeleteAnimation {
                     view.setVisibility(View.GONE);
                 }
             }
-            for (int i = 0; i < mIdsReference.length; i++) {
-                View viewToHide = mRowViewReference.get().findViewById(mIdsReference[i]);
+            for (int j : mIdsReference) {
+                View viewToHide = mRowViewReference.get().findViewById(j);
                 if (viewToHide != null) {
                     viewToHide.setVisibility(View.VISIBLE);
                     AlphaAnimation alpha = new AlphaAnimation(0.0f, 1.0f);
                     alpha.setDuration(ANIM_DURATION);
-                    
+
                     if (viewToHide.getAnimation() != null) {
                         viewToHide.getAnimation().setAnimationListener(null);
                         viewToHide.getAnimation().cancel();

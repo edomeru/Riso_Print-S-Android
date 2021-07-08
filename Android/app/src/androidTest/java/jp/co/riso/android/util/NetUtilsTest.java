@@ -264,8 +264,8 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testIsIPv4Address_ValidIpv4Address() {
         boolean isIpV4Address;
 
-        for (int i = 0; i < IPv4_VALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4Address(IPv4_VALID_ADDRESS[i]);
+        for (String iPv4_valid_address : IPv4_VALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4Address(iPv4_valid_address);
             assertEquals(true, isIpV4Address);
         }
     }
@@ -273,13 +273,13 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testIsIPv4Address_InvalidIpv4Address() {
         boolean isIpV4Address;
 
-        for (int i = 0; i < IPV4_INVALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4Address(IPV4_INVALID_ADDRESS[i]);
+        for (String ipv4_invalid_address : IPV4_INVALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4Address(ipv4_invalid_address);
             assertEquals(false, isIpV4Address);
         }
 
-        for (int i = 0; i < IPv6_VALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4Address(IPv6_VALID_ADDRESS[i]);
+        for (String iPv6_valid_address : IPv6_VALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4Address(iPv6_valid_address);
             assertEquals(false, isIpV4Address);
         }
     }
@@ -299,8 +299,8 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testIsIPv4MulticastAddress_ValidIpv4MulticastAddress() {
         boolean isIpV4Address;
 
-        for (int i = 0; i < IPv4_MULTICAST_VALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4MulticastAddress(IPv4_MULTICAST_VALID_ADDRESS[i]);
+        for (String iPv4_multicast_valid_address : IPv4_MULTICAST_VALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(iPv4_multicast_valid_address);
             assertEquals(true, isIpV4Address);
         }
     }
@@ -308,16 +308,16 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testIsIPv4MulticastAddress_InvalidIpv4MulticastAddress() {
         boolean isIpV4Address;
 
-        for (int i = 0; i < IPv4_MULTICAST_INVALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4MulticastAddress(IPv4_MULTICAST_INVALID_ADDRESS[i]);
+        for (String iPv4_multicast_invalid_address : IPv4_MULTICAST_INVALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(iPv4_multicast_invalid_address);
             assertEquals(false, isIpV4Address);
         }
-        for (int i = 0; i < IPV4_INVALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4MulticastAddress(IPV4_INVALID_ADDRESS[i]);
+        for (String ipv4_invalid_address : IPV4_INVALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(ipv4_invalid_address);
             assertEquals(false, isIpV4Address);
         }
-        for (int i = 0; i < IPv6_VALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4MulticastAddress(IPv6_VALID_ADDRESS[i]);
+        for (String iPv6_valid_address : IPv6_VALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(iPv6_valid_address);
             assertEquals(false, isIpV4Address);
         }
     }
@@ -337,8 +337,8 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testIsIPv6Address_ValidIpv6Address() {
         boolean isIpV6Address;
 
-        for (int i = 0; i < IPv6_VALID_ADDRESS.length; i++) {
-            isIpV6Address = NetUtils.isIPv6Address(IPv6_VALID_ADDRESS[i]);
+        for (String iPv6_valid_address : IPv6_VALID_ADDRESS) {
+            isIpV6Address = NetUtils.isIPv6Address(iPv6_valid_address);
             assertEquals(true, isIpV6Address);
         }
     }
@@ -346,13 +346,13 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testIsIPv6Address_InvalidIpv6Address() {
         boolean isIpV6Address;
 
-        for (int i = 0; i < IPv6_INVALID_ADDRESS.length; i++) {
-            isIpV6Address = NetUtils.isIPv6Address(IPv6_INVALID_ADDRESS[i]);
+        for (String iPv6_invalid_address : IPv6_INVALID_ADDRESS) {
+            isIpV6Address = NetUtils.isIPv6Address(iPv6_invalid_address);
             assertEquals(false, isIpV6Address);
         }
 
-        for (int i = 0; i < IPv4_VALID_ADDRESS.length; i++) {
-            isIpV6Address = NetUtils.isIPv6Address(IPv4_VALID_ADDRESS[i]);
+        for (String iPv4_valid_address : IPv4_VALID_ADDRESS) {
+            isIpV6Address = NetUtils.isIPv6Address(iPv4_valid_address);
             assertEquals(false, isIpV6Address);
         }
     }
@@ -632,8 +632,8 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testValidateIpAddress_invalid() {
-        for (int i = 0; i < IPv6_INVALID_ADDRESS.length; i++) {
-            assertNull(NetUtils.validateIpAddress(IPv6_INVALID_ADDRESS[i]));
+        for (String iPv6_invalid_address : IPv6_INVALID_ADDRESS) {
+            assertNull(NetUtils.validateIpAddress(iPv6_invalid_address));
         }
     }
     

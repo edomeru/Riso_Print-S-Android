@@ -383,11 +383,11 @@ public class Logger {
                 if (files == null) {
                     return true;
                 }
-                for (int i = 0; i < files.length; i++) {
-                    if (files[i].isDirectory()) {
-                        deleteDirectory(files[i]);
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
                     }
-                    files[i].delete();
+                    file.delete();
                     count++;
                 }
             }
@@ -407,11 +407,11 @@ public class Logger {
                 if (files == null) {
                     return true;
                 }
-                for (int i = 0; i < files.length; i++) {
-                    if (files[i].isDirectory()) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
                         //deletes the whole sub-directory
-                        if (deleteDirectory(files[i])) {
-                            files[i].delete();
+                        if (deleteDirectory(file)) {
+                            file.delete();
                         }
                     }
                 }
