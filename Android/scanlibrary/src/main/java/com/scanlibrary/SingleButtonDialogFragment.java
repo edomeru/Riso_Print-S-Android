@@ -8,7 +8,6 @@ import android.app.Dialog;
 // Use androidx.fragment.app.DialogFragment instead
 import androidx.fragment.app.DialogFragment;
 // aLINK edit - End
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 @SuppressLint("ValidFragment")

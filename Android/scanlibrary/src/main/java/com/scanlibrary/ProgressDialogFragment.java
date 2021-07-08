@@ -12,7 +12,6 @@ import android.app.Dialog;
 // Use androidx.fragment.app.DialogFragment instead
 import androidx.fragment.app.DialogFragment;
 // aLINK edit - End
-import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 // aLINK edit - Start
