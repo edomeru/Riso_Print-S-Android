@@ -14,7 +14,6 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.Context;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>  {

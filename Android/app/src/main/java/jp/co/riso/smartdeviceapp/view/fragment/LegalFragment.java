@@ -14,7 +14,6 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;

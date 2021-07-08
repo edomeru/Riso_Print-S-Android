@@ -9,7 +9,7 @@
 package jp.co.riso.smartdeviceapp.view.base;
 
 import androidx.fragment.app.FragmentActivity;
-import android.app.Activity;
+
 import android.content.Context;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
