@@ -343,7 +343,7 @@ public final class AppUtils {
                     Method methodTypeFace = v.getChildAt(i).getClass().getMethod("setTypeface", Typeface.class, Integer.TYPE);
                     // With getTypeface we'll get back the style (Bold, Italic...) set in XML
                     Method methodGetTypeFace = v.getChildAt(i).getClass().getMethod("getTypeface");
-                    Typeface typeFace = ((Typeface) methodGetTypeFace.invoke(v.getChildAt(i), nullArgs));
+                    Typeface typeFace = ((Typeface) methodGetTypeFace.invoke(v.getChildAt(i)));
                     // Invoke the method and apply the new font with the defined style to the view if the method exists
                     // (textview,...)
                     methodTypeFace.invoke(v.getChildAt(i), font, typeFace == null ? 0 : typeFace.getStyle());
