@@ -160,7 +160,7 @@ public class PDFConverterManager {
                     parcelFileDescriptor.close();
                     return 0;
                 }
-                stringBuilder.append(fileString + "\n");
+                stringBuilder.append(fileString).append("\n");
             }
             inputStream.close();
             reader.close();
