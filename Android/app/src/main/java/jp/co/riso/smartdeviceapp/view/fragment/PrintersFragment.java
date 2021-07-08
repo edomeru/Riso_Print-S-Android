@@ -76,7 +76,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private PrinterManager mPrinterManager = null;
     private int mDeleteItem = PrinterManager.EMPTY_ID;
     private Parcelable mScrollState = null;
-    private int mSettingItem = PrinterManager.EMPTY_ID;;
+    private int mSettingItem = PrinterManager.EMPTY_ID;
     private Runnable mUpdateOnlineStatus = null;
     private TextView mEmptyPrintersText;
     

@@ -1005,7 +1005,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
 
             if (targetActivity != null) {
                 targetActivity.runOnUiThread(() -> setZoomLevel(targetZoom));
-            };
+            }
             //setZoomLevel(targetZoom);
         });
         thread.start();

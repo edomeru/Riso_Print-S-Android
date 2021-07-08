@@ -333,7 +333,6 @@ public class PreviewTest extends AndroidTestCase {
     public void testBookletLayout_XML() {
         NodeList optionsNodeList  = mSettingList.item(13).getChildNodes();
         List<Option> optionsList = new ArrayList<>();
-;
         for (int i = 1; i < optionsNodeList.getLength(); i += 2) {
             optionsList.add(new Option(optionsNodeList.item(i)));
         }
