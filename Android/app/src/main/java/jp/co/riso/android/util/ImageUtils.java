@@ -243,6 +243,7 @@ public final class ImageUtils {
                     orientation = cursor.getInt(index);
                 }
             }
+            cursor.close();
         }
 
         switch (orientation) {
