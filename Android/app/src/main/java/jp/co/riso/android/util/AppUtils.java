@@ -333,15 +333,15 @@ public final class AppUtils {
         
         for (int i = 0; i < v.getChildCount(); i++) {
             
-            // For the ViewGroup, we'll have to use recursivity
+            // For the ViewGroup, we'll have to use recursion
             if (v.getChildAt(i) instanceof ViewGroup) {
                 changeChildrenFont((ViewGroup) v.getChildAt(i), font);
             } else {
                 try {
                     Object[] nullArgs = null;
-                    // Test wether setTypeface and getTypeface methods exists
+                    // Test whether setTypeface and getTypeface methods exists
                     Method methodTypeFace = v.getChildAt(i).getClass().getMethod("setTypeface", new Class[] { Typeface.class, Integer.TYPE });
-                    // With getTypefaca we'll get back the style (Bold, Italic...) set in XML
+                    // With getTypeface we'll get back the style (Bold, Italic...) set in XML
                     Method methodGetTypeFace = v.getChildAt(i).getClass().getMethod("getTypeface", new Class[] {});
                     Typeface typeFace = ((Typeface) methodGetTypeFace.invoke(v.getChildAt(i), nullArgs));
                     // Invoke the method and apply the new font with the defined style to the view if the method exists
@@ -373,7 +373,7 @@ public final class AppUtils {
      * 
      * @return Resource ID
      */
-    public static int getResourseId(String variableName, Class<?> c, int defaultId) {
+    public static int getResourceId(String variableName, Class<?> c, int defaultId) {
         if (variableName == null || c == null) {
             return defaultId;
         }

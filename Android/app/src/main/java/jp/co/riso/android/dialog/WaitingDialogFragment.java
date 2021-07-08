@@ -32,7 +32,7 @@ import jp.co.riso.smartprint.R;
  *      @code 
  *      WaitingDialogFragment dialog = WaitingDialogFragment.newInstance(<parameters>):
  *      dialog.setTargetFragment(this, requestCode);
- *      DialogUtils.showdisplayDialog(activity, tag, dialog); 
+ *      DialogUtils.showDisplayDialog(activity, tag, dialog);
  *      @endcode
  * 3. To dismiss, call: DialogUtils.dismissDialog(activity, tag);
  */

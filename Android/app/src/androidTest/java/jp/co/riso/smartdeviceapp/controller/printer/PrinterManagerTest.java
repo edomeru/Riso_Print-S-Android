@@ -708,9 +708,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
 
-    public void testSavePrinterToDB_ExsistingPrinter() {
+    public void testSavePrinterToDB_ExistingPrinter() {
         try {
-            Printer printer = new Printer("testSavePrinterToDB_ExsistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
+            Printer printer = new Printer("testSavePrinterToDB_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
             boolean ret = false;
 
             if (!mPrinterManager.isExists(printer)) {
@@ -738,7 +738,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testSavePrinterToDB_DefaultPrinter() {
         try {
 
-            Printer printer = new Printer("testSavePrinterToDB_ExsistingPrinter",
+            Printer printer = new Printer("testSavePrinterToDB_ExistingPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
             if (!mPrintersList.isEmpty()) {
                 for (int i = mPrintersList.size(); i > 0; i--) {
@@ -755,7 +755,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testSavePrinterToDB_DatabaseError() {
         try {
-            Printer printer = new Printer("testSavePrinterToDB_ExsistingPrinter",
+            Printer printer = new Printer("testSavePrinterToDB_ExistingPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
             MockedDatabaseManager dbManager = new MockedDatabaseManager(
                     SmartDeviceApp.getAppContext());

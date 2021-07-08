@@ -254,7 +254,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
      */
     public int getDeleteItemPosition() {
         if (mDeleteViewHolder != null) {
-            mDeleteItem = indexOfChild((View) mDeleteViewHolder.mOnlineIndcator.getTag());
+            mDeleteItem = indexOfChild((View) mDeleteViewHolder.mOnlineIndicator.getTag());
         }
         return mDeleteItem;
     }
@@ -313,7 +313,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
             return;
         }
         
-        removeView((View) mDeleteViewHolder.mOnlineIndcator.getTag());
+        removeView((View) mDeleteViewHolder.mOnlineIndicator.getTag());
         mDeleteViewHolder = null;
         mDeleteItem = PrinterManager.EMPTY_ID;
         
@@ -334,11 +334,11 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     }
     
     /**
-     * @brief Set the pausable handler object.
+     * @brief Set the pauseable handler object.
      * 
-     * @param handler Pausable handler
+     * @param handler Pauseable handler
      */
-    public void setPausableHandler(PauseableHandler handler) {
+    public void setPauseableHandler(PauseableHandler handler) {
         mPauseableHandler = handler;
     }
     
@@ -451,7 +451,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
         ViewHolder viewHolder = new ViewHolder();
         viewHolder.mPrinterName = (TextView) pView.findViewById(R.id.txt_printerName);
         viewHolder.mDeleteButton = (Button) pView.findViewById(R.id.btn_delete);
-        viewHolder.mOnlineIndcator = (ImageView) pView.findViewById(R.id.img_onOff);
+        viewHolder.mOnlineIndicator = (ImageView) pView.findViewById(R.id.img_onOff);
         viewHolder.mIpAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
         
         viewHolder.mPrintSettings = (LinearLayout) pView.findViewById(R.id.default_print_settings);
@@ -497,12 +497,12 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
         viewHolder.mIpAddress.setTag(printer);
         viewHolder.mPrintSettings.setTag(printer);
         viewHolder.mPrintSettings.setTag(ID_TAG_DEFAULTSETTINGS, viewHolder);
-        viewHolder.mOnlineIndcator.setTag(pView);
+        viewHolder.mOnlineIndicator.setTag(pView);
         viewHolder.mPort.setTag(printer);
         viewHolder.mDefaultPrinter.setTag(viewHolder);
         
         if (isOnline) {
-            viewHolder.mOnlineIndcator.setImageResource(R.drawable.img_btn_printer_status_online);
+            viewHolder.mOnlineIndicator.setImageResource(R.drawable.img_btn_printer_status_online);
         }
         setPrinterView(viewHolder);
     }
@@ -671,7 +671,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
      * @brief Printers Screen view holder for tablet.
      */
     public class ViewHolder {
-        private ImageView mOnlineIndcator;
+        private ImageView mOnlineIndicator;
         private TextView mPrinterName;
         private Button mDeleteButton;
         private TextView mIpAddress;

@@ -39,15 +39,15 @@ import jp.co.riso.smartprint.R;
  */
 public class PrinterSearchSettingsFragment extends BaseFragment {
 
-    private BroadcastReceiver snmpCommunityNameEditTextPastebroadcastReceiver;
+    private BroadcastReceiver snmpCommunityNameEditTextPasteBroadcastReceiver;
     private SnmpCommunityNameEditText snmpCommunityNameEditText;
 
     @Override
     public void onStop() {
         super.onStop();
 
-        if(snmpCommunityNameEditTextPastebroadcastReceiver != null) {
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(snmpCommunityNameEditTextPastebroadcastReceiver);
+        if(snmpCommunityNameEditTextPasteBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(snmpCommunityNameEditTextPasteBroadcastReceiver);
         }
     }
 
@@ -57,7 +57,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
 
         IntentFilter intentFilter = new IntentFilter(SnmpCommunityNameEditText.SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID);
 
-        snmpCommunityNameEditTextPastebroadcastReceiver = new BroadcastReceiver() {
+        snmpCommunityNameEditTextPasteBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(SnmpCommunityNameEditText.SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID.equals(intent.getAction())) {
@@ -68,7 +68,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
             }
         };
 
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(snmpCommunityNameEditTextPastebroadcastReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(snmpCommunityNameEditTextPasteBroadcastReceiver, intentFilter);
     }
 
     @Override

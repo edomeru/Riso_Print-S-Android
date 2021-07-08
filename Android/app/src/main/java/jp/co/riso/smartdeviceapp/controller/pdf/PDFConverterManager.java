@@ -98,9 +98,9 @@ public class PDFConverterManager {
     }
 
     /**
-     * @brief Sets the Clipdata of image files to convert and sets conversion flag.
+     * @brief Sets the ClipData of image files to convert and sets conversion flag.
      *
-     * @param data Clipdata of image files.
+     * @param data ClipData of image files.
      */
     public void setImageFile(ClipData data) {
         mClipData = data;

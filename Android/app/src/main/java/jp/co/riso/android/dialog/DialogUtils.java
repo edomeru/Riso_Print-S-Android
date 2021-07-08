@@ -71,7 +71,7 @@ public final class DialogUtils {
         // Remove the fragment
         removeDialogFragment(ft, activity, tag);
         
-        // Alllow removal even on paused state
+        // Allow removal even on paused state
         ft.commitAllowingStateLoss();
     }
 

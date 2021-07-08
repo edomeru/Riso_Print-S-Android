@@ -450,7 +450,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         assertEquals(status, PDFFileManager.PDF_OK);
     }
     
-    public void testTestDocument_EncrpyptedPath() {
+    public void testTestDocument_EncryptedPath() {
         int status = mPdfManager.testDocument(mEncryptedPdfPath);
         assertEquals(status, PDFFileManager.PDF_ENCRYPTED);
     }
@@ -487,7 +487,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         assertEquals(status, PDFFileManager.PDF_OK);
     }
     
-    public void testOpenDocument_EncrpyptedPath() {
+    public void testOpenDocument_EncryptedPath() {
         mPdfManager.setPDF(mEncryptedPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_ENCRYPTED);

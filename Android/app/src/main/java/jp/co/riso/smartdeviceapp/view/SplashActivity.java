@@ -61,7 +61,7 @@ import jp.co.riso.smartprint.R;
 public class SplashActivity extends BaseActivity implements PauseableHandlerCallback, OnTouchListener {
     
     /// Message ID for running main activity
-    public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
+    public static final int MESSAGE_RUN_MAIN_ACTIVITY = 0x10001;
     
     public static final String KEY_DB_INITIALIZED = "database_initialized";
 
@@ -100,11 +100,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             }
         }
 
-        if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
+        if (!mHandler.hasMessages(MESSAGE_RUN_MAIN_ACTIVITY)) {
             if (!AppConstants.APP_SHOW_SPLASH && dbIsOK) {
                 runMainActivity();
             } else {
-                mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
+                mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAIN_ACTIVITY, AppConstants.APP_SPLASH_DURATION);
             }
         }
     }
@@ -191,14 +191,13 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             LinearLayout buttonLayout = (LinearLayout)this.findViewById(R.id.LicenseButtonLayout);
             buttonLayout.setVisibility(View.VISIBLE);
             
-            Button agreebutton = (Button)buttonLayout.findViewById(R.id.licenseAgreeButton);
-            agreebutton.setText(R.string.ids_lbl_agree);
-            agreebutton.setOnTouchListener(this);
+            Button agreeButton = (Button)buttonLayout.findViewById(R.id.licenseAgreeButton);
+            agreeButton.setText(R.string.ids_lbl_agree);
+            agreeButton.setOnTouchListener(this);
             
-            Button disagreebutton = (Button)buttonLayout.findViewById(R.id.licenseDisagreeButton);
-            disagreebutton.setText(R.string.ids_lbl_disagree);
-            disagreebutton.setOnTouchListener(this);
-
+            Button disagreeButton = (Button)buttonLayout.findViewById(R.id.licenseDisagreeButton);
+            disagreeButton.setText(R.string.ids_lbl_disagree);
+            disagreeButton.setOnTouchListener(this);
 
             ViewFlipper vf = (ViewFlipper) findViewById( R.id.viewFlipper);
             vf.showNext();
@@ -298,12 +297,12 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     
     @Override
     public boolean storeMessage(Message message) {
-        return message.what == MESSAGE_RUN_MAINACTIVITY;
+        return message.what == MESSAGE_RUN_MAIN_ACTIVITY;
     }
     
     @Override
     public void processMessage(Message message) {
-        if (message.what == MESSAGE_RUN_MAINACTIVITY) {
+        if (message.what == MESSAGE_RUN_MAIN_ACTIVITY) {
             if (mDatabaseInitialized) {
                 runMainActivity();
             }
@@ -338,7 +337,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             super.onPostExecute(result);
             
             if (!SplashActivity.this.isFinishing()) {
-                if (mHandler.hasStoredMessage(MESSAGE_RUN_MAINACTIVITY)) {
+                if (mHandler.hasStoredMessage(MESSAGE_RUN_MAIN_ACTIVITY)) {
                     mDatabaseInitialized = true;
                 } else {
                     final Activity activity = SmartDeviceApp.getActivity();

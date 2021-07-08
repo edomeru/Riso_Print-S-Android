@@ -34,7 +34,7 @@ public class PauseableHandler extends Handler {
     final WeakReference<PauseableHandlerCallback> mCallBack;
     
     /**
-     * @brief Creates a PausableHander instance
+     * @brief Creates a PauseableHandler instance
      * @param callback Listener for PauseableHandler events
      */
     public PauseableHandler(Looper looper, PauseableHandlerCallback callback) {

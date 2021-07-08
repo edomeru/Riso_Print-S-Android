@@ -1072,7 +1072,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         for (Option option : options) {
             String value = option.getTextContent();
             
-            int id = AppUtils.getResourseId(value, R.string.class, -1);
+            int id = AppUtils.getResourceId(value, R.string.class, -1);
             
             if (id != -1) {
                 optionsStrings.add(getResources().getString(id));
@@ -1098,12 +1098,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         String type = setting.getAttributeValue(XmlNode.ATTR_TYPE);
         
         String titleText = "";
-        int titleId = AppUtils.getResourseId(text, R.string.class, -1);
+        int titleId = AppUtils.getResourceId(text, R.string.class, -1);
         if (titleId != -1) {
             titleText = getResources().getString(titleId);
         }
         
-        int iconId = AppUtils.getResourseId(icon, R.drawable.class, -1);
+        int iconId = AppUtils.getResourceId(icon, R.drawable.class, -1);
         
         View view = createControlView(type, name);
         
@@ -1146,7 +1146,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         // Create Header
         String titleText = "";
-        int id = AppUtils.getResourseId(textStr, R.string.class, -1);
+        int id = AppUtils.getResourceId(textStr, R.string.class, -1);
         if (id != -1) {
             titleText = getResources().getString(id);
         }
@@ -1494,12 +1494,12 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             String icon = (String) v.getTag(ID_TAG_ICON);
             
             String titleText = "";
-            int titleId = AppUtils.getResourseId(text, R.string.class, -1);
+            int titleId = AppUtils.getResourceId(text, R.string.class, -1);
             if (titleId != -1) {
                 titleText = getResources().getString(titleId);
             }
             
-            int iconId = AppUtils.getResourseId(icon, R.drawable.class, -1);
+            int iconId = AppUtils.getResourceId(icon, R.drawable.class, -1);
             
             addSubviewOptionsTitle(titleText, true, iconId);
             

@@ -250,7 +250,7 @@ public class PDFFileManager {
     /**
      * @brief Checks whether the PDF loaded is landscape.
      * 
-     * @note Orientation is based on the irst page
+     * @note Orientation is based on the first page
      * 
      * @retval true PDF is landscape
      * @retval false PDF is portrait, square.

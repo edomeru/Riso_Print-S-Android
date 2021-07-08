@@ -24,7 +24,7 @@ import android.view.ContextThemeWrapper;
  * 2. In the target fragment, add these snippet:
  *      @code
  *      InfoDialogFragment dialog = new InfoDialogFragment(<parameters>):
- *      InfoDialogFragment.showdisplayDialog(activity, tag, dialog);
+ *      InfoDialogFragment.showDisplayDialog(activity, tag, dialog);
  *      @endcode
  */
 public class InfoDialogFragment extends DialogFragment {

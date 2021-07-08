@@ -1445,13 +1445,13 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             
             // start from right
             if (!leftToRight) {
-                int acualWidthPixels = (getColsPerSheet() * pdfPageWidth);
-                beginPos[0] = beginPos[0] + acualWidthPixels - pdfPageWidth;
+                int actualWidthPixels = (getColsPerSheet() * pdfPageWidth);
+                beginPos[0] = beginPos[0] + actualWidthPixels - pdfPageWidth;
             }
             
             if (!topToBottom) {
-                int acualHeightPixels = (getRowsPerSheet() * pdfPageHeight);
-                beginPos[1] = beginPos[1] + acualHeightPixels - pdfPageHeight;
+                int actualHeightPixels = (getRowsPerSheet() * pdfPageHeight);
+                beginPos[1] = beginPos[1] + actualHeightPixels - pdfPageHeight;
             }
             
             

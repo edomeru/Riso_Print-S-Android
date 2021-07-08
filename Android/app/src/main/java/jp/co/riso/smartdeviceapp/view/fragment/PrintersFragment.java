@@ -552,7 +552,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             case MSG_POPULATE_PRINTERS_LIST:
                 if (isTablet()) {
                     mPrinterTabletView.restoreState(mPrinter, msg.arg1, msg.arg2);
-                    mPrinterTabletView.setPausableHandler(mPauseableHandler);
+                    mPrinterTabletView.setPauseableHandler(mPauseableHandler);
                 } else {
                     mPrinterAdapter = new PrinterArrayAdapter(getActivity(), R.layout.printers_container_item, mPrinter);
                     ((PrinterArrayAdapter) mPrinterAdapter).setPrintersArrayAdapterInterface(this);
