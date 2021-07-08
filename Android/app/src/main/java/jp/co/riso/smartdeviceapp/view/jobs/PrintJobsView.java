@@ -331,7 +331,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private boolean checkIfNeedsRelayout() {
         boolean isColumnCleared = false;
         boolean isLeftCleared = false;
-        boolean childNumExceeds = false;
+        boolean childNumExceeds;
         int childrenNum = 0;
         
         for (int i = 0; i < mColumns.size(); i++) {
@@ -402,8 +402,8 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         
         int coords[] = new int[2];
         boolean dragged = (mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
-        boolean contains1 = false;
-        boolean contains2 = false;
+        boolean contains1;
+        boolean contains2;
         // check self, if valid swipe don't redisplay nor remove delete button
         if (mDeleteMode) {
             mDeleteView.getLocationOnScreen(coords);
@@ -562,7 +562,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             }
         }
         
-        TranslateAnimation animation = null;
+        TranslateAnimation animation;
         for (int i = idx + 1; i < mColumns.get(column).getChildCount(); i++) {
             if (down) {
                 animation = new TranslateAnimation(0, 0, -totalHeight, 0);

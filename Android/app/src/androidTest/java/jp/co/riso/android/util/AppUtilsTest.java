@@ -647,7 +647,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     //================================================================================
     
     public void testGetNextIntegerMultiple_Valid() {
-        int val = 0;
+        int val;
 
         val = AppUtils.getNextIntegerMultiple(12, 2);
         assertEquals(12, val);
@@ -666,7 +666,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
     
     public void testGetNextIntegerMultiple_Invalid() {
-        int val = 0;
+        int val;
         
         val = AppUtils.getNextIntegerMultiple(-3, 0);
         assertEquals(-3, val);

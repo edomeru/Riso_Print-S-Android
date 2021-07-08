@@ -95,7 +95,7 @@ public class InfoDialogFragment extends DialogFragment {
             builder.setNegativeButton(buttonTitle, null);
         }
 
-        AlertDialog dialog = null;
+        AlertDialog dialog;
         dialog = builder.create();
 
         return dialog;

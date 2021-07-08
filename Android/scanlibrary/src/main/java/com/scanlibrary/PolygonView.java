@@ -231,7 +231,7 @@ public class PolygonView extends FrameLayout {
                     StartPT = new PointF(v.getX(), v.getY());
                     break;
                 case MotionEvent.ACTION_UP:
-                    int color = 0;
+                    int color;
                     if (isValidShape(getPoints())) {
                         // aLINK edit - Start
                         // Resources.getColor(int id) was deprecated in API level 23.
@@ -287,7 +287,7 @@ public class PolygonView extends FrameLayout {
                     StartPT = new PointF(v.getX(), v.getY());
                     break;
                 case MotionEvent.ACTION_UP:
-                    int color = 0;
+                    int color;
                     if (isValidShape(getPoints())) {
                         // aLINK edit - Start
                         // Resources.getColor(int id) was deprecated in API level 23.

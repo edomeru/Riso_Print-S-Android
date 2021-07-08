@@ -278,7 +278,7 @@ public class Logger {
         try {
             BufferedReader in = new BufferedReader(new FileReader(path));
             StringBuffer buf = new StringBuffer();
-            String str = "";
+            String str;
             while ((str = in.readLine()) != null) {
                 buf.append(str);
             }

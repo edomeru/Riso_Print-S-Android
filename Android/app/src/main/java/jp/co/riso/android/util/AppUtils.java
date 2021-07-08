@@ -133,7 +133,7 @@ public final class AppUtils {
         }
         
         PackageManager pm = context.getPackageManager();
-        ApplicationInfo appInfo = null;
+        ApplicationInfo appInfo;
         
         try {
             appInfo = pm.getApplicationInfo(packageName, 0);
@@ -407,8 +407,8 @@ public final class AppUtils {
         float ratioSrc = srcWidth / srcHeight;
         float ratioDest = (float) destWidth / destHeight;
         
-        int newWidth = 0;
-        int newHeight = 0;
+        int newWidth;
+        int newHeight;
         
         if (ratioDest > ratioSrc) {
             newHeight = destHeight;

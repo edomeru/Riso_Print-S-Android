@@ -267,10 +267,10 @@ public class NetUtils {
         if (ipAddress == null) {
             return "";
         }
-        List<String> ipv6part = null;
+        List<String> ipv6part;
         String ipv4Addr = null;
         StringBuilder ipAddrBuilder = null;
-        String newIpAddress = null;
+        String newIpAddress;
         
         if (isIPv4Address(ipAddress)) {
             ipAddrBuilder = new StringBuilder();

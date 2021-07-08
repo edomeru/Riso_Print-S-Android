@@ -46,16 +46,16 @@ public class PrinterManager implements SNMPManagerCallback {
     /// Printer ID for invalid printer
     public static final int EMPTY_ID = -1;
     private static PrinterManager sSharedMngr = null;
-    private List<Printer> mPrinterList = null;
+    private List<Printer> mPrinterList;
     private boolean mIsSearching = false;
     private boolean mIsCancelled = false;
-    private SNMPManager mSNMPManager = null;
+    private SNMPManager mSNMPManager;
     private WeakReference<PrinterSearchCallback> mPrinterSearchCallback = null;
     private WeakReference<PrintersCallback> mPrintersCallback = null;
     private WeakReference<UpdateStatusCallback> mUpdateStatusCallback = null;
     private Timer mUpdateStatusTimer = null;
     private int mDefaultPrintId = EMPTY_ID;
-    private DatabaseManager mDatabaseManager = null;
+    private DatabaseManager mDatabaseManager;
 
     /**
      * @brief PrinterManager Constructor.
@@ -328,7 +328,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * @retval false Save to Database has failed
      */
     public boolean removePrinter(Printer printer) {
-        boolean ret = false;
+        boolean ret;
         if (printer == null) {
             return false;
         }
@@ -423,7 +423,7 @@ public class PrinterManager implements SNMPManagerCallback {
         if (portSettings == null) {
             return false;
         }
-        boolean ret = false;
+        boolean ret;
         ContentValues cv = new ContentValues();
         cv.put(KeyConstants.KEY_SQL_PRINTER_PORT, portSettings.ordinal());
         ret = mDatabaseManager.update(KeyConstants.KEY_SQL_PRINTER_TABLE, cv, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printerId));
@@ -734,7 +734,7 @@ public class PrinterManager implements SNMPManagerCallback {
     private boolean setPrinterId(Printer printer) {
         Cursor cursor = mDatabaseManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
                 + KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] { printer.getName(), printer.getIpAddress() }, null, null, null);
-        boolean ret = false;
+        boolean ret;
                
         ret = getIdFromCursor(cursor, printer);
         if (ret) {
@@ -884,8 +884,8 @@ public class PrinterManager implements SNMPManagerCallback {
      * AsyncTask that updates changes the online status image.
      */
     class UpdateOnlineStatusTask extends BaseTask<Object, Boolean> {
-        private WeakReference<View> mViewRef = null;
-        private String mIpAddress = null;
+        private WeakReference<View> mViewRef;
+        private String mIpAddress;
         
         /**
          * @brief Instantiate UpdateOnlineStatusTask.

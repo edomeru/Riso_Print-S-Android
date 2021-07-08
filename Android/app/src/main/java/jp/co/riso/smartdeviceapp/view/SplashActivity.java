@@ -413,9 +413,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                         builder.setNegativeButton(buttonTitle, null);
                     }
 
-                    AlertDialog dialog = null;
-                    dialog = builder.create();
-
+                    AlertDialog dialog = builder.create();
                     dialog.show();
 
                     return true;

@@ -165,7 +165,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
      */
     private void dialogErrCb() {
         String title = getResources().getString(R.string.ids_lbl_search_printers);
-        String errMsg = null;
+        String errMsg;
         errMsg = getResources().getString(R.string.ids_err_msg_network_error);
         DialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
 
@@ -289,10 +289,10 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         if (printer == null) {
             return -1;
         }
-        DialogFragment info = null;
+        DialogFragment info;
 
         String title = getResources().getString(R.string.ids_lbl_search_printers);
-        String msg = null;
+        String msg;
         if (!mPrinterManager.savePrinterToDB(printer, true)) {
             ret = -1;
             msg = getResources().getString(R.string.ids_err_msg_db_failure);

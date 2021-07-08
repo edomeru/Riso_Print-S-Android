@@ -513,7 +513,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     
     @Override
     public void onClick(View v) {
-        Printer printer = null;
+        Printer printer;
         
         switch (v.getId()) {
             case R.id.btn_delete:

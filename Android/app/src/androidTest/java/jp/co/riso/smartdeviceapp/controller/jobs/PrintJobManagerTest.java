@@ -466,7 +466,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
     }
 
     public void testCreatePrintJob() {
-        boolean result = false;
+        boolean result;
         Date date = null;
 
         SQLiteDatabase db = mManager.getWritableDatabase();
@@ -504,7 +504,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
     }
 
     public void testCreatePrintJob_Max() {
-        boolean result = false;
+        boolean result;
 
         SQLiteDatabase db = mManager.getWritableDatabase();
         db.delete(TABLE, null, null);
@@ -551,7 +551,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
     }
 
     public void testCreatePrintJob_Invalid() {
-        boolean result = false;
+        boolean result;
         Date date = null;
 
         SQLiteDatabase db = mManager.getWritableDatabase();
@@ -600,7 +600,7 @@ public class PrintJobManagerTest extends AndroidTestCase {
     }
     
     public void testCreatePrintJob_NullValues() {
-        boolean result = false;
+        boolean result;
  
         SQLiteDatabase db = mManager.getWritableDatabase();
         db.delete(TABLE, null, null);

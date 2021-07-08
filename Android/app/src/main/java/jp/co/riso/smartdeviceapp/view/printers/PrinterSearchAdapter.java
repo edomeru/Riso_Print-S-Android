@@ -31,7 +31,7 @@ import android.widget.TextView;
 public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {
     private PrinterSearchAdapterInterface mSearchAdapterInterface = null;
     private int layoutId;
-    private PrinterManager mPrinterManager = null;
+    private PrinterManager mPrinterManager;
     
     /**
      * @brief Constructor.
@@ -77,7 +77,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         if (viewHolder == null || convertView == null || printer == null) {
             return;
         }
-        View separator = null;
+        View separator;
         String printerName = printer.getName();
         
         viewHolder.mPrinterName = convertView.findViewById(R.id.printerText);

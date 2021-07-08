@@ -515,7 +515,7 @@ public class PDFFileManager {
                 output = new FileOutputStream(file);
                 int bufferSize = 1024;
                 byte[] buffer = new byte[bufferSize];
-                int len = 0;
+                int len;
                 while ((len = contentInputStream.read(buffer)) != -1) {
                     output.write(buffer, 0, len);
                 }

@@ -190,7 +190,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
         String errMsg = null;
-        DialogFragment info = null;
+        DialogFragment info;
         
         switch (err) {
             case ERR_INVALID_IP_ADDRESS:
@@ -329,7 +329,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         if (mPrinterManager.isCancelled()) {
             return;
         }
-        Message newMessage = null;
+        Message newMessage;
         if (mPrinterManager.isExists(printer)) {
             newMessage = Message.obtain(mPauseableHandler, MSG_ERROR);
             newMessage.arg1 = ERR_INVALID_IP_ADDRESS;

@@ -115,7 +115,7 @@ public class JniUtilsTest extends TestCase {
     }
     
     public void testValidateIp_validIp() {
-        String ipAddress = null;
+        String ipAddress;
         
         for (int i = 0; i < IPv4_VALID_ADDRESS.length; i++) {
             ipAddress = JniUtils.validateIp(null);
@@ -124,7 +124,7 @@ public class JniUtilsTest extends TestCase {
     }
     
     public void testValidateIp_invalidIp() {
-        String ipAddress = null;
+        String ipAddress;
         for (int i = 0; i < IP_INVALID_ADDRESS.length; i++) {
             ipAddress = JniUtils.validateIp(null);
             assertNull(ipAddress);

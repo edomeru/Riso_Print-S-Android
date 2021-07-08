@@ -62,7 +62,6 @@ public class PrinterTest extends TestCase {
         parcel.setDataPosition(0);
         Bundle bundleExtract = parcel.readBundle();
         bundleExtract.setClassLoader(Printer.class.getClassLoader());
-        printer = bundleExtract.getParcelable(PRINTER_TAG);
         bundleExtract.getParcelableArray(PRINTER_ARRAY_TAG);
         
         Printer createFromParcel = Printer.CREATOR.createFromParcel(parcel);

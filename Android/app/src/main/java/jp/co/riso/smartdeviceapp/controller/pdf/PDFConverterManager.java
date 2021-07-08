@@ -132,7 +132,7 @@ public class PDFConverterManager {
         }
 
         Rect rect = new Rect(0, 0, A4_WIDTH, A4_HEIGHT);
-        String fileString = "";
+        String fileString;
 
         TextPaint textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
@@ -237,7 +237,7 @@ public class PDFConverterManager {
         }
 
         Rect rect = new Rect(0, 0, A4_WIDTH, A4_HEIGHT);
-        Bitmap bitmap = null;
+        Bitmap bitmap;
         File tempImgFile = null;
         try {
             // check if file from photo picker google drive (account-specified)
@@ -335,7 +335,7 @@ public class PDFConverterManager {
         }
 
         Rect rect = new Rect(0, 0, A4_WIDTH, A4_HEIGHT);
-        Bitmap bitmap = null;
+        Bitmap bitmap;
 
         PdfDocument document = new PdfDocument();
         for (int i=0;i<mClipData.getItemCount();i+=1) {
@@ -492,7 +492,6 @@ public class PDFConverterManager {
         int topMargin = (rect.height() - bitmap.getHeight()) / 2;
         canvas.drawBitmap(bitmap, leftMargin, topMargin, null);
         bitmap.recycle();
-        bitmap = null;
 
         document.finishPage(page);
     }

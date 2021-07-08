@@ -31,9 +31,9 @@ import android.widget.TextView;
  */
 public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {    
     private WeakReference<PrinterArrayAdapterInterface> mCallbackRef = null;
-    private PrinterManager mPrinterManager = null;
-    private ViewHolder mDeleteViewHolder = null;
-    private int mLayoutId = 0;
+    private PrinterManager mPrinterManager;
+    private ViewHolder mDeleteViewHolder;
+    private int mLayoutId;
 
     /**
      * @brief Constructor.
@@ -52,9 +52,9 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
         Printer printer = getItem(position);
-        View separator = null;
+        View separator;
         String printerName = printer.getName();
         
         if (convertView == null) {

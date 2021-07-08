@@ -263,7 +263,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testIsIPv4Address_ValidIpv4Address() {
-        boolean isIpV4Address = false;
+        boolean isIpV4Address;
 
         for (int i = 0; i < IPv4_VALID_ADDRESS.length; i++) {
             isIpV4Address = NetUtils.isIPv4Address(IPv4_VALID_ADDRESS[i]);
@@ -272,7 +272,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testIsIPv4Address_InvalidIpv4Address() {
-        boolean isIpV4Address = false;
+        boolean isIpV4Address;
 
         for (int i = 0; i < IPV4_INVALID_ADDRESS.length; i++) {
             isIpV4Address = NetUtils.isIPv4Address(IPV4_INVALID_ADDRESS[i]);
@@ -298,7 +298,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testIsIPv4MulticastAddress_ValidIpv4MulticastAddress() {
-        boolean isIpV4Address = false;
+        boolean isIpV4Address;
 
         for (int i = 0; i < IPv4_MULTICAST_VALID_ADDRESS.length; i++) {
             isIpV4Address = NetUtils.isIPv4MulticastAddress(IPv4_MULTICAST_VALID_ADDRESS[i]);
@@ -307,7 +307,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testIsIPv4MulticastAddress_InvalidIpv4MulticastAddress() {
-        boolean isIpV4Address = true;
+        boolean isIpV4Address;
 
         for (int i = 0; i < IPv4_MULTICAST_INVALID_ADDRESS.length; i++) {
             isIpV4Address = NetUtils.isIPv4MulticastAddress(IPv4_MULTICAST_INVALID_ADDRESS[i]);
@@ -336,7 +336,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testIsIPv6Address_ValidIpv6Address() {
-        boolean isIpV6Address = false;
+        boolean isIpV6Address;
 
         for (int i = 0; i < IPv6_VALID_ADDRESS.length; i++) {
             isIpV6Address = NetUtils.isIPv6Address(IPv6_VALID_ADDRESS[i]);
@@ -345,7 +345,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testIsIPv6Address_InvalidIpv6Address() {
-        boolean isIpV6Address = true;
+        boolean isIpV6Address;
 
         for (int i = 0; i < IPv6_INVALID_ADDRESS.length; i++) {
             isIpV6Address = NetUtils.isIPv6Address(IPv6_INVALID_ADDRESS[i]);
@@ -415,7 +415,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 
     public void testConnectToIpv4Address_OfflineIpv4Address() {
         try {
-            boolean isReachable = true;
+            boolean isReachable;
 
             isReachable = NetUtils.connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS);
             assertEquals(false, isReachable);
@@ -444,7 +444,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testConnectToIpv4Address_WifiDisabled() {
         try {
             turnWifi(false);
-            boolean isReachable = true;
+            boolean isReachable;
 
             isReachable = NetUtils.connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS);
             assertEquals(false, isReachable);
@@ -461,7 +461,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 
     public void testConnectToIpv6Address_OfflineIpv6Address() {
         try {
-            boolean isReachable = true;
+            boolean isReachable;
             InetAddress inetIpAddress = InetAddress.getByName(IPV6_STD_PRINTER_ADDRESS);
 
             isReachable = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS, inetIpAddress);
@@ -583,7 +583,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testConnectToIpv6Address_WifiDisabled() {
         try {
             turnWifi(false);
-            boolean isReachable = true;
+            boolean isReachable;
 
             isReachable = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS, null);
             assertEquals(false, isReachable);
@@ -599,7 +599,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testTrimZeroes_ipV6() {
-        String ipV6Addr = null;
+        String ipV6Addr;
         for (int i = 0; i < IPv6_TRIMMED_VALID_ADDRESS.length; i++) {
             ipV6Addr = IPv6_TRIMMED_VALID_ADDRESS[i];
 
@@ -608,7 +608,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testTrimZeroes_ipV4() {
-        String ipV4Addr = null;
+        String ipV4Addr;
         for (int i = 0; i < IPv4_TRIMMED_VALID_ADDRESS.length; i++) {
             ipV4Addr = IPv4_TRIMMED_VALID_ADDRESS[i];
 
@@ -625,7 +625,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testValidateIpAddress_ipV6() {
-        String ipV6Addr = null;
+        String ipV6Addr;
         for (int i = 0; i < IPv6_TRIMMED_VALID_ADDRESS.length; i++) {
             ipV6Addr = IPv6_TRIMMED_VALID_ADDRESS[i];
 
@@ -634,7 +634,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testValidateIpAddress_ipV4() {
-        String ipV4Addr = null;
+        String ipV4Addr;
         for (int i = 0; i < IPv4_TRIMMED_VALID_ADDRESS.length; i++) {
             ipV4Addr = IPv4_TRIMMED_VALID_ADDRESS[i];
 

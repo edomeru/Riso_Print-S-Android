@@ -328,7 +328,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private boolean isMaxPrinterCountReached() {
         if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
             String title = getResources().getString(R.string.ids_lbl_printers);
-            String errMsg = null;
+            String errMsg;
             errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
             InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
             DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
@@ -341,7 +341,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      * @brief Updates the online status for the whole view.
      */
     private void updateOnlineStatus() {
-        int childCount = 0;
+        int childCount;
         int position = 0;
         if (isTablet() && mPrinterTabletView != null) {
             childCount = mPrinterTabletView.getChildCount();
@@ -479,7 +479,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         String title = getResources().getString(R.string.ids_lbl_printer);
         String errMsg = getResources().getString(R.string.ids_info_msg_delete_jobs);
 
-        DialogFragment info = null;
+        DialogFragment info;
 
         info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok),
                 getResources().getString(R.string.ids_lbl_cancel));

@@ -647,7 +647,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @retval false Should display portrait
      */
     private boolean shouldDisplayLandscape() {
-        boolean flipToLandscape = false;
+        boolean flipToLandscape;
         
         if (AppConstants.USE_PDF_ORIENTATION) {
             flipToLandscape = mPdfManager.isPDFLandscape();
@@ -852,7 +852,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @retval false Not flipped
      */
     private boolean isVerticalFlip() {
-        boolean verticalFlip = true;
+        boolean verticalFlip;
         
         if (mPrintSettings.isBooklet()) {
             verticalFlip = shouldDisplayLandscape();
@@ -1120,7 +1120,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             
             boolean GET_FROM_CACHE = true;
             
-            Bitmap cachedPages[] = null;
+            Bitmap cachedPages[];
             if (GET_FROM_CACHE) {
                 cachedPages = getBitmapsFromCacheForPage(index);
             } else {

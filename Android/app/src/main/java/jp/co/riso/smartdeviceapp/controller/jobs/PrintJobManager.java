@@ -271,7 +271,7 @@ public class PrintJobManager {
     private static Date convertStringToDate(String strDate) {
         SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone(C_TIMEZONE));
-        Date date = null;
+        Date date;
         
         try {
             date = sdf.parse(strDate);

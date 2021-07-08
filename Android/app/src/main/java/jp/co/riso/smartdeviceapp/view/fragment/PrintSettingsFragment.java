@@ -248,7 +248,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             return;
         }
         
-        String btnMsg = null;
+        String btnMsg;
         String jobname = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
         
         mDirectPrintManager = new DirectPrintManager();
@@ -260,7 +260,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         // Ver.2.0.4.2 Start
         String hostName = android.os.Build.MODEL;
         // Ver.2.0.4.2 End
-        boolean ret = false;
+        boolean ret;
 
         String formattedString = printSettings.formattedString(mPDFisLandscape);
         if (printer.getPortSetting() == PortSetting.LPR) {
@@ -304,9 +304,9 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
 
                 PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
                 String filename = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
-                InfoDialogFragment fragment = null;
-                String strMsg = null;
-                String btnMsg = null;
+                InfoDialogFragment fragment;
+                String strMsg;
+                String btnMsg;
 
                 if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);

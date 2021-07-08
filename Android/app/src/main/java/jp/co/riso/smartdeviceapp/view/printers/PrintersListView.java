@@ -220,8 +220,8 @@ public class PrintersListView extends ListView implements Callback {
         
         int coords[] = new int[2];
         boolean dragged = (mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
-        boolean contains1 = false;
-        boolean contains2 = false;
+        boolean contains1;
+        boolean contains2;
         // check self, if valid swipe don't redisplay nor remove delete button
         if (mDeleteMode) {
             mDeleteView.getLocationOnScreen(coords);

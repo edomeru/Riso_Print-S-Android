@@ -566,7 +566,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
      * @brief Animates deletion of Print Jobs Group.
      */
     private void animateDeleteGroup() {
-        int totalHeight = 0;
+        int totalHeight;
         
         if (!mIsCollapsed) {
             totalHeight = getGroupHeight();

@@ -76,7 +76,7 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         super.setUp();
         PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         List<Printer> printersList = printerManager.getSavedPrintersList();
-        Printer printer = null;
+        Printer printer;
         
         if(printersList.isEmpty()) {
             printer = new Printer("", IPV4_OFFLINE_PRINTER_ADDRESS);
