@@ -102,11 +102,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 return;
             }
             ViewGroup.LayoutParams params = rootView.getLayoutParams();
-            if (screenSize.x > screenSize.y) {
-                params.width = screenSize.y;
-            } else {
-                params.width = screenSize.x;
-            }
+            params.width = Math.min(screenSize.x, screenSize.y);
         }
     }
     
