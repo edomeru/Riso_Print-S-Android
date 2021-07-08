@@ -522,15 +522,14 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
                 endDelete(true);
                 return true;
             }
-            return super.onInterceptTouchEvent(ev);
         } else {
             boolean swipe = processSwipe(ev);
             
             if (swipe) {
                 return true;
             }
-            return super.onInterceptTouchEvent(ev);
         }
+        return super.onInterceptTouchEvent(ev);
     }
     
     @Override

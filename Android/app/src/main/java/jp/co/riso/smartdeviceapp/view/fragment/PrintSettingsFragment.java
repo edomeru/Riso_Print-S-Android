@@ -312,13 +312,12 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
 
                     strMsg = getString(R.string.ids_info_msg_print_job_successful);
-                    btnMsg = getString(R.string.ids_lbl_ok);
                 } else {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.ERROR);
 
                     strMsg = getString(R.string.ids_info_msg_print_job_failed);
-                    btnMsg = getString(R.string.ids_lbl_ok);
                 }
+                btnMsg = getString(R.string.ids_lbl_ok);
                 // Show dialog
                 fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
                 DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
