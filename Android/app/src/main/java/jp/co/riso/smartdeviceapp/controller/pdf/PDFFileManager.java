@@ -67,9 +67,9 @@ public class PDFFileManager {
     private static final float CONST_INCHES_TO_MM = 25.4f; ///< mm per inches
     
     private volatile String mPath;
-    private Document mDocument;
+    private final Document mDocument;
     private String mFileName;
-    private WeakReference<PDFFileManagerInterface> mInterfaceRef;
+    private final WeakReference<PDFFileManagerInterface> mInterfaceRef;
     
     private PDFInitTask mInitTask = null;
     

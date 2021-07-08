@@ -31,9 +31,9 @@ import android.widget.TextView;
  */
 public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {    
     private WeakReference<PrinterArrayAdapterInterface> mCallbackRef = null;
-    private PrinterManager mPrinterManager;
+    private final PrinterManager mPrinterManager;
     private ViewHolder mDeleteViewHolder;
-    private int mLayoutId;
+    private final int mLayoutId;
 
     /**
      * @brief Constructor.

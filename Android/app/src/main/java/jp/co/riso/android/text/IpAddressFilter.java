@@ -20,7 +20,7 @@ import android.text.Spanned;
  * @brief EditText filter for IP Address characters
  */
 public class IpAddressFilter implements InputFilter {
-    private Set<Character> mCharSet;
+    private final Set<Character> mCharSet;
     
     /**
      * @brief Constructor for IP Address Filter 

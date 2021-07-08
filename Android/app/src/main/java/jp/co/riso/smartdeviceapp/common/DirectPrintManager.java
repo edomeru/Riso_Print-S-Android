@@ -263,7 +263,7 @@ public class DirectPrintManager {
      * @brief Async Task for Canceling Direct Print
      */
     public class DirectPrintCancelTask extends BaseTask<Void, Void> {
-        private DirectPrintManager mManager;
+        private final DirectPrintManager mManager;
         
         /**
          * @brief Creates DirectPrintCancelTask instance.

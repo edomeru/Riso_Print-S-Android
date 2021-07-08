@@ -16,7 +16,7 @@ import android.widget.TextView;
  */
 public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
 
-    private Activity activity;
+    private final Activity activity;
     
     public boolean isNoDisabled;
     

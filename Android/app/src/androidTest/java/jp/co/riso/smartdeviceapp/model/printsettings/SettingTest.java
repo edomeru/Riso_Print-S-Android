@@ -36,7 +36,7 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
         super(activityClass);
     }
     private static final String TAG = "SettingTest";
-    private List<Setting> mSettingList = new ArrayList<>();
+    private final List<Setting> mSettingList = new ArrayList<>();
 
     @Override
     protected void setUp() throws Exception {

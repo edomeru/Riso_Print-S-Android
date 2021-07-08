@@ -59,7 +59,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private static final int MSG_EXPAND = 1;
     private static final int MSG_DELETEJOB = 2;
     private static final int MSG_DELETEGROUP = 3;
-    private static float DURATION_MULTIPLIER = 0.2f;
+    private static final float DURATION_MULTIPLIER = 0.2f;
     
     private View mPrintGroupView;
     private List<PrintJob> mPrintJobs;

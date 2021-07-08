@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
  * Data represented by \<group\> tag in XML.
  */
 public class Group extends XmlNode {
-    private List<Setting> mSettings;
+    private final List<Setting> mSettings;
     
     /**
      * @brief Creates a Group instance.

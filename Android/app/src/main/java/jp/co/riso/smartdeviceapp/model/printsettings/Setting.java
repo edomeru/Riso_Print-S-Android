@@ -33,7 +33,7 @@ public class Setting extends XmlNode {
     public static final int TYPE_BOOLEAN = 1; ///< boolean attribute type
     public static final int TYPE_NUMERIC = 2; ///< numeric attribute type
     
-    private List<Option> mOptions;
+    private final List<Option> mOptions;
     
     /**
      * @brief Creates a Setting instance.

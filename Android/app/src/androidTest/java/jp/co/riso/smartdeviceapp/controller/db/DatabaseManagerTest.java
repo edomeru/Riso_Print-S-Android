@@ -31,10 +31,10 @@ public class DatabaseManagerTest extends AndroidTestCase {
     private static final String KEY_SQL_PRINTSETTING_TABLE = "PrintSetting";
 
     private DatabaseManager mDBManager = null;
-    private String printerName = "Printer name1";
-    private String printerName2 = "Printer name 2";
-    private String printerIP = "192.168.1.1";
-    private int printerId = 1;
+    private final String printerName = "Printer name1";
+    private final String printerName2 = "Printer name 2";
+    private final String printerIP = "192.168.1.1";
+    private final int printerId = 1;
 
     @Override
     protected void setUp() throws Exception {

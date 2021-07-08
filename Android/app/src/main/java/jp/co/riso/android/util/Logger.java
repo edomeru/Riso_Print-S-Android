@@ -57,8 +57,8 @@ public class Logger {
     private static boolean sPerfLogsToFile = false;
     
     private static String sStringFolder = "";
-    private static HashMap<String, Long> sTimeLog = new HashMap<>();
-    private static HashMap<String, Float> sMemoryLog = new HashMap<>();
+    private static final HashMap<String, Long> sTimeLog = new HashMap<>();
+    private static final HashMap<String, Float> sMemoryLog = new HashMap<>();
     
     /**
      * @brief Initialize log.

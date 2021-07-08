@@ -223,9 +223,9 @@ public class Preview {
         TL_B (true, true, false), ///< Upper left to bottom
         TR_B (false, true, false); ///< Upper right to bottom
 
-        private boolean mLeftToRight;
-        private boolean mTopToBottom;
-        private boolean mHorizontalFlow;
+        private final boolean mLeftToRight;
+        private final boolean mTopToBottom;
+        private final boolean mHorizontalFlow;
 
         /**
          * @brief ImpositionOrder enum constructor 

@@ -23,9 +23,9 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
 public class XmlNodeTest extends AndroidTestCase {
     private static final String TAG = "XmlNodeTest";
-    private List<XmlNode> mGroupList = new ArrayList<>();
-    private List<XmlNode> mOptionList = new ArrayList<>();
-    private List<XmlNode> mSettingList = new ArrayList<>();
+    private final List<XmlNode> mGroupList = new ArrayList<>();
+    private final List<XmlNode> mOptionList = new ArrayList<>();
+    private final List<XmlNode> mSettingList = new ArrayList<>();
 
     @Override
     protected void setUp() throws Exception {

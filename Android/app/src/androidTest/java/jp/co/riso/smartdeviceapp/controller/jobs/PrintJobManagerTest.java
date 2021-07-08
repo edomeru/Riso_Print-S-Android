@@ -35,9 +35,9 @@ public class PrintJobManagerTest extends AndroidTestCase {
     private DatabaseManager mManager;
     private int mPrinterId=-1;
     private int mPrinterId2=-1;
-    private boolean mInitialFlag = false;
-    private String mPrinterName1 = "printer with job";
-    private String mPrinterName2 = "printer without job";
+    private final boolean mInitialFlag = false;
+    private final String mPrinterName1 = "printer with job";
+    private final String mPrinterName2 = "printer without job";
 
     public PrintJobManagerTest() {
         super();

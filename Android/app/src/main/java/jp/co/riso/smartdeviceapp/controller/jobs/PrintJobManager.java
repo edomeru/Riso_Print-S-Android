@@ -44,7 +44,7 @@ public class PrintJobManager {
     
     private static PrintJobManager sInstance;
     
-    private DatabaseManager mManager;
+    private final DatabaseManager mManager;
     private boolean mRefreshFlag;
     
     /**

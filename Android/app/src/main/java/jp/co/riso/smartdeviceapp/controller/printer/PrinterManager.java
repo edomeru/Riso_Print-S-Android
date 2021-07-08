@@ -46,16 +46,16 @@ public class PrinterManager implements SNMPManagerCallback {
     /// Printer ID for invalid printer
     public static final int EMPTY_ID = -1;
     private static PrinterManager sSharedMngr = null;
-    private List<Printer> mPrinterList;
+    private final List<Printer> mPrinterList;
     private boolean mIsSearching = false;
     private boolean mIsCancelled = false;
-    private SNMPManager mSNMPManager;
+    private final SNMPManager mSNMPManager;
     private WeakReference<PrinterSearchCallback> mPrinterSearchCallback = null;
     private WeakReference<PrintersCallback> mPrintersCallback = null;
     private WeakReference<UpdateStatusCallback> mUpdateStatusCallback = null;
     private Timer mUpdateStatusTimer = null;
     private int mDefaultPrintId = EMPTY_ID;
-    private DatabaseManager mDatabaseManager;
+    private final DatabaseManager mDatabaseManager;
 
     /**
      * @brief PrinterManager Constructor.
@@ -884,8 +884,8 @@ public class PrinterManager implements SNMPManagerCallback {
      * AsyncTask that updates changes the online status image.
      */
     class UpdateOnlineStatusTask extends BaseTask<Object, Boolean> {
-        private WeakReference<View> mViewRef;
-        private String mIpAddress;
+        private final WeakReference<View> mViewRef;
+        private final String mIpAddress;
         
         /**
          * @brief Instantiate UpdateOnlineStatusTask.

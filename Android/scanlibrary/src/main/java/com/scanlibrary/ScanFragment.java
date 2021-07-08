@@ -222,7 +222,7 @@ public class ScanFragment extends Fragment {
     private class ScanAsyncTask extends Thread {
     // aLINK edit - End
 
-        private Map<Integer, PointF> points;
+        private final Map<Integer, PointF> points;
 
         public ScanAsyncTask(Map<Integer, PointF> points) {
             this.points = points;

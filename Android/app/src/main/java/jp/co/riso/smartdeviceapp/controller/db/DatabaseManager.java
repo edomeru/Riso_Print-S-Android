@@ -38,7 +38,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     private static final String INITIALIZE_SQL = "db/initializeDB.sql"; // for testing only
     
-    private Context mContext;
+    private final Context mContext;
     
     /**
      * @brief Creates a DatabaseManager instance.

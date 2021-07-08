@@ -120,8 +120,8 @@ public class SettingsFragment extends BaseFragment {
      * @brief Class for monitoring changes in text values
      */
     private static class SharedPreferenceTextWatcher implements TextWatcher {
-        private Context mContext;
-        private String mPrefKey;
+        private final Context mContext;
+        private final String mPrefKey;
         
         /**
          * @brief Constructor.

@@ -28,7 +28,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 public class PrintSettingsManager {
     private static PrintSettingsManager sInstance;
     
-    private DatabaseManager mManager;
+    private final DatabaseManager mManager;
     
     /**
      * @brief Creates a PrintSettingsManager instance.

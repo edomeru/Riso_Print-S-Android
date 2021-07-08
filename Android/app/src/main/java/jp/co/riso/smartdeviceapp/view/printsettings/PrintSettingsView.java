@@ -2199,9 +2199,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @brief Class to manage input on the copies field
      */
     private class EditTextWatcher implements TextWatcher {
-        private String mTag;
+        private final String mTag;
         private boolean mEditing;
-        private int mMinValue;
+        private final int mMinValue;
         
         /**
          * @brief Instantiate EditTextWatcher

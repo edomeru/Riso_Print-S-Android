@@ -22,7 +22,7 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
 public class OptionTest extends AndroidTestCase {
     private static final String TAG = "OptionTest";
-    private List<Option> mOptionList = new ArrayList<>();
+    private final List<Option> mOptionList = new ArrayList<>();
 
     @Override
     protected void setUp() throws Exception {

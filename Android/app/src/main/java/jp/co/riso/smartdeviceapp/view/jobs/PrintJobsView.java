@@ -41,9 +41,9 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private WeakReference<PrintJobsViewListener> mListenerRef;
     private List<PrintJob> mPrintJobs = new ArrayList<>();
     private List<Printer> mPrinters = new ArrayList<>();
-    private List<Printer> mCollapsedPrinters = new ArrayList<>();
-    private List<LinearLayout> mColumns = new ArrayList<>();
-    private List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<>();
+    private final List<Printer> mCollapsedPrinters = new ArrayList<>();
+    private final List<LinearLayout> mColumns = new ArrayList<>();
+    private final List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<>();
     private PrintJobsGroupView mPrintGroupWithDelete;
     private DisplayDeleteAnimation mDeleteAnimation;
     private PrintJobsGroupListener mGroupListener;

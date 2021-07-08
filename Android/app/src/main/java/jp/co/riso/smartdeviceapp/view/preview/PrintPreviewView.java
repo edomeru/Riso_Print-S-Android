@@ -85,7 +85,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     private CurlView mCurlView = null;
     private PDFFileManager mPdfManager = null;
-    private PDFPageProvider mPdfPageProvider = new PDFPageProvider();
+    private final PDFPageProvider mPdfPageProvider = new PDFPageProvider();
     private PrintSettings mPrintSettings = null;
     private LruCache<String, Bitmap> mBmpCache = null;
     
@@ -112,8 +112,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private float mZoomLevel = BASE_ZOOM_LEVEL;
     
     private int mPtrIdx = INVALID_IDX;
-    private PointF mPtrDownPos = new PointF();
-    private PointF mPtrLastPos = new PointF();
+    private final PointF mPtrDownPos = new PointF();
+    private final PointF mPtrLastPos = new PointF();
     
     /**
      * @brief Constructs a new PrintPreviewView with a Context object
@@ -1144,11 +1144,11 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @brief Background task which performs rendering of PDF pages.
      */
     private class PDFRenderTask extends BaseTask<Void, Void> {
-        private WeakReference<CurlPage> mCurlPageRef;
-        private WeakReference<Object> mHandlerRef;
-        private int mWidth;
-        private int mHeight;
-        private int mIndex;
+        private final WeakReference<CurlPage> mCurlPageRef;
+        private final WeakReference<Object> mHandlerRef;
+        private final int mWidth;
+        private final int mHeight;
+        private final int mIndex;
         private Bitmap[] mRenderBmps;
         
         /**

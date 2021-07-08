@@ -73,8 +73,8 @@ public class PrintSettings {
     public static final HashMap<String, List<Group>> sGroupListMap;
     public static final HashMap<String, HashMap<String, Setting>> sSettingsMaps;
     
-    private HashMap<String, Integer> mSettingValues;
-    private String mSettingMapKey;
+    private final HashMap<String, Integer> mSettingValues;
+    private final String mSettingMapKey;
     
     /**
      * @brief Creates a PrintSettings instance using default values of print settings

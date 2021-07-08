@@ -41,7 +41,7 @@ public class PullToRefreshListView extends ListView{
     private static final float BOUNCE_OVERSHOOT_TENSION        = 1.4f;
     private static final int   ROTATE_ARROW_ANIMATION_DURATION = 250;
 
-    private static enum State{
+    private enum State{
         PULL_TO_REFRESH,
         RELEASE_TO_REFRESH,
         REFRESHING
@@ -445,7 +445,8 @@ public class PullToRefreshListView extends ListView{
 
     private class HeaderAnimationListener implements AnimationListener{
 
-        private int height, translation;
+        private int height;
+        private final int translation;
         private State stateAtAnimationStart;
 
         public HeaderAnimationListener(int translation){

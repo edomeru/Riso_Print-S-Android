@@ -185,8 +185,8 @@ public class PolygonView extends FrameLayout {
         PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
         PointF StartPT = new PointF(); // Record Start Position of 'img'
 
-        private ImageView mainPointer1;
-        private ImageView mainPointer2;
+        private final ImageView mainPointer1;
+        private final ImageView mainPointer2;
 
         public MidPointTouchListenerImpl(ImageView mainPointer1, ImageView mainPointer2) {
             this.mainPointer1 = mainPointer1;

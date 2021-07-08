@@ -62,19 +62,19 @@ public class PDFConverterManager {
     public static final String CONVERSION_IMAGES = "IMAGES";
 
     // PostScript Point Values
-    private int A4_WIDTH = 595;
-    private int A4_HEIGHT = 842;
-    private int MARGIN_SIZE = 72; ///< 1 inch
+    private final int A4_WIDTH = 595;
+    private final int A4_HEIGHT = 842;
+    private final int MARGIN_SIZE = 72; ///< 1 inch
 
     private String mConversionFlag = null;
     private PDFConversionTask mPdfConversionTask = null;
 
-    private WeakReference<PDFConverterManagerInterface> mInterfaceRef;
+    private final WeakReference<PDFConverterManagerInterface> mInterfaceRef;
 
     private Uri mUri = null;
     private ClipData mClipData = null;
     private File mDestFile = null;
-    private Context mContext;
+    private final Context mContext;
 
     /**
      * @brief Creates a PDFConverterManager with an Interface class.

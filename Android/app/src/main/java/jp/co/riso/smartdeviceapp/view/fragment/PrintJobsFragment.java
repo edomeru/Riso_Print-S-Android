@@ -52,7 +52,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     private LoadPrintJobsTask mLoadPrintJobsTask;
     private List<PrintJob> mPrintJobs;
     private List<Printer> mPrinters;
-    private List<Printer> mCollapsedPrinters = new ArrayList<>();
+    private final List<Printer> mCollapsedPrinters = new ArrayList<>();
     private PrintJob mPrintJobToDelete;
     private Printer mPrinterToDelete;
     private ConfirmDialogFragment mConfirmDialog;
@@ -254,7 +254,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
      * @brief Thread for Loading Print Job Tasks
      */
     private class LoadPrintJobsTask extends Thread {
-        private WeakReference<Context> mContextRef;
+        private final WeakReference<Context> mContextRef;
         private List<PrintJob> mPrintJobsList;
         private List<Printer> mPrintersList;
         
