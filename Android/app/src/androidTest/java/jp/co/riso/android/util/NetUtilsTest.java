@@ -421,9 +421,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 
             mSignal.await(500, TimeUnit.MILLISECONDS);
 
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
+        } catch (NullPointerException | InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -433,9 +431,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             NetUtils.connectToIpv4Address(null);
 
             mSignal.await(500, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
+        } catch (NullPointerException | InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -472,11 +468,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             assertEquals(false, isReachable);
             
             mSignal.await(500, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
-            fail(); // Error should not be thrown
-        } catch (UnknownHostException e) {
+        } catch (NullPointerException | UnknownHostException | InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -556,11 +548,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             NetUtils.connectToIpv6Address(null, inetIpAddress);
             
             mSignal.await(500, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (UnknownHostException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
+        } catch (NullPointerException | InterruptedException | UnknownHostException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -572,9 +560,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             NetUtils.connectToIpv6Address(ipv6Addr, null);
             
             mSignal.await(500, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
+        } catch (NullPointerException | InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }

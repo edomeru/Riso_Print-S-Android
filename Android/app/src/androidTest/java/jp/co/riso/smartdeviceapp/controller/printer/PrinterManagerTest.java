@@ -438,8 +438,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             mPrinterManager.updateOnlineStatus(IPV4_ONLINE_PRINTER_ADDRESS, null);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -449,8 +447,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             mPrinterManager.updateOnlineStatus(null, mImageView);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -503,8 +499,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
                     new boolean[10]);
             
             mSignal.await(TIMEOUT, TimeUnit.SECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -515,8 +509,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             mPrinterManager.onFoundDevice(null, IPV4_ONLINE_PRINTER_ADDRESS, "testOnFoundDevice_NullManager",
                     new boolean[10]);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -527,8 +519,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             mPrinterManager.onFoundDevice(new SNMPManager(), null, "testOnFoundDevice_NullIpAddress",
                     new boolean[10]);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -540,8 +530,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS, null,
                     new boolean[10]);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -553,8 +541,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS,
                     "testOnFoundDevice_NullCapabilities", null);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -588,8 +574,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             ret = mPrinterManager.removePrinter(printer);
             assertEquals(false, ret);
 
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -612,8 +596,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             mPrinterManager.removePrinter(null);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -700,8 +682,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             printer.getConfig().setTrayStackAvailable(false);
             
             mPrinterManager.removePrinter(printer);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -727,8 +707,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             mPrinterManager.savePrinterToDB(null, true);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -871,8 +849,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             String ipAddress = null;
             mPrinterManager.isExists(printer);
             mPrinterManager.isExists(ipAddress);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }

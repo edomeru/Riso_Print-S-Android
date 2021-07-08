@@ -159,14 +159,9 @@ public class PrintSettings {
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(xmlString));
             printSettingsContent = db.parse(is);
-        } catch (ParserConfigurationException e) {
-            Logger.logError(PrintSettings.class, "Error: " + e.getMessage());
-        } catch (SAXException e) {
-            Logger.logError(PrintSettings.class, "Error: " + e.getMessage());
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             Logger.logError(PrintSettings.class, "Error: " + e.getMessage());
         }
-        
         parsePrintSettings(printSettingsContent);
     }
     

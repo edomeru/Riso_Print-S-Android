@@ -261,8 +261,6 @@ public final class AppUtils {
             InputStream stream = context.getAssets().open(assetFile);
             stream.close();
             assetOk = true;
-        } catch (FileNotFoundException e) {
-            Logger.logWarn(AppUtils.class, "assetExists failed: " + e.toString());
         } catch (IOException e) {
             Logger.logWarn(AppUtils.class, "assetExists failed: " + e.toString());
         }

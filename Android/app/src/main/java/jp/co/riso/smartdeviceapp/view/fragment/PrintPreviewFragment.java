@@ -210,9 +210,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     ContentResolver c = this.getActivity().getContentResolver();
                     mInputStream = c.openInputStream(mIntentData);
                     mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, false);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
+                } catch (FileNotFoundException | SecurityException e) {
                     e.printStackTrace();
                 }
             }
