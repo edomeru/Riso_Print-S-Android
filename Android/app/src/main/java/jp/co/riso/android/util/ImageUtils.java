@@ -158,7 +158,7 @@ public final class ImageUtils {
     public static boolean isImageFileSupported(Context context, Uri uri) {
         List<String> imageTypes = Arrays.asList(AppConstants.IMAGE_TYPES);
         String contentType = FileUtils.getMimeType(context, uri);
-        return (imageTypes.indexOf(contentType) != -1);
+        return (imageTypes.contains(contentType));
     }
 
 

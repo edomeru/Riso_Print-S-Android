@@ -174,7 +174,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_FILE && resultCode == Activity.RESULT_OK && data != null) {
             String contentType = FileUtils.getMimeType(getActivity(), data.getData());
-            if (Arrays.asList(AppConstants.DOC_TYPES).indexOf(contentType) == -1) {
+            if (!Arrays.asList(AppConstants.DOC_TYPES).contains(contentType)) {
                 String message = getResources().getString(R.string.ids_err_msg_open_failed);
                 String button = getResources().getString(R.string.ids_lbl_ok);
                 DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
