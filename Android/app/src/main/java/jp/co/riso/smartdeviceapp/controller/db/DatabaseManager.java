@@ -85,7 +85,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                         try {
                             db.execSQL(sql);
                         } catch (SQLException e) {
-                            continue;
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -123,7 +123,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             try {
                 db.execSQL(separated[i]);
             } catch (SQLException e) {
-                continue;
+                e.printStackTrace();
             }
         }
     }
