@@ -337,8 +337,7 @@ public class Logger {
      */
     private static String formatMessage(String format, Object...args) {
         try {
-            String msg = (format == null) ? "" : String.format(Locale.getDefault(), format, args);
-            return msg;
+            return (format == null) ? "" : String.format(Locale.getDefault(), format, args);
         } catch(IllegalFormatException e) {
             Log.e(Logger.class.getSimpleName(), "IllegalFormatException, logging format directly");
             return format;

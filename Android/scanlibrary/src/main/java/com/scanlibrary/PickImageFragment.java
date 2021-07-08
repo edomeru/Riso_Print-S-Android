@@ -107,8 +107,7 @@ public class PickImageFragment extends Fragment {
     }
 
     private int getIntentPreference() {
-        int preference = getArguments().getInt(ScanConstants.OPEN_INTENT_PREFERENCE, 0);
-        return preference;
+        return getArguments().getInt(ScanConstants.OPEN_INTENT_PREFERENCE, 0);
     }
 
 
@@ -202,9 +201,7 @@ public class PickImageFragment extends Fragment {
         AssetFileDescriptor fileDescriptor;
         fileDescriptor =
                 getActivity().getContentResolver().openAssetFileDescriptor(selectedimg, "r");
-        Bitmap original
-                = BitmapFactory.decodeFileDescriptor(
-                fileDescriptor.getFileDescriptor(), null, options);
-        return original;
+        return BitmapFactory.decodeFileDescriptor(
+        fileDescriptor.getFileDescriptor(), null, options);
     }
 }

@@ -103,8 +103,7 @@ public class ScanFragment extends Fragment {
     }
 
     private Uri getUri() {
-        Uri uri = getArguments().getParcelable(ScanConstants.SELECTED_BITMAP);
-        return uri;
+        return getArguments().getParcelable(ScanConstants.SELECTED_BITMAP);
     }
 
     private void setBitmap(Bitmap original) {
@@ -122,8 +121,7 @@ public class ScanFragment extends Fragment {
 
     private Map<Integer, PointF> getEdgePoints(Bitmap tempBitmap) {
         List<PointF> pointFs = getContourEdgePoints(tempBitmap);
-        Map<Integer, PointF> orderedPoints = orderedValidEdgePoints(tempBitmap, pointFs);
-        return orderedPoints;
+        return orderedValidEdgePoints(tempBitmap, pointFs);
     }
 
     private List<PointF> getContourEdgePoints(Bitmap tempBitmap) {
@@ -215,8 +213,7 @@ public class ScanFragment extends Fragment {
         float y3 = (points.get(2).y) * yRatio;
         float y4 = (points.get(3).y) * yRatio;
         Log.d("", "Points(" + x1 + "," + y1 + ")(" + x2 + "," + y2 + ")(" + x3 + "," + y3 + ")(" + x4 + "," + y4 + ")");
-        Bitmap _bitmap = ((ScanActivity) getActivity()).getScannedBitmap(original, x1, y1, x2, y2, x3, y3, x4, y4);
-        return _bitmap;
+        return ((ScanActivity) getActivity()).getScannedBitmap(original, x1, y1, x2, y2, x3, y3, x4, y4);
     }
 
     // aLINK edit - Start

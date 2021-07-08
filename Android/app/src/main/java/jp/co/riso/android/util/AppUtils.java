@@ -76,9 +76,8 @@ public final class AppUtils {
      */
     public static String getLocaleCode() {
         Locale defaultLocale = Locale.getDefault();
-        String localeCode = defaultLocale.toString().substring(0, 2).toLowerCase(defaultLocale);
-        
-        return localeCode;
+
+        return defaultLocale.toString().substring(0, 2).toLowerCase(defaultLocale);
     }
     
     /**

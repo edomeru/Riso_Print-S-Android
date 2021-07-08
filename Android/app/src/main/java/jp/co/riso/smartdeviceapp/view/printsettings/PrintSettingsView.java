@@ -411,10 +411,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                 || PrintSettings.sSettingsMaps.get(mPrintSettings.getSettingMapKey()).get(tag) == null) {
             return -1;
         }
-        
-        int defaultValue = PrintSettings.sSettingsMaps.get(mPrintSettings.getSettingMapKey()).get(tag).getDefaultValue();
-        
-        return defaultValue;
+
+        return PrintSettings.sSettingsMaps.get(mPrintSettings.getSettingMapKey()).get(tag).getDefaultValue();
     }
     
     /**
@@ -1234,8 +1232,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.0f);
         params.gravity = Gravity.CENTER_VERTICAL;
-        int width = getResources().getDimensionPixelSize(R.dimen.printsettings_input_pincode_width);
-        params.width = width;
+        params.width = getResources().getDimensionPixelSize(R.dimen.printsettings_input_pincode_width);
         params.leftMargin = margin;
         params.rightMargin = margin;
         
@@ -1784,9 +1781,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             int margin = getResources().getDimensionPixelSize(R.dimen.printsettings_icon_setting_padding);
             params.leftMargin = margin;
             params.rightMargin = margin;
-            
-            int width = getResources().getDimensionPixelSize(R.dimen.printsettings_input_width);
-            params.width = width;
+
+            params.width = getResources().getDimensionPixelSize(R.dimen.printsettings_input_width);
             
             EditText editText = (EditText) li.inflate(R.layout.printsettings_input_edittext, null);
             editText.setActivated(true);
@@ -1802,9 +1798,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             return editText;
         } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_LIST)) {
             params.height = LayoutParams.MATCH_PARENT;
-            
-            int width = getResources().getDimensionPixelSize(R.dimen.printsettings_list_value_width);
-            params.width = width;
+
+            params.width = getResources().getDimensionPixelSize(R.dimen.printsettings_list_value_width);
             
             View view = li.inflate(R.layout.printsettings_value_disclosure, null);
             view.setActivated(true);

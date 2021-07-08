@@ -80,8 +80,7 @@ public class ResultFragment extends Fragment {
     }
 
     private Uri getUri() {
-        Uri uri = getArguments().getParcelable(ScanConstants.SCANNED_RESULT);
-        return uri;
+        return getArguments().getParcelable(ScanConstants.SCANNED_RESULT);
     }
 
     public void setScannedImage(Bitmap scannedImage) {

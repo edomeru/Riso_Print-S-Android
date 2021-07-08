@@ -149,8 +149,7 @@ public abstract class BaseActivity extends FragmentActivity {
      */
     public int getActionBarHeight() {
         // Calculate ActionBar height
-        int actionBarHeight = getResources().getDimensionPixelSize(R.dimen.actionbar_height);
-        return actionBarHeight;
+        return getResources().getDimensionPixelSize(R.dimen.actionbar_height);
     }
     
     /**
