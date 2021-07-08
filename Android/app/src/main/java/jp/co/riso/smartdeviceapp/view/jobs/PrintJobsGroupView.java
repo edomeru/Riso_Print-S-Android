@@ -318,10 +318,10 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         LayoutInflater factory = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
         mPrintGroupView = factory.inflate(R.layout.printjobs_group, this, true);
-        mPrintJobGroupLayout = (RelativeLayout) mPrintGroupView.findViewById(R.id.printJobsGroupLayout);
-        TextView printJobGroupText = (TextView) mPrintGroupView.findViewById(R.id.printJobGroupText);
-        TextView printJobGroupSubText = (TextView) mPrintGroupView.findViewById(R.id.printJobGroupSubText);
-        Button printJobGroupDelete = (Button) mPrintGroupView.findViewById(R.id.printJobGroupDelete);
+        mPrintJobGroupLayout = mPrintGroupView.findViewById(R.id.printJobsGroupLayout);
+        TextView printJobGroupText = mPrintGroupView.findViewById(R.id.printJobGroupText);
+        TextView printJobGroupSubText = mPrintGroupView.findViewById(R.id.printJobGroupSubText);
+        Button printJobGroupDelete = mPrintGroupView.findViewById(R.id.printJobGroupDelete);
         String printerName = mPrinter.getName();
         if (printerName == null || printerName.isEmpty()) {
             printerName = getContext().getResources().getString(R.string.ids_lbl_no_name);
@@ -351,11 +351,11 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     private void createItem(int index) {
         LayoutInflater factory = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View tempView = factory.inflate(R.layout.printjobs_item, this, false);
-        TextView printJobName = (TextView) tempView.findViewById(R.id.printJobName);
-        ImageView printJobError = (ImageView) tempView.findViewById(R.id.printJobError);
-        ImageView printJobSuccess = (ImageView) tempView.findViewById(R.id.printJobSuccess);
-        Button printJobDeleteBtn = (Button) tempView.findViewById(R.id.printJobDeleteBtn);
-        TextView printJobDate = (TextView) tempView.findViewById(R.id.printJobDate);
+        TextView printJobName = tempView.findViewById(R.id.printJobName);
+        ImageView printJobError = tempView.findViewById(R.id.printJobError);
+        ImageView printJobSuccess = tempView.findViewById(R.id.printJobSuccess);
+        Button printJobDeleteBtn = tempView.findViewById(R.id.printJobDeleteBtn);
+        TextView printJobDate = tempView.findViewById(R.id.printJobDate);
         
         PrintJob pj = mPrintJobs.get(index);
         tempView.setTag(pj);

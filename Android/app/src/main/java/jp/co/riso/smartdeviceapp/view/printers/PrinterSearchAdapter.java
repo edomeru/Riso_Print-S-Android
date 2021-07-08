@@ -80,9 +80,9 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         View separator = null;
         String printerName = printer.getName();
         
-        viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.printerText);
-        viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.ipAddressText);
-        viewHolder.mAddedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
+        viewHolder.mPrinterName = convertView.findViewById(R.id.printerText);
+        viewHolder.mIpAddress = convertView.findViewById(R.id.ipAddressText);
+        viewHolder.mAddedIndicator = convertView.findViewById(R.id.addPrinterButton);
         viewHolder.mPrinterName.setText(printer.getName());
         viewHolder.mIpAddress.setText(printer.getIpAddress());
         viewHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_addprinter);

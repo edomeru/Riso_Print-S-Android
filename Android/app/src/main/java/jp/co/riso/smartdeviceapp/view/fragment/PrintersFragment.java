@@ -119,13 +119,13 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             mPrinter = (ArrayList<Printer>) mPrinterManager.getSavedPrintersList();
         }
         
-        mEmptyPrintersText = (TextView) view.findViewById(R.id.emptyPrintersText);
+        mEmptyPrintersText = view.findViewById(R.id.emptyPrintersText);
         
         if (isTablet()) {
-            mPrinterTabletView = (PrintersScreenTabletView) view.findViewById(R.id.printerParentView);
+            mPrinterTabletView = view.findViewById(R.id.printerParentView);
             mPrinterTabletView.setPrintersViewCallback(this);
         } else {
-            mListView = (ListView) view.findViewById(R.id.printer_list);
+            mListView = view.findViewById(R.id.printer_list);
         }
         mPrinterManager.setPrintersCallback(this);
 
@@ -141,7 +141,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printers);
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_add_button, R.drawable.selector_actionbar_add_printer, this);
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_search_button, R.drawable.selector_actionbar_printersearch, this);
@@ -485,7 +485,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
         mDeletePrinter = printer;
-        DialogUtils.displayDialog((FragmentActivity) getActivity(), KEY_PRINTERS_DIALOG, info);
+        DialogUtils.displayDialog(getActivity(), KEY_PRINTERS_DIALOG, info);
     }
     
     @Override

@@ -60,13 +60,13 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
         if (convertView == null) {
             convertView = inflater.inflate(mLayoutId, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.txt_printerName);
-            viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.txt_ipAddress);
+            viewHolder.mPrinterName = convertView.findViewById(R.id.txt_printerName);
+            viewHolder.mIpAddress = convertView.findViewById(R.id.txt_ipAddress);
             viewHolder.mPrinterName.setText(printer.getName());
             viewHolder.mIpAddress.setText(printer.getIpAddress());
             
-            viewHolder.mDiscloseImage = (ImageView) convertView.findViewById(R.id.img_disclosure);
-            viewHolder.mDeleteButton = (Button) convertView.findViewById(R.id.btn_delete);
+            viewHolder.mDiscloseImage = convertView.findViewById(R.id.img_disclosure);
+            viewHolder.mDeleteButton = convertView.findViewById(R.id.btn_delete);
             
             viewHolder.mDiscloseImage.setTag(printer);
             viewHolder.mPrinterName.setTag(printer);

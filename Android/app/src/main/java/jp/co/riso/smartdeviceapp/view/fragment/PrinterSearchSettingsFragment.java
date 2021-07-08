@@ -83,7 +83,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        snmpCommunityNameEditText = (SnmpCommunityNameEditText) view.findViewById(R.id.inputSnmpCommunityName);
+        snmpCommunityNameEditText = view.findViewById(R.id.inputSnmpCommunityName);
         snmpCommunityNameEditText.setText(PrinterManager.getInstance(getActivity()).getSnmpCommunityNameFromSharedPrefs());
         snmpCommunityNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -114,7 +114,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_search_printers_settings);
         
         if (isTablet()) {

@@ -87,12 +87,12 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mListView = (PullToRefreshListView) view.findViewById(R.id.printer_list);
+        mListView = view.findViewById(R.id.printer_list);
         mListView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.theme_light_3));
         mListView.setAdapter(mPrinterSearchAdapter);
         mListView.setOnRefreshListener(this);
         
-        mEmptySearchText = (TextView) view.findViewById(R.id.emptySearchText);
+        mEmptySearchText = view.findViewById(R.id.emptySearchText);
         
         RelativeLayout.LayoutParams progressLayoutParams = (RelativeLayout.LayoutParams) mListView.findViewById(R.id.ptr_id_spinner).getLayoutParams();
         progressLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
@@ -103,7 +103,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_search_printers);
         if (isTablet()) {
             int leftViewPadding = (int) getResources().getDimension(R.dimen.printers_subview_margin);

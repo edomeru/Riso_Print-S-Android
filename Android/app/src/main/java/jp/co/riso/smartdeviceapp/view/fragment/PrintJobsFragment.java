@@ -80,10 +80,10 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mCollapsedPrinters.clear();
         mPrintJobToDelete = null;
         mPrinterToDelete = null;
-        mPrintJobContainer = (LinearLayout) view.findViewById(R.id.printJobContainer);
-        mPrintJobsView = (PrintJobsView) view.findViewById(R.id.printJobsView);
-        mEmptyJobsText = (TextView) view.findViewById(R.id.emptyJobsText);
-        mScrollView = (ScrollView) view.findViewById(R.id.printJobScrollView);
+        mPrintJobContainer = view.findViewById(R.id.printJobContainer);
+        mPrintJobsView = view.findViewById(R.id.printJobsView);
+        mEmptyJobsText = view.findViewById(R.id.emptyJobsText);
+        mScrollView = view.findViewById(R.id.printJobScrollView);
         mPrintJobContainer.setOnTouchListener(this);
         
         mLoadPrintJobsTask = new LoadPrintJobsTask(getActivity(), mPrintJobs, mPrinters);
@@ -92,7 +92,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_print_job_history);
         addActionMenuButton(view);
     }

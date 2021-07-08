@@ -70,9 +70,9 @@ public class PickImageFragment extends Fragment {
         // Temporarily use external cache directory
         imagePath = getActivity().getApplicationContext().getExternalCacheDir() + "/scanSample";
         // aLINK edit - End
-        cameraButton = (ImageButton) view.findViewById(R.id.cameraButton);
+        cameraButton = view.findViewById(R.id.cameraButton);
         cameraButton.setOnClickListener(new CameraButtonClickListener());
-        galleryButton = (ImageButton) view.findViewById(R.id.selectButton);
+        galleryButton = view.findViewById(R.id.selectButton);
         galleryButton.setOnClickListener(new GalleryClickListener());
         if (isIntentPreferenceSet()) {
             handleIntentPreference();

@@ -92,14 +92,14 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mPrintSettingsView = (PrintSettingsView) view.findViewById(R.id.rootView);
+        mPrintSettingsView = view.findViewById(R.id.rootView);
         
         mPrintSettingsView.setValueChangedListener(this);
         
         mPrintSettingsView.setInitialValues(mPrinterId, mPrintSettings);
         mPrintSettingsView.setShowPrintControls(mFragmentForPrinting);
         
-        TextView textView = (TextView) view.findViewById(R.id.titleTextView);
+        TextView textView = view.findViewById(R.id.titleTextView);
         textView.setText(R.string.ids_lbl_print_settings);
         
         if (!mFragmentForPrinting) {

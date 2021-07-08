@@ -44,7 +44,7 @@ public class SnmpCommunityNameDisplayText extends LinearLayout {
 
         this.communityName = PreferenceManager.getDefaultSharedPreferences(context).getString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME);
 
-        TextView textView = (TextView) view.findViewById(R.id.snmpCommunityName);
+        TextView textView = view.findViewById(R.id.snmpCommunityName);
         textView.setText(this.communityName);
     }
 

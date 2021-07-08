@@ -164,11 +164,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         } else {
             //if user has not yet agreed to the license agreement
-            TextView textView = (TextView) this.findViewById(R.id.actionBarTitle);
+            TextView textView = this.findViewById(R.id.actionBarTitle);
             textView.setText(R.string.ids_lbl_license);
             textView.setPadding(18, 0, 0, 0);
             
-            mWebView = (SDAWebView) this.findViewById(R.id.contentWebView);              
+            mWebView = this.findViewById(R.id.contentWebView);
             
             final Context context = this;
             mWebView.setWebViewClient(new WebViewClient() {
@@ -188,18 +188,18 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             
             mWebView.loadUrl(getUrlString());
             
-            LinearLayout buttonLayout = (LinearLayout)this.findViewById(R.id.LicenseButtonLayout);
+            LinearLayout buttonLayout = this.findViewById(R.id.LicenseButtonLayout);
             buttonLayout.setVisibility(View.VISIBLE);
             
-            Button agreeButton = (Button)buttonLayout.findViewById(R.id.licenseAgreeButton);
+            Button agreeButton = buttonLayout.findViewById(R.id.licenseAgreeButton);
             agreeButton.setText(R.string.ids_lbl_agree);
             agreeButton.setOnTouchListener(this);
             
-            Button disagreeButton = (Button)buttonLayout.findViewById(R.id.licenseDisagreeButton);
+            Button disagreeButton = buttonLayout.findViewById(R.id.licenseDisagreeButton);
             disagreeButton.setText(R.string.ids_lbl_disagree);
             disagreeButton.setOnTouchListener(this);
 
-            ViewFlipper vf = (ViewFlipper) findViewById( R.id.viewFlipper);
+            ViewFlipper vf = findViewById( R.id.viewFlipper);
             vf.showNext();
             
             return;
@@ -382,7 +382,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                         findViewById(R.id.settingsButton).setOnTouchListener(this);
                         findViewById(R.id.startButton).setOnTouchListener(this);
 
-                        TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
+                        TextView infoText = findViewById(R.id.txtPermissionInfo);
                         infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
                         ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
                     } else {

@@ -449,14 +449,14 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
         addView(pView);
         
         ViewHolder viewHolder = new ViewHolder();
-        viewHolder.mPrinterName = (TextView) pView.findViewById(R.id.txt_printerName);
-        viewHolder.mDeleteButton = (Button) pView.findViewById(R.id.btn_delete);
-        viewHolder.mOnlineIndicator = (ImageView) pView.findViewById(R.id.img_onOff);
-        viewHolder.mIpAddress = (TextView) pView.findViewById(R.id.inputIpAddress);
+        viewHolder.mPrinterName = pView.findViewById(R.id.txt_printerName);
+        viewHolder.mDeleteButton = pView.findViewById(R.id.btn_delete);
+        viewHolder.mOnlineIndicator = pView.findViewById(R.id.img_onOff);
+        viewHolder.mIpAddress = pView.findViewById(R.id.inputIpAddress);
         
-        viewHolder.mPrintSettings = (LinearLayout) pView.findViewById(R.id.default_print_settings);
-        viewHolder.mPort = (Spinner) pView.findViewById(R.id.input_port);
-        viewHolder.mDefaultPrinter = (Spinner) pView.findViewById(R.id.default_printer_spinner);
+        viewHolder.mPrintSettings = pView.findViewById(R.id.default_print_settings);
+        viewHolder.mPort = pView.findViewById(R.id.input_port);
+        viewHolder.mDefaultPrinter = pView.findViewById(R.id.default_printer_spinner);
         
         viewHolder.mDefaultPrinterAdapter = new DefaultPrinterArrayAdapter(getContext(), R.layout.printerinfo_port_item);
         viewHolder.mDefaultPrinterAdapter.add(getContext().getString(R.string.ids_lbl_yes));
