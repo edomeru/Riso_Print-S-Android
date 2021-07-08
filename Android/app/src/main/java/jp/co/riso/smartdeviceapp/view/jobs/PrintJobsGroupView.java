@@ -699,8 +699,6 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             case MotionEvent.ACTION_MOVE:
                 return true;
             case MotionEvent.ACTION_UP:
-                v.setPressed(false);
-                return true;
             case MotionEvent.ACTION_CANCEL:
                 v.setPressed(false);
                 return true;
