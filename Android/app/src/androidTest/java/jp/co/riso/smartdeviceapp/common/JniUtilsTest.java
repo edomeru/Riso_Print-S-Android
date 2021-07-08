@@ -126,7 +126,7 @@ public class JniUtilsTest extends TestCase {
     public void testValidateIp_invalidIp() {
         String ipAddress;
         for (int i = 0; i < IP_INVALID_ADDRESS.length; i++) {
-            ipAddress = JniUtils.validateIp(null);
+            ipAddress = JniUtils.validateIp(IP_INVALID_ADDRESS[i]);
             assertNull(ipAddress);
         }
     }
