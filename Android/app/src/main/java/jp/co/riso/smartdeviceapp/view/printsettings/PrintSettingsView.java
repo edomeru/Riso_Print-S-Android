@@ -175,7 +175,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         View view = mMainView.findViewWithTag(PrintSettings.TAG_COPIES);
-        if (view != null && view instanceof EditText) {
+        if (view instanceof EditText) {
             if (!AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
                 checkEditTextValue((EditText)view);
             } else {
@@ -183,7 +183,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
         }
         view = mMainView.findViewById(R.id.view_id_pin_code_edit_text);
-        if (view != null && view instanceof EditText) {
+        if (view instanceof EditText) {
             if (AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
                 return super.onInterceptTouchEvent(ev);
             }
