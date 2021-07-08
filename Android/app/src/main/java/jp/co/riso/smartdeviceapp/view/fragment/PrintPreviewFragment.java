@@ -984,12 +984,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         // Always make new
                         PrintSettingsFragment fragment = null;// (PrintSettingsFragment)
                         // fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
-                        if (fragment == null) {
-                            FragmentTransaction ft = fm.beginTransaction();
-                            fragment = new PrintSettingsFragment();
-                            ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
-                            ft.commit();
-                        }
+                        FragmentTransaction ft = fm.beginTransaction();
+                        fragment = new PrintSettingsFragment();
+                        ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
+                        ft.commit();
 
                         fragment.setPrinterId(mPrinterId);
                         fragment.setPdfPath(mPdfManager.getPath());

@@ -214,12 +214,11 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                         setIconState(v.getId(), true);
                         mPrintSettingsFragment = null;
                         
-                        if (mPrintSettingsFragment == null) {
-                            FragmentTransaction ft = fm.beginTransaction();
-                            mPrintSettingsFragment = new PrintSettingsFragment();
-                            ft.replace(R.id.rightLayout, mPrintSettingsFragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
-                            ft.commit();
-                        }
+                        FragmentTransaction ft = fm.beginTransaction();
+                        mPrintSettingsFragment = new PrintSettingsFragment();
+                        ft.replace(R.id.rightLayout, mPrintSettingsFragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
+                        ft.commit();
+
                         mPrintSettingsFragment.setPrinterId(mPrinter.getId());
                         // use new print settings retrieved from the database
                         mPrintSettingsFragment.setPrintSettings(new PrintSettings(mPrinter.getId(), mPrinter.getPrinterType()));

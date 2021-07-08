@@ -149,7 +149,7 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
         
         if (isCollapsed) {
             animateCollapse(false);
-            mIsCollapsed = isCollapsed;
+            mIsCollapsed = true;
         }
         
         if (isDeleteAllClicked) {

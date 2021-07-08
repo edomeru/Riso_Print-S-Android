@@ -150,12 +150,10 @@ public class NetUtils {
             
             if (ipAddress.contains("%")) {
                 String[] newIpString = ipAddress.split("%");
-                if (newIpString != null) {
-                    ip = newIpString[0];
-                    if (IPV6_INTERFACE_NAMES.contains(newIpString[1])) {
-                        inetIpAddress = InetAddress.getByName(ipAddress);
-                        return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
-                    }
+                ip = newIpString[0];
+                if (IPV6_INTERFACE_NAMES.contains(newIpString[1])) {
+                    inetIpAddress = InetAddress.getByName(ipAddress);
+                    return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
                 }
             }
             inetIpAddress = InetAddress.getByName(ip);

@@ -238,7 +238,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             ft.attach(fragment);
         }
 
-        if (fragment instanceof BaseFragment) {
+        if (fragment != null) {
             setIconState(R.id.menu_id_action_button, true);
         }
 

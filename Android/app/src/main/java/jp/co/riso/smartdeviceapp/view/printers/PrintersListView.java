@@ -244,10 +244,8 @@ public class PrintersListView extends ListView implements Callback {
                 contains2 = rect.contains((int) ev.getRawX(), (int) ev.getRawY());
                 
                 if (contains1 && contains2 && dragged) {
-                    if (view != null) {
-                        startDeleteMode(view);
-                        return true;
-                    }
+                    startDeleteMode(view);
+                    return true;
                 }
             }
         }

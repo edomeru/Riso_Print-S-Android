@@ -83,7 +83,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         
         mDatabaseInitialized = false;
         if (savedInstanceState != null) {
-            mDatabaseInitialized = savedInstanceState.getBoolean(KEY_DB_INITIALIZED, mDatabaseInitialized);
+            mDatabaseInitialized = savedInstanceState.getBoolean(KEY_DB_INITIALIZED, false);
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);

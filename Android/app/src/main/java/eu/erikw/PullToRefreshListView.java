@@ -504,10 +504,10 @@ public class PullToRefreshListView extends ListView{
         public void onGlobalLayout(){
             int initialHeaderHeight = header.getHeight();
 
-            if(initialHeaderHeight > 0){
+            if (initialHeaderHeight > 0) {
                 measuredHeaderHeight = initialHeaderHeight;
 
-                if(measuredHeaderHeight > 0 && state != State.REFRESHING){
+                if (measuredHeaderHeight > 0 && state != State.REFRESHING) {
                     setHeaderPadding(-measuredHeaderHeight);
                     requestLayout();
                 }

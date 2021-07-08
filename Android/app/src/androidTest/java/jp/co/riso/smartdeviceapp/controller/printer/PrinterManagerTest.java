@@ -685,7 +685,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             printer.getConfig().setTrayTopAvailable(true);
             printer.getConfig().setTrayStackAvailable(true);
             
-            ret = mPrinterManager.savePrinterToDB(printer, true);
+            boolean ret = mPrinterManager.savePrinterToDB(printer, true);
             assertEquals(true, ret);
             
             //Disabled Capabilities

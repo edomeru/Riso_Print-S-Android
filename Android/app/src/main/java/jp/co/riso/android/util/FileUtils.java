@@ -76,11 +76,8 @@ public class FileUtils {
         out.close();
     }
 
-
     public static void delete(File src) throws IOException {
-
         src.delete();
-
     }
 
     /**

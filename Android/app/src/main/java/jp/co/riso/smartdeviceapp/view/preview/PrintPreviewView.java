@@ -806,8 +806,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         if (mPrintSettings.isBooklet()) {
             if (!shouldDisplayLandscape()) {
-                bindPosition = CurlView.BIND_LEFT;
-                
                 if (mPrintSettings.getBookletLayout() == BookletLayout.REVERSE) {
                     bindPosition = CurlView.BIND_RIGHT;
                 }
@@ -821,7 +819,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         } else {
             switch (mPrintSettings.getFinishingSide()) {
                 case LEFT:
-                    bindPosition = CurlView.BIND_LEFT;
                     break;
                 case RIGHT:
                     bindPosition = CurlView.BIND_RIGHT;
@@ -1516,7 +1513,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                     boolean shouldRotate = ((right - left) > (bottom - top)) != (mPdfManager.getPageWidth(curIndex) > mPdfManager.getPageHeight(curIndex));
                     
                     if (shouldRotate) {
-                        x = left;
                         y = bottom;
                         rotate = -90.0f;
                         if (flipX) {

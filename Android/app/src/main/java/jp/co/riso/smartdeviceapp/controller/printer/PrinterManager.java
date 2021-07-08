@@ -565,13 +565,13 @@ public class PrinterManager implements SNMPManagerCallback {
      * @retval false Device is off-line
      */
     public boolean isOnline(String ipAddress) {
-        InetAddress inetIpAddress = null;
+        InetAddress inetIpAddress;
         try {
             if (ipAddress == null) {
                 return false;
             }
             if (NetUtils.isIPv6Address(ipAddress)) {
-                return NetUtils.connectToIpv6Address(ipAddress, inetIpAddress);
+                return NetUtils.connectToIpv6Address(ipAddress, null);
             } else {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                     return NetUtils.connectToIpv4Address(ipAddress);
