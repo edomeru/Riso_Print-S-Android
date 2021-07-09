@@ -1592,8 +1592,13 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      */
     private void subviewOptionsItemClicked(View v) {
         int id = (Integer) v.getTag();
-        
+        int prevValue = mPrintSettings.getValue((String) mSubView.getTag());
+
         if (v.getId() == R.id.view_id_subview_option_item) {
+            if (id == prevValue) {
+                // If clicked option is same as currently set, no need to update
+                return;
+            }
             if (updateValue((String) mSubView.getTag(), id)) {
                 if (mListener != null) {
                     mListener.onPrintSettingsValueChanged(mPrintSettings);
