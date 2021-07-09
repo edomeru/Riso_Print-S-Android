@@ -9,6 +9,7 @@
 package jp.co.riso.smartdeviceapp.common;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,18 +35,36 @@ public abstract class BaseTask<T, R> {
 
     @SuppressWarnings("unchecked")     // T is defined in BaseTask implementation
     public void execute(final T... params) {
-        mFuture = new FutureTask<>(() -> {
-            mLatch = new CountDownLatch(1);
-            new Thread(() -> preExecute()).start();
-            mLatch.await();
+        mFuture = new FutureTask<>(new Callable<Void>() {
+            @Override
+            public Void call() throws InterruptedException {
+                mLatch = new CountDownLatch(1);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        preExecute();
+                    }
+                }).start();
+                mLatch.await();
 
-            mLatch = new CountDownLatch(1);
-            new Thread(() -> executeInBackground(params)).start();
-            mLatch.await();
+                mLatch = new CountDownLatch(1);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        executeInBackground(params);
+                    }
+                }).start();
+                mLatch.await();
 
-            mLatch = null;
-            new Thread(() -> onPostExecute(mResult.get(0))).start();
-            return null;
+                mLatch = null;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onPostExecute(mResult.get(0));
+                    }
+                }).start();
+                return null;
+            }
         });
         executor.execute(mFuture);
     }

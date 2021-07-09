@@ -909,13 +909,16 @@ public class PrinterManager implements SNMPManagerCallback {
 
             final boolean isOnline = result;
             final Activity activity = SmartDeviceApp.getActivity();
-            activity.runOnUiThread((() -> {
-                if (mViewRef != null && mViewRef.get() != null) {
-                    ImageView view = (ImageView) mViewRef.get();
-                    if (isOnline) {
-                        view.setImageResource(R.drawable.img_btn_printer_status_online);
-                    } else {
-                        view.setImageResource(R.drawable.img_btn_printer_status_offline);
+            activity.runOnUiThread((new Runnable() {
+                @Override
+                public void run() {
+                    if (mViewRef != null && mViewRef.get() != null) {
+                        ImageView view = (ImageView) mViewRef.get();
+                        if (isOnline) {
+                            view.setImageResource(R.drawable.img_btn_printer_status_online);
+                        } else {
+                            view.setImageResource(R.drawable.img_btn_printer_status_offline);
+                        }
                     }
                 }
             }));

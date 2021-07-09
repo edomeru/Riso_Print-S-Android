@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ContentResolver;
@@ -440,10 +441,14 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             } else if (mShouldDisplayExplanation) {
                 final MainActivity mainActivity = (MainActivity) getActivity();
                 final Handler handler = new Handler(Looper.getMainLooper());
-                final Runnable printSettingsDisposer = () -> {
-                    showPrintSettingsButton(getView(), false);
-                    if(mainActivity.isDrawerOpen(Gravity.RIGHT)) {
-                        mainActivity.closeDrawers();
+                final Runnable printSettingsDisposer = new Runnable() {
+                    @SuppressLint("RtlHardcoded")
+                    @Override
+                    public void run() {
+                        showPrintSettingsButton(getView(), false);
+                        if(mainActivity.isDrawerOpen(Gravity.RIGHT)) {
+                            mainActivity.closeDrawers();
+                        }
                     }
                 };
                 // Call with a no-delay handler since not calling inside
@@ -880,7 +885,12 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     @Override
     public void onIndexChanged(int index) {
         updateSeekBarProgress(index);
-        getActivity().runOnUiThread((Runnable) () -> updatePageLabel());
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updatePageLabel();
+            }
+        });
     }
 
     @Override

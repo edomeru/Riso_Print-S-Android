@@ -483,7 +483,13 @@ public class PullToRefreshListView extends ListView{
             if(bounceBackHeader){
                 bounceBackHeader = false;
 
-                postDelayed(() -> resetHeader(), BOUNCE_ANIMATION_DELAY);
+                postDelayed(new Runnable(){
+
+                    @Override
+                    public void run(){
+                        resetHeader();
+                    }
+                }, BOUNCE_ANIMATION_DELAY);
             }else if(stateAtAnimationStart != State.REFRESHING){
                 setState(State.PULL_TO_REFRESH);
             }

@@ -224,7 +224,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         if (isTablet()) {
             if (getActivity() != null && getActivity() instanceof MainActivity) {
                 final MainActivity activity = (MainActivity) getActivity();
-                activity.runOnUiThread((Runnable) () -> activity.closeDrawers());
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.closeDrawers();
+                    }
+                });
             }
         } else if (isAdded()) {
             FragmentManager fm = getParentFragmentManager();
@@ -346,7 +351,12 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
 
         final MainActivity activity = (MainActivity) getActivity();
-        activity.runOnUiThread((Runnable) () -> setViewToNormal(mAddPrinterView));
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setViewToNormal(mAddPrinterView);
+            }
+        });
 
         if(!mAdded) {
             Message newWarningMsg = Message.obtain(mPauseableHandler, MSG_ERROR);

@@ -285,7 +285,12 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
             mRowHeight = getResources().getDimensionPixelSize(R.dimen.printjob_row_height);
             mSeparatorHeight = getResources().getDimensionPixelSize(R.dimen.separator_size);
 
-            ((Activity) getContext()).runOnUiThread(() -> mHandler = new Handler(Looper.myLooper(),PrintJobsGroupView.this));
+            ((Activity) getContext()).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mHandler = new Handler(Looper.myLooper(),PrintJobsGroupView.this);
+                }
+            });
         }
     }
     

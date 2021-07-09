@@ -624,10 +624,13 @@ public class PDFConverterManager {
             final Integer mResult = result;
             final Activity activity = SmartDeviceApp.getActivity();
 
-            activity.runOnUiThread((() -> {
-                if (mInterfaceRef != null && mInterfaceRef.get() != null ) {
-                    if (!mPdfConversionTask.isCancelled()) {
-                        mInterfaceRef.get().onFileConverted(mResult);
+            activity.runOnUiThread((new Runnable() {
+                @Override
+                public void run() {
+                    if (mInterfaceRef != null && mInterfaceRef.get() != null ) {
+                        if (!mPdfConversionTask.isCancelled()) {
+                            mInterfaceRef.get().onFileConverted(mResult);
+                        }
                     }
                 }
             }));

@@ -12,6 +12,7 @@ import android.app.Dialog;
 // Use androidx.fragment.app.DialogFragment instead
 import androidx.fragment.app.DialogFragment;
 // aLINK edit - End
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 // aLINK edit - Start
@@ -75,9 +76,16 @@ public class ProgressDialogFragment extends DialogFragment {
 		// aLINK edit - End
 
 		// Disable the back button
-		OnKeyListener keyListener = (dialog1, keyCode, event) -> {
-            return (keyCode == KeyEvent.KEYCODE_BACK);
-        };
+		OnKeyListener keyListener = new OnKeyListener() {
+
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode,
+								 KeyEvent event) {
+
+                return (keyCode == KeyEvent.KEYCODE_BACK);
+			}
+ 
+		};
 		dialog.setOnKeyListener(keyListener);
 		return dialog;
 	}

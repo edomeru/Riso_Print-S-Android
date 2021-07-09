@@ -8,6 +8,7 @@ import android.app.Dialog;
 // Use androidx.fragment.app.DialogFragment instead
 import androidx.fragment.app.DialogFragment;
 // aLINK edit - End
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 @SuppressLint("ValidFragment")
@@ -34,8 +35,13 @@ public class SingleButtonDialogFragment extends DialogFragment {
                 .setCancelable(isCancelable)
                 .setMessage(message)
                 .setPositiveButton(positiveButtonTitle,
-                        (dialog, which) -> {
+                        new DialogInterface.OnClickListener() {
 
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+
+                            }
                         });
 
         return builder.create();

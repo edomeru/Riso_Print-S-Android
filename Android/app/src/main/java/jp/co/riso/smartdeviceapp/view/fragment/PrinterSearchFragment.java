@@ -222,9 +222,12 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         // http://stackoverflow.com/questions/13881419/android-change-left-margin-using-animation
         final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mEmptySearchText.getLayoutParams();
         ValueAnimator animation = ValueAnimator.ofInt(params.topMargin, 0);
-        animation.addUpdateListener(valueAnimator -> {
-            params.topMargin = (Integer) valueAnimator.getAnimatedValue();
-            mEmptySearchText.requestLayout();
+        animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                params.topMargin = (Integer) valueAnimator.getAnimatedValue();
+                mEmptySearchText.requestLayout();
+            }
         });
         animation.setDuration(duration);
         animation.start();
@@ -252,18 +255,21 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         if (getActivity() == null) {
             return;
         }
-        getActivity().runOnUiThread((Runnable) () -> {
-            if (!mPrinterManager.isSearching()) {
-                return;
-            }
-            for (int i = 0; i < mPrinter.size(); i++) {
-                if (mPrinter.get(i).getIpAddress().equals(printer.getIpAddress())) {
-                    mPrinter.set(i, printer);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!mPrinterManager.isSearching()) {
                     return;
                 }
+                for (int i = 0; i < mPrinter.size(); i++) {
+                    if (mPrinter.get(i).getIpAddress().equals(printer.getIpAddress())) {
+                        mPrinter.set(i, printer);
+                        return;
+                    }
+                }
+                mPrinter.add(printer);
+                mPrinterSearchAdapter.notifyDataSetChanged();
             }
-            mPrinter.add(printer);
-            mPrinterSearchAdapter.notifyDataSetChanged();
         });
     }
     

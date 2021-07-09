@@ -82,10 +82,13 @@ public class ScanFragment extends Fragment {
         scanButton.setOnClickListener(new ScanButtonClickListener());
         sourceFrame = view.findViewById(R.id.sourceFrame);
         polygonView = view.findViewById(R.id.polygonView);
-        sourceFrame.post(() -> {
-            original = getBitmap();
-            if (original != null) {
-                setBitmap(original);
+        sourceFrame.post(new Runnable() {
+            @Override
+            public void run() {
+                original = getBitmap();
+                if (original != null) {
+                    setBitmap(original);
+                }
             }
         });
     }

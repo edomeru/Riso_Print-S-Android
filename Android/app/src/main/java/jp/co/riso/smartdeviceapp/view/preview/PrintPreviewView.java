@@ -993,20 +993,30 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         final float targetZoom = zoomLevel;
         final Activity targetActivity = (Activity) getContext();
 
-        Thread thread = new Thread(() -> {
-            while (System.currentTimeMillis() - currentTime < duration) {
-                float percentage = (System.currentTimeMillis() - currentTime) / duration;
-
-                mCurlView.setZoomLevel(initialZoom + ((targetZoom - initialZoom) * percentage));
-                mCurlView.requestRender();
-
-                Thread.yield();
+        Thread thread = new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                while (System.currentTimeMillis() - currentTime < duration) {
+                    float percentage = (System.currentTimeMillis() - currentTime) / duration;
+                    
+                    mCurlView.setZoomLevel(initialZoom + ((targetZoom - initialZoom) * percentage));
+                    mCurlView.requestRender();
+                    
+                    Thread.yield();
+                }
+                
+                if (targetActivity != null) {
+                    targetActivity.runOnUiThread(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            setZoomLevel(targetZoom);
+                        }
+                    });
+                };
+                //setZoomLevel(targetZoom);
             }
-
-            if (targetActivity != null) {
-                targetActivity.runOnUiThread(() -> setZoomLevel(targetZoom));
-            }
-            //setZoomLevel(targetZoom);
         });
         thread.start();
     }

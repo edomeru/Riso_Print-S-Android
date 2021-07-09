@@ -777,11 +777,14 @@ public class PDFFileManager {
                 }
 
                 final Activity activity = SmartDeviceApp.getActivity();
-                activity.runOnUiThread((() -> {
-                    if (mInterfaceRef != null && mInterfaceRef.get() != null) {
-                        mInterfaceRef.get().onFileInitialized(mResult);
+                activity.runOnUiThread((new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mInterfaceRef != null && mInterfaceRef.get() != null) {
+                            mInterfaceRef.get().onFileInitialized(mResult);
+                        }
                     }
-                }));
+               }));
             }
         }
     }

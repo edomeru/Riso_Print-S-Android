@@ -46,8 +46,12 @@ public class WaitingDialogFragment extends DialogFragment {
     private WaitingDialogListener mListener = null;
     
     static {
-        sCancelBackButtonListener = (dialog, keyCode, event) -> {
-            return (keyCode == KeyEvent.KEYCODE_BACK);
+        sCancelBackButtonListener = new OnKeyListener() {
+            
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                return (keyCode == KeyEvent.KEYCODE_BACK);
+            }
         };
     }
     
@@ -105,12 +109,20 @@ public class WaitingDialogFragment extends DialogFragment {
             // Disable the back button
             dialog.setOnKeyListener(sCancelBackButtonListener);
         } else {
-            dialog.setButton(DialogInterface.BUTTON_NEGATIVE, negButton, (dialog1, which) -> dialog1.cancel());
+            dialog.setButton(DialogInterface.BUTTON_NEGATIVE, negButton, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
         }
 
-        dialog.setOnShowListener(dialogInterface -> {
-            if (message != null) {
-                ((TextView) dialog.findViewById(R.id.progressText)).setText(message);
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                if (message != null) {
+                    ((TextView) dialog.findViewById(R.id.progressText)).setText(message);
+                }
             }
         });
 
@@ -149,10 +161,14 @@ public class WaitingDialogFragment extends DialogFragment {
     public void setMessage(final String msg) {
         if (getActivity() != null) {
             
-            getActivity().runOnUiThread((Runnable) () -> {
-                if (getDialog() != null) {
-                    AlertDialog dialog = (AlertDialog) getDialog();
-                    ((TextView) dialog.findViewById(R.id.progressText)).setText(msg);
+            getActivity().runOnUiThread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    if (getDialog() != null) {
+                        AlertDialog dialog = (AlertDialog) getDialog();
+                        ((TextView) dialog.findViewById(R.id.progressText)).setText(msg);
+                    }
                 }
             });
         }
