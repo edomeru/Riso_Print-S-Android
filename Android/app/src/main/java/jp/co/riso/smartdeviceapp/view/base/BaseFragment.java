@@ -214,7 +214,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
      * @retval false Fragment is not on the right drawer
      */
     public boolean isOnRightDrawer() {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         if (fm != null) {
             return this == fm.findFragmentById(R.id.rightLayout);
         }
