@@ -147,7 +147,7 @@
     <string name="ids_err_msg_max_printer_count">プリンター数が上限に達しました。</string>
     <string name="ids_err_msg_no_selected_printer">プリンターを登録してください。</string>
     <string name="ids_err_msg_pdf_wrong_password">パスワードが正しくありません。確認してください。</string>
-    <string name="ids_err_msg_open_failed">ファイルを開けませんでした。 有効なファイルを選択し、ファイルがアクセス可能であることを確認してください。</string>
+    <string name="ids_err_msg_open_failed">ファイルを開けませんでした。 有効なファイルを選択し、ファイルがアクセス可能であること,またはデバイスに十分な空き容量があることを確認してください。</string>
     <string name="ids_err_msg_pdf_encrypted">暗号化PDFには対応していません。</string>
     <string name="ids_err_msg_pdf_printing_not_allowed">印刷が許可されていません。</string>
     <string name="ids_err_msg_file_too_large">ファイルサイズが大きすぎます。</string>
@@ -183,5 +183,6 @@
     <string name="ids_info_msg_initializing">初期化中...</string>
     <string name="ids_err_msg_camera_permission_not_allowed">カメラとストレージへのアクセスは開くために必要です。\n\n表示される次のダイアログで[許可/ OK]ボタンをタップしてください。</string>
     <string name="ids_err_msg_camera_permission_not_granted">カメラおよび/またはストレージへのアクセス許可が付与されていません。 これらの権限は、画像をキャプチャして保存するために必要です。 [カメラ許可]と[ストレージの権限]がONになっていることを確認してください。</string>
+    <string name="ids_err_msg_invalid_contents_android">アプリから送信されたデータが無効です。 別の方法でファイルを選択してください。</string>
 
 </resources>

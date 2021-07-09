@@ -30,6 +30,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.LruCache;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -75,7 +76,7 @@ import jp.co.riso.smartprint.R;
  */
 public class PrintPreviewFragment extends BaseFragment implements Callback, PDFFileManagerInterface, PDFConverterManagerInterface,
         PreviewControlsListener, OnSeekBarChangeListener, PauseableHandlerCallback, ConfirmDialogFragment.ConfirmDialogListener,
-        WaitingDialogFragment.WaitingDialogListener {
+        WaitingDialogFragment.WaitingDialogListener, View.OnKeyListener, View.OnFocusChangeListener {
 
     /// Tag used to identify the error dialog
     public static final String FRAGMENT_TAG_DIALOG = "pdf_error_dialog";
@@ -353,6 +354,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         mPageLabel = mPageControls.findViewById(R.id.pageDisplayTextView);
         mSeekBar = mPageControls.findViewById(R.id.pageSlider);
         mSeekBar.setOnSeekBarChangeListener(this);
+        mSeekBar.setOnKeyListener(this);
+        mSeekBar.setOnFocusChangeListener(this);
 
         if (mCurrentPage != 0) {
             mPrintPreviewView.setCurrentPage(mCurrentPage);
@@ -507,6 +510,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mPageLabel = mPageControls.findViewById(R.id.pageDisplayTextView);
             mSeekBar = mPageControls.findViewById(R.id.pageSlider);
             mSeekBar.setOnSeekBarChangeListener(this);
+            mSeekBar.setOnKeyListener(this);
+            mSeekBar.setOnFocusChangeListener(this);
 
             if (mPageControls.getVisibility() == View.VISIBLE) {
                 updateSeekBar();
@@ -740,6 +745,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         mSeekBar.setMax(0);
         mSeekBar.setMax(pageCount);
+        // keyboard increment is updated based on range so this must be reset when range changes
+        mSeekBar.setKeyProgressIncrement(1);
         updateSeekBarProgress(currentPage);
     }
 
@@ -757,6 +764,36 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      */
     private void updatePageLabel() {
         mPageLabel.setText(mPrintPreviewView.getPageString());
+    }
+
+    // ================================================================================
+    // INTERFACE - View.OnKeyListener
+    // ================================================================================
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (v.getId() == R.id.pageSlider && event.getAction() == KeyEvent.ACTION_UP &&
+            (keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT))
+        {
+            mPrintPreviewView.setCurrentPage(mSeekBar.getProgress());
+        }
+        return false;
+    }
+
+    // ================================================================================
+    // INTERFACE - View.OnFocusChangeListener
+    // ================================================================================
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        // when limits are reached, arrow keys will move the focus to other buttons instead of calling onKey
+        // if focus moves out of page slider, update page to 1st or last page
+        if (v.getId() == R.id.pageSlider && !hasFocus) {
+            int progress = mSeekBar.getProgress();
+            if (progress == 0 || progress == mSeekBar.getMax()) {
+                mPrintPreviewView.setCurrentPage(progress);
+            }
+        }
     }
 
     // ================================================================================

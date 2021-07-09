@@ -136,6 +136,15 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             mScrollState = null;
         }
         mDeleteItem = PrinterManager.EMPTY_ID;
+
+        // for chromebook, scrollview must not be focusable when printers list is empty
+        // scrollview constructor enables focusable so it can't be disabled in layout.xml
+        if (isChromeBook()) {
+            View scrollView = view.findViewById(R.id.printersTabletScrollView);
+            if (scrollView != null) {
+                scrollView.setFocusable(false);
+            }
+        }
     }
     
     @Override
@@ -143,7 +152,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printers);
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_add_button, R.drawable.selector_actionbar_add_printer, this);
-        addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_search_button, R.drawable.selector_actionbar_printersearch, this);
+		if (!isChromeBook()) {
+            addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_search_button, R.drawable.selector_actionbar_printersearch, this);
+		}
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_printer_search_settings_button, R.drawable.selector_actionbar_printersearchsettings, this);
         addActionMenuButton(view);
     }
@@ -360,7 +371,9 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                     targetView = mListView.getChildAt(i).findViewById(R.id.img_onOff);
                 }
             }
-            if (targetView != null) {
+            if (targetView != null &&
+                // RM#914 add safety checking for access to mPrinter array list
+                mPrinter.size() > (i + position)) {
                 mPrinterManager.updateOnlineStatus(mPrinter.get(i + position).getIpAddress(), targetView);
             }
         }

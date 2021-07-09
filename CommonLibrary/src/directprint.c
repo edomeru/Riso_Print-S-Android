@@ -304,6 +304,10 @@ void directprint_job_free(directprint_job *print_job)
         return;
     }
     pthread_mutex_destroy(&print_job->mutex);
+    /* RM 856 Fix: if caller data still exists, free it here */
+    if(print_job->caller_data != NULL){
+        free(print_job->caller_data);
+    }
     if(print_job->app_name != NULL){
         free(print_job->app_name);
     }

@@ -137,7 +137,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             mPrintGroupWithDelete.clearDeleteButton();
         }
     }
-    
+
     /**
      * @brief Resets the PrintJobsView.
      */
@@ -222,6 +222,12 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         
         mThread = new ViewCreationThread();
         mThread.start();
+        // RM#942 thread join need to prevent race condition which causes print job groups to be doubled
+        try {
+            mThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -295,8 +301,25 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         pjView.setOrientation(VERTICAL);
         
         int col = getSmallestColumn();
-        mColumns.get(col).addView(pjView, groupParams);
-        mColumnsHeight[col] += pjView.getGroupHeight() + groupParams.topMargin; // update column height
+        // RM#942 safety check when accessing columns to prevent crash of screen or app
+        // also check if total print job groups already equal to number of printers to prevent doubling of jobs
+        if (mColumns.size() > col && getTotalPrintJobGroups() < mPrinters.size()) {
+            mColumns.get(col).addView(pjView, groupParams);
+            mColumnsHeight[col] += pjView.getGroupHeight() + groupParams.topMargin; // update column height
+        }
+    }
+
+    /**
+     * @brief Get total number of print job groups
+     *
+     * @return total number of print job groups already assigned to columns
+     */
+    private int getTotalPrintJobGroups() {
+        int total = 0;
+        for (int i = 0; i < mColumns.size(); i++) {
+            total += mColumns.get(i).getChildCount();
+        }
+        return total;
     }
     
     /**
@@ -538,7 +561,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     }
     
     // ================================================================================
-    // INTERFACE - PrintJobsGroupDeleteListener
+    // INTERFACE - PrintJobsLayoutListener
     // ================================================================================
     
     @Override
@@ -579,7 +602,22 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     public void onDeleteJob() {
         endDelete(false);
     }
-    
+
+    @Override
+    public void showDeleteButton(PrintJobsGroupView pj, View view) {
+        beginDelete(pj, view, true);
+    }
+
+    @Override
+    public void hideDeleteButton() {
+        endDelete(true);
+    }
+
+    @Override
+    public boolean isDeleteMode() {
+        return mDeleteMode;
+    }
+
     // ================================================================================
     // Internal Classes
     // ================================================================================

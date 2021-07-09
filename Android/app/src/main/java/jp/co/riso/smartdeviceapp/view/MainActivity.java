@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -228,6 +229,20 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             closeDrawers();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            // only Enter Key Press is handled so far
+            case KeyEvent.KEYCODE_ENTER:
+                int layoutId = mDrawerLayout.isDrawerOpen(Gravity.RIGHT) ? R.id.rightLayout :
+                    mDrawerLayout.isDrawerOpen(Gravity.LEFT) ? R.id.leftLayout : R.id.mainLayout;
+                BaseFragment fragment = (BaseFragment)getSupportFragmentManager().findFragmentById(layoutId);
+                return fragment.onKeyUp(keyCode);
+            default:
+                return super.onKeyUp(keyCode, event);
         }
     }
 

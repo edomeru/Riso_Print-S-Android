@@ -32,8 +32,13 @@ public class PauseableHandlerTest extends ActivityInstrumentationTestCase2<MainA
     }
 
     public void testConstructor_NullCallback() {
-        PauseableHandler handler = new PauseableHandler(Looper.myLooper(), null);
-        assertNotNull(handler);
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                PauseableHandler handler = new PauseableHandler(Looper.myLooper(), null);
+                assertNotNull(handler);
+            }
+        });
     }
 
     public void testHandleMessage() {

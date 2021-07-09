@@ -627,7 +627,11 @@ public class CurlMesh {
 			Bitmap texture = mTexturePage.getTexture(mTextureRectFront,
 					CurlPage.SIDE_FRONT);
 			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
-			texture.recycle();
+			// aLINK edit: check if the texture has already been recycled
+			if (texture.isRecycled() == false) {
+				texture.recycle();
+			}
+			// end
 
 			mTextureBack = mTexturePage.hasBackTexture();
 			if (mTextureBack) {
@@ -635,7 +639,11 @@ public class CurlMesh {
 				texture = mTexturePage.getTexture(mTextureRectBack,
 						CurlPage.SIDE_BACK);
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
-				texture.recycle();
+				// aLINK edit: check if the texture has already been recycled
+				if (texture.isRecycled() == false) {
+					texture.recycle();
+				}
+				// end
 			} else {
 				mTextureRectBack.set(mTextureRectFront);
 			}
