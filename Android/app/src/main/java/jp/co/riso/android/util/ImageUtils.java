@@ -238,15 +238,16 @@ public final class ImageUtils {
                 orientationColumn = new String[]{MediaStore.Images.Media.ORIENTATION};
             }
             Cursor cursor = context.getContentResolver().query(selectedImage, orientationColumn, null, null, null);
-
             orientation = -1;
-            if (cursor != null && cursor.moveToFirst()) {
-                int index = cursor.getColumnIndex(orientationColumn[0]);
-                if (index != -1) {
-                    orientation = cursor.getInt(index);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(orientationColumn[0]);
+                    if (index != -1) {
+                        orientation = cursor.getInt(index);
+                    }
                 }
+                cursor.close();
             }
-            cursor.close();
         }
 
         switch (orientation) {

@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -52,18 +53,18 @@ public class ResultFragment extends Fragment {
     }
 
     private void init() {
-        scannedImageView = view.findViewById(R.id.scannedImage);
-        originalButton = view.findViewById(R.id.original);
+        scannedImageView = (ImageView) view.findViewById(R.id.scannedImage);
+        originalButton = (Button) view.findViewById(R.id.original);
         originalButton.setOnClickListener(new OriginalButtonClickListener());
-        MagicColorButton = view.findViewById(R.id.magicColor);
+        MagicColorButton = (Button) view.findViewById(R.id.magicColor);
         MagicColorButton.setOnClickListener(new MagicColorButtonClickListener());
-        grayModeButton = view.findViewById(R.id.grayMode);
+        grayModeButton = (Button) view.findViewById(R.id.grayMode);
         grayModeButton.setOnClickListener(new GrayButtonClickListener());
-        bwButton = view.findViewById(R.id.BWMode);
+        bwButton = (Button) view.findViewById(R.id.BWMode);
         bwButton.setOnClickListener(new BWButtonClickListener());
         Bitmap bitmap = getBitmap();
         setScannedImage(bitmap);
-        doneButton = view.findViewById(R.id.doneButton);
+        doneButton = (Button) view.findViewById(R.id.doneButton);
         doneButton.setOnClickListener(new DoneButtonClickListener());
     }
 
@@ -80,7 +81,8 @@ public class ResultFragment extends Fragment {
     }
 
     private Uri getUri() {
-        return getArguments().getParcelable(ScanConstants.SCANNED_RESULT);
+        Uri uri = getArguments().getParcelable(ScanConstants.SCANNED_RESULT);
+        return uri;
     }
 
     public void setScannedImage(Bitmap scannedImage) {
