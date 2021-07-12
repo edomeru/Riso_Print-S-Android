@@ -234,19 +234,19 @@ public final class ImageUtils {
 
         if (orientation == 0) {
             String[] orientationColumn = new String[0];
+            orientation = -1;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 orientationColumn = new String[]{MediaStore.Images.Media.ORIENTATION};
-            }
-            Cursor cursor = context.getContentResolver().query(selectedImage, orientationColumn, null, null, null);
-            orientation = -1;
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    int index = cursor.getColumnIndex(orientationColumn[0]);
-                    if (index != -1) {
-                        orientation = cursor.getInt(index);
+                Cursor cursor = context.getContentResolver().query(selectedImage, orientationColumn, null, null, null);
+                if (cursor != null) {
+                    if (cursor.moveToFirst()) {
+                        int index = cursor.getColumnIndex(orientationColumn[0]);
+                        if (index != -1) {
+                            orientation = cursor.getInt(index);
+                        }
                     }
+                    cursor.close();
                 }
-                cursor.close();
             }
         }
 
