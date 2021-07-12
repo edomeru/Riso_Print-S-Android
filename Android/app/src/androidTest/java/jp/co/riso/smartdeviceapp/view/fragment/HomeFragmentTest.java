@@ -1,7 +1,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import android.app.Activity;
-import android.app.FragmentManager;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import android.app.Instrumentation;
 import android.content.ContentProvider;
 import android.content.Context;
@@ -42,7 +42,7 @@ public class HomeFragmentTest {
     public IntentsTestRule<MainActivity> intentsTestRule = new IntentsTestRule<>(MainActivity.class);
 
     private HomeFragment initHomeFragment() {
-        final FragmentManager fm = intentsTestRule.getActivity().getFragmentManager();
+        final FragmentManager fm = intentsTestRule.getActivity().getSupportFragmentManager();
 
         intentsTestRule.getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -69,7 +69,7 @@ public class HomeFragmentTest {
 
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
-        Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, null);
+        Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null);
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result);
 
         // prepare button to be clicked
@@ -115,7 +115,7 @@ public class HomeFragmentTest {
 
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
-        Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, null);
+        Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null);
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result);
 
         // prepare button to be clicked
