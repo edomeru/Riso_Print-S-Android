@@ -28,7 +28,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
 public class PrintSettingsManager {
     private static PrintSettingsManager sInstance;
     
-    private DatabaseManager mManager;
+    private final DatabaseManager mManager;
     
     /**
      * @brief Creates a PrintSettingsManager instance.
@@ -75,8 +75,6 @@ public class PrintSettingsManager {
                 switch (setting.getType()) {
                     case Setting.TYPE_LIST:
                     case Setting.TYPE_NUMERIC:
-                        printSettings.setValue(key, DatabaseManager.getIntFromCursor(c, setting.getDbKey()));
-                        break;
                     case Setting.TYPE_BOOLEAN:
                         printSettings.setValue(key, DatabaseManager.getIntFromCursor(c, setting.getDbKey()));
                         break;

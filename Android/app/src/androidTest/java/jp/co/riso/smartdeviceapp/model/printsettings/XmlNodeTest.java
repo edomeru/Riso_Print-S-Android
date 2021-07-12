@@ -23,9 +23,9 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
 public class XmlNodeTest extends AndroidTestCase {
     private static final String TAG = "XmlNodeTest";
-    private List<XmlNode> mGroupList = new ArrayList<XmlNode>();
-    private List<XmlNode> mOptionList = new ArrayList<XmlNode>();
-    private List<XmlNode> mSettingList = new ArrayList<XmlNode>();
+    private final List<XmlNode> mGroupList = new ArrayList<>();
+    private final List<XmlNode> mOptionList = new ArrayList<>();
+    private final List<XmlNode> mSettingList = new ArrayList<>();
 
     @Override
     protected void setUp() throws Exception {
@@ -41,11 +41,7 @@ public class XmlNodeTest extends AndroidTestCase {
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(xmlString));
             printSettingsContent = db.parse(is);
-        } catch (ParserConfigurationException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (SAXException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             Log.e(TAG, "Error: " + e.getMessage());
         }
 

@@ -67,9 +67,9 @@ public class PDFFileManager {
     private static final float CONST_INCHES_TO_MM = 25.4f; ///< mm per inches
     
     private volatile String mPath;
-    private Document mDocument;
+    private final Document mDocument;
     private String mFileName;
-    private WeakReference<PDFFileManagerInterface> mInterfaceRef;
+    private final WeakReference<PDFFileManagerInterface> mInterfaceRef;
     
     private PDFInitTask mInitTask = null;
     
@@ -85,7 +85,7 @@ public class PDFFileManager {
      */
     public PDFFileManager(PDFFileManagerInterface pdfFileManagerInterface) {
         mDocument = new Document();
-        mInterfaceRef = new WeakReference<PDFFileManagerInterface>(pdfFileManagerInterface);
+        mInterfaceRef = new WeakReference<>(pdfFileManagerInterface);
         setPDF(null);
     }
     
@@ -250,7 +250,7 @@ public class PDFFileManager {
     /**
      * @brief Checks whether the PDF loaded is landscape.
      * 
-     * @note Orientation is based on the irst page
+     * @note Orientation is based on the first page
      * 
      * @retval true PDF is landscape
      * @retval false PDF is portrait, square.
@@ -430,11 +430,11 @@ public class PDFFileManager {
         
         if (CONST_KEEP_DOCUMENT_CLOSED) {
             mDocument.Open(mPath, null);
-        } else {
+        } // else {
             // TODO: re-check: For temporary fix of bug
             // mDocument.Close(); // This will clear the buffer
             // mDocument.Open(mSandboxPath, null);
-        }
+        // }
         
         // Make sure document is opened
         if (!mDocument.IsOpened()) {
@@ -515,7 +515,7 @@ public class PDFFileManager {
                 output = new FileOutputStream(file);
                 int bufferSize = 1024;
                 byte[] buffer = new byte[bufferSize];
-                int len = 0;
+                int len;
                 while ((len = contentInputStream.read(buffer)) != -1) {
                     output.write(buffer, 0, len);
                 }

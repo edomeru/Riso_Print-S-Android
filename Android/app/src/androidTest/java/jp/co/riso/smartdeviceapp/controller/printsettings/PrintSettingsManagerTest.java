@@ -67,16 +67,16 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
     private DatabaseManager mManager;
     private Context mContext;
     private int mPrinterId = PrinterManager.EMPTY_ID;
-    private String mPrinterType = AppConstants.PRINTER_MODEL_IS;
+    private final String mPrinterType = AppConstants.PRINTER_MODEL_IS;
     private int mSettingId = 1;
-    private int mIntValue = 1;
+    private final int mIntValue = 1;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
         List<Printer> printersList = printerManager.getSavedPrintersList();
-        Printer printer = null;
+        Printer printer;
         
         if(printersList.isEmpty()) {
             printer = new Printer("", IPV4_OFFLINE_PRINTER_ADDRESS);

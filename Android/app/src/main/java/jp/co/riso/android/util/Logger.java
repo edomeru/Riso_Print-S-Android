@@ -57,8 +57,8 @@ public class Logger {
     private static boolean sPerfLogsToFile = false;
     
     private static String sStringFolder = "";
-    private static HashMap<String, Long> sTimeLog = new HashMap<String, Long>();
-    private static HashMap<String, Float> sMemoryLog = new HashMap<String, Float>();
+    private static final HashMap<String, Long> sTimeLog = new HashMap<>();
+    private static final HashMap<String, Float> sMemoryLog = new HashMap<>();
     
     /**
      * @brief Initialize log.
@@ -74,8 +74,8 @@ public class Logger {
         sTimeLog.clear();
         sMemoryLog.clear();
         
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmdd-HHmmssSS", Locale.getDefault());
-        sStringFolder = dateFormat.format(new Date()).toString();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmssSS", Locale.getDefault());
+        sStringFolder = dateFormat.format(new Date());
     }
     
     /**
@@ -278,7 +278,7 @@ public class Logger {
         try {
             BufferedReader in = new BufferedReader(new FileReader(path));
             StringBuffer buf = new StringBuffer();
-            String str = "";
+            String str;
             while ((str = in.readLine()) != null) {
                 buf.append(str);
             }
@@ -337,8 +337,7 @@ public class Logger {
      */
     private static String formatMessage(String format, Object...args) {
         try {
-            String msg = (format == null) ? "" : String.format(Locale.getDefault(), format, args);
-            return msg;
+            return (format == null) ? "" : String.format(Locale.getDefault(), format, args);
         } catch(IllegalFormatException e) {
             Log.e(Logger.class.getSimpleName(), "IllegalFormatException, logging format directly");
             return format;
@@ -355,9 +354,7 @@ public class Logger {
             return;
         }
         
-        Logger logger = new Logger();
-        DeleteTask task = (logger.new DeleteTask());
-        
+        DeleteTask task = (new DeleteTask());
         task.execute(context);
     }
     
@@ -366,7 +363,7 @@ public class Logger {
      * 
      * @brief Async Task for deleting a directory
      */
-    public class DeleteTask extends BaseTask<Context, Void> {
+    public static class DeleteTask extends BaseTask<Context, Void> {
         int count = 0;
         double time = 0;
         
@@ -383,11 +380,11 @@ public class Logger {
                 if (files == null) {
                     return true;
                 }
-                for (int i = 0; i < files.length; i++) {
-                    if (files[i].isDirectory()) {
-                        deleteDirectory(files[i]);
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
                     }
-                    files[i].delete();
+                    file.delete();
                     count++;
                 }
             }
@@ -407,11 +404,11 @@ public class Logger {
                 if (files == null) {
                     return true;
                 }
-                for (int i = 0; i < files.length; i++) {
-                    if (files[i].isDirectory()) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
                         //deletes the whole sub-directory
-                        if (deleteDirectory(files[i])) {
-                            files[i].delete();
+                        if (deleteDirectory(file)) {
+                            file.delete();
                         }
                     }
                 }

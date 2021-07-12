@@ -25,10 +25,10 @@ public class Printer implements Parcelable {
     //supported printer type
     private static final String DEFAULT_PRINTER_TYPE = AppConstants.PRINTER_MODEL_IS;
 
-    private String mName = null;
-    private String mIpAddress = null;
+    private String mName;
+    private String mIpAddress;
     private int mId = PrinterManager.EMPTY_ID;
-    private PortSetting mPortSetting = PortSetting.LPR;
+    private PortSetting mPortSetting;
     
     private Config mConfig = null;
 

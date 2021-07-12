@@ -83,7 +83,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mAddPrinterView.mIpAddress = (EditText) view.findViewById(R.id.inputIpAddress);
+        mAddPrinterView.mIpAddress = view.findViewById(R.id.inputIpAddress);
         mAddPrinterView.mSaveButton = view.findViewById(R.id.img_save_button);
         mAddPrinterView.mProgressBar = view.findViewById(R.id.actionbar_progressbar);
 
@@ -102,17 +102,13 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
                 return;
             }
             ViewGroup.LayoutParams params = rootView.getLayoutParams();
-            if (screenSize.x > screenSize.y) {
-                params.width = screenSize.y;
-            } else {
-                params.width = screenSize.x;
-            }
+            params.width = Math.min(screenSize.x, screenSize.y);
         }
     }
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_add_printer);
         
         if (isTablet()) {
@@ -194,7 +190,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         }
         String title = getResources().getString(R.string.ids_lbl_add_printer);
         String errMsg = null;
-        DialogFragment info = null;
+        DialogFragment info;
         
         switch (err) {
             case ERR_INVALID_IP_ADDRESS:
@@ -334,7 +330,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         if (mPrinterManager.isCancelled()) {
             return;
         }
-        Message newMessage = null;
+        Message newMessage;
         if (mPrinterManager.isExists(printer)) {
             newMessage = Message.obtain(mPauseableHandler, MSG_ERROR);
             newMessage.arg1 = ERR_INVALID_IP_ADDRESS;
@@ -406,7 +402,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
      * 
      * @brief Add Printer Screen view holder
      */
-    public class ViewHolder {
+    public static class ViewHolder {
         private EditText mIpAddress;
         private View mProgressBar;
         private View mSaveButton;

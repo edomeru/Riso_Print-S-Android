@@ -28,7 +28,7 @@ public abstract class BaseWebFragment extends BaseFragment {
 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mWebView = (SDAWebView) view.findViewById(R.id.contentWebView);
+        mWebView = view.findViewById(R.id.contentWebView);
         
         configureWebView(mWebView);
         mWebView.loadUrl(getUrlString());

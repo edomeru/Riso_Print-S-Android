@@ -7,7 +7,6 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -65,8 +64,6 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
             }
 
             FileUtils.copy(mSrcFile, mDstFile);
-        } catch (NullPointerException e) {
-            fail();
         } catch (Exception e) {
             fail();
         }
@@ -75,8 +72,6 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
     public void testCopy_NullSrc() {
         try {
             FileUtils.copy((InputStream) null, mDstFile);
-        } catch (IOException e) {
-            fail();
         } catch (Exception e) {
             fail();
         }
@@ -85,8 +80,6 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
     public void testCopy_NullDst() {
         try {
             FileUtils.copy(mSrcFile, null);
-        } catch (IOException e) {
-            fail();
         } catch (Exception e) {
             fail();
         }
@@ -106,8 +99,6 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
             }
 
             assertEquals(FileUtils.getFileName(SmartDeviceApp.getAppContext(), Uri.fromFile(mSrcFile), true), TEST_SRC_FILE);
-        } catch (NullPointerException e) {
-            fail();
         } catch (Exception e) {
             fail();
         }

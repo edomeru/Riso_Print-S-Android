@@ -39,15 +39,15 @@ import jp.co.riso.smartprint.R;
  */
 public class PrinterSearchSettingsFragment extends BaseFragment {
 
-    private BroadcastReceiver snmpCommunityNameEditTextPastebroadcastReceiver;
+    private BroadcastReceiver snmpCommunityNameEditTextPasteBroadcastReceiver;
     private SnmpCommunityNameEditText snmpCommunityNameEditText;
 
     @Override
     public void onStop() {
         super.onStop();
 
-        if(snmpCommunityNameEditTextPastebroadcastReceiver != null) {
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(snmpCommunityNameEditTextPastebroadcastReceiver);
+        if(snmpCommunityNameEditTextPasteBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(snmpCommunityNameEditTextPasteBroadcastReceiver);
         }
     }
 
@@ -57,7 +57,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
 
         IntentFilter intentFilter = new IntentFilter(SnmpCommunityNameEditText.SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID);
 
-        snmpCommunityNameEditTextPastebroadcastReceiver = new BroadcastReceiver() {
+        snmpCommunityNameEditTextPasteBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(SnmpCommunityNameEditText.SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID.equals(intent.getAction())) {
@@ -68,7 +68,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
             }
         };
 
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(snmpCommunityNameEditTextPastebroadcastReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(snmpCommunityNameEditTextPasteBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        snmpCommunityNameEditText = (SnmpCommunityNameEditText) view.findViewById(R.id.inputSnmpCommunityName);
+        snmpCommunityNameEditText = view.findViewById(R.id.inputSnmpCommunityName);
         snmpCommunityNameEditText.setText(PrinterManager.getInstance(getActivity()).getSnmpCommunityNameFromSharedPrefs());
         snmpCommunityNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -104,17 +104,13 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
                 return;
             }
             ViewGroup.LayoutParams params = rootView.getLayoutParams();
-            if (screenSize.x > screenSize.y) {
-                params.width = screenSize.y;
-            } else {
-                params.width = screenSize.x;
-            }
+            params.width = Math.min(screenSize.x, screenSize.y);
         }
     }
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_search_printers_settings);
         
         if (isTablet()) {

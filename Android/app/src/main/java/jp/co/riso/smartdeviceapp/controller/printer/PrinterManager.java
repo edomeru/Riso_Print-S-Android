@@ -46,16 +46,16 @@ public class PrinterManager implements SNMPManagerCallback {
     /// Printer ID for invalid printer
     public static final int EMPTY_ID = -1;
     private static PrinterManager sSharedMngr = null;
-    private List<Printer> mPrinterList = null;
+    private final List<Printer> mPrinterList;
     private boolean mIsSearching = false;
     private boolean mIsCancelled = false;
-    private SNMPManager mSNMPManager = null;
+    private final SNMPManager mSNMPManager;
     private WeakReference<PrinterSearchCallback> mPrinterSearchCallback = null;
     private WeakReference<PrintersCallback> mPrintersCallback = null;
     private WeakReference<UpdateStatusCallback> mUpdateStatusCallback = null;
     private Timer mUpdateStatusTimer = null;
     private int mDefaultPrintId = EMPTY_ID;
-    private DatabaseManager mDatabaseManager = null;
+    private final DatabaseManager mDatabaseManager;
 
     /**
      * @brief PrinterManager Constructor.
@@ -77,7 +77,7 @@ public class PrinterManager implements SNMPManagerCallback {
             databaseManager = new DatabaseManager(context);
         }
         mDatabaseManager = databaseManager;
-        mPrinterList = new ArrayList<Printer>();
+        mPrinterList = new ArrayList<>();
         mSNMPManager = new SNMPManager();
         mSNMPManager.setCallback(this);
     }
@@ -328,7 +328,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * @retval false Save to Database has failed
      */
     public boolean removePrinter(Printer printer) {
-        boolean ret = false;
+        boolean ret;
         if (printer == null) {
             return false;
         }
@@ -423,7 +423,7 @@ public class PrinterManager implements SNMPManagerCallback {
         if (portSettings == null) {
             return false;
         }
-        boolean ret = false;
+        boolean ret;
         ContentValues cv = new ContentValues();
         cv.put(KeyConstants.KEY_SQL_PRINTER_PORT, portSettings.ordinal());
         ret = mDatabaseManager.update(KeyConstants.KEY_SQL_PRINTER_TABLE, cv, KeyConstants.KEY_SQL_PRINTER_ID + "=?", String.valueOf(printerId));
@@ -520,7 +520,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * @param printerSearchCallback Printer search callback function
      */
     public void setPrinterSearchCallback(PrinterSearchCallback printerSearchCallback) {
-        mPrinterSearchCallback = new WeakReference<PrinterSearchCallback>(printerSearchCallback);
+        mPrinterSearchCallback = new WeakReference<>(printerSearchCallback);
     }
     
     /**
@@ -531,7 +531,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * @param printersCallback Printers screen callback function
      */
     public void setPrintersCallback(PrintersCallback printersCallback) {
-        mPrintersCallback = new WeakReference<PrintersCallback>(printersCallback);
+        mPrintersCallback = new WeakReference<>(printersCallback);
     }
     
     /**
@@ -542,7 +542,7 @@ public class PrinterManager implements SNMPManagerCallback {
      * @param updateStatusCallback Update online status callback function
      */
     public void setUpdateStatusCallback(UpdateStatusCallback updateStatusCallback) {
-        mUpdateStatusCallback = new WeakReference<UpdateStatusCallback>(updateStatusCallback);
+        mUpdateStatusCallback = new WeakReference<>(updateStatusCallback);
     }
     
     /**
@@ -565,13 +565,13 @@ public class PrinterManager implements SNMPManagerCallback {
      * @retval false Device is off-line
      */
     public boolean isOnline(String ipAddress) {
-        InetAddress inetIpAddress = null;
+        InetAddress inetIpAddress;
         try {
             if (ipAddress == null) {
                 return false;
             }
             if (NetUtils.isIPv6Address(ipAddress)) {
-                return NetUtils.connectToIpv6Address(ipAddress, inetIpAddress);
+                return NetUtils.connectToIpv6Address(ipAddress, null);
             } else {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                     return NetUtils.connectToIpv4Address(ipAddress);
@@ -734,7 +734,7 @@ public class PrinterManager implements SNMPManagerCallback {
     private boolean setPrinterId(Printer printer) {
         Cursor cursor = mDatabaseManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
                 + KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] { printer.getName(), printer.getIpAddress() }, null, null, null);
-        boolean ret = false;
+        boolean ret;
                
         ret = getIdFromCursor(cursor, printer);
         if (ret) {
@@ -823,14 +823,14 @@ public class PrinterManager implements SNMPManagerCallback {
          * 
          * @param printer Printer object
          */
-        public void onPrinterAdd(Printer printer);
+        void onPrinterAdd(Printer printer);
         
         /**
          * @brief On Search End callback. <br>
          *
          * Callback called at the end of Printer Search
          */
-        public void onSearchEnd();
+        void onSearchEnd();
     }
     
     // ================================================================================
@@ -851,7 +851,7 @@ public class PrinterManager implements SNMPManagerCallback {
          * @param printer Printer object
          * @param isOnline Printer online status            
          */
-        public void onAddedNewPrinter(Printer printer, boolean isOnline);
+        void onAddedNewPrinter(Printer printer, boolean isOnline);
     }
     
     // ================================================================================
@@ -869,7 +869,7 @@ public class PrinterManager implements SNMPManagerCallback {
         /**
          * @brief Callback to update the online status
          */
-        public void updateOnlineStatus();
+        void updateOnlineStatus();
     }
     
     // ================================================================================
@@ -884,14 +884,14 @@ public class PrinterManager implements SNMPManagerCallback {
      * AsyncTask that updates changes the online status image.
      */
     class UpdateOnlineStatusTask extends BaseTask<Object, Boolean> {
-        private WeakReference<View> mViewRef = null;
-        private String mIpAddress = null;
+        private final WeakReference<View> mViewRef;
+        private final String mIpAddress;
         
         /**
          * @brief Instantiate UpdateOnlineStatusTask.
          */
         public UpdateOnlineStatusTask(View view, String ipAddress) {
-            mViewRef = new WeakReference<View>(view);
+            mViewRef = new WeakReference<>(view);
             mIpAddress = ipAddress;
         }
         

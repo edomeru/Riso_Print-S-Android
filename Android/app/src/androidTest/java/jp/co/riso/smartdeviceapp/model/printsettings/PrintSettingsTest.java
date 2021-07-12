@@ -201,7 +201,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
     // must have default values
     public void testConstructor_PrinterIdValid() {
-        int printerId = -1;
+        int printerId;
 
         DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.getAppContext());
 
@@ -432,7 +432,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testSavePrintSettingToDb() {
-        int printerId = -1;
+        int printerId;
 
         DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.getAppContext());
 

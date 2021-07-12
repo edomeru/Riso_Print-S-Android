@@ -75,11 +75,11 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {        
-        mPrinterName = (TextView) view.findViewById(R.id.inputPrinterName);
-        mIpAddress = (TextView) view.findViewById(R.id.inputIpAddress);
-        mPort = (Spinner) view.findViewById(R.id.inputPort);
+        mPrinterName = view.findViewById(R.id.inputPrinterName);
+        mIpAddress = view.findViewById(R.id.inputIpAddress);
+        mPort = view.findViewById(R.id.inputPort);
         mPort.setOnItemSelectedListener(this);
-        mDefaultPrinter = (Spinner) view.findViewById(R.id.defaultPrinter);
+        mDefaultPrinter = view.findViewById(R.id.defaultPrinter);
         mDefaultPrinter.setOnItemSelectedListener(this);
 
         if (savedInstanceState != null) {
@@ -124,7 +124,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printer_info);
 
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_print_settings_button, R.drawable.selector_actionbar_printerinfo, this);
@@ -214,12 +214,11 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
                         setIconState(v.getId(), true);
                         mPrintSettingsFragment = null;
                         
-                        if (mPrintSettingsFragment == null) {
-                            FragmentTransaction ft = fm.beginTransaction();
-                            mPrintSettingsFragment = new PrintSettingsFragment();
-                            ft.replace(R.id.rightLayout, mPrintSettingsFragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
-                            ft.commit();
-                        }
+                        FragmentTransaction ft = fm.beginTransaction();
+                        mPrintSettingsFragment = new PrintSettingsFragment();
+                        ft.replace(R.id.rightLayout, mPrintSettingsFragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
+                        ft.commit();
+
                         mPrintSettingsFragment.setPrinterId(mPrinter.getId());
                         // use new print settings retrieved from the database
                         mPrintSettingsFragment.setPrintSettings(new PrintSettings(mPrinter.getId(), mPrinter.getPrinterType()));

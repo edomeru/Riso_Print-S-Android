@@ -52,7 +52,7 @@ public class Pagination {
         this.mSpacingMult = spacingMult;
         this.mSpacingAdd = spacingAdd;
         this.mIncludePad = includePad;
-        this.mPages = new ArrayList<CharSequence>();
+        this.mPages = new ArrayList<>();
 
         layout();
     }

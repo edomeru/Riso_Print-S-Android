@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
  * Data represented by \<group\> tag in XML.
  */
 public class Group extends XmlNode {
-    private List<Setting> mSettings;
+    private final List<Setting> mSettings;
     
     /**
      * @brief Creates a Group instance.
@@ -32,7 +32,7 @@ public class Group extends XmlNode {
     public Group(Node groupNode) {
         super(groupNode);
         
-        mSettings = new ArrayList<Setting>();
+        mSettings = new ArrayList<>();
 
         NodeList settingsList = groupNode.getChildNodes();
         for (int i = 1; i < settingsList.getLength(); i += 2) {

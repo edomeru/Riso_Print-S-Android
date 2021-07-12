@@ -38,7 +38,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     private static final String INITIALIZE_SQL = "db/initializeDB.sql"; // for testing only
     
-    private Context mContext;
+    private final Context mContext;
     
     /**
      * @brief Creates a DatabaseManager instance.
@@ -85,7 +85,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                         try {
                             db.execSQL(sql);
                         } catch (SQLException e) {
-                            continue;
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -119,11 +119,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String sqlString = AppUtils.getFileContentsFromAssets(mContext, sqlScript);
         String[] separated = sqlString.split(";");
 
-        for (int i = 0; i < separated.length; i++) {
+        for (String s : separated) {
             try {
-                db.execSQL(separated[i]);
+                db.execSQL(s);
             } catch (SQLException e) {
-                continue;
+                e.printStackTrace();
             }
         }
     }
@@ -246,7 +246,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         int rowsNum = 0;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            String whereArgs[] = null;
+            String[] whereArgs = null;
             
             if (whereArg != null && !whereArg.isEmpty()) {
                 whereArgs = new String[] { whereArg };
@@ -301,7 +301,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @retval false Delete has failed.
      */
     public boolean delete(String table, String whereClause, String whereArg) {
-        String whereArgs[] = null;
+        String[] whereArgs = null;
         if (whereArg != null && !whereArg.isEmpty()) {
             whereArgs = new String[] { whereArg };
         }

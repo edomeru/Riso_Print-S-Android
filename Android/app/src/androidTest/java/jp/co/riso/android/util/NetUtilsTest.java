@@ -14,7 +14,6 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.Context;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>  {
@@ -263,24 +262,24 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testIsIPv4Address_ValidIpv4Address() {
-        boolean isIpV4Address = false;
+        boolean isIpV4Address;
 
-        for (int i = 0; i < IPv4_VALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4Address(IPv4_VALID_ADDRESS[i]);
+        for (String iPv4_valid_address : IPv4_VALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4Address(iPv4_valid_address);
             assertEquals(true, isIpV4Address);
         }
     }
 
     public void testIsIPv4Address_InvalidIpv4Address() {
-        boolean isIpV4Address = false;
+        boolean isIpV4Address;
 
-        for (int i = 0; i < IPV4_INVALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4Address(IPV4_INVALID_ADDRESS[i]);
+        for (String ipv4_invalid_address : IPV4_INVALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4Address(ipv4_invalid_address);
             assertEquals(false, isIpV4Address);
         }
 
-        for (int i = 0; i < IPv6_VALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4Address(IPv6_VALID_ADDRESS[i]);
+        for (String iPv6_valid_address : IPv6_VALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4Address(iPv6_valid_address);
             assertEquals(false, isIpV4Address);
         }
     }
@@ -298,27 +297,27 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testIsIPv4MulticastAddress_ValidIpv4MulticastAddress() {
-        boolean isIpV4Address = false;
+        boolean isIpV4Address;
 
-        for (int i = 0; i < IPv4_MULTICAST_VALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4MulticastAddress(IPv4_MULTICAST_VALID_ADDRESS[i]);
+        for (String iPv4_multicast_valid_address : IPv4_MULTICAST_VALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(iPv4_multicast_valid_address);
             assertEquals(true, isIpV4Address);
         }
     }
 
     public void testIsIPv4MulticastAddress_InvalidIpv4MulticastAddress() {
-        boolean isIpV4Address = true;
+        boolean isIpV4Address;
 
-        for (int i = 0; i < IPv4_MULTICAST_INVALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4MulticastAddress(IPv4_MULTICAST_INVALID_ADDRESS[i]);
+        for (String iPv4_multicast_invalid_address : IPv4_MULTICAST_INVALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(iPv4_multicast_invalid_address);
             assertEquals(false, isIpV4Address);
         }
-        for (int i = 0; i < IPV4_INVALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4MulticastAddress(IPV4_INVALID_ADDRESS[i]);
+        for (String ipv4_invalid_address : IPV4_INVALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(ipv4_invalid_address);
             assertEquals(false, isIpV4Address);
         }
-        for (int i = 0; i < IPv6_VALID_ADDRESS.length; i++) {
-            isIpV4Address = NetUtils.isIPv4MulticastAddress(IPv6_VALID_ADDRESS[i]);
+        for (String iPv6_valid_address : IPv6_VALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(iPv6_valid_address);
             assertEquals(false, isIpV4Address);
         }
     }
@@ -336,24 +335,24 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testIsIPv6Address_ValidIpv6Address() {
-        boolean isIpV6Address = false;
+        boolean isIpV6Address;
 
-        for (int i = 0; i < IPv6_VALID_ADDRESS.length; i++) {
-            isIpV6Address = NetUtils.isIPv6Address(IPv6_VALID_ADDRESS[i]);
+        for (String iPv6_valid_address : IPv6_VALID_ADDRESS) {
+            isIpV6Address = NetUtils.isIPv6Address(iPv6_valid_address);
             assertEquals(true, isIpV6Address);
         }
     }
 
     public void testIsIPv6Address_InvalidIpv6Address() {
-        boolean isIpV6Address = true;
+        boolean isIpV6Address;
 
-        for (int i = 0; i < IPv6_INVALID_ADDRESS.length; i++) {
-            isIpV6Address = NetUtils.isIPv6Address(IPv6_INVALID_ADDRESS[i]);
+        for (String iPv6_invalid_address : IPv6_INVALID_ADDRESS) {
+            isIpV6Address = NetUtils.isIPv6Address(iPv6_invalid_address);
             assertEquals(false, isIpV6Address);
         }
 
-        for (int i = 0; i < IPv4_VALID_ADDRESS.length; i++) {
-            isIpV6Address = NetUtils.isIPv6Address(IPv4_VALID_ADDRESS[i]);
+        for (String iPv4_valid_address : IPv4_VALID_ADDRESS) {
+            isIpV6Address = NetUtils.isIPv6Address(iPv4_valid_address);
             assertEquals(false, isIpV6Address);
         }
     }
@@ -415,16 +414,14 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 
     public void testConnectToIpv4Address_OfflineIpv4Address() {
         try {
-            boolean isReachable = true;
+            boolean isReachable;
 
             isReachable = NetUtils.connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS);
             assertEquals(false, isReachable);
 
             mSignal.await(500, TimeUnit.MILLISECONDS);
 
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
+        } catch (NullPointerException | InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -434,9 +431,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             NetUtils.connectToIpv4Address(null);
 
             mSignal.await(500, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
+        } catch (NullPointerException | InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -444,7 +439,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testConnectToIpv4Address_WifiDisabled() {
         try {
             turnWifi(false);
-            boolean isReachable = true;
+            boolean isReachable;
 
             isReachable = NetUtils.connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS);
             assertEquals(false, isReachable);
@@ -461,7 +456,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
 
     public void testConnectToIpv6Address_OfflineIpv6Address() {
         try {
-            boolean isReachable = true;
+            boolean isReachable;
             InetAddress inetIpAddress = InetAddress.getByName(IPV6_STD_PRINTER_ADDRESS);
 
             isReachable = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS, inetIpAddress);
@@ -473,11 +468,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             assertEquals(false, isReachable);
             
             mSignal.await(500, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
-            fail(); // Error should not be thrown
-        } catch (UnknownHostException e) {
+        } catch (NullPointerException | UnknownHostException | InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -557,11 +548,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             NetUtils.connectToIpv6Address(null, inetIpAddress);
             
             mSignal.await(500, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (UnknownHostException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
+        } catch (NullPointerException | InterruptedException | UnknownHostException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -573,9 +560,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
             NetUtils.connectToIpv6Address(ipv6Addr, null);
             
             mSignal.await(500, TimeUnit.MILLISECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
-        } catch (InterruptedException e) {
+        } catch (NullPointerException | InterruptedException e) {
             fail(); // Error should not be thrown
         }
     }
@@ -583,7 +568,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     public void testConnectToIpv6Address_WifiDisabled() {
         try {
             turnWifi(false);
-            boolean isReachable = true;
+            boolean isReachable;
 
             isReachable = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS, null);
             assertEquals(false, isReachable);
@@ -599,7 +584,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testTrimZeroes_ipV6() {
-        String ipV6Addr = null;
+        String ipV6Addr;
         for (int i = 0; i < IPv6_TRIMMED_VALID_ADDRESS.length; i++) {
             ipV6Addr = IPv6_TRIMMED_VALID_ADDRESS[i];
 
@@ -608,7 +593,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testTrimZeroes_ipV4() {
-        String ipV4Addr = null;
+        String ipV4Addr;
         for (int i = 0; i < IPv4_TRIMMED_VALID_ADDRESS.length; i++) {
             ipV4Addr = IPv4_TRIMMED_VALID_ADDRESS[i];
 
@@ -625,7 +610,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
 
     public void testValidateIpAddress_ipV6() {
-        String ipV6Addr = null;
+        String ipV6Addr;
         for (int i = 0; i < IPv6_TRIMMED_VALID_ADDRESS.length; i++) {
             ipV6Addr = IPv6_TRIMMED_VALID_ADDRESS[i];
 
@@ -634,7 +619,7 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testValidateIpAddress_ipV4() {
-        String ipV4Addr = null;
+        String ipV4Addr;
         for (int i = 0; i < IPv4_TRIMMED_VALID_ADDRESS.length; i++) {
             ipV4Addr = IPv4_TRIMMED_VALID_ADDRESS[i];
 
@@ -647,8 +632,8 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
 
     public void testValidateIpAddress_invalid() {
-        for (int i = 0; i < IPv6_INVALID_ADDRESS.length; i++) {
-            assertNull(NetUtils.validateIpAddress(IPv6_INVALID_ADDRESS[i]));
+        for (String iPv6_invalid_address : IPv6_INVALID_ADDRESS) {
+            assertNull(NetUtils.validateIpAddress(iPv6_invalid_address));
         }
     }
     

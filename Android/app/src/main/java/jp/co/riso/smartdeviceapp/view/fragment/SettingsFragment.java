@@ -48,7 +48,7 @@ public class SettingsFragment extends BaseFragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         InputFilter[] filterArray;
         
-        EditText editText = (EditText) view.findViewById(R.id.loginIdEditText);
+        EditText editText = view.findViewById(R.id.loginIdEditText);
         
         editText.setActivated(true);
         editText.setText(prefs.getString(AppConstants.PREF_KEY_LOGIN_ID, AppConstants.PREF_DEFAULT_LOGIN_ID));
@@ -64,7 +64,7 @@ public class SettingsFragment extends BaseFragment {
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_settings);
         
         addActionMenuButton(view);
@@ -119,9 +119,9 @@ public class SettingsFragment extends BaseFragment {
      * 
      * @brief Class for monitoring changes in text values
      */
-    private class SharedPreferenceTextWatcher implements TextWatcher {
-        private Context mContext;
-        private String mPrefKey;
+    private static class SharedPreferenceTextWatcher implements TextWatcher {
+        private final Context mContext;
+        private final String mPrefKey;
         
         /**
          * @brief Constructor.

@@ -16,13 +16,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 public abstract class BaseTask<T, R> {
-    private static ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
     private FutureTask<Void> mFuture = null;
     private CountDownLatch mLatch = null;
     private Boolean mCancelled = false;
 
     @SuppressWarnings("unchecked")     // R is defined in BaseTask implementation
-    private ArrayList<R> mResult = new ArrayList();
+    private final ArrayList<R> mResult = new ArrayList();
 
     public Boolean isCancelled() {
         return mCancelled;

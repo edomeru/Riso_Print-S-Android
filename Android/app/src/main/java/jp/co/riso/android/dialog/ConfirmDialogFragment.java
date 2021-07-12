@@ -172,11 +172,11 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         /**
          * @brief Called when positive button is clicked
          */
-        public void onConfirm();
+        void onConfirm();
 
         /**
          * @brief Called when negative button is clicked
          */
-        public void onCancel();
+        void onCancel();
     }
 }

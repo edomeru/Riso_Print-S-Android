@@ -20,7 +20,7 @@ import android.text.Spanned;
  * @brief EditText filter for Invalid characters
  */
 public class InvalidCharacterFilter implements InputFilter {
-    private Set<Character> mCharSet;
+    private final Set<Character> mCharSet;
     
     /**
      * @brief Constructor for invalid characters input filter
@@ -28,7 +28,7 @@ public class InvalidCharacterFilter implements InputFilter {
      * @param invalidChars Invalid characters in string format
      */
     public InvalidCharacterFilter(String invalidChars) {
-        mCharSet = new HashSet<Character>();
+        mCharSet = new HashSet<>();
         if (invalidChars == null) {
             return;
         }

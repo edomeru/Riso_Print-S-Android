@@ -150,12 +150,10 @@ public class NetUtils {
             
             if (ipAddress.contains("%")) {
                 String[] newIpString = ipAddress.split("%");
-                if (newIpString != null) {
-                    ip = newIpString[0];
-                    if (IPV6_INTERFACE_NAMES.contains(newIpString[1])) {
-                        inetIpAddress = InetAddress.getByName(ipAddress);
-                        return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
-                    }
+                ip = newIpString[0];
+                if (IPV6_INTERFACE_NAMES.contains(newIpString[1])) {
+                    inetIpAddress = InetAddress.getByName(ipAddress);
+                    return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
                 }
             }
             inetIpAddress = InetAddress.getByName(ip);
@@ -267,10 +265,10 @@ public class NetUtils {
         if (ipAddress == null) {
             return "";
         }
-        List<String> ipv6part = null;
+        List<String> ipv6part;
         String ipv4Addr = null;
         StringBuilder ipAddrBuilder = null;
-        String newIpAddress = null;
+        String newIpAddress;
         
         if (isIPv4Address(ipAddress)) {
             ipAddrBuilder = new StringBuilder();
@@ -278,7 +276,7 @@ public class NetUtils {
         }
         if (isIPv6Address(ipAddress)) {
             ipAddrBuilder = new StringBuilder();
-            ipv6part = new ArrayList<String>(Arrays.asList(ipAddress.split("\\:")));
+            ipv6part = new ArrayList<>(Arrays.asList(ipAddress.split("\\:")));
             if (isIPv6Ipv4DerivedAddress(ipAddress)) {
                 ipv4Addr = ipv6part.get(ipv6part.size() - 1);
                 ipv6part.remove(ipv4Addr);
@@ -451,7 +449,7 @@ public class NetUtils {
     private static List<String> initializeIpv6InterfaceList() {
         String localInterface = "wlan0";
         
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         try {
             List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (int i = 0; i < interfaces.size(); i++) {

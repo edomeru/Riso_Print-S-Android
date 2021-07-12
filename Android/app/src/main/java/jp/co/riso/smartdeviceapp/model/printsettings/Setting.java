@@ -33,7 +33,7 @@ public class Setting extends XmlNode {
     public static final int TYPE_BOOLEAN = 1; ///< boolean attribute type
     public static final int TYPE_NUMERIC = 2; ///< numeric attribute type
     
-    private List<Option> mOptions;
+    private final List<Option> mOptions;
     
     /**
      * @brief Creates a Setting instance.
@@ -43,7 +43,7 @@ public class Setting extends XmlNode {
     public Setting(Node settingNode) {
         super(settingNode);
         
-        mOptions = new ArrayList<Option>();
+        mOptions = new ArrayList<>();
         
         NodeList optionsList = settingNode.getChildNodes();
         for (int i = 1; i < optionsList.getLength(); i += 2) {

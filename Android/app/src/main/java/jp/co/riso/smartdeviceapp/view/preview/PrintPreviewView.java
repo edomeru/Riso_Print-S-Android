@@ -85,7 +85,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     
     private CurlView mCurlView = null;
     private PDFFileManager mPdfManager = null;
-    private PDFPageProvider mPdfPageProvider = new PDFPageProvider();
+    private final PDFPageProvider mPdfPageProvider = new PDFPageProvider();
     private PrintSettings mPrintSettings = null;
     private LruCache<String, Bitmap> mBmpCache = null;
     
@@ -112,8 +112,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
     private float mZoomLevel = BASE_ZOOM_LEVEL;
     
     private int mPtrIdx = INVALID_IDX;
-    private PointF mPtrDownPos = new PointF();
-    private PointF mPtrLastPos = new PointF();
+    private final PointF mPtrDownPos = new PointF();
+    private final PointF mPtrLastPos = new PointF();
     
     /**
      * @brief Constructs a new PrintPreviewView with a Context object
@@ -516,7 +516,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      */
     protected int[] getCurlViewDimensions(int screenWidth, int screenHeight) {
         // Compute margins based on the paper size in preview settings.
-        float paperDisplaySize[] = getPaperDisplaySize();
+        float[] paperDisplaySize = getPaperDisplaySize();
         
         // Adjust display on screen.
         if (mCurlView.getViewMode() == CurlView.SHOW_TWO_PAGES) {
@@ -543,7 +543,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      */
     protected int[] getPaperDimensions(int screenWidth, int screenHeight) {
         // Compute margins based on the paper size in preview settings.
-        float paperDisplaySize[] = getPaperDisplaySize();
+        float[] paperDisplaySize = getPaperDisplaySize();
         
         return AppUtils.getFitToAspectRatioSize(paperDisplaySize[0], paperDisplaySize[1], screenWidth, screenHeight);
     }
@@ -647,7 +647,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @retval false Should display portrait
      */
     private boolean shouldDisplayLandscape() {
-        boolean flipToLandscape = false;
+        boolean flipToLandscape;
         
         if (AppConstants.USE_PDF_ORIENTATION) {
             flipToLandscape = mPdfManager.isPDFLandscape();
@@ -806,8 +806,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         
         if (mPrintSettings.isBooklet()) {
             if (!shouldDisplayLandscape()) {
-                bindPosition = CurlView.BIND_LEFT;
-                
                 if (mPrintSettings.getBookletLayout() == BookletLayout.REVERSE) {
                     bindPosition = CurlView.BIND_RIGHT;
                 }
@@ -821,7 +819,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         } else {
             switch (mPrintSettings.getFinishingSide()) {
                 case LEFT:
-                    bindPosition = CurlView.BIND_LEFT;
                     break;
                 case RIGHT:
                     bindPosition = CurlView.BIND_RIGHT;
@@ -852,7 +849,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @retval false Not flipped
      */
     private boolean isVerticalFlip() {
-        boolean verticalFlip = true;
+        boolean verticalFlip;
         
         if (mPrintSettings.isBooklet()) {
             verticalFlip = shouldDisplayLandscape();
@@ -934,7 +931,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             pageControlSize = mListener.getControlsHeight();
         }
 
-        int newDimensions[] = getCurlViewDimensions(w - (marginSize * 2), h - (marginSize * 2) - pageControlSize);
+        int[] newDimensions = getCurlViewDimensions(w - (marginSize * 2), h - (marginSize * 2) - pageControlSize);
         
         float lrMargin = ((w - newDimensions[0]) / (w * 2.0f));
         float tbMargin = (((h - pageControlSize) - newDimensions[1]) / (h * 2.0f));
@@ -1120,7 +1117,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             
             boolean GET_FROM_CACHE = true;
             
-            Bitmap cachedPages[] = null;
+            Bitmap[] cachedPages;
             if (GET_FROM_CACHE) {
                 cachedPages = getBitmapsFromCacheForPage(index);
             } else {
@@ -1157,12 +1154,12 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
      * @brief Background task which performs rendering of PDF pages.
      */
     private class PDFRenderTask extends BaseTask<Void, Void> {
-        private WeakReference<CurlPage> mCurlPageRef;
-        private WeakReference<Object> mHandlerRef;
-        private int mWidth;
-        private int mHeight;
-        private int mIndex;
-        private Bitmap mRenderBmps[];
+        private final WeakReference<CurlPage> mCurlPageRef;
+        private final WeakReference<Object> mHandlerRef;
+        private final int mWidth;
+        private final int mHeight;
+        private final int mIndex;
+        private Bitmap[] mRenderBmps;
         
         /**
          * @brief Initializes a new PDF Render task with the supplied parameters
@@ -1174,8 +1171,8 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
          * @param handler Handler object which determines whether the page is valid or not.
          */
         public PDFRenderTask(CurlPage page, int width, int height, int index, Object handler) {
-            mCurlPageRef = new WeakReference<CurlPage>(page);
-            mHandlerRef = new WeakReference<Object>(handler);
+            mCurlPageRef = new WeakReference<>(page);
+            mHandlerRef = new WeakReference<>(handler);
             mWidth = width;
             mHeight = height;
             mIndex = index;
@@ -1404,7 +1401,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             // get page then draw in bitmap
             Canvas canvas = new Canvas(bmp);
             
-            int pagesDisplayed = getPagesPerSheet() * (getFacesPerPaper() / 2);
+            //int pagesDisplayed = getPagesPerSheet() * (getFacesPerPaper() / 2);
             
             int paperWidth = bmp.getWidth();
             int paperHeight = bmp.getHeight();
@@ -1419,7 +1416,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             int pdfPageWidth = paperWidth / getColsPerSheet();
             int pdfPageHeight = paperHeight / getRowsPerSheet();
             
-            int beginPos[] = getBeginPositions(paperWidth, paperHeight, pdfPageWidth, pdfPageHeight);
+            int[] beginPos = getBeginPositions(paperWidth, paperHeight, pdfPageWidth, pdfPageHeight);
             
             // adjust beginX and beginY based on margins
             beginPos[0] += convertDimension(mMarginLeft, bmp.getWidth(), bmp.getHeight());
@@ -1445,13 +1442,13 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
             
             // start from right
             if (!leftToRight) {
-                int acualWidthPixels = (getColsPerSheet() * pdfPageWidth);
-                beginPos[0] = beginPos[0] + acualWidthPixels - pdfPageWidth;
+                int actualWidthPixels = (getColsPerSheet() * pdfPageWidth);
+                beginPos[0] = beginPos[0] + actualWidthPixels - pdfPageWidth;
             }
             
             if (!topToBottom) {
-                int acualHeightPixels = (getRowsPerSheet() * pdfPageHeight);
-                beginPos[1] = beginPos[1] + acualHeightPixels - pdfPageHeight;
+                int actualHeightPixels = (getRowsPerSheet() * pdfPageHeight);
+                beginPos[1] = beginPos[1] + actualHeightPixels - pdfPageHeight;
             }
             
             
@@ -1498,7 +1495,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                 Bitmap page = mPdfManager.getPageBitmap(curIndex, scale, flipX, flipY);
 
                 if (page != null) {
-                    int dim[] = new int[] {
+                    int[] dim = new int[] {
                             convertDimension(mPdfManager.getPageWidth(curIndex), canvas.getWidth(), canvas.getHeight()),
                             convertDimension(mPdfManager.getPageHeight(curIndex), canvas.getWidth(), canvas.getHeight())
                        };
@@ -1516,7 +1513,6 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
                     boolean shouldRotate = ((right - left) > (bottom - top)) != (mPdfManager.getPageWidth(curIndex) > mPdfManager.getPageHeight(curIndex));
                     
                     if (shouldRotate) {
-                        x = left;
                         y = bottom;
                         rotate = -90.0f;
                         if (flipX) {
@@ -1616,7 +1612,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
          * @return Front and back bitmaps
          */
         private Bitmap[] getRenderBitmaps() {
-            int dim[] = getPaperDimensions(mWidth, mHeight);
+            int[] dim = getPaperDimensions(mWidth, mHeight);
             
             Bitmap front = Bitmap.createBitmap(dim[0], dim[1], BMP_CONFIG_TEXTURE);
             Bitmap back = Bitmap.createBitmap(dim[0], dim[1], BMP_CONFIG_TEXTURE);

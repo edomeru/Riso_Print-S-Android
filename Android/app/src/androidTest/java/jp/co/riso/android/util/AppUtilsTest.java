@@ -343,7 +343,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         assertEquals(RELATIVE_PATH, localized);
     }
     
-    public void testGetLocalizedAssetRelativePath_ContexNull() {
+    public void testGetLocalizedAssetRelativePath_ContextNull() {
         String localized = AppUtils.getLocalizedAssetRelativePath(null, FOLDER, RESOURCE);
         
         assertNull(localized);
@@ -427,7 +427,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         assertEquals(FULL_PATH, localized);
     }
     
-    public void testGetLocalizedAssetFullPath_ContexNull() {
+    public void testGetLocalizedAssetFullPath_ContextNull() {
         String localized = AppUtils.getLocalizedAssetFullPath(null, FOLDER, RESOURCE);
         
         assertNull(localized);
@@ -533,47 +533,47 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
     
     //================================================================================
-    // Tests - getResourseId
+    // Tests - getResourceId
     //================================================================================
     
     public void testGetResourceId_Valid() {
-        int value = AppUtils.getResourseId("app_name", R.string.class, -1);
+        int value = AppUtils.getResourceId("app_name", R.string.class, -1);
         
         assertTrue(-1 != value);
     }
 
     public void testGetResourceId_Null() {
-        int value = AppUtils.getResourseId(null, null, -1);
+        int value = AppUtils.getResourceId(null, null, -1);
         
         assertEquals(-1, value);
     }
 
     public void testGetResourceId_NullVariableName() {
-        int value = AppUtils.getResourseId(null, R.string.class, -1);
+        int value = AppUtils.getResourceId(null, R.string.class, -1);
         
         assertEquals(-1, value);
     }
 
     public void testGetResourceId_NullClass() {
-        int value = AppUtils.getResourseId("app_name", null, -1);
+        int value = AppUtils.getResourceId("app_name", null, -1);
         
         assertEquals(-1, value);
     }
 
     public void testGetResourceId_InvalidClass() {
-        int value = AppUtils.getResourseId("app_name", this.getClass(), -1);
+        int value = AppUtils.getResourceId("app_name", this.getClass(), -1);
         
         assertEquals(-1, value);
     }
 
     public void testGetResourceId_InvalidAccess() {
-        int value = AppUtils.getResourseId("app_name", MockClass.class, -1);
+        int value = AppUtils.getResourceId("app_name", MockClass.class, -1);
         
         assertEquals(-1, value);
     }
 
     public void testGetResourceId_InvalidArgumentAccess() {
-        int value = AppUtils.getResourseId("app_name_2", MockClass.class, -1);
+        int value = AppUtils.getResourceId("app_name_2", MockClass.class, -1);
         
         assertEquals(-1, value);
     }
@@ -589,7 +589,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         int destWidth = 80;
         int destHeight = 80;
         
-        int newDimensions[] = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
+        int[] newDimensions = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
         
         assertTrue(newDimensions.length == 2);
         assertEquals(newDimensions[0] / (float)newDimensions[1], srcWidth / srcHeight, 0.0001f);
@@ -604,7 +604,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         int destWidth = 80;
         int destHeight = 80;
         
-        int newDimensions[] = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
+        int[] newDimensions = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
 
         assertTrue(newDimensions.length == 2);
         assertEquals(newDimensions[0] / (float)newDimensions[1], srcWidth / srcHeight, 0.0001f);
@@ -619,7 +619,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         int destWidth = 80;
         int destHeight = 80;
         
-        int newDimensions[] = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
+        int[] newDimensions = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
 
         assertTrue(newDimensions.length == 2);
         assertEquals(newDimensions[0] / (float)newDimensions[1], srcWidth / srcHeight, 0.0001f);
@@ -634,7 +634,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
         int destWidth = 80;
         int destHeight = 80;
         
-        int newDimensions[] = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
+        int[] newDimensions = AppUtils.getFitToAspectRatioSize(srcWidth, srcHeight, destWidth, destHeight);
         
         assertTrue(newDimensions.length == 2);
         assertEquals(newDimensions[0] / (float)newDimensions[1], srcWidth / srcHeight, 0.0001f);
@@ -647,7 +647,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     //================================================================================
     
     public void testGetNextIntegerMultiple_Valid() {
-        int val = 0;
+        int val;
 
         val = AppUtils.getNextIntegerMultiple(12, 2);
         assertEquals(12, val);
@@ -666,7 +666,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
     
     public void testGetNextIntegerMultiple_Invalid() {
-        int val = 0;
+        int val;
         
         val = AppUtils.getNextIntegerMultiple(-3, 0);
         assertEquals(-3, val);

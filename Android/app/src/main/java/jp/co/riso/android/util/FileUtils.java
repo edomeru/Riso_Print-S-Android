@@ -76,11 +76,8 @@ public class FileUtils {
         out.close();
     }
 
-
     public static void delete(File src) throws IOException {
-
         src.delete();
-
     }
 
     /**
@@ -119,12 +116,10 @@ public class FileUtils {
 
         if (context != null && uri != null && uri.getScheme() != null) {
             if (uri.getScheme().equals("content")) {
-                Cursor cursor = null;
-                try {
+                try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                     // Content resolver query can return a SecurityException
                     // E.g.: When there is a PDF from image/text in PrintPreview, then suddenly user Denied Storage from Settings
                     // PrintPreviewFragment will repeat conversion using the same Intent data, but this time the permission is not granted anymore
-                    cursor = context.getContentResolver().query(uri, null, null, null, null);
                     if (cursor != null && cursor.moveToFirst()) {
                         int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                         if (index >= 0) {
@@ -133,10 +128,6 @@ public class FileUtils {
                     }
                 } catch (SecurityException e) {
                     throw new SecurityException();
-                } finally {
-                    if (cursor != null) {
-                        cursor.close();
-                    }
                 }
             }
             if (result == null && uri.getPath() != null) {
@@ -170,14 +161,9 @@ public class FileUtils {
 
         if (context != null && uri != null && uri.getScheme() != null) {
             if (uri.getScheme().equals("content")) {
-                Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-                try {
+                try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                     if (cursor != null && cursor.moveToFirst()) {
                         filesize = cursor.getInt(cursor.getColumnIndex(OpenableColumns.SIZE));
-                    }
-                } finally {
-                    if (cursor != null) {
-                        cursor.close();
                     }
                 }
             } else if (uri.getPath() != null){

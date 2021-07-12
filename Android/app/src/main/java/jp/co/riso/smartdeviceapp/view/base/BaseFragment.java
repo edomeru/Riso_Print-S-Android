@@ -247,7 +247,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         button.setOnClickListener(listener);
         
         int width = ((BaseActivity) getActivity()).getActionBarHeight();
-        ViewGroup layout = (ViewGroup) v.findViewById(layoutId);
+        ViewGroup layout = v.findViewById(layoutId);
         layout.addView(button, width, LayoutParams.MATCH_PARENT);
 
         return button;

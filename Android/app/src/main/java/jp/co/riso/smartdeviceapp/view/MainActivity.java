@@ -95,12 +95,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         setContentView(R.layout.activity_main);
         
-        mDrawerLayout = (SDADrawerLayout) findViewById(R.id.drawerLayout);
+        mDrawerLayout = findViewById(R.id.drawerLayout);
         mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         
-        mMainLayout = (ViewGroup) findViewById(R.id.mainLayout);
-        mLeftLayout = (ViewGroup) findViewById(R.id.leftLayout);
-        mRightLayout = (ViewGroup) findViewById(R.id.rightLayout);
+        mMainLayout = findViewById(R.id.mainLayout);
+        mLeftLayout = findViewById(R.id.leftLayout);
+        mRightLayout = findViewById(R.id.rightLayout);
         
         mLeftLayout.getLayoutParams().width = getDrawerWidth();
         mRightLayout.getLayoutParams().width = getDrawerWidth();

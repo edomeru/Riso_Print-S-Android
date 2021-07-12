@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
  * @brief Manager responsible for SNMP operations. 
  */
 public class SNMPManager {
+    // Required for JNI
     public long mContext = 0;
     private WeakReference<SNMPManagerCallback> mCallbackRef = null;
     
@@ -59,7 +60,7 @@ public class SNMPManager {
      * @param callback Callback function
      */
     public void setCallback(SNMPManagerCallback callback) {
-        mCallbackRef = new WeakReference<SNMPManagerCallback>(callback);
+        mCallbackRef = new WeakReference<>(callback);
     }
     
     /**
@@ -98,7 +99,7 @@ public class SNMPManager {
          * @param manager SNMP Manager
          * @param result Result of device discovery
          */
-        public void onEndDiscovery(SNMPManager manager, int result);
+        void onEndDiscovery(SNMPManager manager, int result);
         
         /**
          * @brief Callback called when a device is found during device discovery
@@ -108,7 +109,7 @@ public class SNMPManager {
          * @param name Device Name 
          * @param capabilities Device capabilities
          */
-        public void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities);
+        void onFoundDevice(SNMPManager manager, String ipAddress, String name, boolean[] capabilities);
     }
     
     static {

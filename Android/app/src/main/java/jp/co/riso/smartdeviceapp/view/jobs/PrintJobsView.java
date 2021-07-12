@@ -39,11 +39,11 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private static final int MIN_COLUMNS = 2;
     
     private WeakReference<PrintJobsViewListener> mListenerRef;
-    private List<PrintJob> mPrintJobs = new ArrayList<PrintJob>();
-    private List<Printer> mPrinters = new ArrayList<Printer>();
-    private List<Printer> mCollapsedPrinters = new ArrayList<Printer>();
-    private List<LinearLayout> mColumns = new ArrayList<LinearLayout>();
-    private List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<PrintJobsGroupView>();
+    private List<PrintJob> mPrintJobs = new ArrayList<>();
+    private List<Printer> mPrinters = new ArrayList<>();
+    private final List<Printer> mCollapsedPrinters = new ArrayList<>();
+    private final List<LinearLayout> mColumns = new ArrayList<>();
+    private final List<PrintJobsGroupView> mPrintGroupViews = new ArrayList<>();
     private PrintJobsGroupView mPrintGroupWithDelete;
     private DisplayDeleteAnimation mDeleteAnimation;
     private PrintJobsGroupListener mGroupListener;
@@ -100,10 +100,10 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
      * @param viewListener PrintJobsViewListener
      */
     public void setData(List<PrintJob> printJobs, List<Printer> printers, PrintJobsGroupListener groupListener, PrintJobsViewListener viewListener) {
-        this.mPrintJobs = new ArrayList<PrintJob>(printJobs);
-        this.mPrinters = new ArrayList<Printer>(printers);
+        this.mPrintJobs = new ArrayList<>(printJobs);
+        this.mPrinters = new ArrayList<>(printers);
         this.mGroupListener = groupListener;
-        this.mListenerRef = new WeakReference<PrintJobsViewListener>(viewListener);
+        this.mListenerRef = new WeakReference<>(viewListener);
         reset();
     }
     
@@ -331,7 +331,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     private boolean checkIfNeedsRelayout() {
         boolean isColumnCleared = false;
         boolean isLeftCleared = false;
-        boolean childNumExceeds = false;
+        boolean childNumExceeds;
         int childrenNum = 0;
         
         for (int i = 0; i < mColumns.size(); i++) {
@@ -400,10 +400,10 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             return false;
         }
         
-        int coords[] = new int[2];
+        int[] coords = new int[2];
         boolean dragged = (mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
-        boolean contains1 = false;
-        boolean contains2 = false;
+        boolean contains1;
+        boolean contains2;
         // check self, if valid swipe don't redisplay nor remove delete button
         if (mDeleteMode) {
             mDeleteView.getLocationOnScreen(coords);
@@ -484,7 +484,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
     
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        int coords[] = new int[2];
+        int[] coords = new int[2];
         if (mDeleteMode) {
             
             if (mDeleteView != null) {
@@ -522,15 +522,14 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
                 endDelete(true);
                 return true;
             }
-            return super.onInterceptTouchEvent(ev);
         } else {
             boolean swipe = processSwipe(ev);
             
             if (swipe) {
                 return true;
             }
-            return super.onInterceptTouchEvent(ev);
         }
+        return super.onInterceptTouchEvent(ev);
     }
     
     @Override
@@ -562,7 +561,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
             }
         }
         
-        TranslateAnimation animation = null;
+        TranslateAnimation animation;
         for (int i = idx + 1; i < mColumns.get(column).getChildCount(); i++) {
             if (down) {
                 animation = new TranslateAnimation(0, 0, -totalHeight, 0);
@@ -608,7 +607,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         /**
          * @brief Called after loading initial views
          */
-        public void onLoadFinished();
+        void onLoadFinished();
     }
     
     /**

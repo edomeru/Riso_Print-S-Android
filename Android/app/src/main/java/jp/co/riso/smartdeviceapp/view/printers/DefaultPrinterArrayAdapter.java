@@ -16,7 +16,7 @@ import android.widget.TextView;
  */
 public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
 
-    private Activity activity;
+    private final Activity activity;
     
     public boolean isNoDisabled;
     
@@ -34,33 +34,27 @@ public class DefaultPrinterArrayAdapter extends ArrayAdapter<String> {
 
     @Override
     public boolean areAllItemsEnabled() {
-        if(this.isNoDisabled)
-            return false;
-        
-        return true;
+        return !this.isNoDisabled;
     }
 
     @Override
     public boolean isEnabled(int position) {
-        if(position == 1 && this.isNoDisabled)
-            return false;
-        
-        return true;
+        return ((position != 1) || !this.isNoDisabled);
     }
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        View view = (TextView)super.getDropDownView(position, convertView, parent);
+        TextView view = (TextView)super.getDropDownView(position, convertView, parent);
         
         if(isNoDisabled && position == 1)//No
         {
             view.setBackgroundColor(ContextCompat.getColor(activity, R.color.theme_light_3));
-            ((TextView)view).setTextColor(ContextCompat.getColor(activity, R.color.theme_light_4));
+            view.setTextColor(ContextCompat.getColor(activity, R.color.theme_light_4));
         }
         else
         {
             view.setBackgroundResource(R.drawable.selector_printerinfo_port);
-            ((TextView)view).setTextColor(ContextCompat.getColorStateList(activity, R.color.selector_printers_text));
+            view.setTextColor(ContextCompat.getColorStateList(activity, R.color.selector_printers_text));
         }
         
         return view;

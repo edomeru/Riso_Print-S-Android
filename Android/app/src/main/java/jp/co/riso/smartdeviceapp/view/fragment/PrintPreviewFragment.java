@@ -210,9 +210,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     ContentResolver c = this.getActivity().getContentResolver();
                     mInputStream = c.openInputStream(mIntentData);
                     mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, false);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
+                } catch (FileNotFoundException | SecurityException e) {
                     e.printStackTrace();
                 }
             }
@@ -329,7 +327,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mPrintPreviewView = (PrintPreviewView) view.findViewById(R.id.printPreviewView);
+        mPrintPreviewView = view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
         //mPrintPreviewView.setShow3Punch(isPrinterJapanese());
         mPrintPreviewView.setPrintSettings(mPrintSettings);
@@ -352,8 +350,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         mPageControls = view.findViewById(R.id.previewControls);
 
-        mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
-        mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
+        mPageLabel = mPageControls.findViewById(R.id.pageDisplayTextView);
+        mSeekBar = mPageControls.findViewById(R.id.pageSlider);
         mSeekBar.setOnSeekBarChangeListener(this);
 
         if (mCurrentPage != 0) {
@@ -366,7 +364,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
 
         mOpenInView = view.findViewById(R.id.openInView);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.pdfLoadIndicator);
+        mProgressBar = view.findViewById(R.id.pdfLoadIndicator);
 
         mProgressBar.setVisibility(View.GONE);
 
@@ -494,7 +492,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
 
         if (mPageControls != null) {
-            LinearLayout mainView = (LinearLayout) getView().findViewById(R.id.previewView);
+            LinearLayout mainView = getView().findViewById(R.id.previewView);
             mainView.removeView(mPageControls);
 
             View newView = View.inflate(getActivity(), R.layout.preview_controls, null);
@@ -506,8 +504,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mainView.addView(newView);
             mPageControls = newView;
 
-            mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
-            mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
+            mPageLabel = mPageControls.findViewById(R.id.pageDisplayTextView);
+            mSeekBar = mPageControls.findViewById(R.id.pageSlider);
             mSeekBar.setOnSeekBarChangeListener(this);
 
             if (mPageControls.getVisibility() == View.VISIBLE) {
@@ -630,7 +628,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * @param title String to be displayed in the title bar
      */
     public void setTitle(View v, String title) {
-        TextView textView = (TextView) v.findViewById(R.id.actionBarTitle);
+        TextView textView = v.findViewById(R.id.actionBarTitle);
         textView.setText(title);
     }
 
@@ -984,12 +982,10 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         // Always make new
                         PrintSettingsFragment fragment = null;// (PrintSettingsFragment)
                         // fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
-                        if (fragment == null) {
-                            FragmentTransaction ft = fm.beginTransaction();
-                            fragment = new PrintSettingsFragment();
-                            ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
-                            ft.commit();
-                        }
+                        FragmentTransaction ft = fm.beginTransaction();
+                        fragment = new PrintSettingsFragment();
+                        ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
+                        ft.commit();
 
                         fragment.setPrinterId(mPrinterId);
                         fragment.setPdfPath(mPdfManager.getPath());
@@ -1013,7 +1009,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
                 mIsPermissionDialogOpen = false; // the request returned a result hence dialog is closed
@@ -1048,8 +1044,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 }
-
-                return;
             }
         }
     }

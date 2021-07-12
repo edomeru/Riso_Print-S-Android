@@ -73,8 +73,8 @@ public class PrintSettings {
     public static final HashMap<String, List<Group>> sGroupListMap;
     public static final HashMap<String, HashMap<String, Setting>> sSettingsMaps;
     
-    private HashMap<String, Integer> mSettingValues;
-    private String mSettingMapKey;
+    private final HashMap<String, Integer> mSettingValues;
+    private final String mSettingMapKey;
     
     /**
      * @brief Creates a PrintSettings instance using default values of print settings
@@ -84,7 +84,7 @@ public class PrintSettings {
      *                    based on printer type
      */
     public PrintSettings(String printerType) {
-        mSettingValues = new HashMap<String, Integer>();
+        mSettingValues = new HashMap<>();
         mSettingMapKey = printerType;
 
         //Use IS as default settings map
@@ -110,7 +110,7 @@ public class PrintSettings {
      */
     public PrintSettings(PrintSettings printSettings) {
         mSettingMapKey = printSettings.getSettingMapKey();
-        mSettingValues = new HashMap<String, Integer>();
+        mSettingValues = new HashMap<>();
         
         for (String key : printSettings.getSettingValues().keySet()) {
             mSettingValues.put(key, printSettings.getSettingValues().get(key));
@@ -159,14 +159,9 @@ public class PrintSettings {
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(xmlString));
             printSettingsContent = db.parse(is);
-        } catch (ParserConfigurationException e) {
-            Logger.logError(PrintSettings.class, "Error: " + e.getMessage());
-        } catch (SAXException e) {
-            Logger.logError(PrintSettings.class, "Error: " + e.getMessage());
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             Logger.logError(PrintSettings.class, "Error: " + e.getMessage());
         }
-        
         parsePrintSettings(printSettingsContent);
     }
     
@@ -248,7 +243,7 @@ public class PrintSettings {
                 }
             }
 
-            if(key.equals(TAG_SORT) && mSettingMapKey == AppConstants.PRINTER_MODEL_IS) {
+            if(key.equals(TAG_SORT) && mSettingMapKey.equals(AppConstants.PRINTER_MODEL_IS)) {
                 value ^= 1;
             }
 
@@ -392,7 +387,7 @@ public class PrintSettings {
      * @retval false PDF page will not be scaled
      */
     public boolean isScaleToFit() {
-        return (mSettingValues.get(TAG_SCALE_TO_FIT) == 1) ? true : false;
+        return (mSettingValues.get(TAG_SCALE_TO_FIT) == 1);
     }
     
     /**
@@ -437,7 +432,7 @@ public class PrintSettings {
      * @retval false not in booklet format
      */
     public boolean isBooklet() {
-        return (mSettingValues.get(TAG_BOOKLET) == 1) ? true : false;
+        return (mSettingValues.get(TAG_BOOKLET) == 1);
     }
     
     /**

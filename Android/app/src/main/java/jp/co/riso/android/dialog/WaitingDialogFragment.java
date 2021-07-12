@@ -32,7 +32,7 @@ import jp.co.riso.smartprint.R;
  *      @code 
  *      WaitingDialogFragment dialog = WaitingDialogFragment.newInstance(<parameters>):
  *      dialog.setTargetFragment(this, requestCode);
- *      DialogUtils.showdisplayDialog(activity, tag, dialog); 
+ *      DialogUtils.showDisplayDialog(activity, tag, dialog);
  *      @endcode
  * 3. To dismiss, call: DialogUtils.dismissDialog(activity, tag);
  */
@@ -50,10 +50,7 @@ public class WaitingDialogFragment extends DialogFragment {
             
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    return true;
-                }
-                return false;
+                return (keyCode == KeyEvent.KEYCODE_BACK);
             }
         };
     }
@@ -206,6 +203,6 @@ public class WaitingDialogFragment extends DialogFragment {
         /**
          * @brief Called when the button is clicked or when dialog is cancelled
          */
-        public void onCancel();
+        void onCancel();
     }
 }

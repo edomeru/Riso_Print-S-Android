@@ -85,7 +85,7 @@ public class DirectPrintManager {
      * @param callback Callback function
      */
     public void setCallback(DirectPrintCallback callback) {
-        mCallbackRef = new WeakReference<DirectPrintCallback>(callback);
+        mCallbackRef = new WeakReference<>(callback);
     }
     
     /**
@@ -254,7 +254,7 @@ public class DirectPrintManager {
          * @param status Print status
          * @param progress Printing progress percentage
          */
-        public void onNotifyProgress(DirectPrintManager manager, int status, float progress);
+        void onNotifyProgress(DirectPrintManager manager, int status, float progress);
     }
     
     /**
@@ -263,7 +263,7 @@ public class DirectPrintManager {
      * @brief Async Task for Canceling Direct Print
      */
     public class DirectPrintCancelTask extends BaseTask<Void, Void> {
-        private DirectPrintManager mManager;
+        private final DirectPrintManager mManager;
         
         /**
          * @brief Creates DirectPrintCancelTask instance.
@@ -277,7 +277,7 @@ public class DirectPrintManager {
         @Override
         protected Void doInBackground(Void... params) {
             mManager.cancel();
-            finalizeDirectPrint();
+            mManager.finalizeDirectPrint();
             return null;
         }
 
