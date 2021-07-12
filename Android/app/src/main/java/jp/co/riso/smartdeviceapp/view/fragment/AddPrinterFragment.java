@@ -263,6 +263,7 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
             }
         }
 
+        // Check if Add Printer screen is not yet closed
         if (getActivity() != null) {
             AppUtils.hideSoftKeyboard(getActivity());
         }
@@ -289,7 +290,6 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
         } else {
             viewHolder.mIpAddress.setFocusable(false);
         }
-        
     }
     
     /**

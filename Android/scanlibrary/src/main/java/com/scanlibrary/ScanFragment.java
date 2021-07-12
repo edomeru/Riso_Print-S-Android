@@ -114,11 +114,11 @@ public class ScanFragment extends Fragment {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        sourceImageView = view.findViewById(R.id.sourceImageView);
-        scanButton = view.findViewById(R.id.scanButton);
+        sourceImageView = (ImageView) view.findViewById(R.id.sourceImageView);
+        scanButton = (Button) view.findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new ScanButtonClickListener());
-        sourceFrame = view.findViewById(R.id.sourceFrame);
-        polygonView = view.findViewById(R.id.polygonView);
+        sourceFrame = (FrameLayout) view.findViewById(R.id.sourceFrame);
+        polygonView = (PolygonView) view.findViewById(R.id.polygonView);
         sourceFrame.post(new Runnable() {
             @Override
             public void run() {
@@ -146,7 +146,8 @@ public class ScanFragment extends Fragment {
     }
 
     private Uri getUri() {
-        return getArguments().getParcelable(ScanConstants.SELECTED_BITMAP);
+        Uri uri = getArguments().getParcelable(ScanConstants.SELECTED_BITMAP);
+        return uri;
     }
 
     private void setBitmap(Bitmap original) {
@@ -164,7 +165,8 @@ public class ScanFragment extends Fragment {
 
     private Map<Integer, PointF> getEdgePoints(Bitmap tempBitmap) {
         List<PointF> pointFs = getContourEdgePoints(tempBitmap);
-        return orderedValidEdgePoints(tempBitmap, pointFs);
+        Map<Integer, PointF> orderedPoints = orderedValidEdgePoints(tempBitmap, pointFs);
+        return orderedPoints;
     }
 
     private List<PointF> getContourEdgePoints(Bitmap tempBitmap) {
@@ -247,8 +249,8 @@ public class ScanFragment extends Fragment {
     }
 
     private Bitmap getScannedBitmap(Bitmap original, Map<Integer, PointF> points) {
-        //int width = original.getWidth();
-        //int height = original.getHeight();
+        int width = original.getWidth();
+        int height = original.getHeight();
         float xRatio = (float) original.getWidth() / sourceImageView.getWidth();
         float yRatio = (float) original.getHeight() / sourceImageView.getHeight();
 
@@ -260,8 +262,9 @@ public class ScanFragment extends Fragment {
         float y2 = (points.get(1).y) * yRatio;
         float y3 = (points.get(2).y) * yRatio;
         float y4 = (points.get(3).y) * yRatio;
-        Log.d("", "Points(" + x1 + "," + y1 + ")(" + x2 + "," + y2 + ")(" + x3 + "," + y3 + ")(" + x4 + "," + y4 + ")");
-        return ((ScanActivity) getActivity()).getScannedBitmap(original, x1, y1, x2, y2, x3, y3, x4, y4);
+        Log.d("", "POints(" + x1 + "," + y1 + ")(" + x2 + "," + y2 + ")(" + x3 + "," + y3 + ")(" + x4 + "," + y4 + ")");
+        Bitmap _bitmap = ((ScanActivity) getActivity()).getScannedBitmap(original, x1, y1, x2, y2, x3, y3, x4, y4);
+        return _bitmap;
     }
 
     // aLINK edit - Start
@@ -270,7 +273,7 @@ public class ScanFragment extends Fragment {
     private class ScanAsyncTask extends Thread {
     // aLINK edit - End
 
-        private final Map<Integer, PointF> points;
+        private Map<Integer, PointF> points;
 
         public ScanAsyncTask(Map<Integer, PointF> points) {
             this.points = points;

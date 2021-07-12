@@ -70,9 +70,9 @@ public class PickImageFragment extends Fragment {
         // Temporarily use external cache directory
         imagePath = getActivity().getApplicationContext().getExternalCacheDir() + "/scanSample";
         // aLINK edit - End
-        cameraButton = view.findViewById(R.id.cameraButton);
+        cameraButton = (ImageButton) view.findViewById(R.id.cameraButton);
         cameraButton.setOnClickListener(new CameraButtonClickListener());
-        galleryButton = view.findViewById(R.id.selectButton);
+        galleryButton = (ImageButton) view.findViewById(R.id.selectButton);
         galleryButton.setOnClickListener(new GalleryClickListener());
         if (isIntentPreferenceSet()) {
             handleIntentPreference();
@@ -107,7 +107,8 @@ public class PickImageFragment extends Fragment {
     }
 
     private int getIntentPreference() {
-        return getArguments().getInt(ScanConstants.OPEN_INTENT_PREFERENCE, 0);
+        int preference = getArguments().getInt(ScanConstants.OPEN_INTENT_PREFERENCE, 0);
+        return preference;
     }
 
 
@@ -198,10 +199,12 @@ public class PickImageFragment extends Fragment {
     private Bitmap getBitmap(Uri selectedimg) throws IOException {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 3;
-        AssetFileDescriptor fileDescriptor;
+        AssetFileDescriptor fileDescriptor = null;
         fileDescriptor =
                 getActivity().getContentResolver().openAssetFileDescriptor(selectedimg, "r");
-        return BitmapFactory.decodeFileDescriptor(
-        fileDescriptor.getFileDescriptor(), null, options);
+        Bitmap original
+                = BitmapFactory.decodeFileDescriptor(
+                fileDescriptor.getFileDescriptor(), null, options);
+        return original;
     }
 }
