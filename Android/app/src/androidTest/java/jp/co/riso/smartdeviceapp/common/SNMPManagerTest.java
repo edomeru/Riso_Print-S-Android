@@ -11,6 +11,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback;
 
 public class SNMPManagerTest extends TestCase implements
@@ -71,6 +72,11 @@ public class SNMPManagerTest extends TestCase implements
     // ================================================================================
 
     public void testDeviceDiscovery() {
+        if (SmartDeviceApp.getAppContext().getPackageManager().
+                hasSystemFeature(AppConstants.CHROME_BOOK)) {
+            return; // if chrome os, skip test because printer search is not supported
+        }
+
         try {
             mSnmpManager.deviceDiscovery();
 

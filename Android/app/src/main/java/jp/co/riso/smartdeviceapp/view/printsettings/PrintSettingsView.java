@@ -23,6 +23,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -174,6 +175,19 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        // if using trackpad/mouse, placing the cursor near the right edge of the scrollview shows the scrollbar
+        // this has an overlap with the scrollview which blocks tap actions on the setting items
+        // to keep behavior consistent with phone/tablet, hide on tap but show while dragging
+        if (ev.isFromSource(InputDevice.SOURCE_MOUSE)) {
+            View currentScrollView = mMainView.isEnabled() ?
+                    mPrintSettingsScrollView : mSubScrollView;
+            if (ev.getAction() == MotionEvent.ACTION_MOVE) {
+                currentScrollView.setVerticalScrollBarEnabled(true);
+            } else if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+                currentScrollView.setVerticalScrollBarEnabled(false);
+            }
+        }
+
         View view = mMainView.findViewWithTag(PrintSettings.TAG_COPIES);
         if (view instanceof EditText) {
             if (!AppUtils.checkViewHitTest(view, (int) ev.getRawX(), (int) ev.getRawY())) {
@@ -191,7 +205,20 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         
         AppUtils.hideSoftKeyboard((Activity) getContext());
         return super.onInterceptTouchEvent(ev);
-        
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        // scrolling with mouse wheel must be handled here
+        if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+            View currentScrollView = mMainView.isEnabled() ?
+                    mPrintSettingsScrollView : mSubScrollView;
+            if (event.getActionMasked() == MotionEvent.ACTION_SCROLL) {
+                currentScrollView.setVerticalScrollBarEnabled(true);
+            }
+        }
+
+        return super.onGenericMotionEvent(event);
     }
     
     /**
@@ -1241,11 +1268,14 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         editText.setLayoutParams(params);
         
         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        // RM#918 for chromebook, this is also needed to make virtual keyboard numeric only
+        editText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(AppConstants.CONST_PIN_CODE_LIMIT)
         });
         
         editText.addTextChangedListener(new PinCodeTextWatcher());
+        editText.setOnEditorActionListener(this);
 
         titleText = getResources().getString(R.string.ids_lbl_pin_code);
         addAuthenticationItemView(itemsGroup, titleText, editText, KEY_TAG_PIN_CODE, false);
@@ -2052,7 +2082,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
      * @param v TextView to be edited
      */
     private void checkEditTextValue(TextView v) {
-        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER) {
+        if (v.getInputType() == InputType.TYPE_CLASS_NUMBER &&
+                // RM#910 + RM#918 if text input is for PIN code do not attempt to reset
+                v.getId() != R.id.view_id_pin_code_edit_text) {
             String value = v.getText().toString();
             if (value.isEmpty()) {
                 v.setText("1");
@@ -2190,6 +2222,17 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         if (actionId == EditorInfo.IME_ACTION_DONE) {
             checkEditTextValue(v);
             return false;
+        }
+
+        // RM#910 for chromebook, virtual keyboard has ENTER key instead of DONE key
+        // it must be consumed (return true) to prevent focus from moving
+        // it must also be hidden manually
+        if (actionId == EditorInfo.IME_NULL) {
+            if (event != null && event.getAction() == KeyEvent.ACTION_UP) {
+                checkEditTextValue(v);
+                AppUtils.hideSoftKeyboard((Activity) getContext());
+            }
+            return true;
         }
         return false;
     }

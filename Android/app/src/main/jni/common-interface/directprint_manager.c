@@ -22,7 +22,9 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_initializeDirectPrint(J
     // Create cache object
     CommonJNIState *state = (CommonJNIState *)malloc(sizeof(CommonJNIState));
     (*env)->GetJavaVM(env, &state->java_vm);
-    state->instance = (*env)->NewGlobalRef(env, object);
+    // RM 856 Fix: Change global reference to weak reference so that it can be deleted elsewhere
+    // The state is set in directprint.c via directprint_job_set_caller_data() and deleted in that module.
+    state->instance = (*env)->NewWeakGlobalRef(env, object);
 
     // Create direct print job
     const char *native_printer_name =  (*env)->GetStringUTFChars(env, printer_name, 0);
@@ -70,10 +72,11 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_finalizeDirectPrint(JNI
     jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
     if (m_job != 0)
     {
-        directprint_job *job = (directprint_job *)m_job;
-        CommonJNIState *state = (CommonJNIState *)directprint_job_get_caller_data(job);
-        (*env)->DeleteGlobalRef(env, state->instance);
-        free(state);
+        // RM 856 Fix: Move free state to directprint_job_free()
+        //directprint_job *job = (directprint_job *)m_job;
+        //CommonJNIState *state = (CommonJNIState *)directprint_job_get_caller_data(job);
+        //(*env)->DeleteGlobalRef(env, state->instance);
+        //free(state);
         // RM 496 Fix: Move directprint_job_free to directprint.c
         //directprint_job_free(job);
         (*env)->SetLongField(env, object, dp_job_field_id, 0);

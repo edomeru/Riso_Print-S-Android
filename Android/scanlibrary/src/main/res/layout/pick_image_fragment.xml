@@ -20,7 +20,8 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:src="@drawable/gallery" />
+            android:src="@drawable/gallery"
+            android:visibility="gone" /> <!-- aLINK edit: this button is not part of SDA UI -->
 
         <ImageButton
             android:id="@+id/cameraButton"
@@ -29,7 +30,8 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:src="@drawable/camera" />
+            android:src="@drawable/camera"
+            android:visibility="gone" /> <!-- aLINK edit: this button is not part of SDA UI -->
     </LinearLayout>
 
 </RelativeLayout>

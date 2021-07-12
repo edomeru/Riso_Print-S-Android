@@ -10,10 +10,12 @@ package jp.co.riso.smartdeviceapp.view.base;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.android.util.Logger;
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
-
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+
 import android.app.ActionBar.LayoutParams;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -204,6 +206,20 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         
         return getResources().getBoolean(R.bool.is_tablet);
     }
+
+    /**
+     * @brief Checks whether the fragment is on the right drawer
+     *
+     * @retval true Fragment is on the right drawer
+     * @retval false Fragment is not on the right drawer
+     */
+    public boolean isOnRightDrawer() {
+        FragmentManager fm = getParentFragmentManager();
+        if (fm != null) {
+            return this == fm.findFragmentById(R.id.rightLayout);
+        }
+        return false;
+    }
     
     /**
      * @brief Checks whether the device is in tablet landscape mode.
@@ -219,6 +235,20 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         return getResources().getBoolean(R.bool.is_tablet_land);
     }
     
+    /**
+     * @brief Checks whether the device is a Chrome Book.
+     *
+     * @retval true Device is a chrome book
+     * @retval false Device is a tablet or phone
+     */
+    public boolean isChromeBook() {
+        if (getActivity() == null) {
+            return false;
+        }
+
+       return getActivity().getPackageManager().hasSystemFeature(AppConstants.CHROME_BOOK);
+    }
+
     /**
      * @brief Adds an action menu button which by defaults draws the left drawer.
      * 
@@ -281,6 +311,17 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         mIconState = false;
         mIconId = 0;
     }
+
+    /**
+     * @brief Translates key press from activity to fragment
+     *
+     * @param keyCode Key that was pressed
+     *
+     * @return If key press was handled
+     */
+    public boolean onKeyUp(int keyCode) {
+        return false;
+    };
     
     // ================================================================================
     // INTERFACE - View.OnLayoutChangeListener

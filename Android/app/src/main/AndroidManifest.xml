@@ -32,7 +32,8 @@
         </activity>
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.MainActivity" 
-            android:configChanges="orientation|screenSize" >
+            android:configChanges="orientation|screenSize"
+            android:colorMode="wideColorGamut" >
         </activity>
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.PDFHandlerActivity"

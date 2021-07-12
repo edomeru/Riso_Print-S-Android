@@ -32,5 +32,7 @@ public class ScanConstants {
     public final static String IMAGE_RELATIVE_PATH = Environment.DIRECTORY_PICTURES + "/SDA";
     // Used to convert default Bitmap.Config.HARDWARE to supported config
     public final static Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
+    // aLINK edit: RM#907 for checking if chromebook
+    public final static String CHROME_BOOK = "org.chromium.arc.device_management";
     // aLINK edit - End
 }

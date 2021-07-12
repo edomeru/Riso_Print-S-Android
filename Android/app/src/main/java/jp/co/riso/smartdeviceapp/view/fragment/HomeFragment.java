@@ -84,7 +84,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-
+        Intent intent = getActivity().getIntent();
+        if (intent != null) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                String text = (String) extras.get(Intent.EXTRA_TEXT);
+                if ((text != null) && text.equals(AppConstants.ERR_KEY_INVALID_INTENT)) {
+                    intent.removeExtra(Intent.EXTRA_TEXT);
+                    // Display error message that an invalid intent was sent by a third-party app
+                    String message = getResources().getString(R.string.ids_err_msg_invalid_contents_android);
+                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                }
+            }
+        }
     }
 
     @Override
@@ -113,7 +126,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     lastClickTime = SystemClock.elapsedRealtime();
                     Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
                     filePickerIntent.setType("*/*");
-                    filePickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.DOC_TYPES);
+                    if (!isChromeBook()) {
+                        filePickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.DOC_TYPES);
+                    }
                     startActivityForResult(Intent.createChooser(filePickerIntent, getString(R.string.ids_lbl_select_document)), REQUEST_FILE);
                 }
                 break;
@@ -126,7 +141,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     Intent photosPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
                     photosPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                     photosPickerIntent.setType("*/*");
-                    photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES);
+                    if (!isChromeBook()) {
+                        photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES);
+                    }
                     startActivityForResult(Intent.createChooser(photosPickerIntent, getString(R.string.ids_lbl_select_photos)), REQUEST_PHOTO);
                 }
                 break;

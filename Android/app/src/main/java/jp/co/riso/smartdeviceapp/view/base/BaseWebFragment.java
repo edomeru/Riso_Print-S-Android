@@ -10,6 +10,8 @@ package jp.co.riso.smartdeviceapp.view.base;
 
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView;
+
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
@@ -29,14 +31,25 @@ public abstract class BaseWebFragment extends BaseFragment {
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
         mWebView = view.findViewById(R.id.contentWebView);
+        if (Build.VERSION_CODES.O <= Build.VERSION.SDK_INT) {
+            mWebView.setDefaultFocusHighlightEnabled(false);
+        }
         
         configureWebView(mWebView);
-        mWebView.loadUrl(getUrlString());
+
+        if (isChromeBook() && savedInstanceState != null) {
+            mWebView.restoreState(savedInstanceState);
+        } else {
+            mWebView.loadUrl(getUrlString());
+        }
     }
     
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (isChromeBook()) {
+            mWebView.saveState(outState);
+        }
     }
     
     /**

@@ -132,4 +132,16 @@ public class Utils {
         img.recycle();
         return rotatedImg;
     }
+
+    /**
+     * aLINK edit: add chrome book checker to use for chrome book specific behavior
+     *
+     * @brief Check if device is chrome book
+     *
+     * @retval true Device is a chrome book
+     * @retval false Device is a tablet or phone
+     */
+    public static boolean isChromeBook(Context context) {
+        return context.getPackageManager().hasSystemFeature(ScanConstants.CHROME_BOOK);
+    }
 }
