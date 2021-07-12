@@ -41,7 +41,7 @@ public class PullToRefreshListView extends ListView{
     private static final float BOUNCE_OVERSHOOT_TENSION        = 1.4f;
     private static final int   ROTATE_ARROW_ANIMATION_DURATION = 250;
 
-    private static enum State{
+    private enum State{
         PULL_TO_REFRESH,
         RELEASE_TO_REFRESH,
         REFRESHING
@@ -57,17 +57,17 @@ public class PullToRefreshListView extends ListView{
         /**
          * Method to be called when a refresh is requested
          */
-        public void onRefresh();
+        void onRefresh();
         
         /**
          * Method to be called when the header margin is adjusted
          */
-        public void onHeaderAdjusted(int margin);
+        void onHeaderAdjusted(int margin);
         
         /**
          * Method to be called on bounce back header animation
          */
-        public void onBounceBackHeader(int duration);
+        void onBounceBackHeader(int duration);
         
     }
 
@@ -240,11 +240,11 @@ public class PullToRefreshListView extends ListView{
         setVerticalFadingEdgeEnabled(false);
 
         headerContainer = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.pulltorefreshview_ptr_header, null);
-        header = (RelativeLayout) headerContainer.findViewById(R.id.ptr_id_header);
-        text = (TextView) header.findViewById(R.id.ptr_id_text);
-        lastUpdatedTextView = (TextView) header.findViewById(R.id.ptr_id_last_updated);
-        image = (ImageView) header.findViewById(R.id.ptr_id_image);
-        spinner = (ProgressBar) header.findViewById(R.id.ptr_id_spinner);
+        header = headerContainer.findViewById(R.id.ptr_id_header);
+        text = header.findViewById(R.id.ptr_id_text);
+        lastUpdatedTextView = header.findViewById(R.id.ptr_id_last_updated);
+        image = header.findViewById(R.id.ptr_id_image);
+        spinner = header.findViewById(R.id.ptr_id_spinner);
 
         pullToRefreshText = "";// getContext().getString(R.string.ids_lbl_pull_to_refresh);
         releaseToRefreshText = "";// getContext().getString(R.string.ids_lbl_release_to_refresh);
@@ -355,7 +355,7 @@ public class PullToRefreshListView extends ListView{
     private void bounceBackHeader(){
         int yTranslate = state == State.REFRESHING ?
                 header.getHeight() - headerContainer.getHeight() :
-                -headerContainer.getHeight() - headerContainer.getTop() + getPaddingTop();;
+                -headerContainer.getHeight() - headerContainer.getTop() + getPaddingTop();
 
         TranslateAnimation bounceAnimation = new TranslateAnimation(
                 TranslateAnimation.ABSOLUTE, 0,
@@ -445,7 +445,8 @@ public class PullToRefreshListView extends ListView{
 
     private class HeaderAnimationListener implements AnimationListener{
 
-        private int height, translation;
+        private int height;
+        private final int translation;
         private State stateAtAnimationStart;
 
         public HeaderAnimationListener(int translation){
@@ -504,10 +505,10 @@ public class PullToRefreshListView extends ListView{
         public void onGlobalLayout(){
             int initialHeaderHeight = header.getHeight();
 
-            if(initialHeaderHeight > 0){
+            if (initialHeaderHeight > 0) {
                 measuredHeaderHeight = initialHeaderHeight;
 
-                if(measuredHeaderHeight > 0 && state != State.REFRESHING){
+                if (measuredHeaderHeight > 0 && state != State.REFRESHING) {
                     setHeaderPadding(-measuredHeaderHeight);
                     requestLayout();
                 }
