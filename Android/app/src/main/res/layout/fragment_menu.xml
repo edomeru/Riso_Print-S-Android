@@ -51,7 +51,7 @@
                 android:id="@+id/printPreviewButton"
                 style="@style/HomeMenuButton" >
 
-               <!-- HIDE NEW FEATURES: temporarily change PrintPreview name to Home -->
+               <!-- HIDE_NEW_FEATURES: temporarily change PrintPreview name to Home -->
                <TextView
                    style="@style/HomeMenuButtonText"
                    android:text="@string/ids_lbl_home"
