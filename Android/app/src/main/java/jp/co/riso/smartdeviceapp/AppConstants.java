@@ -154,4 +154,7 @@ public class AppConstants {
     public static final String ERR_KEY_INVALID_INTENT = "error_key_invalid_intent";
     // For checking if chromebook
     public static final String CHROME_BOOK = "org.chromium.arc.device_management";
+
+    // HIDE NEW FEATURES FLAG
+    public static final boolean HIDE_NEW_FEATURES = true;
 }

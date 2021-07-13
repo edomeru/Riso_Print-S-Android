@@ -14,6 +14,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
 
+import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
@@ -101,6 +102,9 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             mState = savedInstanceState.getInt(KEY_STATE, STATE_HOME);
             // No need to restore the fragment state as this is already handled
         }
+        if (AppConstants.HIDE_NEW_FEATURES && mState == STATE_HOME) {
+            mState = STATE_PRINTPREVIEW;
+        }
         setSelectedButton(view, mState);
     }
 
@@ -141,7 +145,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         }
 
         for (int i = 0; i < MENU_ITEMS.length; i++) {
-            if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
+            if (!AppConstants.HIDE_NEW_FEATURES && i == STATE_PRINTPREVIEW && !hasPDFfile) {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(false);
                 view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4));
@@ -172,6 +176,9 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
      */
     private void setCurrentState(int state, boolean animate) {
         if (mState != state) {
+            if (AppConstants.HIDE_NEW_FEATURES && state == STATE_HOME) {
+                state = STATE_PRINTPREVIEW;
+            }
             setSelectedButton(getView(), state);
             switchToFragment(state, animate);
             mState = state;
@@ -211,8 +218,10 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         if (fragment == null) {
             switch (state) {
                 case STATE_HOME:
-                    fragment = new HomeFragment();
-                    break;
+                    if (!AppConstants.HIDE_NEW_FEATURES) {
+                        fragment = new HomeFragment();
+                        break;
+                    }
                 case STATE_PRINTPREVIEW:
                     fragment = new PrintPreviewFragment();
                     break;
