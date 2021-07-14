@@ -14,7 +14,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
 
-import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
