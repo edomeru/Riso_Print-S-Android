@@ -155,6 +155,6 @@ public class AppConstants {
     // For checking if chromebook
     public static final String CHROME_BOOK = "org.chromium.arc.device_management";
 
-    // HIDE NEW FEATURES FLAG
+    // HIDE_NEW_FEATURES: Flag for temporary feature changes
     public static final boolean HIDE_NEW_FEATURES = true;
 }

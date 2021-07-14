@@ -29,7 +29,8 @@ import jp.co.riso.smartprint.R;
 public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
     /// Print Preview Screen
-    public static final int STATE_HOME = 0;
+    // HIDE_NEW_FEATURES: Preview screen is Home screen
+    public static final int STATE_HOME = AppConstants.HIDE_NEW_FEATURES ? 1 : 0;
     /// Print Preview Screen
     public static final int STATE_PRINTPREVIEW = 1;
     /// Printers Screen
@@ -102,9 +103,6 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             mState = savedInstanceState.getInt(KEY_STATE, STATE_HOME);
             // No need to restore the fragment state as this is already handled
         }
-        if (AppConstants.HIDE_NEW_FEATURES && mState == STATE_HOME) {
-            mState = STATE_PRINTPREVIEW;
-        }
         setSelectedButton(view, mState);
     }
 
@@ -145,7 +143,9 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         }
 
         for (int i = 0; i < MENU_ITEMS.length; i++) {
-            if (!AppConstants.HIDE_NEW_FEATURES && i == STATE_PRINTPREVIEW && !hasPDFfile) {
+            // HIDE_NEW_FEATURES: Preview button is Home button and is never disabled
+            //if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
+            if (!AppConstants.HIDE_NEW_FEATURES) {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(false);
                 view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4));
@@ -176,9 +176,6 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
      */
     private void setCurrentState(int state, boolean animate) {
         if (mState != state) {
-            if (AppConstants.HIDE_NEW_FEATURES && state == STATE_HOME) {
-                state = STATE_PRINTPREVIEW;
-            }
             setSelectedButton(getView(), state);
             switchToFragment(state, animate);
             mState = state;
@@ -217,11 +214,10 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         BaseFragment fragment = (BaseFragment) fm.findFragmentByTag(tag);
         if (fragment == null) {
             switch (state) {
-                case STATE_HOME:
-                    if (!AppConstants.HIDE_NEW_FEATURES) {
-                        fragment = new HomeFragment();
-                        break;
-                    }
+                // HIDE_NEW_FEATURES: STATE_HOME is same as STATE_PRINTPREVIEW
+                /*case STATE_HOME:
+                    fragment = new HomeFragment();
+                    break;*/
                 case STATE_PRINTPREVIEW:
                     fragment = new PrintPreviewFragment();
                     break;
