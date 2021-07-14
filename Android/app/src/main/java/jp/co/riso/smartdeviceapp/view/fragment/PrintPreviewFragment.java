@@ -626,7 +626,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * @param v Root view which contains the action bar view
      */
     public void setDefaultTitle(View v) {
-        setTitle(v, getResources().getString(R.string.ids_lbl_print_preview));
+        // HIDE_NEW_FEATURES: Preview screen is Home screen
+        //setTitle(v, getResources().getString(R.string.ids_lbl_print_preview));
+        setTitle(v, getResources().getString(R.string.ids_lbl_home));
     }
 
     /**

@@ -45,6 +45,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="application/pdf" />
+                <!-- HIDE_NEW_FEATURES: Disable Text and Image Open-In >
                 <data android:mimeType="text/plain" />
                 <data android:mimeType="image/png" />
                 <data android:mimeType="image/jpg" />
@@ -52,7 +53,7 @@
                 <data android:mimeType="image/gif" />
                 <data android:mimeType="image/x-ms-bmp" />
                 <data android:mimeType="image/bmp" />
-                <data android:mimeType="image/x-windows-bmp" />
+                <data android:mimeType="image/x-windows-bmp" /-->
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -60,6 +61,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="application/pdf" />
+                <!-- HIDE_NEW_FEATURES: Disable Text and Image Open-In >
                 <data android:mimeType="text/plain" />
                 <data android:mimeType="image/png" />
                 <data android:mimeType="image/jpg" />
@@ -67,8 +69,9 @@
                 <data android:mimeType="image/gif" />
                 <data android:mimeType="image/x-ms-bmp" />
                 <data android:mimeType="image/bmp" />
-                <data android:mimeType="image/x-windows-bmp" />
+                <data android:mimeType="image/x-windows-bmp" /-->
             </intent-filter>
+            <!-- HIDE_NEW_FEATURES: Disable Images Open-In >
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
 
@@ -81,7 +84,7 @@
                 <data android:mimeType="image/x-ms-bmp" />
                 <data android:mimeType="image/bmp" />
                 <data android:mimeType="image/x-windows-bmp" />
-            </intent-filter>
+            </intent-filter-->
         </activity>
     </application>
 
