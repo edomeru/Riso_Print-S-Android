@@ -29,10 +29,13 @@ import jp.co.riso.smartprint.R;
 public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
     /// Print Preview Screen
-    // HIDE_NEW_FEATURES: Preview screen is Home screen
-    public static final int STATE_HOME = AppConstants.HIDE_NEW_FEATURES ? 1 : 0;
+    // HIDE_NEW_FEATURES: Prevent transition from Preview screen to Home screen
+    //public static final int STATE_HOME = 0;
+    public static final int STATE_HOME = 1;
+
     /// Print Preview Screen
     public static final int STATE_PRINTPREVIEW = 1;
+
     /// Printers Screen
     public static final int STATE_PRINTERS = 2;
     /// Print Jobs Screen
@@ -144,15 +147,14 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
         for (int i = 0; i < MENU_ITEMS.length; i++) {
             // HIDE_NEW_FEATURES: Preview button is Home button and is never disabled
-            //if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
-            if (!AppConstants.HIDE_NEW_FEATURES) {
+            /*if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(false);
                 view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4));
-            } else {
+            } else {*/
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(true);
-            }
+            //}
         }
 
         view.findViewById(MENU_ITEMS[state]).setSelected(true);
