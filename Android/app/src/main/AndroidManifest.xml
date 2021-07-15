@@ -8,9 +8,10 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera feature declaration >
     <uses-feature
         android:name="android.hardware.camera2"
-        android:required="true" />
+        android:required="true" /-->
 
     <application
         android:name="jp.co.riso.smartdeviceapp.SmartDeviceApp"
