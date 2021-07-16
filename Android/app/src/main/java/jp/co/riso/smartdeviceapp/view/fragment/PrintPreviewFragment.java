@@ -1059,9 +1059,11 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 mIsPermissionDialogOpen = false; // the request returned a result hence dialog is closed
                 if (grantResults.length > 0) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        // after permission is granted and before PDF is initialization,
+                        // based on design docs - RISO_SmartDeviceApp_Design_03_Android_ALK Rev 3.0
+                        // N.Print Preview 1.Display Screen
+                        // Figure I 44 Print Preview – Display Screen – Activity Diagram
+                        // after permission is granted and before PDF initialization,
                         // loading indicator (spinning progress bar) should be displayed
-                        // Design Docs: Figure I-37 Print Preview – Display Screen – Activity Diagram
                         setPrintPreviewViewDisplayed(getView(), true);
 
                         // permission was granted, run PDF conversion and initializations
