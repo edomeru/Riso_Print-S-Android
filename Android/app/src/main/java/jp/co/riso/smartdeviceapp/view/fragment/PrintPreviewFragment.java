@@ -476,8 +476,14 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
 
-        if (!printerManager.isExists(mPrinterId)) {
-            setPrintId(printerManager.getDefaultPrinter());
+        int defaultPrinterId = printerManager.getDefaultPrinter();
+        boolean isFirstPrinterAdded = mPrinterId == PrinterManager.EMPTY_ID && defaultPrinterId != PrinterManager.EMPTY_ID;
+        boolean isCurrentPrinterRemoved = mPrinterId != PrinterManager.EMPTY_ID && !printerManager.isExists(mPrinterId);
+        // OnResume, update printer settings to default printer settings (or IS printer settings when 
+        // printer list is empty) only when the 1st printer is added or the selected printer is removed
+        // this is to prevent unnecessary reload/refresh of the page preview
+        if (isFirstPrinterAdded || isCurrentPrinterRemoved) {
+            setPrintId(defaultPrinterId);
             String printerType = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(mPrinterId);
 
             //use fallthrough printer type IS, if printer does not yet exist
