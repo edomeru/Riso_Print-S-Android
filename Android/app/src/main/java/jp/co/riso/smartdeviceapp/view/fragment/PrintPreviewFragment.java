@@ -554,6 +554,11 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
         if (mPrintPreviewView != null) {
+            // Clear mBmpCache when print settings are updated
+            if (mBmpCache != null) {
+                mBmpCache.evictAll();
+                mPrintPreviewView.setBmpCache(mBmpCache);
+            }
             mPrintPreviewView.setPrintSettings(mPrintSettings);
             mPrintPreviewView.refreshView();
             updateSeekBar();
