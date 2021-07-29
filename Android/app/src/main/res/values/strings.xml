@@ -147,7 +147,7 @@
     <string name="ids_err_msg_max_printer_count">Saved Printer reached maximum count.</string>
     <string name="ids_err_msg_no_selected_printer">Please register a printer.</string>
     <string name="ids_err_msg_pdf_wrong_password">Please check the password you entered.</string>
-    <string name="ids_err_msg_open_failed">Failed to open file. Please select a valid file and ensure that the file is accessible, or that there is enough free space on the device.</string>
+    <string name="ids_err_msg_open_failed">The file could not be opened. Select a valid file and make sure the file is accessible or that there is enough free space on your device.</string>
     <string name="ids_err_msg_pdf_encrypted">PDF Encryption is not supported.</string>
     <string name="ids_err_msg_pdf_printing_not_allowed">File does not allow printing.</string>
     <string name="ids_err_msg_file_too_large">File size is too large.</string>
@@ -185,6 +185,6 @@
     <string name="ids_info_msg_initializing">Initializing...</string>
     <string name="ids_err_msg_camera_permission_not_allowed">Access to camera and storage are needed to open.\n\nIn the next dialog/s that will appear, please tap the \"Allow/OK\" button.</string>
     <string name="ids_err_msg_camera_permission_not_granted">Permission to camera and/or storage is not granted. These permissions are needed in order to capture and save image. Please make sure that [Camera Permission] and [Storage Permission] are ON.</string>
-    <string name="ids_err_msg_invalid_contents_android">The data sent by the app is invalid. Please use a different method to select files.</string>
+    <string name="ids_err_msg_invalid_contents_android">The data sent from the app is invalid. Select the file using another method.</string>
 
 </resources>
