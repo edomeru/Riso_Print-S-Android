@@ -147,7 +147,7 @@
     <string name="ids_err_msg_max_printer_count">Le nombre d\'imprimantes enregistrées a atteint le maximum</string>
     <string name="ids_err_msg_no_selected_printer">Veuillez enregistrer une imprimante</string>
     <string name="ids_err_msg_pdf_wrong_password">Veuillez vérifier le mot de passe que vous avez saisi</string>
-    <string name="ids_err_msg_open_failed">Échec de l\'ouverture du fichier. Veuillez sélectionner un fichier valide et assurez-vous que le fichier est accessible ou qu\'il y a suffisamment d\'espace libre sur l\'appareil.</string>
+    <string name="ids_err_msg_open_failed">Impossible d\'ouvrir le fichier. Sélectionnez un fichier valide et vérifiez que le fichier est accessible ou qu\'il y a suffisamment d\'espace libre sur votre appareil.</string>
     <string name="ids_err_msg_pdf_encrypted">Le chiffrement PDF n\'est pas pris en charge.</string>
     <string name="ids_err_msg_pdf_printing_not_allowed">File does not allow printing.</string>
     <string name="ids_err_msg_file_too_large">La taille du fichier est trop importante</string>
@@ -183,6 +183,6 @@
     <string name="ids_info_msg_initializing">Initialisation...</string>
     <string name="ids_err_msg_camera_permission_not_allowed">L\'accès à la caméra et le stockage sont nécessaires pour ouvrir.\n\nDans la ou les prochaines boîtes de dialogue, appuyez sur le bouton \"Autoriser/OK\".</string>
     <string name="ids_err_msg_camera_permission_not_granted">L\'autorisation de caméra et / ou de stockage n\'est pas accordée. Ces autorisations sont nécessaires pour capturer et enregistrer une image. Assurez-vous que [Permission caméra] et [Permission de stockage] sont activés.</string>
-    <string name="ids_err_msg_invalid_contents_android">Les données envoyées par l\'application ne sont pas valides. Veuillez utiliser une méthode différente pour sélectionner les fichiers.</string>
+    <string name="ids_err_msg_invalid_contents_android">Les données envoyées depuis l\'application ne sont pas valides. Sélectionnez le fichier en utilisant une autre méthode.</string>
 
 </resources>
