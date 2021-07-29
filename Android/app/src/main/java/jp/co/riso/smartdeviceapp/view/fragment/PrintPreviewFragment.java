@@ -476,8 +476,14 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
 
-        if (!printerManager.isExists(mPrinterId)) {
-            setPrintId(printerManager.getDefaultPrinter());
+        int defaultPrinterId = printerManager.getDefaultPrinter();
+        boolean isFirstPrinterAdded = mPrinterId == PrinterManager.EMPTY_ID && defaultPrinterId != PrinterManager.EMPTY_ID;
+        boolean isCurrentPrinterRemoved = mPrinterId != PrinterManager.EMPTY_ID && !printerManager.isExists(mPrinterId);
+        // OnResume, update printer settings to default printer settings (or IS printer settings when 
+        // printer list is empty) only when the 1st printer is added or the selected printer is removed
+        // this is to prevent unnecessary reload/refresh of the page preview
+        if (isFirstPrinterAdded || isCurrentPrinterRemoved) {
+            setPrintId(defaultPrinterId);
             String printerType = PrinterManager.getInstance(SmartDeviceApp.getAppContext()).getPrinterType(mPrinterId);
 
             //use fallthrough printer type IS, if printer does not yet exist
@@ -626,7 +632,9 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * @param v Root view which contains the action bar view
      */
     public void setDefaultTitle(View v) {
-        setTitle(v, getResources().getString(R.string.ids_lbl_print_preview));
+        // HIDE_NEW_FEATURES: Preview screen is Home screen
+        //setTitle(v, getResources().getString(R.string.ids_lbl_print_preview));
+        setTitle(v, getResources().getString(R.string.ids_lbl_home));
     }
 
     /**
@@ -1057,6 +1065,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                 mIsPermissionDialogOpen = false; // the request returned a result hence dialog is closed
                 if (grantResults.length > 0) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        // based on design docs - RISO_SmartDeviceApp_Design_03_Android Rev 3.0
+                        // N.Print Preview 1.Display Screen
+                        // Figure I 44 Print Preview – Display Screen – Activity Diagram
+                        // after permission is granted and before PDF initialization,
+                        // loading indicator (spinning progress bar) should be displayed
+                        setPrintPreviewViewDisplayed(getView(), true);
+
                         // permission was granted, run PDF conversion and initializations
                         if (mPdfConverterManager != null) {
                             initializePdfConverterAndRunAsync();

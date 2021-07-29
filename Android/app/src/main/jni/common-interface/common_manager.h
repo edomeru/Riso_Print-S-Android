@@ -10,8 +10,8 @@
 #define DP_CALLBACK_METHOD_NAME "onNotifyProgress"
 #define DP_CALLBACK_METHOD_TYPE "(IF)V"
 
-jfieldID dp_job_field_id;
-jmethodID dp_callback_method_id;
+jfieldID dp_job_field_id __attribute__((common));
+jmethodID dp_callback_method_id __attribute__((common));
 
 // SNMP
 #define SNMP_CLASS_NAME "jp/co/riso/smartdeviceapp/common/SNMPManager"
@@ -22,9 +22,9 @@ jmethodID dp_callback_method_id;
 #define SNMP_FOUND_CALLBACK_METHOD_NAME "onFoundDevice"
 #define SNMP_FOUND_CALLBACK_METHOD_TYPE "(Ljava/lang/String;Ljava/lang/String;[Z)V"
 
-jfieldID snmp_context_field_id;
-jmethodID snmp_end_callback_method_id;
-jmethodID snmp_found_callback_method_id;
+jfieldID snmp_context_field_id __attribute__((common));
+jmethodID snmp_end_callback_method_id __attribute__((common));
+jmethodID snmp_found_callback_method_id __attribute__((common));
 
 typedef struct
 {
