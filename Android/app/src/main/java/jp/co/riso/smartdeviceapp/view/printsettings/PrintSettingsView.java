@@ -2059,6 +2059,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         EditText editText = (EditText) mMainView.findViewById(R.id.view_id_pin_code_edit_text);
         editText.setEnabled(isEnabled);
         editText.setActivated(isEnabled);
+        // RM1008 textbox should only be focusable when secure print is enabled
+        editText.setFocusableInTouchMode(isEnabled);
         //mMainView.findViewById(R.id.view_id_pin_code_edit_text).setActivated(isEnabled ? View.VISIBLE : View.INVISIBLE);
         //mMainView.findViewById(R.id.view_id_pin_code_edit_text).setVisibility(isEnabled ? View.VISIBLE : View.INVISIBLE);
         
@@ -2072,6 +2074,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             editText.setText(prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE));
         } else {
             editText.setText("");
+            // RM1008 prevent virtual keyboard from showing on relaunch
+            editText.clearFocus();
         }
     }
     
