@@ -105,6 +105,14 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         mLeftLayout.getLayoutParams().width = getDrawerWidth();
         mRightLayout.getLayoutParams().width = getDrawerWidth();
+
+        // RM1008 workaround for text field auto focus due to OS behavior
+        // https://stackoverflow.com/questions/7593887/disable-auto-focus-on-edit-text
+        // exclude Chromebook because it will affect keyboard navigation
+        // and text field autofocus does not occur on Chromebook
+        if (!getPackageManager().hasSystemFeature(AppConstants.CHROME_BOOK)) {
+            mRightLayout.setFocusableInTouchMode(true);
+        }
         
         mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.string.default_content_description, R.string.default_content_description);
         
