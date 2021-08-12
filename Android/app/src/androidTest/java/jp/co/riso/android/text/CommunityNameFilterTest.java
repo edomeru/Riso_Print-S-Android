@@ -39,9 +39,9 @@ public class CommunityNameFilterTest extends TestCase {
         EditText editText = new EditText(SmartDeviceApp.getAppContext());
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(AppConstants.CONST_COMMUNITY_NAME_LIMIT),
-                new SnmpCommunityNameFilter(new SnmpCommunityNameFilter.ErrorSender() {
+                new SnmpCommunityNameFilter(new SnmpCommunityNameFilter.InvalidInputObserver() {
                     @Override
-                    public void send() {
+                    public void onInvalidInput() {
                         sendError();
                     }
                 })

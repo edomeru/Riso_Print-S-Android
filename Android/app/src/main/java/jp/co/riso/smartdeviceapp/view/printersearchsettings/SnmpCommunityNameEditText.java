@@ -13,8 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.content.ClipboardManager;
-import android.content.ClipData;
+
 import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -32,12 +31,14 @@ public class SnmpCommunityNameEditText extends EditText {
     private final Context context;
     private final SnmpCommunityNameFilter snmpCommunityNameFilter = new SnmpCommunityNameFilter(
             // filter catches invalid case for pasting in context menu or from keyboard clipboard
-            new SnmpCommunityNameFilter.ErrorSender() {
+            new SnmpCommunityNameFilter.InvalidInputObserver() {
                 @Override
-                public void send() {
-                    Intent intent = new Intent(SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                    setText(getText());
+                public void onInvalidInput() {
+                    if (context != null) {
+                        Intent intent = new Intent(SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID);
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                        setText(getText());
+                    }
                 }
     });
 
