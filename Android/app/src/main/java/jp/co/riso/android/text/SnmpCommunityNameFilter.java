@@ -18,10 +18,18 @@ public class SnmpCommunityNameFilter implements InputFilter {
 
     private static final String VALID_CHARACTERS = "^[a-zA-Z0-9,./¥:;@\\[\\\\\\]\\^_]*$";
     private static final Pattern validPattern = Pattern.compile(VALID_CHARACTERS);
+    private InvalidInputObserver mInvalidInputObserver = null;
+
+    public SnmpCommunityNameFilter(InvalidInputObserver obs) {
+        mInvalidInputObserver = obs;
+    }
 
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         if (!isValid(source)) {
+            if (mInvalidInputObserver != null) {
+                mInvalidInputObserver.onInvalidInput();
+            }
             return "";
         }
 
@@ -31,5 +39,15 @@ public class SnmpCommunityNameFilter implements InputFilter {
     public boolean isValid(CharSequence source) {
         Matcher matcher = validPattern.matcher(source);
         return matcher.matches();
+    }
+
+    /**
+     * Observer interface for invalid input
+     */
+    public interface InvalidInputObserver {
+        /**
+         * @brief Notify the observer about invalid input
+         */
+        void onInvalidInput();
     }
 }
