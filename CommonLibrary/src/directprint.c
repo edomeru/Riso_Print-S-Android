@@ -286,7 +286,8 @@ char* ConvertUTF8String(char* str){
         free(buf);
         return NULL;
     }
-    for (int i = 0; str[i] != (char)NULL; i++){
+    // (char)NULL change to '\0' to prevent warning
+    for (int i = 0; str[i] != '\0'; i++){
         sprintf(hex, "%x", str[i] & 0x0000FF);
         buf = strcat(buf, hex);
     }

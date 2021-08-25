@@ -105,6 +105,14 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         mLeftLayout.getLayoutParams().width = getDrawerWidth();
         mRightLayout.getLayoutParams().width = getDrawerWidth();
+
+        // RM1008 workaround for text field auto focus due to OS behavior
+        // https://stackoverflow.com/questions/7593887/disable-auto-focus-on-edit-text
+        // exclude Chromebook because it will affect keyboard navigation
+        // and text field autofocus does not occur on Chromebook
+        if (!getPackageManager().hasSystemFeature(AppConstants.CHROME_BOOK)) {
+            mRightLayout.setFocusableInTouchMode(true);
+        }
         
         mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.string.default_content_description, R.string.default_content_description);
         
@@ -122,11 +130,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
 
-            if (getIntent() != null && (getIntent().getData() != null || getIntent().getClipData() != null)) {
+            // HIDE_NEW_FEATURES: Preview screen is Home screen and is always the default screen
+            //if (getIntent() != null && (getIntent().getData() != null || getIntent().getClipData() != null)) {
                 ft.add(R.id.mainLayout, new PrintPreviewFragment(), MenuFragment.FRAGMENT_TAGS[MenuFragment.STATE_PRINTPREVIEW]);
-            } else {
+            /*} else {
                 ft.add(R.id.mainLayout, new HomeFragment(), MenuFragment.FRAGMENT_TAGS[MenuFragment.STATE_HOME]);
-            }
+            }*/
 
             menuFragment = new MenuFragment();
             ft.add(R.id.leftLayout, menuFragment);
