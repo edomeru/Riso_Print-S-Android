@@ -24,7 +24,8 @@
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.SplashActivity"
             android:theme="@style/SplashTheme"
-            android:configChanges="orientation|screenSize" >
+            android:configChanges="orientation|screenSize"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,8 +40,9 @@
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.PDFHandlerActivity"
             android:launchMode="singleTask"
-            android:autoRemoveFromRecents="true">
-            <intent-filter tools:ignore="GoogleAppIndexingWarning">
+            android:autoRemoveFromRecents="true"
+            android:exported="true">
+            <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />

@@ -27,6 +27,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
+
+import androidx.annotation.NonNull;
 
 /**
  * @class NetUtils
@@ -41,6 +44,9 @@ public class NetUtils {
     private static final Pattern IPV6_LINK_LOCAL_PATTERN;
     private static final Pattern IPV6_IPv4_DERIVED_PATTERN;
     private static final List<String> IPV6_INTERFACE_NAMES;
+
+    private static final List<Network> mWifiNetworks = new ArrayList<Network>();
+    private static WifiCallback mWifiCallback = null;
 
     // ================================================================================
     // Public Methods
@@ -227,32 +233,44 @@ public class NetUtils {
     /**
      * @brief Determines wi-fi connectivity.
      * 
-     * @param context Application context
-     * 
      * @retval true Connected to the network using wi-fi
      * @retval false Not connected to the network using wi-fi 
      */
-    public static boolean isWifiAvailable(Context context) {
-        if (context == null) {
-            return false;
-        }
-        
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        boolean result = false;
-
-        Network[] networks = connManager.getAllNetworks();
-
-        for (Network network : networks) {
-            NetworkCapabilities capabilities = connManager.getNetworkCapabilities(network);
-            if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                result = true;
-                break;
-            }
-        }
-
-        return result;
+    public static boolean isWifiAvailable() {
+        return !mWifiNetworks.isEmpty();
     }
-    
+
+    /**
+     * @brief Register callback for monitoring of wifi networks
+     *
+     * @param context Application context
+     */
+    public static void registerWifiCallback(Context context) {
+        if (context == null || mWifiCallback != null) {
+            return;
+        }
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkRequest wifiReq = new NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build();
+
+        mWifiCallback = new WifiCallback();
+        connManager.registerNetworkCallback(wifiReq, mWifiCallback);
+    }
+
+    /**
+     * @brief Unregister callback for monitoring of wifi networks
+     *
+     * @param context Application context
+     */
+    public static void unregisterWifiCallback(Context context) {
+        if (context == null || mWifiCallback == null) {
+            return;
+        }
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        connManager.unregisterNetworkCallback(mWifiCallback);
+        mWifiCallback = null;
+        mWifiNetworks.clear();
+    }
+
     /**
      * @brief Trim leading zeroes from an IP Address
      * 
@@ -466,7 +484,27 @@ public class NetUtils {
         }
         return list;
     }
-    
+
+    /**
+     * @class Inner class for monitoring Wifi networks
+     */
+    static class WifiCallback extends ConnectivityManager.NetworkCallback {
+        @Override
+        public void onAvailable(@NonNull Network network) {
+            mWifiNetworks.add(network);
+        }
+
+        @Override
+        public void onLost(@NonNull Network network) {
+            mWifiNetworks.remove(network);
+        }
+
+        @Override
+        public void onUnavailable() {
+            mWifiNetworks.clear();
+        }
+    }
+
     static {
 
         IPV4_PATTERN = initializeIpv4Pattern_Standard();       

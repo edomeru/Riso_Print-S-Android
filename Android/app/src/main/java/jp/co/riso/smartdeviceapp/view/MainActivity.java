@@ -37,6 +37,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.Logger;
+import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
@@ -208,13 +209,17 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     @Override
     protected void onPause() {
         super.onPause();
-        
+
+        NetUtils.unregisterWifiCallback(this);
+
         mHandler.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        NetUtils.registerWifiCallback(this);
         
         mHandler.resume();
     }
