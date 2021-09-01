@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         minSdkVersion 23
-	// aLINK edit: update build tools version to latest
+        // aLINK edit: update SDK version to latest
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
