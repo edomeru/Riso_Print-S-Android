@@ -220,21 +220,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         }
         return false;
     }
-    
-    /**
-     * @brief Checks whether the device is in tablet landscape mode.
-     * 
-     * @retval true Device is in tablet landscape mode
-     * @retval false Device is not in tablet landscape mode
-     */
-    public boolean isTabletLand() {
-        if (getActivity() == null) {
-            return false;
-        }
-        
-        return getResources().getBoolean(R.bool.is_tablet_land);
-    }
-    
+
     /**
      * @brief Checks whether the device is a Chrome Book.
      *
