@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -398,14 +397,14 @@ public class NetUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     // ================================================================================
     
     public void testIsWifiAvailable_Null() {
-        assertEquals(false, NetUtils.isWifiAvailable(null));
+        assertEquals(false, NetUtils.isWifiAvailable());
     }
     
     public void testIsWifiAvailable_WithConnection() {
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
         turnWifiOn();
         // wifi is ON
-        assertEquals(true, NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext()));
+        assertEquals(true, NetUtils.isWifiAvailable());
     }
 
     // ================================================================================
