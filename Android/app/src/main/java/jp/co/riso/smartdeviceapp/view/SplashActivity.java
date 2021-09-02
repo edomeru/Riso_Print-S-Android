@@ -211,6 +211,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         Editor editor = prefs.edit();
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
         editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
+        //noinspection 'ApplySharedPref'
         editor.commit();
         
         

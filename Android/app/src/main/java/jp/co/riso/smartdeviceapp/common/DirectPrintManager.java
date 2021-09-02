@@ -234,6 +234,7 @@ public class DirectPrintManager {
         int jobNumber = preferences.getInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);     // current job number
         int nextJobNumber = (jobNumber + 1) % (AppConstants.CONST_MAX_JOB_NUMBER + 1);      // increment job number (0-999)
         editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, nextJobNumber);
+        //noinspection 'ApplySharedPref'
         editor.commit();
     }
 
