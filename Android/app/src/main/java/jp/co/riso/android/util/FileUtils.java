@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 
 /**
  * @class FileUtils
@@ -96,7 +97,7 @@ public class FileUtils {
                 mimeType = cr.getType(uri);
             } else {
                 String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
-                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase(Locale.getDefault()));
             }
         }
 
