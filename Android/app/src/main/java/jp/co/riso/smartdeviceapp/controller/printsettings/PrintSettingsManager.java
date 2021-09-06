@@ -14,8 +14,10 @@ import android.database.Cursor;
 
 import java.util.HashMap;
 
+import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
+import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings;
 import jp.co.riso.smartdeviceapp.model.printsettings.Setting;
@@ -149,9 +151,14 @@ public class PrintSettingsManager {
                 KeyConstants.KEY_SQL_PRINTER_ID + "=?", new String[] { String.valueOf(printerId) }, null, null, null);
         
         if (c != null && c.moveToFirst()) {
-            if (!c.isNull(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTSETTING_ID))) {
-                int pstId = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
-                cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, pstId);
+            int columnIndex = c.getColumnIndex(KeyConstants.KEY_SQL_PRINTSETTING_ID);
+            if (columnIndex >= 0) {
+                if (!c.isNull(columnIndex)) {
+                    int pstId = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID);
+                    cv.put(KeyConstants.KEY_SQL_PRINTSETTING_ID, pstId);
+                }
+            } else {
+                Logger.logError(PrintSettingsManager.class, "columnName:" + KeyConstants.KEY_SQL_PRINTSETTING_ID + " not found");
             }
             c.close();
         }

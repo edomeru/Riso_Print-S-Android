@@ -11,6 +11,7 @@ import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 
 public class DatabaseManagerTest extends AndroidTestCase {
+    private static final String KEY_SQL_INVALID = "invalid_key";
     private static final String KEY_SQL_PRINTER_ID = "prn_id";
     private static final String KEY_SQL_PRINTER_IP = "prn_ip_address";
     private static final String KEY_SQL_PRINTER_NAME = "prn_name";
@@ -404,6 +405,7 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
         // test
         assertEquals(printerName, DatabaseManager.getStringFromCursor(cursor, KEY_SQL_PRINTER_NAME));
+        assertEquals("", DatabaseManager.getStringFromCursor(cursor, KEY_SQL_INVALID));
 
         cursor.close();
         db.close();
@@ -429,6 +431,7 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
         //test
         assertEquals(printerId, DatabaseManager.getIntFromCursor(cursor, KEY_SQL_PRINTER_ID));
+        assertEquals(0, DatabaseManager.getIntFromCursor(cursor, KEY_SQL_INVALID));
 
         cursor.close();
         db.close();
@@ -456,6 +459,7 @@ public class DatabaseManagerTest extends AndroidTestCase {
         //test (default true)
         assertEquals(true, DatabaseManager.getBooleanFromCursor(cursor, KEY_SQL_PRINTER_LPR));
         assertEquals(false, DatabaseManager.getBooleanFromCursor(cursor, KEY_SQL_PRINTER_RAW));
+        assertEquals(false, DatabaseManager.getBooleanFromCursor(cursor, KEY_SQL_INVALID));
 
         cursor.close();
         db.close();

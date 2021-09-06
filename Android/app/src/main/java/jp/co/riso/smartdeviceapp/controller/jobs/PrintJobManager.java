@@ -211,7 +211,12 @@ public class PrintJobManager {
         
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTJOB_TABLE, columns, selection, selArgs, groupBy, having, orderBy);
         if (c.moveToFirst()) {
-             jobId = c.getInt(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTJOB_ID));
+            int columnIndex = c.getColumnIndex(KeyConstants.KEY_SQL_PRINTJOB_ID);
+            if (columnIndex >= 0) {
+                jobId = c.getInt(columnIndex);
+            } else {
+                Logger.logError(PrintJobManager.class, "columnName:" + KeyConstants.KEY_SQL_PRINTJOB_ID + " not found");
+            }
         }
         c.close();
         mManager.close();
