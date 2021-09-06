@@ -144,8 +144,11 @@ public class FileUtils {
             if (isPdfFilename && result != null) {
                 // replace file extension with .pdf
                 if (!result.endsWith(".pdf")) {
-                    String filename = result.substring(0, result.lastIndexOf('.'));
-                    result = filename + ".pdf";
+                    int cut = result.lastIndexOf('.');
+                    if (cut != -1) {
+                        String filename = result.substring(0, cut);
+                        result = filename + ".pdf";
+                    }
                 }
             }
         }

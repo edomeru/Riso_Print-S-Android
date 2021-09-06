@@ -105,6 +105,34 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
     }
 
     // ================================================================================
+    // Tests - get filesize
+    // ================================================================================
+
+    public void testGetFileSize() {
+        try {
+            String pdfPath = getAssetPath(TEST_SRC_FILE);
+            mSrcFile = new File(pdfPath);
+            assertEquals(FileUtils.getFileSize(SmartDeviceApp.getAppContext(), Uri.fromFile(mSrcFile)), mSrcFile.length());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    // ================================================================================
+    // Tests - get mimetype
+    // ================================================================================
+
+    public void testGetMimeType() {
+        try {
+            String pdfPath = getAssetPath(TEST_SRC_FILE);
+            mSrcFile = new File(pdfPath);
+            assertEquals(FileUtils.getMimeType(SmartDeviceApp.getAppContext(), Uri.fromFile(mSrcFile)), "application/pdf");
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    // ================================================================================
     // Private
     // ================================================================================
 
