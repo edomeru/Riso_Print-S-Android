@@ -260,11 +260,8 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
         
         int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
-        //workaround for android 5.0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
-        }
-        
+        flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
+
         if (isTaskRoot()) {
             flags |= Intent.FLAG_ACTIVITY_NO_ANIMATION;
         }
@@ -380,18 +377,13 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
                 //edit.putBoolean("licenseAgreementDone",false);
                 edit.apply();
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // show permission onboarding screens
-                    findViewById(R.id.settingsButton).setOnClickListener(this);
-                    findViewById(R.id.startButton).setOnClickListener(this);
+                // show permission onboarding screens
+                findViewById(R.id.settingsButton).setOnClickListener(this);
+                findViewById(R.id.startButton).setOnClickListener(this);
 
-                    TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
-                    infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
-                    ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
-                } else {
-                    // start home screen
-                    runMainActivity();
-                }
+                TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
+                infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
+                ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
                 break;
 
             case R.id.licenseDisagreeButton:

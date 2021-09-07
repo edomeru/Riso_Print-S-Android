@@ -235,7 +235,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         initializePdfConverterAndRunAsync();
                     }
                     initializePdfManagerAndRunAsync();
-                } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                } else {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         mShouldDisplayExplanation = true;
                     } else {
