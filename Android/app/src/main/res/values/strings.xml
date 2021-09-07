@@ -168,7 +168,7 @@
     <string name="ids_lbl_start">Start</string>
     <string name="ids_lbl_search_printers_settings">Search Settings</string>
     <string name="ids_lbl_snmp_community_name">SNMP Community Name</string>
-    <string name="ids_lbl_valid_community_name">Valid characters are:\na-zA-Z0-9,./:;@[\\¥]^_</string>
+    <string name="ids_lbl_valid_community_name" tools:ignore="TypographyDashes">Valid characters are:\na-zA-Z0-9,./:;@[\\¥]^_</string>
     <string name="ids_err_msg_invalid_community_name">Please enter a SNMP community name with valid characters</string>
     <string name="ids_lbl_papertype_plain_premium">Plain (premium)</string>
     <string name="ids_lbl_inputtray_external">Additional Tray</string>
