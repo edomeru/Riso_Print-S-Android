@@ -21,6 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
+
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 
 /**
  * @class FileUtils
@@ -96,7 +99,7 @@ public class FileUtils {
                 mimeType = cr.getType(uri);
             } else {
                 String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
-                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase(Locale.getDefault()));
             }
         }
 
@@ -141,8 +144,11 @@ public class FileUtils {
             if (isPdfFilename && result != null) {
                 // replace file extension with .pdf
                 if (!result.endsWith(".pdf")) {
-                    String filename = result.substring(0, result.lastIndexOf('.'));
-                    result = filename + ".pdf";
+                    int cut = result.lastIndexOf('.');
+                    if (cut != -1) {
+                        String filename = result.substring(0, cut);
+                        result = filename + ".pdf";
+                    }
                 }
             }
         }
@@ -163,7 +169,12 @@ public class FileUtils {
             if (uri.getScheme().equals("content")) {
                 try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                     if (cursor != null && cursor.moveToFirst()) {
-                        filesize = cursor.getInt(cursor.getColumnIndex(OpenableColumns.SIZE));
+                        int columnIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                        if (columnIndex >= 0) {
+                            filesize = cursor.getInt(columnIndex);
+                        } else {
+                            Logger.logError(FileUtils.class, "columnName:" + OpenableColumns.SIZE + " not found");
+                        }
                     }
                 }
             } else if (uri.getPath() != null){

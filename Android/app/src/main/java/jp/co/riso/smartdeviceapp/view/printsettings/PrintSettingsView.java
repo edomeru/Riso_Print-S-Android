@@ -45,6 +45,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import jp.co.riso.android.util.AppUtils;
@@ -888,7 +889,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             }
             
             if (view instanceof EditText) {
-                ((EditText) view).setText(String.format("%d", value));
+                ((EditText) view).setText(String.format(Locale.getDefault(), "%d", value));
             }
             
             if (view instanceof Switch) {
@@ -1251,8 +1252,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
         switchView.setLayoutParams(params);
         switchView.setId(R.id.view_id_secure_print_switch);
         switchView.setOnCheckedChangeListener(this);
-        switchView.setTextOff(getResources().getString(R.string.ids_lbl_off).toUpperCase());
-        switchView.setTextOn(getResources().getString(R.string.ids_lbl_on).toUpperCase());
+        switchView.setTextOff(getResources().getString(R.string.ids_lbl_off).toUpperCase(Locale.getDefault()));
+        switchView.setTextOn(getResources().getString(R.string.ids_lbl_on).toUpperCase(Locale.getDefault()));
             
         String titleText = getResources().getString(R.string.ids_lbl_secure_print);
         addAuthenticationItemView(itemsGroup, titleText, switchView, KEY_TAG_SECURE_PRINT, true);
@@ -1809,8 +1810,8 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
             switchView.setOnCheckedChangeListener(this);
             switchView.setTag(tag);
             switchView.setLayoutParams(params);
-            switchView.setTextOff(getResources().getString(R.string.ids_lbl_off).toUpperCase());
-            switchView.setTextOn(getResources().getString(R.string.ids_lbl_on).toUpperCase());
+            switchView.setTextOff(getResources().getString(R.string.ids_lbl_off).toUpperCase(Locale.getDefault()));
+            switchView.setTextOn(getResources().getString(R.string.ids_lbl_on).toUpperCase(Locale.getDefault()));
             return switchView;
         } else if (type.equalsIgnoreCase(Setting.ATTR_VAL_NUMERIC)) {
             int margin = getResources().getDimensionPixelSize(R.dimen.printsettings_icon_setting_padding);

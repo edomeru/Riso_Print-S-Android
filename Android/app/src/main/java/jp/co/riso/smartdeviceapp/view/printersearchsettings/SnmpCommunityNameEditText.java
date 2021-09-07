@@ -83,6 +83,7 @@ public class SnmpCommunityNameEditText extends EditText {
         }
 
         editor.putString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, snmpCommunityName);
+        //noinspection 'ApplySharedPref'
         editor.commit();
     }
 }

@@ -137,7 +137,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @return Value of the requested column as a String.
      */
     public static String getStringFromCursor(Cursor cursor, String columnName) {
-        return cursor.getString(cursor.getColumnIndex(columnName));
+        int columnIndex = cursor.getColumnIndex(columnName);
+        if (columnIndex >= 0) {
+            return cursor.getString(columnIndex);
+        } else {
+            Logger.logError(DatabaseManager.class, "columnName:" + columnName + " not found");
+            return "";
+        }
     }
     
     /**
@@ -149,7 +155,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @return Value of the requested column as an integer.
      */
     public static int getIntFromCursor(Cursor cursor, String columnName) {
-        return cursor.getInt(cursor.getColumnIndex(columnName));
+        int columnIndex = cursor.getColumnIndex(columnName);
+        if (columnIndex >= 0) {
+            return cursor.getInt(columnIndex);
+        } else {
+            Logger.logError(DatabaseManager.class, "columnName:" + columnName + " not found");
+            return 0;
+        }
     }
     
     /**
@@ -165,7 +177,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @retval false Value is not 1.
      */
     public static boolean getBooleanFromCursor(Cursor cursor, String columnName) {
-        return (cursor.getInt(cursor.getColumnIndex(columnName)) == 1);
+        int columnIndex = cursor.getColumnIndex(columnName);
+        if (columnIndex >= 0) {
+            return (cursor.getInt(columnIndex) == 1);
+        } else {
+            Logger.logError(DatabaseManager.class, "columnName:" + columnName + " not found");
+            return false;
+        }
     }
     
     /**
