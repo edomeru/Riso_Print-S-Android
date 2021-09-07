@@ -13,7 +13,8 @@
         android:orientation="vertical"
         android:paddingBottom="6dp"
         android:paddingTop="24dp"
-        android:splitMotionEvents="false">
+        android:splitMotionEvents="false"
+        tools:ignore="UselessParent">
 
         <LinearLayout
             android:id="@+id/fileButton"
