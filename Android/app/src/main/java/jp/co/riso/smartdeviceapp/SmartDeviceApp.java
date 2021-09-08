@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp;
 
 import jp.co.riso.android.util.Logger;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -25,7 +26,9 @@ import androidx.annotation.Nullable;
  */
 public class SmartDeviceApp extends Application implements Application.ActivityLifecycleCallbacks {
 
+    @SuppressLint("StaticFieldLeak")
     private static volatile Context sContext;
+    @SuppressLint("StaticFieldLeak")
     private static volatile Activity sActivity = null;
     
     @Override
