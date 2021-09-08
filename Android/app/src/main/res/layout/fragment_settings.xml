@@ -57,7 +57,8 @@
                     android:gravity="left"
                     android:inputType="text"
                     android:singleLine="true"
-                    tools:ignore="LabelFor">
+                    tools:ignore="LabelFor"
+                    android:importantForAutofill="no">
                 </EditText>
             </LinearLayout>
         </LinearLayout>
