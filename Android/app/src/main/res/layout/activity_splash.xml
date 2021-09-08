@@ -45,13 +45,15 @@
                 android:id="@+id/licenseAgreeButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                tools:ignore="ButtonStyle" />
 
             <Button
                 android:id="@+id/licenseDisagreeButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                tools:ignore="ButtonStyle" />
         </LinearLayout>
 
     </LinearLayout>
