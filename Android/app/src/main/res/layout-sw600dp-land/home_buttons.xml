@@ -23,6 +23,7 @@
             android:layout_marginBottom="6dp"
             android:background="@android:color/background_light"
             android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
             android:layout_weight="1"
             tools:ignore="NestedWeights">
@@ -54,6 +55,7 @@
             android:layout_marginBottom="6dp"
             android:background="@android:color/background_light"
             android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
             android:layout_weight="1">
 
@@ -84,6 +86,7 @@
             android:layout_marginBottom="6dp"
             android:background="@android:color/background_light"
             android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
             android:layout_weight="1">
 
