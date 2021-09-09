@@ -39,7 +39,8 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/selector_home_file"
                 android:tint="@color/theme_color_1"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="0dp"
@@ -68,7 +69,8 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/selector_home_photo"
                 android:tint="@color/theme_color_1"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="0dp"
@@ -97,7 +99,8 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/selector_home_camera"
                 android:tint="@color/theme_color_1"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="0dp"
