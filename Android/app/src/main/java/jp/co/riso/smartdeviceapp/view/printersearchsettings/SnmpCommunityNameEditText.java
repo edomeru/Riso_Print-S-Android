@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view.printersearchsettings;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +24,7 @@ import jp.co.riso.android.text.SnmpCommunityNameFilter;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager;
 
+@SuppressLint("AppCompatCustomView")
 public class SnmpCommunityNameEditText extends EditText {
 
     public static final String SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID = "snmp_community_name_textfield_paste_broadcast_id";

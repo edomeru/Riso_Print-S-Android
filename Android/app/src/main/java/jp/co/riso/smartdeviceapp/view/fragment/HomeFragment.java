@@ -242,34 +242,30 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private boolean checkPermission(boolean isStorageOnly) {
         if (isStorageOnly && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    if (mConfirmDialogFragment == null) {
-                        final String message = getActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed);
-                        final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
-                        mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
-                        mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
-                        DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
-                    }
-                } else {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (mConfirmDialogFragment == null) {
+                    final String message = getActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed);
+                    final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
+                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
+                    mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
+                    DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                 }
+            } else {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
             }
             return false;
         } else if (!isStorageOnly && (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    if (mConfirmDialogFragment == null) {
-                        final String message = getActivity().getString(R.string.ids_err_msg_camera_permission_not_allowed);
-                        final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
-                        mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
-                        mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
-                        DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
-                    }
-                } else {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_STORAGE_PERMISSION);
+            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (mConfirmDialogFragment == null) {
+                    final String message = getActivity().getString(R.string.ids_err_msg_camera_permission_not_allowed);
+                    final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
+                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
+                    mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
+                    DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                 }
+            } else {
+                requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_STORAGE_PERMISSION);
             }
             return false;
         }

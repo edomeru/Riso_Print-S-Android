@@ -19,6 +19,8 @@ import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener;
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsLayoutListener;
 import jp.co.riso.smartprint.R;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
@@ -555,6 +557,7 @@ public class PrintJobsView extends LinearLayout implements PrintJobsLayoutListen
         return super.onInterceptTouchEvent(ev);
     }
     
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         return super.onTouchEvent(ev);

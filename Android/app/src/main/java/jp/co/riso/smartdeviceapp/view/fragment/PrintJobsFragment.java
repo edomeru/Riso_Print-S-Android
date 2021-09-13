@@ -84,6 +84,7 @@ public class PrintJobsFragment extends BaseFragment implements OnTouchListener, 
         mPrintJobsView = view.findViewById(R.id.printJobsView);
         mEmptyJobsText = view.findViewById(R.id.emptyJobsText);
         mScrollView = view.findViewById(R.id.printJobScrollView);
+        //noinspection 'ClickableViewAccessibility'
         mPrintJobContainer.setOnTouchListener(this);
         
         mLoadPrintJobsTask = new LoadPrintJobsTask(getActivity(), mPrintJobs, mPrinters);

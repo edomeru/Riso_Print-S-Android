@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:gravity="right"
-    tools:ignore="LabelFor">
+    android:importantForAutofill="no"
+    tools:ignore="LabelFor,TextFields">
 
 </EditText>

@@ -728,6 +728,7 @@ public class PDFFileManager {
                             File destFile = new File(sandboxPath);
                             destFile.createNewFile();
                             long srcSize = file.length();
+                            //noinspection 'UsableSpace'
                             long destSize = destFile.getUsableSpace() - AppConstants.CONST_FREE_SPACE_BUFFER;
                             if (srcSize > destSize){
                                 return PDF_NOT_ENOUGH_FREE_SPACE;

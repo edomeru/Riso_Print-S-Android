@@ -282,6 +282,7 @@ public class PullToRefreshListView extends ListView{
         onRefreshListener.onHeaderAdjusted(Math.max(padding, 0));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event){
         if(lockScrollWhileRefreshing

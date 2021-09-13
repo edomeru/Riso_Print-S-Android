@@ -236,6 +236,7 @@ public class PrintPreviewView extends FrameLayout implements OnScaleGestureListe
         return false;
     }
     
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         mScaleDetector.onTouchEvent(ev);
