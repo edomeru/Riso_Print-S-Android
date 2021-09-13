@@ -22,7 +22,6 @@
         android:resizeableActivity="false"
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="true"
-        android:supportsRtl="false"
         tools:ignore="UnusedAttribute">
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.SplashActivity"
