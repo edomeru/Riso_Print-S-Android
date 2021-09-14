@@ -3,15 +3,10 @@ package jp.co.riso.smartdeviceapp.view.fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import android.app.Instrumentation;
-import android.content.ContentProvider;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
-//import androidx.test.core.app.ApplicationProvider;
 import androidx.core.content.ContextCompat;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
@@ -25,6 +20,7 @@ import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 import jp.co.riso.smartprint.R;
 
+import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static junit.framework.Assert.assertEquals;
@@ -33,7 +29,6 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertNotNull;
 
 public class HomeFragmentTest {
-    //private final Context context = ApplicationProvider.getApplicationContext();
     private final String TAG = "HOME_FRAGMENT";
     private final String REQUEST_PERMISSIONS = "android.content.pm.action.REQUEST_PERMISSIONS";
     private final String REQUEST_PERMISSIONS_NAMES = "android.content.pm.extra.REQUEST_PERMISSIONS_NAMES";
@@ -154,5 +149,33 @@ public class HomeFragmentTest {
         } else {
             assertEquals(extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES), AppConstants.IMAGE_TYPES);
         }
+    }
+
+    @Test
+    public void onClickCapturePhoto() {
+        HomeFragment homeFragment = initHomeFragment();
+
+        // stubs handling of start activity to prevent launching of scanActivity
+        Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null);
+        Intents.intending(IntentMatchers.anyIntent()).respondWith(result);
+
+        // prepare button to be clicked
+        final View capturePhotoButton = new LinearLayout(intentsTestRule.getActivity());
+        capturePhotoButton.setId(R.id.cameraButton);
+
+        homeFragment.onClick(capturePhotoButton);
+
+        // because of hidden features, camera permission is ALWAYS not granted
+        // TODO: when new features are restored, storage and camera permissions must be checked (or mocked)
+        Intent permissionRequestIntent = Intents.getIntents().get(0);
+        assertNotNull(permissionRequestIntent);
+        assertEquals(permissionRequestIntent.getAction(), REQUEST_PERMISSIONS);
+
+        String[] permissions = permissionRequestIntent.getStringArrayExtra(REQUEST_PERMISSIONS_NAMES);
+        assertEquals(permissions.length, 2);
+        assertEquals(permissions[0], CAMERA);
+        assertEquals(permissions[1], WRITE_EXTERNAL_STORAGE);
+
+        // TODO: test result handling when permissions are set (not possible now because of hidden features)
     }
 }

@@ -117,58 +117,55 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        switch (v.getId()) {
-            case R.id.fileButton:
-                buttonTapped = fileButton;
-                checkPermission = checkPermission(true);
-                if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
-                    // prevent double tap
-                    lastClickTime = SystemClock.elapsedRealtime();
-                    Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    filePickerIntent.setType("*/*");
-                    if (!isChromeBook()) {
-                        filePickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.DOC_TYPES);
-                    }
-                    startActivityForResult(Intent.createChooser(filePickerIntent, getString(R.string.ids_lbl_select_document)), REQUEST_FILE);
+        int id = v.getId();
+        if (id == R.id.fileButton) {
+            buttonTapped = fileButton;
+            checkPermission = checkPermission(true);
+            if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                // prevent double tap
+                lastClickTime = SystemClock.elapsedRealtime();
+                Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                filePickerIntent.setType("*/*");
+                if (!isChromeBook()) {
+                    filePickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.DOC_TYPES);
                 }
-                break;
-            case R.id.photosButton:
-                buttonTapped = photosButton;
-                checkPermission = checkPermission(true);
-                if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
-                    // prevent double tap
-                    lastClickTime = SystemClock.elapsedRealtime();
-                    Intent photosPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    photosPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                    photosPickerIntent.setType("*/*");
-                    if (!isChromeBook()) {
-                        photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES);
-                    }
-                    startActivityForResult(Intent.createChooser(photosPickerIntent, getString(R.string.ids_lbl_select_photos)), REQUEST_PHOTO);
+                startActivityForResult(Intent.createChooser(filePickerIntent, getString(R.string.ids_lbl_select_document)), REQUEST_FILE);
+            }
+        } else if (id == R.id.photosButton) {
+            buttonTapped = photosButton;
+            checkPermission = checkPermission(true);
+            if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                // prevent double tap
+                lastClickTime = SystemClock.elapsedRealtime();
+                Intent photosPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                photosPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                photosPickerIntent.setType("*/*");
+                if (!isChromeBook()) {
+                    photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES);
                 }
-                break;
-            case R.id.cameraButton:
-                buttonTapped = cameraButton;
-                checkPermission = checkPermission(false);
-                if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
-                    // prevent double tap
-                    lastClickTime = SystemClock.elapsedRealtime();
+                startActivityForResult(Intent.createChooser(photosPickerIntent, getString(R.string.ids_lbl_select_photos)), REQUEST_PHOTO);
+            }
+        } else if (id == R.id.cameraButton) {
+            buttonTapped = cameraButton;
+            checkPermission = checkPermission(false);
+            if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                // prevent double tap
+                lastClickTime = SystemClock.elapsedRealtime();
 
-                    // RM 789 Fix: Add checking of available internal storage before opening External Camera Application
-                    if (getAvailableStorageInBytes() > AppConstants.CONST_FREE_SPACE_BUFFER) {
-                        Intent intent = new Intent(getActivity(), ScanActivity.class);
-                        intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, ScanConstants.OPEN_CAMERA);
-                        startActivityForResult(intent, REQUEST_CAMERA);
-                    } else {
-                        // RM 789 Fix - Start
-                        // Display Error Message if internal storage is less than Free Space Buffer
-                        String message = getResources().getString(R.string.ids_err_msg_not_enough_space);
-                        String button = getResources().getString(R.string.ids_lbl_ok);
-                        DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
-                        // RM 789 Fix - End
-                    }
+                // RM 789 Fix: Add checking of available internal storage before opening External Camera Application
+                if (getAvailableStorageInBytes() > AppConstants.CONST_FREE_SPACE_BUFFER) {
+                    Intent intent = new Intent(getActivity(), ScanActivity.class);
+                    intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, ScanConstants.OPEN_CAMERA);
+                    startActivityForResult(intent, REQUEST_CAMERA);
+                } else {
+                    // RM 789 Fix - Start
+                    // Display Error Message if internal storage is less than Free Space Buffer
+                    String message = getResources().getString(R.string.ids_err_msg_not_enough_space);
+                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    // RM 789 Fix - End
                 }
-                break;
+            }
         }
     }
 
