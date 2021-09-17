@@ -255,30 +255,21 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.homeButton:
-                setCurrentState(STATE_HOME);
-                break;
-            case R.id.printPreviewButton:
-                setCurrentState(STATE_PRINTPREVIEW);
-                break;
-            case R.id.printersButton:
-                setCurrentState(STATE_PRINTERS);
-                break;
-            case R.id.printJobsButton:
-                setCurrentState(STATE_PRINTJOBS);
-                break;
-            case R.id.settingsButton:
-                setCurrentState(STATE_SETTINGS);
-                break;
-            case R.id.helpButton:
-                setCurrentState(STATE_HELP);
-                break;
-            case R.id.legalButton:
-                setCurrentState(STATE_LEGAL);
-                break;
-            default:
-                break;
+        int id = v.getId();
+        if (id == R.id.homeButton) {
+            setCurrentState(STATE_HOME);
+        } else if (id == R.id.printPreviewButton) {
+            setCurrentState(STATE_PRINTPREVIEW);
+        } else if (id == R.id.printersButton) {
+            setCurrentState(STATE_PRINTERS);
+        } else if (id == R.id.printJobsButton) {
+            setCurrentState(STATE_PRINTJOBS);
+        } else if (id == R.id.settingsButton) {
+            setCurrentState(STATE_SETTINGS);
+        } else if (id == R.id.helpButton) {
+            setCurrentState(STATE_HELP);
+        } else if (id == R.id.legalButton) {
+            setCurrentState(STATE_LEGAL);
         }
     }
 }
