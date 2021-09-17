@@ -22,9 +22,6 @@
     <dimen name="home_title_padding">24dp</dimen>
     <dimen name="home_menu_height">48dp</dimen>
     
-    <integer name="match_parent_value">-1</integer>
-    <!-- <dimen name="settings_width">@integer/match_parent_value</dimen> -->
-    
     <dimen name="printsettings_option_with_sub_height">56dp</dimen>
     
     <dimen name="printsettings_menu_padding">10dp</dimen>
@@ -77,12 +74,9 @@
     <dimen name="printers_row_left_padding">10dp</dimen>
 
     <dimen name="printers_row_height">56dp</dimen>
-    <dimen name="printers_edit_box_height">38dp</dimen>
-    <dimen name="printers_row_riso_icon_margin">40dp</dimen>
-    
+
     <dimen name="printers_row_right_padding">5dp</dimen>
     <dimen name="printers_row_right_margin">10dp</dimen>
-    <dimen name="printers_row_right_icon_padding">6dp</dimen>
     <dimen name="printers_row_right_icon_size">30dp</dimen>
     
     <dimen name="printers_view_tablet_padding">5dp</dimen>
@@ -101,9 +95,6 @@
     <dimen name="onboarding_text_margin">16dp</dimen>
     <dimen name="onboarding_button_margin">4dp</dimen>
     <dimen name="onboarding_button_padding">8dp</dimen>
-    <dimen name="onboarding_logo_height">56dp</dimen>
-    <dimen name="onboarding_logo_margin">32dp</dimen>
-    <dimen name="onboarding_logo_padding_bottom">10dp</dimen>
 
     <dimen name="printersearchsettings_horizontal_padding">15dp</dimen>
     <dimen name="printersearchsettings_item_space">3dp</dimen>
