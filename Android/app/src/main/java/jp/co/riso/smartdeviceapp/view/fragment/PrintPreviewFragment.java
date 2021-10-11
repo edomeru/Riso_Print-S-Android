@@ -815,15 +815,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.view_id_print_button:
-                Message msg = Message.obtain(mPauseableHandler, R.id.view_id_print_button);
-                msg.obj = v;
-                mPauseableHandler.sendMessage(msg);
-                break;
-            case R.id.menu_id_action_button:
-                mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
-                break;
+        int id = v.getId();
+        if (id == R.id.view_id_print_button) {
+            Message msg = Message.obtain(mPauseableHandler, R.id.view_id_print_button);
+            msg.obj = v;
+            mPauseableHandler.sendMessage(msg);
+        } else if (id == R.id.menu_id_action_button) {
+            mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
         }
     }
 
@@ -1007,54 +1005,52 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void processMessage(Message msg) {
-        switch (msg.what) {
-            case R.id.view_id_print_button:
-                mPauseableHandler.pause();
-                PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        int id = msg.what;
+        if (id == R.id.view_id_print_button) {
+            mPauseableHandler.pause();
+            PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
 
-                if (printerManager.getDefaultPrinter() == PrinterManager.EMPTY_ID) {
-                    String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
-                    String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
-                    String btnMsg = getString(R.string.ids_lbl_ok);
-                    InfoDialogFragment fragment = InfoDialogFragment.newInstance(titleMsg, strMsg, btnMsg);
-                    DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
-                    mPauseableHandler.resume();
-                    return;
-                }
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    View v = (View) msg.obj;
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        FragmentManager fm = activity.getSupportFragmentManager();
-
-                        setIconState(v.getId(), true);
-
-                        // Always make new
-                        PrintSettingsFragment fragment = null;// (PrintSettingsFragment)
-                        // fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
-                        FragmentTransaction ft = fm.beginTransaction();
-                        fragment = new PrintSettingsFragment();
-                        ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
-                        ft.commit();
-
-                        fragment.setPrinterId(mPrinterId);
-                        fragment.setPdfPath(mPdfManager.getPath());
-                        fragment.setPDFisLandscape(mPdfManager.isPDFLandscape());
-                        fragment.setPrintSettings(mPrintSettings);
-                        fragment.setFragmentForPrinting(true);
-                        fragment.setTargetFragment(this, 0);
-
-                        activity.openDrawer(Gravity.RIGHT, isTablet());
-                    } else {
-                        activity.closeDrawers();
-                    }
-                }
-                break;
-            case R.id.menu_id_action_button:
-                mPauseableHandler.pause();
+            if (printerManager.getDefaultPrinter() == PrinterManager.EMPTY_ID) {
+                String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
+                String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
+                String btnMsg = getString(R.string.ids_lbl_ok);
+                InfoDialogFragment fragment = InfoDialogFragment.newInstance(titleMsg, strMsg, btnMsg);
+                DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                mPauseableHandler.resume();
+                return;
+            }
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
                 MainActivity activity = (MainActivity) getActivity();
-                activity.openDrawer(Gravity.LEFT);
-                break;
+                View v = (View) msg.obj;
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    FragmentManager fm = activity.getSupportFragmentManager();
+
+                    setIconState(v.getId(), true);
+
+                    // Always make new
+                    PrintSettingsFragment fragment = null;// (PrintSettingsFragment)
+                    // fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
+                    FragmentTransaction ft = fm.beginTransaction();
+                    fragment = new PrintSettingsFragment();
+                    ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
+                    ft.commit();
+
+                    fragment.setPrinterId(mPrinterId);
+                    fragment.setPdfPath(mPdfManager.getPath());
+                    fragment.setPDFisLandscape(mPdfManager.isPDFLandscape());
+                    fragment.setPrintSettings(mPrintSettings);
+                    fragment.setFragmentForPrinting(true);
+                    fragment.setTargetFragment(this, 0);
+
+                    activity.openDrawer(Gravity.RIGHT, isTablet());
+                } else {
+                    activity.closeDrawers();
+                }
+            }
+        } else if (id == R.id.menu_id_action_button) {
+            mPauseableHandler.pause();
+            MainActivity activity = (MainActivity) getActivity();
+            activity.openDrawer(Gravity.LEFT);
         }
     }
 

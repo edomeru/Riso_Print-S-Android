@@ -2108,34 +2108,28 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.view_id_collapse_container:
-                toggleCollapse(v);
-                break;
-            case R.id.view_id_show_subview_container:
-                if (mMainView.isEnabled()) {
-                    displayOptionsSubview(v, true);
-                }
-                break;
-            case R.id.view_id_hide_subview_container:
-                if (mSubView.isEnabled()) {
-                    dismissOptionsSubview(true);
-                    mPrinterManager.createUpdateStatusThread();
-                }
-                break;
-            case R.id.view_id_subview_option_item:
-            case R.id.view_id_subview_printer_item:
-                subviewOptionsItemClicked(v);
-                break;
-            case R.id.view_id_print_selected_printer:
-                if (mMainView.isEnabled()) {
-                    displayOptionsSubview(v, true);
-                    mPrinterManager.createUpdateStatusThread();
-                }
-                break;
-            case R.id.view_id_print_header:
-                executePrint();
-                break;
+        int id = v.getId();
+        if (id == R.id.view_id_collapse_container) {
+            toggleCollapse(v);
+        } else if (id == R.id.view_id_show_subview_container) {
+            if (mMainView.isEnabled()) {
+                displayOptionsSubview(v, true);
+            }
+        } else if (id == R.id.view_id_hide_subview_container) {
+            if (mSubView.isEnabled()) {
+                dismissOptionsSubview(true);
+                mPrinterManager.createUpdateStatusThread();
+            }
+        } else if ((id == R.id.view_id_subview_option_item) ||
+                   (id == R.id.view_id_subview_printer_item)) {
+            subviewOptionsItemClicked(v);
+        } else if (id == R.id.view_id_print_selected_printer) {
+            if (mMainView.isEnabled()) {
+                displayOptionsSubview(v, true);
+                mPrinterManager.createUpdateStatusThread();
+            }
+        } else if (id == R.id.view_id_print_header) {
+            executePrint();
         }
     }
     

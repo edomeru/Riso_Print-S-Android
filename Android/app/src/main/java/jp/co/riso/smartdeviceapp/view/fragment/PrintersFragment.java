@@ -424,49 +424,41 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void onClick(View v) {        
-        switch (v.getId()) {
-            case R.id.menu_id_action_search_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    
-                    MainActivity activity = (MainActivity) getActivity();
-                    
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_search_button);
-                    } else {
-                        activity.closeDrawers();
-                    }
-                }
-                break;
-            case R.id.menu_id_action_add_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_add_button);
-                    } else {
-                        activity.closeDrawers();
-                    }
-                }
-                break;
-            case R.id.menu_id_printer_search_settings_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
+        int id = v.getId();
+        if (id == R.id.menu_id_action_search_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
 
-                    MainActivity activity = (MainActivity) getActivity();
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_search_button);
+                } else {
+                    activity.closeDrawers();
+                }
+            }
+        } else if (id == R.id.menu_id_action_add_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
 
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        mPauseableHandler.sendEmptyMessage(R.id.menu_id_printer_search_settings_button);
-                    } else {
-                        activity.closeDrawers();
-                    }
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_add_button);
+                } else {
+                    activity.closeDrawers();
                 }
-                break;
-            case R.id.menu_id_action_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
+            }
+        } else if (id == R.id.menu_id_printer_search_settings_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
+
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    mPauseableHandler.sendEmptyMessage(R.id.menu_id_printer_search_settings_button);
+                } else {
+                    activity.closeDrawers();
                 }
-                break;
-            default:
-                break;
+            }
+        } else if (id == R.id.menu_id_action_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
+            }
         }
     }
     
@@ -560,7 +552,8 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
 
     @Override
     public void processMessage(Message msg) {
-        switch (msg.what) {
+        int id = msg.what;
+        switch (id) {
             case MSG_POPULATE_PRINTERS_LIST:
                 if (isTablet()) {
                     mPrinterTabletView.restoreState(mPrinter, msg.arg1, msg.arg2);
@@ -592,22 +585,22 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 displayDefaultPrintSettings(fragment);
                 mPrinterTabletView.setDefaultSettingSelected(msg.arg1, true);
                 break;
-            case R.id.menu_id_action_search_button:
-                mPauseableHandler.pause();
-                displayPrinterSearchFragment();
-                return;
-            case R.id.menu_id_action_add_button:
-                mPauseableHandler.pause();
-                displayAddPrinterFragment();
-                return;
-            case R.id.menu_id_printer_search_settings_button:
-                mPauseableHandler.pause();
-                displaySearchPrinterFragment();
-                return;
-            case R.id.menu_id_action_button:
-                mPauseableHandler.pause();
-                MainActivity activity = (MainActivity) getActivity();
-                activity.openDrawer(Gravity.LEFT);
+            default:
+                if (id == R.id.menu_id_action_search_button) {
+                    mPauseableHandler.pause();
+                    displayPrinterSearchFragment();
+                } else if (id == R.id.menu_id_action_add_button) {
+                    mPauseableHandler.pause();
+                    displayAddPrinterFragment();
+                } else if (id == R.id.menu_id_printer_search_settings_button) {
+                    mPauseableHandler.pause();
+                    displaySearchPrinterFragment();
+                } else if (id == R.id.menu_id_action_button) {
+                    mPauseableHandler.pause();
+                    MainActivity activity = (MainActivity) getActivity();
+                    activity.openDrawer(Gravity.LEFT);
+                }
+                break;
         }
     }
 }

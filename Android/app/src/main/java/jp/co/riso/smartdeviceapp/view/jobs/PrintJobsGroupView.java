@@ -698,33 +698,29 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.printJobGroupDelete:
-                // if delete button is visible, hide that instead of handling the click
-                if (mLayoutListener.isDeleteMode()) {
-                    mLayoutListener.hideDeleteButton();
-                } else {
-                    deleteJobGroup(v);
-                }
-                break;
-            case R.id.printJobDeleteBtn:
-                mGroupListener.showDeleteDialog();
-                break;
-            case R.id.printJobsGroupLayout:
-                // if delete button is visible, hide that instead of handling the click
-                if (mLayoutListener.isDeleteMode()) {
-                    mLayoutListener.hideDeleteButton();
-                } else {
-                    toggleGroupView(v);
-                }
-                break;
-            case R.id.printJobRow:
-                if (mLayoutListener.isDeleteMode()) {
-                    mLayoutListener.hideDeleteButton();
-                } else {
-                    mLayoutListener.showDeleteButton(this, v);
-                }
-                break;
+        int id = v.getId();
+        if (id == R.id.printJobGroupDelete) {
+            // if delete button is visible, hide that instead of handling the click
+            if (mLayoutListener.isDeleteMode()) {
+                mLayoutListener.hideDeleteButton();
+            } else {
+                deleteJobGroup(v);
+            }
+        } else if (id == R.id.printJobDeleteBtn) {
+            mGroupListener.showDeleteDialog();
+        } else if (id == R.id.printJobsGroupLayout) {
+            // if delete button is visible, hide that instead of handling the click
+            if (mLayoutListener.isDeleteMode()) {
+                mLayoutListener.hideDeleteButton();
+            } else {
+                toggleGroupView(v);
+            }
+        } else if (id == R.id.printJobRow) {
+            if (mLayoutListener.isDeleteMode()) {
+                mLayoutListener.hideDeleteButton();
+            } else {
+                mLayoutListener.showDeleteButton(this, v);
+            }
         }
     }
     

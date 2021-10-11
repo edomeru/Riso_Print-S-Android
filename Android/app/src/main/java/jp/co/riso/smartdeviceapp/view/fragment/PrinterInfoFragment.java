@@ -202,46 +202,44 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
 
     @Override
     public void processMessage(Message msg) {
-        switch (msg.what) {
-            case R.id.menu_id_action_print_settings_button:
-                mPauseableHandler.pause();
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        View v = (View) msg.obj;
-                        FragmentManager fm = getParentFragmentManager();
-                        setIconState(v.getId(), true);
-                        mPrintSettingsFragment = null;
-                        
-                        FragmentTransaction ft = fm.beginTransaction();
-                        mPrintSettingsFragment = new PrintSettingsFragment();
-                        ft.replace(R.id.rightLayout, mPrintSettingsFragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
-                        ft.commit();
+        int id = msg.what;
+        if (id == R.id.menu_id_action_print_settings_button) {
+            mPauseableHandler.pause();
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
 
-                        mPrintSettingsFragment.setPrinterId(mPrinter.getId());
-                        // use new print settings retrieved from the database
-                        mPrintSettingsFragment.setPrintSettings(new PrintSettings(mPrinter.getId(), mPrinter.getPrinterType()));
-                        
-                        PrintersFragment printersFragment = (PrintersFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTERS);
-                        mPrintSettingsFragment.setTargetFragment(printersFragment, 0);
-                        activity.openDrawer(Gravity.RIGHT, false);
-                    } else {
-                        activity.closeDrawers();
-                    }
-                }
-                break;
-            case R.id.menu_id_back_button:
-                mPauseableHandler.pause();
-                FragmentManager fm = getParentFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                
-                if (fm.getBackStackEntryCount() > 0) {
-                    fm.popBackStack();
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    View v = (View) msg.obj;
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    setIconState(v.getId(), true);
+                    mPrintSettingsFragment = null;
+
+                    FragmentTransaction ft = fm.beginTransaction();
+                    mPrintSettingsFragment = new PrintSettingsFragment();
+                    ft.replace(R.id.rightLayout, mPrintSettingsFragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
                     ft.commit();
+
+                    mPrintSettingsFragment.setPrinterId(mPrinter.getId());
+                    // use new print settings retrieved from the database
+                    mPrintSettingsFragment.setPrintSettings(new PrintSettings(mPrinter.getId(), mPrinter.getPrinterType()));
+
+                    PrintersFragment printersFragment = (PrintersFragment) fm.findFragmentByTag(FRAGMENT_TAG_PRINTERS);
+                    mPrintSettingsFragment.setTargetFragment(printersFragment, 0);
+                    activity.openDrawer(Gravity.RIGHT, false);
+                } else {
+                    activity.closeDrawers();
                 }
-                break;
-        }        
+            }
+        } else if (id == R.id.menu_id_back_button) {
+            mPauseableHandler.pause();
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+                
+            if (fm.getBackStackEntryCount() > 0) {
+                fm.popBackStack();
+                ft.commit();
+            }
+        }
     }
     
     // ================================================================================
@@ -250,15 +248,13 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.menu_id_action_print_settings_button:
-                Message newMessage = Message.obtain(mPauseableHandler, R.id.menu_id_action_print_settings_button);
-                newMessage.obj = v;
-                mPauseableHandler.sendMessage(newMessage);
-                break;
-            case R.id.menu_id_back_button:
-                mPauseableHandler.sendEmptyMessage(R.id.menu_id_back_button);
-                break;
+        int id = v.getId();
+        if (id == R.id.menu_id_action_print_settings_button) {
+            Message newMessage = Message.obtain(mPauseableHandler, R.id.menu_id_action_print_settings_button);
+            newMessage.obj = v;
+            mPauseableHandler.sendMessage(newMessage);
+        } else if (id == R.id.menu_id_back_button) {
+            mPauseableHandler.sendEmptyMessage(R.id.menu_id_back_button);
         }
     }
 
@@ -268,46 +264,35 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-        switch(parentView.getId())
-        {
-            case R.id.inputPort:
-            {
-                PortSetting port = PortSetting.LPR;
-                switch (position) {
-                    case 1:
-                        port = PortSetting.RAW;
-                        break;
-                    default:
-                        break;
-                }
-                mPrinter.setPortSetting(port);
-                mPrinterManager.updatePortSettings(mPrinter.getId(), port);
-                break;
+        int parentId = parentView.getId();
+        if (parentId ==  R.id.inputPort) {
+            PortSetting port = PortSetting.LPR;
+            switch (position) {
+                case 1:
+                    port = PortSetting.RAW;
+                    break;
+                default:
+                    break;
             }
-            case R.id.defaultPrinter:
-            {
-                switch (position) {
-                    case 0://yes
-                        {
-                            if (mPrinterManager.setDefaultPrinter(mPrinter)) {
-                                mDefaultPrinterAdapter.isNoDisabled = true;
-                            } else {
-                                InfoDialogFragment info = InfoDialogFragment.newInstance(getActivity().getString(R.string.ids_lbl_printer_info),
-                                        getActivity().getString(R.string.ids_err_msg_db_failure), getActivity().getString(R.string.ids_lbl_ok));
-                                DialogUtils.displayDialog(getActivity(), KEY_PRINTER_INFO_ERR_DIALOG, info);
-                            }
-                        }
-                        break;
-                    default:
-                        break;
+            mPrinter.setPortSetting(port);
+            mPrinterManager.updatePortSettings(mPrinter.getId(), port);
+        } else if (parentId == R.id.defaultPrinter) {
+            switch (position) {
+                case 0://yes
+                {
+                    if (mPrinterManager.setDefaultPrinter(mPrinter)) {
+                        mDefaultPrinterAdapter.isNoDisabled = true;
+                    } else {
+                        InfoDialogFragment info = InfoDialogFragment.newInstance(getActivity().getString(R.string.ids_lbl_printer_info),
+                                getActivity().getString(R.string.ids_err_msg_db_failure), getActivity().getString(R.string.ids_lbl_ok));
+                        DialogUtils.displayDialog(getActivity(), KEY_PRINTER_INFO_ERR_DIALOG, info);
+                    }
                 }
                 break;
+                default:
+                    break;
             }
-            default:
-                break;
         }
-        
-
     }
     
     @Override

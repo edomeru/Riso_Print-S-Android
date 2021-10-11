@@ -210,21 +210,18 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     
     @Override
     public void onClick(View v) {
-        
-        switch (v.getId()) {
-            case R.id.printerListRow:
-                Printer printer = (Printer) v.findViewById(R.id.img_disclosure).getTag();
-                if(mCallbackRef != null && mCallbackRef.get() != null) {
-                    mCallbackRef.get().onPrinterListClicked(printer);
-                }
-                break;
-            case R.id.btn_delete:
-                if (mCallbackRef != null && mCallbackRef.get() != null) {
-                    PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
-                    mDeleteViewHolder = (ViewHolder) printerContainer.getTag();
-                    mCallbackRef.get().onPrinterDeleteClicked((Printer) mDeleteViewHolder.mDiscloseImage.getTag());
-                }
-                break;
+        int id = v.getId();
+        if (id == R.id.printerListRow) {
+            Printer printer = (Printer) v.findViewById(R.id.img_disclosure).getTag();
+            if (mCallbackRef != null && mCallbackRef.get() != null) {
+                mCallbackRef.get().onPrinterListClicked(printer);
+            }
+        } else if (id == R.id.btn_delete) {
+            if (mCallbackRef != null && mCallbackRef.get() != null) {
+                PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
+                mDeleteViewHolder = (ViewHolder) printerContainer.getTag();
+                mCallbackRef.get().onPrinterDeleteClicked((Printer) mDeleteViewHolder.mDiscloseImage.getTag());
+            }
         }
     }
     
