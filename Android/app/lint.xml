@@ -19,4 +19,31 @@
 		<ignore path="src/main/res/values-fr/strings.xml" />
 		<ignore path="src/main/res/values-ja/strings.xml" />
     </issue>
+    <issue id="IconDipSize">
+        <ignore path="src/main/res/**/ic_launcher.png" />
+        <ignore path="src/main/res/**/img_btn_camera_normal.png" />
+        <ignore path="src/main/res/**/img_btn_camera_pressed.png" />
+        <ignore path="src/main/res/**/img_btn_file_normal.png" />
+        <ignore path="src/main/res/**/img_btn_file_pressed.png" />
+        <ignore path="src/main/res/**/img_btn_photo_normal.png" />
+        <ignore path="src/main/res/**/img_btn_photo_pressed.png" />
+    </issue>
+    <issue id="IconDuplicatesConfig">
+        <ignore path="src/main/res/**/ic_launcher.png" />
+        <ignore path="src/main/res/**/img_btn_camera_normal.png" />
+        <ignore path="src/main/res/**/img_btn_camera_pressed.png" />
+        <ignore path="src/main/res/**/img_btn_file_normal.png" />
+        <ignore path="src/main/res/**/img_btn_file_pressed.png" />
+        <ignore path="src/main/res/**/img_btn_photo_normal.png" />
+        <ignore path="src/main/res/**/img_btn_photo_pressed.png" />
+    </issue>
+    <issue id="IconDuplicates">
+        <ignore path="src/main/res/**/img_btn_radio_normal.png" />
+        <ignore path="src/main/res/**/widgettheme_list_selector_disabled_holo_dark_1.9.png" />
+        <ignore path="src/main/res/**/widgettheme_list_selector_disabled_holo_dark_2.9.png" />
+        <ignore path="src/main/res/**/widgettheme_spinner_default_holo_dark_1.9.png" />
+        <ignore path="src/main/res/**/widgettheme_spinner_default_holo_dark_2.9.png" />
+        <ignore path="src/main/res/**/widgettheme_spinner_disabled_holo_dark_1.9.png" />
+        <ignore path="src/main/res/**/widgettheme_spinner_disabled_holo_dark_2.9.png" />
+    </issue>
 </lint>

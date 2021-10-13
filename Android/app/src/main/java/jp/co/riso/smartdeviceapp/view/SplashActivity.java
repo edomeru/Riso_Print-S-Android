@@ -367,69 +367,60 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.licenseAgreeButton:
-                // save to shared preferences
-                SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs", MODE_PRIVATE);
+        int id = v.getId();
+        if (id == R.id.licenseAgreeButton) {
+            // save to shared preferences
+            SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs", MODE_PRIVATE);
 
-                SharedPreferences.Editor edit = preferences.edit();
-                edit.putBoolean("licenseAgreementDone", true);
-                //edit.putBoolean("licenseAgreementDone",false);
-                edit.apply();
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putBoolean("licenseAgreementDone", true);
+            //edit.putBoolean("licenseAgreementDone",false);
+            edit.apply();
 
-                // show permission onboarding screens
-                findViewById(R.id.settingsButton).setOnClickListener(this);
-                findViewById(R.id.startButton).setOnClickListener(this);
+            // show permission onboarding screens
+            findViewById(R.id.settingsButton).setOnClickListener(this);
+            findViewById(R.id.startButton).setOnClickListener(this);
 
-                TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
-                infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
-                ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
-                break;
+            TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
+            infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
+            ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
+        } else if (id == R.id.licenseDisagreeButton) {
+            // alert box
+            String title = getString(R.string.ids_lbl_license);
+            String message = getString(R.string.ids_err_msg_disagree_to_license);
+            String buttonTitle = getString(R.string.ids_lbl_ok);
 
-            case R.id.licenseDisagreeButton:
+            ContextThemeWrapper newContext = new ContextThemeWrapper(this, android.R.style.TextAppearance_Holo_DialogWindowTitle);
+            AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
 
-                // alert box
-                String title = getString(R.string.ids_lbl_license);
-                String message = getString(R.string.ids_err_msg_disagree_to_license);
-                String buttonTitle = getString(R.string.ids_lbl_ok);
+            if (title != null) {
+                builder.setTitle(title);
+            }
 
-                ContextThemeWrapper newContext = new ContextThemeWrapper(this, android.R.style.TextAppearance_Holo_DialogWindowTitle);
-                AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
+            if (message != null) {
+                builder.setMessage(message);
+            }
 
-                if (title != null) {
-                    builder.setTitle(title);
-                }
+            if (buttonTitle != null) {
+                builder.setNegativeButton(buttonTitle, null);
+            }
 
-                if (message != null) {
-                    builder.setMessage(message);
-                }
+            AlertDialog dialog = null;
+            dialog = builder.create();
 
-                if (buttonTitle != null) {
-                    builder.setNegativeButton(buttonTitle, null);
-                }
-
-                AlertDialog dialog = null;
-                dialog = builder.create();
-
-                dialog.show();
-                break;
-
-            case R.id.startButton:
-                // start Home Screen
-                runMainActivity();
-                break;
-
-            case R.id.settingsButton:
-                // Go to Settings screen screen
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                intent.setData(uri);
-                startActivityForResult(intent, DUMMY_REQUEST_CODE);
-                break;
-
-            default:
-                v.performClick();
+            dialog.show();
+        } else if (id == R.id.startButton) {
+            // start Home Screen
+            runMainActivity();
+        } else if (id == R.id.settingsButton) {
+            // Go to Settings screen screen
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", getPackageName(), null);
+            intent.setData(uri);
+            startActivityForResult(intent, DUMMY_REQUEST_CODE);
+        } else {
+            v.performClick();
         }
     }
 

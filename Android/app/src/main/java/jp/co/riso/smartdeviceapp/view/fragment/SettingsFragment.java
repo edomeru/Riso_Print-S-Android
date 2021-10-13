@@ -90,10 +90,9 @@ public class SettingsFragment extends BaseFragment {
     public void onClick(View v) {
         super.onClick(v);
         
-        switch (v.getId()) {
-            case R.id.menu_id_action_button:
-                AppUtils.hideSoftKeyboard(getActivity());
-                break;
+        int id = v.getId();
+        if (id == R.id.menu_id_action_button) {
+            AppUtils.hideSoftKeyboard(getActivity());
         }
     }
     

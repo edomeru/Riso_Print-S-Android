@@ -338,13 +338,11 @@ public class AddPrinterFragment extends BaseFragment implements PrinterSearchCal
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        switch (v.getId()) {
-            case R.id.menu_id_back_button:
-                closeScreen();
-                break;
-            case R.id.img_save_button:
-                startManualSearch();
-                break;
+        int id = v.getId();
+        if (id == R.id.menu_id_back_button) {
+            closeScreen();
+        } else if (id == R.id.img_save_button) {
+            startManualSearch();
         }
     }
     

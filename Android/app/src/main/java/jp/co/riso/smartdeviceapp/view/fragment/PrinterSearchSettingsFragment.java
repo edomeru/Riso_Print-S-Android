@@ -186,10 +186,9 @@ public class PrinterSearchSettingsFragment extends BaseFragment {
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        switch (v.getId()) {
-            case R.id.menu_id_back_button:
-                closeScreen();
-                break;
+        int id = v.getId();
+        if (id == R.id.menu_id_back_button) {
+            closeScreen();
         }
     }
 

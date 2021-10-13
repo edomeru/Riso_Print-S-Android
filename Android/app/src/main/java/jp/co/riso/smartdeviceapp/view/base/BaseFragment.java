@@ -329,13 +329,12 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.menu_id_action_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    activity.openDrawer(Gravity.LEFT);
-                }
-                break;
+        int id = v.getId();
+        if (id == R.id.menu_id_action_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.openDrawer(Gravity.LEFT);
+            }
         }
     }
 

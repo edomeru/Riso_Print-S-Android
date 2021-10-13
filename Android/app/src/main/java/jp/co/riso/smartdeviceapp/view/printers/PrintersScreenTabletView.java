@@ -516,45 +516,42 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     @Override
     public void onClick(View v) {
         Printer printer;
-        
-        switch (v.getId()) {
-            case R.id.btn_delete:
-                mDeleteViewHolder = (ViewHolder) v.getTag();
-                if (mCallbackRef != null && mCallbackRef.get() != null) {
-                    printer = (Printer) mDeleteViewHolder.mIpAddress.getTag();
-                    mCallbackRef.get().onPrinterDeleteClicked(printer);
-                }
-                break;
-            case R.id.default_print_settings:
-                mSelectedPrinter = (Printer) v.getTag();
-                if (getContext() != null && getContext() instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) getContext();
-                    
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {                        
-                        // Always make new
-                        PrintSettingsFragment fragment = null;
-                        
-                        if (fragment == null) {
-                            
-                            fragment = new PrintSettingsFragment();
-                            fragment.setPrinterId(mSelectedPrinter.getId());
-                            // use new print settings retrieved from the database
-                            fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId(), mSelectedPrinter.getPrinterType()));
-                            
-                            if (mPauseableHandler != null) {
-                                Message msg = Message.obtain(mPauseableHandler, PrintersFragment.MSG_PRINTSETTINGS_BUTTON);
-                                msg.obj = fragment;
-                                msg.arg1 = mSelectedPrinter.getId();
-                                mPauseableHandler.sendMessage(msg);
-                            }
+        int id = v.getId();
+        if (id == R.id.btn_delete) {
+            mDeleteViewHolder = (ViewHolder) v.getTag();
+            if (mCallbackRef != null && mCallbackRef.get() != null) {
+                printer = (Printer) mDeleteViewHolder.mIpAddress.getTag();
+                mCallbackRef.get().onPrinterDeleteClicked(printer);
+            }
+        } else if (id == R.id.default_print_settings) {
+            mSelectedPrinter = (Printer) v.getTag();
+            if (getContext() != null && getContext() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getContext();
+
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    // Always make new
+                    PrintSettingsFragment fragment = null;
+
+                    if (fragment == null) {
+
+                        fragment = new PrintSettingsFragment();
+                        fragment.setPrinterId(mSelectedPrinter.getId());
+                        // use new print settings retrieved from the database
+                        fragment.setPrintSettings(new PrintSettings(mSelectedPrinter.getId(), mSelectedPrinter.getPrinterType()));
+
+                        if (mPauseableHandler != null) {
+                            Message msg = Message.obtain(mPauseableHandler, PrintersFragment.MSG_PRINTSETTINGS_BUTTON);
+                            msg.obj = fragment;
+                            msg.arg1 = mSelectedPrinter.getId();
+                            mPauseableHandler.sendMessage(msg);
                         }
-                    } else {
-                        activity.closeDrawers();
                     }
+                } else {
+                    activity.closeDrawers();
                 }
-                break;
+            }
         }
-    }    
+    }
     // ================================================================================
     // INTERFACE - Callback
     // ================================================================================
@@ -590,55 +587,44 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
     
     @Override
     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-    
-        switch(parentView.getId())
-        {
-            case R.id.input_port:
-            {
-                Printer printer = (Printer) parentView.getTag();
-                PortSetting port = PortSetting.LPR;
-                switch (position) {
-                    case 1:
-                        port = PortSetting.RAW;
-                        break;
-                    default:
-                        break;
-                }
-                printer.setPortSetting(port);
-                mPrinterManager.updatePortSettings(printer.getId(), port);                
+        int parentId = parentView.getId();
+        if (parentId == R.id.input_port) {
+            Printer printer = (Printer) parentView.getTag();
+            PortSetting port = PortSetting.LPR;
+            switch (position) {
+                case 1:
+                    port = PortSetting.RAW;
+                    break;
+                default:
+                    break;
             }
-            break;
-            case R.id.default_printer_spinner:
-            {
-                switch (position) {
-                    case 0://
-                        {
-                            ViewHolder viewHolder = (ViewHolder) parentView.getTag();
-                            Printer printer = (Printer) viewHolder.mIpAddress.getTag();
-                                                        
-                            if (mPrinterManager.getDefaultPrinter() == printer.getId()) {
-                                return;
-                            }
-                            if (mPrinterManager.setDefaultPrinter(printer)) {
-                                setPrinterViewToDefault(viewHolder);
-                            } else {
-                                InfoDialogFragment info = InfoDialogFragment.newInstance(getContext().getString(R.string.ids_lbl_printers),
-                                        getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
-                                DialogUtils.displayDialog((FragmentActivity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
-                            }
-                        }
-                        break;
-                    default:
-                        break;
+            printer.setPortSetting(port);
+            mPrinterManager.updatePortSettings(printer.getId(), port);
+        } else if (parentId == R.id.default_printer_spinner) {
+            switch (position) {
+                case 0://
+                {
+                    ViewHolder viewHolder = (ViewHolder) parentView.getTag();
+                    Printer printer = (Printer) viewHolder.mIpAddress.getTag();
+
+                    if (mPrinterManager.getDefaultPrinter() == printer.getId()) {
+                        return;
+                    }
+                    if (mPrinterManager.setDefaultPrinter(printer)) {
+                        setPrinterViewToDefault(viewHolder);
+                    } else {
+                        InfoDialogFragment info = InfoDialogFragment.newInstance(getContext().getString(R.string.ids_lbl_printers),
+                                getContext().getString(R.string.ids_err_msg_db_failure), getContext().getString(R.string.ids_lbl_ok));
+                        DialogUtils.displayDialog((FragmentActivity) getContext(), PrintersFragment.KEY_PRINTER_ERR_DIALOG, info);
+                    }
                 }
-                
-            }
-            break;
-            default:
                 break;
+                default:
+                    break;
+            }
         }
     }
-    
+
     @Override
     public void onNothingSelected(AdapterView<?> parentView) {
         // Do nothing
