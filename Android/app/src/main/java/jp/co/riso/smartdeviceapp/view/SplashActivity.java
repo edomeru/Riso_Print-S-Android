@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -58,6 +59,7 @@ import jp.co.riso.smartprint.R;
  * 
  * @brief Splash activity class.
  */
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends BaseActivity implements PauseableHandlerCallback, View.OnClickListener {
     
     /// Message ID for running main activity
