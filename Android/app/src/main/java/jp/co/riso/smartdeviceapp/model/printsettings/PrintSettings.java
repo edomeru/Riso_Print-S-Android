@@ -275,7 +275,11 @@ public class PrintSettings {
      * @return Value of the print settings given the specified key
      */
     public int getValue(String key) {
-        return mSettingValues.get(key);
+        if (mSettingValues.get(key) == null) {
+            return -1;
+        } else {
+            return mSettingValues.get(key);
+        }
     }
     
     /**
