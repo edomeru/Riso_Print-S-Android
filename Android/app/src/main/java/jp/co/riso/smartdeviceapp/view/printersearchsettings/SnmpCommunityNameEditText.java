@@ -39,10 +39,8 @@ public class SnmpCommunityNameEditText extends EditText {
                     if (context != null && showError) {
                         Intent intent = new Intent(SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID);
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                        setText(getText());
                     }
-                    // text should be reset whether error was shown or not
-                    // or else it will be replaced by empty string
-                    setText(getText());
                 }
     });
 
