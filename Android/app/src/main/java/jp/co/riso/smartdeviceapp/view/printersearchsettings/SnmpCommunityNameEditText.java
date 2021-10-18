@@ -35,12 +35,14 @@ public class SnmpCommunityNameEditText extends EditText {
             // filter catches invalid case for pasting in context menu or from keyboard clipboard
             new SnmpCommunityNameFilter.InvalidInputObserver() {
                 @Override
-                public void onInvalidInput() {
-                    if (context != null) {
+                public void onInvalidInput(boolean showError) {
+                    if (context != null && showError) {
                         Intent intent = new Intent(SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID);
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                        setText(getText());
                     }
+                    // text should be reset whether error was shown or not
+                    // or else it will be replaced by empty string
+                    setText(getText());
                 }
     });
 
