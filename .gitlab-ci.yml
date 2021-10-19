@@ -23,6 +23,7 @@ build:
   script: 
     - cd Android
     - bundle update --bundler
+    - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
@@ -46,6 +47,7 @@ dev_build:
   script: 
     - cd Android
     - bundle update --bundler
+    - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
@@ -70,6 +72,7 @@ build_dump_enable:
     - perl -pi -w -e 's/#define ENABLE_JOB_DUMP 0/#define ENABLE_JOB_DUMP 1/g;' CommonLibrary/src/directprint.c 
     - cd Android
     - bundle update --bundler
+    - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
