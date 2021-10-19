@@ -4,6 +4,11 @@
 stages:
   - build
 
+before_script:
+  - source /usr/local/share/chruby/chruby.sh
+  - source /usr/local/share/chruby/auto.sh
+  - chruby ruby-2.7.2
+
 variables:
   LC_ALL: "en_US.UTF-8"
   LANG: "en_US.UTF-8"
