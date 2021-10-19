@@ -8,6 +8,13 @@ before_script:
   - source /usr/local/share/chruby/chruby.sh
   - source /usr/local/share/chruby/auto.sh
   - chruby ruby-2.7.2
+  - gem update --system
+  - gem install bundler
+  - gem install fastlane
+  - bundle update --bundler
+  - bundle update fastlane
+  - bundle install
+  - bundle 
 
 variables:
   LC_ALL: "en_US.UTF-8"
