@@ -4,6 +4,11 @@
 stages:
   - build
 
+before_script:
+  - source /usr/local/share/chruby/chruby.sh
+  - source /usr/local/share/chruby/auto.sh
+  - chruby ruby-2.7.2
+
 variables:
   LC_ALL: "en_US.UTF-8"
   LANG: "en_US.UTF-8"
@@ -17,10 +22,14 @@ variables:
 build: 
   script: 
     - cd Android
+    - gem install bundler
+    - gem install fastlane
+    - bundle update --bundler
+    - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
-    - bundle exec fastlane release_build
+    - bundle exec fastlane release_build --verbose
     - mkdir ../builds
     - cp -rf app/build/outputs/apk ../builds
 
@@ -39,10 +48,14 @@ build:
 dev_build: 
   script: 
     - cd Android
+    - gem install bundler
+    - gem install fastlane
+    - bundle update --bundler
+    - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
-    - bundle exec fastlane release_build
+    - bundle exec fastlane release_build --verbose
     - mkdir ../builds
     - cp -rf app/build/outputs/apk ../builds
 
@@ -62,10 +75,14 @@ build_dump_enable:
     # change  ENABLE_JOB_DUMP from 0 to 1 in directprint.c
     - perl -pi -w -e 's/#define ENABLE_JOB_DUMP 0/#define ENABLE_JOB_DUMP 1/g;' CommonLibrary/src/directprint.c 
     - cd Android
+    - gem install bundler
+    - gem install fastlane
+    - bundle update --bundler
+    - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
     - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
-    - bundle exec fastlane release_build
+    - bundle exec fastlane release_build --verbose
     - mkdir ../builds
     - cp -rf app/build/outputs/apk ../builds
   stage: build
