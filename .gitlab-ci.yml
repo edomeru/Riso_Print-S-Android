@@ -22,6 +22,8 @@ variables:
 build: 
   script: 
     - cd Android
+    - gem install bundler
+    - gem install fastlane
     - bundle update --bundler
     - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
@@ -46,6 +48,8 @@ build:
 dev_build: 
   script: 
     - cd Android
+    - gem install bundler
+    - gem install fastlane
     - bundle update --bundler
     - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
@@ -71,6 +75,8 @@ build_dump_enable:
     # change  ENABLE_JOB_DUMP from 0 to 1 in directprint.c
     - perl -pi -w -e 's/#define ENABLE_JOB_DUMP 0/#define ENABLE_JOB_DUMP 1/g;' CommonLibrary/src/directprint.c 
     - cd Android
+    - gem install bundler
+    - gem install fastlane
     - bundle update --bundler
     - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
