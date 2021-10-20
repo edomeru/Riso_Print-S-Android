@@ -156,6 +156,8 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 mHandler.sendMessage(msg);
             }
         }
+
+        NetUtils.registerWifiCallback(this);
     }
     
     @Override
@@ -170,7 +172,10 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }        
+        }
+
+        NetUtils.unregisterWifiCallback(this);
+
         super.onDestroy();
     }
     
@@ -209,18 +214,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     @Override
     protected void onPause() {
         super.onPause();
-
-        NetUtils.unregisterWifiCallback(this);
-
         mHandler.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        NetUtils.registerWifiCallback(this);
-        
         mHandler.resume();
     }
 
