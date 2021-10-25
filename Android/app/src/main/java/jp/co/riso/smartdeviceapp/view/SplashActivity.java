@@ -8,6 +8,8 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -17,12 +19,11 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.AndroidRuntimeException;
 import android.view.ContextThemeWrapper;
@@ -46,6 +47,7 @@ import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
@@ -57,10 +59,11 @@ import jp.co.riso.smartprint.R;
  * 
  * @brief Splash activity class.
  */
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends BaseActivity implements PauseableHandlerCallback, View.OnClickListener {
     
     /// Message ID for running main activity
-    public static final int MESSAGE_RUN_MAINACTIVITY = 0x10001;
+    public static final int MESSAGE_RUN_MAIN_ACTIVITY = 0x10001;
     
     public static final String KEY_DB_INITIALIZED = "database_initialized";
 
@@ -74,6 +77,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     @SuppressWarnings("unused") // AppConstant.APP_SHOW_SPLASH is a config setting
     @Override
     protected void onCreateContent(Bundle savedInstanceState) {
+        setContentView(R.layout.activity_splash);
 
         if (mHandler == null) {
             mHandler = new PauseableHandler(Looper.myLooper(), this);
@@ -81,7 +85,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         
         mDatabaseInitialized = false;
         if (savedInstanceState != null) {
-            mDatabaseInitialized = savedInstanceState.getBoolean(KEY_DB_INITIALIZED, mDatabaseInitialized);
+            mDatabaseInitialized = savedInstanceState.getBoolean(KEY_DB_INITIALIZED, false);
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
@@ -98,13 +102,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             }
         }
 
-        setContentView(R.layout.activity_splash);
-
-        if (!mHandler.hasMessages(MESSAGE_RUN_MAINACTIVITY)) {
+        if (!mHandler.hasMessages(MESSAGE_RUN_MAIN_ACTIVITY)) {
             if (!AppConstants.APP_SHOW_SPLASH && dbIsOK) {
                 runMainActivity();
             } else {
-                mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAINACTIVITY, AppConstants.APP_SPLASH_DURATION);
+                mHandler.sendEmptyMessageDelayed(MESSAGE_RUN_MAIN_ACTIVITY, AppConstants.APP_SPLASH_DURATION);
             }
         }
     }
@@ -164,11 +166,11 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             launchIntent = AppUtils.createActivityIntent(this, MainActivity.class);
         } else {
             //if user has not yet agreed to the license agreement
-            TextView textView = (TextView) this.findViewById(R.id.actionBarTitle);
+            TextView textView = this.findViewById(R.id.actionBarTitle);
             textView.setText(R.string.ids_lbl_license);
             textView.setPadding(18, 0, 0, 0);
             
-            mWebView = (SDAWebView) this.findViewById(R.id.contentWebView);              
+            mWebView = this.findViewById(R.id.contentWebView);
             
             final Context context = this;
             mWebView.setWebViewClient(new WebViewClient() {
@@ -188,19 +190,18 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             
             mWebView.loadUrl(getUrlString());
             
-            LinearLayout buttonLayout = (LinearLayout)this.findViewById(R.id.LicenseButtonLayout);
+            LinearLayout buttonLayout = this.findViewById(R.id.LicenseButtonLayout);
             buttonLayout.setVisibility(View.VISIBLE);
             
-            Button agreebutton = (Button)buttonLayout.findViewById(R.id.licenseAgreeButton);
-            agreebutton.setText(R.string.ids_lbl_agree);
-            agreebutton.setOnClickListener(this);
+            Button agreeButton = buttonLayout.findViewById(R.id.licenseAgreeButton);
+            agreeButton.setText(R.string.ids_lbl_agree);
+            agreeButton.setOnClickListener(this);
             
-            Button disagreebutton = (Button)buttonLayout.findViewById(R.id.licenseDisagreeButton);
-            disagreebutton.setText(R.string.ids_lbl_disagree);
-            disagreebutton.setOnClickListener(this);
+            Button disagreeButton = buttonLayout.findViewById(R.id.licenseDisagreeButton);
+            disagreeButton.setText(R.string.ids_lbl_disagree);
+            disagreeButton.setOnClickListener(this);
 
-
-            ViewFlipper vf = (ViewFlipper) findViewById( R.id.viewFlipper);
+            ViewFlipper vf = findViewById( R.id.viewFlipper);
             vf.showNext();
             
             return;
@@ -212,6 +213,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         Editor editor = prefs.edit();
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT);
         editor.putString(AppConstants.PREF_KEY_AUTH_PIN_CODE, AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
+        //noinspection 'ApplySharedPref'
         editor.commit();
         
         
@@ -223,20 +225,20 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         Uri data = null;
         ClipData clipData = null;
         Intent intent = getIntent();
-        if (getIntent() != null) {
-            String action = getIntent().getAction();
+        if (intent != null) {
+            String action = intent.getAction();
             
             if (Intent.ACTION_VIEW.equals(action)) {
-                data = getIntent().getData();
+                data = intent.getData();
             } else if (Intent.ACTION_SEND.equals(action)) {
-                if (getIntent().getExtras().get(Intent.EXTRA_STREAM) != null) {
-                    data = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());
+                if (intent.getExtras().get(Intent.EXTRA_STREAM) != null) {
+                    data = Uri.parse(intent.getExtras().get(Intent.EXTRA_STREAM).toString());
                 } else {
                     // An invalid intent was sent by the third party app
                     launchIntent.putExtra(Intent.EXTRA_TEXT, AppConstants.ERR_KEY_INVALID_INTENT);
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
-                clipData = getIntent().getClipData();
+                clipData = intent.getClipData();
             }
         }
 
@@ -260,11 +262,8 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
         }
         
         int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
-        //workaround for android 5.0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
-        }
-        
+        flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
+
         if (isTaskRoot()) {
             flags |= Intent.FLAG_ACTIVITY_NO_ANIMATION;
         }
@@ -301,12 +300,12 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
     
     @Override
     public boolean storeMessage(Message message) {
-        return message.what == MESSAGE_RUN_MAINACTIVITY;
+        return message.what == MESSAGE_RUN_MAIN_ACTIVITY;
     }
     
     @Override
     public void processMessage(Message message) {
-        if (message.what == MESSAGE_RUN_MAINACTIVITY) {
+        if (message.what == MESSAGE_RUN_MAIN_ACTIVITY) {
             if (mDatabaseInitialized) {
                 runMainActivity();
             }
@@ -323,7 +322,7 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
      * 
      * @brief Async task for initializing database.
      */
-    private class DBInitTask extends AsyncTask<Void, Void, Void> {
+    private class DBInitTask extends BaseTask<Void, Void> {
         
         @Override
         protected Void doInBackground(Void... params) {
@@ -341,10 +340,16 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
             super.onPostExecute(result);
             
             if (!SplashActivity.this.isFinishing()) {
-                if (mHandler.hasStoredMessage(MESSAGE_RUN_MAINACTIVITY)) {
+                if (mHandler.hasStoredMessage(MESSAGE_RUN_MAIN_ACTIVITY)) {
                     mDatabaseInitialized = true;
                 } else {
-                    runMainActivity();
+                    final Activity activity = SmartDeviceApp.getActivity();
+                    activity.runOnUiThread((new Runnable() {
+                        @Override
+                        public void run() {
+                            runMainActivity();
+                        }
+                    }));
                 }
             }
         }
@@ -364,74 +369,60 @@ public class SplashActivity extends BaseActivity implements PauseableHandlerCall
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.licenseAgreeButton:
-                // save to shared preferences
-                SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs", MODE_PRIVATE);
+        int id = v.getId();
+        if (id == R.id.licenseAgreeButton) {
+            // save to shared preferences
+            SharedPreferences preferences = getSharedPreferences("licenseAgreementPrefs", MODE_PRIVATE);
 
-                SharedPreferences.Editor edit = preferences.edit();
-                edit.putBoolean("licenseAgreementDone", true);
-                //edit.putBoolean("licenseAgreementDone",false);
-                edit.apply();
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putBoolean("licenseAgreementDone", true);
+            //edit.putBoolean("licenseAgreementDone",false);
+            edit.apply();
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // show permission onboarding screens
-                    findViewById(R.id.settingsButton).setOnClickListener(this);
-                    findViewById(R.id.startButton).setOnClickListener(this);
+            // show permission onboarding screens
+            findViewById(R.id.settingsButton).setOnClickListener(this);
+            findViewById(R.id.startButton).setOnClickListener(this);
 
-                    TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
-                    infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
-                    ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
-                } else {
-                    // start home screen
-                    runMainActivity();
-                }
-                break;
+            TextView infoText = (TextView) findViewById(R.id.txtPermissionInfo);
+            infoText.setText(getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name)));
+            ((ViewFlipper) findViewById(R.id.viewFlipper)).showNext();
+        } else if (id == R.id.licenseDisagreeButton) {
+            // alert box
+            String title = getString(R.string.ids_lbl_license);
+            String message = getString(R.string.ids_err_msg_disagree_to_license);
+            String buttonTitle = getString(R.string.ids_lbl_ok);
 
-            case R.id.licenseDisagreeButton:
+            ContextThemeWrapper newContext = new ContextThemeWrapper(this, android.R.style.TextAppearance_Holo_DialogWindowTitle);
+            AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
 
-                // alert box
-                String title = getString(R.string.ids_lbl_license);
-                String message = getString(R.string.ids_err_msg_disagree_to_license);
-                String buttonTitle = getString(R.string.ids_lbl_ok);
+            if (title != null) {
+                builder.setTitle(title);
+            }
 
-                ContextThemeWrapper newContext = new ContextThemeWrapper(this, android.R.style.TextAppearance_Holo_DialogWindowTitle);
-                AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
+            if (message != null) {
+                builder.setMessage(message);
+            }
 
-                if (title != null) {
-                    builder.setTitle(title);
-                }
+            if (buttonTitle != null) {
+                builder.setNegativeButton(buttonTitle, null);
+            }
 
-                if (message != null) {
-                    builder.setMessage(message);
-                }
+            AlertDialog dialog = null;
+            dialog = builder.create();
 
-                if (buttonTitle != null) {
-                    builder.setNegativeButton(buttonTitle, null);
-                }
-
-                AlertDialog dialog = null;
-                dialog = builder.create();
-
-                dialog.show();
-                break;
-
-            case R.id.startButton:
-                // start Home Screen
-                runMainActivity();
-                break;
-
-            case R.id.settingsButton:
-                // Go to Settings screen screen
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                intent.setData(uri);
-                startActivityForResult(intent, DUMMY_REQUEST_CODE);
-                break;
-
-            default:
-                v.performClick();
+            dialog.show();
+        } else if (id == R.id.startButton) {
+            // start Home Screen
+            runMainActivity();
+        } else if (id == R.id.settingsButton) {
+            // Go to Settings screen screen
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", getPackageName(), null);
+            intent.setData(uri);
+            startActivityForResult(intent, DUMMY_REQUEST_CODE);
+        } else {
+            v.performClick();
         }
     }
 

@@ -8,9 +8,9 @@
 
 package jp.co.riso.android.dialog;
 
+import androidx.fragment.app.DialogFragment;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
@@ -172,11 +172,11 @@ public class ConfirmDialogFragment extends DialogFragment implements OnClickList
         /**
          * @brief Called when positive button is clicked
          */
-        public void onConfirm();
+        void onConfirm();
 
         /**
          * @brief Called when negative button is clicked
          */
-        public void onCancel();
+        void onCancel();
     }
 }

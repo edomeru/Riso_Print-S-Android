@@ -55,8 +55,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:gravity="left"
+                    android:inputType="text"
                     android:singleLine="true"
-                    tools:ignore="LabelFor">
+                    tools:ignore="LabelFor"
+                    android:importantForAutofill="no">
                 </EditText>
             </LinearLayout>
         </LinearLayout>

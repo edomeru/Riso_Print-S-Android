@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -7,12 +8,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
         android:paddingBottom="6dp"
         android:paddingTop="24dp"
-        android:splitMotionEvents="false">
+        android:splitMotionEvents="false"
+        tools:ignore="UselessParent">
 
         <LinearLayout
             android:id="@+id/fileButton"
@@ -21,8 +23,10 @@
             android:layout_marginBottom="6dp"
             android:background="@android:color/background_light"
             android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            tools:ignore="NestedWeights">
 
             <ImageView
                 android:layout_width="0dp"
@@ -31,7 +35,8 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/selector_home_file"
                 android:tint="@color/theme_color_1"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="0dp"
@@ -50,6 +55,7 @@
             android:layout_marginBottom="6dp"
             android:background="@android:color/background_light"
             android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
             android:layout_weight="1">
 
@@ -60,7 +66,8 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/selector_home_photo"
                 android:tint="@color/theme_color_1"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="0dp"
@@ -79,6 +86,7 @@
             android:layout_marginBottom="6dp"
             android:background="@android:color/background_light"
             android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal"
             android:layout_weight="1">
 
@@ -89,7 +97,8 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/selector_home_camera"
                 android:tint="@color/theme_color_1"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="0dp"

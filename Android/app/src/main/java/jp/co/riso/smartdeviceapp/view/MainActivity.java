@@ -8,20 +8,20 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -37,6 +37,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler;
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.Logger;
+import jp.co.riso.android.util.NetUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager;
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity;
@@ -96,12 +97,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         setContentView(R.layout.activity_main);
         
-        mDrawerLayout = (SDADrawerLayout) findViewById(R.id.drawerLayout);
+        mDrawerLayout = findViewById(R.id.drawerLayout);
         mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         
-        mMainLayout = (ViewGroup) findViewById(R.id.mainLayout);
-        mLeftLayout = (ViewGroup) findViewById(R.id.leftLayout);
-        mRightLayout = (ViewGroup) findViewById(R.id.rightLayout);
+        mMainLayout = findViewById(R.id.mainLayout);
+        mLeftLayout = findViewById(R.id.leftLayout);
+        mRightLayout = findViewById(R.id.rightLayout);
         
         mLeftLayout.getLayoutParams().width = getDrawerWidth();
         mRightLayout.getLayoutParams().width = getDrawerWidth();
@@ -117,7 +118,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         mDrawerToggle = new SDAActionBarDrawerToggle(this, mDrawerLayout, R.string.default_content_description, R.string.default_content_description);
         
         // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         
         if (getActionBar() != null) {
@@ -127,7 +128,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         // Begin Fragments
         if (savedInstanceState == null) {
-            FragmentManager fm = getFragmentManager();
+            FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
 
             // HIDE_NEW_FEATURES: Preview screen is Home screen and is always the default screen
@@ -155,6 +156,8 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
                 mHandler.sendMessage(msg);
             }
         }
+
+        NetUtils.registerWifiCallback(this);
     }
     
     @Override
@@ -169,7 +172,10 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }        
+        }
+
+        NetUtils.unregisterWifiCallback(this);
+
         super.onDestroy();
     }
     
@@ -208,14 +214,12 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     @Override
     protected void onPause() {
         super.onPause();
-        
         mHandler.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        
         mHandler.resume();
     }
 
@@ -226,7 +230,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
         
         mDrawerToggle.onConfigurationChanged(newConfig);
         
-        BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
+        BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.mainLayout);
         if (!mDrawerLayout.isDrawerOpen(Gravity.RIGHT) && !mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
             fragment.clearIconStates();
         }
@@ -248,7 +252,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             case KeyEvent.KEYCODE_ENTER:
                 int layoutId = mDrawerLayout.isDrawerOpen(Gravity.RIGHT) ? R.id.rightLayout :
                     mDrawerLayout.isDrawerOpen(Gravity.LEFT) ? R.id.leftLayout : R.id.mainLayout;
-                BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(layoutId);
+                BaseFragment fragment = (BaseFragment)getSupportFragmentManager().findFragmentById(layoutId);
                 return fragment.onKeyUp(keyCode);
             default:
                 return super.onKeyUp(keyCode, event);
@@ -318,7 +322,7 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     @SuppressLint("RtlHardcoded")
     @Override
     public void processMessage(Message msg) {
-        BaseFragment fragment = ((BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout));
+        BaseFragment fragment = ((BaseFragment) getSupportFragmentManager().findFragmentById(R.id.mainLayout));
         boolean gravityLeft = (msg.arg1 == Gravity.LEFT);
         
         switch (msg.what){
@@ -426,13 +430,13 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             super.onDrawerClosed(view);
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 
-            BaseFragment fragment = (BaseFragment) getFragmentManager().findFragmentById(R.id.mainLayout);
+            BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.mainLayout);
             fragment.clearIconStates();
             if (mDrawerLayout.findViewById(R.id.rightLayout) == view) {
-                BaseFragment rightFragment = ((BaseFragment) getFragmentManager().findFragmentById(R.id.rightLayout));
+                BaseFragment rightFragment = ((BaseFragment) getSupportFragmentManager().findFragmentById(R.id.rightLayout));
                 rightFragment.onRightFragmentDrawerClosed();
             }
-            getFragmentManager().findFragmentById(R.id.mainLayout).onResume();
+            getSupportFragmentManager().findFragmentById(R.id.mainLayout).onResume();
             
         }
         
@@ -442,10 +446,10 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             
             if (mDrawerLayout.findViewById(R.id.rightLayout) == drawerView) {
-                getFragmentManager().findFragmentById(R.id.rightLayout).onResume();
+                getSupportFragmentManager().findFragmentById(R.id.rightLayout).onResume();
             }
             if (!mResizeView) {
-                getFragmentManager().findFragmentById(R.id.mainLayout).onPause();
+                getSupportFragmentManager().findFragmentById(R.id.mainLayout).onPause();
             }
         }
     }

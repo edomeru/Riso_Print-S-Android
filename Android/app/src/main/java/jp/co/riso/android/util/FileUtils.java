@@ -21,6 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
+
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants;
 
 /**
  * @class FileUtils
@@ -76,11 +79,8 @@ public class FileUtils {
         out.close();
     }
 
-
     public static void delete(File src) throws IOException {
-
         src.delete();
-
     }
 
     /**
@@ -99,7 +99,7 @@ public class FileUtils {
                 mimeType = cr.getType(uri);
             } else {
                 String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
-                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase(Locale.getDefault()));
             }
         }
 
@@ -119,12 +119,10 @@ public class FileUtils {
 
         if (context != null && uri != null && uri.getScheme() != null) {
             if (uri.getScheme().equals("content")) {
-                Cursor cursor = null;
-                try {
+                try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                     // Content resolver query can return a SecurityException
                     // E.g.: When there is a PDF from image/text in PrintPreview, then suddenly user Denied Storage from Settings
                     // PrintPreviewFragment will repeat conversion using the same Intent data, but this time the permission is not granted anymore
-                    cursor = context.getContentResolver().query(uri, null, null, null, null);
                     if (cursor != null && cursor.moveToFirst()) {
                         int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                         if (index >= 0) {
@@ -133,10 +131,6 @@ public class FileUtils {
                     }
                 } catch (SecurityException e) {
                     throw new SecurityException();
-                } finally {
-                    if (cursor != null) {
-                        cursor.close();
-                    }
                 }
             }
             if (result == null && uri.getPath() != null) {
@@ -150,8 +144,11 @@ public class FileUtils {
             if (isPdfFilename && result != null) {
                 // replace file extension with .pdf
                 if (!result.endsWith(".pdf")) {
-                    String filename = result.substring(0, result.lastIndexOf('.'));
-                    result = filename + ".pdf";
+                    int cut = result.lastIndexOf('.');
+                    if (cut != -1) {
+                        String filename = result.substring(0, cut);
+                        result = filename + ".pdf";
+                    }
                 }
             }
         }
@@ -170,14 +167,14 @@ public class FileUtils {
 
         if (context != null && uri != null && uri.getScheme() != null) {
             if (uri.getScheme().equals("content")) {
-                Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-                try {
+                try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                     if (cursor != null && cursor.moveToFirst()) {
-                        filesize = cursor.getInt(cursor.getColumnIndex(OpenableColumns.SIZE));
-                    }
-                } finally {
-                    if (cursor != null) {
-                        cursor.close();
+                        int columnIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                        if (columnIndex >= 0) {
+                            filesize = cursor.getInt(columnIndex);
+                        } else {
+                            Logger.logError(FileUtils.class, "columnName:" + OpenableColumns.SIZE + " not found");
+                        }
                     }
                 }
             } else if (uri.getPath() != null){

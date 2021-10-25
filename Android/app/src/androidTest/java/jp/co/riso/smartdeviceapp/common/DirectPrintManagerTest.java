@@ -7,7 +7,7 @@ import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
 
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<MainActivity> {
@@ -358,7 +358,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
     // Internal Classes
     //================================================================================
 
-    private class MockCallback implements DirectPrintCallback {
+    private static class MockCallback implements DirectPrintCallback {
         
         public boolean mCalled = false;
         

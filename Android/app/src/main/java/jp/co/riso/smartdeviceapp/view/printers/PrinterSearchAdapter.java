@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,8 +29,8 @@ import android.widget.TextView;
  */
 public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {
     private PrinterSearchAdapterInterface mSearchAdapterInterface = null;
-    private int layoutId;
-    private PrinterManager mPrinterManager = null;
+    private final int layoutId;
+    private final PrinterManager mPrinterManager;
     
     /**
      * @brief Constructor.
@@ -77,12 +76,12 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
         if (viewHolder == null || convertView == null || printer == null) {
             return;
         }
-        View separator = null;
+        View separator;
         String printerName = printer.getName();
         
-        viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.printerText);
-        viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.ipAddressText);
-        viewHolder.mAddedIndicator = (ImageButton) convertView.findViewById(R.id.addPrinterButton);
+        viewHolder.mPrinterName = convertView.findViewById(R.id.printerText);
+        viewHolder.mIpAddress = convertView.findViewById(R.id.ipAddressText);
+        viewHolder.mAddedIndicator = convertView.findViewById(R.id.addPrinterButton);
         viewHolder.mPrinterName.setText(printer.getName());
         viewHolder.mIpAddress.setText(printer.getIpAddress());
         viewHolder.mAddedIndicator.setBackgroundResource(R.drawable.selector_printersearch_addprinter);
@@ -128,7 +127,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
      * 
      * @brief Printer Search Screen view holder.
      */
-    public class ViewHolder {
+    public static class ViewHolder {
         public ImageView mAddedIndicator;
         public TextView mPrinterName;
         public TextView mIpAddress;
@@ -154,7 +153,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
          * @retval 0 Success
          * @retval -1 Error
          */
-        public int onAddPrinter(Printer printer);
+        int onAddPrinter(Printer printer);
     }
     
     // ================================================================================

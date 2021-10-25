@@ -10,7 +10,6 @@ package jp.co.riso.android.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,14 +27,17 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Insets;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.view.WindowMetrics;
 import android.view.inputmethod.InputMethodManager;
 
 /**
@@ -74,9 +76,8 @@ public final class AppUtils {
      */
     public static String getLocaleCode() {
         Locale defaultLocale = Locale.getDefault();
-        String localeCode = defaultLocale.toString().substring(0, 2).toLowerCase(defaultLocale);
-        
-        return localeCode;
+
+        return defaultLocale.toString().substring(0, 2).toLowerCase(defaultLocale);
     }
     
     /**
@@ -130,7 +131,7 @@ public final class AppUtils {
         }
         
         PackageManager pm = context.getPackageManager();
-        ApplicationInfo appInfo = null;
+        ApplicationInfo appInfo;
         
         try {
             appInfo = pm.getApplicationInfo(packageName, 0);
@@ -171,15 +172,40 @@ public final class AppUtils {
         if (activity == null) {
             return null;
         }
-        
-        Display display = activity.getWindowManager().getDefaultDisplay();
+
         Point size = new Point();
-        
-        display.getSize(size);
-        
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowMetrics metrics = activity.getWindowManager().getCurrentWindowMetrics();
+            WindowInsets windowInsets = metrics.getWindowInsets();
+            Insets insets = windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars() | WindowInsets.Type.displayCutout());
+            Rect bounds = metrics.getBounds();
+
+            size.x = bounds.width() - (insets.right + insets.left);
+            size.y = bounds.height() - (insets.top + insets.bottom);
+        } else {
+            // Retain this part to support API below 30
+            size = getScreenDimensionsForSDK29(activity, size);
+        }
+
         return size;
     }
-    
+
+    /**
+     * @brief Gets the Screen Dimensions of the Device for API 29 and below.
+     *
+     * @param activity Valid activity
+     * @param size Point
+     *
+     * @return Screen dimensions
+     */
+    @SuppressWarnings("deprecation")
+    public static Point getScreenDimensionsForSDK29(Activity activity, Point size) {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        return size;
+    }
+
     /**
      * @brief Get file contents from assets.
      * 
@@ -233,8 +259,6 @@ public final class AppUtils {
             InputStream stream = context.getAssets().open(assetFile);
             stream.close();
             assetOk = true;
-        } catch (FileNotFoundException e) {
-            Logger.logWarn(AppUtils.class, "assetExists failed: " + e.toString());
         } catch (IOException e) {
             Logger.logWarn(AppUtils.class, "assetExists failed: " + e.toString());
         }
@@ -305,20 +329,19 @@ public final class AppUtils {
         
         for (int i = 0; i < v.getChildCount(); i++) {
             
-            // For the ViewGroup, we'll have to use recursivity
+            // For the ViewGroup, we'll have to use recursion
             if (v.getChildAt(i) instanceof ViewGroup) {
                 changeChildrenFont((ViewGroup) v.getChildAt(i), font);
             } else {
                 try {
-                    Object[] nullArgs = null;
-                    // Test wether setTypeface and getTypeface methods exists
-                    Method methodTypeFace = v.getChildAt(i).getClass().getMethod("setTypeface", new Class[] { Typeface.class, Integer.TYPE });
-                    // With getTypefaca we'll get back the style (Bold, Italic...) set in XML
-                    Method methodGetTypeFace = v.getChildAt(i).getClass().getMethod("getTypeface", new Class[] {});
-                    Typeface typeFace = ((Typeface) methodGetTypeFace.invoke(v.getChildAt(i), nullArgs));
+                    // Test whether setTypeface and getTypeface methods exists
+                    Method methodTypeFace = v.getChildAt(i).getClass().getMethod("setTypeface", Typeface.class, Integer.TYPE);
+                    // With getTypeface we'll get back the style (Bold, Italic...) set in XML
+                    Method methodGetTypeFace = v.getChildAt(i).getClass().getMethod("getTypeface");
+                    Typeface typeFace = ((Typeface) methodGetTypeFace.invoke(v.getChildAt(i)));
                     // Invoke the method and apply the new font with the defined style to the view if the method exists
                     // (textview,...)
-                    methodTypeFace.invoke(v.getChildAt(i), new Object[] { font, typeFace == null ? 0 : typeFace.getStyle() });
+                    methodTypeFace.invoke(v.getChildAt(i), font, typeFace == null ? 0 : typeFace.getStyle());
                 }
                 // Will catch the view with no such methods (listview...)
                 catch (NoSuchMethodException e) {
@@ -345,7 +368,7 @@ public final class AppUtils {
      * 
      * @return Resource ID
      */
-    public static int getResourseId(String variableName, Class<?> c, int defaultId) {
+    public static int getResourceId(String variableName, Class<?> c, int defaultId) {
         if (variableName == null || c == null) {
             return defaultId;
         }
@@ -379,8 +402,8 @@ public final class AppUtils {
         float ratioSrc = srcWidth / srcHeight;
         float ratioDest = (float) destWidth / destHeight;
         
-        int newWidth = 0;
-        int newHeight = 0;
+        int newWidth;
+        int newHeight;
         
         if (ratioDest > ratioSrc) {
             newHeight = destHeight;
@@ -435,11 +458,7 @@ public final class AppUtils {
         view.getHitRect(r);
         view.getLocationOnScreen(coords);
         r.offset(coords[0] - view.getLeft(), coords[1] - view.getTop());
-        if (r.contains(x, y)) {
-            return true;
-        }
-        
-        return false;
+        return r.contains(x, y);
     }
     
     /**

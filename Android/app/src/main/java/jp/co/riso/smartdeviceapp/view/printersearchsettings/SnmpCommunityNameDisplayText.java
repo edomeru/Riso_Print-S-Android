@@ -11,7 +11,7 @@ package jp.co.riso.smartdeviceapp.view.printersearchsettings;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -44,7 +44,7 @@ public class SnmpCommunityNameDisplayText extends LinearLayout {
 
         this.communityName = PreferenceManager.getDefaultSharedPreferences(context).getString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME);
 
-        TextView textView = (TextView) view.findViewById(R.id.snmpCommunityName);
+        TextView textView = view.findViewById(R.id.snmpCommunityName);
         textView.setText(this.communityName);
     }
 

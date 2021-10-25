@@ -20,14 +20,14 @@ import android.text.Spanned;
  * @brief EditText filter for IP Address characters
  */
 public class IpAddressFilter implements InputFilter {
-    private Set<Character> mCharSet;
+    private final Set<Character> mCharSet;
     
     /**
      * @brief Constructor for IP Address Filter 
      */
     public IpAddressFilter() {
         String validChars = "1234567890abcdefABCDEF.:";
-        mCharSet = new HashSet<Character>();
+        mCharSet = new HashSet<>();
         for (int i = 0; i < validChars.length(); i++) {
             mCharSet.add(validChars.charAt(i));
         }

@@ -11,8 +11,7 @@ package jp.co.riso.smartdeviceapp.common;
 import java.lang.ref.WeakReference;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -86,7 +85,7 @@ public class DirectPrintManager {
      * @param callback Callback function
      */
     public void setCallback(DirectPrintCallback callback) {
-        mCallbackRef = new WeakReference<DirectPrintCallback>(callback);
+        mCallbackRef = new WeakReference<>(callback);
     }
     
     /**
@@ -235,6 +234,7 @@ public class DirectPrintManager {
         int jobNumber = preferences.getInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);     // current job number
         int nextJobNumber = (jobNumber + 1) % (AppConstants.CONST_MAX_JOB_NUMBER + 1);      // increment job number (0-999)
         editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, nextJobNumber);
+        //noinspection 'ApplySharedPref'
         editor.commit();
     }
 
@@ -255,7 +255,7 @@ public class DirectPrintManager {
          * @param status Print status
          * @param progress Printing progress percentage
          */
-        public void onNotifyProgress(DirectPrintManager manager, int status, float progress);
+        void onNotifyProgress(DirectPrintManager manager, int status, float progress);
     }
     
     /**
@@ -263,8 +263,8 @@ public class DirectPrintManager {
      * 
      * @brief Async Task for Canceling Direct Print
      */
-    public class DirectPrintCancelTask extends AsyncTask<Void, Void, Void> {
-        private DirectPrintManager mManager;
+    public class DirectPrintCancelTask extends BaseTask<Void, Void> {
+        private final DirectPrintManager mManager;
         
         /**
          * @brief Creates DirectPrintCancelTask instance.

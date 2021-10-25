@@ -1,8 +1,18 @@
 package com.scanlibrary;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+// aLINK edit - Start
+// android.app.Fragment was deprecated in API level 28
+// Use androidx.fragment.app.Fragment instead
+import androidx.fragment.app.Fragment;
+// android.app.FragmentManager was deprecated in API level 28
+// Use androidx.fragment.app.FragmentManager instead
+import androidx.fragment.app.FragmentManager;
+
+// androidx.fragment.app.Fragment.onAttach(Activity activity) is deprecated
+// Use androidx.fragment.app.Fragment.onAttach(Context context) instead
+import android.content.Context;
+// aLINK edit - End
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -11,7 +21,10 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
+// aLINK edit - Start
+// android.os.AsyncTask was deprecated in API level 30.
+// Use threading instead
+// aLINK edit - End
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -44,14 +57,18 @@ public class ScanFragment extends Fragment {
     private IScanner scanner;
     private Bitmap original;
 
+    // aLINK edit - Start
+    // androidx.fragment.app.Fragment.onAttach(Activity activity) is deprecated
+    // Use androidx.fragment.app.Fragment.onAttach(Context context) instead
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (!(activity instanceof IScanner)) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof IScanner)) {
             throw new ClassCastException("Activity must implement IScanner");
         }
-        this.scanner = (IScanner) activity;
+        this.scanner = (IScanner) context;
     }
+    // aLINK edit - End
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -200,7 +217,11 @@ public class ScanFragment extends Fragment {
 
             Map<Integer, PointF> points = polygonView.getPoints();
             if (isScanPointsValid(points)) {
-                new ScanAsyncTask(points).execute();
+                // aLINK edit - Start
+                // android.os.AsyncTask was deprecated in API level 30.
+                // Use threading instead
+                new ScanAsyncTask(points).start();
+                // aLINK edit - End
             } else {
                 showErrorDialog();
             }
@@ -209,7 +230,12 @@ public class ScanFragment extends Fragment {
 
     private void showErrorDialog() {
         SingleButtonDialogFragment fragment = new SingleButtonDialogFragment(R.string.ok, getString(R.string.cantCrop), "Error", true);
-        FragmentManager fm = getActivity().getFragmentManager();
+        // aLINK edit - Start
+        // android.app.FragmentManager was deprecated in API level 28
+        // Call the getSupportFragmentManager() API to get androidx.fragment.app.FragmentManager
+        // instead of android.app.FragmentManager
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        // aLINK edit - End
         fragment.show(fm, SingleButtonDialogFragment.class.toString());
     }
 
@@ -242,7 +268,11 @@ public class ScanFragment extends Fragment {
         return _bitmap;
     }
 
-    private class ScanAsyncTask extends AsyncTask<Void, Void, Bitmap> {
+    // aLINK edit - Start
+    // android.os.AsyncTask was deprecated in API level 30.
+    // Use threading instead
+    private class ScanAsyncTask extends Thread {
+    // aLINK edit - End
 
         private Map<Integer, PointF> points;
 
@@ -250,26 +280,21 @@ public class ScanFragment extends Fragment {
             this.points = points;
         }
 
+        // aLINK edit - Start
+        // android.os.AsyncTask was deprecated in API level 30.
+        // Use threading instead
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        public void run() {
             showProgressDialog(getString(R.string.scanning));
-        }
 
-        @Override
-        protected Bitmap doInBackground(Void... params) {
             Bitmap bitmap =  getScannedBitmap(original, points);
             Uri uri = Utils.getUri(getActivity(), bitmap);
             scanner.onScanFinish(uri);
-            return bitmap;
-        }
 
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
             bitmap.recycle();
             dismissDialog();
         }
+        // aLINK edit - End
     }
 
     protected void showProgressDialog(String message) {

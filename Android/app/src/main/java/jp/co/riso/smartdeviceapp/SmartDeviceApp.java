@@ -10,17 +10,26 @@ package jp.co.riso.smartdeviceapp;
 
 import jp.co.riso.android.util.Logger;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * @class SmartDeviceApp
  * 
  * @brief Application class.
  */
-public class SmartDeviceApp extends Application {
+public class SmartDeviceApp extends Application implements Application.ActivityLifecycleCallbacks {
 
+    @SuppressLint("StaticFieldLeak")
     private static volatile Context sContext;
+    @SuppressLint("StaticFieldLeak")
+    private static volatile Activity sActivity = null;
     
     @Override
     public void onCreate() {
@@ -31,6 +40,7 @@ public class SmartDeviceApp extends Application {
             Logger.initialize(Logger.LOGLEVEL_VERBOSE, AppConstants.FOR_PERF_LOGS, AppConstants.FOR_PERF_LOGS);
             Logger.runDeleteTask(getApplicationContext());
         }
+        registerActivityLifecycleCallbacks(this);
     }
 
     /**
@@ -41,4 +51,33 @@ public class SmartDeviceApp extends Application {
     public static Context getAppContext() {
         return SmartDeviceApp.sContext;
     }
+
+    public static Activity getActivity() { return sActivity; }
+
+    @Override
+    public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+        sActivity = activity;
+    }
+
+    @Override
+    public void onActivityStarted(@NonNull Activity activity) {
+        sActivity = activity;
+    }
+
+    @Override
+    public void onActivityResumed(@NonNull Activity activity) {
+        sActivity = activity;
+    }
+
+    @Override
+    public void onActivityPaused(@NonNull Activity activity) {}
+
+    @Override
+    public void onActivityStopped(@NonNull Activity activity) {}
+
+    @Override
+    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
+
+    @Override
+    public void onActivityDestroyed(@NonNull Activity activity) {}
 }

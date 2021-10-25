@@ -27,5 +27,5 @@ public interface PDFFileManagerInterface {
      *      <li>PDFFileManager::PDF_OPEN_FAILED</li>
      * </ul>
      */
-    public void onFileInitialized(int status);
+    void onFileInitialized(int status);
 }

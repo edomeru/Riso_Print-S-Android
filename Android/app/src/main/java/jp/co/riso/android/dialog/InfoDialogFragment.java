@@ -8,9 +8,9 @@
 
 package jp.co.riso.android.dialog;
 
+import androidx.fragment.app.DialogFragment;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 
@@ -24,7 +24,7 @@ import android.view.ContextThemeWrapper;
  * 2. In the target fragment, add these snippet:
  *      @code
  *      InfoDialogFragment dialog = new InfoDialogFragment(<parameters>):
- *      InfoDialogFragment.showdisplayDialog(activity, tag, dialog);
+ *      InfoDialogFragment.showDisplayDialog(activity, tag, dialog);
  *      @endcode
  */
 public class InfoDialogFragment extends DialogFragment {
@@ -95,7 +95,7 @@ public class InfoDialogFragment extends DialogFragment {
             builder.setNegativeButton(buttonTitle, null);
         }
 
-        AlertDialog dialog = null;
+        AlertDialog dialog;
         dialog = builder.create();
 
         return dialog;

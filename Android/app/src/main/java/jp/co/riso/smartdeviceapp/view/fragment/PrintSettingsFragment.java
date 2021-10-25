@@ -92,14 +92,14 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mPrintSettingsView = (PrintSettingsView) view.findViewById(R.id.rootView);
+        mPrintSettingsView = view.findViewById(R.id.rootView);
         
         mPrintSettingsView.setValueChangedListener(this);
         
         mPrintSettingsView.setInitialValues(mPrinterId, mPrintSettings);
         mPrintSettingsView.setShowPrintControls(mFragmentForPrinting);
         
-        TextView textView = (TextView) view.findViewById(R.id.titleTextView);
+        TextView textView = view.findViewById(R.id.titleTextView);
         textView.setText(R.string.ids_lbl_print_settings);
         
         if (!mFragmentForPrinting) {
@@ -240,7 +240,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             return;
         }
         
-        if (!NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
+        if (!NetUtils.isWifiAvailable()) {
             String strMsg = getString(R.string.ids_err_msg_network_error);
             String btnMsg = getString(R.string.ids_lbl_ok);
             InfoDialogFragment fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
@@ -248,7 +248,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
             return;
         }
         
-        String btnMsg = null;
+        String btnMsg;
         String jobname = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
         
         mDirectPrintManager = new DirectPrintManager();
@@ -260,7 +260,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
         // Ver.2.0.4.2 Start
         String hostName = android.os.Build.MODEL;
         // Ver.2.0.4.2 End
-        boolean ret = false;
+        boolean ret;
 
         String formattedString = printSettings.formattedString(mPDFisLandscape);
         if (printer.getPortSetting() == PortSetting.LPR) {
@@ -304,21 +304,20 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
 
                 PrintJobManager pm = PrintJobManager.getInstance(SmartDeviceApp.getAppContext());
                 String filename = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext());
-                InfoDialogFragment fragment = null;
-                String strMsg = null;
-                String btnMsg = null;
+                InfoDialogFragment fragment;
+                String strMsg;
+                String btnMsg;
 
                 if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.SUCCESSFUL);
 
                     strMsg = getString(R.string.ids_info_msg_print_job_successful);
-                    btnMsg = getString(R.string.ids_lbl_ok);
                 } else {
                     pm.createPrintJob(mPrinterId, filename, new Date(), JobResult.ERROR);
 
                     strMsg = getString(R.string.ids_info_msg_print_job_failed);
-                    btnMsg = getString(R.string.ids_lbl_ok);
                 }
+                btnMsg = getString(R.string.ids_lbl_ok);
                 // Show dialog
                 fragment = InfoDialogFragment.newInstance(strMsg, btnMsg);
                 DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
@@ -331,7 +330,7 @@ public class PrintSettingsFragment extends BaseFragment implements PrintSettings
     // ================================================================================
     @Override
     public void onNotifyProgress(DirectPrintManager manager, final int status, float progress) {
-        if (NetUtils.isWifiAvailable(SmartDeviceApp.getAppContext())) {
+        if (NetUtils.isWifiAvailable()) {
             switch (status) {
                 case DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING:
                 case DirectPrintManager.PRINT_STATUS_ERROR_SENDING:

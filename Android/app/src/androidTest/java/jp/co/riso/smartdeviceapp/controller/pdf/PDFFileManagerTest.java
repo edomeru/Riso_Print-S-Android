@@ -3,7 +3,7 @@ package jp.co.riso.smartdeviceapp.controller.pdf;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.radaee.pdf.Global;
@@ -450,7 +450,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         assertEquals(status, PDFFileManager.PDF_OK);
     }
     
-    public void testTestDocument_EncrpyptedPath() {
+    public void testTestDocument_EncryptedPath() {
         int status = mPdfManager.testDocument(mEncryptedPdfPath);
         assertEquals(status, PDFFileManager.PDF_ENCRYPTED);
     }
@@ -487,7 +487,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         assertEquals(status, PDFFileManager.PDF_OK);
     }
     
-    public void testOpenDocument_EncrpyptedPath() {
+    public void testOpenDocument_EncryptedPath() {
         mPdfManager.setPDF(mEncryptedPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_ENCRYPTED);
@@ -517,7 +517,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
     // Tests - close
     //================================================================================
 
-    public void tesCloseDocument_Opened() {
+    public void testCloseDocument_Opened() {
         mPdfManager.setPDF(mPdfPath);
         int status = mPdfManager.openDocument();
         assertEquals(status, PDFFileManager.PDF_OK);
@@ -529,7 +529,7 @@ public class PDFFileManagerTest extends  ActivityInstrumentationTestCase2<MainAc
         }
     }
 
-    public void tesCloseDocument_NotOpened() {
+    public void testCloseDocument_NotOpened() {
         try {
             mPdfManager.setPDF(mPdfPath);
             mPdfManager.closeDocument();

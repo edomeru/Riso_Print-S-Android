@@ -1,7 +1,15 @@
 package com.scanlibrary;
 
 import android.app.Activity;
-import android.app.Fragment;
+// aLINK edit - Start
+// android.app.Fragment was deprecated in API level 28
+// Use androidx.fragment.app.Fragment instead
+import androidx.fragment.app.Fragment;
+
+// androidx.fragment.app.Fragment.onAttach(Activity activity) is deprecated
+// Use androidx.fragment.app.Fragment.onAttach(Context context) instead
+import android.content.Context;
+// aLINK edit - End
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -35,14 +43,18 @@ public class PickImageFragment extends Fragment {
     private IScanner scanner;
     private String imagePath;
 
+    // aLINK edit - Start
+    // androidx.fragment.app.Fragment.onAttach(Activity activity) is deprecated
+    // Use androidx.fragment.app.Fragment.onAttach(Context context) instead
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (!(activity instanceof IScanner)) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof IScanner)) {
             throw new ClassCastException("Activity must implement IScanner");
         }
-        this.scanner = (IScanner) activity;
+        this.scanner = (IScanner) context;
     }
+    // aLINK edit - End
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

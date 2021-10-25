@@ -26,7 +26,7 @@ public interface PDFConverterManagerInterface {
      *      <li>PDFFileManager::CONVERSION_FAILED</li>
      * </ul>
      */
-    public void onFileConverted(int status);
+    void onFileConverted(int status);
 
     /**
      * @brief Set message in progress dialog.
@@ -35,12 +35,12 @@ public interface PDFConverterManagerInterface {
      * @param total progress limit.
      * @param isPercentage flag whether to use and compute for percentage
      */
-    public void onNotifyProgress(int current, int total, boolean isPercentage);
+    void onNotifyProgress(int current, int total, boolean isPercentage);
 
     /**
      * @brief Set message in progress dialog.
      *
      * @param message message.
      */
-    public void onNotifyProgress(String message);
+    void onNotifyProgress(String message);
 }

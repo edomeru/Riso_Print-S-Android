@@ -44,7 +44,7 @@ public class PrintJobManager {
     
     private static PrintJobManager sInstance;
     
-    private DatabaseManager mManager;
+    private final DatabaseManager mManager;
     private boolean mRefreshFlag;
     
     /**
@@ -97,7 +97,7 @@ public class PrintJobManager {
      * @return List of PrintJob objects
      */
     public List<PrintJob> getPrintJobs() {
-        List<PrintJob> printJobs = new ArrayList<PrintJob>();
+        List<PrintJob> printJobs = new ArrayList<>();
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, C_ORDERBY_DATE);
         
         if (c != null) {
@@ -125,7 +125,7 @@ public class PrintJobManager {
      * @return List of Printer objects
      */
     public List<Printer> getPrintersWithJobs() {
-        List<Printer> printers = new ArrayList<Printer>();
+        List<Printer> printers = new ArrayList<>();
         
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null, C_SEL_PRN_ID, null, null, null, KeyConstants.KEY_SQL_PRINTER_ID);
         
@@ -211,7 +211,12 @@ public class PrintJobManager {
         
         Cursor c = mManager.query(KeyConstants.KEY_SQL_PRINTJOB_TABLE, columns, selection, selArgs, groupBy, having, orderBy);
         if (c.moveToFirst()) {
-             jobId = c.getInt(c.getColumnIndex(KeyConstants.KEY_SQL_PRINTJOB_ID));
+            int columnIndex = c.getColumnIndex(KeyConstants.KEY_SQL_PRINTJOB_ID);
+            if (columnIndex >= 0) {
+                jobId = c.getInt(columnIndex);
+            } else {
+                Logger.logError(PrintJobManager.class, "columnName:" + KeyConstants.KEY_SQL_PRINTJOB_ID + " not found");
+            }
         }
         c.close();
         mManager.close();
@@ -271,7 +276,7 @@ public class PrintJobManager {
     private static Date convertStringToDate(String strDate) {
         SimpleDateFormat sdf = new SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone(C_TIMEZONE));
-        Date date = null;
+        Date date;
         
         try {
             date = sdf.parse(strDate);

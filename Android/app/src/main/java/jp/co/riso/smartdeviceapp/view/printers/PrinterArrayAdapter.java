@@ -31,9 +31,9 @@ import android.widget.TextView;
  */
 public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.OnClickListener {    
     private WeakReference<PrinterArrayAdapterInterface> mCallbackRef = null;
-    private PrinterManager mPrinterManager = null;
-    private ViewHolder mDeleteViewHolder = null;
-    private int mLayoutId = 0;
+    private final PrinterManager mPrinterManager;
+    private ViewHolder mDeleteViewHolder;
+    private final int mLayoutId;
 
     /**
      * @brief Constructor.
@@ -52,21 +52,21 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
         Printer printer = getItem(position);
-        View separator = null;
+        View separator;
         String printerName = printer.getName();
         
         if (convertView == null) {
             convertView = inflater.inflate(mLayoutId, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.mPrinterName = (TextView) convertView.findViewById(R.id.txt_printerName);
-            viewHolder.mIpAddress = (TextView) convertView.findViewById(R.id.txt_ipAddress);
+            viewHolder.mPrinterName = convertView.findViewById(R.id.txt_printerName);
+            viewHolder.mIpAddress = convertView.findViewById(R.id.txt_ipAddress);
             viewHolder.mPrinterName.setText(printer.getName());
             viewHolder.mIpAddress.setText(printer.getIpAddress());
             
-            viewHolder.mDiscloseImage = (ImageView) convertView.findViewById(R.id.img_disclosure);
-            viewHolder.mDeleteButton = (Button) convertView.findViewById(R.id.btn_delete);
+            viewHolder.mDiscloseImage = convertView.findViewById(R.id.img_disclosure);
+            viewHolder.mDeleteButton = convertView.findViewById(R.id.btn_delete);
             
             viewHolder.mDiscloseImage.setTag(printer);
             viewHolder.mPrinterName.setTag(printer);
@@ -118,7 +118,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
      * @param callback Callback function
      */
     public void setPrintersArrayAdapterInterface (PrinterArrayAdapterInterface callback) {
-        mCallbackRef = new WeakReference<PrinterArrayAdapterInterface>(callback);
+        mCallbackRef = new WeakReference<>(callback);
     }
       
     /**
@@ -210,21 +210,18 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     
     @Override
     public void onClick(View v) {
-        
-        switch (v.getId()) {
-            case R.id.printerListRow:
-                Printer printer = (Printer) v.findViewById(R.id.img_disclosure).getTag();
-                if(mCallbackRef != null && mCallbackRef.get() != null) {
-                    mCallbackRef.get().onPrinterListClicked(printer);
-                }
-                break;
-            case R.id.btn_delete:
-                if (mCallbackRef != null && mCallbackRef.get() != null) {
-                    PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
-                    mDeleteViewHolder = (ViewHolder) printerContainer.getTag();
-                    mCallbackRef.get().onPrinterDeleteClicked((Printer) mDeleteViewHolder.mDiscloseImage.getTag());
-                }
-                break;
+        int id = v.getId();
+        if (id == R.id.printerListRow) {
+            Printer printer = (Printer) v.findViewById(R.id.img_disclosure).getTag();
+            if (mCallbackRef != null && mCallbackRef.get() != null) {
+                mCallbackRef.get().onPrinterListClicked(printer);
+            }
+        } else if (id == R.id.btn_delete) {
+            if (mCallbackRef != null && mCallbackRef.get() != null) {
+                PrintersContainerView printerContainer = (PrintersContainerView) v.getTag();
+                mDeleteViewHolder = (ViewHolder) printerContainer.getTag();
+                mCallbackRef.get().onPrinterDeleteClicked((Printer) mDeleteViewHolder.mDiscloseImage.getTag());
+            }
         }
     }
     
@@ -241,14 +238,14 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
          * 
          * @param printer Printer to be deleted
          */
-        public void onPrinterDeleteClicked(Printer printer);
+        void onPrinterDeleteClicked(Printer printer);
         
         /**
          * @brief Display the PrinterInfoFragment of the corresponding printer item clicked.
          * 
          * @param printer PrinterInfoFragment to be displayed
          */
-        public void onPrinterListClicked(Printer printer);
+        void onPrinterListClicked(Printer printer);
     }
     
     // ================================================================================
@@ -260,7 +257,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
      * 
      * @brief Printers Screen view holder for phone.
      */
-    public class ViewHolder {
+    public static class ViewHolder {
         private TextView mPrinterName;
         private TextView mIpAddress;
         private Button mDeleteButton;

@@ -36,7 +36,7 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
         super(activityClass);
     }
     private static final String TAG = "SettingTest";
-    private List<Setting> mSettingList = new ArrayList<Setting>();
+    private final List<Setting> mSettingList = new ArrayList<>();
 
     @Override
     protected void setUp() throws Exception {
@@ -52,11 +52,7 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(xmlString));
             printSettingsContent = db.parse(is);
-        } catch (ParserConfigurationException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (SAXException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             Log.e(TAG, "Error: " + e.getMessage());
         }
 
@@ -114,18 +110,14 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(xmlString));
             printSettingsContent = db.parse(is);
-        } catch (ParserConfigurationException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (SAXException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             Log.e(TAG, "Error: " + e.getMessage());
         }
 
         assertNotNull(printSettingsContent);
 
         NodeList settingList = printSettingsContent.getElementsByTagName("setting");
-        List<Setting> invalidSettingList = new ArrayList<Setting>();
+        List<Setting> invalidSettingList = new ArrayList<>();
         // looping through all item nodes <item>
         for (int i = 0; i < settingList.getLength(); i++) {
             Setting setting = new Setting(settingList.item(i));
@@ -147,18 +139,14 @@ public class SettingTest extends ActivityInstrumentationTestCase2<MainActivity> 
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(xmlString));
             printSettingsContent = db.parse(is);
-        } catch (ParserConfigurationException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (SAXException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             Log.e(TAG, "Error: " + e.getMessage());
         }
 
         assertNotNull(printSettingsContent);
 
         NodeList settingList = printSettingsContent.getElementsByTagName("setting");
-        List<Setting> invalidSettingList = new ArrayList<Setting>();
+        List<Setting> invalidSettingList = new ArrayList<>();
         // looping through all item nodes <item>
         for (int i = 0; i < settingList.getLength(); i++) {
             Setting setting = new Setting(settingList.item(i));

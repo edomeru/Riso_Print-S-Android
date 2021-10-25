@@ -8,10 +8,10 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Looper;
@@ -76,7 +76,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private PrinterManager mPrinterManager = null;
     private int mDeleteItem = PrinterManager.EMPTY_ID;
     private Parcelable mScrollState = null;
-    private int mSettingItem = PrinterManager.EMPTY_ID;;
+    private int mSettingItem = PrinterManager.EMPTY_ID;
     private Runnable mUpdateOnlineStatus = null;
     private TextView mEmptyPrintersText;
     
@@ -118,13 +118,13 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
             mPrinter = (ArrayList<Printer>) mPrinterManager.getSavedPrintersList();
         }
         
-        mEmptyPrintersText = (TextView) view.findViewById(R.id.emptyPrintersText);
+        mEmptyPrintersText = view.findViewById(R.id.emptyPrintersText);
         
         if (isTablet()) {
-            mPrinterTabletView = (PrintersScreenTabletView) view.findViewById(R.id.printerParentView);
+            mPrinterTabletView = view.findViewById(R.id.printerParentView);
             mPrinterTabletView.setPrintersViewCallback(this);
         } else {
-            mListView = (ListView) view.findViewById(R.id.printer_list);
+            mListView = view.findViewById(R.id.printer_list);
         }
         mPrinterManager.setPrintersCallback(this);
 
@@ -149,7 +149,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_printers);
         addMenuButton(view, R.id.rightActionLayout, R.id.menu_id_action_add_button, R.drawable.selector_actionbar_add_printer, this);
 		if (!isChromeBook()) {
@@ -311,7 +311,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      * @param tag Fragment tag
      */
     private void switchToFragment(BaseFragment fragment, String tag) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         
         if (isTablet()) {
@@ -338,7 +338,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     private boolean isMaxPrinterCountReached() {
         if (mPrinterManager.getPrinterCount() == AppConstants.CONST_MAX_PRINTER_COUNT) {
             String title = getResources().getString(R.string.ids_lbl_printers);
-            String errMsg = null;
+            String errMsg;
             errMsg = getResources().getString(R.string.ids_err_msg_max_printer_count);
             InfoDialogFragment info = InfoDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok));
             DialogUtils.displayDialog(getActivity(), KEY_PRINTER_ERR_DIALOG, info);
@@ -351,7 +351,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      * @brief Updates the online status for the whole view.
      */
     private void updateOnlineStatus() {
-        int childCount = 0;
+        int childCount;
         int position = 0;
         if (isTablet() && mPrinterTabletView != null) {
             childCount = mPrinterTabletView.getChildCount();
@@ -424,49 +424,41 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     
     @Override
     public void onClick(View v) {        
-        switch (v.getId()) {
-            case R.id.menu_id_action_search_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    
-                    MainActivity activity = (MainActivity) getActivity();
-                    
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_search_button);
-                    } else {
-                        activity.closeDrawers();
-                    }
-                }
-                break;
-            case R.id.menu_id_action_add_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_add_button);
-                    } else {
-                        activity.closeDrawers();
-                    }
-                }
-                break;
-            case R.id.menu_id_printer_search_settings_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
+        int id = v.getId();
+        if (id == R.id.menu_id_action_search_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
 
-                    MainActivity activity = (MainActivity) getActivity();
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_search_button);
+                } else {
+                    activity.closeDrawers();
+                }
+            }
+        } else if (id == R.id.menu_id_action_add_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
 
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        mPauseableHandler.sendEmptyMessage(R.id.menu_id_printer_search_settings_button);
-                    } else {
-                        activity.closeDrawers();
-                    }
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_add_button);
+                } else {
+                    activity.closeDrawers();
                 }
-                break;
-            case R.id.menu_id_action_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
+            }
+        } else if (id == R.id.menu_id_printer_search_settings_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
+
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    mPauseableHandler.sendEmptyMessage(R.id.menu_id_printer_search_settings_button);
+                } else {
+                    activity.closeDrawers();
                 }
-                break;
-            default:
-                break;
+            }
+        } else if (id == R.id.menu_id_action_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
+            }
         }
     }
     
@@ -491,13 +483,13 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
         String title = getResources().getString(R.string.ids_lbl_printer);
         String errMsg = getResources().getString(R.string.ids_info_msg_delete_jobs);
 
-        DialogFragment info = null;
+        DialogFragment info;
 
         info = ConfirmDialogFragment.newInstance(title, errMsg, getResources().getString(R.string.ids_lbl_ok),
                 getResources().getString(R.string.ids_lbl_cancel));
         info.setTargetFragment(this, 0);
         mDeletePrinter = printer;
-        DialogUtils.displayDialog((Activity) getActivity(), KEY_PRINTERS_DIALOG, info);
+        DialogUtils.displayDialog(getActivity(), KEY_PRINTERS_DIALOG, info);
     }
     
     @Override
@@ -516,7 +508,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     @Override
     public void onConfirm() {
         if (isTablet()) {
-            boolean relayout = mDeletePrinter.getId() == mPrinterManager.getDefaultPrinter() ? true : false;
+            boolean relayout = (mDeletePrinter.getId() == mPrinterManager.getDefaultPrinter());
             
             if (mPrinterManager.removePrinter(mDeletePrinter)) {
                 mPrinterTabletView.confirmDeletePrinterView(relayout);
@@ -560,11 +552,12 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
 
     @Override
     public void processMessage(Message msg) {
-        switch (msg.what) {
+        int id = msg.what;
+        switch (id) {
             case MSG_POPULATE_PRINTERS_LIST:
                 if (isTablet()) {
                     mPrinterTabletView.restoreState(mPrinter, msg.arg1, msg.arg2);
-                    mPrinterTabletView.setPausableHandler(mPauseableHandler);
+                    mPrinterTabletView.setPauseableHandler(mPauseableHandler);
                 } else {
                     mPrinterAdapter = new PrinterArrayAdapter(getActivity(), R.layout.printers_container_item, mPrinter);
                     ((PrinterArrayAdapter) mPrinterAdapter).setPrintersArrayAdapterInterface(this);
@@ -592,23 +585,22 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
                 displayDefaultPrintSettings(fragment);
                 mPrinterTabletView.setDefaultSettingSelected(msg.arg1, true);
                 break;
-            case R.id.menu_id_action_search_button:
-                mPauseableHandler.pause();
-                displayPrinterSearchFragment();
-                return;
-            case R.id.menu_id_action_add_button:
-                mPauseableHandler.pause();
-                displayAddPrinterFragment();
-                return;
-            case R.id.menu_id_printer_search_settings_button:
-                mPauseableHandler.pause();
-                displaySearchPrinterFragment();
-                return;
-            case R.id.menu_id_action_button:
-                mPauseableHandler.pause();
-                MainActivity activity = (MainActivity) getActivity();
-                activity.openDrawer(Gravity.LEFT);
-                return;
+            default:
+                if (id == R.id.menu_id_action_search_button) {
+                    mPauseableHandler.pause();
+                    displayPrinterSearchFragment();
+                } else if (id == R.id.menu_id_action_add_button) {
+                    mPauseableHandler.pause();
+                    displayAddPrinterFragment();
+                } else if (id == R.id.menu_id_printer_search_settings_button) {
+                    mPauseableHandler.pause();
+                    displaySearchPrinterFragment();
+                } else if (id == R.id.menu_id_action_button) {
+                    mPauseableHandler.pause();
+                    MainActivity activity = (MainActivity) getActivity();
+                    activity.openDrawer(Gravity.LEFT);
+                }
+                break;
         }
     }
 }

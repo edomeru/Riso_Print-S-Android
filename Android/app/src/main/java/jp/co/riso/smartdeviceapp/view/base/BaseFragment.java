@@ -13,9 +13,10 @@ import jp.co.riso.android.util.Logger;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartprint.R;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+
 import android.app.ActionBar.LayoutParams;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -213,27 +214,13 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
      * @retval false Fragment is not on the right drawer
      */
     public boolean isOnRightDrawer() {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         if (fm != null) {
             return this == fm.findFragmentById(R.id.rightLayout);
         }
         return false;
     }
-    
-    /**
-     * @brief Checks whether the device is in tablet landscape mode.
-     * 
-     * @retval true Device is in tablet landscape mode
-     * @retval false Device is not in tablet landscape mode
-     */
-    public boolean isTabletLand() {
-        if (getActivity() == null) {
-            return false;
-        }
-        
-        return getResources().getBoolean(R.bool.is_tablet_land);
-    }
-    
+
     /**
      * @brief Checks whether the device is a Chrome Book.
      *
@@ -276,7 +263,7 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
         button.setOnClickListener(listener);
         
         int width = ((BaseActivity) getActivity()).getActionBarHeight();
-        ViewGroup layout = (ViewGroup) v.findViewById(layoutId);
+        ViewGroup layout = v.findViewById(layoutId);
         layout.addView(button, width, LayoutParams.MATCH_PARENT);
 
         return button;
@@ -342,13 +329,12 @@ public abstract class BaseFragment extends DialogFragment implements View.OnLayo
     
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.menu_id_action_button:
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    activity.openDrawer(Gravity.LEFT);
-                }
-                break;
+        int id = v.getId();
+        if (id == R.id.menu_id_action_button) {
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.openDrawer(Gravity.LEFT);
+            }
         }
     }
 

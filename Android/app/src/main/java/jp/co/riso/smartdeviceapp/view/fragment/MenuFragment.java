@@ -8,9 +8,9 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
 
@@ -31,10 +31,8 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     // HIDE_NEW_FEATURES: Prevent transition from Preview screen to Home screen
     //public static final int STATE_HOME = 0;
     public static final int STATE_HOME = 1;
-
     /// Print Preview Screen
     public static final int STATE_PRINTPREVIEW = 1;
-
     /// Printers Screen
     public static final int STATE_PRINTERS = 2;
     /// Print Jobs Screen
@@ -49,7 +47,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     /// Menu Fragment key state
     public static final String KEY_STATE = "MenuFragment_State";
 
-    public static int MENU_ITEMS[] = {
+    public static int[] MENU_ITEMS = {
             R.id.homeButton,
             R.id.printPreviewButton,
             R.id.printersButton,
@@ -59,7 +57,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             R.id.legalButton
     };
 
-    public static String FRAGMENT_TAGS[] = {
+    public static String[] FRAGMENT_TAGS = {
             "fragment_home",
             "fragment_printpreview",
             "fragment_printers",
@@ -122,7 +120,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
     public Fragment getCurrentStateFragment(){
         String tag = FRAGMENT_TAGS[mState];
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         return fm.findFragmentByTag(tag);
     }
 
@@ -149,7 +147,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             /*if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(false);
-                view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4));
+                view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4, null));
             } else {*/
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(true);
@@ -195,7 +193,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
      * @param animate Animate changes in layout
      */
     private void switchToFragment(int state, boolean animate) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         FragmentTransaction ft = fm.beginTransaction();
@@ -244,7 +242,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             ft.attach(fragment);
         }
 
-        if (fragment instanceof BaseFragment) {
+        if (fragment != null) {
             setIconState(R.id.menu_id_action_button, true);
         }
 
@@ -257,30 +255,21 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.homeButton:
-                setCurrentState(STATE_HOME);
-                break;
-            case R.id.printPreviewButton:
-                setCurrentState(STATE_PRINTPREVIEW);
-                break;
-            case R.id.printersButton:
-                setCurrentState(STATE_PRINTERS);
-                break;
-            case R.id.printJobsButton:
-                setCurrentState(STATE_PRINTJOBS);
-                break;
-            case R.id.settingsButton:
-                setCurrentState(STATE_SETTINGS);
-                break;
-            case R.id.helpButton:
-                setCurrentState(STATE_HELP);
-                break;
-            case R.id.legalButton:
-                setCurrentState(STATE_LEGAL);
-                break;
-            default:
-                break;
+        int id = v.getId();
+        if (id == R.id.homeButton) {
+            setCurrentState(STATE_HOME);
+        } else if (id == R.id.printPreviewButton) {
+            setCurrentState(STATE_PRINTPREVIEW);
+        } else if (id == R.id.printersButton) {
+            setCurrentState(STATE_PRINTERS);
+        } else if (id == R.id.printJobsButton) {
+            setCurrentState(STATE_PRINTJOBS);
+        } else if (id == R.id.settingsButton) {
+            setCurrentState(STATE_SETTINGS);
+        } else if (id == R.id.helpButton) {
+            setCurrentState(STATE_HELP);
+        } else if (id == R.id.legalButton) {
+            setCurrentState(STATE_LEGAL);
         }
     }
 }

@@ -3,7 +3,11 @@ package com.scanlibrary;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+// aLINK edit - Start
+// android.app.DialogFragment was deprecated in API level 28
+// Use androidx.fragment.app.DialogFragment instead
+import androidx.fragment.app.DialogFragment;
+// aLINK edit - End
 import android.content.DialogInterface;
 import android.os.Bundle;
 

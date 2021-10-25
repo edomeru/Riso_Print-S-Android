@@ -1,15 +1,40 @@
 package com.scanlibrary;
 
+// aLINK edit - Start
+// MediaStore.Images.Media.insertImage(ContentResolver cr, Bitmap src, String title, String desc)
+// was deprecated in API level 29. Use MediaColumns.IS_PENDING instead.
+import android.content.ContentValues;
+// aLINK edit - End
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+// aLINK edit - Start
+// MediaStore.Images.Media.getBitmap(ContentResolver cr, Uri uri) was deprecated in API level 29.
+// Use ImageDecoder.createSource(ContentResolver cr,  Uri uri) instead
+import android.graphics.ImageDecoder;
+// aLINK edit - End
 import android.graphics.Matrix;
 import android.net.Uri;
+// aLINK edit - Start
+// ImageDecoder.createSource(ContentResolver cr,  Uri uri) was added in API level 28
+// Check the build version and use MediaStore.Images.Media.getBitmap(ContentResolver cr, Uri uri)
+// for older build versions.
+import android.os.Build;
+// aLINK edit - End
 import android.provider.MediaStore;
 
-import java.io.ByteArrayOutputStream;
+// aLINK edit - Start
+// MediaStore.Images.Media.insertImage(ContentResolver cr, Bitmap src, String title, String desc)
+// was deprecated in API level 29. Use MediaColumns.IS_PENDING instead.
+import java.io.FileNotFoundException;
+// aLINK edit - End
 import java.io.IOException;
 import java.io.InputStream;
+// aLINK edit - Start
+// MediaStore.Images.Media.insertImage(ContentResolver cr, Bitmap src, String title, String desc)
+// was deprecated in API level 29. Use MediaColumns.IS_PENDING instead.
+import java.io.OutputStream;
+// aLINK edit - End
 
 import androidx.exifinterface.media.ExifInterface;
 
@@ -22,15 +47,49 @@ public class Utils {
 
     }
 
+    // aLINK edit - Start
+    // MediaStore.Images.Media.insertImage(ContentResolver cr, Bitmap src, String title,
+    // String desc) was deprecated in API level 29. Use MediaColumns.IS_PENDING instead.
+    // Reference:
+    // https://github.com/coroutineDispatcher/pocket_treasure/blob/master/gallery_module/src/main/java/com/sxhardha/gallery_module/image/FullImageFragment.kt
     public static Uri getUri(Context context, Bitmap bitmap) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, "Title", null);
-        return Uri.parse(path);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, ScanConstants.IMAGE_RELATIVE_PATH);
+            contentValues.put(MediaStore.MediaColumns.IS_PENDING, 1);
+        }
+        Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues);
+        try {
+            OutputStream stream = context.getContentResolver().openOutputStream(uri);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            uri = null;
+        } finally {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0);
+            }
+        }
+        return uri;
     }
+    // aLINK edit - End
 
+    @SuppressWarnings("deprecation")
     public static Bitmap getBitmap(Context context, Uri uri) throws IOException {
-        Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+        Bitmap bitmap;
+        // aLINK edit - Start
+        // MediaStore.Images.Media.getBitmap(ContentResolver cr, Uri uri) was deprecated in
+        // API level 29. Use ImageDecoder.createSource(ContentResolver cr,  Uri uri) instead.
+        if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+        } else {
+            ImageDecoder.Source source = ImageDecoder.createSource(context.getContentResolver(), uri);
+            bitmap = ImageDecoder.decodeBitmap(source);
+            bitmap = bitmap.copy(ScanConstants.BITMAP_CONFIG, true);
+        }
+        // aLINK edit - End
         return bitmap;
     }
 

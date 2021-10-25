@@ -32,7 +32,7 @@ public class HelpFragment extends BaseWebFragment {
     
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_help);
         
         addActionMenuButton(view);

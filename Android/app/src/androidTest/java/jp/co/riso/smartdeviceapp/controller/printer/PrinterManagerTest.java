@@ -4,7 +4,6 @@ package jp.co.riso.smartdeviceapp.controller.printer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ImageView;
@@ -81,7 +80,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testGetPrinterCount_DuringIdle() {
         try {
             
-            int count = -1;
+            int count;
             count = mPrinterManager.getPrinterCount();
             assertEquals(false, count < 0);
         } catch (Exception e) {
@@ -195,7 +194,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testGetDefaultPrinter_NoDefaultPrinter() {
         try {
-            int defaultPrinter = -1;
+            int defaultPrinter;
             testClearDefaultPrinter();
 
             defaultPrinter = mPrinterManager.getDefaultPrinter();
@@ -207,7 +206,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testGetDefaultPrinter_WithDefaultPrinter() {
         try {
-            int defaultPrinter = -1;
+            int defaultPrinter;
             testSetDefaultPrinter_NoDefaultPrinter();
 
             defaultPrinter = mPrinterManager.getDefaultPrinter();
@@ -220,7 +219,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testGetDefaultPrinter_WithDefaultPrinterActivityRestarted() {
         try {
             mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
-            int defaultPrinter = -1;
+            int defaultPrinter;
 
             defaultPrinter = mPrinterManager.getDefaultPrinter();
             assertEquals(true, defaultPrinter != PrinterManager.EMPTY_ID);
@@ -244,7 +243,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testIsCancelled_StateNotCancelled() {
         try {
-            boolean isCancelled = true;
+            boolean isCancelled;
             mPrinterManager.startPrinterSearch();
 
             isCancelled = mPrinterManager.isCancelled();
@@ -258,7 +257,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testIsCancelled_StateCancelled() {
         try {
-            boolean isCancelled = false;
+            boolean isCancelled;
             mPrinterManager.cancelPrinterSearch();
 
             isCancelled = mPrinterManager.isCancelled();
@@ -274,7 +273,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testIsSearching_StateSearching() {
         try {
-            boolean isSearching = false;
+            boolean isSearching;
             mPrinterManager.startPrinterSearch();
 
             isSearching = mPrinterManager.isSearching();
@@ -288,7 +287,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testIsSearching_StateNotSearching() {
         try {
-            boolean isSearching = true;
+            boolean isSearching;
             mPrinterManager.cancelPrinterSearch();
             isSearching = mPrinterManager.isSearching();
             
@@ -439,8 +438,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             mPrinterManager.updateOnlineStatus(IPV4_ONLINE_PRINTER_ADDRESS, null);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -450,8 +447,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             mPrinterManager.updateOnlineStatus(null, mImageView);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -504,8 +499,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
                     new boolean[10]);
             
             mSignal.await(TIMEOUT, TimeUnit.SECONDS);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -516,8 +509,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             mPrinterManager.onFoundDevice(null, IPV4_ONLINE_PRINTER_ADDRESS, "testOnFoundDevice_NullManager",
                     new boolean[10]);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -528,8 +519,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             mPrinterManager.onFoundDevice(new SNMPManager(), null, "testOnFoundDevice_NullIpAddress",
                     new boolean[10]);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -541,8 +530,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS, null,
                     new boolean[10]);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -554,8 +541,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             mPrinterManager.onFoundDevice(new SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS,
                     "testOnFoundDevice_NullCapabilities", null);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -571,7 +556,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
             Printer printer = new Printer("testRemovePrinter_ValidAndInvalidPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
-            boolean ret = false;
+            boolean ret;
 
             if (!mPrinterManager.isExists(printer)) {
                 mPrinterManager.savePrinterToDB(printer, true);
@@ -589,8 +574,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             ret = mPrinterManager.removePrinter(printer);
             assertEquals(false, ret);
 
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -600,7 +583,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
         Printer printer = new Printer("testRemovePrinter_ValidAndInvalidPrinter",
                 IPV4_OFFLINE_PRINTER_ADDRESS);
-        boolean ret = false;
+        boolean ret;
 
         for (Printer printerItem : mPrintersList) {
             mPrinterManager.removePrinter(printerItem);
@@ -613,8 +596,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             mPrinterManager.removePrinter(null);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -624,7 +605,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             Printer printer = new Printer("testRemovePrinter_IpAddressExists", IPV4_OFFLINE_PRINTER_ADDRESS);
-            boolean ret = false;
+            boolean ret;
 
             if (!mPrinterManager.isExists(printer)) {
                 mPrinterManager.savePrinterToDB(printer, true);
@@ -662,7 +643,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
             Printer printer = new Printer("testSavePrinterToDB_ValidPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
-            boolean ret = false;
+
             for (Printer savedPrinter : mPrinterManager.getSavedPrintersList()) {
                 if (printer.getIpAddress().equals(savedPrinter.getIpAddress())) {
                     printer = savedPrinter;
@@ -686,7 +667,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             printer.getConfig().setTrayTopAvailable(true);
             printer.getConfig().setTrayStackAvailable(true);
             
-            ret = mPrinterManager.savePrinterToDB(printer, true);
+            boolean ret = mPrinterManager.savePrinterToDB(printer, true);
             assertEquals(true, ret);
             
             //Disabled Capabilities
@@ -701,18 +682,15 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             printer.getConfig().setTrayStackAvailable(false);
             
             mPrinterManager.removePrinter(printer);
-            ret = mPrinterManager.savePrinterToDB(printer, false);            
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
     }
 
-    public void testSavePrinterToDB_ExsistingPrinter() {
+    public void testSavePrinterToDB_ExistingPrinter() {
         try {
-            Printer printer = new Printer("testSavePrinterToDB_ExsistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
-            boolean ret = false;
+            Printer printer = new Printer("testSavePrinterToDB_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
+            boolean ret;
 
             if (!mPrinterManager.isExists(printer)) {
                 mPrinterManager.savePrinterToDB(printer, true);
@@ -729,8 +707,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
 
             mPrinterManager.savePrinterToDB(null, true);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -739,7 +715,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testSavePrinterToDB_DefaultPrinter() {
         try {
 
-            Printer printer = new Printer("testSavePrinterToDB_ExsistingPrinter",
+            Printer printer = new Printer("testSavePrinterToDB_ExistingPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
             if (!mPrintersList.isEmpty()) {
                 for (int i = mPrintersList.size(); i > 0; i--) {
@@ -756,7 +732,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testSavePrinterToDB_DatabaseError() {
         try {
-            Printer printer = new Printer("testSavePrinterToDB_ExsistingPrinter",
+            Printer printer = new Printer("testSavePrinterToDB_ExistingPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
             MockedDatabaseManager dbManager = new MockedDatabaseManager(
                     SmartDeviceApp.getAppContext());
@@ -820,7 +796,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testIsExists_ExistingPrinter() {
         try {
             Printer printer = new Printer("testIsExists_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS);
-            boolean ret = false;
+            boolean ret;
 
             if(!mPrinterManager.isExists(printer)) {
                 mPrinterManager.savePrinterToDB(printer, true);
@@ -841,7 +817,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
             Printer printer = new Printer("testIsExists_NotExistingPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
-            boolean ret = false;
+            boolean ret;
             if (mPrintersList != null) {
                 for (Printer savedPrinter : mPrintersList) {
                     if (printer.getIpAddress().equals(savedPrinter.getIpAddress())) {
@@ -873,8 +849,6 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             String ipAddress = null;
             mPrinterManager.isExists(printer);
             mPrinterManager.isExists(ipAddress);
-        } catch (NullPointerException e) {
-            fail(); // Error should not be thrown
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -927,7 +901,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testIsOnline_OfflinePrinter() {
         try {
-            boolean ret = true;
+            boolean ret;
 
             ret = mPrinterManager.isOnline(IPV4_OFFLINE_PRINTER_ADDRESS);
             assertEquals(false, ret);
@@ -938,7 +912,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testIsOnline_NullAddress() {
         try {
-            boolean ret = true;
+            boolean ret;
 
             ret = mPrinterManager.isOnline(null);
             assertEquals(false, ret);
@@ -949,7 +923,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testIsOnline_InvalidAddress() {
         try {
-            boolean ret = true;
+            boolean ret;
 
             ret = mPrinterManager.isOnline(INVALID_ADDRESS);
             assertEquals(false, ret);
@@ -990,7 +964,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testUpdateOnlineStatusTask_EmptyIpAddress() {
 
         mPrinterManager.new UpdateOnlineStatusTask(null, "")
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                .execute();
         
         try {
             // Wait and Check if Address is OFFLINE
@@ -1006,7 +980,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testUpdateOnlineStatusTask_ValidOfflineParameters() {
 
         mPrinterManager.new UpdateOnlineStatusTask(mImageView, IPV4_OFFLINE_PRINTER_ADDRESS)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                .execute();
         try {
             // Wait and Check if Address is OFFLINE
             getInstrumentation().waitForIdleSync();
@@ -1020,7 +994,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testUpdateOnlineStatusTask_ValidIpv4OnlineParameters() {
 
         mPrinterManager.new UpdateOnlineStatusTask(mImageView, IPV4_ONLINE_PRINTER_ADDRESS)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                .execute();
         try {
             // Wait and Check if Address is ONLINE
             getInstrumentation().waitForIdleSync();
@@ -1040,7 +1014,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
         assertNotNull(ipv6Addr);
         mPrinterManager.new UpdateOnlineStatusTask(mImageView, ipv6Addr)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                .execute();
         try {
             // Wait and Check if Address is ONLINE
             getInstrumentation().waitForIdleSync();
@@ -1106,7 +1080,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         }
     }
     public void testSetupPrinterConfig_allAvailable() {
-        boolean capabilities[] = new boolean[] {
+        boolean[] capabilities = new boolean[] {
                 true, true, true, true, true, true, true, true, true, true, true
         };
         Printer target = new Printer("test GL", "ip");
@@ -1126,7 +1100,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     }
     
     public void testSetupPrinterConfig_allFalse() {
-        boolean capabilities[] = new boolean[] {
+        boolean[] capabilities = new boolean[] {
                 false, false, false, false, false, false, false, false, false, false, false
         };
         Printer target = new Printer("test GL", "ip");
@@ -1146,7 +1120,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     }
     
     public void testSetupPrinterConfig_Incomplete() {
-        boolean capabilities[] = new boolean[] {
+        boolean[] capabilities = new boolean[] {
                 false
         };
         Printer target = new Printer("test", "ip");
@@ -1178,7 +1152,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
         try {
             Printer printer = null;
-            boolean ret = false;
+            boolean ret;
             
             if (mPrintersList != null && !mPrintersList.isEmpty()) {
                 printer = mPrintersList.get(0);
@@ -1189,7 +1163,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             }
             
             DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.getAppContext());
-            Cursor cursor = null;
+            Cursor cursor;
             
             ret = mPrinterManager.updatePortSettings(printer.getId(), PortSetting.LPR);
             assertTrue(ret);
@@ -1243,7 +1217,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testGetPrinterType() {
 
         try {
-            Printer printer = null;
+            Printer printer;
 
             printer = new Printer("RISO IS1000C-G", "192.168.0.1");
             mPrinterManager.savePrinterToDB(printer, true);
@@ -1316,7 +1290,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         mSignal.countDown();
     }
     
-    public class MockedDatabaseManager extends DatabaseManager {
+    public static class MockedDatabaseManager extends DatabaseManager {
         private boolean mInsert = false;
         
         public MockedDatabaseManager(Context context) {

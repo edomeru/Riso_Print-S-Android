@@ -3,13 +3,13 @@ package jp.co.riso.android.dialog;
 
 import jp.co.riso.android.dialog.WaitingDialogFragment.WaitingDialogListener;
 import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartprint.R;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -27,8 +27,6 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     private MainActivity mActivity;
     private FragmentManager fm;
 
-    private boolean mCallbackCalled = false;
-
     public WaitingDialogFragmentTest() {
         super(MainActivity.class);
     }
@@ -41,8 +39,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     protected void setUp() throws Exception {
         super.setUp();
         mActivity = getActivity();
-        fm = mActivity.getFragmentManager();
-        mCallbackCalled = false;
+        fm = mActivity.getSupportFragmentManager();
         
         wakeUpScreen();
     }
@@ -102,14 +99,12 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnClick() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE);
         assertNotNull(w);
-        w.setTargetFragment(new MockCallback(), 1);
+
+        MockCallback mockCallback = new MockCallback();
+        fm.beginTransaction().add(mockCallback, null).commit();
+        w.setTargetFragment(mockCallback, 1);
         w.show(fm, TAG);
         waitFewSeconds();
 
@@ -137,19 +132,16 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNull(((DialogFragment) fragment).getDialog());
         assertNull(fm.findFragmentByTag(TAG));
 
-        assertTrue(mCallbackCalled);
-
+        assertTrue(mockCallback.isCancelCalled());
     }
 
     public void testOnCancel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Setting MockCallback as target fragment causes test app to crash in Android 8
-            return;
-        }
-
         WaitingDialogFragment w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE);
         assertNotNull(w);
-        w.setTargetFragment(new MockCallback(), 1);
+
+        MockCallback mockCallback = new MockCallback();
+        fm.beginTransaction().add(mockCallback, null).commit();
+        w.setTargetFragment(mockCallback, 1);
         w.show(fm, TAG);
 
         waitFewSeconds();
@@ -170,7 +162,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNull(((DialogFragment) fragment).getDialog());
         assertNull(fm.findFragmentByTag(TAG));
 
-        assertTrue(mCallbackCalled);
+        assertTrue(mockCallback.isCancelCalled());
     }
 
     public void testSetMessage() {
@@ -195,7 +187,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(((DialogFragment) fragment).getDialog());
         assertNotNull(fm.findFragmentByTag(TAG));
 
-        View msg = dialog.findViewById(android.R.id.message);
+        View msg = dialog.findViewById(R.id.progressText);
         assertNotNull(msg);
         assertEquals("new message", ((TextView) msg).getText());
 
@@ -226,7 +218,7 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(dialog);
         assertTrue(dialog.isShowing());
         assertTrue(((DialogFragment) fragment).isCancelable());
-        View msg = dialog.findViewById(android.R.id.message);
+        View msg = dialog.findViewById(R.id.progressText);
         assertNotNull(msg);
         assertEquals(MSG, ((TextView) msg).getText());
         dialog.dismiss();
@@ -313,16 +305,17 @@ public class WaitingDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
     // for testing only
     @SuppressLint("ValidFragment")
-    public class MockCallback extends Fragment implements WaitingDialogListener {
+    public static class MockCallback extends Fragment implements WaitingDialogListener {
 
-        public MockCallback() {
+        private boolean isCancelCalled = false;
+
+        public boolean isCancelCalled() {
+            return isCancelCalled;
         }
 
         @Override
         public void onCancel() {
-            mCallbackCalled = true;
+            isCancelCalled = true;
         }
-
     }
-
 }

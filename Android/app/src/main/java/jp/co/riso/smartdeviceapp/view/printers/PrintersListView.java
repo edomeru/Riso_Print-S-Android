@@ -82,7 +82,7 @@ public class PrintersListView extends ListView implements Callback {
     
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        int coords[] = new int[2];
+        int[] coords = new int[2];
         
         if (mDeleteMode) {
             View deleteButton = mDeleteView.findViewById(R.id.btn_delete);
@@ -218,10 +218,10 @@ public class PrintersListView extends ListView implements Callback {
      */
     private boolean checkSwipe(MotionEvent ev) {
         
-        int coords[] = new int[2];
+        int[] coords = new int[2];
         boolean dragged = (mDownPoint.x - ev.getRawX()) > SWIPE_THRESHOLD;
-        boolean contains1 = false;
-        boolean contains2 = false;
+        boolean contains1;
+        boolean contains2;
         // check self, if valid swipe don't redisplay nor remove delete button
         if (mDeleteMode) {
             mDeleteView.getLocationOnScreen(coords);
@@ -244,10 +244,8 @@ public class PrintersListView extends ListView implements Callback {
                 contains2 = rect.contains((int) ev.getRawX(), (int) ev.getRawY());
                 
                 if (contains1 && contains2 && dragged) {
-                    if (view != null) {
-                        startDeleteMode(view);
-                        return true;
-                    }
+                    startDeleteMode(view);
+                    return true;
                 }
             }
         }

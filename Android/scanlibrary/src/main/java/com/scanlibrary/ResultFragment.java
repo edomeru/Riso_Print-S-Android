@@ -1,12 +1,21 @@
 package com.scanlibrary;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+// aLINK edit - Start
+// android.app.Fragment was deprecated in API level 28
+// Use androidx.fragment.app.Fragment instead
+import androidx.fragment.app.Fragment;
+// android.app.FragmentManager was deprecated in API level 28
+// Use androidx.fragment.app.FragmentManager instead
+import androidx.fragment.app.FragmentManager;
+// aLINK edit - End
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
+// aLINK edit - Start
+// android.os.AsyncTask was deprecated in API level 30.
+// Use threading instead
+// aLINK edit - End
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,7 +93,11 @@ public class ResultFragment extends Fragment {
         @Override
         public void onClick(View v) {
             showProgressDialog(getResources().getString(R.string.loading));
-            AsyncTask.execute(new Runnable() {
+            // aLINK edit - Start
+            // android.os.AsyncTask was deprecated in API level 30.
+            // Use threading instead
+            new Thread(new Runnable() {
+            // aLINK edit - End
                 @Override
                 public void run() {
                     try {
@@ -109,7 +122,11 @@ public class ResultFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-            });
+            // aLINK edit - Start
+            // android.os.AsyncTask was deprecated in API level 30.
+            // Use threading instead
+            }).start();
+            // aLINK edit - End
         }
     }
 
@@ -117,7 +134,11 @@ public class ResultFragment extends Fragment {
         @Override
         public void onClick(final View v) {
             showProgressDialog(getResources().getString(R.string.applying_filter));
-            AsyncTask.execute(new Runnable() {
+            // aLINK edit - Start
+            // android.os.AsyncTask was deprecated in API level 30.
+            // Use threading instead
+            new Thread(new Runnable() {
+            // aLINK edit - End
                 @Override
                 public void run() {
                     try {
@@ -142,7 +163,11 @@ public class ResultFragment extends Fragment {
                         }
                     });
                 }
-            });
+            // aLINK edit - Start
+            // android.os.AsyncTask was deprecated in API level 30.
+            // Use threading instead
+            }).start();
+            // aLINK edit - End
         }
     }
 
@@ -150,7 +175,11 @@ public class ResultFragment extends Fragment {
         @Override
         public void onClick(final View v) {
             showProgressDialog(getResources().getString(R.string.applying_filter));
-            AsyncTask.execute(new Runnable() {
+            // aLINK edit - Start
+            // android.os.AsyncTask was deprecated in API level 30.
+            // Use threading instead
+            new Thread(new Runnable() {
+            // aLINK edit - End
                 @Override
                 public void run() {
                     try {
@@ -175,7 +204,11 @@ public class ResultFragment extends Fragment {
                         }
                     });
                 }
-            });
+            // aLINK edit - Start
+            // android.os.AsyncTask was deprecated in API level 30.
+            // Use threading instead
+            }).start();
+            // aLINK edit - End
         }
     }
 
@@ -198,7 +231,11 @@ public class ResultFragment extends Fragment {
         @Override
         public void onClick(final View v) {
             showProgressDialog(getResources().getString(R.string.applying_filter));
-            AsyncTask.execute(new Runnable() {
+            // aLINK edit - Start
+            // android.os.AsyncTask was deprecated in API level 30.
+            // Use threading instead
+            new Thread(new Runnable() {
+            // aLINK edit - End
                 @Override
                 public void run() {
                     try {
@@ -223,7 +260,11 @@ public class ResultFragment extends Fragment {
                         }
                     });
                 }
-            });
+            // aLINK edit - Start
+            // android.os.AsyncTask was deprecated in API level 30.
+            // Use threading instead
+            }).start();
+            // aLINK edit - End
         }
     }
 

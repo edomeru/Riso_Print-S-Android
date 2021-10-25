@@ -8,7 +8,8 @@
 
 package jp.co.riso.smartdeviceapp.view.base;
 
-import android.app.Activity;
+import androidx.fragment.app.FragmentActivity;
+
 import android.content.Context;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
@@ -17,6 +18,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
 import jp.co.riso.android.util.AppUtils;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
@@ -27,7 +30,7 @@ import jp.co.riso.smartprint.R;
  * 
  * @brief Base activity class
  */
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends FragmentActivity {
 
     private int systemUIFlags;      // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
 
@@ -44,8 +47,11 @@ public abstract class BaseActivity extends Activity {
          *  - Display system navigation bar again immediately
          */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !isTablet()) {
-            View decorView = getWindow().getDecorView();
-            systemUIFlags = decorView.getSystemUiVisibility();
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                // 031521 - For API Level 30 deprecation
+                getSystemUIFlagsForSDK29();
+            }
+
             DisplayManager.DisplayListener mDisplayListener = new DisplayManager.DisplayListener() {
                 @Override
                 public void onDisplayAdded(int displayId) {
@@ -83,6 +89,38 @@ public abstract class BaseActivity extends Activity {
     // ================================================================================
 
     private void handleSystemUIRotation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // 031521 - For API Level 30 deprecation
+            if (getWindow().getInsetsController() != null) {
+                // Hide system navigation bar
+                getWindow().setDecorFitsSystemWindows(false);
+                getWindow().getInsetsController().hide(WindowInsets.Type.navigationBars());
+                getWindow().getInsetsController().setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+
+                Handler handler = new Handler(Looper.myLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Show system navigation bar
+                        getWindow().setDecorFitsSystemWindows(true);
+                        getWindow().getInsetsController().show(WindowInsets.Type.navigationBars());
+                    }
+                }, 10);
+            }
+        } else {
+            // 031521 - For API Level 30 deprecation
+            handleSystemUIRotationForSDK29();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void getSystemUIFlagsForSDK29() {
+        View decorView = getWindow().getDecorView();
+        systemUIFlags = decorView.getSystemUiVisibility();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void handleSystemUIRotationForSDK29() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(systemUIFlags | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);       // Hide system navigation bar
 
@@ -117,8 +155,7 @@ public abstract class BaseActivity extends Activity {
      */
     public int getActionBarHeight() {
         // Calculate ActionBar height
-        int actionBarHeight = getResources().getDimensionPixelSize(R.dimen.actionbar_height);
-        return actionBarHeight;
+        return getResources().getDimensionPixelSize(R.dimen.actionbar_height);
     }
     
     /**

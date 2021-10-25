@@ -11,6 +11,7 @@ import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 
 public class DatabaseManagerTest extends AndroidTestCase {
+    private static final String KEY_SQL_INVALID = "invalid_key";
     private static final String KEY_SQL_PRINTER_ID = "prn_id";
     private static final String KEY_SQL_PRINTER_IP = "prn_ip_address";
     private static final String KEY_SQL_PRINTER_NAME = "prn_name";
@@ -31,10 +32,10 @@ public class DatabaseManagerTest extends AndroidTestCase {
     private static final String KEY_SQL_PRINTSETTING_TABLE = "PrintSetting";
 
     private DatabaseManager mDBManager = null;
-    private String printerName = "Printer name1";
-    private String printerName2 = "Printer name 2";
-    private String printerIP = "192.168.1.1";
-    private int printerId = 1;
+    private final String printerName = "Printer name1";
+    private final String printerName2 = "Printer name 2";
+    private final String printerIP = "192.168.1.1";
+    private final int printerId = 1;
 
     @Override
     protected void setUp() throws Exception {
@@ -69,9 +70,9 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
     public void testInsert() {
         SQLiteDatabase db = mDBManager.getWritableDatabase();
-        int initialCount = 0;
-        Cursor cursor = null;
-        boolean result = false;
+        int initialCount;
+        Cursor cursor;
+        boolean result;
 
         cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null);
         initialCount = cursor.getCount();
@@ -92,8 +93,8 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
     public void testInsert_Fail() {
         SQLiteDatabase db = mDBManager.getWritableDatabase();
-        Cursor cursor = null;
-        boolean result = false;
+        Cursor cursor;
+        boolean result;
 
         db.delete(KEY_SQL_PRINTER_TABLE, null, null);
         db.close();
@@ -117,9 +118,9 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
     public void testInsertOrReplace() {
         SQLiteDatabase db = mDBManager.getWritableDatabase();
-        Cursor cursor = null;
+        Cursor cursor;
 
-        long row = -1;
+        long row;
 
         db.delete(KEY_SQL_PRINTER_TABLE, null, null);
         db.close();
@@ -161,8 +162,8 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
     public void testInsertOrReplace_Fail() {
         SQLiteDatabase db = mDBManager.getWritableDatabase();
-        Cursor cursor = null;
-        long row = -1;
+        Cursor cursor;
+        long row;
 
         db.delete(KEY_SQL_PRINTER_TABLE, null, null);
         db.close();
@@ -187,7 +188,7 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
     public void testUpdate() {
         SQLiteDatabase db = mDBManager.getWritableDatabase();
-        Cursor cursor = null;
+        Cursor cursor;
 
         db.delete(KEY_SQL_PRINTER_TABLE, null, null);
 
@@ -220,7 +221,7 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
     public void testUpdate_Fail() {
         SQLiteDatabase db = mDBManager.getWritableDatabase();
-        Cursor cursor = null;
+        Cursor cursor;
 
         db.delete(KEY_SQL_PRINTER_TABLE, null, null);
         db.close();
@@ -319,9 +320,9 @@ public class DatabaseManagerTest extends AndroidTestCase {
     }
 
     public void testDelete_All() {
-        int initialCount = 0;
-        Cursor cursor = null;
-        boolean result = false;
+        int initialCount;
+        Cursor cursor;
+        boolean result;
 
         //initialize value
         ContentValues values = new ContentValues();
@@ -351,9 +352,9 @@ public class DatabaseManagerTest extends AndroidTestCase {
     }
 
     public void testDelete_WithSelection() {
-        int initialCount = 0;
-        Cursor cursor = null;
-        boolean result = false;
+        int initialCount;
+        Cursor cursor;
+        boolean result;
 
         ContentValues values = new ContentValues();
         values.put(KEY_SQL_PRINTER_ID, 1000);
@@ -384,7 +385,7 @@ public class DatabaseManagerTest extends AndroidTestCase {
     }
 
     public void testGetString() {
-        Cursor cursor = null;
+        Cursor cursor;
 
         //initialize data
         SQLiteDatabase db = mDBManager.getWritableDatabase();
@@ -404,13 +405,14 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
         // test
         assertEquals(printerName, DatabaseManager.getStringFromCursor(cursor, KEY_SQL_PRINTER_NAME));
+        assertEquals("", DatabaseManager.getStringFromCursor(cursor, KEY_SQL_INVALID));
 
         cursor.close();
         db.close();
     }
 
     public void testGetInt() {
-        Cursor cursor = null;
+        Cursor cursor;
         //initialize data
         SQLiteDatabase db = mDBManager.getWritableDatabase();
         db.delete(KEY_SQL_PRINTER_TABLE, null, null);
@@ -429,13 +431,14 @@ public class DatabaseManagerTest extends AndroidTestCase {
 
         //test
         assertEquals(printerId, DatabaseManager.getIntFromCursor(cursor, KEY_SQL_PRINTER_ID));
+        assertEquals(0, DatabaseManager.getIntFromCursor(cursor, KEY_SQL_INVALID));
 
         cursor.close();
         db.close();
     }
 
     public void testGetBoolean() {
-        Cursor cursor = null;
+        Cursor cursor;
         //initialize data
         SQLiteDatabase db = mDBManager.getWritableDatabase();
         db.delete(KEY_SQL_PRINTER_TABLE, null, null);
@@ -456,6 +459,7 @@ public class DatabaseManagerTest extends AndroidTestCase {
         //test (default true)
         assertEquals(true, DatabaseManager.getBooleanFromCursor(cursor, KEY_SQL_PRINTER_LPR));
         assertEquals(false, DatabaseManager.getBooleanFromCursor(cursor, KEY_SQL_PRINTER_RAW));
+        assertEquals(false, DatabaseManager.getBooleanFromCursor(cursor, KEY_SQL_INVALID));
 
         cursor.close();
         db.close();

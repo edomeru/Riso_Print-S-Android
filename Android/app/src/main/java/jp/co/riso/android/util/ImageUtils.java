@@ -158,8 +158,7 @@ public final class ImageUtils {
     public static boolean isImageFileSupported(Context context, Uri uri) {
         List<String> imageTypes = Arrays.asList(AppConstants.IMAGE_TYPES);
         String contentType = FileUtils.getMimeType(context, uri);
-
-        return contentType != null && imageTypes.indexOf(contentType) != -1;
+        return (imageTypes.contains(contentType));
     }
 
 
@@ -234,14 +233,17 @@ public final class ImageUtils {
         int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
         if (orientation == 0) {
-            String[] orientationColumn = {MediaStore.Images.Media.ORIENTATION};
-            Cursor cursor = context.getContentResolver().query(selectedImage, orientationColumn, null, null, null);
-
-            orientation = -1;
-            if (cursor != null && cursor.moveToFirst()) {
-                int index = cursor.getColumnIndex(orientationColumn[0]);
-                if (index != -1) {
-                    orientation = cursor.getInt(index);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                String[] orientationColumn = {MediaStore.Images.Media.ORIENTATION};
+                Cursor cursor = context.getContentResolver().query(selectedImage, orientationColumn, null, null, null);
+                if (cursor != null) {
+                    if (cursor.moveToFirst()) {
+                        int index = cursor.getColumnIndex(orientationColumn[0]);
+                        if (index != -1) {
+                            orientation = cursor.getInt(index);
+                        }
+                    }
+                    cursor.close();
                 }
             }
         }

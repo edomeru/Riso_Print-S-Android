@@ -26,9 +26,10 @@ import jp.co.riso.smartdeviceapp.AppConstants;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
-import android.net.NetworkInfo;
+import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
-import android.os.Build;
+
+import androidx.annotation.NonNull;
 
 /**
  * @class NetUtils
@@ -43,7 +44,10 @@ public class NetUtils {
     private static final Pattern IPV6_LINK_LOCAL_PATTERN;
     private static final Pattern IPV6_IPv4_DERIVED_PATTERN;
     private static final List<String> IPV6_INTERFACE_NAMES;
-    
+
+    private static final List<Network> mWifiNetworks = new ArrayList<Network>();
+    private static WifiCallback mWifiCallback = null;
+
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -152,12 +156,10 @@ public class NetUtils {
             
             if (ipAddress.contains("%")) {
                 String[] newIpString = ipAddress.split("%");
-                if (newIpString != null) {
-                    ip = newIpString[0];
-                    if (IPV6_INTERFACE_NAMES.contains(newIpString[1])) {
-                        inetIpAddress = InetAddress.getByName(ipAddress);
-                        return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
-                    }
+                ip = newIpString[0];
+                if (IPV6_INTERFACE_NAMES.contains(newIpString[1])) {
+                    inetIpAddress = InetAddress.getByName(ipAddress);
+                    return inetIpAddress.isReachable(AppConstants.CONST_TIMEOUT_PING);
                 }
             }
             inetIpAddress = InetAddress.getByName(ip);
@@ -196,7 +198,8 @@ public class NetUtils {
         }
         return validatedIp;
     }
-    
+
+    // *** This method is unused. isWifiAvailable() method is instead used for checking of connectivity.
     /**
      * @brief Determines network connectivity.
      * 
@@ -205,40 +208,19 @@ public class NetUtils {
      * @retval true Connected to network
      * @retval false Not connected to network
      */
-    protected static boolean isNetworkAvailable(Context context) {
+    /* protected static boolean isNetworkAvailable(Context context) {
         if (context == null) {
             return false;
         }
-        
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
-        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
-    }
-    
-    /**
-     * @brief Determines wi-fi connectivity.
-     * 
-     * @param context Application context
-     * 
-     * @retval true Connected to the network using wi-fi
-     * @retval false Not connected to the network using wi-fi 
-     */
-    public static boolean isWifiAvailable(Context context) {
-        if (context == null) {
-            return false;
-        }
-        
+
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean result = false;
 
         Network[] networks = connManager.getAllNetworks();
-        NetworkInfo networkInfo;
-        Network network;
-        for (int i = 0; i < networks.length; i++){
-            network = networks[i];
-            networkInfo = connManager.getNetworkInfo(network);
-            if ((networkInfo.getType() == ConnectivityManager.TYPE_WIFI) &&
-                    (networkInfo.getState().equals(NetworkInfo.State.CONNECTED))) {
+
+        for (Network network : networks) {
+            NetworkCapabilities capabilities = connManager.getNetworkCapabilities(network);
+            if (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
                 result = true;
                 break;
             }
@@ -246,7 +228,49 @@ public class NetUtils {
 
         return result;
     }
-    
+    */
+
+    /**
+     * @brief Determines wi-fi connectivity.
+     * 
+     * @retval true Connected to the network using wi-fi
+     * @retval false Not connected to the network using wi-fi 
+     */
+    public static boolean isWifiAvailable() {
+        return !mWifiNetworks.isEmpty();
+    }
+
+    /**
+     * @brief Register callback for monitoring of wifi networks
+     *
+     * @param context Application context
+     */
+    public static void registerWifiCallback(Context context) {
+        if (context == null || mWifiCallback != null) {
+            return;
+        }
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkRequest wifiReq = new NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build();
+
+        mWifiCallback = new WifiCallback();
+        connManager.registerNetworkCallback(wifiReq, mWifiCallback);
+    }
+
+    /**
+     * @brief Unregister callback for monitoring of wifi networks
+     *
+     * @param context Application context
+     */
+    public static void unregisterWifiCallback(Context context) {
+        if (context == null || mWifiCallback == null) {
+            return;
+        }
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        connManager.unregisterNetworkCallback(mWifiCallback);
+        mWifiCallback = null;
+        mWifiNetworks.clear();
+    }
+
     /**
      * @brief Trim leading zeroes from an IP Address
      * 
@@ -259,10 +283,10 @@ public class NetUtils {
         if (ipAddress == null) {
             return "";
         }
-        List<String> ipv6part = null;
+        List<String> ipv6part;
         String ipv4Addr = null;
         StringBuilder ipAddrBuilder = null;
-        String newIpAddress = null;
+        String newIpAddress;
         
         if (isIPv4Address(ipAddress)) {
             ipAddrBuilder = new StringBuilder();
@@ -270,7 +294,7 @@ public class NetUtils {
         }
         if (isIPv6Address(ipAddress)) {
             ipAddrBuilder = new StringBuilder();
-            ipv6part = new ArrayList<String>(Arrays.asList(ipAddress.split("\\:")));
+            ipv6part = new ArrayList<>(Arrays.asList(ipAddress.split("\\:")));
             if (isIPv6Ipv4DerivedAddress(ipAddress)) {
                 ipv4Addr = ipv6part.get(ipv6part.size() - 1);
                 ipv6part.remove(ipv4Addr);
@@ -443,7 +467,7 @@ public class NetUtils {
     private static List<String> initializeIpv6InterfaceList() {
         String localInterface = "wlan0";
         
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         try {
             List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (int i = 0; i < interfaces.size(); i++) {
@@ -460,7 +484,27 @@ public class NetUtils {
         }
         return list;
     }
-    
+
+    /**
+     * @class Inner class for monitoring Wifi networks
+     */
+    static class WifiCallback extends ConnectivityManager.NetworkCallback {
+        @Override
+        public void onAvailable(@NonNull Network network) {
+            mWifiNetworks.add(network);
+        }
+
+        @Override
+        public void onLost(@NonNull Network network) {
+            mWifiNetworks.remove(network);
+        }
+
+        @Override
+        public void onUnavailable() {
+            mWifiNetworks.clear();
+        }
+    }
+
     static {
 
         IPV4_PATTERN = initializeIpv4Pattern_Standard();       

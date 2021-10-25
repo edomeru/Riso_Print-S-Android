@@ -8,11 +8,12 @@
 
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -36,8 +37,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -212,9 +211,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     ContentResolver c = this.getActivity().getContentResolver();
                     mInputStream = c.openInputStream(mIntentData);
                     mFilenameFromContent = FileUtils.getFileName(SmartDeviceApp.getAppContext(), mIntentData, false);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
+                } catch (FileNotFoundException | SecurityException e) {
                     e.printStackTrace();
                 }
             }
@@ -238,7 +235,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                         initializePdfConverterAndRunAsync();
                     }
                     initializePdfManagerAndRunAsync();
-                } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                } else {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         mShouldDisplayExplanation = true;
                     } else {
@@ -331,7 +328,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void initializeView(View view, Bundle savedInstanceState) {
-        mPrintPreviewView = (PrintPreviewView) view.findViewById(R.id.printPreviewView);
+        mPrintPreviewView = view.findViewById(R.id.printPreviewView);
         mPrintPreviewView.setPdfManager(mPdfManager);
         //mPrintPreviewView.setShow3Punch(isPrinterJapanese());
         mPrintPreviewView.setPrintSettings(mPrintSettings);
@@ -354,8 +351,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         mPageControls = view.findViewById(R.id.previewControls);
 
-        mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
-        mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
+        mPageLabel = mPageControls.findViewById(R.id.pageDisplayTextView);
+        mSeekBar = mPageControls.findViewById(R.id.pageSlider);
         mSeekBar.setOnSeekBarChangeListener(this);
         mSeekBar.setOnKeyListener(this);
         mSeekBar.setOnFocusChangeListener(this);
@@ -370,7 +367,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
 
         mOpenInView = view.findViewById(R.id.openInView);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.pdfLoadIndicator);
+        mProgressBar = view.findViewById(R.id.pdfLoadIndicator);
 
         mProgressBar.setVisibility(View.GONE);
 
@@ -504,7 +501,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
 
         if (mPageControls != null) {
-            LinearLayout mainView = (LinearLayout) getView().findViewById(R.id.previewView);
+            LinearLayout mainView = getView().findViewById(R.id.previewView);
             mainView.removeView(mPageControls);
 
             View newView = View.inflate(getActivity(), R.layout.preview_controls, null);
@@ -516,8 +513,8 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
             mainView.addView(newView);
             mPageControls = newView;
 
-            mPageLabel = (TextView) mPageControls.findViewById(R.id.pageDisplayTextView);
-            mSeekBar = (SeekBar) mPageControls.findViewById(R.id.pageSlider);
+            mPageLabel = mPageControls.findViewById(R.id.pageDisplayTextView);
+            mSeekBar = mPageControls.findViewById(R.id.pageSlider);
             mSeekBar.setOnSeekBarChangeListener(this);
             mSeekBar.setOnKeyListener(this);
             mSeekBar.setOnFocusChangeListener(this);
@@ -563,6 +560,11 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
     public void setPrintSettings(PrintSettings printSettings) {
         mPrintSettings = new PrintSettings(printSettings);
         if (mPrintPreviewView != null) {
+            // Clear mBmpCache when print settings are updated
+            if (mBmpCache != null) {
+                mBmpCache.evictAll();
+                mPrintPreviewView.setBmpCache(mBmpCache);
+            }
             mPrintPreviewView.setPrintSettings(mPrintSettings);
             mPrintPreviewView.refreshView();
             updateSeekBar();
@@ -644,7 +646,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
      * @param title String to be displayed in the title bar
      */
     public void setTitle(View v, String title) {
-        TextView textView = (TextView) v.findViewById(R.id.actionBarTitle);
+        TextView textView = v.findViewById(R.id.actionBarTitle);
         textView.setText(title);
     }
 
@@ -726,7 +728,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         MainActivity activity = (MainActivity) getActivity();
         MenuFragment menuFragment = activity.getMenuFragment();
         if (menuFragment == null) {
-            FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             menuFragment = new MenuFragment();
             // When MenuFragment gets destroyed due to config change such as changing permissions
             // from Settings, the state gets reset to default as well.
@@ -813,15 +815,13 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.view_id_print_button:
-                Message msg = Message.obtain(mPauseableHandler, R.id.view_id_print_button);
-                msg.obj = v;
-                mPauseableHandler.sendMessage(msg);
-                break;
-            case R.id.menu_id_action_button:
-                mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
-                break;
+        int id = v.getId();
+        if (id == R.id.view_id_print_button) {
+            Message msg = Message.obtain(mPauseableHandler, R.id.view_id_print_button);
+            msg.obj = v;
+            mPauseableHandler.sendMessage(msg);
+        } else if (id == R.id.menu_id_action_button) {
+            mPauseableHandler.sendEmptyMessage(R.id.menu_id_action_button);
         }
     }
 
@@ -1005,61 +1005,57 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
     @Override
     public void processMessage(Message msg) {
-        switch (msg.what) {
-            case R.id.view_id_print_button:
-                mPauseableHandler.pause();
-                PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        int id = msg.what;
+        if (id == R.id.view_id_print_button) {
+            mPauseableHandler.pause();
+            PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
 
-                if (printerManager.getDefaultPrinter() == PrinterManager.EMPTY_ID) {
-                    String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
-                    String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
-                    String btnMsg = getString(R.string.ids_lbl_ok);
-                    InfoDialogFragment fragment = InfoDialogFragment.newInstance(titleMsg, strMsg, btnMsg);
-                    DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
-                    mPauseableHandler.resume();
-                    return;
-                }
-                if (getActivity() != null && getActivity() instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    View v = (View) msg.obj;
-                    if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                        FragmentManager fm = getFragmentManager();
-
-                        setIconState(v.getId(), true);
-
-                        // Always make new
-                        PrintSettingsFragment fragment = null;// (PrintSettingsFragment)
-                        // fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
-                        if (fragment == null) {
-                            FragmentTransaction ft = fm.beginTransaction();
-                            fragment = new PrintSettingsFragment();
-                            ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
-                            ft.commit();
-                        }
-
-                        fragment.setPrinterId(mPrinterId);
-                        fragment.setPdfPath(mPdfManager.getPath());
-                        fragment.setPDFisLandscape(mPdfManager.isPDFLandscape());
-                        fragment.setPrintSettings(mPrintSettings);
-                        fragment.setFragmentForPrinting(true);
-                        fragment.setTargetFragment(this, 0);
-
-                        activity.openDrawer(Gravity.RIGHT, isTablet());
-                    } else {
-                        activity.closeDrawers();
-                    }
-                }
-                break;
-            case R.id.menu_id_action_button:
-                mPauseableHandler.pause();
+            if (printerManager.getDefaultPrinter() == PrinterManager.EMPTY_ID) {
+                String titleMsg = getResources().getString(R.string.ids_lbl_print_settings);
+                String strMsg = getString(R.string.ids_err_msg_no_selected_printer);
+                String btnMsg = getString(R.string.ids_lbl_ok);
+                InfoDialogFragment fragment = InfoDialogFragment.newInstance(titleMsg, strMsg, btnMsg);
+                DialogUtils.displayDialog(getActivity(), TAG_MESSAGE_DIALOG, fragment);
+                mPauseableHandler.resume();
+                return;
+            }
+            if (getActivity() != null && getActivity() instanceof MainActivity) {
                 MainActivity activity = (MainActivity) getActivity();
-                activity.openDrawer(Gravity.LEFT);
-                break;
+                View v = (View) msg.obj;
+                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                    FragmentManager fm = activity.getSupportFragmentManager();
+
+                    setIconState(v.getId(), true);
+
+                    // Always make new
+                    PrintSettingsFragment fragment = null;// (PrintSettingsFragment)
+                    // fm.findFragmentByTag(FRAGMENT_TAG_PRINTSETTINGS);
+                    FragmentTransaction ft = fm.beginTransaction();
+                    fragment = new PrintSettingsFragment();
+                    ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINTSETTINGS);
+                    ft.commit();
+
+                    fragment.setPrinterId(mPrinterId);
+                    fragment.setPdfPath(mPdfManager.getPath());
+                    fragment.setPDFisLandscape(mPdfManager.isPDFLandscape());
+                    fragment.setPrintSettings(mPrintSettings);
+                    fragment.setFragmentForPrinting(true);
+                    fragment.setTargetFragment(this, 0);
+
+                    activity.openDrawer(Gravity.RIGHT, isTablet());
+                } else {
+                    activity.closeDrawers();
+                }
+            }
+        } else if (id == R.id.menu_id_action_button) {
+            mPauseableHandler.pause();
+            MainActivity activity = (MainActivity) getActivity();
+            activity.openDrawer(Gravity.LEFT);
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
                 mIsPermissionDialogOpen = false; // the request returned a result hence dialog is closed
@@ -1101,8 +1097,6 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
                     String button = getResources().getString(R.string.ids_lbl_ok);
                     DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
                 }
-
-                return;
             }
         }
     }

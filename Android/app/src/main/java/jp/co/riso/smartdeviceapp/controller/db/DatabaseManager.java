@@ -38,7 +38,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     private static final String INITIALIZE_SQL = "db/initializeDB.sql"; // for testing only
     
-    private Context mContext;
+    private final Context mContext;
     
     /**
      * @brief Creates a DatabaseManager instance.
@@ -85,7 +85,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
                         try {
                             db.execSQL(sql);
                         } catch (SQLException e) {
-                            continue;
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -119,11 +119,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String sqlString = AppUtils.getFileContentsFromAssets(mContext, sqlScript);
         String[] separated = sqlString.split(";");
 
-        for (int i = 0; i < separated.length; i++) {
+        for (String s : separated) {
             try {
-                db.execSQL(separated[i]);
+                db.execSQL(s);
             } catch (SQLException e) {
-                continue;
+                e.printStackTrace();
             }
         }
     }
@@ -137,7 +137,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @return Value of the requested column as a String.
      */
     public static String getStringFromCursor(Cursor cursor, String columnName) {
-        return cursor.getString(cursor.getColumnIndex(columnName));
+        int columnIndex = cursor.getColumnIndex(columnName);
+        if (columnIndex >= 0) {
+            return cursor.getString(columnIndex);
+        } else {
+            Logger.logError(DatabaseManager.class, "columnName:" + columnName + " not found");
+            return "";
+        }
     }
     
     /**
@@ -149,7 +155,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @return Value of the requested column as an integer.
      */
     public static int getIntFromCursor(Cursor cursor, String columnName) {
-        return cursor.getInt(cursor.getColumnIndex(columnName));
+        int columnIndex = cursor.getColumnIndex(columnName);
+        if (columnIndex >= 0) {
+            return cursor.getInt(columnIndex);
+        } else {
+            Logger.logError(DatabaseManager.class, "columnName:" + columnName + " not found");
+            return 0;
+        }
     }
     
     /**
@@ -165,7 +177,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @retval false Value is not 1.
      */
     public static boolean getBooleanFromCursor(Cursor cursor, String columnName) {
-        return (cursor.getInt(cursor.getColumnIndex(columnName)) == 1);
+        int columnIndex = cursor.getColumnIndex(columnName);
+        if (columnIndex >= 0) {
+            return (cursor.getInt(columnIndex) == 1);
+        } else {
+            Logger.logError(DatabaseManager.class, "columnName:" + columnName + " not found");
+            return false;
+        }
     }
     
     /**
@@ -246,7 +264,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         int rowsNum = 0;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            String whereArgs[] = null;
+            String[] whereArgs = null;
             
             if (whereArg != null && !whereArg.isEmpty()) {
                 whereArgs = new String[] { whereArg };
@@ -301,7 +319,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @retval false Delete has failed.
      */
     public boolean delete(String table, String whereClause, String whereArg) {
-        String whereArgs[] = null;
+        String[] whereArgs = null;
         if (whereArg != null && !whereArg.isEmpty()) {
             whereArgs = new String[] { whereArg };
         }

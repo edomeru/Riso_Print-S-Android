@@ -108,7 +108,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
     @Override
     public void initializeCustomActionBar(View view, Bundle savedInstanceState) {
-        TextView textView = (TextView) view.findViewById(R.id.actionBarTitle);
+        TextView textView = view.findViewById(R.id.actionBarTitle);
         textView.setText(R.string.ids_lbl_home);
 
         addActionMenuButton(view);
@@ -117,58 +117,55 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        switch (v.getId()) {
-            case R.id.fileButton:
-                buttonTapped = fileButton;
-                checkPermission = checkPermission(true);
-                if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
-                    // prevent double tap
-                    lastClickTime = SystemClock.elapsedRealtime();
-                    Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    filePickerIntent.setType("*/*");
-                    if (!isChromeBook()) {
-                        filePickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.DOC_TYPES);
-                    }
-                    startActivityForResult(Intent.createChooser(filePickerIntent, getString(R.string.ids_lbl_select_document)), REQUEST_FILE);
+        int id = v.getId();
+        if (id == R.id.fileButton) {
+            buttonTapped = fileButton;
+            checkPermission = checkPermission(true);
+            if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                // prevent double tap
+                lastClickTime = SystemClock.elapsedRealtime();
+                Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                filePickerIntent.setType("*/*");
+                if (!isChromeBook()) {
+                    filePickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.DOC_TYPES);
                 }
-                break;
-            case R.id.photosButton:
-                buttonTapped = photosButton;
-                checkPermission = checkPermission(true);
-                if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
-                    // prevent double tap
-                    lastClickTime = SystemClock.elapsedRealtime();
-                    Intent photosPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    photosPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                    photosPickerIntent.setType("*/*");
-                    if (!isChromeBook()) {
-                        photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES);
-                    }
-                    startActivityForResult(Intent.createChooser(photosPickerIntent, getString(R.string.ids_lbl_select_photos)), REQUEST_PHOTO);
+                startActivityForResult(Intent.createChooser(filePickerIntent, getString(R.string.ids_lbl_select_document)), REQUEST_FILE);
+            }
+        } else if (id == R.id.photosButton) {
+            buttonTapped = photosButton;
+            checkPermission = checkPermission(true);
+            if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                // prevent double tap
+                lastClickTime = SystemClock.elapsedRealtime();
+                Intent photosPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                photosPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                photosPickerIntent.setType("*/*");
+                if (!isChromeBook()) {
+                    photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES);
                 }
-                break;
-            case R.id.cameraButton:
-                buttonTapped = cameraButton;
-                checkPermission = checkPermission(false);
-                if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
-                    // prevent double tap
-                    lastClickTime = SystemClock.elapsedRealtime();
+                startActivityForResult(Intent.createChooser(photosPickerIntent, getString(R.string.ids_lbl_select_photos)), REQUEST_PHOTO);
+            }
+        } else if (id == R.id.cameraButton) {
+            buttonTapped = cameraButton;
+            checkPermission = checkPermission(false);
+            if (checkPermission && SystemClock.elapsedRealtime() - lastClickTime > 1000) {
+                // prevent double tap
+                lastClickTime = SystemClock.elapsedRealtime();
 
-                    // RM 789 Fix: Add checking of available internal storage before opening External Camera Application
-                    if (getAvailableStorageInBytes() > AppConstants.CONST_FREE_SPACE_BUFFER) {
-                        Intent intent = new Intent(getActivity(), ScanActivity.class);
-                        intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, ScanConstants.OPEN_CAMERA);
-                        startActivityForResult(intent, REQUEST_CAMERA);
-                    } else {
-                        // RM 789 Fix - Start
-                        // Display Error Message if internal storage is less than Free Space Buffer
-                        String message = getResources().getString(R.string.ids_err_msg_not_enough_space);
-                        String button = getResources().getString(R.string.ids_lbl_ok);
-                        DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
-                        // RM 789 Fix - End
-                    }
+                // RM 789 Fix: Add checking of available internal storage before opening External Camera Application
+                if (getAvailableStorageInBytes() > AppConstants.CONST_FREE_SPACE_BUFFER) {
+                    Intent intent = new Intent(getActivity(), ScanActivity.class);
+                    intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, ScanConstants.OPEN_CAMERA);
+                    startActivityForResult(intent, REQUEST_CAMERA);
+                } else {
+                    // RM 789 Fix - Start
+                    // Display Error Message if internal storage is less than Free Space Buffer
+                    String message = getResources().getString(R.string.ids_err_msg_not_enough_space);
+                    String button = getResources().getString(R.string.ids_lbl_ok);
+                    DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
+                    // RM 789 Fix - End
                 }
-                break;
+            }
         }
     }
 
@@ -191,7 +188,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_FILE && resultCode == Activity.RESULT_OK && data != null) {
             String contentType = FileUtils.getMimeType(getActivity(), data.getData());
-            if (contentType == null || Arrays.asList(AppConstants.DOC_TYPES).indexOf(contentType) == -1) {
+            if (!Arrays.asList(AppConstants.DOC_TYPES).contains(contentType)) {
                 String message = getResources().getString(R.string.ids_err_msg_open_failed);
                 String button = getResources().getString(R.string.ids_lbl_ok);
                 DialogUtils.displayDialog(getActivity(), FRAGMENT_TAG_DIALOG, InfoDialogFragment.newInstance(message, button));
@@ -242,34 +239,30 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private boolean checkPermission(boolean isStorageOnly) {
         if (isStorageOnly && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    if (mConfirmDialogFragment == null) {
-                        final String message = getActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed);
-                        final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
-                        mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
-                        mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
-                        DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
-                    }
-                } else {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (mConfirmDialogFragment == null) {
+                    final String message = getActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed);
+                    final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
+                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
+                    mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
+                    DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                 }
+            } else {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
             }
             return false;
         } else if (!isStorageOnly && (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    if (mConfirmDialogFragment == null) {
-                        final String message = getActivity().getString(R.string.ids_err_msg_camera_permission_not_allowed);
-                        final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
-                        mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
-                        mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
-                        DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
-                    }
-                } else {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_STORAGE_PERMISSION);
+            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (mConfirmDialogFragment == null) {
+                    final String message = getActivity().getString(R.string.ids_err_msg_camera_permission_not_allowed);
+                    final String positiveButton = getActivity().getString(R.string.ids_lbl_ok);
+                    mConfirmDialogFragment = ConfirmDialogFragment.newInstance(message, positiveButton, null);
+                    mConfirmDialogFragment.setTargetFragment(HomeFragment.this, 0);
+                    DialogUtils.displayDialog(getActivity(), TAG_PERMISSION_DIALOG, mConfirmDialogFragment);
                 }
+            } else {
+                requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_STORAGE_PERMISSION);
             }
             return false;
         }
@@ -300,6 +293,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (permissions.length == 0 && grantResults.length == 0) {
+            // ignore if result is empty which is due to repeated permission request because of quick taps
+            return;
+        }
         switch (requestCode) {
             case REQUEST_WRITE_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

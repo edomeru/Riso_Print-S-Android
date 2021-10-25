@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 import java.io.BufferedReader;
@@ -76,7 +76,8 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     private static final String KEY_STAPLE = "staple";
     private static final String KEY_PUNCH = "punch";
     private static final String KEY_OUTPUT_TRAY = "outputTray";
-    
+    private static final String KEY_MISSING_VALUE = "missingValue";
+
     private static final int DEFAULT_KEY_COLOR = 0;
     private static final int DEFAULT_KEY_ORIENTATION = 0;
     private static final int DEFAULT_KEY_COPIES = 1;
@@ -201,7 +202,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
 
     // must have default values
     public void testConstructor_PrinterIdValid() {
-        int printerId = -1;
+        int printerId;
 
         DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.getAppContext());
 
@@ -358,13 +359,17 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
         assertEquals(18, mPrintSettings.getSettingValues().size());
     }
 
+    public void testGetValueNull() {
+        assertEquals(-1, mPrintSettings.getValue(KEY_MISSING_VALUE));
+    }
+
     public void testGetValue() {
-        assertEquals(0, mPrintSettings.getValue("colorMode"));
+        assertEquals(0, mPrintSettings.getValue(KEY_COLOR));
     }
 
     public void testSetValue() {
         mPrintSettings.setValue("colorMode", 2);
-        assertEquals(2, mPrintSettings.getValue("colorMode"));
+        assertEquals(2, mPrintSettings.getValue(KEY_COLOR));
     }
 
     public void testGetColorMode() {
@@ -432,7 +437,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testSavePrintSettingToDb() {
-        int printerId = -1;
+        int printerId;
 
         DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.getAppContext());
 

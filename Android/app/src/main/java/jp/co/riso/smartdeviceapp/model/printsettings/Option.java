@@ -18,7 +18,7 @@ import org.w3c.dom.Node;
  * Data represented by \<option\> tag in XML.
  */
 public class Option extends XmlNode {
-    private String mTextContent;
+    private final String mTextContent;
     
     /**
      * @brief Creates an Option instance.

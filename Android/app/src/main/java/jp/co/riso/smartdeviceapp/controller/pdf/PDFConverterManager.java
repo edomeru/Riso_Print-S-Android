@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,7 +18,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -37,6 +37,8 @@ import java.lang.ref.WeakReference;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.android.util.ImageUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 import jp.co.riso.smartdeviceapp.model.Pagination;
 import jp.co.riso.smartprint.R;
 
@@ -60,19 +62,19 @@ public class PDFConverterManager {
     public static final String CONVERSION_IMAGES = "IMAGES";
 
     // PostScript Point Values
-    private int A4_WIDTH = 595;
-    private int A4_HEIGHT = 842;
-    private int MARGIN_SIZE = 72; ///< 1 inch
+    private final int A4_WIDTH = 595;
+    private final int A4_HEIGHT = 842;
+    private final int MARGIN_SIZE = 72; ///< 1 inch
 
     private String mConversionFlag = null;
     private PDFConversionTask mPdfConversionTask = null;
 
-    private WeakReference<PDFConverterManagerInterface> mInterfaceRef;
+    private final WeakReference<PDFConverterManagerInterface> mInterfaceRef;
 
     private Uri mUri = null;
     private ClipData mClipData = null;
     private File mDestFile = null;
-    private Context mContext;
+    private final Context mContext;
 
     /**
      * @brief Creates a PDFConverterManager with an Interface class.
@@ -82,7 +84,7 @@ public class PDFConverterManager {
      */
     public PDFConverterManager(Context context, PDFConverterManagerInterface pdfConverterManagerInterface) {
         this.mContext = context;
-        mInterfaceRef = new WeakReference<PDFConverterManagerInterface>(pdfConverterManagerInterface);
+        mInterfaceRef = new WeakReference<>(pdfConverterManagerInterface);
     }
 
     /**
@@ -96,9 +98,9 @@ public class PDFConverterManager {
     }
 
     /**
-     * @brief Sets the Clipdata of image files to convert and sets conversion flag.
+     * @brief Sets the ClipData of image files to convert and sets conversion flag.
      *
-     * @param data Clipdata of image files.
+     * @param data ClipData of image files.
      */
     public void setImageFile(ClipData data) {
         mClipData = data;
@@ -130,7 +132,7 @@ public class PDFConverterManager {
         }
 
         Rect rect = new Rect(0, 0, A4_WIDTH, A4_HEIGHT);
-        String fileString = "";
+        String fileString;
 
         TextPaint textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
@@ -165,7 +167,7 @@ public class PDFConverterManager {
                     parcelFileDescriptor.close();
                     return 0;
                 }
-                stringBuilder.append(fileString + "\n");
+                stringBuilder.append(fileString).append("\n");
             }
             inputStream.close();
             reader.close();
@@ -251,7 +253,7 @@ public class PDFConverterManager {
         }
 
         Rect rect = new Rect(0, 0, A4_WIDTH, A4_HEIGHT);
-        Bitmap bitmap = null;
+        Bitmap bitmap;
         File tempImgFile = null;
         try {
             // check if it is needed to store file in temp file
@@ -343,7 +345,7 @@ public class PDFConverterManager {
         }
 
         Rect rect = new Rect(0, 0, A4_WIDTH, A4_HEIGHT);
-        Bitmap bitmap = null;
+        Bitmap bitmap;
 
         PdfDocument document = new PdfDocument();
         for (int i=0;i<mClipData.getItemCount();i+=1) {
@@ -494,7 +496,6 @@ public class PDFConverterManager {
         int topMargin = (rect.height() - bitmap.getHeight()) / 2;
         canvas.drawBitmap(bitmap, leftMargin, topMargin, null);
         bitmap.recycle();
-        bitmap = null;
 
         document.finishPage(page);
     }
@@ -626,7 +627,7 @@ public class PDFConverterManager {
      * @brief Background task which converts files to PDF.
      * The PDF is saved to the sandbox.
      */
-    private class PDFConversionTask extends AsyncTask<String, Void, Integer> {
+    private class PDFConversionTask extends BaseTask<String, Integer> {
 
         @Override
         protected Integer doInBackground(String... params) {
@@ -661,11 +662,19 @@ public class PDFConverterManager {
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
 
-            if (mInterfaceRef != null && mInterfaceRef.get() != null ) {
-                if (!mPdfConversionTask.isCancelled()) {
-                    mInterfaceRef.get().onFileConverted(result);
+            final Integer mResult = result;
+            final Activity activity = SmartDeviceApp.getActivity();
+
+            activity.runOnUiThread((new Runnable() {
+                @Override
+                public void run() {
+                    if (mInterfaceRef != null && mInterfaceRef.get() != null ) {
+                        if (!mPdfConversionTask.isCancelled()) {
+                            mInterfaceRef.get().onFileConverted(mResult);
+                        }
+                    }
                 }
-            }
+            }));
         }
     }
 }

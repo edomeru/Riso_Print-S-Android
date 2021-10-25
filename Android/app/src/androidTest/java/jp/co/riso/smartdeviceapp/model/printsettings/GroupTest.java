@@ -42,11 +42,7 @@ public class GroupTest extends AndroidTestCase {
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(xmlString));
             printSettingsContent = db.parse(is);
-        } catch (ParserConfigurationException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (SAXException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             Log.e(TAG, "Error: " + e.getMessage());
         }
 

@@ -8,13 +8,13 @@
 
 package jp.co.riso.smartdeviceapp.controller.pdf;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Matrix;
@@ -29,6 +29,7 @@ import java.lang.ref.WeakReference;
 import jp.co.riso.android.util.FileUtils;
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
+import jp.co.riso.smartdeviceapp.common.BaseTask;
 
 import android.system.ErrnoException;
 import static android.system.OsConstants.ENOSPC;
@@ -66,9 +67,9 @@ public class PDFFileManager {
     private static final float CONST_INCHES_TO_MM = 25.4f; ///< mm per inches
     
     private volatile String mPath;
-    private Document mDocument;
+    private final Document mDocument;
     private String mFileName;
-    private WeakReference<PDFFileManagerInterface> mInterfaceRef;
+    private final WeakReference<PDFFileManagerInterface> mInterfaceRef;
     
     private PDFInitTask mInitTask = null;
     
@@ -84,7 +85,7 @@ public class PDFFileManager {
      */
     public PDFFileManager(PDFFileManagerInterface pdfFileManagerInterface) {
         mDocument = new Document();
-        mInterfaceRef = new WeakReference<PDFFileManagerInterface>(pdfFileManagerInterface);
+        mInterfaceRef = new WeakReference<>(pdfFileManagerInterface);
         setPDF(null);
     }
     
@@ -249,7 +250,7 @@ public class PDFFileManager {
     /**
      * @brief Checks whether the PDF loaded is landscape.
      * 
-     * @note Orientation is based on the irst page
+     * @note Orientation is based on the first page
      * 
      * @retval true PDF is landscape
      * @retval false PDF is portrait, square.
@@ -429,11 +430,11 @@ public class PDFFileManager {
         
         if (CONST_KEEP_DOCUMENT_CLOSED) {
             mDocument.Open(mPath, null);
-        } else {
+        } // else {
             // TODO: re-check: For temporary fix of bug
             // mDocument.Close(); // This will clear the buffer
             // mDocument.Open(mSandboxPath, null);
-        }
+        // }
         
         // Make sure document is opened
         if (!mDocument.IsOpened()) {
@@ -514,7 +515,7 @@ public class PDFFileManager {
                 output = new FileOutputStream(file);
                 int bufferSize = 1024;
                 byte[] buffer = new byte[bufferSize];
-                int len = 0;
+                int len;
                 while ((len = contentInputStream.read(buffer)) != -1) {
                     output.write(buffer, 0, len);
                 }
@@ -681,7 +682,7 @@ public class PDFFileManager {
      * @brief Background task which initialized the PDF.
      * The PDF is copied to the sandbox.
      */
-    private class PDFInitTask extends AsyncTask<String, Void, Integer> {
+    private class PDFInitTask extends BaseTask<String, Integer> {
         
         String sandboxPath = PDFFileManager.getSandboxPath();
         String inputFile = null;
@@ -727,6 +728,7 @@ public class PDFFileManager {
                             File destFile = new File(sandboxPath);
                             destFile.createNewFile();
                             long srcSize = file.length();
+                            //noinspection 'UsableSpace'
                             long destSize = destFile.getUsableSpace() - AppConstants.CONST_FREE_SPACE_BUFFER;
                             if (srcSize > destSize){
                                 return PDF_NOT_ENOUGH_FREE_SPACE;
@@ -767,15 +769,23 @@ public class PDFFileManager {
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
+
+            final Integer mResult = result;
             
             if (result != PDF_CANCELLED) {
                 if (result != PDF_OK) {
                     setPDF(null);
                 }
-                
-                if (mInterfaceRef != null && mInterfaceRef.get() != null) {
-                    mInterfaceRef.get().onFileInitialized(result);
-                }
+
+                final Activity activity = SmartDeviceApp.getActivity();
+                activity.runOnUiThread((new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mInterfaceRef != null && mInterfaceRef.get() != null) {
+                            mInterfaceRef.get().onFileInitialized(mResult);
+                        }
+                    }
+               }));
             }
         }
     }

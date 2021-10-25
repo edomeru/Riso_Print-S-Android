@@ -2090,11 +2090,16 @@ public class Page
 	 * @return true or false<br/>
 	 * the added annotation can be obtained by Page.GetAnnot(Page.GetAnnotCount() - 1), if this method return true.
 	 */
+	// aLINK edit - Start
+	// Comment out unused method. Method is using Radaee PDF deprecated class `HWriting`.
+	/*
     final public boolean AddAnnotHWriting( Matrix mat, HWriting hwriting, float orgx, float orgy )
 	{
         if(mat == null || hwriting == null) return false;
 		return addAnnotHWriting(hand, mat.hand, hwriting.hand, orgx, orgy);
 	}
+	*/
+	// aLINK edit - End
 	/**
 	 * add a user-defined glyph to page.<br/>
 	 * you should re-render page to display modified data.<br/>

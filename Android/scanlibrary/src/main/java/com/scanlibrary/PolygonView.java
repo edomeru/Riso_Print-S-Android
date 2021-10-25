@@ -87,7 +87,11 @@ public class PolygonView extends FrameLayout {
 
     private void initPaint() {
         paint = new Paint();
-        paint.setColor(getResources().getColor(R.color.blue));
+        // aLINK edit - Start
+        // Resources.getColor(int id) was deprecated in API level 23.
+        // Use Resources.getColor(int id, Resources.Theme theme) instead
+        paint.setColor(getResources().getColor(R.color.blue, null));
+        // aLINK edit - End
         paint.setStrokeWidth(2);
         paint.setAntiAlias(true);
     }
@@ -229,9 +233,17 @@ public class PolygonView extends FrameLayout {
                 case MotionEvent.ACTION_UP:
                     int color = 0;
                     if (isValidShape(getPoints())) {
-                        color = getResources().getColor(R.color.blue);
+                        // aLINK edit - Start
+                        // Resources.getColor(int id) was deprecated in API level 23.
+                        // Use Resources.getColor(int id, Resources.Theme theme) instead
+                        color = getResources().getColor(R.color.blue, null);
+                        // aLINK edit - End
                     } else {
-                        color = getResources().getColor(R.color.orange);
+                        // aLINK edit - Start
+                        // Resources.getColor(int id) was deprecated in API level 23.
+                        // Use Resources.getColor(int id, Resources.Theme theme) instead
+                        color = getResources().getColor(R.color.orange, null);
+                        // aLINK edit - End
                     }
                     paint.setColor(color);
                     break;
@@ -277,9 +289,17 @@ public class PolygonView extends FrameLayout {
                 case MotionEvent.ACTION_UP:
                     int color = 0;
                     if (isValidShape(getPoints())) {
-                        color = getResources().getColor(R.color.blue);
+                        // aLINK edit - Start
+                        // Resources.getColor(int id) was deprecated in API level 23.
+                        // Use Resources.getColor(int id, Resources.Theme theme) instead
+                        color = getResources().getColor(R.color.blue, null);
+                        // aLINK edit - End
                     } else {
-                        color = getResources().getColor(R.color.orange);
+                        // aLINK edit - Start
+                        // Resources.getColor(int id) was deprecated in API level 23.
+                        // Use Resources.getColor(int id, Resources.Theme theme) instead
+                        color = getResources().getColor(R.color.orange, null);
+                        // aLINK edit - End
                     }
                     paint.setColor(color);
                     break;
