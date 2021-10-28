@@ -10,8 +10,10 @@ import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
 public class CommunityNameFilterTest extends TestCase {
-    private static final String INVALID_INPUT_TEXT = "!";
+    private static final String INVALID_INPUT_TEXT_SINGLE_CHAR = "!";
+    private static final String INVALID_INPUT_TEXT = "!+";
     private static final String VALID_INPUT_TEXT = "\\";
+    public boolean wasInvalid = false;
     public boolean errorSent = false;
 
     public CommunityNameFilterTest(String name) {
@@ -25,10 +27,6 @@ public class CommunityNameFilterTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
     }
-
-    private void sendError() {
-        errorSent = true;
-    }
     
     // ================================================================================
     // Tests - filter
@@ -41,18 +39,27 @@ public class CommunityNameFilterTest extends TestCase {
                 new InputFilter.LengthFilter(AppConstants.CONST_COMMUNITY_NAME_LIMIT),
                 new SnmpCommunityNameFilter(new SnmpCommunityNameFilter.InvalidInputObserver() {
                     @Override
-                    public void onInvalidInput() {
-                        sendError();
+                    public void onInvalidInput(boolean showError) {
+                        wasInvalid = true;
+                        errorSent = showError;
                     }
                 })
         });
+
+        editText.setText(VALID_INPUT_TEXT);
+        assertEquals(editText.getText().toString(), VALID_INPUT_TEXT);
+        assertFalse(wasInvalid);
+        assertFalse(errorSent);
+
+        editText.setText(INVALID_INPUT_TEXT_SINGLE_CHAR);
+        assertTrue(editText.getText().toString().isEmpty());
+        assertTrue(wasInvalid);
+        assertFalse(errorSent);
+
+        wasInvalid = false;
         editText.setText(INVALID_INPUT_TEXT);
         assertTrue(editText.getText().toString().isEmpty());
+        assertTrue(wasInvalid);
         assertTrue(errorSent);
-
-        errorSent = false;
-        editText.setText(VALID_INPUT_TEXT);
-        assertTrue(editText.getText().toString().equals(VALID_INPUT_TEXT));
-        assertFalse(errorSent);
     }
 }

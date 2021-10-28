@@ -28,7 +28,10 @@ public class SnmpCommunityNameFilter implements InputFilter {
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         if (!isValid(source)) {
             if (mInvalidInputObserver != null) {
-                mInvalidInputObserver.onInvalidInput();
+                // because this also filters characters typed from the keyboard
+                // show error only when there are more than 1 characters
+                // behavior is same with iOS
+                mInvalidInputObserver.onInvalidInput(source.length() > 1);
             }
             return "";
         }
@@ -48,6 +51,10 @@ public class SnmpCommunityNameFilter implements InputFilter {
         /**
          * @brief Notify the observer about invalid input
          */
-        void onInvalidInput();
+
+        /**
+         * @param showError if observer should show an error
+         */
+        void onInvalidInput(boolean showError);
     }
 }
