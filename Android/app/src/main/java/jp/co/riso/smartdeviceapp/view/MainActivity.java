@@ -8,6 +8,7 @@
 
 package jp.co.riso.smartdeviceapp.view;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -19,6 +20,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
@@ -221,6 +223,29 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
     protected void onResume() {
         super.onResume();
         mHandler.resume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // RM805 workaround for app hang in Android 11
+        // If following steps are done, the view will become unresponsive but fragment is still OK:
+        // 1. PDF is open in preview screen
+        // 2. Go to a different screen and then return to preview screen
+        // 3. Minimize the app and then return to the app
+        // Workaround: Re-attach the fragment in order to recreate the view
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment screen = fm.findFragmentById(R.id.mainLayout);
+            if (screen instanceof PrintPreviewFragment && !((PrintPreviewFragment) screen).isConversionOngoing()) {
+                fm.beginTransaction().detach(screen).attach(screen).commitNow();
+                // print settings button state need to be updated if print settings is open
+                if (isDrawerOpen(Gravity.RIGHT)) {
+                    screen.getView().findViewById(R.id.view_id_print_button).setSelected(true);
+                }
+            }
+        }
     }
 
     @SuppressLint("RtlHardcoded")
