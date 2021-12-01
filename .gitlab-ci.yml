@@ -13,7 +13,6 @@ variables:
   LC_ALL: "en_US.UTF-8"
   LANG: "en_US.UTF-8"
   ANDROID_SDK_ROOT: "/Users/build/Library/Android/sdk"
-  ANDROID_NDK_HOME: "$ANDROID_SDK_ROOT/ndk/22.1.7171670"
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # before_script:
 #   - gem install bundler
