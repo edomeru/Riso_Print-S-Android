@@ -26,7 +26,6 @@ build:
     - bundle update --bundler
     - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
-    - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
     - bundle exec fastlane release_build --verbose
     - mkdir ../builds
@@ -52,7 +51,6 @@ dev_build:
     - bundle update --bundler
     - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
-    - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
     - bundle exec fastlane release_build --verbose
     - mkdir ../builds
@@ -79,7 +77,6 @@ build_dump_enable:
     - bundle update --bundler
     - bundle update fastlane
     - echo $ANDROID_SDK_ROOT
-    - echo $ANDROID_NDK_HOME
     - chmod +x gradlew
     - bundle exec fastlane release_build --verbose
     - mkdir ../builds
@@ -116,7 +113,6 @@ android_release_package:
 
     - cd $CI_PROJECT_DIR
     - echo $ANDROID_SDK_ROOT
-    - echo $ANDROID_NDK_HOME
 
     - cd Android
     - chmod +x gradlew
