@@ -666,6 +666,16 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
         }
     }
 
+    /**
+     * @brief Indicate if conversion is ongoing
+     *
+     * @return true If text or image conversion is ongoing
+     * @return false If text or image conversion is finished or not ongoing
+     */
+    public boolean isConversionOngoing() {
+        return mPdfConverterManager != null;
+    }
+
     // ================================================================================
     // Private functions
     // ================================================================================
