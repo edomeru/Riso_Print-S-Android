@@ -1,7 +1,6 @@
 package jp.co.riso.smartdeviceapp.view;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
 
-import jp.co.riso.smartdeviceapp.view.fragment.AddPrinterFragment;
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
 import jp.co.riso.smartprint.R;
 
@@ -151,6 +149,21 @@ public class MainActivityTest extends BaseMainActivityTest {
                 assertTrue(testBundle.getBoolean(MainActivity.KEY_RESIZE_VIEW));
             }
         });
+    }
+
+    @Test
+    public void storeMessage() {
+        Message msg = new Message();
+        msg.what = 0; //MSG_OPEN_DRAWER
+        assertTrue(mActivity.storeMessage(msg));
+        msg.what = 1; //MSG_CLOSE_DRAWER
+        assertTrue(mActivity.storeMessage(msg));
+        msg.what = 2; //MSG_CLEAR_ICON_STATES
+        assertTrue(mActivity.storeMessage(msg));
+        msg.what = -1; //others
+        assertFalse(mActivity.storeMessage(msg));
+        msg.what = 3; //others
+        assertFalse(mActivity.storeMessage(msg));
     }
 
      public static class TestFragment extends HomeFragment {
