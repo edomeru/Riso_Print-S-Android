@@ -18,7 +18,7 @@ import jp.co.riso.smartdeviceapp.view.BaseMainActivityTest;
 import jp.co.riso.smartprint.R;
 
 public class PrintersFragmentTest extends BaseMainActivityTest {
-    TestPrintersFragment mPrintersFragment = null;
+    PrintersFragment mPrintersFragment = null;
 
     // sleep is needed because drawer calls goes through mHandler
     private void waitForDrawer() {
@@ -30,14 +30,14 @@ public class PrintersFragmentTest extends BaseMainActivityTest {
         final FragmentManager fm = mActivity.getSupportFragmentManager();
 
         mActivity.runOnUiThread(() -> {
-            fm.beginTransaction().add(R.id.mainLayout, new TestPrintersFragment()).commit();
+            fm.beginTransaction().add(R.id.mainLayout, new PrintersFragment()).commit();
             fm.executePendingTransactions();
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
         Fragment printersFragment = fm.findFragmentById(R.id.mainLayout);
-        assertTrue(printersFragment instanceof TestPrintersFragment);
-        mPrintersFragment = (TestPrintersFragment) printersFragment;
+        assertTrue(printersFragment instanceof PrintersFragment);
+        mPrintersFragment = (PrintersFragment) printersFragment;
     }
 
     @Test
@@ -48,92 +48,72 @@ public class PrintersFragmentTest extends BaseMainActivityTest {
     @Test
     public void onClickAddPrinter() {
         testClick(R.id.menu_id_action_add_button);
+        int layoutId = R.id.mainLayout;
+        if (mPrintersFragment.isTablet()) {
+            waitForDrawer();
+            assertTrue(mActivity.isDrawerOpen(Gravity.RIGHT));
+            layoutId = R.id.rightLayout;
+        }
         final FragmentManager fm = mActivity.getSupportFragmentManager();
-        Fragment addPrinterFragment = fm.findFragmentById(R.id.mainLayout);
+        Fragment addPrinterFragment = fm.findFragmentById(layoutId);
         assertTrue(addPrinterFragment instanceof AddPrinterFragment);
 
-        testClick(R.id.menu_id_back_button);
-        Fragment printersFragment = fm.findFragmentById(R.id.mainLayout);
-        assertTrue(printersFragment instanceof PrintersFragment);
-    }
-
-    @Test
-    public void onClickAddPrinterAsTablet() {
-        mPrintersFragment.setAsTablet();
-        testClick(R.id.menu_id_action_add_button);
-        waitForDrawer();
-        final FragmentManager fm = mActivity.getSupportFragmentManager();
-        Fragment addPrinterFragment = fm.findFragmentById(R.id.rightLayout);
-        assertTrue(addPrinterFragment instanceof AddPrinterFragment);
-        assertTrue(mActivity.isDrawerOpen(Gravity.RIGHT));
-
-        testClick(R.id.menu_id_action_add_button);
-        waitForDrawer();
-        assertFalse(mActivity.isDrawerOpen(Gravity.RIGHT));
+        if (mPrintersFragment.isTablet()) {
+            testClick(R.id.menu_id_action_add_button);
+            waitForDrawer();
+            assertFalse(mActivity.isDrawerOpen(Gravity.RIGHT));
+        } else {
+            testClick(R.id.menu_id_back_button);
+            Fragment printersFragment = fm.findFragmentById(layoutId);
+            assertTrue(printersFragment instanceof PrintersFragment);
+        }
     }
 
     @Test
     public void onClickSearchPrinter() {
         testClick(R.id.menu_id_action_search_button);
+        int layoutId = R.id.mainLayout;
+        if (mPrintersFragment.isTablet()) {
+            waitForDrawer();
+            assertTrue(mActivity.isDrawerOpen(Gravity.RIGHT));
+            layoutId = R.id.rightLayout;
+        }
         final FragmentManager fm = mActivity.getSupportFragmentManager();
-        Fragment searchPrintersFragment = fm.findFragmentById(R.id.mainLayout);
+        Fragment searchPrintersFragment = fm.findFragmentById(layoutId);
         assertTrue(searchPrintersFragment instanceof PrinterSearchFragment);
 
-        testClick(R.id.menu_id_back_button);
-        Fragment printersFragment = fm.findFragmentById(R.id.mainLayout);
-        assertTrue(printersFragment instanceof PrintersFragment);
-    }
-
-    @Test
-    public void onClickSearchPrinterAsTablet() {
-        mPrintersFragment.setAsTablet();
-        testClick(R.id.menu_id_action_search_button);
-        waitForDrawer();
-        final FragmentManager fm = mActivity.getSupportFragmentManager();
-        Fragment searchPrintersFragment = fm.findFragmentById(R.id.rightLayout);
-        assertTrue(searchPrintersFragment instanceof PrinterSearchFragment);
-        assertTrue(mActivity.isDrawerOpen(Gravity.RIGHT));
-
-        testClick(R.id.menu_id_action_search_button);
-        waitForDrawer();
-        assertFalse(mActivity.isDrawerOpen(Gravity.RIGHT));
+        if (mPrintersFragment.isTablet()) {
+            testClick(R.id.menu_id_action_search_button);
+            waitForDrawer();
+            assertFalse(mActivity.isDrawerOpen(Gravity.RIGHT));
+        } else {
+            testClick(R.id.menu_id_back_button);
+            Fragment printersFragment = fm.findFragmentById(layoutId);
+            assertTrue(printersFragment instanceof PrintersFragment);
+        }
     }
 
     @Test
     public void onClickPrinterSearchSettings() {
         testClick(R.id.menu_id_printer_search_settings_button);
-        final FragmentManager fm = mActivity.getSupportFragmentManager();
-        Fragment printerSearchSettingsFragment = fm.findFragmentById(R.id.mainLayout);
-        assertTrue(printerSearchSettingsFragment instanceof PrinterSearchSettingsFragment);
-
-        testClick(R.id.menu_id_back_button);
-        Fragment printersFragment = fm.findFragmentById(R.id.mainLayout);
-        assertTrue(printersFragment instanceof PrintersFragment);
-    }
-
-    @Test
-    public void onClickPrinterSearchSettingsAsTablet() {
-        mPrintersFragment.setAsTablet();
-        testClick(R.id.menu_id_printer_search_settings_button);
-        waitForDrawer();
-        final FragmentManager fm = mActivity.getSupportFragmentManager();
-        Fragment printerSearchSettingsFragment = fm.findFragmentById(R.id.rightLayout);
-        assertTrue(printerSearchSettingsFragment instanceof PrinterSearchSettingsFragment);
-        assertTrue(mActivity.isDrawerOpen(Gravity.RIGHT));
-
-        testClick(R.id.menu_id_printer_search_settings_button);
-        waitForDrawer();
-        assertFalse(mActivity.isDrawerOpen(Gravity.RIGHT));
-    }
-
-    public static class TestPrintersFragment extends PrintersFragment {
-        private boolean isTablet = false;
-        public void setAsTablet() {
-            isTablet = true;
+        int layoutId = R.id.mainLayout;
+        if (mPrintersFragment.isTablet()) {
+            waitForDrawer();
+            assertTrue(mActivity.isDrawerOpen(Gravity.RIGHT));
+            layoutId = R.id.rightLayout;
         }
-        @Override
-        public boolean isTablet() {
-            return isTablet;
+        final FragmentManager fm = mActivity.getSupportFragmentManager();
+        Fragment printerSearchSettingsFragment = fm.findFragmentById(layoutId);
+        assertTrue(printerSearchSettingsFragment instanceof PrinterSearchSettingsFragment);
+
+        if (mPrintersFragment.isTablet()) {
+            testClick(R.id.menu_id_action_search_button);
+            waitForDrawer();
+            assertFalse(mActivity.isDrawerOpen(Gravity.RIGHT));
+        } else {
+            testClick(R.id.menu_id_back_button);
+            Fragment printersFragment = fm.findFragmentById(layoutId);
+            assertTrue(printersFragment instanceof PrintersFragment);
         }
     }
 }
