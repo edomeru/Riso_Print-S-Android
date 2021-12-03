@@ -11,10 +11,10 @@ import androidx.fragment.app.FragmentManager;
 import org.junit.Before;
 import org.junit.Test;
 
-import jp.co.riso.smartdeviceapp.view.BaseMainActivityTest;
+import jp.co.riso.smartdeviceapp.view.MainActivityTestUtil;
 import jp.co.riso.smartprint.R;
 
-public class MenuFragmentTest extends BaseMainActivityTest {
+public class MenuFragmentTest extends MainActivityTestUtil {
     private MenuFragment mMenuFragment = null;
 
     @Before
@@ -44,7 +44,7 @@ public class MenuFragmentTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void newInstance() {
+    public void testNewInstance() {
         assertNotNull(mMenuFragment);
 
         // TODO: when new features are returned, Home screen is default
@@ -53,7 +53,7 @@ public class MenuFragmentTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void onClick() {
+    public void testOnClick() {
         testClick(R.id.printersButton);
         assertTrue(getCurrentScreen() instanceof PrintersFragment);
         assertTrue(isSelectedButtonCorrect(R.id.printersButton));

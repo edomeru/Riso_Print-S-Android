@@ -17,7 +17,7 @@ import org.junit.Test;
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
 import jp.co.riso.smartprint.R;
 
-public class MainActivityTest extends BaseMainActivityTest {
+public class MainActivityTest extends MainActivityTestUtil {
     TestFragment mTestRightFragment = null;
     TestFragment mTestMainFragment = null;
 
@@ -52,7 +52,7 @@ public class MainActivityTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void openCloseLeftDrawer() {
+    public void testOpenClose_LeftDrawer() {
         mActivity.openDrawer(Gravity.LEFT);
         waitForDrawer();
         assertTrue(mActivity.isDrawerOpen(Gravity.LEFT));
@@ -63,7 +63,7 @@ public class MainActivityTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void openCloseRightDrawer() {
+    public void testOpenClose_RightDrawer() {
         initLayoutFragments();
         mActivity.openDrawer(Gravity.RIGHT);
         waitForDrawer();
@@ -79,7 +79,7 @@ public class MainActivityTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void onBackPressed() {
+    public void testOnBackPressed() {
         mActivity.openDrawer(Gravity.LEFT);
         waitForDrawer();
         assertTrue(mActivity.isDrawerOpen(Gravity.LEFT));
@@ -99,7 +99,7 @@ public class MainActivityTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void onSaveInstanceStateLeftDrawerOpen() {
+    public void testOnSaveInstanceState_LeftDrawerOpen() {
         mActivity.openDrawer(Gravity.LEFT);
         waitForDrawer();
 
@@ -116,7 +116,7 @@ public class MainActivityTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void onSaveInstanceStateRightDrawerOpen() {
+    public void testOnSaveInstanceState_RightDrawerOpen() {
         initLayoutFragments();
         mActivity.openDrawer(Gravity.RIGHT);
         waitForDrawer();
@@ -134,7 +134,7 @@ public class MainActivityTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void onSaveInstanceStateResizeView() {
+    public void testOnSaveInstanceState_ResizeView() {
         initLayoutFragments();
         mActivity.openDrawer(Gravity.RIGHT, true);
         waitForDrawer();
@@ -152,7 +152,7 @@ public class MainActivityTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void storeMessage() {
+    public void testStoreMessage() {
         Message msg = new Message();
         msg.what = 0; //MSG_OPEN_DRAWER
         assertTrue(mActivity.storeMessage(msg));

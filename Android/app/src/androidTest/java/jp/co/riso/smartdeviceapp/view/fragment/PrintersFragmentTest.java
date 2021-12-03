@@ -14,10 +14,10 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-import jp.co.riso.smartdeviceapp.view.BaseMainActivityTest;
+import jp.co.riso.smartdeviceapp.view.MainActivityTestUtil;
 import jp.co.riso.smartprint.R;
 
-public class PrintersFragmentTest extends BaseMainActivityTest {
+public class PrintersFragmentTest extends MainActivityTestUtil {
     PrintersFragment mPrintersFragment = null;
 
     // sleep is needed because drawer calls goes through mHandler
@@ -41,12 +41,12 @@ public class PrintersFragmentTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void newInstance() {
+    public void testNewInstance() {
         assertNotNull(mPrintersFragment);
     }
 
     @Test
-    public void onClickAddPrinter() {
+    public void testOnClick_AddPrinter() {
         testClick(R.id.menu_id_action_add_button);
         int layoutId = R.id.mainLayout;
         if (mPrintersFragment.isTablet()) {
@@ -70,7 +70,7 @@ public class PrintersFragmentTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void onClickSearchPrinter() {
+    public void testOnClick_SearchPrinter() {
         testClick(R.id.menu_id_action_search_button);
         int layoutId = R.id.mainLayout;
         if (mPrintersFragment.isTablet()) {
@@ -94,7 +94,7 @@ public class PrintersFragmentTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void onClickPrinterSearchSettings() {
+    public void testOnClick_PrinterSearchSettings() {
         testClick(R.id.menu_id_printer_search_settings_button);
         int layoutId = R.id.mainLayout;
         if (mPrintersFragment.isTablet()) {

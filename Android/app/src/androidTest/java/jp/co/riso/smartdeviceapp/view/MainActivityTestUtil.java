@@ -10,7 +10,7 @@ import org.junit.Rule;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class BaseMainActivityTest {
+public class MainActivityTestUtil {
     protected MainActivity mActivity = null;
 
     @Rule

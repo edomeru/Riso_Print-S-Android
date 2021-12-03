@@ -19,7 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.view.BaseMainActivityTest;
+import jp.co.riso.smartdeviceapp.view.MainActivityTestUtil;
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity;
 import jp.co.riso.smartprint.R;
 
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
 import com.scanlibrary.ScanActivity;
 import com.scanlibrary.ScanConstants;
 
-public class HomeFragmentTest extends BaseMainActivityTest {
+public class HomeFragmentTest extends MainActivityTestUtil {
     private HomeFragment mHomeFragment = null;
     private final String REQUEST_PERMISSIONS = "android.content.pm.action.REQUEST_PERMISSIONS";
     private final String REQUEST_PERMISSIONS_NAMES = "android.content.pm.extra.REQUEST_PERMISSIONS_NAMES";
@@ -75,12 +75,12 @@ public class HomeFragmentTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void newInstance() {
+    public void testNewInstance() {
         assertNotNull(mHomeFragment);
     }
 
     @Test
-    public void onClickSelectDocument() {
+    public void testOnClick_SelectDocument() {
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null);
@@ -120,7 +120,7 @@ public class HomeFragmentTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void onClickSelectPhotos() {
+    public void testOnClick_SelectPhotos() {
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null);
@@ -161,7 +161,7 @@ public class HomeFragmentTest extends BaseMainActivityTest {
     }
 
     @Test
-    public void onClickCapturePhoto() {
+    public void testOnClick_CapturePhoto() {
         // stubs handling of permission request in case of no permissions
         // null result only since test is not about checking handling of result
         Intents.intending(IntentMatchers.hasAction(REQUEST_PERMISSIONS))
