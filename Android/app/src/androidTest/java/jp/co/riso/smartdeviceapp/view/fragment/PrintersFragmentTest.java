@@ -107,7 +107,7 @@ public class PrintersFragmentTest extends BaseMainActivityTest {
         assertTrue(printerSearchSettingsFragment instanceof PrinterSearchSettingsFragment);
 
         if (mPrintersFragment.isTablet()) {
-            testClick(R.id.menu_id_action_search_button);
+            testClick(R.id.menu_id_printer_search_settings_button);
             waitForDrawer();
             assertFalse(mActivity.isDrawerOpen(Gravity.RIGHT));
         } else {
