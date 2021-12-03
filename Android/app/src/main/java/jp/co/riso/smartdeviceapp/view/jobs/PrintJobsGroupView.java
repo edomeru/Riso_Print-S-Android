@@ -213,6 +213,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
     public void setDeleteButton(View v) {
         mViewToDelete = v;
         mViewToDelete.setSelected(true);
+        // RM#1104 print job button should not be selected - it must only be selected when clicked
+        mViewToDelete.findViewById(R.id.printJobDeleteBtn).setSelected(false);
         mGroupListener.setDeletePrintJob(this, (PrintJob) mViewToDelete.getTag());
     }
     
@@ -707,6 +709,8 @@ public class PrintJobsGroupView extends LinearLayout implements View.OnClickList
                 deleteJobGroup(v);
             }
         } else if (id == R.id.printJobDeleteBtn) {
+            // RM#1104 set button to selected to change the button background color when clicked
+            v.setSelected(true);
             mGroupListener.showDeleteDialog();
         } else if (id == R.id.printJobsGroupLayout) {
             // if delete button is visible, hide that instead of handling the click
