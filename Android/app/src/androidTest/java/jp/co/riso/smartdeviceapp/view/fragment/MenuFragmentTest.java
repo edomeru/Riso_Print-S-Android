@@ -58,9 +58,21 @@ public class MenuFragmentTest extends BaseActivityTestUtil {
         assertTrue(getCurrentScreen() instanceof PrintersFragment);
         assertTrue(isSelectedButtonCorrect(R.id.printersButton));
 
+        testClick(R.id.printersButton);
+        assertTrue(getCurrentScreen() instanceof PrintersFragment);
+        assertTrue(isSelectedButtonCorrect(R.id.printersButton));
+
         testClick(R.id.printJobsButton);
         assertTrue(getCurrentScreen() instanceof PrintJobsFragment);
         assertTrue(isSelectedButtonCorrect(R.id.printJobsButton));
+
+        testClick(R.id.printJobsButton);
+        assertTrue(getCurrentScreen() instanceof PrintJobsFragment);
+        assertTrue(isSelectedButtonCorrect(R.id.printJobsButton));
+
+        testClick(R.id.settingsButton);
+        assertTrue(getCurrentScreen() instanceof SettingsFragment);
+        assertTrue(isSelectedButtonCorrect(R.id.settingsButton));
 
         testClick(R.id.settingsButton);
         assertTrue(getCurrentScreen() instanceof SettingsFragment);
@@ -70,11 +82,23 @@ public class MenuFragmentTest extends BaseActivityTestUtil {
         assertTrue(getCurrentScreen() instanceof HelpFragment);
         assertTrue(isSelectedButtonCorrect(R.id.helpButton));
 
+        testClick(R.id.helpButton);
+        assertTrue(getCurrentScreen() instanceof HelpFragment);
+        assertTrue(isSelectedButtonCorrect(R.id.helpButton));
+
+        testClick(R.id.legalButton);
+        assertTrue(getCurrentScreen() instanceof LegalFragment);
+        assertTrue(isSelectedButtonCorrect(R.id.legalButton));
+
         testClick(R.id.legalButton);
         assertTrue(getCurrentScreen() instanceof LegalFragment);
         assertTrue(isSelectedButtonCorrect(R.id.legalButton));
 
         // while new features are hidden Home == PrintPreview
+        testClick(R.id.printPreviewButton);
+        assertTrue(getCurrentScreen() instanceof PrintPreviewFragment);
+        assertTrue(isSelectedButtonCorrect(R.id.printPreviewButton));
+
         testClick(R.id.printPreviewButton);
         assertTrue(getCurrentScreen() instanceof PrintPreviewFragment);
         assertTrue(isSelectedButtonCorrect(R.id.printPreviewButton));
