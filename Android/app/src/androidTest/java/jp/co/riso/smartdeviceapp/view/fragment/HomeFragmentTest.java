@@ -1,92 +1,96 @@
 package jp.co.riso.smartdeviceapp.view.fragment;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.net.Uri;
-import android.view.View;
-import android.widget.LinearLayout;
 
 import androidx.core.content.ContextCompat;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
-import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.view.MainActivity;
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil;
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity;
 import jp.co.riso.smartprint.R;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertNotNull;
+import static androidx.test.espresso.intent.Intents.init;
+import static androidx.test.espresso.intent.Intents.release;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import com.scanlibrary.ScanActivity;
 import com.scanlibrary.ScanConstants;
 
-public class HomeFragmentTest {
-    private final String TAG = "HOME_FRAGMENT";
+public class HomeFragmentTest extends BaseActivityTestUtil {
+    private HomeFragment mHomeFragment = null;
     private final String REQUEST_PERMISSIONS = "android.content.pm.action.REQUEST_PERMISSIONS";
     private final String REQUEST_PERMISSIONS_NAMES = "android.content.pm.extra.REQUEST_PERMISSIONS_NAMES";
 
-    @Rule
-    public IntentsTestRule<MainActivity> intentsTestRule = new IntentsTestRule<>(MainActivity.class);
     @Rule
     public GrantPermissionRule storagePermission = GrantPermissionRule.grant(WRITE_EXTERNAL_STORAGE);
     // TODO: CAMERA permission is hidden feature. uncomment when new features are restored
     //@Rule
     //public GrantPermissionRule cameraPermission = GrantPermissionRule.grant(CAMERA);
 
-    private HomeFragment initHomeFragment() {
-        final FragmentManager fm = intentsTestRule.getActivity().getSupportFragmentManager();
+    @Before
+    public void initEspresso() {
+        init();
+    }
 
-        intentsTestRule.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fm.beginTransaction().add(new HomeFragment(), TAG).commit();
-                fm.executePendingTransactions();
-            }
+    @After
+    public void releaseEspresso() {
+        release();
+    }
+
+    @Before
+    public void initHomeFragment() {
+        final FragmentManager fm = mActivity.getSupportFragmentManager();
+
+        mActivity.runOnUiThread(() -> {
+            fm.beginTransaction().add(R.id.mainLayout, new HomeFragment()).commit();
+            fm.executePendingTransactions();
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
-        assertTrue(fm.findFragmentByTag(TAG) instanceof HomeFragment);
-        return (HomeFragment) fm.findFragmentByTag(TAG);
+        Fragment homeFragment = fm.findFragmentById(R.id.mainLayout);
+        assertTrue(homeFragment instanceof HomeFragment);
+        mHomeFragment = (HomeFragment) homeFragment;
     }
 
     @Test
-    public void newInstance() {
-        HomeFragment homeFragment = initHomeFragment();
-        assertNotNull(homeFragment);
+    public void testNewInstance() {
+        assertNotNull(mHomeFragment);
     }
 
     @Test
-    public void onClickSelectDocument() {
-        HomeFragment homeFragment = initHomeFragment();
-
+    public void testOnClick_SelectDocument() {
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null);
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result);
 
-        // prepare button to be clicked
-        final View selectDocumentButton = new LinearLayout(intentsTestRule.getActivity());
-        selectDocumentButton.setId(R.id.fileButton);
-
-        homeFragment.onClick(selectDocumentButton);
+        testClick(R.id.fileButton);
 
         // if no permission yet, intent for permission request will be sent instead
         // TODO: add mocking of permission check
-        if (ContextCompat.checkSelfPermission(intentsTestRule.getActivity(),
+        if (ContextCompat.checkSelfPermission(mActivity,
                 WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
             Intent permissionRequestIntent = Intents.getIntents().get(0);
             assertNotNull(permissionRequestIntent);
@@ -108,7 +112,7 @@ public class HomeFragmentTest {
         assertEquals(extraIntent.getAction(), Intent.ACTION_GET_CONTENT);
         assertEquals(extraIntent.getType(), "*/*");
 
-        if (homeFragment.isChromeBook()) {
+        if (mHomeFragment.isChromeBook()) {
             assertNull(extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES));
         } else {
             assertEquals(extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES), AppConstants.DOC_TYPES);
@@ -116,23 +120,17 @@ public class HomeFragmentTest {
     }
 
     @Test
-    public void onClickSelectPhotos() {
-        HomeFragment homeFragment = initHomeFragment();
-
+    public void testOnClick_SelectPhotos() {
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null);
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result);
 
-        // prepare button to be clicked
-        final View selectPhotosButton = new LinearLayout(intentsTestRule.getActivity());
-        selectPhotosButton.setId(R.id.photosButton);
-
-        homeFragment.onClick(selectPhotosButton);
+        testClick(R.id.photosButton);
 
         // if no permission yet, intent for permission request will be sent instead
         // TODO: add mocking of permission check
-        if (ContextCompat.checkSelfPermission(intentsTestRule.getActivity(),
+        if (ContextCompat.checkSelfPermission(mActivity,
                 WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
             Intent permissionRequestIntent = Intents.getIntents().get(0);
             assertNotNull(permissionRequestIntent);
@@ -155,17 +153,15 @@ public class HomeFragmentTest {
         assertEquals(extraIntent.getType(), "*/*");
         assertTrue(extraIntent.getBooleanExtra(Intent.EXTRA_ALLOW_MULTIPLE, false));
 
-        if (homeFragment.isChromeBook()) {
+        if (mHomeFragment.isChromeBook()) {
             assertNull(extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES));
         } else {
-            assertEquals(extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES), AppConstants.IMAGE_TYPES);
+            assertArrayEquals(extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES), AppConstants.IMAGE_TYPES);
         }
     }
 
     @Test
-    public void onClickCapturePhoto() {
-        HomeFragment homeFragment = initHomeFragment();
-
+    public void testOnClick_CapturePhoto() {
         // stubs handling of permission request in case of no permissions
         // null result only since test is not about checking handling of result
         Intents.intending(IntentMatchers.hasAction(REQUEST_PERMISSIONS))
@@ -178,17 +174,13 @@ public class HomeFragmentTest {
         Intents.intending(IntentMatchers.hasComponent(ScanActivity.class.getName()))
                 .respondWith(new Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, scanActivityResult));
 
-        // prepare button to be clicked
-        final View capturePhotoButton = new LinearLayout(intentsTestRule.getActivity());
-        capturePhotoButton.setId(R.id.cameraButton);
-
-        homeFragment.onClick(capturePhotoButton);
+        testClick(R.id.cameraButton);
 
         // if no permission yet, intent for permission request will be sent instead
         // TODO: add mocking of permission check
-        if (ContextCompat.checkSelfPermission(intentsTestRule.getActivity(),
+        if (ContextCompat.checkSelfPermission(mActivity,
                 WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(intentsTestRule.getActivity(),
+                ContextCompat.checkSelfPermission(mActivity,
                         CAMERA) != PERMISSION_GRANTED) {
 
             Intent permissionRequestIntent = Intents.getIntents().get(0);
