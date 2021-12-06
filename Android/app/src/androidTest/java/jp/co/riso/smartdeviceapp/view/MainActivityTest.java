@@ -17,7 +17,7 @@ import org.junit.Test;
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment;
 import jp.co.riso.smartprint.R;
 
-public class MainActivityTest extends MainActivityTestUtil {
+public class MainActivityTest extends BaseActivityTestUtil {
     TestFragment mTestRightFragment = null;
     TestFragment mTestMainFragment = null;
 

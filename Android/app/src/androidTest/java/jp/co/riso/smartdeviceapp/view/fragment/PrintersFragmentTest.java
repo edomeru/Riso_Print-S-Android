@@ -14,10 +14,10 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-import jp.co.riso.smartdeviceapp.view.MainActivityTestUtil;
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil;
 import jp.co.riso.smartprint.R;
 
-public class PrintersFragmentTest extends MainActivityTestUtil {
+public class PrintersFragmentTest extends BaseActivityTestUtil {
     PrintersFragment mPrintersFragment = null;
 
     // sleep is needed because drawer calls goes through mHandler

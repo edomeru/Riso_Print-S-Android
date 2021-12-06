@@ -11,10 +11,10 @@ import androidx.fragment.app.FragmentManager;
 import org.junit.Before;
 import org.junit.Test;
 
-import jp.co.riso.smartdeviceapp.view.MainActivityTestUtil;
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil;
 import jp.co.riso.smartprint.R;
 
-public class MenuFragmentTest extends MainActivityTestUtil {
+public class MenuFragmentTest extends BaseActivityTestUtil {
     private MenuFragment mMenuFragment = null;
 
     @Before

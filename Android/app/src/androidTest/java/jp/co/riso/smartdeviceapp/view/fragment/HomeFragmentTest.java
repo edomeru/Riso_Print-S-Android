@@ -19,7 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import jp.co.riso.smartdeviceapp.AppConstants;
-import jp.co.riso.smartdeviceapp.view.MainActivityTestUtil;
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil;
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity;
 import jp.co.riso.smartprint.R;
 
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
 import com.scanlibrary.ScanActivity;
 import com.scanlibrary.ScanConstants;
 
-public class HomeFragmentTest extends MainActivityTestUtil {
+public class HomeFragmentTest extends BaseActivityTestUtil {
     private HomeFragment mHomeFragment = null;
     private final String REQUEST_PERMISSIONS = "android.content.pm.action.REQUEST_PERMISSIONS";
     private final String REQUEST_PERMISSIONS_NAMES = "android.content.pm.extra.REQUEST_PERMISSIONS_NAMES";
