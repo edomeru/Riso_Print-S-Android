@@ -13,7 +13,7 @@ module Fastlane
         date, *_ =   date.split("_")
         version = version[1..]
         version_name = "v"+version+"."+build
-        version_code = version_name.gsub(".","0")[1..]
+        version_code = version.gsub(".","0")+"00"+build
 
         puts "versionCode: #{version_code}"
         puts "versionName: #{version_name}"
