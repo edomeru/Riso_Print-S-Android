@@ -17,6 +17,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
@@ -90,22 +92,27 @@ public abstract class BaseActivity extends FragmentActivity {
 
     private void handleSystemUIRotation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // 031521 - For API Level 30 deprecation
-            if (getWindow().getInsetsController() != null) {
-                // Hide system navigation bar
-                getWindow().setDecorFitsSystemWindows(false);
-                getWindow().getInsetsController().hide(WindowInsets.Type.navigationBars());
-                getWindow().getInsetsController().setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            // RM1132 fix: Added checking for navigation bar
+            boolean hasHomeKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
+            boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+            if(!hasHomeKey && !hasBackKey) {
+                // 031521 - For API Level 30 deprecation
+                if (getWindow().getInsetsController() != null) {
+                    // Hide system navigation bar
+                    getWindow().setDecorFitsSystemWindows(false);
+                    getWindow().getInsetsController().hide(WindowInsets.Type.navigationBars());
+                    getWindow().getInsetsController().setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
 
-                Handler handler = new Handler(Looper.myLooper());
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Show system navigation bar
-                        getWindow().setDecorFitsSystemWindows(true);
-                        getWindow().getInsetsController().show(WindowInsets.Type.navigationBars());
-                    }
-                }, 10);
+                    Handler handler = new Handler(Looper.myLooper());
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Show system navigation bar
+                            getWindow().setDecorFitsSystemWindows(true);
+                            getWindow().getInsetsController().show(WindowInsets.Type.navigationBars());
+                        }
+                    }, 10);
+                }
             }
         } else {
             // 031521 - For API Level 30 deprecation
