@@ -10,21 +10,21 @@ package jp.co.riso.smartdeviceapp.view.base;
 
 import androidx.fragment.app.FragmentActivity;
 
-import android.content.Context;
+import android.graphics.Insets;
 import android.graphics.Point;
-import android.hardware.display.DisplayManager;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
+import android.view.Display;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.view.WindowMetrics;
 
 import jp.co.riso.android.util.AppUtils;
-import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartprint.R;
 
 /**
@@ -35,6 +35,7 @@ import jp.co.riso.smartprint.R;
 public abstract class BaseActivity extends FragmentActivity {
 
     private int systemUIFlags;      // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
+    private int mLastRotation;      // Stores previous rotation to isolate change in rotation events only
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,23 +55,21 @@ public abstract class BaseActivity extends FragmentActivity {
                 getSystemUIFlagsForSDK29();
             }
 
-            DisplayManager.DisplayListener mDisplayListener = new DisplayManager.DisplayListener() {
+            // RM1132 fix: Use onOrientationChanged to capture rotation events only
+            OrientationEventListener orientationEventListener = new OrientationEventListener(this,
+                    SensorManager.SENSOR_DELAY_NORMAL) {
                 @Override
-                public void onDisplayAdded(int displayId) {
-                }
-
-                @Override
-                public void onDisplayRemoved(int displayId) {
-                }
-
-                @Override
-                public void onDisplayChanged(int displayId) {
-                    handleSystemUIRotation();
+                public void onOrientationChanged(int orientation) {
+                    Display display = getWindowManager().getDefaultDisplay();
+                    int rotation = display.getRotation();
+                    if (rotation != mLastRotation) {
+                        handleSystemUIRotation();
+                        mLastRotation = rotation;
+                    }
                 }
             };
-            DisplayManager displayManager = (DisplayManager) SmartDeviceApp.getAppContext().getSystemService(Context.DISPLAY_SERVICE);
-            if (displayManager != null) {
-                displayManager.registerDisplayListener(mDisplayListener, new Handler(Looper.myLooper()));
+            if (orientationEventListener.canDetectOrientation()) {
+                orientationEventListener.enable();
             }
         }
     }
@@ -92,14 +91,19 @@ public abstract class BaseActivity extends FragmentActivity {
 
     private void handleSystemUIRotation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // RM1132 fix: Added checking for navigation bar
-            boolean hasHomeKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
-            boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-            if(!hasHomeKey && !hasBackKey) {
-                // 031521 - For API Level 30 deprecation
+            // 031521 - For API Level 30 deprecation
+            // RM1132 fix: Add checking for navigation bar
+            final WindowMetrics metrics = getWindowManager().getCurrentWindowMetrics();
+            // Gets all excluding insets
+            final WindowInsets windowInsets = metrics.getWindowInsets();
+            Insets insets = windowInsets.getInsets(WindowInsets.Type.systemBars());
+
+            int insetsWidth = insets.right + insets.left;
+            int insetsHeight = insets.top + insets.bottom;
+
+            if (insetsWidth > 0 || insetsHeight > 0) {
                 if (getWindow().getInsetsController() != null) {
                     // Hide system navigation bar
-                    getWindow().setDecorFitsSystemWindows(false);
                     getWindow().getInsetsController().hide(WindowInsets.Type.navigationBars());
                     getWindow().getInsetsController().setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
 
@@ -108,7 +112,6 @@ public abstract class BaseActivity extends FragmentActivity {
                         @Override
                         public void run() {
                             // Show system navigation bar
-                            getWindow().setDecorFitsSystemWindows(true);
                             getWindow().getInsetsController().show(WindowInsets.Type.navigationBars());
                         }
                     }, 10);
