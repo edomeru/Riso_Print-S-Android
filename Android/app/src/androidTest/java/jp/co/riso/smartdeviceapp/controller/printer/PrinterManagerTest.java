@@ -34,7 +34,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     final CountDownLatch mSignal = new CountDownLatch(1);
     final int TIMEOUT = 20;
     private static final String IPV4_ONLINE_PRINTER_ADDRESS = "192.168.1.206";
-    private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2";
+    private static final String IPV6_ONLINE_PRINTER_ADDRESS = "fe80::a00:27ff:fe95:7387";
     private static final String IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.0.206";
     private static final String INVALID_ADDRESS = "invalid";
     
@@ -873,15 +873,16 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     */
 
     public void testIsOnline_OnlineIpv6Printer() {
+        // If test fails, check with actual ipv6 address
         try {
             boolean ret = false;
             int retry =10;
             initialize();
-            String ipv6Addr = IPV6_ONLINE_PRINTER_ADDRESS;
+            String ipv6Addr = IPV6_ONLINE_PRINTER_ADDRESS; // If test fails, update constant to use actual ipv6
             
             // Ipv6 Address
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                ipv6Addr = getLocalIpv6Address();
+                ipv6Addr = getLocalIpv6Address();        // If test fails, comment out this line to use actual ipv6
             }
             assertNotNull(ipv6Addr);
 
