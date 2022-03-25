@@ -72,6 +72,7 @@ public class SNMPManagerTest extends TestCase implements
     // ================================================================================
 
     public void testDeviceDiscovery() {
+        // if test fails, make sure there are online printers available in network
         if (SmartDeviceApp.getAppContext().getPackageManager().
                 hasSystemFeature(AppConstants.CHROME_BOOK)) {
             return; // if chrome os, skip test because printer search is not supported
