@@ -36,6 +36,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
     private int systemUIFlags;      // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
     private int mLastRotation;      // Stores previous rotation to isolate change in rotation events only
+    private OrientationEventListener mOrientationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +57,17 @@ public abstract class BaseActivity extends FragmentActivity {
             }
 
             // RM1132 fix: Use onOrientationChanged to capture rotation events only
-            OrientationEventListener orientationEventListener = new OrientationEventListener(this,
+            if (mOrientationListener == null) {
+                mOrientationListener = new OrientationEventListener(this,
                     SensorManager.SENSOR_DELAY_NORMAL) {
-                @Override
-                public void onOrientationChanged(int orientation) {
+                    @Override
+                    public void onOrientationChanged(int orientation) {
                         handleSystemUIRotation();
-                }
-            };
-            if (orientationEventListener.canDetectOrientation()) {
-                orientationEventListener.enable();
+                    }
+                };
+            }
+            if (mOrientationListener.canDetectOrientation()) {
+                mOrientationListener.enable();
             }
         }
     }
@@ -193,5 +196,11 @@ public abstract class BaseActivity extends FragmentActivity {
         drawerWidth = Math.min(drawerWidth, maxDrawerWidth);
         
         return (int) drawerWidth;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mOrientationListener.disable();
     }
 }
