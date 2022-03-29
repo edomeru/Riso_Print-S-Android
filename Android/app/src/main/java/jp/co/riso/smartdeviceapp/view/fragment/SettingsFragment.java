@@ -121,6 +121,8 @@ public class SettingsFragment extends BaseFragment {
             ViewGroup.LayoutParams params = rootView.getLayoutParams();
             if (screenSize.x > screenSize.y) {
                 params.width = screenSize.y;
+            } else {
+                params.width = screenSize.x;
             }
         }
     }
