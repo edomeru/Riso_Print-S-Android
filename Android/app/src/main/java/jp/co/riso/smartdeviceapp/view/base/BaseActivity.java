@@ -10,21 +10,22 @@ package jp.co.riso.smartdeviceapp.view.base;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Context;
 import android.graphics.Insets;
 import android.graphics.Point;
-import android.hardware.SensorManager;
+import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Display;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowMetrics;
 
 import jp.co.riso.android.util.AppUtils;
+import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 import jp.co.riso.smartprint.R;
 
 /**
@@ -36,6 +37,8 @@ public abstract class BaseActivity extends FragmentActivity {
 
     private int systemUIFlags;      // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
     private int mLastRotation;      // Stores previous rotation to isolate change in rotation events only
+    private DisplayManager.DisplayListener mDisplayListener;
+    private DisplayManager mDisplayManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +57,26 @@ public abstract class BaseActivity extends FragmentActivity {
                 // 031521 - For API Level 30 deprecation
                 getSystemUIFlagsForSDK29();
             }
+            // RM1139 fix: Use onDisplayChanged. Less delay in detecting rotation changes compared to OnOrientationChange
+            if (mDisplayListener == null) {
+                mDisplayListener = new DisplayManager.DisplayListener() {
+                    @Override
+                    public void onDisplayAdded(int displayId) {
+                    }
 
-            // RM1132 fix: Use onOrientationChanged to capture rotation events only
-            OrientationEventListener orientationEventListener = new OrientationEventListener(this,
-                    SensorManager.SENSOR_DELAY_NORMAL) {
-                @Override
-                public void onOrientationChanged(int orientation) {
+                    @Override
+                    public void onDisplayRemoved(int displayId) {
+                    }
+
+                    @Override
+                    public void onDisplayChanged(int displayId) {
                         handleSystemUIRotation();
-                }
-            };
-            if (orientationEventListener.canDetectOrientation()) {
-                orientationEventListener.enable();
+                    }
+                };
+            }
+            mDisplayManager = (DisplayManager) SmartDeviceApp.getAppContext().getSystemService(Context.DISPLAY_SERVICE);
+            if (mDisplayManager != null) {
+                mDisplayManager.registerDisplayListener(mDisplayListener, new Handler(Looper.myLooper()));
             }
         }
     }
@@ -193,5 +205,13 @@ public abstract class BaseActivity extends FragmentActivity {
         drawerWidth = Math.min(drawerWidth, maxDrawerWidth);
         
         return (int) drawerWidth;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mDisplayManager != null && mDisplayListener != null) {
+            mDisplayManager.unregisterDisplayListener(mDisplayListener);
+        }
     }
 }
