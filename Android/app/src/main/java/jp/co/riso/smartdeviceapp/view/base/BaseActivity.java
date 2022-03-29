@@ -210,6 +210,8 @@ public abstract class BaseActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mDisplayManager.unregisterDisplayListener(mDisplayListener);
+        if (mDisplayManager != null && mDisplayListener != null) {
+            mDisplayManager.unregisterDisplayListener(mDisplayListener);
+        }
     }
 }
