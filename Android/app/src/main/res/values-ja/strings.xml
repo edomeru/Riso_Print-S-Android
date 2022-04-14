@@ -162,9 +162,7 @@
     <string name="ids_lbl_disagree">同意しない</string>
     <string name="ids_err_msg_disagree_to_license">このアプリを使用するには、使用許諾への同意が必要です。</string>
     <string name="ids_err_msg_storage_permission_not_allowed">ストレージのアクセスが必要です。\n\n次のダイアログで、「許可」または「OK」を選択してください。</string>
-    <!-- HIDE_NEW_FEATURES : Image and Text Open-In Not Supported >
-    <string name="ids_lbl_permission_information">%1$sは、印刷用のPDF/ Image/ Textファイルを開くためにストレージへのアクセスが必要です。\n\nストレージへのアクセスを許可するには、[設定]->[アプリ]->[%1$s]->[許可]で設定します。</string-->
-    <string name="ids_lbl_permission_information">%1$sは、印刷用のPDFファイルを開くためにストレージへのアクセスが必要です。\n\nストレージへのアクセスを許可するには、[設定]->[アプリ]->[%1$s]->[許可]で設定します。</string>
+    <string name="ids_lbl_permission_information">%1$sは、印刷用のPDF/ Image/ Textファイルを開くためにストレージへのアクセスが必要です。\n\nストレージへのアクセスを許可するには、[設定]->[アプリ]->[%1$s]->[許可]で設定します。</string>
     <string name="ids_lbl_start">開始</string>
     <string name="ids_lbl_search_printers_settings">検索設定</string>
     <string name="ids_lbl_snmp_community_name">SNMPコミュニティ名</string>
