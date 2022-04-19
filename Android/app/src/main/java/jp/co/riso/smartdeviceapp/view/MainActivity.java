@@ -173,9 +173,9 @@ public class MainActivity extends BaseActivity implements PauseableHandlerCallba
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
 
-        NetUtils.unregisterWifiCallback(this);
+            NetUtils.unregisterWifiCallback(this);
+        }
 
         super.onDestroy();
     }
