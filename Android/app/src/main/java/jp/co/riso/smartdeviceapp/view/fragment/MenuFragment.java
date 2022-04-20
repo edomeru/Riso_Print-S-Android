@@ -28,9 +28,7 @@ import jp.co.riso.smartprint.R;
 public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
     /// Print Preview Screen
-    // HIDE_NEW_FEATURES: Prevent transition from Preview screen to Home screen
-    //public static final int STATE_HOME = 0;
-    public static final int STATE_HOME = 1;
+    public static final int STATE_HOME = 0;
     /// Print Preview Screen
     public static final int STATE_PRINTPREVIEW = 1;
     /// Printers Screen
@@ -143,15 +141,14 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         }
 
         for (int i = 0; i < MENU_ITEMS.length; i++) {
-            // HIDE_NEW_FEATURES: Preview button is Home button and is never disabled
-            /*if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
+            if (i == STATE_PRINTPREVIEW && !hasPDFfile) {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(false);
-                view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4, null));
-            } else {*/
+                view.findViewById(MENU_ITEMS[i]).setBackgroundColor(getResources().getColor(R.color.theme_light_4));
+            } else {
                 view.findViewById(MENU_ITEMS[i]).setSelected(false);
                 view.findViewById(MENU_ITEMS[i]).setClickable(true);
-            //}
+            }
         }
 
         view.findViewById(MENU_ITEMS[state]).setSelected(true);
@@ -213,10 +210,9 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         BaseFragment fragment = (BaseFragment) fm.findFragmentByTag(tag);
         if (fragment == null) {
             switch (state) {
-                // HIDE_NEW_FEATURES: STATE_HOME is same as STATE_PRINTPREVIEW
-                /*case STATE_HOME:
+                case STATE_HOME:
                     fragment = new HomeFragment();
-                    break;*/
+                    break;
                 case STATE_PRINTPREVIEW:
                     fragment = new PrintPreviewFragment();
                     break;

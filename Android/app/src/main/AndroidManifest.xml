@@ -9,10 +9,9 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera feature declaration >
     <uses-feature
         android:name="android.hardware.camera2"
-        android:required="true" /-->
+        android:required="true" />
 
     <application
         android:name="jp.co.riso.smartdeviceapp.SmartDeviceApp"
@@ -51,7 +50,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="application/pdf" />
-                <!-- HIDE_NEW_FEATURES: Disable Text and Image Open-In >
                 <data android:mimeType="text/plain" />
                 <data android:mimeType="image/png" />
                 <data android:mimeType="image/jpg" />
@@ -59,7 +57,7 @@
                 <data android:mimeType="image/gif" />
                 <data android:mimeType="image/x-ms-bmp" />
                 <data android:mimeType="image/bmp" />
-                <data android:mimeType="image/x-windows-bmp" /-->
+                <data android:mimeType="image/x-windows-bmp" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -67,7 +65,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="application/pdf" />
-                <!-- HIDE_NEW_FEATURES: Disable Text and Image Open-In >
                 <data android:mimeType="text/plain" />
                 <data android:mimeType="image/png" />
                 <data android:mimeType="image/jpg" />
@@ -75,9 +72,8 @@
                 <data android:mimeType="image/gif" />
                 <data android:mimeType="image/x-ms-bmp" />
                 <data android:mimeType="image/bmp" />
-                <data android:mimeType="image/x-windows-bmp" /-->
+                <data android:mimeType="image/x-windows-bmp" />
             </intent-filter>
-            <!-- HIDE_NEW_FEATURES: Disable Images Open-In >
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
 
@@ -90,7 +86,7 @@
                 <data android:mimeType="image/x-ms-bmp" />
                 <data android:mimeType="image/bmp" />
                 <data android:mimeType="image/x-windows-bmp" />
-            </intent-filter-->
+            </intent-filter>
         </activity>
     </application>
 

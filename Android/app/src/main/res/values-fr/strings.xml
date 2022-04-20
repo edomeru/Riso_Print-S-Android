@@ -162,9 +162,7 @@
     <string name="ids_lbl_disagree">Disagree</string>
     <string name="ids_err_msg_disagree_to_license">User must agree to License Agreement to continue using the app</string>
     <string name="ids_err_msg_storage_permission_not_allowed">L\'accès à  stockage est nécessaire. \n\nDans la prochaine alerte de la boîte de dialogue qui apparaîtra, merci de cliquer sur \"Autoriser/OK\".</string>
-    <!-- HIDE_NEW_FEATURES : Image and Text Open-In Not Supported >
-    <string name="ids_lbl_permission_information">%1$s est, vous devez avoir accès au stockage en vue d\'ouvrir un fichier PDF/ Image/ Text pour l\'impression.\n\nPour permettre l\'accès au stockage, [Settings]-> [Application] -> [%1$s] -> [Autorisations] et appuyez sur pour régler.</string-->
-    <string name="ids_lbl_permission_information">%1$s est, vous devez avoir accès au stockage en vue d\'ouvrir un fichier PDF pour l\'impression.\n\nPour permettre l\'accès au stockage, [Settings]-> [Application] -> [%1$s] -> [Autorisations] et appuyez sur pour régler.</string>
+    <string name="ids_lbl_permission_information">%1$s est, vous devez avoir accès au stockage en vue d\'ouvrir un fichier PDF/ Image/ Text pour l\'impression.\n\nPour permettre l\'accès au stockage, [Settings]-> [Application] -> [%1$s] -> [Autorisations] et appuyez sur pour régler.</string>
     <string name="ids_lbl_start">Démarrer</string>
     <string name="ids_lbl_search_printers_settings">Chercher Réglages</string>
     <string name="ids_lbl_snmp_community_name">Nom de Communauté SNMP</string>

@@ -31,8 +31,7 @@
            <FrameLayout
                android:id="@+id/homeButton"
                style="@style/HomeMenuButton"
-               android:layout_width="match_parent"
-               android:visibility="gone"> <!-- HIDE_NEW_FEATURES: Home button not needed -->
+               android:layout_width="match_parent">
 
                <TextView
                    style="@style/HomeMenuButtonText"
@@ -51,10 +50,9 @@
                 android:id="@+id/printPreviewButton"
                 style="@style/HomeMenuButton" >
 
-               <!-- HIDE_NEW_FEATURES: temporarily change PrintPreview name to Home -->
                <TextView
                    style="@style/HomeMenuButtonText"
-                   android:text="@string/ids_lbl_home"
+                   android:text="@string/ids_lbl_print_preview"
                    android:textAllCaps="false" />
 
                 <View
