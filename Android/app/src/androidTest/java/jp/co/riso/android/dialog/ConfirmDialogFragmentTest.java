@@ -67,9 +67,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
 
     public void testNewInstance_WithMessage() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
         c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
@@ -84,7 +84,7 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         View msg = dialog.findViewById(android.R.id.message);
         assertNotNull(msg);
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
 
         Button pos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         Button neg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
@@ -92,16 +92,16 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(pos);
         assertNotNull(neg);
 
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON), pos.getText());
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON), neg.getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON), pos.getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON), neg.getText());
         c.dismissAllowingStateLoss();
     }
 
     public void testNewInstance_WithTitle() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(TITLE),
-                SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(TITLE),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
         c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
@@ -116,13 +116,13 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
 
         View msg = dialog.findViewById(android.R.id.message);
         assertNotNull(msg);
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
 
         int titleId = mActivity.getResources().getIdentifier("alertTitle", "id", "android");
         assertFalse(titleId == 0);
         View title = dialog.findViewById(titleId);
         assertNotNull(title);
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(TITLE), ((TextView) title).getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(TITLE), ((TextView) title).getText());
 
         Button pos = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         Button neg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
@@ -130,16 +130,16 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
         assertNotNull(pos);
         assertNotNull(neg);
 
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON), pos.getText());
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON), neg.getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON), pos.getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON), neg.getText());
 
         c.dismissAllowingStateLoss();
     }
 
     public void testOnClick_Positive() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
         c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
@@ -165,9 +165,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnClick_Negative() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
         c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
@@ -194,9 +194,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnClick_PositiveListener() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
 
         MockCallback mockCallback = new MockCallback();
@@ -230,9 +230,9 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnClick_NegativeListener() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
 
         MockCallback mockCallback = new MockCallback();
@@ -266,10 +266,10 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testOnCancel() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(TITLE),
-                SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(TITLE),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
 
         MockCallback mockCallback = new MockCallback();
@@ -300,26 +300,26 @@ public class ConfirmDialogFragmentTest extends ActivityInstrumentationTestCase2<
     }
 
     public void testIsShowing_Null() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
         assertFalse(c.isShowing());
     }
 
     public void testIsShowing_False() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
         waitFewSeconds();
         assertFalse(c.isShowing());
     }
 
     public void testIsShowing_True() {
-        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(POSITIVE_BUTTON),
-                SmartDeviceApp.getAppContext().getResources().getString(NEGATIVE_BUTTON));
+        ConfirmDialogFragment c = ConfirmDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(POSITIVE_BUTTON),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(NEGATIVE_BUTTON));
         assertNotNull(c);
         c.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();

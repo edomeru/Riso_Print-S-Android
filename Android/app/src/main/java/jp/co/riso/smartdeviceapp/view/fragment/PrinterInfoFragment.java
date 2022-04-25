@@ -69,7 +69,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
     
     @Override
     public void initializeFragment(Bundle savedInstanceState) {
-        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.Companion.getAppContext());
         mPauseableHandler = new PauseableHandler(Looper.myLooper(), this);
     }
     
@@ -216,7 +216,7 @@ public class PrinterInfoFragment extends BaseFragment implements OnItemSelectedL
 
                     FragmentTransaction ft = fm.beginTransaction();
                     mPrintSettingsFragment = new PrintSettingsFragment();
-                    ft.replace(R.id.rightLayout, mPrintSettingsFragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
+                    ft.replace(R.id.rightLayout, mPrintSettingsFragment, PrintPreviewFragment.FRAGMENT_TAG_PRINT_SETTINGS);
                     ft.commit();
 
                     mPrintSettingsFragment.setPrinterId(mPrinter.getId());

@@ -30,7 +30,7 @@ public class XmlNodeTest extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), "printsettings.xml");
+        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.Companion.getAppContext(), "printsettings.xml");
 
         Document printSettingsContent = null;
 

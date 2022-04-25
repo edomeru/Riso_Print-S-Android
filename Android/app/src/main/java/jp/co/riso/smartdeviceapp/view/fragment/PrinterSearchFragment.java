@@ -81,7 +81,7 @@ public class PrinterSearchFragment extends BaseFragment implements OnRefreshList
         }
         mPrinterSearchAdapter = new PrinterSearchAdapter(getActivity(), R.layout.printersearch_container_item, mPrinter);
         mPrinterSearchAdapter.setSearchAdapterInterface(this);
-        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.Companion.getAppContext());
         mPrinterManager.setPrinterSearchCallback(this);
     }
     

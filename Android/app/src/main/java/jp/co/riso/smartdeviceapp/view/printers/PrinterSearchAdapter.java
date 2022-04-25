@@ -42,7 +42,7 @@ public class PrinterSearchAdapter extends ArrayAdapter<Printer> implements View.
     public PrinterSearchAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
         this.layoutId = resource;
-        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.Companion.getAppContext());
     }
     
     @Override

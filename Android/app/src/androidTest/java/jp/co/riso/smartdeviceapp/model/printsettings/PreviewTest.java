@@ -31,7 +31,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.Preview.ImpositionOrder;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Orientation;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.OutputTray;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize;
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTray_FT_GL_CEREZONA_S;
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTrayFtGlCerezonaS;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Punch;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Sort;
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.Staple;
@@ -43,7 +43,7 @@ public class PreviewTest extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(),
+        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.Companion.getAppContext(),
                 AppConstants.XML_FILENAME);
 
         Document printSettingsContent = null;
@@ -116,32 +116,32 @@ public class PreviewTest extends AndroidTestCase {
     }
 
     public void testInputTray() {
-        assertEquals(0, Preview.InputTray_FT_GL_CEREZONA_S.AUTO.ordinal());
-        assertEquals(1, InputTray_FT_GL_CEREZONA_S.STANDARD.ordinal());
-        assertEquals(2, InputTray_FT_GL_CEREZONA_S.TRAY1.ordinal());
-        assertEquals(3, InputTray_FT_GL_CEREZONA_S.TRAY2.ordinal());
-        assertEquals(4, InputTray_FT_GL_CEREZONA_S.TRAY3.ordinal());
-        assertEquals(5, Preview.InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER.ordinal());
-        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.AUTO, InputTray_FT_GL_CEREZONA_S.valueOf("AUTO"));
-        assertEquals(InputTray_FT_GL_CEREZONA_S.STANDARD, InputTray_FT_GL_CEREZONA_S.valueOf("STANDARD"));
-        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER, InputTray_FT_GL_CEREZONA_S.valueOf("EXTERNAL_FEEDER"));
+        assertEquals(0, Preview.InputTrayFtGlCerezonaS.AUTO.ordinal());
+        assertEquals(1, InputTrayFtGlCerezonaS.STANDARD.ordinal());
+        assertEquals(2, InputTrayFtGlCerezonaS.TRAY1.ordinal());
+        assertEquals(3, InputTrayFtGlCerezonaS.TRAY2.ordinal());
+        assertEquals(4, InputTrayFtGlCerezonaS.TRAY3.ordinal());
+        assertEquals(5, Preview.InputTrayFtGlCerezonaS.EXTERNAL_FEEDER.ordinal());
+        assertEquals(Preview.InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.valueOf("AUTO"));
+        assertEquals(InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.valueOf("STANDARD"));
+        assertEquals(Preview.InputTrayFtGlCerezonaS.EXTERNAL_FEEDER, InputTrayFtGlCerezonaS.valueOf("EXTERNAL_FEEDER"));
 
-        assertEquals(InputTray_FT_GL_CEREZONA_S.AUTO, Preview.InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[0]);
-        assertEquals(InputTray_FT_GL_CEREZONA_S.STANDARD, InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[1]);
-        assertEquals(InputTray_FT_GL_CEREZONA_S.TRAY1, Preview.InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[2]);
-        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.TRAY2, InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[3]);
-        assertEquals(InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER, Preview.InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[4]);
+        assertEquals(InputTrayFtGlCerezonaS.AUTO, Preview.InputTrayFtGlCerezonaS.valuesFtCerezonaS()[0]);
+        assertEquals(InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.valuesFtCerezonaS()[1]);
+        assertEquals(InputTrayFtGlCerezonaS.TRAY1, Preview.InputTrayFtGlCerezonaS.valuesFtCerezonaS()[2]);
+        assertEquals(Preview.InputTrayFtGlCerezonaS.TRAY2, InputTrayFtGlCerezonaS.valuesFtCerezonaS()[3]);
+        assertEquals(InputTrayFtGlCerezonaS.EXTERNAL_FEEDER, Preview.InputTrayFtGlCerezonaS.valuesFtCerezonaS()[4]);
 
-        assertEquals(InputTray_FT_GL_CEREZONA_S.AUTO, InputTray_FT_GL_CEREZONA_S.valuesGL()[0]);
-        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.STANDARD, Preview.InputTray_FT_GL_CEREZONA_S.valuesGL()[1]);
-        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.TRAY1, InputTray_FT_GL_CEREZONA_S.valuesGL()[2]);
-        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.TRAY2, InputTray_FT_GL_CEREZONA_S.valuesGL()[3]);
-        assertEquals(InputTray_FT_GL_CEREZONA_S.TRAY3, InputTray_FT_GL_CEREZONA_S.valuesGL()[4]);
-        assertEquals(InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER, Preview.InputTray_FT_GL_CEREZONA_S.valuesGL()[5]);
+        assertEquals(InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.valuesGl()[0]);
+        assertEquals(Preview.InputTrayFtGlCerezonaS.STANDARD, Preview.InputTrayFtGlCerezonaS.valuesGl()[1]);
+        assertEquals(Preview.InputTrayFtGlCerezonaS.TRAY1, InputTrayFtGlCerezonaS.valuesGl()[2]);
+        assertEquals(Preview.InputTrayFtGlCerezonaS.TRAY2, InputTrayFtGlCerezonaS.valuesGl()[3]);
+        assertEquals(InputTrayFtGlCerezonaS.TRAY3, InputTrayFtGlCerezonaS.valuesGl()[4]);
+        assertEquals(InputTrayFtGlCerezonaS.EXTERNAL_FEEDER, Preview.InputTrayFtGlCerezonaS.valuesGl()[5]);
 
-        assertEquals(InputTray_FT_GL_CEREZONA_S.AUTO, Preview.InputTray_FT_GL_CEREZONA_S.valueOf("AUTO"));
-        assertEquals(Preview.InputTray_FT_GL_CEREZONA_S.STANDARD, InputTray_FT_GL_CEREZONA_S.valueOf("STANDARD"));
-        assertEquals(InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER, InputTray_FT_GL_CEREZONA_S.valueOf("EXTERNAL_FEEDER"));
+        assertEquals(InputTrayFtGlCerezonaS.AUTO, Preview.InputTrayFtGlCerezonaS.valueOf("AUTO"));
+        assertEquals(Preview.InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.valueOf("STANDARD"));
+        assertEquals(InputTrayFtGlCerezonaS.EXTERNAL_FEEDER, InputTrayFtGlCerezonaS.valueOf("EXTERNAL_FEEDER"));
     }
 
     public void testImpositionValueOf() {

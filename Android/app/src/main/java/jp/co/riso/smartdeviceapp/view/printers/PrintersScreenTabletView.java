@@ -354,7 +354,7 @@ public class PrintersScreenTabletView extends ViewGroup implements View.OnClickL
      * @param context Application context
      */
     private void init(Context context) {
-        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.Companion.getAppContext());
         mHandler = new Handler(Looper.myLooper(), this);
     }
     

@@ -83,7 +83,7 @@ public class SplashActivityTest {
     }
 
     private boolean isSecurePrintReset() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
 
         return prefs.getBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true) == AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT
                 && prefs.getString(AppConstants.PREF_KEY_AUTH_PIN_CODE, "").equals(AppConstants.PREF_DEFAULT_AUTH_PIN_CODE);
