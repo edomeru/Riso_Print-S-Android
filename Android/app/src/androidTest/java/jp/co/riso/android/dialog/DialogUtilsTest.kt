@@ -2,7 +2,6 @@ package jp.co.riso.android.dialog
 
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.commitNow
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import jp.co.riso.android.dialog.DialogUtils.dismissDialog
@@ -20,13 +19,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class DialogUtilsTest {
 
-    private var _activity: MainActivity? = null
-
-    @Before
-    fun setUp() {
-       //wakeUpScreen()
-    }
-
     @Test
     fun testConstructor() {
         TestCase.assertNotNull(DialogUtils)
@@ -38,15 +30,7 @@ class DialogUtilsTest {
             scenario.onActivity { activity: MainActivity ->
 
                 // wake up screen
-                activity.runOnUiThread {
-                    activity.window.addFlags(
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                    )
-                }
-                waitFewSeconds()
+                wakeUpScreen(activity)
 
                 val d: InfoDialogFragment = newInstance(
                     appContext!!.resources.getString(MSG),
@@ -71,15 +55,7 @@ class DialogUtilsTest {
             scenario.onActivity { activity: MainActivity ->
 
                 // wake up screen
-                activity.runOnUiThread {
-                    activity.window.addFlags(
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                    )
-                }
-                waitFewSeconds()
+                wakeUpScreen(activity)
 
                 val d: InfoDialogFragment = newInstance(
                     appContext!!.resources.getString(MSG),
@@ -115,20 +91,16 @@ class DialogUtilsTest {
         }
     }
 
-    private fun wakeUpScreen() {
-        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
-            scenario.onActivity { activity: MainActivity ->
-                activity.runOnUiThread {
-                    activity.window.addFlags(
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                    )
-                }
-                waitFewSeconds()
-            }
+    private fun wakeUpScreen(activity: MainActivity) {
+        activity.runOnUiThread {
+            activity.window.addFlags(
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+            )
         }
+        waitFewSeconds()
     }
 
     companion object {
