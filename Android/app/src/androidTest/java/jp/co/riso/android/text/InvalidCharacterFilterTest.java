@@ -44,7 +44,7 @@ public class InvalidCharacterFilterTest extends TestCase {
     // ================================================================================
 
     public void testFilter() {
-        EditText editText = new EditText(SmartDeviceApp.getAppContext());
+        EditText editText = new EditText(SmartDeviceApp.Companion.getAppContext());
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(8),
                 new InvalidCharacterFilter("abcd")

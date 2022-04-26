@@ -13,10 +13,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.Build;
-import androidx.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.preference.PreferenceManager;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
@@ -571,7 +573,7 @@ public class PrinterManager implements SNMPManagerCallback {
                 return false;
             }
             if (NetUtils.isIPv6Address(ipAddress)) {
-                return NetUtils.connectToIpv6Address(ipAddress, null);
+                return NetUtils.connectToIpv6Address(ipAddress);
             } else {
                 // RM#901 use socket connect to check printer online status
                 return NetUtils.connectToIpv4Address(ipAddress);
@@ -740,7 +742,7 @@ public class PrinterManager implements SNMPManagerCallback {
     }
 
     public String getSnmpCommunityNameFromSharedPrefs() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
 
         return sharedPreferences.getString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME);
     }
@@ -891,6 +893,7 @@ public class PrinterManager implements SNMPManagerCallback {
             mIpAddress = ipAddress;
         }
         
+        @Nullable
         @Override
         protected Boolean doInBackground(Object... arg) {
             if (mIpAddress.isEmpty()) {
@@ -904,7 +907,7 @@ public class PrinterManager implements SNMPManagerCallback {
             super.onPostExecute(result);
 
             final boolean isOnline = result;
-            final Activity activity = SmartDeviceApp.getActivity();
+            final Activity activity = SmartDeviceApp.Companion.getActivity();
             activity.runOnUiThread((new Runnable() {
                 @Override
                 public void run() {

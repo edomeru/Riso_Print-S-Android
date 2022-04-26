@@ -31,7 +31,7 @@ public class GroupTest extends AndroidTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         mGroupListMap = new HashMap<>();
-        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), "printsettings.xml");
+        String xmlString = AppUtils.getFileContentsFromAssets(SmartDeviceApp.Companion.getAppContext(), "printsettings.xml");
 
         Document printSettingsContent = null;
 

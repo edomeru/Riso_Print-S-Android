@@ -57,7 +57,7 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
                 fail();
             }
 
-            mDstFile = new File(SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs") + "/"
+            mDstFile = new File(SmartDeviceApp.Companion.getAppContext().getExternalFilesDir("pdfs") + "/"
                     + TEST_DST_FILE);
             if (mDstFile == null) {
                 fail();
@@ -98,7 +98,7 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
                 fail();
             }
 
-            assertEquals(FileUtils.getFileName(SmartDeviceApp.getAppContext(), Uri.fromFile(mSrcFile), true), TEST_SRC_FILE);
+            assertEquals(FileUtils.getFileName(SmartDeviceApp.Companion.getAppContext(), Uri.fromFile(mSrcFile), true), TEST_SRC_FILE);
         } catch (Exception e) {
             fail();
         }
@@ -112,7 +112,7 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
         try {
             String pdfPath = getAssetPath(TEST_SRC_FILE);
             mSrcFile = new File(pdfPath);
-            assertEquals(FileUtils.getFileSize(SmartDeviceApp.getAppContext(), Uri.fromFile(mSrcFile)), mSrcFile.length());
+            assertEquals(FileUtils.getFileSize(SmartDeviceApp.Companion.getAppContext(), Uri.fromFile(mSrcFile)), mSrcFile.length());
         } catch (Exception e) {
             fail();
         }
@@ -126,7 +126,7 @@ public class FileUtilsTest extends ActivityInstrumentationTestCase2<MainActivity
         try {
             String pdfPath = getAssetPath(TEST_SRC_FILE);
             mSrcFile = new File(pdfPath);
-            assertEquals(FileUtils.getMimeType(SmartDeviceApp.getAppContext(), Uri.fromFile(mSrcFile)), "application/pdf");
+            assertEquals(FileUtils.getMimeType(SmartDeviceApp.Companion.getAppContext(), Uri.fromFile(mSrcFile)), "application/pdf");
         } catch (Exception e) {
             fail();
         }

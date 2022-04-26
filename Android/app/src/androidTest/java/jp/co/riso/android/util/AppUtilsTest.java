@@ -677,7 +677,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     //================================================================================
 
     public void testGetAuthenticationString_Valid() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         SharedPreferences.Editor editor = prefs.edit();
         
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, false);
@@ -699,7 +699,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     }
     
     public void testGetAuthenticationString_Invalid() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         SharedPreferences.Editor editor = prefs.edit();
         
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true);
@@ -729,7 +729,7 @@ public class AppUtilsTest extends ActivityInstrumentationTestCase2<MainActivity>
     //================================================================================
 
     public void testGetOwnerName_Valid() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         SharedPreferences.Editor editor = prefs.edit();
         String expected = "testLogin";
         editor.clear();

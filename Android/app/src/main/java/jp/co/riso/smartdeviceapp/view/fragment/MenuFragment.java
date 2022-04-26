@@ -78,7 +78,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
             boolean isOpenIn = (activity.getIntent() != null && (activity.getIntent().getData() != null || activity.getIntent().getClipData() != null));
-            boolean isInSandbox = (PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext()) != null);
+            boolean isInSandbox = (PDFFileManager.getSandboxPDFName(SmartDeviceApp.Companion.getAppContext()) != null);
             hasPDFfile = (isInSandbox || isOpenIn);
         }
     }
