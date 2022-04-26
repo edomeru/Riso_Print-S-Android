@@ -47,9 +47,9 @@ public class MenuFragmentTest extends BaseActivityTestUtil {
     public void testNewInstance() {
         assertNotNull(mMenuFragment);
 
-        // TODO: when new features are returned, Home screen is default
-        assertTrue(getCurrentScreen() instanceof PrintPreviewFragment);
-        assertTrue(isSelectedButtonCorrect(R.id.printPreviewButton));
+        // HIDE_NEW_FEATURES when new features are returned, Home screen is default, else Print Preview screen
+        assertTrue(getCurrentScreen() instanceof HomeFragment);
+        assertTrue(isSelectedButtonCorrect(R.id.homeButton));
     }
 
     @Test
@@ -94,15 +94,14 @@ public class MenuFragmentTest extends BaseActivityTestUtil {
         assertTrue(getCurrentScreen() instanceof LegalFragment);
         assertTrue(isSelectedButtonCorrect(R.id.legalButton));
 
-        // while new features are hidden Home == PrintPreview
-        testClick(R.id.printPreviewButton);
-        assertTrue(getCurrentScreen() instanceof PrintPreviewFragment);
-        assertTrue(isSelectedButtonCorrect(R.id.printPreviewButton));
+        // HIDE_NEW_FEATURES when new features are hidden replace Home with PrintPreview
+        testClick(R.id.homeButton);
+        assertTrue(getCurrentScreen() instanceof HomeFragment);
+        assertTrue(isSelectedButtonCorrect(R.id.homeButton));
 
-        testClick(R.id.printPreviewButton);
-        assertTrue(getCurrentScreen() instanceof PrintPreviewFragment);
-        assertTrue(isSelectedButtonCorrect(R.id.printPreviewButton));
+        testClick(R.id.homeButton);
+        assertTrue(getCurrentScreen() instanceof HomeFragment);
+        assertTrue(isSelectedButtonCorrect(R.id.homeButton));
 
-        // TODO: when new features are returned, add testing for Home screen
     }
 }
