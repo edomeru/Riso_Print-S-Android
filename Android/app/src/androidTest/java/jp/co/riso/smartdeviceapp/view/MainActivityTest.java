@@ -28,9 +28,9 @@ public class MainActivityTest extends BaseActivityTestUtil {
 
     // fragments for testing calls on right and main layout
     private void initLayoutFragments() {
-        final FragmentManager fm = mActivity.getSupportFragmentManager();
+        final FragmentManager fm = mainActivity.getSupportFragmentManager();
 
-        mActivity.runOnUiThread(() -> {
+        mainActivity.runOnUiThread(() -> {
             fm.beginTransaction().add(R.id.rightLayout, new TestFragment()).commit();
             fm.executePendingTransactions();
         });
@@ -40,7 +40,7 @@ public class MainActivityTest extends BaseActivityTestUtil {
         assertTrue(rightFragment instanceof TestFragment);
         mTestRightFragment = (TestFragment) rightFragment;
 
-        mActivity.runOnUiThread(() -> {
+        mainActivity.runOnUiThread(() -> {
             fm.beginTransaction().add(R.id.mainLayout, new TestFragment()).commit();
             fm.executePendingTransactions();
         });
@@ -53,61 +53,61 @@ public class MainActivityTest extends BaseActivityTestUtil {
 
     @Test
     public void testOpenClose_LeftDrawer() {
-        mActivity.openDrawer(Gravity.LEFT);
+        mainActivity.openDrawer(Gravity.LEFT);
         waitForDrawer();
-        assertTrue(mActivity.isDrawerOpen(Gravity.LEFT));
+        assertTrue(mainActivity.isDrawerOpen(Gravity.LEFT));
 
-        mActivity.closeDrawers();
+        mainActivity.closeDrawers();
         waitForDrawer();
-        assertFalse(mActivity.isDrawerOpen(Gravity.LEFT));
+        assertFalse(mainActivity.isDrawerOpen(Gravity.LEFT));
     }
 
     @Test
     public void testOpenClose_RightDrawer() {
         initLayoutFragments();
-        mActivity.openDrawer(Gravity.RIGHT);
+        mainActivity.openDrawer(Gravity.RIGHT);
         waitForDrawer();
-        assertTrue(mActivity.isDrawerOpen(Gravity.RIGHT));
+        assertTrue(mainActivity.isDrawerOpen(Gravity.RIGHT));
         assertTrue(mTestMainFragment.onPauseCalled);
         assertTrue(mTestRightFragment.onResumeCalled);
 
-        mActivity.closeDrawers();
+        mainActivity.closeDrawers();
         waitForDrawer();
-        assertFalse(mActivity.isDrawerOpen(Gravity.RIGHT));
+        assertFalse(mainActivity.isDrawerOpen(Gravity.RIGHT));
         assertTrue(mTestMainFragment.onResumeCalled);
         assertTrue(mTestRightFragment.onPauseCalled);
     }
 
     @Test
     public void testOnBackPressed() {
-        mActivity.openDrawer(Gravity.LEFT);
+        mainActivity.openDrawer(Gravity.LEFT);
         waitForDrawer();
-        assertTrue(mActivity.isDrawerOpen(Gravity.LEFT));
+        assertTrue(mainActivity.isDrawerOpen(Gravity.LEFT));
 
-        mActivity.onBackPressed();
+        mainActivity.onBackPressed();
         waitForDrawer();
-        assertFalse(mActivity.isDrawerOpen(Gravity.LEFT));
+        assertFalse(mainActivity.isDrawerOpen(Gravity.LEFT));
 
         initLayoutFragments();
-        mActivity.openDrawer(Gravity.RIGHT);
+        mainActivity.openDrawer(Gravity.RIGHT);
         waitForDrawer();
-        assertTrue(mActivity.isDrawerOpen(Gravity.RIGHT));
+        assertTrue(mainActivity.isDrawerOpen(Gravity.RIGHT));
 
-        mActivity.onBackPressed();
+        mainActivity.onBackPressed();
         waitForDrawer();
-        assertFalse(mActivity.isDrawerOpen(Gravity.RIGHT));
+        assertFalse(mainActivity.isDrawerOpen(Gravity.RIGHT));
     }
 
     @Test
     public void testOnSaveInstanceState_LeftDrawerOpen() {
-        mActivity.openDrawer(Gravity.LEFT);
+        mainActivity.openDrawer(Gravity.LEFT);
         waitForDrawer();
 
         Bundle testBundle = new Bundle();
-        mActivity.runOnUiThread(new Runnable() {
+        mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mActivity.onSaveInstanceState(testBundle);
+                mainActivity.onSaveInstanceState(testBundle);
                 assertTrue(testBundle.getBoolean(MainActivity.KEY_LEFT_OPEN));
                 assertFalse(testBundle.getBoolean(MainActivity.KEY_RIGHT_OPEN));
                 assertFalse(testBundle.getBoolean(MainActivity.KEY_RESIZE_VIEW));
@@ -118,14 +118,14 @@ public class MainActivityTest extends BaseActivityTestUtil {
     @Test
     public void testOnSaveInstanceState_RightDrawerOpen() {
         initLayoutFragments();
-        mActivity.openDrawer(Gravity.RIGHT);
+        mainActivity.openDrawer(Gravity.RIGHT);
         waitForDrawer();
 
         Bundle testBundle = new Bundle();
-        mActivity.runOnUiThread(new Runnable() {
+        mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mActivity.onSaveInstanceState(testBundle);
+                mainActivity.onSaveInstanceState(testBundle);
                 assertTrue(testBundle.getBoolean(MainActivity.KEY_RIGHT_OPEN));
                 assertFalse(testBundle.getBoolean(MainActivity.KEY_LEFT_OPEN));
                 assertFalse(testBundle.getBoolean(MainActivity.KEY_RESIZE_VIEW));
@@ -136,14 +136,14 @@ public class MainActivityTest extends BaseActivityTestUtil {
     @Test
     public void testOnSaveInstanceState_ResizeView() {
         initLayoutFragments();
-        mActivity.openDrawer(Gravity.RIGHT, true);
+        mainActivity.openDrawer(Gravity.RIGHT, true);
         waitForDrawer();
 
         Bundle testBundle = new Bundle();
-        mActivity.runOnUiThread(new Runnable() {
+        mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mActivity.onSaveInstanceState(testBundle);
+                mainActivity.onSaveInstanceState(testBundle);
                 assertFalse(testBundle.getBoolean(MainActivity.KEY_LEFT_OPEN));
                 assertTrue(testBundle.getBoolean(MainActivity.KEY_RIGHT_OPEN));
                 assertTrue(testBundle.getBoolean(MainActivity.KEY_RESIZE_VIEW));
@@ -155,15 +155,15 @@ public class MainActivityTest extends BaseActivityTestUtil {
     public void testStoreMessage() {
         Message msg = new Message();
         msg.what = 0; //MSG_OPEN_DRAWER
-        assertTrue(mActivity.storeMessage(msg));
+        assertTrue(mainActivity.storeMessage(msg));
         msg.what = 1; //MSG_CLOSE_DRAWER
-        assertTrue(mActivity.storeMessage(msg));
+        assertTrue(mainActivity.storeMessage(msg));
         msg.what = 2; //MSG_CLEAR_ICON_STATES
-        assertTrue(mActivity.storeMessage(msg));
+        assertTrue(mainActivity.storeMessage(msg));
         msg.what = -1; //others
-        assertFalse(mActivity.storeMessage(msg));
+        assertFalse(mainActivity.storeMessage(msg));
         msg.what = 3; //others
-        assertFalse(mActivity.storeMessage(msg));
+        assertFalse(mainActivity.storeMessage(msg));
     }
 
      public static class TestFragment extends HomeFragment {
