@@ -10,7 +10,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
@@ -19,9 +18,7 @@ import jp.co.riso.smartprint.R
 import junit.framework.TestCase.*
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
 
     @Before
@@ -338,33 +335,6 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
         mainActivity!!.runOnUiThread { button.callOnClick() }
         waitFewSeconds()
     }
-
-    //================================================================================
-    // Private methods
-    //================================================================================
-/*
-    // wait some seconds so that you can see the change on emulator/device.
-    private fun waitFewSeconds() {
-        try {
-            Thread.sleep(2000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-    }
-
-    private fun wakeUpScreen() {
-        mainActivity!!.runOnUiThread {
-            mainActivity!!.window.addFlags(
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-            )
-        }
-        waitFewSeconds()
-    }
-*/
 
     //================================================================================
     // Internal Classes
