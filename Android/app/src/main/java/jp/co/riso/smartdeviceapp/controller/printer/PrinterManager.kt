@@ -280,17 +280,17 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                         cursor,
                         KeyConstants.KEY_SQL_PRINTER_PUNCH0
                     )
-                    printer._config!!.isLprAvailable = lprAvailable
-                    printer._config!!.isRawAvailable = rawAvailable
-                    printer._config!!.isBookletFinishingAvailable = bookletFinishingAvailable
-                    printer._config!!.isStaplerAvailable = staplerAvailable
-                    printer._config!!.isPunch3Available = punch3Available
-                    printer._config!!.isPunch4Available = punch4Available
-                    printer._config!!.isTrayFaceDownAvailable = trayFaceDownAvailable
-                    printer._config!!.isTrayTopAvailable = trayTopAvailable
-                    printer._config!!.isTrayStackAvailable = trayStackAvailable
-                    printer._config!!.isExternalFeederAvailable = externalFeederAvailable
-                    printer._config!!.isPunch0Available = punch0Available
+                    printer.config!!.isLprAvailable = lprAvailable
+                    printer.config!!.isRawAvailable = rawAvailable
+                    printer.config!!.isBookletFinishingAvailable = bookletFinishingAvailable
+                    printer.config!!.isStaplerAvailable = staplerAvailable
+                    printer.config!!.isPunch3Available = punch3Available
+                    printer.config!!.isPunch4Available = punch4Available
+                    printer.config!!.isTrayFaceDownAvailable = trayFaceDownAvailable
+                    printer.config!!.isTrayTopAvailable = trayTopAvailable
+                    printer.config!!.isTrayStackAvailable = trayStackAvailable
+                    printer.config!!.isExternalFeederAvailable = externalFeederAvailable
+                    printer.config!!.isPunch0Available = punch0Available
                     mPrinterList.add(printer)
                 } while (cursor.moveToNext())
             }
@@ -638,47 +638,47 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.portSetting!!.ordinal)
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_LPR,
-            if (printer._config!!.isLprAvailable) 1 else 0
+            if (printer.config!!.isLprAvailable) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_RAW,
-            if (printer._config!!.isRawAvailable) 1 else 0
+            if (printer.config!!.isRawAvailable) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_BOOKLET_FINISHING,
-            if (printer._config!!.isBookletFinishingAvailable) 1 else 0
+            if (printer.config!!.isBookletFinishingAvailable) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_STAPLER,
-            if (printer._config!!.isStaplerAvailable) 1 else 0
+            if (printer.config!!.isStaplerAvailable) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_PUNCH3,
-            if (printer._config!!.isPunch3Available) 1 else 0
+            if (printer.config!!.isPunch3Available) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_PUNCH4,
-            if (printer._config!!.isPunch4Available) 1 else 0
+            if (printer.config!!.isPunch4Available) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_TRAYFACEDOWN,
-            if (printer._config!!.isTrayFaceDownAvailable) 1 else 0
+            if (printer.config!!.isTrayFaceDownAvailable) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_TRAYTOP,
-            if (printer._config!!.isTrayTopAvailable) 1 else 0
+            if (printer.config!!.isTrayTopAvailable) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_TRAYSTACK,
-            if (printer._config!!.isTrayStackAvailable) 1 else 0
+            if (printer.config!!.isTrayStackAvailable) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_EXTERNALFEEDER,
-            if (printer._config!!.isExternalFeederAvailable) 1 else 0
+            if (printer.config!!.isExternalFeederAvailable) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_PUNCH0,
-            if (printer._config!!.isPunch0Available) 1 else 0
+            if (printer.config!!.isPunch0Available) 1 else 0
         )
         if (!mDatabaseManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {
             mDatabaseManager.close()
@@ -919,33 +919,33 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
             }
             for (i in capabilities.indices) {
                 when (i) {
-                    SNMPManager.SNMP_CAPABILITY_BOOKLET_FINISHING -> printer._config!!.isBookletFinishingAvailable =
+                    SNMPManager.SNMP_CAPABILITY_BOOKLET_FINISHING -> printer.config!!.isBookletFinishingAvailable =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_STAPLER -> printer._config!!.isStaplerAvailable =
+                    SNMPManager.SNMP_CAPABILITY_STAPLER -> printer.config!!.isStaplerAvailable =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_FINISH_2_3 -> printer._config!!.isPunch3Available =
+                    SNMPManager.SNMP_CAPABILITY_FINISH_2_3 -> printer.config!!.isPunch3Available =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_FINISH_2_4 -> printer._config!!.isPunch4Available =
+                    SNMPManager.SNMP_CAPABILITY_FINISH_2_4 -> printer.config!!.isPunch4Available =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_TRAY_FACE_DOWN -> printer._config!!.isTrayFaceDownAvailable =
+                    SNMPManager.SNMP_CAPABILITY_TRAY_FACE_DOWN -> printer.config!!.isTrayFaceDownAvailable =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_TRAY_TOP -> printer._config!!.isTrayTopAvailable =
+                    SNMPManager.SNMP_CAPABILITY_TRAY_TOP -> printer.config!!.isTrayTopAvailable =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_TRAY_STACK -> printer._config!!.isTrayStackAvailable =
+                    SNMPManager.SNMP_CAPABILITY_TRAY_STACK -> printer.config!!.isTrayStackAvailable =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_LPR -> printer._config!!.isLprAvailable =
+                    SNMPManager.SNMP_CAPABILITY_LPR -> printer.config!!.isLprAvailable =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_RAW -> printer._config!!.isRawAvailable =
+                    SNMPManager.SNMP_CAPABILITY_RAW -> printer.config!!.isRawAvailable =
                         capabilities[i]
                     SNMPManager.SNMP_CAPABILITY_EXTERNAL_FEEDER -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGL) {
-                        printer._config!!.isExternalFeederAvailable = capabilities[i]
+                        printer.config!!.isExternalFeederAvailable = capabilities[i]
                     } else {
-                        printer._config!!.isExternalFeederAvailable = false
+                        printer.config!!.isExternalFeederAvailable = false
                     }
                     SNMPManager.SNMP_CAPABILITY_FINISH_0 -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGL) {
-                        printer._config!!.isPunch0Available = capabilities[i]
+                        printer.config!!.isPunch0Available = capabilities[i]
                     } else {
-                        printer._config!!.isPunch0Available = false
+                        printer.config!!.isPunch0Available = false
                     }
                 }
             }

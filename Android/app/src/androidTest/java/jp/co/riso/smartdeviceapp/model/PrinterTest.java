@@ -48,7 +48,7 @@ public class PrinterTest extends TestCase {
         Bundle bundlePut = new Bundle();
 
         // Null config
-        printer.set_config(null);
+        printer.setConfig(null);
         // Parcel in
         bundlePut.putParcelable(PRINTER_TAG, printer);
         // New Array
@@ -316,7 +316,7 @@ public class PrinterTest extends TestCase {
 
     public void testGetConfig() {
         Printer printer = new Printer("", "");
-        Config config = printer.get_config();
+        Config config = printer.getConfig();
 
         assertNotNull(config);
     }
@@ -329,7 +329,7 @@ public class PrinterTest extends TestCase {
         Printer printer = new Printer("", "");
         Config config = printer.new Config();
 
-        printer.set_config(config);
+        printer.setConfig(config);
         assertNotNull(config);
     }
 
@@ -337,7 +337,7 @@ public class PrinterTest extends TestCase {
         try {
             Printer printer = new Printer("", "");
 
-            printer.set_config(null);
+            printer.setConfig(null);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -358,17 +358,17 @@ public class PrinterTest extends TestCase {
 
     public void testConfig() {
         Printer printer = new Printer("", "");
-        printer.get_config().isLprAvailable();
-        printer.get_config().isRawAvailable();
-        printer.get_config().isBookletFinishingAvailable();
-        printer.get_config().isStaplerAvailable();
-        printer.get_config().isPunch3Available();
-        printer.get_config().isPunch4Available();
-        printer.get_config().isTrayFaceDownAvailable();
-        printer.get_config().isTrayTopAvailable();
-        printer.get_config().isTrayStackAvailable();
-        printer.get_config().isTrayTopAvailable();
-        printer.get_config().isExternalFeederAvailable();
-        printer.get_config().isPunch0Available();
+        printer.getConfig().isLprAvailable();
+        printer.getConfig().isRawAvailable();
+        printer.getConfig().isBookletFinishingAvailable();
+        printer.getConfig().isStaplerAvailable();
+        printer.getConfig().isPunch3Available();
+        printer.getConfig().isPunch4Available();
+        printer.getConfig().isTrayFaceDownAvailable();
+        printer.getConfig().isTrayTopAvailable();
+        printer.getConfig().isTrayStackAvailable();
+        printer.getConfig().isTrayTopAvailable();
+        printer.getConfig().isExternalFeederAvailable();
+        printer.getConfig().isPunch0Available();
     }
 }

@@ -587,7 +587,7 @@ public class PrintPreviewFragment extends BaseFragment implements Callback, PDFF
 
         for (Printer printer : mList) {
             if (printer.getId() == mPrinterId) {
-                return printer.get_config().isPunch3Available();
+                return printer.getConfig().isPunch3Available();
             }
         }
 

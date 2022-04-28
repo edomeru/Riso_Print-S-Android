@@ -75,7 +75,7 @@ class Printer : Parcelable {
      *
      * @param config The printer device configuration
      */
-    var _config: Config? = null
+    var config: Config? = null
 
     /**
      * @brief Returns the printer's printer type .
@@ -112,7 +112,7 @@ class Printer : Parcelable {
         this.name = name
         this.ipAddress = ipAddress
         portSetting = PortSetting.LPR
-        _config = Config()
+        config = Config()
         initializePrinterType()
     }
 
@@ -124,8 +124,8 @@ class Printer : Parcelable {
      * @param in Parcel containing the printer information.
      */
     constructor(`in`: Parcel) {
-        if (_config == null) {
-            _config = Config()
+        if (config == null) {
+            config = Config()
         }
         name = `in`.readString()
         ipAddress = `in`.readString()
@@ -134,7 +134,7 @@ class Printer : Parcelable {
             1 -> portSetting = PortSetting.RAW
             else -> portSetting = PortSetting.LPR
         }
-        _config!!.readFromParcel(`in`)
+        config!!.readFromParcel(`in`)
         initializePrinterType()
     }
 
@@ -143,14 +143,14 @@ class Printer : Parcelable {
     }
 
     override fun writeToParcel(out: Parcel, flags: Int) {
-        if (_config == null) {
-            _config = Config()
+        if (config == null) {
+            config = Config()
         }
         out.writeString(name)
         out.writeString(ipAddress)
         out.writeInt(id)
         out.writeInt(portSetting!!.ordinal)
-        _config!!.writeToParcel(out)
+        config!!.writeToParcel(out)
     }
     // ================================================================================
     // Getter/Setters
@@ -389,7 +389,7 @@ class Printer : Parcelable {
          * @param in Source parcel where to retrieve the data
          */
         fun readFromParcel(`in`: Parcel) {
-            val config = booleanArrayOf(
+            val bConfig = booleanArrayOf(
                 isLprAvailable,
                 isRawAvailable,
                 isBookletFinishingAvailable,
@@ -402,18 +402,18 @@ class Printer : Parcelable {
                 isExternalFeederAvailable,
                 isPunch0Available
             )
-            `in`.readBooleanArray(config)
-            _config?.isLprAvailable = config[0]
-            _config?.isRawAvailable = config[1]
-            _config?.isBookletFinishingAvailable = config[2]
-            _config?.isStaplerAvailable = config[3]
-            _config?.isPunch3Available = config[4]
-            _config?.isPunch4Available = config[5]
-            _config?.isTrayFaceDownAvailable = config[6]
-            _config?.isTrayTopAvailable = config[7]
-            _config?.isTrayStackAvailable = config[8]
-            _config?.isExternalFeederAvailable = config[9]
-            _config?.isPunch0Available = config[10]
+            `in`.readBooleanArray(bConfig)
+            config?.isLprAvailable = bConfig[0]
+            config?.isRawAvailable = bConfig[1]
+            config?.isBookletFinishingAvailable = bConfig[2]
+            config?.isStaplerAvailable = bConfig[3]
+            config?.isPunch3Available = bConfig[4]
+            config?.isPunch4Available = bConfig[5]
+            config?.isTrayFaceDownAvailable = bConfig[6]
+            config?.isTrayTopAvailable = bConfig[7]
+            config?.isTrayStackAvailable = bConfig[8]
+            config?.isExternalFeederAvailable = bConfig[9]
+            config?.isPunch0Available = bConfig[10]
         }
     }
 

@@ -657,29 +657,29 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             }
             
             //Enabled Capabilities
-            printer.get_config().setLprAvailable(true);
-            printer.get_config().setRawAvailable(true);
-            printer.get_config().setBookletFinishingAvailable(true);
-            printer.get_config().setStaplerAvailable(true);
-            printer.get_config().setPunch3Available(true);
-            printer.get_config().setPunch4Available(true);
-            printer.get_config().setTrayFaceDownAvailable(true);
-            printer.get_config().setTrayTopAvailable(true);
-            printer.get_config().setTrayStackAvailable(true);
+            printer.getConfig().setLprAvailable(true);
+            printer.getConfig().setRawAvailable(true);
+            printer.getConfig().setBookletFinishingAvailable(true);
+            printer.getConfig().setStaplerAvailable(true);
+            printer.getConfig().setPunch3Available(true);
+            printer.getConfig().setPunch4Available(true);
+            printer.getConfig().setTrayFaceDownAvailable(true);
+            printer.getConfig().setTrayTopAvailable(true);
+            printer.getConfig().setTrayStackAvailable(true);
             
             boolean ret = mPrinterManager.savePrinterToDB(printer, true);
             assertEquals(true, ret);
             
             //Disabled Capabilities
-            printer.get_config().setLprAvailable(false);
-            printer.get_config().setRawAvailable(false);
-            printer.get_config().setBookletFinishingAvailable(false);
-            printer.get_config().setStaplerAvailable(false);
-            printer.get_config().setPunch3Available(true);
-            printer.get_config().setPunch4Available(false);
-            printer.get_config().setTrayFaceDownAvailable(false);
-            printer.get_config().setTrayTopAvailable(false);
-            printer.get_config().setTrayStackAvailable(false);
+            printer.getConfig().setLprAvailable(false);
+            printer.getConfig().setRawAvailable(false);
+            printer.getConfig().setBookletFinishingAvailable(false);
+            printer.getConfig().setStaplerAvailable(false);
+            printer.getConfig().setPunch3Available(true);
+            printer.getConfig().setPunch4Available(false);
+            printer.getConfig().setTrayFaceDownAvailable(false);
+            printer.getConfig().setTrayTopAvailable(false);
+            printer.getConfig().setTrayStackAvailable(false);
             
             mPrinterManager.removePrinter(printer);
         } catch (Exception e) {
@@ -1087,17 +1087,17 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         Printer target = new Printer("test GL", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);
         
-        assertTrue(target.get_config().isBookletFinishingAvailable());
-        assertTrue(target.get_config().isStaplerAvailable());
-        assertTrue(target.get_config().isPunch3Available());
-        assertTrue(target.get_config().isPunch4Available());
-        assertTrue(target.get_config().isPunch0Available());
-        assertTrue(target.get_config().isExternalFeederAvailable());
-        assertTrue(target.get_config().isTrayFaceDownAvailable());
-        assertTrue(target.get_config().isTrayStackAvailable());
-        assertTrue(target.get_config().isTrayTopAvailable());
-        assertTrue(target.get_config().isLprAvailable());
-        assertTrue(target.get_config().isRawAvailable());
+        assertTrue(target.getConfig().isBookletFinishingAvailable());
+        assertTrue(target.getConfig().isStaplerAvailable());
+        assertTrue(target.getConfig().isPunch3Available());
+        assertTrue(target.getConfig().isPunch4Available());
+        assertTrue(target.getConfig().isPunch0Available());
+        assertTrue(target.getConfig().isExternalFeederAvailable());
+        assertTrue(target.getConfig().isTrayFaceDownAvailable());
+        assertTrue(target.getConfig().isTrayStackAvailable());
+        assertTrue(target.getConfig().isTrayTopAvailable());
+        assertTrue(target.getConfig().isLprAvailable());
+        assertTrue(target.getConfig().isRawAvailable());
     }
     
     public void testSetupPrinterConfig_allFalse() {
@@ -1107,17 +1107,17 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         Printer target = new Printer("test GL", "ip");
         PrinterManager.setupPrinterConfig(target, capabilities);
         
-        assertFalse(target.get_config().isBookletFinishingAvailable());
-        assertFalse(target.get_config().isStaplerAvailable());
-        assertFalse(target.get_config().isPunch3Available());
-        assertFalse(target.get_config().isPunch4Available());
-        assertFalse(target.get_config().isPunch0Available());
-        assertFalse(target.get_config().isExternalFeederAvailable());
-        assertFalse(target.get_config().isTrayFaceDownAvailable());
-        assertFalse(target.get_config().isTrayStackAvailable());
-        assertFalse(target.get_config().isTrayTopAvailable());
-        assertFalse(target.get_config().isLprAvailable());
-        assertFalse(target.get_config().isRawAvailable());
+        assertFalse(target.getConfig().isBookletFinishingAvailable());
+        assertFalse(target.getConfig().isStaplerAvailable());
+        assertFalse(target.getConfig().isPunch3Available());
+        assertFalse(target.getConfig().isPunch4Available());
+        assertFalse(target.getConfig().isPunch0Available());
+        assertFalse(target.getConfig().isExternalFeederAvailable());
+        assertFalse(target.getConfig().isTrayFaceDownAvailable());
+        assertFalse(target.getConfig().isTrayStackAvailable());
+        assertFalse(target.getConfig().isTrayTopAvailable());
+        assertFalse(target.getConfig().isLprAvailable());
+        assertFalse(target.getConfig().isRawAvailable());
     }
     
     public void testSetupPrinterConfig_Incomplete() {
@@ -1134,15 +1134,15 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
         Printer defaultPrinter = new Printer("test", "ip");
         
-        assertFalse(target.get_config().isBookletFinishingAvailable());
-        assertEquals(defaultPrinter.get_config().isStaplerAvailable(), target.get_config().isStaplerAvailable());
-        assertEquals(defaultPrinter.get_config().isPunch3Available(), target.get_config().isPunch3Available());
-        assertEquals(defaultPrinter.get_config().isPunch4Available(), target.get_config().isPunch4Available());
-        assertEquals(defaultPrinter.get_config().isTrayFaceDownAvailable(), target.get_config().isTrayFaceDownAvailable());
-        assertEquals(defaultPrinter.get_config().isTrayStackAvailable(), target.get_config().isTrayStackAvailable());
-        assertEquals(defaultPrinter.get_config().isTrayTopAvailable(), target.get_config().isTrayTopAvailable());
-        assertEquals(defaultPrinter.get_config().isLprAvailable(), target.get_config().isLprAvailable());
-        assertEquals(defaultPrinter.get_config().isRawAvailable(), target.get_config().isRawAvailable());
+        assertFalse(target.getConfig().isBookletFinishingAvailable());
+        assertEquals(defaultPrinter.getConfig().isStaplerAvailable(), target.getConfig().isStaplerAvailable());
+        assertEquals(defaultPrinter.getConfig().isPunch3Available(), target.getConfig().isPunch3Available());
+        assertEquals(defaultPrinter.getConfig().isPunch4Available(), target.getConfig().isPunch4Available());
+        assertEquals(defaultPrinter.getConfig().isTrayFaceDownAvailable(), target.getConfig().isTrayFaceDownAvailable());
+        assertEquals(defaultPrinter.getConfig().isTrayStackAvailable(), target.getConfig().isTrayStackAvailable());
+        assertEquals(defaultPrinter.getConfig().isTrayTopAvailable(), target.getConfig().isTrayTopAvailable());
+        assertEquals(defaultPrinter.getConfig().isLprAvailable(), target.getConfig().isLprAvailable());
+        assertEquals(defaultPrinter.getConfig().isRawAvailable(), target.getConfig().isRawAvailable());
     }
     
     // ================================================================================

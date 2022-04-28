@@ -88,7 +88,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         val portAdapter = ArrayAdapter<String>(requireActivity(), R.layout.printerinfo_port_item)
         // Assumption is that LPR is always available
         portAdapter.add(getString(R.string.ids_lbl_port_lpr))
-        if (mPrinter!!._config!!.isRawAvailable) {
+        if (mPrinter!!.config!!.isRawAvailable) {
             portAdapter.add(getString(R.string.ids_lbl_port_raw))
             portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
         } else {

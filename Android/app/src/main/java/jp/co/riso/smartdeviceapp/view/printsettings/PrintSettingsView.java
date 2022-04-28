@@ -762,13 +762,13 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
     private void hideDisabledPrintSettings() {
         Printer printer = getPrinter();
         
-        boolean isStapleAvailable = printer == null || printer.get_config().isStaplerAvailable();
+        boolean isStapleAvailable = printer == null || printer.getConfig().isStaplerAvailable();
         setViewVisible(PrintSettings.TAG_STAPLE, isStapleAvailable);
         
-        boolean isPunchAvailable = printer == null || printer.get_config().isPunchAvailable();
+        boolean isPunchAvailable = printer == null || printer.getConfig().isPunchAvailable();
         setViewVisible(PrintSettings.TAG_PUNCH, isPunchAvailable);
         
-        boolean isBookletFinishingAvailable = printer == null || printer.get_config().isBookletFinishingAvailable();
+        boolean isBookletFinishingAvailable = printer == null || printer.getConfig().isBookletFinishingAvailable();
         setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable);
         
         setViewVisible(PrintSettings.TAG_ORIENTATION, !AppConstants.USE_PDF_ORIENTATION);
@@ -797,9 +797,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         return true;
                         //End
                     case TOP:
-                        return getPrinter().get_config().isTrayTopAvailable();
+                        return getPrinter().getConfig().isTrayTopAvailable();
                     case STACKING:
-                        return getPrinter().get_config().isTrayStackAvailable();
+                        return getPrinter().getConfig().isTrayStackAvailable();
                 }
             }
             if (name.equals(PrintSettings.TAG_PUNCH)) {
@@ -808,9 +808,9 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                     case HOLES_2:
                         return true;
                     case HOLES_3:
-                        return getPrinter().get_config().isPunch3Available();
+                        return getPrinter().getConfig().isPunch3Available();
                     case HOLES_4:
-                        return getPrinter().get_config().isPunch4Available();
+                        return getPrinter().getConfig().isPunch4Available();
                 }
             }
             if (name.equals(PrintSettings.TAG_INPUT_TRAY)) {
@@ -822,7 +822,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         case TRAY2:
                             return true;
                         case EXTERNAL_FEEDER:
-                            return getPrinter().get_config().isExternalFeederAvailable();
+                            return getPrinter().getConfig().isExternalFeederAvailable();
                     }
                 }
                 if (getPrinter().isPrinterGL()) {
@@ -835,7 +835,7 @@ public class PrintSettingsView extends FrameLayout implements View.OnClickListen
                         case TRAY3:
                             return getPrinter().isPrinterGL();
                         case EXTERNAL_FEEDER:
-                            return getPrinter().get_config().isExternalFeederAvailable();
+                            return getPrinter().getConfig().isExternalFeederAvailable();
                     }
                 }
             }

@@ -431,7 +431,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         val portAdapter = ArrayAdapter<String>(context, R.layout.printerinfo_port_item)
         // Assumption is that LPR is always available
         portAdapter.add(context.getString(R.string.ids_lbl_port_lpr))
-        if (printer._config!!.isRawAvailable) {
+        if (printer.config!!.isRawAvailable) {
             portAdapter.add(context.getString(R.string.ids_lbl_port_raw))
             portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
         } else {
