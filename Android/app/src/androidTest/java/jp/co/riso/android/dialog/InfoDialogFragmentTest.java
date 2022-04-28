@@ -60,8 +60,8 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     public void testNewInstance_WithMessage() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString((BUTTON_TITLE)));
+        InfoDialogFragment info = InfoDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString((BUTTON_TITLE)));
         assertNotNull(info);
         info.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
@@ -78,19 +78,19 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
 
         View msg = dialog.findViewById(android.R.id.message);
         assertNotNull(msg);
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
 
         Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
 
         assertNotNull(b);
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE), b.getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(BUTTON_TITLE), b.getText());
         info.dismissAllowingStateLoss();
     }
 
     public void testNewInstance_WithTitle() {
-        InfoDialogFragment info = InfoDialogFragment.newInstance(SmartDeviceApp.getAppContext().getResources().getString(TITLE),
-                SmartDeviceApp.getAppContext().getResources().getString(MSG),
-                SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE));
+        InfoDialogFragment info = InfoDialogFragment.newInstance(SmartDeviceApp.Companion.getAppContext().getResources().getString(TITLE),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG),
+                SmartDeviceApp.Companion.getAppContext().getResources().getString(BUTTON_TITLE));
         assertNotNull(info);
         info.show(mActivity.getSupportFragmentManager(), TAG);
         waitFewSeconds();
@@ -107,18 +107,18 @@ public class InfoDialogFragmentTest extends ActivityInstrumentationTestCase2<Mai
 
         View msg = dialog.findViewById(android.R.id.message);
         assertNotNull(msg);
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(MSG), ((TextView) msg).getText());
 
         int titleId = mActivity.getResources().getIdentifier("alertTitle", "id", "android");
         assertFalse(titleId == 0);
         View title = dialog.findViewById(titleId);
         assertNotNull(title);
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(TITLE), ((TextView) title).getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(TITLE), ((TextView) title).getText());
 
         Button b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
 
         assertNotNull(b);
-        assertEquals(SmartDeviceApp.getAppContext().getResources().getString(BUTTON_TITLE), b.getText());
+        assertEquals(SmartDeviceApp.Companion.getAppContext().getResources().getString(BUTTON_TITLE), b.getText());
         info.dismissAllowingStateLoss();
     }
 

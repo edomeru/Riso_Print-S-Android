@@ -40,7 +40,7 @@ public class AlphaNumericFilterTest extends  ActivityInstrumentationTestCase2<Ma
     // ================================================================================
 
     public void testFilter() {
-        EditText editText = new EditText(SmartDeviceApp.getAppContext());
+        EditText editText = new EditText(SmartDeviceApp.Companion.getAppContext());
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(8),
                 new AlphaNumericFilter()
@@ -52,7 +52,7 @@ public class AlphaNumericFilterTest extends  ActivityInstrumentationTestCase2<Ma
     }
     
     public void testFilter_Kanji() {
-        EditText editText = new EditText(SmartDeviceApp.getAppContext());
+        EditText editText = new EditText(SmartDeviceApp.Companion.getAppContext());
         editText.setFilters(new InputFilter[] {
                 new AlphaNumericFilter()
         });

@@ -45,7 +45,7 @@ public class PrinterArrayAdapter extends ArrayAdapter<Printer> implements View.O
     public PrinterArrayAdapter(Context context, int resource, List<Printer> values) {
         super(context, resource, values);
         this.mLayoutId = resource;
-        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.Companion.getAppContext());
         mDeleteViewHolder = null;
     }
     

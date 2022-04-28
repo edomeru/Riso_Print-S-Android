@@ -24,6 +24,8 @@ import java.util.Locale;
 import android.content.Context;
 import android.util.Log;
 
+import org.jetbrains.annotations.Nullable;
+
 import jp.co.riso.smartdeviceapp.common.BaseTask;
 
 /**
@@ -423,6 +425,7 @@ public class Logger {
             time = System.currentTimeMillis();
         }
         
+        @Nullable
         @Override
         protected Void doInBackground(Context... params) {
             deleteAppLogDirectory(params[0].getExternalFilesDir(CONST_LOGS_DIR));

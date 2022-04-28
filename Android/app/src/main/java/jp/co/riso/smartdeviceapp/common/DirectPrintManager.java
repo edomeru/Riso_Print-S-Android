@@ -13,6 +13,8 @@ import java.lang.ref.WeakReference;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
+import org.jetbrains.annotations.Nullable;
+
 import jp.co.riso.smartdeviceapp.AppConstants;
 import jp.co.riso.smartdeviceapp.SmartDeviceApp;
 
@@ -120,7 +122,7 @@ public class DirectPrintManager {
         // Ver.2.2.0.0 Start
 
         // LPR Cancel Fix: Set a unique job number for print job (0-999)
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         int jobNumber = preferences.getInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);
         updateJobNumber();
         initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName, jobNumber);
@@ -229,7 +231,7 @@ public class DirectPrintManager {
      *
      */
     private void updateJobNumber(){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         SharedPreferences.Editor editor = preferences.edit();
         int jobNumber = preferences.getInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);     // current job number
         int nextJobNumber = (jobNumber + 1) % (AppConstants.CONST_MAX_JOB_NUMBER + 1);      // increment job number (0-999)
@@ -275,6 +277,7 @@ public class DirectPrintManager {
             mManager = manager;
         }
 
+        @Nullable
         @Override
         protected Void doInBackground(Void... params) {
             mManager.cancel();

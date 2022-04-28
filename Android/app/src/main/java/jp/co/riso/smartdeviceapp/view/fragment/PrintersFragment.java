@@ -89,7 +89,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
     public void initializeFragment(Bundle savedInstanceState) {
         setRetainInstance(true);
         
-        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.Companion.getAppContext());
         if (mPauseableHandler == null) {
             mPauseableHandler = new PauseableHandler(Looper.myLooper(), this);
         }
@@ -301,7 +301,7 @@ public class PrintersFragment extends BaseFragment implements PrintersCallback, 
      * @param fragment Default Print Settings Fragment
      */
     private void displayDefaultPrintSettings(PrintSettingsFragment fragment) {
-        switchToFragment(fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS);
+        switchToFragment(fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINT_SETTINGS);
     }
 
     /**
