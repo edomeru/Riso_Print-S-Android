@@ -64,9 +64,9 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
     private var mPauseableHandler: PauseableHandler? = null
     private var mEmptySearchText: TextView? = null
     private var mNoNetwork = false
-    override fun getViewLayout(): Int {
-        return R.layout.fragment_printersearch
-    }
+
+    override val viewLayout: Int
+        get() = R.layout.fragment_printersearch
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         mPrinter = if (savedInstanceState != null) {
@@ -80,7 +80,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         mPrinterSearchAdapter =
             PrinterSearchAdapter(activity, R.layout.printersearch_container_item, mPrinter)
         mPrinterSearchAdapter!!.setSearchAdapterInterface(this)
-        mPrinterManager = getInstance(SmartDeviceApp.getAppContext())
+        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
         mPrinterManager!!.setPrinterSearchCallback(this)
     }
 
@@ -164,7 +164,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         errMsg = resources.getString(R.string.ids_err_msg_network_error)
         val info: DialogFragment =
             InfoDialogFragment.newInstance(title, errMsg, resources.getString(R.string.ids_lbl_ok))
-        DialogUtils.displayDialog(activity, KEY_PRINTER_ERR_DIALOG, info)
+        DialogUtils.displayDialog(requireActivity(), KEY_PRINTER_ERR_DIALOG, info)
     }
 
     /**
@@ -191,7 +191,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         mPrinter!!.clear()
         mEmptySearchText!!.visibility = View.GONE
         mNoNetwork = false
-        if (!NetUtils.isWifiAvailable()) {
+        if (!NetUtils.isWifiAvailable) {
             mNoNetwork = true
             dialogErrCb()
             updateRefreshBar()
@@ -283,7 +283,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
             )
             info.setTargetFragment(this, 0)
         }
-        DialogUtils.displayDialog(activity, KEY_SEARCHED_PRINTER_DIALOG, info)
+        DialogUtils.displayDialog(requireActivity(), KEY_SEARCHED_PRINTER_DIALOG, info)
         return ret
     }
 

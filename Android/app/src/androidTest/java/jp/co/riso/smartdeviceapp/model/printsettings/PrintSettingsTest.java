@@ -204,7 +204,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     public void testConstructor_PrinterIdValid() {
         int printerId;
 
-        DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.getAppContext());
+        DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.Companion.getAppContext());
 
         SQLiteDatabase db = mManager.getWritableDatabase();
 
@@ -287,7 +287,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
     
     public void testFormattedString_Portrait() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, false);
@@ -321,7 +321,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
     
     public void testFormattedString_Landscape() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, false);
@@ -439,7 +439,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     public void testSavePrintSettingToDb() {
         int printerId;
 
-        DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.getAppContext());
+        DatabaseManager mManager = new DatabaseManager(SmartDeviceApp.Companion.getAppContext());
 
         SQLiteDatabase db = mManager.getWritableDatabase();
 
@@ -575,7 +575,7 @@ public class PrintSettingsTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     public void testSSettingMap_ExistInDb() {
-        DatabaseManager mgr = new DatabaseManager(SmartDeviceApp.getAppContext());
+        DatabaseManager mgr = new DatabaseManager(SmartDeviceApp.Companion.getAppContext());
         SQLiteDatabase db = mgr.getReadableDatabase();
         Cursor c = db.query("PrintSetting", null, null, null, null, null, null);
         String[] columnNames = c.getColumnNames();

@@ -66,7 +66,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testgetInstance() {
         try {
             mPrinterManager = null;
-            mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+            mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.Companion.getAppContext());
             assertNotNull(mPrinterManager);
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -103,7 +103,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testClearDefaultPrinter_NullDatabaseManager() {
         try {
-            mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), null);
+            mPrinterManager = new PrinterManager(SmartDeviceApp.Companion.getAppContext(), null);
             mPrinterManager.clearDefaultPrinter();
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -163,7 +163,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
         try {
             Printer printer = null;
 
-            mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), null);
+            mPrinterManager = new PrinterManager(SmartDeviceApp.Companion.getAppContext(), null);
             assertFalse(mPrinterManager.setDefaultPrinter(printer));
             
             if (mPrintersList != null && !mPrintersList.isEmpty()) {
@@ -182,9 +182,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testSetDefaultPrinter_DatabaseError() {
         Printer printer = new Printer("", IPV4_OFFLINE_PRINTER_ADDRESS);
         MockedDatabaseManager dbManager = new MockedDatabaseManager(
-                SmartDeviceApp.getAppContext());
+                SmartDeviceApp.Companion.getAppContext());
 
-        mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), dbManager);
+        mPrinterManager = new PrinterManager(SmartDeviceApp.Companion.getAppContext(), dbManager);
         assertFalse(mPrinterManager.setDefaultPrinter(printer));
     }
     
@@ -218,7 +218,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
 
     public void testGetDefaultPrinter_WithDefaultPrinterActivityRestarted() {
         try {
-            mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+            mPrinterManager = PrinterManager.getInstance(SmartDeviceApp.Companion.getAppContext());
             int defaultPrinter;
 
             defaultPrinter = mPrinterManager.getDefaultPrinter();
@@ -230,7 +230,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testGetDefaultPrinter_NullDatabaseManager() {
         try {
-            mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), null);
+            mPrinterManager = new PrinterManager(SmartDeviceApp.Companion.getAppContext(), null);
             mPrinterManager.getDefaultPrinter();
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -623,7 +623,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testRemovePrinter_NullDatabaseManager() {
         try {
             Printer printer = new Printer("testRemovePrinter_IpAddressExists", IPV4_OFFLINE_PRINTER_ADDRESS);
-            mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), null);
+            mPrinterManager = new PrinterManager(SmartDeviceApp.Companion.getAppContext(), null);
 
             if (!mPrinterManager.isExists(printer)) {
                 mPrinterManager.savePrinterToDB(printer, true);
@@ -735,9 +735,9 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
             Printer printer = new Printer("testSavePrinterToDB_ExistingPrinter",
                     IPV4_OFFLINE_PRINTER_ADDRESS);
             MockedDatabaseManager dbManager = new MockedDatabaseManager(
-                    SmartDeviceApp.getAppContext());
+                    SmartDeviceApp.Companion.getAppContext());
             
-            mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), dbManager);
+            mPrinterManager = new PrinterManager(SmartDeviceApp.Companion.getAppContext(), dbManager);
 
             mPrinterManager.savePrinterToDB(printer, true);
             dbManager.setSavePrinterInfoRet(true);
@@ -782,7 +782,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testGetSavedPrintersList_NullDatabaseManager() {
         try {
-            mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(), null);
+            mPrinterManager = new PrinterManager(SmartDeviceApp.Companion.getAppContext(), null);
             mPrinterManager.getSavedPrintersList();
         } catch (Exception e) {
             fail(); // Error should not be thrown
@@ -1041,7 +1041,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     
     public void testGetIdFromCursor_NullPrinter() {
         try {
-            DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.getAppContext());
+            DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.Companion.getAppContext());
             Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null,
                     KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] {IPV4_ONLINE_PRINTER_ADDRESS}, 
                     null, null, null);
@@ -1054,7 +1054,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     public void testGetIdFromCursor_ValidParameters() {
         try {
             Printer printer = new Printer("testGetIdFromCursor_ValidParameters", IPV4_ONLINE_PRINTER_ADDRESS);            
-            DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.getAppContext());
+            DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.Companion.getAppContext());
             Cursor cursor = dbManager.query(KeyConstants.KEY_SQL_PRINTER_TABLE, null,
                     KeyConstants.KEY_SQL_PRINTER_IP + "=?", new String[] {IPV4_ONLINE_PRINTER_ADDRESS}, 
                     null, null, null);
@@ -1163,7 +1163,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
                 mPrinterManager.savePrinterToDB(printer, true);
             }
             
-            DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.getAppContext());
+            DatabaseManager dbManager = new DatabaseManager(SmartDeviceApp.Companion.getAppContext());
             Cursor cursor;
             
             ret = mPrinterManager.updatePortSettings(printer.getId(), PortSetting.LPR);
@@ -1318,7 +1318,7 @@ public class PrinterManagerTest extends ActivityInstrumentationTestCase2<MainAct
     // ================================================================================
     
     private void initialize() {
-        mPrinterManager = new PrinterManager(SmartDeviceApp.getAppContext(),null);
+        mPrinterManager = new PrinterManager(SmartDeviceApp.Companion.getAppContext(),null);
         assertNotNull(mPrinterManager);
 
         mPrinterManager.setPrinterSearchCallback(this);

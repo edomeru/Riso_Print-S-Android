@@ -239,7 +239,7 @@ class PrinterArrayAdapter(context: Context?, private val mLayoutId: Int, values:
      * @param values Printers list
      */
     init {
-        mPrinterManager = getInstance(SmartDeviceApp.getAppContext())
+        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
         mDeleteViewHolder = null
     }
 }

@@ -163,6 +163,6 @@ class PrinterSearchAdapter(context: Context?, private val layoutId: Int, values:
      * @param values Searched printers list
      */
     init {
-        mPrinterManager = getInstance(SmartDeviceApp.getAppContext())
+        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
     }
 }

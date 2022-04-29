@@ -63,14 +63,14 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
     private var mPrinterManager: PrinterManager? = null
     private var mAdded = false
     private var mPauseableHandler: PauseableHandler? = null
-    override fun getViewLayout(): Int {
-        return R.layout.fragment_addprinter
-    }
+
+    override val viewLayout: Int
+        get() = R.layout.fragment_addprinter
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         retainInstance = true
         mAdded = false
-        mPrinterManager = getInstance(SmartDeviceApp.getAppContext())
+        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
         mPrinterManager!!.setPrinterSearchCallback(this)
         mAddPrinterView = ViewHolder()
         if (mPauseableHandler == null) {
@@ -187,7 +187,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
             )
             info.setTargetFragment(this, 0)
             if (activity != null && activity is MainActivity) {
-                DialogUtils.displayDialog(activity, KEY_ADD_PRINTER_DIALOG, info)
+                DialogUtils.displayDialog(activity as MainActivity, KEY_ADD_PRINTER_DIALOG, info)
             }
         }
     }
@@ -235,7 +235,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 resources.getString(R.string.ids_lbl_ok)
             )
         }
-        DialogUtils.displayDialog(activity, KEY_ADD_PRINTER_DIALOG, info)
+        DialogUtils.displayDialog(requireActivity(), KEY_ADD_PRINTER_DIALOG, info)
     }
 
     /**

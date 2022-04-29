@@ -39,7 +39,7 @@ public class IpAddressFilterTest extends TestCase {
     // ================================================================================
 
     public void testFilter_Invalid() {
-        EditText editText = new EditText(SmartDeviceApp.getAppContext());
+        EditText editText = new EditText(SmartDeviceApp.Companion.getAppContext());
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(8),
                 new IpAddressFilter()
@@ -50,7 +50,7 @@ public class IpAddressFilterTest extends TestCase {
     }
 
     public void testFilter_Valid() {
-        EditText editText = new EditText(SmartDeviceApp.getAppContext());
+        EditText editText = new EditText(SmartDeviceApp.Companion.getAppContext());
         editText.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(8),
                 new IpAddressFilter()

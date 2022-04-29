@@ -58,12 +58,12 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
     private var mPrintSettingsFragment: PrintSettingsFragment? = null
     private var mPauseableHandler: PauseableHandler? = null
     private var mDefaultPrinterAdapter: DefaultPrinterArrayAdapter? = null
-    override fun getViewLayout(): Int {
-        return R.layout.fragment_printerinfo
-    }
+
+    override val viewLayout: Int
+        get() = R.layout.fragment_printerinfo
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        mPrinterManager = getInstance(SmartDeviceApp.getAppContext())
+        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
         mPauseableHandler = PauseableHandler(Looper.myLooper(), this)
     }
 
@@ -198,7 +198,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
                     ft.replace(
                         R.id.rightLayout,
                         mPrintSettingsFragment!!,
-                        PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS
+                        PrintPreviewFragment.FRAGMENT_TAG_PRINT_SETTINGS
                     )
                     ft.commit()
                     mPrintSettingsFragment!!.setPrinterId(mPrinter!!.id)
@@ -206,7 +206,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
                     mPrintSettingsFragment!!.setPrintSettings(
                         PrintSettings(
                             mPrinter!!.id,
-                            mPrinter!!.printerType
+                            mPrinter!!.printerType!!
                         )
                     )
                     val printersFragment =
@@ -272,7 +272,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
                             requireActivity().getString(R.string.ids_err_msg_db_failure),
                             requireActivity().getString(R.string.ids_lbl_ok)
                         )
-                        DialogUtils.displayDialog(activity, KEY_PRINTER_INFO_ERR_DIALOG, info)
+                        DialogUtils.displayDialog(requireActivity(), KEY_PRINTER_INFO_ERR_DIALOG, info)
                     }
                 }
                 else -> {}

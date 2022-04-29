@@ -328,7 +328,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param context Application context
      */
     private fun init(context: Context) {
-        mPrinterManager = getInstance(SmartDeviceApp.getAppContext())
+        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
         mHandler = Handler(Looper.myLooper()!!, this)
     }
 
@@ -490,7 +490,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
                         fragment.setPrintSettings(
                             PrintSettings(
                                 mSelectedPrinter!!.id,
-                                mSelectedPrinter!!.printerType
+                                mSelectedPrinter!!.printerType!!
                             )
                         )
                         if (mPauseableHandler != null) {

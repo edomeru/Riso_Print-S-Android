@@ -59,9 +59,9 @@ class PrintJobsFragment
     private var mConfirmDialog: ConfirmDialogFragment? = null
     private var mScrollView: ScrollView? = null
     private var mEmptyJobsText: TextView? = null
-    override fun getViewLayout(): Int {
-        return R.layout.fragment_printjobs
-    }
+
+    override val viewLayout: Int
+        get() = R.layout.fragment_printjobs
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         retainInstance = true
@@ -153,7 +153,7 @@ class PrintJobsFragment
             mConfirmDialog =
                 ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg)
             mConfirmDialog!!.setTargetFragment(this, 0)
-            DialogUtils.displayDialog(activity, TAG, mConfirmDialog)
+            DialogUtils.displayDialog(requireActivity(), TAG, mConfirmDialog!!)
             true
         }
     }

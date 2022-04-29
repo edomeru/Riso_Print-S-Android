@@ -75,13 +75,13 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
     private var mSettingItem = PrinterManager.EMPTY_ID
     private var mUpdateOnlineStatus: Runnable? = null
     private var mEmptyPrintersText: TextView? = null
-    override fun getViewLayout(): Int {
-        return R.layout.fragment_printers
-    }
+
+    override val viewLayout: Int
+        get() = R.layout.fragment_printers
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         retainInstance = true
-        mPrinterManager = getInstance(SmartDeviceApp.getAppContext())
+        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
         if (mPauseableHandler == null) {
             mPauseableHandler = PauseableHandler(Looper.myLooper(), this)
         }
@@ -290,7 +290,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
      * @param fragment Default Print Settings Fragment
      */
     private fun displayDefaultPrintSettings(fragment: PrintSettingsFragment) {
-        switchToFragment(fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINTSETTINGS)
+        switchToFragment(fragment, PrintPreviewFragment.FRAGMENT_TAG_PRINT_SETTINGS)
     }
 
     /**
@@ -339,7 +339,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
                     errMsg,
                     resources.getString(R.string.ids_lbl_ok)
                 )
-                DialogUtils.displayDialog(activity, KEY_PRINTER_ERR_DIALOG, info)
+                DialogUtils.displayDialog(requireActivity(), KEY_PRINTER_ERR_DIALOG, info)
                 return true
             }
             return false
@@ -413,7 +413,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         val errMsg = resources.getString(R.string.ids_err_msg_db_failure)
         val info: DialogFragment =
             InfoDialogFragment.newInstance(title, errMsg, resources.getString(R.string.ids_lbl_ok))
-        DialogUtils.displayDialog(activity, KEY_PRINTER_ERR_DIALOG, info)
+        DialogUtils.displayDialog(requireActivity(), KEY_PRINTER_ERR_DIALOG, info)
     }
 
     // ================================================================================
@@ -478,7 +478,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         )
         info.setTargetFragment(this, 0)
         mDeletePrinter = printer
-        DialogUtils.displayDialog(activity, KEY_PRINTERS_DIALOG, info)
+        DialogUtils.displayDialog(requireActivity(), KEY_PRINTERS_DIALOG, info)
     }
 
     override fun onPrinterListClicked(printer: Printer?) {

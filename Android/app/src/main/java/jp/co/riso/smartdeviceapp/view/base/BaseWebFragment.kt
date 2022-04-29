@@ -22,7 +22,9 @@ import android.webkit.WebView
  */
 abstract class BaseWebFragment : BaseFragment() {
     protected var mWebView: SDAWebView? = null
+
     override fun initializeFragment(savedInstanceState: Bundle?) {}
+
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         mWebView = view.findViewById(R.id.contentWebView)
         if (Build.VERSION_CODES.O <= Build.VERSION.SDK_INT) {

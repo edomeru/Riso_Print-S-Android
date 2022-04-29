@@ -29,7 +29,7 @@ public class SmartDeviceAppTest extends ApplicationTestCase<SmartDeviceApp> {
     // ================================================================================
 
     public void testConstructor() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         SharedPreferences.Editor edit = prefs.edit();
         edit.clear();
         edit.apply();
@@ -42,6 +42,6 @@ public class SmartDeviceAppTest extends ApplicationTestCase<SmartDeviceApp> {
     // ================================================================================
 
     public void testGetAppContext() {
-        assertNotNull(SmartDeviceApp.getAppContext());
+        assertNotNull(SmartDeviceApp.Companion.getAppContext());
     }
 }

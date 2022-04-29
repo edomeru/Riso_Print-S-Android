@@ -7,36 +7,35 @@
  */
 package jp.co.riso.smartdeviceapp.view.printersearchsettings
 
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.snmpCommunityNameFromSharedPrefs
 import android.annotation.SuppressLint
 import android.content.Context
-import android.widget.EditText
-import jp.co.riso.android.text.SnmpCommunityNameFilter
-import jp.co.riso.android.text.SnmpCommunityNameFilter.InvalidInputObserver
 import android.content.Intent
-import jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameEditText
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.text.InputFilter.LengthFilter
-import jp.co.riso.smartdeviceapp.AppConstants
-import android.content.SharedPreferences
 import android.util.AttributeSet
 import android.view.KeyEvent
+import android.widget.EditText
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.android.text.SnmpCommunityNameFilter
+import jp.co.riso.android.text.SnmpCommunityNameFilter.InvalidInputObserver
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
+
 
 @SuppressLint("AppCompatCustomView")
 class SnmpCommunityNameEditText : EditText {
     private var _context: Context? = null
-    private val snmpCommunityNameFilter = SnmpCommunityNameFilter {
-        // filter catches invalid case for pasting in context menu or from keyboard clipboard
-            showError ->
-        if (_context != null && showError) {
-            val intent = Intent(SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID)
-            LocalBroadcastManager.getInstance(_context!!).sendBroadcast(intent)
-            text = text
-        }
-    }
+    private val snmpCommunityNameFilter =
+        SnmpCommunityNameFilter( // filter catches invalid case for pasting in context menu or from keyboard clipboard
+            object : InvalidInputObserver {
+                override fun onInvalidInput(showError: Boolean) {
+                    if (context != null && showError) {
+                        val intent = Intent(SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID)
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                        text = text
+                    }
+                }
+            })
 
 
     constructor(context: Context?) : super(context) {

@@ -574,7 +574,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                 return false
             }
             if (NetUtils.isIPv6Address(ipAddress)) {
-                NetUtils.connectToIpv6Address(ipAddress, null)
+                NetUtils.connectToIpv6Address(ipAddress)
             } else {
                 // RM#901 use socket connect to check printer online status
                 NetUtils.connectToIpv4Address(ipAddress)
@@ -718,7 +718,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     val snmpCommunityNameFromSharedPrefs: String?
         get() {
             val sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
             return sharedPreferences.getString(
                 AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME,
                 AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME
@@ -862,8 +862,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
 
         protected override fun onPostExecute(result: Boolean?) {
             super.onPostExecute(result)
-            val activity = SmartDeviceApp.getActivity()
-            activity.runOnUiThread {
+            val activity = SmartDeviceApp.activity
+            activity!!.runOnUiThread {
                 if (mViewRef != null && mViewRef.get() != null) {
                     val view = mViewRef.get() as ImageView?
                     if (result == true) {

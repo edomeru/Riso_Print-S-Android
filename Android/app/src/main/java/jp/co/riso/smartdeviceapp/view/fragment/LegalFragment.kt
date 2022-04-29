@@ -32,9 +32,9 @@ import java.util.*
  * @brief Web fragment for Legal Screen
  */
 class LegalFragment : BaseWebFragment() {
-    override fun getViewLayout(): Int {
-        return R.layout.fragment_helplegal
-    }
+
+    override val viewLayout: Int
+        get() = R.layout.fragment_helplegal
 
     override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {
         val textView = view.findViewById<TextView>(R.id.actionBarTitle)

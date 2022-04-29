@@ -74,7 +74,7 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext());
+        PrinterManager printerManager = PrinterManager.getInstance(SmartDeviceApp.Companion.getAppContext());
         List<Printer> printersList = printerManager.getSavedPrintersList();
         Printer printer;
         
@@ -84,7 +84,7 @@ public class PrintSettingsManagerTest extends AndroidTestCase {
         } else {
             printer = printersList.get(0);
         }
-        mContext = SmartDeviceApp.getAppContext();
+        mContext = SmartDeviceApp.Companion.getAppContext();
         mManager = new DatabaseManager(mContext);
         mPrinterId = printer.getId();
         

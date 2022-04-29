@@ -27,9 +27,9 @@ import jp.co.riso.android.util.AppUtils
  * @brief Fragment class for Help Screen
  */
 class HelpFragment : BaseWebFragment() {
-    override fun getViewLayout(): Int {
-        return R.layout.fragment_helplegal
-    }
+
+    override val viewLayout: Int
+        get() = R.layout.fragment_helplegal
 
     override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {
         val textView = view.findViewById<TextView>(R.id.actionBarTitle)

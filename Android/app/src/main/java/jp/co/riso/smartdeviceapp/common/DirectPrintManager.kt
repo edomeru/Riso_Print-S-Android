@@ -126,7 +126,7 @@ class DirectPrintManager {
 
         // LPR Cancel Fix: Set a unique job number for print job (0-999)
         val preferences =
-            PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+            PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
         val jobNumber = preferences.getInt(
             AppConstants.PREF_KEY_JOB_NUMBER_COUNTER,
             AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER
@@ -271,7 +271,7 @@ class DirectPrintManager {
      */
     private fun updateJobNumber() {
         val preferences =
-            PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+            PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
         val editor = preferences.edit()
         val jobNumber = preferences.getInt(
             AppConstants.PREF_KEY_JOB_NUMBER_COUNTER,

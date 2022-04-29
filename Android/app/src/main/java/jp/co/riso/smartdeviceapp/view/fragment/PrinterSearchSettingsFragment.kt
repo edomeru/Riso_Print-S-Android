@@ -8,29 +8,26 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.app.AlertDialog
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.snmpCommunityNameFromSharedPrefs
-import jp.co.riso.android.util.AppUtils.hideSoftKeyboard
-import jp.co.riso.android.util.AppUtils.getScreenDimensions
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import android.content.BroadcastReceiver
 import android.content.Context
-import jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameEditText
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import android.content.IntentFilter
 import android.content.Intent
-import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartprint.R
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import android.widget.TextView.OnEditorActionListener
-import android.widget.TextView
 import android.view.inputmethod.EditorInfo
-import jp.co.riso.android.util.AppUtils
-import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.TextView.OnEditorActionListener
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import jp.co.riso.android.util.AppUtils.getScreenDimensions
+import jp.co.riso.android.util.AppUtils.hideSoftKeyboard
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
 import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+import jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameEditText
+import jp.co.riso.smartprint.R
+import kotlin.math.min
 
 /**
  * @class AddPrinterFragment
@@ -66,9 +63,8 @@ class PrinterSearchSettingsFragment : BaseFragment() {
             .registerReceiver(snmpCommunityNameEditTextPasteBroadcastReceiver as BroadcastReceiver, intentFilter)
     }
 
-    override fun getViewLayout(): Int {
-        return R.layout.fragment_printersearchsettings
-    }
+    override val viewLayout: Int
+        get() = R.layout.fragment_printersearchsettings
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         retainInstance = true
@@ -98,7 +94,7 @@ class PrinterSearchSettingsFragment : BaseFragment() {
             val screenSize = getScreenDimensions(activity)
             val rootView = view.findViewById<View>(R.id.rootView) ?: return
             val params = rootView.layoutParams
-            params.width = Math.min(screenSize!!.x, screenSize.y)
+            params.width = min(screenSize!!.x, screenSize.y)
         }
     }
 

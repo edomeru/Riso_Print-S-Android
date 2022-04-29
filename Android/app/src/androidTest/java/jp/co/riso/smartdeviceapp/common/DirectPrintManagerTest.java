@@ -143,7 +143,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
 
     public void testDirectPrint_JobIDIncrement() {
         // Set Job ID
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER);
         editor.commit();
@@ -169,7 +169,7 @@ public class DirectPrintManagerTest extends ActivityInstrumentationTestCase2<Mai
 
     public void testDirectPrint_JobIDMaxNumber() {
         // Set Job ID
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.Companion.getAppContext());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.CONST_MAX_JOB_NUMBER);
         editor.commit();

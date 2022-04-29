@@ -62,7 +62,7 @@ dependencies {
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.vectordrawable:vectordrawable-animated:1.1.0'
 
@@ -77,13 +77,12 @@ dependencies {
     // Espresso dependencies
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
-
+    
     // Kotlin dependencies
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.activity:activity-ktx:1.4.0"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
-
 }
 
 // Returns NDK build command based on development OS
@@ -170,7 +169,4 @@ task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/allTests")
     // Include the results from the `test` task in all subprojects
     reportOn subprojects*.test
-}
-repositories {
-    mavenCentral()
 }
