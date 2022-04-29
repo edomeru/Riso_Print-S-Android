@@ -75,12 +75,12 @@ class SnmpCommunityNameEditText : EditText {
     }
 
     fun saveValueToSharedPrefs(snmpCommunityName: String?) {
-        var snmpCommunityName = snmpCommunityName
+        var name = snmpCommunityName
         val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        if (snmpCommunityName == null || snmpCommunityName.isEmpty()) {
-            snmpCommunityName = getInstance(context!!)!!.snmpCommunityNameFromSharedPrefs
+        if (name == null || name.isEmpty()) {
+            name = getInstance(context!!)!!.snmpCommunityNameFromSharedPrefs
         }
-        editor.putString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, snmpCommunityName)
+        editor.putString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, name)
         editor.commit()
     }
 

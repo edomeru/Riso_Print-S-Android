@@ -44,7 +44,6 @@ import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.ImageUtils
 import jp.co.riso.android.util.MemoryUtils.getCacheSizeBasedOnMemoryClass
 import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFConverterManager
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFConverterManagerInterface
@@ -348,15 +347,13 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             setTitle(view, _pdfManager!!.fileName)
         }
 
-        if (view != null) {
-            _openInView = view.findViewById(R.id.openInView)
-            _progressBar = view.findViewById(R.id.pdfLoadIndicator)
-            _progressBar!!.visibility = View.GONE
-        }
+        _openInView = view.findViewById(R.id.openInView)
+        _progressBar = view.findViewById(R.id.pdfLoadIndicator)
+        _progressBar!!.visibility = View.GONE
 
         setPrintPreviewViewDisplayed(view, _pdfManager!!.fileName != null)
         val newMessage = Message.obtain(_handler, 0)
-        newMessage.arg1 = _printPreviewView!!.visibility!!
+        newMessage.arg1 = _printPreviewView!!.visibility
         _printPreviewView!!.visibility = View.GONE
         _handler!!.sendMessage(newMessage)
     }
@@ -712,7 +709,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             ft.replace(R.id.leftLayout, menuFragment, "fragment_menu")
             ft.commit()
         }
-        menuFragment.hasPDFfile = false
+        menuFragment.hasPdfFile = false
         menuFragment.setCurrentState(MenuFragment.STATE_HOME)
     }
     // ================================================================================

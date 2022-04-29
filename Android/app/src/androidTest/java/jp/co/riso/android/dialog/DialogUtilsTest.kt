@@ -71,7 +71,7 @@ class DialogUtilsTest {
                 )
                 dismissDialog(activity, TAG)
                 waitFewSeconds()
-                TestCase.assertNull(dialog?.dialog)
+                TestCase.assertNull(dialog.dialog)
                 dialog = activity.supportFragmentManager.findFragmentByTag(TAG)
                 TestCase.assertNull(dialog)
             }

@@ -594,7 +594,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     // Test getAuthenticationString
     //================================================================================
     fun testGetAuthenticationString_Valid() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
         val editor = prefs.edit()
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, false)
         editor.putString(AppConstants.PREF_KEY_LOGIN_ID, "test")
@@ -611,7 +611,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     }
 
     fun testGetAuthenticationString_Invalid() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
         val editor = prefs.edit()
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, true)
         editor.putString(AppConstants.PREF_KEY_LOGIN_ID, "test")
@@ -634,7 +634,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     // Test getOwnerName
     //================================================================================
     fun testGetOwnerName_Valid() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
         val editor = prefs.edit()
         val expected = "testLogin"
         editor.clear()

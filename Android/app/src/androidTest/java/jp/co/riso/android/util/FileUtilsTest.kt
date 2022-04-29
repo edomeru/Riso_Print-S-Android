@@ -54,7 +54,7 @@ class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail()
             }
             mDstFile = File(
-                SmartDeviceApp.getAppContext().getExternalFilesDir("pdfs").toString() + "/"
+                SmartDeviceApp.appContext!!.getExternalFilesDir("pdfs").toString() + "/"
                         + TEST_DST_FILE
             )
             if (mDstFile == null) {
@@ -94,7 +94,7 @@ class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
             }
             TestCase.assertEquals(
                 getFileName(
-                    SmartDeviceApp.getAppContext(),
+                    SmartDeviceApp.appContext,
                     Uri.fromFile(mSrcFile),
                     true
                 ), TEST_SRC_FILE
@@ -113,7 +113,7 @@ class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
             mSrcFile = File(pdfPath)
             TestCase.assertEquals(
                 getFileSize(
-                    SmartDeviceApp.getAppContext(),
+                    SmartDeviceApp.appContext,
                     Uri.fromFile(mSrcFile)
                 ).toLong(), mSrcFile!!.length()
             )
@@ -131,7 +131,7 @@ class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
             mSrcFile = File(pdfPath)
             TestCase.assertEquals(
                 getMimeType(
-                    SmartDeviceApp.getAppContext(),
+                    SmartDeviceApp.appContext,
                     Uri.fromFile(mSrcFile)
                 ), "application/pdf"
             )
