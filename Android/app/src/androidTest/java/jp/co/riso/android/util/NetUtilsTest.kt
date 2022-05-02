@@ -20,14 +20,14 @@ class NetUtilsTest {
     @Test
     fun testConstructor_WifiOff() {
         turnWifi(false)
-        val netUtils = NetUtils()
+        val netUtils = NetUtils
         TestCase.assertNotNull(netUtils)
         turnWifiOn()
     }
 
     @Test
     fun testConstructor_WifiOn() {
-        val netUtils = NetUtils()
+        val netUtils = NetUtils
         TestCase.assertNotNull(netUtils)
     }
 
@@ -170,18 +170,18 @@ class NetUtilsTest {
     // ================================================================================
     @Test
     fun testIsWifiAvailable_Null() {
-        TestCase.assertEquals(false, NetUtils.isWifiAvailable())
+        TestCase.assertEquals(false, NetUtils.isWifiAvailable)
     }
 
     @Test
     fun testIsWifiAvailable_WithConnection() {
-        NetUtils.registerWifiCallback(SmartDeviceApp.getAppContext())
+        NetUtils.registerWifiCallback(SmartDeviceApp.appContext!!)
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
         turnWifiOn()
         // wifi is ON
-        TestCase.assertEquals(true, NetUtils.isWifiAvailable())
-        NetUtils.unregisterWifiCallback(SmartDeviceApp.getAppContext())
-        TestCase.assertEquals(false, NetUtils.isWifiAvailable())
+        TestCase.assertEquals(true, NetUtils.isWifiAvailable)
+        NetUtils.unregisterWifiCallback(SmartDeviceApp.appContext!!)
+        TestCase.assertEquals(false, NetUtils.isWifiAvailable)
     }
 
     // ================================================================================
@@ -230,14 +230,11 @@ class NetUtilsTest {
     @Test
     fun testConnectToIpv6Address_OfflineIpv6Address() {
         try {
-            var isReachable: Boolean
-            val inetIpAddress = InetAddress.getByName(IPV6_STD_PRINTER_ADDRESS)
-            isReachable = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS, inetIpAddress)
+            var isReachable: Boolean = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS)
             TestCase.assertEquals(false, isReachable)
             _signal.await(500, TimeUnit.MILLISECONDS)
             isReachable = NetUtils.connectToIpv6Address(
-                "$IPV6_STD_OFFLINE_PRINTER_ADDRESS%wlan0",
-                inetIpAddress
+                "$IPV6_STD_OFFLINE_PRINTER_ADDRESS%wlan0"
             )
             TestCase.assertEquals(false, isReachable)
             _signal.await(500, TimeUnit.MILLISECONDS)
@@ -321,8 +318,7 @@ class NetUtilsTest {
     @Test
     fun testConnectToIpv6Address_NullIpAddress() {
         try {
-            val inetIpAddress = InetAddress.getByName(IPV6_STD_PRINTER_ADDRESS)
-            NetUtils.connectToIpv6Address(null, inetIpAddress)
+            NetUtils.connectToIpv6Address(null)
             _signal.await(500, TimeUnit.MILLISECONDS)
         } catch (e: NullPointerException) {
             TestCase.fail() // Error should not be thrown
@@ -338,7 +334,7 @@ class NetUtilsTest {
         try {
             val ipv6Addr = localIpv6Address
             TestCase.assertNotNull(ipv6Addr)
-            NetUtils.connectToIpv6Address(ipv6Addr, null)
+            NetUtils.connectToIpv6Address(ipv6Addr)
             _signal.await(500, TimeUnit.MILLISECONDS)
         } catch (e: NullPointerException) {
             TestCase.fail() // Error should not be thrown
@@ -352,7 +348,7 @@ class NetUtilsTest {
         try {
             turnWifi(false)
             val isReachable: Boolean =
-                NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS, null)
+                NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS)
             TestCase.assertEquals(false, isReachable)
             turnWifiOn()
         } catch (e: NullPointerException) {
@@ -670,7 +666,7 @@ class NetUtilsTest {
     companion object {
         private const val IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.x.x"
         private const val IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%lo"
-        private const val IPV6_STD_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2"
+
         private const val IPV6_STD_OFFLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb3"
         // private const val IPV6_STD_RISO_PRINTER_ADDRESS = "2001::4:225:5cff:fe34:7c27"
     }

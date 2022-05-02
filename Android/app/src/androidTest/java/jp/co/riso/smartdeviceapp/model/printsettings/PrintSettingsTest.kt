@@ -69,7 +69,7 @@ class PrintSettingsTest {
         _printSettings!!.setValue(KEY_COLOR, 2)
         _printSettings!!.setValue(KEY_COPIES, 10)
         _printSettings!!.setValue(KEY_SCALE_TO_FIT, 0)
-        val settings = PrintSettings(_printSettings)
+        val settings = PrintSettings(_printSettings!!)
         TestCase.assertNotNull(settings)
         val settingValues = settings.settingValues
         TestCase.assertNotNull(settingValues)
@@ -130,7 +130,7 @@ class PrintSettingsTest {
     @Test
     fun testConstructor_PrinterIdValid() {
         val printerId: Int
-        val mManager = DatabaseManager(SmartDeviceApp.getAppContext())
+        val mManager = DatabaseManager(SmartDeviceApp.appContext!!)
         val db = mManager.writableDatabase
         val c = db.query(PRINTSETTING_TABLE, null, null, null, null, null, null)
         if (c.count > 0) {
@@ -257,7 +257,7 @@ class PrintSettingsTest {
 
     @Test
     fun testFormattedString_Portrait() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
         val editor = prefs.edit()
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, false)
         editor.putString(AppConstants.PREF_KEY_LOGIN_ID, "test")
@@ -285,7 +285,7 @@ class PrintSettingsTest {
 
     @Test
     fun testFormattedString_Landscape() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
         val editor = prefs.edit()
         editor.putBoolean(AppConstants.PREF_KEY_AUTH_SECURE_PRINT, false)
         editor.putString(AppConstants.PREF_KEY_LOGIN_ID, "test")
@@ -415,7 +415,7 @@ class PrintSettingsTest {
     @Test
     fun testSavePrintSettingToDb() {
         val printerId: Int
-        val mManager = DatabaseManager(SmartDeviceApp.getAppContext())
+        val mManager = DatabaseManager(SmartDeviceApp.appContext!!)
         var db = mManager.writableDatabase
         var c = db.query(PRINTER_TABLE, null, null, null, null, null, null)
         if (c.moveToFirst()) {
@@ -548,8 +548,8 @@ class PrintSettingsTest {
 
     @Test
     fun testInitializeStaticObjects() {
-        TestCase.assertEquals(18, PrintSettings.sSettingsMaps[AppConstants.PRINTER_MODEL_IS]!!.size)
-        TestCase.assertEquals(3, PrintSettings.sGroupListMap[AppConstants.PRINTER_MODEL_IS]!!.size)
+        TestCase.assertEquals(18, PrintSettings.sSettingsMaps!![AppConstants.PRINTER_MODEL_IS]!!.size)
+        TestCase.assertEquals(3, PrintSettings.sGroupListMap!![AppConstants.PRINTER_MODEL_IS]!!.size)
         try {
             PrintSettings.initializeStaticObjects(null)
         } catch (e: NullPointerException) {
@@ -567,20 +567,20 @@ class PrintSettingsTest {
         PrintSettings.initializeStaticObjects(getFileContentsFromAssets("invalid_missingString.xml"))
 
         // w/ values since initially loaded - must still be equal to initial size
-        TestCase.assertEquals(18, PrintSettings.sSettingsMaps[AppConstants.PRINTER_MODEL_IS]!!.size)
-        TestCase.assertEquals(3, PrintSettings.sGroupListMap[AppConstants.PRINTER_MODEL_IS]!!.size)
+        TestCase.assertEquals(18, PrintSettings.sSettingsMaps!![AppConstants.PRINTER_MODEL_IS]!!.size)
+        TestCase.assertEquals(3, PrintSettings.sGroupListMap!![AppConstants.PRINTER_MODEL_IS]!!.size)
     }
 
     @Test
     fun testInitializeStaticObjects_Duplicate() {
         // w/ values since initially loaded
-        TestCase.assertEquals(18, PrintSettings.sSettingsMaps[AppConstants.PRINTER_MODEL_IS]!!.size)
+        TestCase.assertEquals(18, PrintSettings.sSettingsMaps!![AppConstants.PRINTER_MODEL_IS]!!.size)
         PrintSettings.initializeStaticObjects(getFileContentsFromAssets("printsettings.xml"))
-        TestCase.assertEquals(18, PrintSettings.sSettingsMaps[AppConstants.PRINTER_MODEL_IS]!!.size)
-        TestCase.assertEquals(3, PrintSettings.sGroupListMap[AppConstants.PRINTER_MODEL_IS]!!.size)
+        TestCase.assertEquals(18, PrintSettings.sSettingsMaps!![AppConstants.PRINTER_MODEL_IS]!!.size)
+        TestCase.assertEquals(3, PrintSettings.sGroupListMap!![AppConstants.PRINTER_MODEL_IS]!!.size)
         var count = 0
-        for (key in PrintSettings.sSettingsMaps[AppConstants.PRINTER_MODEL_IS]!!.keys) {
-            val s = PrintSettings.sSettingsMaps[AppConstants.PRINTER_MODEL_IS]!![key]
+        for (key in PrintSettings.sSettingsMaps!![AppConstants.PRINTER_MODEL_IS]!!.keys) {
+            val s = PrintSettings.sSettingsMaps!![AppConstants.PRINTER_MODEL_IS]!![key]
             if (s!!.getAttributeValue("name") == "colorMode") {
                 count++
             }
@@ -590,15 +590,15 @@ class PrintSettingsTest {
 
     @Test
     fun testSSettingMap_ExistInDb() {
-        val mgr = DatabaseManager(SmartDeviceApp.getAppContext())
+        val mgr = DatabaseManager(SmartDeviceApp.appContext!!)
         val db = mgr.readableDatabase
         val c = db.query("PrintSetting", null, null, null, null, null, null)
         val columnNames = c.columnNames
         c.close()
         db.close()
         val columns = listOf(*columnNames)
-        for (key in PrintSettings.sSettingsMaps[AppConstants.PRINTER_MODEL_IS]!!.keys) {
-            val s = PrintSettings.sSettingsMaps[AppConstants.PRINTER_MODEL_IS]!![key]
+        for (key in PrintSettings.sSettingsMaps!![AppConstants.PRINTER_MODEL_IS]!!.keys) {
+            val s = PrintSettings.sSettingsMaps!![AppConstants.PRINTER_MODEL_IS]!![key]
             TestCase.assertTrue(columns.contains(s!!.dbKey))
         }
     }

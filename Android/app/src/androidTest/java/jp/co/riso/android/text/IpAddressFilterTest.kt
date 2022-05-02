@@ -25,7 +25,7 @@ class IpAddressFilterTest {
     // ================================================================================
     @Test
     fun testFilter_Invalid() {
-        val editText = EditText(SmartDeviceApp.getAppContext())
+        val editText = EditText(SmartDeviceApp.appContext!!)
         editText.filters = arrayOf(
             LengthFilter(8),
             IpAddressFilter()
@@ -36,7 +36,7 @@ class IpAddressFilterTest {
 
     @Test
     fun testFilter_Valid() {
-        val editText = EditText(SmartDeviceApp.getAppContext())
+        val editText = EditText(SmartDeviceApp.appContext!!)
         editText.filters = arrayOf(
             LengthFilter(8),
             IpAddressFilter()

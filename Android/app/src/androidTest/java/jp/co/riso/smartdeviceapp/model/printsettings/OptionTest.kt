@@ -22,7 +22,7 @@ class OptionTest {
     @Before
     fun setUp() {
         val xmlString =
-            AppUtils.getFileContentsFromAssets(SmartDeviceApp.getAppContext(), "printsettings.xml")
+            AppUtils.getFileContentsFromAssets(SmartDeviceApp.appContext!!, "printsettings.xml")
         var printSettingsContent: Document? = null
         val dbf = DocumentBuilderFactory.newInstance()
         try {

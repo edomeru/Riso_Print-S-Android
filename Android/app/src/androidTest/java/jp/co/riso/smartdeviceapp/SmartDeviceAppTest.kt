@@ -19,7 +19,7 @@ class SmartDeviceAppTest {
     // ================================================================================
     @Test
     fun testConstructor() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
         val edit = prefs.edit()
         edit.clear()
         edit.apply()
@@ -32,6 +32,6 @@ class SmartDeviceAppTest {
     // ================================================================================
     @Test
     fun testGetAppContext() {
-        TestCase.assertNotNull(SmartDeviceApp.getAppContext())
+        TestCase.assertNotNull(SmartDeviceApp.appContext!!)
     }
 }

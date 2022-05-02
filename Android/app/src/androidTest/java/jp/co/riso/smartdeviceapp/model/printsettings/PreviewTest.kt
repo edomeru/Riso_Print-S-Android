@@ -24,7 +24,7 @@ class PreviewTest {
     @Before
     fun setUp() {
         val xmlString = AppUtils.getFileContentsFromAssets(
-            SmartDeviceApp.getAppContext(),
+            SmartDeviceApp.appContext!!,
             AppConstants.XML_FILENAME
         )
         var printSettingsContent: Document? = null
@@ -103,79 +103,79 @@ class PreviewTest {
 
     @Test
     fun testInputTray() {
-        TestCase.assertEquals(0, InputTray_FT_GL_CEREZONA_S.AUTO.ordinal)
-        TestCase.assertEquals(1, InputTray_FT_GL_CEREZONA_S.STANDARD.ordinal)
-        TestCase.assertEquals(2, InputTray_FT_GL_CEREZONA_S.TRAY1.ordinal)
-        TestCase.assertEquals(3, InputTray_FT_GL_CEREZONA_S.TRAY2.ordinal)
-        TestCase.assertEquals(4, InputTray_FT_GL_CEREZONA_S.TRAY3.ordinal)
-        TestCase.assertEquals(5, InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER.ordinal)
+        TestCase.assertEquals(0, InputTrayFtGlCerezonaS.AUTO.ordinal)
+        TestCase.assertEquals(1, InputTrayFtGlCerezonaS.STANDARD.ordinal)
+        TestCase.assertEquals(2, InputTrayFtGlCerezonaS.TRAY1.ordinal)
+        TestCase.assertEquals(3, InputTrayFtGlCerezonaS.TRAY2.ordinal)
+        TestCase.assertEquals(4, InputTrayFtGlCerezonaS.TRAY3.ordinal)
+        TestCase.assertEquals(5, InputTrayFtGlCerezonaS.EXTERNAL_FEEDER.ordinal)
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.AUTO,
-            InputTray_FT_GL_CEREZONA_S.valueOf("AUTO")
+            InputTrayFtGlCerezonaS.AUTO,
+            InputTrayFtGlCerezonaS.valueOf("AUTO")
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.STANDARD,
-            InputTray_FT_GL_CEREZONA_S.valueOf("STANDARD")
+            InputTrayFtGlCerezonaS.STANDARD,
+            InputTrayFtGlCerezonaS.valueOf("STANDARD")
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER,
-            InputTray_FT_GL_CEREZONA_S.valueOf("EXTERNAL_FEEDER")
+            InputTrayFtGlCerezonaS.EXTERNAL_FEEDER,
+            InputTrayFtGlCerezonaS.valueOf("EXTERNAL_FEEDER")
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.AUTO,
-            InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[0]
+            InputTrayFtGlCerezonaS.AUTO,
+            InputTrayFtGlCerezonaS.valuesFtCerezonaS()[0]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.STANDARD,
-            InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[1]
+            InputTrayFtGlCerezonaS.STANDARD,
+            InputTrayFtGlCerezonaS.valuesFtCerezonaS()[1]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.TRAY1,
-            InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[2]
+            InputTrayFtGlCerezonaS.TRAY1,
+            InputTrayFtGlCerezonaS.valuesFtCerezonaS()[2]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.TRAY2,
-            InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[3]
+            InputTrayFtGlCerezonaS.TRAY2,
+            InputTrayFtGlCerezonaS.valuesFtCerezonaS()[3]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER,
-            InputTray_FT_GL_CEREZONA_S.valuesFT_CEREZONA_S()[4]
+            InputTrayFtGlCerezonaS.EXTERNAL_FEEDER,
+            InputTrayFtGlCerezonaS.valuesFtCerezonaS()[4]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.AUTO,
-            InputTray_FT_GL_CEREZONA_S.valuesGL()[0]
+            InputTrayFtGlCerezonaS.AUTO,
+            InputTrayFtGlCerezonaS.valuesGl()[0]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.STANDARD,
-            InputTray_FT_GL_CEREZONA_S.valuesGL()[1]
+            InputTrayFtGlCerezonaS.STANDARD,
+            InputTrayFtGlCerezonaS.valuesGl()[1]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.TRAY1,
-            InputTray_FT_GL_CEREZONA_S.valuesGL()[2]
+            InputTrayFtGlCerezonaS.TRAY1,
+            InputTrayFtGlCerezonaS.valuesGl()[2]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.TRAY2,
-            InputTray_FT_GL_CEREZONA_S.valuesGL()[3]
+            InputTrayFtGlCerezonaS.TRAY2,
+            InputTrayFtGlCerezonaS.valuesGl()[3]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.TRAY3,
-            InputTray_FT_GL_CEREZONA_S.valuesGL()[4]
+            InputTrayFtGlCerezonaS.TRAY3,
+            InputTrayFtGlCerezonaS.valuesGl()[4]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER,
-            InputTray_FT_GL_CEREZONA_S.valuesGL()[5]
+            InputTrayFtGlCerezonaS.EXTERNAL_FEEDER,
+            InputTrayFtGlCerezonaS.valuesGl()[5]
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.AUTO,
-            InputTray_FT_GL_CEREZONA_S.valueOf("AUTO")
+            InputTrayFtGlCerezonaS.AUTO,
+            InputTrayFtGlCerezonaS.valueOf("AUTO")
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.STANDARD,
-            InputTray_FT_GL_CEREZONA_S.valueOf("STANDARD")
+            InputTrayFtGlCerezonaS.STANDARD,
+            InputTrayFtGlCerezonaS.valueOf("STANDARD")
         )
         TestCase.assertEquals(
-            InputTray_FT_GL_CEREZONA_S.EXTERNAL_FEEDER,
-            InputTray_FT_GL_CEREZONA_S.valueOf("EXTERNAL_FEEDER")
+            InputTrayFtGlCerezonaS.EXTERNAL_FEEDER,
+            InputTrayFtGlCerezonaS.valueOf("EXTERNAL_FEEDER")
         )
     }
 

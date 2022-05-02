@@ -4,6 +4,8 @@ import android.view.View
 import android.view.WindowManager
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
+import jp.co.riso.android.util.NetUtils
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -55,6 +57,9 @@ open class BaseActivityTestUtil {
 
     @After
     fun tearDown() {
+        if (NetUtils.isWifiAvailable) {
+            NetUtils.unregisterWifiCallback(SmartDeviceApp.appContext!!)
+        }
         testRule.scenario.close()
     }
 }

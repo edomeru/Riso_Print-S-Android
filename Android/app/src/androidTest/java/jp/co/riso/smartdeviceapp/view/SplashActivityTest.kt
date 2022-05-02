@@ -70,7 +70,7 @@ class SplashActivityTest {
     private val isSecurePrintReset: Boolean
         get() {
             val prefs =
-                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
             return (prefs.getBoolean(
                 AppConstants.PREF_KEY_AUTH_SECURE_PRINT,
                 true

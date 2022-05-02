@@ -84,10 +84,10 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
         val fragment = fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
+        val dialog = fragment?.dialog as AlertDialog?
         TestCase.assertNotNull(dialog)
         TestCase.assertTrue(dialog!!.isShowing)
-        TestCase.assertTrue(fragment.isCancelable)
+        TestCase.assertTrue(fragment?.isCancelable ?: false)
         val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
         TestCase.assertNotNull(b)
         TestCase.assertEquals(BUTTON_TITLE, b.text)
@@ -96,7 +96,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
         } catch (e: Throwable) {
             Log.d(TAG, e.message!!)
         }
-        TestCase.assertNull(fragment.dialog)
+        TestCase.assertNull(fragment?.dialog)
         TestCase.assertNull(fm!!.findFragmentByTag(TAG))
         TestCase.assertTrue(mockCallback.isCancelCalled)
     }
@@ -113,15 +113,15 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
         val fragment = fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
+        val dialog = fragment?.dialog as AlertDialog?
         TestCase.assertNotNull(dialog)
         TestCase.assertTrue(dialog!!.isShowing)
-        TestCase.assertTrue(fragment.isCancelable)
+        TestCase.assertTrue(fragment?.isCancelable ?: false)
 
         // back button
         InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
         waitFewSeconds()
-        TestCase.assertNull(fragment.dialog)
+        TestCase.assertNull(fragment?.dialog)
         TestCase.assertNull(fm!!.findFragmentByTag(TAG))
         TestCase.assertTrue(mockCallback.isCancelCalled)
     }
@@ -164,10 +164,10 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
         val fragment = fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
+        val dialog = fragment?.dialog as AlertDialog?
         TestCase.assertNotNull(dialog)
         TestCase.assertTrue(dialog!!.isShowing)
-        TestCase.assertTrue(fragment.isCancelable)
+        TestCase.assertTrue(fragment!!.isCancelable)
         val msg = dialog.findViewById<View>(R.id.progressText)
         TestCase.assertNotNull(msg)
         TestCase.assertEquals(MSG, (msg as TextView).text)

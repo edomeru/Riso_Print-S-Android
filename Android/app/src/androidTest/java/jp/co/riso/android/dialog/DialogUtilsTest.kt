@@ -17,18 +17,18 @@ class DialogUtilsTest : BaseActivityTestUtil() {
 
     @Test
     fun testConstructor() {
-        TestCase.assertNotNull(DialogUtils())
+        TestCase.assertNotNull(DialogUtils)
     }
 
     @Test
     fun testDisplayDialog() {
         val d = InfoDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(BUTTON_TITLE)
+            SmartDeviceApp.appContext!!.resources.getString(BUTTON_TITLE)
         )
-        DialogUtils.displayDialog(mainActivity, TAG, d)
+        DialogUtils.displayDialog(mainActivity!!, TAG, d)
         waitFewSeconds()
         val dialog = mainActivity!!.supportFragmentManager.findFragmentByTag(TAG)
         TestCase.assertTrue(dialog is DialogFragment)
@@ -41,12 +41,12 @@ class DialogUtilsTest : BaseActivityTestUtil() {
     @Test
     fun testDismissDialog() {
         val d = InfoDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(BUTTON_TITLE)
+            SmartDeviceApp.appContext!!.resources.getString(BUTTON_TITLE)
         )
-        DialogUtils.displayDialog(mainActivity, TAG, d)
+        DialogUtils.displayDialog(mainActivity!!, TAG, d)
         waitFewSeconds()
         var dialog = mainActivity!!.supportFragmentManager.findFragmentByTag(TAG)
         TestCase.assertTrue(dialog is DialogFragment)
@@ -54,7 +54,7 @@ class DialogUtilsTest : BaseActivityTestUtil() {
         TestCase.assertTrue(
             dialog!!.dialog!!.isShowing
         )
-        DialogUtils.dismissDialog(mainActivity, TAG)
+        DialogUtils.dismissDialog(mainActivity!!, TAG)
         waitFewSeconds()
         TestCase.assertNull(dialog.dialog)
         dialog = mainActivity!!.supportFragmentManager.findFragmentByTag(TAG)

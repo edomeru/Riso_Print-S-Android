@@ -34,14 +34,14 @@ class PDFFileManagerTest : BaseActivityTestUtil(), PDFFileManagerInterface {
         _encryptedPdfPath = getAssetPath("40RC4_Nitro.pdf")
         _printingDisallowed = getAssetPath("PDF-0010pages.pdf")
         _landscapePDF = getAssetPath("4pages_Landscape_TestData.pdf")
-        _pdfInSandboxPath = PDFFileManager.getSandboxPath()
+        _pdfInSandboxPath = PDFFileManager.sandboxPath
         FileUtils.copy(File(_pdfPath!!), File(_pdfInSandboxPath!!))
         _largePdfPath = _pdfPath
         //Environment.getExternalStorageDirectory()+"/TestPDFs/PDF-270MB_134pages.pdf";
         _status = 0
         _pdfManager = PDFFileManager(this)
         TestCase.assertNotNull(_pdfManager)
-        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), true)
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.appContext!!, true)
     }
 
     //================================================================================
@@ -49,10 +49,10 @@ class PDFFileManagerTest : BaseActivityTestUtil(), PDFFileManagerInterface {
     //================================================================================
     @Test
     fun testGetSetNewPDFData_Valid() {
-        val `val` = PDFFileManager.hasNewPDFData(SmartDeviceApp.getAppContext())
+        val `val` = PDFFileManager.hasNewPDFData(SmartDeviceApp.appContext!!)
         TestCase.assertTrue(`val`)
-        PDFFileManager.setHasNewPDFData(SmartDeviceApp.getAppContext(), false)
-        TestCase.assertFalse(PDFFileManager.hasNewPDFData(SmartDeviceApp.getAppContext()))
+        PDFFileManager.setHasNewPDFData(SmartDeviceApp.appContext!!, false)
+        TestCase.assertFalse(PDFFileManager.hasNewPDFData(SmartDeviceApp.appContext!!))
     }
 
     @Test
@@ -98,9 +98,9 @@ class PDFFileManagerTest : BaseActivityTestUtil(), PDFFileManagerInterface {
     //================================================================================
     @Test
     fun testGetSandboxPath() {
-        val sandbox = PDFFileManager.getSandboxPath()
+        val sandbox = PDFFileManager.sandboxPath
         TestCase.assertEquals(
-            SmartDeviceApp.getAppContext().getExternalFilesDir(AppConstants.CONST_PDF_DIR)
+            SmartDeviceApp.appContext!!.getExternalFilesDir(AppConstants.CONST_PDF_DIR)
                 .toString() + "/" + AppConstants.CONST_TEMP_PDF_PATH, sandbox
         )
     }
@@ -110,27 +110,27 @@ class PDFFileManagerTest : BaseActivityTestUtil(), PDFFileManagerInterface {
     //================================================================================
     @Test
     fun testClearSandboxPDFName() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
         val edit = prefs.edit()
         edit.putString(PDFFileManager.KEY_SANDBOX_PDF_NAME, "NOT")
         edit.apply()
-        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext())
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.appContext!!)
         TestCase.assertFalse(prefs.contains(PDFFileManager.KEY_SANDBOX_PDF_NAME))
     }
 
     @Test
     fun testClearSandboxPDFName_NoKey() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
         val edit = prefs.edit()
         edit.remove(PDFFileManager.KEY_SANDBOX_PDF_NAME)
         edit.apply()
-        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext())
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.appContext!!)
         TestCase.assertFalse(prefs.contains(PDFFileManager.KEY_SANDBOX_PDF_NAME))
     }
 
     @Test
     fun testClearSandboxPDFName_NullContext() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
         val edit = prefs.edit()
         edit.putString(PDFFileManager.KEY_SANDBOX_PDF_NAME, "NOT")
         edit.apply()
@@ -143,27 +143,27 @@ class PDFFileManagerTest : BaseActivityTestUtil(), PDFFileManagerInterface {
     //================================================================================
     @Test
     fun testGetSetSandboxPDFName_Valid() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
-        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext())
-        PDFFileManager.setSandboxPDF(SmartDeviceApp.getAppContext(), "NO.pdf")
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.appContext!!)
+        PDFFileManager.setSandboxPDF(SmartDeviceApp.appContext!!, "NO.pdf")
         TestCase.assertTrue(prefs.contains(PDFFileManager.KEY_SANDBOX_PDF_NAME))
-        val sandboxName = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext())
+        val sandboxName = PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext!!)
         TestCase.assertEquals("NO.pdf", sandboxName)
     }
 
     @Test
     fun testGetSetSandboxPDFName_NoKeyInPreferences() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.getAppContext())
-        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext())
-        PDFFileManager.setSandboxPDF(SmartDeviceApp.getAppContext(), null)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.appContext!!)
+        PDFFileManager.setSandboxPDF(SmartDeviceApp.appContext!!, null)
         TestCase.assertFalse(prefs.contains(PDFFileManager.KEY_SANDBOX_PDF_NAME))
-        val sandboxName = PDFFileManager.getSandboxPDFName(SmartDeviceApp.getAppContext())
+        val sandboxName = PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext!!)
         TestCase.assertNull(sandboxName)
     }
 
     @Test
     fun testGetSetSandboxPDFName_NullContext() {
-        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.getAppContext())
+        PDFFileManager.clearSandboxPDFName(SmartDeviceApp.appContext!!)
         PDFFileManager.setSandboxPDF(null, null)
         val sandboxName = PDFFileManager.getSandboxPDFName(null)
         TestCase.assertNull(sandboxName)

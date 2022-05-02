@@ -37,10 +37,10 @@ class InfoDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testNewInstance_WithMessage() {
         val info = InfoDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(BUTTON_TITLE)
+            SmartDeviceApp.appContext!!.resources.getString(BUTTON_TITLE)
         )
         TestCase.assertNotNull(info)
         info.show(mainActivity!!.supportFragmentManager, TAG)
@@ -55,13 +55,13 @@ class InfoDialogFragmentTest : BaseActivityTestUtil() {
         val msg = dialog.findViewById<View>(android.R.id.message)
         TestCase.assertNotNull(msg)
         TestCase.assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(MSG),
+            SmartDeviceApp.appContext!!.resources.getString(MSG),
             (msg as TextView).text
         )
         val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
         TestCase.assertNotNull(b)
         TestCase.assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(BUTTON_TITLE),
+            SmartDeviceApp.appContext!!.resources.getString(BUTTON_TITLE),
             b.text
         )
         info.dismissAllowingStateLoss()
@@ -70,11 +70,11 @@ class InfoDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testNewInstance_WithTitle() {
         val info = InfoDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 TITLE
             ),
-            SmartDeviceApp.getAppContext().resources.getString(MSG),
-            SmartDeviceApp.getAppContext().resources.getString(BUTTON_TITLE)
+            SmartDeviceApp.appContext!!.resources.getString(MSG),
+            SmartDeviceApp.appContext!!.resources.getString(BUTTON_TITLE)
         )
         TestCase.assertNotNull(info)
         info.show(mainActivity!!.supportFragmentManager, TAG)
@@ -89,7 +89,7 @@ class InfoDialogFragmentTest : BaseActivityTestUtil() {
         val msg = dialog.findViewById<View>(android.R.id.message)
         TestCase.assertNotNull(msg)
         TestCase.assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(MSG),
+            SmartDeviceApp.appContext!!.resources.getString(MSG),
             (msg as TextView).text
         )
         val titleId = mainActivity!!.resources.getIdentifier("alertTitle", "id", "android")
@@ -97,13 +97,13 @@ class InfoDialogFragmentTest : BaseActivityTestUtil() {
         val title = dialog.findViewById<View>(titleId)
         TestCase.assertNotNull(title)
         TestCase.assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(TITLE),
+            SmartDeviceApp.appContext!!.resources.getString(TITLE),
             (title as TextView).text
         )
         val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
         TestCase.assertNotNull(b)
         TestCase.assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(BUTTON_TITLE),
+            SmartDeviceApp.appContext!!.resources.getString(BUTTON_TITLE),
             b.text
         )
         info.dismissAllowingStateLoss()

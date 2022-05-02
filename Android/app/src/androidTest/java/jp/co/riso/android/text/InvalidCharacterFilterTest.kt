@@ -32,7 +32,7 @@ class InvalidCharacterFilterTest {
     // ================================================================================
     @Test
     fun testFilter() {
-        val editText = EditText(SmartDeviceApp.getAppContext())
+        val editText = EditText(SmartDeviceApp.appContext!!)
         editText.filters = arrayOf(
             LengthFilter(8),
             InvalidCharacterFilter("abcd")

@@ -44,11 +44,11 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testNewInstance_WithMessage() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         c.show(mainActivity!!.supportFragmentManager, TAG)
@@ -62,7 +62,7 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
         val msg = dialog.findViewById<View>(android.R.id.message)
         assertNotNull(msg)
         assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(MSG),
+            SmartDeviceApp.appContext!!.resources.getString(MSG),
             (msg as TextView).text
         )
         val pos = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
@@ -70,11 +70,11 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
         assertNotNull(pos)
         assertNotNull(neg)
         assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
             pos.text
         )
         assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON),
             neg.text
         )
         c.dismissAllowingStateLoss()
@@ -83,12 +83,12 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testNewInstance_WithTitle() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 TITLE
             ),
-            SmartDeviceApp.getAppContext().resources.getString(MSG),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(MSG),
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         c.show(mainActivity!!.supportFragmentManager, TAG)
@@ -102,7 +102,7 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
         val msg = dialog.findViewById<View>(android.R.id.message)
         assertNotNull(msg)
         assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(MSG),
+            SmartDeviceApp.appContext!!.resources.getString(MSG),
             (msg as TextView).text
         )
         val titleId = mainActivity!!.resources.getIdentifier("alertTitle", "id", "android")
@@ -110,7 +110,7 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
         val title = dialog.findViewById<View>(titleId)
         assertNotNull(title)
         assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(TITLE),
+            SmartDeviceApp.appContext!!.resources.getString(TITLE),
             (title as TextView).text
         )
         val pos = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
@@ -118,11 +118,11 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
         assertNotNull(pos)
         assertNotNull(neg)
         assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
             pos.text
         )
         assertEquals(
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON),
             neg.text
         )
         c.dismissAllowingStateLoss()
@@ -131,11 +131,11 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testOnClick_Positive() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         c.show(mainActivity!!.supportFragmentManager, TAG)
@@ -160,11 +160,11 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testOnClick_Negative() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         c.show(mainActivity!!.supportFragmentManager, TAG)
@@ -189,11 +189,11 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testOnClick_PositiveListener() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         val mockCallback = MockCallback()
@@ -222,11 +222,11 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testOnClick_NegativeListener() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         val mockCallback = MockCallback()
@@ -237,7 +237,7 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
         val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(TAG)
         assertTrue(fragment is DialogFragment)
         assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
+        val dialog = fragment?.dialog as AlertDialog?
         assertNotNull(dialog)
         assertTrue(dialog!!.isShowing)
         val neg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
@@ -247,20 +247,20 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
         } catch (e: Throwable) {
             Log.d(TAG, e.message!!)
         }
-        assertNull(fragment.dialog)
-        assertNull(mainActivity!!.supportFragmentManager.findFragmentByTag(TAG))
+        assertNull(fragment?.dialog)
+        assertNull(mainActivity?.supportFragmentManager?.findFragmentByTag(TAG))
         assertTrue(mockCallback.isCancelCalled)
     }
 
     @Test
     fun testOnCancel() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 TITLE
             ),
-            SmartDeviceApp.getAppContext().resources.getString(MSG),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(MSG),
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         val mockCallback = MockCallback()
@@ -271,25 +271,25 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
         val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(TAG)
         assertTrue(fragment is DialogFragment)
         assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
+        val dialog = fragment?.dialog as AlertDialog?
         assertNotNull(dialog)
         assertTrue(dialog!!.isShowing)
-        assertTrue(fragment.isCancelable)
+        assertTrue(fragment?.isCancelable ?: false)
         InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
         waitFewSeconds()
-        assertNull(fragment.dialog)
-        assertNull(mainActivity!!.supportFragmentManager.findFragmentByTag(TAG))
+        assertNull(fragment?.dialog)
+        assertNull(mainActivity?.supportFragmentManager?.findFragmentByTag(TAG))
         assertTrue(mockCallback.isCancelCalled)
     }
 
     @Test
     fun testIsShowing_Null() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         assertFalse(c.isShowing)
@@ -298,11 +298,11 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testIsShowing_False() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         waitFewSeconds()
@@ -312,11 +312,11 @@ class ConfirmDialogFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testIsShowing_True() {
         val c = ConfirmDialogFragment.newInstance(
-            SmartDeviceApp.getAppContext().resources.getString(
+            SmartDeviceApp.appContext!!.resources.getString(
                 MSG
             ),
-            SmartDeviceApp.getAppContext().resources.getString(POSITIVE_BUTTON),
-            SmartDeviceApp.getAppContext().resources.getString(NEGATIVE_BUTTON)
+            SmartDeviceApp.appContext!!.resources.getString(POSITIVE_BUTTON),
+            SmartDeviceApp.appContext!!.resources.getString(NEGATIVE_BUTTON)
         )
         assertNotNull(c)
         c.show(mainActivity!!.supportFragmentManager, TAG)

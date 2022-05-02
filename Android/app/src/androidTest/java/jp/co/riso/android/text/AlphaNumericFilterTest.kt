@@ -23,7 +23,7 @@ class AlphaNumericFilterTest {
     // ================================================================================
     @Test
     fun testFilter() {
-        val editText = EditText(SmartDeviceApp.getAppContext())
+        val editText = EditText(SmartDeviceApp.appContext!!)
         editText.filters = arrayOf(
             LengthFilter(8),
             AlphaNumericFilter()
@@ -36,7 +36,7 @@ class AlphaNumericFilterTest {
 
     @Test
     fun testFilter_Kanji() {
-        val editText = EditText(SmartDeviceApp.getAppContext())
+        val editText = EditText(SmartDeviceApp.appContext!!)
         editText.filters = arrayOf<InputFilter>(
             AlphaNumericFilter()
         )

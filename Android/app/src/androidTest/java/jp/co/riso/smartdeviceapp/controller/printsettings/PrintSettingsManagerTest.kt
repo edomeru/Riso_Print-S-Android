@@ -27,16 +27,16 @@ class PrintSettingsManagerTest {
 
     @Before
     fun setUp() {
-        val printerManager = PrinterManager.getInstance(SmartDeviceApp.getAppContext())
-        val printersList = printerManager.savedPrintersList
+        val printerManager = PrinterManager.getInstance(SmartDeviceApp.appContext!!)
+        val printersList = printerManager!!.savedPrintersList
         val printer: Printer
-        if (printersList.isEmpty()) {
+        if (printersList!!.isEmpty()) {
             printer = Printer("", IPV4_OFFLINE_PRINTER_ADDRESS)
             printerManager.savePrinterToDB(printer, false)
         } else {
-            printer = printersList[0]
+            printer = printersList[0]!!
         }
-        _context = SmartDeviceApp.getAppContext()
+        _context = SmartDeviceApp.appContext!!
         _manager = DatabaseManager(_context)
         _printerId = printer.id
         val c = _manager!!.query(
@@ -48,10 +48,10 @@ class PrintSettingsManagerTest {
             null,
             null
         )
-        if (c.moveToFirst()) {
+        if (c!!.moveToFirst()) {
             _settingId = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID)
         }
-        _printSettingsMgr = PrintSettingsManager.getInstance(_context)
+        _printSettingsMgr = PrintSettingsManager.getInstance(_context!!)
         val db = _manager!!.writableDatabase
         val cv = ContentValues()
         cv.put(PRINTER_ID, _printerId)
@@ -125,7 +125,7 @@ class PrintSettingsManagerTest {
     // ================================================================================
     @Test
     fun testGetInstance() {
-        TestCase.assertEquals(_printSettingsMgr, PrintSettingsManager.getInstance(_context))
+        TestCase.assertEquals(_printSettingsMgr, PrintSettingsManager.getInstance(_context!!))
     }
 
     // ================================================================================
