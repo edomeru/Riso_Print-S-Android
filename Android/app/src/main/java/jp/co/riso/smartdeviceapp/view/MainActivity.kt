@@ -302,19 +302,19 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
     // INTERFACE - PauseableHandlerCallback 
     // ================================================================================
     override fun storeMessage(message: Message?): Boolean {
-        return message!!.what == MSG_OPEN_DRAWER || message!!.what == MSG_CLOSE_DRAWER || message!!.what == MSG_CLEAR_ICON_STATES
+        return message!!.what == MSG_OPEN_DRAWER || message.what == MSG_CLOSE_DRAWER || message.what == MSG_CLEAR_ICON_STATES
     }
 
     @SuppressLint("RtlHardcoded")
-    override fun processMessage(msg: Message?) {
+    override fun processMessage(message: Message?) {
         val fragment = supportFragmentManager.findFragmentById(R.id.mainLayout) as BaseFragment?
-        val gravityLeft = msg!!.arg1 == Gravity.LEFT
-        when (msg.what) {
+        val gravityLeft = message!!.arg1 == Gravity.LEFT
+        when (message.what) {
             MSG_OPEN_DRAWER -> {
                 _drawerLayout!!.closeDrawers()
                 fragment?.setIconState(R.id.menu_id_action_button, gravityLeft)
-                _resizeView = msg.arg2 == 1
-                _drawerLayout!!.openDrawer(msg.arg1)
+                _resizeView = message.arg2 == 1
+                _drawerLayout!!.openDrawer(message.arg1)
             }
             MSG_CLOSE_DRAWER -> _drawerLayout!!.closeDrawers()
             MSG_CLEAR_ICON_STATES -> fragment?.clearIconStates()

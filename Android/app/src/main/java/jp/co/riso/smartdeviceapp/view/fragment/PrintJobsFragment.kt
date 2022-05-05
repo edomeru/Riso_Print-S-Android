@@ -15,7 +15,6 @@ import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView
 import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView
 import android.widget.LinearLayout
-import jp.co.riso.smartdeviceapp.view.fragment.PrintJobsFragment.LoadPrintJobsTask
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import android.widget.ScrollView
 import android.widget.TextView
@@ -25,7 +24,6 @@ import androidx.core.content.ContextCompat
 import android.annotation.SuppressLint
 import android.view.MotionEvent
 import jp.co.riso.android.dialog.DialogUtils
-import jp.co.riso.smartdeviceapp.view.fragment.PrintJobsFragment
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager
 import android.app.Activity
 import android.content.Context
@@ -34,7 +32,7 @@ import android.view.View
 import jp.co.riso.smartdeviceapp.model.PrintJob
 import jp.co.riso.smartdeviceapp.model.Printer
 import java.lang.ref.WeakReference
-import java.util.ArrayList
+import kotlin.collections.ArrayList
 
 /**
  * @class PrintJobsFragment
@@ -151,8 +149,12 @@ class PrintJobsFragment
             false
         } else {
             mConfirmDialog =
-                ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg)
-            mConfirmDialog!!.setTargetFragment(this, 0)
+                ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg, TAG)
+            setResultListenerConfirmDialog(
+                requireActivity().supportFragmentManager,
+                this,
+                TAG
+            )
             DialogUtils.displayDialog(requireActivity(), TAG, mConfirmDialog!!)
             true
         }
@@ -247,12 +249,12 @@ class PrintJobsFragment
                     if (mPrintJobsList!!.isEmpty()) {
                         showEmptyText()
                     } else {
-                        mPrintJobs = ArrayList(mPrintJobsList)
-                        mPrinters = ArrayList(mPrintersList)
-                        if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList!!.isEmpty() && !mPrintersList!!.isEmpty()) {
+                        mPrintJobs = ArrayList(mPrintJobsList as MutableList<PrintJob?>)
+                        mPrinters = ArrayList(mPrintersList as MutableList)
+                        if (mContextRef.get() != null && !mPrintJobsList!!.isEmpty() && !mPrintersList!!.isEmpty()) {
                             mPrintJobsView!!.setData(
-                                mPrintJobsList as List<PrintJob>?,
-                                mPrintersList as List<Printer>?,
+                                mPrintJobsList,
+                                mPrintersList,
                                 this@PrintJobsFragment,
                                 this@PrintJobsFragment
                             )

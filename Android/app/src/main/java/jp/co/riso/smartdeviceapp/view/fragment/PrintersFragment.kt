@@ -8,47 +8,36 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.content.res.Configuration
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.savedPrintersList
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.setPrintersCallback
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isSearching
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.cancelPrinterSearch
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.resume
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.printerCount
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.updateOnlineStatus
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.defaultPrinter
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.removePrinter
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.pause
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
-import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView.PrintersViewCallback
-import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
-import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter.PrinterArrayAdapterInterface
-import jp.co.riso.android.os.pauseablehandler.PauseableHandler
-import android.widget.ArrayAdapter
-import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import android.os.Parcelable
-import android.widget.TextView
-import jp.co.riso.smartprint.R
 import android.os.Bundle
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import android.os.Looper
 import android.os.Message
-import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.view.printers.PrintersListView
-import jp.co.riso.smartdeviceapp.view.MainActivity
+import android.os.Parcelable
 import android.view.Gravity
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import jp.co.riso.android.dialog.InfoDialogFragment
-import jp.co.riso.android.dialog.DialogUtils
 import jp.co.riso.android.dialog.ConfirmDialogFragment
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
+import jp.co.riso.android.dialog.DialogUtils
+import jp.co.riso.android.dialog.InfoDialogFragment
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrintersCallback
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter
-import java.util.ArrayList
+import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter.PrinterArrayAdapterInterface
+import jp.co.riso.smartdeviceapp.view.printers.PrintersListView
+import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView
+import jp.co.riso.smartdeviceapp.view.printers.PrintersScreenTabletView.PrintersViewCallback
+import jp.co.riso.smartprint.R
 
 /**
  * @class PrintersFragment
@@ -162,8 +151,8 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         addActionMenuButton(view)
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        super.onSaveInstanceState(savedInstanceState)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
         if (isTablet && mPrinterTabletView != null) {
             mDeleteItem = mPrinterTabletView!!.deleteItemPosition
             mSettingItem = mPrinterTabletView!!.defaultSettingSelected
@@ -329,7 +318,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
      * @retval false Maximum printer count is not yet reached
      */
     private val isMaxPrinterCountReached: Boolean
-        private get() {
+        get() {
             if (mPrinterManager!!.printerCount == AppConstants.CONST_MAX_PRINTER_COUNT) {
                 val title = resources.getString(R.string.ids_lbl_printers)
                 val errMsg: String
@@ -473,9 +462,13 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         val errMsg = resources.getString(R.string.ids_info_msg_delete_jobs)
         val info: DialogFragment
         info = ConfirmDialogFragment.newInstance(
-            title, errMsg, resources.getString(R.string.ids_lbl_ok),
-            resources.getString(R.string.ids_lbl_cancel)
+            title,
+            errMsg,
+            resources.getString(R.string.ids_lbl_ok),
+            resources.getString(R.string.ids_lbl_cancel),
+            KEY_PRINTERS_DIALOG
         )
+
         info.setTargetFragment(this, 0)
         mDeletePrinter = printer
         DialogUtils.displayDialog(requireActivity(), KEY_PRINTERS_DIALOG, info)
@@ -492,6 +485,8 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
     // ================================================================================
     // INTERFACE - ConfirmDialogListener
     // ================================================================================
+
+
     override fun onConfirm() {
         if (isTablet) {
             val relayout = mDeletePrinter!!.id == mPrinterManager!!.defaultPrinter
@@ -530,31 +525,31 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         return message!!.what != R.id.menu_id_action_add_button && message.what != R.id.menu_id_action_search_button && message.what != R.id.menu_id_action_button && message.what != MSG_SUBMENU_BUTTON && message.what != MSG_PRINTSETTINGS_BUTTON
     }
 
-    override fun processMessage(msg: Message?) {
-        val id = msg!!.what
+    override fun processMessage(message: Message?) {
+        val id = message!!.what
         when (id) {
             MSG_POPULATE_PRINTERS_LIST -> {
                 if (isTablet) {
-                    mPrinterTabletView!!.restoreState(mPrinter, msg.arg1, msg.arg2)
+                    mPrinterTabletView!!.restoreState(mPrinter, message.arg1, message.arg2)
                     mPrinterTabletView!!.setPauseableHandler(mPauseableHandler)
                 } else {
                     mPrinterAdapter =
                         PrinterArrayAdapter(activity, R.layout.printers_container_item, mPrinter)
                     (mPrinterAdapter as PrinterArrayAdapter).setPrintersArrayAdapterInterface(this)
                     mListView!!.adapter = mPrinterAdapter
-                    if (msg.obj != null) {
+                    if (message.obj != null) {
                         (mListView as PrintersListView?)!!.onRestoreInstanceState(
-                            msg.obj as Parcelable,
-                            msg.arg1
+                            message.obj as Parcelable,
+                            message.arg1
                         )
                     }
                 }
                 return
             }
             MSG_ADD_NEW_PRINTER -> {
-                val printer = msg.obj as Printer
+                val printer = message.obj as Printer
                 if (isTablet) {
-                    mPrinterTabletView!!.onAddedNewPrinter(printer, msg.arg1 > 0)
+                    mPrinterTabletView!!.onAddedNewPrinter(printer, message.arg1 > 0)
                 } else {
                     mPrinterAdapter!!.notifyDataSetChanged()
                 }
@@ -562,13 +557,13 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
             }
             MSG_SUBMENU_BUTTON -> {
                 mPauseableHandler!!.pause()
-                displayPrinterInfoFragment(msg.obj as Printer)
+                displayPrinterInfoFragment(message.obj as Printer)
             }
             MSG_PRINTSETTINGS_BUTTON -> {
                 mPauseableHandler!!.pause()
-                val fragment = msg.obj as PrintSettingsFragment
+                val fragment = message.obj as PrintSettingsFragment
                 displayDefaultPrintSettings(fragment)
-                mPrinterTabletView!!.setDefaultSettingSelected(msg.arg1, true)
+                mPrinterTabletView!!.setDefaultSettingSelected(message.arg1, true)
             }
             else -> if (id == R.id.menu_id_action_search_button) {
                 mPauseableHandler!!.pause()

@@ -29,7 +29,6 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import android.widget.TextView
 import jp.co.riso.smartprint.R
 import android.os.Bundle
-import jp.co.riso.smartdeviceapp.view.fragment.PrinterSearchFragment
 import android.os.Looper
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import androidx.core.content.ContextCompat
@@ -40,7 +39,6 @@ import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.android.util.NetUtils
 import android.widget.FrameLayout
 import android.animation.ValueAnimator
-import android.animation.ValueAnimator.AnimatorUpdateListener
 import android.os.Message
 import android.view.View
 import androidx.fragment.app.DialogFragment
@@ -119,8 +117,8 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         if (mPrinterManager!!.isSearching) {
             updateRefreshBar()
         }
@@ -130,9 +128,9 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         }
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        savedInstanceState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter)
-        super.onSaveInstanceState(savedInstanceState)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onPause() {
@@ -279,9 +277,14 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
                 title,
                 msg,
                 resources.getString(R.string.ids_lbl_ok),
-                null
+                null,
+                KEY_SEARCHED_PRINTER_DIALOG
             )
-            info.setTargetFragment(this, 0)
+            setResultListenerConfirmDialog(
+                requireActivity().supportFragmentManager,
+                this,
+                KEY_SEARCHED_PRINTER_DIALOG
+            )
         }
         DialogUtils.displayDialog(requireActivity(), KEY_SEARCHED_PRINTER_DIALOG, info)
         return ret
@@ -305,8 +308,8 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         return message!!.what == MSG_UPDATE_REFRESH_BAR
     }
 
-    override fun processMessage(msg: Message?) {
-        when (msg!!.what) {
+    override fun processMessage(message: Message?) {
+        when (message!!.what) {
             MSG_UPDATE_REFRESH_BAR -> if (mPrinterManager!!.isSearching) {
                 mListView!!.setRefreshing()
             } else {

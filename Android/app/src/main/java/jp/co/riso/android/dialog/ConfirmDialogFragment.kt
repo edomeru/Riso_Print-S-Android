@@ -12,7 +12,10 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.ContextThemeWrapper
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LifecycleOwner
 
 /**
  * @class ConfirmDialogFragment
@@ -29,14 +32,16 @@ import androidx.fragment.app.DialogFragment
  * @endcode
  */
 class ConfirmDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
-    private var _listener: ConfirmDialogListener? = null
     private var _alertDialog: AlertDialog? = null
+    private var _requestKey: String? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val title = arguments?.getString(KEY_TITLE)
         val message = arguments?.getString(KEY_MESSAGE)
         val buttonPosTitle = arguments?.getString(KEY_POS_BUTTON)
         val buttonNegTitle = arguments?.getString(KEY_NEG_BUTTON)
+        _requestKey = arguments?.getString(KEY_REQUEST)
+
         val newContext =
             ContextThemeWrapper(activity, android.R.style.TextAppearance_Holo_DialogWindowTitle)
         val builder = AlertDialog.Builder(newContext)
@@ -57,32 +62,35 @@ class ConfirmDialogFragment : DialogFragment(), DialogInterface.OnClickListener 
     }
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        if (_listener == null && targetFragment is ConfirmDialogListener) {
-            _listener = targetFragment as ConfirmDialogListener?
-        }
-        if (_listener != null) {
-            when (which) {
-                Dialog.BUTTON_POSITIVE -> {
-                    _listener!!.onConfirm()
-                    _alertDialog = null
-                }
-                Dialog.BUTTON_NEGATIVE -> {
-                    _listener!!.onCancel()
-                    _alertDialog = null
-                }
+        when (which) {
+            Dialog.BUTTON_POSITIVE -> {
+                resultConfirm()
+            }
+            Dialog.BUTTON_NEGATIVE -> {
+                resultCancel()
             }
         }
+        _alertDialog = null
     }
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
-        if (_listener == null && targetFragment is ConfirmDialogListener) {
-            _listener = targetFragment as ConfirmDialogListener?
-        }
-        if (_listener != null) {
-            _listener!!.onCancel()
-            _alertDialog = null
-        }
+        resultCancel()
+        _alertDialog = null
+    }
+
+    private fun resultConfirm() {
+        requireActivity().supportFragmentManager.setFragmentResult(
+            _requestKey!!,
+            bundleOf( DialogUtils.DIALOG_RESULT to DialogUtils.DIALOG_RESULT_CONFIRM)
+        )
+    }
+
+    private fun resultCancel() {
+        requireActivity().supportFragmentManager.setFragmentResult(
+            _requestKey!!,
+            bundleOf(DialogUtils.DIALOG_RESULT to DialogUtils.DIALOG_RESULT_CANCEL)
+        )
     }
 
     // ================================================================================
@@ -101,6 +109,7 @@ class ConfirmDialogFragment : DialogFragment(), DialogInterface.OnClickListener 
      * @brief Interface ConfirmDialogFragment events
      */
     interface ConfirmDialogListener {
+
         /**
          * @brief Called when positive button is clicked
          */
@@ -110,6 +119,23 @@ class ConfirmDialogFragment : DialogFragment(), DialogInterface.OnClickListener 
          * @brief Called when negative button is clicked
          */
         fun onCancel()
+
+        /**
+         * @brief Called to setup fragment result listener
+         */
+        fun setResultListenerConfirmDialog(fm: FragmentManager, lifecycleOwner: LifecycleOwner, requestKey: String){
+            fm.setFragmentResultListener(
+                requestKey,
+                lifecycleOwner
+            ) { _, bundle: Bundle ->
+                val result = bundle.getString(DialogUtils.DIALOG_RESULT)
+                if (result == DialogUtils.DIALOG_RESULT_CONFIRM) {
+                    onConfirm()
+                } else if (result == DialogUtils.DIALOG_RESULT_CANCEL) {
+                    onCancel()
+                }
+            }
+        }
     }
 
     companion object {
@@ -117,6 +143,7 @@ class ConfirmDialogFragment : DialogFragment(), DialogInterface.OnClickListener 
         private const val KEY_MESSAGE = "message"
         private const val KEY_POS_BUTTON = "posButton"
         private const val KEY_NEG_BUTTON = "negButton"
+        private const val KEY_REQUEST = "requestKey"
 
         /**
          * @brief Creates a ConfirmDialogFragment instance.
@@ -131,9 +158,10 @@ class ConfirmDialogFragment : DialogFragment(), DialogInterface.OnClickListener 
         fun newInstance(
             message: String?,
             buttonPosTitle: String?,
-            buttonNegTitle: String?
+            buttonNegTitle: String?,
+            requestKey: String?
         ): ConfirmDialogFragment {
-            return newInstance(null, message, buttonPosTitle, buttonNegTitle)
+            return newInstance(null, message, buttonPosTitle, buttonNegTitle, requestKey)
         }
 
         /**
@@ -151,7 +179,8 @@ class ConfirmDialogFragment : DialogFragment(), DialogInterface.OnClickListener 
             title: String?,
             message: String?,
             buttonPosTitle: String?,
-            buttonNegTitle: String?
+            buttonNegTitle: String?,
+            requestKey: String?
         ): ConfirmDialogFragment {
             val dialog = ConfirmDialogFragment()
 
@@ -162,6 +191,7 @@ class ConfirmDialogFragment : DialogFragment(), DialogInterface.OnClickListener 
                 putString(KEY_MESSAGE, message)
                 putString(KEY_POS_BUTTON, buttonPosTitle)
                 putString(KEY_NEG_BUTTON, buttonNegTitle)
+                putString(KEY_REQUEST, requestKey)
             }
             dialog.arguments = args
             return dialog

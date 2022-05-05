@@ -70,7 +70,7 @@ object AppUtils {
     val localeCode: String
         get() {
             val defaultLocale = Locale.getDefault()
-            return defaultLocale.toString().substring(0, 2).toLowerCase(defaultLocale)
+            return defaultLocale.toString().substring(0, 2).lowercase(defaultLocale)
         }
 
     /**
@@ -194,6 +194,7 @@ object AppUtils {
      *
      * @return Screen dimensions
      */
+    @Suppress("DEPRECATION")
     fun getScreenDimensionsForSDK29(activity: Activity, size: Point): Point {
         val display = activity.windowManager.defaultDisplay
         display.getSize(size)

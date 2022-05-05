@@ -28,7 +28,7 @@ class DefaultPrinterArrayAdapter(context: Context?, resource: Int) : ArrayAdapte
         return position != 1 || !isNoDisabled
     }
 
-    override fun getDropDownView(position: Int, convertView: View, parent: ViewGroup): View {
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = super.getDropDownView(position, convertView, parent) as TextView
         if (isNoDisabled && position == 1) //No
         {

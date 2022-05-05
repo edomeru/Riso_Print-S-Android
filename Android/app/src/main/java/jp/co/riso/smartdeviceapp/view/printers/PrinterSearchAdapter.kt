@@ -11,7 +11,6 @@ import android.content.Context
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
 //import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isExists
 import android.widget.ArrayAdapter
-import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import android.view.ViewGroup
 import android.view.LayoutInflater
@@ -31,10 +30,12 @@ class PrinterSearchAdapter(context: Context?, private val layoutId: Int, values:
     ArrayAdapter<Printer?>(
         context!!, layoutId, values!!
     ), View.OnClickListener {
+
     private var mSearchAdapterInterface: PrinterSearchAdapterInterface? = null
     private val mPrinterManager: PrinterManager?
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+
+    override fun getView(position: Int, view: View?, parent: ViewGroup): View {
+        var convertView = view
         val printer = getItem(position)
         val viewHolder: ViewHolder
         if (convertView == null) {

@@ -11,7 +11,6 @@ import android.content.Context
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
 //import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.defaultPrinter
 import android.widget.ArrayAdapter
-import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter.PrinterArrayAdapterInterface
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import android.view.ViewGroup
 import android.view.LayoutInflater
@@ -20,7 +19,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import jp.co.riso.smartprint.R
-import jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.model.Printer
 import java.lang.ref.WeakReference
@@ -34,11 +32,13 @@ class PrinterArrayAdapter(context: Context?, private val mLayoutId: Int, values:
     ArrayAdapter<Printer?>(
         context!!, mLayoutId, values!!
     ), View.OnClickListener {
+
     private var mCallbackRef: WeakReference<PrinterArrayAdapterInterface?>? = null
     private val mPrinterManager: PrinterManager?
     private var mDeleteViewHolder: ViewHolder?
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+
+    override fun getView(position: Int, view: View?, parent: ViewGroup): View {
+        var convertView = view
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         var viewHolder: ViewHolder
         val printer = getItem(position)

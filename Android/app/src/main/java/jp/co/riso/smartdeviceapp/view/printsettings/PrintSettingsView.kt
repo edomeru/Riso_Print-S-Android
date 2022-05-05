@@ -64,7 +64,7 @@ class PrintSettingsView @JvmOverloads constructor(
 
     private var _printSettings: PrintSettings? = null
     private var _printerId = PrinterManager.EMPTY_ID
-    private var _printersList: List<Printer>? = null
+    private var _printersList: List<Printer?>? = null
     private var _mainView: LinearLayout? = null
     private var _printSettingsScrollView: ScrollView? = null
     private var _printSettingsLayout: LinearLayout? = null
@@ -162,7 +162,7 @@ class PrintSettingsView @JvmOverloads constructor(
      * @brief Gets the list of printers from manager
      */
     private fun loadPrintersList() {
-        _printersList = PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!.savedPrintersList as List<Printer>?
+        _printersList = PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!.savedPrintersList
     }
     // ================================================================================
     // Save/Restore State
@@ -182,7 +182,7 @@ class PrintSettingsView @JvmOverloads constructor(
         }
 
         // Need to convert to String array (Direct Object[] to String[] has JVM error
-        var stockArr: Array<String?>? = arrayOfNulls(selectedTitles.size)
+        var stockArr: Array<String?> = arrayOfNulls(selectedTitles.size)
         stockArr = selectedTitles.toArray(stockArr)
 
         // Save to bundle
@@ -635,10 +635,8 @@ class PrintSettingsView @JvmOverloads constructor(
     // ================================================================================
     /**
      * @brief Display the highlighted printer
-     *
-     * @param printerId Printer ID
      */
-    private fun updateHighlightedPrinter(printerId: Int) {
+    private fun updateHighlightedPrinter() {
         if (_printControls == null) {
             return
         }
@@ -722,9 +720,10 @@ class PrintSettingsView @JvmOverloads constructor(
             }
             if (name == PrintSettings.TAG_INPUT_TRAY) {
                 if (printer!!.isPrinterFTorCEREZONA_S) {
-                    when (valuesFtCerezonaS()[value]) {
-                        InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.TRAY1, InputTrayFtGlCerezonaS.TRAY2 -> return true
-                        InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> return printer!!.config!!.isExternalFeederAvailable
+                    return when (valuesFtCerezonaS()[value]) {
+                        InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.TRAY1, InputTrayFtGlCerezonaS.TRAY2 -> true
+                        InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> printer!!.config!!.isExternalFeederAvailable
+                        else -> false
                     }
                 }
                 if (printer!!.isPrinterGL) {
@@ -771,7 +770,7 @@ class PrintSettingsView @JvmOverloads constructor(
                 val textView = view.findViewById<TextView>(R.id.listValueTextView)
                 var text = value.toString()
                 val setting = view.getTag(ID_TAG_SETTING) as Setting
-                val options = getOptionsStrings(tag, setting.options)
+                val options = getOptionsStrings(setting.options)
                 if (value >= 0 && value < options.size) {
                     text = options[value].toString()
                 }
@@ -850,7 +849,7 @@ class PrintSettingsView @JvmOverloads constructor(
      */
     private fun setPrinterId(printerId: Int) {
         _printerId = printerId
-        updateHighlightedPrinter(_printerId)
+        updateHighlightedPrinter()
         hideDisabledPrintSettings()
     }
 
@@ -896,7 +895,7 @@ class PrintSettingsView @JvmOverloads constructor(
      */
     private fun getPrinterFromList(printerId: Int): Printer? {
         for (p in _printersList!!) {
-            if (p.id == printerId) {
+            if (p!!.id == printerId) {
                 return p
             }
         }
@@ -965,12 +964,11 @@ class PrintSettingsView @JvmOverloads constructor(
      * @brief Get the options strings.
      * The strings ids are updated based on constraints
      *
-     * @param name Print settings tag
      * @param options Options list
      *
      * @return Option strings
      */
-    private fun getOptionsStrings(name: String, options: List<Option>): Array<Any> {
+    private fun getOptionsStrings(options: List<Option>): Array<Any> {
         val optionsStrings = ArrayList<String>()
         for (option in options) {
             val value = option.textContent
@@ -1356,7 +1354,7 @@ class PrintSettingsView @JvmOverloads constructor(
                 for (i in _printersList!!.indices) {
                     val printer = _printersList!![i]
                     val showSeparator = i != _printersList!!.size - 1
-                    var printerName = printer.name
+                    var printerName = printer!!.name
                     if (printerName == null || printerName.isEmpty()) {
                         printerName = context.resources.getString(string.ids_lbl_no_name)
                     }
@@ -1375,7 +1373,7 @@ class PrintSettingsView @JvmOverloads constructor(
             _subView!!.setTag(ID_TAG_TEXT, v.getTag(ID_TAG_TEXT))
             _subView!!.setTag(ID_TAG_ICON, v.getTag(ID_TAG_ICON))
             val setting = v.getTag(ID_TAG_SETTING) as Setting
-            val options = getOptionsStrings(v.tag as String, setting.options)
+            val options = getOptionsStrings(setting.options)
             _subView!!.setTag(ID_TAG_SUB_OPTIONS, options)
             val name = v.tag as String
             val text = v.getTag(ID_TAG_TEXT) as String
@@ -1500,7 +1498,7 @@ class PrintSettingsView @JvmOverloads constructor(
 
                 // Update UI
                 updateDisplayedValue(_subView!!.tag as String)
-                val options = _subView!!.getTag(ID_TAG_SUB_OPTIONS) as Array<Any>
+                val options = _subView!!.getTag(ID_TAG_SUB_OPTIONS) as Array<*>
                 for (i in options.indices) {
                     val view = _subView!!.findViewWithTag<View>(i)
                     // Some views may be hidden
@@ -1527,7 +1525,7 @@ class PrintSettingsView @JvmOverloads constructor(
                 }
                 for (i in _printersList!!.indices) {
                     val printer = _printersList!![i]
-                    val view = _subView!!.findViewWithTag<View>(printer.id)
+                    val view = _subView!!.findViewWithTag<View>(printer!!.id)
                     val subView = view.findViewById<View>(R.id.view_id_subview_status)
                     subView.isSelected = _printerId == printer.id
                 }
@@ -2045,7 +2043,7 @@ class PrintSettingsView @JvmOverloads constructor(
             if (_subView == null) {
                 return
             }
-            val view = _subView!!.findViewWithTag<View>(printer.id)
+            val view = _subView!!.findViewWithTag<View>(printer!!.id)
             if (view != null) {
                 val imageView = view.findViewById<View>(R.id.menuIcon)
                 _printerManager!!.updateOnlineStatus(printer.ipAddress, imageView)
@@ -2208,8 +2206,6 @@ class PrintSettingsView @JvmOverloads constructor(
      */
     /**
      * @brief Constructs a new PrintSettingsView with a Context object
-     *
-     * @param context A Context object used to access application assets
      */
     init {
         init()

@@ -83,11 +83,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logVerbose(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logVerbose(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_VERBOSE) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.v(cls.simpleName, msg!!)
     }
 
@@ -101,11 +101,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logDebug(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logDebug(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_DEBUG) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.d(cls.simpleName, msg ?: "")
     }
 
@@ -119,11 +119,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logInfo(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logInfo(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_INFO) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.i(cls.simpleName, msg!!)
     }
 
@@ -137,11 +137,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logWarn(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logWarn(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_WARN) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.w(cls.simpleName, msg!!)
     }
 
@@ -155,11 +155,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logError(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logError(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_ERROR) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.e(cls.simpleName, msg!!)
     }
 
@@ -173,11 +173,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logAssert(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logAssert(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_ASSERT) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.wtf(cls.simpleName, msg)
     }
 

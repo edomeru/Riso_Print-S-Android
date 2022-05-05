@@ -7,50 +7,38 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.setPrinterSearchCallback
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isSearching
-import jp.co.riso.android.util.AppUtils.getScreenDimensions
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.pause
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.resume
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.searchPrinter
-import jp.co.riso.android.util.AppUtils.hideSoftKeyboard
-import jp.co.riso.smartdeviceapp.common.JniUtils.validateIpAddress
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isExists
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isCancelled
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.savePrinterToDB
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback
-import android.widget.TextView.OnEditorActionListener
-import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import jp.co.riso.android.os.pauseablehandler.PauseableHandler
-import jp.co.riso.smartprint.R
 import android.os.Bundle
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import android.os.Looper
 import android.os.Message
 import android.text.InputFilter
 import android.text.InputType
-import android.widget.EditText
-import androidx.core.content.ContextCompat
-import jp.co.riso.android.text.IpAddressFilter
-import jp.co.riso.android.util.AppUtils
-import android.view.ViewGroup
-import android.widget.TextView
-import jp.co.riso.smartdeviceapp.view.MainActivity
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
-import jp.co.riso.android.dialog.ConfirmDialogFragment
-import jp.co.riso.android.dialog.DialogUtils
-import jp.co.riso.smartdeviceapp.view.fragment.AddPrinterFragment
-import jp.co.riso.android.dialog.InfoDialogFragment
-import jp.co.riso.smartdeviceapp.common.JniUtils
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.TextView.OnEditorActionListener
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import jp.co.riso.android.dialog.ConfirmDialogFragment
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
+import jp.co.riso.android.dialog.DialogUtils
+import jp.co.riso.android.dialog.InfoDialogFragment
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
+import jp.co.riso.android.text.IpAddressFilter
+import jp.co.riso.android.util.AppUtils.getScreenDimensions
+import jp.co.riso.android.util.AppUtils.hideSoftKeyboard
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.common.JniUtils.validateIpAddress
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+import jp.co.riso.smartprint.R
 
 /**
  * @class AddPrinterFragment
@@ -164,10 +152,8 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
 
     /**
      * @brief Display success dialog during successful printer search
-     *
-     * @param printer Searched printer
      */
-    private fun dialogCb(printer: Printer) {
+    private fun dialogCb() {
         if (isTablet && activity != null && activity is MainActivity) {
             val activity = activity as MainActivity?
             if (!activity!!.isDrawerOpen(Gravity.RIGHT)) {
@@ -183,10 +169,14 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 title,
                 msg,
                 resources.getString(R.string.ids_lbl_ok),
-                null
+                null,
+                KEY_ADD_PRINTER_DIALOG
             )
-            info.setTargetFragment(this, 0)
             if (activity != null && activity is MainActivity) {
+                setResultListenerConfirmDialog(
+                    requireActivity().supportFragmentManager,
+                    this,
+                    KEY_ADD_PRINTER_DIALOG)
                 DialogUtils.displayDialog(activity as MainActivity, KEY_ADD_PRINTER_DIALOG, info)
             }
         }
@@ -225,9 +215,13 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 title,
                 errMsg,
                 resources.getString(R.string.ids_lbl_ok),
-                null
+                null,
+                KEY_ADD_PRINTER_DIALOG
             )
-            info.setTargetFragment(this, 0)
+            setResultListenerConfirmDialog(
+                requireActivity().supportFragmentManager,
+                this,
+                KEY_ADD_PRINTER_DIALOG)
         } else {
             info = InfoDialogFragment.newInstance(
                 title,
@@ -284,9 +278,9 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         // #RM908 for chromeOS, setFocusable(false) somehow causes virtual keyboard to reappear after printer is added
         // use alternative way to disable IP address field which does cause the same problem
         if (isChromeBook) {
-            viewHolder!!.mIpAddress!!.inputType = InputType.TYPE_NULL
+            viewHolder.mIpAddress!!.inputType = InputType.TYPE_NULL
         } else {
-            viewHolder!!.mIpAddress!!.isFocusable = false
+            viewHolder.mIpAddress!!.isFocusable = false
         }
     }
 
@@ -307,15 +301,20 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 R.color.theme_dark_1
             )
         )
-        viewHolder!!.mIpAddress!!.isFocusableInTouchMode = true
+        viewHolder.mIpAddress!!.isFocusableInTouchMode = true
     }
 
     /**
      * @brief Start manual printer search
      */
     private fun startManualSearch() {
-        var ipAddress = mAddPrinterView!!.mIpAddress!!.text.toString()
-        ipAddress = validateIpAddress(ipAddress)
+        var ipAddress: String?
+        if (mAddPrinterView!!.mIpAddress!!.text != null) {
+            ipAddress = mAddPrinterView?.mIpAddress?.text.toString()
+            ipAddress = validateIpAddress(ipAddress)
+        } else {
+            ipAddress = null
+        }
         if (ipAddress == null || ipAddress.contentEquals(BROADCAST_ADDRESS)) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS)
             return
@@ -422,11 +421,11 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         return message!!.what == MSG_ERROR || message.what == MSG_ADD_SUCCESS
     }
 
-    override fun processMessage(msg: Message?) {
-        if (msg != null) {
-            when (msg.what) {
-                MSG_ERROR -> dialogErrCb(msg.arg1)
-                MSG_ADD_SUCCESS -> dialogCb(msg.obj as Printer)
+    override fun processMessage(message: Message?) {
+        if (message != null) {
+            when (message.what) {
+                MSG_ERROR -> dialogErrCb(message.arg1)
+                MSG_ADD_SUCCESS -> dialogCb()
             }
         }
     }

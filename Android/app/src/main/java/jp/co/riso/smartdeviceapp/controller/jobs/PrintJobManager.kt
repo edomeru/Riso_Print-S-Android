@@ -17,7 +17,6 @@ import jp.co.riso.android.util.Logger.logError
 import jp.co.riso.android.util.Logger.logWarn
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants
-import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult
 import android.content.ContentValues
 import android.content.Context
@@ -196,7 +195,7 @@ class PrintJobManager private constructor(context: Context) {
             "MIN(" + KeyConstants.KEY_SQL_PRINTJOB_DATE + ")"
         )
         val selection = KeyConstants.KEY_SQL_PRINTER_ID + "=?"
-        val selArgs = arrayOf(Integer.toString(printerId))
+        val selArgs = arrayOf<String?>(printerId.toString())
         val groupBy = KeyConstants.KEY_SQL_PRINTER_ID
         val having = "COUNT(" + KeyConstants.KEY_SQL_PRINTER_ID + ") >= 100"
         val orderBy = KeyConstants.KEY_SQL_PRINTJOB_ID + " ASC"
@@ -286,13 +285,13 @@ class PrintJobManager private constructor(context: Context) {
          */
         @JvmStatic
         fun convertDateToString(date: Date?): String {
-            var date = date
-            if (date == null) {
-                date = Date(0)
-            }
             val sdf = SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault())
             sdf.timeZone = TimeZone.getTimeZone(C_TIMEZONE)
-            return sdf.format(date)
+            return if (date == null) {
+                sdf.format(Date(0))
+            } else {
+                sdf.format(date)
+            }
         }
 
         /**
@@ -307,7 +306,7 @@ class PrintJobManager private constructor(context: Context) {
             sdf.timeZone = TimeZone.getTimeZone(C_TIMEZONE)
             val date: Date
             date = try {
-                sdf.parse(strDate)
+                sdf.parse(strDate)!!
             } catch (e: ParseException) {
                 logWarn(
                     PrintJobManager::class.java,

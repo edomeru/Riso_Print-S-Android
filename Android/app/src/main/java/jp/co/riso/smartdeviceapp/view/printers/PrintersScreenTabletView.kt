@@ -77,7 +77,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param context Application context
      */
     constructor(context: Context) : super(context) {
-        init(context)
+        init()
     }
 
     /**
@@ -89,7 +89,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param attrs Layout attributes
      */
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init(context)
+        init()
     }
 
     /**
@@ -106,7 +106,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         attrs,
         defStyle
     ) {
-        init(context)
+        init()
     }
 
     override fun generateLayoutParams(layoutParams: LayoutParams): LayoutParams {
@@ -324,10 +324,8 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
     // ================================================================================
     /**
      * @brief Initialize PrinterScreenTabletView.
-     *
-     * @param context Application context
      */
-    private fun init(context: Context) {
+    private fun init() {
         mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
         mHandler = Handler(Looper.myLooper()!!, this)
     }

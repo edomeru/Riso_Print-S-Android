@@ -68,7 +68,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     private var mUpdateStatusCallback: WeakReference<UpdateStatusCallback?>? = null
     private var mUpdateStatusTimer: Timer? = null
     private var mDefaultPrintId = EMPTY_ID
-    private val mDatabaseManager: DatabaseManager
+    private var mDatabaseManager: DatabaseManager
 
     /**
      * @brief PrinterManager Constructor.
@@ -346,30 +346,30 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @retval false Save to Database has failed
      */
     fun removePrinter(printer: Printer?): Boolean {
-        var printer = printer
+        var printerFromList = printer
         val ret: Boolean
         if (printer == null) {
             return false
         }
         for (i in mPrinterList!!.indices) {
             val printerItem = mPrinterList[i]
-            if (printerItem!!.id == printer!!.id) {
-                printer = printerItem
+            if (printerItem!!.id == printerFromList!!.id) {
+                printerFromList = printerItem
                 break
             }
         }
-        if (!isExists(printer)) {
+        if (!isExists(printerFromList)) {
             return false
         }
         ret = mDatabaseManager.delete(
             KeyConstants.KEY_SQL_PRINTER_TABLE,
             KeyConstants.KEY_SQL_PRINTER_ID + "=?",
-            printer!!.id.toString()
+            printerFromList!!.id.toString()
         )
         if (ret) {
-            mPrinterList.remove(printer)
+            mPrinterList.remove(printerFromList)
             // Set default printer to invalid
-            if (printer.id == mDefaultPrintId) {
+            if (printerFromList.id == mDefaultPrintId) {
                 if (mPrinterList.size != 0) {
                     val newDefaultPrinter = mPrinterList[0]
                     setDefaultPrinter(newDefaultPrinter)
@@ -568,7 +568,6 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @retval false Device is off-line
      */
     fun isOnline(ipAddress: String?): Boolean {
-        var inetIpAddress: InetAddress
         return try {
             if (ipAddress == null) {
                 return false
@@ -854,7 +853,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         BaseTask<Any?, Boolean?>() {
         private val mViewRef: WeakReference<View?>?
         private val mIpAddress: String
-        protected override fun doInBackground(vararg arg: Any?): Boolean? {
+        protected override fun doInBackground(vararg params: Any?): Boolean? {
             return if (mIpAddress.isEmpty()) {
                 false
             } else isOnline(mIpAddress)
@@ -959,11 +958,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @param databaseManager DatabaseManager instance
      */
     init {
-        var databaseManager = databaseManager
-        if (databaseManager == null) {
-            databaseManager = DatabaseManager(context)
-        }
-        mDatabaseManager = databaseManager
+        mDatabaseManager = databaseManager ?: DatabaseManager(context)
         mPrinterList = ArrayList()
         mSNMPManager = SNMPManager()
         mSNMPManager.setCallback(this)

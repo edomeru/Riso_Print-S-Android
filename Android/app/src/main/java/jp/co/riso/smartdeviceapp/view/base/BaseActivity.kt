@@ -27,12 +27,14 @@ import jp.co.riso.android.util.AppUtils
  * @brief Base activity class
  */
 abstract class BaseActivity : FragmentActivity() {
+
     private var systemUIFlags // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
             = 0
     private var mLastRotation // Stores previous rotation to isolate change in rotation events only
             = 0
     private var mDisplayListener: DisplayListener? = null
     private var mDisplayManager: DisplayManager? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onCreateContent(savedInstanceState)
@@ -116,12 +118,14 @@ abstract class BaseActivity : FragmentActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     private val systemUIFlagsForSDK29: Unit
         get() {
             val decorView = window.decorView
             systemUIFlags = decorView.systemUiVisibility
         }
 
+    @Suppress("DEPRECATION")
     private fun handleSystemUIRotationForSDK29() {
         // RM1132 fix: Use onOrientationChanged to capture rotation events only
         val display = windowManager.defaultDisplay

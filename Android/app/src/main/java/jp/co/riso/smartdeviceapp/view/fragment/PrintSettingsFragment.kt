@@ -13,6 +13,8 @@ import android.os.Looper
 import android.os.Message
 import android.view.View
 import android.widget.TextView
+import androidx.core.os.bundleOf
+import jp.co.riso.android.dialog.DialogUtils
 import jp.co.riso.android.dialog.DialogUtils.dismissDialog
 import jp.co.riso.android.dialog.DialogUtils.displayDialog
 import jp.co.riso.android.dialog.InfoDialogFragment
@@ -82,7 +84,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         val textView = view.findViewById<TextView>(R.id.titleTextView)
         textView!!.setText(R.string.ids_lbl_print_settings)
         if (!_fragmentForPrinting) {
-            textView!!.setText(R.string.ids_lbl_default_print_settings)
+            textView.setText(R.string.ids_lbl_default_print_settings)
         }
         if (_printSettingsBundle != null) {
             _printSettingsView!!.restoreState(_printSettingsBundle!!)
@@ -171,10 +173,14 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     // ================================================================================
     override fun onPrinterIdSelectedChanged(printerId: Int) {
         setPrinterId(printerId)
-        if (targetFragment is PrintPreviewFragment) {
-            val fragment = targetFragment as PrintPreviewFragment?
-            fragment!!.setPrintId(printerId)
-        }
+
+        // set printerId to PrintPreviewFragment
+        requireActivity().supportFragmentManager.setFragmentResult(
+            PrintPreviewFragment.TAG_RESULT_PRINT_SETTINGS,
+            bundleOf(
+                RESULT_KEY to RESULT_PRINTER_ID,
+                RESULT_PRINTER_ID to printerId)
+        )
     }
 
     override fun onPrintSettingsValueChanged(printSettings: PrintSettings?) {
@@ -182,10 +188,14 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         if (!_fragmentForPrinting) {
             printSettings!!.savePrintSettingToDB(_printerId)
         }
-        if (targetFragment is PrintPreviewFragment) {
-            val fragment = targetFragment as PrintPreviewFragment?
-            fragment!!.setPrintSettings(printSettings)
-        }
+
+        // set printSettings to PrintPreviewFragment
+        requireActivity().supportFragmentManager.setFragmentResult(
+            PrintPreviewFragment.TAG_RESULT_PRINT_SETTINGS,
+            bundleOf(
+                RESULT_KEY to RESULT_PRINTER_SETTINGS,
+                RESULT_PRINTER_SETTINGS to printSettings)
+        )
     }
 
     override fun onPrint(printer: Printer?, printSettings: PrintSettings?) {
@@ -252,8 +262,12 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         }
         if (ret) {
             btnMsg = getString(R.string.ids_lbl_cancel)
-            _waitingDialog = newInstance(null, _printMsg, true, btnMsg)
-            _waitingDialog!!.setTargetFragment(this, REQUEST_CODE_CANCEL)
+            _waitingDialog = newInstance(null, _printMsg, true, btnMsg, TAG_MESSAGE_DIALOG)
+            setResultListenerWaitingDialog(
+                requireActivity().supportFragmentManager,
+                this,
+                PrintPreviewFragment.TAG_WAITING_DIALOG
+            )
             displayDialog(requireActivity(), TAG_WAITING_DIALOG, _waitingDialog!!)
         } else {
             val strMsg = getString(R.string.ids_info_msg_print_job_failed)
@@ -343,6 +357,9 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         private const val PRINT_JOB_SENT_PROGRESS_DIALOG_DELAY =
             50 // To allow user to see 100% progress percentage, enforce a 50ms delay before closing the progress dialog after a successful print job
         private const val MSG_PRINT = 0
-        private const val REQUEST_CODE_CANCEL = 0
+
+        const val RESULT_KEY = "result"
+        const val RESULT_PRINTER_ID = "printer_id"
+        const val RESULT_PRINTER_SETTINGS = "printer_settings"
     }
 }

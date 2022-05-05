@@ -114,7 +114,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
         groupListener: PrintJobsGroupListener?,
         layoutListener: PrintJobsLayoutListener?
     ) {
-        mPrintJobs = ArrayList(printJobs)
+        mPrintJobs = ArrayList(printJobs as MutableList)
         mPrinter = printer
         mGroupListener = groupListener
         mLayoutListener = layoutListener
@@ -368,7 +368,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
         tempView.tag = pj
         tempView.setOnTouchListener(this)
         printJobName.text = pj.name
-        printJobDate.text = formatDate(pj.date)
+        printJobDate.text = formatDate(pj.date!!)
         printJobDeleteBtn.setOnClickListener(this)
         if (pj.result == JobResult.ERROR) {
             printJobError.visibility = VISIBLE
@@ -391,7 +391,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      *
      * @return Converted string format
      */
-    private fun formatDate(date: Date?): String {
+    private fun formatDate(date: Date): String {
         val dateStr = DateFormat.getDateFormat(context).format(date)
         val timeStr = DateFormat.getTimeFormat(context).format(date)
         return dateStr + C_SPACE + timeStr
@@ -497,7 +497,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
         } else {
             val jobToDelete = mJobsLayout!!.indexOfChild(v) //mPrintJobViews.indexOf(v);
             val deleteAnim = ScaleAnimation(1.0f, 1.0f, 1.0f, 0.0f)
-            deleteAnim.setDuration((totalHeight * DURATION_MULTIPLIER) as Long)
+            deleteAnim.setDuration((totalHeight * DURATION_MULTIPLIER).toLong())
             if (jobToDelete == mJobsLayout!!.childCount - 1) {
                 deleteAnim.setAnimationListener(object : AnimationListener {
                     override fun onAnimationStart(animation: Animation) {}
@@ -514,7 +514,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
             for (i in jobToDelete + 1 until mJobsLayout!!.childCount) {
                 val child = mJobsLayout!!.getChildAt(i)
                 val animation = TranslateAnimation(0F, 0F, 0F, (-totalHeight).toFloat())
-                animation.setDuration((totalHeight * DURATION_MULTIPLIER) as Long)
+                animation.setDuration((totalHeight * DURATION_MULTIPLIER).toLong())
                 if (i == mJobsLayout!!.childCount - 1) {
                     animation.setAnimationListener(object : AnimationListener {
                         override fun onAnimationStart(animation: Animation) {}

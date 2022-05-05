@@ -115,13 +115,13 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @param viewListener PrintJobsViewListener
      */
     fun setData(
-        printJobs: List<PrintJob>?,
-        printers: List<Printer>?,
+        printJobs: List<PrintJob?>?,
+        printers: List<Printer?>?,
         groupListener: PrintJobsGroupListener?,
         viewListener: PrintJobsViewListener?
     ) {
-        mPrintJobs = ArrayList(printJobs)
-        mPrinters = ArrayList(printers)
+        mPrintJobs = ArrayList(printJobs as MutableList)
+        mPrinters = ArrayList(printers as MutableList)
         mGroupListener = groupListener
         mListenerRef = WeakReference(viewListener)
         reset()
@@ -263,7 +263,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @return Index of the smallest column
      */
     private val smallestColumn: Int
-        private get() {
+        get() {
             // initially assign to 1st column
             var smallestColumn = 0
             var tempHeight = mColumnsHeight[smallestColumn]
@@ -342,7 +342,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @return total number of print job groups already assigned to columns
      */
     private val totalPrintJobGroups: Int
-        private get() {
+        get() {
             var total = 0
             for (i in mColumns.indices) {
                 total += mColumns[i].childCount
@@ -459,21 +459,19 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
         }
         for (i in mColumns.indices) {
             val column = mColumns[i]
-            if (column != null) {
-                column.getLocationOnScreen(coords)
-                val rect =
-                    Rect(coords[0], coords[1], coords[0] + column.width, coords[1] + column.height)
-                contains1 = rect.contains(mDownPoint!!.x, mDownPoint!!.y)
-                contains2 = rect.contains(ev.rawX.toInt(), ev.rawY.toInt())
-                if (contains1 && contains2 && dragged) {
-                    for (j in 0 until column.childCount) {
-                        val view = (column.getChildAt(j) as PrintJobsGroupView).getJobViewSwiped(
-                            mDownPoint!!, ev
-                        )
-                        if (view != null) {
-                            beginDelete(column.getChildAt(j) as PrintJobsGroupView, view, true)
-                            return true
-                        }
+            column.getLocationOnScreen(coords)
+            val rect =
+                Rect(coords[0], coords[1], coords[0] + column.width, coords[1] + column.height)
+            contains1 = rect.contains(mDownPoint!!.x, mDownPoint!!.y)
+            contains2 = rect.contains(ev.rawX.toInt(), ev.rawY.toInt())
+            if (contains1 && contains2 && dragged) {
+                for (j in 0 until column.childCount) {
+                    val view = (column.getChildAt(j) as PrintJobsGroupView).getJobViewSwiped(
+                        mDownPoint!!, ev
+                    )
+                    if (view != null) {
+                        beginDelete(column.getChildAt(j) as PrintJobsGroupView, view, true)
+                        return true
                     }
                 }
             }
@@ -607,7 +605,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
             if (down) {
                 animation = TranslateAnimation(0F, 0F, (-totalHeight).toFloat(), 0F)
                 animation.setStartOffset(
-                    (resources.getDimensionPixelSize(R.dimen.printjob_row_height) * durationMultiplier) as Long
+                    (resources.getDimensionPixelSize(R.dimen.printjob_row_height) * durationMultiplier).toLong()
 
                 )
             } else {
