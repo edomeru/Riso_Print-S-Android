@@ -1,23 +1,19 @@
 package jp.co.riso.android.dialog
 
-import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import androidx.test.core.app.ActivityScenario
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import jp.co.riso.android.dialog.DialogUtils.dismissDialog
-import jp.co.riso.android.dialog.DialogUtils.displayDialog
-import jp.co.riso.android.dialog.InfoDialogFragment.Companion.newInstance
-import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
-import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartprint.R
 import junit.framework.TestCase
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
+class DialogUtilsTest : BaseActivityTestUtil() {
 
-@RunWith(AndroidJUnit4::class)
-class DialogUtilsTest {
+    @Before
+    fun setUp() {
+        wakeUpScreen()
+    }
 
     @Test
     fun testConstructor() {
@@ -26,81 +22,43 @@ class DialogUtilsTest {
 
     @Test
     fun testDisplayDialog() {
-        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
-            scenario.onActivity { activity: MainActivity ->
-
-                // wake up screen
-                wakeUpScreen(activity)
-
-                val d: InfoDialogFragment = newInstance(
-                    appContext!!.resources.getString(MSG),
-                    appContext!!.resources.getString(BUTTON_TITLE)
-                )
-                displayDialog(activity, TAG, d)
-                waitFewSeconds()
-                val dialog = activity.supportFragmentManager.findFragmentByTag(TAG)
-                TestCase.assertTrue(dialog is DialogFragment)
-                TestCase.assertTrue((dialog as DialogFragment?)!!.showsDialog)
-                TestCase.assertTrue(
-                    dialog!!.dialog!!.isShowing
-                )
-            }
-            scenario.close()
-        }
+        val d = InfoDialogFragment.newInstance(
+            SmartDeviceApp.appContext!!.resources.getString(
+                MSG
+            ),
+            SmartDeviceApp.appContext!!.resources.getString(BUTTON_TITLE)
+        )
+        DialogUtils.displayDialog(mainActivity!!, TAG, d)
+        waitFewSeconds()
+        val dialog = mainActivity!!.supportFragmentManager.findFragmentByTag(TAG)
+        TestCase.assertTrue(dialog is DialogFragment)
+        TestCase.assertTrue((dialog as DialogFragment?)!!.showsDialog)
+        TestCase.assertTrue(
+            dialog!!.dialog!!.isShowing
+        )
     }
 
     @Test
     fun testDismissDialog() {
-        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
-            scenario.onActivity { activity: MainActivity ->
-
-                // wake up screen
-                wakeUpScreen(activity)
-
-                val d: InfoDialogFragment = newInstance(
-                    appContext!!.resources.getString(MSG),
-                    appContext!!.resources.getString(BUTTON_TITLE)
-                )
-                displayDialog(activity, TAG, d)
-                waitFewSeconds()
-                var dialog = activity.supportFragmentManager.findFragmentByTag(TAG)
-                TestCase.assertTrue(dialog is DialogFragment)
-                TestCase.assertTrue((dialog as DialogFragment?)!!.showsDialog)
-                TestCase.assertTrue(
-                    dialog!!.dialog!!.isShowing
-                )
-                dismissDialog(activity, TAG)
-                waitFewSeconds()
-                TestCase.assertNull(dialog.dialog)
-                dialog = activity.supportFragmentManager.findFragmentByTag(TAG)
-                TestCase.assertNull(dialog)
-            }
-            scenario.close()
-        }
-    }
-
-    // ================================================================================
-    // Private methods
-    // ================================================================================
-    // wait some seconds so that you can see the change on emulator/device.
-    private fun waitFewSeconds() {
-        try {
-            Thread.sleep(1000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun wakeUpScreen(activity: MainActivity) {
-        activity.runOnUiThread {
-            activity.window.addFlags(
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-            )
-        }
+        val d = InfoDialogFragment.newInstance(
+            SmartDeviceApp.appContext!!.resources.getString(
+                MSG
+            ),
+            SmartDeviceApp.appContext!!.resources.getString(BUTTON_TITLE)
+        )
+        DialogUtils.displayDialog(mainActivity!!, TAG, d)
         waitFewSeconds()
+        var dialog = mainActivity!!.supportFragmentManager.findFragmentByTag(TAG)
+        TestCase.assertTrue(dialog is DialogFragment)
+        TestCase.assertTrue((dialog as DialogFragment?)!!.showsDialog)
+        TestCase.assertTrue(
+            dialog!!.dialog!!.isShowing
+        )
+        DialogUtils.dismissDialog(mainActivity!!, TAG)
+        waitFewSeconds()
+        TestCase.assertNull(dialog.dialog)
+        dialog = mainActivity!!.supportFragmentManager.findFragmentByTag(TAG)
+        TestCase.assertNull(dialog)
     }
 
     companion object {
