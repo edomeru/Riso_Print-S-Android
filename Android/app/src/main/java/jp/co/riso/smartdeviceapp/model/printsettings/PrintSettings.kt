@@ -128,7 +128,7 @@ class PrintSettings {
             }
             strBuf.append(String.format(Locale.getDefault(), formatKeyVal, key, value))
         }
-        strBuf.append(AppUtils.getAuthenticationString())
+        strBuf.append(AppUtils.authenticationString)
         return strBuf.toString()
     }
     // ================================================================================

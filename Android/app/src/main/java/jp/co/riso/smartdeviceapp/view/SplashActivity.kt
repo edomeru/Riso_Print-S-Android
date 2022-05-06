@@ -252,18 +252,18 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
         get() {
             val htmlFolder = getString(R.string.html_folder)
             val helpHtml = getString(R.string.license_html)
-            return AppUtils.getLocalizedAssetFullPath(this, htmlFolder, helpHtml)
+            return AppUtils.getLocalizedAssetFullPath(this, htmlFolder, helpHtml)!!
         }
 
     // ================================================================================
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
-    override fun storeMessage(message: Message): Boolean {
-        return message.what == MESSAGE_RUN_MAIN_ACTIVITY
+    override fun storeMessage(message: Message?): Boolean {
+        return message!!.what == MESSAGE_RUN_MAIN_ACTIVITY
     }
 
-    override fun processMessage(message: Message) {
-        if (message.what == MESSAGE_RUN_MAIN_ACTIVITY) {
+    override fun processMessage(message: Message?) {
+        if (message!!.what == MESSAGE_RUN_MAIN_ACTIVITY) {
             if (_databaseInitialized) {
                 runMainActivity()
             }

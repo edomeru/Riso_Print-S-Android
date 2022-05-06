@@ -26,9 +26,11 @@ import jp.co.riso.android.util.Logger
  * @brief Base fragment class
  */
 abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.OnClickListener {
+
     private var mIconState = false
     private var mIconId = 0
     private var mIconIdToRestore = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Logger.logStartTime(activity, this.javaClass, "Fragment Instance")
         super.onCreate(savedInstanceState)
@@ -87,7 +89,7 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
             setIconState(mIconIdToRestore, true)
         }
         mIconIdToRestore = 0
-        AppUtils.hideSoftKeyboard(activity)
+        AppUtils.hideSoftKeyboard(requireActivity())
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -147,7 +149,7 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
      * @param view The view of the fragment
      * @param savedInstanceState Bundle which contains a saved state during recreation
      */
-    abstract fun initializeView(view: View?, savedInstanceState: Bundle?)
+    abstract fun initializeView(view: View, savedInstanceState: Bundle?)
 
     /**
      * @brief Initializes the custom action bar.
@@ -155,7 +157,7 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
      * @param view The view of the fragment
      * @param savedInstanceState Bundle which contains the saved state during recreation
      */
-    abstract fun initializeCustomActionBar(view: View?, savedInstanceState: Bundle?)
+    abstract fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?)
     // ================================================================================
     // Public Functions
     // ================================================================================

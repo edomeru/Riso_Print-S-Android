@@ -11,8 +11,8 @@ import android.text.InputFilter
 import android.text.Spanned
 import java.util.regex.Pattern
 
-class SnmpCommunityNameFilter(obs: InvalidInputObserver?) : InputFilter {
-    private var _invalidInputObserver: InvalidInputObserver? = null
+class SnmpCommunityNameFilter(obs: InvalidInputObserver) : InputFilter {
+    private var _invalidInputObserver: InvalidInputObserver? = obs
     override fun filter(
         source: CharSequence,
         start: Int,
@@ -52,9 +52,5 @@ class SnmpCommunityNameFilter(obs: InvalidInputObserver?) : InputFilter {
     companion object {
         private const val VALID_CHARACTERS = "^[a-zA-Z0-9,./¥:;@\\[\\\\\\]^_]*$"
         private val validPattern = Pattern.compile(VALID_CHARACTERS)
-    }
-
-    init {
-        _invalidInputObserver = obs
     }
 }

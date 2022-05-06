@@ -172,7 +172,7 @@ abstract class BaseActivity : FragmentActivity() {
                 resources.getFraction(R.fraction.drawer_width_percentage, 1, 1)
             val minDrawerWidth = resources.getDimensionPixelSize(R.dimen.drawer_width_min)
             val maxDrawerWidth = resources.getDimensionPixelSize(R.dimen.drawer_width_max)
-            var drawerWidth = screenSize.x.coerceAtMost(screenSize.y) * drawerWidthPercentage
+            var drawerWidth = screenSize!!.x.coerceAtMost(screenSize.y) * drawerWidthPercentage
             drawerWidth = drawerWidth.coerceAtLeast(minDrawerWidth.toFloat())
             drawerWidth = drawerWidth.coerceAtMost(maxDrawerWidth.toFloat())
             return drawerWidth.toInt()

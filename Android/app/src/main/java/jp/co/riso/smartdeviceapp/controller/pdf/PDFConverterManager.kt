@@ -223,7 +223,7 @@ class PDFConverterManager(
                 mUri = Uri.fromFile(tempImgFile)
             }
             bitmap = ImageUtils.getBitmapFromUri(mContext, mUri)
-            bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap, mUri)
+            bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap!!, mUri)
             if (bitmap == null) {
                 return CONVERSION_FAILED
             }
@@ -311,7 +311,7 @@ class PDFConverterManager(
                     uri = Uri.fromFile(tempImgFile)
                 }
                 bitmap = ImageUtils.getBitmapFromUri(mContext, uri)
-                bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap, uri)
+                bitmap = ImageUtils.rotateImageIfRequired(mContext, bitmap!!, uri)
                 if (bitmap == null) {
                     return CONVERSION_FAILED
                 }

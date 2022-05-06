@@ -241,10 +241,10 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             }
         }
         if (_printerId == PrinterManager.EMPTY_ID) {
-            _printerId = PrinterManager.getInstance(appContext).defaultPrinter
+            _printerId = PrinterManager.getInstance(appContext!!)!!.defaultPrinter
             if (_printerId != -1) {
-                val printerType = PrinterManager.getInstance(appContext).getPrinterType(_printerId)
-                _printSettings = PrintSettings(_printerId, printerType)
+                val printerType = PrinterManager.getInstance(appContext!!)!!.getPrinterType(_printerId)
+                _printSettings = PrintSettings(_printerId, printerType!!)
             }
         }
 
@@ -252,7 +252,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (_printSettings == null) {
             var printerType: String? = AppConstants.PRINTER_MODEL_IS
             if (_printerId != -1) {
-                printerType = PrinterManager.getInstance(appContext).getPrinterType(_printerId)
+                printerType = PrinterManager.getInstance(appContext!!)!!.getPrinterType(_printerId)
             }
             _printSettings = printerType?.let { PrintSettings(it) }
         }
@@ -313,9 +313,9 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         }
     }
 
-    override fun initializeView(view: View?, savedInstanceState: Bundle?) {
-        _printPreviewView = view?.findViewById(R.id.printPreviewView)
-        _printPreviewView?.setPdfManager(_pdfManager)
+    override fun initializeView(view: View, savedInstanceState: Bundle?) {
+        _printPreviewView = view.findViewById(R.id.printPreviewView)
+        _printPreviewView!!.setPdfManager(_pdfManager)
         //mPrintPreviewView.setShow3Punch(isPrinterJapanese());
         _printPreviewView!!.setPrintSettings(_printSettings)
 
@@ -328,35 +328,33 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
                 _bmpCache!!.evictAll()
             }
         }
-        _printPreviewView?.setBmpCache(_bmpCache)
-        _printPreviewView?.setListener(this)
-        _printPreviewView?.setPans(_panX, _panY)
-        _printPreviewView?.setZoomLevel(_zoomLevel)
-        _printPreviewView?.visibility = View.GONE
-        _pageControls = view?.findViewById(R.id.previewControls)
-        _pageLabel = _pageControls?.findViewById(R.id.pageDisplayTextView)
-        _seekBar = _pageControls?.findViewById(R.id.pageSlider)
-        _seekBar?.setOnSeekBarChangeListener(this)
-        _seekBar?.setOnKeyListener(this)
-        _seekBar?.onFocusChangeListener = this
+        _printPreviewView!!.setBmpCache(_bmpCache)
+        _printPreviewView!!.setListener(this)
+        _printPreviewView!!.setPans(_panX, _panY)
+        _printPreviewView!!.setZoomLevel(_zoomLevel)
+        _printPreviewView!!.visibility = View.GONE
+        _pageControls = view.findViewById(R.id.previewControls)
+        _pageLabel = _pageControls!!.findViewById(R.id.pageDisplayTextView)
+        _seekBar = _pageControls!!.findViewById(R.id.pageSlider)
+        _seekBar!!.setOnSeekBarChangeListener(this)
+        _seekBar!!.setOnKeyListener(this)
+        _seekBar!!.onFocusChangeListener = this
         if (_currentPage != 0) {
-            _printPreviewView?.currentPage = _currentPage
+            _printPreviewView!!.currentPage = _currentPage
         }
         if (_pdfManager!!.isInitialized) {
-            _printPreviewView?.refreshView()
+            _printPreviewView!!.refreshView()
             setTitle(view, _pdfManager!!.fileName)
         }
 
-        if (view != null) {
-            _openInView = view.findViewById(R.id.openInView)
-            _progressBar = view.findViewById(R.id.pdfLoadIndicator)
-            _progressBar?.visibility = View.GONE
-        }
+        _openInView = view.findViewById(R.id.openInView)
+        _progressBar = view.findViewById(R.id.pdfLoadIndicator)
+        _progressBar!!.visibility = View.GONE
 
         setPrintPreviewViewDisplayed(view, _pdfManager!!.fileName != null)
         val newMessage = Message.obtain(_handler, 0)
-        newMessage.arg1 = _printPreviewView?.visibility!!
-        _printPreviewView?.visibility = View.GONE
+        newMessage.arg1 = _printPreviewView!!.visibility
+        _printPreviewView!!.visibility = View.GONE
         _handler!!.sendMessage(newMessage)
     }
 
@@ -377,9 +375,9 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         }
     }
 
-    override fun initializeCustomActionBar(view: View?, savedInstanceState: Bundle?) {
+    override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {
         setDefaultTitle(view)
-        view?.let{ addActionMenuButton(it) }
+        addActionMenuButton(view)
         addPrintButton(view)
     }
 
@@ -448,8 +446,8 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             }
         }
         _shouldDisplayExplanation = false
-        val printerManager = PrinterManager.getInstance(appContext)
-        val defaultPrinterId = printerManager.defaultPrinter
+        val printerManager = PrinterManager.getInstance(appContext!!)
+        val defaultPrinterId = printerManager!!.defaultPrinter
         val isFirstPrinterAdded =
             _printerId == PrinterManager.EMPTY_ID && defaultPrinterId != PrinterManager.EMPTY_ID
         val isCurrentPrinterRemoved =
@@ -459,7 +457,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         // this is to prevent unnecessary reload/refresh of the page preview
         if (isFirstPrinterAdded || isCurrentPrinterRemoved) {
             setPrintId(defaultPrinterId)
-            val printerType = PrinterManager.getInstance(appContext).getPrinterType(_printerId)
+            val printerType = PrinterManager.getInstance(appContext!!)!!.getPrinterType(_printerId)
 
             //use fallthrough printer type IS, if printer does not yet exist
             setPrintSettings(
@@ -549,6 +547,26 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             updatePageLabel()
         }
     }
+
+    /**
+     * @brief Checks if the printer set is Japanese. Uses the punch 3 capability
+     *
+     * @return true 3-punch in the printer is available
+     * @return false 3-punch in the printer is not available available or no printer is set
+     */
+	/* -- unused method
+    open fun isPrinterJapanese(): Boolean {
+        if (_printerId === PrinterManager.EMPTY_ID) {
+            return false
+        }
+        val mList: MutableList<jp.co.riso.smartdeviceapp.model.Printer>? = PrinterManager.getInstance(activity).savedPrintersList
+        for (printer in mList!!) {
+            if (printer.id === _printerId) {
+                return printer.config.isPunch3Available()
+            }
+        }
+        return false
+    }*/
 
     /**
      * @brief Shows/Hide the Print Preview View.
@@ -691,7 +709,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             ft.replace(R.id.leftLayout, menuFragment, "fragment_menu")
             ft.commit()
         }
-        menuFragment.hasPDFfile = false
+        menuFragment.hasPdfFile = false
         menuFragment.setCurrentState(MenuFragment.STATE_HOME)
     }
     // ================================================================================
@@ -928,16 +946,16 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     // ================================================================================
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
-    override fun storeMessage(msg: Message): Boolean {
+    override fun storeMessage(msg: Message?): Boolean {
         return false
     }
 
-    override fun processMessage(msg: Message) {
-        val id = msg.what
+    override fun processMessage(msg: Message?) {
+        val id = msg!!.what
         if (id == R.id.view_id_print_button) {
             _pauseableHandler!!.pause()
-            val printerManager = PrinterManager.getInstance(appContext)
-            if (printerManager.defaultPrinter == PrinterManager.EMPTY_ID) {
+            val printerManager = PrinterManager.getInstance(appContext!!)
+            if (printerManager!!.defaultPrinter == PrinterManager.EMPTY_ID) {
                 val titleMsg = resources.getString(R.string.ids_lbl_print_settings)
                 val strMsg = getString(R.string.ids_err_msg_no_selected_printer)
                 val btnMsg = getString(R.string.ids_lbl_ok)

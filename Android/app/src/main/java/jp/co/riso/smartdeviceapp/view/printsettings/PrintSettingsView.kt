@@ -84,7 +84,7 @@ class PrintSettingsView @JvmOverloads constructor(
         if (isInEditMode) {
             return
         }
-        _printerManager = PrinterManager.getInstance(SmartDeviceApp.appContext)
+        _printerManager = PrinterManager.getInstance(SmartDeviceApp.appContext!!)
         _printerManager?.setUpdateStatusCallback(this)
         _handler = Handler(Looper.myLooper()!!, this)
         loadPrintersList()
@@ -162,7 +162,7 @@ class PrintSettingsView @JvmOverloads constructor(
      * @brief Gets the list of printers from manager
      */
     private fun loadPrintersList() {
-        _printersList = PrinterManager.getInstance(SmartDeviceApp.appContext).savedPrintersList
+        _printersList = PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!.savedPrintersList as List<Printer>?
     }
     // ================================================================================
     // Save/Restore State
@@ -681,12 +681,12 @@ class PrintSettingsView @JvmOverloads constructor(
      */
     private fun hideDisabledPrintSettings() {
         val printer = printer
-        val isStapleAvailable = printer == null || printer.config.isStaplerAvailable
+        val isStapleAvailable = printer == null || printer.config!!.isStaplerAvailable
         setViewVisible(PrintSettings.TAG_STAPLE, isStapleAvailable)
-        val isPunchAvailable = printer == null || printer.config.isPunchAvailable
+        val isPunchAvailable = printer == null || printer.config!!.isPunchAvailable
         setViewVisible(PrintSettings.TAG_PUNCH, isPunchAvailable)
         val isBookletFinishingAvailable =
-            printer == null || printer.config.isBookletFinishingAvailable
+            printer == null || printer.config!!.isBookletFinishingAvailable
         setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable)
         setViewVisible(PrintSettings.TAG_ORIENTATION, !AppConstants.USE_PDF_ORIENTATION)
     }
@@ -709,29 +709,29 @@ class PrintSettingsView @JvmOverloads constructor(
                     OutputTray.FACEDOWN ->                         //ver.2.0.1.2 We always display "Facedown" in the Output tray list(20160707 RISO Saito)
                         //return getPrinter().getConfig().isTrayFaceDownAvailable();
                         true
-                    OutputTray.TOP -> printer!!.config.isTrayTopAvailable
-                    OutputTray.STACKING -> printer!!.config.isTrayStackAvailable
+                    OutputTray.TOP -> printer!!.config!!.isTrayTopAvailable
+                    OutputTray.STACKING -> printer!!.config!!.isTrayStackAvailable
                 }
             }
             if (name == PrintSettings.TAG_PUNCH) {
                 return when (Punch.values()[value]) {
                     Punch.OFF, Punch.HOLES_2 -> true
-                    Punch.HOLES_3 -> printer!!.config.isPunch3Available
-                    Punch.HOLES_4 -> printer!!.config.isPunch4Available
+                    Punch.HOLES_3 -> printer!!.config!!.isPunch3Available
+                    Punch.HOLES_4 -> printer!!.config!!.isPunch4Available
                 }
             }
             if (name == PrintSettings.TAG_INPUT_TRAY) {
                 if (printer!!.isPrinterFTorCEREZONA_S) {
                     when (valuesFtCerezonaS()[value]) {
                         InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.TRAY1, InputTrayFtGlCerezonaS.TRAY2 -> return true
-                        InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> return printer!!.config.isExternalFeederAvailable
+                        InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> return printer!!.config!!.isExternalFeederAvailable
                     }
                 }
                 if (printer!!.isPrinterGL) {
                     return when (InputTrayFtGlCerezonaS.valuesGl()[value]) {
                         InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.TRAY1, InputTrayFtGlCerezonaS.TRAY2 -> true
                         InputTrayFtGlCerezonaS.TRAY3 -> printer!!.isPrinterGL
-                        InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> printer!!.config.isExternalFeederAvailable
+                        InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> printer!!.config!!.isExternalFeederAvailable
                     }
                 }
             }
@@ -1516,8 +1516,8 @@ class PrintSettingsView @JvmOverloads constructor(
                 setPrintSettings(
                     PrintSettings(
                         id,
-                        PrinterManager.getInstance(SmartDeviceApp.appContext)
-                            .getPrinterType(id)
+                        PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!
+                            .getPrinterType(id)!!
                     )
                 )
                 setPrinterId(id)
@@ -1999,7 +1999,7 @@ class PrintSettingsView @JvmOverloads constructor(
                 return true
             }
             MSG_SLIDE_OUT -> {
-                PrinterManager.getInstance(SmartDeviceApp.appContext)
+                PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!
                     .cancelUpdateStatusThread()
                 removeView(_subView)
                 return true

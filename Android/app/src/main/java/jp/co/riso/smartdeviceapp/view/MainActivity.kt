@@ -301,14 +301,14 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
     // ================================================================================
     // INTERFACE - PauseableHandlerCallback 
     // ================================================================================
-    override fun storeMessage(message: Message): Boolean {
-        return message.what == MSG_OPEN_DRAWER || message.what == MSG_CLOSE_DRAWER || message.what == MSG_CLEAR_ICON_STATES
+    override fun storeMessage(message: Message?): Boolean {
+        return message!!.what == MSG_OPEN_DRAWER || message!!.what == MSG_CLOSE_DRAWER || message!!.what == MSG_CLEAR_ICON_STATES
     }
 
     @SuppressLint("RtlHardcoded")
-    override fun processMessage(msg: Message) {
+    override fun processMessage(msg: Message?) {
         val fragment = supportFragmentManager.findFragmentById(R.id.mainLayout) as BaseFragment?
-        val gravityLeft = msg.arg1 == Gravity.LEFT
+        val gravityLeft = msg!!.arg1 == Gravity.LEFT
         when (msg.what) {
             MSG_OPEN_DRAWER -> {
                 _drawerLayout!!.closeDrawers()

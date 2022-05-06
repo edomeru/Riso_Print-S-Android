@@ -76,15 +76,15 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         }
     }
 
-    override fun initializeView(view: View?, savedInstanceState: Bundle?) {
-        _homeButtons = view?.findViewById(R.id.homeButtons)
+    override fun initializeView(view: View, savedInstanceState: Bundle?) {
+        _homeButtons = view.findViewById(R.id.homeButtons)
         setOnClickListeners(view)
     }
 
-    override fun initializeCustomActionBar(view: View?, savedInstanceState: Bundle?) {
-        val textView = view?.findViewById<TextView>(R.id.actionBarTitle)
-        textView?.setText(R.string.ids_lbl_home)
-        view?.let {addActionMenuButton(it)}
+    override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {
+        val textView = view.findViewById<TextView>(R.id.actionBarTitle)
+        textView.setText(R.string.ids_lbl_home)
+        addActionMenuButton(view)
     }
 
     override fun onClick(v: View) {

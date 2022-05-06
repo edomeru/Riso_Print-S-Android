@@ -74,23 +74,24 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         _printMsg = resources.getString(R.string.ids_info_msg_printing)
     }
 
-    override fun initializeView(view: View?, savedInstanceState: Bundle?) {
-        _printSettingsView = view?.findViewById(R.id.rootView)
-        _printSettingsView?.setValueChangedListener(this)
-        _printSettingsView?.setInitialValues(_printerId, _printSettings!!)
-        _printSettingsView?.setShowPrintControls(_fragmentForPrinting)
-        val textView = view?.findViewById<TextView>(R.id.titleTextView)
-        textView?.setText(R.string.ids_lbl_print_settings)
+    override fun initializeView(view: View, savedInstanceState: Bundle?) {
+        _printSettingsView = view.findViewById(R.id.rootView)
+        _printSettingsView!!.setValueChangedListener(this)
+        _printSettingsView!!.setInitialValues(_printerId, _printSettings!!)
+        _printSettingsView!!.setShowPrintControls(_fragmentForPrinting)
+        val textView = view.findViewById<TextView>(R.id.titleTextView)
+        textView!!.setText(R.string.ids_lbl_print_settings)
         if (!_fragmentForPrinting) {
-            textView?.setText(R.string.ids_lbl_default_print_settings)
+            textView!!.setText(R.string.ids_lbl_default_print_settings)
         }
         if (_printSettingsBundle != null) {
-            _printSettingsView?.restoreState(_printSettingsBundle!!)
+            _printSettingsView!!.restoreState(_printSettingsBundle!!)
             _printSettingsBundle = null
         }
     }
 
-    override fun initializeCustomActionBar(view: View?, savedInstanceState: Bundle?) {}
+    override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {}
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (_printSettingsView != null) {
@@ -101,7 +102,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
 
     override fun onPause() {
         super.onPause()
-        PrinterManager.getInstance(SmartDeviceApp.appContext).cancelUpdateStatusThread()
+        PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!.cancelUpdateStatusThread()
         _pauseableHandler!!.pause()
     }
 
@@ -212,7 +213,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         _directPrintManager!!.setCallback(this)
         val appName = resources.getString(R.string.ids_app_name)
         val appVersion = AppUtils.getApplicationVersion(SmartDeviceApp.appContext)
-        val userName = AppUtils.getOwnerName()
+        val userName = AppUtils.ownerName
         // Ver.2.0.4.2 Start
         val hostName = Build.MODEL
         // Ver.2.0.4.2 End
@@ -265,22 +266,22 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     // ================================================================================
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
-    override fun storeMessage(message: Message): Boolean {
-        return message.what == MSG_PRINT
+    override fun storeMessage(message: Message?): Boolean {
+        return message!!.what == MSG_PRINT
     }
 
-    override fun processMessage(message: Message) {
-        when (message.what) {
+    override fun processMessage(message: Message?) {
+        when (message!!.what) {
             MSG_PRINT -> {
                 dismissDialog(requireActivity(), TAG_WAITING_DIALOG)
-                val pm = PrintJobManager.getInstance(SmartDeviceApp.appContext)
+                val pm = PrintJobManager.getInstance(SmartDeviceApp.appContext!!)
                 val filename = getSandboxPDFName(SmartDeviceApp.appContext)
                 val fragment: InfoDialogFragment
                 val strMsg: String = if (message.arg1 == DirectPrintManager.PRINT_STATUS_SENT) {
-                    pm.createPrintJob(_printerId, filename, Date(), JobResult.SUCCESSFUL)
+                    pm!!.createPrintJob(_printerId, filename, Date(), JobResult.SUCCESSFUL)
                     getString(R.string.ids_info_msg_print_job_successful)
                 } else {
-                    pm.createPrintJob(_printerId, filename, Date(), JobResult.ERROR)
+                    pm!!.createPrintJob(_printerId, filename, Date(), JobResult.ERROR)
                     getString(R.string.ids_info_msg_print_job_failed)
                 }
                 val btnMsg: String = getString(R.string.ids_lbl_ok)
@@ -294,7 +295,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     // ================================================================================
     // INTERFACE - DirectPrintCallback
     // ================================================================================
-    override fun onNotifyProgress(manager: DirectPrintManager, status: Int, progress: Float) {
+    override fun onNotifyProgress(manager: DirectPrintManager?, status: Int, progress: Float) {
         if (isWifiAvailable) {
             when (status) {
                 DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING, DirectPrintManager.PRINT_STATUS_ERROR_SENDING, DirectPrintManager.PRINT_STATUS_ERROR_FILE, DirectPrintManager.PRINT_STATUS_ERROR, DirectPrintManager.PRINT_STATUS_SENT -> {
