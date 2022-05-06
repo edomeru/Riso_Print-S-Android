@@ -2,28 +2,14 @@ package jp.co.riso.android.util
 
 import android.content.Context
 import android.net.wifi.WifiManager
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import jp.co.riso.android.util.NetUtils.connectToIpv4Address
-import jp.co.riso.android.util.NetUtils.connectToIpv6Address
-import jp.co.riso.android.util.NetUtils.isIPv4Address
-import jp.co.riso.android.util.NetUtils.isIPv4MulticastAddress
-import jp.co.riso.android.util.NetUtils.isIPv6Address
-import jp.co.riso.android.util.NetUtils.isWifiAvailable
-import jp.co.riso.android.util.NetUtils.registerWifiCallback
-import jp.co.riso.android.util.NetUtils.trimZeroes
-import jp.co.riso.android.util.NetUtils.unregisterWifiCallback
-import jp.co.riso.android.util.NetUtils.validateIpAddress
-import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
+import androidx.test.platform.app.InstrumentationRegistry
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import junit.framework.TestCase
 import org.junit.Test
-import org.junit.runner.RunWith
 import java.net.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-
-@RunWith(AndroidJUnit4::class)
 class NetUtilsTest {
 
     private val _signal = CountDownLatch(1)
@@ -52,7 +38,7 @@ class NetUtilsTest {
     fun testIsIPv4Address_ValidIpv4Address() {
         var isIpV4Address: Boolean
         for (iPv4_valid_address in IPv4_VALID_ADDRESS) {
-            isIpV4Address = isIPv4Address(iPv4_valid_address)
+            isIpV4Address = NetUtils.isIPv4Address(iPv4_valid_address)
             TestCase.assertEquals(true, isIpV4Address)
         }
     }
@@ -60,12 +46,12 @@ class NetUtilsTest {
     @Test
     fun testIsIPv4Address_InvalidIpv4Address() {
         var isIpV4Address: Boolean
-        for (ipv4_invalid_address in IPV4_INVALID_ADDRESS) {
-            isIpV4Address = isIPv4Address(ipv4_invalid_address)
+        for (ipv4_invalid_address in IPv4_INVALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4Address(ipv4_invalid_address)
             TestCase.assertEquals(false, isIpV4Address)
         }
         for (iPv6_valid_address in IPv6_VALID_ADDRESS) {
-            isIpV4Address = isIPv4Address(iPv6_valid_address)
+            isIpV4Address = NetUtils.isIPv4Address(iPv6_valid_address)
             TestCase.assertEquals(false, isIpV4Address)
         }
     }
@@ -73,7 +59,7 @@ class NetUtilsTest {
     @Test
     fun testIsIPv4Address_NullIpAddress() {
         try {
-            isIPv4Address(null)
+            NetUtils.isIPv4Address(null)
         } catch (e: NullPointerException) {
             TestCase.fail() // Error should not be thrown
         }
@@ -86,7 +72,7 @@ class NetUtilsTest {
     fun testIsIPv4MulticastAddress_ValidIpv4MulticastAddress() {
         var isIpV4Address: Boolean
         for (iPv4_multicast_valid_address in IPv4_MULTICAST_VALID_ADDRESS) {
-            isIpV4Address = isIPv4MulticastAddress(iPv4_multicast_valid_address)
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(iPv4_multicast_valid_address)
             TestCase.assertEquals(true, isIpV4Address)
         }
     }
@@ -95,15 +81,15 @@ class NetUtilsTest {
     fun testIsIPv4MulticastAddress_InvalidIpv4MulticastAddress() {
         var isIpV4Address: Boolean
         for (iPv4_multicast_invalid_address in IPv4_MULTICAST_INVALID_ADDRESS) {
-            isIpV4Address = isIPv4MulticastAddress(iPv4_multicast_invalid_address)
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(iPv4_multicast_invalid_address)
             TestCase.assertEquals(false, isIpV4Address)
         }
-        for (ipv4_invalid_address in IPV4_INVALID_ADDRESS) {
-            isIpV4Address = isIPv4MulticastAddress(ipv4_invalid_address)
+        for (ipv4_invalid_address in IPv4_INVALID_ADDRESS) {
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(ipv4_invalid_address)
             TestCase.assertEquals(false, isIpV4Address)
         }
         for (iPv6_valid_address in IPv6_VALID_ADDRESS) {
-            isIpV4Address = isIPv4MulticastAddress(iPv6_valid_address)
+            isIpV4Address = NetUtils.isIPv4MulticastAddress(iPv6_valid_address)
             TestCase.assertEquals(false, isIpV4Address)
         }
     }
@@ -111,7 +97,7 @@ class NetUtilsTest {
     @Test
     fun testIsIPv4MulticastAddress_NullIpAddress() {
         try {
-            isIPv4MulticastAddress(null)
+            NetUtils.isIPv4MulticastAddress(null)
         } catch (e: NullPointerException) {
             TestCase.fail() // Error should not be thrown
         }
@@ -124,7 +110,7 @@ class NetUtilsTest {
     fun testIsIPv6Address_ValidIpv6Address() {
         var isIpV6Address: Boolean
         for (iPv6_valid_address in IPv6_VALID_ADDRESS) {
-            isIpV6Address = isIPv6Address(iPv6_valid_address)
+            isIpV6Address = NetUtils.isIPv6Address(iPv6_valid_address)
             TestCase.assertEquals(true, isIpV6Address)
         }
     }
@@ -133,11 +119,11 @@ class NetUtilsTest {
     fun testIsIPv6Address_InvalidIpv6Address() {
         var isIpV6Address: Boolean
         for (iPv6_invalid_address in IPv6_INVALID_ADDRESS) {
-            isIpV6Address = isIPv6Address(iPv6_invalid_address)
+            isIpV6Address = NetUtils.isIPv6Address(iPv6_invalid_address)
             TestCase.assertEquals(false, isIpV6Address)
         }
         for (iPv4_valid_address in IPv4_VALID_ADDRESS) {
-            isIpV6Address = isIPv6Address(iPv4_valid_address)
+            isIpV6Address = NetUtils.isIPv6Address(iPv4_valid_address)
             TestCase.assertEquals(false, isIpV6Address)
         }
     }
@@ -145,7 +131,7 @@ class NetUtilsTest {
     @Test
     fun testIsIPv6Address_NullIpAddress() {
         try {
-            isIPv6Address(null)
+            NetUtils.isIPv6Address(null)
         } catch (e: NullPointerException) {
             TestCase.fail() // Error should not be thrown
         }
@@ -169,14 +155,14 @@ class NetUtilsTest {
             // ignored
         }
         // wifi is OFF
-        assertEquals(false, NetUtils.isNetworkAvailable(SmartDeviceApp.Companion.getAppContext()));
+        assertEquals(false, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
     }
 
     public void testIsNetworkAvailable_WithConnection() {
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
         turnWifiOn();
         // wifi is ON
-        assertEquals(true, NetUtils.isNetworkAvailable(SmartDeviceApp.Companion.getAppContext()));
+        assertEquals(true, NetUtils.isNetworkAvailable(SmartDeviceApp.getAppContext()));
     }
     */
     // ================================================================================
@@ -184,18 +170,18 @@ class NetUtilsTest {
     // ================================================================================
     @Test
     fun testIsWifiAvailable_Null() {
-        TestCase.assertEquals(false, isWifiAvailable)
+        TestCase.assertEquals(false, NetUtils.isWifiAvailable)
     }
 
     @Test
     fun testIsWifiAvailable_WithConnection() {
-        registerWifiCallback(appContext)
+        NetUtils.registerWifiCallback(SmartDeviceApp.appContext!!)
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
         turnWifiOn()
         // wifi is ON
-        TestCase.assertEquals(true, isWifiAvailable)
-        unregisterWifiCallback(appContext)
-        TestCase.assertEquals(false, isWifiAvailable)
+        TestCase.assertEquals(true, NetUtils.isWifiAvailable)
+        NetUtils.unregisterWifiCallback(SmartDeviceApp.appContext!!)
+        TestCase.assertEquals(false, NetUtils.isWifiAvailable)
     }
 
     // ================================================================================
@@ -204,7 +190,7 @@ class NetUtilsTest {
     @Test
     fun testConnectToIpv4Address_OfflineIpv4Address() {
         try {
-            val isReachable: Boolean = connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS)
+            val isReachable: Boolean = NetUtils.connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS)
             TestCase.assertEquals(false, isReachable)
             _signal.await(500, TimeUnit.MILLISECONDS)
         } catch (e: NullPointerException) {
@@ -217,7 +203,7 @@ class NetUtilsTest {
     @Test
     fun testConnectToIpv4Address_NullIpAddress() {
         try {
-            connectToIpv4Address(null)
+            NetUtils.connectToIpv4Address(null)
             _signal.await(500, TimeUnit.MILLISECONDS)
         } catch (e: NullPointerException) {
             TestCase.fail() // Error should not be thrown
@@ -230,7 +216,7 @@ class NetUtilsTest {
     fun testConnectToIpv4Address_WifiDisabled() {
         try {
             turnWifi(false)
-            val isReachable: Boolean = connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS)
+            val isReachable: Boolean = NetUtils.connectToIpv4Address(IPV4_OFFLINE_PRINTER_ADDRESS)
             TestCase.assertEquals(false, isReachable)
             turnWifiOn()
         } catch (e: NullPointerException) {
@@ -244,11 +230,12 @@ class NetUtilsTest {
     @Test
     fun testConnectToIpv6Address_OfflineIpv6Address() {
         try {
-            var isReachable: Boolean = connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS)
+            var isReachable: Boolean = NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS)
             TestCase.assertEquals(false, isReachable)
             _signal.await(500, TimeUnit.MILLISECONDS)
-            isReachable =
-                connectToIpv6Address("$IPV6_STD_OFFLINE_PRINTER_ADDRESS%wlan0")
+            isReachable = NetUtils.connectToIpv6Address(
+                "$IPV6_STD_OFFLINE_PRINTER_ADDRESS%wlan0"
+            )
             TestCase.assertEquals(false, isReachable)
             _signal.await(500, TimeUnit.MILLISECONDS)
         } catch (e: NullPointerException) {
@@ -331,7 +318,7 @@ class NetUtilsTest {
     @Test
     fun testConnectToIpv6Address_NullIpAddress() {
         try {
-            connectToIpv6Address(null)
+            NetUtils.connectToIpv6Address(null)
             _signal.await(500, TimeUnit.MILLISECONDS)
         } catch (e: NullPointerException) {
             TestCase.fail() // Error should not be thrown
@@ -345,9 +332,9 @@ class NetUtilsTest {
     @Test
     fun testConnectToIpv6Address_NullInetAddressObject() {
         try {
-            val ipv6Addr = _localIpv6Address
+            val ipv6Addr = localIpv6Address
             TestCase.assertNotNull(ipv6Addr)
-            connectToIpv6Address(ipv6Addr!!)
+            NetUtils.connectToIpv6Address(ipv6Addr)
             _signal.await(500, TimeUnit.MILLISECONDS)
         } catch (e: NullPointerException) {
             TestCase.fail() // Error should not be thrown
@@ -360,7 +347,8 @@ class NetUtilsTest {
     fun testConnectToIpv6Address_WifiDisabled() {
         try {
             turnWifi(false)
-            val isReachable: Boolean = connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS)
+            val isReachable: Boolean =
+                NetUtils.connectToIpv6Address(IPV6_OFFLINE_PRINTER_ADDRESS)
             TestCase.assertEquals(false, isReachable)
             turnWifiOn()
         } catch (e: NullPointerException) {
@@ -376,7 +364,7 @@ class NetUtilsTest {
         var ipV6Addr: String
         for (i in IPv6_TRIMMED_VALID_ADDRESS.indices) {
             ipV6Addr = IPv6_TRIMMED_VALID_ADDRESS[i]
-            TestCase.assertEquals(ipV6Addr, trimZeroes(IPv6_VALID_ADDRESS[i]))
+            TestCase.assertEquals(ipV6Addr, NetUtils.trimZeroes(IPv6_VALID_ADDRESS[i]))
         }
     }
 
@@ -385,13 +373,13 @@ class NetUtilsTest {
         var ipV4Addr: String
         for (i in IPv4_TRIMMED_VALID_ADDRESS.indices) {
             ipV4Addr = IPv4_TRIMMED_VALID_ADDRESS[i]
-            TestCase.assertEquals(ipV4Addr, trimZeroes(IPv4_VALID_ADDRESS[i]))
+            TestCase.assertEquals(ipV4Addr, NetUtils.trimZeroes(IPv4_VALID_ADDRESS[i]))
         }
     }
 
     @Test
     fun testTrimZeroes_nullIpAddress() {
-        TestCase.assertNotNull(trimZeroes(null))
+        TestCase.assertNotNull(NetUtils.trimZeroes(null))
     }
 
     // ================================================================================
@@ -403,7 +391,7 @@ class NetUtilsTest {
         for (i in IPv6_TRIMMED_VALID_ADDRESS.indices) {
             ipV6Addr = IPv6_TRIMMED_VALID_ADDRESS[i]
             TestCase.assertEquals(
-                ipV6Addr, validateIpAddress(
+                ipV6Addr, NetUtils.validateIpAddress(
                     IPv6_VALID_ADDRESS[i]
                 )
             )
@@ -416,7 +404,7 @@ class NetUtilsTest {
         for (i in IPv4_TRIMMED_VALID_ADDRESS.indices) {
             ipV4Addr = IPv4_TRIMMED_VALID_ADDRESS[i]
             TestCase.assertEquals(
-                ipV4Addr, validateIpAddress(
+                ipV4Addr, NetUtils.validateIpAddress(
                     IPv4_VALID_ADDRESS[i]
                 )
             )
@@ -425,24 +413,23 @@ class NetUtilsTest {
 
     @Test
     fun testValidateIpAddress_nullIpAddress() {
-        TestCase.assertNull(validateIpAddress(null))
+        TestCase.assertNull(NetUtils.validateIpAddress(null))
     }
 
     @Test
     fun testValidateIpAddress_invalid() {
         for (iPv6_invalid_address in IPv6_INVALID_ADDRESS) {
-            TestCase.assertNull(validateIpAddress(iPv6_invalid_address))
+            TestCase.assertNull(NetUtils.validateIpAddress(iPv6_invalid_address))
         }
     }
 
     // ================================================================================
     // Private
     // ================================================================================
-
     private fun turnWifi(enabled: Boolean) {
         try {
-            val wifiManager =
-                getInstrumentation().targetContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val wifiManager = InstrumentationRegistry.getInstrumentation()
+                .targetContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
             wifiManager.isWifiEnabled = enabled
         } catch (ignored: Exception) {
         }
@@ -458,7 +445,7 @@ class NetUtilsTest {
         }
     }
 
-    private val _localIpv6Address: String?
+    private val localIpv6Address: String?
         get() {
             try {
                 val en = NetworkInterface.getNetworkInterfaces()
@@ -477,210 +464,210 @@ class NetUtilsTest {
             return null
         }
 
+    private val IPv4_INVALID_ADDRESS = arrayOf(
+        "0.1.2.3.4",
+        "x.x.x.x",
+        "0.1.2.",
+        "0.1.2",
+        "0.1.",
+        "0.1",
+        "0.",
+        "0",
+        "1000.00001.000002.0000003"
+    )
+    private val IPv4_VALID_ADDRESS = arrayOf(
+        "0.0.0.0",
+        "224.0.0.1",
+        "192.168.0.1",
+        "255.255.255.255",
+        "000.000.000.000",
+        "0000.00000.000000.0000000",
+        "0224.0.0.1",
+        "192.00168.0.1",
+        "255.255.00255.255",
+        "255.255.255.000255"
+    )
+    private val IPv4_TRIMMED_VALID_ADDRESS = arrayOf(
+        "0.0.0.0",
+        "224.0.0.1",
+        "192.168.0.1",
+        "255.255.255.255",
+        "0.0.0.0",
+        "0.0.0.0",
+        "224.0.0.1",
+        "192.168.0.1",
+        "255.255.255.255",
+        "255.255.255.255"
+    )
+    private val IPv4_MULTICAST_VALID_ADDRESS = arrayOf(
+        "224.0.0.1",
+        "224.0.0.2",
+        "224.0.0.3",
+        "224.0.0.4",
+        "224.0.0.5",
+        "224.0.0.6",
+        "224.0.0.9",
+        "224.0.0.10",
+        "224.0.0.13",
+        "224.0.0.18",
+        "224.0.0.19",
+        "224.0.0.20",
+        "224.0.0.21",
+        "224.0.0.22",
+        "224.0.0.102",
+        "224.0.0.107",
+        "224.0.0.251",
+        "224.0.0.252",
+        "224.0.0.253",
+        "224.0.1.1",
+        "224.0.1.39",
+        "224.0.1.40",
+        "224.0.1.41",
+        "224.0.1.129",
+        "224.0.1.130",
+        "224.0.1.131",
+        "224.0.1.132",
+        "239.255.255.250",
+        "255.255.255.255"
+    )
+    private val IPv4_MULTICAST_INVALID_ADDRESS = arrayOf(
+        "0.0.0.0",
+        "192.168.0.1"
+    )
+    private val IPv6_VALID_ADDRESS = arrayOf(
+        "1:2:3:4:5:6:7:8",
+        "1:2:3:4:5:6:7::",
+        "1:2:3:4:5:6::8",
+        "1:2:3:4:5::7:8",
+        "1:2:3:4::6:7:8",
+        "1:2:3::5:6:7:8",
+        "1:2::4:5:6:7:8",
+        "1::3:4:5:6:7:8",
+        "::2:3:4:5:6:7:8",
+        "1:2:3:4:5::8",
+        "1:2:3:4::7:8",
+        "1:2:3::6:7:8",
+        "1:2::5:6:7:8",
+        "1::4:5:6:7:8",
+        "1:2:3:4::8",
+        "1:2:3::7:8",
+        "1:2::6:7:8",
+        "1::5:6:7:8",
+        "::4:5:6:7:8",
+        "1:2:3::8",
+        "1:2::7:8",
+        "1::6:7:8",
+        "1:2::8",
+        "1::7:8",
+        "1::8",
+        "::8",
+        "::",
+        "a::",
+        "A::",
+        "::f",
+        "::F",
+        "00001:000002:0000003:00000004:000000005:0000000006:00000000007:000000000008",
+        "00001:2:3:4:5:6:7::",
+        "1:000002:3:4:5:6::8",
+        "1:2:0000003:4:5::7:8",
+        "1:2:3:00000004::6:7:8",
+        "1:2:3::000000005:6:7:8",
+        "1:2::4:5:0000000006:7:8",
+        "1::3:4:5:6:00000000007:8",
+        "::2:3:4:5:6:7:000000000008",
+        "1:2:3:4:5::000000000009",
+        "1:2:3:4::7:00000000000a",
+        "1:2:3::6:7:00000000000b",
+        "1:2::5:6:7:00000000000c",
+        "1::4:5:6:7:00000000000d",
+        "1:2:3:4::00000000000e",
+        "1:2:3::7:00000000000f",
+        "00ff::0192.00168.00001.0000206"
+    )
+    private val IPv6_TRIMMED_VALID_ADDRESS = arrayOf(
+        "1:2:3:4:5:6:7:8",
+        "1:2:3:4:5:6:7::",
+        "1:2:3:4:5:6::8",
+        "1:2:3:4:5::7:8",
+        "1:2:3:4::6:7:8",
+        "1:2:3::5:6:7:8",
+        "1:2::4:5:6:7:8",
+        "1::3:4:5:6:7:8",
+        "::2:3:4:5:6:7:8",
+        "1:2:3:4:5::8",
+        "1:2:3:4::7:8",
+        "1:2:3::6:7:8",
+        "1:2::5:6:7:8",
+        "1::4:5:6:7:8",
+        "1:2:3:4::8",
+        "1:2:3::7:8",
+        "1:2::6:7:8",
+        "1::5:6:7:8",
+        "::4:5:6:7:8",
+        "1:2:3::8",
+        "1:2::7:8",
+        "1::6:7:8",
+        "1:2::8",
+        "1::7:8",
+        "1::8",
+        "::8",
+        "::",
+        "a::",
+        "a::",
+        "::f",
+        "::f",
+        "1:2:3:4:5:6:7:8",
+        "1:2:3:4:5:6:7::",
+        "1:2:3:4:5:6::8",
+        "1:2:3:4:5::7:8",
+        "1:2:3:4::6:7:8",
+        "1:2:3::5:6:7:8",
+        "1:2::4:5:6:7:8",
+        "1::3:4:5:6:7:8",
+        "::2:3:4:5:6:7:8",
+        "1:2:3:4:5::9",
+        "1:2:3:4::7:a",
+        "1:2:3::6:7:b",
+        "1:2::5:6:7:c",
+        "1::4:5:6:7:d",
+        "1:2:3:4::e",
+        "1:2:3::7:f",
+        "ff::192.168.1.206"
+    )
+    private val IPv6_INVALID_ADDRESS = arrayOf(
+        "z:2:3:4:5:6:7:8",
+        "z:2:3:4:5:6:7::",
+        "z:2:3:4:5:6::8",
+        "z:2:3:4:5::7:8",
+        "z:2:3:4::6:7:8",
+        "z:2:3::5:6:7:8",
+        "z:2::4:5:6:7:8",
+        "z::3:4:5:6:7:8",
+        "::z:3:4:5:6:7:8",
+        "z:2:3:4:5::8",
+        "z:2:3:4::7:8",
+        "z:2:3::6:7:8",
+        "z:2::5:6:7:8",
+        "z::4:5:6:7:8",
+        "z:2:3:4::8",
+        "z:2:3::7:8",
+        "z:2::6:7:8",
+        "z::5:6:7:8",
+        "::z:5:6:7:8",
+        "z:2:3::8",
+        "z:2::7:8",
+        "z::6:7:8",
+        "z:2::8",
+        "z::7:8",
+        "z::8",
+        "::z"
+    )
+
     companion object {
         private const val IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.x.x"
         private const val IPV6_OFFLINE_PRINTER_ADDRESS = "2001::4:216:97ff:fe1e:93e4%lo"
-        private const val IPV6_STD_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb2"
-        private const val IPV6_STD_OFFLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb3"
-        //private const val IPV6_STD_RISO_PRINTER_ADDRESS = "2001::4:225:5cff:fe34:7c27"
 
-        private val IPV4_INVALID_ADDRESS = arrayOf(
-            "0.1.2.3.4",
-            "x.x.x.x",
-            "0.1.2.",
-            "0.1.2",
-            "0.1.",
-            "0.1",
-            "0.",
-            "0",
-            "1000.00001.000002.0000003"
-        )
-        private val IPv4_VALID_ADDRESS = arrayOf(
-            "0.0.0.0",
-            "224.0.0.1",
-            "192.168.0.1",
-            "255.255.255.255",
-            "000.000.000.000",
-            "0000.00000.000000.0000000",
-            "0224.0.0.1",
-            "192.00168.0.1",
-            "255.255.00255.255",
-            "255.255.255.000255"
-        )
-        private val IPv4_TRIMMED_VALID_ADDRESS = arrayOf(
-            "0.0.0.0",
-            "224.0.0.1",
-            "192.168.0.1",
-            "255.255.255.255",
-            "0.0.0.0",
-            "0.0.0.0",
-            "224.0.0.1",
-            "192.168.0.1",
-            "255.255.255.255",
-            "255.255.255.255"
-        )
-        private val IPv4_MULTICAST_VALID_ADDRESS = arrayOf(
-            "224.0.0.1",
-            "224.0.0.2",
-            "224.0.0.3",
-            "224.0.0.4",
-            "224.0.0.5",
-            "224.0.0.6",
-            "224.0.0.9",
-            "224.0.0.10",
-            "224.0.0.13",
-            "224.0.0.18",
-            "224.0.0.19",
-            "224.0.0.20",
-            "224.0.0.21",
-            "224.0.0.22",
-            "224.0.0.102",
-            "224.0.0.107",
-            "224.0.0.251",
-            "224.0.0.252",
-            "224.0.0.253",
-            "224.0.1.1",
-            "224.0.1.39",
-            "224.0.1.40",
-            "224.0.1.41",
-            "224.0.1.129",
-            "224.0.1.130",
-            "224.0.1.131",
-            "224.0.1.132",
-            "239.255.255.250",
-            "255.255.255.255"
-        )
-        private val IPv4_MULTICAST_INVALID_ADDRESS = arrayOf(
-            "0.0.0.0",
-            "192.168.0.1"
-        )
-        private val IPv6_VALID_ADDRESS = arrayOf(
-            "1:2:3:4:5:6:7:8",
-            "1:2:3:4:5:6:7::",
-            "1:2:3:4:5:6::8",
-            "1:2:3:4:5::7:8",
-            "1:2:3:4::6:7:8",
-            "1:2:3::5:6:7:8",
-            "1:2::4:5:6:7:8",
-            "1::3:4:5:6:7:8",
-            "::2:3:4:5:6:7:8",
-            "1:2:3:4:5::8",
-            "1:2:3:4::7:8",
-            "1:2:3::6:7:8",
-            "1:2::5:6:7:8",
-            "1::4:5:6:7:8",
-            "1:2:3:4::8",
-            "1:2:3::7:8",
-            "1:2::6:7:8",
-            "1::5:6:7:8",
-            "::4:5:6:7:8",
-            "1:2:3::8",
-            "1:2::7:8",
-            "1::6:7:8",
-            "1:2::8",
-            "1::7:8",
-            "1::8",
-            "::8",
-            "::",
-            "a::",
-            "A::",
-            "::f",
-            "::F",
-            "00001:000002:0000003:00000004:000000005:0000000006:00000000007:000000000008",
-            "00001:2:3:4:5:6:7::",
-            "1:000002:3:4:5:6::8",
-            "1:2:0000003:4:5::7:8",
-            "1:2:3:00000004::6:7:8",
-            "1:2:3::000000005:6:7:8",
-            "1:2::4:5:0000000006:7:8",
-            "1::3:4:5:6:00000000007:8",
-            "::2:3:4:5:6:7:000000000008",
-            "1:2:3:4:5::000000000009",
-            "1:2:3:4::7:00000000000a",
-            "1:2:3::6:7:00000000000b",
-            "1:2::5:6:7:00000000000c",
-            "1::4:5:6:7:00000000000d",
-            "1:2:3:4::00000000000e",
-            "1:2:3::7:00000000000f",
-            "00ff::0192.00168.00001.0000206"
-        )
-        private val IPv6_TRIMMED_VALID_ADDRESS = arrayOf(
-            "1:2:3:4:5:6:7:8",
-            "1:2:3:4:5:6:7::",
-            "1:2:3:4:5:6::8",
-            "1:2:3:4:5::7:8",
-            "1:2:3:4::6:7:8",
-            "1:2:3::5:6:7:8",
-            "1:2::4:5:6:7:8",
-            "1::3:4:5:6:7:8",
-            "::2:3:4:5:6:7:8",
-            "1:2:3:4:5::8",
-            "1:2:3:4::7:8",
-            "1:2:3::6:7:8",
-            "1:2::5:6:7:8",
-            "1::4:5:6:7:8",
-            "1:2:3:4::8",
-            "1:2:3::7:8",
-            "1:2::6:7:8",
-            "1::5:6:7:8",
-            "::4:5:6:7:8",
-            "1:2:3::8",
-            "1:2::7:8",
-            "1::6:7:8",
-            "1:2::8",
-            "1::7:8",
-            "1::8",
-            "::8",
-            "::",
-            "a::",
-            "a::",
-            "::f",
-            "::f",
-            "1:2:3:4:5:6:7:8",
-            "1:2:3:4:5:6:7::",
-            "1:2:3:4:5:6::8",
-            "1:2:3:4:5::7:8",
-            "1:2:3:4::6:7:8",
-            "1:2:3::5:6:7:8",
-            "1:2::4:5:6:7:8",
-            "1::3:4:5:6:7:8",
-            "::2:3:4:5:6:7:8",
-            "1:2:3:4:5::9",
-            "1:2:3:4::7:a",
-            "1:2:3::6:7:b",
-            "1:2::5:6:7:c",
-            "1::4:5:6:7:d",
-            "1:2:3:4::e",
-            "1:2:3::7:f",
-            "ff::192.168.1.206"
-        )
-        private val IPv6_INVALID_ADDRESS = arrayOf(
-            "z:2:3:4:5:6:7:8",
-            "z:2:3:4:5:6:7::",
-            "z:2:3:4:5:6::8",
-            "z:2:3:4:5::7:8",
-            "z:2:3:4::6:7:8",
-            "z:2:3::5:6:7:8",
-            "z:2::4:5:6:7:8",
-            "z::3:4:5:6:7:8",
-            "::z:3:4:5:6:7:8",
-            "z:2:3:4:5::8",
-            "z:2:3:4::7:8",
-            "z:2:3::6:7:8",
-            "z:2::5:6:7:8",
-            "z::4:5:6:7:8",
-            "z:2:3:4::8",
-            "z:2:3::7:8",
-            "z:2::6:7:8",
-            "z::5:6:7:8",
-            "::z:5:6:7:8",
-            "z:2:3::8",
-            "z:2::7:8",
-            "z::6:7:8",
-            "z:2::8",
-            "z::7:8",
-            "z::8",
-            "::z"
-        )
+        private const val IPV6_STD_OFFLINE_PRINTER_ADDRESS = "fe80::2a0:deff:fe69:7fb3"
+        // private const val IPV6_STD_RISO_PRINTER_ADDRESS = "2001::4:225:5cff:fe34:7c27"
     }
 }
