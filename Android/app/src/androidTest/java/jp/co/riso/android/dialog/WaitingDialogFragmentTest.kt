@@ -3,6 +3,7 @@ package jp.co.riso.android.dialog
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -31,7 +32,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testNewInstance_WithNull() {
-        val w = WaitingDialogFragment.newInstance(null, null, true, null)
+        val w = WaitingDialogFragment.newInstance(null, null, true, null, null)
         TestCase.assertNotNull(w)
         w.show(fm!!, TAG)
 
@@ -53,7 +54,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testNewInstance_NotCancelable() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
         w.retainInstance = true
         w.show(fm!!, TAG)
@@ -74,11 +75,10 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnClick() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
         val mockCallback = MockCallback()
         fm!!.beginTransaction().add(mockCallback, null).commit()
-        w.setTargetFragment(mockCallback, 1)
         w.show(fm!!, TAG)
         waitFewSeconds()
         val fragment = fm!!.findFragmentByTag(TAG)
@@ -103,11 +103,10 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnCancel() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
         val mockCallback = MockCallback()
         fm!!.beginTransaction().add(mockCallback, null).commit()
-        w.setTargetFragment(mockCallback, 1)
         w.show(fm!!, TAG)
         waitFewSeconds()
         val fragment = fm!!.findFragmentByTag(TAG)
@@ -128,7 +127,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testSetMessage() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
         w.show(fm!!, TAG)
         waitFewSeconds()
@@ -151,7 +150,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testSetMessage_NullDialog() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
         try {
             w.setMessage("New message before displaying the dialog")
@@ -185,7 +184,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnKey_NotBack() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
         w.show(fm!!, TAG)
         waitFewSeconds()
@@ -212,6 +211,11 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
         override fun onCancel() {
             isCancelCalled = true
+        }
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setResultListenerWaitingDialog(activity!!.supportFragmentManager, this, TAG)
         }
     }
 

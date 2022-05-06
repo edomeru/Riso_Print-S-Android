@@ -10,7 +10,6 @@ package jp.co.riso.android.os.pauseablehandler
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import java.lang.ref.WeakReference
 import java.util.*
 
