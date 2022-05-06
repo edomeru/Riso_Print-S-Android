@@ -468,8 +468,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
             resources.getString(R.string.ids_lbl_cancel),
             KEY_PRINTERS_DIALOG
         )
-
-        info.setTargetFragment(this, 0)
+        setResultListenerConfirmDialog(requireActivity().supportFragmentManager, this, KEY_PRINTERS_DIALOG)
         mDeletePrinter = printer
         DialogUtils.displayDialog(requireActivity(), KEY_PRINTERS_DIALOG, info)
     }

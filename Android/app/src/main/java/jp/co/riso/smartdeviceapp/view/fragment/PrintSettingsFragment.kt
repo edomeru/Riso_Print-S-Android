@@ -14,7 +14,7 @@ import android.os.Message
 import android.view.View
 import android.widget.TextView
 import androidx.core.os.bundleOf
-import jp.co.riso.android.dialog.DialogUtils
+import androidx.fragment.app.activityViewModels
 import jp.co.riso.android.dialog.DialogUtils.dismissDialog
 import jp.co.riso.android.dialog.DialogUtils.displayDialog
 import jp.co.riso.android.dialog.InfoDialogFragment
@@ -39,6 +39,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView.PrintSettingsViewInterface
+import jp.co.riso.smartdeviceapp.viewmodel.PrintSettingsViewModel
 import jp.co.riso.smartprint.R
 import java.util.*
 import kotlin.math.min
@@ -50,6 +51,7 @@ import kotlin.math.min
  */
 class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, PauseableHandlerCallback,
     DirectPrintCallback, WaitingDialogListener {
+
     private var _directPrintManager: DirectPrintManager? = null
     private var _fragmentForPrinting = false
     private var _printerId = PrinterManager.EMPTY_ID
@@ -61,6 +63,8 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     private var _pauseableHandler: PauseableHandler? = null
     private var _waitingDialog: WaitingDialogFragment? = null
     private var _printMsg = ""
+
+    private val _printSettingsViewModel: PrintSettingsViewModel by activityViewModels()
 
     override val viewLayout: Int
         get() = R.layout.fragment_printsettings
@@ -175,12 +179,15 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         setPrinterId(printerId)
 
         // set printerId to PrintPreviewFragment
-        requireActivity().supportFragmentManager.setFragmentResult(
-            PrintPreviewFragment.TAG_RESULT_PRINT_SETTINGS,
-            bundleOf(
-                RESULT_KEY to RESULT_PRINTER_ID,
-                RESULT_PRINTER_ID to printerId)
-        )
+        if (_printSettingsViewModel.isTargetFragmentPrintPreview) {
+            _printSettingsViewModel.setPrinterId(printerId)
+            requireActivity().supportFragmentManager.setFragmentResult(
+                PrintPreviewFragment.TAG_RESULT_PRINT_PREVIEW,
+                bundleOf(
+                    RESULT_KEY to RESULT_PRINTER_ID
+                )
+            )
+        }
     }
 
     override fun onPrintSettingsValueChanged(printSettings: PrintSettings?) {
@@ -190,12 +197,15 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         }
 
         // set printSettings to PrintPreviewFragment
-        requireActivity().supportFragmentManager.setFragmentResult(
-            PrintPreviewFragment.TAG_RESULT_PRINT_SETTINGS,
-            bundleOf(
-                RESULT_KEY to RESULT_PRINTER_SETTINGS,
-                RESULT_PRINTER_SETTINGS to printSettings)
-        )
+        if (_printSettingsViewModel.isTargetFragmentPrintPreview) {
+            _printSettingsViewModel.setPrintSettings(printSettings!!)
+            requireActivity().supportFragmentManager.setFragmentResult(
+                PrintPreviewFragment.TAG_RESULT_PRINT_PREVIEW,
+                bundleOf(
+                    RESULT_KEY to RESULT_PRINTER_SETTINGS
+                )
+            )
+        }
     }
 
     override fun onPrint(printer: Printer?, printSettings: PrintSettings?) {

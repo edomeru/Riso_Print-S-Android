@@ -18,6 +18,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.fragment.app.activityViewModels
 import jp.co.riso.android.dialog.DialogUtils
 import jp.co.riso.android.dialog.InfoDialogFragment
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler
@@ -31,6 +32,7 @@ import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.printers.DefaultPrinterArrayAdapter
+import jp.co.riso.smartdeviceapp.viewmodel.PrintSettingsViewModel
 import jp.co.riso.smartprint.R
 
 /**
@@ -51,6 +53,8 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
 
     override val viewLayout: Int
         get() = R.layout.fragment_printerinfo
+
+    private val _printSettingsViewModel: PrintSettingsViewModel by activityViewModels()
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
@@ -199,9 +203,10 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
                             mPrinter!!.printerType!!
                         )
                     )
-                    val printersFragment =
-                        fm.findFragmentByTag(FRAGMENT_TAG_PRINTERS) as PrintersFragment?
-                    mPrintSettingsFragment!!.setTargetFragment(printersFragment, 0)
+
+                    // isolate update to Default Printer Settings screen (update should not affect Print Settings)
+                    _printSettingsViewModel.setTargetPrintersFragment()
+
                     activity.openDrawer(Gravity.RIGHT, false)
                 } else {
                     activity.closeDrawers()
@@ -275,7 +280,6 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
     }
 
     companion object {
-        private const val FRAGMENT_TAG_PRINTERS = "fragment_printers"
         private const val KEY_PRINTER_INFO_ID = "fragment_printer_info_id"
         private const val KEY_PRINTER_INFO_ERR_DIALOG = "printer_info_err_dialog"
     }

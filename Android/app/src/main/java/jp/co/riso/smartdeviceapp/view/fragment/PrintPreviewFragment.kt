@@ -29,6 +29,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
 import jp.co.riso.android.dialog.DialogUtils.dismissDialog
@@ -58,6 +59,7 @@ import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.preview.PreviewControlsListener
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
+import jp.co.riso.smartdeviceapp.viewmodel.PrintSettingsViewModel
 import jp.co.riso.smartprint.R
 import java.io.File
 import java.io.FileNotFoundException
@@ -74,6 +76,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     PDFConverterManagerInterface, PreviewControlsListener, OnSeekBarChangeListener,
     PauseableHandlerCallback, ConfirmDialogListener, WaitingDialogListener, View.OnKeyListener,
     OnFocusChangeListener {
+
     private var _pdfManager: PDFFileManager? = null
     private var _pdfConverterManager: PDFConverterManager? = null
     private var _printerId = PrinterManager.EMPTY_ID
@@ -108,6 +111,8 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     private var _waitingDialog: WaitingDialogFragment? = null
     override val viewLayout: Int
         get() = R.layout.fragment_printpreview
+
+    private val _printSettingsViewModel: PrintSettingsViewModel by activityViewModels()
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         // dismiss permission alert dialog if showing
@@ -524,7 +529,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
      *
      * @param printerId ID of the printer to be set
      */
-    fun setPrintId(printerId: Int) {
+    private fun setPrintId(printerId: Int) {
         _printerId = printerId
         if (_printPreviewView != null) {
             _printPreviewView!!.refreshView()
@@ -536,7 +541,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
      *
      * @param printSettings Print settings to be applied
      */
-    fun setPrintSettings(printSettings: PrintSettings?) {
+    private fun setPrintSettings(printSettings: PrintSettings?) {
         _printSettings = printSettings?.let { PrintSettings(it) }
         if (_printPreviewView != null) {
             // Clear mBmpCache when print settings are updated
@@ -990,7 +995,8 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
                     fragment.setPDFisLandscape(_pdfManager!!.isPDFLandscape)
                     fragment.setPrintSettings(_printSettings)
                     fragment.setFragmentForPrinting(true)
-                    setResultListenerForPrintSettings(TAG_RESULT_PRINT_SETTINGS)
+                    _printSettingsViewModel.setTargetPrintPreviewFragment()
+                    setResultListenerForPrintSettings()
                     activity.openDrawer(Gravity.RIGHT, isTablet)
                 } else {
                     activity.closeDrawers()
@@ -1006,17 +1012,19 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     // ================================================================================
     // INTERFACE - FragmentResultListener
     // ================================================================================
-    private fun setResultListenerForPrintSettings(requestKey: String){
+    private fun setResultListenerForPrintSettings() {
         requireActivity().supportFragmentManager.setFragmentResultListener(
-            requestKey,
+            TAG_RESULT_PRINT_PREVIEW,
             this
         ) { _, bundle: Bundle ->
             val result = bundle.getString(PrintSettingsFragment.RESULT_KEY)
             if (result == PrintSettingsFragment.RESULT_PRINTER_ID) {
-                setPrintId(bundle.getInt(result))
+                setPrintId(
+                    _printSettingsViewModel.printerId
+                )
             } else if (result == PrintSettingsFragment.RESULT_PRINTER_SETTINGS) {
                 setPrintSettings(
-                    bundle.getSerializable(result) as PrintSettings?
+                    _printSettingsViewModel.printSettings
                 )
             }
         }
@@ -1109,7 +1117,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         const val FRAGMENT_TAG_DIALOG = "pdf_error_dialog"
 
         /// Tag used to identify the print settings fragment
-        const val FRAGMENT_TAG_PRINT_SETTINGS = "fragment_printsettings"
+        const val FRAGMENT_TAG_PRINT_SETTINGS = "fragment_print_settings"
 
         /// Key used to store current page
         private const val KEY_CURRENT_PAGE = "current_page"
@@ -1121,6 +1129,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         private const val KEY_SCREEN_SIZE = "screen_size"
         const val TAG_WAITING_DIALOG = "dialog_converting"
 
-        const val TAG_RESULT_PRINT_SETTINGS = "result_print_settings"
+        /// Tag used to identify print setting update result
+        const val TAG_RESULT_PRINT_PREVIEW = "result_print_preview"
     }
 }
