@@ -549,6 +549,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     }
 
     /**
+<<<<<<< HEAD
      * @brief Checks if the printer set is Japanese. Uses the punch 3 capability
      *
      * @return true 3-punch in the printer is available
@@ -569,6 +570,8 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     }*/
 
     /**
+=======
+>>>>>>> feature/V5.6.0/Android/RQM-2022-KotlinMigration
      * @brief Shows/Hide the Print Preview View.
      *
      * @param v View which contains the Print Preview components
