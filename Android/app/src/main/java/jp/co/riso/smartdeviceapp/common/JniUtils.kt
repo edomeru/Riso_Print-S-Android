@@ -8,7 +8,6 @@
 package jp.co.riso.smartdeviceapp.common
 
 import jp.co.riso.android.util.NetUtils
-import jp.co.riso.smartdeviceapp.common.JniUtils
 
 /**
  * @class JniUtils
@@ -30,9 +29,9 @@ object JniUtils {
      */
     @JvmStatic
     fun validateIpAddress(ipAddress: String?): String {
-        var ipAddress = ipAddress
-        ipAddress = NetUtils.validateIpAddress(ipAddress)
-        return validateIp(ipAddress)
+        var ip = ipAddress
+        ip = NetUtils.validateIpAddress(ip)
+        return validateIp(ip)
     }
 
     init {

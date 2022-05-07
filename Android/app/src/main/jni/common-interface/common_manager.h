@@ -5,7 +5,7 @@
 
 // Direct print
 #define DP_CLASS_NAME "jp/co/riso/smartdeviceapp/common/DirectPrintManager"
-#define DP_JOB_FIELD_NAME "mJob"
+#define DP_JOB_FIELD_NAME "_job"
 #define DP_JOB_FIELD_TYPE "J"
 #define DP_CALLBACK_METHOD_NAME "onNotifyProgress"
 #define DP_CALLBACK_METHOD_TYPE "(IF)V"

@@ -11,24 +11,16 @@ import android.content.Context
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.Handler
-//import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter.setPrinterRow
-//import jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView.delete
-//import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation.endDeleteMode
-//import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation.beginDeleteModeOnView
-//import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter.setPrinterRowToDelete
-import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation
-import android.view.MotionEvent
-import jp.co.riso.smartprint.R
-import android.os.Parcelable
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import jp.co.riso.smartdeviceapp.view.printers.PrintersListView
-import jp.co.riso.smartdeviceapp.view.printers.PrinterArrayAdapter
-import jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView
 import android.os.Looper
 import android.os.Message
+import android.os.Parcelable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ListView
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation
+import jp.co.riso.smartprint.R
 
 /**
  * @class PrintersListView
@@ -36,11 +28,11 @@ import android.widget.ListView
  * @brief ListView for Printers Screen having custom states.
  */
 class PrintersListView : ListView, Handler.Callback {
-    private var mDeleteMode = false
-    private var mDeleteView: View? = null
-    private var mDownPoint: Point? = null
-    private var mDeleteAnimation: DisplayDeleteAnimation? = null
-    private var mHandler: Handler? = null
+    private var _deleteMode = false
+    private var _deleteView: View? = null
+    private var _downPoint: Point? = null
+    private var _deleteAnimation: DisplayDeleteAnimation? = null
+    private var _handler: Handler? = null
 
     /**
      * @brief Constructor. <br></br>
@@ -84,8 +76,8 @@ class PrintersListView : ListView, Handler.Callback {
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val coords = IntArray(2)
-        return if (mDeleteMode) {
-            val deleteButton = mDeleteView!!.findViewById<View>(R.id.btn_delete)
+        return if (_deleteMode) {
+            val deleteButton = _deleteView!!.findViewById<View>(R.id.btn_delete)
             if (deleteButton != null) {
                 deleteButton.getLocationOnScreen(coords)
                 val rect = Rect(
@@ -101,22 +93,22 @@ class PrintersListView : ListView, Handler.Callback {
                         // Process Dialog box
                         super.onInterceptTouchEvent(ev)
                         // Reset delete mode to true
-                        mDeleteMode = true
+                        _deleteMode = true
                         return false
                     }
                 }
             }
             // intercept and clear delete button if ACTION_DOWN on different item
             if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
-                mDeleteView!!.getLocationOnScreen(coords)
+                _deleteView!!.getLocationOnScreen(coords)
                 val rect = Rect(
                     coords[0],
                     coords[1],
-                    coords[0] + mDeleteView!!.width,
-                    coords[1] + mDeleteView!!.height
+                    coords[0] + _deleteView!!.width,
+                    coords[1] + _deleteView!!.height
                 )
                 if (!rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
-                    endDeleteMode(mDeleteView)
+                    endDeleteMode(_deleteView)
                     return true
                 }
             }
@@ -127,20 +119,20 @@ class PrintersListView : ListView, Handler.Callback {
 
             // intercept and clear delete button if ACTION_UP on same item
             if (ev.actionMasked == MotionEvent.ACTION_UP) {
-                mDeleteView!!.getLocationOnScreen(coords)
+                _deleteView!!.getLocationOnScreen(coords)
                 val rect = Rect(
                     coords[0],
                     coords[1],
-                    coords[0] + mDeleteView!!.width,
-                    coords[1] + mDeleteView!!.height
+                    coords[0] + _deleteView!!.width,
+                    coords[1] + _deleteView!!.height
                 )
                 if (rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
-                    endDeleteMode(mDeleteView)
+                    endDeleteMode(_deleteView)
                     return true
                 }
             }
             if (ev.actionMasked == MotionEvent.ACTION_UP || ev.actionMasked == MotionEvent.ACTION_CANCEL) {
-                endDeleteMode(mDeleteView)
+                endDeleteMode(_deleteView)
             }
             super.onInterceptTouchEvent(ev)
         } else {
@@ -164,9 +156,9 @@ class PrintersListView : ListView, Handler.Callback {
     fun onRestoreInstanceState(state: Parcelable?, index: Int) {
         super.onRestoreInstanceState(state)
         if (index != PrinterManager.EMPTY_ID) {
-            val newMessage = Message.obtain(mHandler, MSG_START_DELETE_MODE)
+            val newMessage = Message.obtain(_handler, MSG_START_DELETE_MODE)
             newMessage.arg1 = index
-            mHandler!!.sendMessage(newMessage)
+            _handler!!.sendMessage(newMessage)
         }
     }
 
@@ -178,11 +170,11 @@ class PrintersListView : ListView, Handler.Callback {
      */
     val deleteItemPosition: Int
         get() {
-            if (!mDeleteMode) {
+            if (!_deleteMode) {
                 return PrinterManager.EMPTY_ID
             }
-            return if (mDeleteView != null) {
-                indexOfChild(mDeleteView)
+            return if (_deleteView != null) {
+                indexOfChild(_deleteView)
             } else {
                 PrinterManager.EMPTY_ID
             }
@@ -194,17 +186,17 @@ class PrintersListView : ListView, Handler.Callback {
      * @param animate Animate delete button
      */
     fun resetDeleteView(animate: Boolean) {
-        if (mDeleteView != null) {
-            (adapter as PrinterArrayAdapter).setPrinterRow(mDeleteView!!)
-            (mDeleteView as PrintersContainerView).delete = false
-            mDeleteAnimation!!.endDeleteMode(
-                mDeleteView as PrintersContainerView,
+        if (_deleteView != null) {
+            (adapter as PrinterArrayAdapter).setPrinterRow(_deleteView!!)
+            (_deleteView as PrintersContainerView).delete = false
+            _deleteAnimation!!.endDeleteMode(
+                _deleteView as PrintersContainerView,
                 animate,
                 R.id.btn_delete,
                 R.id.img_disclosure
             )
-            mDeleteMode = false
-            mDeleteView = null
+            _deleteMode = false
+            _deleteView = null
         }
     }
     // ================================================================================
@@ -214,8 +206,8 @@ class PrintersListView : ListView, Handler.Callback {
      * @brief Initialize PrintersListView.
      */
     private fun init() {
-        mDeleteAnimation = DisplayDeleteAnimation()
-        mHandler = Handler(Looper.myLooper()!!, this)
+        _deleteAnimation = DisplayDeleteAnimation()
+        _handler = Handler(Looper.myLooper()!!, this)
     }
 
     /**
@@ -228,19 +220,19 @@ class PrintersListView : ListView, Handler.Callback {
      */
     private fun checkSwipe(ev: MotionEvent): Boolean {
         val coords = IntArray(2)
-        val dragged = mDownPoint!!.x - ev.rawX > SWIPE_THRESHOLD
+        val dragged = _downPoint!!.x - ev.rawX > SWIPE_THRESHOLD
         var contains1: Boolean
         var contains2: Boolean
         // check self, if valid swipe don't redisplay nor remove delete button
-        if (mDeleteMode) {
-            mDeleteView!!.getLocationOnScreen(coords)
+        if (_deleteMode) {
+            _deleteView!!.getLocationOnScreen(coords)
             val rect = Rect(
                 coords[0],
                 coords[1],
-                coords[0] + mDeleteView!!.width,
-                coords[1] + mDeleteView!!.height
+                coords[0] + _deleteView!!.width,
+                coords[1] + _deleteView!!.height
             )
-            contains1 = rect.contains(mDownPoint!!.x, mDownPoint!!.y)
+            contains1 = rect.contains(_downPoint!!.x, _downPoint!!.y)
             contains2 = rect.contains(ev.rawX.toInt(), ev.rawY.toInt())
             return contains1 && contains2 && dragged
         }
@@ -250,7 +242,7 @@ class PrintersListView : ListView, Handler.Callback {
                 view.getLocationOnScreen(coords)
                 val rect =
                     Rect(coords[0], coords[1], coords[0] + view.width, coords[1] + view.height)
-                contains1 = rect.contains(mDownPoint!!.x, mDownPoint!!.y)
+                contains1 = rect.contains(_downPoint!!.x, _downPoint!!.y)
                 contains2 = rect.contains(ev.rawX.toInt(), ev.rawY.toInt())
                 if (contains1 && contains2 && dragged) {
                     startDeleteMode(view)
@@ -271,9 +263,8 @@ class PrintersListView : ListView, Handler.Callback {
      */
     private fun processSwipe(ev: MotionEvent): Boolean {
         var ret = false
-        val action = ev.actionMasked
-        when (action) {
-            MotionEvent.ACTION_DOWN -> mDownPoint = Point(
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> _downPoint = Point(
                 ev.rawX.toInt(), ev.rawY.toInt()
             )
             MotionEvent.ACTION_MOVE -> ret = checkSwipe(ev)
@@ -287,16 +278,16 @@ class PrintersListView : ListView, Handler.Callback {
      * @param view View to set as delete view
      */
     private fun startDeleteMode(view: View) {
-        if (!mDeleteMode) {
-            mDeleteView = view
-            mDeleteAnimation!!.beginDeleteModeOnView(
+        if (!_deleteMode) {
+            _deleteView = view
+            _deleteAnimation!!.beginDeleteModeOnView(
                 view,
                 true,
                 R.id.btn_delete,
                 R.id.img_disclosure
             )
-            (adapter as PrinterArrayAdapter).setPrinterRowToDelete(mDeleteView)
-            mDeleteMode = true
+            (adapter as PrinterArrayAdapter).setPrinterRowToDelete(_deleteView)
+            _deleteMode = true
         }
     }
 
@@ -306,12 +297,12 @@ class PrintersListView : ListView, Handler.Callback {
      * @param view Delete view
      */
     private fun endDeleteMode(view: View?) {
-        if (mDeleteMode) {
+        if (_deleteMode) {
             (adapter as PrinterArrayAdapter).setPrinterRow(view!!)
             val printerItem = view.findViewById<View>(R.id.btn_delete).tag as PrintersContainerView
             printerItem.delete = false
-            mDeleteAnimation!!.endDeleteMode(view, true, R.id.btn_delete, R.id.img_disclosure)
-            mDeleteMode = false
+            _deleteAnimation!!.endDeleteMode(view, true, R.id.btn_delete, R.id.img_disclosure)
+            _deleteMode = false
         }
     }
 
@@ -319,7 +310,7 @@ class PrintersListView : ListView, Handler.Callback {
      * @brief End delete mode.
      */
     private fun endDeleteMode() {
-        mDeleteMode = false
+        _deleteMode = false
     }
 
     // ================================================================================

@@ -8,12 +8,10 @@
 package jp.co.riso.smartdeviceapp.view.anim
 
 import android.view.View
-import android.view.animation.TranslateAnimation
-import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation
-import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation.HideOnFadeAnimationListener
-import android.view.animation.Animation.AnimationListener
-import android.view.animation.Animation
 import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.Animation.AnimationListener
+import android.view.animation.TranslateAnimation
 import java.lang.ref.WeakReference
 
 /**
@@ -105,10 +103,10 @@ class DisplayDeleteAnimation {
      *
      * @brief Listener class that hides the view and displays other views after animation end
      */
-    class HideOnFadeAnimationListener : AnimationListener {
-        private var mRowViewReference: WeakReference<View>? = null
-        private var mViewReference: WeakReference<View>? = null
-        private var mIdsReference: IntArray? = null
+    inner class HideOnFadeAnimationListener : AnimationListener {
+        private var _rowViewReference: WeakReference<View>? = null
+        private var _viewReference: WeakReference<View>? = null
+        private var _idsReference: IntArray? = null
 
         /**
          * @brief Set delete view
@@ -116,7 +114,7 @@ class DisplayDeleteAnimation {
          * @param view Delete button
          */
         fun setView(view: View) {
-            mViewReference = WeakReference(view)
+            _viewReference = WeakReference(view)
         }
 
         /**
@@ -125,7 +123,7 @@ class DisplayDeleteAnimation {
          * @param view Row view or parent view of the delete button
          */
         fun setRowView(view: View) {
-            mRowViewReference = WeakReference(view)
+            _rowViewReference = WeakReference(view)
         }
 
         /**
@@ -134,18 +132,18 @@ class DisplayDeleteAnimation {
          * @param ids Array of resource IDs that needs to be redisplayed
          */
         fun setIds(ids: IntArray?) {
-            mIdsReference = ids
+            _idsReference = ids
         }
 
         override fun onAnimationEnd(animation: Animation) {
-            if (mViewReference != null) {
-                val view = mViewReference!!.get()
+            if (_viewReference != null) {
+                val view = _viewReference!!.get()
                 if (view != null) {
                     view.visibility = View.GONE
                 }
             }
-            for (j in mIdsReference!!) {
-                val viewToHide = mRowViewReference!!.get()!!.findViewById<View>(j)
+            for (j in _idsReference!!) {
+                val viewToHide = _rowViewReference!!.get()!!.findViewById<View>(j)
                 if (viewToHide != null) {
                     viewToHide.visibility = View.VISIBLE
                     val alpha = AlphaAnimation(0.0f, 1.0f)

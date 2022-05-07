@@ -7,8 +7,6 @@
  */
 package jp.co.riso.smartdeviceapp.common
 
-import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback
-import jp.co.riso.smartdeviceapp.common.SNMPManager
 import java.lang.ref.WeakReference
 
 /**
@@ -19,7 +17,7 @@ import java.lang.ref.WeakReference
 class SNMPManager {
     // Required for JNI
     var mContext: Long = 0
-    private var mCallbackRef: WeakReference<SNMPManagerCallback?>? = null
+    private var _callbackRef: WeakReference<SNMPManagerCallback?>? = null
     external fun initializeSNMPManager(communityName: String?)
     external fun finalizeSNMPManager()
     external fun deviceDiscovery()
@@ -32,7 +30,7 @@ class SNMPManager {
      * @param callback Callback function
      */
     fun setCallback(callback: SNMPManagerCallback?) {
-        mCallbackRef = WeakReference(callback)
+        _callbackRef = WeakReference(callback)
     }
 
     /**
@@ -41,8 +39,8 @@ class SNMPManager {
      * @param result Result of device discovery
      */
     private fun onEndDiscovery(result: Int) {
-        if (mCallbackRef != null && mCallbackRef!!.get() != null) {
-            mCallbackRef!!.get()!!.onEndDiscovery(this, result)
+        if (_callbackRef != null && _callbackRef!!.get() != null) {
+            _callbackRef!!.get()!!.onEndDiscovery(this, result)
         }
     }
 
@@ -54,8 +52,8 @@ class SNMPManager {
      * @param capabilities Device capabilities
      */
     private fun onFoundDevice(ipAddress: String, name: String, capabilities: BooleanArray) {
-        if (mCallbackRef != null && mCallbackRef!!.get() != null) {
-            mCallbackRef!!.get()!!.onFoundDevice(this, ipAddress, name, capabilities)
+        if (_callbackRef != null && _callbackRef!!.get() != null) {
+            _callbackRef!!.get()!!.onFoundDevice(this, ipAddress, name, capabilities)
         }
     }
 

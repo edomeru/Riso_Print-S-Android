@@ -7,12 +7,11 @@
  */
 package jp.co.riso.smartdeviceapp.model
 
-import android.os.Parcelable
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
 import android.os.Parcel
-import jp.co.riso.smartdeviceapp.AppConstants
+import android.os.Parcelable
 import android.os.Parcelable.Creator
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 
 /**
  * @class Printer
@@ -130,9 +129,9 @@ class Printer : Parcelable {
         name = `in`.readString()
         ipAddress = `in`.readString()
         id = `in`.readInt()
-        when (`in`.readInt()) {
-            1 -> portSetting = PortSetting.RAW
-            else -> portSetting = PortSetting.LPR
+        portSetting = when (`in`.readInt()) {
+            1 -> PortSetting.RAW
+            else -> PortSetting.LPR
         }
         config!!.readFromParcel(`in`)
         initializePrinterType()
@@ -423,7 +422,7 @@ class Printer : Parcelable {
         private const val DEFAULT_PRINTER_TYPE = AppConstants.PRINTER_MODEL_IS
         @JvmField
         val CREATOR: Creator<Printer?> = object : Creator<Printer?> {
-            override fun createFromParcel(`in`: Parcel): Printer? {
+            override fun createFromParcel(`in`: Parcel): Printer {
                 return Printer(`in`)
             }
 

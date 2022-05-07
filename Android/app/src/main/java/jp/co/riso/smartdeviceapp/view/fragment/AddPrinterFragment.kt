@@ -7,50 +7,38 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.setPrinterSearchCallback
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isSearching
-import jp.co.riso.android.util.AppUtils.getScreenDimensions
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.pause
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.resume
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.searchPrinter
-import jp.co.riso.android.util.AppUtils.hideSoftKeyboard
-import jp.co.riso.smartdeviceapp.common.JniUtils.validateIpAddress
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isExists
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isCancelled
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.savePrinterToDB
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback
-import android.widget.TextView.OnEditorActionListener
-import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import jp.co.riso.android.os.pauseablehandler.PauseableHandler
-import jp.co.riso.smartprint.R
 import android.os.Bundle
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import android.os.Looper
 import android.os.Message
 import android.text.InputFilter
 import android.text.InputType
-import android.widget.EditText
-import androidx.core.content.ContextCompat
-import jp.co.riso.android.text.IpAddressFilter
-import jp.co.riso.android.util.AppUtils
-import android.view.ViewGroup
-import android.widget.TextView
-import jp.co.riso.smartdeviceapp.view.MainActivity
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
-import jp.co.riso.android.dialog.ConfirmDialogFragment
-import jp.co.riso.android.dialog.DialogUtils
-import jp.co.riso.smartdeviceapp.view.fragment.AddPrinterFragment
-import jp.co.riso.android.dialog.InfoDialogFragment
-import jp.co.riso.smartdeviceapp.common.JniUtils
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.TextView.OnEditorActionListener
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import jp.co.riso.android.dialog.ConfirmDialogFragment
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
+import jp.co.riso.android.dialog.DialogUtils
+import jp.co.riso.android.dialog.InfoDialogFragment
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
+import jp.co.riso.android.text.IpAddressFilter
+import jp.co.riso.android.util.AppUtils.getScreenDimensions
+import jp.co.riso.android.util.AppUtils.hideSoftKeyboard
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.common.JniUtils.validateIpAddress
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+import jp.co.riso.smartprint.R
 
 /**
  * @class AddPrinterFragment
@@ -59,40 +47,40 @@ import jp.co.riso.smartdeviceapp.model.Printer
  */
 class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorActionListener,
     ConfirmDialogListener, PauseableHandlerCallback {
-    private var mAddPrinterView: ViewHolder? = null
-    private var mPrinterManager: PrinterManager? = null
-    private var mAdded = false
-    private var mPauseableHandler: PauseableHandler? = null
+    private var _addPrinterView: ViewHolder? = null
+    private var _printerManager: PrinterManager? = null
+    private var _added = false
+    private var _pauseableHandler: PauseableHandler? = null
 
     override val viewLayout: Int
         get() = R.layout.fragment_addprinter
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         retainInstance = true
-        mAdded = false
-        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
-        mPrinterManager!!.setPrinterSearchCallback(this)
-        mAddPrinterView = ViewHolder()
-        if (mPauseableHandler == null) {
-            mPauseableHandler = PauseableHandler(Looper.myLooper(), this)
+        _added = false
+        _printerManager = getInstance(SmartDeviceApp.appContext!!)
+        _printerManager!!.setPrinterSearchCallback(this)
+        _addPrinterView = ViewHolder()
+        if (_pauseableHandler == null) {
+            _pauseableHandler = PauseableHandler(Looper.myLooper(), this)
         }
     }
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
-        mAddPrinterView!!.mIpAddress = view.findViewById(R.id.inputIpAddress)
-        mAddPrinterView!!.mSaveButton = view.findViewById(R.id.img_save_button)
-        mAddPrinterView!!.mProgressBar = view.findViewById(R.id.actionbar_progressbar)
-        mAddPrinterView!!.mIpAddress!!.setBackgroundColor(
+        _addPrinterView!!.ipAddress = view.findViewById(R.id.inputIpAddress)
+        _addPrinterView!!.saveButton = view.findViewById(R.id.img_save_button)
+        _addPrinterView!!.progressBar = view.findViewById(R.id.actionbar_progressbar)
+        _addPrinterView!!.ipAddress!!.setBackgroundColor(
             ContextCompat.getColor(
                 requireActivity(),
                 R.color.theme_light_1
             )
         )
-        mAddPrinterView!!.mIpAddress!!.setOnEditorActionListener(this)
-        mAddPrinterView!!.mSaveButton!!.setOnClickListener(this)
-        mAddPrinterView!!.mIpAddress!!.setFilters(arrayOf<InputFilter>(IpAddressFilter()))
-        if (mPrinterManager!!.isSearching) {
-            setViewToDisable(mAddPrinterView)
+        _addPrinterView!!.ipAddress!!.setOnEditorActionListener(this)
+        _addPrinterView!!.saveButton!!.setOnClickListener(this)
+        _addPrinterView!!.ipAddress!!.filters = arrayOf<InputFilter>(IpAddressFilter())
+        if (_printerManager!!.isSearching) {
+            setViewToDisable(_addPrinterView)
         }
 
         // RM#911 when display size is changed, layout can change from tablet to phone
@@ -102,7 +90,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
             val screenSize = getScreenDimensions(activity)
             val rootView = view.findViewById<View>(R.id.rootView) ?: return
             val params = rootView.layoutParams
-            params.width = Math.min(screenSize!!.x, screenSize.y)
+            params.width = screenSize!!.x.coerceAtMost(screenSize.y)
         }
     }
 
@@ -130,18 +118,18 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
 
     override fun onPause() {
         super.onPause()
-        mPauseableHandler!!.pause()
+        _pauseableHandler!!.pause()
     }
 
     override fun onResume() {
         super.onResume()
-        mPauseableHandler!!.resume()
+        _pauseableHandler!!.resume()
     }
 
     override fun onKeyUp(keyCode: Int): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_ENTER -> {
-                if (mAddPrinterView!!.mIpAddress!!.isFocused) {
+                if (_addPrinterView!!.ipAddress!!.isFocused) {
                     startManualSearch()
                     return true
                 }
@@ -159,15 +147,13 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
      * @param ipAddress Printer IP Address
      */
     private fun findPrinter(ipAddress: String) {
-        mPrinterManager!!.searchPrinter(ipAddress)
+        _printerManager!!.searchPrinter(ipAddress)
     }
 
     /**
      * @brief Display success dialog during successful printer search
-     *
-     * @param printer Searched printer
      */
-    private fun dialogCb(printer: Printer) {
+    private fun dialogCb() {
         if (isTablet && activity != null && activity is MainActivity) {
             val activity = activity as MainActivity?
             if (!activity!!.isDrawerOpen(Gravity.RIGHT)) {
@@ -272,9 +258,9 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         if (viewHolder == null) {
             return
         }
-        viewHolder.mSaveButton!!.visibility = View.GONE
-        viewHolder.mProgressBar!!.visibility = View.VISIBLE
-        viewHolder.mIpAddress!!.setTextColor(
+        viewHolder.saveButton!!.visibility = View.GONE
+        viewHolder.progressBar!!.visibility = View.VISIBLE
+        viewHolder.ipAddress!!.setTextColor(
             ContextCompat.getColor(
                 requireActivity(),
                 R.color.theme_light_4
@@ -284,9 +270,9 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         // #RM908 for chromeOS, setFocusable(false) somehow causes virtual keyboard to reappear after printer is added
         // use alternative way to disable IP address field which does cause the same problem
         if (isChromeBook) {
-            viewHolder!!.mIpAddress!!.inputType = InputType.TYPE_NULL
+            viewHolder.ipAddress!!.inputType = InputType.TYPE_NULL
         } else {
-            viewHolder!!.mIpAddress!!.isFocusable = false
+            viewHolder.ipAddress!!.isFocusable = false
         }
     }
 
@@ -299,35 +285,35 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         if (viewHolder == null) {
             return
         }
-        viewHolder.mSaveButton!!.visibility = View.VISIBLE
-        viewHolder.mProgressBar!!.visibility = View.GONE
-        viewHolder.mIpAddress!!.setTextColor(
+        viewHolder.saveButton!!.visibility = View.VISIBLE
+        viewHolder.progressBar!!.visibility = View.GONE
+        viewHolder.ipAddress!!.setTextColor(
             ContextCompat.getColor(
                 requireActivity(),
                 R.color.theme_dark_1
             )
         )
-        viewHolder!!.mIpAddress!!.isFocusableInTouchMode = true
+        viewHolder.ipAddress!!.isFocusableInTouchMode = true
     }
 
     /**
      * @brief Start manual printer search
      */
     private fun startManualSearch() {
-        var ipAddress = mAddPrinterView!!.mIpAddress!!.text.toString()
+        var ipAddress = _addPrinterView!!.ipAddress!!.text.toString()
         ipAddress = validateIpAddress(ipAddress)
-        if (ipAddress == null || ipAddress.contentEquals(BROADCAST_ADDRESS)) {
+        if (ipAddress.contentEquals(BROADCAST_ADDRESS)) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS)
             return
         }
-        mAddPrinterView!!.mIpAddress!!.setText(ipAddress)
-        if (mPrinterManager!!.isExists(ipAddress)) {
+        _addPrinterView!!.ipAddress!!.setText(ipAddress)
+        if (_printerManager!!.isExists(ipAddress)) {
             dialogErrCb(ERR_CAN_NOT_ADD_PRINTER)
             return
         }
-        if (!mPrinterManager!!.isSearching) {
-            setViewToDisable(mAddPrinterView)
-            findPrinter(mAddPrinterView!!.mIpAddress!!.text.toString())
+        if (!_printerManager!!.isSearching) {
+            setViewToDisable(_addPrinterView)
+            findPrinter(_addPrinterView!!.ipAddress!!.text.toString())
         }
         hideSoftKeyboard(requireActivity())
     }
@@ -349,34 +335,38 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
     // INTERFACE - OnPrinterSearch
     // ================================================================================
     override fun onPrinterAdd(printer: Printer?) {
-        if (mPrinterManager!!.isCancelled) {
+        if (_printerManager!!.isCancelled) {
             return
         }
         val newMessage: Message
-        if (mPrinterManager!!.isExists(printer)) {
-            newMessage = Message.obtain(mPauseableHandler, MSG_ERROR)
-            newMessage.arg1 = ERR_INVALID_IP_ADDRESS
-        } else if (mPrinterManager!!.savePrinterToDB(printer, true)) {
-            mAdded = true
-            newMessage = Message.obtain(mPauseableHandler, MSG_ADD_SUCCESS)
-            newMessage.obj = printer
-        } else {
-            newMessage = Message.obtain(mPauseableHandler, MSG_ERROR)
-            newMessage.arg1 = ERR_DB_FAILURE
+        when {
+            _printerManager!!.isExists(printer) -> {
+                newMessage = Message.obtain(_pauseableHandler, MSG_ERROR)
+                newMessage.arg1 = ERR_INVALID_IP_ADDRESS
+            }
+            _printerManager!!.savePrinterToDB(printer, true) -> {
+                _added = true
+                newMessage = Message.obtain(_pauseableHandler, MSG_ADD_SUCCESS)
+                newMessage.obj = printer
+            }
+            else -> {
+                newMessage = Message.obtain(_pauseableHandler, MSG_ERROR)
+                newMessage.arg1 = ERR_DB_FAILURE
+            }
         }
-        mPauseableHandler!!.sendMessage(newMessage)
+        _pauseableHandler!!.sendMessage(newMessage)
     }
 
     override fun onSearchEnd() {
-        if (mPrinterManager!!.isCancelled) {
+        if (_printerManager!!.isCancelled) {
             return
         }
         val activity = activity as MainActivity?
-        activity!!.runOnUiThread { setViewToNormal(mAddPrinterView) }
-        if (!mAdded) {
-            val newWarningMsg = Message.obtain(mPauseableHandler, MSG_ERROR)
+        activity!!.runOnUiThread { setViewToNormal(_addPrinterView) }
+        if (!_added) {
+            val newWarningMsg = Message.obtain(_pauseableHandler, MSG_ERROR)
             newWarningMsg.arg1 = ERR_PRINTER_ADDED_WARNING
-            mPauseableHandler!!.sendMessage(newWarningMsg)
+            _pauseableHandler!!.sendMessage(newWarningMsg)
         }
     }
 
@@ -409,10 +399,10 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
      *
      * @brief Add Printer Screen view holder
      */
-    class ViewHolder {
-        var mIpAddress: EditText? = null
-        var mProgressBar: View? = null
-        var mSaveButton: View? = null
+    inner class ViewHolder {
+        internal var ipAddress: EditText? = null
+        internal var progressBar: View? = null
+        internal var saveButton: View? = null
     }
 
     // ================================================================================
@@ -422,11 +412,11 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         return message!!.what == MSG_ERROR || message.what == MSG_ADD_SUCCESS
     }
 
-    override fun processMessage(msg: Message?) {
-        if (msg != null) {
-            when (msg.what) {
-                MSG_ERROR -> dialogErrCb(msg.arg1)
-                MSG_ADD_SUCCESS -> dialogCb(msg.obj as Printer)
+    override fun processMessage(message: Message?) {
+        if (message != null) {
+            when (message.what) {
+                MSG_ERROR -> dialogErrCb(message.arg1)
+                MSG_ADD_SUCCESS -> dialogCb()
             }
         }
     }

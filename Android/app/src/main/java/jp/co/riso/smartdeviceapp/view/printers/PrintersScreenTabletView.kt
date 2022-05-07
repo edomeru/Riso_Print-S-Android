@@ -7,39 +7,32 @@
  */
 package jp.co.riso.smartdeviceapp.view.printers
 
-import jp.co.riso.android.util.AppUtils.getScreenDimensions
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
-//import jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView.default
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.defaultPrinter
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isExists
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.printerCount
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.updatePortSettings
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.setDefaultPrinter
-import android.widget.AdapterView.OnItemSelectedListener
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import jp.co.riso.android.os.pauseablehandler.PauseableHandler
-import jp.co.riso.smartprint.R
 import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
 import android.os.Handler
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import android.os.Looper
 import android.os.Message
 import android.util.AttributeSet
 import android.view.*
 import android.widget.*
+import android.widget.AdapterView.OnItemSelectedListener
+import androidx.fragment.app.FragmentActivity
+import jp.co.riso.android.dialog.DialogUtils
+import jp.co.riso.android.dialog.InfoDialogFragment
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler
+import jp.co.riso.android.util.AppUtils.getScreenDimensions
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
+import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment
-import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
-import jp.co.riso.android.dialog.InfoDialogFragment
-import jp.co.riso.android.dialog.DialogUtils
-import androidx.fragment.app.FragmentActivity
-import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartprint.R
 import java.lang.ref.WeakReference
-import java.util.ArrayList
 
 /**
  * @class PrintersScreenTabletView
@@ -48,15 +41,15 @@ import java.util.ArrayList
  */
 class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callback,
     OnItemSelectedListener {
-    private var mPrinterManager: PrinterManager? = null
-    private var mSelectedPrinter: Printer? = null
-    private var mPrinterList: ArrayList<Printer?>? = null
-    private var mDeleteViewHolder: ViewHolder? = null
-    private var mDefaultViewHolder: ViewHolder? = null
-    private var mHandler: Handler? = null
-    private var mDeleteItem = -1
-    private var mWidth = 0
-    private var mHeight = 0
+    private var _printerManager: PrinterManager? = null
+    private var _selectedPrinter: Printer? = null
+    private var _printerList: ArrayList<Printer?>? = null
+    private var _deleteViewHolder: ViewHolder? = null
+    private var _defaultViewHolder: ViewHolder? = null
+    private var _handler: Handler? = null
+    private var _deleteItem = -1
+    private var _width = 0
+    private var _height = 0
 
     /**
      * @brief Get the index of the selected printer having an opened Default Print Settings.
@@ -66,8 +59,8 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      */
     var defaultSettingSelected = PrinterManager.EMPTY_ID
         private set
-    private var mCallbackRef: WeakReference<PrintersViewCallback?>? = null
-    private var mPauseableHandler: PauseableHandler? = null
+    private var _callbackRef: WeakReference<PrintersViewCallback?>? = null
+    private var _pauseableHandler: PauseableHandler? = null
 
     /**
      * @brief Constructor. <br></br>
@@ -77,7 +70,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param context Application context
      */
     constructor(context: Context) : super(context) {
-        init(context)
+        init()
     }
 
     /**
@@ -89,7 +82,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param attrs Layout attributes
      */
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init(context)
+        init()
     }
 
     /**
@@ -106,7 +99,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         attrs,
         defStyle
     ) {
-        init(context)
+        init()
     }
 
     override fun generateLayoutParams(layoutParams: LayoutParams): LayoutParams {
@@ -123,8 +116,9 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         val childCount = childCount
         var childWidth = context.resources.getDimensionPixelSize(R.dimen.printers_view_width)
         val childHeight = context.resources.getDimensionPixelSize(R.dimen.printers_view_height)
-        val numberOfColumn = Math.max(screenWidth / childWidth, MIN_COLUMN)
-        val numberOfRow = Math.max((childCount + numberOfColumn - 1) / numberOfColumn, MIN_ROW)
+        val numberOfColumn = (screenWidth / childWidth).coerceAtLeast(MIN_COLUMN)
+        val numberOfRow =
+            ((childCount + numberOfColumn - 1) / numberOfColumn).coerceAtLeast(MIN_ROW)
         if (numberOfColumn == MIN_COLUMN) {
             if (childWidth * MIN_COLUMN > screenWidth) {
                 childWidth = screenWidth / numberOfColumn
@@ -132,8 +126,8 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         }
         val newRowMeasureSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.EXACTLY)
         val newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.EXACTLY)
-        mWidth = childWidth
-        mHeight = childHeight
+        _width = childWidth
+        _height = childHeight
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             if (child.visibility != GONE) {
@@ -147,8 +141,8 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         val childCount = childCount
         val screenSize = getScreenDimensions(context as Activity)
-        val numberOfColumn = Math.max(screenSize!!.x / mWidth, MIN_COLUMN)
-        val margin = (screenSize.x - mWidth * numberOfColumn) / 2
+        val numberOfColumn = (screenSize!!.x / _width).coerceAtLeast(MIN_COLUMN)
+        val margin = (screenSize.x - _width * numberOfColumn) / 2
         var i = 0
         var y = 0
         while (i < childCount) {
@@ -157,14 +151,14 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
 
                 // RM#914 getChildCount() sometimes returns incorrect value (duplicates printer count)
                 // add checking based on actual printer list size
-                if (child == null || i >= mPrinterList!!.size) {
+                if (child == null || i >= _printerList!!.size) {
                     return
                 }
                 val lps = child.layoutParams as MarginLayoutParams
-                val fLeft = left + mWidth * x + lps.leftMargin
-                val fRight = left + mWidth * (x + 1) - lps.rightMargin
-                val fTop = top + mHeight * y + lps.topMargin
-                val fBot = top + mHeight * (y + 1) - lps.bottomMargin
+                val fLeft = left + _width * x + lps.leftMargin
+                val fRight = left + _width * (x + 1) - lps.rightMargin
+                val fTop = top + _height * y + lps.topMargin
+                val fBot = top + _height * (y + 1) - lps.bottomMargin
                 child.layout(fLeft + margin, fTop, fRight + margin, fBot)
                 i++
             }
@@ -174,25 +168,25 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val coords = IntArray(2)
-        if (mSelectedPrinter != null) {
-            mSelectedPrinter = null
+        if (_selectedPrinter != null) {
+            _selectedPrinter = null
         }
-        if (mDeleteViewHolder != null) {
-            if (mDeleteViewHolder!!.mDeleteButton != null) {
-                mDeleteViewHolder!!.mDeleteButton!!.getLocationOnScreen(coords)
+        if (_deleteViewHolder != null) {
+            if (_deleteViewHolder!!.deleteButton != null) {
+                _deleteViewHolder!!.deleteButton!!.getLocationOnScreen(coords)
                 val rect = Rect(
                     coords[0],
                     coords[1],
-                    coords[0] + mDeleteViewHolder!!.mDeleteButton!!.width,
+                    coords[0] + _deleteViewHolder!!.deleteButton!!.width,
                     coords[1]
-                            + mDeleteViewHolder!!.mDeleteButton!!.height
+                            + _deleteViewHolder!!.deleteButton!!.height
                 )
                 if (rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                     return super.onInterceptTouchEvent(ev)
                 }
             }
             if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
-                setPrinterView(mDeleteViewHolder!!)
+                setPrinterView(_deleteViewHolder!!)
             }
             return true
         }
@@ -208,14 +202,14 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param isOnline Printer online status
      */
     fun onAddedNewPrinter(printer: Printer?, isOnline: Boolean) {
-        val newMessage = Message.obtain(mHandler, MSG_ADD_PRINTER)
+        val newMessage = Message.obtain(_handler, MSG_ADD_PRINTER)
         newMessage.obj = printer
         if (isOnline) {
             newMessage.arg1 = 1
         } else {
             newMessage.arg1 = 0
         }
-        mHandler!!.sendMessage(newMessage)
+        _handler!!.sendMessage(newMessage)
     }
 
     /**
@@ -226,14 +220,14 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param settingItem Default Print Setting item
      */
     fun restoreState(printer: ArrayList<Printer?>?, deleteItem: Int, settingItem: Int) {
-        mPrinterList = printer
-        mDeleteItem = deleteItem
+        _printerList = printer
+        _deleteItem = deleteItem
         defaultSettingSelected = settingItem
         for (i in printer!!.indices) {
             addToTabletPrinterScreen(printer[i], false)
         }
-        val newMessage = Message.obtain(mHandler, MSG_SET_UPDATE_VIEWS)
-        mHandler!!.sendMessage(newMessage)
+        val newMessage = Message.obtain(_handler, MSG_SET_UPDATE_VIEWS)
+        _handler!!.sendMessage(newMessage)
     }
 
     /**
@@ -243,10 +237,10 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      */
     val deleteItemPosition: Int
         get() {
-            if (mDeleteViewHolder != null) {
-                mDeleteItem = indexOfChild(mDeleteViewHolder!!.mOnlineIndicator!!.tag as View)
+            if (_deleteViewHolder != null) {
+                _deleteItem = indexOfChild(_deleteViewHolder!!.onlineIndicator!!.tag as View)
             }
-            return mDeleteItem
+            return _deleteItem
         }
 
     /**
@@ -259,8 +253,8 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      */
     fun setDefaultSettingSelected(printerId: Int, state: Boolean) {
         if (printerId != PrinterManager.EMPTY_ID) {
-            for (index in mPrinterList!!.indices) {
-                if (mPrinterList!![index]?.id == printerId) {
+            for (index in _printerList!!.indices) {
+                if (_printerList!![index]?.id == printerId) {
                     defaultSettingSelected = index
                 }
             }
@@ -280,7 +274,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param callback Callback function
      */
     fun setPrintersViewCallback(callback: PrintersViewCallback?) {
-        mCallbackRef = WeakReference(callback)
+        _callbackRef = WeakReference(callback)
     }
 
     /**
@@ -289,15 +283,15 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param relayout Re-layout the entire view
      */
     fun confirmDeletePrinterView(relayout: Boolean) {
-        if (mDeleteViewHolder == null) {
+        if (_deleteViewHolder == null) {
             return
         }
-        removeView(mDeleteViewHolder!!.mOnlineIndicator!!.tag as View)
-        mDeleteViewHolder = null
-        mDeleteItem = PrinterManager.EMPTY_ID
+        removeView(_deleteViewHolder!!.onlineIndicator!!.tag as View)
+        _deleteViewHolder = null
+        _deleteItem = PrinterManager.EMPTY_ID
         if (relayout) {
             removeAllViews()
-            restoreState(mPrinterList, PrinterManager.EMPTY_ID, PrinterManager.EMPTY_ID)
+            restoreState(_printerList, PrinterManager.EMPTY_ID, PrinterManager.EMPTY_ID)
         }
     }
 
@@ -305,9 +299,9 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @brief This function is called when deletion of the printer view is confirmed.
      */
     fun resetDeletePrinterView() {
-        if (mDeleteViewHolder != null) {
-            mDeleteViewHolder = null
-            mDeleteItem = PrinterManager.EMPTY_ID
+        if (_deleteViewHolder != null) {
+            _deleteViewHolder = null
+            _deleteItem = PrinterManager.EMPTY_ID
         }
     }
 
@@ -317,19 +311,17 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param handler Pauseable handler
      */
     fun setPauseableHandler(handler: PauseableHandler?) {
-        mPauseableHandler = handler
+        _pauseableHandler = handler
     }
     // ================================================================================
     // Private methods
     // ================================================================================
     /**
      * @brief Initialize PrinterScreenTabletView.
-     *
-     * @param context Application context
      */
-    private fun init(context: Context) {
-        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
-        mHandler = Handler(Looper.myLooper()!!, this)
+    private fun init() {
+        _printerManager = getInstance(SmartDeviceApp.appContext!!)
+        _handler = Handler(Looper.myLooper()!!, this)
     }
 
     /**
@@ -341,11 +333,11 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         if (viewHolder == null) {
             return
         }
-        val printerItem = viewHolder.mDeleteButton!!.parent as PrintersContainerView
+        val printerItem = viewHolder.deleteButton!!.parent as PrintersContainerView
         if (printerItem.default) {
             printerItem.default = false
-            viewHolder.mDefaultPrinter!!.setSelection(1, true)
-            viewHolder.mDefaultPrinterAdapter!!.isNoDisabled = false
+            viewHolder.defaultPrinter!!.setSelection(1, true)
+            viewHolder.defaultPrinterAdapter!!.isNoDisabled = false
         }
         resetDeletePrinterView()
     }
@@ -359,22 +351,22 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         if (viewHolder == null) {
             return
         }
-        if (mDefaultViewHolder != null) {
-            setPrinterViewToNormal(mDefaultViewHolder)
+        if (_defaultViewHolder != null) {
+            setPrinterViewToNormal(_defaultViewHolder)
         }
-        val printerItem = viewHolder.mPrinterName!!.parent as PrintersContainerView
+        val printerItem = viewHolder.printerName!!.parent as PrintersContainerView
         resetDeletePrinterView()
         if (printerItem.default) {
             return
         }
-        if (mDefaultViewHolder != null) {
-            setPrinterViewToNormal(mDefaultViewHolder)
-            mDefaultViewHolder = null
+        if (_defaultViewHolder != null) {
+            setPrinterViewToNormal(_defaultViewHolder)
+            _defaultViewHolder = null
         }
         printerItem.default = true
-        viewHolder.mDefaultPrinter!!.setSelection(0, true)
-        viewHolder.mDefaultPrinterAdapter!!.isNoDisabled = true
-        mDefaultViewHolder = viewHolder
+        viewHolder.defaultPrinter!!.setSelection(0, true)
+        viewHolder.defaultPrinterAdapter!!.isNoDisabled = true
+        _defaultViewHolder = viewHolder
     }
 
     /**
@@ -383,8 +375,8 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      * @param viewHolder View holder to reset
      */
     private fun setPrinterView(viewHolder: ViewHolder) {
-        val printer = viewHolder.mIpAddress!!.tag as Printer
-        if (mPrinterManager!!.defaultPrinter == printer.id) {
+        val printer = viewHolder.ipAddress!!.tag as Printer
+        if (_printerManager!!.defaultPrinter == printer.id) {
             setPrinterViewToDefault(viewHolder)
         } else {
             setPrinterViewToNormal(viewHolder)
@@ -409,25 +401,25 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
             printerName = context.resources.getString(R.string.ids_lbl_no_name)
         }
         addView(pView)
-        var viewHolder = ViewHolder()
-        viewHolder.mPrinterName = pView.findViewById(R.id.txt_printerName)
-        viewHolder.mDeleteButton = pView.findViewById(R.id.btn_delete)
-        viewHolder.mOnlineIndicator = pView.findViewById(R.id.img_onOff)
-        viewHolder.mIpAddress = pView.findViewById(R.id.inputIpAddress)
-        viewHolder.mPrintSettings = pView.findViewById(R.id.default_print_settings)
-        viewHolder.mPort = pView.findViewById(R.id.input_port)
-        viewHolder.mDefaultPrinter = pView.findViewById(R.id.default_printer_spinner)
-        viewHolder.mDefaultPrinterAdapter =
+        val viewHolder = ViewHolder()
+        viewHolder.printerName = pView.findViewById(R.id.txt_printerName)
+        viewHolder.deleteButton = pView.findViewById(R.id.btn_delete)
+        viewHolder.onlineIndicator = pView.findViewById(R.id.img_onOff)
+        viewHolder.ipAddress = pView.findViewById(R.id.inputIpAddress)
+        viewHolder.printSettings = pView.findViewById(R.id.default_print_settings)
+        viewHolder.port = pView.findViewById(R.id.input_port)
+        viewHolder.defaultPrinter = pView.findViewById(R.id.default_printer_spinner)
+        viewHolder.defaultPrinterAdapter =
             DefaultPrinterArrayAdapter(context, R.layout.printerinfo_port_item)
-        viewHolder.mDefaultPrinterAdapter!!.add(context.getString(R.string.ids_lbl_yes))
-        viewHolder.mDefaultPrinterAdapter!!.add(context.getString(R.string.ids_lbl_no))
-        viewHolder.mDefaultPrinterAdapter!!.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
-        viewHolder.mDefaultPrinter!!.adapter = viewHolder.mDefaultPrinterAdapter
-        if (mPrinterManager!!.defaultPrinter == printer.id) viewHolder.mDefaultPrinter!!.setSelection(
+        viewHolder.defaultPrinterAdapter!!.add(context.getString(R.string.ids_lbl_yes))
+        viewHolder.defaultPrinterAdapter!!.add(context.getString(R.string.ids_lbl_no))
+        viewHolder.defaultPrinterAdapter!!.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
+        viewHolder.defaultPrinter!!.adapter = viewHolder.defaultPrinterAdapter
+        if (_printerManager!!.defaultPrinter == printer.id) viewHolder.defaultPrinter!!.setSelection(
             0,
             true
         ) //yes
-        else viewHolder.mDefaultPrinter!!.setSelection(1, true) //no
+        else viewHolder.defaultPrinter!!.setSelection(1, true) //no
         val portAdapter = ArrayAdapter<String>(context, R.layout.printerinfo_port_item)
         // Assumption is that LPR is always available
         portAdapter.add(context.getString(R.string.ids_lbl_port_lpr))
@@ -435,31 +427,31 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
             portAdapter.add(context.getString(R.string.ids_lbl_port_raw))
             portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
         } else {
-            viewHolder.mPort?.visibility = GONE
+            viewHolder.port?.visibility = GONE
             // Port setting is always displayed as LPR
             pView.findViewById<View>(R.id.defaultPort).visibility = VISIBLE
         }
-        viewHolder.mPort?.adapter = portAdapter
-        viewHolder.mPort?.setSelection(printer.portSetting!!.ordinal)
-        viewHolder.mPrinterName?.text = printerName
-        viewHolder.mIpAddress?.text = printer.ipAddress
-        viewHolder.mDeleteButton?.setOnClickListener(this)
-        viewHolder.mPrintSettings?.setOnClickListener(this)
-        viewHolder.mPrintSettings?.findViewById<View>(R.id.print_settings)?.isClickable =
+        viewHolder.port?.adapter = portAdapter
+        viewHolder.port?.setSelection(printer.portSetting!!.ordinal)
+        viewHolder.printerName?.text = printerName
+        viewHolder.ipAddress?.text = printer.ipAddress
+        viewHolder.deleteButton?.setOnClickListener(this)
+        viewHolder.printSettings?.setOnClickListener(this)
+        viewHolder.printSettings?.findViewById<View>(R.id.print_settings)?.isClickable =
             false
-        viewHolder.mPort?.onItemSelectedListener = this
-        viewHolder.mDefaultPrinter?.onItemSelectedListener = this
+        viewHolder.port?.onItemSelectedListener = this
+        viewHolder.defaultPrinter?.onItemSelectedListener = this
         pView.tag = viewHolder
-        viewHolder.mPrinterName?.tag = viewHolder
-        viewHolder.mDeleteButton?.tag = viewHolder
-        viewHolder.mIpAddress?.tag = printer
-        viewHolder.mPrintSettings?.tag = printer
-        viewHolder.mPrintSettings?.setTag(ID_TAG_DEFAULTSETTINGS, viewHolder)
-        viewHolder.mOnlineIndicator?.tag = pView
-        viewHolder.mPort?.tag = printer
-        viewHolder.mDefaultPrinter?.tag = viewHolder
+        viewHolder.printerName?.tag = viewHolder
+        viewHolder.deleteButton?.tag = viewHolder
+        viewHolder.ipAddress?.tag = printer
+        viewHolder.printSettings?.tag = printer
+        viewHolder.printSettings?.setTag(ID_TAG_DEFAULTSETTINGS, viewHolder)
+        viewHolder.onlineIndicator?.tag = pView
+        viewHolder.port?.tag = printer
+        viewHolder.defaultPrinter?.tag = viewHolder
         if (isOnline) {
-            viewHolder.mOnlineIndicator?.setImageResource(R.drawable.img_btn_printer_status_online)
+            viewHolder.onlineIndicator?.setImageResource(R.drawable.img_btn_printer_status_online)
         }
         setPrinterView(viewHolder)
     }
@@ -471,13 +463,13 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         val printer: Printer
         val id = v.id
         if (id == R.id.btn_delete) {
-            mDeleteViewHolder = v.tag as ViewHolder
-            if (mCallbackRef != null && mCallbackRef!!.get() != null) {
-                printer = mDeleteViewHolder!!.mIpAddress!!.tag as Printer
-                mCallbackRef!!.get()!!.onPrinterDeleteClicked(printer)
+            _deleteViewHolder = v.tag as ViewHolder
+            if (_callbackRef != null && _callbackRef!!.get() != null) {
+                printer = _deleteViewHolder!!.ipAddress!!.tag as Printer
+                _callbackRef!!.get()!!.onPrinterDeleteClicked(printer)
             }
         } else if (id == R.id.default_print_settings) {
-            mSelectedPrinter = v.tag as Printer
+            _selectedPrinter = v.tag as Printer
             if (context != null && context is MainActivity) {
                 val activity = context as MainActivity
                 if (!activity.isDrawerOpen(Gravity.RIGHT)) {
@@ -485,22 +477,22 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
                     var fragment: PrintSettingsFragment? = null
                     if (fragment == null) {
                         fragment = PrintSettingsFragment()
-                        fragment.setPrinterId(mSelectedPrinter!!.id)
+                        fragment.setPrinterId(_selectedPrinter!!.id)
                         // use new print settings retrieved from the database
                         fragment.setPrintSettings(
                             PrintSettings(
-                                mSelectedPrinter!!.id,
-                                mSelectedPrinter!!.printerType!!
+                                _selectedPrinter!!.id,
+                                _selectedPrinter!!.printerType!!
                             )
                         )
-                        if (mPauseableHandler != null) {
+                        if (_pauseableHandler != null) {
                             val msg = Message.obtain(
-                                mPauseableHandler,
+                                _pauseableHandler,
                                 PrintersFragment.MSG_PRINTSETTINGS_BUTTON
                             )
                             msg.obj = fragment
-                            msg.arg1 = mSelectedPrinter!!.id
-                            mPauseableHandler!!.sendMessage(msg)
+                            msg.arg1 = _selectedPrinter!!.id
+                            _pauseableHandler!!.sendMessage(msg)
                         }
                     }
                 } else {
@@ -516,10 +508,10 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
             MSG_SET_UPDATE_VIEWS -> {
-                if (mDeleteItem != -1) {
-                    val view = getChildAt(mDeleteItem)
+                if (_deleteItem != -1) {
+                    val view = getChildAt(_deleteItem)
                     if (view != null) {
-                        mDeleteViewHolder =
+                        _deleteViewHolder =
                             view.findViewById<View>(R.id.txt_printerName).tag as ViewHolder
                     }
                 }
@@ -530,7 +522,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
             }
             MSG_ADD_PRINTER -> {
                 // BUG#10003: Check if printer to add already exists OR is added already on printers list view to avoid adding multiple views for the same printer
-                if (!mPrinterManager!!.isExists(msg.obj as Printer) || childCount != mPrinterManager!!.printerCount) {
+                if (!_printerManager!!.isExists(msg.obj as Printer) || childCount != _printerManager!!.printerCount) {
                     addToTabletPrinterScreen(msg.obj as Printer, msg.arg1 > 0)
                 }
                 return true
@@ -557,16 +549,16 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
                 else -> {}
             }
             printer.portSetting = port
-            mPrinterManager!!.updatePortSettings(printer.id, port)
+            _printerManager!!.updatePortSettings(printer.id, port)
         } else if (parentId == R.id.default_printer_spinner) {
             when (position) {
                 0 -> {
                     val viewHolder = parentView.tag as ViewHolder
-                    val printer = viewHolder.mIpAddress!!.tag as Printer
-                    if (mPrinterManager!!.defaultPrinter == printer.id) {
+                    val printer = viewHolder.ipAddress!!.tag as Printer
+                    if (_printerManager!!.defaultPrinter == printer.id) {
                         return
                     }
-                    if (mPrinterManager!!.setDefaultPrinter(printer)) {
+                    if (_printerManager!!.setDefaultPrinter(printer)) {
                         setPrinterViewToDefault(viewHolder)
                     } else {
                         val info = InfoDialogFragment.newInstance(
@@ -613,15 +605,15 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
      *
      * @brief Printers Screen view holder for tablet.
      */
-    class ViewHolder {
-        var mOnlineIndicator: ImageView? = null
-        var mPrinterName: TextView? = null
-        var mDeleteButton: Button? = null
-        var mIpAddress: TextView? = null
-        var mPort: Spinner? = null
-        var mDefaultPrinter: Spinner? = null
-        var mDefaultPrinterAdapter: DefaultPrinterArrayAdapter? = null
-        var mPrintSettings: LinearLayout? = null
+    inner class ViewHolder {
+        internal var onlineIndicator: ImageView? = null
+        internal var printerName: TextView? = null
+        internal var deleteButton: Button? = null
+        internal var ipAddress: TextView? = null
+        internal var port: Spinner? = null
+        internal var defaultPrinter: Spinner? = null
+        internal var defaultPrinterAdapter: DefaultPrinterArrayAdapter? = null
+        internal var printSettings: LinearLayout? = null
     }
 
     companion object {

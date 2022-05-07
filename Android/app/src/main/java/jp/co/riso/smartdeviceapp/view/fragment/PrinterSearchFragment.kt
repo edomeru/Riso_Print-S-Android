@@ -7,46 +7,34 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
-//import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.setSearchAdapterInterface
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.setPrinterSearchCallback
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isSearching
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.pause
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.resume
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.startPrinterSearch
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.cancelPrinterSearch
-//import jp.co.riso.smartdeviceapp.model.Printer.ipAddress
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.savePrinterToDB
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment
-import eu.erikw.PullToRefreshListView
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback
-import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface
-import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
-import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import jp.co.riso.android.os.pauseablehandler.PauseableHandler
-import android.widget.TextView
-import jp.co.riso.smartprint.R
-import android.os.Bundle
-import jp.co.riso.smartdeviceapp.view.fragment.PrinterSearchFragment
-import android.os.Looper
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
-import androidx.core.content.ContextCompat
-import android.widget.RelativeLayout
-import jp.co.riso.android.dialog.InfoDialogFragment
-import jp.co.riso.android.dialog.DialogUtils
-import jp.co.riso.smartdeviceapp.view.MainActivity
-import jp.co.riso.android.util.NetUtils
-import android.widget.FrameLayout
 import android.animation.ValueAnimator
-import android.animation.ValueAnimator.AnimatorUpdateListener
+import android.os.Bundle
+import android.os.Looper
 import android.os.Message
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import eu.erikw.PullToRefreshListView
 import jp.co.riso.android.dialog.ConfirmDialogFragment
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
+import jp.co.riso.android.dialog.DialogUtils
+import jp.co.riso.android.dialog.InfoDialogFragment
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
+import jp.co.riso.android.util.NetUtils
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.PrinterSearchCallback
 import jp.co.riso.smartdeviceapp.model.Printer
-import java.util.ArrayList
+import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter
+import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface
+import jp.co.riso.smartprint.R
 
 /**
  * @class PrinterSearchFragment
@@ -57,44 +45,44 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
     PrinterSearchCallback, PrinterSearchAdapterInterface, ConfirmDialogListener,
     PauseableHandlerCallback {
     // ListView parameters
-    private var mListView: PullToRefreshListView? = null
-    private var mPrinter: ArrayList<Printer?>? = null
-    private var mPrinterSearchAdapter: PrinterSearchAdapter? = null
-    private var mPrinterManager: PrinterManager? = null
-    private var mPauseableHandler: PauseableHandler? = null
-    private var mEmptySearchText: TextView? = null
-    private var mNoNetwork = false
+    private var _listView: PullToRefreshListView? = null
+    private var _printer: ArrayList<Printer?>? = null
+    private var _printerSearchAdapter: PrinterSearchAdapter? = null
+    private var _printerManager: PrinterManager? = null
+    private var _pauseableHandler: PauseableHandler? = null
+    private var _emptySearchText: TextView? = null
+    private var _noNetwork = false
 
     override val viewLayout: Int
         get() = R.layout.fragment_printersearch
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        mPrinter = if (savedInstanceState != null) {
+        _printer = if (savedInstanceState != null) {
             savedInstanceState.getParcelableArrayList(KEY_SEARCHED_PRINTER_LIST)
         } else {
             ArrayList()
         }
-        if (mPauseableHandler == null) {
-            mPauseableHandler = PauseableHandler(Looper.myLooper(), this)
+        if (_pauseableHandler == null) {
+            _pauseableHandler = PauseableHandler(Looper.myLooper(), this)
         }
-        mPrinterSearchAdapter =
-            PrinterSearchAdapter(activity, R.layout.printersearch_container_item, mPrinter)
-        mPrinterSearchAdapter!!.setSearchAdapterInterface(this)
-        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
-        mPrinterManager!!.setPrinterSearchCallback(this)
+        _printerSearchAdapter =
+            PrinterSearchAdapter(activity, R.layout.printersearch_container_item, _printer)
+        _printerSearchAdapter!!.setSearchAdapterInterface(this)
+        _printerManager = getInstance(SmartDeviceApp.appContext!!)
+        _printerManager!!.setPrinterSearchCallback(this)
     }
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
-        mListView = view.findViewById(R.id.printer_list)
-        mListView?.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.theme_light_3))
-        mListView?.setAdapter(mPrinterSearchAdapter)
-        mListView?.setOnRefreshListener(this)
-        mEmptySearchText = view.findViewById(R.id.emptySearchText)
+        _listView = view.findViewById(R.id.printer_list)
+        _listView?.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.theme_light_3))
+        _listView?.adapter = _printerSearchAdapter
+        _listView?.setOnRefreshListener(this)
+        _emptySearchText = view.findViewById(R.id.emptySearchText)
         val progressLayoutParams =
-            mListView?.findViewById<View>(R.id.ptr_id_spinner)?.layoutParams as RelativeLayout.LayoutParams
+            _listView?.findViewById<View>(R.id.ptr_id_spinner)?.layoutParams as RelativeLayout.LayoutParams
         progressLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
         val arrowLayoutParams =
-            mListView?.findViewById<View>(R.id.ptr_id_image)?.layoutParams as RelativeLayout.LayoutParams
+            _listView?.findViewById<View>(R.id.ptr_id_image)?.layoutParams as RelativeLayout.LayoutParams
         arrowLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
     }
 
@@ -119,9 +107,9 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        if (mPrinterManager!!.isSearching) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (_printerManager!!.isSearching) {
             updateRefreshBar()
         }
         if (savedInstanceState == null) {
@@ -130,19 +118,19 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         }
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        savedInstanceState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, mPrinter)
-        super.onSaveInstanceState(savedInstanceState)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelableArrayList(KEY_SEARCHED_PRINTER_LIST, _printer)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onPause() {
         super.onPause()
-        mPauseableHandler!!.pause()
+        _pauseableHandler!!.pause()
     }
 
     override fun onResume() {
         super.onResume()
-        mPauseableHandler!!.resume()
+        _pauseableHandler!!.resume()
     }
     // ================================================================================
     // Private Methods
@@ -151,8 +139,8 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
      * @brief Updates the status of the refresh bar.
      */
     private fun updateRefreshBar() {
-        val newMessage = Message.obtain(mPauseableHandler, MSG_UPDATE_REFRESH_BAR)
-        mPauseableHandler!!.sendMessage(newMessage)
+        val newMessage = Message.obtain(_pauseableHandler, MSG_UPDATE_REFRESH_BAR)
+        _pauseableHandler!!.sendMessage(newMessage)
     }
 
     /**
@@ -160,8 +148,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
      */
     private fun dialogErrCb() {
         val title = resources.getString(R.string.ids_lbl_search_printers)
-        val errMsg: String
-        errMsg = resources.getString(R.string.ids_err_msg_network_error)
+        val errMsg: String = resources.getString(R.string.ids_err_msg_network_error)
         val info: DialogFragment =
             InfoDialogFragment.newInstance(title, errMsg, resources.getString(R.string.ids_lbl_ok))
         DialogUtils.displayDialog(requireActivity(), KEY_PRINTER_ERR_DIALOG, info)
@@ -188,33 +175,33 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
     // INTERFACE - onRefresh()
     // ================================================================================
     override fun onRefresh() {
-        mPrinter!!.clear()
-        mEmptySearchText!!.visibility = View.GONE
-        mNoNetwork = false
+        _printer!!.clear()
+        _emptySearchText!!.visibility = View.GONE
+        _noNetwork = false
         if (!NetUtils.isWifiAvailable) {
-            mNoNetwork = true
+            _noNetwork = true
             dialogErrCb()
             updateRefreshBar()
             return
         }
-        mPrinterManager!!.startPrinterSearch()
+        _printerManager!!.startPrinterSearch()
     }
 
     override fun onHeaderAdjusted(margin: Int) {
-        if (mEmptySearchText != null) {
-            val params = mEmptySearchText!!.layoutParams as FrameLayout.LayoutParams
+        if (_emptySearchText != null) {
+            val params = _emptySearchText!!.layoutParams as FrameLayout.LayoutParams
             params.topMargin = margin
-            mEmptySearchText!!.layoutParams = params
+            _emptySearchText!!.layoutParams = params
         }
     }
 
     override fun onBounceBackHeader(duration: Int) {
         // http://stackoverflow.com/questions/13881419/android-change-left-margin-using-animation
-        val params = mEmptySearchText!!.layoutParams as FrameLayout.LayoutParams
+        val params = _emptySearchText!!.layoutParams as FrameLayout.LayoutParams
         val animation = ValueAnimator.ofInt(params.topMargin, 0)
         animation.addUpdateListener { valueAnimator ->
             params.topMargin = (valueAnimator.animatedValue as Int)
-            mEmptySearchText!!.requestLayout()
+            _emptySearchText!!.requestLayout()
         }
         animation.duration = duration.toLong()
         animation.start()
@@ -226,7 +213,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
     override fun onClick(v: View) {
         // Back Button
         if (v.id == R.id.menu_id_back_button) {
-            mPrinterManager!!.cancelPrinterSearch()
+            _printerManager!!.cancelPrinterSearch()
             closeScreen()
         }
     }
@@ -239,17 +226,17 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
             return
         }
         requireActivity().runOnUiThread(Runnable {
-            if (!mPrinterManager!!.isSearching) {
+            if (!_printerManager!!.isSearching) {
                 return@Runnable
             }
-            for (i in mPrinter!!.indices) {
-                if (mPrinter!![i]!!.ipAddress == printer!!.ipAddress) {
-                    mPrinter!![i] = printer
+            for (i in _printer!!.indices) {
+                if (_printer!![i]!!.ipAddress == printer!!.ipAddress) {
+                    _printer!![i] = printer
                     return@Runnable
                 }
             }
-            mPrinter!!.add(printer)
-            mPrinterSearchAdapter!!.notifyDataSetChanged()
+            _printer!!.add(printer)
+            _printerSearchAdapter!!.notifyDataSetChanged()
         })
     }
 
@@ -268,7 +255,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         val info: DialogFragment
         val title = resources.getString(R.string.ids_lbl_search_printers)
         val msg: String
-        if (!mPrinterManager!!.savePrinterToDB(printer, true)) {
+        if (!_printerManager!!.savePrinterToDB(printer, true)) {
             ret = -1
             msg = resources.getString(R.string.ids_err_msg_db_failure)
             info =
@@ -305,14 +292,14 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         return message!!.what == MSG_UPDATE_REFRESH_BAR
     }
 
-    override fun processMessage(msg: Message?) {
-        when (msg!!.what) {
-            MSG_UPDATE_REFRESH_BAR -> if (mPrinterManager!!.isSearching) {
-                mListView!!.setRefreshing()
+    override fun processMessage(message: Message?) {
+        when (message!!.what) {
+            MSG_UPDATE_REFRESH_BAR -> if (_printerManager!!.isSearching) {
+                _listView!!.setRefreshing()
             } else {
-                mListView!!.onRefreshComplete()
-                if (mPrinter!!.isEmpty() && !mNoNetwork) {
-                    mEmptySearchText!!.visibility = View.VISIBLE
+                _listView!!.onRefreshComplete()
+                if (_printer!!.isEmpty() && !_noNetwork) {
+                    _emptySearchText!!.visibility = View.VISIBLE
                 }
             }
         }

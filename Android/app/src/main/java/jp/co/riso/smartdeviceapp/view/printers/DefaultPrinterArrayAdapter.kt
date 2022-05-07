@@ -17,9 +17,10 @@ import jp.co.riso.smartprint.R
 class DefaultPrinterArrayAdapter(context: Context?, resource: Int) : ArrayAdapter<String?>(
     context!!, resource
 ) {
-    private val activity: Activity?
+    private val _activity: Activity? = context as Activity?
+
     @JvmField
-    var isNoDisabled: Boolean
+    var isNoDisabled: Boolean = false
     override fun areAllItemsEnabled(): Boolean {
         return !isNoDisabled
     }
@@ -28,17 +29,17 @@ class DefaultPrinterArrayAdapter(context: Context?, resource: Int) : ArrayAdapte
         return position != 1 || !isNoDisabled
     }
 
-    override fun getDropDownView(position: Int, convertView: View, parent: ViewGroup): View {
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = super.getDropDownView(position, convertView, parent) as TextView
         if (isNoDisabled && position == 1) //No
         {
-            view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.theme_light_3))
-            view.setTextColor(ContextCompat.getColor(activity, R.color.theme_light_4))
+            view.setBackgroundColor(ContextCompat.getColor(_activity!!, R.color.theme_light_3))
+            view.setTextColor(ContextCompat.getColor(_activity, R.color.theme_light_4))
         } else {
             view.setBackgroundResource(R.drawable.selector_printerinfo_port)
             view.setTextColor(
                 ContextCompat.getColorStateList(
-                    activity!!,
+                    _activity!!,
                     R.color.selector_printers_text
                 )
             )
@@ -46,14 +47,4 @@ class DefaultPrinterArrayAdapter(context: Context?, resource: Int) : ArrayAdapte
         return view
     }
 
-    /**
-     * @brief Constructor.
-     *
-     * @param context Application context
-     * @param resource Resource ID to be used as a printer row
-     */
-    init {
-        activity = context as Activity?
-        isNoDisabled = false
-    }
 }
