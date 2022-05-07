@@ -25,6 +25,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.get
 @SuppressLint("AppCompatCustomView")
 class SnmpCommunityNameEditText : EditText {
     private var _context: Context? = null
+
     private val snmpCommunityNameFilter =
         SnmpCommunityNameFilter( // filter catches invalid case for pasting in context menu or from keyboard clipboard
             object : InvalidInputObserver {
