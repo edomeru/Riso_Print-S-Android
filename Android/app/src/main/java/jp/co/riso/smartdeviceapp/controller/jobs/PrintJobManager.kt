@@ -70,7 +70,7 @@ class PrintJobManager private constructor(context: Context) {
                         getStringFromCursor(
                             c,
                             KeyConstants.KEY_SQL_PRINTJOB_DATE
-                        )
+                        ).toString()
                     )
                     val pjb_result = JobResult.values()[getIntFromCursor(
                         c,
@@ -297,7 +297,7 @@ class PrintJobManager private constructor(context: Context) {
          * @return Converted date if strDate is in valid format
          * @retval "Date(0) equivalent of Jan.1,1970 UTC" strDate is in invalid format
          */
-        private fun convertStringToDate(strDate: String?): Date {
+        private fun convertStringToDate(strDate: String): Date {
             val sdf = SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault())
             sdf.timeZone = TimeZone.getTimeZone(C_TIMEZONE)
             val date: Date = try {
