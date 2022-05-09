@@ -309,7 +309,7 @@ open class DatabaseManager
          * @return Value of the requested column as a String.
          */
         @JvmStatic
-        fun getStringFromCursor(cursor: Cursor, columnName: String): String {
+        fun getStringFromCursor(cursor: Cursor, columnName: String): String? {
             val columnIndex = cursor.getColumnIndex(columnName)
             return if (columnIndex >= 0) {
                 cursor.getString(columnIndex)
