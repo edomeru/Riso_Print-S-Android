@@ -19,7 +19,7 @@ import android.util.AttributeSet
 import androidx.preference.PreferenceManager
 
 class SnmpCommunityNameDisplayText : LinearLayout {
-    private var communityName: String? = AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME
+    private var _communityName: String? = AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME
 
     constructor(context: Context) : super(context) {
         init(context)
@@ -39,18 +39,18 @@ class SnmpCommunityNameDisplayText : LinearLayout {
 
     private fun init(context: Context) {
         val view = inflate(context, R.layout.printersearchsettings_community_name_display, this)
-        communityName = PreferenceManager.getDefaultSharedPreferences(context).getString(
+        _communityName = PreferenceManager.getDefaultSharedPreferences(context).getString(
             AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME,
             AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME
         )
         val textView = view.findViewById<TextView>(R.id.snmpCommunityName)
-        textView.text = communityName
+        textView.text = _communityName
     }
 
-    public override fun onSaveInstanceState(): Parcelable? {
+    public override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
         val savedState = SavedState(superState)
-        savedState.communityName = communityName
+        savedState.communityName = _communityName
         return savedState
     }
 
@@ -59,15 +59,14 @@ class SnmpCommunityNameDisplayText : LinearLayout {
             super.onRestoreInstanceState(state)
             return
         }
-        val savedState = state
-        super.onRestoreInstanceState(savedState.superState)
-        communityName = savedState.communityName
+        super.onRestoreInstanceState(state.superState)
+        _communityName = state.communityName
     }
 
     internal class SavedState : BaseSavedState {
         var communityName: String? = null
 
-        constructor(superState: Parcelable?) : super(superState) {}
+        constructor(superState: Parcelable?) : super(superState)
         private constructor(`in`: Parcel) : super(`in`) {
             communityName = `in`.readString()
         }
@@ -81,7 +80,7 @@ class SnmpCommunityNameDisplayText : LinearLayout {
             //required field that makes Parcelables from a Parcel
             @JvmField
             val CREATOR: Creator<SavedState?> = object : Creator<SavedState?> {
-                override fun createFromParcel(`in`: Parcel): SavedState? {
+                override fun createFromParcel(`in`: Parcel): SavedState {
                     return SavedState(`in`)
                 }
 

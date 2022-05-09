@@ -35,13 +35,13 @@ import kotlin.math.min
  * @brief Fragment for Add Printer Screen.
  */
 class PrinterSearchSettingsFragment : BaseFragment() {
-    private var snmpCommunityNameEditTextPasteBroadcastReceiver: BroadcastReceiver? = null
-    private var snmpCommunityNameEditText: SnmpCommunityNameEditText? = null
+    private var _snmpCommunityNameEditTextPasteBroadcastReceiver: BroadcastReceiver? = null
+    private var _snmpCommunityNameEditText: SnmpCommunityNameEditText? = null
     override fun onStop() {
         super.onStop()
-        if (snmpCommunityNameEditTextPasteBroadcastReceiver != null) {
+        if (_snmpCommunityNameEditTextPasteBroadcastReceiver != null) {
             LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(
-                snmpCommunityNameEditTextPasteBroadcastReceiver!!
+                _snmpCommunityNameEditTextPasteBroadcastReceiver!!
             )
         }
     }
@@ -50,17 +50,17 @@ class PrinterSearchSettingsFragment : BaseFragment() {
         super.onStart()
         val intentFilter =
             IntentFilter(SnmpCommunityNameEditText.SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID)
-        snmpCommunityNameEditTextPasteBroadcastReceiver = object : BroadcastReceiver() {
+        _snmpCommunityNameEditTextPasteBroadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (SnmpCommunityNameEditText.SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID == intent.action) {
                     showInvalidPasteErrorDialog()
                 } else if (SnmpCommunityNameEditText.SNMP_COMMUNITY_NAME_SAVE_ON_BACK_BROADCAST_ID == intent.action) {
-                    saveSnmpCommunityNameToSharedPrefs(if (snmpCommunityNameEditText != null) snmpCommunityNameEditText!!.text.toString() else AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME)
+                    saveSnmpCommunityNameToSharedPrefs(if (_snmpCommunityNameEditText != null) _snmpCommunityNameEditText!!.text.toString() else AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME)
                 }
             }
         }
         LocalBroadcastManager.getInstance(requireActivity())
-            .registerReceiver(snmpCommunityNameEditTextPasteBroadcastReceiver as BroadcastReceiver, intentFilter)
+            .registerReceiver(_snmpCommunityNameEditTextPasteBroadcastReceiver as BroadcastReceiver, intentFilter)
     }
 
     override val viewLayout: Int
@@ -71,9 +71,9 @@ class PrinterSearchSettingsFragment : BaseFragment() {
     }
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
-        snmpCommunityNameEditText = view.findViewById(R.id.inputSnmpCommunityName)
-        snmpCommunityNameEditText?.setText(getInstance(requireActivity())!!.snmpCommunityNameFromSharedPrefs)
-        snmpCommunityNameEditText?.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+        _snmpCommunityNameEditText = view.findViewById(R.id.inputSnmpCommunityName)
+        _snmpCommunityNameEditText?.setText(getInstance(requireActivity())!!.snmpCommunityNameFromSharedPrefs)
+        _snmpCommunityNameEditText?.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 saveSnmpCommunityNameToSharedPrefs(v.text.toString())
             } else if (actionId == EditorInfo.IME_NULL) {
@@ -152,7 +152,7 @@ class PrinterSearchSettingsFragment : BaseFragment() {
     }
 
     private fun saveSnmpCommunityNameToSharedPrefs(snmpCommunityName: String) {
-        snmpCommunityNameEditText!!.saveValueToSharedPrefs(snmpCommunityName)
+        _snmpCommunityNameEditText!!.saveValueToSharedPrefs(snmpCommunityName)
     }
 
     // ================================================================================
@@ -168,12 +168,12 @@ class PrinterSearchSettingsFragment : BaseFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        saveSnmpCommunityNameToSharedPrefs(snmpCommunityNameEditText!!.text.toString())
+        saveSnmpCommunityNameToSharedPrefs(_snmpCommunityNameEditText!!.text.toString())
     }
 
     override fun onRightFragmentDrawerClosed() {
         super.onRightFragmentDrawerClosed()
         // Save community name in shared prefs when Printer Search Settings drawer is closed
-        saveSnmpCommunityNameToSharedPrefs(snmpCommunityNameEditText!!.text.toString())
+        saveSnmpCommunityNameToSharedPrefs(_snmpCommunityNameEditText!!.text.toString())
     }
 }

@@ -7,43 +7,24 @@
  */
 package jp.co.riso.smartdeviceapp.view.jobs
 
-//import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation.beginDeleteModeOnView
-//import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.setDeleteButton
-//import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation.endDeleteMode
-//import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.clearDeleteButton
-//import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.setData
-//import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.restoreState
-//import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.groupHeight
-//import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.getJobViewSwiped
-import jp.co.riso.android.util.AppUtils.getScreenDimensions
-//import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.getAnimationDuration
-//import jp.co.riso.smartdeviceapp.model.Printer.id
-import android.widget.LinearLayout
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsLayoutListener
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView
-import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.ViewCreationThread
-import jp.co.riso.smartprint.R
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.AddViewRunnable
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView
-import android.view.MotionEvent
-import jp.co.riso.android.util.AppUtils
-import android.app.Activity
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Point
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.TranslateAnimation
+import android.widget.LinearLayout
+import jp.co.riso.android.util.AppUtils.getScreenDimensions
 import jp.co.riso.smartdeviceapp.model.PrintJob
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.view.anim.DisplayDeleteAnimation
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsLayoutListener
+import jp.co.riso.smartprint.R
 import java.lang.ref.WeakReference
-import java.util.ArrayList
-import kotlin.jvm.Volatile
-import kotlin.jvm.Synchronized
 
 /**
  * @class PrintJobsView
@@ -51,26 +32,26 @@ import kotlin.jvm.Synchronized
  * @brief Custom view for the Print Job History view
  */
 class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
-    private var mListenerRef: WeakReference<PrintJobsViewListener?>? = null
-    private var mPrintJobs: MutableList<PrintJob> = ArrayList()
-    private var mPrinters: MutableList<Printer> = ArrayList()
-    private val mCollapsedPrinters: MutableList<Printer> = ArrayList()
-    private val mColumns: MutableList<LinearLayout> = ArrayList()
-    private val mPrintGroupViews: MutableList<PrintJobsGroupView?> = ArrayList()
-    private var mPrintGroupWithDelete: PrintJobsGroupView? = null
-    private var mDeleteAnimation: DisplayDeleteAnimation? = null
-    private var mGroupListener: PrintJobsGroupListener? = null
-    private var mPrintJobToDelete: PrintJob? = null
-    private var mPrinterToDelete: Printer? = null
-    private var mRunnable: Runnable? = null
-    private var mGroupViewCtr = 0
-    private var mInitialFlag = false
+    private var _listenerRef: WeakReference<PrintJobsViewListener?>? = null
+    private var _printJobs: MutableList<PrintJob> = ArrayList()
+    private var _printers: MutableList<Printer> = ArrayList()
+    private val _collapsedPrinters: MutableList<Printer> = ArrayList()
+    private val _columns: MutableList<LinearLayout?> = ArrayList()
+    private val _printGroupViews: MutableList<PrintJobsGroupView?> = ArrayList()
+    private var _printGroupWithDelete: PrintJobsGroupView? = null
+    private var _deleteAnimation: DisplayDeleteAnimation? = null
+    private var _groupListener: PrintJobsGroupListener? = null
+    private var _printJobToDelete: PrintJob? = null
+    private var _printerToDelete: Printer? = null
+    private var _runnable: Runnable? = null
+    private var _groupViewCtr = 0
+    private var _initialFlag = false
     override var isDeleteMode = false
         private set
-    private var mDeleteView: View? = null
-    private var mDownPoint: Point? = null
-    private lateinit var mColumnsHeight: IntArray
-    private var mThread: ViewCreationThread? = null
+    private var _deleteView: View? = null
+    private var _downPoint: Point? = null
+    private lateinit var _columnsHeight: IntArray
+    private var _thread: ViewCreationThread? = null
 
     /**
      * @brief Default Constructor
@@ -120,10 +101,10 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
         groupListener: PrintJobsGroupListener?,
         viewListener: PrintJobsViewListener?
     ) {
-        mPrintJobs = ArrayList(printJobs)
-        mPrinters = ArrayList(printers)
-        mGroupListener = groupListener
-        mListenerRef = WeakReference(viewListener)
+        _printJobs = ArrayList(printJobs!!)
+        _printers = ArrayList(printers!!)
+        _groupListener = groupListener
+        _listenerRef = WeakReference(viewListener)
         reset()
     }
 
@@ -134,18 +115,18 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @param view Job row layout view containing the delete button to be displayed
      * @param animate If true, delete button is displayed with animation
      */
-    fun beginDelete(pj: PrintJobsGroupView?, view: View?, animate: Boolean) {
+    private fun beginDelete(pj: PrintJobsGroupView?, view: View?, animate: Boolean) {
         if (!isDeleteMode) {
             isDeleteMode = true
-            mDeleteAnimation!!.beginDeleteModeOnView(
+            _deleteAnimation!!.beginDeleteModeOnView(
                 view!!,
                 animate,
                 R.id.printJobDeleteBtn,
                 R.id.printJobDate
             )
-            mDeleteView = view
+            _deleteView = view
             pj!!.setDeleteButton(view)
-            mPrintGroupWithDelete = pj
+            _printGroupWithDelete = pj
         }
     }
 
@@ -157,14 +138,14 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
     fun endDelete(animate: Boolean) {
         if (isDeleteMode) {
             isDeleteMode = false
-            mDeleteAnimation!!.endDeleteMode(
-                mDeleteView!!,
+            _deleteAnimation!!.endDeleteMode(
+                _deleteView!!,
                 animate,
                 R.id.printJobDeleteBtn,
                 R.id.printJobDate
             )
-            mDeleteView = null
-            mPrintGroupWithDelete!!.clearDeleteButton()
+            _deleteView = null
+            _printGroupWithDelete!!.clearDeleteButton()
         }
     }
 
@@ -173,11 +154,11 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      */
     fun reset() {
         isDeleteMode = false
-        mGroupViewCtr = 0
-        mPrintGroupViews.clear()
-        mInitialFlag = true
+        _groupViewCtr = 0
+        _printGroupViews.clear()
+        _initialFlag = true
         removeAllViews()
-        mColumns.clear()
+        _columns.clear()
         groupPrintJobs()
     }
 
@@ -187,7 +168,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @param job PrintJob to be deleted
      */
     fun setJobToDelete(job: PrintJob?) {
-        mPrintJobToDelete = job
+        _printJobToDelete = job
     }
 
     /**
@@ -196,7 +177,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @param printer Printer of the job group to be deleted
      */
     fun setPrinterToDelete(printer: Printer?) {
-        mPrinterToDelete = printer
+        _printerToDelete = printer
     }
 
     /**
@@ -207,9 +188,9 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      */
     fun setCollapsedPrinters(printer: Printer, isCollapsed: Boolean) {
         if (isCollapsed) {
-            mCollapsedPrinters.add(printer)
+            _collapsedPrinters.add(printer)
         } else {
-            mCollapsedPrinters.remove(printer)
+            _collapsedPrinters.remove(printer)
         }
     }
 
@@ -219,7 +200,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @param job PrintJob to be deleted
      */
     fun deleteJobFromList(job: PrintJob) {
-        mPrintJobs.remove(job)
+        _printJobs.remove(job)
     }
 
     /**
@@ -228,30 +209,30 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @param printer Printer to be deleted
      */
     fun deletePrinterFromList(printer: Printer) {
-        mPrinters.remove(printer)
+        _printers.remove(printer)
     }
 
     /**
      * @brief Initializes PrintJobsView.
      */
     private fun init() {
-        mDeleteAnimation = DisplayDeleteAnimation()
-        mRunnable = AddViewRunnable()
+        _deleteAnimation = DisplayDeleteAnimation()
+        _runnable = AddViewRunnable()
     }
 
     /**
      * @brief Creates a thread for grouping print jobs and creating views for each group
      */
     private fun groupPrintJobs() {
-        if (mThread != null && mThread!!.isAlive) {
-            mThread!!.interrupt()
-            mThread!!.setIsRunning(false)
+        if (_thread != null && _thread!!.isAlive) {
+            _thread!!.interrupt()
+            _thread!!.setIsRunning(false)
         }
-        mThread = ViewCreationThread()
-        mThread!!.start()
+        _thread = ViewCreationThread()
+        _thread!!.start()
         // RM#942 thread join need to prevent race condition which causes print job groups to be doubled
         try {
-            mThread!!.join()
+            _thread!!.join()
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
@@ -263,13 +244,13 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @return Index of the smallest column
      */
     private val smallestColumn: Int
-        private get() {
+        get() {
             // initially assign to 1st column
             var smallestColumn = 0
-            var tempHeight = mColumnsHeight[smallestColumn]
-            for (i in 1 until mColumnsHeight.size) {
-                if (mColumnsHeight[i] < tempHeight) {
-                    tempHeight = mColumnsHeight[i]
+            var tempHeight = _columnsHeight[smallestColumn]
+            for (i in 1 until _columnsHeight.size) {
+                if (_columnsHeight[i] < tempHeight) {
+                    tempHeight = _columnsHeight[i]
                     smallestColumn = i
                 }
             }
@@ -287,7 +268,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
         printer: Printer
     ): PrintJobsGroupView {
         val pjView = PrintJobsGroupView(context)
-        pjView.setData(jobsList, printer, mGroupListener, this@PrintJobsView)
+        pjView.setData(jobsList, printer, _groupListener, this@PrintJobsView)
         restoreUIstate(pjView, printer)
         return pjView
     }
@@ -299,18 +280,18 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @param printer Printer to be restored
      */
     private fun restoreUIstate(pj: PrintJobsGroupView, printer: Printer) {
-        val isCollapsed = mCollapsedPrinters.contains(printer)
-        val isDeleteShown = mPrintJobToDelete != null && mPrintJobs.contains(mPrintJobToDelete)
+        val isCollapsed = _collapsedPrinters.contains(printer)
+        val isDeleteShown = _printJobToDelete != null && _printJobs.contains(_printJobToDelete)
         if (isDeleteShown) {
-            val v = pj.findViewWithTag<View>(mPrintJobToDelete)
+            val v = pj.findViewWithTag<View>(_printJobToDelete)
             if (v != null) {
                 beginDelete(pj, v, false)
-                pj.restoreState(isCollapsed, mPrinterToDelete, mPrintJobToDelete)
+                pj.restoreState(isCollapsed, _printerToDelete, _printJobToDelete)
             } else {
-                pj.restoreState(isCollapsed, mPrinterToDelete, null)
+                pj.restoreState(isCollapsed, _printerToDelete, null)
             }
         } else {
-            pj.restoreState(isCollapsed, mPrinterToDelete, null)
+            pj.restoreState(isCollapsed, _printerToDelete, null)
         }
     }
 
@@ -330,9 +311,9 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
         val col = smallestColumn
         // RM#942 safety check when accessing columns to prevent crash of screen or app
         // also check if total print job groups already equal to number of printers to prevent doubling of jobs
-        if (mColumns.size > col && totalPrintJobGroups < mPrinters.size) {
-            mColumns[col].addView(pjView, groupParams)
-            mColumnsHeight[col] += pjView.groupHeight + groupParams.topMargin // update column height
+        if (_columns.size > col && totalPrintJobGroups < _printers.size) {
+            _columns[col]!!.addView(pjView, groupParams)
+            _columnsHeight[col] += pjView.groupHeight + groupParams.topMargin // update column height
         }
     }
 
@@ -342,10 +323,10 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @return total number of print job groups already assigned to columns
      */
     private val totalPrintJobGroups: Int
-        private get() {
+        get() {
             var total = 0
-            for (i in mColumns.indices) {
-                total += mColumns[i].childCount
+            for (i in _columns.indices) {
+                total += _columns[i]!!.childCount
             }
             return total
         }
@@ -354,11 +335,11 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @brief Adds PrintJobsGroupView in columns.
      */
     private fun addViewsToColumns() {
-        for (i in mPrintGroupViews.indices) {
-            placeInColumns(mPrintGroupViews[i])
+        for (i in _printGroupViews.indices) {
+            placeInColumns(_printGroupViews[i])
         }
-        mGroupViewCtr = mPrinters.size - 1
-        post(mRunnable)
+        _groupViewCtr = _printers.size - 1
+        post(_runnable)
     }
 
     /**
@@ -366,11 +347,11 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      */
     private fun relayoutColumns() {
         if (checkIfNeedsRelayout()) {
-            for (i in mColumns.indices) {
-                mColumns[i].removeAllViews()
-                mColumnsHeight[i] = 0 // clear columns height
+            for (i in _columns.indices) {
+                _columns[i]!!.removeAllViews()
+                _columnsHeight[i] = 0 // clear columns height
             }
-            mGroupViewCtr = 0
+            _groupViewCtr = 0
             addViewsToColumns()
         }
     }
@@ -383,14 +364,14 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
         var isLeftCleared = false
         val childNumExceeds: Boolean
         var childrenNum = 0
-        for (i in mColumns.indices) {
-            isColumnCleared = isColumnCleared or (mColumns[i].height == 0)
-            childrenNum += mColumns[i].childCount
+        for (i in _columns.indices) {
+            isColumnCleared = isColumnCleared or (_columns[i]!!.height == 0)
+            childrenNum += _columns[i]!!.childCount
         }
-        childNumExceeds = childrenNum >= mColumns.size
+        childNumExceeds = childrenNum >= _columns.size
         if (!childNumExceeds) {
             for (i in 0 until childrenNum) {
-                isLeftCleared = isLeftCleared or (mColumns[i].height == 0)
+                isLeftCleared = isLeftCleared or (_columns[i]!!.height == 0)
             }
         }
         return isColumnCleared && (childNumExceeds || isLeftCleared)
@@ -406,23 +387,23 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
         var columnWidth = context.resources.getDimensionPixelSize(R.dimen.printers_view_width)
         if (resources.getBoolean(R.bool.is_tablet)) {
             // if tablet get number of columns based on whole width
-            colNum = Math.max(width / columnWidth, MIN_COLUMNS)
+            colNum = (width / columnWidth).coerceAtLeast(MIN_COLUMNS)
             if (colNum == MIN_COLUMNS) {
                 // adjust column width depending on whole width
-                columnWidth = Math.min(width / MIN_COLUMNS, columnWidth)
+                columnWidth = (width / MIN_COLUMNS).coerceAtMost(columnWidth)
             }
         }
-        mColumnsHeight = IntArray(colNum)
+        _columnsHeight = IntArray(colNum)
         for (i in 0 until colNum) {
             val columnParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-            mColumns.add(LinearLayout(context))
-            mColumns[i].orientation = VERTICAL
+            _columns.add(LinearLayout(context))
+            _columns[i]!!.orientation = VERTICAL
 
             // if tablet set column width
             if (colNum > 1) {
                 columnParams.width = columnWidth
             }
-            addView(mColumns[i], columnParams)
+            addView(_columns[i], columnParams)
         }
     }
 
@@ -436,39 +417,39 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      */
     private fun checkSwipe(ev: MotionEvent): Boolean {
         // if swipe to right end delete mode
-        if (ev.rawX - mDownPoint!!.x > SWIPE_THRESHOLD) {
+        if (ev.rawX - _downPoint!!.x > SWIPE_THRESHOLD) {
             endDelete(true)
             return false
         }
         val coords = IntArray(2)
-        val dragged = mDownPoint!!.x - ev.rawX > SWIPE_THRESHOLD
+        val dragged = _downPoint!!.x - ev.rawX > SWIPE_THRESHOLD
         var contains1: Boolean
         var contains2: Boolean
         // check self, if valid swipe don't redisplay nor remove delete button
         if (isDeleteMode) {
-            mDeleteView!!.getLocationOnScreen(coords)
+            _deleteView!!.getLocationOnScreen(coords)
             val rect = Rect(
                 coords[0],
                 coords[1],
-                coords[0] + mDeleteView!!.width,
-                coords[1] + mDeleteView!!.height
+                coords[0] + _deleteView!!.width,
+                coords[1] + _deleteView!!.height
             )
-            contains1 = rect.contains(mDownPoint!!.x, mDownPoint!!.y)
+            contains1 = rect.contains(_downPoint!!.x, _downPoint!!.y)
             contains2 = rect.contains(ev.rawX.toInt(), ev.rawY.toInt())
             return contains1 && contains2 && dragged
         }
-        for (i in mColumns.indices) {
-            val column = mColumns[i]
+        for (i in _columns.indices) {
+            val column = _columns[i]
             if (column != null) {
                 column.getLocationOnScreen(coords)
                 val rect =
                     Rect(coords[0], coords[1], coords[0] + column.width, coords[1] + column.height)
-                contains1 = rect.contains(mDownPoint!!.x, mDownPoint!!.y)
+                contains1 = rect.contains(_downPoint!!.x, _downPoint!!.y)
                 contains2 = rect.contains(ev.rawX.toInt(), ev.rawY.toInt())
                 if (contains1 && contains2 && dragged) {
                     for (j in 0 until column.childCount) {
                         val view = (column.getChildAt(j) as PrintJobsGroupView).getJobViewSwiped(
-                            mDownPoint!!, ev
+                            _downPoint!!, ev
                         )
                         if (view != null) {
                             beginDelete(column.getChildAt(j) as PrintJobsGroupView, view, true)
@@ -491,9 +472,8 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      */
     private fun processSwipe(ev: MotionEvent): Boolean {
         var ret = false
-        val action = ev.actionMasked
-        when (action) {
-            MotionEvent.ACTION_DOWN -> mDownPoint = Point(
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> _downPoint = Point(
                 ev.rawX.toInt(), ev.rawY.toInt()
             )
             MotionEvent.ACTION_MOVE -> ret = checkSwipe(ev)
@@ -503,15 +483,15 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
-        if (mInitialFlag) {
+        if (_initialFlag) {
             val screenSize = getScreenDimensions(context as Activity)
             createColumns(screenSize!!.x)
-            mInitialFlag = false
+            _initialFlag = false
         }
         //        if (mGroupViewCtr < mPrintGroupViews.size()) {
 //            addViewsToColumns();
 //        } else 
-        if (mColumns.size > 1 && mGroupViewCtr > mPrinters.size - 1) {
+        if (_columns.size > 1 && _groupViewCtr > _printers.size - 1) {
             // if multiple columns and after deletion of a PrintJobsGroupView
             relayoutColumns()
         }
@@ -520,8 +500,8 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val coords = IntArray(2)
         if (isDeleteMode) {
-            if (mDeleteView != null) {
-                val deleteButton = mDeleteView!!.findViewById<View>(R.id.printJobDeleteBtn)
+            if (_deleteView != null) {
+                val deleteButton = _deleteView!!.findViewById<View>(R.id.printJobDeleteBtn)
                 if (deleteButton != null) {
                     deleteButton.getLocationOnScreen(coords)
                     val rect = Rect(
@@ -533,7 +513,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
                     // intercept if touched item is not the delete button
                     if (rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                         if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
-                            mDownPoint = Point(
+                            _downPoint = Point(
                                 ev.rawX.toInt(), ev.rawY.toInt()
                             )
                         }
@@ -542,12 +522,12 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
                 }
                 // intercept and clear delete button if ACTION_DOWN on different item
                 if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
-                    mDeleteView!!.getLocationOnScreen(coords)
+                    _deleteView!!.getLocationOnScreen(coords)
                     val rect = Rect(
                         coords[0],
                         coords[1],
-                        coords[0] + mDeleteView!!.width,
-                        coords[1] + mDeleteView!!.height
+                        coords[0] + _deleteView!!.width,
+                        coords[1] + _deleteView!!.height
                     )
                     if (!rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                         endDelete(true)
@@ -582,7 +562,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
     // INTERFACE - PrintJobsLayoutListener
     // ================================================================================
     override fun deletePrintJobsGroup(printJobsGroupView: PrintJobsGroupView?) {
-        mPrintGroupViews.remove(printJobsGroupView)
+        _printGroupViews.remove(printJobsGroupView)
     }
 
     override fun animateGroups(
@@ -591,11 +571,11 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
         durationMultiplier: Float,
         down: Boolean
     ) {
-        var idx = mPrintGroupViews.indexOf(printJobsGroupView)
+        var idx = _printGroupViews.indexOf(printJobsGroupView)
         var column = 0
-        for (i in mColumns.indices) {
-            for (j in 0 until mColumns[i].childCount) {
-                if (mColumns[i].getChildAt(j) == printJobsGroupView) {
+        for (i in _columns.indices) {
+            for (j in 0 until _columns[i]!!.childCount) {
+                if (_columns[i]!!.getChildAt(j) == printJobsGroupView) {
                     idx = j // get index position in column of collapsed/expanded group
                     column = i // get column of collapsed/expanded group
                     break
@@ -603,19 +583,16 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
             }
         }
         var animation: TranslateAnimation
-        for (i in idx + 1 until mColumns[column].childCount) {
+        for (i in idx + 1 until _columns[column]!!.childCount) {
             if (down) {
                 animation = TranslateAnimation(0F, 0F, (-totalHeight).toFloat(), 0F)
-                animation.setStartOffset(
-                    (resources.getDimensionPixelSize(R.dimen.printjob_row_height) * durationMultiplier) as Long
-
-                )
+                animation.startOffset = (resources.getDimensionPixelSize(R.dimen.printjob_row_height) * durationMultiplier).toLong()
             } else {
                 animation = TranslateAnimation(0F, 0F, 0F, (-totalHeight).toFloat())
             }
             animation.duration = printJobsGroupView!!.getAnimationDuration(totalHeight).toLong()
-            mColumns[column].getChildAt(i).clearAnimation()
-            mColumns[column].getChildAt(i).startAnimation(animation)
+            _columns[column]!!.getChildAt(i).clearAnimation()
+            _columns[column]!!.getChildAt(i).startAnimation(animation)
         }
     }
 
@@ -665,45 +642,45 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      */
     private inner class ViewCreationThread : Thread() {
         @Volatile
-        private var mIsRunning = true
+        private var _isRunning = true
         @Synchronized
         fun setIsRunning(b: Boolean) {
-            mIsRunning = b
+            _isRunning = b
         }
 
         override fun run() {
             var jobCtr = 0
             var start = 0
-            for (j in mPrinters.indices) {
-                if (!mIsRunning) {
+            for (j in _printers.indices) {
+                if (!_isRunning) {
                     return
                 }
-                val printer = mPrinters[j]
+                val printer = _printers[j]
                 val pid = printer.id
                 // get printer's jobs list with printerid==pid
                 // printJobs is ordered according to prn_id in query
-                for (i in start until mPrintJobs.size) {
-                    val id = mPrintJobs[i].printerId
+                for (i in start until _printJobs.size) {
+                    val id = _printJobs[i].printerId
                     jobCtr = i
                     if (id == pid) {
                         // if current printer id is different from printer id of next print job in the list
-                        if (i == mPrintJobs.size - 1 || pid != mPrintJobs[i + 1].printerId) {
+                        if (i == _printJobs.size - 1 || pid != _printJobs[i + 1].printerId) {
                             break
                         }
                     }
                 }
-                val pjView = createPrintJobsView(mPrintJobs.subList(start, jobCtr + 1), printer)
+                val pjView = createPrintJobsView(_printJobs.subList(start, jobCtr + 1), printer)
                 start = jobCtr + 1
-                if (!mIsRunning) {
+                if (!_isRunning) {
                     return
                 }
-                mPrintGroupViews.add(pjView)
-                mGroupViewCtr = j
+                _printGroupViews.add(pjView)
+                _groupViewCtr = j
                 post {
                     placeInColumns(pjView)
-                    if (mGroupViewCtr == mPrinters.size - 1) {
-                        if (mListenerRef != null && mListenerRef!!.get() != null) {
-                            mListenerRef!!.get()!!.onLoadFinished()
+                    if (_groupViewCtr == _printers.size - 1) {
+                        if (_listenerRef != null && _listenerRef!!.get() != null) {
+                            _listenerRef!!.get()!!.onLoadFinished()
                         }
                     }
                 }

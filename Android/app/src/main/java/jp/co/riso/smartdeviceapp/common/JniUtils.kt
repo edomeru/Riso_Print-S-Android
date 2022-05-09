@@ -17,7 +17,7 @@ import jp.co.riso.android.util.NetUtils
 object JniUtils {
     //https://code.google.com/p/android/issues/detail?id=181918
     @JvmStatic
-    external fun validateIp(ipAddress: String?): String
+    external fun validateIp(ipAddress: String?): String?
 
     /**
      * @brief Validate IP Address
@@ -28,7 +28,7 @@ object JniUtils {
      * @retval null ipAddress is an invalid IP Address
      */
     @JvmStatic
-    fun validateIpAddress(ipAddress: String?): String {
+    fun validateIpAddress(ipAddress: String?): String? {
         var ip = ipAddress
         ip = NetUtils.validateIpAddress(ip)
         return validateIp(ip)

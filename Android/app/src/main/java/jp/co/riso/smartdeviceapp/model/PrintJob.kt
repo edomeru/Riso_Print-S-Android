@@ -7,7 +7,6 @@
  */
 package jp.co.riso.smartdeviceapp.model
 
-import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult
 import java.util.*
 
 /**
@@ -100,15 +99,9 @@ class PrintJob {
      */
     constructor(mPrinterId: Int, mName: String?, mDate: Date?, mResult: JobResult?) {
         printerId = mPrinterId
-        if (mName != null) {
-            name = mName
-        }
-        if (mDate != null) {
-            date = mDate
-        }
-        if (mResult != null) {
-            result = mResult
-        }
+        name = mName
+        date = mDate
+        result = mResult
     }
 
     /**

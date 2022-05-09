@@ -7,41 +7,34 @@
  */
 package jp.co.riso.smartdeviceapp.view.jobs
 
-//import jp.co.riso.smartdeviceapp.model.Printer.id
-import jp.co.riso.android.util.AppUtils.getScreenDimensions
-//import jp.co.riso.smartdeviceapp.model.Printer.name
-//import jp.co.riso.smartdeviceapp.model.Printer.ipAddress
-import android.view.View.OnTouchListener
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsLayoutListener
-import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager
-import jp.co.riso.smartprint.R
-import jp.co.riso.android.dialog.InfoDialogFragment
-import jp.co.riso.android.dialog.DialogUtils
-import androidx.fragment.app.FragmentActivity
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView
-import android.view.MotionEvent
-import jp.co.riso.android.util.AppUtils
-import android.app.Activity
-import android.os.Looper
-import android.view.LayoutInflater
-import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult
-import android.view.animation.TranslateAnimation
-import android.view.animation.Animation.AnimationListener
-import android.view.animation.Animation
-import android.view.animation.ScaleAnimation
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.text.format.DateFormat
 import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
+import android.view.animation.Animation
+import android.view.animation.Animation.AnimationListener
+import android.view.animation.ScaleAnimation
+import android.view.animation.TranslateAnimation
 import android.widget.*
+import androidx.fragment.app.FragmentActivity
+import jp.co.riso.android.dialog.DialogUtils
+import jp.co.riso.android.dialog.InfoDialogFragment
+import jp.co.riso.android.util.AppUtils.getScreenDimensions
+import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager
 import jp.co.riso.smartdeviceapp.model.PrintJob
+import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartprint.R
 import java.util.*
 
 /**
@@ -50,21 +43,21 @@ import java.util.*
  * @brief Custom view for a print jobs group (jobs under the same printer).
  */
 class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, Handler.Callback {
-    private var mPrintGroupView: View? = null
-    private var mPrintJobs: MutableList<PrintJob>? = null
-    private var mPrinter: Printer? = null
-    private var mViewToDelete: View? = null
-    private var mGroupListener: PrintJobsGroupListener? = null
-    private var mLayoutListener: PrintJobsLayoutListener? = null
-    private var mPrintJobGroupLayout: RelativeLayout? = null
-    private var mIsCollapsed = false
-    private var mTitle: String? = null
-    private var mErrorMessage: String? = null
-    private var mOkText: String? = null
-    private var mHandler: Handler? = null
-    private var mJobsLayout: LinearLayout? = null
-    private var mRowHeight = 0
-    private var mSeparatorHeight = 0
+    private var _printGroupView: View? = null
+    private var _printJobs: MutableList<PrintJob>? = null
+    private var _printer: Printer? = null
+    private var _viewToDelete: View? = null
+    private var _groupListener: PrintJobsGroupListener? = null
+    private var _layoutListener: PrintJobsLayoutListener? = null
+    private var _printJobGroupLayout: RelativeLayout? = null
+    private var _isCollapsed = false
+    private var _title: String? = null
+    private var _errorMessage: String? = null
+    private var _okText: String? = null
+    private var _handler: Handler? = null
+    private var _jobsLayout: LinearLayout? = null
+    private var _rowHeight = 0
+    private var _separatorHeight = 0
 
     /**
      * @brief Default Constructor
@@ -114,10 +107,10 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
         groupListener: PrintJobsGroupListener?,
         layoutListener: PrintJobsLayoutListener?
     ) {
-        mPrintJobs = ArrayList(printJobs)
-        mPrinter = printer
-        mGroupListener = groupListener
-        mLayoutListener = layoutListener
+        _printJobs = ArrayList(printJobs!!)
+        _printer = printer
+        _groupListener = groupListener
+        _layoutListener = layoutListener
         createView()
     }
 
@@ -127,7 +120,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @return Expanded height of PrintJobsGroupView
      */
     val groupHeight: Int
-        get() = (mJobsLayout!!.childCount + 1) * mRowHeight + (mJobsLayout!!.childCount - 1) * mSeparatorHeight
+        get() = (_jobsLayout!!.childCount + 1) * _rowHeight + (_jobsLayout!!.childCount - 1) * _separatorHeight
 
     /**
      * @brief Restores the UI state of the jobs group
@@ -137,18 +130,18 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @param jobToDelete Print job to be deleted
      */
     fun restoreState(isCollapsed: Boolean, printerToDelete: Printer?, jobToDelete: PrintJob?) {
-        val isDeleteAllClicked = printerToDelete != null && printerToDelete == mPrinter
-        val isDeleteShown = jobToDelete != null && mPrintJobs!!.contains(jobToDelete)
+        val isDeleteAllClicked = printerToDelete != null && printerToDelete == _printer
+        val isDeleteShown = jobToDelete != null && _printJobs!!.contains(jobToDelete)
         if (isCollapsed) {
             animateCollapse(false)
-            mIsCollapsed = true
+            _isCollapsed = true
         }
         if (isDeleteAllClicked) {
-            mGroupListener!!.setPrinterToDelete(this, mPrinter)
-            mPrintGroupView!!.findViewWithTag<View>(printerToDelete).isSelected = true
+            _groupListener!!.setPrinterToDelete(this, _printer)
+            _printGroupView!!.findViewWithTag<View>(printerToDelete).isSelected = true
         }
         if (isDeleteShown) {
-            mGroupListener!!.setDeletePrintJob(this, jobToDelete)
+            _groupListener!!.setDeletePrintJob(this, jobToDelete)
         }
     }
 
@@ -157,14 +150,14 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      */
     fun onDeleteJobGroup() {
         val pm = PrintJobManager.getInstance(context)
-        val isSuccess = pm!!.deleteWithPrinterId(mPrinter!!.id)
+        val isSuccess = pm!!.deleteWithPrinterId(_printer!!.id)
         if (isSuccess) {
             animateDeleteGroup()
         } else {
-            mPrintJobGroupLayout!!.findViewById<View>(R.id.printJobGroupDelete).isSelected =
+            _printJobGroupLayout!!.findViewById<View>(R.id.printJobGroupDelete).isSelected =
                 false
             // show dialog
-            val errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText)
+            val errordialog = InfoDialogFragment.newInstance(_title, _errorMessage, _okText)
             DialogUtils.displayDialog(context as FragmentActivity, TAG, errordialog)
         }
     }
@@ -178,22 +171,22 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
         val pm = PrintJobManager.getInstance(context)
         val isSuccess = pm!!.deleteWithJobId(job.id)
         if (isSuccess) {
-            mGroupListener!!.deleteJobFromList(job)
-            animateDeleteJob(mJobsLayout!!.findViewWithTag(job))
+            _groupListener!!.deleteJobFromList(job)
+            animateDeleteJob(_jobsLayout!!.findViewWithTag(job))
         } else {
             // show dialog
-            val errordialog = InfoDialogFragment.newInstance(mTitle, mErrorMessage, mOkText)
+            val errordialog = InfoDialogFragment.newInstance(_title, _errorMessage, _okText)
             DialogUtils.displayDialog(context as FragmentActivity, TAG, errordialog)
         }
         // clears delete state
-        mLayoutListener!!.onDeleteJob()
+        _layoutListener!!.onDeleteJob()
     }
 
     /**
      * @brief Cancels delete Job Group
      */
     fun onCancelDeleteGroup() {
-        mPrintJobGroupLayout!!.findViewById<View>(R.id.printJobGroupDelete).isSelected = false
+        _printJobGroupLayout!!.findViewById<View>(R.id.printJobGroupDelete).isSelected = false
     }
 
     /**
@@ -202,21 +195,21 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @param v Print Job view to be deleted
      */
     fun setDeleteButton(v: View?) {
-        mViewToDelete = v
-        mViewToDelete!!.isSelected = true
+        _viewToDelete = v
+        _viewToDelete!!.isSelected = true
         // RM#1104 print job button should not be selected - it must only be selected when clicked
-        mViewToDelete!!.findViewById<View>(R.id.printJobDeleteBtn).isSelected = false
-        mGroupListener!!.setDeletePrintJob(this, mViewToDelete!!.tag as PrintJob)
+        _viewToDelete!!.findViewById<View>(R.id.printJobDeleteBtn).isSelected = false
+        _groupListener!!.setDeletePrintJob(this, _viewToDelete!!.tag as PrintJob)
     }
 
     /**
      * @brief Clears delete button state
      */
     fun clearDeleteButton() {
-        if (mViewToDelete != null) {
-            mViewToDelete!!.isSelected = false
-            mViewToDelete = null
-            mGroupListener!!.setDeletePrintJob(null, null)
+        if (_viewToDelete != null) {
+            _viewToDelete!!.isSelected = false
+            _viewToDelete = null
+            _groupListener!!.setDeletePrintJob(null, null)
         }
     }
 
@@ -225,11 +218,11 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * if it is the last print job, move focus to the previous print job
      */
     fun focusNextPrintJob() {
-        if (mViewToDelete != null) {
-            var nextFocus = mViewToDelete!!.focusSearch(FOCUS_DOWN)
+        if (_viewToDelete != null) {
+            var nextFocus = _viewToDelete!!.focusSearch(FOCUS_DOWN)
             // focus can move beyond the print job group so check if a child of the group
-            if (nextFocus == null || nextFocus.parent !== mJobsLayout) {
-                nextFocus = mViewToDelete!!.focusSearch(FOCUS_UP)
+            if (nextFocus == null || nextFocus.parent !== _jobsLayout) {
+                nextFocus = _viewToDelete!!.focusSearch(FOCUS_UP)
             }
             nextFocus?.requestFocus()
         }
@@ -239,8 +232,8 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @brief After delete is cancelled, return focus to the print job
      */
     fun returnFocusToPrintJob() {
-        if (mViewToDelete != null) {
-            mViewToDelete!!.requestFocus()
+        if (_viewToDelete != null) {
+            _viewToDelete!!.requestFocus()
         }
     }
 
@@ -254,12 +247,12 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @retval null Invalid swipe
      */
     fun getJobViewSwiped(downPoint: Point, ev: MotionEvent): View? {
-        if (mIsCollapsed) {
+        if (_isCollapsed) {
             return null
         }
         val coords = IntArray(2)
-        for (i in 0 until mJobsLayout!!.childCount) {
-            val view = mJobsLayout!!.getChildAt(i)
+        for (i in 0 until _jobsLayout!!.childCount) {
+            val view = _jobsLayout!!.getChildAt(i)
             if (view != null) {
                 view.getLocationOnScreen(coords)
                 val rect =
@@ -284,7 +277,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @return Computed animation duration
      */
     fun getAnimationDuration(originalHeight: Int): Int {
-        val newHeight = Math.min(originalHeight, getScreenDimensions(context as Activity)!!.y)
+        val newHeight = originalHeight.coerceAtMost(getScreenDimensions(context as Activity)!!.y)
         return (newHeight * DURATION_MULTIPLIER).toInt()
     }
 
@@ -293,14 +286,14 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      */
     private fun init() {
         if (!isInEditMode) {
-            mTitle = resources.getString(R.string.ids_info_msg_delete_jobs_title)
-            mOkText = resources.getString(R.string.ids_lbl_ok)
-            mErrorMessage = resources.getString(R.string.ids_err_msg_db_failure)
+            _title = resources.getString(R.string.ids_info_msg_delete_jobs_title)
+            _okText = resources.getString(R.string.ids_lbl_ok)
+            _errorMessage = resources.getString(R.string.ids_err_msg_db_failure)
             orientation = VERTICAL
-            mRowHeight = resources.getDimensionPixelSize(R.dimen.printjob_row_height)
-            mSeparatorHeight = resources.getDimensionPixelSize(R.dimen.separator_size)
+            _rowHeight = resources.getDimensionPixelSize(R.dimen.printjob_row_height)
+            _separatorHeight = resources.getDimensionPixelSize(R.dimen.separator_size)
             (context as Activity).runOnUiThread {
-                mHandler = Handler(Looper.myLooper()!!, this@PrintJobsGroupView)
+                _handler = Handler(Looper.myLooper()!!, this@PrintJobsGroupView)
             }
         }
     }
@@ -310,15 +303,15 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      */
     private fun createView() {
         // create header
-        if (!mPrintJobs!!.isEmpty()) {
+        if (_printJobs!!.isNotEmpty()) {
             createHeader()
         }
 
         // add print jobs
-        for (i in mPrintJobs!!.indices) {
+        for (i in _printJobs!!.indices) {
             createItem(i)
         }
-        mPrintJobs!!.clear()
+        _printJobs!!.clear()
     }
 
     /**
@@ -326,27 +319,27 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      */
     private fun createHeader() {
         val factory = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        mPrintGroupView = factory.inflate(R.layout.printjobs_group, this, true)
-        mPrintJobGroupLayout = mPrintGroupView!!.findViewById(R.id.printJobsGroupLayout)
-        val printJobGroupText = mPrintGroupView!!.findViewById<TextView>(R.id.printJobGroupText)
-        val printJobGroupSubText = mPrintGroupView!!.findViewById<TextView>(R.id.printJobGroupSubText)
-        val printJobGroupDelete = mPrintGroupView!!.findViewById<Button>(R.id.printJobGroupDelete)
-        var printerName = mPrinter!!.name
+        _printGroupView = factory.inflate(R.layout.printjobs_group, this, true)
+        _printJobGroupLayout = _printGroupView!!.findViewById(R.id.printJobsGroupLayout)
+        val printJobGroupText = _printGroupView!!.findViewById<TextView>(R.id.printJobGroupText)
+        val printJobGroupSubText = _printGroupView!!.findViewById<TextView>(R.id.printJobGroupSubText)
+        val printJobGroupDelete = _printGroupView!!.findViewById<Button>(R.id.printJobGroupDelete)
+        var printerName = _printer!!.name
         if (printerName == null || printerName.isEmpty()) {
             printerName = context.resources.getString(R.string.ids_lbl_no_name)
         }
         printJobGroupText.text = printerName
-        printJobGroupSubText.text = mPrinter!!.ipAddress
-        printJobGroupDelete.tag = mPrinter
-        mPrintJobGroupLayout!!.setOnClickListener(this)
+        printJobGroupSubText.text = _printer!!.ipAddress
+        printJobGroupDelete.tag = _printer
+        _printJobGroupLayout!!.setOnClickListener(this)
         printJobGroupDelete.setOnClickListener(this)
 
         // AppUtils.changeChildrenFont(mPrintJobGroupLayout, SmartDeviceApp.getAppFont());
-        mJobsLayout = LinearLayout(context)
-        mJobsLayout!!.orientation = VERTICAL
-        addView(mJobsLayout, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+        _jobsLayout = LinearLayout(context)
+        _jobsLayout!!.orientation = VERTICAL
+        addView(_jobsLayout, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         if (resources.getBoolean(R.bool.is_tablet)) {
-            mPrintGroupView!!.findViewById<View>(R.id.printJobDeleteSeparator).visibility =
+            _printGroupView!!.findViewById<View>(R.id.printJobDeleteSeparator).visibility =
                 INVISIBLE
         }
     }
@@ -364,7 +357,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
         val printJobSuccess = tempView.findViewById<ImageView>(R.id.printJobSuccess)
         val printJobDeleteBtn = tempView.findViewById<Button>(R.id.printJobDeleteBtn)
         val printJobDate = tempView.findViewById<TextView>(R.id.printJobDate)
-        val pj = mPrintJobs!![index]
+        val pj = _printJobs!![index]
         tempView.tag = pj
         tempView.setOnTouchListener(this)
         printJobName.text = pj.name
@@ -375,10 +368,10 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
             printJobSuccess.visibility = GONE
         }
         tempView.setOnClickListener(this)
-        mJobsLayout!!.addView(tempView)
+        _jobsLayout!!.addView(tempView)
 
         // AppUtils.changeChildrenFont((ViewGroup) tempView, SmartDeviceApp.getAppFont());
-        if (index == mPrintJobs!!.size - 1) {
+        if (index == _printJobs!!.size - 1) {
             tempView.findViewById<View>(R.id.printJobSeparator).visibility =
                 GONE
         }
@@ -392,7 +385,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @return Converted string format
      */
     private fun formatDate(date: Date?): String {
-        val dateStr = DateFormat.getDateFormat(context).format(date)
+        val dateStr = DateFormat.getDateFormat(context).format(date!!)
         val timeStr = DateFormat.getTimeFormat(context).format(date)
         return dateStr + C_SPACE + timeStr
     }
@@ -404,14 +397,14 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      */
     private fun toggleGroupView(v: View) {
         v.isClickable = false
-        mIsCollapsed = if (mIsCollapsed) {
+        _isCollapsed = if (_isCollapsed) {
             animateExpand(true)
             false
         } else {
             animateCollapse(true)
             true
         }
-        mGroupListener!!.setCollapsed(mPrinter, mIsCollapsed)
+        _groupListener!!.setCollapsed(_printer, _isCollapsed)
     }
 
     /**
@@ -420,28 +413,28 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @param animate true if expand with animation
      */
     private fun animateExpand(animate: Boolean) {
-        mJobsLayout!!.visibility = VISIBLE
+        _jobsLayout!!.visibility = VISIBLE
         val totalHeight =
-            mJobsLayout!!.childCount * mRowHeight + (mJobsLayout!!.childCount - 1) * mSeparatorHeight
+            _jobsLayout!!.childCount * _rowHeight + (_jobsLayout!!.childCount - 1) * _separatorHeight
         if (animate) {
-            for (i in 0 until mJobsLayout!!.childCount) {
-                val child = mJobsLayout!!.getChildAt(i)
+            for (i in 0 until _jobsLayout!!.childCount) {
+                val child = _jobsLayout!!.getChildAt(i)
                 val animation = TranslateAnimation(0F, 0F, (-totalHeight).toFloat(), 0F)
                 animation.duration = getAnimationDuration(totalHeight).toLong()
-                if (i == mJobsLayout!!.childCount - 1) {
+                if (i == _jobsLayout!!.childCount - 1) {
                     animation.setAnimationListener(object : AnimationListener {
                         override fun onAnimationStart(animation: Animation) {}
                         override fun onAnimationRepeat(animation: Animation) {}
                         override fun onAnimationEnd(animation: Animation) {
-                            val newMessage = Message.obtain(mHandler, MSG_EXPAND)
-                            mHandler!!.sendMessage(newMessage)
+                            val newMessage = Message.obtain(_handler, MSG_EXPAND)
+                            _handler!!.sendMessage(newMessage)
                         }
                     })
                 }
                 child.clearAnimation()
                 child.startAnimation(animation)
             }
-            mLayoutListener!!.animateGroups(this, totalHeight, DURATION_MULTIPLIER, true)
+            _layoutListener!!.animateGroups(this, totalHeight, DURATION_MULTIPLIER, true)
         } else {
             expandGroupView()
         }
@@ -455,26 +448,26 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
     private fun animateCollapse(animate: Boolean) {
         if (animate) {
             val totalHeight =
-                mJobsLayout!!.childCount * mRowHeight + (mJobsLayout!!.childCount - 1) * mSeparatorHeight
-            for (i in 0 until mJobsLayout!!.childCount) {
-                val child = mJobsLayout!!.getChildAt(i)
+                _jobsLayout!!.childCount * _rowHeight + (_jobsLayout!!.childCount - 1) * _separatorHeight
+            for (i in 0 until _jobsLayout!!.childCount) {
+                val child = _jobsLayout!!.getChildAt(i)
                 val animation = TranslateAnimation(0F, 0F, 0F, (-totalHeight).toFloat())
                 animation.duration = getAnimationDuration(totalHeight).toLong()
                 animation.fillAfter = true
-                if (i == mJobsLayout!!.childCount - 1) {
+                if (i == _jobsLayout!!.childCount - 1) {
                     animation.setAnimationListener(object : AnimationListener {
                         override fun onAnimationStart(animation: Animation) {}
                         override fun onAnimationRepeat(animation: Animation) {}
                         override fun onAnimationEnd(animation: Animation) {
-                            val newMessage = Message.obtain(mHandler, MSG_COLLAPSE)
-                            mHandler!!.sendMessage(newMessage)
+                            val newMessage = Message.obtain(_handler, MSG_COLLAPSE)
+                            _handler!!.sendMessage(newMessage)
                         }
                     })
                 }
                 child.clearAnimation()
                 child.startAnimation(animation)
             }
-            mLayoutListener!!.animateGroups(
+            _layoutListener!!.animateGroups(
                 this@PrintJobsGroupView,
                 totalHeight,
                 DURATION_MULTIPLIER,
@@ -491,45 +484,45 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @param v View of the print job row to be deleted
      */
     private fun animateDeleteJob(v: View) {
-        val totalHeight = mRowHeight + mSeparatorHeight
-        if (mJobsLayout!!.childCount == 1) {
+        val totalHeight = _rowHeight + _separatorHeight
+        if (_jobsLayout!!.childCount == 1) {
             animateDeleteGroup()
         } else {
-            val jobToDelete = mJobsLayout!!.indexOfChild(v) //mPrintJobViews.indexOf(v);
+            val jobToDelete = _jobsLayout!!.indexOfChild(v) //mPrintJobViews.indexOf(v);
             val deleteAnim = ScaleAnimation(1.0f, 1.0f, 1.0f, 0.0f)
-            deleteAnim.setDuration((totalHeight * DURATION_MULTIPLIER) as Long)
-            if (jobToDelete == mJobsLayout!!.childCount - 1) {
+            deleteAnim.duration = (totalHeight * DURATION_MULTIPLIER).toLong()
+            if (jobToDelete == _jobsLayout!!.childCount - 1) {
                 deleteAnim.setAnimationListener(object : AnimationListener {
                     override fun onAnimationStart(animation: Animation) {}
                     override fun onAnimationRepeat(animation: Animation) {}
                     override fun onAnimationEnd(animation: Animation) {
-                        val newMessage = Message.obtain(mHandler, MSG_DELETEJOB)
+                        val newMessage = Message.obtain(_handler, MSG_DELETEJOB)
                         newMessage.arg1 = jobToDelete
-                        mHandler!!.sendMessage(newMessage)
+                        _handler!!.sendMessage(newMessage)
                     }
                 })
             }
             v.clearAnimation()
             v.startAnimation(deleteAnim)
-            for (i in jobToDelete + 1 until mJobsLayout!!.childCount) {
-                val child = mJobsLayout!!.getChildAt(i)
+            for (i in jobToDelete + 1 until _jobsLayout!!.childCount) {
+                val child = _jobsLayout!!.getChildAt(i)
                 val animation = TranslateAnimation(0F, 0F, 0F, (-totalHeight).toFloat())
-                animation.setDuration((totalHeight * DURATION_MULTIPLIER) as Long)
-                if (i == mJobsLayout!!.childCount - 1) {
+                animation.duration = (totalHeight * DURATION_MULTIPLIER).toLong()
+                if (i == _jobsLayout!!.childCount - 1) {
                     animation.setAnimationListener(object : AnimationListener {
                         override fun onAnimationStart(animation: Animation) {}
                         override fun onAnimationRepeat(animation: Animation) {}
                         override fun onAnimationEnd(animation: Animation) {
-                            val newMessage = Message.obtain(mHandler, MSG_DELETEJOB)
+                            val newMessage = Message.obtain(_handler, MSG_DELETEJOB)
                             newMessage.arg1 = jobToDelete
-                            mHandler!!.sendMessage(newMessage)
+                            _handler!!.sendMessage(newMessage)
                         }
                     })
                 }
                 child.clearAnimation()
                 child.startAnimation(animation)
             }
-            mLayoutListener!!.animateGroups(
+            _layoutListener!!.animateGroups(
                 this@PrintJobsGroupView,
                 totalHeight,
                 DURATION_MULTIPLIER,
@@ -542,13 +535,12 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @brief Animates deletion of Print Jobs Group.
      */
     private fun animateDeleteGroup() {
-        val totalHeight: Int
-        totalHeight = if (!mIsCollapsed) {
+        val totalHeight: Int = if (!_isCollapsed) {
             groupHeight
         } else if (resources.getBoolean(R.bool.is_tablet)) {
-            mRowHeight
+            _rowHeight
         } else {
-            mRowHeight + mSeparatorHeight
+            _rowHeight + _separatorHeight
         }
         val animation = ScaleAnimation(1.0f, 1.0f, 1.0f, 0.0f)
         animation.duration = getAnimationDuration(totalHeight).toLong()
@@ -557,13 +549,13 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
             override fun onAnimationStart(animation: Animation) {}
             override fun onAnimationRepeat(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {
-                val newMessage = Message.obtain(mHandler, MSG_DELETEGROUP)
-                mHandler!!.sendMessage(newMessage)
+                val newMessage = Message.obtain(_handler, MSG_DELETEGROUP)
+                _handler!!.sendMessage(newMessage)
             }
         })
-        mPrintGroupView!!.clearAnimation()
-        mPrintGroupView!!.startAnimation(animation)
-        mLayoutListener!!.animateGroups(
+        _printGroupView!!.clearAnimation()
+        _printGroupView!!.startAnimation(animation)
+        _layoutListener!!.animateGroups(
             this@PrintJobsGroupView,
             totalHeight,
             DURATION_MULTIPLIER,
@@ -575,26 +567,26 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @brief Expands view group.
      */
     private fun expandGroupView() {
-        mPrintJobGroupLayout!!.isSelected = false
+        _printJobGroupLayout!!.isSelected = false
         if (!resources.getBoolean(R.bool.is_tablet)) {
             findViewById<View>(R.id.printJobGroupSeparator).visibility =
                 GONE
         }
-        mPrintJobGroupLayout!!.isClickable = true
+        _printJobGroupLayout!!.isClickable = true
     }
 
     /**
      * @brief Collapses view group.
      */
     private fun collapseGroupView() {
-        mJobsLayout!!.visibility = GONE
-        mPrintJobGroupLayout!!.isSelected = true
-        mPrintJobGroupLayout!!.findViewById<View>(R.id.printJobGroupDelete).isSelected =
+        _jobsLayout!!.visibility = GONE
+        _printJobGroupLayout!!.isSelected = true
+        _printJobGroupLayout!!.findViewById<View>(R.id.printJobGroupDelete).isSelected =
             false
         if (!resources.getBoolean(R.bool.is_tablet)) {
             findViewById<View>(R.id.printJobGroupSeparator).visibility = VISIBLE
         }
-        mPrintJobGroupLayout!!.isClickable = true
+        _printJobGroupLayout!!.isClickable = true
     }
 
     /**
@@ -603,8 +595,8 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @param v Delete view clicked
      */
     private fun deleteJobGroup(v: View) {
-        mGroupListener!!.setPrinterToDelete(this, mPrinter)
-        if (mGroupListener!!.showDeleteDialog()) {
+        _groupListener!!.setPrinterToDelete(this, _printer)
+        if (_groupListener!!.showDeleteDialog()) {
             v.findViewById<View>(R.id.printJobGroupDelete).isSelected = true
         }
     }
@@ -613,12 +605,12 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @brief Deletes the print job group view.
      */
     private fun deletePrintJobGroupView() {
-        for (i in 0 until mJobsLayout!!.childCount) {
-            mGroupListener!!.deleteJobFromList(mJobsLayout!!.getChildAt(i).tag as PrintJob)
+        for (i in 0 until _jobsLayout!!.childCount) {
+            _groupListener!!.deleteJobFromList(_jobsLayout!!.getChildAt(i).tag as PrintJob)
         }
-        mGroupListener!!.deletePrinterFromList(mPrinter)
-        mLayoutListener!!.deletePrintJobsGroup(this)
-        (mPrintGroupView!!.parent as LinearLayout).removeView(mPrintGroupView)
+        _groupListener!!.deletePrinterFromList(_printer)
+        _layoutListener!!.deletePrintJobsGroup(this)
+        (_printGroupView!!.parent as LinearLayout).removeView(_printGroupView)
     }
 
     /**
@@ -627,13 +619,13 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @param i Index of Print Job View to be deleted
      */
     private fun deletePrintJobView(i: Int) {
-        mJobsLayout!!.removeViewAt(i)
-        if (mJobsLayout!!.childCount == 0) {
+        _jobsLayout!!.removeViewAt(i)
+        if (_jobsLayout!!.childCount == 0) {
             deletePrintJobGroupView()
-        } else if (i == mJobsLayout!!.childCount) {
+        } else if (i == _jobsLayout!!.childCount) {
             // after deletion remove separator in last row
             val lastRow = i - 1
-            mJobsLayout!!.getChildAt(lastRow)
+            _jobsLayout!!.getChildAt(lastRow)
                 .findViewById<View>(R.id.printJobSeparator).visibility = GONE
         }
     }
@@ -645,27 +637,27 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
         val id = v.id
         if (id == R.id.printJobGroupDelete) {
             // if delete button is visible, hide that instead of handling the click
-            if (mLayoutListener!!.isDeleteMode) {
-                mLayoutListener!!.hideDeleteButton()
+            if (_layoutListener!!.isDeleteMode) {
+                _layoutListener!!.hideDeleteButton()
             } else {
                 deleteJobGroup(v)
             }
         } else if (id == R.id.printJobDeleteBtn) {
             // RM#1104 set button to selected to change the button background color when clicked
             v.isSelected = true
-            mGroupListener!!.showDeleteDialog()
+            _groupListener!!.showDeleteDialog()
         } else if (id == R.id.printJobsGroupLayout) {
             // if delete button is visible, hide that instead of handling the click
-            if (mLayoutListener!!.isDeleteMode) {
-                mLayoutListener!!.hideDeleteButton()
+            if (_layoutListener!!.isDeleteMode) {
+                _layoutListener!!.hideDeleteButton()
             } else {
                 toggleGroupView(v)
             }
         } else if (id == R.id.printJobRow) {
-            if (mLayoutListener!!.isDeleteMode) {
-                mLayoutListener!!.hideDeleteButton()
+            if (_layoutListener!!.isDeleteMode) {
+                _layoutListener!!.hideDeleteButton()
             } else {
-                mLayoutListener!!.showDeleteButton(this, v)
+                _layoutListener!!.showDeleteButton(this, v)
             }
         }
     }

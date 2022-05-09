@@ -7,23 +7,21 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.os.Bundle
+import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.TextView
+import jp.co.riso.android.util.AppUtils.getLocalizedAssetFullPath
 import jp.co.riso.android.util.Logger.logStartTime
 import jp.co.riso.android.util.Logger.logStopTime
 import jp.co.riso.android.util.Logger.logWarn
-import jp.co.riso.android.util.AppUtils.getLocalizedAssetFullPath
+import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment
 import jp.co.riso.smartprint.R
-import android.os.Bundle
-import android.widget.TextView
-import android.annotation.SuppressLint
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.graphics.Bitmap
-import jp.co.riso.smartdeviceapp.view.fragment.LegalFragment
-import jp.co.riso.smartdeviceapp.view.MainActivity
-import android.content.pm.PackageManager
-import android.view.View
-import jp.co.riso.android.util.AppUtils
 import java.util.*
 
 /**
@@ -72,7 +70,7 @@ class LegalFragment : BaseWebFragment() {
         }
     }
 
-    override val urlString: String?
+    override val urlString: String
         get() = getUrlString()
 
     @JvmName("getUrlString1")

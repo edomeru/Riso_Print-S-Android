@@ -300,9 +300,10 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
      * @brief Start manual printer search
      */
     private fun startManualSearch() {
-        var ipAddress = _addPrinterView!!.ipAddress!!.text.toString()
+        var ipAddress: String?
+        ipAddress = _addPrinterView!!.ipAddress!!.text.toString()
         ipAddress = validateIpAddress(ipAddress)
-        if (ipAddress.contentEquals(BROADCAST_ADDRESS)) {
+        if (ipAddress == null || ipAddress.contentEquals(BROADCAST_ADDRESS)) {
             dialogErrCb(ERR_INVALID_IP_ADDRESS)
             return
         }
