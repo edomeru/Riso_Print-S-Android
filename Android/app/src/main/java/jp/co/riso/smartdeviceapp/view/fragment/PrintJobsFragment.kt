@@ -1,64 +1,58 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrintJobsFragment.java
+ * PrintJobsFragment.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment
-import android.view.View.OnTouchListener
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener
-import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView
-import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView
-import android.widget.LinearLayout
-import jp.co.riso.smartdeviceapp.view.fragment.PrintJobsFragment.LoadPrintJobsTask
-import jp.co.riso.android.dialog.ConfirmDialogFragment
-import android.widget.ScrollView
-import android.widget.TextView
-import jp.co.riso.smartprint.R
-import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.annotation.SuppressLint
-import android.view.MotionEvent
-import jp.co.riso.android.dialog.DialogUtils
-import jp.co.riso.smartdeviceapp.view.fragment.PrintJobsFragment
-import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import jp.co.riso.android.dialog.ConfirmDialogFragment
+import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
+import jp.co.riso.android.dialog.DialogUtils
+import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager
 import jp.co.riso.smartdeviceapp.model.PrintJob
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsGroupView.PrintJobsGroupListener
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView
+import jp.co.riso.smartdeviceapp.view.jobs.PrintJobsView.PrintJobsViewListener
+import jp.co.riso.smartprint.R
 import java.lang.ref.WeakReference
-import java.util.ArrayList
 
 /**
  * @class PrintJobsFragment
  *
  * @brief Fragment class for displaying Print Job History screen.
- */
-class PrintJobsFragment
-/**
  * @brief Creates a PrintJobsFragment instance.
  */
-    : BaseFragment(), OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener,
+class PrintJobsFragment : BaseFragment(), OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener,
     ConfirmDialogListener {
-    private var mPrintJobsView: PrintJobsView? = null
-    private var mPrintGroupToDelete: PrintJobsGroupView? = null
-    private var mPrintJobContainer: LinearLayout? = null
-    private var mLoadPrintJobsTask: LoadPrintJobsTask? = null
-    private var mPrintJobs: MutableList<PrintJob?>? = null
-    private var mPrinters: MutableList<Printer?>? = null
-    private val mCollapsedPrinters: MutableList<Printer> = ArrayList()
-    private var mPrintJobToDelete: PrintJob? = null
-    private var mPrinterToDelete: Printer? = null
-    private var mConfirmDialog: ConfirmDialogFragment? = null
-    private var mScrollView: ScrollView? = null
-    private var mEmptyJobsText: TextView? = null
+    private var _printJobsView: PrintJobsView? = null
+    private var _printGroupToDelete: PrintJobsGroupView? = null
+    private var _printJobContainer: LinearLayout? = null
+    private var _loadPrintJobsTask: LoadPrintJobsTask? = null
+    private var _printJobs: MutableList<PrintJob>? = null
+    private var _printers: MutableList<Printer>? = null
+    private val _collapsedPrinters: MutableList<Printer> = ArrayList()
+    private var _printJobToDelete: PrintJob? = null
+    private var _printerToDelete: Printer? = null
+    private var _confirmDialog: ConfirmDialogFragment? = null
+    private var _scrollView: ScrollView? = null
+    private var _emptyJobsText: TextView? = null
 
     override val viewLayout: Int
         get() = R.layout.fragment_printjobs
@@ -67,17 +61,18 @@ class PrintJobsFragment
         retainInstance = true
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
-        mCollapsedPrinters.clear()
-        mPrintJobToDelete = null
-        mPrinterToDelete = null
-        mPrintJobContainer = view.findViewById(R.id.printJobContainer)
-        mPrintJobsView = view.findViewById(R.id.printJobsView)
-        mEmptyJobsText = view.findViewById(R.id.emptyJobsText)
-        mScrollView = view.findViewById(R.id.printJobScrollView)
-        mPrintJobContainer!!.setOnTouchListener(this)
-        mLoadPrintJobsTask = LoadPrintJobsTask(activity, mPrintJobs, mPrinters)
-        mLoadPrintJobsTask!!.start()
+        _collapsedPrinters.clear()
+        _printJobToDelete = null
+        _printerToDelete = null
+        _printJobContainer = view.findViewById(R.id.printJobContainer)
+        _printJobsView = view.findViewById(R.id.printJobsView)
+        _emptyJobsText = view.findViewById(R.id.emptyJobsText)
+        _scrollView = view.findViewById(R.id.printJobScrollView)
+        _printJobContainer!!.setOnTouchListener(this)
+        _loadPrintJobsTask = LoadPrintJobsTask(activity, _printJobs, _printers)
+        _loadPrintJobsTask!!.start()
     }
 
     override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {
@@ -88,8 +83,8 @@ class PrintJobsFragment
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (isTablet && mPrintJobsView != null) {
-            mPrintJobsView!!.reset()
+        if (isTablet && _printJobsView != null) {
+            _printJobsView!!.reset()
         }
     }
     // ================================================================================
@@ -99,8 +94,8 @@ class PrintJobsFragment
      * @brief Displays empty message and hides PrintJobsView.
      */
     private fun showEmptyText() {
-        mEmptyJobsText!!.visibility = View.VISIBLE
-        mScrollView!!.visibility = View.GONE
+        _emptyJobsText!!.visibility = View.VISIBLE
+        _scrollView!!.visibility = View.GONE
         val view = view
         view?.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.theme_light_2))
     }
@@ -111,7 +106,7 @@ class PrintJobsFragment
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View, e: MotionEvent): Boolean {
         if (v.id == R.id.printJobContainer) {
-            mPrintJobsView!!.endDelete(true)
+            _printJobsView!!.endDelete(true)
         }
         return true
     }
@@ -120,24 +115,24 @@ class PrintJobsFragment
     // INTERFACE - PrintJobsGroupViewListener
     // ================================================================================
     override fun setPrinterToDelete(printJobsGroupView: PrintJobsGroupView?, printer: Printer?) {
-        mPrintGroupToDelete = printJobsGroupView
-        mPrinterToDelete = printer
-        mPrintJobsView!!.setPrinterToDelete(printer)
+        _printGroupToDelete = printJobsGroupView
+        _printerToDelete = printer
+        _printJobsView!!.setPrinterToDelete(printer)
     }
 
     override fun deletePrinterFromList(printer: Printer?) {
-        mPrinters!!.remove(printer)
+        _printers!!.remove(printer)
         if (printer != null) {
-            mPrintJobsView!!.deletePrinterFromList(printer)
+            _printJobsView!!.deletePrinterFromList(printer)
         }
     }
 
     override fun deleteJobFromList(printJob: PrintJob?) {
-        mPrintJobs!!.remove(printJob)
+        _printJobs!!.remove(printJob)
         if (printJob != null) {
-            mPrintJobsView!!.deleteJobFromList(printJob)
+            _printJobsView!!.deleteJobFromList(printJob)
         }
-        if (mPrintJobs!!.isEmpty()) {
+        if (_printJobs!!.isEmpty()) {
             showEmptyText()
         }
     }
@@ -147,13 +142,13 @@ class PrintJobsFragment
         val message = resources.getString(R.string.ids_info_msg_delete_jobs)
         val confirmMsg = resources.getString(R.string.ids_lbl_ok)
         val cancelMsg = resources.getString(R.string.ids_lbl_cancel)
-        return if (mConfirmDialog != null && mConfirmDialog!!.isShowing || mPrintGroupToDelete == null) {
+        return if (_confirmDialog != null && _confirmDialog!!.isShowing || _printGroupToDelete == null) {
             false
         } else {
-            mConfirmDialog =
+            _confirmDialog =
                 ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg)
-            mConfirmDialog!!.setTargetFragment(this, 0)
-            DialogUtils.displayDialog(requireActivity(), TAG, mConfirmDialog!!)
+            _confirmDialog!!.setTargetFragment(this, 0)
+            DialogUtils.displayDialog(requireActivity(), TAG, _confirmDialog!!)
             true
         }
     }
@@ -161,20 +156,20 @@ class PrintJobsFragment
     override fun setCollapsed(printer: Printer?, isCollapsed: Boolean) {
         if (isCollapsed) {
             if (printer != null) {
-                mCollapsedPrinters.add(printer)
+                _collapsedPrinters.add(printer)
             }
         } else {
-            mCollapsedPrinters.remove(printer)
+            _collapsedPrinters.remove(printer)
         }
         if (printer != null) {
-            mPrintJobsView!!.setCollapsedPrinters(printer, isCollapsed)
+            _printJobsView!!.setCollapsedPrinters(printer, isCollapsed)
         }
     }
 
     override fun setDeletePrintJob(printJobsGroupView: PrintJobsGroupView?, job: PrintJob?) {
-        mPrintGroupToDelete = printJobsGroupView
-        mPrintJobToDelete = job
-        mPrintJobsView!!.setJobToDelete(job)
+        _printGroupToDelete = printJobsGroupView
+        _printJobToDelete = job
+        _printJobsView!!.setJobToDelete(job)
     }
 
     // ================================================================================
@@ -191,30 +186,30 @@ class PrintJobsFragment
     // INTERFACE - ConfirmationDialogListener
     // ================================================================================
     override fun onConfirm() {
-        if (mPrintGroupToDelete != null) {
-            mPrintGroupToDelete!!.focusNextPrintJob()
-            if (mPrinterToDelete != null) {
-                mPrintGroupToDelete!!.onDeleteJobGroup()
+        if (_printGroupToDelete != null) {
+            _printGroupToDelete!!.focusNextPrintJob()
+            if (_printerToDelete != null) {
+                _printGroupToDelete!!.onDeleteJobGroup()
                 setPrinterToDelete(null, null)
-            } else if (mPrintJobToDelete != null) {
-                mPrintGroupToDelete!!.onDeletePrintJob(mPrintJobToDelete!!)
+            } else if (_printJobToDelete != null) {
+                _printGroupToDelete!!.onDeletePrintJob(_printJobToDelete!!)
                 setDeletePrintJob(null, null)
             }
-            mConfirmDialog = null
+            _confirmDialog = null
         }
     }
 
     override fun onCancel() {
-        if (mPrintGroupToDelete != null) {
-            mPrintGroupToDelete!!.returnFocusToPrintJob()
-            if (mPrinterToDelete != null) {
-                mPrintGroupToDelete!!.onCancelDeleteGroup()
+        if (_printGroupToDelete != null) {
+            _printGroupToDelete!!.returnFocusToPrintJob()
+            if (_printerToDelete != null) {
+                _printGroupToDelete!!.onCancelDeleteGroup()
                 setPrinterToDelete(null, null)
-            } else if (mPrintJobToDelete != null) {
-                mPrintJobsView!!.endDelete(true)
+            } else if (_printJobToDelete != null) {
+                _printJobsView!!.endDelete(true)
                 setDeletePrintJob(null, null)
             }
-            mConfirmDialog = null
+            _confirmDialog = null
         }
     }
     // ================================================================================
@@ -227,32 +222,32 @@ class PrintJobsFragment
      */
     private inner class LoadPrintJobsTask(
         context: Context?,
-        printJobs: List<PrintJob?>?,
-        printers: List<Printer?>?
+        printJobs: List<PrintJob>?,
+        printers: List<Printer>?
     ) : Thread() {
-        private val mContextRef: WeakReference<Context?>?
-        private var mPrintJobsList: List<PrintJob?>? = null
-        private var mPrintersList: List<Printer?>? = null
+        private val _contextRef: WeakReference<Context?>?
+        private var _printJobsList: List<PrintJob>? = null
+        private var _printersList: List<Printer>? = null
         override fun run() {
-            if (mContextRef != null && mContextRef.get() != null) {
-                val pm = PrintJobManager.getInstance(mContextRef.get()!!)
+            if (_contextRef?.get() != null) {
+                val pm = PrintJobManager.getInstance(_contextRef.get()!!)
                 val printers = pm!!.printersWithJobs
                 // if initial data OR job is added OR printer w/jobs is deleted (no need to check if a printer is added since initially w/o print job)
-                if (mPrintJobsList == null || mPrintersList == null || pm.isRefreshFlag || mPrintersList!!.size > printers.size) {
-                    mPrintJobsList = pm.printJobs
-                    mPrintersList = printers
+                if (_printJobsList == null || _printersList == null || pm.isRefreshFlag || _printersList!!.size > printers.size) {
+                    _printJobsList = pm.printJobs
+                    _printersList = printers
                     pm.isRefreshFlag = false
                 }
-                (mContextRef.get() as Activity?)!!.runOnUiThread {
-                    if (mPrintJobsList!!.isEmpty()) {
+                (_contextRef.get() as Activity?)!!.runOnUiThread {
+                    if (_printJobsList!!.isEmpty()) {
                         showEmptyText()
                     } else {
-                        mPrintJobs = ArrayList(mPrintJobsList)
-                        mPrinters = ArrayList(mPrintersList)
-                        if (mContextRef != null && mContextRef.get() != null && !mPrintJobsList!!.isEmpty() && !mPrintersList!!.isEmpty()) {
-                            mPrintJobsView!!.setData(
-                                mPrintJobsList as List<PrintJob>?,
-                                mPrintersList as List<Printer>?,
+                        _printJobs = ArrayList(_printJobsList!!)
+                        _printers = ArrayList(_printersList!!)
+                        if (_contextRef.get() != null && _printJobsList!!.isNotEmpty() && _printersList!!.isNotEmpty()) {
+                            _printJobsView!!.setData(
+                                _printJobsList,
+                                _printersList,
                                 this@PrintJobsFragment,
                                 this@PrintJobsFragment
                             )
@@ -270,13 +265,9 @@ class PrintJobsFragment
          * @param printers List of Printer objects
          */
         init {
-            mContextRef = WeakReference(context)
-            if (printJobs != null) {
-                mPrintJobsList = ArrayList(printJobs)
-            }
-            if (printers != null) {
-                mPrintersList = ArrayList(printers)
-            }
+            _contextRef = WeakReference(context)
+            _printJobsList = printJobs?.let { ArrayList(it) }
+            _printersList = printers?.let { ArrayList(it) }
         }
     }
 

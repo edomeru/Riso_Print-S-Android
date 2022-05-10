@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2015 Ricoh Company, Ltd. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrinterSearchSettingsEditText.java
- * Tamago Clicker
+ * SnmpCommunityNameEditText.kt
+ * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.view.printersearchsettings
@@ -26,13 +26,13 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.get
 class SnmpCommunityNameEditText : EditText {
     private var _context: Context? = null
 
-    private val snmpCommunityNameFilter =
+    private val _snmpCommunityNameFilter =
         SnmpCommunityNameFilter( // filter catches invalid case for pasting in context menu or from keyboard clipboard
             object : InvalidInputObserver {
                 override fun onInvalidInput(showError: Boolean) {
-                    if (context != null && showError) {
+                    if (_context != null && showError) {
                         val intent = Intent(SNMP_COMMUNITY_NAME_TEXTFIELD_PASTE_BROADCAST_ID)
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                        LocalBroadcastManager.getInstance(_context!!).sendBroadcast(intent)
                         text = text
                     }
                 }
@@ -60,7 +60,7 @@ class SnmpCommunityNameEditText : EditText {
 
     private fun initializeIntentFilter() {
         filters = arrayOf(
-            snmpCommunityNameFilter,
+            _snmpCommunityNameFilter,
             LengthFilter(AppConstants.CONST_COMMUNITY_NAME_LIMIT)
         )
     }
@@ -68,7 +68,7 @@ class SnmpCommunityNameEditText : EditText {
     override fun onKeyPreIme(keyCode: Int, event: KeyEvent): Boolean {
         if (event.keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
             val intent = Intent(SNMP_COMMUNITY_NAME_SAVE_ON_BACK_BROADCAST_ID)
-            LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
+            LocalBroadcastManager.getInstance(_context!!).sendBroadcast(intent)
             // Save community name in shared prefs keyboard is dismissed via back button
             saveValueToSharedPrefs(this.text.toString())
         }
@@ -77,12 +77,12 @@ class SnmpCommunityNameEditText : EditText {
 
     fun saveValueToSharedPrefs(snmpCommunityName: String?) {
         var name = snmpCommunityName
-        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val editor = PreferenceManager.getDefaultSharedPreferences(_context).edit()
         if (name == null || name.isEmpty()) {
-            name = getInstance(context!!)!!.snmpCommunityNameFromSharedPrefs
+            name = getInstance(_context!!)!!.snmpCommunityNameFromSharedPrefs
         }
         editor.putString(AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME, name)
-        editor.commit()
+        editor.apply()
     }
 
     companion object {

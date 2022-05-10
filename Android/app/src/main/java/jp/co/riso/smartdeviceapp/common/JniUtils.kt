@@ -1,14 +1,13 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * JniUtils.java
+ * JniUtils.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.common
 
 import jp.co.riso.android.util.NetUtils
-import jp.co.riso.smartdeviceapp.common.JniUtils
 
 /**
  * @class JniUtils
@@ -18,7 +17,7 @@ import jp.co.riso.smartdeviceapp.common.JniUtils
 object JniUtils {
     //https://code.google.com/p/android/issues/detail?id=181918
     @JvmStatic
-    external fun validateIp(ipAddress: String?): String
+    external fun validateIp(ipAddress: String?): String?
 
     /**
      * @brief Validate IP Address
@@ -29,10 +28,10 @@ object JniUtils {
      * @retval null ipAddress is an invalid IP Address
      */
     @JvmStatic
-    fun validateIpAddress(ipAddress: String?): String {
-        var ipAddress = ipAddress
-        ipAddress = NetUtils.validateIpAddress(ipAddress)
-        return validateIp(ipAddress)
+    fun validateIpAddress(ipAddress: String?): String? {
+        var ip = ipAddress
+        ip = NetUtils.validateIpAddress(ip)
+        return validateIp(ip)
     }
 
     init {

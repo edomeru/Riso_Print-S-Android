@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PauseableHandler.java
+ * PauseableHandler.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -10,7 +10,6 @@ package jp.co.riso.android.os.pauseablehandler
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -26,23 +25,23 @@ class PauseableHandler(looper: Looper?, callback: PauseableHandlerCallback?) : H
     looper!!, null
 ) {
     /// Message Queue Buffer
-    val mMessageQueueBuffer = Vector<Message>()
+    val messageQueueBuffer = Vector<Message>()
 
     /// Flag indicating the paused state
-    private var mPaused = false
+    private var _paused = false
 
     /// Callback reference
-    val mCallBack: WeakReference<PauseableHandlerCallback?>
+    val callBack: WeakReference<PauseableHandlerCallback?> = WeakReference(callback)
 
     /**
      * @brief Resumes the handler. Enables processing of messages.
      * @note Stored messages will be executed.
      */
     fun resume() {
-        mPaused = false
-        while (mMessageQueueBuffer.size > 0) {
-            val msg = mMessageQueueBuffer.elementAt(0)
-            mMessageQueueBuffer.removeElementAt(0)
+        _paused = false
+        while (messageQueueBuffer.size > 0) {
+            val msg = messageQueueBuffer.elementAt(0)
+            messageQueueBuffer.removeElementAt(0)
             sendMessage(msg)
         }
     }
@@ -51,7 +50,7 @@ class PauseableHandler(looper: Looper?, callback: PauseableHandlerCallback?) : H
      * @brief Pauses the handler. Messages processed during pause will be stored.
      */
     fun pause() {
-        mPaused = true
+        _paused = true
     }
 
     /**
@@ -64,8 +63,8 @@ class PauseableHandler(looper: Looper?, callback: PauseableHandlerCallback?) : H
     fun hasStoredMessage(what: Int): Boolean {
         val contains = hasMessages(what)
         if (!contains) {
-            for (i in mMessageQueueBuffer.indices) {
-                if (mMessageQueueBuffer[i].what == what) {
+            for (i in messageQueueBuffer.indices) {
+                if (messageQueueBuffer[i].what == what) {
                     return true
                 }
             }
@@ -77,24 +76,17 @@ class PauseableHandler(looper: Looper?, callback: PauseableHandlerCallback?) : H
     // INTERFACE - Handler
     // ================================================================================
     override fun handleMessage(msg: Message) {
-        if (mCallBack.get() != null) {
-            if (mPaused) {
-                if (mCallBack.get()!!.storeMessage(msg)) {
+        if (callBack.get() != null) {
+            if (_paused) {
+                if (callBack.get()!!.storeMessage(msg)) {
                     val msgCopy = Message()
                     msgCopy.copyFrom(msg)
-                    mMessageQueueBuffer.add(msgCopy)
+                    messageQueueBuffer.add(msgCopy)
                 }
             } else {
-                mCallBack.get()!!.processMessage(msg)
+                callBack.get()!!.processMessage(msg)
             }
         }
     }
 
-    /**
-     * @brief Creates a PauseableHandler instance
-     * @param callback Listener for PauseableHandler events
-     */
-    init {
-        mCallBack = WeakReference(callback)
-    }
 }

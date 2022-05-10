@@ -1,6 +1,6 @@
-/* Copyright (c) 2014 RISO, Inc. All rights reserved.
+/* Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * SDAWebView.java
+ * SDAWebView.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
