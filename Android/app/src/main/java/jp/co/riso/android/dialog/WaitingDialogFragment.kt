@@ -11,7 +11,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import jp.co.riso.smartprint.R
 import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.View
@@ -20,6 +19,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
+import jp.co.riso.smartprint.R
 
 /**
  * @class WaitingDialogFragment
@@ -87,11 +87,6 @@ class WaitingDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        retainInstance = true
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val title = arguments?.getString(KEY_TITLE)
         val message = arguments?.getString(KEY_MESSAGE)
@@ -125,17 +120,6 @@ class WaitingDialogFragment : DialogFragment() {
             }
         }
         return dialog
-    }
-
-    override fun onDestroyView() {
-        val dialog = dialog
-
-        // Work around bug:
-        // http://code.google.com/p/android/issues/detail?id=17423
-        if (dialog != null && retainInstance) {
-            dialog.setDismissMessage(null)
-        }
-        super.onDestroyView()
     }
 
     override fun onCancel(dialog: DialogInterface) {

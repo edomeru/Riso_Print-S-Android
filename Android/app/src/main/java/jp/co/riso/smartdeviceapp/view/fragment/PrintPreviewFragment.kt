@@ -899,11 +899,11 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             _waitingDialog!!.setMessage(message)
         } else {
             _waitingDialog = newInstance(null, message, true, getString(R.string.ids_lbl_cancel), TAG_WAITING_DIALOG)
-            setResultListenerConfirmDialog(
+            requireActivity().runOnUiThread { setResultListenerWaitingDialog(
                 requireActivity().supportFragmentManager,
                 this,
                 TAG_WAITING_DIALOG
-            )
+            )}
             displayDialog(requireActivity(), TAG_WAITING_DIALOG, _waitingDialog!!)
         }
     }
