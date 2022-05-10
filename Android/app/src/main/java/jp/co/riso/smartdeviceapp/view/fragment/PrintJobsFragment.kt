@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrintJobsFragment.java
+ * PrintJobsFragment.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -37,12 +37,9 @@ import java.lang.ref.WeakReference
  * @class PrintJobsFragment
  *
  * @brief Fragment class for displaying Print Job History screen.
- */
-class PrintJobsFragment
-/**
  * @brief Creates a PrintJobsFragment instance.
  */
-    : BaseFragment(), OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener,
+class PrintJobsFragment : BaseFragment(), OnTouchListener, PrintJobsGroupListener, PrintJobsViewListener,
     ConfirmDialogListener {
     private var _printJobsView: PrintJobsView? = null
     private var _printGroupToDelete: PrintJobsGroupView? = null
@@ -247,7 +244,7 @@ class PrintJobsFragment
                     } else {
                         _printJobs = ArrayList(_printJobsList!!)
                         _printers = ArrayList(_printersList!!)
-                        if (_contextRef?.get() != null && _printJobsList!!.isNotEmpty() && _printersList!!.isNotEmpty()) {
+                        if (_contextRef.get() != null && _printJobsList!!.isNotEmpty() && _printersList!!.isNotEmpty()) {
                             _printJobsView!!.setData(
                                 _printJobsList,
                                 _printersList,

@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrinterManager.java
+ * PrinterManager.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -52,7 +52,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      */
     var isCancelled = false
         private set
-    private val _SNMPManager: SNMPManager
+    private val _snmpManager: SNMPManager
     private var _printerSearchCallback: WeakReference<PrinterSearchCallback?>? = null
     private var _printersCallback: WeakReference<PrintersCallback?>? = null
     private var _updateStatusCallback: WeakReference<UpdateStatusCallback?>? = null
@@ -453,8 +453,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     fun startPrinterSearch() {
         isSearching = true
         isCancelled = false
-        _SNMPManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
-        _SNMPManager.deviceDiscovery()
+        _snmpManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
+        _snmpManager.deviceDiscovery()
     }
 
     /**
@@ -470,8 +470,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         }
         isSearching = true
         isCancelled = false
-        _SNMPManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
-        _SNMPManager.manualDiscovery(ipAddress)
+        _snmpManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
+        _snmpManager.manualDiscovery(ipAddress)
     }
 
     /**
@@ -484,7 +484,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         isCancelled = true
         Timer().schedule(object : TimerTask() {
             override fun run() {
-                _SNMPManager.cancel()
+                _snmpManager.cancel()
             }
         }, 0)
     }
@@ -944,7 +944,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      */
     init {
         _printerList = ArrayList()
-        _SNMPManager = SNMPManager()
-        _SNMPManager.setCallback(this)
+        _snmpManager = SNMPManager()
+        _snmpManager.setCallback(this)
     }
 }

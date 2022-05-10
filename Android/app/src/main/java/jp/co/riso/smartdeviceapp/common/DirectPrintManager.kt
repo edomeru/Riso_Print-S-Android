@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * DirectPrintManager.java
+ * DirectPrintManager.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -300,13 +300,11 @@ class DirectPrintManager {
      * @class DirectPrintCancelTask
      *
      * @brief Async Task for Canceling Direct Print
-     */
-    inner class DirectPrintCancelTask
-    /**
      * @brief Creates DirectPrintCancelTask instance.
      *
-     * @param manager DirectPrint Manager
-     */(private val _manager: DirectPrintManager) : BaseTask<Void?, Void?>() {
+     * @param _manager DirectPrint Manager
+     */
+    inner class DirectPrintCancelTask (private val _manager: DirectPrintManager) : BaseTask<Void?, Void?>() {
         override fun doInBackground(vararg params: Void?): Void? {
             _manager.cancel()
             _manager.finalizeDirectPrint()

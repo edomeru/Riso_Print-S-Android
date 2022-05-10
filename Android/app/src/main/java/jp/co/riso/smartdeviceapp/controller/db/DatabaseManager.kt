@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * DatabaseManager.java
+ * DatabaseManager.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -24,13 +24,11 @@ import java.util.*
  * @class DatabaseManager
  *
  * @brief Helper class for opening, creating and managing the database.
- */
-open class DatabaseManager
-/**
  * @brief Creates a DatabaseManager instance.
  *
  * @param _context Context to use to open or create the database.
- */(private val _context: Context?) :
+ */
+open class DatabaseManager (private val _context: Context?) :
     SQLiteOpenHelper(_context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onOpen(db: SQLiteDatabase) {
         // http://stackoverflow.com/questions/13641250/sqlite-delete-cascade-not-working

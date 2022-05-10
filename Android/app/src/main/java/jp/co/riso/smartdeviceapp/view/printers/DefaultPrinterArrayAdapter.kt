@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
+ *
+ * DefaultPrinterArrayAdapter.kt
+ * SmartDeviceApp
+ * Created by: a-LINK Group
+ */
 package jp.co.riso.smartdeviceapp.view.printers
 
 import android.widget.ArrayAdapter

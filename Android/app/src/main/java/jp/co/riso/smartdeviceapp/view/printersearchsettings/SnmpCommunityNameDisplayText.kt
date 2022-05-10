@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015 Ricoh Company, Ltd. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * SnmpCommunityNameDisplayText.java
+ * SnmpCommunityNameDisplayText.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */

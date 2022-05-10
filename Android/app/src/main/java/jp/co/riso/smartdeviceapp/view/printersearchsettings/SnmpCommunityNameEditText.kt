@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2015 Ricoh Company, Ltd. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrinterSearchSettingsEditText.java
- * Tamago Clicker
+ * SnmpCommunityNameEditText.kt
+ * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.view.printersearchsettings
