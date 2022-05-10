@@ -4,8 +4,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.os.Build
-import android.test.ActivityInstrumentationTestCase2
 import android.widget.ImageView
+import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.common.SNMPManager
@@ -16,39 +16,39 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.get
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.setupPrinterConfig
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
-import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import junit.framework.TestCase
+import org.junit.Before
+import org.junit.Test
 import java.net.Inet6Address
 import java.net.NetworkInterface
 import java.net.SocketException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
-    MainActivity::class.java
-), UpdateStatusCallback, PrintersCallback, PrinterSearchCallback {
-    val mSignal = CountDownLatch(1)
-    val TIMEOUT = 20
+class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, PrintersCallback, PrinterSearchCallback {
+    private val _signal = CountDownLatch(1)
+    private val _timeout = 20
     private var mImageView: ImageView? = null
     private var mPrinterManager: PrinterManager? = null
     private var mPrintersList: List<Printer?>? = null
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
+
+    @Before
+    fun setUp() {
         initialize()
-        mImageView = ImageView(activity)
+        mImageView = ImageView(mainActivity)
     }
 
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-        mPrinterManager = null
-    }
+//    @After
+//    override fun tearDown() {
+//        mPrinterManager = null
+//    }
 
     // ================================================================================
     // Tests - getInstance
     // ================================================================================
-    fun testgetInstance() {
+    @Test
+    fun testGetInstance() {
         try {
             mPrinterManager = null
             mPrinterManager = getInstance(appContext!!)
@@ -61,10 +61,10 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - getPrinterCount
     // ================================================================================
+    @Test
     fun testGetPrinterCount_DuringIdle() {
         try {
-            val count: Int
-            count = mPrinterManager!!.printerCount
+            val count: Int = mPrinterManager!!.printerCount
             TestCase.assertEquals(false, count < 0)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
@@ -74,6 +74,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - clearDefaultPrinter
     // ================================================================================
+    @Test
     fun testClearDefaultPrinter() {
         try {
             mPrinterManager!!.clearDefaultPrinter()
@@ -82,6 +83,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testClearDefaultPrinter_NullDatabaseManager() {
         try {
             mPrinterManager = PrinterManager(appContext, null)
@@ -94,10 +96,11 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - setDefaultPrinter
     // ================================================================================
+    @Test
     fun testSetDefaultPrinter_NoDefaultPrinter() {
         try {
             var printer: Printer? = null
-            if (mPrintersList != null && !mPrintersList!!.isEmpty()) {
+            if (mPrintersList != null && mPrintersList!!.isNotEmpty()) {
                 printer = mPrintersList!![0]
             }
             if (printer == null) {
@@ -112,10 +115,11 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSetDefaultPrinter_WithDefaultPrinter() {
         try {
             var printer: Printer? = null
-            if (mPrintersList != null && !mPrintersList!!.isEmpty()) {
+            if (mPrintersList != null && mPrintersList!!.isNotEmpty()) {
                 printer = mPrintersList!![0]
             }
             if (printer == null) {
@@ -132,6 +136,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSetDefaultPrinter_NullPrinter() {
         try {
             TestCase.assertFalse(mPrinterManager!!.setDefaultPrinter(null))
@@ -140,12 +145,13 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSetDefaultPrinter_NullDatabaseManager() {
         try {
             var printer: Printer? = null
             mPrinterManager = PrinterManager(appContext, null)
             TestCase.assertFalse(mPrinterManager!!.setDefaultPrinter(printer))
-            if (mPrintersList != null && !mPrintersList!!.isEmpty()) {
+            if (mPrintersList != null && mPrintersList!!.isNotEmpty()) {
                 printer = mPrintersList!![0]
             }
             if (printer == null) {
@@ -161,6 +167,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSetDefaultPrinter_DatabaseError() {
         val printer = Printer("", IPV4_OFFLINE_PRINTER_ADDRESS)
         val dbManager = MockedDatabaseManager(
@@ -173,39 +180,40 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - getDefaultPrinter
     // ================================================================================
+    @Test
     fun testGetDefaultPrinter_NoDefaultPrinter() {
         try {
-            val defaultPrinter: Int
             testClearDefaultPrinter()
-            defaultPrinter = mPrinterManager!!.defaultPrinter
+            val defaultPrinter: Int = mPrinterManager!!.defaultPrinter
             TestCase.assertEquals(false, defaultPrinter != PrinterManager.EMPTY_ID)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testGetDefaultPrinter_WithDefaultPrinter() {
         try {
-            val defaultPrinter: Int
             testSetDefaultPrinter_NoDefaultPrinter()
-            defaultPrinter = mPrinterManager!!.defaultPrinter
+            val defaultPrinter: Int = mPrinterManager!!.defaultPrinter
             TestCase.assertEquals(true, defaultPrinter != PrinterManager.EMPTY_ID)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testGetDefaultPrinter_WithDefaultPrinterActivityRestarted() {
         try {
             mPrinterManager = getInstance(appContext!!)
-            val defaultPrinter: Int
-            defaultPrinter = mPrinterManager!!.defaultPrinter
+            val defaultPrinter: Int = mPrinterManager!!.defaultPrinter
             TestCase.assertEquals(true, defaultPrinter != PrinterManager.EMPTY_ID)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testGetDefaultPrinter_NullDatabaseManager() {
         try {
             mPrinterManager = PrinterManager(appContext, null)
@@ -218,23 +226,23 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - isCancelled
     // ================================================================================
+    @Test
     fun testIsCancelled_StateNotCancelled() {
         try {
-            val isCancelled: Boolean
             mPrinterManager!!.startPrinterSearch()
-            isCancelled = mPrinterManager!!.isCancelled
+            val isCancelled: Boolean = mPrinterManager!!.isCancelled
             TestCase.assertEquals(false, isCancelled)
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            _signal.await(_timeout.toLong(), TimeUnit.SECONDS)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testIsCancelled_StateCancelled() {
         try {
-            val isCancelled: Boolean
             mPrinterManager!!.cancelPrinterSearch()
-            isCancelled = mPrinterManager!!.isCancelled
+            val isCancelled: Boolean = mPrinterManager!!.isCancelled
             TestCase.assertEquals(true, isCancelled)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
@@ -244,23 +252,23 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - isSearching
     // ================================================================================
+    @Test
     fun testIsSearching_StateSearching() {
         try {
-            val isSearching: Boolean
             mPrinterManager!!.startPrinterSearch()
-            isSearching = mPrinterManager!!.isSearching
+            val isSearching: Boolean = mPrinterManager!!.isSearching
             TestCase.assertEquals(true, isSearching)
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            _signal.await(_timeout.toLong(), TimeUnit.SECONDS)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testIsSearching_StateNotSearching() {
         try {
-            val isSearching: Boolean
             mPrinterManager!!.cancelPrinterSearch()
-            isSearching = mPrinterManager!!.isSearching
+            val isSearching: Boolean = mPrinterManager!!.isSearching
             TestCase.assertEquals(false, isSearching)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
@@ -270,6 +278,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - setPrintersCallback
     // ================================================================================
+    @Test
     fun testSetPrintersCallback_NullCallback() {
         try {
             mPrinterManager!!.setPrintersCallback(null)
@@ -278,6 +287,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSetPrintersCallback_ValidCallback() {
         try {
             mPrinterManager!!.setPrintersCallback(this)
@@ -289,6 +299,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - setPrinterSearchCallback
     // ================================================================================
+    @Test
     fun testSetPrinterSearchCallback_NullCallback() {
         try {
             mPrinterManager!!.setPrinterSearchCallback(null)
@@ -297,6 +308,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSetPrinterSearchCallback_ValidCallback() {
         try {
             mPrinterManager!!.setPrinterSearchCallback(this)
@@ -308,6 +320,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - setUpdateStatusCallback
     // ================================================================================
+    @Test
     fun testSetUpdateStatusCallback_NullCallback() {
         try {
             mPrinterManager!!.setUpdateStatusCallback(null)
@@ -316,6 +329,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSetUpdateStatusCallback_ValidCallback() {
         try {
             mPrinterManager!!.setUpdateStatusCallback(this)
@@ -327,10 +341,11 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - startPrinterSearch
     // ================================================================================
+    @Test
     fun testStartPrinterSearch() {
         try {
             mPrinterManager!!.startPrinterSearch()
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            _signal.await(_timeout.toLong(), TimeUnit.SECONDS)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
@@ -339,6 +354,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - cancelPrinterSearch
     // ================================================================================
+    @Test
     fun testCancelPrinterSearch() {
         try {
             mPrinterManager!!.cancelPrinterSearch()
@@ -350,6 +366,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - createUpdateStatusThread
     // ================================================================================
+    @Test
     fun testCreateUpdateStatusThread() {
         try {
             mPrinterManager!!.createUpdateStatusThread()
@@ -364,6 +381,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - cancelUpdateStatusThread
     // ================================================================================
+    @Test
     fun testCancelUpdateStatusThread_DuringIdle() {
         try {
             mPrinterManager!!.cancelUpdateStatusThread()
@@ -372,6 +390,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testCancelUpdateStatusThread_AfterCreate() {
         try {
             mPrinterManager!!.createUpdateStatusThread()
@@ -384,6 +403,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - updateOnlineStatus
     // ================================================================================
+    @Test
     fun testUpdateOnlineStatus_NullImageView() {
         try {
             mPrinterManager!!.updateOnlineStatus(IPV4_ONLINE_PRINTER_ADDRESS, null)
@@ -392,6 +412,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testUpdateOnlineStatus_NullIpAddress() {
         try {
             mPrinterManager!!.updateOnlineStatus(null, mImageView)
@@ -400,13 +421,14 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testUpdateOnlineStatus_ValidParameters() {
         mPrinterManager!!.updateOnlineStatus(IPV4_ONLINE_PRINTER_ADDRESS, mImageView)
         try {
             // Wait and Check if Address is ONLINE
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             Thread.sleep(10000)
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
@@ -415,6 +437,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - onEndDiscovery
     // ================================================================================
+    @Test
     fun testOnEndDiscovery_NullManager() {
         try {
             mPrinterManager!!.onEndDiscovery(null, -1)
@@ -423,6 +446,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testOnEndDiscovery_ValidParameters() {
         try {
             mPrinterManager!!.onEndDiscovery(SNMPManager(), -1)
@@ -434,6 +458,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - onFoundDevice
     // ================================================================================
+    @Test
     fun testOnFoundDevice_ValidParameters() {
         try {
 
@@ -445,12 +470,13 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
                 "testOnFoundDevice_ValidParameters",
                 BooleanArray(10)
             )
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            _signal.await(_timeout.toLong(), TimeUnit.SECONDS)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testOnFoundDevice_NullManager() {
         try {
             mPrinterManager!!.onFoundDevice(
@@ -464,6 +490,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testOnFoundDevice_NullIpAddress() {
         try {
             mPrinterManager!!.onFoundDevice(
@@ -477,6 +504,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testOnFoundDevice_NullName() {
         try {
             initialize()
@@ -491,6 +519,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testOnFoundDevice_NullCapabilities() {
         try {
             initialize()
@@ -506,6 +535,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - removePrinter
     // ================================================================================
+    @Test
     fun testRemovePrinter_ValidAndInvalidPrinter() {
         try {
             initialize()
@@ -513,7 +543,6 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
                 "testRemovePrinter_ValidAndInvalidPrinter",
                 IPV4_OFFLINE_PRINTER_ADDRESS
             )
-            var ret: Boolean
             if (!mPrinterManager!!.isExists(printer)) {
                 mPrinterManager!!.savePrinterToDB(printer, true)
             } else {
@@ -524,7 +553,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
                     }
                 }
             }
-            ret = mPrinterManager!!.removePrinter(printer)
+            var ret: Boolean = mPrinterManager!!.removePrinter(printer)
             TestCase.assertEquals(true, ret)
             ret = mPrinterManager!!.removePrinter(printer)
             TestCase.assertEquals(false, ret)
@@ -533,19 +562,20 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testRemovePrinter_EmptyList() {
         val printer = Printer(
             "testRemovePrinter_ValidAndInvalidPrinter",
             IPV4_OFFLINE_PRINTER_ADDRESS
         )
-        val ret: Boolean
         for (printerItem in mPrintersList!!) {
             mPrinterManager!!.removePrinter(printerItem)
         }
-        ret = mPrinterManager!!.removePrinter(printer)
+        val ret: Boolean = mPrinterManager!!.removePrinter(printer)
         TestCase.assertEquals(false, ret)
     }
 
+    @Test
     fun testRemovePrinter_NullPrinter() {
         try {
             mPrinterManager!!.removePrinter(null)
@@ -554,21 +584,22 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testRemovePrinter_IpAddressExists() {
         try {
             val printer = Printer("testRemovePrinter_IpAddressExists", IPV4_OFFLINE_PRINTER_ADDRESS)
-            val ret: Boolean
             if (!mPrinterManager!!.isExists(printer)) {
                 mPrinterManager!!.savePrinterToDB(printer, true)
             }
             printer.name = IPV4_OFFLINE_PRINTER_ADDRESS
-            ret = mPrinterManager!!.removePrinter(printer)
+            val ret: Boolean = mPrinterManager!!.removePrinter(printer)
             TestCase.assertEquals(true, ret)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testRemovePrinter_NullDatabaseManager() {
         try {
             val printer = Printer("testRemovePrinter_IpAddressExists", IPV4_OFFLINE_PRINTER_ADDRESS)
@@ -585,13 +616,14 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - savePrinterToDB
     // ================================================================================
+    @Test
     fun testSavePrinterToDB_ValidPrinter() {
         try {
             var printer: Printer? = Printer(
                 "testSavePrinterToDB_ValidPrinter",
                 IPV4_OFFLINE_PRINTER_ADDRESS
             )
-            for (savedPrinter in mPrinterManager!!.savedPrintersList!!) {
+            for (savedPrinter in mPrinterManager!!.savedPrintersList) {
                 if (printer!!.ipAddress == savedPrinter!!.ipAddress) {
                     printer = savedPrinter
                     break
@@ -599,7 +631,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
             }
             mPrinterManager!!.removePrinter(printer)
             if (mPrinterManager!!.printerCount == AppConstants.CONST_MAX_PRINTER_COUNT) {
-                mPrinterManager!!.removePrinter(mPrinterManager!!.savedPrintersList!![0])
+                mPrinterManager!!.removePrinter(mPrinterManager!!.savedPrintersList[0])
             }
 
             //Enabled Capabilities
@@ -631,21 +663,22 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSavePrinterToDB_ExistingPrinter() {
         try {
             val printer =
                 Printer("testSavePrinterToDB_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS)
-            val ret: Boolean
             if (!mPrinterManager!!.isExists(printer)) {
                 mPrinterManager!!.savePrinterToDB(printer, true)
             }
-            ret = mPrinterManager!!.savePrinterToDB(printer, true)
+            val ret: Boolean = mPrinterManager!!.savePrinterToDB(printer, true)
             TestCase.assertEquals(false, ret)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testSavePrinterToDB_NullPrinter() {
         try {
             mPrinterManager!!.savePrinterToDB(null, true)
@@ -654,13 +687,14 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSavePrinterToDB_DefaultPrinter() {
         try {
             val printer = Printer(
                 "testSavePrinterToDB_ExistingPrinter",
                 IPV4_OFFLINE_PRINTER_ADDRESS
             )
-            if (!mPrintersList!!.isEmpty()) {
+            if (mPrintersList!!.isNotEmpty()) {
                 for (i in mPrintersList!!.size downTo 1) {
                     mPrinterManager!!.removePrinter(mPrintersList!![i - 1])
                 }
@@ -673,6 +707,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSavePrinterToDB_DatabaseError() {
         try {
             val printer = Printer(
@@ -694,6 +729,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - getSavedPrintersList
     // ================================================================================
+    @Test
     fun testGetSavedPrintersList_NonEmptyList() {
         try {
             if (mPrintersList!!.isEmpty()) {
@@ -706,9 +742,10 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testGetSavedPrintersList_EmptyList() {
         try {
-            if (!mPrintersList!!.isEmpty()) {
+            if (mPrintersList!!.isNotEmpty()) {
                 for (i in mPrintersList!!.size downTo 1) {
                     mPrinterManager!!.removePrinter(mPrintersList!![i - 1])
                 }
@@ -719,6 +756,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testGetSavedPrintersList_NullDatabaseManager() {
         try {
             mPrinterManager = PrinterManager(appContext, null)
@@ -731,14 +769,14 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - isExists
     // ================================================================================
+    @Test
     fun testIsExists_ExistingPrinter() {
         try {
             val printer = Printer("testIsExists_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS)
-            var ret: Boolean
             if (!mPrinterManager!!.isExists(printer)) {
                 mPrinterManager!!.savePrinterToDB(printer, true)
             }
-            ret = mPrinterManager!!.isExists(printer)
+            var ret: Boolean = mPrinterManager!!.isExists(printer)
             TestCase.assertEquals(true, ret)
             ret = mPrinterManager!!.isExists(printer.ipAddress)
             TestCase.assertEquals(true, ret)
@@ -747,13 +785,13 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testIsExists_NotExistingPrinter() {
         try {
             var printer: Printer? = Printer(
                 "testIsExists_NotExistingPrinter",
                 IPV4_OFFLINE_PRINTER_ADDRESS
             )
-            var ret: Boolean
             if (mPrintersList != null) {
                 for (savedPrinter in mPrintersList!!) {
                     if (printer!!.ipAddress == savedPrinter!!.ipAddress) {
@@ -767,7 +805,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
                 mPrinterManager!!.savePrinterToDB(Printer("", IPV6_ONLINE_PRINTER_ADDRESS), true)
             }
             mPrinterManager!!.removePrinter(printer)
-            ret = mPrinterManager!!.isExists(printer)
+            var ret: Boolean = mPrinterManager!!.isExists(printer)
             TestCase.assertEquals(false, ret)
             ret = mPrinterManager!!.isExists(printer!!.ipAddress)
             TestCase.assertEquals(false, ret)
@@ -776,6 +814,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testIsExists_NullPrinter() {
         try {
             val printer: Printer? = null
@@ -803,6 +842,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
     */
+    @Test
     fun testIsOnline_OnlineIpv6Printer() {
         // If test fails, check with actual ipv6 address
         try {
@@ -823,7 +863,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
                 if (ret) {
                     break
                 }
-                mSignal.await(1, TimeUnit.SECONDS)
+                _signal.await(1, TimeUnit.SECONDS)
                 retry--
             }
             TestCase.assertEquals(true, ret)
@@ -832,30 +872,30 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testIsOnline_OfflinePrinter() {
         try {
-            val ret: Boolean
-            ret = mPrinterManager!!.isOnline(IPV4_OFFLINE_PRINTER_ADDRESS)
+            val ret: Boolean = mPrinterManager!!.isOnline(IPV4_OFFLINE_PRINTER_ADDRESS)
             TestCase.assertEquals(false, ret)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testIsOnline_NullAddress() {
         try {
-            val ret: Boolean
-            ret = mPrinterManager!!.isOnline(null)
+            val ret: Boolean = mPrinterManager!!.isOnline(null)
             TestCase.assertEquals(false, ret)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testIsOnline_InvalidAddress() {
         try {
-            val ret: Boolean
-            ret = mPrinterManager!!.isOnline(INVALID_ADDRESS)
+            val ret: Boolean = mPrinterManager!!.isOnline(INVALID_ADDRESS)
             TestCase.assertEquals(false, ret)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
@@ -865,19 +905,21 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - searchPrinter
     // ================================================================================
+    @Test
     fun testSearchPrinter_ValidIpAddress() {
         try {
             mPrinterManager!!.searchPrinter(IPV4_ONLINE_PRINTER_ADDRESS)
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            _signal.await(_timeout.toLong(), TimeUnit.SECONDS)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testSearchPrinter_NullIpAddress() {
         try {
             mPrinterManager!!.searchPrinter(null)
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            _signal.await(_timeout.toLong(), TimeUnit.SECONDS)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
@@ -886,45 +928,49 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - UpdateOnlineStatusTask
     // ================================================================================
+    @Test
     fun testUpdateOnlineStatusTask_EmptyIpAddress() {
         mPrinterManager!!.UpdateOnlineStatusTask(null, "")
             .execute()
         try {
             // Wait and Check if Address is OFFLINE
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             Thread.sleep(1000)
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testUpdateOnlineStatusTask_ValidOfflineParameters() {
         mPrinterManager!!.UpdateOnlineStatusTask(mImageView, IPV4_OFFLINE_PRINTER_ADDRESS)
             .execute()
         try {
             // Wait and Check if Address is OFFLINE
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             Thread.sleep(10000)
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testUpdateOnlineStatusTask_ValidIpv4OnlineParameters() {
         mPrinterManager!!.UpdateOnlineStatusTask(mImageView, IPV4_ONLINE_PRINTER_ADDRESS)
             .execute()
         try {
             // Wait and Check if Address is ONLINE
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             Thread.sleep(10000)
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testUpdateOnlineStatusTask_ValidIpv6OnlineParameters() {
         var ipv6Addr: String? = IPV6_ONLINE_PRINTER_ADDRESS
 
@@ -937,9 +983,9 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
             .execute()
         try {
             // Wait and Check if Address is ONLINE
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             Thread.sleep(10000)
-            instrumentation.waitForIdleSync()
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
@@ -948,6 +994,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - UpdateOnlineStatusTask
     // ================================================================================
+    @Test
     fun testGetIdFromCursor_NullCursor() {
         try {
             mPrinterManager!!.getIdFromCursor(null, null)
@@ -956,6 +1003,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testGetIdFromCursor_NullPrinter() {
         try {
             val dbManager = DatabaseManager(appContext)
@@ -970,6 +1018,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testGetIdFromCursor_ValidParameters() {
         try {
             val printer =
@@ -989,6 +1038,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - setupPrinterConfig
     // ================================================================================
+    @Test
     fun testSetupPrinterConfig_null() {
         try {
             setupPrinterConfig(null, null)
@@ -1000,6 +1050,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testSetupPrinterConfig_allAvailable() {
         val capabilities = booleanArrayOf(
             true, true, true, true, true, true, true, true, true, true, true
@@ -1019,6 +1070,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         TestCase.assertTrue(target.config!!.isRawAvailable)
     }
 
+    @Test
     fun testSetupPrinterConfig_allFalse() {
         val capabilities = booleanArrayOf(
             false, false, false, false, false, false, false, false, false, false, false
@@ -1038,6 +1090,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         TestCase.assertFalse(target.config!!.isRawAvailable)
     }
 
+    @Test
     fun testSetupPrinterConfig_Incomplete() {
         val capabilities = booleanArrayOf(
             false
@@ -1088,11 +1141,11 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - updatePortSettings
     // ================================================================================
+    @Test
     fun testUpdatePortSettings() {
         try {
             var printer: Printer? = null
-            var ret: Boolean
-            if (mPrintersList != null && !mPrintersList!!.isEmpty()) {
+            if (mPrintersList != null && mPrintersList!!.isNotEmpty()) {
                 printer = mPrintersList!![0]
             }
             if (printer == null) {
@@ -1100,15 +1153,14 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
                 mPrinterManager!!.savePrinterToDB(printer, true)
             }
             val dbManager = DatabaseManager(appContext)
-            var cursor: Cursor?
-            ret = mPrinterManager!!.updatePortSettings(printer.id, PortSetting.LPR)
+            var ret: Boolean = mPrinterManager!!.updatePortSettings(printer.id, PortSetting.LPR)
             TestCase.assertTrue(ret)
-            cursor = dbManager.query(
+            var cursor: Cursor? = dbManager.query(
                 KeyConstants.KEY_SQL_PRINTER_TABLE, arrayOf(KeyConstants.KEY_SQL_PRINTER_PORT),
                 KeyConstants.KEY_SQL_PRINTER_ID + "=?", arrayOf("" + printer.id),
                 null, null, null
             )
-            if (cursor != null && cursor.moveToFirst() && printer != null) {
+            if (cursor != null && cursor.moveToFirst()) {
                 TestCase.assertEquals(
                     0,
                     cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_PORT))
@@ -1122,7 +1174,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
                 KeyConstants.KEY_SQL_PRINTER_ID + "=?", arrayOf("" + printer.id),
                 null, null, null
             )
-            if (cursor != null && cursor.moveToFirst() && printer != null) {
+            if (cursor != null && cursor.moveToFirst()) {
                 TestCase.assertEquals(
                     1,
                     cursor.getInt(cursor.getColumnIndexOrThrow(KeyConstants.KEY_SQL_PRINTER_PORT))
@@ -1134,10 +1186,11 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
         }
     }
 
+    @Test
     fun testUpdatePortSettings_NullPortSetting() {
         try {
             var printer: Printer? = null
-            if (mPrintersList != null && !mPrintersList!!.isEmpty()) {
+            if (mPrintersList != null && mPrintersList!!.isNotEmpty()) {
                 printer = mPrintersList!![0]
             }
             if (printer == null) {
@@ -1154,10 +1207,10 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     // ================================================================================
     // Tests - getPrinterType
     // ================================================================================
+    @Test
     fun testGetPrinterType() {
         try {
-            var printer: Printer
-            printer = Printer("RISO IS1000C-G", "192.168.0.1")
+            var printer = Printer("RISO IS1000C-G", "192.168.0.1")
             mPrinterManager!!.savePrinterToDB(printer, true)
             var printerType = mPrinterManager!!.getPrinterType(printer.id)
             TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_IS)
@@ -1189,7 +1242,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
             mPrinterManager!!.removePrinter(printer)
             var nonExistentId = 2
             if (mPrinterManager!!.printerCount > 0) {
-                nonExistentId += mPrinterManager!!.savedPrintersList!![mPrinterManager!!.printerCount - 1]!!.id
+                nonExistentId += mPrinterManager!!.savedPrintersList[mPrinterManager!!.printerCount - 1]!!.id
             }
             printerType = mPrinterManager!!.getPrinterType(nonExistentId)
             TestCase.assertNull(printerType)
@@ -1205,7 +1258,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     override fun onAddedNewPrinter(printer: Printer?, isOnline: Boolean) {}
     override fun onPrinterAdd(printer: Printer?) {}
     override fun onSearchEnd() {
-        mSignal.countDown()
+        _signal.countDown()
     }
 
     class MockedDatabaseManager(context: Context?) : DatabaseManager(context) {
@@ -1249,7 +1302,7 @@ class PrinterManagerTest : ActivityInstrumentationTestCase2<MainActivity>(
     }
 
     private val localIpv6Address: String?
-        private get() {
+        get() {
             try {
                 val en = NetworkInterface.getNetworkInterfaces()
                 while (en

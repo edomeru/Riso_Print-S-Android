@@ -2,74 +2,65 @@ package jp.co.riso.android.os.pauseablehandler
 
 import android.os.Looper
 import android.os.Message
-import android.test.ActivityInstrumentationTestCase2
-import jp.co.riso.smartdeviceapp.view.MainActivity
+import androidx.test.platform.app.InstrumentationRegistry
 import junit.framework.TestCase
+import org.junit.Test
 
-class PauseableHandlerTest : ActivityInstrumentationTestCase2<MainActivity> {
-    private var mHandler: PauseableHandler? = null
+class PauseableHandlerTest {
+    private var _handler: PauseableHandler? = null
 
-    constructor() : super(MainActivity::class.java) {}
-    constructor(activityClass: Class<MainActivity?>?) : super(activityClass) {}
-
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-    }
-
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
-
+    @Test
     fun testConstructor_NullCallback() {
-        instrumentation.runOnMainSync {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
             val handler = PauseableHandler(Looper.myLooper(), null)
             TestCase.assertNotNull(handler)
         }
     }
 
+    @Test
     fun testHandleMessage() {
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), null)
-            val msg = Message.obtain(mHandler, MESSAGE)
-            mHandler!!.sendMessage(msg) //will call handleMessage
-            TestCase.assertTrue(mHandler!!.hasMessages(MESSAGE))
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), null)
+            val msg = Message.obtain(_handler, MESSAGE)
+            _handler!!.sendMessage(msg) //will call handleMessage
+            TestCase.assertTrue(_handler!!.hasMessages(MESSAGE))
         }
-        instrumentation.waitForIdleSync()
-        TestCase.assertFalse(mHandler!!.hasMessages(MESSAGE))
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertFalse(_handler!!.hasMessages(MESSAGE))
     }
 
+    @Test
     fun testHasStoredMessage() {
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), null)
-            val msg = Message.obtain(mHandler, MESSAGE)
-            mHandler!!.sendMessage(msg) //will call handleMessage
-            TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE))
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), null)
+            val msg = Message.obtain(_handler, MESSAGE)
+            _handler!!.sendMessage(msg) //will call handleMessage
+            TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE))
         }
-        instrumentation.waitForIdleSync()
-        TestCase.assertFalse(mHandler!!.hasStoredMessage(MESSAGE))
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE))
     }
 
+    @Test
     fun testHandleMessage_PauseResume() {
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), null)
-            val msg = Message.obtain(mHandler, MESSAGE)
-            mHandler!!.pause()
-            mHandler!!.sendMessage(msg) //will call handleMessage
-            TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE))
-            TestCase.assertTrue(mHandler!!.hasMessages(MESSAGE))
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), null)
+            val msg = Message.obtain(_handler, MESSAGE)
+            _handler!!.pause()
+            _handler!!.sendMessage(msg) //will call handleMessage
+            TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE))
+            TestCase.assertTrue(_handler!!.hasMessages(MESSAGE))
         }
-        instrumentation.waitForIdleSync()
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         // message is already processed
-        TestCase.assertFalse(mHandler!!.hasStoredMessage(MESSAGE))
-        TestCase.assertFalse(mHandler!!.hasMessages(MESSAGE))
-        instrumentation.runOnMainSync { mHandler!!.resume() }
-        instrumentation.waitForIdleSync()
+        TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE))
+        TestCase.assertFalse(_handler!!.hasMessages(MESSAGE))
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { _handler!!.resume() }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         // no effect since message is already processed
-        TestCase.assertFalse(mHandler!!.hasStoredMessage(MESSAGE))
-        TestCase.assertFalse(mHandler!!.hasMessages(MESSAGE))
+        TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE))
+        TestCase.assertFalse(_handler!!.hasMessages(MESSAGE))
     }
 
     companion object {

@@ -1,37 +1,30 @@
 package jp.co.riso.smartdeviceapp.view.anim
 
-import android.test.ActivityInstrumentationTestCase2
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartdeviceapp.view.MainActivity
 import junit.framework.TestCase
+import org.junit.Before
+import org.junit.Test
 
-class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity> {
-    private var mActivity: MainActivity? = null
-
-    constructor() : super(MainActivity::class.java) {}
-    constructor(activityClass: Class<MainActivity?>?) : super(activityClass) {}
-
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-        mActivity = activity
+class DisplayDeleteAnimationTest : BaseActivityTestUtil() {
+    private var _activity: MainActivity? = null
+    
+    @Before
+    fun setUp() {
+        _activity = mainActivity
         wakeUpScreen()
     }
-
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
-
+    
+    @Test
     fun testBeginDeleteModeOnView_WithAnimation() {
         val mDeleteAnimation = DisplayDeleteAnimation()
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
@@ -42,10 +35,11 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.VISIBLE, deleteButton.visibility)
     }
 
+    @Test
     fun testBeginDeleteModeOnView_WithoutAnimation() {
         val mDeleteAnimation = DisplayDeleteAnimation()
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
@@ -55,19 +49,20 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         waitInMilliseconds(100)
         TestCase.assertEquals(View.VISIBLE, deleteButton.visibility)
     }
-
+    
+    @Test
     fun testBeginDeleteModeOnView_WithOutAnimationHideOtherViews() {
         val mDeleteAnimation = DisplayDeleteAnimation()
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
-        val otherButton = Button(mActivity)
+        val otherButton = Button(_activity)
         otherButton.text = "other button"
         otherButton.id = 2
         ll.addView(otherButton)
-        val tv = TextView(mActivity)
+        val tv = TextView(_activity)
         tv.text = "textview"
         tv.id = 3
         ll.addView(tv)
@@ -84,19 +79,20 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.GONE, tv.visibility)
     }
 
+    @Test
     fun testBeginDeleteModeOnView_WithAnimationHideOtherViews() {
         // DisplayDeleteAnimation mDeleteAnimation = new
         // DisplayDeleteAnimation();
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
-        val otherButton = Button(mActivity)
+        val otherButton = Button(_activity)
         otherButton.text = "other button"
         otherButton.id = 2
         ll.addView(otherButton)
-        val tv = TextView(mActivity)
+        val tv = TextView(_activity)
         tv.text = "textview"
         tv.id = 3
         ll.addView(tv)
@@ -106,8 +102,8 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.GONE, deleteButton.visibility)
         TestCase.assertEquals(View.VISIBLE, otherButton.visibility)
         TestCase.assertEquals(View.VISIBLE, tv.visibility)
-        mActivity!!.runOnUiThread {
-            mActivity!!.window.addContentView(
+        _activity!!.runOnUiThread {
+            _activity!!.window.addContentView(
                 ll, LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
@@ -122,19 +118,20 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.GONE, tv.visibility)
     }
 
+    @Test
     fun testBeginDeleteModeOnView_WithAnimationHideOtherViewsTwice() {
         // DisplayDeleteAnimation mDeleteAnimation = new
         // DisplayDeleteAnimation();
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
-        val otherButton = Button(mActivity)
+        val otherButton = Button(_activity)
         otherButton.text = "other button"
         otherButton.id = 2
         ll.addView(otherButton)
-        val tv = TextView(mActivity)
+        val tv = TextView(_activity)
         tv.text = "textview"
         tv.id = 3
         ll.addView(tv)
@@ -144,8 +141,8 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.GONE, deleteButton.visibility)
         TestCase.assertEquals(View.VISIBLE, otherButton.visibility)
         TestCase.assertEquals(View.VISIBLE, tv.visibility)
-        mActivity!!.runOnUiThread {
-            mActivity!!.window.addContentView(
+        _activity!!.runOnUiThread {
+            _activity!!.window.addContentView(
                 ll, LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
@@ -161,16 +158,17 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.GONE, tv.visibility)
     }
 
+    @Test
     fun testEndDeleteModeOnView_WithAnimation() {
         // setActivityInitialTouchMode(true);
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
         TestCase.assertEquals(View.VISIBLE, deleteButton.visibility)
-        mActivity!!.runOnUiThread { // ll.addView(deleteButton);
-            mActivity!!.window.addContentView(
+        _activity!!.runOnUiThread { // ll.addView(deleteButton);
+            _activity!!.window.addContentView(
                 ll,
                 LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -185,9 +183,10 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.GONE, deleteButton.visibility)
     }
 
+    @Test
     fun testEndDeleteModeOnView_WithOutAnimation() {
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
@@ -198,17 +197,18 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.GONE, deleteButton.visibility)
     }
 
+    @Test
     fun testEndDeleteModeOnView_WithOutAnimationShowOtherViews() {
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
-        val otherButton = Button(mActivity)
+        val otherButton = Button(_activity)
         otherButton.text = "other button"
         otherButton.id = 2
         ll.addView(otherButton)
-        val tv = TextView(mActivity)
+        val tv = TextView(_activity)
         tv.text = "textview"
         tv.id = 3
         ll.addView(tv)
@@ -226,17 +226,18 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.VISIBLE, tv.visibility)
     }
 
+    @Test
     fun testEndDeleteModeOnView_WithAnimationShowOtherViews() {
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
-        val otherButton = Button(mActivity)
+        val otherButton = Button(_activity)
         otherButton.text = "other button"
         otherButton.id = 2
         ll.addView(otherButton)
-        val tv = TextView(mActivity)
+        val tv = TextView(_activity)
         tv.text = "textview"
         tv.id = 3
         ll.addView(tv)
@@ -246,8 +247,8 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.VISIBLE, deleteButton.visibility)
         TestCase.assertEquals(View.GONE, otherButton.visibility)
         TestCase.assertEquals(View.GONE, tv.visibility)
-        mActivity!!.runOnUiThread {
-            mActivity!!.window.addContentView(
+        _activity!!.runOnUiThread {
+            _activity!!.window.addContentView(
                 ll,
                 LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -263,17 +264,18 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.VISIBLE, tv.visibility)
     }
 
+    @Test
     fun testEndDeleteModeOnView_WithAnimationShowOtherViewsTwice() {
-        val ll = LinearLayout(mActivity)
-        val deleteButton = Button(mActivity)
+        val ll = LinearLayout(_activity)
+        val deleteButton = Button(_activity)
         deleteButton.text = "button"
         deleteButton.id = 1
         ll.addView(deleteButton)
-        val otherButton = Button(mActivity)
+        val otherButton = Button(_activity)
         otherButton.text = "other button"
         otherButton.id = 2
         ll.addView(otherButton)
-        val tv = TextView(mActivity)
+        val tv = TextView(_activity)
         tv.text = "textview"
         tv.id = 3
         ll.addView(tv)
@@ -283,8 +285,8 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         TestCase.assertEquals(View.VISIBLE, deleteButton.visibility)
         TestCase.assertEquals(View.GONE, otherButton.visibility)
         TestCase.assertEquals(View.GONE, tv.visibility)
-        mActivity!!.runOnUiThread {
-            mActivity!!.window.addContentView(
+        _activity!!.runOnUiThread {
+            _activity!!.window.addContentView(
                 ll,
                 LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -311,17 +313,5 @@ class DisplayDeleteAnimationTest : ActivityInstrumentationTestCase2<MainActivity
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-    }
-
-    private fun wakeUpScreen() {
-        mActivity!!.runOnUiThread {
-            mActivity!!.window.addFlags(
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-            )
-        }
-        waitInMilliseconds(2000)
     }
 }

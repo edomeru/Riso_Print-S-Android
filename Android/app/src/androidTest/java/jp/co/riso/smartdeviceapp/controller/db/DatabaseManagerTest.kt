@@ -5,37 +5,37 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
-import android.test.AndroidTestCase
 import android.test.RenamingDelegatingContext
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.Companion.getBooleanFromCursor
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.Companion.getIntFromCursor
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.Companion.getStringFromCursor
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import junit.framework.TestCase
+import org.junit.Before
+import org.junit.Test
 
-class DatabaseManagerTest : AndroidTestCase() {
+class DatabaseManagerTest : BaseActivityTestUtil() {
     private var mDBManager: DatabaseManager? = null
     private val printerName = "Printer name1"
     private val printerName2 = "Printer name 2"
     private val printerIP = "192.168.1.1"
     private val printerId = 1
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-        val context: Context = RenamingDelegatingContext(context, "test_")
+
+    @Before
+    fun setUp() {
+        val context: Context = RenamingDelegatingContext(SmartDeviceApp.appContext, "test_")
         mDBManager = DatabaseManager(context)
     }
 
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
-
+    @Test
     fun testPreConditions() {
         TestCase.assertNotNull(mDBManager)
         TestCase.assertEquals(mDBManager!!.databaseName, "SmartDeviceAppDB.sqlite")
     }
 
+    @Test
     fun testCreate() {
         val db = SQLiteDatabase.create(null)
         mDBManager!!.onCreate(db)
@@ -49,12 +49,12 @@ class DatabaseManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testInsert() {
         var db = mDBManager!!.writableDatabase
         val initialCount: Int
-        var cursor: Cursor
         val result: Boolean
-        cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
+        var cursor: Cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         initialCount = cursor.count
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_NAME, "Printer name")
@@ -68,9 +68,9 @@ class DatabaseManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testInsert_Fail() {
         var db = mDBManager!!.writableDatabase
-        val cursor: Cursor
         val result: Boolean
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         db.close()
@@ -83,16 +83,16 @@ class DatabaseManagerTest : AndroidTestCase() {
         result = mDBManager!!.insert(KEY_SQL_PRINTJOB_TABLE, null, values)
         TestCase.assertFalse(result)
         db = mDBManager!!.readableDatabase
-        cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
+        val cursor: Cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(0, cursor.count)
         cursor.close()
         db.close()
     }
 
+    @Test
     fun testInsertOrReplace() {
         var db = mDBManager!!.writableDatabase
-        var cursor: Cursor
         var row: Long
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         db.close()
@@ -104,7 +104,7 @@ class DatabaseManagerTest : AndroidTestCase() {
         row = mDBManager!!.insertOrReplace(KEY_SQL_PRINTER_TABLE, null, values)
         TestCase.assertTrue(row > -1)
         db = mDBManager!!.readableDatabase
-        cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
+        var cursor: Cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(1, cursor.count)
         cursor.moveToFirst()
@@ -140,9 +140,9 @@ class DatabaseManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testInsertOrReplace_Fail() {
         var db = mDBManager!!.writableDatabase
-        val cursor: Cursor
         val row: Long
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         db.close()
@@ -155,16 +155,16 @@ class DatabaseManagerTest : AndroidTestCase() {
         row = mDBManager!!.insertOrReplace(KEY_SQL_PRINTJOB_TABLE, null, values)
         TestCase.assertEquals(-1, row)
         db = mDBManager!!.readableDatabase
-        cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
+        val cursor: Cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(0, cursor.count)
         cursor.close()
         db.close()
     }
 
+    @Test
     fun testUpdate() {
         var db = mDBManager!!.writableDatabase
-        val cursor: Cursor
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_ID, printerId)
@@ -179,7 +179,7 @@ class DatabaseManagerTest : AndroidTestCase() {
         )
         TestCase.assertTrue(result)
         db = mDBManager!!.readableDatabase
-        cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
+        val cursor: Cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(1, cursor.count)
         cursor.moveToFirst()
@@ -195,9 +195,9 @@ class DatabaseManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testUpdate_Fail() {
         var db = mDBManager!!.writableDatabase
-        val cursor: Cursor
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         db.close()
         val values = ContentValues()
@@ -210,13 +210,14 @@ class DatabaseManagerTest : AndroidTestCase() {
         )
         TestCase.assertFalse(result)
         db = mDBManager!!.readableDatabase
-        cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
+        val cursor: Cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(0, cursor.count)
         cursor.close()
         db.close()
     }
 
+    @Test
     fun testQuery() {
         val db = mDBManager!!.writableDatabase
         var c1: Cursor? = null
@@ -293,6 +294,7 @@ class DatabaseManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testDelete_All() {
         val initialCount: Int
         var cursor: Cursor
@@ -319,6 +321,7 @@ class DatabaseManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testDelete_WithSelection() {
         val initialCount: Int
         var cursor: Cursor
@@ -350,6 +353,7 @@ class DatabaseManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testGetString() {
         val cursor: Cursor
 
@@ -373,6 +377,7 @@ class DatabaseManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testGetInt() {
         val cursor: Cursor
         //initialize data
@@ -395,6 +400,7 @@ class DatabaseManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testGetBoolean() {
         val cursor: Cursor
         //initialize data

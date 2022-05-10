@@ -61,7 +61,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // Tests - newArray
     // ================================================================================
     fun testNewArray_Parcel() {
-        val printer: Array<Printer> = Printer.CREATOR.newArray(2) as Array<Printer>
+        val printer: Array<out Printer?>? = Printer.CREATOR.newArray(2)
         assertNotNull(printer)
     }
 

@@ -2,173 +2,165 @@ package jp.co.riso.android.os.pauseablehandler
 
 import android.os.Looper
 import android.os.Message
-import android.test.ActivityInstrumentationTestCase2
 import android.util.Log
-import jp.co.riso.smartdeviceapp.view.MainActivity
+import androidx.test.platform.app.InstrumentationRegistry
 import junit.framework.TestCase
+import org.junit.Test
 
-class PauseableHandlerCallbackTest : ActivityInstrumentationTestCase2<MainActivity> {
-    private var mCallback: MockCallback? = null
-    private var mMessageProcessed = false
-    private var mMessageStored = false
-    private var mHandler: PauseableHandler? = null
+class PauseableHandlerCallbackTest {
+    private var _callback: MockCallback? = null
+    private var _messageProcessed = false
+    private var _messageStored = false
+    private var _handler: PauseableHandler? = null
 
-    constructor() : super(MainActivity::class.java) {}
-    constructor(activityClass: Class<MainActivity?>?) : super(activityClass) {}
-
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-        mCallback = null
-        mMessageProcessed = false
-        mMessageStored = false
-    }
-
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
-
+    @Test
     fun testConstructor_WithCallback() {
-        mCallback = MockCallback()
-        instrumentation.runOnMainSync {
-            val handler = PauseableHandler(Looper.myLooper(), mCallback)
+        _callback = MockCallback()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            val handler = PauseableHandler(Looper.myLooper(), _callback)
             TestCase.assertNotNull(handler)
         }
     }
 
+    @Test
     fun testHasStoredMessage() {
-        mCallback = MockCallback()
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), mCallback)
-            val msg = Message.obtain(mHandler, MESSAGE_FORSTORING)
-            mHandler!!.sendMessage(msg)
-            TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
+        _callback = MockCallback()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), _callback)
+            val msg = Message.obtain(_handler, MESSAGE_FORSTORING)
+            _handler!!.sendMessage(msg)
+            TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
         }
     }
 
+    @Test
     fun testHasStoredMessage_Pause() {
-        mCallback = MockCallback()
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), mCallback)
-            var msg = Message.obtain(mHandler, MESSAGE_FORSTORING)
-            mHandler!!.pause()
-            mHandler!!.sendMessage(msg!!)
-            TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-            msg = Message.obtain(mHandler, MESSAGE_FORSTORING_2)
-            mHandler!!.sendMessage(msg)
-            TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING_2))
+        _callback = MockCallback()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), _callback)
+            var msg = Message.obtain(_handler, MESSAGE_FORSTORING)
+            _handler!!.pause()
+            _handler!!.sendMessage(msg!!)
+            TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+            msg = Message.obtain(_handler, MESSAGE_FORSTORING_2)
+            _handler!!.sendMessage(msg)
+            TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING_2))
         }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageStored)
-        TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-        TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING_2))
-        instrumentation.runOnMainSync { mHandler!!.resume() }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageProcessed)
-        TestCase.assertFalse(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-        TestCase.assertFalse(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING_2))
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageStored)
+        TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+        TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING_2))
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { _handler!!.resume() }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageProcessed)
+        TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+        TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE_FORSTORING_2))
     }
 
+    @Test
     fun testHandleMessage() {
-        mCallback = MockCallback()
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), mCallback)
-            val msg = Message.obtain(mHandler, MESSAGE_DONOTSTORE)
-            mHandler!!.sendMessage(msg) //will call handleMessage
-            TestCase.assertTrue(mHandler!!.hasMessages(MESSAGE_DONOTSTORE))
+        _callback = MockCallback()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), _callback)
+            val msg = Message.obtain(_handler, MESSAGE_DONOTSTORE)
+            _handler!!.sendMessage(msg) //will call handleMessage
+            TestCase.assertTrue(_handler!!.hasMessages(MESSAGE_DONOTSTORE))
         }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageProcessed)
-        TestCase.assertFalse(mHandler!!.hasMessages(MESSAGE_DONOTSTORE))
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageProcessed)
+        TestCase.assertFalse(_handler!!.hasMessages(MESSAGE_DONOTSTORE))
     }
 
+    @Test
     fun testHandleMessage_WithDelay() {
-        mCallback = MockCallback()
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), mCallback)
-            val msg = Message.obtain(mHandler, MESSAGE_DONOTSTORE)
-            mHandler!!.sendMessageDelayed(msg, 1000) //will call handleMessage
-            TestCase.assertTrue(mHandler!!.hasMessages(MESSAGE_DONOTSTORE))
+        _callback = MockCallback()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), _callback)
+            val msg = Message.obtain(_handler, MESSAGE_DONOTSTORE)
+            _handler!!.sendMessageDelayed(msg, 1000) //will call handleMessage
+            TestCase.assertTrue(_handler!!.hasMessages(MESSAGE_DONOTSTORE))
         }
         try {
             Thread.sleep(1000)
         } catch (e: InterruptedException) {
             Log.d("PauseableHandlerCallbackTest", e.message!!)
         }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageProcessed)
-        TestCase.assertFalse(mHandler!!.hasStoredMessage(MESSAGE_DONOTSTORE))
-        TestCase.assertFalse(mHandler!!.hasMessages(MESSAGE_DONOTSTORE))
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageProcessed)
+        TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE_DONOTSTORE))
+        TestCase.assertFalse(_handler!!.hasMessages(MESSAGE_DONOTSTORE))
     }
 
+    @Test
     fun testHandleMessage_PauseResume() {
-        mCallback = MockCallback()
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), mCallback)
-            val msg = Message.obtain(mHandler, MESSAGE_FORSTORING)
-            mHandler!!.pause()
-            mHandler!!.sendMessage(msg)
-            TestCase.assertTrue(mHandler!!.hasMessages(MESSAGE_FORSTORING))
+        _callback = MockCallback()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), _callback)
+            val msg = Message.obtain(_handler, MESSAGE_FORSTORING)
+            _handler!!.pause()
+            _handler!!.sendMessage(msg)
+            TestCase.assertTrue(_handler!!.hasMessages(MESSAGE_FORSTORING))
         }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageStored)
-        TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-        instrumentation.runOnMainSync { mHandler!!.resume() }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageProcessed)
-        TestCase.assertFalse(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-        TestCase.assertFalse(mHandler!!.hasMessages(MESSAGE_FORSTORING))
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageStored)
+        TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { _handler!!.resume() }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageProcessed)
+        TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+        TestCase.assertFalse(_handler!!.hasMessages(MESSAGE_FORSTORING))
     }
 
+    @Test
     fun testHandleMessage_PauseWithDelay() {
-        mCallback = MockCallback()
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), mCallback)
-            val msg = Message.obtain(mHandler, MESSAGE_FORSTORING)
-            mHandler!!.pause()
-            mHandler!!.sendMessageDelayed(msg, 1000)
-            TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-            TestCase.assertTrue(mHandler!!.hasMessages(MESSAGE_FORSTORING))
+        _callback = MockCallback()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), _callback)
+            val msg = Message.obtain(_handler, MESSAGE_FORSTORING)
+            _handler!!.pause()
+            _handler!!.sendMessageDelayed(msg, 1000)
+            TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+            TestCase.assertTrue(_handler!!.hasMessages(MESSAGE_FORSTORING))
         }
         try {
             Thread.sleep(1000)
         } catch (e: InterruptedException) {
             Log.d(TAG, e.message!!)
         }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageStored)
-        TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-        instrumentation.runOnMainSync { mHandler!!.resume() }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageProcessed)
-        TestCase.assertFalse(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-        TestCase.assertFalse(mHandler!!.hasMessages(MESSAGE_FORSTORING))
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageStored)
+        TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { _handler!!.resume() }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageProcessed)
+        TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+        TestCase.assertFalse(_handler!!.hasMessages(MESSAGE_FORSTORING))
     }
 
+    @Test
     fun testHandleMessage_WithDelayBeforePause() {
-        mCallback = MockCallback()
-        instrumentation.runOnMainSync {
-            mHandler = PauseableHandler(Looper.myLooper(), mCallback)
-            val msg = Message.obtain(mHandler, MESSAGE_FORSTORING)
-            mHandler!!.sendMessageDelayed(msg, 1000)
-            TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-            TestCase.assertTrue(mHandler!!.hasMessages(MESSAGE_FORSTORING))
-            mHandler!!.pause()
+        _callback = MockCallback()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), _callback)
+            val msg = Message.obtain(_handler, MESSAGE_FORSTORING)
+            _handler!!.sendMessageDelayed(msg, 1000)
+            TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+            TestCase.assertTrue(_handler!!.hasMessages(MESSAGE_FORSTORING))
+            _handler!!.pause()
         }
         try {
             Thread.sleep(1000)
         } catch (e: InterruptedException) {
             Log.d("PauseableHandlerCallbackTest", e.message!!)
         }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageStored)
-        TestCase.assertTrue(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-        instrumentation.runOnMainSync { mHandler!!.resume() }
-        instrumentation.waitForIdleSync()
-        TestCase.assertTrue(mMessageProcessed)
-        TestCase.assertFalse(mHandler!!.hasStoredMessage(MESSAGE_FORSTORING))
-        TestCase.assertFalse(mHandler!!.hasMessages(MESSAGE_FORSTORING))
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageStored)
+        TestCase.assertTrue(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { _handler!!.resume() }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertTrue(_messageProcessed)
+        TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE_FORSTORING))
+        TestCase.assertFalse(_handler!!.hasMessages(MESSAGE_FORSTORING))
     }
 
     //================================================================================
@@ -176,12 +168,12 @@ class PauseableHandlerCallbackTest : ActivityInstrumentationTestCase2<MainActivi
     //================================================================================
     private inner class MockCallback : PauseableHandlerCallback {
         override fun storeMessage(message: Message?): Boolean {
-            mMessageStored = true
+            _messageStored = true
             return true
         }
 
         override fun processMessage(message: Message?) {
-            mMessageProcessed = true
+            _messageProcessed = true
         }
     }
 

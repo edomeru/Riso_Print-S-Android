@@ -5,13 +5,14 @@ import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback
 import junit.framework.TestCase
+import org.junit.Test
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     val mSignal = CountDownLatch(1)
-    val TIMEOUT = 15
+    private val _timeout = 15
     private var mSnmpManager: SNMPManager? = null
     private var mOnEndDiscovery = false
     private var mOnFoundDevice = false
@@ -36,6 +37,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     // ================================================================================
     // Tests - setCallback
     // ================================================================================
+    @Test
     fun testSetCallback_ValidCallback() {
         try {
             mSnmpManager!!.setCallback(this)
@@ -44,6 +46,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         }
     }
 
+    @Test
     fun testSetCallback_NullCallback() {
         try {
             mSnmpManager!!.setCallback(null)
@@ -55,6 +58,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     // ================================================================================
     // Tests - deviceDiscovery
     // ================================================================================
+    @Test
     fun testDeviceDiscovery() {
         // if test fails, make sure there are online printers available in network
         if (appContext!!.packageManager.hasSystemFeature(AppConstants.CHROME_BOOK)) {
@@ -62,7 +66,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         }
         try {
             mSnmpManager!!.deviceDiscovery()
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            mSignal.await(_timeout.toLong(), TimeUnit.SECONDS)
             assertEquals(true, mOnFoundDevice)
             assertEquals(true, mOnEndDiscovery)
         } catch (e: Exception) {
@@ -78,7 +82,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         try {
             mSnmpManager.manualDiscovery(IPV4_ONLINE_RISO_PRINTER_ADDRESS);
 
-            mSignal.await(TIMEOUT, TimeUnit.SECONDS);
+            mSignal.await(_timeout, TimeUnit.SECONDS);
 
             assertEquals(true, mOnFoundDevice);
             assertEquals(true, mOnEndDiscovery);
@@ -91,7 +95,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         try {
             mSnmpManager.manualDiscovery(IPV4_ONLINE_NONRISO_PRINTER_ADDRESS);
 
-            mSignal.await(TIMEOUT, TimeUnit.SECONDS);
+            mSignal.await(_timeout, TimeUnit.SECONDS);
 
             assertEquals(true, mOnFoundDevice);
             assertEquals(true, mOnEndDiscovery);
@@ -100,10 +104,11 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         }
     }
     */
+    @Test
     fun testManualDiscovery_OfflinePrinter() {
         try {
             mSnmpManager!!.manualDiscovery(IPV4_OFFLINE_PRINTER_ADDRESS)
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            mSignal.await(_timeout.toLong(), TimeUnit.SECONDS)
             assertEquals(true, mOnEndDiscovery)
             assertEquals(false, mOnFoundDevice)
         } catch (e: Exception) {
@@ -114,6 +119,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     // ================================================================================
     // Tests - cancel
     // ================================================================================
+    @Test
     fun testCancel_DuringIdle() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Test case causes test app to crash in Android 8
@@ -126,6 +132,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         }
     }
 
+    @Test
     fun testCancel_DuringAutoSearch() {
         try {
             val timer = Timer()
@@ -135,13 +142,14 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
                 }
             }, 1000)
             mSnmpManager!!.deviceDiscovery()
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            mSignal.await(_timeout.toLong(), TimeUnit.SECONDS)
             assertEquals(false, mOnEndDiscovery)
         } catch (e: Exception) {
             fail() // Error should not be thrown
         }
     }
 
+    @Test
     fun testCancel_DuringManualSearch() {
         try {
             val timer = Timer()
@@ -152,7 +160,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
                 }
             }, 1000)
             mSnmpManager!!.manualDiscovery(IPV4_OFFLINE_PRINTER_ADDRESS)
-            mSignal.await(TIMEOUT.toLong(), TimeUnit.SECONDS)
+            mSignal.await(_timeout.toLong(), TimeUnit.SECONDS)
             assertEquals(false, mOnEndDiscovery)
         } catch (e: Exception) {
             fail() // Error should not be thrown
@@ -162,6 +170,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     // ================================================================================
     // Tests - finalizeSNMPManager
     // ================================================================================
+    @Test
     fun testFinalizeSNMPManager_DuringIdle() {
         try {
             mSnmpManager!!.finalizeSNMPManager()

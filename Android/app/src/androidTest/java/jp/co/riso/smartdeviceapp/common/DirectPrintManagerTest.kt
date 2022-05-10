@@ -1,37 +1,29 @@
 package jp.co.riso.smartdeviceapp.common
 
-import android.test.ActivityInstrumentationTestCase2
 import androidx.preference.PreferenceManager
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback
-import jp.co.riso.smartdeviceapp.view.MainActivity
 import junit.framework.TestCase
+import org.junit.Before
+import org.junit.Test
 
-class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
-    private var mgr: DirectPrintManager? = null
-
-    constructor() : super(MainActivity::class.java) {}
-    constructor(activityClass: Class<MainActivity?>?) : super(activityClass) {}
-
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-        mgr = DirectPrintManager()
+class DirectPrintManagerTest {
+    private var _mgr: DirectPrintManager? = null
+    
+    @Before
+    fun setUp() {
+        _mgr = DirectPrintManager()
     }
-
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
-
+    
     // ================================================================================
     // Tests - executeLPRPrint
     // ================================================================================
+    @Test
     fun testDirectPrint_ValidCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.executeLPRPrint(
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeLPRPrint(
             "printerName",
             "appName",
             "appVersion",
@@ -42,7 +34,7 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
             "192.168.1.206",
             "hostname"
         )
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -50,14 +42,15 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertTrue(callback.mCalled)
+        TestCase.assertTrue(callback.called)
     }
 
+    @Test
     fun testDirectPrint_NullParameterValidCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.executeLPRPrint(null, null, null, null, null, null, null, null, null)
-        while (mgr!!.isPrinting) {
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeLPRPrint(null, null, null, null, null, null, null, null, null)
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -65,14 +58,15 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testDirectPrint_EmptyParametersValidCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.executeLPRPrint("", "", "", "", "", "", "", "", "")
-        while (mgr!!.isPrinting) {
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeLPRPrint("", "", "", "", "", "", "", "", "")
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -80,13 +74,14 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testDirectPrint_NullCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(null)
-        mgr!!.executeLPRPrint(
+        _mgr!!.setCallback(null)
+        _mgr!!.executeLPRPrint(
             "printerName",
             "appName",
             "appVersion",
@@ -99,7 +94,7 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
         )
 
         //wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -107,16 +102,17 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testDirectPrint_NullParameterNullCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(null)
-        mgr!!.executeLPRPrint(null, null, null, null, null, null, null, null, null)
+        _mgr!!.setCallback(null)
+        _mgr!!.executeLPRPrint(null, null, null, null, null, null, null, null, null)
 
         // wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             // wait for response
             try {
                 Thread.sleep(100)
@@ -124,16 +120,17 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testDirectPrint_EmptyParametersNullCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(null)
-        mgr!!.executeLPRPrint("", "", "", "", "", "", "", "", "")
+        _mgr!!.setCallback(null)
+        _mgr!!.executeLPRPrint("", "", "", "", "", "", "", "", "")
 
         // wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             // wait for response
             try {
                 Thread.sleep(100)
@@ -141,9 +138,10 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testDirectPrint_JobIDIncrement() {
         // Set Job ID
         val preferences = PreferenceManager.getDefaultSharedPreferences(appContext)
@@ -154,8 +152,8 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
         )
         editor.commit()
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.executeLPRPrint(
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeLPRPrint(
             "printerName",
             "appName",
             "appVersion",
@@ -168,7 +166,7 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
         )
 
         //wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -183,6 +181,7 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertNotSame(newJobNum, AppConstants.PREF_DEFAULT_JOB_NUMBER_COUNTER)
     }
 
+    @Test
     fun testDirectPrint_JobIDMaxNumber() {
         // Set Job ID
         val preferences = PreferenceManager.getDefaultSharedPreferences(appContext)
@@ -190,8 +189,8 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
         editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.CONST_MAX_JOB_NUMBER)
         editor.commit()
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.executeLPRPrint(
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeLPRPrint(
             "printerName",
             "appName",
             "appVersion",
@@ -204,7 +203,7 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
         )
 
         //wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -223,10 +222,11 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
     // ================================================================================
     // Tests - executeRAWPrint
     // ================================================================================
+    @Test
     fun testRawPrint_ValidCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.executeRAWPrint(
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeRAWPrint(
             "printerName",
             "appName",
             "appVersion",
@@ -237,7 +237,7 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
             "192.168.1.206",
             "hostname"
         )
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -245,14 +245,15 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertTrue(callback.mCalled)
+        TestCase.assertTrue(callback.called)
     }
 
+    @Test
     fun testRawPrint_NullParameterValidCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.executeRAWPrint(null, null, null, null, null, null, null, null, null)
-        while (mgr!!.isPrinting) {
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeRAWPrint(null, null, null, null, null, null, null, null, null)
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -260,14 +261,15 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testRawPrint_EmptyParametersValidCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.executeRAWPrint("", "", "", "", "", "", "", "", "")
-        while (mgr!!.isPrinting) {
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeRAWPrint("", "", "", "", "", "", "", "", "")
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -275,13 +277,14 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testRawPrint_NullCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(null)
-        mgr!!.executeRAWPrint(
+        _mgr!!.setCallback(null)
+        _mgr!!.executeRAWPrint(
             "printerName",
             "appName",
             "appVersion",
@@ -294,7 +297,7 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
         )
 
         //wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -302,16 +305,17 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testRawPrint_NullParameterNullCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(null)
-        mgr!!.executeRAWPrint(null, null, null, null, null, null, null, null, null)
+        _mgr!!.setCallback(null)
+        _mgr!!.executeRAWPrint(null, null, null, null, null, null, null, null, null)
 
         // wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             // wait for response
             try {
                 Thread.sleep(100)
@@ -319,16 +323,17 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testRawPrint_EmptyParametersNullCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(null)
-        mgr!!.executeRAWPrint("", "", "", "", "", "", "", "", "")
+        _mgr!!.setCallback(null)
+        _mgr!!.executeRAWPrint("", "", "", "", "", "", "", "", "")
 
         // wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             // wait for response
             try {
                 Thread.sleep(100)
@@ -336,16 +341,17 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
     // ================================================================================
     // Tests - sendCancelCommand
     // ================================================================================
+    @Test
     fun testSendCancelCommand() {
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.executeLPRPrint(
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeLPRPrint(
             "printerName",
             "appName",
             "appVersion",
@@ -356,11 +362,11 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
             "192.168.1.206",
             "hostname"
         )
-        TestCase.assertFalse(callback.mCalled)
-        mgr!!.sendCancelCommand()
+        TestCase.assertFalse(callback.called)
+        _mgr!!.sendCancelCommand()
 
         //wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -368,13 +374,14 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun testSendCancelCommand_NullCallback() {
         val callback = MockCallback()
-        mgr!!.setCallback(null)
-        mgr!!.executeLPRPrint(
+        _mgr!!.setCallback(null)
+        _mgr!!.executeLPRPrint(
             "printerName",
             "appName",
             "appVersion",
@@ -385,11 +392,11 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
             "192.168.1.206",
             "hostname"
         )
-        TestCase.assertFalse(callback.mCalled)
-        mgr!!.sendCancelCommand()
+        TestCase.assertFalse(callback.called)
+        _mgr!!.sendCancelCommand()
 
         //wait for response
-        while (mgr!!.isPrinting) {
+        while (_mgr!!.isPrinting) {
             //wait for response
             try {
                 Thread.sleep(100)
@@ -397,22 +404,23 @@ class DirectPrintManagerTest : ActivityInstrumentationTestCase2<MainActivity> {
                 TestCase.fail(e.toString())
             }
         }
-        TestCase.assertFalse(callback.mCalled)
+        TestCase.assertFalse(callback.called)
     }
 
+    @Test
     fun test_SendCancelCommand_WithoutPrinting() {
         val callback = MockCallback()
-        mgr!!.setCallback(callback)
-        mgr!!.sendCancelCommand()
+        _mgr!!.setCallback(callback)
+        _mgr!!.sendCancelCommand()
     }
 
     //================================================================================
     // Internal Classes
     //================================================================================
     private class MockCallback : DirectPrintCallback {
-        var mCalled = false
+        var called = false
         override fun onNotifyProgress(manager: DirectPrintManager?, status: Int, progress: Float) {
-            mCalled = true
+            called = true
         }
     }
 }

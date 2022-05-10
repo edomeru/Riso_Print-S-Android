@@ -1,7 +1,5 @@
 package jp.co.riso.android.util
 
-import android.test.ActivityInstrumentationTestCase2
-import android.test.UiThreadTest
 import jp.co.riso.android.util.Logger.getLogString
 import jp.co.riso.android.util.Logger.initialize
 import jp.co.riso.android.util.Logger.logAssert
@@ -14,28 +12,18 @@ import jp.co.riso.android.util.Logger.logVerbose
 import jp.co.riso.android.util.Logger.logWarn
 import jp.co.riso.android.util.Logger.runDeleteTask
 import jp.co.riso.android.util.Logger.writeToFile
-import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import junit.framework.TestCase
+import org.junit.Test
 
-class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
-    constructor() : super(MainActivity::class.java) {}
-    constructor(activityClass: Class<MainActivity?>?) : super(activityClass) {}
-
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-    }
-
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
+class LoggerTest : BaseActivityTestUtil() {
 
     //================================================================================
     // Test Logs
     //================================================================================
+    @Test
     fun testLogs() {
-        initialize(Logger.LOGLEVEL_VERBOSE, false, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = false, perfLogsToFile = false)
         try {
             logVerbose(LoggerTest::class.java, "Log Message")
             logWarn(LoggerTest::class.java, "Log Message")
@@ -48,8 +36,9 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testLogs_Off() {
-        initialize(Logger.LOGLEVEL_NONE, false, false)
+        initialize(Logger.LOGLEVEL_NONE, perfLogs = false, perfLogsToFile = false)
         try {
             logVerbose(LoggerTest::class.java, "Log Message")
             logWarn(LoggerTest::class.java, "Log Message")
@@ -62,8 +51,9 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testLogs_NullClass() {
-        initialize(Logger.LOGLEVEL_VERBOSE, false, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = false, perfLogsToFile = false)
         try {
             logVerbose(null, "Log Message")
             logWarn(null, "Log Message")
@@ -76,8 +66,9 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testLogs_WithParameters() {
-        initialize(Logger.LOGLEVEL_VERBOSE, false, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = false, perfLogsToFile = false)
         try {
             logVerbose(LoggerTest::class.java, "Log Message %d", 123)
             logWarn(LoggerTest::class.java, "Log Message %d", 123)
@@ -90,8 +81,9 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testLogs_WithInvalidParameters() {
-        initialize(Logger.LOGLEVEL_VERBOSE, false, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = false, perfLogsToFile = false)
         try {
             logVerbose(LoggerTest::class.java, "Log Message %d", "asd")
             logWarn(LoggerTest::class.java, "Log Message %d", "asd")
@@ -104,8 +96,9 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testLogs_WithParamInvalidFormat() {
-        initialize(Logger.LOGLEVEL_VERBOSE, false, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = false, perfLogsToFile = false)
         try {
             logVerbose(LoggerTest::class.java, "Log Message", "asd")
             logWarn(LoggerTest::class.java, "Log Message", "asd")
@@ -118,8 +111,9 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testLogs_WithIncompleteFormat() {
-        initialize(Logger.LOGLEVEL_VERBOSE, false, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = false, perfLogsToFile = false)
         try {
             logVerbose(LoggerTest::class.java, "Log Message %d")
             logWarn(LoggerTest::class.java, "Log Message %d")
@@ -132,8 +126,9 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testLogs_WithMoreParam() {
-        initialize(Logger.LOGLEVEL_VERBOSE, false, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = false, perfLogsToFile = false)
         try {
             logVerbose(LoggerTest::class.java, "Log Message %d", 123, "asd")
             logWarn(LoggerTest::class.java, "Log Message %d", 123, "asd")
@@ -146,8 +141,9 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testLogs_NullFormat() {
-        initialize(Logger.LOGLEVEL_VERBOSE, false, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = false, perfLogsToFile = false)
         try {
             logVerbose(LoggerTest::class.java, null, 123, "asd")
             logWarn(LoggerTest::class.java, null, 123, "asd")
@@ -166,32 +162,35 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Test Start Stop Time
     //================================================================================
+    @Test
     fun testStartStopTime() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = false)
         try {
-            logStartTime(activity, LoggerTest::class.java, "PROCESS1")
+            logStartTime(mainActivity, LoggerTest::class.java, "PROCESS1")
             Thread.sleep(500)
-            logStopTime(activity, LoggerTest::class.java, "PROCESS1")
+            logStopTime(mainActivity, LoggerTest::class.java, "PROCESS1")
         } catch (e: InterruptedException) {
         } catch (e: Exception) {
             TestCase.fail("Should not throw any exception")
         }
     }
 
+    @Test
     fun testStartStopTime_Off() {
-        initialize(Logger.LOGLEVEL_VERBOSE, false, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = false, perfLogsToFile = false)
         try {
-            logStartTime(activity, LoggerTest::class.java, "PROCESS1")
+            logStartTime(mainActivity, LoggerTest::class.java, "PROCESS1")
             Thread.sleep(500)
-            logStopTime(activity, LoggerTest::class.java, "PROCESS1")
+            logStopTime(mainActivity, LoggerTest::class.java, "PROCESS1")
         } catch (e: InterruptedException) {
         } catch (e: Exception) {
             TestCase.fail("Should not throw any exception")
         }
     }
 
+    @Test
     fun testStartStopTime_invalidContext() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = false)
         try {
             logStartTime(null, LoggerTest::class.java, "PROCESS1")
             Thread.sleep(500)
@@ -202,118 +201,126 @@ class LoggerTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testStartStopTime_InvalidClass() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = false)
         try {
-            logStartTime(activity, null, "PROCESS1")
+            logStartTime(mainActivity, null, "PROCESS1")
             Thread.sleep(500)
-            logStopTime(activity, null, "PROCESS1")
+            logStopTime(mainActivity, null, "PROCESS1")
         } catch (e: InterruptedException) {
         } catch (e: Exception) {
             TestCase.fail("Should not throw any exception")
         }
     }
 
+    @Test
     fun testStartStopTime_InvalidProcess() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = false)
         try {
-            logStartTime(activity, LoggerTest::class.java, null)
+            logStartTime(mainActivity, LoggerTest::class.java, null)
             Thread.sleep(500)
-            logStopTime(activity, LoggerTest::class.java, null)
+            logStopTime(mainActivity, LoggerTest::class.java, null)
         } catch (e: InterruptedException) {
         } catch (e: Exception) {
             TestCase.fail("Should not throw any exception")
         }
     }
 
+    @Test
     fun testStartStopTime_EmptyProcess() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, false)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = false)
         try {
-            logStartTime(activity, LoggerTest::class.java, "")
+            logStartTime(mainActivity, LoggerTest::class.java, "")
             Thread.sleep(500)
-            logStopTime(activity, LoggerTest::class.java, "")
+            logStopTime(mainActivity, LoggerTest::class.java, "")
         } catch (e: InterruptedException) {
         } catch (e: Exception) {
             TestCase.fail("Should not throw any exception")
         }
     }
 
+    @Test
     fun testStartStopTime_StartTwice() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, true)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = true)
         try {
-            logStartTime(activity, LoggerTest::class.java, "PROCESS1")
+            logStartTime(mainActivity, LoggerTest::class.java, "PROCESS1")
             Thread.sleep(500)
-            logStartTime(activity, LoggerTest::class.java, "PROCESS1")
+            logStartTime(mainActivity, LoggerTest::class.java, "PROCESS1")
             Thread.sleep(500)
-            logStopTime(activity, LoggerTest::class.java, "PROCESS1")
-            TestCase.assertTrue(getLogString(activity) != null)
+            logStopTime(mainActivity, LoggerTest::class.java, "PROCESS1")
+            TestCase.assertTrue(getLogString(mainActivity) != null)
         } catch (e: InterruptedException) {
         } catch (e: Exception) {
             TestCase.fail("Should not throw any exception")
         }
     }
 
+    @Test
     fun testStartStopTime_StopWithoutStart() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, true)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = true)
         try {
-            logStopTime(activity, LoggerTest::class.java, "PROCESS1")
+            logStopTime(mainActivity, LoggerTest::class.java, "PROCESS1")
         } catch (e: Exception) {
             TestCase.fail("Should not throw any exception")
         }
     }
 
+    @Test
     fun testStartStopTime_WriteToFile() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, true)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = true)
         try {
-            logStartTime(activity, LoggerTest::class.java, "PROCESS1")
+            logStartTime(mainActivity, LoggerTest::class.java, "PROCESS1")
             Thread.sleep(1000)
-            logStopTime(activity, LoggerTest::class.java, "PROCESS1")
-            TestCase.assertTrue(getLogString(activity) != null)
+            logStopTime(mainActivity, LoggerTest::class.java, "PROCESS1")
+            TestCase.assertTrue(getLogString(mainActivity) != null)
         } catch (e: InterruptedException) {
         } catch (e: Exception) {
             TestCase.fail("Should not throw any exception")
         }
     }
 
-    @UiThreadTest
+    @Test
     fun testGetLogString() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, true)
-        logStartTime(activity, LoggerTest::class.java, "PROCESS1")
-        TestCase.assertTrue(getLogString(activity) != null)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = true)
+        logStartTime(mainActivity, LoggerTest::class.java, "PROCESS1")
+        TestCase.assertTrue(getLogString(mainActivity) != null)
     }
 
-    @UiThreadTest
+    @Test
     fun testGetLogString_NullContext() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, true)
-        logStartTime(activity, LoggerTest::class.java, "PROCESS1")
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = true)
+        logStartTime(mainActivity, LoggerTest::class.java, "PROCESS1")
         TestCase.assertTrue(getLogString(null) == null)
     }
 
-    @UiThreadTest
+    @Test
     fun testWriteToFile() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, true)
-        writeToFile(activity, "Hello")
-        TestCase.assertTrue(getLogString(activity) != null)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = true)
+        writeToFile(mainActivity, "Hello")
+        TestCase.assertTrue(getLogString(mainActivity) != null)
     }
 
-    @UiThreadTest
+    @Test
     fun testWriteToFile_NullContext() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, true)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = true)
         writeToFile(null, "Hello")
-        TestCase.assertTrue(getLogString(activity) == null)
+        TestCase.assertTrue(getLogString(mainActivity) == null)
     }
 
-    @UiThreadTest
+    @Test
     fun testWriteToFile_NullMessage() {
-        initialize(Logger.LOGLEVEL_VERBOSE, true, true)
-        writeToFile(activity, null)
-        TestCase.assertTrue(getLogString(activity) != null)
+        initialize(Logger.LOGLEVEL_VERBOSE, perfLogs = true, perfLogsToFile = true)
+        writeToFile(mainActivity, null)
+        TestCase.assertTrue(getLogString(mainActivity) != null)
     }
 
+    @Test
     fun testDeleteTask() {
-        runDeleteTask(activity)
+        runDeleteTask(mainActivity)
     }
 
+    @Test
     fun testDeleteTask_NullContext() {
         runDeleteTask(null)
     }

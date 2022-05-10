@@ -1,21 +1,24 @@
 package jp.co.riso.smartdeviceapp.controller.jobs
 
 import android.content.ContentValues
-import android.test.AndroidTestCase
 import android.test.RenamingDelegatingContext
 import android.util.Log
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager.Companion.convertDateToString
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager.Companion.getInstance
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult
 import junit.framework.TestCase
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PrintJobManagerTest : AndroidTestCase() {
+class PrintJobManagerTest {
     private var mSdf: SimpleDateFormat? = null
-    private val mContext: RenamingDelegatingContext? = null
+    private var mContext: RenamingDelegatingContext? = null
     private var mPrintJobManager: PrintJobManager? = null
     private var mManager: DatabaseManager? = null
     private var mPrinterId = -1
@@ -23,13 +26,13 @@ class PrintJobManagerTest : AndroidTestCase() {
     private val mInitialFlag = false
     private val mPrinterName1 = "printer with job"
     private val mPrinterName2 = "printer without job"
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-        mContext = RenamingDelegatingContext(context, "test_")
+
+    @Before
+    fun setUp() {
+        mContext = RenamingDelegatingContext(SmartDeviceApp.appContext, "test_")
         mSdf = SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault())
         mSdf!!.timeZone = TimeZone.getTimeZone(C_TIMEZONE)
-        mPrintJobManager = getInstance(mContext)
+        mPrintJobManager = getInstance(mContext!!)
         mPrintJobManager!!.isRefreshFlag = mInitialFlag
         mManager = DatabaseManager(mContext)
         val db = mManager!!.writableDatabase
@@ -51,9 +54,8 @@ class PrintJobManagerTest : AndroidTestCase() {
         db.close()
     }
 
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
+    @After
+    fun tearDown() {
         // clear data
         val db = mManager!!.writableDatabase
         db.delete(TABLE_PRINTER, null, null)
@@ -61,6 +63,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testPreConditions() {
         TestCase.assertNotNull(mPrintJobManager)
         val db = mManager!!.readableDatabase
@@ -75,10 +78,12 @@ class PrintJobManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testGetInstance() {
-        TestCase.assertEquals(mPrintJobManager, getInstance(mContext))
+        TestCase.assertEquals(mPrintJobManager, mContext?.let { getInstance(it) })
     }
 
+    @Test
     fun testGetPrintJobs_WithData() {
         var db = mManager!!.writableDatabase
         db.delete(TABLE, null, null)
@@ -96,7 +101,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertEquals("Print Job Name", pj[0].name)
         TestCase.assertEquals(JobResult.SUCCESSFUL, pj[0].result)
         TestCase.assertTrue(
-            mSdf!!.format(pj[0].date) ==
+            mSdf!!.format(pj[0].date as Date) ==
                     "2014-03-17 13:12:11"
         )
         db = mManager!!.writableDatabase
@@ -117,10 +122,11 @@ class PrintJobManagerTest : AndroidTestCase() {
         //invalid date uses value of Date(0) = January 1, 1970 00:00:00
         TestCase.assertEquals(
             "1970-01-01 00:00:00",
-            mSdf!!.format(pj[0].date)
+            mSdf!!.format(pj[0].date as Date)
         )
     }
 
+    @Test
     fun testGetPrintJobs_WithoutData() {
         val db = mManager!!.writableDatabase
         //test no data
@@ -131,6 +137,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertEquals(0, pj.size)
     }
 
+    @Test
     fun testGetPrintJobs_Order() {
         mManager!!.writableDatabase
         val db = mManager!!.writableDatabase
@@ -179,6 +186,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         }
     }
 
+    @Test
     fun testGetPrintersWithJobs_EmptyJobs() {
         val db = mManager!!.writableDatabase
         db.delete(TABLE, null, null)
@@ -189,6 +197,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertEquals(0, printers.size)
     }
 
+    @Test
     fun testGetPrintersWithJobs_WithJobs() {
         val newPrinterId = mPrinterId2 + 1
         var db = mManager!!.writableDatabase
@@ -246,6 +255,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertEquals("another printer", printers[1].name)
     }
 
+    @Test
     fun testGetPrintersWithJobs_NewPrinterAdded() {
         var db = mManager!!.writableDatabase
         db.delete(TABLE, null, null)
@@ -281,6 +291,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertEquals(mPrinterName1, printers[0].name)
     }
 
+    @Test
     fun testGetPrintersWithJobs_WithDeletedPrinter() {
         val newPrinterId = mPrinterId2 + 1
         var db = mManager!!.writableDatabase
@@ -332,6 +343,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertEquals(mPrinterName1, printers[0].name)
     }
 
+    @Test
     fun testGetPrintersWithJobs_WithDeletedEmptyPrinter() {
         var db = mManager!!.writableDatabase
         db.delete(TABLE, null, null)
@@ -365,6 +377,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertEquals(mPrinterName1, printers[0].name)
     }
 
+    @Test
     fun testCreatePrintJob() {
         val result: Boolean
         var date: Date? = null
@@ -403,8 +416,8 @@ class PrintJobManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testCreatePrintJob_Max() {
-        val result: Boolean
         var db = mManager!!.writableDatabase
         db.delete(TABLE, null, null)
         for (j in 1..100) {
@@ -416,7 +429,7 @@ class PrintJobManagerTest : AndroidTestCase() {
             db.execSQL(sql)
         }
         db.close()
-        result = mPrintJobManager!!.createPrintJob(
+        val result: Boolean = mPrintJobManager!!.createPrintJob(
             1, "printjob.pdf", Date(),
             JobResult.ERROR
         )
@@ -450,6 +463,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testCreatePrintJob_Invalid() {
         var result: Boolean
         var date: Date? = null
@@ -502,12 +516,12 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertFalse(result)
     }
 
+    @Test
     fun testCreatePrintJob_NullValues() {
-        val result: Boolean
         var db = mManager!!.writableDatabase
         db.delete(TABLE, null, null)
         db.close()
-        result = mPrintJobManager!!.createPrintJob(
+        val result: Boolean = mPrintJobManager!!.createPrintJob(
             mPrinterId, null, null,
             JobResult.ERROR
         )
@@ -532,16 +546,19 @@ class PrintJobManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testDeleteWithPrinterId_Invalid() {
         val result = mPrintJobManager!!.deleteWithPrinterId(-1)
         TestCase.assertFalse(result)
     }
 
+    @Test
     fun testDeleteWithJobId_Invalid() {
         val result = mPrintJobManager!!.deleteWithJobId(-1)
         TestCase.assertFalse(result)
     }
 
+    @Test
     fun testDeleteWithPrinterId_Empty() {
         val db = mManager!!.writableDatabase
         db.delete(TABLE, null, null)
@@ -550,6 +567,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertFalse(result)
     }
 
+    @Test
     fun testDeleteWithJobId_Empty() {
         val db = mManager!!.writableDatabase
         db.delete(TABLE, null, null)
@@ -558,6 +576,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         TestCase.assertFalse(result)
     }
 
+    @Test
     fun testDeleteWithPrinterId() {
         var db = mManager!!.writableDatabase
         db.delete(TABLE, null, null)
@@ -578,6 +597,7 @@ class PrintJobManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testDeleteWithJobId() {
         val jobId = 1
         var db = mManager!!.writableDatabase
@@ -599,10 +619,12 @@ class PrintJobManagerTest : AndroidTestCase() {
         db.close()
     }
 
+    @Test
     fun testGetFlag() {
         TestCase.assertEquals(mInitialFlag, mPrintJobManager!!.isRefreshFlag)
     }
 
+    @Test
     fun testSetFlag() {
         val flag = true
         mPrintJobManager!!.isRefreshFlag = flag

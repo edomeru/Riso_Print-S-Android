@@ -10,7 +10,7 @@ import org.junit.Before
 import org.junit.Test
 
 class PrintersFragmentTest : BaseActivityTestUtil() {
-    var mPrintersFragment: PrintersFragment? = null
+    private var _printersFragment: PrintersFragment? = null
 
     // sleep is needed because drawer calls goes through mHandler
     private fun waitForDrawer() {
@@ -27,19 +27,19 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         val printersFragment = fm.findFragmentById(R.id.mainLayout)
         Assert.assertTrue(printersFragment is PrintersFragment)
-        mPrintersFragment = printersFragment as PrintersFragment?
+        _printersFragment = printersFragment as PrintersFragment?
     }
 
     @Test
     fun testNewInstance() {
-        Assert.assertNotNull(mPrintersFragment)
+        Assert.assertNotNull(_printersFragment)
     }
 
     @Test
     fun testOnClick_AddPrinter() {
         testClick(R.id.menu_id_action_add_button)
         var layoutId = R.id.mainLayout
-        if (mPrintersFragment!!.isTablet) {
+        if (_printersFragment!!.isTablet) {
             waitForDrawer()
             Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
             layoutId = R.id.rightLayout
@@ -47,7 +47,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
         val fm = mainActivity!!.supportFragmentManager
         val addPrinterFragment = fm.findFragmentById(layoutId)
         Assert.assertTrue(addPrinterFragment is AddPrinterFragment)
-        if (mPrintersFragment!!.isTablet) {
+        if (_printersFragment!!.isTablet) {
             testClick(R.id.menu_id_action_add_button)
             waitForDrawer()
             Assert.assertFalse(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
@@ -62,7 +62,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
     fun testOnClick_SearchPrinter() {
         testClick(R.id.menu_id_action_search_button)
         var layoutId = R.id.mainLayout
-        if (mPrintersFragment!!.isTablet) {
+        if (_printersFragment!!.isTablet) {
             waitForDrawer()
             Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
             layoutId = R.id.rightLayout
@@ -70,7 +70,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
         val fm = mainActivity!!.supportFragmentManager
         val searchPrintersFragment = fm.findFragmentById(layoutId)
         Assert.assertTrue(searchPrintersFragment is PrinterSearchFragment)
-        if (mPrintersFragment!!.isTablet) {
+        if (_printersFragment!!.isTablet) {
             testClick(R.id.menu_id_action_search_button)
             waitForDrawer()
             Assert.assertFalse(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
@@ -85,7 +85,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
     fun testOnClick_PrinterSearchSettings() {
         testClick(R.id.menu_id_printer_search_settings_button)
         var layoutId = R.id.mainLayout
-        if (mPrintersFragment!!.isTablet) {
+        if (_printersFragment!!.isTablet) {
             waitForDrawer()
             Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
             layoutId = R.id.rightLayout
@@ -93,7 +93,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
         val fm = mainActivity!!.supportFragmentManager
         val printerSearchSettingsFragment = fm.findFragmentById(layoutId)
         Assert.assertTrue(printerSearchSettingsFragment is PrinterSearchSettingsFragment)
-        if (mPrintersFragment!!.isTablet) {
+        if (_printersFragment!!.isTablet) {
             testClick(R.id.menu_id_printer_search_settings_button)
             waitForDrawer()
             Assert.assertFalse(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
