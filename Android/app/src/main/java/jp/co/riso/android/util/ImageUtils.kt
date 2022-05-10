@@ -1,26 +1,22 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * ImageUtils.java
+ * ImageUtils.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.android.util
 
-import jp.co.riso.android.util.FileUtils.getMimeType
-import jp.co.riso.android.util.ImageUtils
 import android.content.ClipData
 import android.content.Context
 import android.graphics.*
 import android.net.Uri
 import android.os.Build
-import jp.co.riso.smartdeviceapp.AppConstants
-import kotlin.Throws
-import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import androidx.exifinterface.media.ExifInterface
+import jp.co.riso.android.util.FileUtils.getMimeType
+import jp.co.riso.smartdeviceapp.AppConstants
 import java.io.IOException
-import java.util.*
 
 /**
  * @class ImageUtils
@@ -28,8 +24,8 @@ import java.util.*
  * @brief Utility class for image operations
  */
 object ImageUtils {
-    const val A4_WIDTH = 595
-    const val A4_HEIGHT = 842
+    private const val A4_WIDTH = 595
+    private const val A4_HEIGHT = 842
 
     /**
      * @brief Render Bitmap to Canvas.
@@ -165,7 +161,7 @@ object ImageUtils {
      */
     @JvmStatic
     fun isImageFileSupported(context: Context?, uri: Uri?): Boolean {
-        val imageTypes = Arrays.asList(*AppConstants.IMAGE_TYPES)
+        val imageTypes = listOf(*AppConstants.IMAGE_TYPES)
         val contentType = getMimeType(context, uri)
         return imageTypes.contains(contentType)
     }

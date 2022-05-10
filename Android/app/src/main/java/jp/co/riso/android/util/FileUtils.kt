@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * FileUtils.java
+ * FileUtils.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -94,7 +94,7 @@ object FileUtils {
             } else {
                 val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
                 MimeTypeMap.getSingleton()
-                    .getMimeTypeFromExtension(fileExtension.toLowerCase(Locale.getDefault()))
+                    .getMimeTypeFromExtension(fileExtension.lowercase(Locale.getDefault()))
             }
         }
         return mimeType ?: ""
@@ -177,7 +177,7 @@ object FileUtils {
                     }
                 }
             } else if (uri.path != null) {
-                val file = File(uri.path)
+                val file = File(uri.path!!)
                 filesize = file.length().toInt()
             }
         }

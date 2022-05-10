@@ -1,46 +1,44 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrinterSearchAdapter.java
+ * PrinterSearchAdapter.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.view.printers
 
 import android.content.Context
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.isExists
-import android.widget.ArrayAdapter
-import jp.co.riso.smartdeviceapp.view.printers.PrinterSearchAdapter.PrinterSearchAdapterInterface
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import jp.co.riso.smartprint.R
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartprint.R
 
 /**
  * @class PrinterSearchAdapter
  *
  * @brief Array Adapter used for Printers Search Screen
  */
-class PrinterSearchAdapter(context: Context?, private val layoutId: Int, values: List<Printer?>?) :
+class PrinterSearchAdapter(context: Context?, private val _layoutId: Int, values: List<Printer?>?) :
     ArrayAdapter<Printer?>(
-        context!!, layoutId, values!!
+        context!!, _layoutId, values!!
     ), View.OnClickListener {
-    private var mSearchAdapterInterface: PrinterSearchAdapterInterface? = null
-    private val mPrinterManager: PrinterManager?
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+    private var _searchAdapterInterface: PrinterSearchAdapterInterface? = null
+    private val _printerManager: PrinterManager? = getInstance(SmartDeviceApp.appContext!!)
+    override fun getView(position: Int, view: View?, parent: ViewGroup): View {
+        var convertView = view
         val printer = getItem(position)
         val viewHolder: ViewHolder
         if (convertView == null) {
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            convertView = inflater.inflate(layoutId, parent, false)
+            convertView = inflater.inflate(_layoutId, parent, false)
             // AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
             viewHolder = ViewHolder()
         } else {
@@ -67,30 +65,29 @@ class PrinterSearchAdapter(context: Context?, private val layoutId: Int, values:
         if (viewHolder == null || convertView == null || printer == null) {
             return
         }
-        val separator: View
         val printerName = printer.name
-        viewHolder.mPrinterName = convertView.findViewById(R.id.printerText)
-        viewHolder.mIpAddress = convertView.findViewById(R.id.ipAddressText)
-        viewHolder.mAddedIndicator = convertView.findViewById(R.id.addPrinterButton)
-        viewHolder.mPrinterName?.setText(printer.name)
-        viewHolder.mIpAddress?.setText(printer.ipAddress)
-        viewHolder.mAddedIndicator?.setBackgroundResource(R.drawable.selector_printersearch_addprinter)
-        viewHolder.mAddedIndicator?.setTag(position)
-        viewHolder.mAddedIndicator?.setClickable(false)
-        separator = convertView.findViewById(R.id.printers_separator)
+        viewHolder.printerName = convertView.findViewById(R.id.printerText)
+        viewHolder.ipAddress = convertView.findViewById(R.id.ipAddressText)
+        viewHolder.addedIndicator = convertView.findViewById(R.id.addPrinterButton)
+        viewHolder.printerName?.text = printer.name
+        viewHolder.ipAddress?.text = printer.ipAddress
+        viewHolder.addedIndicator?.setBackgroundResource(R.drawable.selector_printersearch_addprinter)
+        viewHolder.addedIndicator?.tag = position
+        viewHolder.addedIndicator?.isClickable = false
+        val separator: View = convertView.findViewById(R.id.printers_separator)
         if (position == count - 1) {
             separator.visibility = View.GONE
         } else {
             separator.visibility = View.VISIBLE
         }
-        if (mPrinterManager!!.isExists(printer)) {
+        if (_printerManager!!.isExists(printer)) {
             convertView.isClickable = false
-            viewHolder.mAddedIndicator?.setActivated(true)
+            viewHolder.addedIndicator?.isActivated = true
         } else {
-            viewHolder.mAddedIndicator?.setActivated(false)
+            viewHolder.addedIndicator?.isActivated = false
         }
         if (printerName!!.isEmpty()) {
-            viewHolder.mPrinterName?.setText(context.resources.getString(R.string.ids_lbl_no_name))
+            viewHolder.printerName?.text = context.resources.getString(R.string.ids_lbl_no_name)
         }
         convertView.setOnClickListener(this)
         convertView.tag = viewHolder
@@ -102,7 +99,7 @@ class PrinterSearchAdapter(context: Context?, private val layoutId: Int, values:
      * @param searchAdapterInterface Printer search adapter interface
      */
     fun setSearchAdapterInterface(searchAdapterInterface: PrinterSearchAdapterInterface?) {
-        mSearchAdapterInterface = searchAdapterInterface
+        _searchAdapterInterface = searchAdapterInterface
     }
     // ================================================================================
     // Internal Classes
@@ -112,10 +109,10 @@ class PrinterSearchAdapter(context: Context?, private val layoutId: Int, values:
      *
      * @brief Printer Search Screen view holder.
      */
-    class ViewHolder {
-        var mAddedIndicator: ImageView? = null
-        var mPrinterName: TextView? = null
-        var mIpAddress: TextView? = null
+    inner class ViewHolder {
+        internal var addedIndicator: ImageView? = null
+        internal var printerName: TextView? = null
+        internal var ipAddress: TextView? = null
     }
     // ================================================================================
     // Interface
@@ -145,24 +142,14 @@ class PrinterSearchAdapter(context: Context?, private val layoutId: Int, values:
     override fun onClick(v: View) {
         if (v.id == R.id.printer_search_row) {
             val viewHolder = v.tag as ViewHolder
-            val printer = getItem((viewHolder.mAddedIndicator!!.tag as Int))
-            if (viewHolder.mAddedIndicator!!.isActivated) {
+            val printer = getItem((viewHolder.addedIndicator!!.tag as Int))
+            if (viewHolder.addedIndicator!!.isActivated) {
                 return
             }
-            if (mSearchAdapterInterface!!.onAddPrinter(printer) != -1) {
+            if (_searchAdapterInterface!!.onAddPrinter(printer) != -1) {
                 v.isActivated = true
             }
         }
     }
 
-    /**
-     * @brief Constructor.
-     *
-     * @param context Application context
-     * @param resource Resource ID to be used as Searched printer row
-     * @param values Searched printers list
-     */
-    init {
-        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
-    }
 }

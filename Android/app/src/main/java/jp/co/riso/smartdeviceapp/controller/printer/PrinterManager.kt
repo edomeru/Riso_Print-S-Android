@@ -1,40 +1,30 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrinterManager.java
+ * PrinterManager.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.controller.printer
 
-//import jp.co.riso.smartdeviceapp.common.SNMPManager.setCallback
-//import jp.co.riso.smartdeviceapp.common.SNMPManager.initializeSNMPManager
-//import jp.co.riso.smartdeviceapp.common.SNMPManager.deviceDiscovery
-//import jp.co.riso.smartdeviceapp.common.SNMPManager.manualDiscovery
-//import jp.co.riso.smartdeviceapp.common.SNMPManager.cancel
-//import jp.co.riso.smartdeviceapp.common.SNMPManager.finalizeSNMPManager
-import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
-import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback
-import jp.co.riso.smartdeviceapp.common.SNMPManager
-import kotlin.jvm.Synchronized
-import jp.co.riso.smartdeviceapp.controller.db.KeyConstants
-import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
 import android.content.ContentValues
-import jp.co.riso.android.util.NetUtils
-import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
-import jp.co.riso.smartdeviceapp.common.BaseTask
 import android.content.Context
 import android.database.Cursor
 import android.view.View
 import android.widget.ImageView
 import androidx.preference.PreferenceManager
+import jp.co.riso.android.util.NetUtils
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.common.BaseTask
+import jp.co.riso.smartdeviceapp.common.SNMPManager
+import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
 import jp.co.riso.smartprint.R
-import java.lang.Exception
-import java.lang.IndexOutOfBoundsException
 import java.lang.ref.WeakReference
-import java.net.InetAddress
 import java.util.*
 
 /**
@@ -43,7 +33,7 @@ import java.util.*
  * @brief Manager responsible for Printer management
  */
 class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNMPManagerCallback {
-    private val mPrinterList: MutableList<Printer?>?
+    private val _printerList: MutableList<Printer?>?
 
     /**
      * @brief Checks if there is an ongoing printer search.
@@ -62,20 +52,20 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      */
     var isCancelled = false
         private set
-    private val mSNMPManager: SNMPManager
-    private var mPrinterSearchCallback: WeakReference<PrinterSearchCallback?>? = null
-    private var mPrintersCallback: WeakReference<PrintersCallback?>? = null
-    private var mUpdateStatusCallback: WeakReference<UpdateStatusCallback?>? = null
-    private var mUpdateStatusTimer: Timer? = null
-    private var mDefaultPrintId = EMPTY_ID
-    private val mDatabaseManager: DatabaseManager
+    private val _snmpManager: SNMPManager
+    private var _printerSearchCallback: WeakReference<PrinterSearchCallback?>? = null
+    private var _printersCallback: WeakReference<PrintersCallback?>? = null
+    private var _updateStatusCallback: WeakReference<UpdateStatusCallback?>? = null
+    private var _updateStatusTimer: Timer? = null
+    private var _defaultPrintId = EMPTY_ID
+    private val _databaseManager: DatabaseManager = databaseManager ?: DatabaseManager(context)
 
     /**
      * @brief PrinterManager Constructor.
      *
      * @param context Application context
      */
-    private constructor(context: Context) : this(context, DatabaseManager(context)) {}
+    private constructor(context: Context) : this(context, DatabaseManager(context))
     // ================================================================================
     // Public Methods
     // ================================================================================
@@ -102,10 +92,10 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         if (defaultPrinter == EMPTY_ID) {
             setDefaultPrinter(printer)
         }
-        if (mPrintersCallback != null && mPrintersCallback!!.get() != null) {
-            mPrintersCallback!!.get()!!.onAddedNewPrinter(printer, isOnline)
+        if (_printersCallback != null && _printersCallback!!.get() != null) {
+            _printersCallback!!.get()!!.onAddedNewPrinter(printer, isOnline)
         }
-        mPrinterList!!.add(printer)
+        _printerList!!.add(printer)
         return true
     }
 
@@ -123,9 +113,9 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         if (printer == null) {
             return false
         }
-        if (mPrinterList != null) {
-            for (i in mPrinterList.indices) {
-                val printerItem = mPrinterList[i]
+        if (_printerList != null) {
+            for (i in _printerList.indices) {
+                val printerItem = _printerList[i]
                 if (printerItem!!.ipAddress == printer.ipAddress) {
                     return true
                 }
@@ -150,9 +140,9 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         if (ipAddress == null) {
             return false
         }
-        if (mPrinterList != null) {
-            for (i in mPrinterList.indices) {
-                val printerItem = mPrinterList[i]
+        if (_printerList != null) {
+            for (i in _printerList.indices) {
+                val printerItem = _printerList[i]
                 if (printerItem!!.ipAddress == ipAddress) {
                     return true
                 }
@@ -177,9 +167,9 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         if (printerId == EMPTY_ID) {
             return false
         }
-        if (mPrinterList != null) {
-            for (i in mPrinterList.indices) {
-                val printerItem = mPrinterList[i]
+        if (_printerList != null) {
+            for (i in _printerList.indices) {
+                val printerItem = _printerList[i]
                 if (printerItem!!.id == printerId) {
                     return true
                 }
@@ -194,12 +184,12 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @return List of Saved Printer objects
      */
     @get:Synchronized
-    val savedPrintersList: List<Printer?>?
+    val savedPrintersList: List<Printer?>
         get() {
-            if (mPrinterList!!.size != 0) {
-                return mPrinterList
+            if (_printerList!!.size != 0) {
+                return _printerList
             }
-            val cursor = mDatabaseManager.query(
+            val cursor = _databaseManager.query(
                 KeyConstants.KEY_SQL_PRINTER_TABLE,
                 null,
                 null,
@@ -208,14 +198,14 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                 null,
                 null
             )
-            mPrinterList.clear()
+            _printerList.clear()
             if (cursor == null) {
-                return mPrinterList
+                return _printerList
             }
             if (cursor.count < 1) {
-                mDatabaseManager.close()
+                _databaseManager.close()
                 cursor.close()
-                return mPrinterList
+                return _printerList
             }
             if (cursor.moveToFirst()) {
                 do {
@@ -291,12 +281,12 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                     printer.config!!.isTrayStackAvailable = trayStackAvailable
                     printer.config!!.isExternalFeederAvailable = externalFeederAvailable
                     printer.config!!.isPunch0Available = punch0Available
-                    mPrinterList.add(printer)
+                    _printerList.add(printer)
                 } while (cursor.moveToNext())
             }
-            mDatabaseManager.close()
+            _databaseManager.close()
             cursor.close()
-            return mPrinterList
+            return _printerList
         }
 
     /**
@@ -314,17 +304,17 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         clearDefaultPrinter()
         val newDefaultPrinter = ContentValues()
         newDefaultPrinter.put(KeyConstants.KEY_SQL_PRINTER_ID, printer.id)
-        if (!mDatabaseManager.insert(
+        if (!_databaseManager.insert(
                 KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE,
                 null,
                 newDefaultPrinter
             )
         ) {
-            mDatabaseManager.close()
+            _databaseManager.close()
             return false
         }
-        mDefaultPrintId = printer.id
-        mDatabaseManager.close()
+        _defaultPrintId = printer.id
+        _databaseManager.close()
         return true
     }
 
@@ -332,9 +322,9 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @brief Clears the Default Printer table in the database.
      */
     fun clearDefaultPrinter() {
-        mDatabaseManager.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null)
-        mDefaultPrintId = EMPTY_ID
-        mDatabaseManager.close()
+        _databaseManager.delete(KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE, null, null)
+        _defaultPrintId = EMPTY_ID
+        _databaseManager.close()
     }
 
     /**
@@ -346,39 +336,35 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @retval false Save to Database has failed
      */
     fun removePrinter(printer: Printer?): Boolean {
-        var printer = printer
-        val ret: Boolean
-        if (printer == null) {
-            return false
-        }
-        for (i in mPrinterList!!.indices) {
-            val printerItem = mPrinterList[i]
-            if (printerItem!!.id == printer!!.id) {
-                printer = printerItem
+        var selectedPrinter = printer ?: return false
+        for (i in _printerList!!.indices) {
+            val printerItem = _printerList[i]
+            if (printerItem!!.id == selectedPrinter.id) {
+                selectedPrinter = printerItem
                 break
             }
         }
-        if (!isExists(printer)) {
+        if (!isExists(selectedPrinter)) {
             return false
         }
-        ret = mDatabaseManager.delete(
+        val ret: Boolean = _databaseManager.delete(
             KeyConstants.KEY_SQL_PRINTER_TABLE,
             KeyConstants.KEY_SQL_PRINTER_ID + "=?",
-            printer!!.id.toString()
+            selectedPrinter.id.toString()
         )
         if (ret) {
-            mPrinterList.remove(printer)
+            _printerList.remove(selectedPrinter)
             // Set default printer to invalid
-            if (printer.id == mDefaultPrintId) {
-                if (mPrinterList.size != 0) {
-                    val newDefaultPrinter = mPrinterList[0]
+            if (selectedPrinter.id == _defaultPrintId) {
+                if (_printerList.size != 0) {
+                    val newDefaultPrinter = _printerList[0]
                     setDefaultPrinter(newDefaultPrinter)
                 } else {
-                    mDefaultPrintId = EMPTY_ID
+                    _defaultPrintId = EMPTY_ID
                 }
             }
         }
-        mDatabaseManager.close()
+        _databaseManager.close()
         return ret
     }
 
@@ -390,10 +376,10 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      */
     val defaultPrinter: Int
         get() {
-            if (mDefaultPrintId != EMPTY_ID) {
-                return mDefaultPrintId
+            if (_defaultPrintId != EMPTY_ID) {
+                return _defaultPrintId
             }
-            val cursor = mDatabaseManager.query(
+            val cursor = _databaseManager.query(
                 KeyConstants.KEY_SQL_DEFAULT_PRINTER_TABLE,
                 null,
                 KeyConstants.KEY_SQL_PRINTER_ID,
@@ -404,17 +390,17 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
             )
                 ?: return EMPTY_ID
             if (cursor.count != 1) {
-                mDatabaseManager.close()
+                _databaseManager.close()
                 cursor.close()
                 return EMPTY_ID
             }
             if (cursor.moveToFirst()) {
-                mDefaultPrintId =
+                _defaultPrintId =
                     DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID)
             }
             cursor.close()
-            mDatabaseManager.close()
-            return mDefaultPrintId
+            _databaseManager.close()
+            return _defaultPrintId
         }
 
     /**
@@ -425,7 +411,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      */
     fun getPrinterType(printerId: Int): String? {
         val printerList = savedPrintersList
-        for (printer in printerList!!) {
+        for (printer in printerList) {
             if (printer!!.id == printerId) {
                 return printer.printerType
             }
@@ -449,13 +435,13 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         val ret: Boolean
         val cv = ContentValues()
         cv.put(KeyConstants.KEY_SQL_PRINTER_PORT, portSettings.ordinal)
-        ret = mDatabaseManager.update(
+        ret = _databaseManager.update(
             KeyConstants.KEY_SQL_PRINTER_TABLE,
             cv,
             KeyConstants.KEY_SQL_PRINTER_ID + "=?",
             printerId.toString()
         )
-        mDatabaseManager.close()
+        _databaseManager.close()
         return ret
     }
 
@@ -467,8 +453,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     fun startPrinterSearch() {
         isSearching = true
         isCancelled = false
-        mSNMPManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
-        mSNMPManager.deviceDiscovery()
+        _snmpManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
+        _snmpManager.deviceDiscovery()
     }
 
     /**
@@ -484,8 +470,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         }
         isSearching = true
         isCancelled = false
-        mSNMPManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
-        mSNMPManager.manualDiscovery(ipAddress)
+        _snmpManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
+        _snmpManager.manualDiscovery(ipAddress)
     }
 
     /**
@@ -498,7 +484,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         isCancelled = true
         Timer().schedule(object : TimerTask() {
             override fun run() {
-                mSNMPManager.cancel()
+                _snmpManager.cancel()
             }
         }, 0)
     }
@@ -524,7 +510,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @param printerSearchCallback Printer search callback function
      */
     fun setPrinterSearchCallback(printerSearchCallback: PrinterSearchCallback?) {
-        mPrinterSearchCallback = WeakReference(printerSearchCallback)
+        _printerSearchCallback = WeakReference(printerSearchCallback)
     }
 
     /**
@@ -535,7 +521,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @param printersCallback Printers screen callback function
      */
     fun setPrintersCallback(printersCallback: PrintersCallback?) {
-        mPrintersCallback = WeakReference(printersCallback)
+        _printersCallback = WeakReference(printersCallback)
     }
 
     /**
@@ -546,7 +532,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @param updateStatusCallback Update online status callback function
      */
     fun setUpdateStatusCallback(updateStatusCallback: UpdateStatusCallback?) {
-        mUpdateStatusCallback = WeakReference(updateStatusCallback)
+        _updateStatusCallback = WeakReference(updateStatusCallback)
     }
 
     /**
@@ -555,7 +541,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @return Printer count
      */
     val printerCount: Int
-        get() = mPrinterList!!.size
+        get() = _printerList!!.size
 
     /**
      * @brief Check the Device status. <br></br>
@@ -568,7 +554,6 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @retval false Device is off-line
      */
     fun isOnline(ipAddress: String?): Boolean {
-        var inetIpAddress: InetAddress
         return try {
             if (ipAddress == null) {
                 return false
@@ -592,14 +577,14 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * when the status view is no longer visible.
      */
     fun createUpdateStatusThread() {
-        if (mUpdateStatusTimer != null) {
+        if (_updateStatusTimer != null) {
             return
         }
-        mUpdateStatusTimer = Timer()
-        mUpdateStatusTimer!!.schedule(object : TimerTask() {
+        _updateStatusTimer = Timer()
+        _updateStatusTimer!!.schedule(object : TimerTask() {
             override fun run() {
-                if (mUpdateStatusCallback != null && mUpdateStatusCallback!!.get() != null) {
-                    mUpdateStatusCallback!!.get()!!.updateOnlineStatus()
+                if (_updateStatusCallback != null && _updateStatusCallback!!.get() != null) {
+                    _updateStatusCallback!!.get()!!.updateOnlineStatus()
                 }
             }
         }, 0, AppConstants.CONST_UPDATE_INTERVAL.toLong())
@@ -611,11 +596,11 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * Stops the thread that updates the online/off-line status.
      */
     fun cancelUpdateStatusThread() {
-        if (mUpdateStatusTimer == null) {
+        if (_updateStatusTimer == null) {
             return
         }
-        mUpdateStatusTimer!!.cancel()
-        mUpdateStatusTimer = null
+        _updateStatusTimer!!.cancel()
+        _updateStatusTimer = null
     }
     // ================================================================================
     // Private Methods
@@ -680,11 +665,11 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
             KeyConstants.KEY_SQL_PRINTER_PUNCH0,
             if (printer.config!!.isPunch0Available) 1 else 0
         )
-        if (!mDatabaseManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {
-            mDatabaseManager.close()
+        if (!_databaseManager.insert(KeyConstants.KEY_SQL_PRINTER_TABLE, null, newPrinter)) {
+            _databaseManager.close()
             return false
         }
-        mDatabaseManager.close()
+        _databaseManager.close()
         return true
     }
 
@@ -697,7 +682,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @retval false Failed
      */
     private fun setPrinterId(printer: Printer): Boolean {
-        val cursor = mDatabaseManager.query(
+        val cursor = _databaseManager.query(
             KeyConstants.KEY_SQL_PRINTER_TABLE,
             null,
             KeyConstants.KEY_SQL_PRINTER_NAME + "=? and "
@@ -707,10 +692,9 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
             null,
             null
         )
-        val ret: Boolean
-        ret = getIdFromCursor(cursor, printer)
+        val ret: Boolean = getIdFromCursor(cursor, printer)
         if (ret) {
-            mDatabaseManager.close()
+            _databaseManager.close()
         }
         return ret
     }
@@ -753,8 +737,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         }
         isSearching = false
         manager.finalizeSNMPManager()
-        if (mPrinterSearchCallback != null && mPrinterSearchCallback!!.get() != null) {
-            mPrinterSearchCallback!!.get()!!.onSearchEnd()
+        if (_printerSearchCallback != null && _printerSearchCallback!!.get() != null) {
+            _printerSearchCallback!!.get()!!.onSearchEnd()
         }
     }
 
@@ -773,8 +757,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         }
         setupPrinterConfig(printer, capabilities)
         if (isSearching) {
-            if (mPrinterSearchCallback != null && mPrinterSearchCallback!!.get() != null) {
-                mPrinterSearchCallback!!.get()!!.onPrinterAdd(printer)
+            if (_printerSearchCallback != null && _printerSearchCallback!!.get() != null) {
+                _printerSearchCallback!!.get()!!.onPrinterAdd(printer)
             }
         }
     }
@@ -854,17 +838,17 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         BaseTask<Any?, Boolean?>() {
         private val mViewRef: WeakReference<View?>?
         private val mIpAddress: String
-        protected override fun doInBackground(vararg arg: Any?): Boolean? {
+        override fun doInBackground(vararg params: Any?): Boolean {
             return if (mIpAddress.isEmpty()) {
                 false
             } else isOnline(mIpAddress)
         }
 
-        protected override fun onPostExecute(result: Boolean?) {
+        override fun onPostExecute(result: Boolean?) {
             super.onPostExecute(result)
             val activity = SmartDeviceApp.activity
             activity!!.runOnUiThread {
-                if (mViewRef != null && mViewRef.get() != null) {
+                if (mViewRef?.get() != null) {
                     val view = mViewRef.get() as ImageView?
                     if (result == true) {
                         view!!.setImageResource(R.drawable.img_btn_printer_status_online)
@@ -959,13 +943,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      * @param databaseManager DatabaseManager instance
      */
     init {
-        var databaseManager = databaseManager
-        if (databaseManager == null) {
-            databaseManager = DatabaseManager(context)
-        }
-        mDatabaseManager = databaseManager
-        mPrinterList = ArrayList()
-        mSNMPManager = SNMPManager()
-        mSNMPManager.setCallback(this)
+        _printerList = ArrayList()
+        _snmpManager = SNMPManager()
+        _snmpManager.setCallback(this)
     }
 }

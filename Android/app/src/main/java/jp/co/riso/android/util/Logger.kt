@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * Logger.java
+ * Logger.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -9,8 +9,6 @@ package jp.co.riso.android.util
 
 import android.content.Context
 import android.util.Log
-import jp.co.riso.android.util.MemoryUtils
-import jp.co.riso.android.util.Logger.DeleteTask
 import jp.co.riso.smartdeviceapp.common.BaseTask
 import java.io.*
 import java.text.SimpleDateFormat
@@ -26,19 +24,19 @@ object Logger {
     const val LOGLEVEL_NONE = Log.ASSERT + 1
 
     /// Log level to enable logs for assert
-    const val LOGLEVEL_ASSERT = Log.ASSERT
+    private const val LOGLEVEL_ASSERT = Log.ASSERT
 
     /// Log level to enable logs for error
-    const val LOGLEVEL_ERROR = Log.ERROR
+    private const val LOGLEVEL_ERROR = Log.ERROR
 
     /// Log level to enable logs for warning
-    const val LOGLEVEL_WARN = Log.WARN
+    private const val LOGLEVEL_WARN = Log.WARN
 
     /// Log level to enable logs for info
-    const val LOGLEVEL_INFO = Log.INFO
+    private const val LOGLEVEL_INFO = Log.INFO
 
     /// Log level to enable logs for debug
-    const val LOGLEVEL_DEBUG = Log.DEBUG
+    private const val LOGLEVEL_DEBUG = Log.DEBUG
 
     /// Log level to enable logs for verbose
     const val LOGLEVEL_VERBOSE = Log.VERBOSE
@@ -47,7 +45,7 @@ object Logger {
     const val CONST_LOGS_DIR = "logs"
 
     /// Log filename
-    const val CONST_TXT_FILENAME = "log.txt"
+    private const val CONST_TXT_FILENAME = "log.txt"
     private var sLogLevel = LOGLEVEL_NONE
     private var sPerfLogs = false
     private var sPerfLogsToFile = false
@@ -83,11 +81,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logVerbose(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logVerbose(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_VERBOSE) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.v(cls.simpleName, msg!!)
     }
 
@@ -101,11 +99,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logDebug(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logDebug(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_DEBUG) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.d(cls.simpleName, msg ?: "")
     }
 
@@ -119,11 +117,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logInfo(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logInfo(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_INFO) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.i(cls.simpleName, msg!!)
     }
 
@@ -137,11 +135,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logWarn(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logWarn(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_WARN) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.w(cls.simpleName, msg!!)
     }
 
@@ -155,11 +153,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logError(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logError(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_ERROR) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.e(cls.simpleName, msg!!)
     }
 
@@ -173,11 +171,11 @@ object Logger {
      * @param args The list of arguments passed to the formatter. If there are more arguments than required by format, additional arguments are ignored.
      */
     @JvmStatic
-    fun logAssert(cls: Class<*>?, format: String?, vararg args: Any?) {
+    fun logAssert(cls: Class<*>?, format: String?, vararg args: Any) {
         if (cls == null || sLogLevel > LOGLEVEL_ASSERT) {
             return
         }
-        val msg = formatMessage(format, *args as Array<out Any>)
+        val msg = formatMessage(format, *args)
         Log.wtf(cls.simpleName, msg)
     }
 
@@ -312,8 +310,8 @@ object Logger {
      * @param context Valid context
      * @return File containing the folder path.
      */
-    internal fun getFolderString(context: Context?): File? {
-        return context?.getExternalFilesDir(CONST_LOGS_DIR + "/" + sStringFolder)
+    private fun getFolderString(context: Context?): File? {
+        return context?.getExternalFilesDir("$CONST_LOGS_DIR/$sStringFolder")
     }
 
     /**
@@ -361,7 +359,7 @@ object Logger {
          *
          * @param path File object of the Directory path to delete
          */
-        fun deleteDirectory(path: File): Boolean {
+        private fun deleteDirectory(path: File): Boolean {
             if (path.exists()) {
                 val files = path.listFiles() ?: return true
                 for (file in files) {
@@ -382,7 +380,7 @@ object Logger {
          *
          * @param path File object of the Directory path to delete
          */
-        fun deleteAppLogDirectory(path: File?): Boolean {
+        private fun deleteAppLogDirectory(path: File?): Boolean {
             if (path!!.exists()) {
                 val files = path.listFiles() ?: return true
                 for (file in files) {
@@ -402,12 +400,12 @@ object Logger {
             time = System.currentTimeMillis().toDouble()
         }
 
-        protected override fun doInBackground(vararg params: Context?): Void? {
+        override fun doInBackground(vararg params: Context?): Void? {
             deleteAppLogDirectory(params[0]?.getExternalFilesDir(CONST_LOGS_DIR))
             return null
         }
 
-        protected override fun onPostExecute(result: Void?) {
+        override fun onPostExecute(result: Void?) {
             super.onPostExecute(result)
             Log.d(
                 DeleteTask::class.java.simpleName,
@@ -419,6 +417,6 @@ object Logger {
     }
 
     init {
-        initialize(LOGLEVEL_NONE, false, false)
+        initialize(LOGLEVEL_NONE, perfLogs = false, perfLogsToFile = false)
     }
 }

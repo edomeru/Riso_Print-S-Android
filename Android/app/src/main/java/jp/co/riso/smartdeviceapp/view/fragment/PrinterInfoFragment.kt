@@ -1,47 +1,37 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrinterInfoFragment.java
+ * PrinterInfoFragment.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.content.res.Configuration
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.savedPrintersList
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.defaultPrinter
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.resume
-//import jp.co.riso.android.os.pauseablehandler.PauseableHandler.pause
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.updatePortSettings
-//import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.setDefaultPrinter
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment
-import android.widget.AdapterView.OnItemSelectedListener
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
-import android.widget.TextView
-import android.widget.Spinner
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment
-import jp.co.riso.android.os.pauseablehandler.PauseableHandler
-import jp.co.riso.smartdeviceapp.view.printers.DefaultPrinterArrayAdapter
-import jp.co.riso.smartprint.R
 import android.os.Bundle
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import android.os.Looper
 import android.os.Message
-import jp.co.riso.smartdeviceapp.view.fragment.PrinterInfoFragment
-import android.widget.ArrayAdapter
-import jp.co.riso.smartdeviceapp.view.MainActivity
 import android.view.Gravity
 import android.view.View
-import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
-import jp.co.riso.smartdeviceapp.view.fragment.PrintersFragment
 import android.widget.AdapterView
-import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
-import jp.co.riso.android.dialog.InfoDialogFragment
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.TextView
 import jp.co.riso.android.dialog.DialogUtils
+import jp.co.riso.android.dialog.InfoDialogFragment
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
+import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+import jp.co.riso.smartdeviceapp.view.printers.DefaultPrinterArrayAdapter
+import jp.co.riso.smartprint.R
 
 /**
  * @class PrinterInfo
@@ -49,38 +39,38 @@ import jp.co.riso.smartdeviceapp.model.Printer
  * @brief Fragment for Printer Info Screen
  */
 class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHandlerCallback {
-    private var mPrinter: Printer? = null
-    private var mPrinterName: TextView? = null
-    private var mIpAddress: TextView? = null
-    private var mPort: Spinner? = null
-    private var mDefaultPrinter: Spinner? = null
-    private var mPrinterManager: PrinterManager? = null
-    private var mPrintSettingsFragment: PrintSettingsFragment? = null
-    private var mPauseableHandler: PauseableHandler? = null
-    private var mDefaultPrinterAdapter: DefaultPrinterArrayAdapter? = null
+    private var _printer: Printer? = null
+    private var _printerName: TextView? = null
+    private var _ipAddress: TextView? = null
+    private var _port: Spinner? = null
+    private var _defaultPrinter: Spinner? = null
+    private var _printerManager: PrinterManager? = null
+    private var _printSettingsFragment: PrintSettingsFragment? = null
+    private var _pauseableHandler: PauseableHandler? = null
+    private var _defaultPrinterAdapter: DefaultPrinterArrayAdapter? = null
 
     override val viewLayout: Int
         get() = R.layout.fragment_printerinfo
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        mPrinterManager = getInstance(SmartDeviceApp.appContext!!)
-        mPauseableHandler = PauseableHandler(Looper.myLooper(), this)
+        _printerManager = getInstance(SmartDeviceApp.appContext!!)
+        _pauseableHandler = PauseableHandler(Looper.myLooper(), this)
     }
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
-        mPrinterName = view.findViewById(R.id.inputPrinterName)
-        mIpAddress = view.findViewById(R.id.inputIpAddress)
-        mPort = view.findViewById(R.id.inputPort)
-        mPort?.setOnItemSelectedListener(this)
-        mDefaultPrinter = view.findViewById(R.id.defaultPrinter)
-        mDefaultPrinter?.setOnItemSelectedListener(this)
+        _printerName = view.findViewById(R.id.inputPrinterName)
+        _ipAddress = view.findViewById(R.id.inputIpAddress)
+        _port = view.findViewById(R.id.inputPort)
+        _port?.onItemSelectedListener = this
+        _defaultPrinter = view.findViewById(R.id.defaultPrinter)
+        _defaultPrinter?.onItemSelectedListener = this
         if (savedInstanceState != null) {
-            if (mPrinter == null) {
-                val printersList = mPrinterManager!!.savedPrintersList
+            if (_printer == null) {
+                val printersList = _printerManager!!.savedPrintersList
                 val printerId = savedInstanceState.getInt(KEY_PRINTER_INFO_ID)
-                for (printer in printersList!!) {
+                for (printer in printersList) {
                     if (printer!!.id == printerId) {
-                        mPrinter = printer
+                        _printer = printer
                     }
                 }
             }
@@ -88,25 +78,25 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         val portAdapter = ArrayAdapter<String>(requireActivity(), R.layout.printerinfo_port_item)
         // Assumption is that LPR is always available
         portAdapter.add(getString(R.string.ids_lbl_port_lpr))
-        if (mPrinter!!.config!!.isRawAvailable) {
+        if (_printer!!.config!!.isRawAvailable) {
             portAdapter.add(getString(R.string.ids_lbl_port_raw))
             portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
         } else {
-            mPort?.setVisibility(View.GONE)
+            _port?.visibility = View.GONE
             // Port setting is always displayed as LPR
             view.findViewById<View>(R.id.defaultPort).visibility = View.VISIBLE
         }
-        mPort?.setAdapter(portAdapter)
-        mPort?.setSelection(mPrinter!!.portSetting!!.ordinal)
-        mDefaultPrinterAdapter =
+        _port?.adapter = portAdapter
+        _port?.setSelection(_printer!!.portSetting!!.ordinal)
+        _defaultPrinterAdapter =
             DefaultPrinterArrayAdapter(activity, R.layout.printerinfo_port_item)
-        mDefaultPrinterAdapter!!.add(getString(R.string.ids_lbl_yes))
-        mDefaultPrinterAdapter!!.add(getString(R.string.ids_lbl_no))
-        mDefaultPrinterAdapter!!.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
-        mDefaultPrinter?.setAdapter(mDefaultPrinterAdapter)
-        if (mPrinterManager!!.defaultPrinter == mPrinter!!.id) {
-            mDefaultPrinter?.setSelection(0) //yes
-        } else mDefaultPrinter?.setSelection(1) //no
+        _defaultPrinterAdapter!!.add(getString(R.string.ids_lbl_yes))
+        _defaultPrinterAdapter!!.add(getString(R.string.ids_lbl_no))
+        _defaultPrinterAdapter!!.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
+        _defaultPrinter?.adapter = _defaultPrinterAdapter
+        if (_printerManager!!.defaultPrinter == _printer!!.id) {
+            _defaultPrinter?.setSelection(0) //yes
+        } else _defaultPrinter?.setSelection(1) //no
     }
 
     override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {
@@ -128,23 +118,23 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         )
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        var printerName = mPrinter!!.name
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        var printerName = _printer!!.name
         if (printerName == null || printerName.isEmpty()) {
             printerName = requireActivity().resources.getString(R.string.ids_lbl_no_name)
         }
-        mPrinterName!!.text = printerName
-        mIpAddress!!.text = mPrinter!!.ipAddress
-        if (mPrinterManager!!.defaultPrinter == mPrinter!!.id) {
-            mDefaultPrinter!!.setSelection(0)
-        } else mDefaultPrinter!!.setSelection(1)
-        mPort!!.setSelection(mPrinter!!.portSetting!!.ordinal)
+        _printerName!!.text = printerName
+        _ipAddress!!.text = _printer!!.ipAddress
+        if (_printerManager!!.defaultPrinter == _printer!!.id) {
+            _defaultPrinter!!.setSelection(0)
+        } else _defaultPrinter!!.setSelection(1)
+        _port!!.setSelection(_printer!!.portSetting!!.ordinal)
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        savedInstanceState.putInt(KEY_PRINTER_INFO_ID, mPrinter!!.id)
-        super.onSaveInstanceState(savedInstanceState)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(KEY_PRINTER_INFO_ID, _printer!!.id)
+        super.onSaveInstanceState(outState)
     }
 
     override fun clearIconStates() {
@@ -154,13 +144,13 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
 
     override fun onResume() {
         super.onResume()
-        mPauseableHandler!!.resume()
+        _pauseableHandler!!.resume()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (mPauseableHandler != null) {
-            mPauseableHandler!!.resume()
+        if (_pauseableHandler != null) {
+            _pauseableHandler!!.resume()
         }
     }
     // ================================================================================
@@ -172,53 +162,53 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
      * @param printer Printer object
      */
     fun setPrinter(printer: Printer?) {
-        mPrinter = printer
+        _printer = printer
     }
 
     // ================================================================================
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
-    override fun storeMessage(msg: Message?): Boolean {
+    override fun storeMessage(message: Message?): Boolean {
         return false
     }
 
-    override fun processMessage(msg: Message?) {
-        val id = msg!!.what
+    override fun processMessage(message: Message?) {
+        val id = message!!.what
         if (id == R.id.menu_id_action_print_settings_button) {
-            mPauseableHandler!!.pause()
+            _pauseableHandler!!.pause()
             if (activity != null && activity is MainActivity) {
                 val activity = activity as MainActivity?
                 if (!activity!!.isDrawerOpen(Gravity.RIGHT)) {
-                    val v = msg.obj as View
+                    val v = message.obj as View
                     val fm = requireActivity().supportFragmentManager
                     setIconState(v.id, true)
-                    mPrintSettingsFragment = null
+                    _printSettingsFragment = null
                     val ft = fm.beginTransaction()
-                    mPrintSettingsFragment = PrintSettingsFragment()
+                    _printSettingsFragment = PrintSettingsFragment()
                     ft.replace(
                         R.id.rightLayout,
-                        mPrintSettingsFragment!!,
+                        _printSettingsFragment!!,
                         PrintPreviewFragment.FRAGMENT_TAG_PRINT_SETTINGS
                     )
                     ft.commit()
-                    mPrintSettingsFragment!!.setPrinterId(mPrinter!!.id)
+                    _printSettingsFragment!!.setPrinterId(_printer!!.id)
                     // use new print settings retrieved from the database
-                    mPrintSettingsFragment!!.setPrintSettings(
+                    _printSettingsFragment!!.setPrintSettings(
                         PrintSettings(
-                            mPrinter!!.id,
-                            mPrinter!!.printerType!!
+                            _printer!!.id,
+                            _printer!!.printerType!!
                         )
                     )
                     val printersFragment =
                         fm.findFragmentByTag(FRAGMENT_TAG_PRINTERS) as PrintersFragment?
-                    mPrintSettingsFragment!!.setTargetFragment(printersFragment, 0)
+                    _printSettingsFragment!!.setTargetFragment(printersFragment, 0)
                     activity.openDrawer(Gravity.RIGHT, false)
                 } else {
                     activity.closeDrawers()
                 }
             }
         } else if (id == R.id.menu_id_back_button) {
-            mPauseableHandler!!.pause()
+            _pauseableHandler!!.pause()
             val fm = requireActivity().supportFragmentManager
             val ft = fm.beginTransaction()
             if (fm.backStackEntryCount > 0) {
@@ -235,11 +225,11 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         val id = v.id
         if (id == R.id.menu_id_action_print_settings_button) {
             val newMessage =
-                Message.obtain(mPauseableHandler, R.id.menu_id_action_print_settings_button)
+                Message.obtain(_pauseableHandler, R.id.menu_id_action_print_settings_button)
             newMessage.obj = v
-            mPauseableHandler!!.sendMessage(newMessage)
+            _pauseableHandler!!.sendMessage(newMessage)
         } else if (id == R.id.menu_id_back_button) {
-            mPauseableHandler!!.sendEmptyMessage(R.id.menu_id_back_button)
+            _pauseableHandler!!.sendEmptyMessage(R.id.menu_id_back_button)
         }
     }
 
@@ -259,13 +249,13 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
                 1 -> port = PortSetting.RAW
                 else -> {}
             }
-            mPrinter!!.portSetting = port
-            mPrinterManager!!.updatePortSettings(mPrinter!!.id, port)
+            _printer!!.portSetting = port
+            _printerManager!!.updatePortSettings(_printer!!.id, port)
         } else if (parentId == R.id.defaultPrinter) {
             when (position) {
                 0 -> {
-                    if (mPrinterManager!!.setDefaultPrinter(mPrinter)) {
-                        mDefaultPrinterAdapter!!.isNoDisabled = true
+                    if (_printerManager!!.setDefaultPrinter(_printer)) {
+                        _defaultPrinterAdapter!!.isNoDisabled = true
                     } else {
                         val info = InfoDialogFragment.newInstance(
                             requireActivity().getString(R.string.ids_lbl_printer_info),

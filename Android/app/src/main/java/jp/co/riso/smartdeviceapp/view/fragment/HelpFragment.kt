@@ -1,25 +1,23 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * HelpFragment.java
+ * HelpFragment.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import jp.co.riso.android.util.Logger.logStartTime
-import jp.co.riso.android.util.Logger.logStopTime
-import jp.co.riso.android.util.AppUtils.getLocalizedAssetFullPath
-import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment
-import jp.co.riso.smartprint.R
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.widget.TextView
+import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.graphics.Bitmap
-import android.view.View
-import jp.co.riso.smartdeviceapp.view.fragment.HelpFragment
-import jp.co.riso.android.util.AppUtils
+import android.widget.TextView
+import jp.co.riso.android.util.AppUtils.getLocalizedAssetFullPath
+import jp.co.riso.android.util.Logger.logStartTime
+import jp.co.riso.android.util.Logger.logStopTime
+import jp.co.riso.smartdeviceapp.view.base.BaseWebFragment
+import jp.co.riso.smartprint.R
 
 /**
  * @class HelpFragment
@@ -50,7 +48,7 @@ class HelpFragment : BaseWebFragment() {
         }
     }
 
-    override val urlString: String?
+    override val urlString: String
         get() = getUrlString()
 
     @JvmName("getUrlString1")

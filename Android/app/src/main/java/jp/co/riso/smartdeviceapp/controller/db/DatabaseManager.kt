@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * DatabaseManager.java
+ * DatabaseManager.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -24,14 +24,12 @@ import java.util.*
  * @class DatabaseManager
  *
  * @brief Helper class for opening, creating and managing the database.
- */
-open class DatabaseManager
-/**
  * @brief Creates a DatabaseManager instance.
  *
- * @param context Context to use to open or create the database.
- */(private val mContext: Context?) :
-    SQLiteOpenHelper(mContext, DATABASE_NAME, null, DATABASE_VERSION) {
+ * @param _context Context to use to open or create the database.
+ */
+open class DatabaseManager (private val _context: Context?) :
+    SQLiteOpenHelper(_context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onOpen(db: SQLiteDatabase) {
         // http://stackoverflow.com/questions/13641250/sqlite-delete-cascade-not-working
         try {
@@ -89,8 +87,8 @@ open class DatabaseManager
      * @param db SQLiteDatabase object
      * @param sqlScript Path to SQL Script file
      */
-    fun executeSqlCommandFromScript(db: SQLiteDatabase, sqlScript: String?) {
-        val sqlString = getFileContentsFromAssets(mContext, sqlScript)
+    private fun executeSqlCommandFromScript(db: SQLiteDatabase, sqlScript: String?) {
+        val sqlString = getFileContentsFromAssets(_context, sqlScript)
         val separated = sqlString!!.split(";").toTypedArray()
         for (s in separated) {
             try {
@@ -190,7 +188,7 @@ open class DatabaseManager
         try {
             val db = this.writableDatabase
             var whereArgs: Array<String>? = null
-            if (whereArg != null && !whereArg.isEmpty()) {
+            if (whereArg != null && whereArg.isNotEmpty()) {
                 whereArgs = arrayOf(whereArg)
             }
             rowsNum = db.update(table, values, whereClause, whereArgs)
@@ -257,7 +255,7 @@ open class DatabaseManager
      */
     fun delete(table: String, whereClause: String?, whereArg: String?): Boolean {
         var whereArgs: Array<String>? = null
-        if (whereArg != null && !whereArg.isEmpty()) {
+        if (whereArg != null && whereArg.isNotEmpty()) {
             whereArgs = arrayOf(whereArg)
         }
         return delete(table, whereClause, whereArgs)
@@ -309,7 +307,7 @@ open class DatabaseManager
          * @return Value of the requested column as a String.
          */
         @JvmStatic
-        fun getStringFromCursor(cursor: Cursor, columnName: String): String {
+        fun getStringFromCursor(cursor: Cursor, columnName: String): String? {
             val columnIndex = cursor.getColumnIndex(columnName)
             return if (columnIndex >= 0) {
                 cursor.getString(columnIndex)
