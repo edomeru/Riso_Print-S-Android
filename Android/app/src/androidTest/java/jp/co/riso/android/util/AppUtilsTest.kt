@@ -37,7 +37,7 @@ import org.junit.Test
 import java.util.*
 
 class AppUtilsTest : BaseActivityTestUtil() {
-    var _appFont: Typeface? = null
+    private var _appFont: Typeface? = null
 
     @Before
     fun setUp() {
@@ -701,17 +701,7 @@ class AppUtilsTest : BaseActivityTestUtil() {
     //================================================================================
     // Mock Classes
     //================================================================================
-    inner class MockClass(context: Context?) : View(context) {
-        protected var typeface: Typeface?
-            protected get() = _appFont
-            protected set(tf) {}
-
-//        companion object {
-//            // Invoked
-//            private const val app_name = 0x7f030000
-//            const val app_name_2: Float = 0x7030000f
-//        }
-    }
+    inner class MockClass(context: Context?) : View(context)
 
     companion object {
         private const val ASSET = "html/help.html"
