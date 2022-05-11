@@ -96,8 +96,8 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
      * @param viewListener PrintJobsViewListener
      */
     fun setData(
-        printJobs: List<PrintJob?>?,
-        printers: List<Printer?>?,
+        printJobs: List<PrintJob>?,
+        printers: List<Printer>?,
         groupListener: PrintJobsGroupListener?,
         viewListener: PrintJobsViewListener?
     ) {
