@@ -17,7 +17,7 @@ import org.junit.Before
 import org.junit.Test
 
 class DatabaseManagerTest : BaseActivityTestUtil() {
-    private var mDBManager: DatabaseManager? = null
+    private var _dbManager: DatabaseManager? = null
     private val printerName = "Printer name1"
     private val printerName2 = "Printer name 2"
     private val printerIP = "192.168.1.1"
@@ -26,19 +26,19 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
     @Before
     fun setUp() {
         val context: Context = RenamingDelegatingContext(SmartDeviceApp.appContext, "test_")
-        mDBManager = DatabaseManager(context)
+        _dbManager = DatabaseManager(context)
     }
 
     @Test
     fun testPreConditions() {
-        TestCase.assertNotNull(mDBManager)
-        TestCase.assertEquals(mDBManager!!.databaseName, "SmartDeviceAppDB.sqlite")
+        TestCase.assertNotNull(_dbManager)
+        TestCase.assertEquals(_dbManager!!.databaseName, "SmartDeviceAppDB.sqlite")
     }
 
     @Test
     fun testCreate() {
         val db = SQLiteDatabase.create(null)
-        mDBManager!!.onCreate(db)
+        _dbManager!!.onCreate(db)
         val cursor = db.rawQuery(
             "SELECT name FROM sqlite_master WHERE type = ?", arrayOf(
                 "table"
@@ -51,16 +51,16 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
 
     @Test
     fun testInsert() {
-        var db = mDBManager!!.writableDatabase
+        var db = _dbManager!!.writableDatabase
         val initialCount: Int
         val result: Boolean
         var cursor: Cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         initialCount = cursor.count
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_NAME, "Printer name")
-        result = mDBManager!!.insert(KEY_SQL_PRINTER_TABLE, null, values)
+        result = _dbManager!!.insert(KEY_SQL_PRINTER_TABLE, null, values)
         TestCase.assertTrue(result)
-        db = mDBManager!!.readableDatabase
+        db = _dbManager!!.readableDatabase
         cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(initialCount + 1, cursor.count)
@@ -70,7 +70,7 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
 
     @Test
     fun testInsert_Fail() {
-        var db = mDBManager!!.writableDatabase
+        var db = _dbManager!!.writableDatabase
         val result: Boolean
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         db.close()
@@ -80,9 +80,9 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         values.put(KEY_SQL_PRINTJOB_RESULT, JobResult.SUCCESSFUL.ordinal)
 
         //will fail due to foreign key constraints
-        result = mDBManager!!.insert(KEY_SQL_PRINTJOB_TABLE, null, values)
+        result = _dbManager!!.insert(KEY_SQL_PRINTJOB_TABLE, null, values)
         TestCase.assertFalse(result)
-        db = mDBManager!!.readableDatabase
+        db = _dbManager!!.readableDatabase
         val cursor: Cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(0, cursor.count)
@@ -92,7 +92,7 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
 
     @Test
     fun testInsertOrReplace() {
-        var db = mDBManager!!.writableDatabase
+        var db = _dbManager!!.writableDatabase
         var row: Long
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         db.close()
@@ -101,9 +101,9 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         values.put(KEY_SQL_PRINTER_NAME, printerName)
 
         //will insert the row
-        row = mDBManager!!.insertOrReplace(KEY_SQL_PRINTER_TABLE, null, values)
+        row = _dbManager!!.insertOrReplace(KEY_SQL_PRINTER_TABLE, null, values)
         TestCase.assertTrue(row > -1)
-        db = mDBManager!!.readableDatabase
+        db = _dbManager!!.readableDatabase
         var cursor: Cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(1, cursor.count)
@@ -121,9 +121,9 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         values.put(KEY_SQL_PRINTER_NAME, printerName2)
 
         //will replace the row
-        row = mDBManager!!.insertOrReplace(KEY_SQL_PRINTER_TABLE, null, values)
+        row = _dbManager!!.insertOrReplace(KEY_SQL_PRINTER_TABLE, null, values)
         TestCase.assertTrue(row > -1)
-        db = mDBManager!!.readableDatabase
+        db = _dbManager!!.readableDatabase
         cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(1, cursor.count)
@@ -142,7 +142,7 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
 
     @Test
     fun testInsertOrReplace_Fail() {
-        var db = mDBManager!!.writableDatabase
+        var db = _dbManager!!.writableDatabase
         val row: Long
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         db.close()
@@ -152,9 +152,9 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         values.put(KEY_SQL_PRINTJOB_RESULT, JobResult.SUCCESSFUL.ordinal)
 
         //will fail due to foreign key constraints
-        row = mDBManager!!.insertOrReplace(KEY_SQL_PRINTJOB_TABLE, null, values)
+        row = _dbManager!!.insertOrReplace(KEY_SQL_PRINTJOB_TABLE, null, values)
         TestCase.assertEquals(-1, row)
-        db = mDBManager!!.readableDatabase
+        db = _dbManager!!.readableDatabase
         val cursor: Cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(0, cursor.count)
@@ -164,7 +164,7 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
 
     @Test
     fun testUpdate() {
-        var db = mDBManager!!.writableDatabase
+        var db = _dbManager!!.writableDatabase
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_ID, printerId)
@@ -173,12 +173,12 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         TestCase.assertTrue(row > -1)
         db.close()
         values.put(KEY_SQL_PRINTER_NAME, printerName2)
-        val result = mDBManager!!.update(
+        val result = _dbManager!!.update(
             KEY_SQL_PRINTER_TABLE, values,
             KeyConstants.KEY_SQL_PRINTER_ID + "=?", printerId.toString()
         )
         TestCase.assertTrue(result)
-        db = mDBManager!!.readableDatabase
+        db = _dbManager!!.readableDatabase
         val cursor: Cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(1, cursor.count)
@@ -197,19 +197,19 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
 
     @Test
     fun testUpdate_Fail() {
-        var db = mDBManager!!.writableDatabase
+        var db = _dbManager!!.writableDatabase
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         db.close()
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_NAME, "new printer name")
 
         //will fail since not existing
-        val result = mDBManager!!.update(
+        val result = _dbManager!!.update(
             KEY_SQL_PRINTER_TABLE, values,
             KeyConstants.KEY_SQL_PRINTER_ID + "=?", printerId.toString()
         )
         TestCase.assertFalse(result)
-        db = mDBManager!!.readableDatabase
+        db = _dbManager!!.readableDatabase
         val cursor: Cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(0, cursor.count)
@@ -219,29 +219,29 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
 
     @Test
     fun testQuery() {
-        val db = mDBManager!!.writableDatabase
+        val db = _dbManager!!.writableDatabase
         var c1: Cursor? = null
         var c2: Cursor? = null
         TestCase.assertNotNull(db)
         try {
             c1 = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
-            c2 = mDBManager!!
+            c2 = _dbManager!!
                 .query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
             TestCase.assertTrue(c1.count == c2!!.count)
             c1 = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
-            c2 = mDBManager!!.query(
+            c2 = _dbManager!!.query(
                 KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null,
                 null
             )
             TestCase.assertTrue(c1.count == c2!!.count)
             c1 = db.query(KEY_SQL_PRINTSETTING_TABLE, null, null, null, null, null, null)
-            c2 = mDBManager!!.query(
+            c2 = _dbManager!!.query(
                 KEY_SQL_PRINTSETTING_TABLE, null, null, null, null, null,
                 null
             )
             TestCase.assertTrue(c1.count == c2!!.count)
             c1 = db.query(KEY_SQL_DEFAULT_PRINTER_TABLE, null, null, null, null, null, null)
-            c2 = mDBManager!!.query(
+            c2 = _dbManager!!.query(
                 KEY_SQL_DEFAULT_PRINTER_TABLE, null, null, null, null,
                 null, null
             )
@@ -254,7 +254,7 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
 
         //query empty table
-        c1 = mDBManager!!.query(
+        c1 = _dbManager!!.query(
             KEY_SQL_PRINTER_TABLE, null, null, null, null,
             null, null
         )
@@ -270,7 +270,7 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         TestCase.assertTrue(row > -1)
 
         //query with selection
-        c1 = mDBManager!!.query(
+        c1 = _dbManager!!.query(
             KEY_SQL_PRINTER_TABLE, null, "prn_id=?", arrayOf(printerId.toString()), null,
             null, null
         )
@@ -303,17 +303,17 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         //initialize value
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_NAME, printerName)
-        result = mDBManager!!.insert(KEY_SQL_PRINTER_TABLE, null, values)
+        result = _dbManager!!.insert(KEY_SQL_PRINTER_TABLE, null, values)
         TestCase.assertTrue(result)
-        var db = mDBManager!!.writableDatabase
+        var db = _dbManager!!.writableDatabase
         cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         initialCount = cursor.count
         TestCase.assertTrue(initialCount > 0)
         cursor.close()
         db.close()
-        result = mDBManager!!.delete(KEY_SQL_PRINTER_TABLE, null, null)
+        result = _dbManager!!.delete(KEY_SQL_PRINTER_TABLE, null, null)
         TestCase.assertTrue(result)
-        db = mDBManager!!.readableDatabase
+        db = _dbManager!!.readableDatabase
         cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
         TestCase.assertNotNull(cursor)
         TestCase.assertEquals(0, cursor.count)
@@ -331,9 +331,9 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         values.put(KEY_SQL_PRINTER_NAME, printerName)
 
         //initialize data
-        result = mDBManager!!.insert(KEY_SQL_PRINTER_TABLE, null, values)
+        result = _dbManager!!.insert(KEY_SQL_PRINTER_TABLE, null, values)
         TestCase.assertTrue(result)
-        var db = mDBManager!!.writableDatabase
+        var db = _dbManager!!.writableDatabase
         cursor =
             db.query(KEY_SQL_PRINTER_TABLE, null, "prn_id=?", arrayOf("1000"), null, null, null)
         initialCount = cursor.count
@@ -342,9 +342,9 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         db.close()
 
         // delete data
-        result = mDBManager!!.delete(KEY_SQL_PRINTER_TABLE, "prn_id=?", "1000")
+        result = _dbManager!!.delete(KEY_SQL_PRINTER_TABLE, "prn_id=?", "1000")
         TestCase.assertTrue(result)
-        db = mDBManager!!.readableDatabase
+        db = _dbManager!!.readableDatabase
         cursor =
             db.query(KEY_SQL_PRINTER_TABLE, null, "prn_id=?", arrayOf("1000"), null, null, null)
         TestCase.assertNotNull(cursor)
@@ -358,7 +358,7 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         val cursor: Cursor
 
         //initialize data
-        val db = mDBManager!!.writableDatabase
+        val db = _dbManager!!.writableDatabase
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_ID, printerId)
@@ -381,7 +381,7 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
     fun testGetInt() {
         val cursor: Cursor
         //initialize data
-        val db = mDBManager!!.writableDatabase
+        val db = _dbManager!!.writableDatabase
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_ID, printerId)
@@ -404,7 +404,7 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
     fun testGetBoolean() {
         val cursor: Cursor
         //initialize data
-        val db = mDBManager!!.writableDatabase
+        val db = _dbManager!!.writableDatabase
         db.delete(KEY_SQL_PRINTER_TABLE, null, null)
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_ID, printerId)

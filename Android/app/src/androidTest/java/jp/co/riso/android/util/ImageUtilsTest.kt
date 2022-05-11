@@ -1,17 +1,11 @@
 package jp.co.riso.android.util
 
-import jp.co.riso.android.util.ImageUtils.renderBmpToCanvas
-import android.test.ActivityInstrumentationTestCase2
-import jp.co.riso.smartdeviceapp.view.MainActivity
-import kotlin.Throws
-import jp.co.riso.android.util.ImageUtils
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
+import jp.co.riso.android.util.ImageUtils.renderBmpToCanvas
 import junit.framework.TestCase
 import org.junit.Test
-import java.lang.Exception
-import java.lang.NullPointerException
 
 class ImageUtilsTest {
 

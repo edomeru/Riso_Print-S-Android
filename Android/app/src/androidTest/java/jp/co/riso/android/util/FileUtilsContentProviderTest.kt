@@ -232,12 +232,12 @@ class FileUtilsContentProviderTest : ProviderTestCase2<TestContentProvider>(
 
     @Test
     fun testGetMimeType() {
-        val test_type = "testType"
-        this.provider!!.setMimeType(test_type)
+        val testType = "testType"
+        this.provider!!.setMimeType(testType)
         _testUri = Uri.parse(TEST_URI_PDF)
-        TestCase.assertEquals(getMimeType(_testContext, _testUri), test_type)
+        TestCase.assertEquals(getMimeType(_testContext, _testUri), testType)
         _testUri = Uri.parse(TEST_URI_NON_PDF)
-        TestCase.assertEquals(getMimeType(_testContext, _testUri), test_type)
+        TestCase.assertEquals(getMimeType(_testContext, _testUri), testType)
     }
 
     // ================================================================================

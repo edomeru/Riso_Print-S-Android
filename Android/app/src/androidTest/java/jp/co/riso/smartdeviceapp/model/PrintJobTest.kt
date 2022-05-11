@@ -7,81 +7,81 @@ import org.junit.Test
 import java.util.*
 
 class PrintJobTest {
-    private var pj: PrintJob? = null
-    private var date: Date? = null
+    private var _pj: PrintJob? = null
+    private var _date: Date? = null
 
     @Before
     fun setUp() {
-        date = Date()
-        pj = PrintJob(1, 1, "print job name.pdf", date!!, JobResult.SUCCESSFUL)
+        _date = Date()
+        _pj = PrintJob(1, 1, "print job name.pdf", _date!!, JobResult.SUCCESSFUL)
     }
 
     @Test
     fun testGetId() {
-        TestCase.assertEquals(1, pj!!.id)
+        TestCase.assertEquals(1, _pj!!.id)
     }
 
     @Test
     fun testSetId() {
-        pj!!.id = 2
-        TestCase.assertEquals(2, pj!!.id)
+        _pj!!.id = 2
+        TestCase.assertEquals(2, _pj!!.id)
     }
 
     @Test
     fun testGetPrinterId() {
-        TestCase.assertEquals(1, pj!!.printerId)
+        TestCase.assertEquals(1, _pj!!.printerId)
     }
 
     @Test
     fun testSetPrinterId() {
-        pj!!.printerId = 3
-        TestCase.assertEquals(3, pj!!.printerId)
+        _pj!!.printerId = 3
+        TestCase.assertEquals(3, _pj!!.printerId)
     }
 
     @Test
     fun testGetName() {
-        TestCase.assertEquals("print job name.pdf", pj!!.name)
+        TestCase.assertEquals("print job name.pdf", _pj!!.name)
     }
 
     @Test
     fun testSetName() {
-        pj!!.name = "new name.pdf"
-        TestCase.assertEquals("new name.pdf", pj!!.name)
+        _pj!!.name = "new name.pdf"
+        TestCase.assertEquals("new name.pdf", _pj!!.name)
     }
 
     @Test
     fun testSetName_Null() {
-        pj!!.name = null
-        TestCase.assertNull(pj!!.name)
+        _pj!!.name = null
+        TestCase.assertNull(_pj!!.name)
     }
 
     @Test
     fun testGetDate() {
-        TestCase.assertEquals(date, pj!!.date)
+        TestCase.assertEquals(_date, _pj!!.date)
     }
 
     @Test
     fun testSetDate() {
         val dateNew = Date()
-        pj!!.date = dateNew
-        TestCase.assertEquals(dateNew, pj!!.date)
+        _pj!!.date = dateNew
+        TestCase.assertEquals(dateNew, _pj!!.date)
     }
 
     @Test
     fun testSetDate_Null() {
-        pj!!.date = null
-        TestCase.assertNull(pj!!.date)
+        _pj!!.date = null
+        TestCase.assertNull(_pj!!.date)
     }
 
     @Test
     fun testGetResult() {
-        TestCase.assertEquals(JobResult.SUCCESSFUL, pj!!.result)
+        TestCase.assertEquals(JobResult.SUCCESSFUL, _pj!!.result)
     }
 
     @Test
     fun testSetResult() {
-        pj!!.result = JobResult.ERROR
-        TestCase.assertEquals(JobResult.ERROR, pj!!.result)
+        _pj!!.result = JobResult.ERROR
+        TestCase.assertEquals(JobResult.ERROR, _pj!!.result)
     }
 
     @Test

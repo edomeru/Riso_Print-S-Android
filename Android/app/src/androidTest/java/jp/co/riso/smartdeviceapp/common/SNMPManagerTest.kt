@@ -13,24 +13,24 @@ import java.util.concurrent.TimeUnit
 class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     val mSignal = CountDownLatch(1)
     private val _timeout = 15
-    private var mSnmpManager: SNMPManager? = null
-    private var mOnEndDiscovery = false
-    private var mOnFoundDevice = false
+    private var _snmpManager: SNMPManager? = null
+    private var _onEndDiscovery = false
+    private var _onFoundDevice = false
     @Throws(Exception::class)
     override fun setUp() {
         super.setUp()
-        mSnmpManager = SNMPManager()
-        assertNotNull(mSnmpManager)
-        mSnmpManager!!.initializeSNMPManager(AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME)
-        mOnEndDiscovery = false
-        mOnFoundDevice = false
+        _snmpManager = SNMPManager()
+        assertNotNull(_snmpManager)
+        _snmpManager!!.initializeSNMPManager(AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME)
+        _onEndDiscovery = false
+        _onFoundDevice = false
         testSetCallback_ValidCallback()
     }
 
     @Throws(Exception::class)
     override fun tearDown() {
         super.tearDown()
-        mSnmpManager!!.finalizeSNMPManager()
+        _snmpManager!!.finalizeSNMPManager()
         testSetCallback_NullCallback()
     }
 
@@ -40,7 +40,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     @Test
     fun testSetCallback_ValidCallback() {
         try {
-            mSnmpManager!!.setCallback(this)
+            _snmpManager!!.setCallback(this)
         } catch (e: Exception) {
             fail() // Error should not be thrown
         }
@@ -49,7 +49,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     @Test
     fun testSetCallback_NullCallback() {
         try {
-            mSnmpManager!!.setCallback(null)
+            _snmpManager!!.setCallback(null)
         } catch (e: NullPointerException) {
             fail() // Error should not be thrown
         }
@@ -65,10 +65,10 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
             return  // if chrome os, skip test because printer search is not supported
         }
         try {
-            mSnmpManager!!.deviceDiscovery()
+            _snmpManager!!.deviceDiscovery()
             mSignal.await(_timeout.toLong(), TimeUnit.SECONDS)
-            assertEquals(true, mOnFoundDevice)
-            assertEquals(true, mOnEndDiscovery)
+            assertEquals(true, _onFoundDevice)
+            assertEquals(true, _onEndDiscovery)
         } catch (e: Exception) {
             fail() // Error should not be thrown
         }
@@ -80,12 +80,12 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     /*
     public void testManualDiscovery_OnlineRisoPrinter() {
         try {
-            mSnmpManager.manualDiscovery(IPV4_ONLINE_RISO_PRINTER_ADDRESS);
+            _snmpManager.manualDiscovery(IPV4_ONLINE_RISO_PRINTER_ADDRESS);
 
             mSignal.await(_timeout, TimeUnit.SECONDS);
 
-            assertEquals(true, mOnFoundDevice);
-            assertEquals(true, mOnEndDiscovery);
+            assertEquals(true, _onFoundDevice);
+            assertEquals(true, _onEndDiscovery);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -93,12 +93,12 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
 
     public void testManualDiscovery_OnlineNonRisoPrinter() {
         try {
-            mSnmpManager.manualDiscovery(IPV4_ONLINE_NONRISO_PRINTER_ADDRESS);
+            _snmpManager.manualDiscovery(IPV4_ONLINE_NONRISO_PRINTER_ADDRESS);
 
             mSignal.await(_timeout, TimeUnit.SECONDS);
 
-            assertEquals(true, mOnFoundDevice);
-            assertEquals(true, mOnEndDiscovery);
+            assertEquals(true, _onFoundDevice);
+            assertEquals(true, _onEndDiscovery);
         } catch (Exception e) {
             fail(); // Error should not be thrown
         }
@@ -107,10 +107,10 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     @Test
     fun testManualDiscovery_OfflinePrinter() {
         try {
-            mSnmpManager!!.manualDiscovery(IPV4_OFFLINE_PRINTER_ADDRESS)
+            _snmpManager!!.manualDiscovery(IPV4_OFFLINE_PRINTER_ADDRESS)
             mSignal.await(_timeout.toLong(), TimeUnit.SECONDS)
-            assertEquals(true, mOnEndDiscovery)
-            assertEquals(false, mOnFoundDevice)
+            assertEquals(true, _onEndDiscovery)
+            assertEquals(false, _onFoundDevice)
         } catch (e: Exception) {
             fail() // Error should not be thrown
         }
@@ -126,7 +126,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
             return
         }
         try {
-            mSnmpManager!!.cancel()
+            _snmpManager!!.cancel()
         } catch (e: Exception) {
             fail() // Error should not be thrown
         }
@@ -138,12 +138,12 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
             val timer = Timer()
             timer.schedule(object : TimerTask() {
                 override fun run() {
-                    mSnmpManager!!.cancel()
+                    _snmpManager!!.cancel()
                 }
             }, 1000)
-            mSnmpManager!!.deviceDiscovery()
+            _snmpManager!!.deviceDiscovery()
             mSignal.await(_timeout.toLong(), TimeUnit.SECONDS)
-            assertEquals(false, mOnEndDiscovery)
+            assertEquals(false, _onEndDiscovery)
         } catch (e: Exception) {
             fail() // Error should not be thrown
         }
@@ -155,13 +155,13 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
             val timer = Timer()
             timer.schedule(object : TimerTask() {
                 override fun run() {
-                    mSnmpManager!!.cancel()
+                    _snmpManager!!.cancel()
                     mSignal.countDown()
                 }
             }, 1000)
-            mSnmpManager!!.manualDiscovery(IPV4_OFFLINE_PRINTER_ADDRESS)
+            _snmpManager!!.manualDiscovery(IPV4_OFFLINE_PRINTER_ADDRESS)
             mSignal.await(_timeout.toLong(), TimeUnit.SECONDS)
-            assertEquals(false, mOnEndDiscovery)
+            assertEquals(false, _onEndDiscovery)
         } catch (e: Exception) {
             fail() // Error should not be thrown
         }
@@ -173,7 +173,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     @Test
     fun testFinalizeSNMPManager_DuringIdle() {
         try {
-            mSnmpManager!!.finalizeSNMPManager()
+            _snmpManager!!.finalizeSNMPManager()
         } catch (e: Exception) {
             fail() // Error should not be thrown
         }
@@ -183,7 +183,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     // Interface
     // ================================================================================
     override fun onEndDiscovery(manager: SNMPManager?, result: Int) {
-        mOnEndDiscovery = true
+        _onEndDiscovery = true
         try {
             manager!!.finalizeSNMPManager()
             mSignal.countDown()
@@ -196,7 +196,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         manager: SNMPManager?, ipAddress: String?, name: String?,
         capabilities: BooleanArray?
     ) {
-        mOnFoundDevice = true
+        _onFoundDevice = true
     }
 
     companion object {
