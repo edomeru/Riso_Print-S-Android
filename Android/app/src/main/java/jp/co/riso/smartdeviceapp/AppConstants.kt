@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * AppConstants.java
+ * AppConstants.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp
-
-import jp.co.riso.smartdeviceapp.AppConstants
 
 /**
  * @class AppConstants
@@ -173,10 +171,10 @@ object AppConstants {
     // add URI authorities here for cloud storage that need temporary copy for text/image to PDF conversion
     // i.e. when text/image Open-In from cloud storage fails with CONVERSION_FILE_NOT_FOUND error
     // Google Drive (account-specified) URI authority
-    const val GOOGLE_DRIVE_URI_AUTHORITY = "com.google.android.apps.docs.storage"
+    private const val GOOGLE_DRIVE_URI_AUTHORITY = "com.google.android.apps.docs.storage"
 
     // OneDrive URI authority
-    const val ONE_DRIVE_URI_AUTHORITY = "com.microsoft.skydrive.content.external"
+    private const val ONE_DRIVE_URI_AUTHORITY = "com.microsoft.skydrive.content.external"
 
     // add URI authorities here for cloud storage that need temporary copy for text to PDF conversion
     @JvmField

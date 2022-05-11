@@ -114,7 +114,7 @@ class JniUtilsTest(name: String?) : TestCase(name) {
     }
 
     fun testValidateIp_validIp() {
-        var ipAddress: String
+        var ipAddress: String?
         for (i in IPv4_VALID_ADDRESS.indices) {
             ipAddress = validateIp(null)
             assertNull(ipAddress)
@@ -122,7 +122,7 @@ class JniUtilsTest(name: String?) : TestCase(name) {
     }
 
     fun testValidateIp_invalidIp() {
-        var ipAddress: String
+        var ipAddress: String?
         for (ip_invalid_address in IP_INVALID_ADDRESS) {
             ipAddress = validateIp(ip_invalid_address)
             assertNull(ipAddress)

@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * JniUtils.java
+ * JniUtils.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -17,7 +17,7 @@ import jp.co.riso.android.util.NetUtils
 object JniUtils {
     //https://code.google.com/p/android/issues/detail?id=181918
     @JvmStatic
-    external fun validateIp(ipAddress: String?): String
+    external fun validateIp(ipAddress: String?): String?
 
     /**
      * @brief Validate IP Address

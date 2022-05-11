@@ -1,19 +1,18 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * BaseWebFragment.java
+ * BaseWebFragment.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.view.base
 
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment
-import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
-import android.os.Bundle
-import jp.co.riso.smartprint.R
 import android.os.Build
+import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
+import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
+import jp.co.riso.smartprint.R
 
 /**
  * @class BaseWebFragment
@@ -21,27 +20,27 @@ import android.webkit.WebView
  * @brief Base web fragment class
  */
 abstract class BaseWebFragment : BaseFragment() {
-    protected var mWebView: SDAWebView? = null
+    private var _webView: SDAWebView? = null
 
     override fun initializeFragment(savedInstanceState: Bundle?) {}
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
-        mWebView = view.findViewById(R.id.contentWebView)
+        _webView = view.findViewById(R.id.contentWebView)
         if (Build.VERSION_CODES.O <= Build.VERSION.SDK_INT) {
-            mWebView!!.setDefaultFocusHighlightEnabled(false)
+            _webView!!.defaultFocusHighlightEnabled = false
         }
-        configureWebView(mWebView)
+        configureWebView(_webView)
         if (isChromeBook && savedInstanceState != null) {
-            mWebView!!.restoreState(savedInstanceState)
+            _webView!!.restoreState(savedInstanceState)
         } else {
-            mWebView!!.loadUrl(urlString!!)
+            _webView!!.loadUrl(urlString)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (isChromeBook) {
-            mWebView!!.saveState(outState)
+            _webView!!.saveState(outState)
         }
     }
 
@@ -57,5 +56,5 @@ abstract class BaseWebFragment : BaseFragment() {
      *
      * @return URL String
      */
-    abstract val urlString: String?
+    abstract val urlString: String
 }

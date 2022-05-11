@@ -1,35 +1,29 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * AppUtils.java
+ * AppUtils.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.android.util
 
-import android.content.Intent
-import jp.co.riso.android.util.AppUtils
-import android.content.pm.PackageManager
-import kotlin.Throws
-import android.content.pm.ApplicationInfo
 import android.app.Activity
 import android.content.Context
-import android.os.Build
-import android.view.WindowMetrics
-import android.view.WindowInsets
-import android.view.ViewGroup
-import android.graphics.Typeface
-import android.content.SharedPreferences
+import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.graphics.Point
 import android.graphics.Rect
+import android.graphics.Typeface
+import android.os.Build
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.inputmethod.InputMethodManager
 import androidx.preference.PreferenceManager
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import java.io.*
-import java.lang.IllegalArgumentException
-import java.lang.StringBuilder
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 
@@ -40,7 +34,7 @@ import java.util.*
  */
 object AppUtils {
     /// Path to asset files
-    const val CONST_ASSET_PATH = "file:///android_asset/"
+    private const val CONST_ASSET_PATH = "file:///android_asset/"
 
     /**
      * @brief Creates an activity intent launcher.
@@ -124,8 +118,7 @@ object AppUtils {
             return 0
         }
         val pm = context.packageManager
-        val appInfo: ApplicationInfo
-        appInfo = try {
+        val appInfo: ApplicationInfo = try {
             pm.getApplicationInfo(packageName.toString(), 0)
         } catch (e: PackageManager.NameNotFoundException) {
             throw e
@@ -277,7 +270,7 @@ object AppUtils {
         if (folder.isEmpty() || resource.isEmpty()) {
             return null
         }
-        var relativePath = folder + "-" + localeCode + "/" + resource
+        var relativePath = "$folder-$localeCode/$resource"
         val assetExists = assetExists(context, relativePath)
         if (!assetExists) {
             relativePath = "$folder/$resource"

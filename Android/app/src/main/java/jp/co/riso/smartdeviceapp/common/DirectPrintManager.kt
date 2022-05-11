@@ -1,20 +1,15 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * DirectPrintManager.java
+ * DirectPrintManager.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.common
 
-import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback
-import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCancelTask
-import jp.co.riso.smartdeviceapp.common.DirectPrintManager
-import jp.co.riso.smartdeviceapp.common.BaseTask
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import java.lang.ref.WeakReference
 
 /**
@@ -23,8 +18,8 @@ import java.lang.ref.WeakReference
  * @brief Helper class for printing PDF files with PJL settings.
  */
 class DirectPrintManager {
-    private val mJob: Long = 0
-    private var mCallbackRef: WeakReference<DirectPrintCallback?>? = null
+    private val _job: Long = 0
+    private var _callbackRef: WeakReference<DirectPrintCallback?>? = null
 
     /**
      * @brief Initializes Direct Print.
@@ -79,7 +74,7 @@ class DirectPrintManager {
      * @param callback Callback function
      */
     fun setCallback(callback: DirectPrintCallback?) {
-        mCallbackRef = WeakReference(callback)
+        _callbackRef = WeakReference(callback)
     }
 
     /**
@@ -221,7 +216,7 @@ class DirectPrintManager {
      * @retval false No ongoing print job
      */
     val isPrinting: Boolean
-        get() = mJob != 0L
+        get() = _job != 0L
 
     /**
      * @brief Sends cancel command.
@@ -261,8 +256,8 @@ class DirectPrintManager {
             PRINT_STATUS_ERROR_CONNECTING, PRINT_STATUS_ERROR_SENDING, PRINT_STATUS_ERROR_FILE, PRINT_STATUS_ERROR, PRINT_STATUS_SENT -> finalizeDirectPrint()
             PRINT_STATUS_JOB_NUM_UPDATE -> updateJobNumber()
         }
-        if (mCallbackRef != null && mCallbackRef!!.get() != null) {
-            mCallbackRef!!.get()!!.onNotifyProgress(this, status, progress)
+        if (_callbackRef != null && _callbackRef!!.get() != null) {
+            _callbackRef!!.get()!!.onNotifyProgress(this, status, progress)
         }
     }
 
@@ -280,7 +275,7 @@ class DirectPrintManager {
         val nextJobNumber =
             (jobNumber + 1) % (AppConstants.CONST_MAX_JOB_NUMBER + 1) // increment job number (0-999)
         editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, nextJobNumber)
-        editor.commit()
+        editor.apply()
     }
     // ================================================================================
     // Internal classes
@@ -305,21 +300,16 @@ class DirectPrintManager {
      * @class DirectPrintCancelTask
      *
      * @brief Async Task for Canceling Direct Print
-     */
-    inner class DirectPrintCancelTask
-    /**
      * @brief Creates DirectPrintCancelTask instance.
      *
-     * @param manager DirectPrint Manager
-     */(private val mManager: DirectPrintManager) : BaseTask<Void?, Void?>() {
-        protected override fun doInBackground(vararg params: Void?): Void? {
-            mManager.cancel()
-            mManager.finalizeDirectPrint()
+     * @param _manager DirectPrint Manager
+     */
+    inner class DirectPrintCancelTask (private val _manager: DirectPrintManager) : BaseTask<Void?, Void?>() {
+        override fun doInBackground(vararg params: Void?): Void? {
+            _manager.cancel()
+            _manager.finalizeDirectPrint()
             return null
         }
 
-        protected override fun onPostExecute(result: Void?) {
-            super.onPostExecute(result)
-        }
     }
 }

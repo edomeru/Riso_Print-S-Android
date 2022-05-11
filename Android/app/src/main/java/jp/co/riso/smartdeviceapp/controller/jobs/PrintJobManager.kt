@@ -1,26 +1,22 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrintJobManager.java
+ * PrintJobManager.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
 package jp.co.riso.smartdeviceapp.controller.jobs
 
-//import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.query
-import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.Companion.getIntFromCursor
-import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.Companion.getStringFromCursor
-//import jp.co.riso.smartdeviceapp.model.Printer.id
-//import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.delete
-import jp.co.riso.android.util.Logger.logError
-//import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.insert
-import jp.co.riso.android.util.Logger.logWarn
-import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
-import jp.co.riso.smartdeviceapp.controller.db.KeyConstants
-import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult
 import android.content.ContentValues
 import android.content.Context
+import jp.co.riso.android.util.Logger.logError
+import jp.co.riso.android.util.Logger.logWarn
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.Companion.getIntFromCursor
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager.Companion.getStringFromCursor
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants
 import jp.co.riso.smartdeviceapp.model.PrintJob
+import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult
 import jp.co.riso.smartdeviceapp.model.Printer
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -32,7 +28,7 @@ import java.util.*
  * @brief Helper class for managing the database transactions of Print Job History.
  */
 class PrintJobManager private constructor(context: Context) {
-    private val mManager: DatabaseManager
+    private val _manager: DatabaseManager = DatabaseManager(context)
     /**
      * @brief Returns true if Print Job History contains new data.
      *
@@ -56,7 +52,7 @@ class PrintJobManager private constructor(context: Context) {
     val printJobs: List<PrintJob>
         get() {
             val printJobs: MutableList<PrintJob> = ArrayList()
-            val c = mManager.query(
+            val c = _manager.query(
                 KeyConstants.KEY_SQL_PRINTJOB_TABLE,
                 null,
                 null,
@@ -74,16 +70,16 @@ class PrintJobManager private constructor(context: Context) {
                         getStringFromCursor(
                             c,
                             KeyConstants.KEY_SQL_PRINTJOB_DATE
-                        )
+                        ).toString()
                     )
                     val pjb_result = JobResult.values()[getIntFromCursor(
                         c,
                         KeyConstants.KEY_SQL_PRINTJOB_RESULT
                     )]
-                    printJobs.add(PrintJob(pjb_id, prn_id, pjb_name, pjb_date, pjb_result))
+                    printJobs.add(PrintJob(pjb_id, prn_id, pjb_name.toString(), pjb_date, pjb_result))
                 }
                 c.close()
-                mManager.close()
+                _manager.close()
             }
             return printJobs
         }
@@ -98,7 +94,7 @@ class PrintJobManager private constructor(context: Context) {
     val printersWithJobs: List<Printer>
         get() {
             val printers: MutableList<Printer> = ArrayList()
-            val c = mManager.query(
+            val c = _manager.query(
                 KeyConstants.KEY_SQL_PRINTER_TABLE,
                 null,
                 C_SEL_PRN_ID,
@@ -117,7 +113,7 @@ class PrintJobManager private constructor(context: Context) {
                     printers.add(printer)
                 }
                 c.close()
-                mManager.close()
+                _manager.close()
             }
             return printers
         }
@@ -131,7 +127,7 @@ class PrintJobManager private constructor(context: Context) {
      * @retval false Delete has failed.
      */
     fun deleteWithPrinterId(prn_id: Int): Boolean {
-        return mManager.delete(
+        return _manager.delete(
             KeyConstants.KEY_SQL_PRINTJOB_TABLE,
             C_WHERE_PRN_ID,
             prn_id.toString()
@@ -147,7 +143,7 @@ class PrintJobManager private constructor(context: Context) {
      * @retval false Delete has failed.
      */
     fun deleteWithJobId(pjb_id: Int): Boolean {
-        return mManager.delete(
+        return _manager.delete(
             KeyConstants.KEY_SQL_PRINTJOB_TABLE,
             C_WHERE_PJB_ID,
             pjb_id.toString()
@@ -188,7 +184,7 @@ class PrintJobManager private constructor(context: Context) {
      * @return Print job id of the oldest print job if the printer contains 100 or more print jobs.
      * @retval -1 Printer contains less than 100 print jobs.
      */
-    fun getOldest(printerId: Int): Int {
+    private fun getOldest(printerId: Int): Int {
         var jobId = -1
         val columns = arrayOf<String?>(
             KeyConstants.KEY_SQL_PRINTJOB_ID,
@@ -199,7 +195,7 @@ class PrintJobManager private constructor(context: Context) {
         val groupBy = KeyConstants.KEY_SQL_PRINTER_ID
         val having = "COUNT(" + KeyConstants.KEY_SQL_PRINTER_ID + ") >= 100"
         val orderBy = KeyConstants.KEY_SQL_PRINTJOB_ID + " ASC"
-        val c = mManager.query(
+        val c = _manager.query(
             KeyConstants.KEY_SQL_PRINTJOB_TABLE,
             columns,
             selection,
@@ -220,7 +216,7 @@ class PrintJobManager private constructor(context: Context) {
             }
         }
         c.close()
-        mManager.close()
+        _manager.close()
         return jobId
     }
 
@@ -245,7 +241,7 @@ class PrintJobManager private constructor(context: Context) {
         pjvalues.put(KeyConstants.KEY_SQL_PRINTJOB_NAME, printJob.name)
         pjvalues.put(KeyConstants.KEY_SQL_PRINTJOB_RESULT, printJob.result!!.ordinal)
         pjvalues.put(KeyConstants.KEY_SQL_PRINTJOB_DATE, convertDateToString(printJob.date))
-        return mManager.insert(KeyConstants.KEY_SQL_PRINTJOB_TABLE, null, pjvalues)
+        return _manager.insert(KeyConstants.KEY_SQL_PRINTJOB_TABLE, null, pjvalues)
     }
 
     companion object {
@@ -304,9 +300,8 @@ class PrintJobManager private constructor(context: Context) {
         private fun convertStringToDate(strDate: String): Date {
             val sdf = SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault())
             sdf.timeZone = TimeZone.getTimeZone(C_TIMEZONE)
-            val date: Date
-            date = try {
-                sdf.parse(strDate)!!
+            val date: Date = try {
+                sdf.parse(strDate) as Date
             } catch (e: ParseException) {
                 logWarn(
                     PrintJobManager::class.java,
@@ -318,12 +313,4 @@ class PrintJobManager private constructor(context: Context) {
         }
     }
 
-    /**
-     * @brief Creates a PrintJobManager instance.
-     *
-     * @param context Context object to use to manage the database.
-     */
-    init {
-        mManager = DatabaseManager(context)
-    }
 }

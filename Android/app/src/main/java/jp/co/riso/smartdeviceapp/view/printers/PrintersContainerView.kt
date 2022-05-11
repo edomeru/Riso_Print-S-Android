@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 RISO, Inc. All rights reserved.
+ * Copyright (c) 2022 RISO, Inc. All rights reserved.
  *
- * PrintersContainerView.java
+ * PrintersContainerView.kt
  * SmartDeviceApp
  * Created by: a-LINK Group
  */
@@ -10,7 +10,6 @@ package jp.co.riso.smartdeviceapp.view.printers
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
-import jp.co.riso.smartdeviceapp.view.printers.PrintersContainerView
 import jp.co.riso.smartprint.R
 
 /**
@@ -19,8 +18,8 @@ import jp.co.riso.smartprint.R
  * @brief LinearLayout with custom states
  */
 class PrintersContainerView : LinearLayout {
-    private var mIsDelete = false
-    private var mIsDefault = false
+    private var _isDelete = false
+    private var _isDefault = false
 
     /**
      * @brief Constructor. <br></br>
@@ -29,7 +28,7 @@ class PrintersContainerView : LinearLayout {
      *
      * @param context Application context
      */
-    constructor(context: Context?) : super(context) {}
+    constructor(context: Context?) : super(context)
 
     /**
      * @brief Constructor. <br></br>
@@ -39,7 +38,7 @@ class PrintersContainerView : LinearLayout {
      * @param context Application context
      * @param attrs Layout attributes
      */
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {}
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
     /**
      * @brief Constructor. <br></br>
@@ -54,15 +53,14 @@ class PrintersContainerView : LinearLayout {
         context,
         attrs,
         defStyle
-    ) {
-    }
+    )
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
         val drawableState = super.onCreateDrawableState(extraSpace + 2)
-        if (mIsDelete) {
+        if (_isDelete) {
             mergeDrawableStates(drawableState, STATE_DELETE)
         }
-        if (mIsDefault) {
+        if (_isDefault) {
             mergeDrawableStates(drawableState, STATE_DEFAULT)
         }
         return drawableState
@@ -78,13 +76,13 @@ class PrintersContainerView : LinearLayout {
      *
      * Sets and refreshes the drawable state of the view
      *
-     * @param isDelete Delete state
+     * @param _isDelete Delete state
      */
     var delete: Boolean
-        get() = mIsDelete
+        get() = _isDelete
         set(isDelete) {
-            if (mIsDelete != isDelete) {
-                mIsDelete = isDelete
+            if (_isDelete != isDelete) {
+                _isDelete = isDelete
                 refreshDrawableState()
             }
         }
@@ -100,13 +98,13 @@ class PrintersContainerView : LinearLayout {
      * Sets and refreshes the drawable state of the view.
      * The view is used for default printer view.
      *
-     * @param isDefault Default state
+     * @param _isDefault Default state
      */
     var default: Boolean
-        get() = mIsDefault
+        get() = _isDefault
         set(isDefault) {
-            if (mIsDefault != isDefault) {
-                mIsDefault = isDefault
+            if (_isDefault != isDefault) {
+                _isDefault = isDefault
                 refreshDrawableState()
             }
         }
