@@ -1,43 +1,27 @@
 package jp.co.riso.android.util
 
+import android.net.Uri
+import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.util.FileUtils.copy
 import jp.co.riso.android.util.FileUtils.getFileName
 import jp.co.riso.android.util.FileUtils.getFileSize
 import jp.co.riso.android.util.FileUtils.getMimeType
-import android.test.ActivityInstrumentationTestCase2
-import jp.co.riso.smartdeviceapp.view.MainActivity
-import kotlin.Throws
-import jp.co.riso.android.util.FileUtilsTest
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
-import android.content.res.AssetManager
-import android.net.Uri
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import junit.framework.TestCase
+import org.junit.Test
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.lang.Exception
-import java.lang.RuntimeException
 
-class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
-    private var mSrcFile: File? = null
-    private var mDstFile: File? = null
-
-    constructor() : super(MainActivity::class.java) {}
-    constructor(activityClass: Class<MainActivity?>?) : super(activityClass) {}
-
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-    }
-
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
-
+class FileUtilsTest : BaseActivityTestUtil() {
+    private var _srcFile: File? = null
+    private var _dstFile: File? = null
+    
     // ================================================================================
     // Tests - constructors
     // ================================================================================
+    @Test
     fun testConstructor() {
         val utils: FileUtils = jp.co.riso.android.util.FileUtils
         TestCase.assertNotNull(utils)
@@ -46,37 +30,40 @@ class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     // ================================================================================
     // Tests - copy
     // ================================================================================
+    @Test
     fun testCopy_ValidParams() {
         try {
             val pdfPath = getAssetPath(TEST_SRC_FILE)
-            mSrcFile = File(pdfPath)
-            if (mSrcFile == null) {
+            _srcFile = File(pdfPath)
+            if (_srcFile == null) {
                 TestCase.fail()
             }
-            mDstFile = File(
+            _dstFile = File(
                 SmartDeviceApp.appContext!!.getExternalFilesDir("pdfs").toString() + "/"
                         + TEST_DST_FILE
             )
-            if (mDstFile == null) {
+            if (_dstFile == null) {
                 TestCase.fail()
             }
-            copy(mSrcFile, mDstFile)
+            copy(_srcFile, _dstFile)
         } catch (e: Exception) {
             TestCase.fail()
         }
     }
 
+    @Test
     fun testCopy_NullSrc() {
         try {
-            copy(null as InputStream?, mDstFile)
+            copy(null as InputStream?, _dstFile)
         } catch (e: Exception) {
             TestCase.fail()
         }
     }
 
+    @Test
     fun testCopy_NullDst() {
         try {
-            copy(mSrcFile, null)
+            copy(_srcFile, null)
         } catch (e: Exception) {
             TestCase.fail()
         }
@@ -85,17 +72,18 @@ class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     // ================================================================================
     // Tests - get filename
     // ================================================================================
+    @Test
     fun testGetFilename() {
         try {
             val pdfPath = getAssetPath(TEST_SRC_FILE)
-            mSrcFile = File(pdfPath)
-            if (mSrcFile == null) {
+            _srcFile = File(pdfPath)
+            if (_srcFile == null) {
                 TestCase.fail()
             }
             TestCase.assertEquals(
                 getFileName(
                     SmartDeviceApp.appContext,
-                    Uri.fromFile(mSrcFile),
+                    Uri.fromFile(_srcFile),
                     true
                 ), TEST_SRC_FILE
             )
@@ -107,15 +95,16 @@ class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     // ================================================================================
     // Tests - get filesize
     // ================================================================================
+    @Test
     fun testGetFileSize() {
         try {
             val pdfPath = getAssetPath(TEST_SRC_FILE)
-            mSrcFile = File(pdfPath)
+            _srcFile = File(pdfPath)
             TestCase.assertEquals(
                 getFileSize(
                     SmartDeviceApp.appContext,
-                    Uri.fromFile(mSrcFile)
-                ).toLong(), mSrcFile!!.length()
+                    Uri.fromFile(_srcFile)
+                ).toLong(), _srcFile!!.length()
             )
         } catch (e: Exception) {
             TestCase.fail()
@@ -125,14 +114,15 @@ class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     // ================================================================================
     // Tests - get mimetype
     // ================================================================================
+    @Test
     fun testGetMimeType() {
         try {
             val pdfPath = getAssetPath(TEST_SRC_FILE)
-            mSrcFile = File(pdfPath)
+            _srcFile = File(pdfPath)
             TestCase.assertEquals(
                 getMimeType(
                     SmartDeviceApp.appContext,
-                    Uri.fromFile(mSrcFile)
+                    Uri.fromFile(_srcFile)
                 ), "application/pdf"
             )
         } catch (e: Exception) {
@@ -144,8 +134,8 @@ class FileUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     // Private
     // ================================================================================
     private fun getAssetPath(filename: String): String {
-        val f = File(activity!!.cacheDir.toString() + "/" + filename)
-        val assetManager = instrumentation.context.assets
+        val f = File(mainActivity!!.cacheDir.toString() + "/" + filename)
+        val assetManager = InstrumentationRegistry.getInstrumentation().context.assets
         try {
             val `is` = assetManager.open(filename)
             val size = `is`.available()

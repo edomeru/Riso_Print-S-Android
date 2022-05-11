@@ -1,66 +1,54 @@
 package jp.co.riso.android.util
 
 import android.content.Context
-import jp.co.riso.android.util.AppUtils.createActivityIntent
-import jp.co.riso.android.util.AppUtils.localeCode
-import jp.co.riso.android.util.AppUtils.getApplicationPackageName
-import jp.co.riso.android.util.AppUtils.getApplicationLastInstallDate
-import jp.co.riso.android.util.AppUtils.getScreenDimensions
-import jp.co.riso.android.util.AppUtils.getFileContentsFromAssets
-import jp.co.riso.android.util.AppUtils.assetExists
-import jp.co.riso.android.util.AppUtils.getLocalizedAssetRelativePath
-import jp.co.riso.android.util.AppUtils.getLocalizedAssetFullPath
-import jp.co.riso.android.util.AppUtils.changeChildrenFont
-import jp.co.riso.android.util.AppUtils.getResourceId
-import jp.co.riso.android.util.AppUtils.getFitToAspectRatioSize
-import jp.co.riso.android.util.AppUtils.getNextIntegerMultiple
-import jp.co.riso.android.util.AppUtils.authenticationString
-import jp.co.riso.android.util.AppUtils.ownerName
-import android.test.ActivityInstrumentationTestCase2
-import jp.co.riso.smartdeviceapp.view.MainActivity
-import android.graphics.Typeface
-import kotlin.Throws
-import jp.co.riso.android.util.AppUtils
 import android.content.Intent
 import android.content.pm.PackageManager
-import jp.co.riso.android.util.AppUtilsTest
+import android.graphics.Point
+import android.graphics.Typeface
 import android.os.Build
 import android.os.LocaleList
-import jp.co.riso.android.util.AppUtilsTest.MockClass
-import jp.co.riso.smartprint.test.R.string
-import android.content.SharedPreferences
-import android.graphics.Point
 import android.view.View
 import android.widget.*
 import androidx.preference.PreferenceManager
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import androidx.test.platform.app.InstrumentationRegistry
+import jp.co.riso.android.util.AppUtils.assetExists
+import jp.co.riso.android.util.AppUtils.authenticationString
+import jp.co.riso.android.util.AppUtils.changeChildrenFont
+import jp.co.riso.android.util.AppUtils.createActivityIntent
+import jp.co.riso.android.util.AppUtils.getApplicationLastInstallDate
+import jp.co.riso.android.util.AppUtils.getApplicationPackageName
+import jp.co.riso.android.util.AppUtils.getFileContentsFromAssets
+import jp.co.riso.android.util.AppUtils.getFitToAspectRatioSize
+import jp.co.riso.android.util.AppUtils.getLocalizedAssetFullPath
+import jp.co.riso.android.util.AppUtils.getLocalizedAssetRelativePath
+import jp.co.riso.android.util.AppUtils.getNextIntegerMultiple
+import jp.co.riso.android.util.AppUtils.getResourceId
+import jp.co.riso.android.util.AppUtils.getScreenDimensions
+import jp.co.riso.android.util.AppUtils.localeCode
+import jp.co.riso.android.util.AppUtils.ownerName
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
+import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartprint.test.R.string
 import junit.framework.TestCase
-import java.lang.Exception
+import org.junit.Before
+import org.junit.Test
 import java.util.*
 
-class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
-    val FONT_FILE = "fonts/Raleway/Raleway-Regular.ttf"
-    var mAppFont: Typeface? = null
+class AppUtilsTest : BaseActivityTestUtil() {
+    private var _appFont: Typeface? = null
 
-    constructor() : super(MainActivity::class.java) {}
-    constructor(activityClass: Class<MainActivity?>?) : super(activityClass) {}
-
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
+    @Before
+    fun setUp() {
         Locale.setDefault(Locale.US)
-        mAppFont = Typeface.DEFAULT
-    }
-
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
+        _appFont = Typeface.DEFAULT
     }
 
     //================================================================================
     // Tests - constructors
     //================================================================================
+    @Test
     fun testConstructor() {
         val appUtils = AppUtils
         TestCase.assertNotNull(appUtils)
@@ -69,17 +57,17 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Tests - createActivityIntent
     //================================================================================
+    @Test
     fun testCreateActivityIntent_ValidContextAndClass() {
-        val testIntent: Intent?
-        testIntent = createActivityIntent(activity, MainActivity::class.java)
+        val testIntent: Intent? = createActivityIntent(mainActivity, MainActivity::class.java)
         TestCase.assertNotNull(testIntent)
     }
 
+    @Test
     fun testCreateActivityIntent_NullContextOrClass() {
-        var testIntent: Intent?
 
         // Both null
-        testIntent = createActivityIntent(null, null)
+        var testIntent: Intent? = createActivityIntent(null, null)
         TestCase.assertNull(testIntent)
 
         // Context is null
@@ -87,19 +75,21 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertNull(testIntent)
 
         // Class is null
-        testIntent = createActivityIntent(instrumentation.context, null)
+        testIntent = createActivityIntent(InstrumentationRegistry.getInstrumentation().context, null)
         TestCase.assertNull(testIntent)
     }
 
     //================================================================================
     // Tests - getLocaleCode
     //================================================================================
+    @Test
     fun testGetLocaleCode_Default() {
         Locale.setDefault(Locale.getDefault())
         val str = localeCode
         TestCase.assertEquals(2, str.length)
     }
 
+    @Test
     fun testGetLocaleCode_EN() {
         Locale.setDefault(Locale.ENGLISH)
         var str = localeCode
@@ -109,6 +99,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertEquals("en", str)
     }
 
+    @Test
     fun testGetLocaleCode_FR() {
         Locale.setDefault(Locale.FRENCH)
         var str = localeCode
@@ -118,6 +109,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertEquals("fr", str)
     }
 
+    @Test
     fun testGetLocaleCode_IT() {
         Locale.setDefault(Locale.ITALIAN)
         var str = localeCode
@@ -127,6 +119,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertEquals("it", str)
     }
 
+    @Test
     fun testGetLocaleCode_DE() {
         Locale.setDefault(Locale.GERMAN)
         var str = localeCode
@@ -136,6 +129,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertEquals("de", str)
     }
 
+    @Test
     fun testGetLocaleCode_JA() {
         Locale.setDefault(Locale.JAPANESE)
         var str = localeCode
@@ -148,11 +142,13 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Tests - getApplicationLastInstallDate
     //================================================================================
+    @Test
     fun testGetApplicationPackageName_ValidContext() {
-        val packageName = getApplicationPackageName(activity)
+        val packageName = getApplicationPackageName(mainActivity)
         TestCase.assertNotNull(packageName)
     }
 
+    @Test
     fun testGetApplicationPackageName_NullContext() {
         val packageName = getApplicationPackageName(null)
         TestCase.assertNull(packageName)
@@ -161,18 +157,20 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Tests - getApplicationLastInstallDate
     //================================================================================
+    @Test
     fun testGetApplicationLastInstallDate_ValidContextAndPackageName() {
-        val packageName = getApplicationPackageName(activity)
+        val packageName = getApplicationPackageName(mainActivity)
         try {
-            val result = getApplicationLastInstallDate(activity, packageName)
+            val result = getApplicationLastInstallDate(mainActivity, packageName)
             TestCase.assertFalse(result == 0L)
         } catch (e: PackageManager.NameNotFoundException) {
             TestCase.fail()
         }
     }
 
+    @Test
     fun testGetApplicationLastInstallDate_NullContext() {
-        val packageName = getApplicationPackageName(activity)
+        val packageName = getApplicationPackageName(mainActivity)
         try {
             val result = getApplicationLastInstallDate(null, packageName)
             TestCase.assertTrue(result == 0L)
@@ -181,19 +179,21 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testGetApplicationLastInstallDate_InvalidPackageName() {
         val packageName = "this is an invalid package name"
         try {
-            getApplicationLastInstallDate(activity, packageName)
+            getApplicationLastInstallDate(mainActivity, packageName)
             TestCase.fail() // Should throw exception
         } catch (e: PackageManager.NameNotFoundException) {
         }
     }
 
+    @Test
     fun testGetApplicationLastInstallDate_NullPackageName() {
         val packageName: String? = null
         try {
-            getApplicationLastInstallDate(activity, packageName)
+            getApplicationLastInstallDate(mainActivity, packageName)
             TestCase.fail() // Should throw exception
         } catch (e: PackageManager.NameNotFoundException) {
         }
@@ -202,15 +202,17 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Tests - getScreenDimensions
     //================================================================================
+    @Test
     fun testGetScreenDimensions_Valid() {
         val expected = Point()
-        val display = activity!!.windowManager.defaultDisplay
+        val display = mainActivity!!.windowManager.defaultDisplay
         display.getSize(expected)
-        val size = getScreenDimensions(activity)
+        val size = getScreenDimensions(mainActivity)
         TestCase.assertEquals(expected.x, size!!.x)
         TestCase.assertEquals(expected.y, size.y)
     }
 
+    @Test
     fun testGetScreenDimensions_ContextNull() {
         val size = getScreenDimensions(null)
         TestCase.assertNull(size)
@@ -219,282 +221,321 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Tests - getFileContentsFromAssets
     //================================================================================
+    @Test
     fun testGetFileContentsFromAssets_ContextNull() {
         val str = getFileContentsFromAssets(null, null)
         TestCase.assertNull(str)
     }
 
+    @Test
     fun testGetFileContentsFromAssets_Valid() {
-        val str = getFileContentsFromAssets(activity, "db/SmartDeviceAppDB.sql")
+        val str = getFileContentsFromAssets(mainActivity, "db/SmartDeviceAppDB.sql")
         TestCase.assertNotNull(str)
     }
 
+    @Test
     fun testGetFileContentsFromAssets_InvalidAsset() {
-        val str = getFileContentsFromAssets(activity, "db/non-existent.sql")
+        val str = getFileContentsFromAssets(mainActivity, "db/non-existent.sql")
         TestCase.assertNull(str)
     }
 
     //================================================================================
     // Tests - assetExists
     //================================================================================
+    @Test
     fun testAssetExists_Valid() {
-        val isExists = assetExists(activity, ASSET)
+        val isExists = assetExists(mainActivity, ASSET)
         TestCase.assertTrue(isExists)
     }
 
+    @Test
     fun testAssetExists_ContextNull() {
         val isExists = assetExists(null, ASSET)
         TestCase.assertFalse(isExists)
     }
 
+    @Test
     fun testAssetExists_PathNull() {
-        val isExists = assetExists(activity, null)
+        val isExists = assetExists(mainActivity, null)
         TestCase.assertFalse(isExists)
     }
 
+    @Test
     fun testAssetExists_PathEmptyString() {
-        val isExists = assetExists(activity, "")
+        val isExists = assetExists(mainActivity, "")
         TestCase.assertFalse(isExists)
     }
 
+    @Test
     fun testAssetExists_PathNotExisting() {
-        val isExists = assetExists(activity, INVALID_VAL)
+        val isExists = assetExists(mainActivity, INVALID_VAL)
         TestCase.assertFalse(isExists)
     }
 
     //================================================================================
     // Tests - getLocalizedAssetRelativePath
     //================================================================================
+    @Test
     fun testGetLocalizedAssetRelativePath_Valid() {
-        val localized = getLocalizedAssetRelativePath(activity, FOLDER, RESOURCE)
+        val localized = getLocalizedAssetRelativePath(mainActivity, FOLDER, RESOURCE)
         TestCase.assertEquals(RELATIVE_PATH, localized)
     }
 
+    @Test
     fun testGetLocalizedAssetRelativePath_Valid_ja() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             Locale.setDefault(Locale.JAPANESE)
         } else {
             val locale = Locale("ja")
-            val res = activity!!.resources
+            val res = mainActivity!!.resources
             val config = res.configuration
             config.setLocale(locale)
             val list = LocaleList(locale)
             LocaleList.setDefault(list)
-            activity!!.createConfigurationContext(config)
+            mainActivity!!.createConfigurationContext(config)
         }
-        val localized = getLocalizedAssetRelativePath(activity, FOLDER, RESOURCE)
+        val localized = getLocalizedAssetRelativePath(mainActivity, FOLDER, RESOURCE)
         TestCase.assertEquals(RELATIVE_PATH_JA, localized)
 
         // Revert to EN locale
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
             val locale = Locale("en")
-            val res = activity!!.resources
+            val res = mainActivity!!.resources
             val config = res.configuration
             config.setLocale(locale)
             val list = LocaleList(locale)
             LocaleList.setDefault(list)
-            activity!!.createConfigurationContext(config)
+            mainActivity!!.createConfigurationContext(config)
         }
     }
 
+    @Test
     fun testGetLocalizedAssetRelativePath_Valid_missingLocale() {
         Locale.setDefault(Locale.KOREAN)
-        val localized = getLocalizedAssetRelativePath(activity, FOLDER, RESOURCE)
+        val localized = getLocalizedAssetRelativePath(mainActivity, FOLDER, RESOURCE)
         TestCase.assertEquals(RELATIVE_PATH, localized)
     }
 
+    @Test
     fun testGetLocalizedAssetRelativePath_ContextNull() {
         val localized = getLocalizedAssetRelativePath(null, FOLDER, RESOURCE)
         TestCase.assertNull(localized)
     }
 
+    @Test
     fun testGetLocalizedAssetRelativePath_FolderNull() {
-        val localized = getLocalizedAssetRelativePath(activity, null, RESOURCE)
+        val localized = getLocalizedAssetRelativePath(mainActivity, null, RESOURCE)
         TestCase.assertNull(localized)
     }
 
+    @Test
     fun testGetLocalizedAssetRelativePath_FolderEmptyString() {
-        val localized = getLocalizedAssetRelativePath(activity, "", RESOURCE)
+        val localized = getLocalizedAssetRelativePath(mainActivity, "", RESOURCE)
         TestCase.assertNull(localized)
     }
 
+    @Test
     fun testGetLocalizedAssetRelativePath_FolderNotExisting() {
-        val localized = getLocalizedAssetRelativePath(activity, INVALID_VAL, RESOURCE)
+        val localized = getLocalizedAssetRelativePath(mainActivity, INVALID_VAL, RESOURCE)
         TestCase.assertEquals(INVALID_FOLDER_PATH, localized)
     }
 
+    @Test
     fun testGetLocalizedAssetRelativePath_ResourceNull() {
-        val localized = getLocalizedAssetRelativePath(activity, FOLDER, null)
+        val localized = getLocalizedAssetRelativePath(mainActivity, FOLDER, null)
         TestCase.assertNull(localized)
     }
 
+    @Test
     fun testGetLocalizedAssetRelativePath_ResourceEmptyString() {
-        val localized = getLocalizedAssetRelativePath(activity, FOLDER, "")
+        val localized = getLocalizedAssetRelativePath(mainActivity, FOLDER, "")
         TestCase.assertNull(localized)
     }
 
     //================================================================================
     // Tests - getLocalizedAssetFullPath
     //================================================================================
+    @Test
     fun testGetLocalizedAssetFullPath_Valid() {
-        val localized = getLocalizedAssetFullPath(activity, FOLDER, RESOURCE)
+        val localized = getLocalizedAssetFullPath(mainActivity, FOLDER, RESOURCE)
         TestCase.assertEquals(FULL_PATH, localized)
     }
 
+    @Test
     fun testGetLocalizedAssetFullPath_Valid_ja() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             Locale.setDefault(Locale.JAPANESE)
         } else {
             val locale = Locale("ja")
-            val res = activity!!.resources
+            val res = mainActivity!!.resources
             val config = res.configuration
             config.setLocale(locale)
             val list = LocaleList(locale)
             LocaleList.setDefault(list)
-            activity!!.createConfigurationContext(config)
+            mainActivity!!.createConfigurationContext(config)
         }
-        val localized = getLocalizedAssetFullPath(activity, FOLDER, RESOURCE)
+        val localized = getLocalizedAssetFullPath(mainActivity, FOLDER, RESOURCE)
         TestCase.assertEquals(FULL_PATH_JA, localized)
 
         // Revert to EN locale
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
             val locale = Locale("en")
-            val res = activity!!.resources
+            val res = mainActivity!!.resources
             val config = res.configuration
             config.setLocale(locale)
             val list = LocaleList(locale)
             LocaleList.setDefault(list)
-            activity!!.createConfigurationContext(config)
+            mainActivity!!.createConfigurationContext(config)
         }
     }
 
+    @Test
     fun testGetLocalizedAssetFullPath_Valid_missingLocale() {
         Locale.setDefault(Locale.KOREAN)
-        val localized = getLocalizedAssetFullPath(activity, FOLDER, RESOURCE)
+        val localized = getLocalizedAssetFullPath(mainActivity, FOLDER, RESOURCE)
         TestCase.assertEquals(FULL_PATH, localized)
     }
 
+    @Test
     fun testGetLocalizedAssetFullPath_ContextNull() {
         val localized = getLocalizedAssetFullPath(null, FOLDER, RESOURCE)
         TestCase.assertNull(localized)
     }
 
+    @Test
     fun testGetLocalizedAssetFullPath_FolderNull() {
-        val localized = getLocalizedAssetFullPath(activity, null, RESOURCE)
+        val localized = getLocalizedAssetFullPath(mainActivity, null, RESOURCE)
         TestCase.assertNull(localized)
     }
 
+    @Test
     fun testGetLocalizedAssetFullPath_FolderEmptyString() {
-        val localized = getLocalizedAssetFullPath(activity, "", RESOURCE)
+        val localized = getLocalizedAssetFullPath(mainActivity, "", RESOURCE)
         TestCase.assertNull(localized)
     }
 
+    @Test
     fun testGetLocalizedAssetFullPath_FolderNotExisting() {
-        val localized = getLocalizedAssetFullPath(activity, INVALID_VAL, RESOURCE)
+        val localized = getLocalizedAssetFullPath(mainActivity, INVALID_VAL, RESOURCE)
         TestCase.assertEquals(INVALID_FOLDER_FULLPATH, localized)
     }
 
+    @Test
     fun testGetLocalizedAssetFullPath_ResourceNull() {
-        val localized = getLocalizedAssetFullPath(activity, FOLDER, null)
+        val localized = getLocalizedAssetFullPath(mainActivity, FOLDER, null)
         TestCase.assertNull(localized)
     }
 
+    @Test
     fun testGetLocalizedAssetFullPath_ResourceEmptyString() {
-        val localized = getLocalizedAssetFullPath(activity, FOLDER, "")
+        val localized = getLocalizedAssetFullPath(mainActivity, FOLDER, "")
         TestCase.assertNull(localized)
     }
 
     //================================================================================
     // Tests - changeChildrenFont
     //================================================================================
+    @Test
     fun testChangeChildrenFont_ValidViewGroupValidFont() {
-        val ll = LinearLayout(activity)
-        val ll2 = LinearLayout(activity)
-        ll.addView(TextView(activity))
-        ll.addView(View(activity))
-        ll.addView(Spinner(activity))
-        ll.addView(EditText(activity))
-        ll.addView(Switch(activity))
+        val ll = LinearLayout(mainActivity)
+        val ll2 = LinearLayout(mainActivity)
+        ll.addView(TextView(mainActivity))
+        ll.addView(View(mainActivity))
+        ll.addView(Spinner(mainActivity))
+        ll.addView(EditText(mainActivity))
+        ll.addView(Switch(mainActivity))
         ll.addView(ll2)
-        var typeFace = TextView(activity)
+        var typeFace = TextView(mainActivity)
         typeFace.typeface = null
         ll.addView(typeFace)
-        typeFace = TextView(activity)
-        typeFace.typeface = mAppFont
+        typeFace = TextView(mainActivity)
+        typeFace.typeface = _appFont
         ll.addView(typeFace)
-        ll2.addView(TextView(activity))
-        ll2.addView(View(activity))
-        ll2.addView(Spinner(activity))
-        ll2.addView(EditText(activity))
-        ll2.addView(Switch(activity))
-        changeChildrenFont(ll, mAppFont)
+        ll2.addView(TextView(mainActivity))
+        ll2.addView(View(mainActivity))
+        ll2.addView(Spinner(mainActivity))
+        ll2.addView(EditText(mainActivity))
+        ll2.addView(Switch(mainActivity))
+        changeChildrenFont(ll, _appFont)
     }
 
+    @Test
     fun testChangeChildrenFont_NullViewGroupValidFont() {
-        changeChildrenFont(null, mAppFont)
+        changeChildrenFont(null, _appFont)
     }
 
+    @Test
     fun testChangeChildrenFont_ValidViewGroupNullFont() {
-        val ll = LinearLayout(activity)
-        ll.addView(TextView(activity))
-        ll.addView(View(activity))
-        ll.addView(Spinner(activity))
-        ll.addView(EditText(activity))
-        ll.addView(Switch(activity))
+        val ll = LinearLayout(mainActivity)
+        ll.addView(TextView(mainActivity))
+        ll.addView(View(mainActivity))
+        ll.addView(Spinner(mainActivity))
+        ll.addView(EditText(mainActivity))
+        ll.addView(Switch(mainActivity))
         changeChildrenFont(ll, null)
     }
 
+    @Test
     fun testChangeChildrenFont_NullViewGroupNullFont() {
         changeChildrenFont(null, null)
     }
 
+    @Test
     fun testChangeChildrenFont_InvalidAccess() {
-        val ll = LinearLayout(activity)
-        ll.addView(MockClass(activity))
-        changeChildrenFont(ll, mAppFont)
+        val ll = LinearLayout(mainActivity)
+        ll.addView(MockClass(mainActivity))
+        changeChildrenFont(ll, _appFont)
     }
 
+    @Test
     fun testChangeChildrenFont_TypeFaceNull() {
-        val ll = LinearLayout(activity)
-        val nullTypeFace = TextView(activity)
+        val ll = LinearLayout(mainActivity)
+        val nullTypeFace = TextView(mainActivity)
         nullTypeFace.typeface = null
         ll.addView(nullTypeFace)
-        changeChildrenFont(ll, mAppFont)
+        changeChildrenFont(ll, _appFont)
     }
 
     //================================================================================
     // Tests - getResourceId
     //================================================================================
+    @Test
     fun testGetResourceId_Valid() {
         val value = getResourceId("app_name", string::class.java, -1)
         TestCase.assertTrue(-1 != value)
     }
 
+    @Test
     fun testGetResourceId_Null() {
         val value = getResourceId(null, null, -1)
         TestCase.assertEquals(-1, value)
     }
 
+    @Test
     fun testGetResourceId_NullVariableName() {
         val value = getResourceId(null, string::class.java, -1)
         TestCase.assertEquals(-1, value)
     }
 
+    @Test
     fun testGetResourceId_NullClass() {
         val value = getResourceId("app_name", null, -1)
         TestCase.assertEquals(-1, value)
     }
 
+    @Test
     fun testGetResourceId_InvalidClass() {
         val value = getResourceId("app_name", this.javaClass, -1)
         TestCase.assertEquals(-1, value)
     }
 
+    @Test
     fun testGetResourceId_InvalidAccess() {
         val value = getResourceId("app_name", MockClass::class.java, -1)
         TestCase.assertEquals(-1, value)
     }
 
+    @Test
     fun testGetResourceId_InvalidArgumentAccess() {
         val value = getResourceId("app_name_2", MockClass::class.java, -1)
         TestCase.assertEquals(-1, value)
@@ -503,6 +544,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Tests - getFitToAspectRatioSize
     //================================================================================
+    @Test
     fun testGetFitToAspectRatioSize_SmallerSrc_WillFitToWidth() {
         val srcWidth = 20.0f
         val srcHeight = 10.0f
@@ -519,6 +561,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertEquals(40, newDimensions[1])
     }
 
+    @Test
     fun testGetFitToAspectRatioSize_SmallerSrc_WillFitToHeight() {
         val srcWidth = 10.0f
         val srcHeight = 20.0f
@@ -535,6 +578,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertEquals(80, newDimensions[1])
     }
 
+    @Test
     fun testGetFitToAspectRatioSize_BiggerSrc_WillFitToWidth() {
         val srcWidth = 400.0f
         val srcHeight = 200.0f
@@ -551,6 +595,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertEquals(40, newDimensions[1])
     }
 
+    @Test
     fun testGetFitToAspectRatioSize_BiggerSrc_WillFitToHeight() {
         val srcWidth = 200.0f
         val srcHeight = 400.0f
@@ -570,9 +615,9 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Test getNextIntegerMultiple
     //================================================================================
+    @Test
     fun testGetNextIntegerMultiple_Valid() {
-        var `val`: Int
-        `val` = getNextIntegerMultiple(12, 2)
+        var `val`: Int = getNextIntegerMultiple(12, 2)
         TestCase.assertEquals(12, `val`)
         `val` = getNextIntegerMultiple(10, 4)
         TestCase.assertEquals(12, `val`)
@@ -584,15 +629,16 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertEquals(-6, `val`)
     }
 
+    @Test
     fun testGetNextIntegerMultiple_Invalid() {
-        val `val`: Int
-        `val` = getNextIntegerMultiple(-3, 0)
+        val `val`: Int = getNextIntegerMultiple(-3, 0)
         TestCase.assertEquals(-3, `val`)
     }
 
     //================================================================================
     // Test getAuthenticationString
     //================================================================================
+    @Test
     fun testGetAuthenticationString_Valid() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
         val editor = prefs.edit()
@@ -610,6 +656,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         TestCase.assertTrue(authenticationString == "securePrint=1\nloginId=test\npinCode=1234\n")
     }
 
+    @Test
     fun testGetAuthenticationString_Invalid() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
         val editor = prefs.edit()
@@ -633,6 +680,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Test getOwnerName
     //================================================================================
+    @Test
     fun testGetOwnerName_Valid() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
         val editor = prefs.edit()
@@ -653,17 +701,7 @@ class AppUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     //================================================================================
     // Mock Classes
     //================================================================================
-    inner class MockClass(context: Context?) : View(context) {
-        protected var typeface: Typeface?
-            protected get() = mAppFont
-            protected set(tf) {}
-
-//        companion object {
-//            // Invoked
-//            private const val app_name = 0x7f030000
-//            const val app_name_2: Float = 0x7030000f
-//        }
-    }
+    inner class MockClass(context: Context?) : View(context)
 
     companion object {
         private const val ASSET = "html/help.html"

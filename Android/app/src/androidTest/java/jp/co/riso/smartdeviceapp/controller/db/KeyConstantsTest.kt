@@ -1,21 +1,11 @@
 package jp.co.riso.smartdeviceapp.controller.db
 
-import kotlin.Throws
-import jp.co.riso.smartdeviceapp.controller.db.KeyConstants
-import junit.framework.TestCase
-import java.lang.Exception
+import junit.framework.TestCase.assertNotNull
+import org.junit.Test
 
-class KeyConstantsTest(name: String?) : TestCase(name) {
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-    }
+class KeyConstantsTest {
 
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
-
+    @Test
     fun testConstructor() {
         val keyConstants = KeyConstants
         assertNotNull(keyConstants)
