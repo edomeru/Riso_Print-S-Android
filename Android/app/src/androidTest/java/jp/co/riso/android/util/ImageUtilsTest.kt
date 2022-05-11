@@ -1,34 +1,18 @@
 package jp.co.riso.android.util
 
-import jp.co.riso.android.util.ImageUtils.renderBmpToCanvas
-import android.test.ActivityInstrumentationTestCase2
-import jp.co.riso.smartdeviceapp.view.MainActivity
-import kotlin.Throws
-import jp.co.riso.android.util.ImageUtils
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
+import jp.co.riso.android.util.ImageUtils.renderBmpToCanvas
 import junit.framework.TestCase
-import java.lang.Exception
-import java.lang.NullPointerException
+import org.junit.Test
 
-class ImageUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
-    constructor() : super(MainActivity::class.java) {}
-    constructor(activityClass: Class<MainActivity?>?) : super(activityClass) {}
-
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-    }
-
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
+class ImageUtilsTest {
 
     // ================================================================================
     // Tests - constructors
     // ================================================================================
+    @Test
     fun testConstructor() {
         val utils = ImageUtils
         TestCase.assertNotNull(utils)
@@ -37,6 +21,7 @@ class ImageUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
     // ================================================================================
     // Tests - renderBmpToCanvas
     // ================================================================================
+    @Test
     fun testRenderBmpToCanvas_ValidParameters() {
         try {
             val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
@@ -51,6 +36,7 @@ class ImageUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testRenderBmpToCanvas_NullBitmap() {
         try {
             val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
@@ -65,6 +51,7 @@ class ImageUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testRenderBmpToCanvas_NullCanvas() {
         try {
             val bmp = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
@@ -78,6 +65,7 @@ class ImageUtilsTest : ActivityInstrumentationTestCase2<MainActivity> {
         }
     }
 
+    @Test
     fun testRenderBmpToCanvas_NullRect() {
         try {
             val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)

@@ -1,10 +1,7 @@
 package jp.co.riso.smartdeviceapp.common
 
 import jp.co.riso.smartdeviceapp.common.JniUtils.validateIp
-import kotlin.Throws
-import jp.co.riso.smartdeviceapp.common.JniUtils
 import junit.framework.TestCase
-import java.lang.Exception
 
 class JniUtilsTest(name: String?) : TestCase(name) {
     private val IPv4_VALID_ADDRESS = arrayOf(
