@@ -28,12 +28,12 @@ import jp.co.riso.android.util.AppUtils
  */
 abstract class BaseActivity : FragmentActivity() {
 
-    private var systemUIFlags // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
+    private var _systemUIFlags // Stores initial System UI Visibility flags of device. Initialized and used only on Android 10 Phones.
             = 0
-    private var mLastRotation // Stores previous rotation to isolate change in rotation events only
+    private var _lastRotation // Stores previous rotation to isolate change in rotation events only
             = 0
-    private var mDisplayListener: DisplayListener? = null
-    private var mDisplayManager: DisplayManager? = null
+    private var _displayListener: DisplayListener? = null
+    private var _displayManager: DisplayManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +47,11 @@ abstract class BaseActivity : FragmentActivity() {
          */if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !isTablet) {
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                 // 031521 - For API Level 30 deprecation
-                systemUIFlagsForSDK29
+                _systemUIFlagsForSDK29
             }
             // RM1139 fix: Use onDisplayChanged. Less delay in detecting rotation changes compared to OnOrientationChange
-            if (mDisplayListener == null) {
-                mDisplayListener = object : DisplayListener {
+            if (_displayListener == null) {
+                _displayListener = object : DisplayListener {
                     override fun onDisplayAdded(displayId: Int) {}
                     override fun onDisplayRemoved(displayId: Int) {}
                     override fun onDisplayChanged(displayId: Int) {
@@ -59,11 +59,11 @@ abstract class BaseActivity : FragmentActivity() {
                     }
                 }
             }
-            mDisplayManager =
+            _displayManager =
                 SmartDeviceApp.appContext?.getSystemService(DISPLAY_SERVICE) as DisplayManager
-            if (mDisplayManager != null) {
-                mDisplayManager!!.registerDisplayListener(
-                    mDisplayListener, Handler(
+            if (_displayManager != null) {
+                _displayManager!!.registerDisplayListener(
+                    _displayListener, Handler(
                         Looper.myLooper()!!
                     )
                 )
@@ -88,7 +88,7 @@ abstract class BaseActivity : FragmentActivity() {
             // RM1132 fix: Use onOrientationChanged to capture rotation events only
             val display = display
             val rotation = display!!.rotation
-            if (rotation != mLastRotation) {
+            if (rotation != _lastRotation) {
                 // 031521 - For API Level 30 deprecation
                 // RM1132 fix: Add checking for navigation bar
                 val metrics = windowManager.currentWindowMetrics
@@ -110,7 +110,7 @@ abstract class BaseActivity : FragmentActivity() {
                         }, 10)
                     }
                 }
-                mLastRotation = rotation
+                _lastRotation = rotation
             }
         } else {
             // 031521 - For API Level 30 deprecation
@@ -119,10 +119,10 @@ abstract class BaseActivity : FragmentActivity() {
     }
 
     @Suppress("DEPRECATION")
-    private val systemUIFlagsForSDK29: Unit
+    private val _systemUIFlagsForSDK29: Unit
         get() {
             val decorView = window.decorView
-            systemUIFlags = decorView.systemUiVisibility
+            _systemUIFlags = decorView.systemUiVisibility
         }
 
     @Suppress("DEPRECATION")
@@ -130,17 +130,17 @@ abstract class BaseActivity : FragmentActivity() {
         // RM1132 fix: Use onOrientationChanged to capture rotation events only
         val display = windowManager.defaultDisplay
         val rotation = display.rotation
-        if (rotation != mLastRotation) {
+        if (rotation != _lastRotation) {
             var decorView = window.decorView
             decorView.systemUiVisibility =
-                systemUIFlags or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // Hide system navigation bar
+                _systemUIFlags or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // Hide system navigation bar
             val handler = Handler(Looper.myLooper()!!)
             handler.postDelayed({
                 decorView = window.decorView
                 decorView.systemUiVisibility =
-                    systemUIFlags or View.SYSTEM_UI_FLAG_LAYOUT_STABLE // Show system navigation bar
+                    _systemUIFlags or View.SYSTEM_UI_FLAG_LAYOUT_STABLE // Show system navigation bar
             }, 10)
-            mLastRotation = rotation
+            _lastRotation = rotation
         }
     }
     // ================================================================================
@@ -184,8 +184,8 @@ abstract class BaseActivity : FragmentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mDisplayManager != null && mDisplayListener != null) {
-            mDisplayManager!!.unregisterDisplayListener(mDisplayListener)
+        if (_displayManager != null && _displayListener != null) {
+            _displayManager!!.unregisterDisplayListener(_displayListener)
         }
     }
 }

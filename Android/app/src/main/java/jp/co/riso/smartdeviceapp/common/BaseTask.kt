@@ -19,7 +19,8 @@ abstract class BaseTask<T, R> {
         private set
 
     // R is defined in BaseTask implementation
-    private val mResult: ArrayList<R?> = ArrayList<R?>()
+    private val _result: ArrayList<R?> = ArrayList<R?>()
+
     fun cancel(mayInterruptIfRunning: Boolean?) {
         _future!!.cancel(mayInterruptIfRunning!!)
         isCancelled = true
@@ -35,7 +36,7 @@ abstract class BaseTask<T, R> {
             Thread { executeInBackground(*params) }.start()
             _latch!!.await()
             _latch = null
-            Thread { onPostExecute(mResult[0]) }.start()
+            Thread { onPostExecute(_result[0]) }.start()
             null
         }
         executor.execute(_future)
@@ -49,7 +50,7 @@ abstract class BaseTask<T, R> {
     // T is defined in BaseTask implementation
     private fun executeInBackground(vararg params: T) {
         val result = doInBackground(*params)
-        mResult.add(result)
+        _result.add(result)
         _latch!!.countDown()
     }
 

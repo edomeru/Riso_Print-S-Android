@@ -35,15 +35,15 @@ import java.lang.ref.WeakReference
  * @brief Manager responsible for file conversion to PDF.
  */
 class PDFConverterManager(
-    private val mContext: Context,
+    private val _context: Context,
     pdfConverterManagerInterface: PDFConverterManagerInterface?
 ) {
 
-    private var mConversionFlag: String? = null
-    private var mPdfConversionTask: PDFConversionTask? = null
-    private val mInterfaceRef: WeakReference<PDFConverterManagerInterface?>?
-    private var mUri: Uri? = null
-    private var mClipData: ClipData? = null
+    private var _conversionFlag: String? = null
+    private var _pdfConversionTask: PDFConversionTask? = null
+    private val _interfaceRef: WeakReference<PDFConverterManagerInterface?>?
+    private var _uri: Uri? = null
+    private var _clipData: ClipData? = null
 
     /**
      * @brief Obtain the destination file.
@@ -59,8 +59,8 @@ class PDFConverterManager(
      * @param data URI of image file.
      */
     fun setImageFile(data: Uri?) {
-        mUri = data
-        mConversionFlag = CONVERSION_IMAGE
+        _uri = data
+        _conversionFlag = CONVERSION_IMAGE
     }
 
     /**
@@ -69,8 +69,8 @@ class PDFConverterManager(
      * @param data ClipData of image files.
      */
     fun setImageFile(data: ClipData?) {
-        mClipData = data
-        mConversionFlag = CONVERSION_IMAGES
+        _clipData = data
+        _conversionFlag = CONVERSION_IMAGES
     }
 
     /**
@@ -79,8 +79,8 @@ class PDFConverterManager(
      * @param data URI of text file.
      */
     fun setTextFile(data: Uri?) {
-        mUri = data
-        mConversionFlag = CONVERSION_TEXT
+        _uri = data
+        _conversionFlag = CONVERSION_TEXT
     }
 
     /**
@@ -89,7 +89,7 @@ class PDFConverterManager(
     fun convertTextToPDF(): Int {
         try {
             // check if over file size limit (5MB)
-            if (FileUtils.getFileSize(mContext, mUri) > AppConstants.TEXT_FILE_SIZE_LIMIT) {
+            if (FileUtils.getFileSize(_context, _uri) > AppConstants.TEXT_FILE_SIZE_LIMIT) {
                 return CONVERSION_EXCEED_TEXT_FILE_SIZE_LIMIT
             }
         } catch (e: SecurityException) {
@@ -105,17 +105,17 @@ class PDFConverterManager(
         // Get text file content
         try {
             // check if it is needed to store file in temp file
-            if (isUriAuthorityAnyOf(mUri, AppConstants.TXT_URI_AUTHORITIES)) {
-                tempTxtFile = copyInputStreamToTempFile(mUri)
-                mUri = Uri.fromFile(tempTxtFile)
+            if (isUriAuthorityAnyOf(_uri, AppConstants.TXT_URI_AUTHORITIES)) {
+                tempTxtFile = copyInputStreamToTempFile(_uri)
+                _uri = Uri.fromFile(tempTxtFile)
             }
-            val parcelFileDescriptor = mContext.contentResolver.openFileDescriptor(
-                mUri!!, "r"
+            val parcelFileDescriptor = _context.contentResolver.openFileDescriptor(
+                _uri!!, "r"
             )
             val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
             val inputStream = InputStreamReader(FileInputStream(fileDescriptor))
             val reader = BufferedReader(inputStream)
-            if (mPdfConversionTask!!.isCancelled) {
+            if (_pdfConversionTask!!.isCancelled) {
                 inputStream.close()
                 reader.close()
                 parcelFileDescriptor.close()
@@ -123,7 +123,7 @@ class PDFConverterManager(
             }
             val stringBuilder = StringBuilder()
             while (reader.readLine().also { fileString = it } != null) {
-                if (mPdfConversionTask!!.isCancelled) {
+                if (_pdfConversionTask!!.isCancelled) {
                     inputStream.close()
                     reader.close()
                     parcelFileDescriptor.close()
@@ -135,7 +135,7 @@ class PDFConverterManager(
             reader.close()
             parcelFileDescriptor.close()
             fileString = stringBuilder.toString()
-            if (mPdfConversionTask!!.isCancelled) {
+            if (_pdfConversionTask!!.isCancelled) {
                 return 0
             }
         } catch (e: SecurityException) {
@@ -167,7 +167,7 @@ class PDFConverterManager(
                     fileString!!, rect.width() - 2 * MARGIN_SIZE,
                     rect.height() - 2 * MARGIN_SIZE, textPaint, 1F, 1F, true)
             val pages = pagination.size()
-            if (mPdfConversionTask!!.isCancelled) {
+            if (_pdfConversionTask!!.isCancelled) {
                 return 0
             }
             var i = 0
@@ -177,11 +177,11 @@ class PDFConverterManager(
                 if (!drawTextToPdf(pagination[i].toString(), rect, document, textPaint, i + 1)) {
                     return 0
                 }
-                mInterfaceRef!!.get()!!.onNotifyProgress(i + 1, pages, true)
+                _interfaceRef!!.get()!!.onNotifyProgress(i + 1, pages, true)
                 i += 1
             }
-            createDestFile(mContext)
-            if (mPdfConversionTask!!.isCancelled) {
+            createDestFile(_context)
+            if (_pdfConversionTask!!.isCancelled) {
                 return 0
             }
             document.writeTo(FileOutputStream(destFile))
@@ -206,7 +206,7 @@ class PDFConverterManager(
     fun convertImageToPDF(): Int {
         try {
             // Check first if image is supported
-            if (!ImageUtils.isImageFileSupported(mContext, mUri)) {
+            if (!ImageUtils.isImageFileSupported(_context, _uri)) {
                 return CONVERSION_UNSUPPORTED
             }
         } catch (e: SecurityException) {
@@ -218,12 +218,12 @@ class PDFConverterManager(
         var tempImgFile: File? = null
         try {
             // check if it is needed to store file in temp file
-            if (isUriAuthorityAnyOf(mUri, AppConstants.IMG_URI_AUTHORITIES)) {
-                tempImgFile = copyInputStreamToTempFile(mUri)
-                mUri = Uri.fromFile(tempImgFile)
+            if (isUriAuthorityAnyOf(_uri, AppConstants.IMG_URI_AUTHORITIES)) {
+                tempImgFile = copyInputStreamToTempFile(_uri)
+                _uri = Uri.fromFile(tempImgFile)
             }
-            bitmap = ImageUtils.getBitmapFromUri(mContext, mUri)
-            bitmap = bitmap?.let { ImageUtils.rotateImageIfRequired(mContext, it, mUri) }
+            bitmap = ImageUtils.getBitmapFromUri(_context, _uri)
+            bitmap = bitmap?.let { ImageUtils.rotateImageIfRequired(_context, it, _uri) }
             if (bitmap == null) {
                 return CONVERSION_FAILED
             }
@@ -246,7 +246,7 @@ class PDFConverterManager(
                 }
             }
         }
-        if (mPdfConversionTask!!.isCancelled) {
+        if (_pdfConversionTask!!.isCancelled) {
             return 0
         }
 
@@ -256,18 +256,18 @@ class PDFConverterManager(
         if (width > height) {
             rect = Rect(0, 0, A4_HEIGHT, A4_WIDTH)
         }
-        mInterfaceRef!!.get()!!.onNotifyProgress(1, 1, false)
+        _interfaceRef!!.get()!!.onNotifyProgress(1, 1, false)
         val document = PdfDocument()
-        if (mPdfConversionTask!!.isCancelled) {
+        if (_pdfConversionTask!!.isCancelled) {
             return 0
         }
         drawBitmapToPage(bitmap, rect, document, 1)
-        if (mPdfConversionTask!!.isCancelled) {
+        if (_pdfConversionTask!!.isCancelled) {
             return 0
         }
         try {
-            createDestFile(mContext)
-            if (mPdfConversionTask!!.isCancelled) {
+            createDestFile(_context)
+            if (_pdfConversionTask!!.isCancelled) {
                 return 0
             }
             document.writeTo(FileOutputStream(destFile))
@@ -289,7 +289,7 @@ class PDFConverterManager(
     fun convertImagesToPDF(): Int {
         try {
             // Check first if all files are supported image files
-            if (!ImageUtils.isImageFileSupported(mContext, mClipData)) {
+            if (!ImageUtils.isImageFileSupported(_context, _clipData)) {
                 return CONVERSION_UNSUPPORTED
             }
         } catch (e: SecurityException) {
@@ -300,18 +300,18 @@ class PDFConverterManager(
         var bitmap: Bitmap?
         val document = PdfDocument()
         var i = 0
-        while (i < mClipData!!.itemCount) {
-            mInterfaceRef!!.get()!!.onNotifyProgress(i + 1, mClipData!!.itemCount, false)
+        while (i < _clipData!!.itemCount) {
+            _interfaceRef!!.get()!!.onNotifyProgress(i + 1, _clipData!!.itemCount, false)
             var tempImgFile: File? = null
             try {
-                var uri = mClipData!!.getItemAt(i).uri
+                var uri = _clipData!!.getItemAt(i).uri
                 // check if it is needed to store file in temp file
                 if (isUriAuthorityAnyOf(uri, AppConstants.IMG_URI_AUTHORITIES)) {
                     tempImgFile = copyInputStreamToTempFile(uri)
                     uri = Uri.fromFile(tempImgFile)
                 }
-                bitmap = ImageUtils.getBitmapFromUri(mContext, uri)
-                bitmap = bitmap?.let { ImageUtils.rotateImageIfRequired(mContext, it, uri) }
+                bitmap = ImageUtils.getBitmapFromUri(_context, uri)
+                bitmap = bitmap?.let { ImageUtils.rotateImageIfRequired(_context, it, uri) }
                 if (bitmap == null) {
                     return CONVERSION_FAILED
                 }
@@ -334,7 +334,7 @@ class PDFConverterManager(
                     }
                 }
             }
-            if (mPdfConversionTask!!.isCancelled) {
+            if (_pdfConversionTask!!.isCancelled) {
                 return 0
             }
 
@@ -347,20 +347,20 @@ class PDFConverterManager(
                     rect = Rect(0, 0, A4_HEIGHT, A4_WIDTH)
                 }
             }
-            if (mPdfConversionTask!!.isCancelled) {
+            if (_pdfConversionTask!!.isCancelled) {
                 document.close()
                 return 0
             }
             drawBitmapToPage(bitmap, rect, document, i + 1)
-            if (mPdfConversionTask!!.isCancelled) {
+            if (_pdfConversionTask!!.isCancelled) {
                 document.close()
                 return 0
             }
             i += 1
         }
         try {
-            createDestFile(mContext)
-            if (mPdfConversionTask!!.isCancelled) {
+            createDestFile(_context)
+            if (_pdfConversionTask!!.isCancelled) {
                 return 0
             }
             document.writeTo(FileOutputStream(destFile))
@@ -380,19 +380,19 @@ class PDFConverterManager(
      * @brief Initializes conversion task asynchronously.
      */
     fun initializeAsync() {
-        if (mPdfConversionTask != null) {
-            mPdfConversionTask!!.cancel(true)
+        if (_pdfConversionTask != null) {
+            _pdfConversionTask!!.cancel(true)
         }
-        mPdfConversionTask = PDFConversionTask()
-        mPdfConversionTask!!.execute(mConversionFlag)
+        _pdfConversionTask = PDFConversionTask()
+        _pdfConversionTask!!.execute(_conversionFlag)
     }
 
     /**
      * @brief Cancel conversion task.
      */
     fun cancel() {
-        if (mPdfConversionTask != null) {
-            mPdfConversionTask!!.cancel(true)
+        if (_pdfConversionTask != null) {
+            _pdfConversionTask!!.cancel(true)
         }
     }
 
@@ -425,7 +425,7 @@ class PDFConverterManager(
         var bitmap1 = bitmap
         bitmap1 =
             getScaledBitmap(bitmap1, rect.width() - 2 * MARGIN_SIZE, rect.height() - 2 * MARGIN_SIZE)
-        if (mPdfConversionTask!!.isCancelled) {
+        if (_pdfConversionTask!!.isCancelled) {
             return
         }
         val pageInfo = PageInfo.Builder(rect.width(), rect.height(), pageNumber).create()
@@ -435,7 +435,7 @@ class PDFConverterManager(
         paint.color = Color.WHITE
         canvas.drawPaint(paint)
         paint.color = Color.BLUE
-        if (mPdfConversionTask!!.isCancelled) {
+        if (_pdfConversionTask!!.isCancelled) {
             document.finishPage(page)
             return
         }
@@ -467,7 +467,7 @@ class PDFConverterManager(
         textPaint: TextPaint,
         pageNumber: Int
     ): Boolean {
-        if (mPdfConversionTask!!.isCancelled) {
+        if (_pdfConversionTask!!.isCancelled) {
             return false
         }
         val pageInfo = PageInfo.Builder(rect.width(), rect.height(), pageNumber).create()
@@ -487,7 +487,7 @@ class PDFConverterManager(
             .setIncludePad(true)
         val staticLayout = builder.build()
         val pageString = staticLayout.text.toString()
-        if (mPdfConversionTask!!.isCancelled) {
+        if (_pdfConversionTask!!.isCancelled) {
             document.finishPage(page)
             return false
         }
@@ -503,7 +503,7 @@ class PDFConverterManager(
             j += 1
         }
         document.finishPage(page)
-        return !mPdfConversionTask!!.isCancelled
+        return !_pdfConversionTask!!.isCancelled
     }
 
     /**
@@ -537,8 +537,8 @@ class PDFConverterManager(
      */
     @Throws(IOException::class)
     private fun copyInputStreamToTempFile(uri: Uri?): File {
-        val tempFile = File(mContext.cacheDir, AppConstants.TEMP_COPY_FILENAME)
-        val input = mContext.contentResolver.openInputStream(uri!!)
+        val tempFile = File(_context.cacheDir, AppConstants.TEMP_COPY_FILENAME)
+        val input = _context.contentResolver.openInputStream(uri!!)
         FileUtils.copy(input, tempFile)
         input?.close()
         return tempFile
@@ -585,10 +585,10 @@ class PDFConverterManager(
         }
 
         override fun onPreExecute() {
-            if (mInterfaceRef?.get() != null) {
-                if (!mPdfConversionTask!!.isCancelled) {
-                    mInterfaceRef.get()!!
-                        .onNotifyProgress(mContext.resources.getString(R.string.ids_info_msg_initializing))
+            if (_interfaceRef?.get() != null) {
+                if (!_pdfConversionTask!!.isCancelled) {
+                    _interfaceRef.get()!!
+                        .onNotifyProgress(_context.resources.getString(R.string.ids_info_msg_initializing))
                 }
             }
         }
@@ -597,9 +597,9 @@ class PDFConverterManager(
             super.onPostExecute(result)
             val activity = activity
             activity!!.runOnUiThread {
-                if (mInterfaceRef?.get() != null) {
-                    if (!mPdfConversionTask!!.isCancelled) {
-                        mInterfaceRef.get()!!.onFileConverted(result!!)
+                if (_interfaceRef?.get() != null) {
+                    if (!_pdfConversionTask!!.isCancelled) {
+                        _interfaceRef.get()!!.onFileConverted(result!!)
                     }
                 }
             }
@@ -630,6 +630,6 @@ class PDFConverterManager(
      * @brief Creates a PDFConverterManager with an Interface class.
      */
     init {
-        mInterfaceRef = WeakReference(pdfConverterManagerInterface)
+        _interfaceRef = WeakReference(pdfConverterManagerInterface)
     }
 }

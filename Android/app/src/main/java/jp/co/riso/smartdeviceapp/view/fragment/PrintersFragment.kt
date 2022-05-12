@@ -225,7 +225,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
      * @brief Displays the Printer Search Screen.
      */
     private fun displayPrinterSearchFragment() {
-        if (isMaxPrinterCountReached) {
+        if (_isMaxPrinterCountReached) {
             _pauseableHandler!!.resume()
             return
         }
@@ -240,7 +240,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
      * @brief Displays the Add Printer Screen.
      */
     private fun displayAddPrinterFragment() {
-        if (isMaxPrinterCountReached) {
+        if (_isMaxPrinterCountReached) {
             _pauseableHandler!!.resume()
             return
         }
@@ -317,7 +317,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
      * @retval true Maximum printer count is reached
      * @retval false Maximum printer count is not yet reached
      */
-    private val isMaxPrinterCountReached: Boolean
+    private val _isMaxPrinterCountReached: Boolean
         get() {
             if (_printerManager!!.printerCount == AppConstants.CONST_MAX_PRINTER_COUNT) {
                 val title = resources.getString(R.string.ids_lbl_printers)

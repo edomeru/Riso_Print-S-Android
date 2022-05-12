@@ -27,16 +27,16 @@ import jp.co.riso.android.util.Logger
  */
 abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.OnClickListener {
 
-    private var mIconState = false
-    private var mIconId = 0
-    private var mIconIdToRestore = 0
+    private var _iconState = false
+    private var _iconId = 0
+    private var _iconIdToRestore = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Logger.logStartTime(activity, this.javaClass, "Fragment Instance")
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
-            mIconState = savedInstanceState.getBoolean(KEY_ICON_STATE)
-            mIconIdToRestore = savedInstanceState.getInt(KEY_ICON_ID)
+            _iconState = savedInstanceState.getBoolean(KEY_ICON_STATE)
+            _iconIdToRestore = savedInstanceState.getInt(KEY_ICON_ID)
         }
         initializeFragment(savedInstanceState)
         Logger.logStopTime(activity, this.javaClass, "Fragment Instance")
@@ -85,18 +85,18 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
     override fun onResume() {
         super.onResume()
         // restore selected only if screen is rotated
-        if (mIconIdToRestore != 0 && mIconState) {
-            setIconState(mIconIdToRestore, true)
+        if (_iconIdToRestore != 0 && _iconState) {
+            setIconState(_iconIdToRestore, true)
         }
-        mIconIdToRestore = 0
+        _iconIdToRestore = 0
         AppUtils.hideSoftKeyboard(requireActivity())
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(KEY_ICON_STATE, mIconState)
-        outState.putInt(KEY_ICON_ID, mIconId)
-        mIconIdToRestore = mIconId
+        outState.putBoolean(KEY_ICON_STATE, _iconState)
+        outState.putInt(KEY_ICON_ID, _iconId)
+        _iconIdToRestore = _iconId
 
         // Get selected menu item and store it in bundle
         val parentView = view
@@ -248,8 +248,8 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
     fun setIconState(id: Int, state: Boolean) {
         if (view != null && view?.findViewById<View?>(id) != null) {
             view?.findViewById<View>(id)?.isSelected = state
-            mIconState = state
-            mIconId = id
+            _iconState = state
+            _iconId = id
         }
     }
 
@@ -263,8 +263,8 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
                 setIconState(R.id.menu_id_action_button, false)
             }
         }
-        mIconState = false
-        mIconId = 0
+        _iconState = false
+        _iconId = 0
     }
 
     /**

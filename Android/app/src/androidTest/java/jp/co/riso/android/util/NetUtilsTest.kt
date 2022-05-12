@@ -332,7 +332,7 @@ class NetUtilsTest {
     @Test
     fun testConnectToIpv6Address_NullInetAddressObject() {
         try {
-            val ipv6Addr = localIpv6Address
+            val ipv6Addr = _localIpv6Address
             TestCase.assertNotNull(ipv6Addr)
             NetUtils.connectToIpv6Address(ipv6Addr)
             _signal.await(500, TimeUnit.MILLISECONDS)
@@ -445,7 +445,7 @@ class NetUtilsTest {
         }
     }
 
-    private val localIpv6Address: String?
+    private val _localIpv6Address: String?
         get() {
             try {
                 val en = NetworkInterface.getNetworkInterfaces()

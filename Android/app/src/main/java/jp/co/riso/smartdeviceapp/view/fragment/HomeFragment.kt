@@ -142,7 +142,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                 _lastClickTime = SystemClock.elapsedRealtime()
 
                 // RM 789 Fix: Add checking of available internal storage before opening External Camera Application
-                if (availableStorageInBytes > AppConstants.CONST_FREE_SPACE_BUFFER) {
+                if (_availableStorageInBytes > AppConstants.CONST_FREE_SPACE_BUFFER) {
                     val intent = Intent(activity, ScanActivity::class.java)
                     intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, ScanConstants.OPEN_CAMERA)
                     _resultLauncherCamera.launch(intent)
@@ -282,7 +282,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
      *
      * @return Remaining Internal Storage Size (in Bytes)
      */
-    private val availableStorageInBytes: Long
+    private val _availableStorageInBytes: Long
         get() {
             val stat = StatFs(SmartDeviceApp.appContext?.filesDir!!.path)
             val bytesAvailable = stat.blockSizeLong * stat.availableBlocksLong
