@@ -29,8 +29,10 @@ class PrinterSearchAdapter(context: Context?, private val _layoutId: Int, values
     ArrayAdapter<Printer?>(
         context!!, _layoutId, values!!
     ), View.OnClickListener {
+
     private var _searchAdapterInterface: PrinterSearchAdapterInterface? = null
     private val _printerManager: PrinterManager? = getInstance(SmartDeviceApp.appContext!!)
+
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         var convertView = view
         val printer = getItem(position)

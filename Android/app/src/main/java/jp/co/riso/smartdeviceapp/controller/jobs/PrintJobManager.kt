@@ -281,13 +281,13 @@ class PrintJobManager private constructor(context: Context) {
          */
         @JvmStatic
         fun convertDateToString(date: Date?): String {
-            var convertDate = date
-            if (convertDate == null) {
-                convertDate = Date(0)
-            }
             val sdf = SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault())
             sdf.timeZone = TimeZone.getTimeZone(C_TIMEZONE)
-            return sdf.format(convertDate)
+            return if (date == null) {
+                sdf.format(Date(0))
+            } else {
+                sdf.format(date)
+            }
         }
 
         /**

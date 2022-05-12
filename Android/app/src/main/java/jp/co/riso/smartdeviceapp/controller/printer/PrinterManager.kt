@@ -836,20 +836,20 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
      */
     internal inner class UpdateOnlineStatusTask(view: View?, ipAddress: String) :
         BaseTask<Any?, Boolean?>() {
-        private val mViewRef: WeakReference<View?>?
-        private val mIpAddress: String
+        private val _viewRef: WeakReference<View?>?
+        private val _ipAddress: String
         override fun doInBackground(vararg params: Any?): Boolean {
-            return if (mIpAddress.isEmpty()) {
+            return if (_ipAddress.isEmpty()) {
                 false
-            } else isOnline(mIpAddress)
+            } else isOnline(_ipAddress)
         }
 
         override fun onPostExecute(result: Boolean?) {
             super.onPostExecute(result)
             val activity = SmartDeviceApp.activity
             activity!!.runOnUiThread {
-                if (mViewRef?.get() != null) {
-                    val view = mViewRef.get() as ImageView?
+                if (_viewRef?.get() != null) {
+                    val view = _viewRef.get() as ImageView?
                     if (result == true) {
                         view!!.setImageResource(R.drawable.img_btn_printer_status_online)
                     } else {
@@ -863,8 +863,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
          * @brief Instantiate UpdateOnlineStatusTask.
          */
         init {
-            mViewRef = WeakReference(view)
-            mIpAddress = ipAddress
+            _viewRef = WeakReference(view)
+            _ipAddress = ipAddress
         }
     }
 

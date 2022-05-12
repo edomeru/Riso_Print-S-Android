@@ -17,7 +17,7 @@ import org.w3c.dom.Node
  * Data represented by <group> tag in XML.
  */
 class Group(groupNode: Node) : XmlNode(groupNode) {
-    private val mSettings: MutableList<Setting>
+    private val _settings: MutableList<Setting>
 
     /**
      * @brief Gets settings of a Group.
@@ -25,7 +25,7 @@ class Group(groupNode: Node) : XmlNode(groupNode) {
      * @return List of Setting objects.
      */
     val settings: List<Setting>
-        get() = mSettings
+        get() = _settings
 
     /**
      * @brief Creates a Group instance.
@@ -33,11 +33,11 @@ class Group(groupNode: Node) : XmlNode(groupNode) {
      * @param groupNode Node represented by \<group></group>\> tag in XML.
      */
     init {
-        mSettings = ArrayList()
+        _settings = ArrayList()
         val settingsList = groupNode.childNodes
         var i = 1
         while (i < settingsList.length) {
-            mSettings.add(Setting(settingsList.item(i)))
+            _settings.add(Setting(settingsList.item(i)))
             i += 2
         }
     }

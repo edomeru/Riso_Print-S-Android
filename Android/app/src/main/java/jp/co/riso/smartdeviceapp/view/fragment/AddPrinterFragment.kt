@@ -169,10 +169,14 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 title,
                 msg,
                 resources.getString(R.string.ids_lbl_ok),
-                null
+                null,
+                KEY_ADD_PRINTER_DIALOG
             )
-            info.setTargetFragment(this, 0)
             if (activity != null && activity is MainActivity) {
+                setResultListenerConfirmDialog(
+                    requireActivity().supportFragmentManager,
+                    this,
+                    KEY_ADD_PRINTER_DIALOG)
                 DialogUtils.displayDialog(activity as MainActivity, KEY_ADD_PRINTER_DIALOG, info)
             }
         }
@@ -211,9 +215,13 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 title,
                 errMsg,
                 resources.getString(R.string.ids_lbl_ok),
-                null
+                null,
+                KEY_ADD_PRINTER_DIALOG
             )
-            info.setTargetFragment(this, 0)
+            setResultListenerConfirmDialog(
+                requireActivity().supportFragmentManager,
+                this,
+                KEY_ADD_PRINTER_DIALOG)
         } else {
             info = InfoDialogFragment.newInstance(
                 title,

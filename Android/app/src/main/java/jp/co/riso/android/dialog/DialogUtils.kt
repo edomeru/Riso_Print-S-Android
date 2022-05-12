@@ -16,6 +16,17 @@ import androidx.fragment.app.*
  */
 
 object DialogUtils {
+
+    /**
+     * @brief Tags used for setting up fragment result listeners for ConfirmDialogFragment and WaitingDialogFragment
+     */
+    val DIALOG_RESULT: String
+        get() = "value"
+    val DIALOG_RESULT_CONFIRM: String
+        get() = "confirm"
+    val DIALOG_RESULT_CANCEL: String
+        get() = "cancel"
+
     /**
      * @brief Removes a dialog fragment with the given tag in a activity using a transaction
      *

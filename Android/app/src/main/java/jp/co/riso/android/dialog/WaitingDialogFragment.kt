@@ -11,12 +11,15 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import jp.co.riso.smartprint.R
 import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LifecycleOwner
+import jp.co.riso.smartprint.R
 
 /**
  * @class WaitingDialogFragment
@@ -34,13 +37,15 @@ import androidx.fragment.app.DialogFragment
  * 3. To dismiss, call: DialogUtils.dismissDialog(activity, tag);
  */
 class WaitingDialogFragment : DialogFragment() {
-    private var _listener: WaitingDialogListener? = null
+    private var _requestKey: String? = null
 
     companion object {
         private const val KEY_TITLE = "title"
         private const val KEY_MESSAGE = "message"
         private const val KEY_CANCELABLE = "cancelable"
         private const val KEY_NEG_BUTTON = "negButton"
+        private const val KEY_REQUEST = "requestKey"
+
         private var sCancelBackButtonListener: DialogInterface.OnKeyListener? = null
 
         /**
@@ -58,7 +63,8 @@ class WaitingDialogFragment : DialogFragment() {
             title: String?,
             message: String?,
             cancelable: Boolean,
-            buttonTitle: String?
+            buttonTitle: String?,
+            requestKey: String?
         ): WaitingDialogFragment {
             val dialog = WaitingDialogFragment()
 
@@ -69,6 +75,7 @@ class WaitingDialogFragment : DialogFragment() {
                 putString(KEY_MESSAGE, message)
                 putString(KEY_NEG_BUTTON, buttonTitle)
                 putBoolean(KEY_CANCELABLE, cancelable)
+                putString(KEY_REQUEST, requestKey)
             }
             dialog.arguments = args
             return dialog
@@ -80,16 +87,13 @@ class WaitingDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        retainInstance = true
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val title = arguments?.getString(KEY_TITLE)
         val message = arguments?.getString(KEY_MESSAGE)
         val negButton = arguments?.getString(KEY_NEG_BUTTON)
         val cancelable = arguments?.getBoolean(KEY_CANCELABLE)
+        _requestKey = arguments?.getString(KEY_REQUEST)
+
         val newContext =
             ContextThemeWrapper(activity, android.R.style.TextAppearance_Holo_DialogWindowTitle)
         val builder = AlertDialog.Builder(newContext)
@@ -108,7 +112,7 @@ class WaitingDialogFragment : DialogFragment() {
             dialog.setButton(
                 DialogInterface.BUTTON_NEGATIVE,
                 negButton
-            ) { dialog, _ -> dialog.cancel() }
+            ) { dialogInterface, _ -> dialogInterface.cancel() }
         }
         dialog.setOnShowListener {
             if (message != null) {
@@ -118,25 +122,12 @@ class WaitingDialogFragment : DialogFragment() {
         return dialog
     }
 
-    override fun onDestroyView() {
-        val dialog = dialog
-
-        // Work around bug:
-        // http://code.google.com/p/android/issues/detail?id=17423
-        if (dialog != null && retainInstance) {
-            dialog.setDismissMessage(null)
-        }
-        super.onDestroyView()
-    }
-
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
-        if (targetFragment is WaitingDialogListener || _listener != null) {
-            if (_listener == null) {
-                _listener = targetFragment as WaitingDialogListener?
-            }
-            _listener!!.onCancel()
-        }
+        requireActivity().supportFragmentManager.setFragmentResult(
+            _requestKey!!,
+            bundleOf( DialogUtils.DIALOG_RESULT to DialogUtils.DIALOG_RESULT_CANCEL)
+        )
     }
 
     /**
@@ -170,9 +161,25 @@ class WaitingDialogFragment : DialogFragment() {
      * @brief Interface for WaitingDialog events
      */
     interface WaitingDialogListener {
+
         /**
          * @brief Called when the button is clicked or when dialog is cancelled
          */
         fun onCancel()
+
+        /**
+         * @brief Called to setup fragment result listener
+         */
+        fun setResultListenerWaitingDialog(fm: FragmentManager, lifecycleOwner: LifecycleOwner, requestKey: String){
+            fm.setFragmentResultListener(
+                requestKey,
+                lifecycleOwner
+            ) { _, bundle: Bundle ->
+                val result = bundle.getString(DialogUtils.DIALOG_RESULT)
+                if (result == DialogUtils.DIALOG_RESULT_CANCEL) {
+                    onCancel()
+                }
+            }
+        }
     }
 }

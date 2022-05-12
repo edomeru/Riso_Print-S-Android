@@ -41,10 +41,10 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
     @Volatile
     var path: String? = null
         private set
-    private val mDocument: Document = Document()
-    private var mFileName: String? = null
-    private val mInterfaceRef: WeakReference<PDFFileManagerInterface?>?
-    private var mInitTask: PDFInitTask? = null
+    private val _document: Document = Document()
+    private var _fileName: String? = null
+    private val _interfaceRef: WeakReference<PDFFileManagerInterface?>?
+    private var _initTask: PDFInitTask? = null
 
     /**
      * @brief Checks if the PDF is already initialized
@@ -65,7 +65,7 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
     @Volatile
     var pageCount = 0
         private set
-    private var contentInputStream: InputStream? = null
+    private var _contentInputStream: InputStream? = null
     /**
      * @brief Gets the current filename of the PDF
      *
@@ -77,9 +77,9 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
      * @return Filename of the PDF (with extension)
      */
     var fileName: String?
-        get() = mFileName
+        get() = _fileName
         set(filename) {
-            mFileName = filename
+            _fileName = filename
             val prefs =
                 PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
             val edit = prefs.edit()
@@ -97,12 +97,12 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
         pageCount = 0
         if (path == null) {
             this.path = null
-            mFileName = null
+            _fileName = null
             return
         }
         val file = File(path)
         this.path = path
-        mFileName = file.name
+        _fileName = file.name
     }
 
     /**
@@ -110,7 +110,7 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
      */
     fun setSandboxPDF() {
         setPDF(sandboxPath)
-        mFileName = getSandboxPDFName(SmartDeviceApp.appContext)
+        _fileName = getSandboxPDFName(SmartDeviceApp.appContext)
         setHasNewPDFData(SmartDeviceApp.appContext, true)
     }
 
@@ -131,17 +131,17 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
             return 0F
         }
         if (CONST_KEEP_DOCUMENT_CLOSED) {
-            mDocument.Open(path, null)
+            _document.Open(path, null)
         }
-        if (!mDocument.IsOpened()) {
-            mDocument.Open(path, null)
+        if (!_document.IsOpened()) {
+            _document.Open(path, null)
         }
 
         // Make sure document is opened
-        var width = mDocument.GetPageWidth(pageNo) / CONST_RADAEE_DPI
+        var width = _document.GetPageWidth(pageNo) / CONST_RADAEE_DPI
         width *= CONST_INCHES_TO_MM
         if (CONST_KEEP_DOCUMENT_CLOSED) {
-            mDocument.Close()
+            _document.Close()
         }
         return width
     }
@@ -163,17 +163,17 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
             return 0F
         }
         if (CONST_KEEP_DOCUMENT_CLOSED) {
-            mDocument.Open(path, null)
+            _document.Open(path, null)
         }
 
         // Make sure document is opened
-        if (!mDocument.IsOpened()) {
-            mDocument.Open(path, null)
+        if (!_document.IsOpened()) {
+            _document.Open(path, null)
         }
-        var height = mDocument.GetPageHeight(pageNo) / CONST_RADAEE_DPI
+        var height = _document.GetPageHeight(pageNo) / CONST_RADAEE_DPI
         height *= CONST_INCHES_TO_MM
         if (CONST_KEEP_DOCUMENT_CLOSED) {
-            mDocument.Close()
+            _document.Close()
         }
         return height
     }// if width == height, it is considered portrait
@@ -210,17 +210,17 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
         pageCount = 0
 
         // Cancel any previous initialize task
-        if (mInitTask != null) {
-            mInitTask!!.cancel(true)
+        if (_initTask != null) {
+            _initTask!!.cancel(true)
         }
         if (`is` != null) {
-            contentInputStream = `is`
+            _contentInputStream = `is`
             setPDF(null)
         } else {
-            contentInputStream = null
+            _contentInputStream = null
         }
-        mInitTask = PDFInitTask()
-        mInitTask!!.execute(path)
+        _initTask = PDFInitTask()
+        _initTask!!.execute(path)
     }
 
     /**
@@ -254,7 +254,7 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
             return null
         }
         if (CONST_KEEP_DOCUMENT_CLOSED) {
-            mDocument.Open(path, null)
+            _document.Open(path, null)
         } // else {
         // TODO: re-check: For temporary fix of bug
         // mDocument.Close(); // This will clear the buffer
@@ -262,12 +262,12 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
         // }
 
         // Make sure document is opened
-        if (!mDocument.IsOpened()) {
-            mDocument.Open(path, null)
+        if (!_document.IsOpened()) {
+            _document.Open(path, null)
         }
-        val page = mDocument.GetPage(pageNo) ?: return null
-        val pageWidth = mDocument.GetPageWidth(pageNo) * scale
-        val pageHeight = mDocument.GetPageHeight(pageNo) * scale
+        val page = _document.GetPage(pageNo) ?: return null
+        val pageWidth = _document.GetPageWidth(pageNo) * scale
+        val pageHeight = _document.GetPageHeight(pageNo) * scale
         var x0 = 0f
         var y0 = pageHeight
         if (flipX) {
@@ -295,7 +295,7 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
         mat.Destroy()
         page.Close()
         if (CONST_KEEP_DOCUMENT_CLOSED) {
-            mDocument.Close()
+            _document.Close()
         }
         return bitmap
     }
@@ -331,23 +331,23 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
      */
     @Synchronized
     fun openDocument(path: String?): Int {
-        if (mDocument.IsOpened()) {
+        if (_document.IsOpened()) {
             closeDocument()
         }
         if (path == null || path.isEmpty()) {
             return PDF_OPEN_FAILED
         }
-        return when (mDocument.Open(path, null)) {
+        return when (_document.Open(path, null)) {
             RADAEE_OK -> {
-                val permission = mDocument.GetPermission()
+                val permission = _document.GetPermission()
                 // check if (permission != 0) means that license is not standard. if standard license, just display.
                 if (permission != 0) {
                     if (permission and 0x4 == 0) {
-                        mDocument.Close()
+                        _document.Close()
                         return PDF_PRINT_RESTRICTED
                     }
                 }
-                pageCount = mDocument.GetPageCount()
+                pageCount = _document.GetPageCount()
                 this.isInitialized = true
                 PDF_OK
             }
@@ -397,8 +397,8 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
      */
     @Synchronized
     fun closeDocument() {
-        if (mDocument.IsOpened()) {
-            mDocument.Close()
+        if (_document.IsOpened()) {
+            _document.Close()
         }
     }
     // ================================================================================
@@ -415,11 +415,11 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
         var inputFile: String? = null
 
         override fun doInBackground(vararg params: String?): Int {
-            if (contentInputStream != null) {
+            if (_contentInputStream != null) {
                 // do file copy in background
                 val destFile = File(sandboxPath)
                 try {
-                    FileUtils.copy(contentInputStream, destFile)
+                    FileUtils.copy(_contentInputStream, destFile)
                 } catch (e: IOException) {
                     e.printStackTrace()
 
@@ -469,7 +469,7 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
         }
 
         override fun onPreExecute() {
-            if (contentInputStream != null) {
+            if (_contentInputStream != null) {
                 val destFile = File(sandboxPath)
                 try {
                     destFile.createNewFile()
@@ -490,8 +490,8 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
                 }
                 val activity = SmartDeviceApp.activity!!
                 activity.runOnUiThread {
-                    if (mInterfaceRef?.get() != null) {
-                        mInterfaceRef.get()!!.onFileInitialized(result!!)
+                    if (_interfaceRef?.get() != null) {
+                        _interfaceRef.get()!!.onFileInitialized(result!!)
                     }
                 }
             }
@@ -695,7 +695,7 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
      * @brief Creates a PDFFileManager with an Interface class
      */
     init {
-        mInterfaceRef = WeakReference(pdfFileManagerInterface)
+        _interfaceRef = WeakReference(pdfFileManagerInterface)
         setPDF(null)
     }
 }

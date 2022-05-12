@@ -7,8 +7,7 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import android.Manifest
-import android.annotation.TargetApi
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -28,7 +27,9 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
 import jp.co.riso.android.dialog.DialogUtils.dismissDialog
@@ -58,6 +59,7 @@ import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.preview.PreviewControlsListener
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
+import jp.co.riso.smartdeviceapp.viewmodel.PrintSettingsViewModel
 import jp.co.riso.smartprint.R
 import java.io.File
 import java.io.FileNotFoundException
@@ -74,6 +76,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     PDFConverterManagerInterface, PreviewControlsListener, OnSeekBarChangeListener,
     PauseableHandlerCallback, ConfirmDialogListener, WaitingDialogListener, View.OnKeyListener,
     OnFocusChangeListener {
+
     private var _pdfManager: PDFFileManager? = null
     private var _pdfConverterManager: PDFConverterManager? = null
     private var _printerId = PrinterManager.EMPTY_ID
@@ -108,6 +111,8 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     private var _waitingDialog: WaitingDialogFragment? = null
     override val viewLayout: Int
         get() = R.layout.fragment_printpreview
+
+    private val _printSettingsViewModel: PrintSettingsViewModel by activityViewModels()
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         // dismiss permission alert dialog if showing
@@ -218,7 +223,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             if (hasPdfFile() && !_isPermissionDialogOpen) {
                 if (ContextCompat.checkSelfPermission(
                         requireActivity(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        WRITE_EXTERNAL_STORAGE
                     )
                     == PackageManager.PERMISSION_GRANTED
                 ) {
@@ -227,15 +232,13 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
                     }
                     initializePdfManagerAndRunAsync()
                 } else {
-                    if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE)) {
                         _shouldDisplayExplanation = true
                     } else {
                         _isPermissionDialogOpen = true
                         // Request the permission, no explanation needed
-                        requestPermissions(
-                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                            REQUEST_WRITE_EXTERNAL_STORAGE
-                        )
+                        _resultLauncherPermissionStorage.launch(
+                            arrayOf(WRITE_EXTERNAL_STORAGE))
                     }
                 }
             }
@@ -243,7 +246,8 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (_printerId == PrinterManager.EMPTY_ID) {
             _printerId = PrinterManager.getInstance(appContext!!)!!.defaultPrinter
             if (_printerId != -1) {
-                val printerType = PrinterManager.getInstance(appContext!!)!!.getPrinterType(_printerId)
+                val printerType =
+                    PrinterManager.getInstance(appContext!!)!!.getPrinterType(_printerId)
                 _printSettings = PrintSettings(_printerId, printerType!!)
             }
         }
@@ -401,7 +405,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (hasPdfFile() && !_isPermissionDialogOpen) {
             if (ContextCompat.checkSelfPermission(
                     requireActivity(),
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    WRITE_EXTERNAL_STORAGE
                 )
                 == PackageManager.PERMISSION_GRANTED
             ) {
@@ -435,8 +439,12 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
                         requireActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed)
                     val positiveButton = requireActivity().getString(R.string.ids_lbl_ok)
                     _confirmDialogFragment =
-                        ConfirmDialogFragment.newInstance(message, positiveButton, null)
-                    _confirmDialogFragment!!.setTargetFragment(this@PrintPreviewFragment, 0)
+                        ConfirmDialogFragment.newInstance(message, positiveButton, null, TAG_PERMISSION_DIALOG)
+                    setResultListenerConfirmDialog(
+                        requireActivity().supportFragmentManager,
+                        this,
+                        TAG_PERMISSION_DIALOG
+                    )
                     displayDialog(
                         requireActivity(),
                         TAG_PERMISSION_DIALOG,
@@ -521,7 +529,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
      *
      * @param printerId ID of the printer to be set
      */
-    fun setPrintId(printerId: Int) {
+    private fun setPrintId(printerId: Int) {
         _printerId = printerId
         if (_printPreviewView != null) {
             _printPreviewView!!.refreshView()
@@ -533,7 +541,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
      *
      * @param printSettings Print settings to be applied
      */
-    fun setPrintSettings(printSettings: PrintSettings?) {
+    private fun setPrintSettings(printSettings: PrintSettings?) {
         _printSettings = printSettings?.let { PrintSettings(it) }
         if (_printPreviewView != null) {
             // Clear mBmpCache when print settings are updated
@@ -554,7 +562,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
      * @return true 3-punch in the printer is available
      * @return false 3-punch in the printer is not available available or no printer is set
      */
-	/* -- unused method
+    /* -- unused method
     open fun isPrinterJapanese(): Boolean {
         if (_printerId === PrinterManager.EMPTY_ID) {
             return false
@@ -608,7 +616,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
      * @param v Root view which contains the action bar view
      */
     private fun setDefaultTitle(v: View?) {
-        setTitle(v, resources.getString(R.string.ids_lbl_print_preview));
+        setTitle(v, resources.getString(R.string.ids_lbl_print_preview))
     }
 
     /**
@@ -890,8 +898,12 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (_waitingDialog != null) {
             _waitingDialog!!.setMessage(message)
         } else {
-            _waitingDialog = newInstance(null, message, true, getString(R.string.ids_lbl_cancel))
-            _waitingDialog!!.setTargetFragment(this, 1)
+            _waitingDialog = newInstance(null, message, true, getString(R.string.ids_lbl_cancel), TAG_WAITING_DIALOG)
+            requireActivity().runOnUiThread { setResultListenerWaitingDialog(
+                requireActivity().supportFragmentManager,
+                this,
+                TAG_WAITING_DIALOG
+            )}
             displayDialog(requireActivity(), TAG_WAITING_DIALOG, _waitingDialog!!)
         }
     }
@@ -946,12 +958,12 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     // ================================================================================
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
-    override fun storeMessage(msg: Message?): Boolean {
+    override fun storeMessage(message: Message?): Boolean {
         return false
     }
 
-    override fun processMessage(msg: Message?) {
-        val id = msg!!.what
+    override fun processMessage(message: Message?) {
+        val id = message!!.what
         if (id == R.id.view_id_print_button) {
             _pauseableHandler!!.pause()
             val printerManager = PrinterManager.getInstance(appContext!!)
@@ -966,7 +978,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             }
             if (requireActivity() is MainActivity) {
                 val activity = requireActivity() as MainActivity
-                val v = msg.obj as View
+                val v = message.obj as View
                 if (!activity.isDrawerOpen(Gravity.RIGHT)) {
                     val fm = activity.supportFragmentManager
                     setIconState(v.id, true)
@@ -983,7 +995,8 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
                     fragment.setPDFisLandscape(_pdfManager!!.isPDFLandscape)
                     fragment.setPrintSettings(_printSettings)
                     fragment.setFragmentForPrinting(true)
-                    fragment.setTargetFragment(this, 0)
+                    _printSettingsViewModel.setTargetPrintPreviewFragment()
+                    setResultListenerForPrintSettings()
                     activity.openDrawer(Gravity.RIGHT, isTablet)
                 } else {
                     activity.closeDrawers()
@@ -996,74 +1009,35 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            REQUEST_WRITE_EXTERNAL_STORAGE -> {
-                _isPermissionDialogOpen =
-                    false // the request returned a result hence dialog is closed
-                if (grantResults.isNotEmpty()) {
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        // based on design docs - RISO_SmartDeviceApp_Design_03_Android Rev 3.0
-                        // N.Print Preview 1.Display Screen
-                        // Figure I 44 Print Preview – Display Screen – Activity Diagram
-                        // after permission is granted and before PDF initialization,
-                        // loading indicator (spinning progress bar) should be displayed
-                        setPrintPreviewViewDisplayed(view, true)
-
-                        // permission was granted, run PDF conversion and initializations
-                        if (_pdfConverterManager != null) {
-                            initializePdfConverterAndRunAsync()
-                        }
-                        initializePdfManagerAndRunAsync()
-                        _shouldResetToFirstPageOnInitialize = true
-                    } else {
-                        // permission was denied check if Print Settings is open
-                        val activity = requireActivity() as MainActivity
-                        if (activity.isDrawerOpen(Gravity.RIGHT)) {
-                            activity.closeDrawers()
-                        }
-
-                        // Q&A188#1/RM775/RM786 Fix: Clear PDF before transition to Home Screen -- start
-                        val intent = requireActivity().intent
-                        intent.action = null
-                        intent.clipData = null
-                        intent.data = null
-                        // Q&A188#1/RM775/RM786 Fix -- end
-                        transitionToHomeScreen()
-                    }
-                }
-                if (ContextCompat.checkSelfPermission(
-                        requireActivity(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                ) {
-                    val message =
-                        resources.getString(R.string.ids_err_msg_write_external_storage_permission_not_granted)
-                    val button = resources.getString(R.string.ids_lbl_ok)
-                    displayDialog(
-                        requireActivity(),
-                        FRAGMENT_TAG_DIALOG,
-                        newInstance(message, button)
-                    )
-                }
+    // ================================================================================
+    // INTERFACE - FragmentResultListener
+    // ================================================================================
+    private fun setResultListenerForPrintSettings() {
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            TAG_RESULT_PRINT_PREVIEW,
+            this
+        ) { _, bundle: Bundle ->
+            val result = bundle.getString(PrintSettingsFragment.RESULT_KEY)
+            if (result == PrintSettingsFragment.RESULT_PRINTER_ID) {
+                setPrintId(
+                    _printSettingsViewModel.printerId
+                )
+            } else if (result == PrintSettingsFragment.RESULT_PRINTER_SETTINGS) {
+                setPrintSettings(
+                    _printSettingsViewModel.printSettings
+                )
             }
         }
     }
 
-    @TargetApi(23)
+    // ================================================================================
+    // INTERFACE - ConfirmDialogListener
+    // ================================================================================
     override fun onConfirm() {
         _confirmDialogFragment = null
         _isPermissionDialogOpen = true
-        requestPermissions(
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-            REQUEST_WRITE_EXTERNAL_STORAGE
-        )
+        _resultLauncherPermissionStorage.launch(
+            arrayOf(WRITE_EXTERNAL_STORAGE))
     }
 
     override fun onCancel() {
@@ -1081,22 +1055,81 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         }
     }
 
+    // ================================================================================
+    // Result Launcher
+    // ================================================================================
+    private val _resultLauncherPermissionStorage =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions())
+        { permissions ->
+            _isPermissionDialogOpen = false // the request returned a result hence dialog is closed
+            if (permissions.isNotEmpty()) {
+                if (permissions[WRITE_EXTERNAL_STORAGE] == true) {
+                    // based on design docs - RISO_SmartDeviceApp_Design_03_Android Rev 3.0
+                    // N.Print Preview 1.Display Screen
+                    // Figure I 44 Print Preview – Display Screen – Activity Diagram
+                    // after permission is granted and before PDF initialization,
+                    // loading indicator (spinning progress bar) should be displayed
+                    setPrintPreviewViewDisplayed(view, true)
+
+                    // permission was granted, run PDF conversion and initializations
+                    if (_pdfConverterManager != null) {
+                        initializePdfConverterAndRunAsync()
+                    }
+                    initializePdfManagerAndRunAsync()
+                    _shouldResetToFirstPageOnInitialize = true
+                } else {
+                    // permission was denied check if Print Settings is open
+                    val activity = requireActivity() as MainActivity
+                    if (activity.isDrawerOpen(Gravity.RIGHT)) {
+                        activity.closeDrawers()
+                    }
+
+                    // Q&A188#1/RM775/RM786 Fix: Clear PDF before transition to Home Screen -- start
+                    val intent = requireActivity().intent
+                    intent.action = null
+                    intent.clipData = null
+                    intent.data = null
+                    // Q&A188#1/RM775/RM786 Fix -- end
+                    transitionToHomeScreen()
+                }
+            }
+            if (ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(
+                    WRITE_EXTERNAL_STORAGE
+                )
+            ) {
+                val message =
+                    resources.getString(R.string.ids_err_msg_write_external_storage_permission_not_granted)
+                val button = resources.getString(R.string.ids_lbl_ok)
+                displayDialog(
+                    requireActivity(),
+                    FRAGMENT_TAG_DIALOG,
+                    newInstance(message, button)
+                )
+            }
+        }
+
+
     companion object {
         /// Tag used to identify the error dialog
         const val FRAGMENT_TAG_DIALOG = "pdf_error_dialog"
 
         /// Tag used to identify the print settings fragment
-        const val FRAGMENT_TAG_PRINT_SETTINGS = "fragment_printsettings"
+        const val FRAGMENT_TAG_PRINT_SETTINGS = "fragment_print_settings"
 
         /// Key used to store current page
         private const val KEY_CURRENT_PAGE = "current_page"
 
         /// Tag used to identify the dialog message
         const val TAG_MESSAGE_DIALOG = "dialog_message"
-        const val REQUEST_WRITE_EXTERNAL_STORAGE = 1
         private const val TAG_PERMISSION_DIALOG = "external_storage_tag"
         private const val KEY_EXTERNAL_STORAGE_DIALOG_OPEN = "key_external_storage_dialog_open"
         private const val KEY_SCREEN_SIZE = "screen_size"
         const val TAG_WAITING_DIALOG = "dialog_converting"
+
+        /// Tag used to identify print setting update result
+        const val TAG_RESULT_PRINT_PREVIEW = "result_print_preview"
     }
 }

@@ -28,7 +28,7 @@ import jp.co.riso.android.util.AppUtils
  *
  */
 class SDADrawerLayout : DrawerLayout {
-    private var mPreventInterceptTouches = false
+    private var _preventInterceptTouches = false
 
     /**
      * @brief Constructs a new DrawerLayout with a Context object
@@ -61,7 +61,7 @@ class SDADrawerLayout : DrawerLayout {
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        if (mPreventInterceptTouches) {
+        if (_preventInterceptTouches) {
             return false
         }
         if (isDrawerOpen(Gravity.LEFT)) {

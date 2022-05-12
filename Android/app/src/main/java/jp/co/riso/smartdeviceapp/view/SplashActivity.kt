@@ -26,6 +26,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.ViewFlipper
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.PreferenceManager
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
@@ -353,7 +354,7 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
                 intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                 val uri = Uri.fromParts("package", packageName, null)
                 intent.data = uri
-                startActivityForResult(intent, DUMMY_REQUEST_CODE)
+                _resultLauncher.launch(intent)
             }
             else -> {
                 v.performClick()
@@ -361,15 +362,15 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        runMainActivity()
+    private var _resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            runMainActivity()
+        }
     }
 
     companion object {
         /// Message ID for running main activity
         const val MESSAGE_RUN_MAIN_ACTIVITY = 0x10001
         const val KEY_DB_INITIALIZED = "database_initialized"
-        private const val DUMMY_REQUEST_CODE = 0
     }
 }

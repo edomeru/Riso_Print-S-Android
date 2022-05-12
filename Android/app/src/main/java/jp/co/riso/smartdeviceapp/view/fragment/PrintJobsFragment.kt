@@ -146,8 +146,12 @@ class PrintJobsFragment : BaseFragment(), OnTouchListener, PrintJobsGroupListene
             false
         } else {
             _confirmDialog =
-                ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg)
-            _confirmDialog!!.setTargetFragment(this, 0)
+                ConfirmDialogFragment.newInstance(title, message, confirmMsg, cancelMsg, TAG)
+            setResultListenerConfirmDialog(
+                requireActivity().supportFragmentManager,
+                this,
+                TAG
+            )
             DialogUtils.displayDialog(requireActivity(), TAG, _confirmDialog!!)
             true
         }

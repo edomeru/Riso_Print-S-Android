@@ -212,14 +212,14 @@ class PrintSettings {
      * @retval STATEMENT 140mm x 216mm
      */
     val paperSize: PaperSize
-        get() = paperSizeOnPrinter// Need to know if printer type is GL or non-GL as GL printer has an added paper size SRA3
+        get() = _paperSizeOnPrinter// Need to know if printer type is GL or non-GL as GL printer has an added paper size SRA3
     // mSettingMapKey holds the printer type string
     /**
      * @brief Retrieves PaperSize setting value based on printer model.
      *
      * @retval PaperSize
      */
-    private val paperSizeOnPrinter: PaperSize
+    private val _paperSizeOnPrinter: PaperSize
         get() {
             val paperSizeIndex = settingValues[TAG_PAPER_SIZE]!!
 

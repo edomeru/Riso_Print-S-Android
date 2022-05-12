@@ -61,13 +61,13 @@ class SplashActivityTest {
         SystemClock.sleep(AppConstants.APP_SPLASH_DURATION + 100)
     }
 
-    private val isLicenseAgreementDone: Boolean
+    private val _isLicenseAgreementDone: Boolean
         get() = _activity!!.getSharedPreferences(
             "licenseAgreementPrefs",
             Context.MODE_PRIVATE
-        )
-            .getBoolean("licenseAgreementDone", false)
-    private val isSecurePrintReset: Boolean
+        ).getBoolean("licenseAgreementDone", false)
+
+    private val _isSecurePrintReset: Boolean
         get() {
             val prefs =
                 PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
@@ -101,11 +101,11 @@ class SplashActivityTest {
     fun onClickAgree() {
         clearLicenseAgreementPrefs()
         waitForSplashDone()
-        Assert.assertFalse(isLicenseAgreementDone)
+        Assert.assertFalse(_isLicenseAgreementDone)
         val viewFlipper = _activity!!.findViewById<ViewFlipper>(R.id.viewFlipper)
         Assert.assertNull(viewFlipper.currentView.findViewById(R.id.txtPermissionInfo))
         testClick(R.id.licenseAgreeButton)
-        Assert.assertTrue(isLicenseAgreementDone)
+        Assert.assertTrue(_isLicenseAgreementDone)
         Assert.assertNotNull(viewFlipper.currentView.findViewById(R.id.txtPermissionInfo))
     }
 
@@ -113,11 +113,11 @@ class SplashActivityTest {
     fun onClickDisagree() {
         clearLicenseAgreementPrefs()
         waitForSplashDone()
-        Assert.assertFalse(isLicenseAgreementDone)
+        Assert.assertFalse(_isLicenseAgreementDone)
         val viewFlipper = _activity!!.findViewById<ViewFlipper>(R.id.viewFlipper)
         Assert.assertNull(viewFlipper.currentView.findViewById(R.id.txtPermissionInfo))
         testClick(R.id.licenseDisagreeButton)
-        Assert.assertFalse(isLicenseAgreementDone)
+        Assert.assertFalse(_isLicenseAgreementDone)
         // check if EULA is still displayed and permission info is not yet displayed
         Assert.assertNotNull(viewFlipper.currentView.findViewById(R.id.LicenseButtonLayout))
         Assert.assertNull(viewFlipper.currentView.findViewById(R.id.txtPermissionInfo))
@@ -131,7 +131,7 @@ class SplashActivityTest {
         waitForSplashDone()
         testClick(R.id.licenseAgreeButton)
         testClick(R.id.startButton)
-        Assert.assertTrue(isSecurePrintReset)
+        Assert.assertTrue(_isSecurePrintReset)
         val intent = Intents.getIntents()[0]
         Assert.assertNotNull(intent)
         Assert.assertEquals(intent.component!!.className, MainActivity::class.java.name)

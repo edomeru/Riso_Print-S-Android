@@ -31,9 +31,11 @@ class PrinterArrayAdapter(context: Context?, private val _layoutId: Int, values:
     ArrayAdapter<Printer?>(
         context!!, _layoutId, values!!
     ), View.OnClickListener {
+
     private var _callbackRef: WeakReference<PrinterArrayAdapterInterface?>? = null
     private val _printerManager: PrinterManager? = getInstance(SmartDeviceApp.appContext!!)
     private var _deleteViewHolder: ViewHolder?
+
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         var convertView = view
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater

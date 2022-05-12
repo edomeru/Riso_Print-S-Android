@@ -266,9 +266,14 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
                 title,
                 msg,
                 resources.getString(R.string.ids_lbl_ok),
-                null
+                null,
+                KEY_SEARCHED_PRINTER_DIALOG
             )
-            info.setTargetFragment(this, 0)
+            setResultListenerConfirmDialog(
+                requireActivity().supportFragmentManager,
+                this,
+                KEY_SEARCHED_PRINTER_DIALOG
+            )
         }
         DialogUtils.displayDialog(requireActivity(), KEY_SEARCHED_PRINTER_DIALOG, info)
         return ret

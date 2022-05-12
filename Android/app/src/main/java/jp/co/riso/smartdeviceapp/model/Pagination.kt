@@ -19,35 +19,35 @@ import java.util.ArrayList
  * @brief Class representation of pagination for PDF
  */
 class Pagination(
-    private val mText: CharSequence,
-    private val mWidth: Int,
-    private val mHeight: Int,
-    private val mPaint: TextPaint,
-    private val mSpacingMult: Float,
-    private val mSpacingAdd: Float,
-    private val mIncludePad: Boolean
+    private val _text: CharSequence,
+    private val _width: Int,
+    private val _height: Int,
+    private val _paint: TextPaint,
+    private val _spacingMult: Float,
+    private val _spacingAdd: Float,
+    private val _includePad: Boolean
 ) {
-    private val mPages: MutableList<CharSequence>
+    private val _pages: MutableList<CharSequence>
 
     /**
      * @brief Compute pagination
      */
     private fun layout() {
-        val builder = StaticLayout.Builder.obtain(mText, 0, mText.length, mPaint, mWidth)
+        val builder = StaticLayout.Builder.obtain(_text, 0, _text.length, _paint, _width)
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-            .setLineSpacing(mSpacingAdd, mSpacingMult)
-            .setIncludePad(mIncludePad)
+            .setLineSpacing(_spacingAdd, _spacingMult)
+            .setIncludePad(_includePad)
         val layout = builder.build()
         val lines = layout.lineCount
         val text = layout.text
         var startOffset = 0
-        var height = mHeight
+        var height = _height
         for (i in 0 until lines) {
             if (height < layout.getLineBottom(i)) {
                 // When the layout height has been exceeded
                 addPage(text.subSequence(startOffset, layout.getLineStart(i)))
                 startOffset = layout.getLineStart(i)
-                height = layout.getLineTop(i) + mHeight
+                height = layout.getLineTop(i) + _height
             }
             if (i == lines - 1) {
                 // Put the rest of the text into the last page
@@ -66,7 +66,7 @@ class Pagination(
      * @param text remaining text
      */
     private fun addPage(text: CharSequence) {
-        mPages.add(text)
+        _pages.add(text)
     }
 
     /**
@@ -75,7 +75,7 @@ class Pagination(
      * @return Total number of pages
      */
     fun size(): Int {
-        return mPages.size
+        return _pages.size
     }
 
     /**
@@ -86,7 +86,7 @@ class Pagination(
      * @return string content of page
      */
     operator fun get(index: Int): CharSequence? {
-        return if (index >= 0 && index < mPages.size) mPages[index] else null
+        return if (index >= 0 && index < _pages.size) _pages[index] else null
     }
 
     /**
@@ -95,7 +95,7 @@ class Pagination(
      * Create a pagination instance
      */
     init {
-        mPages = ArrayList()
+        _pages = ArrayList()
         layout()
     }
 }

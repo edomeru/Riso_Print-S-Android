@@ -225,7 +225,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
      * @brief Displays the Printer Search Screen.
      */
     private fun displayPrinterSearchFragment() {
-        if (isMaxPrinterCountReached) {
+        if (_isMaxPrinterCountReached) {
             _pauseableHandler!!.resume()
             return
         }
@@ -240,7 +240,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
      * @brief Displays the Add Printer Screen.
      */
     private fun displayAddPrinterFragment() {
-        if (isMaxPrinterCountReached) {
+        if (_isMaxPrinterCountReached) {
             _pauseableHandler!!.resume()
             return
         }
@@ -317,7 +317,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
      * @retval true Maximum printer count is reached
      * @retval false Maximum printer count is not yet reached
      */
-    private val isMaxPrinterCountReached: Boolean
+    private val _isMaxPrinterCountReached: Boolean
         get() {
             if (_printerManager!!.printerCount == AppConstants.CONST_MAX_PRINTER_COUNT) {
                 val title = resources.getString(R.string.ids_lbl_printers)
@@ -461,10 +461,13 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         val errMsg = resources.getString(R.string.ids_info_msg_delete_jobs)
         val info: DialogFragment
         info = ConfirmDialogFragment.newInstance(
-            title, errMsg, resources.getString(R.string.ids_lbl_ok),
-            resources.getString(R.string.ids_lbl_cancel)
+            title,
+            errMsg,
+            resources.getString(R.string.ids_lbl_ok),
+            resources.getString(R.string.ids_lbl_cancel),
+            KEY_PRINTERS_DIALOG
         )
-        info.setTargetFragment(this, 0)
+        setResultListenerConfirmDialog(requireActivity().supportFragmentManager, this, KEY_PRINTERS_DIALOG)
         _deletePrinter = printer
         DialogUtils.displayDialog(requireActivity(), KEY_PRINTERS_DIALOG, info)
     }
@@ -480,6 +483,8 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
     // ================================================================================
     // INTERFACE - ConfirmDialogListener
     // ================================================================================
+
+
     override fun onConfirm() {
         if (isTablet) {
             val relayout = _deletePrinter!!.id == _printerManager!!.defaultPrinter

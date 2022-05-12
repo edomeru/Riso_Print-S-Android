@@ -3,6 +3,7 @@ package jp.co.riso.android.dialog
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -21,19 +22,19 @@ import org.junit.Test
 
 class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
-    private var fm: FragmentManager? = null
+    private var _fm: FragmentManager? = null
 
     @Before
     fun setUp() {
-        fm = mainActivity!!.supportFragmentManager
+        _fm = mainActivity!!.supportFragmentManager
         wakeUpScreen()
     }
 
     @Test
     fun testNewInstance_WithNull() {
-        val w = WaitingDialogFragment.newInstance(null, null, true, null)
+        val w = WaitingDialogFragment.newInstance(null, null, true, null, null)
         TestCase.assertNotNull(w)
-        w.show(fm!!, TAG)
+        w.show(_fm!!, TAG)
 
         // wait some seconds so that you can see the change on emulator/device.
         try {
@@ -41,7 +42,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        val fragment = fm!!.findFragmentByTag(TAG)
+        val fragment = _fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
         val dialog = fragment!!.dialog as AlertDialog?
@@ -53,12 +54,11 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testNewInstance_NotCancelable() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
-        w.retainInstance = true
-        w.show(fm!!, TAG)
+        w.show(_fm!!, TAG)
         waitFewSeconds()
-        val fragment = fm!!.findFragmentByTag(TAG)
+        val fragment = _fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
         val dialog = fragment!!.dialog as AlertDialog?
@@ -74,14 +74,13 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnClick() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
         val mockCallback = MockCallback()
-        fm!!.beginTransaction().add(mockCallback, null).commit()
-        w.setTargetFragment(mockCallback, 1)
-        w.show(fm!!, TAG)
+        _fm!!.beginTransaction().add(mockCallback, null).commit()
+        w.show(_fm!!, TAG)
         waitFewSeconds()
-        val fragment = fm!!.findFragmentByTag(TAG)
+        val fragment = _fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
         val dialog = fragment?.dialog as AlertDialog?
@@ -97,20 +96,19 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
             Log.d(TAG, e.message!!)
         }
         TestCase.assertNull(fragment?.dialog)
-        TestCase.assertNull(fm!!.findFragmentByTag(TAG))
+        TestCase.assertNull(_fm!!.findFragmentByTag(TAG))
         TestCase.assertTrue(mockCallback.isCancelCalled)
     }
 
     @Test
     fun testOnCancel() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
         val mockCallback = MockCallback()
-        fm!!.beginTransaction().add(mockCallback, null).commit()
-        w.setTargetFragment(mockCallback, 1)
-        w.show(fm!!, TAG)
+        _fm!!.beginTransaction().add(mockCallback, null).commit()
+        w.show(_fm!!, TAG)
         waitFewSeconds()
-        val fragment = fm!!.findFragmentByTag(TAG)
+        val fragment = _fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
         val dialog = fragment?.dialog as AlertDialog?
@@ -122,17 +120,17 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
         InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
         waitFewSeconds()
         TestCase.assertNull(fragment?.dialog)
-        TestCase.assertNull(fm!!.findFragmentByTag(TAG))
+        TestCase.assertNull(_fm!!.findFragmentByTag(TAG))
         TestCase.assertTrue(mockCallback.isCancelCalled)
     }
 
     @Test
     fun testSetMessage() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
-        w.show(fm!!, TAG)
+        w.show(_fm!!, TAG)
         waitFewSeconds()
-        val fragment = fm!!.findFragmentByTag(TAG)
+        val fragment = _fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
         val dialog = fragment!!.dialog as AlertDialog?
@@ -142,7 +140,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
         w.setMessage("new message")
         waitFewSeconds()
         TestCase.assertNotNull(fragment.dialog)
-        TestCase.assertNotNull(fm!!.findFragmentByTag(TAG))
+        TestCase.assertNotNull(_fm!!.findFragmentByTag(TAG))
         val msg = dialog.findViewById<View>(R.id.progressText)
         TestCase.assertNotNull(msg)
         TestCase.assertEquals("new message", (msg as TextView).text)
@@ -151,7 +149,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testSetMessage_NullDialog() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, true, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
         try {
             w.setMessage("New message before displaying the dialog")
@@ -159,9 +157,9 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
             TestCase.fail("setMessage null")
         }
         waitFewSeconds()
-        w.show(fm!!, TAG)
+        w.show(_fm!!, TAG)
         waitFewSeconds()
-        val fragment = fm!!.findFragmentByTag(TAG)
+        val fragment = _fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
         val dialog = fragment?.dialog as AlertDialog?
@@ -174,7 +172,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
         dialog.dismiss()
         waitFewSeconds()
         TestCase.assertNull(fragment.dialog)
-        TestCase.assertNull(fm!!.findFragmentByTag(TAG))
+        TestCase.assertNull(_fm!!.findFragmentByTag(TAG))
         try {
             w.setMessage("New message after closing the dialog")
         } catch (e: NullPointerException) {
@@ -185,11 +183,11 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnKey_NotBack() {
-        val w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE)
+        val w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
-        w.show(fm!!, TAG)
+        w.show(_fm!!, TAG)
         waitFewSeconds()
-        val fragment = fm!!.findFragmentByTag(TAG)
+        val fragment = _fm!!.findFragmentByTag(TAG)
         TestCase.assertTrue(fragment is DialogFragment)
         TestCase.assertTrue((fragment as DialogFragment?)!!.showsDialog)
         val dialog = fragment!!.dialog as AlertDialog?
@@ -212,6 +210,11 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
 
         override fun onCancel() {
             isCancelCalled = true
+        }
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setResultListenerWaitingDialog(activity!!.supportFragmentManager, this, TAG)
         }
     }
 
