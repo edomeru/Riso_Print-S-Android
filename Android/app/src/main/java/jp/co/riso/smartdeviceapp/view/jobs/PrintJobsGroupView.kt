@@ -361,7 +361,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
         tempView.tag = pj
         tempView.setOnTouchListener(this)
         printJobName.text = pj.name
-        printJobDate.text = formatDate(pj.date!!)
+        printJobDate.text = formatDate(pj.date)
         printJobDeleteBtn.setOnClickListener(this)
         if (pj.result == JobResult.ERROR) {
             printJobError.visibility = VISIBLE
