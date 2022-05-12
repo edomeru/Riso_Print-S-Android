@@ -18,7 +18,7 @@ import java.lang.ref.WeakReference
  * @brief Helper class for printing PDF files with PJL settings.
  */
 class DirectPrintManager {
-    private val _job: Long = 0
+    private val mJob: Long = 0
     private var _callbackRef: WeakReference<DirectPrintCallback?>? = null
 
     /**
@@ -216,7 +216,7 @@ class DirectPrintManager {
      * @retval false No ongoing print job
      */
     val isPrinting: Boolean
-        get() = _job != 0L
+        get() = mJob != 0L
 
     /**
      * @brief Sends cancel command.
