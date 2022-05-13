@@ -56,7 +56,6 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         get() = R.layout.fragment_addprinter
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        retainInstance = true
         _added = false
         _printerManager = getInstance(SmartDeviceApp.appContext!!)
         _printerManager!!.setPrinterSearchCallback(this)

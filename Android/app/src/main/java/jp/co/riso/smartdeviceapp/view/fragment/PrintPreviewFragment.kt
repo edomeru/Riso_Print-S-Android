@@ -117,7 +117,6 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     override fun initializeFragment(savedInstanceState: Bundle?) {
         // dismiss permission alert dialog if showing
         dismissDialog(requireActivity(), TAG_PERMISSION_DIALOG)
-        retainInstance = true
         if (savedInstanceState != null) {
             _currentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0)
             _isPermissionDialogOpen =
