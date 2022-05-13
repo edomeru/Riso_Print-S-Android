@@ -70,7 +70,6 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         get() = R.layout.fragment_printsettings
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        retainInstance = true
         if (_printSettings == null) {
             _printSettings = PrintSettings()
         }
