@@ -211,7 +211,8 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             val fm = supportFragmentManager
             val screen = fm.findFragmentById(R.id.mainLayout)
             if (screen is PrintPreviewFragment && !screen.isConversionOngoing) {
-                fm.beginTransaction().detach(screen).attach(screen).commitNow()
+                fm.beginTransaction().detach(screen).commitNow()
+                fm.beginTransaction().attach(screen).commitNow()
                 // print settings button state need to be updated if print settings is open
                 if (isDrawerOpen(Gravity.RIGHT)) {
                     screen.requireView().findViewById<View>(R.id.view_id_print_button).isSelected =
