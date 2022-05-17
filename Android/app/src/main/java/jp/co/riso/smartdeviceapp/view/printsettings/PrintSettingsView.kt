@@ -2054,7 +2054,7 @@ class PrintSettingsView @JvmOverloads constructor(
     // ================================================================================
     // INTERFACE - OnEditorActionListener
     // ================================================================================
-    override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent): Boolean {
+    override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
             checkEditTextValue(v)
             return false
@@ -2064,9 +2064,11 @@ class PrintSettingsView @JvmOverloads constructor(
         // it must be consumed (return true) to prevent focus from moving
         // it must also be hidden manually
         if (actionId == EditorInfo.IME_NULL) {
-            if (event.action == KeyEvent.ACTION_UP) {
-                checkEditTextValue(v)
-                AppUtils.hideSoftKeyboard(context as Activity)
+            if (event != null) {
+                if (event.action == KeyEvent.ACTION_UP) {
+                    checkEditTextValue(v)
+                    AppUtils.hideSoftKeyboard(context as Activity)
+                }
             }
             return true
         }
