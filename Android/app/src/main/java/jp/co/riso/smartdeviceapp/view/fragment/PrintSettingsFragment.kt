@@ -271,11 +271,11 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         }
         if (ret) {
             btnMsg = getString(R.string.ids_lbl_cancel)
-            _waitingDialog = newInstance(null, _printMsg, true, btnMsg, TAG_MESSAGE_DIALOG)
+            _waitingDialog = newInstance(null, _printMsg, true, btnMsg, TAG_WAITING_DIALOG)
             setResultListenerWaitingDialog(
                 requireActivity().supportFragmentManager,
                 this,
-                PrintPreviewFragment.TAG_WAITING_DIALOG
+                TAG_WAITING_DIALOG
             )
             displayDialog(requireActivity(), TAG_WAITING_DIALOG, _waitingDialog!!)
         } else {
