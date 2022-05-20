@@ -10,11 +10,11 @@ task generateJacocoTestReport(type: JacocoReport, dependsOn: ['createDebugCovera
     reports {
         html {
             required.set(true)
-            destination file("${project.buildDir}/reports/jacoco/CodeCoverage/coverage_report")
+            destination file("${project.buildDir}/reports/CodeCoverage/coverage_report")
         }
         xml {
             required.set(true)
-            destination file("${project.buildDir}/reports/jacoco/CodeCoverage/coverage_report.xml")
+            destination file("${project.buildDir}/reports/CodeCoverage/coverage_report.xml")
         }
         csv.required.set(false)
     }
