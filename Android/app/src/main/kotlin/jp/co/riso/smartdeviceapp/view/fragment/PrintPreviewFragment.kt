@@ -566,7 +566,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (_printerId === PrinterManager.EMPTY_ID) {
             return false
         }
-        val mList: MutableList<jp.co.riso.smartdeviceapp.model.Printer>? = PrinterManager.getInstance(activity).savedPrintersList
+        val mList: MutableList<Printer>? = PrinterManager.getInstance(activity).savedPrintersList
         for (printer in mList!!) {
             if (printer.id === _printerId) {
                 return printer.config.isPunch3Available()
