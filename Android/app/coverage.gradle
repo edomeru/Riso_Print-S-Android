@@ -8,8 +8,14 @@ jacoco {
 task generateJacocoTestReport(type: JacocoReport, dependsOn: ['createDebugCoverageReport', 'testDebugUnitTest']) {
 
     reports {
-        html.required.set(true)
-        xml.required.set(true)
+        html {
+            required.set(true)
+            destination file("${project.buildDir}/reports/jacoco/coverage_report")
+        }
+        xml {
+            required.set(true)
+            destination file("${project.buildDir}/reports/jacoco/coverage_report.xml")
+        }
         csv.required.set(false)
     }
 
