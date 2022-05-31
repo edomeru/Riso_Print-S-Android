@@ -229,10 +229,35 @@ class PrintPreviewView @JvmOverloads constructor(
      * @param printSettings Print settings to be applied
      */
     fun setPrintSettings(printSettings: PrintSettings?) {
-        _printSettings = printSettings
-        reconfigureCurlView()
-        displayValidPage()
-        _curlView!!.requestLayout()
+        if (_printSettings == null || isPrintSettingsChanged(printSettings)) {
+            _printSettings = printSettings
+            reconfigureCurlView()
+            displayValidPage()
+            _curlView!!.requestLayout()
+        }
+    }
+
+    /**
+     * @brief Check if it is necessary to update view
+     *
+     * @param printSettings Print settings to be applied
+     */
+    private fun isPrintSettingsChanged(printSettings: PrintSettings?): Boolean {
+        return _printSettings?.bookletFinish != printSettings?.bookletFinish ||
+                _printSettings?.bookletLayout != printSettings?.bookletLayout ||
+                _printSettings?.colorMode != printSettings?.colorMode ||
+                _printSettings?.duplex != printSettings?.duplex ||
+                _printSettings?.finishingSide != printSettings?.finishingSide ||
+                _printSettings?.imposition != printSettings?.imposition ||
+                _printSettings?.impositionOrder != printSettings?.impositionOrder ||
+                _printSettings?.inputTray  != printSettings?.inputTray  ||
+                _printSettings?.orientation  != printSettings?.orientation  ||
+                _printSettings?.paperSize != printSettings?.paperSize ||
+                _printSettings?.punch  != printSettings?.punch  ||
+                _printSettings?.sort  != printSettings?.sort  ||
+                _printSettings?.staple  != printSettings?.staple  ||
+                _printSettings?.isBooklet != printSettings?.isBooklet ||
+                _printSettings?.isScaleToFit != printSettings?.isScaleToFit
     }
 
     /**
