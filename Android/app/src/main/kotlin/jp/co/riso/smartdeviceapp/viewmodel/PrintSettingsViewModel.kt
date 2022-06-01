@@ -20,18 +20,6 @@ class PrintSettingsViewModel : ViewModel() {
     val printSettings: PrintSettings
         get() = _printSettings
 
-    private var _isTargetPrintPreviewFragment = true
-    val isTargetFragmentPrintPreview: Boolean
-        get() = _isTargetPrintPreviewFragment
-
-    fun setTargetPrintPreviewFragment() {
-        _isTargetPrintPreviewFragment = true
-    }
-
-    fun setTargetPrintersFragment() {
-        _isTargetPrintPreviewFragment = false
-    }
-
     fun setPrinterId(id: Int) {
         _printerId = id
     }

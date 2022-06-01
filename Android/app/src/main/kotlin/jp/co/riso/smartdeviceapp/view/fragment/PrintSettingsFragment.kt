@@ -63,6 +63,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     private var _pauseableHandler: PauseableHandler? = null
     private var _waitingDialog: WaitingDialogFragment? = null
     private var _printMsg = ""
+    private var _isTargetFragmentPrintPreview: Boolean = true
 
     private val _printSettingsViewModel: PrintSettingsViewModel by activityViewModels()
 
@@ -152,6 +153,20 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     }
 
     /**
+     * @brief Sets flag to true if update is for Print Preview screen
+     */
+    fun setTargetFragmentPrintPreview() {
+        _isTargetFragmentPrintPreview = true
+    }
+
+    /**
+     * @brief Sets flag to false since update is for Printers screen
+     */
+    fun setTargetFragmentPrinters() {
+        _isTargetFragmentPrintPreview = false
+    }
+
+    /**
      * @brief This method sets the value of mPdfPath
      *
      * @param pdfPath The path of the PDF to be printed
@@ -178,7 +193,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         setPrinterId(printerId)
 
         // set printerId to PrintPreviewFragment
-        if (_printSettingsViewModel.isTargetFragmentPrintPreview) {
+        if (_isTargetFragmentPrintPreview) {
             _printSettingsViewModel.setPrinterId(printerId)
             requireActivity().supportFragmentManager.setFragmentResult(
                 PrintPreviewFragment.TAG_RESULT_PRINT_PREVIEW,
@@ -196,7 +211,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         }
 
         // set printSettings to PrintPreviewFragment
-        if (_printSettingsViewModel.isTargetFragmentPrintPreview) {
+        if (_isTargetFragmentPrintPreview) {
             _printSettingsViewModel.setPrintSettings(printSettings!!)
             requireActivity().supportFragmentManager.setFragmentResult(
                 PrintPreviewFragment.TAG_RESULT_PRINT_PREVIEW,

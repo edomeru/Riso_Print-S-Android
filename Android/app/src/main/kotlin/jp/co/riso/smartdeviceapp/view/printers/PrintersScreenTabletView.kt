@@ -485,6 +485,8 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
                                 _selectedPrinter!!.printerType!!
                             )
                         )
+                        fragment.setTargetFragmentPrinters()
+
                         if (_pauseableHandler != null) {
                             val msg = Message.obtain(
                                 _pauseableHandler,

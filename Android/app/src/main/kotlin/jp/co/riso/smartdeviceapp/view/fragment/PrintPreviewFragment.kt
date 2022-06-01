@@ -994,7 +994,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
                     fragment.setPDFisLandscape(_pdfManager!!.isPDFLandscape)
                     fragment.setPrintSettings(_printSettings)
                     fragment.setFragmentForPrinting(true)
-                    _printSettingsViewModel.setTargetPrintPreviewFragment()
+                    fragment.setTargetFragmentPrintPreview()
                     setResultListenerForPrintSettings()
                     activity.openDrawer(Gravity.RIGHT, isTablet)
                 } else {
