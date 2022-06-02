@@ -8,17 +8,11 @@ import android.os.SystemClock
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 
 class MainActivityTest : BaseActivityTestUtil() {
     private var _testRightFragment: TestFragment? = null
     private var _testMainFragment: TestFragment? = null
-
-    @Before
-    fun setup() {
-        wakeUpScreen()
-    }
 
     // sleep is needed because drawer calls goes through mHandler
     private fun waitForDrawer() {
