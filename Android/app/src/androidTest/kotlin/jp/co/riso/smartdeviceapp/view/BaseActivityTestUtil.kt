@@ -1,11 +1,15 @@
 package jp.co.riso.smartdeviceapp.view
 
+import android.content.pm.ActivityInfo
 import android.view.View
 import android.view.WindowManager
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import org.hamcrest.BaseMatcher
+import org.hamcrest.Description
+import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -36,6 +40,13 @@ open class BaseActivityTestUtil {
         }
     }
 
+    fun waitForAnimation() {
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        repeat(5) {
+            waitFewSeconds()
+        }
+    }
+
     fun testClick(id: Int) {
         val button = mainActivity!!.findViewById<View>(id)
         mainActivity!!.runOnUiThread { button.callOnClick() }
@@ -53,6 +64,48 @@ open class BaseActivityTestUtil {
             )
         }
         waitFewSeconds()
+    }
+
+    fun switchOrientation() {
+        mainActivity!!.requestedOrientation = if (
+            mainActivity!!.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+            mainActivity!!.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+        ) {
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+
+        mainActivity!!.requestedOrientation = when(mainActivity!!.requestedOrientation) {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+            else -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+    }
+
+    fun getElementFromMatchAtPosition(
+        matcher: Matcher<View>,
+        position: Int
+    ): Matcher<View?> {
+        return object : BaseMatcher<View?>() {
+            var counter = 0
+            override fun matches(item: Any): Boolean {
+                if (matcher.matches(item)) {
+                    if (counter == position) {
+                        counter++
+                        return true
+                    }
+                    counter++
+                }
+                return false
+            }
+
+            override fun describeTo(description: Description) {
+                description.appendText("Element at hierarchy position $position")
+            }
+        }
     }
 
     @After
