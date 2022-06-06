@@ -57,6 +57,11 @@ open class BaseActivityTestUtil {
     val IMG_PNG = "Fairy.png"
     val IMG_BMP = "BMP.bmp"
     val IMG_GIF = "Circles.gif"
+    val IMG_JPG = "Universe.jpg"
+    val IMG_JPG_90 = "Universe_rotate90.jpg"
+    val IMG_JPG_180 = "Universe_rotate180.jpg"
+    val IMG_JPG_270 = "Universe_rotate270.jpg"
+    val IMG_HEIC = "autumn.heic"
 
     // wait some seconds so that you can see the change on emulator/device.
     fun waitFewSeconds() {
