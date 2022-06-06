@@ -13,13 +13,11 @@ import jp.co.riso.android.util.AppUtils
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartprint.R
-import org.hamcrest.BaseMatcher
-import org.hamcrest.Description
-import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import kotlin.math.min
 
 
 class SettingsFragmentTest : BaseActivityTestUtil() {
@@ -59,7 +57,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testKeyboard_HideUsingMenuButton() {
+    fun testKeyboardHide_MenuButton() {
         // show keyboard then hide via menu button
         onView(withId(R.id.loginIdEditText)).perform(click())
         waitForAnimation()
@@ -75,7 +73,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testKeyboard_HideUsingEnter() {
+    fun testKeyboardHide_Enter() {
         // show keyboard then hide via enter
         onView(withId(R.id.loginIdEditText)).perform(click())
         waitForAnimation()
@@ -101,42 +99,40 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
     fun testSettingsFragment_OrientationChange() {
         if (!mainActivity!!.isTablet) {
 
-            val expectedWidth = if (mainActivity!!.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                AppUtils.getScreenDimensions(mainActivity)!!.y
-            } else {
-                AppUtils.getScreenDimensions(mainActivity)!!.x
-            }
+            val expectedWidth = min(
+                AppUtils.getScreenDimensions(mainActivity)!!.x,
+                AppUtils.getScreenDimensions(mainActivity)!!.y)
 
             mainActivity!!.requestedOrientation =
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             waitForAnimation()
             Assert.assertEquals(
-                _fragment!!.view!!.findViewById<View>(R.id.rootView).width,
-                expectedWidth
+                expectedWidth,
+                _fragment!!.view!!.findViewById<View>(R.id.rootView).width
             )
 
             mainActivity!!.requestedOrientation =
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             waitForAnimation()
             Assert.assertEquals(
-                _fragment!!.view!!.findViewById<View>(R.id.rootView).width,
-                expectedWidth
+                expectedWidth,
+                _fragment!!.view!!.findViewById<View>(R.id.rootView).width
             )
 
             mainActivity!!.requestedOrientation =
                 ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
             waitForAnimation()
             Assert.assertEquals(
-                _fragment!!.view!!.findViewById<View>(R.id.rootView).width,
-                expectedWidth
+                expectedWidth,
+                _fragment!!.view!!.findViewById<View>(R.id.rootView).width
             )
 
             mainActivity!!.requestedOrientation =
                 ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
             waitForAnimation()
             Assert.assertEquals(
-                _fragment!!.view!!.findViewById<View>(R.id.rootView).width,
-                expectedWidth
+                expectedWidth,
+                _fragment!!.view!!.findViewById<View>(R.id.rootView).width
             )
         }
     }
