@@ -134,13 +134,7 @@ open class BaseActivityTestUtil {
             }
         }
     }
-
-    @After
-    fun tearDown() {
-        if (NetUtils.isWifiAvailable) {
-            NetUtils.unregisterWifiCallback(SmartDeviceApp.appContext!!)
-        }
-
+    
     fun getPath(filename: String): String {
         val f = File(mainActivity!!.cacheDir.toString() + "/" + filename)
         val assetManager = InstrumentationRegistry.getInstrumentation().context.assets
