@@ -80,3 +80,37 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.4.0"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
 }
+
+// Returns NDK build command based on development OS
+import org.apache.tools.ant.taskdefs.condition.Os
+
+def getNdkBuildCmd() {
+    def ndkDir = android.getNdkDirectory()
+//    def ndkDir = plugins.getPlugin('com.android.application').sdkHandler.getNdkFolder()
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        return "${ndkDir}${File.separator}ndk-build.cmd"
+    } else {
+        return "${ndkDir}${File.separator}ndk-build"
+    }
+}
+
+// Temporary NDK build task until full support is added by Google.
+task ndkBuild(type: Exec) {
+    // In NDK r22, there is bug which causes warning in ndk-build if output-sync is enabled
+    // https://github.com/android/ndk/issues/1492
+    // workaround is to disable it by adding --output-sync=none
+    commandLine getNdkBuildCmd(), '--output-sync=none', '-C', file('src/main/jni').absolutePath
+}
+
+task ndkClean(type: Exec) {
+    // In NDK r22, there is bug which causes warning in ndk-build if output-sync is enabled
+    // https://github.com/android/ndk/issues/1492
+    // workaround is to disable it by adding --output-sync=none
+    commandLine getNdkBuildCmd(), '--output-sync=none', '-C', file('src/main/jni').absolutePath, 'clean'
+}
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn ndkBuild
+}
+
+clean.dependsOn ndkClean
