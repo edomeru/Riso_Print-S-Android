@@ -19,6 +19,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
     @Before
     fun initPrintersFragment() {
+        wakeUpScreen()
         val fm = mainActivity!!.supportFragmentManager
         mainActivity!!.runOnUiThread {
             fm.beginTransaction().add(R.id.mainLayout, PrintersFragment()).commit()

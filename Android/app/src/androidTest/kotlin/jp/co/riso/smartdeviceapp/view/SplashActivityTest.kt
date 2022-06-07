@@ -2,20 +2,20 @@ package jp.co.riso.smartdeviceapp.view
 
 import android.app.Instrumentation
 import android.content.Context
-import androidx.test.ext.junit.rules.ActivityScenarioRule
-import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
-import android.widget.ViewFlipper
-import jp.co.riso.smartprint.R
 import android.net.Uri
 import android.os.SystemClock
 import android.provider.Settings
 import android.view.View
+import android.widget.ViewFlipper
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartprint.R
 import org.junit.*
 import java.util.concurrent.atomic.AtomicReference
 

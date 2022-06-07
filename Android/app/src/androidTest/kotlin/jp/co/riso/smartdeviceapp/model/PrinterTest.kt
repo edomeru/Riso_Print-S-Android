@@ -12,6 +12,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     private val PRINTER_ADDRESS = "192.168.1.206"
     private val PRINTER_TAG = "PRINTER_BUNDLE"
     private val PRINTER_ARRAY_TAG = "PRINTER_ARRAY_BUNDLE"
+
     @Throws(Exception::class)
     override fun setUp() {
         super.setUp()

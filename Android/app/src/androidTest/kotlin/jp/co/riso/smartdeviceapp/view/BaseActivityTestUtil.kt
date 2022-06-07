@@ -3,12 +3,10 @@ package jp.co.riso.smartdeviceapp.view
 import android.content.pm.ActivityInfo
 import android.view.View
 import android.view.WindowManager
-import androidx.fragment.app.Fragment
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
-import jp.co.riso.smartprint.R
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
