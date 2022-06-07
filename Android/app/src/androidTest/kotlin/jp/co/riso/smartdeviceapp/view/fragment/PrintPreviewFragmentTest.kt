@@ -10,8 +10,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
@@ -20,6 +19,7 @@ import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartprint.R
 import junit.framework.TestCase
+import org.hamcrest.Matchers.not
 import org.junit.*
 
 class PrintPreviewFragmentTest : BaseActivityTestUtil() {
@@ -114,17 +114,31 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testPrintSettings_WithPrinter() {
         testClick(R.id.view_id_print_button)
-        var fragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.rightLayout)
-        Assert.assertTrue(fragment is PrintSettingsFragment)
+        val rightFragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.rightLayout)
+        Assert.assertTrue(rightFragment is PrintSettingsFragment)
         pressBack()
         waitForAnimation()
-        onView(withId(R.id.mainLayout)).check(matches(isCompletelyDisplayed()))
-        fragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.mainLayout)
-        Assert.assertTrue(fragment is PrintPreviewFragment)
+        onView(withId(R.id.rightLayout))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.mainLayout))
+            .check(matches(isCompletelyDisplayed()))
+        val mainFragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.mainLayout)
+        Assert.assertTrue(mainFragment is PrintPreviewFragment)
         var ret: Boolean = _printerManager!!.removePrinter(_printer)
         TestCase.assertEquals(true, ret)
         ret = _printerManager!!.removePrinter(_printer)
         TestCase.assertEquals(false, ret)
+    }
+
+    @Test
+    fun testOrientationChange() {
+        switchOrientation()
+        waitForAnimation()
+        testPrintSettings_NoPrinter()
+
+        switchOrientation()
+        waitForAnimation()
+        testPrintSettings_NoPrinter()
     }
 
     companion object {
