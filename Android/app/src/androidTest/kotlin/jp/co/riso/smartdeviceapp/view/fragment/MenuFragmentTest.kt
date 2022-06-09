@@ -3,9 +3,9 @@ package jp.co.riso.smartdeviceapp.view.fragment
 import android.view.View
 import androidx.fragment.app.Fragment
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
-import org.junit.Before
 import jp.co.riso.smartprint.R
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 
 class MenuFragmentTest : BaseActivityTestUtil() {

@@ -18,7 +18,6 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartprint.R
-import junit.framework.TestCase
 import org.hamcrest.Matchers.not
 import org.junit.*
 
@@ -43,6 +42,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     @After
     fun releaseEspresso() {
         Intents.release()
+        clearPrintersList(_printerManager!!)
         _printPreviewFragment = null
         _printerManager = null
         _printer = null
@@ -66,12 +66,6 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         if (!_printerManager!!.isExists(_printer)) {
             _printerManager!!.savePrinterToDB(_printer, true)
         }
-        for (printerItem in _printerManager!!.savedPrintersList) {
-            if (printerItem!!.ipAddress.contentEquals(TEST_PRINTER_ADDRESS)) {
-                _printer = printerItem
-                break
-            }
-        }
     }
 
     @Test
@@ -81,9 +75,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testPrintSettings_NoPrinter() {
-        for (printerItem in _printerManager!!.savedPrintersList) {
-            _printerManager!!.removePrinter(printerItem)
-        }
+        clearPrintersList(_printerManager!!)
 
         testClick(R.id.view_id_print_button)
 
@@ -124,10 +116,6 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
             .check(matches(isCompletelyDisplayed()))
         val mainFragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.mainLayout)
         Assert.assertTrue(mainFragment is PrintPreviewFragment)
-        var ret: Boolean = _printerManager!!.removePrinter(_printer)
-        TestCase.assertEquals(true, ret)
-        ret = _printerManager!!.removePrinter(_printer)
-        TestCase.assertEquals(false, ret)
     }
 
     @Test

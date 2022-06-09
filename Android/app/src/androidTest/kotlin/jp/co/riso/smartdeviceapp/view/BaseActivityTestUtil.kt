@@ -3,13 +3,24 @@ package jp.co.riso.smartdeviceapp.view
 import android.content.pm.ActivityInfo
 import android.view.View
 import android.view.WindowManager
+import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers.allOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -110,7 +121,31 @@ open class BaseActivityTestUtil {
         }
     }
 
-    fun getElementFromMatchAtPosition(
+    fun getViewInteractionFromMatchAtPosition(id: Int, position: Int): ViewInteraction {
+        return onView(
+            allOf(
+                getElementFromMatchAtPosition(
+                    allOf(withId(id)),
+                    position
+                ),
+                ViewMatchers.isDisplayed()
+            )
+        )
+    }
+
+    fun getViewInteractionFromMatchAtPosition(matcher: Matcher<View>, position: Int): ViewInteraction {
+        return onView(
+            allOf(
+                getElementFromMatchAtPosition(
+                    allOf(matcher),
+                    position
+                ),
+                ViewMatchers.isDisplayed()
+            )
+        )
+    }
+
+    private fun getElementFromMatchAtPosition(
         matcher: Matcher<View>,
         position: Int
     ): Matcher<View?> {
@@ -150,4 +185,29 @@ open class BaseActivityTestUtil {
         }
         return f.path
     }
+
+    fun isKeyboardOpen(fragment: Fragment):Boolean {
+        return WindowInsetsCompat
+            .toWindowInsetsCompat(fragment.view!!.rootWindowInsets)
+            .isVisible(WindowInsetsCompat.Type.ime())
+    }
+
+    fun clearPrintersList(pm: PrinterManager) {
+        val settingsScreen =
+            UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).findObject(
+                UiSelector().text(
+                    "Print Settings"
+                )
+            )
+        if (settingsScreen.exists()) {
+            pressBack()
+        }
+
+        for (printerItem in pm.savedPrintersList.reversed()) {
+            pm.removePrinter(printerItem)
+        }
+    }
+
+
+
 }

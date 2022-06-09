@@ -1,12 +1,12 @@
 package jp.co.riso.smartdeviceapp.view
 
-import jp.co.riso.smartprint.R
-import android.view.Gravity
 import android.os.Bundle
 import android.os.Message
 import android.os.SystemClock
+import android.view.Gravity
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment
+import jp.co.riso.smartprint.R
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
