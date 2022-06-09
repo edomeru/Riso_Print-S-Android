@@ -202,12 +202,22 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         db.close()
         val values = ContentValues()
         values.put(KEY_SQL_PRINTER_NAME, "new printer name")
+        values.put("try", "try")
 
         //will fail since not existing
         val result = _dbManager!!.update(
             KEY_SQL_PRINTER_TABLE, values,
             KeyConstants.KEY_SQL_PRINTER_ID + "=?", printerId.toString()
         )
+        _dbManager!!.update(
+            KEY_SQL_PRINTER_TABLE, values,
+            KeyConstants.KEY_SQL_PRINTER_ID + "=?", null
+        )
+        _dbManager!!.update(
+            KEY_SQL_PRINTER_TABLE, values,
+            KeyConstants.KEY_SQL_PRINTER_ID + "=?", ""
+        )
+
         TestCase.assertFalse(result)
         db = _dbManager!!.readableDatabase
         val cursor: Cursor = db.query(KEY_SQL_PRINTJOB_TABLE, null, null, null, null, null, null)
@@ -290,6 +300,13 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         TestCase.assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_TRAYFACEDOWN)))
         TestCase.assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_TRAYSTACK)))
         TestCase.assertEquals(1, c1.getInt(c1.getColumnIndex(KEY_SQL_PRINTER_TRAYTOP)))
+
+        //query fail
+        _dbManager!!.query(
+            "try", null, "prn_id=?", arrayOf(printerId.toString()), null,
+            null, null
+        )
+
         c1.close()
         db.close()
     }
@@ -312,6 +329,8 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         cursor.close()
         db.close()
         result = _dbManager!!.delete(KEY_SQL_PRINTER_TABLE, null, null)
+        _dbManager!!.delete(KEY_SQL_PRINTER_TABLE, null, "")
+        _dbManager!!.delete("try", null, "")
         TestCase.assertTrue(result)
         db = _dbManager!!.readableDatabase
         cursor = db.query(KEY_SQL_PRINTER_TABLE, null, null, null, null, null, null)
@@ -423,6 +442,13 @@ class DatabaseManagerTest : BaseActivityTestUtil() {
         TestCase.assertEquals(false, getBooleanFromCursor(cursor, KEY_SQL_INVALID))
         cursor.close()
         db.close()
+    }
+
+    @Test
+    fun testOnUpgrade() {
+        val db = _dbManager!!.writableDatabase
+        _dbManager!!.onUpgrade(db, 1, 2)
+        _dbManager!!.onUpgrade(db, 2, 3)
     }
 
     companion object {
