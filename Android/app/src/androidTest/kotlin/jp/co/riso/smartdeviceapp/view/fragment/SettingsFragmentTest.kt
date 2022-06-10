@@ -91,7 +91,6 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
         waitForAnimation()
         Assert.assertTrue(isKeyboardOpen(settingsFragment!!))
 
-        //onView(withId(R.id.loginIdEditText)).perform(typeText("\n"))
         onView(withId(R.id.loginIdEditText)).perform(pressKey(KeyEvent.KEYCODE_ENTER))
         waitForAnimation()
         Assert.assertFalse(isKeyboardOpen(settingsFragment!!))
