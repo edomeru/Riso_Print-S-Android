@@ -17,7 +17,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
@@ -107,6 +106,13 @@ open class BaseActivityTestUtil {
     }
 
     fun waitForAnimation() {
+        getInstrumentation().waitForIdleSync()
+        repeat(5) {
+            waitFewSeconds()
+        }
+    }
+
+    fun waitForPrint() {
         getInstrumentation().waitForIdleSync()
         repeat(5) {
             waitFewSeconds()
@@ -219,7 +225,8 @@ open class BaseActivityTestUtil {
             .isVisible(WindowInsetsCompat.Type.ime())
     }
 
-    fun clearPrintersList(pm: PrinterManager) {
+    fun clearPrintersList() {
+        val pm = PrinterManager.getInstance(mainActivity!!)
         val settingsScreen =
             UiDevice.getInstance(getInstrumentation()).findObject(
                 UiSelector().text(
@@ -230,7 +237,7 @@ open class BaseActivityTestUtil {
             pressBack()
         }
 
-        for (printerItem in pm.savedPrintersList.reversed()) {
+        for (printerItem in pm!!.savedPrintersList.reversed()) {
             pm.removePrinter(printerItem)
         }
     }
@@ -292,11 +299,12 @@ open class BaseActivityTestUtil {
     }
 
     fun switchScreen(state: Int) {
+/*
         getViewInteractionFromMatchAtPosition(
             R.id.menu_id_action_button,
             0
         ).perform(click())
-
+*/
         val id = when (state) {
                 MenuFragment.STATE_HOME -> R.id.homeButton
                 MenuFragment.STATE_PRINTPREVIEW -> R.id.printPreviewButton

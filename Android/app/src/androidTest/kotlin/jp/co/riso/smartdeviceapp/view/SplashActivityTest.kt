@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.SystemClock
 import android.provider.Settings
 import android.view.View
+import android.view.WindowManager
 import android.widget.ViewFlipper
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
@@ -16,10 +17,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartprint.R
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import java.util.concurrent.atomic.AtomicReference
 
 class SplashActivityTest {
@@ -36,6 +34,28 @@ class SplashActivityTest {
         val activityRef = AtomicReference<SplashActivity>()
         testRule.scenario.onActivity { newValue: SplashActivity -> activityRef.set(newValue) }
         _activity = activityRef.get()
+    }
+
+    @Before
+    fun initEspresso() {
+        Intents.init()
+        wakeUpScreen()
+    }
+
+    @After
+    fun releaseEspresso() {
+        Intents.release()
+    }
+
+    private fun wakeUpScreen() {
+        _activity!!.runOnUiThread {
+            _activity!!.window.addFlags(
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+            )
+        }
     }
 
     private fun testClick(id: Int) {
