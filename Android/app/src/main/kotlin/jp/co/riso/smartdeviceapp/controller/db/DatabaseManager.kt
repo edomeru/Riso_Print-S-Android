@@ -119,13 +119,13 @@ open class DatabaseManager (private val _context: Context?) :
         try {
             db = this.writableDatabase
             rowId = db.insertOrThrow(table, nullColumnHack, values)
+            db.close()
         } catch (e: SQLException) {
             logError(
                 DatabaseManager::class.java,
                 "failed insert to " + table + ". Error: " + e.message
             )
         }
-        db?.close()
         return rowId > -1
     }
 
