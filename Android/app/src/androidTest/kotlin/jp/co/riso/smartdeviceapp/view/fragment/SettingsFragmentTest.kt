@@ -1,6 +1,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.content.pm.ActivityInfo
+import android.view.KeyEvent
 import android.view.View
 import androidx.preference.PreferenceManager
 import androidx.test.espresso.Espresso.onView
@@ -13,6 +14,7 @@ import jp.co.riso.android.util.AppUtils
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartprint.R
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -34,6 +36,12 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
         val fragment = fm.findFragmentById(R.id.mainLayout)
         Assert.assertTrue(fragment is SettingsFragment)
         settingsFragment = fragment as SettingsFragment?
+    }
+
+    @After
+    fun cleanUp() {
+        onView(withId(R.id.loginIdEditText)).perform(clearText())
+        waitForAnimation()
     }
 
     @Test
@@ -65,17 +73,30 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
+    fun testKeyboardHide_ActionButton() {
+        // show keyboard then hide via enter
+        onView(withId(R.id.loginIdEditText)).perform(click())
+        waitForAnimation()
+        Assert.assertTrue(isKeyboardOpen(settingsFragment!!))
+
+        onView(withId(R.id.loginIdEditText)).perform(pressImeActionButton())
+        waitForAnimation()
+        Assert.assertFalse(isKeyboardOpen(settingsFragment!!))
+    }
+
+    @Test
     fun testKeyboardHide_Enter() {
         // show keyboard then hide via enter
         onView(withId(R.id.loginIdEditText)).perform(click())
         waitForAnimation()
         Assert.assertTrue(isKeyboardOpen(settingsFragment!!))
 
-        //onView(withId(R.id.loginIdEditText)).perform(pressKey(KeyEvent.ACTION_UP))
-        onView(withId(R.id.loginIdEditText)).perform(pressImeActionButton())
+        //onView(withId(R.id.loginIdEditText)).perform(typeText("\n"))
+        onView(withId(R.id.loginIdEditText)).perform(pressKey(KeyEvent.KEYCODE_ENTER))
         waitForAnimation()
         Assert.assertFalse(isKeyboardOpen(settingsFragment!!))
     }
+
 
     @Test
     fun testEditText_UpdateValue() {

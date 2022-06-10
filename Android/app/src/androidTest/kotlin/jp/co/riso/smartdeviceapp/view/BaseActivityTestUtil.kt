@@ -1,27 +1,46 @@
 package jp.co.riso.smartdeviceapp.view
 
+import android.app.AlertDialog
+import android.app.Instrumentation
+import android.content.ClipData
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
+import androidx.test.runner.lifecycle.Stage.RESUMED
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import com.scanlibrary.ScanActivity
+import com.scanlibrary.ScanConstants
 import jp.co.riso.android.util.NetUtils
-import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment
+import jp.co.riso.smartprint.R
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import java.io.File
@@ -48,7 +67,7 @@ open class BaseActivityTestUtil {
     @After
     fun tearDown() {
         if (NetUtils.isWifiAvailable) {
-            NetUtils.unregisterWifiCallback(appContext!!)
+            NetUtils.unregisterWifiCallback(mainActivity!!)
         }
         testRule.scenario.close()
         /** Use to set default state: permissions are not granted
@@ -61,12 +80,6 @@ open class BaseActivityTestUtil {
      *  Utility Methods
      */
 
-    val DOC_PDF = "PDF-squarish.pdf"
-    val DOC_TXT = "1_7MB.txt"
-    val IMG_PNG = "Fairy.png"
-    val IMG_BMP = "BMP.bmp"
-    val IMG_GIF = "Circles.gif"
-
     // wait some seconds so that you can see the change on emulator/device.
     fun waitFewSeconds() {
         try {
@@ -76,19 +89,29 @@ open class BaseActivityTestUtil {
         }
     }
 
-    fun waitForAnimation() {
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-        repeat(5) {
-            waitFewSeconds()
-        }
-    }
+   /* fun testClick(activity: MainActivity, id: Int) {
+        val button = activity.findViewById<View>(id)
+        activity.runOnUiThread { button.callOnClick() }
+        waitForAnimation()
+    }*/
 
     fun testClick(id: Int) {
+        val button = mainActivity!!.findViewById<View>(id)
+        mainActivity!!.runOnUiThread { button.callOnClick() }
+    }
+
+    fun testClickAndWait(id: Int) {
         val button = mainActivity!!.findViewById<View>(id)
         mainActivity!!.runOnUiThread { button.callOnClick() }
         waitForAnimation()
     }
 
+    fun waitForAnimation() {
+        getInstrumentation().waitForIdleSync()
+        repeat(5) {
+            waitFewSeconds()
+        }
+    }
 
     fun wakeUpScreen() {
         mainActivity!!.runOnUiThread {
@@ -167,10 +190,14 @@ open class BaseActivityTestUtil {
             }
         }
     }
+
+    fun getUriFromPath(filename: String): Uri {
+        return Uri.fromFile(File(getPath(filename)))
+    }
     
-    fun getPath(filename: String): String {
+    private fun getPath(filename: String): String {
         val f = File(mainActivity!!.cacheDir.toString() + "/" + filename)
-        val assetManager = InstrumentationRegistry.getInstrumentation().context.assets
+        val assetManager = getInstrumentation().context.assets
         try {
             val `is` = assetManager.open(filename)
             val size = `is`.available()
@@ -194,7 +221,7 @@ open class BaseActivityTestUtil {
 
     fun clearPrintersList(pm: PrinterManager) {
         val settingsScreen =
-            UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).findObject(
+            UiDevice.getInstance(getInstrumentation()).findObject(
                 UiSelector().text(
                     "Print Settings"
                 )
@@ -208,6 +235,139 @@ open class BaseActivityTestUtil {
         }
     }
 
+    fun selectDocument(uri: Uri) {
+        loadFileUsingButton(R.id.fileButton, uri)
+    }
 
+    fun selectPhotos(uri: Uri) {
+        loadFileUsingButton(R.id.photosButton, uri)
+    }
 
+    fun capturePhoto(uri: Uri) {
+        loadFileUsingButton(R.id.cameraButton, uri)
+    }
+
+    private fun loadFileUsingButton(id: Int, uri: Uri) {
+        val intent = Intent()
+        if (id != R.id.cameraButton) {
+            intent.setData(uri)
+            Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
+                .respondWith(
+                    Instrumentation.ActivityResult(
+                        FragmentActivity.RESULT_OK,
+                        intent))
+        } else {
+            intent.putExtra(ScanConstants.SCANNED_RESULT, uri)
+            Intents.intending(IntentMatchers.hasComponent(ScanActivity::class.java.name))
+                .respondWith(
+                    Instrumentation.ActivityResult(
+                        FragmentActivity.RESULT_OK,
+                        intent
+                    )
+                )
+        }
+        testClickAndWait(id)
+        updateMainActivity()
+    }
+
+    fun selectPhotos(clipData: ClipData) {
+        val intent = Intent()
+        intent.clipData = clipData
+        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, intent)
+        Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
+        testClickAndWait(R.id.photosButton)
+        updateMainActivity()
+    }
+
+    open fun updateMainActivity() {
+        var currentActivity = mainActivity
+        getInstrumentation().runOnMainSync {
+            val resumedActivities: Collection<*> =
+                ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(RESUMED)
+            if (resumedActivities.iterator().hasNext()) {
+                currentActivity = resumedActivities.iterator().next() as MainActivity
+            }
+        }
+        mainActivity = currentActivity
+    }
+
+    fun switchScreen(state: Int) {
+        getViewInteractionFromMatchAtPosition(
+            R.id.menu_id_action_button,
+            0
+        ).perform(click())
+
+        val id = when (state) {
+                MenuFragment.STATE_HOME -> R.id.homeButton
+                MenuFragment.STATE_PRINTPREVIEW -> R.id.printPreviewButton
+                MenuFragment.STATE_PRINTERS -> R.id.printersButton
+                MenuFragment.STATE_PRINTJOBS -> R.id.printJobsButton
+                MenuFragment.STATE_SETTINGS -> R.id.settingsButton
+                MenuFragment.STATE_HELP -> R.id.helpButton
+                MenuFragment.STATE_LEGAL -> R.id.legalButton
+            else -> {R.id.homeButton}
+        }
+        testClickAndWait(id)
+    }
+
+    fun checkDialog(tag: String, msgId: Int) {
+        val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
+            tag
+        )
+        Assert.assertTrue(fragment is DialogFragment)
+        Assert.assertTrue((fragment as DialogFragment).showsDialog)
+        val dialog = fragment.dialog as AlertDialog
+        val msg = dialog.findViewById<View>(android.R.id.message)
+        Assert.assertEquals(
+            mainActivity!!.resources.getString(msgId),
+            (msg as TextView).text
+        )
+        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+        Assert.assertEquals(
+            mainActivity!!.resources.getString(R.string.ids_lbl_ok),
+            b.text
+        )
+    }
+
+    fun checkDialog(tag: String, titleId: Int, msgId: Int) {
+        val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
+            tag
+        )
+        Assert.assertTrue(fragment is DialogFragment)
+        Assert.assertTrue((fragment as DialogFragment?)!!.showsDialog)
+        val dialog = fragment!!.dialog as AlertDialog?
+        val titleIdentifier = mainActivity!!.resources.getIdentifier("alertTitle", "id", "android")
+        val title = dialog!!.findViewById<View>(titleIdentifier)
+        val msg = dialog.findViewById<View>(android.R.id.message)
+        Assert.assertEquals(
+            mainActivity!!.resources.getString(titleId),
+            (title as TextView).text
+        )
+        Assert.assertEquals(
+            mainActivity!!.resources.getString(msgId),
+            (msg as TextView).text
+        )
+        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+        Assert.assertEquals(
+            mainActivity!!.resources.getString(R.string.ids_lbl_ok),
+            b.text
+        )
+    }
+
+    companion object {
+        const val DOC_PDF = "PDF-squarish.pdf"
+        const val DOC_PDF_PRINT_NOT_ALLOWED = "PDF-PrintNotAllowed.pdf"
+        const val DOC_PDF_WITH_ENCRYPTION = "PDF-withEncryption.pdf"
+
+        const val DOC_TXT = "1_7MB.txt"
+        const val DOC_TXT_OVER_SIZE_LIMIT = "6MB.txt"
+
+        const val IMG_PNG = "Fairy.png"
+        const val IMG_BMP = "BMP.bmp"
+        const val IMG_GIF = "Circles.gif"
+        const val IMG_FailConversion = "Invalid_JPEG.jpg"
+
+        val TEST_ONLINE_PRINTER = Printer("ORPHIS FW5230", "192.168.0.32") // update with online printer details
+        val TEST_OFFLINE_PRINTER = Printer("ORPHIS GD500", "192.168.0.2")
+    }
 }

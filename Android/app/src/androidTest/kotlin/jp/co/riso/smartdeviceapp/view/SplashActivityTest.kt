@@ -16,7 +16,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartprint.R
-import org.junit.*
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import java.util.concurrent.atomic.AtomicReference
 
 class SplashActivityTest {
@@ -33,16 +36,6 @@ class SplashActivityTest {
         val activityRef = AtomicReference<SplashActivity>()
         testRule.scenario.onActivity { newValue: SplashActivity -> activityRef.set(newValue) }
         _activity = activityRef.get()
-    }
-
-    @Before
-    fun initEspresso() {
-        Intents.init()
-    }
-
-    @After
-    fun releaseEspresso() {
-        Intents.release()
     }
 
     private fun testClick(id: Int) {

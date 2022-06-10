@@ -1,35 +1,24 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
-import android.app.AlertDialog
-import android.app.Instrumentation
-import android.content.DialogInterface
-import android.content.Intent
-import android.net.Uri
-import android.view.View
-import android.widget.TextView
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
+import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTERS
 import jp.co.riso.smartprint.R
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
 import org.junit.*
-import java.io.File
 
 class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
@@ -43,11 +32,9 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     @Before
     fun setup() {
         Intents.init()
-
         wakeUpScreen()
         initPrinters()
         initFragment()
-        initPreview()
     }
 
     @After
@@ -66,7 +53,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             fm.executePendingTransactions()
         }
         waitForAnimation()
-        testClick(R.id.view_id_print_button)
+        testClickAndWait(R.id.view_id_print_button)
         val fragment = fm.findFragmentById(R.id.rightLayout)
         Assert.assertTrue(fragment is PrintSettingsFragment)
         _printSettingsFragment = fragment as PrintSettingsFragment?
@@ -94,30 +81,14 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     private fun initPreview() {
-        /*
-        val fm = mainActivity!!.supportFragmentManager
-        mainActivity!!.runOnUiThread {
-            fm.beginTransaction().add(R.id.mainLayout,HomeFragment()).commit()
-            fm.executePendingTransactions()
-        }*/
+        // hide print settings screen
         pressBack()
-        getViewInteractionFromMatchAtPosition(
-            R.id.menu_id_action_button,
-            0
-        ).perform(click())
-        testClick(R.id.homeButton)
-        val intent = Intent()
-        val testFile = Uri.fromFile(File(getPath(DOC_PDF)))
-        intent.setData(testFile)
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, intent)
-        Intents.intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
-        testClick(R.id.fileButton)
-        getViewInteractionFromMatchAtPosition(
-            R.id.menu_id_action_button,
-            0
-        ).perform(click())
-        testClick(R.id.printPreviewButton)
-        testClick(R.id.view_id_print_button)
+
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF))
+
+        // return to print settings screen
+        onView(withId(R.id.view_id_print_button)).perform(click())
     }
 
     @Test
@@ -182,82 +153,73 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testSelectPrinter() {
-        val selectedPrinter = 0
-        val nextPrinter = 1
+        val selectedPrinter = _printerManager!!.savedPrintersList[0]
+
+        val nextPrinterIndex = 1
+        val nextPrinter = _printerManager!!.savedPrintersList[nextPrinterIndex]
 
         // Check selected Printer
-        onView(allOf(withId(R.id.listValueTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(_printerManager!!.savedPrintersList[selectedPrinter]!!.name))))
-        onView(allOf(withId(R.id.listValueSubTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(_printerManager!!.savedPrintersList[selectedPrinter]!!.ipAddress))))
+        onView(allOf(withId(R.id.listValueTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
+            .check(matches(withText(containsString(selectedPrinter!!.name))))
+        onView(allOf(withId(R.id.listValueSubTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
+            .check(matches(withText(containsString(selectedPrinter.ipAddress))))
 
         // Select Printer
         testClick(R.id.view_id_print_selected_printer)
         getViewInteractionFromMatchAtPosition(
             R.id.view_id_subview_printer_item,
-            nextPrinter
+            nextPrinterIndex
         ).perform(click())
 
         // Check selected Printer
         onView(withId(R.id.view_id_hide_subview_container))
             .perform(click())
         onView(allOf(withId(R.id.listValueTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(_printerManager!!.savedPrintersList[nextPrinter]!!.name))))
+            .check(matches(withText(containsString(nextPrinter!!.name))))
         onView(allOf(withId(R.id.listValueSubTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(_printerManager!!.savedPrintersList[nextPrinter]!!.ipAddress))))
+            .check(matches(withText(containsString(nextPrinter.ipAddress))))
     }
 
     @Test
     fun testPrint_Success() {
-        testClick(R.id.view_id_print_header)
+        initPreview()
+        testClickAndWait(R.id.view_id_print_header)
 
-        val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
-            PrintSettingsFragment.TAG_MESSAGE_DIALOG
-        )
-        Assert.assertTrue(fragment is DialogFragment)
-        Assert.assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
-        val msg = dialog!!.findViewById<View>(android.R.id.message)
-        Assert.assertEquals(
-            mainActivity!!.resources.getString(R.string.ids_info_msg_print_job_successful),
-            (msg as TextView).text
-        )
-        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        Assert.assertEquals(
-            SmartDeviceApp.appContext!!.resources.getString(R.string.ids_lbl_ok),
-            b.text
+        checkDialog(
+            PrintSettingsFragment.TAG_MESSAGE_DIALOG,
+            R.string.ids_info_msg_print_job_successful
         )
     }
 
     @Test
     fun testPrint_Cancel() {
+        initPreview()
+        onView(withId(R.id.view_id_print_header)).perform(click())
+        pressBack()
 
+        Assert.assertNull(
+            mainActivity!!.supportFragmentManager.findFragmentByTag(
+                PrintSettingsFragment.TAG_MESSAGE_DIALOG
+        ))
     }
 
     @Test
     fun testPrint_Fail() {
-        testClick(R.id.view_id_print_header)
+        initPreview()
+        testSelectPrinter()
+        testClickAndWait(R.id.view_id_print_header)
 
-        val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
-            PrintSettingsFragment.TAG_MESSAGE_DIALOG
-        )
-        Assert.assertTrue(fragment is DialogFragment)
-        Assert.assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
-        val msg = dialog!!.findViewById<View>(android.R.id.message)
-        Assert.assertEquals(
-            mainActivity!!.resources.getString(R.string.ids_info_msg_print_job_failed),
-            (msg as TextView).text
-        )
-        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        Assert.assertEquals(
-            SmartDeviceApp.appContext!!.resources.getString(R.string.ids_lbl_ok),
-            b.text
+        checkDialog(
+            PrintSettingsFragment.TAG_MESSAGE_DIALOG,
+            R.string.ids_info_msg_print_job_failed
         )
     }
 
-    companion object {
-        private val TEST_ONLINE_PRINTER = Printer("ORPHIS FW5230", "192.168.0.32") // update with online printer details
-        private val TEST_OFFLINE_PRINTER = Printer("ORPHIS GD500", "192.168.0.2")
+    /** TODO
+    @Test
+    fun testDefaultPrintSettings() {
+        switchScreen(STATE_PRINTERS)
+
     }
+    */
 }

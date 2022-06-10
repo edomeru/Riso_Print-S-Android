@@ -1,23 +1,25 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
-import android.app.AlertDialog
-import android.content.DialogInterface
-import android.view.View
-import android.widget.TextView
-import androidx.fragment.app.DialogFragment
+import android.app.Instrumentation
+import android.content.Intent
+import androidx.fragment.app.FragmentActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
+import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartprint.R
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.not
 import org.junit.*
 
@@ -31,16 +33,15 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     @Before
-    fun initEspresso() {
+    fun setup() {
         Intents.init()
-
         wakeUpScreen()
         initPrinter()
         initFragment()
     }
 
     @After
-    fun releaseEspresso() {
+    fun cleanUp() {
         Intents.release()
         clearPrintersList(_printerManager!!)
         _printPreviewFragment = null
@@ -62,7 +63,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
     private fun initPrinter() {
         _printerManager = PrinterManager.getInstance(mainActivity!!)
-        _printer = Printer(TEST_PRINTER_NAME, TEST_PRINTER_ADDRESS)
+        _printer = TEST_ONLINE_PRINTER
         if (!_printerManager!!.isExists(_printer)) {
             _printerManager!!.savePrinterToDB(_printer, true)
         }
@@ -74,38 +75,21 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testPrintSettings_NoPrinter() {
+    fun testPrintButton_NoPrinter() {
         clearPrintersList(_printerManager!!)
 
-        testClick(R.id.view_id_print_button)
+        testClickAndWait(R.id.view_id_print_button)
 
-        val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
-            PrintPreviewFragment.TAG_MESSAGE_DIALOG
-        )
-        Assert.assertTrue(fragment is DialogFragment)
-        Assert.assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
-        val titleId = mainActivity!!.resources.getIdentifier("alertTitle", "id", "android")
-        val title = dialog!!.findViewById<View>(titleId)
-        val msg = dialog.findViewById<View>(android.R.id.message)
-        Assert.assertEquals(
-            mainActivity!!.resources.getString(R.string.ids_lbl_print_settings),
-            (title as TextView).text
-        )
-        Assert.assertEquals(
-            mainActivity!!.resources.getString(R.string.ids_err_msg_no_selected_printer),
-            (msg as TextView).text
-        )
-        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        Assert.assertEquals(
-            SmartDeviceApp.appContext!!.resources.getString(R.string.ids_lbl_ok),
-            b.text
+        checkDialog(
+            PrintPreviewFragment.TAG_MESSAGE_DIALOG,
+            R.string.ids_lbl_print_settings,
+            R.string.ids_err_msg_no_selected_printer
         )
     }
 
     @Test
-    fun testPrintSettings_WithPrinter() {
-        testClick(R.id.view_id_print_button)
+    fun testPrintButton_WithPrinter() {
+        testClickAndWait(R.id.view_id_print_button)
         val rightFragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.rightLayout)
         Assert.assertTrue(rightFragment is PrintSettingsFragment)
         pressBack()
@@ -119,18 +103,82 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
+    fun testPreview_ChangePage() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF))
+
+        onView(withClassName(equalTo(PrintPreviewView::class.java.name)))
+            .perform(swipeLeft())
+    }
+
+    @Test
+    fun testFileOpen_Consecutive() {
+        switchScreen(MenuFragment.STATE_HOME)
+        val intent = Intent()
+        intent.setData(getUriFromPath(DOC_TXT))
+        Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
+            .respondWith(
+                Instrumentation.ActivityResult(
+                    FragmentActivity.RESULT_OK,
+                    intent))
+        onView(withId(R.id.fileButton)).perform(click())
+
+        switchScreen(MenuFragment.STATE_HOME)
+        selectPhotos(getUriFromPath(IMG_BMP))
+    }
+
+    @Test
+    fun testPdfError_PrintNotAllowed() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF_PRINT_NOT_ALLOWED))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_pdf_printing_not_allowed
+        )
+    }
+
+    @Test
+    fun testPdfError_Encrypted() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF_WITH_ENCRYPTION))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_pdf_encrypted
+        )
+    }
+
+    @Test
+    fun testConversionError_TxtSizeLimit() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_TXT_OVER_SIZE_LIMIT))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_txt_size_limit
+        )
+    }
+
+    @Test
+    fun testConversionError_Fail() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectPhotos(getUriFromPath(IMG_FailConversion))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_conversion_failed
+        )
+    }
+
+    @Test
     fun testOrientationChange() {
         switchOrientation()
         waitForAnimation()
-        testPrintSettings_NoPrinter()
+        testPrintButton_NoPrinter()
 
         switchOrientation()
         waitForAnimation()
-        testPrintSettings_NoPrinter()
-    }
-
-    companion object {
-        private const val TEST_PRINTER_NAME = "RISO IS1000C-G"
-        private const val TEST_PRINTER_ADDRESS = "192.168.0.1"
+        testPrintButton_NoPrinter()
     }
 }
