@@ -2,20 +2,21 @@ package jp.co.riso.smartdeviceapp.view
 
 import android.app.Instrumentation
 import android.content.Context
-import androidx.test.ext.junit.rules.ActivityScenarioRule
-import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
-import android.widget.ViewFlipper
-import jp.co.riso.smartprint.R
 import android.net.Uri
 import android.os.SystemClock
 import android.provider.Settings
 import android.view.View
+import android.view.WindowManager
+import android.widget.ViewFlipper
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartprint.R
 import org.junit.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -38,11 +39,23 @@ class SplashActivityTest {
     @Before
     fun initEspresso() {
         Intents.init()
+        wakeUpScreen()
     }
 
     @After
     fun releaseEspresso() {
         Intents.release()
+    }
+
+    private fun wakeUpScreen() {
+        _activity!!.runOnUiThread {
+            _activity!!.window.addFlags(
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+            )
+        }
     }
 
     private fun testClick(id: Int) {

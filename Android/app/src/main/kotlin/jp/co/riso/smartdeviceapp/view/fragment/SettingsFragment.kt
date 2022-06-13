@@ -101,7 +101,7 @@ class SettingsFragment : BaseFragment() {
     private fun resizeView(view: View) {
         if (!isTablet) {
             val screenSize = AppUtils.getScreenDimensions(activity)
-            val rootView = view.findViewById<View>(R.id.rootView) ?: return
+            val rootView = view.findViewById<View>(R.id.rootView)
             val params = rootView.layoutParams
             if (screenSize!!.x > screenSize.y) {
                 params.width = screenSize.y

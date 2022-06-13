@@ -1,12 +1,9 @@
 package jp.co.riso.android.text
 
-import android.content.Intent
 import android.text.InputFilter.LengthFilter
 import android.widget.EditText
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
-import jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameEditText
 import junit.framework.TestCase.*
 import org.junit.Test
 

@@ -27,6 +27,7 @@ import java.net.SocketException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+
 class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, PrintersCallback, PrinterSearchCallback {
     private val _signal = CountDownLatch(1)
     private val _timeout = 20
@@ -42,6 +43,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
 
     @After
     fun cleanUp() {
+        clearPrintersList()
         _printerManager = null
     }
 
@@ -205,6 +207,9 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
 
     @Test
     fun testGetDefaultPrinter_WithDefaultPrinterActivityRestarted() {
+        testSetDefaultPrinter_WithDefaultPrinter()
+        _printerManager = null
+        testRule.scenario.recreate()
         try {
             _printerManager = getInstance(appContext!!)
             val defaultPrinter: Int = _printerManager!!.defaultPrinter

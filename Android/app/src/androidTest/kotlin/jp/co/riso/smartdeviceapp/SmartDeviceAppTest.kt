@@ -1,15 +1,10 @@
 package jp.co.riso.smartdeviceapp
 
-import android.test.ApplicationTestCase
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
-import kotlin.Throws
-import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import junit.framework.TestCase
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Exception
 
 @RunWith(AndroidJUnit4::class)
 class SmartDeviceAppTest {
