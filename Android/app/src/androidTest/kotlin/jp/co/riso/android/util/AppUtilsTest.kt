@@ -14,6 +14,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.util.AppUtils.assetExists
 import jp.co.riso.android.util.AppUtils.authenticationString
 import jp.co.riso.android.util.AppUtils.changeChildrenFont
+import jp.co.riso.android.util.AppUtils.checkViewHitTest
 import jp.co.riso.android.util.AppUtils.createActivityIntent
 import jp.co.riso.android.util.AppUtils.getApplicationLastInstallDate
 import jp.co.riso.android.util.AppUtils.getApplicationPackageName
@@ -696,6 +697,31 @@ class AppUtilsTest : BaseActivityTestUtil() {
         TestCase.assertNotNull(ownerName)
         TestCase.assertFalse(ownerName!!.isEmpty())
         TestCase.assertEquals(expected, ownerName)
+    }
+
+    @Test
+    fun testGetApplicationVersion_NullContext() {
+        val ret = AppUtils.getApplicationVersion(null)
+        TestCase.assertNull(ret)
+    }
+
+    @Test
+    fun testGetApplicationVersion_ValidContext() {
+        val ret = AppUtils.getApplicationVersion(SmartDeviceApp.appContext!!)
+        TestCase.assertNotNull(ret)
+    }
+
+    @Test
+    fun testCheckViewHitTest_NullContext() {
+        val ret = checkViewHitTest(null, 100, 100)
+        TestCase.assertFalse(ret)
+    }
+
+    @Test
+    fun testCheckViewHitTest_ValidContext() {
+        val ll = LinearLayout(mainActivity)
+        val ret = checkViewHitTest(ll, 100, 100)
+        TestCase.assertFalse(ret)
     }
 
     //================================================================================

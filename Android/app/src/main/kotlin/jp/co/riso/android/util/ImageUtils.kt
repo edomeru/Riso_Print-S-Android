@@ -137,7 +137,7 @@ object ImageUtils {
     @JvmStatic
     fun isImageFileSupported(context: Context?, items: ClipData?): Boolean {
         var valid = true
-        if (items == null || items.itemCount < 1) {
+        if (items == null) {
             valid = false
         } else {
             var i = 0

@@ -377,5 +377,13 @@ open class BaseActivityTestUtil {
 
         val TEST_ONLINE_PRINTER = Printer("ORPHIS FW5230", "192.168.0.32") // update with online printer details
         val TEST_OFFLINE_PRINTER = Printer("ORPHIS GD500", "192.168.0.2")
+
+        const val IMG_JPG = "Universe.jpg"
+        const val IMG_JPG_90 = "Universe_rotate90.jpg"
+        const val IMG_JPG_180 = "Universe_rotate180.jpg"
+        const val IMG_JPG_270 = "Universe_rotate270.jpg"
+        const val IMG_HEIC = "autumn.heic"
+        const val IMG_PORTRAIT = "Portrait.PNG"
+        const val IMG_LANDSCAPE = "Landscape.jpg"
     }
 }

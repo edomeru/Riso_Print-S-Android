@@ -3,6 +3,7 @@ package jp.co.riso.android.util
 import android.net.Uri
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.util.FileUtils.copy
+import jp.co.riso.android.util.FileUtils.delete
 import jp.co.riso.android.util.FileUtils.getFileName
 import jp.co.riso.android.util.FileUtils.getFileSize
 import jp.co.riso.android.util.FileUtils.getMimeType
@@ -11,11 +12,13 @@ import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import junit.framework.TestCase
 import org.junit.Test
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 
 class FileUtilsTest : BaseActivityTestUtil() {
     private var _srcFile: File? = null
+    private var _srcInputStream: InputStream? = null
     private var _dstFile: File? = null
     
     // ================================================================================
@@ -23,7 +26,7 @@ class FileUtilsTest : BaseActivityTestUtil() {
     // ================================================================================
     @Test
     fun testConstructor() {
-        val utils: FileUtils = jp.co.riso.android.util.FileUtils
+        val utils = FileUtils
         TestCase.assertNotNull(utils)
     }
 
@@ -52,9 +55,35 @@ class FileUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
+    fun testCopy_ValidParamsFromInputStream() {
+        try {
+            val pdfPath = getAssetPath(TEST_SRC_FILE)
+            _srcInputStream = FileInputStream(pdfPath)
+            if (_srcInputStream == null) {
+                TestCase.fail()
+            }
+            _dstFile = File(
+                SmartDeviceApp.appContext!!.getExternalFilesDir("pdfs").toString() + "/"
+                        + TEST_DST_FILE
+            )
+            if (_dstFile == null) {
+                TestCase.fail()
+            }
+            copy(_srcInputStream, _dstFile)
+        } catch (e: Exception) {
+            TestCase.fail()
+        }
+    }
+
+    @Test
     fun testCopy_NullSrc() {
         try {
-            copy(null as InputStream?, _dstFile)
+            _dstFile = File(
+                SmartDeviceApp.appContext!!.getExternalFilesDir("pdfs").toString() + "/"
+                        + TEST_DST_FILE
+            )
+            copy(_srcInputStream, _dstFile)
+            copy(_srcFile, _dstFile)
         } catch (e: Exception) {
             TestCase.fail()
         }
@@ -63,7 +92,22 @@ class FileUtilsTest : BaseActivityTestUtil() {
     @Test
     fun testCopy_NullDst() {
         try {
-            copy(_srcFile, null)
+            val pdfPath = getAssetPath(TEST_SRC_FILE)
+            _srcInputStream = FileInputStream(pdfPath)
+            _srcFile = File(pdfPath)
+
+            copy(_srcInputStream, _dstFile)
+            copy(_srcFile, _dstFile)
+        } catch (e: Exception) {
+            TestCase.fail()
+        }
+    }
+
+    @Test
+    fun testCopy_NullParameters() {
+        try {
+            copy(_srcInputStream, _dstFile)
+            copy(_srcFile, _dstFile)
         } catch (e: Exception) {
             TestCase.fail()
         }
@@ -125,6 +169,18 @@ class FileUtilsTest : BaseActivityTestUtil() {
                     Uri.fromFile(_srcFile)
                 ), "application/pdf"
             )
+        } catch (e: Exception) {
+            TestCase.fail()
+        }
+    }
+
+    @Test
+    fun testDelete() {
+        try {
+            val pdfPath = getAssetPath(TEST_SRC_FILE)
+            _srcFile = File(pdfPath)
+
+            delete(_srcFile!!)
         } catch (e: Exception) {
             TestCase.fail()
         }

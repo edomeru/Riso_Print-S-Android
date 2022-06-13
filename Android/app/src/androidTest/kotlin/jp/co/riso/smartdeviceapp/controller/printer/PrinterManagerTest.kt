@@ -574,9 +574,11 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             "testRemovePrinter_ValidAndInvalidPrinter",
             IPV4_OFFLINE_PRINTER_ADDRESS
         )
+
         for (printerItem in _printersList!!) {
             _printerManager!!.removePrinter(printerItem)
         }
+
         val ret: Boolean = _printerManager!!.removePrinter(printer)
         TestCase.assertEquals(false, ret)
     }
@@ -786,6 +788,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             TestCase.assertEquals(true, ret)
             ret = _printerManager!!.isExists(printer.ipAddress)
             TestCase.assertEquals(true, ret)
+            ret = _printerManager!!.isExists(printer.id)
+            TestCase.assertEquals(true, ret)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
@@ -815,6 +819,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             TestCase.assertEquals(false, ret)
             ret = _printerManager!!.isExists(printer!!.ipAddress)
             TestCase.assertEquals(false, ret)
+            ret = _printerManager!!.isExists(printer.id)
+            TestCase.assertEquals(false, ret)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
@@ -825,8 +831,10 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         try {
             val printer: Printer? = null
             val ipAddress: String? = null
+            val printID: Int = -1
             _printerManager!!.isExists(printer)
             _printerManager!!.isExists(ipAddress)
+            _printerManager!!.isExists(printID)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
