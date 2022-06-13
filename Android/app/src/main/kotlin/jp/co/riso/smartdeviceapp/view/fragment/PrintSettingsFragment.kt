@@ -376,8 +376,8 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     }
 
     companion object {
-        private const val TAG_WAITING_DIALOG = "dialog_printing"
-        private const val TAG_MESSAGE_DIALOG = "dialog_message"
+        const val TAG_WAITING_DIALOG = "dialog_printing"
+        const val TAG_MESSAGE_DIALOG = "dialog_message"
         private const val PRINT_JOB_SENT_PROGRESS_DIALOG_DELAY =
             50 // To allow user to see 100% progress percentage, enforce a 50ms delay before closing the progress dialog after a successful print job
         private const val MSG_PRINT = 0

@@ -6,7 +6,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import junit.framework.TestCase
 import org.junit.Test
-import java.net.*
+import java.net.Inet6Address
+import java.net.NetworkInterface
+import java.net.SocketException
+import java.net.UnknownHostException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 

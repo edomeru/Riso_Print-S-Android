@@ -166,16 +166,16 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         newView.layoutParams = _homeButtons!!.layoutParams
         mainView.addView(newView)
         _homeButtons = newView
-        setOnClickListeners(_homeButtons)
+        setOnClickListeners(_homeButtons!!)
     }
 
-    private fun setOnClickListeners(view: View?) {
-        _fileButton = view?.findViewById(R.id.fileButton)
-        _photosButton = view?.findViewById(R.id.photosButton)
-        _cameraButton = view?.findViewById(R.id.cameraButton)
-        _fileButton?.setOnClickListener(this)
-        _photosButton?.setOnClickListener(this)
-        _cameraButton?.setOnClickListener(this)
+    private fun setOnClickListeners(view: View) {
+        _fileButton = view.findViewById(R.id.fileButton)
+        _photosButton = view.findViewById(R.id.photosButton)
+        _cameraButton = view.findViewById(R.id.cameraButton)
+        _fileButton!!.setOnClickListener(this)
+        _photosButton!!.setOnClickListener(this)
+        _cameraButton!!.setOnClickListener(this)
     }
 
     private fun checkPermission(isStorageOnly: Boolean): Boolean {
@@ -284,7 +284,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
      */
     private val _availableStorageInBytes: Long
         get() {
-            val stat = StatFs(SmartDeviceApp.appContext?.filesDir!!.path)
+            val stat = StatFs(SmartDeviceApp.appContext!!.filesDir!!.path)
             val bytesAvailable = stat.blockSizeLong * stat.availableBlocksLong
             Log.d(HomeFragment::class.java.simpleName, "bytesAvailable:$bytesAvailable")
             return bytesAvailable

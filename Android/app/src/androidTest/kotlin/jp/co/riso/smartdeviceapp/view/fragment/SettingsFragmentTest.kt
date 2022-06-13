@@ -1,19 +1,20 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.content.pm.ActivityInfo
+import android.view.KeyEvent
 import android.view.View
-import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.util.AppUtils
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartprint.R
-import org.hamcrest.Matchers.allOf
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -21,7 +22,7 @@ import kotlin.math.min
 
 
 class SettingsFragmentTest : BaseActivityTestUtil() {
-    private var _fragment: SettingsFragment? = null
+    private var settingsFragment: SettingsFragment? = null
 
     @Before
     fun initFragment() {
@@ -34,18 +35,18 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         val fragment = fm.findFragmentById(R.id.mainLayout)
         Assert.assertTrue(fragment is SettingsFragment)
-        _fragment = fragment as SettingsFragment?
+        settingsFragment = fragment as SettingsFragment?
     }
 
-    private fun isKeyboardOpen():Boolean {
-        return WindowInsetsCompat
-        .toWindowInsetsCompat(_fragment!!.view!!.rootWindowInsets)
-        .isVisible(WindowInsetsCompat.Type.ime())
+    @After
+    fun cleanUp() {
+        onView(withId(R.id.loginIdEditText)).perform(clearText())
+        waitForAnimation()
     }
 
     @Test
     fun testNewInstance() {
-        Assert.assertNotNull(_fragment)
+        Assert.assertNotNull(settingsFragment)
 
         // check initial value
         val prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity)
@@ -61,15 +62,26 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
         // show keyboard then hide via menu button
         onView(withId(R.id.loginIdEditText)).perform(click())
         waitForAnimation()
-        Assert.assertTrue(isKeyboardOpen())
+        Assert.assertTrue(isKeyboardOpen(settingsFragment!!))
 
-        onView(allOf(
-            getElementFromMatchAtPosition(
-                allOf(withId(R.id.menu_id_action_button)), 1),
-            isDisplayed())
+        getViewInteractionFromMatchAtPosition(
+            R.id.menu_id_action_button,
+            0
         ).perform(click())
         waitForAnimation()
-        Assert.assertFalse(isKeyboardOpen())
+        Assert.assertFalse(isKeyboardOpen(settingsFragment!!))
+    }
+
+    @Test
+    fun testKeyboardHide_ActionButton() {
+        // show keyboard then hide via enter
+        onView(withId(R.id.loginIdEditText)).perform(click())
+        waitForAnimation()
+        Assert.assertTrue(isKeyboardOpen(settingsFragment!!))
+
+        onView(withId(R.id.loginIdEditText)).perform(pressImeActionButton())
+        waitForAnimation()
+        Assert.assertFalse(isKeyboardOpen(settingsFragment!!))
     }
 
     @Test
@@ -77,13 +89,13 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
         // show keyboard then hide via enter
         onView(withId(R.id.loginIdEditText)).perform(click())
         waitForAnimation()
-        Assert.assertTrue(isKeyboardOpen())
+        Assert.assertTrue(isKeyboardOpen(settingsFragment!!))
 
-        //onView(withId(R.id.loginIdEditText)).perform(pressKey(KeyEvent.ACTION_UP))
-        onView(withId(R.id.loginIdEditText)).perform(pressImeActionButton())
+        onView(withId(R.id.loginIdEditText)).perform(pressKey(KeyEvent.KEYCODE_ENTER))
         waitForAnimation()
-        Assert.assertFalse(isKeyboardOpen())
+        Assert.assertFalse(isKeyboardOpen(settingsFragment!!))
     }
+
 
     @Test
     fun testEditText_UpdateValue() {
@@ -108,7 +120,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
             waitForAnimation()
             Assert.assertEquals(
                 expectedWidth,
-                _fragment!!.view!!.findViewById<View>(R.id.rootView).width
+                settingsFragment!!.view!!.findViewById<View>(R.id.rootView).width
             )
 
             mainActivity!!.requestedOrientation =
@@ -116,7 +128,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
             waitForAnimation()
             Assert.assertEquals(
                 expectedWidth,
-                _fragment!!.view!!.findViewById<View>(R.id.rootView).width
+                settingsFragment!!.view!!.findViewById<View>(R.id.rootView).width
             )
 
             mainActivity!!.requestedOrientation =
@@ -124,7 +136,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
             waitForAnimation()
             Assert.assertEquals(
                 expectedWidth,
-                _fragment!!.view!!.findViewById<View>(R.id.rootView).width
+                settingsFragment!!.view!!.findViewById<View>(R.id.rootView).width
             )
 
             mainActivity!!.requestedOrientation =
@@ -132,7 +144,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
             waitForAnimation()
             Assert.assertEquals(
                 expectedWidth,
-                _fragment!!.view!!.findViewById<View>(R.id.rootView).width
+                settingsFragment!!.view!!.findViewById<View>(R.id.rootView).width
             )
         }
     }

@@ -1,0 +1,184 @@
+package jp.co.riso.smartdeviceapp.view.fragment
+
+import android.Manifest
+import android.app.Instrumentation
+import android.content.Intent
+import androidx.fragment.app.FragmentActivity
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.swipeLeft
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
+import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
+import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
+import jp.co.riso.smartprint.R
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.not
+import org.junit.*
+
+class PrintPreviewFragmentTest : BaseActivityTestUtil() {
+
+    private var _printPreviewFragment: PrintPreviewFragment? = null
+    private var _printerManager: PrinterManager? = null
+    private var _printer: Printer? = null
+
+    @get:Rule
+    var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+    @Before
+    fun setup() {
+        Intents.init()
+        wakeUpScreen()
+        initPrinter()
+        initFragment()
+    }
+
+    @After
+    fun cleanUp() {
+        Intents.release()
+        clearPrintersList()
+        _printPreviewFragment = null
+        _printerManager = null
+        _printer = null
+    }
+
+    private fun initFragment() {
+        val fm = mainActivity!!.supportFragmentManager
+        mainActivity!!.runOnUiThread {
+            fm.beginTransaction().add(R.id.mainLayout, PrintPreviewFragment()).commit()
+            fm.executePendingTransactions()
+        }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        val fragment = fm.findFragmentById(R.id.mainLayout)
+        Assert.assertTrue(fragment is PrintPreviewFragment)
+        _printPreviewFragment = fragment as PrintPreviewFragment
+    }
+
+    private fun initPrinter() {
+        _printerManager = PrinterManager.getInstance(mainActivity!!)
+        _printer = TEST_ONLINE_PRINTER
+        if (!_printerManager!!.isExists(_printer)) {
+            _printerManager!!.savePrinterToDB(_printer, true)
+        }
+    }
+
+    @Test
+    fun testNewInstance() {
+        Assert.assertNotNull(_printPreviewFragment)
+    }
+
+    @Ignore("fails during check all")
+    fun testPrintSettingsButton_NoPrinter() {
+        clearPrintersList()
+
+        testClickAndWait(R.id.view_id_print_button)
+
+        checkDialog(
+            PrintPreviewFragment.TAG_MESSAGE_DIALOG,
+            R.string.ids_lbl_print_settings,
+            R.string.ids_err_msg_no_selected_printer
+        )
+    }
+
+    @Test
+    fun testPrintSettingsButton_WithPrinter() {
+        testClickAndWait(R.id.view_id_print_button)
+        val rightFragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.rightLayout)
+        Assert.assertTrue(rightFragment is PrintSettingsFragment)
+        pressBack()
+        waitForAnimation()
+        onView(withId(R.id.rightLayout))
+            .check(matches(not(isDisplayed())))
+        onView(withId(R.id.mainLayout))
+            .check(matches(isCompletelyDisplayed()))
+        val mainFragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.mainLayout)
+        Assert.assertTrue(mainFragment is PrintPreviewFragment)
+    }
+
+    @Ignore("TODO")
+    fun testPreview_ChangePage() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF))
+
+        onView(withClassName(equalTo(PrintPreviewView::class.java.name)))
+            .perform(swipeLeft())
+    }
+
+    @Test
+    fun testFileOpen_Consecutive() {
+        switchScreen(MenuFragment.STATE_HOME)
+        val intent = Intent()
+        intent.setData(getUriFromPath(DOC_TXT))
+        Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
+            .respondWith(
+                Instrumentation.ActivityResult(
+                    FragmentActivity.RESULT_OK,
+                    intent))
+        onView(withId(R.id.fileButton)).perform(click())
+
+        switchScreen(MenuFragment.STATE_HOME)
+        selectPhotos(getUriFromPath(IMG_BMP))
+    }
+
+    @Test
+    fun testPdfError_PrintNotAllowed() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF_PRINT_NOT_ALLOWED))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_pdf_printing_not_allowed
+        )
+    }
+
+    @Test
+    fun testPdfError_Encrypted() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF_WITH_ENCRYPTION))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_pdf_encrypted
+        )
+    }
+
+    @Test
+    fun testConversionError_TxtSizeLimit() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_TXT_OVER_SIZE_LIMIT))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_txt_size_limit
+        )
+    }
+
+    @Test
+    fun testConversionError_Fail() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectPhotos(getUriFromPath(IMG_FailConversion))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_conversion_failed
+        )
+    }
+
+    @Ignore("fails during check all")
+    fun testOrientationChange() {
+        switchOrientation()
+        waitForAnimation()
+        testPrintSettingsButton_NoPrinter()
+
+        switchOrientation()
+        waitForAnimation()
+        testPrintSettingsButton_NoPrinter()
+    }
+}
