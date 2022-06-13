@@ -83,18 +83,18 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testImageFileSupportedItemsNullClipData() {
+    fun testImageFileSupported_ItemsNullClipData() {
         val items: ClipData? = null
         val ret = ImageUtils.isImageFileSupported(SmartDeviceApp.appContext, items)
         TestCase.assertFalse(ret)
     }
 
     @Test
-    fun testImageFileSupportedValidParameters() {
+    fun testImageFileSupported_ValidParameters() {
         val testFiles = ClipData.newUri(SmartDeviceApp.appContext!!.contentResolver,
-            getPath(IMG_JPG),
-            Uri.fromFile(File(getPath(IMG_JPG))))
-        testFiles.addItem(ClipData.Item(Uri.fromFile(File(getPath(IMG_PNG)))))
+            IMG_JPG,
+            getUriFromPath(IMG_JPG))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_JPG)))
 
         val intent = Intent()
         intent.clipData = testFiles
@@ -104,11 +104,11 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testImageFileSupportedUnsupportedImage() {
+    fun testImageFileSupported_UnsupportedImage() {
         val testFiles = ClipData.newUri(SmartDeviceApp.appContext!!.contentResolver,
-            getPath(IMG_JPG),
-            Uri.fromFile(File(getPath(IMG_JPG))))
-        testFiles.addItem(ClipData.Item(Uri.fromFile(File(getPath(IMG_HEIC)))))
+            IMG_JPG,
+            getUriFromPath(IMG_JPG))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_HEIC)))
 
         val intent = Intent()
         intent.clipData = testFiles
@@ -118,60 +118,60 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testImageFileSupportedValidUri() {
-        val testUri = Uri.fromFile(File(getPath(IMG_JPG)))
+    fun testImageFileSupported_ValidUri() {
+        val testUri = getUriFromPath(IMG_JPG)
 
         val ret = ImageUtils.isImageFileSupported(SmartDeviceApp.appContext, testUri)
         TestCase.assertTrue(ret)
     }
 
     @Test
-    fun testGetBitmapFromUriValidPathLandscape() {
-        val testUri = Uri.fromFile(File(getPath(IMG_JPG)))
+    fun testGetBitmapFromUri_ValidPathLandscape() {
+        val testUri = getUriFromPath(IMG_LANDSCAPE)
 
         val ret = ImageUtils.getBitmapFromUri(SmartDeviceApp.appContext!!, testUri)
         TestCase.assertNotNull(ret)
     }
 
     @Test
-    fun testGetBitmapFromUriValidPathPortrait() {
-        val testUri = Uri.fromFile(File(getPath(IMG_PNG)))
+    fun testGetBitmapFromUri_ValidPathPortrait() {
+        val testUri = getUriFromPath(IMG_PORTRAIT)
 
         val ret = ImageUtils.getBitmapFromUri(SmartDeviceApp.appContext!!, testUri)
         TestCase.assertNotNull(ret)
     }
 
     @Test
-    fun testRotateImageIfRequiredValidParam() {
+    fun testRotateImageIfRequired_ValidParam() {
         val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-        val testUri = Uri.fromFile(File(getPath(IMG_PNG)))
+        val testUri = getUriFromPath(IMG_PNG)
 
         val ret = ImageUtils.rotateImageIfRequired(SmartDeviceApp.appContext!!, bmp, testUri)
         TestCase.assertNotNull(ret)
     }
 
     @Test
-    fun testRotateImageIfRequiredRotate90() {
+    fun testRotateImageIfRequired_Rotate90() {
         val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-        val testUri = Uri.fromFile(File(getPath(IMG_JPG_90)))
+        val testUri = getUriFromPath(IMG_JPG_90)
 
         val ret = ImageUtils.rotateImageIfRequired(SmartDeviceApp.appContext!!, bmp, testUri)
         TestCase.assertNotNull(ret)
     }
 
     @Test
-    fun testRotateImageIfRequiredRotate180() {
+    fun testRotateImageIfRequired_Rotate180() {
         val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-        val testUri = Uri.fromFile(File(getPath(IMG_JPG_180)))
+        val testUri = getUriFromPath(IMG_JPG_180)
 
         val ret = ImageUtils.rotateImageIfRequired(SmartDeviceApp.appContext!!, bmp, testUri)
         TestCase.assertNotNull(ret)
     }
 
     @Test
-    fun testRotateImageIfRequiredRotate270() {
+    fun testRotateImageIfRequired_Rotate270() {
         val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-        val testUri = Uri.fromFile(File(getPath(IMG_JPG_270)))
+        val testUri = getUriFromPath(IMG_JPG_270)
 
         val ret = ImageUtils.rotateImageIfRequired(SmartDeviceApp.appContext!!, bmp, testUri)
         TestCase.assertNotNull(ret)

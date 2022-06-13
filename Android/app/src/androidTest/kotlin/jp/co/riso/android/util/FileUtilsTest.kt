@@ -55,7 +55,7 @@ class FileUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testCopy_ValidParams2() {
+    fun testCopy_ValidParamsFromInputStream() {
         try {
             val pdfPath = getAssetPath(TEST_SRC_FILE)
             _srcInputStream = FileInputStream(pdfPath)

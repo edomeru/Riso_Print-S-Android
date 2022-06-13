@@ -2,31 +2,26 @@ package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.AlertDialog
 import android.app.Instrumentation
 import android.content.ClipData
-import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import android.view.View
-import android.widget.TextView
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
+import androidx.test.espresso.action.ViewActions.doubleClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.scanlibrary.ScanActivity
 import com.scanlibrary.ScanConstants
 import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment.Companion.FRAGMENT_TAG_DIALOG
 import jp.co.riso.smartprint.R
 import org.junit.*
-import java.io.File
 
 class HomeFragmentTest : BaseActivityTestUtil() {
 
@@ -42,22 +37,18 @@ class HomeFragmentTest : BaseActivityTestUtil() {
     var cameraPermission: GrantPermissionRule = GrantPermissionRule.grant(CAMERA)
 
     @Before
-    fun initEspresso() {
+    fun setup() {
         Intents.init()
+        wakeUpScreen()
+        initFragment()
     }
 
     @After
-    fun releaseEspresso() {
+    fun cleanUp() {
         Intents.release()
     }
 
-    @Before
-    fun setup() {
-        wakeUpScreen()
-    }
-
-    @Before
-    fun initHomeFragment() {
+    private fun initFragment() {
         val fm = mainActivity!!.supportFragmentManager
         mainActivity!!.runOnUiThread {
             fm.beginTransaction().add(R.id.mainLayout, HomeFragment()).commit()
@@ -145,7 +136,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
     }
      */
 
-    private fun checkIntent_DocumentPicker(intent: Intent) {
+    private fun checkIntentDocumentPicker(intent: Intent) {
         Assert.assertNotNull(intent)
         Assert.assertEquals(Intent.ACTION_CHOOSER, intent.action)
         val extraIntent = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
@@ -162,7 +153,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         }
     }
 
-    private fun checkIntent_ImagePicker(intent: Intent) {
+    private fun checkIntentImagePicker(intent: Intent) {
         Assert.assertNotNull(intent)
         Assert.assertEquals(Intent.ACTION_CHOOSER, intent.action)
         val extraIntent = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
@@ -180,7 +171,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         }
     }
 
-    private fun checkIntent_ScanActivity(intent: Intent) {
+    private fun checkIntentScanActivity(intent: Intent) {
         Assert.assertNotNull(intent)
         Assert.assertEquals(
             ScanActivity::class.java.name,
@@ -241,7 +232,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testPermissionsAllow_CapturePhoto() {
         val result = Intent()
-        val testFile = Uri.fromFile(File(getPath(IMG_BMP)))
+        val testFile = getUriFromPath(IMG_BMP)
         result.putExtra(ScanConstants.SCANNED_RESULT, testFile)
         Intents.intending(IntentMatchers.hasComponent(ScanActivity::class.java.name))
             .respondWith(
@@ -269,11 +260,9 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         grantCameraPermission()
 
         // check that picker intent was sent
-        checkIntent_ScanActivity(Intents.getIntents()[1])
+        checkIntentScanActivity(Intents.getIntents()[1])
     }
      */
-
-
 
     @Test
     fun testOnClick_SelectDocument() {
@@ -282,10 +271,13 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         // null result only since test is not about checking handling of result
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
+
         testClick(R.id.fileButton)
 
+        Assert.assertEquals(1, Intents.getIntents().size.toLong())
+
         // check intent that was sent
-        checkIntent_DocumentPicker(Intents.getIntents()[0])
+        checkIntentDocumentPicker(Intents.getIntents()[0])
     }
 
     @Test
@@ -296,40 +288,122 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         // null result only since test is not about checking handling of result
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
+
         testClick(R.id.photosButton)
 
+        Assert.assertEquals(1, Intents.getIntents().size.toLong())
+
         // check intent that was sent
-        checkIntent_ImagePicker(Intents.getIntents()[0])
+        checkIntentImagePicker(Intents.getIntents()[0])
     }
 
     @Test
     fun testOnClick_CapturePhoto() {
         grantPermissions()
-        // stubs handling of permission request in case of no permissions
+        // stubs handling of start activity to prevent launching of Camera
         // null result only since test is not about checking handling of result
-        Intents.intending(IntentMatchers.hasAction(REQUEST_PERMISSIONS))
-            .respondWith(Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null))
+        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
+        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
 
-        // simulate return of ScanActivity
-        val scanActivityResult = Intent()
-        val testFile = Uri.fromFile(File(getPath(IMG_BMP)))
-        scanActivityResult.putExtra(ScanConstants.SCANNED_RESULT, testFile)
-        Intents.intending(IntentMatchers.hasComponent(ScanActivity::class.java.name))
-            .respondWith(
-                Instrumentation.ActivityResult(
-                    FragmentActivity.RESULT_OK,
-                    scanActivityResult
-                )
-            )
         testClick(R.id.cameraButton)
 
-        // check that ScanActivity, PdfHandlerActivity, MainActivity intents were sent
-        Assert.assertEquals(3, Intents.getIntents().size.toLong())
+        // check that ScanActivity intent was sent
+        Assert.assertEquals(1, Intents.getIntents().size.toLong())
 
         // check that intent for ScanActivity was sent
-        checkIntent_ScanActivity(Intents.getIntents()[0])
+        checkIntentScanActivity(Intents.getIntents()[0])
+    }
 
-        // check that intent for PdfHandlerActivity was sent
+    @Test
+    fun testOnClick_NotButton() {
+        val dummyView = mainActivity!!.findViewById<View>(R.id.mainLayout)
+        mainActivity!!.runOnUiThread {
+            dummyView.setOnClickListener(_homeFragment)
+        }
+
+        testClick(R.id.mainLayout)
+
+        // check that no intent was sent
+        Assert.assertEquals(0, Intents.getIntents().size.toLong())
+
+        mainActivity!!.runOnUiThread {
+            dummyView.setOnClickListener(null)
+        }
+    }
+
+    @Test
+    fun testOnDoubleClick_SelectDocument() {
+        grantPermissions()
+        // stubs handling of start activity to prevent launching of OS picker
+        // null result only since test is not about checking handling of result
+        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
+        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
+
+        getViewInteractionFromMatchAtPosition(
+            R.id.fileButton,
+            0
+        ).perform(doubleClick())
+        waitForAnimation()
+
+        Assert.assertEquals(1, Intents.getIntents().size.toLong())
+
+        // check intent that was sent
+        checkIntentDocumentPicker(Intents.getIntents()[0])
+    }
+
+    @Test
+    fun testOnDoubleClick_SelectPhotos() {
+        grantPermissions()
+        // stubs handling of start activity to prevent launching of OS picker
+        // null result only since test is not about checking handling of result
+        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
+        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
+
+        getViewInteractionFromMatchAtPosition(
+            R.id.photosButton,
+            0
+        ).perform(doubleClick())
+        waitForAnimation()
+
+        Assert.assertEquals(1, Intents.getIntents().size.toLong())
+
+        // check intent that was sent
+        checkIntentImagePicker(Intents.getIntents()[0])
+    }
+
+    @Test
+    fun testOnDoubleClick_CapturePhoto() {
+        grantPermissions()
+        // stubs handling of start activity to prevent launching of Camera
+        // null result only since test is not about checking handling of result
+        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
+        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
+
+        getViewInteractionFromMatchAtPosition(
+            R.id.cameraButton,
+            0
+        ).perform(doubleClick())
+        waitForAnimation()
+
+        // check that ScanActivity intent was sent
+        Assert.assertEquals(1, Intents.getIntents().size.toLong())
+
+        // check that intent for ScanActivity was sent
+        checkIntentScanActivity(Intents.getIntents()[0])
+    }
+
+    @Test
+    fun testFileOpen_SelectDocument() {
+        grantPermissions()
+
+        val testFile = getUriFromPath(DOC_PDF)
+        selectDocument(testFile)
+
+        // check that File Picker, PdfHandlerActivity, MainActivity intents were sent
+        Assert.assertEquals(3, Intents.getIntents().size.toLong())
+
+        checkIntentDocumentPicker(Intents.getIntents()[0])
+
         val pdfHandlerIntent = Intents.getIntents()[1]
         Assert.assertNotNull(pdfHandlerIntent)
         Assert.assertEquals(
@@ -337,8 +411,218 @@ class HomeFragmentTest : BaseActivityTestUtil() {
             pdfHandlerIntent.component!!.className
         )
         Assert.assertEquals(
-            HomeFragment.IMAGE_FROM_CAMERA.toLong(),
+            HomeFragment.PDF_FROM_PICKER.toLong(),
+            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFile, pdfHandlerIntent.data)
+
+        val mainActivityIntent = Intents.getIntents()[2]
+        Assert.assertNotNull(mainActivityIntent)
+        Assert.assertEquals(
+            MainActivity::class.java.name,
+            mainActivityIntent.component!!.className
+        )
+        Assert.assertEquals(
+            HomeFragment.PDF_FROM_PICKER.toLong(),
+            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFile, mainActivityIntent.data)
+    }
+
+    @Test
+    fun testFileOpen_SelectTextFile() {
+        grantPermissions()
+
+        val testFile = getUriFromPath(DOC_TXT)
+        selectDocument(testFile)
+
+        // check that File Picker, PdfHandlerActivity, Main Activity intents were sent
+        Assert.assertEquals(3, Intents.getIntents().size.toLong())
+
+        checkIntentDocumentPicker(Intents.getIntents()[0])
+
+        val pdfHandlerIntent = Intents.getIntents()[1]
+        Assert.assertNotNull(pdfHandlerIntent)
+        Assert.assertEquals(
+            PDFHandlerActivity::class.java.name,
+            pdfHandlerIntent.component!!.className
+        )
+        Assert.assertEquals(
+            HomeFragment.TEXT_FROM_PICKER.toLong(),
+            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFile, pdfHandlerIntent.data)
+
+        val mainActivityIntent = Intents.getIntents()[2]
+        Assert.assertNotNull(mainActivityIntent)
+        Assert.assertEquals(
+            MainActivity::class.java.name,
+            mainActivityIntent.component!!.className
+        )
+        Assert.assertEquals(
+            HomeFragment.TEXT_FROM_PICKER.toLong(),
+            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFile, mainActivityIntent.data!!)
+    }
+
+    @Test
+    fun testFileOpen_SelectPhotos() {
+        grantPermissions()
+
+        val testFile = getUriFromPath(IMG_PNG)
+        selectPhotos(testFile)
+
+        // check that File Picker, PdfHandlerActivity, MainActivity intents were sent
+        Assert.assertEquals(3, Intents.getIntents().size.toLong())
+
+        checkIntentImagePicker(Intents.getIntents()[0])
+
+        val pdfHandlerIntent = Intents.getIntents()[1]
+        Assert.assertNotNull(pdfHandlerIntent)
+        Assert.assertEquals(
+            PDFHandlerActivity::class.java.name,
+            pdfHandlerIntent.component!!.className
+        )
+        Assert.assertEquals(
+            HomeFragment.IMAGE_FROM_PICKER.toLong(),
+            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFile, pdfHandlerIntent.data)
+
+        val mainActivityIntent = Intents.getIntents()[2]
+        Assert.assertNotNull(mainActivityIntent)
+        Assert.assertEquals(
+            MainActivity::class.java.name,
+            mainActivityIntent.component!!.className
+        )
+        Assert.assertEquals(
+            HomeFragment.IMAGE_FROM_PICKER.toLong(),
+            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFile, mainActivityIntent.data)
+        // files sent to main activity not in same sequence
+    }
+
+    @Test
+    fun testFileOpen_SelectPhotosMultiple() {
+        grantPermissions()
+
+        val testFiles = ClipData.newUri(
+            mainActivity!!.contentResolver,
+            IMG_BMP,
+            getUriFromPath(IMG_BMP))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_GIF)))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_PNG)))
+        selectPhotos(testFiles)
+
+        // check that File Picker, PdfHandlerActivity, MainActivity intents were sent
+        Assert.assertEquals(3, Intents.getIntents().size.toLong())
+
+        checkIntentImagePicker(Intents.getIntents()[0])
+
+        val pdfHandlerIntent = Intents.getIntents()[1]
+        Assert.assertNotNull(pdfHandlerIntent)
+        Assert.assertEquals(
+            PDFHandlerActivity::class.java.name,
+            pdfHandlerIntent.component!!.className
+        )
+        Assert.assertEquals(
+            HomeFragment.IMAGES_FROM_PICKER.toLong(),
+            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFiles.itemCount, pdfHandlerIntent.clipData!!.itemCount)
+        for (i in 0 until testFiles.itemCount) {
+            Assert.assertEquals(testFiles.getItemAt(i), pdfHandlerIntent.clipData!!.getItemAt(i))
+        }
+
+        val mainActivityIntent = Intents.getIntents()[2]
+        Assert.assertNotNull(mainActivityIntent)
+        Assert.assertEquals(
+            MainActivity::class.java.name,
+            mainActivityIntent.component!!.className
+        )
+        Assert.assertEquals(
+            HomeFragment.IMAGES_FROM_PICKER.toLong(),
+            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFiles.itemCount, mainActivityIntent.clipData!!.itemCount)
+    }
+
+    @Test
+    fun testFileOpen_SelectPhotosSingleClipData() {
+        grantPermissions()
+
+        val testFiles = ClipData.newUri(
+            mainActivity!!.contentResolver,
+            IMG_BMP,
+            getUriFromPath(IMG_BMP))
+        selectPhotos(testFiles)
+
+        // check that File Picker, PdfHandlerActivity, MainActivity intents were sent
+        Assert.assertEquals(3, Intents.getIntents().size.toLong())
+
+        checkIntentImagePicker(Intents.getIntents()[0])
+
+        val pdfHandlerIntent = Intents.getIntents()[1]
+        Assert.assertNotNull(pdfHandlerIntent)
+        Assert.assertEquals(
+            PDFHandlerActivity::class.java.name,
+            pdfHandlerIntent.component!!.className
+        )
+        Assert.assertEquals(
+            HomeFragment.IMAGES_FROM_PICKER.toLong(),
+            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFiles.itemCount, pdfHandlerIntent.clipData!!.itemCount)
+        for (i in 0 until testFiles.itemCount) {
+            Assert.assertEquals(testFiles.getItemAt(i), pdfHandlerIntent.clipData!!.getItemAt(i))
+        }
+
+        val mainActivityIntent = Intents.getIntents()[2]
+        Assert.assertNotNull(mainActivityIntent)
+        Assert.assertEquals(
+            MainActivity::class.java.name,
+            mainActivityIntent.component!!.className
+        )
+        Assert.assertEquals(
+            HomeFragment.IMAGES_FROM_PICKER.toLong(),
+            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
+        )
+        Assert.assertEquals(testFiles.itemCount, mainActivityIntent.clipData!!.itemCount)
+        for (i in 0 until testFiles.itemCount) {
+            Assert.assertEquals(testFiles.getItemAt(i), pdfHandlerIntent.clipData!!.getItemAt(i))
+        }
+    }
+
+    @Test
+    fun testFileOpen_CapturePhoto() {
+        grantPermissions()
+
+        // stubs handling of permission request in case of no permissions
+        // null result only since test is not about checking handling of result
+        Intents.intending(hasAction(REQUEST_PERMISSIONS))
+            .respondWith(Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null))
+
+        // simulate return of ScanActivity
+        val testFile = getUriFromPath(IMG_BMP)
+        capturePhoto(testFile)
+
+        // check that ScanActivity, PdfHandlerActivity, MainActivity intents were sent
+        Assert.assertEquals(3, Intents.getIntents().size.toLong())
+
+        checkIntentScanActivity(Intents.getIntents()[0])
+
+        // check that intent for PdfHandlerActivity was sent
+        val pdfHandlerIntent = Intents.getIntents()[1]
+        Assert.assertNotNull(pdfHandlerIntent)
+        Assert.assertEquals(
+            pdfHandlerIntent.component!!.className,
+            PDFHandlerActivity::class.java.name
+        )
+        Assert.assertEquals(
             pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong(),
+            HomeFragment.IMAGE_FROM_CAMERA.toLong()
         )
         Assert.assertEquals(testFile, pdfHandlerIntent.data)
 
@@ -354,6 +638,107 @@ class HomeFragmentTest : BaseActivityTestUtil() {
             mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
         )
         Assert.assertEquals(testFile, mainActivityIntent.data)
+    }
+
+    @Test
+    fun testInvalid_SelectDocument() {
+        grantPermissions()
+
+        val testFile = getUriFromPath(IMG_PNG)
+        selectDocument(testFile)
+
+        // check that only File Picker intent was sent
+        Assert.assertEquals(1, Intents.getIntents().size.toLong())
+
+        checkIntentDocumentPicker(Intents.getIntents()[0])
+
+        checkDialog(
+            FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_open_failed
+        )
+    }
+
+    @Test
+    fun testInvalid_SelectPhotos() {
+        grantPermissions()
+
+        val testFile = getUriFromPath(DOC_PDF)
+        selectPhotos(testFile)
+
+        // check that only File Picker intent was sent
+        Assert.assertEquals(1, Intents.getIntents().size.toLong())
+
+        checkIntentImagePicker(Intents.getIntents()[0])
+
+        checkDialog(
+            FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_invalid_file_selection
+        )
+    }
+
+    @Test
+    fun testInvalid_SelectPhotosMultiple() {
+        grantPermissions()
+
+        val testFiles = ClipData.newUri(
+                mainActivity!!.contentResolver,
+                IMG_BMP,
+                getUriFromPath(IMG_BMP))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_GIF)))
+        testFiles.addItem(ClipData.Item(getUriFromPath(DOC_PDF)))
+        selectPhotos(testFiles)
+
+        // check that only File Picker intent was sent
+        Assert.assertEquals(1, Intents.getIntents().size.toLong())
+
+        checkIntentImagePicker(Intents.getIntents()[0])
+
+        checkDialog(
+            FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_invalid_file_selection
+        )
+    }
+
+    @Test
+    fun testCanceled_SelectDocument() {
+        grantPermissions()
+
+        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
+        Intents.intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
+        testClick(R.id.fileButton)
+
+        // check that only File Picker is sent
+        Assert.assertEquals(Intents.getIntents().size.toLong(), 1)
+
+        checkIntentDocumentPicker(Intents.getIntents()[0])
+    }
+
+    @Test
+    fun testCanceled_SelectPhotos() {
+        grantPermissions()
+
+        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
+        Intents.intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
+        testClick(R.id.photosButton)
+
+        // check that only File Picker is sent
+        Assert.assertEquals(Intents.getIntents().size.toLong(), 1)
+
+        checkIntentImagePicker(Intents.getIntents()[0])
+    }
+
+    @Test
+    fun testCanceled_CapturePhoto() {
+        grantPermissions()
+
+        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
+        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
+        testClick(R.id.cameraButton)
+
+        // check that only File Picker is sent
+        Assert.assertEquals(Intents.getIntents().size.toLong(), 1)
+
+        checkIntentScanActivity(Intents.getIntents()[0])
     }
 
     @Test
@@ -377,273 +762,4 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         testOnClick_CapturePhoto()
     }
 
-    @Test
-    fun testSelectDocument() {
-        grantPermissions()
-        val intent = Intent()
-        val testFile = File(getPath(DOC_PDF))
-        intent.data = Uri.fromFile(testFile)
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, intent)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-        testClick(R.id.fileButton)
-
-        // check that File Picker, PdfHandlerActivity intents were sent
-        Assert.assertEquals(Intents.getIntents().size.toLong(), 2)
-
-        checkIntent_DocumentPicker(Intents.getIntents()[0])
-
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            PDFHandlerActivity::class.java.name,
-            pdfHandlerIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.PDF_FROM_PICKER.toLong(),
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(getPath(DOC_PDF), pdfHandlerIntent.data!!.path)
-    }
-
-    @Test
-    fun testSelectDocument_Invalid() {
-        grantPermissions()
-        val intent = Intent()
-        val testFile = File(getPath(IMG_PNG))
-        intent.data = Uri.fromFile(testFile)
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, intent)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-        testClick(R.id.fileButton)
-
-        // check that only File Picker intent was sent
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
-            FRAGMENT_TAG_DIALOG
-        )
-        Assert.assertTrue(fragment is DialogFragment)
-        Assert.assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
-        val msg = dialog!!.findViewById<View>(android.R.id.message)
-        Assert.assertEquals(
-            SmartDeviceApp.appContext!!.resources.getString(R.string.ids_err_msg_open_failed),
-            (msg as TextView).text
-        )
-        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        Assert.assertEquals(
-            SmartDeviceApp.appContext!!.resources.getString(R.string.ids_lbl_ok),
-            b.text
-        )
-    }
-
-    @Test
-    fun testSelectDocument_TextFile() {
-        grantPermissions()
-        val intent = Intent()
-        val testFile = File(getPath(DOC_TXT))
-        intent.data = Uri.fromFile(testFile)
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, intent)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-        testClick(R.id.fileButton)
-
-        // check that File Picker, PdfHandlerActivity intents were sent
-        Assert.assertEquals(Intents.getIntents().size.toLong(), 2)
-
-        checkIntent_DocumentPicker(Intents.getIntents()[0])
-
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            PDFHandlerActivity::class.java.name,
-            pdfHandlerIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.TEXT_FROM_PICKER.toLong(),
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(getPath(DOC_TXT), pdfHandlerIntent.data!!.path)
-    }
-
-    @Test
-    fun testSelectPhotos() {
-        grantPermissions()
-        val intent = Intent()
-        val testFile = File(getPath(IMG_PNG))
-        intent.data = Uri.fromFile(testFile)
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, intent)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-        testClick(R.id.photosButton)
-
-        // check that File Picker, PdfHandlerActivity intents were sent
-        Assert.assertEquals(2, Intents.getIntents().size.toLong())
-
-        checkIntent_ImagePicker(Intents.getIntents()[0])
-
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            PDFHandlerActivity::class.java.name,
-            pdfHandlerIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.IMAGE_FROM_PICKER.toLong(),
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(getPath(IMG_PNG), pdfHandlerIntent.data!!.path)
-    }
-
-    @Test
-    fun testSelectPhotos_Invalid() {
-        grantPermissions()
-        val intent = Intent()
-        val testFile = File(getPath(DOC_PDF))
-        intent.data = Uri.fromFile(testFile)
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, intent)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-        testClick(R.id.photosButton)
-
-        // check that only File Picker intent was sent
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        checkIntent_ImagePicker(Intents.getIntents()[0])
-
-        val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
-            FRAGMENT_TAG_DIALOG
-        )
-        Assert.assertTrue(fragment is DialogFragment)
-        Assert.assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
-        val msg = dialog!!.findViewById<View>(android.R.id.message)
-        Assert.assertEquals(
-            SmartDeviceApp.appContext!!.resources.getString(R.string.ids_err_msg_invalid_file_selection),
-            (msg as TextView).text
-        )
-        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        Assert.assertEquals(
-            SmartDeviceApp.appContext!!.resources.getString(R.string.ids_lbl_ok),
-            b.text
-        )
-    }
-
-
-    @Test
-    fun testSelectPhotosMultiple() {
-        grantPermissions()
-        val testFiles = ClipData.newUri(
-            SmartDeviceApp.appContext!!.contentResolver,
-            getPath(IMG_BMP),
-            Uri.fromFile(File(getPath(IMG_BMP))))
-        testFiles.addItem(ClipData.Item(Uri.fromFile(File(getPath(IMG_GIF)))))
-        testFiles.addItem(ClipData.Item(Uri.fromFile(File(getPath(IMG_PNG)))))
-        val intent = Intent()
-        intent.clipData = testFiles
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, intent)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-        testClick(R.id.photosButton)
-
-        // check that File Picker, PdfHandlerActivity intents were sent
-        Assert.assertEquals(2, Intents.getIntents().size.toLong())
-
-        checkIntent_ImagePicker(Intents.getIntents()[0])
-
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            PDFHandlerActivity::class.java.name,
-            pdfHandlerIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.IMAGES_FROM_PICKER.toLong(),
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFiles.itemCount, pdfHandlerIntent.clipData!!.itemCount)
-        for (i in 0 until testFiles.itemCount) {
-            Assert.assertEquals(testFiles.getItemAt(i), pdfHandlerIntent.clipData!!.getItemAt(i))
-        }
-    }
-
-
-    @Test
-    fun testSelectPhotosMultiple_Invalid() {
-        grantPermissions()
-        val testFiles = ClipData.newUri(
-                SmartDeviceApp.appContext!!.contentResolver,
-                getPath(IMG_BMP),
-                Uri.fromFile(File(getPath(IMG_BMP))))
-        testFiles.addItem(ClipData.Item(Uri.fromFile(File(getPath(IMG_GIF)))))
-        testFiles.addItem(ClipData.Item(Uri.fromFile(File(getPath(DOC_PDF)))))
-        val intent = Intent()
-        intent.clipData = testFiles
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, intent)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-        testClick(R.id.photosButton)
-
-        // check that only File Picker intent was sent
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        checkIntent_ImagePicker(Intents.getIntents()[0])
-
-        val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
-            FRAGMENT_TAG_DIALOG
-        )
-        Assert.assertTrue(fragment is DialogFragment)
-        Assert.assertTrue((fragment as DialogFragment?)!!.showsDialog)
-        val dialog = fragment!!.dialog as AlertDialog?
-        val msg = dialog!!.findViewById<View>(android.R.id.message)
-        Assert.assertEquals(
-            SmartDeviceApp.appContext!!.resources.getString(R.string.ids_err_msg_invalid_file_selection),
-            (msg as TextView).text
-        )
-        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        Assert.assertEquals(
-            SmartDeviceApp.appContext!!.resources.getString(R.string.ids_lbl_ok),
-            b.text
-        )
-    }
-
-    @Test
-    fun testCapturePhoto() {
-        grantPermissions()
-
-        // stubs handling of permission request in case of no permissions
-        // null result only since test is not about checking handling of result
-        Intents.intending(IntentMatchers.hasAction(REQUEST_PERMISSIONS))
-            .respondWith(Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null))
-
-        // simulate return of ScanActivity
-        val scanActivityResult = Intent()
-        val testFile = Uri.fromFile(File(getPath(IMG_BMP)))
-        scanActivityResult.putExtra(ScanConstants.SCANNED_RESULT, testFile)
-        Intents.intending(IntentMatchers.hasComponent(ScanActivity::class.java.name))
-            .respondWith(
-                Instrumentation.ActivityResult(
-                    FragmentActivity.RESULT_OK,
-                    scanActivityResult
-                )
-            )
-
-        testClick(R.id.cameraButton)
-
-        // check that ScanActivity, PdfHandlerActivity, MainActivity intents were sent
-        Assert.assertEquals(3, Intents.getIntents().size.toLong())
-
-        checkIntent_ScanActivity(Intents.getIntents()[0])
-
-        // check that intent for PdfHandlerActivity was sent
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            pdfHandlerIntent.component!!.className,
-            PDFHandlerActivity::class.java.name
-        )
-        Assert.assertEquals(
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong(),
-            HomeFragment.IMAGE_FROM_CAMERA.toLong()
-        )
-        Assert.assertEquals(pdfHandlerIntent.data, testFile)
-
-    }
-
-    // TODO: testIntent_Invalid
-    // TODO: testPermission
 }

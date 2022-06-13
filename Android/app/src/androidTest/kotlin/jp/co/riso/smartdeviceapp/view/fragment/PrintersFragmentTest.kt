@@ -1,6 +1,5 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import android.os.SystemClock
 import android.view.Gravity
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
@@ -12,13 +11,9 @@ import org.junit.Test
 class PrintersFragmentTest : BaseActivityTestUtil() {
     private var _printersFragment: PrintersFragment? = null
 
-    // sleep is needed because drawer calls goes through mHandler
-    private fun waitForDrawer() {
-        SystemClock.sleep(1000)
-    }
-
     @Before
     fun initPrintersFragment() {
+        wakeUpScreen()
         val fm = mainActivity!!.supportFragmentManager
         mainActivity!!.runOnUiThread {
             fm.beginTransaction().add(R.id.mainLayout, PrintersFragment()).commit()
@@ -37,10 +32,9 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnClick_AddPrinter() {
-        testClick(R.id.menu_id_action_add_button)
+        testClickAndWait(R.id.menu_id_action_add_button)
         var layoutId = R.id.mainLayout
         if (_printersFragment!!.isTablet) {
-            waitForDrawer()
             Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
             layoutId = R.id.rightLayout
         }
@@ -48,11 +42,10 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
         val addPrinterFragment = fm.findFragmentById(layoutId)
         Assert.assertTrue(addPrinterFragment is AddPrinterFragment)
         if (_printersFragment!!.isTablet) {
-            testClick(R.id.menu_id_action_add_button)
-            waitForDrawer()
+            testClickAndWait(R.id.menu_id_action_add_button)
             Assert.assertFalse(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
         } else {
-            testClick(R.id.menu_id_back_button)
+            testClickAndWait(R.id.menu_id_back_button)
             val printersFragment = fm.findFragmentById(layoutId)
             Assert.assertTrue(printersFragment is PrintersFragment)
         }
@@ -60,10 +53,9 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnClick_SearchPrinter() {
-        testClick(R.id.menu_id_action_search_button)
+        testClickAndWait(R.id.menu_id_action_search_button)
         var layoutId = R.id.mainLayout
         if (_printersFragment!!.isTablet) {
-            waitForDrawer()
             Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
             layoutId = R.id.rightLayout
         }
@@ -71,11 +63,10 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
         val searchPrintersFragment = fm.findFragmentById(layoutId)
         Assert.assertTrue(searchPrintersFragment is PrinterSearchFragment)
         if (_printersFragment!!.isTablet) {
-            testClick(R.id.menu_id_action_search_button)
-            waitForDrawer()
+            testClickAndWait(R.id.menu_id_action_search_button)
             Assert.assertFalse(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
         } else {
-            testClick(R.id.menu_id_back_button)
+            testClickAndWait(R.id.menu_id_back_button)
             val printersFragment = fm.findFragmentById(layoutId)
             Assert.assertTrue(printersFragment is PrintersFragment)
         }
@@ -83,10 +74,9 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnClick_PrinterSearchSettings() {
-        testClick(R.id.menu_id_printer_search_settings_button)
+        testClickAndWait(R.id.menu_id_printer_search_settings_button)
         var layoutId = R.id.mainLayout
         if (_printersFragment!!.isTablet) {
-            waitForDrawer()
             Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
             layoutId = R.id.rightLayout
         }
@@ -94,11 +84,10 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
         val printerSearchSettingsFragment = fm.findFragmentById(layoutId)
         Assert.assertTrue(printerSearchSettingsFragment is PrinterSearchSettingsFragment)
         if (_printersFragment!!.isTablet) {
-            testClick(R.id.menu_id_printer_search_settings_button)
-            waitForDrawer()
+            testClickAndWait(R.id.menu_id_printer_search_settings_button)
             Assert.assertFalse(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
         } else {
-            testClick(R.id.menu_id_back_button)
+            testClickAndWait(R.id.menu_id_back_button)
             val printersFragment = fm.findFragmentById(layoutId)
             Assert.assertTrue(printersFragment is PrintersFragment)
         }

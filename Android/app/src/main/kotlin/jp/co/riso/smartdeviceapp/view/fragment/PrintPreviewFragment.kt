@@ -485,20 +485,20 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             _pauseableHandler!!.resume()
         }
         if (_pageControls != null) {
-            val mainView = view?.findViewById<LinearLayout>(R.id.previewView)
-            mainView?.removeView(_pageControls)
+            val mainView = requireView().findViewById<LinearLayout>(R.id.previewView)
+            mainView!!.removeView(_pageControls)
             val newView = View.inflate(requireActivity(), R.layout.preview_controls, null)
             newView.layoutParams = _pageControls!!.layoutParams
             newView.visibility = _pageControls!!.visibility
 
             // AppUtils.changeChildrenFont((ViewGroup) newView, SmartDeviceApp.getAppFont());
-            mainView?.addView(newView)
+            mainView.addView(newView)
             _pageControls = newView
             _pageLabel = _pageControls!!.findViewById(R.id.pageDisplayTextView)
             _seekBar = _pageControls!!.findViewById(R.id.pageSlider)
-            _seekBar?.setOnSeekBarChangeListener(this)
-            _seekBar?.setOnKeyListener(this)
-            _seekBar?.onFocusChangeListener = this
+            _seekBar!!.setOnSeekBarChangeListener(this)
+            _seekBar!!.setOnKeyListener(this)
+            _seekBar!!.onFocusChangeListener = this
             if (_pageControls!!.visibility == View.VISIBLE) {
                 updateSeekBar()
                 updatePageLabel()
