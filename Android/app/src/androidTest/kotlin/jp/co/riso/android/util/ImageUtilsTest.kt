@@ -83,14 +83,14 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testImageFileSupportedItemsNullClipData() {
+    fun testImageFileSupported_ItemsNullClipData() {
         val items: ClipData? = null
         val ret = ImageUtils.isImageFileSupported(SmartDeviceApp.appContext, items)
         TestCase.assertFalse(ret)
     }
 
     @Test
-    fun testImageFileSupportedValidParameters() {
+    fun testImageFileSupported_ValidParameters() {
         val testFiles = ClipData.newUri(SmartDeviceApp.appContext!!.contentResolver,
             IMG_JPG,
             getUriFromPath(IMG_JPG))
@@ -104,7 +104,7 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testImageFileSupportedUnsupportedImage() {
+    fun testImageFileSupported_UnsupportedImage() {
         val testFiles = ClipData.newUri(SmartDeviceApp.appContext!!.contentResolver,
             IMG_JPG,
             getUriFromPath(IMG_JPG))
@@ -118,7 +118,7 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testImageFileSupportedValidUri() {
+    fun testImageFileSupported_ValidUri() {
         val testUri = getUriFromPath(IMG_JPG)
 
         val ret = ImageUtils.isImageFileSupported(SmartDeviceApp.appContext, testUri)
@@ -126,23 +126,23 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testGetBitmapFromUriValidPathLandscape() {
-        val testUri = getUriFromPath(IMG_JPG)
+    fun testGetBitmapFromUri_ValidPathLandscape() {
+        val testUri = getUriFromPath(IMG_LANDSCAPE)
 
         val ret = ImageUtils.getBitmapFromUri(SmartDeviceApp.appContext!!, testUri)
         TestCase.assertNotNull(ret)
     }
 
     @Test
-    fun testGetBitmapFromUriValidPathPortrait() {
-        val testUri = getUriFromPath(IMG_PNG)
+    fun testGetBitmapFromUri_ValidPathPortrait() {
+        val testUri = getUriFromPath(IMG_PORTRAIT)
 
         val ret = ImageUtils.getBitmapFromUri(SmartDeviceApp.appContext!!, testUri)
         TestCase.assertNotNull(ret)
     }
 
     @Test
-    fun testRotateImageIfRequiredValidParam() {
+    fun testRotateImageIfRequired_ValidParam() {
         val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         val testUri = getUriFromPath(IMG_PNG)
 
@@ -151,7 +151,7 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testRotateImageIfRequiredRotate90() {
+    fun testRotateImageIfRequired_Rotate90() {
         val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         val testUri = getUriFromPath(IMG_JPG_90)
 
@@ -160,7 +160,7 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testRotateImageIfRequiredRotate180() {
+    fun testRotateImageIfRequired_Rotate180() {
         val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         val testUri = getUriFromPath(IMG_JPG_180)
 
@@ -169,7 +169,7 @@ class ImageUtilsTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testRotateImageIfRequiredRotate270() {
+    fun testRotateImageIfRequired_Rotate270() {
         val bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         val testUri = getUriFromPath(IMG_JPG_270)
 

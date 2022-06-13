@@ -383,5 +383,7 @@ open class BaseActivityTestUtil {
         const val IMG_JPG_180 = "Universe_rotate180.jpg"
         const val IMG_JPG_270 = "Universe_rotate270.jpg"
         const val IMG_HEIC = "autumn.heic"
+        const val IMG_PORTRAIT = "Portrait.PNG"
+        const val IMG_LANDSCAPE = "Landscape.JPG"
     }
 }
