@@ -856,35 +856,35 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         }
     }
     */
-//    @Test
-//    fun testIsOnline_OnlineIpv6Printer() {
-//        // If test fails, check with actual ipv6 address
-//        try {
-//            var ret = false
-//            var retry = 10
-//            initialize()
-//            var ipv6Addr: String? =
-//                IPV6_ONLINE_PRINTER_ADDRESS // If test fails, update constant to use actual ipv6
-//
-//            // Ipv6 Address
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                ipv6Addr = "fe80::a00:27ff:fedd:19f3"
-//                   // localIpv6Address // If test fails, comment out this line to use actual ipv6
-//            }
-//            TestCase.assertNotNull(ipv6Addr)
-//            while (retry > 0) {
-//                ret = _printerManager!!.isOnline(ipv6Addr)
-//                if (ret) {
-//                    break
-//                }
-//                _signal.await(1, TimeUnit.SECONDS)
-//                retry--
-//            }
-//            TestCase.assertEquals(true, ret)
-//        } catch (e: Exception) {
-//            TestCase.fail() // Error should not be thrown
-//        }
-//    }
+    @Test
+    fun testIsOnline_OnlineIpv6Printer() {
+        // If test fails, check with actual ipv6 address
+        try {
+            var ret = false
+            var retry = 10
+            initialize()
+            var ipv6Addr: String? =
+                IPV6_ONLINE_PRINTER_ADDRESS // If test fails, update constant to use actual ipv6
+
+            // Ipv6 Address
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                ipv6Addr = "fe80::a00:27ff:fedd:19f3"
+                   // localIpv6Address // If test fails, comment out this line to use actual ipv6
+            }
+            TestCase.assertNotNull(ipv6Addr)
+            while (retry > 0) {
+                ret = _printerManager!!.isOnline(ipv6Addr)
+                if (ret) {
+                    break
+                }
+                _signal.await(1, TimeUnit.SECONDS)
+                retry--
+            }
+            TestCase.assertEquals(true, ret)
+        } catch (e: Exception) {
+            TestCase.fail() // Error should not be thrown
+        }
+    }
 
     @Test
     fun testIsOnline_OfflinePrinter() {
