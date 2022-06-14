@@ -127,7 +127,7 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
         val ft = fm.beginTransaction()
         val container = fm.findFragmentById(R.id.mainLayout)
         if (container != null) {
-            if (container is PrintPreviewFragment || container is PrintersFragment || container is PrintJobsFragment) {
+            if (container.retainInstance) {
                 ft.detach(container)
             } else {
                 ft.remove(container)

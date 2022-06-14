@@ -69,6 +69,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         get() = R.layout.fragment_printers
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
+        retainInstance = true
         _printerManager = getInstance(SmartDeviceApp.appContext!!)
         if (_pauseableHandler == null) {
             _pauseableHandler = PauseableHandler(Looper.myLooper(), this)

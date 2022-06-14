@@ -115,9 +115,8 @@ open class DatabaseManager (private val _context: Context?) :
      */
     open fun insert(table: String, nullColumnHack: String?, values: ContentValues?): Boolean {
         var rowId: Long = -1
-        var db: SQLiteDatabase? = null
         try {
-            db = this.writableDatabase
+            val db = this.writableDatabase
             rowId = db.insertOrThrow(table, nullColumnHack, values)
             db.close()
         } catch (e: SQLException) {
