@@ -1,10 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'jacoco'
-
-jacoco {
-    toolVersion = "0.8.6"
-}
+apply from: 'coverage.gradle'
 
 android {
     compileSdkVersion 31
@@ -72,10 +68,11 @@ dependencies {
     implementation project(':scanlibrary')
 
     // test dependencies
+    implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
 
     // Espresso dependencies
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0-alpha07'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
     
     // Kotlin dependencies
@@ -83,6 +80,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.activity:activity-ktx:1.4.0"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
+    androidTestImplementation 'androidx.test:rules:1.4.1-alpha07'
 }
 
 // Returns NDK build command based on development OS
@@ -118,55 +116,3 @@ tasks.withType(JavaCompile) {
 }
 
 clean.dependsOn ndkClean
-
-// coverage
-task generateJacocoTestReport(type: JacocoReport, dependsOn: ['createDebugCoverageReport', 'testDebugUnitTest']) {
-    def coverageSourceDirs = [
-            'src/main/java'
-    ]
-
-    group = "Reporting"
-    description = "Generates Jacoco coverage reports"
-    reports {
-        xml{
-            required.set(true)
-            destination file("${buildDir}/reports/jacoco/jacoco.xml")
-        }
-        csv.required.set(false)
-        html{
-            required.set(true)
-            destination file("${buildDir}/jacocoHtml")
-        }
-    }
-
-    classDirectories.from = fileTree(
-            dir: 'build/intermediates/classes',
-            excludes: ['**/R.class',
-                       '**/R$*.class',
-                       '**/BuildConfig.*',
-                       '**/Manifest*.*',
-                       'androidTest/**',
-                       '**/com/radaee/pdf/**',
-                       '**/eu/erikw/**',
-                       '**/fi/harism/curl/**',
-                       '**/jp/co/riso/smartdeviceapp/view/MainActivity*.*',
-                       '**/jp/co/riso/smartdeviceapp/view/SplashActivity*.*',
-                       '**/jp/co/riso/smartdeviceapp/view/base/**',
-                       '**/jp/co/riso/smartdeviceapp/view/fragment/**',
-                       '**/jp/co/riso/smartdeviceapp/view/jobs/**',
-                       '**/jp/co/riso/smartdeviceapp/view/preview/**',
-                       '**/jp/co/riso/smartdeviceapp/view/printers/**',
-                       '**/jp/co/riso/smartdeviceapp/view/printsettings/**',
-                       '**/jp/co/riso/smartdeviceapp/view/webkit/**',
-                       '**/jp/co/riso/smartdeviceapp/view/widget/**']
-    )
-    sourceDirectories.from = files(coverageSourceDirs)
-    additionalSourceDirs.from = files(coverageSourceDirs)
-    executionData.from = files('build/outputs/code-coverage/connected/coverage.ec')
-}
-
-task testReport(type: TestReport) {
-    destinationDir = file("$buildDir/reports/allTests")
-    // Include the results from the `test` task in all subprojects
-    reportOn subprojects*.test
-}

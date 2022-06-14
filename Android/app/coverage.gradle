@@ -1,0 +1,71 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.8.6"
+}
+
+// coverage
+task generateJacocoTestReport(type: JacocoReport, dependsOn: ['createDebugCoverageReport', 'testDebugUnitTest']) {
+
+    reports {
+        html {
+            required.set(true)
+            destination file("${project.buildDir}/reports/CodeCoverage/coverage_report")
+        }
+        xml {
+            required.set(true)
+            destination file("${project.buildDir}/reports/CodeCoverage/coverage_report.xml")
+        }
+        csv.required.set(false)
+    }
+
+    group = "Reporting"
+    description = "Generates Jacoco coverage reports when all unit tests have passed"
+
+    def sourceDirs = [
+            "${project.projectDir}/src/main/kotlin"
+    ]
+
+    def kotlinTree = fileTree(
+            dir: "${project.buildDir}/tmp/kotlin-classes/debug",
+            excludes: [
+                    '**/R.class',
+                    '**/R$*.class',
+                    '**/BuildConfig.*',
+                    '**/Manifest*.*',
+                    'androidTest/*',
+                    '**/com/radaee/pdf/*',
+                    '**/eu/erikw/*',
+                    '**/fi/harism/curl/*'
+            ])
+
+    def execTree = fileTree(
+            dir: "${project.buildDir}",
+            includes: [
+                    "outputs/code_coverage/debugAndroidTest/connected/**/coverage.ec"
+            ])
+
+    sourceDirectories.from = files(sourceDirs)
+    additionalSourceDirs.from = files(sourceDirs)
+    classDirectories.from = files(kotlinTree)
+    executionData.from = files(execTree)
+
+}
+
+task testReport(type: TestReport) {
+    destinationDir = file("${project.buildDir}/reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects*.test
+}
+
+// Fix for error "Unexpected SMAP line: *S KotlinDebug"
+// https://gist.github.com/huuphuoc1396/497c27c1fac205f5d9c6696016227e1c
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if ("org.jacoco" == requested.group) {
+                useVersion("0.8.7")
+            }
+        }
+    }
+}
