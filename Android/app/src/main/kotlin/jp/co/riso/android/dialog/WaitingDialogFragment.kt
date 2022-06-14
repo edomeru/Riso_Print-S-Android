@@ -87,6 +87,11 @@ class WaitingDialogFragment : DialogFragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retainInstance = true
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val title = arguments?.getString(KEY_TITLE)
         val message = arguments?.getString(KEY_MESSAGE)

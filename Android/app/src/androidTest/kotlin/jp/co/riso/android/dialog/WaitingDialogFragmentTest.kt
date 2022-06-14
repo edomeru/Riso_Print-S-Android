@@ -56,6 +56,7 @@ class WaitingDialogFragmentTest : BaseActivityTestUtil() {
     fun testNewInstance_NotCancelable() {
         val w = WaitingDialogFragment.newInstance(TITLE, MSG, false, BUTTON_TITLE, TAG)
         TestCase.assertNotNull(w)
+        w.retainInstance = true
         w.show(_fm!!, TAG)
         waitFewSeconds()
         val fragment = _fm!!.findFragmentByTag(TAG)
