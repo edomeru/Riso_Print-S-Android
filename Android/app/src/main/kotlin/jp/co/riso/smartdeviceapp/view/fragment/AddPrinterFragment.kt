@@ -30,6 +30,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import jp.co.riso.android.text.IpAddressFilter
 import jp.co.riso.android.util.AppUtils.getScreenDimensions
 import jp.co.riso.android.util.AppUtils.hideSoftKeyboard
+import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.JniUtils.validateIpAddress
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
@@ -56,7 +57,10 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         get() = R.layout.fragment_addprinter
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        retainInstance = true
+        if (isChromeBook) {
+            // Avoid rotation issues in Chrome
+            retainInstance = true
+        }
         _added = false
         _printerManager = getInstance(SmartDeviceApp.appContext!!)
         _printerManager!!.setPrinterSearchCallback(this)

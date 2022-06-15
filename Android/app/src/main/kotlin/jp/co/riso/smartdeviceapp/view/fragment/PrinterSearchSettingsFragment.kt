@@ -22,6 +22,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import jp.co.riso.android.util.AppUtils.getScreenDimensions
 import jp.co.riso.android.util.AppUtils.hideSoftKeyboard
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
 import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
@@ -67,7 +68,10 @@ class PrinterSearchSettingsFragment : BaseFragment() {
         get() = R.layout.fragment_printersearchsettings
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        retainInstance = true
+        if (isChromeBook) {
+            // Avoid rotation issues in Chrome
+            retainInstance = true
+        }
     }
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {

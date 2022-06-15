@@ -11,6 +11,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager.Companion.getSandboxPDFName
 import jp.co.riso.smartdeviceapp.view.MainActivity
@@ -127,10 +129,19 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
         val ft = fm.beginTransaction()
         val container = fm.findFragmentById(R.id.mainLayout)
         if (container != null) {
-            if (container.retainInstance) {
-                ft.detach(container)
+            if (isChromeBook) {
+                // Avoid rotation issues in Chrome
+                if (container.retainInstance) {
+                    ft.detach(container)
+                } else {
+                    ft.remove(container)
+                }
             } else {
-                ft.remove(container)
+                if (container is PrintPreviewFragment || container is PrintersFragment || container is PrintJobsFragment) {
+                    ft.detach(container)
+                } else {
+                    ft.remove(container)
+                }
             }
         }
         val tag = FRAGMENT_TAGS[state]

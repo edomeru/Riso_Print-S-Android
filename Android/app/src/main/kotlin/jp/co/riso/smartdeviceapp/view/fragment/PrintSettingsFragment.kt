@@ -26,6 +26,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import jp.co.riso.android.util.AppUtils
 import jp.co.riso.android.util.NetUtils.isWifiAvailable
+import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback
@@ -71,7 +72,10 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         get() = R.layout.fragment_printsettings
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        retainInstance = true
+        if (isChromeBook) {
+            // Avoid rotation issues in Chrome
+            retainInstance = true
+        }
         if (_printSettings == null) {
             _printSettings = PrintSettings()
         }

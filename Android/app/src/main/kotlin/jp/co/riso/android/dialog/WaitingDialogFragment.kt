@@ -19,6 +19,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartprint.R
 
 /**
@@ -89,7 +91,10 @@ class WaitingDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        retainInstance = true
+        if (SmartDeviceApp.appContext!!.packageManager.hasSystemFeature(AppConstants.CHROME_BOOK)) {
+            // Avoid rotation issues in Chrome
+            retainInstance = true
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

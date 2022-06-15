@@ -45,6 +45,7 @@ import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.ImageUtils
 import jp.co.riso.android.util.MemoryUtils.getCacheSizeBasedOnMemoryClass
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFConverterManager
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFConverterManagerInterface
@@ -117,7 +118,10 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     override fun initializeFragment(savedInstanceState: Bundle?) {
         // dismiss permission alert dialog if showing
         dismissDialog(requireActivity(), TAG_PERMISSION_DIALOG)
-        retainInstance = true
+        if (isChromeBook) {
+            // Avoid rotation issues in Chrome
+            retainInstance = true
+        }
         if (savedInstanceState != null) {
             _currentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0)
             _isPermissionDialogOpen =
