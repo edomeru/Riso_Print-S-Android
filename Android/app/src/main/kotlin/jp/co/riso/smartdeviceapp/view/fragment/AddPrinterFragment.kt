@@ -30,7 +30,6 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import jp.co.riso.android.text.IpAddressFilter
 import jp.co.riso.android.util.AppUtils.getScreenDimensions
 import jp.co.riso.android.util.AppUtils.hideSoftKeyboard
-import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.JniUtils.validateIpAddress
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager

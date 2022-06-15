@@ -26,7 +26,6 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import jp.co.riso.android.util.AppUtils
 import jp.co.riso.android.util.NetUtils.isWifiAvailable
-import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback

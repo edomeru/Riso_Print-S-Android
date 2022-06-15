@@ -22,8 +22,6 @@ import androidx.core.content.ContextCompat
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
 import jp.co.riso.android.dialog.DialogUtils
-import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager
 import jp.co.riso.smartdeviceapp.model.PrintJob
 import jp.co.riso.smartdeviceapp.model.Printer

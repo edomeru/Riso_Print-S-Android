@@ -45,7 +45,6 @@ import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.ImageUtils
 import jp.co.riso.android.util.MemoryUtils.getCacheSizeBasedOnMemoryClass
 import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFConverterManager
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFConverterManagerInterface
