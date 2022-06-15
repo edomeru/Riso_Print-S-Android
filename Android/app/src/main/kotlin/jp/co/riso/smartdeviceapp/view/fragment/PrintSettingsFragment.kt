@@ -71,6 +71,10 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         get() = R.layout.fragment_printsettings
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
+        if (isChromeBook) {
+            // RM1167 temporary fix - Avoid rotation issues in Chrome
+            retainInstance = true
+        }
         if (_printSettings == null) {
             _printSettings = PrintSettings()
         }
