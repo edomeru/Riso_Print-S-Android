@@ -118,7 +118,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         // dismiss permission alert dialog if showing
         dismissDialog(requireActivity(), TAG_PERMISSION_DIALOG)
         if (isChromeBook) {
-            // Avoid rotation issues in Chrome
+            // RM1167 temporary fix - Avoid rotation issues in Chrome
             retainInstance = true
         }
         if (savedInstanceState != null) {

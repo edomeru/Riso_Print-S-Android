@@ -70,7 +70,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         if (isChromeBook) {
-            // Avoid rotation issues in Chrome
+            // RM1167 temporary fix - Avoid rotation issues in Chrome
             retainInstance = true
         }
         _printerManager = getInstance(SmartDeviceApp.appContext!!)

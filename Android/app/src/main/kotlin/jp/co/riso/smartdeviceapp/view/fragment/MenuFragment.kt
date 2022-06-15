@@ -128,7 +128,7 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
         val container = fm.findFragmentById(R.id.mainLayout)
         if (container != null) {
             if (isChromeBook) {
-                // Avoid rotation issues in Chrome
+                // RM1167 temporary fix - Avoid rotation issues in Chrome
                 if (container.retainInstance) {
                     ft.detach(container)
                 } else {
