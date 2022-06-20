@@ -127,10 +127,19 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
         val ft = fm.beginTransaction()
         val container = fm.findFragmentById(R.id.mainLayout)
         if (container != null) {
-            if (container is PrintPreviewFragment || container is PrintersFragment || container is PrintJobsFragment) {
-                ft.detach(container)
+            if (isChromeBook) {
+                // RM1167 temporary fix - Avoid rotation issues in Chrome
+                if (container.retainInstance) {
+                    ft.detach(container)
+                } else {
+                    ft.remove(container)
+                }
             } else {
-                ft.remove(container)
+                if (container is PrintPreviewFragment || container is PrintersFragment || container is PrintJobsFragment) {
+                    ft.detach(container)
+                } else {
+                    ft.remove(container)
+                }
             }
         }
         val tag = FRAGMENT_TAGS[state]

@@ -117,6 +117,10 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     override fun initializeFragment(savedInstanceState: Bundle?) {
         // dismiss permission alert dialog if showing
         dismissDialog(requireActivity(), TAG_PERMISSION_DIALOG)
+        if (isChromeBook) {
+            // RM1167 temporary fix - Avoid rotation issues in Chrome
+            retainInstance = true
+        }
         if (savedInstanceState != null) {
             _currentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0)
             _isPermissionDialogOpen =

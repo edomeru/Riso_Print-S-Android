@@ -19,6 +19,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
+import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartprint.R
 
 /**
@@ -87,6 +88,14 @@ class WaitingDialogFragment : DialogFragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (isChromeBook) {
+            // RM1167 temporary fix - Avoid rotation issues in Chrome
+            retainInstance = true
+        }
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val title = arguments?.getString(KEY_TITLE)
         val message = arguments?.getString(KEY_MESSAGE)
@@ -151,6 +160,18 @@ class WaitingDialogFragment : DialogFragment() {
             dialog!!.getButton(DialogInterface.BUTTON_NEGATIVE).text = buttonText
         }
     }
+
+    // RM1167 temporary fix - Avoid rotation issues in Chrome
+    /**
+     * @brief Checks whether the device is a Chrome Book.
+     *
+     * @retval true Device is a chrome book
+     * @retval false Device is a tablet or phone
+     */
+    val isChromeBook: Boolean
+        get() = if (activity == null) {
+            false
+        } else requireActivity().packageManager.hasSystemFeature(AppConstants.CHROME_BOOK)
 
     // ================================================================================
     // Internal Classes
