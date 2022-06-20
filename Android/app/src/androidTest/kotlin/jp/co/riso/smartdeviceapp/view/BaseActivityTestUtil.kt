@@ -30,6 +30,7 @@ import androidx.test.uiautomator.UiSelector
 import com.scanlibrary.ScanActivity
 import com.scanlibrary.ScanConstants
 import jp.co.riso.android.util.NetUtils
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment
@@ -166,7 +167,7 @@ open class BaseActivityTestUtil {
         return onView(
             allOf(
                 getElementFromMatchAtPosition(
-                    allOf(matcher),
+                    matcher,
                     position
                 ),
                 ViewMatchers.isDisplayed()
@@ -226,7 +227,7 @@ open class BaseActivityTestUtil {
     }
 
     fun clearPrintersList() {
-        val pm = PrinterManager.getInstance(mainActivity!!)
+        val pm = PrinterManager.getInstance(SmartDeviceApp.appContext!!)
         val settingsScreen =
             UiDevice.getInstance(getInstrumentation()).findObject(
                 UiSelector().text(

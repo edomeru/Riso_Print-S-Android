@@ -81,7 +81,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         }
     }
 
-    private fun initPreview() {
+    private fun initPreviewAndOpenPrintSettings() {
         // hide print settings screen
         pressBack()
         switchScreen(MenuFragment.STATE_HOME)
@@ -172,38 +172,49 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     }
 
+    private fun selectPrinterPrintSettings(printer: Printer) {
+        // open printer select
+        testClick(R.id.view_id_print_selected_printer)
+
+        // select printer
+        getViewInteractionFromMatchAtPosition(allOf(
+            withId(R.id.view_id_subview_printer_item),
+            hasDescendant(withText(containsString(printer.ipAddress)))), 0
+        ).perform(click())
+
+        // hide printer select
+        onView(withId(R.id.view_id_hide_subview_container))
+            .perform(click())
+    }
+
     @Test
     fun testSelectPrinter() {
-        val selectedPrinter = _printerManager!!.savedPrintersList[0]
-
-        val nextPrinterIndex = 1
-        val nextPrinter = _printerManager!!.savedPrintersList[nextPrinterIndex]
+        val selectedPrinter = _printerManager!!.savedPrintersList[0]!!
+        val nextPrinter = TEST_OFFLINE_PRINTER
 
         // Check selected Printer
         onView(allOf(withId(R.id.listValueTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(selectedPrinter!!.name))))
+            .check(matches(withText(containsString(selectedPrinter.name))))
         onView(allOf(withId(R.id.listValueSubTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
             .check(matches(withText(containsString(selectedPrinter.ipAddress))))
 
         // Select Printer
-        testClick(R.id.view_id_print_selected_printer)
-        getViewInteractionFromMatchAtPosition(
-            R.id.view_id_subview_printer_item,
-            nextPrinterIndex
-        ).perform(click())
+        selectPrinterPrintSettings(nextPrinter)
 
         // Check selected Printer
-        onView(withId(R.id.view_id_hide_subview_container))
-            .perform(click())
         onView(allOf(withId(R.id.listValueTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(nextPrinter!!.name))))
+            .check(matches(withText(containsString(nextPrinter.name))))
         onView(allOf(withId(R.id.listValueSubTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
             .check(matches(withText(containsString(nextPrinter.ipAddress))))
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testPrint_Success() {
-        initPreview()
+        initPreviewAndOpenPrintSettings()
+
+        // select online printer
+        selectPrinterPrintSettings(TEST_ONLINE_PRINTER)
+
         testClickAndWait(R.id.view_id_print_header)
         waitForPrint()
 
@@ -234,7 +245,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             rawPort.click()
         }
 
-        initPreview()
+        initPreviewAndOpenPrintSettings()
         testClick(R.id.view_id_print_header)
         waitForPrint()
 
@@ -246,7 +257,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testPrint_Cancel() {
-        initPreview()
+        initPreviewAndOpenPrintSettings()
         testClickAndWait(R.id.view_id_print_header)
 
         // Cancel print
@@ -258,12 +269,12 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         ))
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testPrint_Fail() {
-        initPreview()
+        initPreviewAndOpenPrintSettings()
 
         // select offline printer
-        testSelectPrinter()
+        selectPrinterPrintSettings(TEST_OFFLINE_PRINTER)
 
         testClickAndWait(R.id.view_id_print_header)
         waitForPrint()
@@ -276,7 +287,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testPrint_NoNetwork() {
-        initPreview()
+        initPreviewAndOpenPrintSettings()
 
         // disable wifi
         NetUtils.unregisterWifiCallback(mainActivity!!)
@@ -290,13 +301,13 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         )
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testDefaultPrintSettings_ClickEditText() {
         openDefaultPrintSettings()
         testOnClick_EditText()
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testDefaultPrintSettings_UpdateSettings() {
         openDefaultPrintSettings()
         testSettings_Update()

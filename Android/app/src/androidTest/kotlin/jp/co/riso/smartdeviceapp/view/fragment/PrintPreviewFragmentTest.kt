@@ -74,9 +74,12 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         Assert.assertNotNull(_printPreviewFragment)
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testPrintSettingsButton_NoPrinter() {
         clearPrintersList()
+        Assert.assertEquals(
+            0,
+            _printerManager!!.savedPrintersList.size)
 
         testClickAndWait(R.id.view_id_print_button)
 
@@ -171,7 +174,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         )
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testOrientationChange() {
         switchOrientation()
         waitForAnimation()

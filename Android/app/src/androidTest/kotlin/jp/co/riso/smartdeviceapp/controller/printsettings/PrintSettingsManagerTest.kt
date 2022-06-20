@@ -18,7 +18,7 @@ import org.junit.Test
 class PrintSettingsManagerTest {
 
     private var _printSettingsMgr: PrintSettingsManager? = null
-    private var _manager: DatabaseManager? = null
+    private var _databaseManager: DatabaseManager? = null
     private var _context: Context? = null
     private var _printerId = PrinterManager.EMPTY_ID
     private val _printerType = AppConstants.PRINTER_MODEL_IS
@@ -30,16 +30,16 @@ class PrintSettingsManagerTest {
         val printerManager = PrinterManager.getInstance(SmartDeviceApp.appContext!!)
         val printersList = printerManager!!.savedPrintersList
         val printer: Printer
-        if (printersList!!.isEmpty()) {
+        if (printersList.isEmpty()) {
             printer = Printer("", IPV4_OFFLINE_PRINTER_ADDRESS)
             printerManager.savePrinterToDB(printer, false)
         } else {
             printer = printersList[0]!!
         }
         _context = SmartDeviceApp.appContext!!
-        _manager = DatabaseManager(_context)
+        _databaseManager = DatabaseManager(_context)
         _printerId = printer.id
-        val c = _manager!!.query(
+        val c = _databaseManager!!.query(
             KeyConstants.KEY_SQL_PRINTSETTING_TABLE,
             null,
             KeyConstants.KEY_SQL_PRINTER_ID + "=?",
@@ -52,7 +52,7 @@ class PrintSettingsManagerTest {
             _settingId = DatabaseManager.getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTSETTING_ID)
         }
         _printSettingsMgr = PrintSettingsManager.getInstance(_context!!)
-        val db = _manager!!.writableDatabase
+        val db = _databaseManager!!.writableDatabase
         val cv = ContentValues()
         cv.put(PRINTER_ID, _printerId)
         db.insertWithOnConflict(PRINTER_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
@@ -85,7 +85,11 @@ class PrintSettingsManagerTest {
 
     @After
     fun tearDown() {
-        val db = _manager!!.writableDatabase
+        val printerManager = PrinterManager.getInstance(SmartDeviceApp.appContext!!)
+        for (printerItem in printerManager!!.savedPrintersList.reversed()) {
+            printerManager.removePrinter(printerItem)
+        }
+        val db = _databaseManager!!.writableDatabase
         db.delete(PRINTER_TABLE, null, null)
         db.delete(PRINTSETTING_TABLE, null, null)
         db.close()
@@ -96,7 +100,7 @@ class PrintSettingsManagerTest {
     // ================================================================================
     @Test
     fun testPreConditions() {
-        var db = _manager!!.readableDatabase
+        var db = _databaseManager!!.readableDatabase
         var c = db.query(
             PRINTSETTING_TABLE,
             null,
@@ -107,7 +111,7 @@ class PrintSettingsManagerTest {
             null
         )
         TestCase.assertEquals(1, c.count)
-        db = _manager!!.readableDatabase
+        db = _databaseManager!!.readableDatabase
         c = db.query(
             PRINTER_TABLE,
             null,
@@ -168,7 +172,7 @@ class PrintSettingsManagerTest {
         TestCase.assertNotNull(settingValues)
         var result = _printSettingsMgr!!.saveToDB(_printerId, settings)
         TestCase.assertTrue(result)
-        val db = _manager!!.readableDatabase
+        val db = _databaseManager!!.readableDatabase
         var c = db.query(
             PRINTSETTING_TABLE,
             null,
@@ -282,7 +286,7 @@ class PrintSettingsManagerTest {
         TestCase.assertNotNull(settingValues)
         val result = _printSettingsMgr!!.saveToDB(999, null)
         TestCase.assertFalse(result)
-        val db = _manager!!.readableDatabase
+        val db = _databaseManager!!.readableDatabase
         val c = db.query(
             PRINTSETTING_TABLE,
             null,
@@ -303,7 +307,7 @@ class PrintSettingsManagerTest {
         TestCase.assertNotNull(settings)
         val settingValues = settings.settingValues
         TestCase.assertNotNull(settingValues)
-        var db = _manager!!.writableDatabase
+        var db = _databaseManager!!.writableDatabase
         db.delete(PRINTER_TABLE, null, null)
         val cv = ContentValues()
         cv.put(PRINTER_ID, _printerId)
@@ -311,7 +315,7 @@ class PrintSettingsManagerTest {
         db.close()
         val result = _printSettingsMgr!!.saveToDB(_printerId, settings)
         TestCase.assertTrue(result)
-        db = _manager!!.readableDatabase
+        db = _databaseManager!!.readableDatabase
         var c = db.query(
             PRINTSETTING_TABLE,
             null,
