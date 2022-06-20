@@ -365,16 +365,18 @@ open class BaseActivityTestUtil {
 
     companion object {
         const val DOC_PDF = "PDF-squarish.pdf"
-        const val DOC_PDF_PRINT_NOT_ALLOWED = "PDF-PrintNotAllowed.pdf"
-        const val DOC_PDF_WITH_ENCRYPTION = "PDF-withEncryption.pdf"
+        const val DOC_PDF_4PAGES = "4pages_Landscape_TestData.pdf"
+        const val DOC_PDF_ERR_OPEN_FAILED = "Invalid_PDF.pdf"
+        const val DOC_PDF_ERR_WITH_ENCRYPTION = "PDF-withEncryption.pdf"
+        const val DOC_PDF_ERR_PRINT_NOT_ALLOWED = "PDF-PrintNotAllowed.pdf"
 
         const val DOC_TXT = "1_7MB.txt"
-        const val DOC_TXT_OVER_SIZE_LIMIT = "6MB.txt"
+        const val DOC_TXT_ERR_SIZE_LIMIT = "6MB.txt"
 
         const val IMG_PNG = "Fairy.png"
         const val IMG_BMP = "BMP.bmp"
         const val IMG_GIF = "Circles.gif"
-        const val IMG_FailConversion = "Invalid_JPEG.jpg"
+        const val IMG_ERR_FAIL_CONVERSION = "Invalid_JPEG.jpg"
 
         val TEST_ONLINE_PRINTER = Printer("ORPHIS FW5230", "192.168.0.32") // update with online printer details
         val TEST_OFFLINE_PRINTER = Printer("ORPHIS GD500", "192.168.0.2")

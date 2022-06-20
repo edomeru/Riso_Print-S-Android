@@ -1,6 +1,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
+import android.widget.Spinner
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
@@ -17,9 +18,9 @@ import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTERS
 import jp.co.riso.smartprint.R
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.*
 import org.junit.*
+
 
 class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
@@ -97,7 +98,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         switchScreen(STATE_PRINTERS)
 
         if (!_printSettingsFragment!!.isTablet) {
-            selectPrinterInfoScreen(0)
+            selectPrinterInfoScreen(TEST_ONLINE_PRINTER)
             testClickAndWait(R.id.menu_id_action_print_settings_button)
         } else {
             getViewInteractionFromMatchAtPosition(R.id.default_print_settings, 0).perform(click())
@@ -107,8 +108,10 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             (mainActivity!!.supportFragmentManager.findFragmentById(R.id.rightLayout)) as PrintSettingsFragment
     }
 
-    private fun selectPrinterInfoScreen(index: Int) {
-        getViewInteractionFromMatchAtPosition(R.id.printerListRow, index).perform(click())
+    private fun selectPrinterInfoScreen(printer: Printer) {
+        getViewInteractionFromMatchAtPosition(
+            withText(printer.ipAddress), 0
+        ).perform(click())
         waitForAnimation()
     }
 
@@ -224,26 +227,31 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         )
     }
 
-    @Ignore("TODO")
+    @Test
     fun testPrint_RawPort() {
         // set raw port
         pressBack()
         switchScreen(STATE_PRINTERS)
 
         if (!_printSettingsFragment!!.isTablet) {
-            selectPrinterInfoScreen(0)
+            selectPrinterInfoScreen(TEST_ONLINE_PRINTER)
         }
 
-        testClickAndWait(R.layout.printerinfo_port_item)
-        val rawPort =
-            UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).findObject(
-                UiSelector().textMatches(
-                    mainActivity!!.getString(R.string.ids_lbl_port_raw)
-                )
-            )
-        if (rawPort.exists()) {
-            rawPort.click()
-        }
+        getViewInteractionFromMatchAtPosition(
+            withClassName(`is`(Spinner::class.java.canonicalName)), 0
+        ).check(matches(withSpinnerText(R.string.ids_lbl_port_lpr)))
+
+        getViewInteractionFromMatchAtPosition(
+            withClassName(`is`(Spinner::class.java.canonicalName)), 0
+        ).perform(click())
+        waitForAnimation()
+
+        onView(withText(R.string.ids_lbl_port_raw)).perform(click())
+        waitForAnimation()
+
+        getViewInteractionFromMatchAtPosition(
+            withClassName(`is`(Spinner::class.java.canonicalName)), 0
+        ).check(matches(withSpinnerText(R.string.ids_lbl_port_raw)))
 
         initPreviewAndOpenPrintSettings()
         testClick(R.id.view_id_print_header)
