@@ -6,6 +6,7 @@ import android.content.ClipData
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.net.Uri
 import android.view.View
 import android.view.WindowManager
@@ -30,9 +31,11 @@ import androidx.test.uiautomator.UiSelector
 import com.scanlibrary.ScanActivity
 import com.scanlibrary.ScanConstants
 import jp.co.riso.android.util.NetUtils
+import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment
 import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment
 import jp.co.riso.smartprint.R
 import org.hamcrest.BaseMatcher
@@ -89,12 +92,6 @@ open class BaseActivityTestUtil {
         }
     }
 
-   /* fun testClick(activity: MainActivity, id: Int) {
-        val button = activity.findViewById<View>(id)
-        activity.runOnUiThread { button.callOnClick() }
-        waitForAnimation()
-    }*/
-
     fun testClick(id: Int) {
         val button = mainActivity!!.findViewById<View>(id)
         mainActivity!!.runOnUiThread { button.callOnClick() }
@@ -134,20 +131,11 @@ open class BaseActivityTestUtil {
 
     fun switchOrientation() {
         mainActivity!!.requestedOrientation = if (
-            mainActivity!!.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
-            mainActivity!!.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+            mainActivity!!.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
         ) {
             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
-
-        mainActivity!!.requestedOrientation = when(mainActivity!!.requestedOrientation) {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-            else -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
@@ -288,6 +276,10 @@ open class BaseActivityTestUtil {
     }
 
     open fun updateMainActivity() {
+        mainActivity = getCurrentActivity()
+    }
+
+    fun getCurrentActivity(): MainActivity? {
         var currentActivity = mainActivity
         getInstrumentation().runOnMainSync {
             val resumedActivities: Collection<*> =
@@ -296,16 +288,10 @@ open class BaseActivityTestUtil {
                 currentActivity = resumedActivities.iterator().next() as MainActivity
             }
         }
-        mainActivity = currentActivity
+        return currentActivity
     }
 
     fun switchScreen(state: Int) {
-/*
-        getViewInteractionFromMatchAtPosition(
-            R.id.menu_id_action_button,
-            0
-        ).perform(click())
-*/
         val id = when (state) {
                 MenuFragment.STATE_HOME -> R.id.homeButton
                 MenuFragment.STATE_PRINTPREVIEW -> R.id.printPreviewButton

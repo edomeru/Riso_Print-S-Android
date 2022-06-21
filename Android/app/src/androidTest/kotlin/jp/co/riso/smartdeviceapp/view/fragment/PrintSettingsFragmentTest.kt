@@ -21,7 +21,6 @@ import jp.co.riso.smartprint.R
 import org.hamcrest.Matchers.*
 import org.junit.*
 
-
 class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     private var _printSettingsFragment: PrintSettingsFragment? = null

@@ -3,11 +3,12 @@ package jp.co.riso.smartdeviceapp.view.fragment
 import android.Manifest
 import android.app.Instrumentation
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import androidx.fragment.app.FragmentActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.swipeLeft
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -71,6 +72,23 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         }
     }
 
+    private fun turnPageForward(isForward: Boolean) {
+        val printPreviewView = onView(withId(R.id.printPreviewView))
+        if (mainActivity!!.resources.configuration.orientation == ORIENTATION_LANDSCAPE &&
+            mainActivity!!.requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            /** TODO: For now, force orientation to portrait.
+             *  Swipe doesn't work when orientation is landscape (tried either swipe left/up/down) */
+            mainActivity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+        waitForAnimation()
+        if (isForward) {
+            printPreviewView.perform(swipeLeft())
+        } else {
+            printPreviewView.perform(swipeRight())
+        }
+        waitForAnimation()
+    }
+
     @Test
     fun testNewInstance() {
         Assert.assertNotNull(_printPreviewFragment)
@@ -111,53 +129,22 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     fun testPreview_ChangePage() {
         switchScreen(MenuFragment.STATE_HOME)
         selectDocument(getUriFromPath(DOC_PDF))
-
-        Assert.assertEquals(
-            0,
-            _printPreviewView.currentPage
-        )
-
-        onView(withId(R.id.printPreviewView))
-            .perform(swipeLeft())
-        waitForAnimation()
-
-        Assert.assertEquals(
-            1,
-            _printPreviewView.currentPage
-        )
+        Assert.assertEquals(0, _printPreviewView.currentPage)
+        turnPageForward(true)
+        Assert.assertEquals(1, _printPreviewView.currentPage)
+        turnPageForward(false)
+        Assert.assertEquals(0, _printPreviewView.currentPage)
     }
 
     @Test
     fun testPreview_SwipeUntilLastPage() {
         switchScreen(MenuFragment.STATE_HOME)
         selectDocument(getUriFromPath(DOC_PDF_4PAGES))
-
-        Assert.assertEquals(
-            0,
-            _printPreviewView.currentPage
-        )
-
         for (i in 0 until _printPreviewView.pageCount) {
-            onView(withId(R.id.printPreviewView))
-                .perform(swipeLeft())
-            waitForAnimation()
-
-            if (i == (_printPreviewView.pageCount - 1)) {
-                Assert.assertEquals(
-                    i,
-                    _printPreviewView.currentPage
-                )
-
-                onView(withId(R.id.printPreviewView))
-                    .perform(swipeLeft())
-                waitForAnimation()
-
-                Assert.assertEquals(
-                    i,
-                    _printPreviewView.currentPage
-                )
-            }
+            Assert.assertEquals(i, _printPreviewView.currentPage)
+            turnPageForward(true)
         }
+        Assert.assertEquals((_printPreviewView.pageCount - 1), _printPreviewView.currentPage)
     }
 
     @Test
@@ -233,7 +220,6 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
             R.string.ids_err_msg_invalid_file_selection
         )
     }
-
 
     @Test
     fun testConversionError_TxtSizeLimit() {
