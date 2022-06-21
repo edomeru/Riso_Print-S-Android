@@ -5,13 +5,11 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.net.Uri
 import jp.co.riso.android.util.ImageUtils.renderBmpToCanvas
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import junit.framework.TestCase
 import org.junit.Test
-import java.io.File
 
 class ImageUtilsTest : BaseActivityTestUtil() {
     // ================================================================================
