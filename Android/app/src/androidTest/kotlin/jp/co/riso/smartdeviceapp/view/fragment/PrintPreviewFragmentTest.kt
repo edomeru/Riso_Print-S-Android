@@ -19,7 +19,6 @@ import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartprint.R
-import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.not
 import org.junit.*
 
@@ -28,6 +27,9 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     private var _printPreviewFragment: PrintPreviewFragment? = null
     private var _printerManager: PrinterManager? = null
     private var _printer: Printer? = null
+
+    private val _printPreviewView: PrintPreviewView
+        get() = mainActivity!!.findViewById(R.id.printPreviewView)
 
     @get:Rule
     var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -74,9 +76,12 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         Assert.assertNotNull(_printPreviewFragment)
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testPrintSettingsButton_NoPrinter() {
         clearPrintersList()
+        Assert.assertEquals(
+            0,
+            _printerManager!!.savedPrintersList.size)
 
         testClickAndWait(R.id.view_id_print_button)
 
@@ -102,13 +107,57 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         Assert.assertTrue(mainFragment is PrintPreviewFragment)
     }
 
-    @Ignore("TODO")
+    @Test
     fun testPreview_ChangePage() {
         switchScreen(MenuFragment.STATE_HOME)
         selectDocument(getUriFromPath(DOC_PDF))
 
-        onView(withClassName(equalTo(PrintPreviewView::class.java.name)))
+        Assert.assertEquals(
+            0,
+            _printPreviewView.currentPage
+        )
+
+        onView(withId(R.id.printPreviewView))
             .perform(swipeLeft())
+        waitForAnimation()
+
+        Assert.assertEquals(
+            1,
+            _printPreviewView.currentPage
+        )
+    }
+
+    @Test
+    fun testPreview_SwipeUntilLastPage() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF_4PAGES))
+
+        Assert.assertEquals(
+            0,
+            _printPreviewView.currentPage
+        )
+
+        for (i in 0 until _printPreviewView.pageCount) {
+            onView(withId(R.id.printPreviewView))
+                .perform(swipeLeft())
+            waitForAnimation()
+
+            if (i == (_printPreviewView.pageCount - 1)) {
+                Assert.assertEquals(
+                    i,
+                    _printPreviewView.currentPage
+                )
+
+                onView(withId(R.id.printPreviewView))
+                    .perform(swipeLeft())
+                waitForAnimation()
+
+                Assert.assertEquals(
+                    i,
+                    _printPreviewView.currentPage
+                )
+            }
+        }
     }
 
     @Test
@@ -128,20 +177,9 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testPdfError_PrintNotAllowed() {
-        switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_PDF_PRINT_NOT_ALLOWED))
-
-        checkDialog(
-            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
-            R.string.ids_err_msg_pdf_printing_not_allowed
-        )
-    }
-
-    @Test
     fun testPdfError_Encrypted() {
         switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_PDF_WITH_ENCRYPTION))
+        selectDocument(getUriFromPath(DOC_PDF_ERR_WITH_ENCRYPTION))
 
         checkDialog(
             PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
@@ -150,9 +188,57 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
+    fun testPdfError_PrintNotAllowed() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF_ERR_PRINT_NOT_ALLOWED))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_pdf_printing_not_allowed
+        )
+    }
+
+    @Test
+    fun testPdfError_OpenFailed() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectDocument(getUriFromPath(DOC_PDF_ERR_OPEN_FAILED))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_open_failed
+        )
+    }
+
+    @Test
+    fun testConversionError_Fail() {
+        switchScreen(MenuFragment.STATE_HOME)
+        selectPhotos(getUriFromPath(IMG_ERR_FAIL_CONVERSION))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_conversion_failed
+        )
+    }
+
+    @Ignore("TODO")
+    fun testConversionError_Unsupported() {
+        switchScreen(MenuFragment.STATE_HOME)
+
+        //open in ?
+
+        waitForAnimation()
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_invalid_file_selection
+        )
+    }
+
+
+    @Test
     fun testConversionError_TxtSizeLimit() {
         switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_TXT_OVER_SIZE_LIMIT))
+        selectDocument(getUriFromPath(DOC_TXT_ERR_SIZE_LIMIT))
 
         checkDialog(
             PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
@@ -161,17 +247,6 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testConversionError_Fail() {
-        switchScreen(MenuFragment.STATE_HOME)
-        selectPhotos(getUriFromPath(IMG_FailConversion))
-
-        checkDialog(
-            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
-            R.string.ids_err_msg_conversion_failed
-        )
-    }
-
-    @Ignore("fails during check all")
     fun testOrientationChange() {
         switchOrientation()
         waitForAnimation()

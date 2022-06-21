@@ -1,6 +1,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
+import android.widget.Spinner
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
@@ -17,9 +18,9 @@ import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTERS
 import jp.co.riso.smartprint.R
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.*
 import org.junit.*
+
 
 class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
@@ -81,7 +82,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         }
     }
 
-    private fun initPreview() {
+    private fun initPreviewAndOpenPrintSettings() {
         // hide print settings screen
         pressBack()
         switchScreen(MenuFragment.STATE_HOME)
@@ -97,7 +98,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         switchScreen(STATE_PRINTERS)
 
         if (!_printSettingsFragment!!.isTablet) {
-            selectPrinterInfoScreen(0)
+            selectPrinterInfoScreen(TEST_ONLINE_PRINTER)
             testClickAndWait(R.id.menu_id_action_print_settings_button)
         } else {
             getViewInteractionFromMatchAtPosition(R.id.default_print_settings, 0).perform(click())
@@ -107,8 +108,10 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             (mainActivity!!.supportFragmentManager.findFragmentById(R.id.rightLayout)) as PrintSettingsFragment
     }
 
-    private fun selectPrinterInfoScreen(index: Int) {
-        getViewInteractionFromMatchAtPosition(R.id.printerListRow, index).perform(click())
+    private fun selectPrinterInfoScreen(printer: Printer) {
+        getViewInteractionFromMatchAtPosition(
+            withText(printer.ipAddress), 0
+        ).perform(click())
         waitForAnimation()
     }
 
@@ -172,38 +175,49 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     }
 
+    private fun selectPrinterPrintSettings(printer: Printer) {
+        // open printer select
+        testClick(R.id.view_id_print_selected_printer)
+
+        // select printer
+        getViewInteractionFromMatchAtPosition(allOf(
+            withId(R.id.view_id_subview_printer_item),
+            hasDescendant(withText(containsString(printer.ipAddress)))), 0
+        ).perform(click())
+
+        // hide printer select
+        onView(withId(R.id.view_id_hide_subview_container))
+            .perform(click())
+    }
+
     @Test
     fun testSelectPrinter() {
-        val selectedPrinter = _printerManager!!.savedPrintersList[0]
-
-        val nextPrinterIndex = 1
-        val nextPrinter = _printerManager!!.savedPrintersList[nextPrinterIndex]
+        val selectedPrinter = _printerManager!!.savedPrintersList[0]!!
+        val nextPrinter = TEST_OFFLINE_PRINTER
 
         // Check selected Printer
         onView(allOf(withId(R.id.listValueTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(selectedPrinter!!.name))))
+            .check(matches(withText(containsString(selectedPrinter.name))))
         onView(allOf(withId(R.id.listValueSubTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
             .check(matches(withText(containsString(selectedPrinter.ipAddress))))
 
         // Select Printer
-        testClick(R.id.view_id_print_selected_printer)
-        getViewInteractionFromMatchAtPosition(
-            R.id.view_id_subview_printer_item,
-            nextPrinterIndex
-        ).perform(click())
+        selectPrinterPrintSettings(nextPrinter)
 
         // Check selected Printer
-        onView(withId(R.id.view_id_hide_subview_container))
-            .perform(click())
         onView(allOf(withId(R.id.listValueTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(nextPrinter!!.name))))
+            .check(matches(withText(containsString(nextPrinter.name))))
         onView(allOf(withId(R.id.listValueSubTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
             .check(matches(withText(containsString(nextPrinter.ipAddress))))
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testPrint_Success() {
-        initPreview()
+        initPreviewAndOpenPrintSettings()
+
+        // select online printer
+        selectPrinterPrintSettings(TEST_ONLINE_PRINTER)
+
         testClickAndWait(R.id.view_id_print_header)
         waitForPrint()
 
@@ -213,28 +227,33 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         )
     }
 
-    @Ignore("TODO")
+    @Test
     fun testPrint_RawPort() {
         // set raw port
         pressBack()
         switchScreen(STATE_PRINTERS)
 
         if (!_printSettingsFragment!!.isTablet) {
-            selectPrinterInfoScreen(0)
+            selectPrinterInfoScreen(TEST_ONLINE_PRINTER)
         }
 
-        testClickAndWait(R.layout.printerinfo_port_item)
-        val rawPort =
-            UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).findObject(
-                UiSelector().textMatches(
-                    mainActivity!!.getString(R.string.ids_lbl_port_raw)
-                )
-            )
-        if (rawPort.exists()) {
-            rawPort.click()
-        }
+        getViewInteractionFromMatchAtPosition(
+            withClassName(`is`(Spinner::class.java.canonicalName)), 0
+        ).check(matches(withSpinnerText(R.string.ids_lbl_port_lpr)))
 
-        initPreview()
+        getViewInteractionFromMatchAtPosition(
+            withClassName(`is`(Spinner::class.java.canonicalName)), 0
+        ).perform(click())
+        waitForAnimation()
+
+        onView(withText(R.string.ids_lbl_port_raw)).perform(click())
+        waitForAnimation()
+
+        getViewInteractionFromMatchAtPosition(
+            withClassName(`is`(Spinner::class.java.canonicalName)), 0
+        ).check(matches(withSpinnerText(R.string.ids_lbl_port_raw)))
+
+        initPreviewAndOpenPrintSettings()
         testClick(R.id.view_id_print_header)
         waitForPrint()
 
@@ -246,7 +265,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testPrint_Cancel() {
-        initPreview()
+        initPreviewAndOpenPrintSettings()
         testClickAndWait(R.id.view_id_print_header)
 
         // Cancel print
@@ -258,12 +277,12 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         ))
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testPrint_Fail() {
-        initPreview()
+        initPreviewAndOpenPrintSettings()
 
         // select offline printer
-        testSelectPrinter()
+        selectPrinterPrintSettings(TEST_OFFLINE_PRINTER)
 
         testClickAndWait(R.id.view_id_print_header)
         waitForPrint()
@@ -276,7 +295,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testPrint_NoNetwork() {
-        initPreview()
+        initPreviewAndOpenPrintSettings()
 
         // disable wifi
         NetUtils.unregisterWifiCallback(mainActivity!!)
@@ -290,13 +309,13 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         )
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testDefaultPrintSettings_ClickEditText() {
         openDefaultPrintSettings()
         testOnClick_EditText()
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testDefaultPrintSettings_UpdateSettings() {
         openDefaultPrintSettings()
         testSettings_Update()
