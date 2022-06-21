@@ -146,7 +146,6 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         }
         Assert.assertEquals((_printPreviewView.pageCount - 1), _printPreviewView.currentPage)
     }
-    }
 
     @Test
     fun testFileOpen_Consecutive() {
