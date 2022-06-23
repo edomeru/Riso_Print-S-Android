@@ -33,7 +33,6 @@ import com.scanlibrary.ScanConstants
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.InfoDialogFragment
 import jp.co.riso.android.util.NetUtils
-import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
@@ -246,6 +245,12 @@ open class BaseActivityTestUtil {
     }
 
     private fun loadFileUsingButton(id: Int, uri: Uri) {
+        val fm = mainActivity!!.supportFragmentManager
+        val fragment = fm.findFragmentById(R.id.mainLayout)
+        if (fragment !is HomeFragment) {
+            switchScreen(MenuFragment.STATE_HOME)
+        }
+
         val intent = Intent()
         if (id != R.id.cameraButton) {
             intent.setData(uri)
@@ -277,11 +282,29 @@ open class BaseActivityTestUtil {
         updateMainActivity()
     }
 
+    fun loadFileUsingOpenIn(uri: Uri) {
+        val intent = Intent(mainActivity, PDFHandlerActivity::class.java)
+        intent.action = Intent.ACTION_VIEW
+        intent.data = uri
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+        mainActivity!!.startActivity(intent)
+    }
+
+    fun loadFileUsingOpenIn(clipData: ClipData) {
+        val intent = Intent(mainActivity, PDFHandlerActivity::class.java)
+        intent.action = Intent.ACTION_SEND_MULTIPLE
+        intent.clipData = clipData
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+        mainActivity!!.startActivity(intent)
+    }
+
     open fun updateMainActivity() {
         mainActivity = getCurrentActivity()
     }
 
-    fun getCurrentActivity(): MainActivity? {
+    private fun getCurrentActivity(): MainActivity? {
         var currentActivity = mainActivity
         getInstrumentation().runOnMainSync {
             val resumedActivities: Collection<*> =
@@ -308,6 +331,7 @@ open class BaseActivityTestUtil {
     }
 
     fun checkDialog(tag: String, msgId: Int) {
+        updateMainActivity()
         val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
             tag
         )
@@ -334,6 +358,7 @@ open class BaseActivityTestUtil {
     }
 
     fun checkDialog(tag: String, titleId: Int, msgId: Int) {
+        updateMainActivity()
         val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
             tag
         )
@@ -379,9 +404,14 @@ open class BaseActivityTestUtil {
         const val IMG_BMP = "BMP.bmp"
         const val IMG_GIF = "Circles.gif"
         const val IMG_ERR_FAIL_CONVERSION = "Invalid_JPEG.jpg"
+        const val IMG_ERR_UNSUPPORTED = "MARBLES.TIF"
 
-        val TEST_ONLINE_PRINTER = Printer("ORPHIS FW5230", "192.168.0.32") // update with online printer details
-        val TEST_OFFLINE_PRINTER = Printer("ORPHIS GD500", "192.168.0.2")
+        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.0.41") // update with online printer details
+        val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.2")
+        val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.3")
+        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.4")
+        val TEST_PRINTER_GL = Printer("RISO CEREZONA S200", "192.168.0.5")
+        val TEST_PRINTER_FW = Printer("RISO ORPHIS FW5230", "192.168.0.6")
 
         const val IMG_JPG = "Universe.jpg"
         const val IMG_JPG_90 = "Universe_rotate90.jpg"
