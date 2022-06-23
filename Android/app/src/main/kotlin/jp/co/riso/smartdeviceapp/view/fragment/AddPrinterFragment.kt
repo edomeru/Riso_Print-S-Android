@@ -434,7 +434,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
     }
 
     companion object {
-        private const val KEY_ADD_PRINTER_DIALOG = "add_printer_dialog"
+        const val KEY_ADD_PRINTER_DIALOG = "add_printer_dialog"
         private const val ERR_INVALID_IP_ADDRESS = -1
         private const val ERR_CAN_NOT_ADD_PRINTER = -2
         private const val ERR_PRINTER_ADDED_WARNING = -3
