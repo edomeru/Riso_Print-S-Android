@@ -75,8 +75,8 @@ class PrinterSearchSettingsFragment : BaseFragment() {
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _snmpCommunityNameEditText = view.findViewById(R.id.inputSnmpCommunityName)
-        _snmpCommunityNameEditText?.setText(getInstance(requireActivity())!!.snmpCommunityNameFromSharedPrefs)
-        _snmpCommunityNameEditText?.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+        _snmpCommunityNameEditText!!.setText(getInstance(requireActivity())!!.snmpCommunityNameFromSharedPrefs)
+        _snmpCommunityNameEditText!!.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 saveSnmpCommunityNameToSharedPrefs(v.text.toString())
             } else if (actionId == EditorInfo.IME_NULL) {
@@ -163,10 +163,7 @@ class PrinterSearchSettingsFragment : BaseFragment() {
     // ================================================================================
     override fun onClick(v: View) {
         super.onClick(v)
-        val id = v.id
-        if (id == R.id.menu_id_back_button) {
-            closeScreen()
-        }
+        closeScreen()
     }
 
     override fun onDetach() {

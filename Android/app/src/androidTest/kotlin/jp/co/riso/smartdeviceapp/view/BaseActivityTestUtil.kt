@@ -30,6 +30,8 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import com.scanlibrary.ScanActivity
 import com.scanlibrary.ScanConstants
+import jp.co.riso.android.dialog.ConfirmDialogFragment
+import jp.co.riso.android.dialog.InfoDialogFragment
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
@@ -317,7 +319,14 @@ open class BaseActivityTestUtil {
             mainActivity!!.resources.getString(msgId),
             (msg as TextView).text
         )
-        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+
+        val buttonType = if (fragment is ConfirmDialogFragment) {
+            DialogInterface.BUTTON_POSITIVE
+        } else {
+            DialogInterface.BUTTON_NEGATIVE
+        }
+
+        val b = dialog.getButton(buttonType)
         Assert.assertEquals(
             mainActivity!!.resources.getString(R.string.ids_lbl_ok),
             b.text
@@ -342,7 +351,14 @@ open class BaseActivityTestUtil {
             mainActivity!!.resources.getString(msgId),
             (msg as TextView).text
         )
-        val b = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+
+        val buttonType = if (fragment is ConfirmDialogFragment) {
+            DialogInterface.BUTTON_POSITIVE
+        } else {
+            DialogInterface.BUTTON_NEGATIVE
+        }
+
+        val b = dialog.getButton(buttonType)
         Assert.assertEquals(
             mainActivity!!.resources.getString(R.string.ids_lbl_ok),
             b.text
