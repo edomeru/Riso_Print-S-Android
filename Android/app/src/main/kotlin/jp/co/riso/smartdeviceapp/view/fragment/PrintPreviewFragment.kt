@@ -132,10 +132,10 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             val fileFromPickerFlag = intent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 1)
 
             // Check if from Home Screen OR opened-in file is not PDF
-            if (_intentData != null && FileUtils.getMimeType(
-                    activity,
-                    _intentData
-                ) != AppConstants.DOC_TYPES[0] || fileFromPickerFlag < 0 || intent.clipData != null
+            if (_intentData != null &&
+                FileUtils.getMimeType(activity, _intentData) != AppConstants.DOC_TYPES[0] ||
+                fileFromPickerFlag < 0 ||
+                intent.clipData != null
             ) {
                 val clipData = intent.clipData
                 if (_pdfConverterManager == null) {

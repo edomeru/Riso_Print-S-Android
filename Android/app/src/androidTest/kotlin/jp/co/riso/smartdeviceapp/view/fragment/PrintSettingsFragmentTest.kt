@@ -1,10 +1,14 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
+import android.widget.EditText
 import android.widget.Spinner
+import android.widget.Switch
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -64,8 +68,12 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         _printerManager = PrinterManager.getInstance(mainActivity!!)
 
         _printersList = mutableListOf(
-            TEST_ONLINE_PRINTER,
-            TEST_OFFLINE_PRINTER
+            TEST_PRINTER_ONLINE,
+            TEST_PRINTER_OFFLINE,
+            TEST_PRINTER_NO_NAME,
+            TEST_PRINTER_CEREZONA,
+            TEST_PRINTER_GL,
+            TEST_PRINTER_FW
         )
 
         for ((index, printer) in _printersList!!.withIndex()) {
@@ -91,13 +99,28 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         onView(withId(R.id.view_id_print_button)).perform(click())
     }
 
+    private fun selectPrinterPrintSettings(printer: Printer) {
+        // open printer select
+        testClick(R.id.view_id_print_selected_printer)
+
+        // select printer
+        getViewInteractionFromMatchAtPosition(allOf(
+            withId(R.id.view_id_subview_printer_item),
+            hasDescendant(withText(containsString(printer.ipAddress)))), 0
+        ).perform(click())
+
+        // hide printer select
+        onView(withId(R.id.view_id_hide_subview_container))
+            .perform(click())
+    }
+
     private fun openDefaultPrintSettings() {
         // Close print settings
         pressBack()
         switchScreen(STATE_PRINTERS)
 
         if (!_printSettingsFragment!!.isTablet) {
-            selectPrinterInfoScreen(TEST_ONLINE_PRINTER)
+            selectPrinterInfoScreen(TEST_PRINTER_ONLINE)
             testClickAndWait(R.id.menu_id_action_print_settings_button)
         } else {
             getViewInteractionFromMatchAtPosition(R.id.default_print_settings, 0).perform(click())
@@ -112,6 +135,84 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             withText(printer.ipAddress), 0
         ).perform(click())
         waitForAnimation()
+    }
+
+    private fun displaySettingOptions(setting: String) {
+        onView(allOf(isDescendantOfA(withId(R.id.view_id_show_subview_container)),
+            withText(setting)))
+            .perform(scrollTo(), click())
+        waitForAnimation()
+    }
+
+    private fun checkSettingOptions(options: List<String?>) {
+        for ((i,option) in options.withIndex()) {
+            getViewInteractionFromMatchAtPosition(R.id.view_id_subview_option_item, i)
+                .check(matches(hasDescendant(allOf(
+                        withId(R.id.menuTextView),
+                        withText(option)))))
+        }
+        // return to print settings
+        onView(withId(R.id.view_id_hide_subview_container))
+            .perform(click())
+    }
+
+    private fun updateSetting(setting: String, option: String) {
+        // Select setting
+        onView(allOf(isDescendantOfA(withId(R.id.view_id_show_subview_container)),
+                withText(setting)))
+            .perform(scrollTo(), click())
+
+        // Select option
+        repeat(2) {
+            onView(allOf(withId(R.id.view_id_subview_option_item),
+                    hasDescendant(
+                        allOf(
+                            withId(R.id.menuTextView),
+                            withText(option)))))
+                .perform(scrollTo(), click())
+        }
+
+        // return to print settings
+        onView(withId(R.id.view_id_hide_subview_container))
+            .perform(click())
+    }
+
+    private fun updateSetting(setting: String) {
+        onView(
+            allOf(
+                withClassName(`is`(Switch::class.java.canonicalName)),
+                isDescendantOfA(
+                    allOf(
+                        withId(R.id.view_id_show_subview_container),
+                        hasDescendant(withText(setting))
+                    )
+                )
+            )
+        ).perform(scrollTo(), click())
+    }
+
+    private fun confirmSetting(setting: String, option: String) {
+        // Check selected option displayed in item header
+        onView(allOf(
+            withId(R.id.view_id_show_subview_container),
+            hasDescendant(allOf(
+                withText(setting)
+            )))
+        ).check(matches(
+            hasDescendant(allOf(
+                withText(option))
+            )))
+    }
+
+    private fun checkSelectedPrinter(name: String?, ipAddress: String?) {
+        onView(allOf(withId(R.id.listValueTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
+            .check(matches(withText(containsString(name))))
+        onView(allOf(withId(R.id.listValueSubTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
+            .check(matches(withText(containsString(ipAddress))))
+    }
+
+    private fun getString(id: Int):String {
+        return mainActivity!!.resources.getString(id)
     }
 
     @Test
@@ -139,75 +240,224 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testSettings_Update() {
-        val setting = "Color Mode"
-        val option = "Black"
+    fun testSettings_Collapsible() {
+        onView(allOf(isDescendantOfA(withId(R.id.view_id_show_subview_container)),
+            withText(getString(R.string.ids_lbl_colormode))
+        )).check(matches(isDisplayed()))
 
-        // Select setting
+        // Collapse
         onView(allOf(
-            isDescendantOfA(withId(R.id.view_id_show_subview_container)),
-            withText(setting))
-        ).perform(click())
+            withId(R.id.view_id_collapse_container),
+            hasDescendant(withText(getString(R.string.ids_lbl_basic)))
+        )).perform(click())
+        waitForAnimation()
 
-        // Select option
+        onView(allOf(isDescendantOfA(withId(R.id.view_id_show_subview_container)),
+            withText(getString(R.string.ids_lbl_colormode))
+        )).check(matches(not(isDisplayed())))
+
+        // Expand
         onView(allOf(
-            withId(R.id.view_id_subview_option_item),
-            hasDescendant(
-                allOf(
-                    withId(R.id.menuTextView),
-                    withText(option))
-            ))
-        ).perform(click())
+            withId(R.id.view_id_collapse_container),
+            hasDescendant(withText(getString(R.string.ids_lbl_basic)))
+        )).perform(click())
+        waitForAnimation()
 
-        // Check selected option displayed in item header
-        onView(withId(R.id.view_id_hide_subview_container))
-            .perform(click())
-        onView(allOf(
-            withId(R.id.view_id_show_subview_container),
-            hasDescendant(allOf(
-                withText(setting)
-            )))
-        ).check(matches(
-            hasDescendant(allOf(
-                withText(option))
-        )))
-
+        onView(allOf(isDescendantOfA(withId(R.id.view_id_show_subview_container)),
+            withText(getString(R.string.ids_lbl_colormode))
+        )).check(matches(isDisplayed()))
     }
 
-    private fun selectPrinterPrintSettings(printer: Printer) {
-        // open printer select
-        testClick(R.id.view_id_print_selected_printer)
+    @Test
+    fun testSettings_Update() {
+        // setting 1
+        updateSetting(
+            getString(R.string.ids_lbl_colormode),
+            getString(R.string.ids_lbl_colormode_black)
+        )
+        confirmSetting(
+            getString(R.string.ids_lbl_colormode),
+            getString(R.string.ids_lbl_colormode_black)
+        )
 
-        // select printer
-        getViewInteractionFromMatchAtPosition(allOf(
-            withId(R.id.view_id_subview_printer_item),
-            hasDescendant(withText(containsString(printer.ipAddress)))), 0
-        ).perform(click())
-
-        // hide printer select
-        onView(withId(R.id.view_id_hide_subview_container))
+        pressBack()
+        // return to print settings screen
+        onView(withId(R.id.view_id_print_button))
             .perform(click())
+
+        // setting 2
+        updateSetting(
+            getString(R.string.ids_lbl_papersize),
+            getString(R.string.ids_lbl_papersize_b4)
+        )
+        confirmSetting(
+            getString(R.string.ids_lbl_papersize),
+            getString(R.string.ids_lbl_papersize_b4)
+        )
+    }
+    @Ignore("TODO")
+    fun testSettings_UpdateAuthentication() {
+        val text = "12345678"
+
+        // authentication
+        updateSetting(getString(R.string.ids_lbl_secure_print))
+
+        onView(
+            allOf(
+                withClassName(`is`(EditText::class.java.canonicalName)),
+                isDescendantOfA(
+                    allOf(
+                        withId(R.id.view_id_show_subview_container),
+                        hasDescendant(withText(getString(R.string.ids_lbl_pin_code))))))
+        ).apply {
+            perform(ViewActions.clearText())
+            waitForAnimation()
+            perform(ViewActions.typeText(text))
+            waitForAnimation()
+            check(matches(withText(text.padEnd(text.length+1, '*'))))
+        }
+    }
+
+    @Test
+    fun testSettingsConstraints_Staple() {
+        selectPrinterPrintSettings(TEST_PRINTER_CEREZONA)
+
+        // Staple - Finishing Left
+        updateSetting(
+            getString(R.string.ids_lbl_finishingside),
+            getString(R.string.ids_lbl_finishingside_left))
+        displaySettingOptions(getString(R.string.ids_lbl_staple))
+        checkSettingOptions(
+            listOf(
+                getString(R.string.ids_lbl_off),
+                getString(R.string.ids_lbl_staple_1),
+                getString(R.string.ids_lbl_staple_2)
+            ))
+
+        // Staple - Finishing Top
+        updateSetting(
+            getString(R.string.ids_lbl_finishingside),
+            getString(R.string.ids_lbl_finishingside_top))
+        displaySettingOptions(getString(R.string.ids_lbl_staple))
+        checkSettingOptions(
+            listOf(
+                getString(R.string.ids_lbl_off),
+                getString(R.string.ids_lbl_staple_upperleft),
+                getString(R.string.ids_lbl_staple_upperright)
+            ))
+
+        // Staple - Finishing Right
+        updateSetting(
+            getString(R.string.ids_lbl_finishingside),
+            getString(R.string.ids_lbl_finishingside_right))
+        displaySettingOptions(getString(R.string.ids_lbl_staple))
+        checkSettingOptions(
+            listOf(
+                getString(R.string.ids_lbl_off),
+                getString(R.string.ids_lbl_staple_1),
+                getString(R.string.ids_lbl_staple_2)
+            ))
+    }
+
+    @Test
+    fun testSettingsConstraints_Imposition() {
+        selectPrinterPrintSettings(TEST_PRINTER_CEREZONA)
+
+        // Imposition - 2up
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_2up))
+        displaySettingOptions(getString(R.string.ids_lbl_imposition_order))
+        checkSettingOptions(
+            listOf(
+                getString(R.string.ids_lbl_imposition_order_2up_lr),
+                getString(R.string.ids_lbl_imposition_order_2up_rl)
+            ))
+
+        // Imposition - 4up
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_4up))
+        displaySettingOptions(getString(R.string.ids_lbl_imposition_order))
+        checkSettingOptions(
+            listOf(
+                getString(R.string.ids_lbl_imposition_order_4up_ulr),
+                getString(R.string.ids_lbl_imposition_order_4up_url),
+                getString(R.string.ids_lbl_imposition_order_4up_ulb),
+                getString(R.string.ids_lbl_imposition_order_4up_urb),
+
+            ))
+    }
+
+    @Ignore("TODO")
+    fun testSettingsConstraints_OutputTray() {
+        selectPrinterPrintSettings(TEST_PRINTER_CEREZONA)
+
+        // Output Tray
+        updateSetting(getString(R.string.ids_lbl_booklet))
+        displaySettingOptions(getString(R.string.ids_lbl_imposition_order))
+        checkSettingOptions(
+            listOf(
+                getString(R.string.ids_lbl_outputtray_auto),
+                getString(R.string.ids_lbl_outputtray_facedown),
+                getString(R.string.ids_lbl_outputtray_top),
+                getString(R.string.ids_lbl_outputtray_stacking)
+            ))
+
+        updateSetting(getString(R.string.ids_lbl_booklet))
+        displaySettingOptions(getString(R.string.ids_lbl_imposition_order))
+        checkSettingOptions(
+            listOf(
+                getString(R.string.ids_lbl_outputtray_auto),
+                getString(R.string.ids_lbl_outputtray_facedown),
+                getString(R.string.ids_lbl_outputtray_top),
+                getString(R.string.ids_lbl_outputtray_stacking)
+            ))
+
+        updateSetting(
+            getString(R.string.ids_lbl_punch),
+            getString(R.string.ids_lbl_off))
+        displaySettingOptions(getString(R.string.ids_lbl_imposition_order))
+        checkSettingOptions(
+            listOf(
+                getString(R.string.ids_lbl_outputtray_auto),
+                getString(R.string.ids_lbl_outputtray_facedown),
+                getString(R.string.ids_lbl_outputtray_top),
+                getString(R.string.ids_lbl_outputtray_stacking)
+            ))
+    }
+
+    @Ignore("TODO")
+    fun testSettingsConstraints_InputTray() {
+        for (printer in listOf(TEST_PRINTER_CEREZONA, TEST_PRINTER_GL, TEST_PRINTER_FW)) {
+            selectPrinterPrintSettings(printer)
+            // Paper Size / Input Tray
+
+
+        }
     }
 
     @Test
     fun testSelectPrinter() {
         val selectedPrinter = _printerManager!!.savedPrintersList[0]!!
-        val nextPrinter = TEST_OFFLINE_PRINTER
+        val nextPrinter = TEST_PRINTER_OFFLINE
 
-        // Check selected Printer
-        onView(allOf(withId(R.id.listValueTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(selectedPrinter.name))))
-        onView(allOf(withId(R.id.listValueSubTextView),isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(selectedPrinter.ipAddress))))
+        // Check current printer
+        checkSelectedPrinter(selectedPrinter.name, selectedPrinter.ipAddress)
 
         // Select Printer
         selectPrinterPrintSettings(nextPrinter)
+        checkSelectedPrinter(nextPrinter.name, nextPrinter.ipAddress)
 
-        // Check selected Printer
-        onView(allOf(withId(R.id.listValueTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(nextPrinter.name))))
-        onView(allOf(withId(R.id.listValueSubTextView), isDescendantOfA(withId(R.id.view_id_print_selected_printer))))
-            .check(matches(withText(containsString(nextPrinter.ipAddress))))
+    }
+
+    @Test
+    fun testSelectPrinter_NoName() {
+        val nextPrinter = TEST_PRINTER_NO_NAME
+
+        // Select Printer
+        selectPrinterPrintSettings(nextPrinter)
+        checkSelectedPrinter(getString(R.string.ids_lbl_no_name), nextPrinter.ipAddress)
     }
 
     @Test
@@ -215,7 +465,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         initPreviewAndOpenPrintSettings()
 
         // select online printer
-        selectPrinterPrintSettings(TEST_ONLINE_PRINTER)
+        selectPrinterPrintSettings(TEST_PRINTER_ONLINE)
 
         testClickAndWait(R.id.view_id_print_header)
         waitForPrint()
@@ -233,7 +483,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         switchScreen(STATE_PRINTERS)
 
         if (!_printSettingsFragment!!.isTablet) {
-            selectPrinterInfoScreen(TEST_ONLINE_PRINTER)
+            selectPrinterInfoScreen(TEST_PRINTER_ONLINE)
         }
 
         getViewInteractionFromMatchAtPosition(
@@ -281,7 +531,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         initPreviewAndOpenPrintSettings()
 
         // select offline printer
-        selectPrinterPrintSettings(TEST_OFFLINE_PRINTER)
+        selectPrinterPrintSettings(TEST_PRINTER_OFFLINE)
 
         testClickAndWait(R.id.view_id_print_header)
         waitForPrint()
@@ -309,6 +559,21 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
+    fun testPrint_NoNetworkWhilePrinting() {
+        initPreviewAndOpenPrintSettings()
+
+        testClick(R.id.view_id_print_header)
+        // disable wifi
+        NetUtils.unregisterWifiCallback(mainActivity!!)
+        waitForPrint()
+
+        checkDialog(
+            PrintSettingsFragment.TAG_MESSAGE_DIALOG,
+            R.string.ids_info_msg_print_job_failed
+        )
+    }
+
+    @Test
     fun testDefaultPrintSettings_ClickEditText() {
         openDefaultPrintSettings()
         testOnClick_EditText()
@@ -317,6 +582,30 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     @Test
     fun testDefaultPrintSettings_UpdateSettings() {
         openDefaultPrintSettings()
-        testSettings_Update()
+
+        // setting 1
+        updateSetting(
+            getString(R.string.ids_lbl_colormode),
+            getString(R.string.ids_lbl_colormode_black))
+        confirmSetting(
+            getString(R.string.ids_lbl_colormode),
+            getString(R.string.ids_lbl_colormode_black))
+
+        pressBack()
+        // return to print settings screen
+        if (!_printSettingsFragment!!.isTablet) {
+            selectPrinterInfoScreen(TEST_PRINTER_ONLINE)
+            testClickAndWait(R.id.menu_id_action_print_settings_button)
+        } else {
+            getViewInteractionFromMatchAtPosition(R.id.default_print_settings, 0).perform(click())
+        }
+
+        // setting 2
+        updateSetting(
+            getString(R.string.ids_lbl_papersize),
+            getString(R.string.ids_lbl_papersize_b4))
+        confirmSetting(
+            getString(R.string.ids_lbl_papersize),
+            getString(R.string.ids_lbl_papersize_b4))
     }
 }

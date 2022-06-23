@@ -47,8 +47,8 @@ class PrintJobsFragmentTest: BaseActivityTestUtil() {
         _printerManager = PrinterManager.getInstance(mainActivity!!)
 
         _printersList = mutableListOf(
-            TEST_ONLINE_PRINTER,
-            TEST_OFFLINE_PRINTER
+            TEST_PRINTER_ONLINE,
+            TEST_PRINTER_OFFLINE
         )
 
         for ((index, printer) in _printersList!!.withIndex()) {
@@ -78,7 +78,7 @@ class PrintJobsFragmentTest: BaseActivityTestUtil() {
         // Hide confirmation dialog after printing
         pressBack()
 
-        selectPrinterPrintSettings(TEST_OFFLINE_PRINTER)
+        selectPrinterPrintSettings(TEST_PRINTER_OFFLINE)
 
         testClickAndWait(R.id.view_id_print_header)
         waitForPrint()
@@ -131,13 +131,13 @@ class PrintJobsFragmentTest: BaseActivityTestUtil() {
 
         // Collapse
         getViewInteractionFromMatchAtPosition(
-            withText(TEST_ONLINE_PRINTER.ipAddress), 0
+            withText(TEST_PRINTER_ONLINE.ipAddress), 0
         ).perform(click())
         waitForAnimation()
 
         // Expand again
         getViewInteractionFromMatchAtPosition(
-            withText(TEST_ONLINE_PRINTER.ipAddress), 0
+            withText(TEST_PRINTER_ONLINE.ipAddress), 0
         ).perform(click())
         waitForAnimation()
     }
