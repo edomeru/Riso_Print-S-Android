@@ -266,7 +266,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnClick_SelectDocument() {
-        grantPermissions()
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
@@ -282,8 +281,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnClick_SelectPhotos() {
-        grantPermissions()
-
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
@@ -299,7 +296,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnClick_CapturePhoto() {
-        grantPermissions()
         // stubs handling of start activity to prevent launching of Camera
         // null result only since test is not about checking handling of result
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
@@ -333,7 +329,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnDoubleClick_SelectDocument() {
-        grantPermissions()
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
@@ -353,7 +348,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnDoubleClick_SelectPhotos() {
-        grantPermissions()
         // stubs handling of start activity to prevent launching of OS picker
         // null result only since test is not about checking handling of result
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
@@ -373,7 +367,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testOnDoubleClick_CapturePhoto() {
-        grantPermissions()
         // stubs handling of start activity to prevent launching of Camera
         // null result only since test is not about checking handling of result
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
@@ -394,8 +387,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testFileOpen_SelectDocument() {
-        grantPermissions()
-
         val testFile = getUriFromPath(DOC_PDF)
         selectDocument(testFile)
 
@@ -431,8 +422,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testFileOpen_SelectTextFile() {
-        grantPermissions()
-
         val testFile = getUriFromPath(DOC_TXT)
         selectDocument(testFile)
 
@@ -468,8 +457,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testFileOpen_SelectPhotos() {
-        grantPermissions()
-
         val testFile = getUriFromPath(IMG_PNG)
         selectPhotos(testFile)
 
@@ -506,8 +493,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testFileOpen_SelectPhotosMultiple() {
-        grantPermissions()
-
         val testFiles = ClipData.newUri(
             mainActivity!!.contentResolver,
             IMG_BMP,
@@ -551,8 +536,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testFileOpen_SelectPhotosSingleClipData() {
-        grantPermissions()
-
         val testFiles = ClipData.newUri(
             mainActivity!!.contentResolver,
             IMG_BMP,
@@ -597,8 +580,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testFileOpen_CapturePhoto() {
-        grantPermissions()
-
         // stubs handling of permission request in case of no permissions
         // null result only since test is not about checking handling of result
         Intents.intending(hasAction(REQUEST_PERMISSIONS))
@@ -642,8 +623,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testInvalid_SelectDocument() {
-        grantPermissions()
-
         val testFile = getUriFromPath(IMG_PNG)
         selectDocument(testFile)
 
@@ -660,8 +639,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testInvalid_SelectPhotos() {
-        grantPermissions()
-
         val testFile = getUriFromPath(DOC_PDF)
         selectPhotos(testFile)
 
@@ -678,8 +655,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testInvalid_SelectPhotosMultiple() {
-        grantPermissions()
-
         val testFiles = ClipData.newUri(
                 mainActivity!!.contentResolver,
                 IMG_BMP,
@@ -701,8 +676,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testCanceled_SelectDocument() {
-        grantPermissions()
-
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
         Intents.intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
         testClick(R.id.fileButton)
@@ -715,8 +688,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testCanceled_SelectPhotos() {
-        grantPermissions()
-
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
         Intents.intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
         testClick(R.id.photosButton)
@@ -729,8 +700,6 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testCanceled_CapturePhoto() {
-        grantPermissions()
-
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
         Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
         testClick(R.id.cameraButton)

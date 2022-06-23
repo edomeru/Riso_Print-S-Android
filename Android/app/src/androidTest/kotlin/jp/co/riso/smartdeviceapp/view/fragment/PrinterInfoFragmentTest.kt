@@ -39,7 +39,7 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
 
     private fun initPrinter() {
         _printerManager = PrinterManager.getInstance(mainActivity!!)
-        _printer = TEST_ONLINE_PRINTER
+        _printer = TEST_PRINTER_ONLINE
         if (!_printerManager!!.isExists(_printer)) {
             _printerManager!!.savePrinterToDB(_printer, true)
         }

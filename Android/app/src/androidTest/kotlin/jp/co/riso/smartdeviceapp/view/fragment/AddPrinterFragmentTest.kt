@@ -38,7 +38,7 @@ class AddPrinterFragmentTest : BaseActivityTestUtil() {
 
     private fun initPrinter() {
         _printerManager = PrinterManager.getInstance(mainActivity!!)
-        _existingPrinter = TEST_ONLINE_PRINTER
+        _existingPrinter = TEST_PRINTER_ONLINE
         _newPrinter  = TEST_NEW_PRINTER
         if (!_printerManager!!.isExists(_existingPrinter)) {
             _printerManager!!.savePrinterToDB(_existingPrinter, true)
