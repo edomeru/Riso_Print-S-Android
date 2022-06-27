@@ -279,6 +279,6 @@ class PrintJobsFragment : BaseFragment(), OnTouchListener, PrintJobsGroupListene
     }
 
     companion object {
-        private val TAG = PrintJobsFragment::class.java.name
+        val TAG = PrintJobsFragment::class.java.name
     }
 }
