@@ -120,7 +120,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         )
     }
 
-    @Ignore("test fails")
+    @Test
     fun testPrintSettingsButton_WithPrinter() {
         testClickAndWait(R.id.view_id_print_button)
         val rightFragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.rightLayout)
@@ -155,19 +155,18 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         Assert.assertEquals((_printPreviewView.pageCount - 1), _printPreviewView.currentPage)
     }
 
-    @Ignore("test fails")
+    @Test
     fun testFileOpenIn_Document() {
         val testFile = DOC_PDF
 
         loadFileUsingOpenIn(getUriFromPath(testFile))
-        waitForAnimation()
 
         Assert.assertEquals(
             fileNameNoExtension(testFile),
             fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
     }
 
-    @Ignore("test fails")
+    @Test
     fun testFileOpenIn_DocumentTxt() {
         val testFile = DOC_TXT
 
@@ -179,7 +178,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
             fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
     }
 
-    @Ignore("test fails")
+    @Test
     fun testFileOpenIn_Photo() {
         val testFile = IMG_BMP
 
@@ -191,7 +190,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
             fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
     }
 
-    @Ignore("test fails")
+    @Test
     fun testFileOpenIn_MultiplePhotos() {
         val testFiles = ClipData.newUri(
             mainActivity!!.contentResolver,
@@ -208,12 +207,10 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
             fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
     }
 
-    @Ignore("test fails")
+    @Test
     fun testFileOpenConsecutive() {
         val testFile1 = DOC_TXT
         val testFile2 = IMG_BMP
-
-        switchScreen(MenuFragment.STATE_HOME)
         val intent = Intent()
         intent.setData(getUriFromPath(testFile1))
         Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
@@ -221,7 +218,11 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
                 Instrumentation.ActivityResult(
                     FragmentActivity.RESULT_OK,
                     intent))
+
+        switchScreen(MenuFragment.STATE_HOME)
+        waitForView(R.id.fileButton, TIMEOUT_WAITFORVIEW)
         onView(withId(R.id.fileButton)).perform(click())
+        updateMainActivity()
 
         selectPhotos(getUriFromPath(testFile2))
         waitForAnimation()
@@ -231,12 +232,11 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
             fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
     }
 
-    @Ignore("test fails")
+    @Test
     fun testFileOpenConsecutive_OpenIn() {
         val testFile1 = DOC_TXT
         val testFile2 = IMG_BMP
 
-        switchScreen(MenuFragment.STATE_HOME)
         val intent = Intent()
         intent.setData(getUriFromPath(testFile1))
         Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
@@ -244,7 +244,11 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
                 Instrumentation.ActivityResult(
                     FragmentActivity.RESULT_OK,
                     intent))
+
+        switchScreen(MenuFragment.STATE_HOME)
+        waitForView(R.id.fileButton, TIMEOUT_WAITFORVIEW)
         onView(withId(R.id.fileButton)).perform(click())
+        updateMainActivity()
         waitFewSeconds()
 
         loadFileUsingOpenIn(getUriFromPath(testFile2))
@@ -295,7 +299,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         )
     }
 
-    @Ignore("test fails")
+    @Test
     fun testConversionError_Unsupported() {
         val testFiles = ClipData.newUri(
             mainActivity!!.contentResolver,
@@ -323,7 +327,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         )
     }
 
-    @Ignore("test fails")
+    @Test
     fun testOrientationChange() {
         switchOrientation()
         waitForAnimation()

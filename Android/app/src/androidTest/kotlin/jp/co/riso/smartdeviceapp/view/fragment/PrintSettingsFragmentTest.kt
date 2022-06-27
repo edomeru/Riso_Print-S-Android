@@ -22,8 +22,12 @@ import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTERS
 import jp.co.riso.smartprint.R
+import junit.framework.AssertionFailedError
 import org.hamcrest.Matchers.*
 import org.junit.*
+import java.lang.Exception
+import java.lang.NullPointerException
+import java.util.*
 
 class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
@@ -191,6 +195,24 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         ).perform(scrollTo(), click())
     }
 
+    private fun toggleSwitchOn(setting: String) {
+        try {
+            onView(
+                allOf(
+                    withClassName(`is`(Switch::class.java.canonicalName)),
+                    isDescendantOfA(
+                        allOf(
+                            withId(R.id.view_id_show_subview_container),
+                            hasDescendant(withText(setting))
+                        )),
+                ))
+                .check(matches(isNotChecked()))
+                .perform(scrollTo(), click())
+        } catch (e: AssertionFailedError) {
+            // switch is on
+        }
+    }
+
     private fun confirmSetting(setting: String, option: String) {
         // Check selected option displayed in item header
         onView(allOf(
@@ -295,12 +317,14 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             getString(R.string.ids_lbl_papersize_b4)
         )
     }
-    @Ignore("TODO")
+
+    @Test
     fun testSettings_UpdateAuthentication() {
         val text = "12345678"
+        val password = "••••••••"
 
         // authentication
-        updateSetting(getString(R.string.ids_lbl_secure_print))
+        toggleSwitchOn(getString(R.string.ids_lbl_secure_print))
 
         onView(
             allOf(
@@ -310,11 +334,13 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
                         withId(R.id.view_id_show_subview_container),
                         hasDescendant(withText(getString(R.string.ids_lbl_pin_code))))))
         ).apply {
+            perform(scrollTo())
             perform(ViewActions.clearText())
+            waitForAnimation()
             waitForAnimation()
             perform(ViewActions.typeText(text))
             waitForAnimation()
-            check(matches(withText(text.padEnd(text.length+1, '*'))))
+            check(matches(withText(password)))
         }
     }
 
@@ -394,7 +420,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         selectPrinterPrintSettings(TEST_PRINTER_CEREZONA)
 
         // Output Tray
-        updateSetting(getString(R.string.ids_lbl_booklet))
+        toggleSwitchOn(getString(R.string.ids_lbl_booklet))
         displaySettingOptions(getString(R.string.ids_lbl_imposition_order))
         checkSettingOptions(
             listOf(
@@ -404,7 +430,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
                 getString(R.string.ids_lbl_outputtray_stacking)
             ))
 
-        updateSetting(getString(R.string.ids_lbl_booklet))
+        toggleSwitchOn(getString(R.string.ids_lbl_booklet))
         displaySettingOptions(getString(R.string.ids_lbl_imposition_order))
         checkSettingOptions(
             listOf(
