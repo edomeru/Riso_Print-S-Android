@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.PerformException
@@ -28,6 +29,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.espresso.util.HumanReadables
 import androidx.test.espresso.util.TreeIterables
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage.RESUMED
@@ -38,6 +40,7 @@ import com.scanlibrary.ScanConstants
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.common.SNMPManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment
@@ -455,6 +458,12 @@ open class BaseActivityTestUtil {
         }
     }
 
+    fun getId(id: String): Int {
+        val targetContext: Context = SmartDeviceApp.appContext!!
+        val packageName = targetContext.packageName
+        return targetContext.resources.getIdentifier(id, "id", packageName)
+    }
+
     companion object {
         const val DOC_PDF = "PDF-squarish.pdf"
         const val DOC_PDF_4PAGES = "4pages_Landscape_TestData.pdf"
@@ -474,9 +483,12 @@ open class BaseActivityTestUtil {
         val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.0.41") // update with online printer details
         val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.2")
         val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.3")
-        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.4")
-        val TEST_PRINTER_GL = Printer("RISO CEREZONA S200", "192.168.0.5")
+        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.20")
+        val TEST_PRINTER_GL = Printer("RISO ComColor GL9730", "192.168.0.5")
         val TEST_PRINTER_FW = Printer("RISO ORPHIS FW5230", "192.168.0.6")
+        val TEST_PRINTER_GD = Printer("ORPHIS GD500", "192.168.0.7")
+        val TEST_PRINTER_IS = Printer("RISO IS1000C-J", "192.168.0.8")
+        val TEST_PRINTER_FT = Printer("ComColor FT5430", "192.168.0.9")
 
         const val IMG_JPG = "Universe.jpg"
         const val IMG_JPG_90 = "Universe_rotate90.jpg"
