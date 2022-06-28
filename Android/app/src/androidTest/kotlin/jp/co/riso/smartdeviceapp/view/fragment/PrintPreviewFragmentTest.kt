@@ -211,22 +211,15 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     fun testFileOpenConsecutive() {
         val testFile1 = DOC_TXT
         val testFile2 = IMG_BMP
-        val intent = Intent()
-        intent.setData(getUriFromPath(testFile1))
-        Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
-            .respondWith(
-                Instrumentation.ActivityResult(
-                    FragmentActivity.RESULT_OK,
-                    intent))
 
-        switchScreen(MenuFragment.STATE_HOME)
-        waitForView(R.id.fileButton, TIMEOUT_WAITFORVIEW)
-        onView(withId(R.id.fileButton)).perform(click())
-        updateMainActivity()
+        selectDocument(getUriFromPath(testFile1))
+        waitForAnimation()
+        Assert.assertEquals(
+            fileNameNoExtension(testFile1),
+            fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
 
         selectPhotos(getUriFromPath(testFile2))
         waitForAnimation()
-
         Assert.assertEquals(
             fileNameNoExtension(testFile2),
             fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
@@ -236,7 +229,6 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     fun testFileOpenConsecutive_OpenIn() {
         val testFile1 = DOC_TXT
         val testFile2 = IMG_BMP
-
         val intent = Intent()
         intent.setData(getUriFromPath(testFile1))
         Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
@@ -247,6 +239,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
         switchScreen(MenuFragment.STATE_HOME)
         waitForView(R.id.fileButton, TIMEOUT_WAITFORVIEW)
+        waitFewSeconds()
         onView(withId(R.id.fileButton)).perform(click())
         updateMainActivity()
         waitFewSeconds()
