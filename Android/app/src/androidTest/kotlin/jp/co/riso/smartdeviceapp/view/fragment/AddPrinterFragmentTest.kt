@@ -1,5 +1,6 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
+import android.view.Gravity
 import android.view.KeyEvent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -39,7 +40,7 @@ class AddPrinterFragmentTest : BaseActivityTestUtil() {
     private fun initPrinter() {
         _printerManager = PrinterManager.getInstance(mainActivity!!)
         _existingPrinter = TEST_PRINTER_ONLINE
-        _newPrinter  = TEST_NEW_PRINTER
+        _newPrinter  = TEST_PRINTER_FT
         if (!_printerManager!!.isExists(_existingPrinter)) {
             _printerManager!!.savePrinterToDB(_existingPrinter, true)
         }
@@ -54,7 +55,14 @@ class AddPrinterFragmentTest : BaseActivityTestUtil() {
         }
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         testClickAndWait(R.id.menu_id_action_add_button)
-        val addPrinterFragment = fm.findFragmentById(R.id.mainLayout)
+
+        var layoutId = R.id.mainLayout
+        if (mainActivity!!.isTablet) {
+            Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
+            layoutId = R.id.rightLayout
+        }
+
+        val addPrinterFragment = fm.findFragmentById(layoutId)
         Assert.assertTrue(addPrinterFragment is AddPrinterFragment)
         _addPrinterFragment = addPrinterFragment as AddPrinterFragment?
     }
@@ -117,7 +125,6 @@ class AddPrinterFragmentTest : BaseActivityTestUtil() {
         onView(withId(R.id.inputIpAddress)).perform(typeText(_newPrinter!!.ipAddress))
         testClickAndWait(R.id.img_save_button)
 
-
         checkDialog(
             AddPrinterFragment.KEY_ADD_PRINTER_DIALOG,
             R.string.ids_info_msg_printer_add_successful
@@ -147,9 +154,5 @@ class AddPrinterFragmentTest : BaseActivityTestUtil() {
 
         onView(withId(R.id.inputIpAddress)).perform(click())
         onView(withId(R.id.inputIpAddress)).perform(pressKey(KeyEvent.KEYCODE_ENTER))
-    }
-
-    companion object {
-        val TEST_NEW_PRINTER = Printer("ORPHIS FW5230", "192.168.1.236") // Need valid and online printer
     }
 }
