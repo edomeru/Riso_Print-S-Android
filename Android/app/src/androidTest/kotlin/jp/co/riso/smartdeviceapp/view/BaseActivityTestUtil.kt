@@ -489,6 +489,14 @@ open class BaseActivityTestUtil {
         val TEST_PRINTER_GD = Printer("ORPHIS GD500", "192.168.0.7")
         val TEST_PRINTER_IS = Printer("RISO IS1000C-J", "192.168.0.8")
         val TEST_PRINTER_FT = Printer("ComColor FT5430", "192.168.0.9")
+	
+        val TEST_PRINTER_MODELS = listOf(
+            TEST_PRINTER_IS,
+            TEST_PRINTER_GD,
+            TEST_PRINTER_FW,
+            TEST_PRINTER_FT,
+            TEST_PRINTER_GL,
+            TEST_PRINTER_CEREZONA)
 
         const val IMG_JPG = "Universe.jpg"
         const val IMG_JPG_90 = "Universe_rotate90.jpg"

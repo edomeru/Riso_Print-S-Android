@@ -239,7 +239,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
         switchScreen(MenuFragment.STATE_HOME)
         waitForView(R.id.fileButton, TIMEOUT_WAITFORVIEW)
-        waitFewSeconds()
+        waitForAnimation()
         onView(withId(R.id.fileButton)).perform(click())
         updateMainActivity()
         waitFewSeconds()
