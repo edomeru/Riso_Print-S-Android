@@ -74,8 +74,9 @@ class PrintSettingsView @JvmOverloads constructor(
     private var _printControls: LinearLayout? = null
     private var _handler: Handler? = null
     private var _printSettingsTitles: ArrayList<LinearLayout>? = null
-    private var _listener: PrintSettingsViewInterface? = null
     private var _printerManager: PrinterManager? = null
+    
+    private lateinit var _listener: PrintSettingsViewInterface
 
     /**
      * @brief Constructs the PrintSettingsView
@@ -651,7 +652,7 @@ class PrintSettingsView @JvmOverloads constructor(
             nameTextView.setText(string.ids_lbl_choose_printer)
         } else {
             var printerName = targetPrinter.name
-            if (printerName == null || printerName.isEmpty()) {
+            if (printerName!!.isEmpty()) {
                 printerName = context.resources.getString(string.ids_lbl_no_name)
             }
             nameTextView.text = printerName
@@ -793,7 +794,7 @@ class PrintSettingsView @JvmOverloads constructor(
      *
      * @param listener PrintSettingsViewInterface listener
      */
-    fun setValueChangedListener(listener: PrintSettingsViewInterface?) {
+    fun setValueChangedListener(listener: PrintSettingsViewInterface) {
         _listener = listener
     }
 
@@ -1041,8 +1042,7 @@ class PrintSettingsView @JvmOverloads constructor(
         }
         val title =
             createTitle(titleText, true, drawable.selector_printsettings_collapsible,
-                showBackButton = false,
-                showDisclosure = false
+                showBackButton = false
             )
         title.id = R.id.view_id_collapse_container
         title.setTag(ID_COLLAPSE_TARGET_GROUP, itemsGroup)
@@ -1064,9 +1064,6 @@ class PrintSettingsView @JvmOverloads constructor(
      * @brief Create the Print Setting Controls
      */
     private fun initializePrintSettingsControls() {
-        if (_printSettings == null) {
-            return
-        }
         _printSettingsTitles = ArrayList()
         if (PrintSettings.sGroupListMap!![_printSettings!!.settingMapKey] != null) {
             for (group in PrintSettings.sGroupListMap!![_printSettings!!.settingMapKey]!!) {
@@ -1149,8 +1146,7 @@ class PrintSettingsView @JvmOverloads constructor(
         titleText = resources.getString(string.ids_lbl_authentication)
         val title =
             createTitle(titleText, true, drawable.selector_printsettings_collapsible,
-                showBackButton = false,
-                showDisclosure = false
+                showBackButton = false
             )
         title.id = R.id.view_id_collapse_container
         title.setTag(ID_COLLAPSE_TARGET_GROUP, itemsGroup)
@@ -1332,8 +1328,7 @@ class PrintSettingsView @JvmOverloads constructor(
      */
     private fun addSubviewOptionsTitle(str: String, showIcon: Boolean, iconId: Int) {
         val title = createTitle(str, showIcon, iconId,
-            showBackButton = true,
-            showDisclosure = false
+            showBackButton = true
         )
         title.id = R.id.view_id_hide_subview_container
         title.setOnClickListener(this)
@@ -1350,24 +1345,22 @@ class PrintSettingsView @JvmOverloads constructor(
         if (v.tag.toString() == KEY_TAG_PRINTER) {
             val title = resources.getString(string.ids_lbl_printers)
             addSubviewOptionsTitle(title, false, -1)
-            if (_printersList != null) {
-                for (i in _printersList!!.indices) {
-                    val printer = _printersList!![i]
-                    val showSeparator = i != _printersList!!.size - 1
-                    var printerName = printer!!.name
-                    if (printerName == null || printerName.isEmpty()) {
-                        printerName = context.resources.getString(string.ids_lbl_no_name)
-                    }
-                    addSubviewOptionsList(
-                        printerName,
-                        printer.ipAddress,
-                        _printerId,
-                        printer.id,
-                        showSeparator,
-                        R.id.view_id_subview_printer_item,
-                        drawable.img_btn_printer_status_offline
-                    )
+            for (i in _printersList!!.indices) {
+                val printer = _printersList!![i]
+                val showSeparator = i != _printersList!!.size - 1
+                var printerName = printer!!.name
+                if (printerName!!.isEmpty()) {
+                    printerName = context.resources.getString(string.ids_lbl_no_name)
                 }
+                addSubviewOptionsList(
+                    printerName,
+                    printer.ipAddress,
+                    _printerId,
+                    printer.id,
+                    showSeparator,
+                    R.id.view_id_subview_printer_item,
+                    drawable.img_btn_printer_status_offline
+                )
             }
         } else {
             _subView!!.setTag(ID_TAG_TEXT, v.getTag(ID_TAG_TEXT))
@@ -1492,10 +1485,7 @@ class PrintSettingsView @JvmOverloads constructor(
                 return
             }
             if (updateValue(_subView!!.tag as String, id)) {
-                if (_listener != null) {
-                    _listener!!.onPrintSettingsValueChanged(_printSettings)
-                }
-
+                _listener.onPrintSettingsValueChanged(_printSettings)
                 // Update UI
                 updateDisplayedValue(_subView!!.tag as String)
                 val options = _subView!!.getTag(ID_TAG_SUB_OPTIONS) as Array<*>
@@ -1519,10 +1509,8 @@ class PrintSettingsView @JvmOverloads constructor(
                     )
                 )
                 setPrinterId(id)
-                if (_listener != null) {
-                    _listener!!.onPrinterIdSelectedChanged(_printerId)
-                    _listener!!.onPrintSettingsValueChanged(_printSettings)
-                }
+                _listener.onPrinterIdSelectedChanged(_printerId)
+                _listener.onPrintSettingsValueChanged(_printSettings)
                 for (i in _printersList!!.indices) {
                     val printer = _printersList!![i]
                     val view = _subView!!.findViewWithTag<View>(printer!!.id)
@@ -1537,9 +1525,7 @@ class PrintSettingsView @JvmOverloads constructor(
      * @brief Execute Print
      */
     private fun executePrint() {
-        if (_listener != null) {
-            _listener!!.onPrint(getPrinterFromList(_printerId), _printSettings)
-        }
+        _listener.onPrint(getPrinterFromList(_printerId), _printSettings)
     }
     // ================================================================================
     // Convenience methods
@@ -1551,14 +1537,12 @@ class PrintSettingsView @JvmOverloads constructor(
      * @param showIcon Show icon
      * @param iconId Icon resource ID
      * @param showBackButton Show back button
-     * @param showDisclosure Show Disclosure
      */
     private fun createTitle(
         text: String,
         showIcon: Boolean,
         iconId: Int,
-        showBackButton: Boolean,
-        showDisclosure: Boolean
+        showBackButton: Boolean
     ): LinearLayout {
         val li = LayoutInflater.from(context)
         val title = li.inflate(R.layout.printsettings_container_title, null) as LinearLayout
@@ -1578,10 +1562,6 @@ class PrintSettingsView @JvmOverloads constructor(
         }
         imgView = title.findViewById(R.id.returnButtonIndicator)
         if (showBackButton) {
-            imgView.visibility = VISIBLE
-        }
-        imgView = title.findViewById(R.id.disclosureView)
-        if (showDisclosure) {
             imgView.visibility = VISIBLE
         }
         return title
@@ -2026,9 +2006,7 @@ class PrintSettingsView @JvmOverloads constructor(
             return
         }
         if (updateValue(buttonView.tag.toString(), if (isChecked) 1 else 0)) {
-            if (_listener != null) {
-                _listener!!.onPrintSettingsValueChanged(_printSettings)
-            }
+            _listener.onPrintSettingsValueChanged(_printSettings)
         } // else {
         // cancel onCheckedChanged?
         // }
@@ -2109,9 +2087,7 @@ class PrintSettingsView @JvmOverloads constructor(
                 } catch (nfe: NumberFormatException) {
                 }
                 if (updateValue(_tag, value)) {
-                    if (_listener != null) {
-                        _listener!!.onPrintSettingsValueChanged(_printSettings)
-                    }
+                    _listener.onPrintSettingsValueChanged(_printSettings)
                 }
                 _editing = false
             }

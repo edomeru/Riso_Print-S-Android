@@ -142,7 +142,7 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
         selectPrinterPrintSettings(TEST_PRINTER_CEREZONA)
 
         testClickAndWait(R.id.view_id_print_header)
-        waitForPrint(30)
+        waitForPrint()
 
         // Hide confirmation dialog after printing
         pressBack()
