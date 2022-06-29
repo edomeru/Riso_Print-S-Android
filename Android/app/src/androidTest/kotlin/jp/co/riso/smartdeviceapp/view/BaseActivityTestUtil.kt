@@ -3,6 +3,7 @@ package jp.co.riso.smartdeviceapp.view
 import android.app.AlertDialog
 import android.app.Instrumentation
 import android.content.ClipData
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -15,14 +16,20 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.PerformException
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.util.HumanReadables
+import androidx.test.espresso.util.TreeIterables
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage.RESUMED
@@ -31,9 +38,9 @@ import androidx.test.uiautomator.UiSelector
 import com.scanlibrary.ScanActivity
 import com.scanlibrary.ScanConstants
 import jp.co.riso.android.dialog.ConfirmDialogFragment
-import jp.co.riso.android.dialog.InfoDialogFragment
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.common.SNMPManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment
@@ -49,6 +56,7 @@ import org.junit.Before
 import org.junit.Rule
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicReference
 
 open class BaseActivityTestUtil {
@@ -66,6 +74,10 @@ open class BaseActivityTestUtil {
         val activityRef = AtomicReference<MainActivity>()
         testRule.scenario.onActivity { newValue: MainActivity -> activityRef.set(newValue) }
         mainActivity = activityRef.get()
+
+        if(!_isLicenseAgreementDone) {
+            agreeLicenseAgreement(true)
+        }
     }
 
     @After
@@ -132,7 +144,9 @@ open class BaseActivityTestUtil {
 
     fun switchOrientation() {
         mainActivity!!.requestedOrientation = if (
-            mainActivity!!.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+            mainActivity!!.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT ||
+            mainActivity!!.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+            mainActivity!!.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
         ) {
             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         } else {
@@ -147,7 +161,7 @@ open class BaseActivityTestUtil {
                     allOf(withId(id)),
                     position
                 ),
-                ViewMatchers.isDisplayed()
+                isDisplayed()
             )
         )
     }
@@ -159,7 +173,7 @@ open class BaseActivityTestUtil {
                     matcher,
                     position
                 ),
-                ViewMatchers.isDisplayed()
+                isDisplayed()
             )
         )
     }
@@ -190,7 +204,7 @@ open class BaseActivityTestUtil {
     fun getUriFromPath(filename: String): Uri {
         return Uri.fromFile(File(getPath(filename)))
     }
-    
+
     private fun getPath(filename: String): String {
         val f = File(mainActivity!!.cacheDir.toString() + "/" + filename)
         val assetManager = getInstrumentation().context.assets
@@ -289,6 +303,8 @@ open class BaseActivityTestUtil {
         intent.flags =
             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
         mainActivity!!.startActivity(intent)
+        waitForAnimation()
+        updateMainActivity()
     }
 
     fun loadFileUsingOpenIn(clipData: ClipData) {
@@ -298,6 +314,8 @@ open class BaseActivityTestUtil {
         intent.flags =
             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
         mainActivity!!.startActivity(intent)
+        waitForAnimation()
+        updateMainActivity()
     }
 
     open fun updateMainActivity() {
@@ -390,6 +408,62 @@ open class BaseActivityTestUtil {
         )
     }
 
+    private val _isLicenseAgreementDone: Boolean
+        get() = mainActivity!!.getSharedPreferences("licenseAgreementPrefs", Context.MODE_PRIVATE)
+            .getBoolean("licenseAgreementDone", false)
+
+    private fun agreeLicenseAgreement(agree: Boolean) {
+        val preferences = mainActivity!!.getSharedPreferences("licenseAgreementPrefs", Context.MODE_PRIVATE)
+        if (agree) {
+            preferences.edit().putBoolean("licenseAgreementDone", true).apply()
+        } else {
+            preferences.edit().clear().apply()
+        }
+    }
+
+    fun waitForView(viewId: Int, timeout: Float): ViewAction {
+        return object : ViewAction {
+            override fun getConstraints(): Matcher<View> {
+                return isRoot()
+            }
+
+            override fun getDescription(): String {
+                return "wait for a specific view with id $viewId; during $timeout millis."
+            }
+
+            override fun perform(uiController: UiController, rootView: View) {
+                uiController.loopMainThreadUntilIdle()
+                val startTime = System.currentTimeMillis()
+                val endTime = startTime + timeout
+                val viewMatcher = allOf(withId(viewId), isCompletelyDisplayed())
+
+                do {
+                    // Iterate through all views on the screen and see if the view we are looking for is there already
+                    for (child in TreeIterables.breadthFirstViewTraversal(rootView)) {
+                        // found view with required ID
+                        if (viewMatcher.matches(child)) {
+                            return
+                        }
+                    }
+                    // Loops the main thread for a specified period of time.
+                    // Control may not return immediately, instead it'll return after the provided delay has passed and the queue is in an idle state again.
+                    uiController.loopMainThreadForAtLeast(100)
+                } while (System.currentTimeMillis() < endTime) // in case of a timeout we throw an exception -> test fails
+                throw PerformException.Builder()
+                    .withCause(TimeoutException())
+                    .withActionDescription(this.description)
+                    .withViewDescription(HumanReadables.describe(rootView))
+                    .build()
+            }
+        }
+    }
+
+    fun getId(id: String): Int {
+        val targetContext: Context = SmartDeviceApp.appContext!!
+        val packageName = targetContext.packageName
+        return targetContext.resources.getIdentifier(id, "id", packageName)
+    }
+
     companion object {
         const val DOC_PDF = "PDF-squarish.pdf"
         const val DOC_PDF_4PAGES = "4pages_Landscape_TestData.pdf"
@@ -409,9 +483,12 @@ open class BaseActivityTestUtil {
         val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.0.41") // update with online printer details
         val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.2")
         val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.3")
-        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.4")
-        val TEST_PRINTER_GL = Printer("RISO CEREZONA S200", "192.168.0.5")
+        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.20")
+        val TEST_PRINTER_GL = Printer("RISO ComColor GL9730", "192.168.0.5")
         val TEST_PRINTER_FW = Printer("RISO ORPHIS FW5230", "192.168.0.6")
+        val TEST_PRINTER_GD = Printer("ORPHIS GD500", "192.168.0.7")
+        val TEST_PRINTER_IS = Printer("RISO IS1000C-J", "192.168.0.8")
+        val TEST_PRINTER_FT = Printer("ComColor FT5430", "192.168.0.9")
 
         const val IMG_JPG = "Universe.jpg"
         const val IMG_JPG_90 = "Universe_rotate90.jpg"
@@ -420,5 +497,7 @@ open class BaseActivityTestUtil {
         const val IMG_HEIC = "autumn.heic"
         const val IMG_PORTRAIT = "Portrait.PNG"
         const val IMG_LANDSCAPE = "Landscape.jpg"
+
+        const val TIMEOUT_WAITFORVIEW = 100000f
     }
 }
