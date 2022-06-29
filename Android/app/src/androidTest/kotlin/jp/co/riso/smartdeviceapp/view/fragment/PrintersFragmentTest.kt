@@ -424,23 +424,24 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
         } else {
             if (!clickMethod) {
                 getViewInteractionFromMatchAtPosition(R.id.btn_delete, index).perform(click())
-
-                val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
-                    KEY_PRINTERS_DIALOG
-                )
-
-                Assert.assertTrue(fragment is DialogFragment)
-                Assert.assertTrue((fragment as DialogFragment).showsDialog)
-
-                val dialog = fragment.dialog as AlertDialog
-
-                val b = dialog.getButton(deleteFlag)
-                mainActivity!!.runOnUiThread { b.callOnClick() }
             } else {
                 val button = mainActivity!!.findViewById<View>(R.id.btn_delete)
                 mainActivity!!.runOnUiThread { button.callOnClick() }
                 mainActivity!!.runOnUiThread { button.callOnClick() }
             }
         }
+
+        val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
+            KEY_PRINTERS_DIALOG
+        )
+
+        Assert.assertTrue(fragment is DialogFragment)
+        Assert.assertTrue((fragment as DialogFragment).showsDialog)
+
+        val dialog = fragment.dialog as AlertDialog
+
+        val b = dialog.getButton(deleteFlag)
+        mainActivity!!.runOnUiThread { b.callOnClick() }
+
     }
 }
