@@ -1,5 +1,6 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
+import android.view.Gravity
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
@@ -48,7 +49,14 @@ class PrinterSearchFragmentTest : BaseActivityTestUtil() {
         }
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         testClickAndWait(R.id.menu_id_action_search_button)
-        val printerSearchFragment = fm.findFragmentById(R.id.mainLayout)
+
+        var layoutId = R.id.mainLayout
+        if (mainActivity!!.isTablet) {
+            Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
+            layoutId = R.id.rightLayout
+        }
+
+        val printerSearchFragment = fm.findFragmentById(layoutId)
         Assert.assertTrue(printerSearchFragment is PrinterSearchFragment)
         _printerSearchFragment = printerSearchFragment as PrinterSearchFragment?
     }

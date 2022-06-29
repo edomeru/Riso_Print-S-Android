@@ -49,7 +49,7 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
 
         _printersList = mutableListOf(
             TEST_PRINTER_ONLINE,
-            TEST_PRINTER_FT,
+            TEST_PRINTER_ONLINE2,
             TEST_PRINTER_CEREZONA
         )
 
@@ -131,7 +131,7 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
         // Hide confirmation dialog after printing
         pressBack()
 
-        selectPrinterPrintSettings(TEST_PRINTER_FT)
+        selectPrinterPrintSettings(TEST_PRINTER_ONLINE2)
 
         testClickAndWait(R.id.view_id_print_header)
         waitForPrint()
@@ -142,7 +142,7 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
         selectPrinterPrintSettings(TEST_PRINTER_CEREZONA)
 
         testClickAndWait(R.id.view_id_print_header)
-        waitForPrint()
+        waitForPrint(30)
 
         // Hide confirmation dialog after printing
         pressBack()

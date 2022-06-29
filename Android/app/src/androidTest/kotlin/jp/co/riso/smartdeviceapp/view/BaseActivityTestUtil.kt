@@ -89,7 +89,7 @@ open class BaseActivityTestUtil {
         /** Use to set default state: permissions are not granted
          *  Not yet working. Clearing of permissions is needed at the end of each test, however, this also clears coverage report generated in app storage
         InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pm reset-permissions")
-        */
+         */
     }
 
     /**
@@ -123,9 +123,9 @@ open class BaseActivityTestUtil {
         }
     }
 
-    fun waitForPrint() {
+    fun waitForPrint(time: Int = 5) {
         getInstrumentation().waitForIdleSync()
-        repeat(5) {
+        repeat(time) {
             waitFewSeconds()
         }
     }
@@ -459,8 +459,8 @@ open class BaseActivityTestUtil {
     }
 
     fun getId(id: String): Int {
-        val targetContext: Context = SmartDeviceApp.appContext!!
-        val packageName = targetContext.packageName
+        val targetContext = getInstrumentation().targetContext
+        val packageName: String = targetContext.packageName
         return targetContext.resources.getIdentifier(id, "id", packageName)
     }
 
@@ -480,15 +480,16 @@ open class BaseActivityTestUtil {
         const val IMG_ERR_FAIL_CONVERSION = "Invalid_JPEG.jpg"
         const val IMG_ERR_UNSUPPORTED = "MARBLES.TIF"
 
-        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.0.41") // update with online printer details
-        val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.2")
-        val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.3")
-        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.20")
+        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.17.23") // update with online printer details
+        val TEST_PRINTER_ONLINE2 = Printer("ORPHIS FW5230", "192.168.1.76")
+        val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.3")
+        val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.9")
+        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.4")
         val TEST_PRINTER_GL = Printer("RISO ComColor GL9730", "192.168.0.5")
         val TEST_PRINTER_FW = Printer("RISO ORPHIS FW5230", "192.168.0.6")
         val TEST_PRINTER_GD = Printer("ORPHIS GD500", "192.168.0.7")
         val TEST_PRINTER_IS = Printer("RISO IS1000C-J", "192.168.0.8")
-        val TEST_PRINTER_FT = Printer("ComColor FT5430", "192.168.0.9")
+        val TEST_PRINTER_FT = Printer("ORPHIS FW5230", "192.168.1.76")
 
         const val IMG_JPG = "Universe.jpg"
         const val IMG_JPG_90 = "Universe_rotate90.jpg"
