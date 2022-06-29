@@ -59,7 +59,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _printerName = view.findViewById(R.id.inputPrinterName)
-        _ipAddress = view.findViewById(R.id.inputtedIpAddress)
+        _ipAddress = view.findViewById(R.id.infoIpAddress)
         _port = view.findViewById(R.id.inputPort)
         _port?.onItemSelectedListener = this
         _defaultPrinter = view.findViewById(R.id.defaultPrinter)

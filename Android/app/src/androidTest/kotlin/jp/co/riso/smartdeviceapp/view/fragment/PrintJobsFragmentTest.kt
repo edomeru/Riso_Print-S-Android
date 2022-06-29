@@ -83,6 +83,8 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
         // Go back to print jobs view
         pressBack()
         switchScreen(MenuFragment.STATE_PRINTJOBS)
+
+        waitForAnimation()
     }
 
     private fun prepareMultiplePrintJobs() {
@@ -105,6 +107,8 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
         // Go back to print jobs view
         pressBack()
         switchScreen(MenuFragment.STATE_PRINTJOBS)
+
+        waitForAnimation()
     }
 
     private fun prepareMultiplePrinters() {
@@ -146,6 +150,8 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
         // Go back to print jobs view
         pressBack()
         switchScreen(MenuFragment.STATE_PRINTJOBS)
+
+        waitForAnimation()
     }
 
     private fun selectPrinterPrintSettings(printer: Printer) {

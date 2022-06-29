@@ -596,7 +596,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         const val MSG_ADD_NEW_PRINTER = 0x1
         const val MSG_SUBMENU_BUTTON = 0x2
         const val MSG_PRINTSETTINGS_BUTTON = 0x3
-        private const val KEY_PRINTERS_DIALOG = "printers_dialog"
+        const val KEY_PRINTERS_DIALOG = "printers_dialog"
         private const val MSG_POPULATE_PRINTERS_LIST = 0x0
     }
 

@@ -7,11 +7,12 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/printerItem"
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
         android:background="@drawable/selector_printers_container"
         android:duplicateParentState="true"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/img_onOff"
@@ -31,11 +32,11 @@
             android:layout_marginRight="@dimen/printers_row_right_icon_size"
             android:layout_weight="1"
             android:duplicateParentState="true"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
-                style="@style/EllipsizeText"
                 android:id="@+id/txt_printerName"
+                style="@style/EllipsizeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:duplicateParentState="true"
@@ -43,8 +44,8 @@
                 android:textColor="@color/selector_printers_text" />
 
             <TextView
-                style="@style/EllipsizeText"
                 android:id="@+id/txt_ipAddress"
+                style="@style/EllipsizeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:duplicateParentState="true"
@@ -53,7 +54,7 @@
                 android:textSize="@dimen/font_size_small" />
 
         </LinearLayout>
-        
+
         <ImageView
             android:id="@+id/img_disclosure"
             android:layout_width="@dimen/printers_row_right_icon_size"
@@ -63,16 +64,16 @@
             android:duplicateParentState="true"
             android:paddingRight="@dimen/printers_row_right_padding"
             android:src="@drawable/img_btn_submenu" />
-                        
+
         <Button
             android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|right"
-            android:layout_marginBottom="@dimen/printjob_delbtn_margin"
             android:layout_marginLeft="@dimen/printjob_delbtn_margin"
-            android:layout_marginRight="@dimen/printers_delbtn_right_margin"
             android:layout_marginTop="@dimen/printjob_delbtn_margin"
+            android:layout_marginRight="@dimen/printers_delbtn_right_margin"
+            android:layout_marginBottom="@dimen/printjob_delbtn_margin"
             android:background="@drawable/selector_jobs_deletebutton"
             android:gravity="center"
             android:paddingLeft="@dimen/printjob_delbtn_padding_side"

@@ -405,7 +405,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         viewHolder.printerName = pView.findViewById(R.id.txt_printerName)
         viewHolder.deleteButton = pView.findViewById(R.id.btn_delete)
         viewHolder.onlineIndicator = pView.findViewById(R.id.img_onOff)
-        viewHolder.ipAddress = pView.findViewById(R.id.inputtedIpAddress)
+        viewHolder.ipAddress = pView.findViewById(R.id.infoIpAddress)
         viewHolder.printSettings = pView.findViewById(R.id.default_print_settings)
         viewHolder.port = pView.findViewById(R.id.input_port)
         viewHolder.defaultPrinter = pView.findViewById(R.id.default_printer_spinner)
