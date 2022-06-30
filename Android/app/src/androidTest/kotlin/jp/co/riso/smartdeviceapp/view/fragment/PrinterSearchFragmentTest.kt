@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.View
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
@@ -19,13 +20,9 @@ import org.junit.Test
 
 class PrinterSearchFragmentTest : BaseActivityTestUtil() {
     private var _printerSearchFragment: PrinterSearchFragment? = null
-    private var _printerManager: PrinterManager? = null
-    private var _existingPrinter: Printer? = null
-    private var _newPrinter: Printer? = null
 
     @Before
     fun setup() {
-        initPrinter()
         initPrinterSearchFragment()
     }
 
@@ -33,17 +30,6 @@ class PrinterSearchFragmentTest : BaseActivityTestUtil() {
     fun cleanUp() {
         clearPrintersList()
         _printerSearchFragment = null
-        _printerManager = null
-        _existingPrinter = null
-        _newPrinter = null
-    }
-
-    private fun initPrinter() {
-        _printerManager = PrinterManager.getInstance(mainActivity!!)
-        _existingPrinter = TEST_PRINTER_ONLINE2
-        if (!_printerManager!!.isExists(_existingPrinter)) {
-            _printerManager!!.savePrinterToDB(_existingPrinter, true)
-        }
     }
 
     private fun initPrinterSearchFragment() {
@@ -139,11 +125,14 @@ class PrinterSearchFragmentTest : BaseActivityTestUtil() {
         waitForAnimation()
 
         // New IP address
-        testClickAndWait(R.id.addPrinterButton)
+        getViewInteractionFromMatchAtPosition(
+            R.id.printerSearchItem, 0
+        ).perform(click())
+        waitForAnimation()
 
         checkDialog(
-            AddPrinterFragment.KEY_ADD_PRINTER_DIALOG,
-            R.string.ids_err_msg_cannot_add_printer
+            PrinterSearchFragment.KEY_SEARCHED_PRINTER_DIALOG,
+            R.string.ids_info_msg_printer_add_successful
         )
 
         pressBack()
@@ -154,7 +143,9 @@ class PrinterSearchFragmentTest : BaseActivityTestUtil() {
         waitForAnimation()
 
         // try to click existing printer
-        testClickAndWait(R.id.addPrinterButton)
+        getViewInteractionFromMatchAtPosition(
+            R.id.printerSearchItem, 0
+        ).perform(click())
     }
 
     @Test
@@ -163,11 +154,14 @@ class PrinterSearchFragmentTest : BaseActivityTestUtil() {
         waitForAnimation()
 
         // New IP address
-        testClickAndWait(R.id.addPrinterButton)
+        getViewInteractionFromMatchAtPosition(
+            R.id.printerSearchItem, 0
+        ).perform(click())
+        waitForAnimation()
 
         checkDialog(
-            AddPrinterFragment.KEY_ADD_PRINTER_DIALOG,
-            R.string.ids_err_msg_cannot_add_printer
+            PrinterSearchFragment.KEY_SEARCHED_PRINTER_DIALOG,
+            R.string.ids_info_msg_printer_add_successful
         )
     }
 }

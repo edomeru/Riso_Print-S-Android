@@ -309,8 +309,8 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
 
     companion object {
         const val KEY_PRINTER_ERR_DIALOG = "printer_err_dialog"
+        const val KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog"
         private const val KEY_SEARCHED_PRINTER_LIST = "searched_printer_list"
-        private const val KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog"
         private const val MSG_UPDATE_REFRESH_BAR = 0x0
     }
 }
