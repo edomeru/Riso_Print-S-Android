@@ -484,16 +484,16 @@ open class BaseActivityTestUtil {
         const val IMG_ERR_FAIL_CONVERSION = "Invalid_JPEG.jpg"
         const val IMG_ERR_UNSUPPORTED = "MARBLES.TIF"
 
-        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.17.23") // update with online printer details
-        val TEST_PRINTER_ONLINE2 = Printer("ORPHIS FW5230", "192.168.1.76")
-        val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.3")
-        val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.9")
-        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.4")
-        val TEST_PRINTER_GL = Printer("RISO ComColor GL9730", "192.168.0.5")
-        val TEST_PRINTER_FW = Printer("RISO ORPHIS FW5230", "192.168.0.6")
-        val TEST_PRINTER_GD = Printer("ORPHIS GD500", "192.168.0.7")
-        val TEST_PRINTER_IS = Printer("RISO IS1000C-J", "192.168.0.8")
-        val TEST_PRINTER_FT = Printer("ComColor FT5430", "192.168.0.9")
+        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.0.41") // update with online printer details
+        val TEST_PRINTER_ONLINE2 = Printer("ORPHIS FW5230", "192.168.0.71") // update with online printer details
+        val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.02")
+        val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.03")
+        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.04")
+        val TEST_PRINTER_GL = Printer("RISO ComColor GL9730", "192.168.0.05")
+        val TEST_PRINTER_FW = Printer("RISO ORPHIS FW5230", "192.168.0.06")
+        val TEST_PRINTER_GD = Printer("ORPHIS GD500", "192.168.0.07")
+        val TEST_PRINTER_IS = Printer("RISO IS1000C-J", "192.168.0.08")
+        val TEST_PRINTER_FT = Printer("ComColor FT5430", "192.168.0.09")
 	
         val TEST_PRINTER_MODELS = listOf(
             TEST_PRINTER_IS,
@@ -502,6 +502,8 @@ open class BaseActivityTestUtil {
             TEST_PRINTER_FT,
             TEST_PRINTER_GL,
             TEST_PRINTER_CEREZONA)
+
+        const val TEST_IPV6_ONLINE_PRINTER_ADDRESS = "fe80::a00:27ff:fe22:44a2"
 
         const val IMG_JPG = "Universe.jpg"
         const val IMG_JPG_90 = "Universe_rotate90.jpg"
