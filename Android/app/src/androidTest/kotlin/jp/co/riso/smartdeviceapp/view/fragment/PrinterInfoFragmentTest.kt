@@ -1,5 +1,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
+import android.view.Gravity
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.intent.Intents
@@ -19,7 +21,7 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
     private var _printersFragment: PrintersFragment? = null
     private var _printerInfoFragment: PrinterInfoFragment? = null
     private var _printerManager: PrinterManager? = null
-    private var _printer: Printer? = null
+    private var _printersList: List<Printer?>? = null
 
     @Before
     fun setup() {
@@ -36,15 +38,15 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
         _printersFragment = null
         _printerInfoFragment = null
         _printerManager = null
-        _printer = null
+        _printersList = null
     }
 
     private fun initPrinter() {
         _printerManager = PrinterManager.getInstance(mainActivity!!)
-        _printer = TEST_PRINTER_ONLINE
-        if (!_printerManager!!.isExists(_printer)) {
-            _printerManager!!.savePrinterToDB(_printer, true)
-        }
+        _printersList = mutableListOf(
+            TEST_PRINTER_ONLINE,
+            TEST_PRINTER_ONLINE2
+        )
     }
 
     private fun initFragment() {
@@ -55,13 +57,15 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
             fm.executePendingTransactions()
         }
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        addPrinter(_printersList)
 
         // for phone devices
         if (!mainActivity!!.isTablet) {
             getViewInteractionFromMatchAtPosition(
-                ViewMatchers.withText(_printer!!.ipAddress), 0
+                R.id.printerItem, 0
             ).perform(ViewActions.click())
             waitForAnimation()
+
             val printerInfoFragment = fm.findFragmentById(R.id.mainLayout)
             Assert.assertTrue(printerInfoFragment is PrinterInfoFragment)
             _printerInfoFragment = printerInfoFragment as PrinterInfoFragment?
@@ -99,7 +103,13 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testClickDefaultPrintSettingsButton() {
-        testClickAndWait(R.id.menu_id_action_print_settings_button)
-        pressBack()
+        if (!mainActivity!!.isTablet) {
+            testClickAndWait(R.id.menu_id_action_print_settings_button)
+            pressBack()
+        } else {
+            getViewInteractionFromMatchAtPosition(R.id.default_print_settings, 0).perform(
+                ViewActions.click()
+            )
+        }
     }
 }

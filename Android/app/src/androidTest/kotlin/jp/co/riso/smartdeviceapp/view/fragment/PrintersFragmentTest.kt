@@ -185,7 +185,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
     fun testSelectPrinter() {
         // Only applies to phone devices
         if (!_printersFragment!!.isTablet) {
-            addPrinter()
+            addPrinter(_printersList)
 
             getViewInteractionFromMatchAtPosition(
                 withId(R.id.printerItem),
@@ -205,7 +205,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
     fun testClickDefaultPrinterSettings() {
         // Only applies to tablet devices
         if (_printersFragment!!.isTablet) {
-            addPrinter()
+            addPrinter(_printersList)
 
             getViewInteractionFromMatchAtPosition(
                 withId(R.id.default_print_settings),
@@ -233,7 +233,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testSaveInstanceStateWithPrinters() {
-        addPrinter()
+        addPrinter(_printersList)
 
         val intent = Intent(mainActivity, PDFHandlerActivity::class.java)
         intent.action = Intent.ACTION_VIEW
@@ -245,13 +245,13 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testAddPrinterThenDelete() {
-        addPrinter()
+        addPrinter(_printersList)
         deletePrinter(OK_DELETE)
     }
 
     @Test
     fun testAddPrinterThenCancelDelete() {
-        addPrinter()
+        addPrinter(_printersList)
         deletePrinter(CANCEL_DELETE)
     }
 
@@ -264,7 +264,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testDeletePrinterStartingRow() {
-        addPrinter(2)
+        addPrinter(_printersList, 2)
 
         deletePrinter(OK_DELETE)
         waitForAnimation()
@@ -275,7 +275,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testDeletePrinterEndRow() {
-        addPrinter(2)
+        addPrinter(_printersList, 2)
 
         deletePrinter(OK_DELETE, 1)
         waitForAnimation()
@@ -288,7 +288,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
     fun testSwipeMultiplePrinters() {
         // Only applies to phone devices
         if (!_printersFragment!!.isTablet) {
-            addPrinter(2)
+            addPrinter(_printersList, 2)
 
             // swipe a printer
             getViewInteractionFromMatchAtPosition(
@@ -314,7 +314,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
     fun testReSwipePrintJob() {
         // Only applies to phone devices
         if (!_printersFragment!!.isTablet) {
-            addPrinter()
+            addPrinter(_printersList)
 
             // swipe a printer
             getViewInteractionFromMatchAtPosition(
@@ -334,7 +334,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
     fun testHideDeleteButton() {
         // Only applies to phone devices
         if (!_printersFragment!!.isTablet) {
-            addPrinter(2)
+            addPrinter(_printersList, 2)
 
             // swipe a printer
             getViewInteractionFromMatchAtPosition(
@@ -385,31 +385,6 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
         // Open Printer Search Screen
         testClickAndWait(R.id.menu_id_action_search_button)
         pressBack()
-    }
-
-    private fun addPrinter(num: Int = 1) {
-        var index = num
-
-        while (index > 0) {
-            testClickAndWait(R.id.menu_id_action_add_button)
-            var layoutId = R.id.mainLayout
-            if (_printersFragment!!.isTablet) {
-                Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
-                layoutId = R.id.rightLayout
-            }
-            val fm = mainActivity!!.supportFragmentManager
-            val addPrinterFragment = fm.findFragmentById(layoutId)
-            Assert.assertTrue(addPrinterFragment is AddPrinterFragment)
-
-            // Add a printer
-            onView(withId(R.id.inputIpAddress))
-                .perform(typeText(_printersList!![index - 1]!!.ipAddress))
-            testClickAndWait(R.id.img_save_button)
-            pressBack()
-            waitForAnimation()
-
-            index--
-        }
     }
 
     private fun deletePrinter(deleteFlag: Int, index: Int = 0, clickMethod: Boolean = false) {
