@@ -461,6 +461,16 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         }
     }
 
+    @Test
+    fun testOnEndDiscovery_NullCallback() {
+        try {
+            _printerManager!!.setPrinterSearchCallback(null)
+            _printerManager!!.onEndDiscovery(SNMPManager(), -1)
+        } catch (e: NullPointerException) {
+            TestCase.fail() // Error should not be thrown
+        }
+    }
+
     // ================================================================================
     // Tests - onFoundDevice
     // ================================================================================
@@ -538,6 +548,29 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         }
     }
 
+    @Test
+    fun testOnFoundDevice_NullCallback() {
+        try {
+            _printerManager!!.setPrinterSearchCallback(null)
+        } catch (e: NullPointerException) {
+            TestCase.fail() // Error should not be thrown
+        }
+
+        try {
+            // Trigger Printer Search
+            _printerManager!!.startPrinterSearch()
+            _printerManager!!.onFoundDevice(
+                SNMPManager(),
+                IPV4_ONLINE_PRINTER_ADDRESS,
+                "testOnFoundDevice_ValidParameters",
+                BooleanArray(10)
+            )
+            _signal.await(_timeout.toLong(), TimeUnit.SECONDS)
+        } catch (e: Exception) {
+            TestCase.fail() // Error should not be thrown
+        }
+    }
+
     // ================================================================================
     // Tests - removePrinter
     // ================================================================================
@@ -563,6 +596,36 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             TestCase.assertEquals(true, ret)
             ret = _printerManager!!.removePrinter(printer)
             TestCase.assertEquals(false, ret)
+        } catch (e: Exception) {
+            TestCase.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testRemovePrinter_MultiplePrintersExists() {
+        try {
+            initialize()
+
+            var printers: List<Printer?>? = null
+            printers = mutableListOf(
+                Printer("Printer1", IPV4_ONLINE_PRINTER_ADDRESS),
+                Printer("Printer2", IPV4_OFFLINE_PRINTER_ADDRESS)
+            )
+
+            for ((index, printer) in printers.withIndex()) {
+                if (!_printerManager!!.isExists(printer)) {
+                    _printerManager!!.savePrinterToDB(printer, true)
+                }
+                for (printerItem in _printersList!!) {
+                    if (printerItem!!.ipAddress.contentEquals(printers[index].ipAddress)) {
+                        printers!![index]!!.id = printerItem.id
+                        break
+                    }
+                }
+            }
+
+            var ret: Boolean = _printerManager!!.removePrinter(printers[0])
+            TestCase.assertEquals(true, ret)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
         }
@@ -652,6 +715,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             printer.config!!.isTrayFaceDownAvailable = true
             printer.config!!.isTrayTopAvailable = true
             printer.config!!.isTrayStackAvailable = true
+            printer.config!!.isExternalFeederAvailable = true
+            printer.config!!.isPunch0Available = true
             val ret = _printerManager!!.savePrinterToDB(printer, true)
             TestCase.assertEquals(true, ret)
 
@@ -665,6 +730,47 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             printer.config!!.isTrayFaceDownAvailable = false
             printer.config!!.isTrayTopAvailable = false
             printer.config!!.isTrayStackAvailable = false
+            printer.config!!.isExternalFeederAvailable = false
+            printer.config!!.isPunch0Available = false
+            _printerManager!!.removePrinter(printer)
+        } catch (e: Exception) {
+            TestCase.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testSavePrinterToDB_DisabledCapabilities() {
+        try {
+            var printer: Printer? = Printer(
+                "testSavePrinterToDB_ValidPrinter",
+                IPV4_OFFLINE_PRINTER_ADDRESS
+            )
+            for (savedPrinter in _printerManager!!.savedPrintersList) {
+                if (printer!!.ipAddress == savedPrinter!!.ipAddress) {
+                    printer = savedPrinter
+                    break
+                }
+            }
+            _printerManager!!.removePrinter(printer)
+            if (_printerManager!!.printerCount == AppConstants.CONST_MAX_PRINTER_COUNT) {
+                _printerManager!!.removePrinter(_printerManager!!.savedPrintersList[0])
+            }
+
+            //Disabled Capabilities
+            printer!!.config!!.isLprAvailable = false
+            printer.config!!.isRawAvailable = false
+            printer.config!!.isBookletFinishingAvailable = false
+            printer.config!!.isStaplerAvailable = false
+            printer.config!!.isPunch3Available = true
+            printer.config!!.isPunch4Available = false
+            printer.config!!.isTrayFaceDownAvailable = false
+            printer.config!!.isTrayTopAvailable = false
+            printer.config!!.isTrayStackAvailable = false
+            printer.config!!.isExternalFeederAvailable = false
+            printer.config!!.isPunch0Available = false
+            val ret = _printerManager!!.savePrinterToDB(printer, true)
+            TestCase.assertEquals(true, ret)
+
             _printerManager!!.removePrinter(printer)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
@@ -868,7 +974,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
 
             // Ipv6 Address
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                ipv6Addr = "fe80::a00:27ff:fedd:19f3"
+                ipv6Addr = "fe80::a00:27ff:fe93:795d"
                    // localIpv6Address // If test fails, comment out this line to use actual ipv6
             }
             TestCase.assertNotNull(ipv6Addr)

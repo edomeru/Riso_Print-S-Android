@@ -1,6 +1,7 @@
 package jp.co.riso.smartdeviceapp.common
 
 import jp.co.riso.smartdeviceapp.common.JniUtils.validateIp
+import jp.co.riso.smartdeviceapp.common.JniUtils.validateIpAddress
 import junit.framework.TestCase
 
 class JniUtilsTest(name: String?) : TestCase(name) {
@@ -122,6 +123,14 @@ class JniUtilsTest(name: String?) : TestCase(name) {
         var ipAddress: String?
         for (ip_invalid_address in IP_INVALID_ADDRESS) {
             ipAddress = validateIp(ip_invalid_address)
+            assertNull(ipAddress)
+        }
+    }
+
+    fun testValidateIpAddress() {
+        var ipAddress: String?
+        for (i in IPv4_VALID_ADDRESS.indices) {
+            ipAddress = validateIpAddress(null)
             assertNull(ipAddress)
         }
     }

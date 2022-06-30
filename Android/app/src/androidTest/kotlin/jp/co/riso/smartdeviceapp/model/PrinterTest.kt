@@ -31,6 +31,11 @@ class PrinterTest(name: String?) : TestCase(name) {
         assertNotNull(printer)
     }
 
+    fun testConstructor_NullName() {
+        val printer = Printer(null, PRINTER_ADDRESS)
+        assertNotNull(printer)
+    }
+
     fun testConstructor_Parcel() {
         val printer = Printer(PRINTER_NAME, PRINTER_ADDRESS)
         val printerArray = arrayOfNulls<Printer>(2)
@@ -295,7 +300,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // ================================================================================
     // Tests - Config
     // ================================================================================
-    fun testConfig() {
+    fun testGetConfigParams() {
         val printer = Printer("", "")
         printer.config!!.isLprAvailable
         printer.config!!.isRawAvailable
@@ -309,5 +314,68 @@ class PrinterTest(name: String?) : TestCase(name) {
         printer.config!!.isTrayTopAvailable
         printer.config!!.isExternalFeederAvailable
         printer.config!!.isPunch0Available
+    }
+
+    fun testSetConfigParams() {
+        val printer = Printer("", "")
+        printer.config!!.isLprAvailable = true
+        printer.config!!.isRawAvailable = true
+        printer.config!!.isBookletFinishingAvailable = true
+        printer.config!!.isStaplerAvailable = true
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = true
+        printer.config!!.isTrayFaceDownAvailable = true
+        printer.config!!.isTrayTopAvailable = true
+        printer.config!!.isTrayStackAvailable = true
+        printer.config!!.isTrayTopAvailable = true
+        printer.config!!.isExternalFeederAvailable = true
+        printer.config!!.isPunch0Available = true
+    }
+
+    fun testGetPunchAvailability() {
+        val printer = Printer("", "")
+        printer.config!!.isPunchAvailable
+
+        // isPunch0Available is true
+        printer.config!!.isPunch0Available = true
+        printer.config!!.isPunch3Available = false
+        printer.config!!.isPunch4Available = false
+        printer.config!!.isPunchAvailable
+
+        printer.config!!.isPunch0Available = true
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = false
+        printer.config!!.isPunchAvailable
+
+        printer.config!!.isPunch0Available = true
+        printer.config!!.isPunch3Available = false
+        printer.config!!.isPunch4Available = true
+        printer.config!!.isPunchAvailable
+
+        printer.config!!.isPunch0Available = true
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = true
+        printer.config!!.isPunchAvailable
+
+        // isPunch0Available is false
+        printer.config!!.isPunch0Available = false
+        printer.config!!.isPunch3Available = false
+        printer.config!!.isPunch4Available = false
+        printer.config!!.isPunchAvailable
+
+        printer.config!!.isPunch0Available = false
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = false
+        printer.config!!.isPunchAvailable
+
+        printer.config!!.isPunch0Available = false
+        printer.config!!.isPunch3Available = false
+        printer.config!!.isPunch4Available = true
+        printer.config!!.isPunchAvailable
+
+        printer.config!!.isPunch0Available = false
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = true
+        printer.config!!.isPunchAvailable
     }
 }
