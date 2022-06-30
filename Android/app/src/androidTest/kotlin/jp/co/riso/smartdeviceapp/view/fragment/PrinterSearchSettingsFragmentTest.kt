@@ -19,13 +19,10 @@ import org.junit.Test
 class PrinterSearchSettingsFragmentTest : BaseActivityTestUtil() {
 
     private var _printerSearchSettingsFragment: PrinterSearchSettingsFragment? = null
-    private var _printerManager: PrinterManager? = null
-    private var _existingPrinter: Printer? = null
 
     @Before
     fun setup() {
         Intents.init()
-        initPrinter()
         initPrinterSearchSettingsFragment()
     }
 
@@ -34,16 +31,6 @@ class PrinterSearchSettingsFragmentTest : BaseActivityTestUtil() {
         Intents.release()
         clearPrintersList()
         _printerSearchSettingsFragment = null
-        _printerManager = null
-        _existingPrinter = null
-    }
-
-    private fun initPrinter() {
-        _printerManager = PrinterManager.getInstance(mainActivity!!)
-        _existingPrinter = TEST_PRINTER_ONLINE
-        if (!_printerManager!!.isExists(_existingPrinter)) {
-            _printerManager!!.savePrinterToDB(_existingPrinter, true)
-        }
     }
 
     private fun initPrinterSearchSettingsFragment() {

@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.net.Uri
+import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
@@ -23,6 +24,7 @@ import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -43,6 +45,7 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.SNMPManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
+import jp.co.riso.smartdeviceapp.view.fragment.AddPrinterFragment
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment
 import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment
 import jp.co.riso.smartprint.R
@@ -462,6 +465,35 @@ open class BaseActivityTestUtil {
         }
     }
 
+    fun addPrinter(printersList: List<Printer?>?, num: Int = 1) {
+        var index = num
+
+        for (printers in printersList!!) {
+            if (index == 0) {
+                break
+            }
+
+            testClickAndWait(R.id.menu_id_action_add_button)
+            var layoutId = R.id.mainLayout
+            if (mainActivity!!.isTablet) {
+                Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
+                layoutId = R.id.rightLayout
+            }
+            val fm = mainActivity!!.supportFragmentManager
+            val addPrinterFragment = fm.findFragmentById(layoutId)
+            Assert.assertTrue(addPrinterFragment is AddPrinterFragment)
+
+            // Add a printer
+            onView(withId(R.id.inputIpAddress))
+                .perform(ViewActions.typeText(printers!!.ipAddress))
+            testClickAndWait(R.id.img_save_button)
+            pressBack()
+            waitForAnimation()
+
+            index--
+        }
+    }
+
     fun getId(id: String): Int {
         val targetContext = getInstrumentation().targetContext
         val packageName: String = targetContext.packageName
@@ -484,8 +516,8 @@ open class BaseActivityTestUtil {
         const val IMG_ERR_FAIL_CONVERSION = "Invalid_JPEG.jpg"
         const val IMG_ERR_UNSUPPORTED = "MARBLES.TIF"
 
-        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.0.41") // update with online printer details
-        val TEST_PRINTER_ONLINE2 = Printer("ORPHIS FW5230", "192.168.0.71") // update with online printer details
+        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.17.23") // update with online printer details
+        val TEST_PRINTER_ONLINE2 = Printer("ORPHIS FW5230", "192.168.1.224") // update with online printer details
         val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.02")
         val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.03")
         val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.04")
