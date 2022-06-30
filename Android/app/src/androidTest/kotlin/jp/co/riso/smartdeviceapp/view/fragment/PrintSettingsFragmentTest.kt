@@ -2,6 +2,7 @@ package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
 import android.text.method.PasswordTransformationMethod
+import android.view.Gravity
 import android.view.View
 import android.widget.EditText
 import android.widget.Spinner
@@ -26,6 +27,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTERS
+import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTPREVIEW
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartprint.R
 import junit.framework.AssertionFailedError
@@ -45,7 +47,8 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         get() = SmartDeviceApp.activity!!.findViewById(R.id.printPreviewView)
 
     @get:Rule
-    var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    var storagePermission: GrantPermissionRule =
+        GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     @Before
     fun setup() {
@@ -61,7 +64,6 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         clearPrintersList()
         _printSettingsFragment = null
         _printerManager = null
-        _printersList = null
     }
 
     private fun initFragment() {
@@ -71,6 +73,11 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             fm.executePendingTransactions()
         }
         waitForAnimation()
+
+        switchScreen(STATE_PRINTERS)
+        addPrinter(_printersList)
+
+        switchScreen(STATE_PRINTPREVIEW)
         testClickAndWait(R.id.view_id_print_button)
         val fragment = fm.findFragmentById(R.id.rightLayout)
         Assert.assertTrue(fragment is PrintSettingsFragment)
@@ -78,33 +85,18 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     private fun initPrinters() {
-        _printerManager = PrinterManager.getInstance(mainActivity!!)
-
-        // Add Printers
+        _printerManager = PrinterManager.getInstance(SmartDeviceApp.appContext!!)
         _printersList = mutableListOf(
-            TEST_PRINTER_ONLINE,
-            TEST_PRINTER_OFFLINE
-        ) // Max 10
-
-        for ((index, printer) in _printersList!!.withIndex()) {
-            if (!_printerManager!!.isExists(printer)) {
-                _printerManager!!.savePrinterToDB(printer, true)
-            }
-            for (printerItem in _printerManager!!.savedPrintersList) {
-                if (printerItem!!.ipAddress.contentEquals(_printersList!![index]!!.ipAddress)) {
-                    _printersList!![index]!!.id = printerItem.id
-                    break
-                }
-            }
-        }
+            TEST_PRINTER_ONLINE
+        )
     }
 
     private fun addAndSelectPrinter(printer: Printer) {
-        addPrinter(printer)
+        addTestPrinter(printer)
         selectPrinterPrintSettings(printer)
     }
 
-    private fun addPrinter(printer: Printer) {
+    private fun addTestPrinter(printer: Printer) {
         _printersList!!.add(printer)
         if (!_printerManager!!.isExists(printer)) {
             _printerManager!!.savePrinterToDB(printer, true)
@@ -121,7 +113,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         // hide print settings screen
         pressBack()
         switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_PDF))
+        selectDocument(getUriFromPath(DOC_PDF_4PAGES))
 
         // return to print settings screen
         onView(withId(R.id.view_id_print_button)).perform(click())
@@ -360,11 +352,8 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     fun testSelectPrinter() {
         val selectedPrinter = _printerManager!!.savedPrintersList[0]!!
         val nextPrinter = TEST_PRINTER_OFFLINE
-
-        // Check current printer
+        addTestPrinter(nextPrinter)
         checkSelectedPrinter(selectedPrinter.name, selectedPrinter.ipAddress)
-
-        // Select Printer
         selectPrinterPrintSettings(nextPrinter)
         checkSelectedPrinter(nextPrinter.name, nextPrinter.ipAddress)
     }
@@ -422,7 +411,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             initPreviewAndOpenPrintSettings()
         } else {
             switchScreen(MenuFragment.STATE_HOME)
-            selectDocument(getUriFromPath(DOC_PDF))
+            selectDocument(getUriFromPath(DOC_PDF_4PAGES))
             onView(withId(R.id.view_id_print_button)).perform(click())
         }
 
@@ -451,13 +440,14 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testPrint_Fail() {
+        addTestPrinter(TEST_PRINTER_OFFLINE)
         initPreviewAndOpenPrintSettings()
 
         // select offline printer
         selectPrinterPrintSettings(TEST_PRINTER_OFFLINE)
 
         testClickAndWait(R.id.view_id_print_header)
-        waitForPrint()
+        waitForPrint(30)
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
@@ -1072,7 +1062,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             printer.config!!.isPunch0Available = false // if false, punch is enabled. Refer to definition in Printer.kt
             printer.config!!.isPunch3Available = (printer.name!!.contains("Orphis", true))
             printer.config!!.isPunch4Available = !(printer.name!!.contains("Orphis", true))
-            addPrinter(printer)
+            addTestPrinter(printer)
             selectPrinterPrintSettings(printer)
 
             val punch3or4 = if (printer.name!!.contains("Orphis", true)) {
