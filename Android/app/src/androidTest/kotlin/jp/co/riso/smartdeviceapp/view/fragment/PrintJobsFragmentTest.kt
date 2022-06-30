@@ -69,7 +69,7 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
     // TODO: cleanup
     private fun prepareSinglePrintJob() {
         switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_PDF))
+        selectDocument(getUriFromPath(DOC_PDF_4PAGES))
 
         // return to print settings screen
         onView(withId(R.id.view_id_print_button)).perform(click())
@@ -89,7 +89,7 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
 
     private fun prepareMultiplePrintJobs() {
         switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_PDF))
+        selectDocument(getUriFromPath(DOC_PDF_4PAGES))
 
         // return to print settings screen
         onView(withId(R.id.view_id_print_button)).perform(click())
@@ -113,7 +113,7 @@ class PrintJobsFragmentTest : BaseActivityTestUtil() {
 
     private fun prepareMultiplePrinters() {
         switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_PDF))
+        selectDocument(getUriFromPath(DOC_PDF_4PAGES))
 
         // return to print settings screen
         onView(withId(R.id.view_id_print_button)).perform(click())
