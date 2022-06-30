@@ -76,6 +76,8 @@ class PrinterSearchSettingsFragmentTest : BaseActivityTestUtil() {
     fun testBackButton() {
         if (!_printerSearchSettingsFragment!!.isTablet) {
             testClickAndWait(R.id.menu_id_back_button)
+        } else {
+            pressBack()
         }
     }
 

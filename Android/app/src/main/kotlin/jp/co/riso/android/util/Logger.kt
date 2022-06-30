@@ -311,7 +311,7 @@ object Logger {
      * @return File containing the folder path.
      */
     private fun getFolderString(context: Context?): File? {
-        return context?.getExternalFilesDir("$CONST_LOGS_DIR/$sStringFolder")
+        return context!!.getExternalFilesDir("$CONST_LOGS_DIR/$sStringFolder")
     }
 
     /**
