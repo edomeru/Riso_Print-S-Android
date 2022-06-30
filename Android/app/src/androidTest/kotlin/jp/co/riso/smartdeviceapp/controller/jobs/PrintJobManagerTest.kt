@@ -1,7 +1,7 @@
 package jp.co.riso.smartdeviceapp.controller.jobs
 
 import android.content.ContentValues
-import android.test.RenamingDelegatingContext
+import android.content.Context
 import android.util.Log
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
@@ -18,7 +18,7 @@ import java.util.*
 
 class PrintJobManagerTest {
     private var _sdf: SimpleDateFormat? = null
-    private var _context: RenamingDelegatingContext? = null
+    private var _context: Context? = null
     private var _printJobManager: PrintJobManager? = null
     private var _manager: DatabaseManager? = null
     private var _printerId = -1
@@ -29,7 +29,7 @@ class PrintJobManagerTest {
 
     @Before
     fun setUp() {
-        _context = RenamingDelegatingContext(SmartDeviceApp.appContext, "test_")
+        _context = SmartDeviceApp.appContext
         _sdf = SimpleDateFormat(C_SQL_DATEFORMAT, Locale.getDefault())
         _sdf!!.timeZone = TimeZone.getTimeZone(C_TIMEZONE)
         _printJobManager = getInstance(_context!!)

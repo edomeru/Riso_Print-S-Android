@@ -20,10 +20,13 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.GrantPermissionRule
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTERS
+import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartprint.R
 import junit.framework.AssertionFailedError
 import org.hamcrest.Description
@@ -37,6 +40,9 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     private var _printSettingsFragment: PrintSettingsFragment? = null
     private var _printerManager: PrinterManager? = null
     private var _printersList: MutableList<Printer?>? = null
+
+    private val _printPreviewView: PrintPreviewView
+        get() = SmartDeviceApp.activity!!.findViewById(R.id.printPreviewView)
 
     @get:Rule
     var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -164,17 +170,17 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             withText(setting)))
             .perform(scrollTo(), click())
         //waitForAnimation()
-        for ((i,option) in options.withIndex()) {
-            getViewInteractionFromMatchAtPosition(R.id.view_id_subview_option_item, i)
-                .check(matches(hasDescendant(allOf(
-                        withId(R.id.menuTextView),
-                        withText(option)))))
-
-            if (i == options.size - 1) {
-                getViewInteractionFromMatchAtPosition(R.id.view_id_subview_option_item, options.size)
-                    .check(doesNotExist())
-            }
+        for (option in options) {
+            onView(allOf(
+                withId(R.id.view_id_subview_option_item),
+                hasDescendant(allOf(
+                    withId(R.id.menuTextView),
+                    withText(option))))
+                ).perform(scrollTo())
         }
+
+        getViewInteractionFromMatchAtPosition(R.id.view_id_subview_option_item, options.size)
+            .check(doesNotExist())
 
         // return to print settings
         onView(withId(R.id.view_id_hide_subview_container))
@@ -613,18 +619,16 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testSettings_Orientation() {
-        checkSettingOptions(
-            getString(R.string.ids_lbl_orientation),
-            listOf(
-                getString(R.string.ids_lbl_orientation_portrait),
-                getString(R.string.ids_lbl_orientation_landscape)))
+        val field = PrintPreviewView::class.java.getDeclaredField("_pdfManager")
+        field.isAccessible = true
 
-        updateSettingAndCheck(
-            getString(R.string.ids_lbl_orientation),
-            getString(R.string.ids_lbl_orientation_landscape))
-        updateSettingAndCheck(
-            getString(R.string.ids_lbl_orientation),
-            getString(R.string.ids_lbl_orientation_portrait))
+        selectPhotos(getUriFromPath(IMG_PORTRAIT))
+        var pdfManager = field.get(_printPreviewView) as PDFFileManager
+        Assert.assertFalse(pdfManager.isPDFLandscape)
+
+        selectPhotos(getUriFromPath(IMG_LANDSCAPE))
+        pdfManager = field.get(_printPreviewView) as PDFFileManager
+        Assert.assertTrue(pdfManager.isPDFLandscape)
     }
 
     @Test

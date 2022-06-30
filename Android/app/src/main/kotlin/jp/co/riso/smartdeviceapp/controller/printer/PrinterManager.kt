@@ -929,7 +929,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                     SNMPManager.SNMP_CAPABILITY_FINISH_0 -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGL) {
                         printer.config!!.isPunch0Available = capabilities[i]
                     } else {
-                        printer.config!!.isPunch0Available = false
+                        printer.config!!.isPunch0Available = false // if false, punch is enabled. Refer to definition in Printer.kt
                     }
                 }
             }
