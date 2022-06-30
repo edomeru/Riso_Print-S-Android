@@ -503,6 +503,8 @@ open class BaseActivityTestUtil {
             TEST_PRINTER_GL,
             TEST_PRINTER_CEREZONA)
 
+        const val TEST_IPV6_ONLINE_PRINTER_ADDRESS = "fe80::a00:27ff:fe22:44a2"
+
         const val IMG_JPG = "Universe.jpg"
         const val IMG_JPG_90 = "Universe_rotate90.jpg"
         const val IMG_JPG_180 = "Universe_rotate180.jpg"
