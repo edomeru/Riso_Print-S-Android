@@ -161,7 +161,8 @@ class PrinterSearchFragmentTest : BaseActivityTestUtil() {
 
         checkDialog(
             PrinterSearchFragment.KEY_SEARCHED_PRINTER_DIALOG,
-            R.string.ids_info_msg_printer_add_successful
+            R.string.ids_info_msg_printer_add_successful,
+            true
         )
     }
 }

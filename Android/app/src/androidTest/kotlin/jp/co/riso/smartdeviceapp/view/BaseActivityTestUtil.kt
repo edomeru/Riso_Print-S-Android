@@ -348,7 +348,7 @@ open class BaseActivityTestUtil {
         testClickAndWait(id)
     }
 
-    fun checkDialog(tag: String, msgId: Int) {
+    fun checkDialog(tag: String, msgId: Int, toConfirm: Boolean = false) {
         updateMainActivity()
         val fragment = mainActivity!!.supportFragmentManager.findFragmentByTag(
             tag
@@ -373,6 +373,10 @@ open class BaseActivityTestUtil {
             mainActivity!!.resources.getString(R.string.ids_lbl_ok),
             b.text
         )
+
+        if (toConfirm) {
+            mainActivity!!.runOnUiThread { b.callOnClick() }
+        }
     }
 
     fun checkDialog(tag: String, titleId: Int, msgId: Int) {
