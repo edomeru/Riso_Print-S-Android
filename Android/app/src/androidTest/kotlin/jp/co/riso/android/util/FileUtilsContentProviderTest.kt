@@ -270,6 +270,6 @@ class FileUtilsContentProviderTest : ProviderTestCase2<TestContentProvider>(
     }
 
     companion object {
-        private const val TEST_AUTHORITY = "testAuthority"
+        const val TEST_AUTHORITY = "testAuthority"
     }
 }

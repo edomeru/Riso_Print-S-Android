@@ -1,5 +1,6 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
+import android.view.Gravity
 import android.view.KeyEvent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -54,7 +55,14 @@ class PrinterSearchSettingsFragmentTest : BaseActivityTestUtil() {
         }
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         testClickAndWait(R.id.menu_id_printer_search_settings_button)
-        val printerSearchSettingsFragment = fm.findFragmentById(R.id.mainLayout)
+
+        var layoutId = R.id.mainLayout
+        if (mainActivity!!.isTablet) {
+            Assert.assertTrue(mainActivity!!.isDrawerOpen(Gravity.RIGHT))
+            layoutId = R.id.rightLayout
+        }
+
+        val printerSearchSettingsFragment = fm.findFragmentById(layoutId)
         Assert.assertTrue(printerSearchSettingsFragment is PrinterSearchSettingsFragment)
         _printerSearchSettingsFragment = printerSearchSettingsFragment as PrinterSearchSettingsFragment?
     }
@@ -66,7 +74,11 @@ class PrinterSearchSettingsFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testBackButton() {
-        testClickAndWait(R.id.menu_id_back_button)
+        if (!_printerSearchSettingsFragment!!.isTablet) {
+            testClickAndWait(R.id.menu_id_back_button)
+        } else {
+            pressBack()
+        }
     }
 
     @Test
@@ -85,7 +97,11 @@ class PrinterSearchSettingsFragmentTest : BaseActivityTestUtil() {
     fun testEmptyInput() {
         onView(withId(R.id.inputSnmpCommunityName)).perform(click())
         onView(withId(R.id.inputSnmpCommunityName)).perform(clearText())
-        testClickAndWait(R.id.menu_id_back_button)
+        if (!_printerSearchSettingsFragment!!.isTablet) {
+            testClickAndWait(R.id.menu_id_back_button)
+        } else {
+            testClickAndWait(R.id.menu_id_printer_search_settings_button)
+        }
         testClickAndWait(R.id.menu_id_printer_search_settings_button)
     }
 }

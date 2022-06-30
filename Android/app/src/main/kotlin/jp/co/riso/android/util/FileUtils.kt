@@ -86,7 +86,7 @@ object FileUtils {
      */
     @JvmStatic
     fun getMimeType(context: Context?, uri: Uri?): String {
-        var mimeType: String? = ""
+        var mimeType: String? = null
         if (context != null && uri != null && uri.scheme != null) {
             mimeType = if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
                 val cr = context.contentResolver

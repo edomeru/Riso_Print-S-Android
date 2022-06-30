@@ -3,6 +3,7 @@ package jp.co.riso.android.os.pauseablehandler
 import android.os.Looper
 import android.os.Message
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.runner.intent.IntentStubberRegistry
 import junit.framework.TestCase
 import org.junit.Test
 
@@ -39,6 +40,18 @@ class PauseableHandlerTest {
         }
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         TestCase.assertFalse(_handler!!.hasStoredMessage(MESSAGE))
+    }
+
+    @Test
+    fun testHasNoStoredMessage() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), null)
+            val msg = Message.obtain(_handler, 0)
+            _handler!!.sendMessage(msg)
+            TestCase.assertTrue(_handler!!.hasStoredMessage(0))
+        }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertFalse(_handler!!.hasStoredMessage(0))
     }
 
     @Test

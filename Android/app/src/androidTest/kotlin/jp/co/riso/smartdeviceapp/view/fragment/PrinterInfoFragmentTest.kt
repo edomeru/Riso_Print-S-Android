@@ -16,6 +16,7 @@ import org.junit.Test
 
 class PrinterInfoFragmentTest : BaseActivityTestUtil() {
 
+    private var _printersFragment: PrintersFragment? = null
     private var _printerInfoFragment: PrinterInfoFragment? = null
     private var _printerManager: PrinterManager? = null
     private var _printer: Printer? = null
@@ -25,13 +26,14 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
         Intents.init()
         wakeUpScreen()
         initPrinter()
-        initPrinterInfoFragment()
+        initFragment()
     }
 
     @After
     fun cleanUp() {
         Intents.release()
         clearPrintersList()
+        _printersFragment = null
         _printerInfoFragment = null
         _printerManager = null
         _printer = null
@@ -45,7 +47,7 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
         }
     }
 
-    private fun initPrinterInfoFragment() {
+    private fun initFragment() {
         wakeUpScreen()
         val fm = mainActivity!!.supportFragmentManager
         mainActivity!!.runOnUiThread {
@@ -53,18 +55,31 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
             fm.executePendingTransactions()
         }
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-        getViewInteractionFromMatchAtPosition(
-            ViewMatchers.withText(_printer!!.ipAddress), 0
-        ).perform(ViewActions.click())
-        waitForAnimation()
-        val printerInfoFragment = fm.findFragmentById(R.id.mainLayout)
-        Assert.assertTrue(printerInfoFragment is PrinterInfoFragment)
-        _printerInfoFragment = printerInfoFragment as PrinterInfoFragment?
+
+        // for phone devices
+        if (!mainActivity!!.isTablet) {
+            getViewInteractionFromMatchAtPosition(
+                ViewMatchers.withText(_printer!!.ipAddress), 0
+            ).perform(ViewActions.click())
+            waitForAnimation()
+            val printerInfoFragment = fm.findFragmentById(R.id.mainLayout)
+            Assert.assertTrue(printerInfoFragment is PrinterInfoFragment)
+            _printerInfoFragment = printerInfoFragment as PrinterInfoFragment?
+        } else {
+            val printersFragment = fm.findFragmentById(R.id.mainLayout)
+            Assert.assertTrue(printersFragment is PrintersFragment)
+            _printersFragment = printersFragment as PrintersFragment?
+        }
     }
 
     @Test
     fun testNewInstance() {
-        Assert.assertNotNull(_printerInfoFragment)
+        if (!mainActivity!!.isTablet) {
+            // for phone devices
+            Assert.assertNotNull(_printerInfoFragment)
+        } else {
+            Assert.assertNotNull(_printersFragment)
+        }
     }
 
     @Test
@@ -76,7 +91,10 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testBackButton() {
-        testClickAndWait(R.id.menu_id_back_button)
+        if (!mainActivity!!.isTablet) {
+            // for phone devices
+            testClickAndWait(R.id.menu_id_back_button)
+        }
     }
 
     @Test

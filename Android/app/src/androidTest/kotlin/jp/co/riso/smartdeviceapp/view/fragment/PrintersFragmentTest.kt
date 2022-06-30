@@ -41,7 +41,7 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
         _printersList = mutableListOf(
             TEST_PRINTER_ONLINE,
-            TEST_PRINTER_FT
+            TEST_PRINTER_ONLINE2
         )
     }
 
