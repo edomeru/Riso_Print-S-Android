@@ -606,7 +606,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         try {
             initialize()
 
-            var printers: List<Printer?>? = null
+            val printers: List<Printer?>?
             printers = mutableListOf(
                 Printer("Printer1", IPV4_ONLINE_PRINTER_ADDRESS),
                 Printer("Printer2", IPV4_OFFLINE_PRINTER_ADDRESS)
@@ -618,13 +618,13 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
                 }
                 for (printerItem in _printersList!!) {
                     if (printerItem!!.ipAddress.contentEquals(printers[index].ipAddress)) {
-                        printers!![index]!!.id = printerItem.id
+                        printers[index].id = printerItem.id
                         break
                     }
                 }
             }
 
-            var ret: Boolean = _printerManager!!.removePrinter(printers[0])
+            val ret: Boolean = _printerManager!!.removePrinter(printers[0])
             TestCase.assertEquals(true, ret)
         } catch (e: Exception) {
             TestCase.fail() // Error should not be thrown
@@ -974,11 +974,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
 
             // Ipv6 Address
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-<<<<<<< HEAD
-                ipv6Addr = "fe80::a00:27ff:fe93:795d"
-=======
                 ipv6Addr = TEST_IPV6_ONLINE_PRINTER_ADDRESS
->>>>>>> feature/V5.6.0/Android/RQM-2022-KotlinMigration
                    // localIpv6Address // If test fails, comment out this line to use actual ipv6
             }
             TestCase.assertNotNull(ipv6Addr)
