@@ -64,6 +64,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         clearPrintersList()
         _printSettingsFragment = null
         _printerManager = null
+        _printersList = null
     }
 
     private fun initFragment() {
