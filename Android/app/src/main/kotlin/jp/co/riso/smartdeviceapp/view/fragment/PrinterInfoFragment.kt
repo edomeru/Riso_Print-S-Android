@@ -61,9 +61,9 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         _printerName = view.findViewById(R.id.inputPrinterName)
         _ipAddress = view.findViewById(R.id.infoIpAddress)
         _port = view.findViewById(R.id.inputPort)
-        _port?.onItemSelectedListener = this
+        _port!!.onItemSelectedListener = this
         _defaultPrinter = view.findViewById(R.id.defaultPrinter)
-        _defaultPrinter?.onItemSelectedListener = this
+        _defaultPrinter!!.onItemSelectedListener = this
         if (savedInstanceState != null) {
             if (_printer == null) {
                 val printersList = _printerManager!!.savedPrintersList
@@ -82,21 +82,21 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
             portAdapter.add(getString(R.string.ids_lbl_port_raw))
             portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
         } else {
-            _port?.visibility = View.GONE
+            _port!!.visibility = View.GONE
             // Port setting is always displayed as LPR
             view.findViewById<View>(R.id.defaultPort).visibility = View.VISIBLE
         }
-        _port?.adapter = portAdapter
-        _port?.setSelection(_printer!!.portSetting!!.ordinal)
+        _port!!.adapter = portAdapter
+        _port!!.setSelection(_printer!!.portSetting!!.ordinal)
         _defaultPrinterAdapter =
             DefaultPrinterArrayAdapter(activity, R.layout.printerinfo_port_item)
         _defaultPrinterAdapter!!.add(getString(R.string.ids_lbl_yes))
         _defaultPrinterAdapter!!.add(getString(R.string.ids_lbl_no))
         _defaultPrinterAdapter!!.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
-        _defaultPrinter?.adapter = _defaultPrinterAdapter
+        _defaultPrinter!!.adapter = _defaultPrinterAdapter
         if (_printerManager!!.defaultPrinter == _printer!!.id) {
-            _defaultPrinter?.setSelection(0) //yes
-        } else _defaultPrinter?.setSelection(1) //no
+            _defaultPrinter!!.setSelection(0) //yes
+        } else _defaultPrinter!!.setSelection(1) //no
     }
 
     override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {
