@@ -67,7 +67,7 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
         // for phone devices
         if (!mainActivity!!.isTablet) {
             getViewInteractionFromMatchAtPosition(
-                R.id.printerItem, 1
+                R.id.printerItem, 1 // explicitly select second printer item for testing purposes
             ).perform(click())
             waitForAnimation()
 
@@ -99,6 +99,13 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
         intent.flags =
             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
         mainActivity!!.startActivity(intent)
+
+        waitForAnimation()
+        if (!mainActivity!!.isTablet) {
+            Assert.assertTrue(_printerInfoFragment is PrinterInfoFragment)
+        } else {
+            Assert.assertTrue(_printersFragment is PrintersFragment)
+        }
     }
 
     @Test
@@ -165,11 +172,11 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
 
             // Set second added printer as the default printer
             getViewInteractionFromMatchAtPosition(
-                withClassName(`is`(Spinner::class.java.canonicalName)), 3
+                withClassName(`is`(Spinner::class.java.canonicalName)), 3 // for second printer
             ).check(matches(withSpinnerText(R.string.ids_lbl_no)))
 
             getViewInteractionFromMatchAtPosition(
-                withClassName(`is`(Spinner::class.java.canonicalName)), 3
+                withClassName(`is`(Spinner::class.java.canonicalName)), 3 // for second printer
             ).perform(click())
             waitForAnimation()
 
@@ -177,7 +184,7 @@ class PrinterInfoFragmentTest : BaseActivityTestUtil() {
             waitForAnimation()
 
             getViewInteractionFromMatchAtPosition(
-                withClassName(`is`(Spinner::class.java.canonicalName)), 3
+                withClassName(`is`(Spinner::class.java.canonicalName)), 3 // for second printer
             ).check(matches(withSpinnerText(R.string.ids_lbl_yes)))
         } else {
             // Set second added printer as the default printer
