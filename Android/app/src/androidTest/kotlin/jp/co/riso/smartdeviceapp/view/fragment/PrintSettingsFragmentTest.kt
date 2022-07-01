@@ -2,7 +2,6 @@ package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
 import android.text.method.PasswordTransformationMethod
-import android.view.Gravity
 import android.view.View
 import android.widget.EditText
 import android.widget.Spinner
@@ -18,6 +17,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.AppConstants
@@ -37,6 +37,7 @@ import org.hamcrest.Matchers.*
 import org.junit.*
 
 
+@LargeTest
 class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     private var _printSettingsFragment: PrintSettingsFragment? = null
@@ -159,10 +160,12 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     private fun checkSettingOptions(setting: String, options: List<String?>) {
+        // Click setting
         onView(allOf(isDescendantOfA(withId(R.id.view_id_show_subview_container)),
             withText(setting)))
             .perform(scrollTo(), click())
-        //waitForAnimation()
+
+        // Check options
         for (option in options) {
             onView(allOf(
                 withId(R.id.view_id_subview_option_item),
@@ -171,7 +174,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
                     withText(option))))
                 ).perform(scrollTo())
         }
-
+        // Check that no other options exist
         getViewInteractionFromMatchAtPosition(R.id.view_id_subview_option_item, options.size)
             .check(doesNotExist())
 
@@ -282,10 +285,6 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             .check(matches(withText(containsString(ipAddress))))
     }
 
-    private fun getString(id: Int):String {
-        return mainActivity!!.resources.getString(id)
-    }
-
     private fun isPasswordHidden(): Matcher<View?> {
         return object : BoundedMatcher<View?, EditText>(EditText::class.java) {
             override fun describeTo(description: Description) {
@@ -331,7 +330,20 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             withId(R.id.view_id_collapse_container),
             hasDescendant(withText(getString(R.string.ids_lbl_basic)))
         )).perform(click())
-        waitForAnimation()
+
+        onView(allOf(isDescendantOfA(withId(R.id.view_id_show_subview_container)),
+            withText(getString(R.string.ids_lbl_colormode))
+        )).check(matches(not(isDisplayed())))
+
+        // hide/show print settings
+        pressBack()
+        testClickAndWait(R.id.view_id_print_button)
+
+        // Collapse
+        onView(allOf(
+            withId(R.id.view_id_collapse_container),
+            hasDescendant(withText(getString(R.string.ids_lbl_basic)))
+        )).perform(click())
 
         onView(allOf(isDescendantOfA(withId(R.id.view_id_show_subview_container)),
             withText(getString(R.string.ids_lbl_colormode))
@@ -342,7 +354,6 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             withId(R.id.view_id_collapse_container),
             hasDescendant(withText(getString(R.string.ids_lbl_basic)))
         )).perform(click())
-        waitForAnimation()
 
         onView(allOf(isDescendantOfA(withId(R.id.view_id_show_subview_container)),
             withText(getString(R.string.ids_lbl_colormode))
@@ -374,7 +385,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         selectPrinterPrintSettings(TEST_PRINTER_ONLINE)
 
         testClickAndWait(R.id.view_id_print_header)
-        waitForPrint()
+        waitForDialogWithText(R.string.ids_info_msg_print_job_successful)
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
@@ -384,17 +395,15 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testPrint_RawPort() {
-        // set raw port
+        // Open pdf in preview
         pressBack()
-        switchScreen(STATE_PRINTERS)
+        selectDocument(getUriFromPath(DOC_PDF_4PAGES))
 
+        // set raw port
+        switchScreen(STATE_PRINTERS)
         if (!mainActivity!!.isTablet) {
             selectPrinterInfoScreen(TEST_PRINTER_ONLINE)
         }
-
-        getViewInteractionFromMatchAtPosition(
-            withClassName(`is`(Spinner::class.java.canonicalName)), 0
-        ).check(matches(withSpinnerText(R.string.ids_lbl_port_lpr)))
 
         getViewInteractionFromMatchAtPosition(
             withClassName(`is`(Spinner::class.java.canonicalName)), 0
@@ -408,16 +417,47 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             withClassName(`is`(Spinner::class.java.canonicalName)), 0
         ).check(matches(withSpinnerText(R.string.ids_lbl_port_raw)))
 
-        if(!mainActivity!!.isTablet) {
-            initPreviewAndOpenPrintSettings()
-        } else {
-            switchScreen(MenuFragment.STATE_HOME)
-            selectDocument(getUriFromPath(DOC_PDF_4PAGES))
-            onView(withId(R.id.view_id_print_button)).perform(click())
+        switchScreen(STATE_PRINTPREVIEW)
+        testClick(R.id.view_id_print_button)
+        waitForView(withId(R.id.view_id_print_header))
+        testClick(R.id.view_id_print_header)
+        waitForPrint(30)
+
+        checkDialog(
+            PrintSettingsFragment.TAG_MESSAGE_DIALOG,
+            R.string.ids_info_msg_print_job_successful
+        )
+    }
+
+    @Test
+    fun testPrint_LprPort() {
+        // Open pdf in preview
+        pressBack()
+        selectDocument(getUriFromPath(DOC_PDF_4PAGES))
+
+        // set lpr port
+        switchScreen(STATE_PRINTERS)
+        if (!mainActivity!!.isTablet) {
+            selectPrinterInfoScreen(TEST_PRINTER_ONLINE)
         }
 
+        getViewInteractionFromMatchAtPosition(
+            withClassName(`is`(Spinner::class.java.canonicalName)), 0
+        ).perform(click())
+        waitForAnimation()
+
+        onView(withText(R.string.ids_lbl_port_lpr)).perform(click())
+        waitForAnimation()
+
+        getViewInteractionFromMatchAtPosition(
+            withClassName(`is`(Spinner::class.java.canonicalName)), 0
+        ).check(matches(withSpinnerText(R.string.ids_lbl_port_lpr)))
+
+        switchScreen(STATE_PRINTPREVIEW)
+        testClick(R.id.view_id_print_button)
+        waitForView(withId(R.id.view_id_print_header))
         testClick(R.id.view_id_print_header)
-        waitForPrint()
+        waitForPrint(30)
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
@@ -448,7 +488,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         selectPrinterPrintSettings(TEST_PRINTER_OFFLINE)
 
         testClickAndWait(R.id.view_id_print_header)
-        waitForPrint(30)
+        waitForDialogWithText(R.string.ids_info_msg_print_job_failed)
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
@@ -464,7 +504,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         NetUtils.unregisterWifiCallback(mainActivity!!)
 
         testClick(R.id.view_id_print_header)
-        waitForPrint()
+        waitForDialogWithText(R.string.ids_err_msg_network_error)
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
@@ -479,7 +519,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         testClick(R.id.view_id_print_header)
         // disable wifi
         NetUtils.unregisterWifiCallback(mainActivity!!)
-        onView(isRoot()).perform(waitForView(withText(R.string.ids_info_msg_print_job_failed)))
+        waitForDialogWithText(R.string.ids_info_msg_print_job_failed)
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
@@ -963,6 +1003,9 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         updateSettingAndCheck(
             getString(R.string.ids_lbl_imposition_order),
             getString(R.string.ids_lbl_imposition_order_2up_rl))
+        updateSettingAndCheck(
+            getString(R.string.ids_lbl_imposition_order),
+            getString(R.string.ids_lbl_imposition_order_2up_lr))
 
         // Imposition - 4up
         updateSetting(
@@ -989,31 +1032,21 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         updateSettingAndCheck(
             getString(R.string.ids_lbl_imposition_order),
             getString(R.string.ids_lbl_imposition_order_4up_ulr))
+
+        updateSettingAndCheck(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_off))
     }
 
-    @Ignore("TODO")
+    @Ignore("RM1171")
     fun testSettings_Punch() {
-        // Output Tray - Punch On
-        updateSetting(
-            getString(R.string.ids_lbl_punch),
-            getString(R.string.ids_lbl_punch_2holes))
-        checkSettingOptions(
-            getString(R.string.ids_lbl_outputtray),
-            listOf(
-                getString(R.string.ids_lbl_outputtray_auto),
-                getString(R.string.ids_lbl_outputtray_top),
-                getString(R.string.ids_lbl_outputtray_stacking)
-            ))
-
+        // Punch - Output Tray facedown
         updateSetting(
             getString(R.string.ids_lbl_punch),
             getString(R.string.ids_lbl_off))
-
         updateSetting(
             getString(R.string.ids_lbl_outputtray),
             getString(R.string.ids_lbl_outputtray_facedown))
-
-        // Output Tray - Punch On
         checkSettingOptions(
             getString(R.string.ids_lbl_punch),
             listOf(
@@ -1054,6 +1087,19 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             getString(R.string.ids_lbl_outputtray),
             listOf(
                 getString(R.string.ids_lbl_outputtray_auto)
+            ))
+
+        // Output Tray - Punch On
+        toggleSwitchOff(getString(R.string.ids_lbl_booklet))
+        updateSetting(
+            getString(R.string.ids_lbl_punch),
+            getString(R.string.ids_lbl_punch_2holes))
+        checkSettingOptions(
+            getString(R.string.ids_lbl_outputtray),
+            listOf(
+                getString(R.string.ids_lbl_outputtray_auto),
+                getString(R.string.ids_lbl_outputtray_top),
+                getString(R.string.ids_lbl_outputtray_stacking)
             ))
     }
 

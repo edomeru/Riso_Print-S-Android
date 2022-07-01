@@ -2,14 +2,11 @@ package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.content.Intent
 import android.view.Gravity
-import android.view.View
 import androidx.test.espresso.Espresso.pressBack
-import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.util.NetUtils
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
 import jp.co.riso.smartprint.R
@@ -18,6 +15,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
+@LargeTest
 class PrinterSearchFragmentTest : BaseActivityTestUtil() {
     private var _printerSearchFragment: PrinterSearchFragment? = null
 

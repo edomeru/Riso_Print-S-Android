@@ -26,6 +26,7 @@ import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.espresso.util.HumanReadables
 import androidx.test.espresso.util.TreeIterables
@@ -425,7 +426,20 @@ open class BaseActivityTestUtil {
         }
     }
 
-    fun waitForView(matcher: Matcher<View>): ViewAction {
+    fun getString(id: Int):String {
+        return mainActivity!!.resources.getString(id)
+    }
+
+    fun waitForDialogWithText(stringId: Int) {
+        onView(isRoot()).inRoot(RootMatchers.isDialog())
+            .perform(waitForViewMatcher(withText(getString(stringId))))
+    }
+
+    fun waitForView(matcher: Matcher<View>) {
+        onView(isRoot()).perform(waitForViewMatcher(matcher))
+    }
+
+    fun waitForViewMatcher(matcher: Matcher<View>): ViewAction {
         return object : ViewAction {
             val timeout = TIMEOUT_WAITFORVIEW
             override fun getConstraints(): Matcher<View> {
@@ -440,13 +454,13 @@ open class BaseActivityTestUtil {
                 uiController.loopMainThreadUntilIdle()
                 val startTime = System.currentTimeMillis()
                 val endTime = startTime + timeout
-
+                val viewMatcher = allOf(matcher, isDisplayed())
 
                 do {
                     // Iterate through all views on the screen and see if the view we are looking for is there already
                     for (child in TreeIterables.breadthFirstViewTraversal(rootView)) {
                         // found view with required ID
-                        if (matcher.matches(child)) {
+                        if (viewMatcher.matches(child)) {
                             return
                         }
                     }
@@ -543,6 +557,6 @@ open class BaseActivityTestUtil {
         const val IMG_PORTRAIT = "Portrait.PNG"
         const val IMG_LANDSCAPE = "Landscape.jpg"
 
-        const val TIMEOUT_WAITFORVIEW = 1000f
+        const val TIMEOUT_WAITFORVIEW = 30000f
     }
 }

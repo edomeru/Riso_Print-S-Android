@@ -14,6 +14,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import jp.co.riso.smartdeviceapp.AppConstants.MULTI_IMAGE_PDF_FILENAME
@@ -29,6 +30,7 @@ import jp.co.riso.smartprint.R
 import org.hamcrest.Matchers.not
 import org.junit.*
 
+@LargeTest
 class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
     private var _printPreviewFragment: PrintPreviewFragment? = null
@@ -243,7 +245,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
                     intent))
 
         switchScreen(MenuFragment.STATE_HOME)
-        onView(isRoot()).perform(waitForView(withId(R.id.fileButton)))
+        waitForView(withId(R.id.fileButton))
         onView(withId(R.id.fileButton)).perform(click())
         updateMainActivity()
         waitFewSeconds()
