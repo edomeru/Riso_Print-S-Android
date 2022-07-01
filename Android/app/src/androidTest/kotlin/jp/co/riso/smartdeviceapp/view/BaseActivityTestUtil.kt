@@ -17,7 +17,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.PerformException
@@ -31,7 +30,6 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.espresso.util.HumanReadables
 import androidx.test.espresso.util.TreeIterables
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage.RESUMED
@@ -42,7 +40,6 @@ import com.scanlibrary.ScanConstants
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
-import jp.co.riso.smartdeviceapp.common.SNMPManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.fragment.AddPrinterFragment
@@ -428,27 +425,28 @@ open class BaseActivityTestUtil {
         }
     }
 
-    fun waitForView(viewId: Int, timeout: Float): ViewAction {
+    fun waitForView(matcher: Matcher<View>): ViewAction {
         return object : ViewAction {
+            val timeout = TIMEOUT_WAITFORVIEW
             override fun getConstraints(): Matcher<View> {
                 return isRoot()
             }
 
             override fun getDescription(): String {
-                return "wait for a specific view with id $viewId; during $timeout millis."
+                return "wait for a specific view with matcher $matcher; during $timeout millis."
             }
 
             override fun perform(uiController: UiController, rootView: View) {
                 uiController.loopMainThreadUntilIdle()
                 val startTime = System.currentTimeMillis()
                 val endTime = startTime + timeout
-                val viewMatcher = allOf(withId(viewId), isCompletelyDisplayed())
+
 
                 do {
                     // Iterate through all views on the screen and see if the view we are looking for is there already
                     for (child in TreeIterables.breadthFirstViewTraversal(rootView)) {
                         // found view with required ID
-                        if (viewMatcher.matches(child)) {
+                        if (matcher.matches(child)) {
                             return
                         }
                     }
@@ -545,6 +543,6 @@ open class BaseActivityTestUtil {
         const val IMG_PORTRAIT = "Portrait.PNG"
         const val IMG_LANDSCAPE = "Landscape.jpg"
 
-        const val TIMEOUT_WAITFORVIEW = 100000f
+        const val TIMEOUT_WAITFORVIEW = 1000f
     }
 }

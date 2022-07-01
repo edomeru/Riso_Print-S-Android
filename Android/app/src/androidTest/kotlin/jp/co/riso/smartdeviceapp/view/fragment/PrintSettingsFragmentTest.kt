@@ -479,7 +479,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         testClick(R.id.view_id_print_header)
         // disable wifi
         NetUtils.unregisterWifiCallback(mainActivity!!)
-        waitForPrint()
+        onView(isRoot()).perform(waitForView(withText(R.string.ids_info_msg_print_job_failed)))
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
