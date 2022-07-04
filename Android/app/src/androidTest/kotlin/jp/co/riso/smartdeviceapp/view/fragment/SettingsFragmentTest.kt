@@ -9,6 +9,7 @@ import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.android.util.AppUtils
 import jp.co.riso.smartdeviceapp.AppConstants
@@ -20,7 +21,7 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.math.min
 
-
+@LargeTest
 class SettingsFragmentTest : BaseActivityTestUtil() {
     private var settingsFragment: SettingsFragment? = null
 

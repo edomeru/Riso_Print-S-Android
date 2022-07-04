@@ -2,7 +2,6 @@ package jp.co.riso.smartdeviceapp.common
 
 import android.os.Build
 import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.activity
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback
 import junit.framework.TestCase

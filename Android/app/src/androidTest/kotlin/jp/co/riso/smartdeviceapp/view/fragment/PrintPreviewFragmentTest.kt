@@ -14,6 +14,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import jp.co.riso.smartdeviceapp.AppConstants.MULTI_IMAGE_PDF_FILENAME
@@ -22,16 +23,19 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
+import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTERS
+import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTPREVIEW
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartprint.R
 import org.hamcrest.Matchers.not
 import org.junit.*
 
+@LargeTest
 class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
     private var _printPreviewFragment: PrintPreviewFragment? = null
     private var _printerManager: PrinterManager? = null
-    private var _printer: Printer? = null
+    private var _printersList: List<Printer?>? = null
 
 
     private val _printPreviewView: PrintPreviewView
@@ -44,7 +48,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     fun setup() {
         Intents.init()
         wakeUpScreen()
-        initPrinter()
+        initPrinters()
         initFragment()
     }
 
@@ -54,7 +58,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         clearPrintersList()
         _printPreviewFragment = null
         _printerManager = null
-        _printer = null
+        _printersList = null
     }
 
     private fun initFragment() {
@@ -69,12 +73,11 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         _printPreviewFragment = fragment as PrintPreviewFragment
     }
 
-    private fun initPrinter() {
+    private fun initPrinters() {
         _printerManager = PrinterManager.getInstance(mainActivity!!)
-        _printer = TEST_PRINTER_ONLINE
-        if (!_printerManager!!.isExists(_printer)) {
-            _printerManager!!.savePrinterToDB(_printer, true)
-        }
+        _printersList = mutableListOf(
+            TEST_PRINTER_ONLINE
+        )
     }
 
     private fun turnPageForward(isForward: Boolean) {
@@ -122,6 +125,10 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testPrintSettingsButton_WithPrinter() {
+        switchScreen(STATE_PRINTERS)
+        addPrinter(_printersList)
+
+        switchScreen(STATE_PRINTPREVIEW)
         testClickAndWait(R.id.view_id_print_button)
         val rightFragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.rightLayout)
         Assert.assertTrue(rightFragment is PrintSettingsFragment)
@@ -238,8 +245,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
                     intent))
 
         switchScreen(MenuFragment.STATE_HOME)
-        waitForView(R.id.fileButton, TIMEOUT_WAITFORVIEW)
-        waitForAnimation()
+        waitForView(withId(R.id.fileButton))
         onView(withId(R.id.fileButton)).perform(click())
         updateMainActivity()
         waitFewSeconds()
