@@ -12,6 +12,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
@@ -24,6 +25,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
+@LargeTest
 class PrinterInfoFragmentTest : BaseActivityTestUtil() {
 
     private var _printersFragment: PrintersFragment? = null

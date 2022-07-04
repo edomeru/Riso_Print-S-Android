@@ -5,10 +5,10 @@ import android.content.Intent
 import android.view.Gravity
 import android.view.View
 import androidx.fragment.app.DialogFragment
-import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
@@ -21,6 +21,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
+@LargeTest
 class PrintersFragmentTest : BaseActivityTestUtil() {
     private var _printersFragment: PrintersFragment? = null
     private var _printerManager: PrinterManager? = null
