@@ -11,6 +11,7 @@ import androidx.test.espresso.action.ViewActions.doubleClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.scanlibrary.ScanActivity
@@ -23,6 +24,7 @@ import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment.Companion.FRAGMENT_T
 import jp.co.riso.smartprint.R
 import org.junit.*
 
+@LargeTest
 class HomeFragmentTest : BaseActivityTestUtil() {
 
     private var _homeFragment: HomeFragment? = null

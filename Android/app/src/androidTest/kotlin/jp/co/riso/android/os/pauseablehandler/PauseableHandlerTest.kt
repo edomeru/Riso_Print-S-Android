@@ -3,7 +3,6 @@ package jp.co.riso.android.os.pauseablehandler
 import android.os.Looper
 import android.os.Message
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.intent.IntentStubberRegistry
 import junit.framework.TestCase
 import org.junit.Test
 
