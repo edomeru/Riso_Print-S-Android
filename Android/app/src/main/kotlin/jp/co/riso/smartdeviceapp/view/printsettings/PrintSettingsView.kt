@@ -723,8 +723,9 @@ class PrintSettingsView @JvmOverloads constructor(
                 if (printer!!.isPrinterFTorCEREZONA_S) {
                     return when (valuesFtCerezonaS()[value]) {
                         InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.TRAY1, InputTrayFtGlCerezonaS.TRAY2 -> true
+                        InputTrayFtGlCerezonaS.TRAY3 -> false
                         InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> printer!!.config!!.isExternalFeederAvailable
-                        else -> false
+
                     }
                 }
                 if (printer!!.isPrinterGL) {
@@ -744,18 +745,12 @@ class PrintSettingsView @JvmOverloads constructor(
      *
      * @param tag Print settings tag name
      * @param newValue New value
-     *
-     * @retval true Update is successful
-     * @retval false Update failed
      */
-    private fun updateValue(tag: String, newValue: Int): Boolean {
+    private fun updateValue(tag: String, newValue: Int) {
         val prevValue = _printSettings!!.getValue(tag)
-        if (_printSettings!!.setValue(tag, newValue)) {
-            applyValueConstraints(tag, prevValue)
-            applyViewConstraints(tag)
-            return true
-        }
-        return false
+        _printSettings!!.setValue(tag, newValue)
+        applyValueConstraints(tag, prevValue)
+        applyViewConstraints(tag)
     }
 
     /**
@@ -1484,18 +1479,17 @@ class PrintSettingsView @JvmOverloads constructor(
                 // If clicked option is same as currently set, no need to update
                 return
             }
-            if (updateValue(_subView!!.tag as String, id)) {
-                _listener.onPrintSettingsValueChanged(_printSettings)
-                // Update UI
-                updateDisplayedValue(_subView!!.tag as String)
-                val options = _subView!!.getTag(ID_TAG_SUB_OPTIONS) as Array<*>
-                for (i in options.indices) {
-                    val view = _subView!!.findViewWithTag<View>(i)
-                    // Some views may be hidden
-                    if (view != null) {
-                        val subView = view.findViewById<View>(R.id.view_id_subview_status)
-                        subView.isSelected = id == i
-                    }
+            updateValue(_subView!!.tag as String, id)
+            _listener.onPrintSettingsValueChanged(_printSettings)
+            // Update UI
+            updateDisplayedValue(_subView!!.tag as String)
+            val options = _subView!!.getTag(ID_TAG_SUB_OPTIONS) as Array<*>
+            for (i in options.indices) {
+                val view = _subView!!.findViewWithTag<View>(i)
+                // Some views may be hidden
+                if (view != null) {
+                    val subView = view.findViewById<View>(R.id.view_id_subview_status)
+                    subView.isSelected = id == i
                 }
             }
         } else if (v.id == R.id.view_id_subview_printer_item) {
@@ -2005,11 +1999,8 @@ class PrintSettingsView @JvmOverloads constructor(
             setSecurePrintEnabled(isChecked)
             return
         }
-        if (updateValue(buttonView.tag.toString(), if (isChecked) 1 else 0)) {
-            _listener.onPrintSettingsValueChanged(_printSettings)
-        } // else {
-        // cancel onCheckedChanged?
-        // }
+        updateValue(buttonView.tag.toString(), if (isChecked) 1 else 0)
+        _listener.onPrintSettingsValueChanged(_printSettings)
     }
 
     // ================================================================================
@@ -2086,9 +2077,8 @@ class PrintSettingsView @JvmOverloads constructor(
                     value = max(_minValue, value)
                 } catch (nfe: NumberFormatException) {
                 }
-                if (updateValue(_tag, value)) {
-                    _listener.onPrintSettingsValueChanged(_printSettings)
-                }
+                updateValue(_tag, value)
+                _listener.onPrintSettingsValueChanged(_printSettings)
                 _editing = false
             }
         }
