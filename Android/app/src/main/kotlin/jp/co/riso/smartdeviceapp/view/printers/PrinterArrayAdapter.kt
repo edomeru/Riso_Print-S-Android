@@ -38,29 +38,29 @@ class PrinterArrayAdapter(context: Context?, private val _layoutId: Int, values:
 
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         var convertView = view
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
         val viewHolder: ViewHolder
         val printer = getItem(position)
         val printerName = printer!!.name
         if (convertView == null) {
-            convertView = inflater.inflate(_layoutId, parent, false)
+            convertView = inflater!!.inflate(_layoutId, parent, false)
             viewHolder = ViewHolder()
             viewHolder.mPrinterName = convertView.findViewById(R.id.txt_printerName)
             viewHolder.mIpAddress = convertView.findViewById(R.id.txt_ipAddress)
-            viewHolder.mPrinterName?.text = printer.name
-            viewHolder.mIpAddress?.text = printer.ipAddress
+            viewHolder.mPrinterName!!.text = printer.name
+            viewHolder.mIpAddress!!.text = printer.ipAddress
             viewHolder.mDiscloseImage = convertView.findViewById(R.id.img_disclosure)
             viewHolder.mDeleteButton = convertView.findViewById(R.id.btn_delete)
-            viewHolder.mDiscloseImage?.tag = printer
-            viewHolder.mPrinterName?.tag = printer
-            viewHolder.mDeleteButton?.tag = convertView
+            viewHolder.mDiscloseImage!!.tag = printer
+            viewHolder.mPrinterName!!.tag = printer
+            viewHolder.mDeleteButton!!.tag = convertView
             convertView.setOnClickListener(this)
-            viewHolder.mDeleteButton?.setOnClickListener(this)
+            viewHolder.mDeleteButton!!.setOnClickListener(this)
             convertView.tag = viewHolder
 
             // AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
         } else {
-            viewHolder = convertView.tag as ViewHolder
+            viewHolder = (convertView.tag as ViewHolder?)!!
             viewHolder.mPrinterName!!.text = printer.name
             viewHolder.mIpAddress!!.text = printer.ipAddress
             viewHolder.mDiscloseImage!!.tag = printer
@@ -102,8 +102,8 @@ class PrinterArrayAdapter(context: Context?, private val _layoutId: Int, values:
      */
     fun resetDeletePrinterView() {
         if (_deleteViewHolder != null) {
-            val printerItem = _deleteViewHolder!!.mDeleteButton!!.tag as PrintersContainerView
-            printerItem.delete = false
+            val printerItem = _deleteViewHolder!!.mDeleteButton!!.tag as PrintersContainerView?
+            printerItem!!.delete = false
             _deleteViewHolder = null
         }
     }
@@ -120,7 +120,7 @@ class PrinterArrayAdapter(context: Context?, private val _layoutId: Int, values:
             return
         }
         val printerItem = convertView as PrintersContainerView
-        val viewHolder = convertView.getTag() as ViewHolder
+        val viewHolder = convertView.getTag() as ViewHolder?
         printerItem.delete = true
         _deleteViewHolder = viewHolder
     }
@@ -131,9 +131,9 @@ class PrinterArrayAdapter(context: Context?, private val _layoutId: Int, values:
      * @param convertView View to reset
      */
     fun setPrinterRow(convertView: View) {
-        val viewHolder = convertView.tag as ViewHolder
-        val printer = viewHolder.mPrinterName!!.tag as Printer
-        if (printer.id == _printerManager!!.defaultPrinter) {
+        val viewHolder = convertView.tag as ViewHolder?
+        val printer = viewHolder!!.mPrinterName!!.tag as Printer?
+        if (printer!!.id == _printerManager!!.defaultPrinter) {
             setPrinterRowToDefault(viewHolder)
         } else {
             setPrinterRowToNormal(viewHolder)
@@ -151,8 +151,8 @@ class PrinterArrayAdapter(context: Context?, private val _layoutId: Int, values:
         if (viewHolder == null) {
             return
         }
-        val printerItem = viewHolder.mDeleteButton!!.tag as PrintersContainerView
-        if (printerItem.default) {
+        val printerItem = viewHolder.mDeleteButton!!.tag as PrintersContainerView?
+        if (printerItem!!.default) {
             printerItem.default = false
         }
         if (printerItem.delete) {
@@ -170,8 +170,8 @@ class PrinterArrayAdapter(context: Context?, private val _layoutId: Int, values:
         if (viewHolder == null) {
             return
         }
-        val printerItem = viewHolder.mDeleteButton!!.tag as PrintersContainerView
-        printerItem.default = true
+        val printerItem = viewHolder.mDeleteButton!!.tag as PrintersContainerView?
+        printerItem!!.default = true
     }
 
     // ================================================================================
@@ -180,16 +180,16 @@ class PrinterArrayAdapter(context: Context?, private val _layoutId: Int, values:
     override fun onClick(v: View) {
         val id = v.id
         if (id == R.id.printerListRow) {
-            val printer = v.findViewById<View>(R.id.img_disclosure).tag as Printer
+            val printer = v.findViewById<View>(R.id.img_disclosure).tag as Printer?
             if (_callbackRef != null && _callbackRef!!.get() != null) {
                 _callbackRef!!.get()!!.onPrinterListClicked(printer)
             }
         } else if (id == R.id.btn_delete) {
             if (_callbackRef != null && _callbackRef!!.get() != null) {
-                val printerContainer = v.tag as PrintersContainerView
-                _deleteViewHolder = printerContainer.tag as ViewHolder
+                val printerContainer = v.tag as PrintersContainerView?
+                _deleteViewHolder = printerContainer!!.tag as ViewHolder?
                 _callbackRef!!.get()!!
-                    .onPrinterDeleteClicked(_deleteViewHolder!!.mDiscloseImage!!.tag as Printer)
+                    .onPrinterDeleteClicked(_deleteViewHolder!!.mDiscloseImage!!.tag as Printer?)
             }
         }
     }

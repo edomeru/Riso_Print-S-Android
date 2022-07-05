@@ -176,12 +176,12 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         val id = message!!.what
         if (id == R.id.menu_id_action_print_settings_button) {
             _pauseableHandler!!.pause()
-            if (activity != null && activity is MainActivity) {
+            if (activity != null && activity is MainActivity?) {
                 val activity = activity as MainActivity?
                 if (!activity!!.isDrawerOpen(Gravity.RIGHT)) {
-                    val v = message.obj as View
+                    val v = message.obj as View?
                     val fm = requireActivity().supportFragmentManager
-                    setIconState(v.id, true)
+                    setIconState(v!!.id, true)
                     _printSettingsFragment = null
                     val ft = fm.beginTransaction()
                     _printSettingsFragment = PrintSettingsFragment()

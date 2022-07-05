@@ -200,7 +200,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         val params = _emptySearchText!!.layoutParams as FrameLayout.LayoutParams?
         val animation = ValueAnimator.ofInt(params!!.topMargin, 0)
         animation.addUpdateListener { valueAnimator ->
-            params.topMargin = (valueAnimator.animatedValue as Int)
+            params.topMargin = (valueAnimator.animatedValue as Int?)!!
             _emptySearchText!!.requestLayout()
         }
         animation.duration = duration.toLong()

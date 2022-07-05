@@ -848,7 +848,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
             super.onPostExecute(result)
             val activity = SmartDeviceApp.activity
             activity!!.runOnUiThread {
-                if (_viewRef?.get() != null) {
+                if (_viewRef!!.get() != null) {
                     val view = _viewRef.get() as ImageView?
                     if (result == true) {
                         view!!.setImageResource(R.drawable.img_btn_printer_status_online)

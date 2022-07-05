@@ -236,7 +236,7 @@ class PrintJobsFragment : BaseFragment(), OnTouchListener, PrintJobsGroupListene
         private var _printJobsList: List<PrintJob>? = null
         private var _printersList: List<Printer>? = null
         override fun run() {
-            if (_contextRef?.get() != null) {
+            if (_contextRef!!.get() != null) {
                 val pm = PrintJobManager.getInstance(_contextRef.get()!!)
                 val printers = pm!!.printersWithJobs
                 // if initial data OR job is added OR printer w/jobs is deleted (no need to check if a printer is added since initially w/o print job)
