@@ -2,6 +2,7 @@ package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
 import android.text.method.PasswordTransformationMethod
+import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.Spinner
@@ -9,15 +10,12 @@ import android.widget.Switch
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.scrollTo
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.AppConstants
@@ -36,8 +34,6 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.*
 import org.junit.*
 
-
-@LargeTest
 class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
     private var _printSettingsFragment: PrintSettingsFragment? = null
@@ -183,6 +179,49 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             .perform(click())
     }
 
+    private fun checkSettingOptionIsDisplayed(setting: String, option: String, isDisplayed: Boolean) {
+        // Click setting
+        onView(
+            allOf(
+                isDescendantOfA(withId(R.id.view_id_show_subview_container)),
+                withText(setting)
+            )
+        )
+            .perform(scrollTo(), click())
+
+        if(isDisplayed) {
+            // Check option is displayed
+            onView(
+                allOf(
+                    withId(R.id.view_id_subview_option_item),
+                    hasDescendant(
+                        allOf(
+                            withId(R.id.menuTextView),
+                            withText(option)
+                        )
+                    )
+                )
+            ).perform(scrollTo())
+
+            // return to print settings
+            onView(withId(R.id.view_id_hide_subview_container))
+                .perform(click())
+        } else {
+            // Check option is hidden
+            onView(
+                allOf(
+                    withId(R.id.view_id_subview_option_item),
+                    hasDescendant(
+                        allOf(
+                            withId(R.id.menuTextView),
+                            withText(option)
+                        )
+                    )
+                )
+            ).check(doesNotExist())
+        }
+    }
+
     private fun updateSettingAndCheck(setting: String, option: String) {
         updateSetting(setting, option)
         checkSetting(setting, option)
@@ -222,6 +261,22 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             hasDescendant(allOf(
                 withText(option))
             )))
+    }
+
+    private fun checkSettingIsNotDisplayed(setting: String) {
+        // Check selected option displayed in item header
+        onView(
+            allOf(
+                withId(R.id.view_id_show_subview_container),
+                hasDescendant(
+                    allOf(
+                        withText(setting)
+                    )
+                )
+            )
+        ).check(
+            matches(not(isDisplayed()))
+        )
     }
 
     private fun updateSettingDoubleTap(setting: String, option: String) {
@@ -305,18 +360,93 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testOnClick_EditText() {
+    fun testSettings_Copies() {
+        val text = "12345"
+        val result = "1234"
+
         onView(allOf(
                 withClassName(`is`(EditText::class.java.canonicalName)),
                 isDescendantOfA(
                     allOf(
                         withId(R.id.view_id_show_subview_container),
                         hasDescendant(withText(getString(R.string.ids_lbl_number_of_copies))))))
-        ).perform(scrollTo(), click())
-        waitForAnimation()
-        Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
-        pressBack()
-        Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
+        ).apply {
+            perform(scrollTo(), click())
+            waitForView(hasFocus())
+            Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
+            perform(
+                replaceText(text)
+            ).check(matches(withText(result)))
+
+            // Back
+            pressBack()
+            waitForView(hasFocus())
+            Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
+            check(matches(withText(result)))
+
+            // Action button
+            perform(click())
+            waitForView(hasFocus())
+            Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
+            perform(pressImeActionButton())
+            waitForView(hasFocus())
+            Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
+
+            // Enter button
+            perform(click())
+            waitForView(hasFocus())
+            Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
+            perform(pressKey(KeyEvent.KEYCODE_ENTER))
+            waitForView(hasFocus())
+            Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
+
+            // Back to Print Preview
+            pressBack()
+            onView(withId(R.id.view_id_print_button)).perform(click())
+            check(matches(withText(result)))
+        }
+    }
+
+    @Test
+    fun testSettings_PinCode() {
+        val text = "12345678"
+
+        onView(withId(R.id.view_id_pin_code_edit_text)
+        ).apply {
+            toggleSwitchOn(getString(R.string.ids_lbl_secure_print))
+
+            perform(scrollTo(), click())
+            waitForView(hasFocus())
+            Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
+            perform(
+                replaceText(text)
+            )
+            check(matches(isPasswordHidden()))
+            pressBack()
+            waitForView(hasFocus())
+            Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
+            check(matches(isPasswordHidden()))
+
+            perform(click())
+            waitForView(hasFocus())
+            Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
+            perform(pressImeActionButton())
+            waitForView(hasFocus())
+            Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
+
+            perform(click())
+            waitForView(hasFocus())
+            Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
+            perform(pressKey(KeyEvent.KEYCODE_ENTER))
+            waitForView(hasFocus())
+            Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
+
+            toggleSwitchOff(getString(R.string.ids_lbl_secure_print))
+            toggleSwitchOn(getString(R.string.ids_lbl_secure_print))
+
+            perform(scrollTo())
+            check(matches(isPasswordHidden()))
+        }
     }
 
     @Test
@@ -486,9 +616,8 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
         // select offline printer
         selectPrinterPrintSettings(TEST_PRINTER_OFFLINE)
-
+        waitForPrint(30)
         testClickAndWait(R.id.view_id_print_header)
-        waitForDialogWithText(R.string.ids_info_msg_print_job_failed)
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
@@ -525,12 +654,6 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
             R.string.ids_info_msg_print_job_failed
         )
-    }
-
-    @Test
-    fun testDefaultPrintSettings_ClickEditText() {
-        openDefaultPrintSettings()
-        testOnClick_EditText()
     }
 
     @Test
@@ -579,33 +702,6 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         updateSettingAndCheck(
             getString(R.string.ids_lbl_papersize),
             getString(R.string.ids_lbl_papersize_b4))
-    }
-
-    @Test
-    fun testSettings_Authentication() {
-        val text = "12345678"
-
-        toggleSwitchOn(getString(R.string.ids_lbl_secure_print))
-
-        onView(
-            withId(R.id.view_id_pin_code_edit_text)
-        ).apply {
-            perform(
-                scrollTo(),
-                ViewActions.clearText(),
-                ViewActions.typeText(text))
-            check(matches(isPasswordHidden()))
-        }
-
-        toggleSwitchOff(getString(R.string.ids_lbl_secure_print))
-        toggleSwitchOn(getString(R.string.ids_lbl_secure_print))
-
-        onView(
-            withId(R.id.view_id_pin_code_edit_text)
-        ).apply {
-            perform(scrollTo())
-            check(matches(isPasswordHidden()))
-        }
     }
 
     @Test
@@ -694,70 +790,74 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         for (printer in TEST_PRINTER_MODELS) {
             addAndSelectPrinter(printer)
 
-            if (printer.isPrinterGL) {
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_papersize),
-                    listOf(
-                        getString(R.string.ids_lbl_papersize_a3),
-                        getString(R.string.ids_lbl_papersize_a3w),
-                        getString(R.string.ids_lbl_papersize_sra3),
-                        getString(R.string.ids_lbl_papersize_a4),
-                        getString(R.string.ids_lbl_papersize_a5),
-                        getString(R.string.ids_lbl_papersize_a6),
-                        getString(R.string.ids_lbl_papersize_b4),
-                        getString(R.string.ids_lbl_papersize_b5),
-                        getString(R.string.ids_lbl_papersize_b6),
-                        getString(R.string.ids_lbl_papersize_foolscap),
-                        getString(R.string.ids_lbl_papersize_tabloid),
-                        getString(R.string.ids_lbl_papersize_legal),
-                        getString(R.string.ids_lbl_papersize_letter),
-                        getString(R.string.ids_lbl_papersize_statement),
-                        getString(R.string.ids_lbl_papersize_legal13),
-                        getString(R.string.ids_lbl_papersize_8k),
-                        getString(R.string.ids_lbl_papersize_16k)
+            when(printer.printerType) {
+                AppConstants.PRINTER_MODEL_GL -> {
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_papersize),
+                        listOf(
+                            getString(R.string.ids_lbl_papersize_a3),
+                            getString(R.string.ids_lbl_papersize_a3w),
+                            getString(R.string.ids_lbl_papersize_sra3),
+                            getString(R.string.ids_lbl_papersize_a4),
+                            getString(R.string.ids_lbl_papersize_a5),
+                            getString(R.string.ids_lbl_papersize_a6),
+                            getString(R.string.ids_lbl_papersize_b4),
+                            getString(R.string.ids_lbl_papersize_b5),
+                            getString(R.string.ids_lbl_papersize_b6),
+                            getString(R.string.ids_lbl_papersize_foolscap),
+                            getString(R.string.ids_lbl_papersize_tabloid),
+                            getString(R.string.ids_lbl_papersize_legal),
+                            getString(R.string.ids_lbl_papersize_letter),
+                            getString(R.string.ids_lbl_papersize_statement),
+                            getString(R.string.ids_lbl_papersize_legal13),
+                            getString(R.string.ids_lbl_papersize_8k),
+                            getString(R.string.ids_lbl_papersize_16k)
+                        )
                     )
-                )
-            } else if (printer.printerType != AppConstants.PRINTER_MODEL_IS) {
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_papersize),
-                    listOf(
-                        getString(R.string.ids_lbl_papersize_a3),
-                        getString(R.string.ids_lbl_papersize_a3w),
-                        getString(R.string.ids_lbl_papersize_a4),
-                        getString(R.string.ids_lbl_papersize_a5),
-                        getString(R.string.ids_lbl_papersize_a6),
-                        getString(R.string.ids_lbl_papersize_b4),
-                        getString(R.string.ids_lbl_papersize_b5),
-                        getString(R.string.ids_lbl_papersize_b6),
-                        getString(R.string.ids_lbl_papersize_foolscap),
-                        getString(R.string.ids_lbl_papersize_tabloid),
-                        getString(R.string.ids_lbl_papersize_legal),
-                        getString(R.string.ids_lbl_papersize_letter),
-                        getString(R.string.ids_lbl_papersize_statement),
-                        getString(R.string.ids_lbl_papersize_legal13),
-                        getString(R.string.ids_lbl_papersize_8k),
-                        getString(R.string.ids_lbl_papersize_16k)
+                }
+                AppConstants.PRINTER_MODEL_IS -> {
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_papersize),
+                        listOf(
+                            getString(R.string.ids_lbl_papersize_a3),
+                            getString(R.string.ids_lbl_papersize_a3w),
+                            getString(R.string.ids_lbl_papersize_a4),
+                            getString(R.string.ids_lbl_papersize_a5),
+                            getString(R.string.ids_lbl_papersize_a6),
+                            getString(R.string.ids_lbl_papersize_b4),
+                            getString(R.string.ids_lbl_papersize_b5),
+                            getString(R.string.ids_lbl_papersize_b6),
+                            getString(R.string.ids_lbl_papersize_foolscap),
+                            getString(R.string.ids_lbl_papersize_tabloid),
+                            getString(R.string.ids_lbl_papersize_legal),
+                            getString(R.string.ids_lbl_papersize_letter),
+                            getString(R.string.ids_lbl_papersize_statement)
+                        )
                     )
-                )
-            } else {
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_papersize),
-                    listOf(
-                        getString(R.string.ids_lbl_papersize_a3),
-                        getString(R.string.ids_lbl_papersize_a3w),
-                        getString(R.string.ids_lbl_papersize_a4),
-                        getString(R.string.ids_lbl_papersize_a5),
-                        getString(R.string.ids_lbl_papersize_a6),
-                        getString(R.string.ids_lbl_papersize_b4),
-                        getString(R.string.ids_lbl_papersize_b5),
-                        getString(R.string.ids_lbl_papersize_b6),
-                        getString(R.string.ids_lbl_papersize_foolscap),
-                        getString(R.string.ids_lbl_papersize_tabloid),
-                        getString(R.string.ids_lbl_papersize_legal),
-                        getString(R.string.ids_lbl_papersize_letter),
-                        getString(R.string.ids_lbl_papersize_statement)
+                }
+                else -> {
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_papersize),
+                        listOf(
+                            getString(R.string.ids_lbl_papersize_a3),
+                            getString(R.string.ids_lbl_papersize_a3w),
+                            getString(R.string.ids_lbl_papersize_a4),
+                            getString(R.string.ids_lbl_papersize_a5),
+                            getString(R.string.ids_lbl_papersize_a6),
+                            getString(R.string.ids_lbl_papersize_b4),
+                            getString(R.string.ids_lbl_papersize_b5),
+                            getString(R.string.ids_lbl_papersize_b6),
+                            getString(R.string.ids_lbl_papersize_foolscap),
+                            getString(R.string.ids_lbl_papersize_tabloid),
+                            getString(R.string.ids_lbl_papersize_legal),
+                            getString(R.string.ids_lbl_papersize_letter),
+                            getString(R.string.ids_lbl_papersize_statement),
+                            getString(R.string.ids_lbl_papersize_legal13),
+                            getString(R.string.ids_lbl_papersize_8k),
+                            getString(R.string.ids_lbl_papersize_16k)
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -808,119 +908,213 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         for (printer in TEST_PRINTER_MODELS) {
             addAndSelectPrinter(printer)
 
-            if (printer.isPrinterGL) {
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_inputtray),
-                    listOf(
-                        getString(R.string.ids_lbl_inputtray_auto),
-                        getString(R.string.ids_lbl_inputtray_standard),
-                        getString(R.string.ids_lbl_inputtray_tray1),
-                        getString(R.string.ids_lbl_inputtray_tray2),
-                        getString(R.string.ids_lbl_inputtray_tray3),
+            when(printer.printerType) {
+                AppConstants.PRINTER_MODEL_GL -> {
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_inputtray),
+                        listOf(
+                            getString(R.string.ids_lbl_inputtray_auto),
+                            getString(R.string.ids_lbl_inputtray_standard),
+                            getString(R.string.ids_lbl_inputtray_tray1),
+                            getString(R.string.ids_lbl_inputtray_tray2),
+                            getString(R.string.ids_lbl_inputtray_tray3),
+                            getString(R.string.ids_lbl_inputtray_external)
+                        )
+                    )
+
+                    updateSetting(
+                        getString(R.string.ids_lbl_inputtray),
                         getString(R.string.ids_lbl_inputtray_external)
                     )
-                )
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_papersize),
+                        listOf(
+                            getString(R.string.ids_lbl_papersize_a4),
+                            getString(R.string.ids_lbl_papersize_b5),
+                            getString(R.string.ids_lbl_papersize_letter),
+                            getString(R.string.ids_lbl_papersize_16k)
+                        )
+                    )
 
-                updateSetting(
-                    getString(R.string.ids_lbl_inputtray),
-                    getString(R.string.ids_lbl_inputtray_external)
-                )
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_papersize),
-                    listOf(
-                        getString(R.string.ids_lbl_papersize_a4),
-                        getString(R.string.ids_lbl_papersize_b5),
-                        getString(R.string.ids_lbl_papersize_letter),
+                    updateSetting(
+                        getString(R.string.ids_lbl_papersize),
+                        getString(R.string.ids_lbl_papersize_b5)
+                    )
+                    checkSettingOptionIsDisplayed(
+                        getString(R.string.ids_lbl_inputtray),
+                        getString(R.string.ids_lbl_inputtray_external),
+                        true
+                    )
+
+                    updateSetting(
+                        getString(R.string.ids_lbl_papersize),
+                        getString(R.string.ids_lbl_papersize_letter)
+                    )
+                    checkSettingOptionIsDisplayed(
+                        getString(R.string.ids_lbl_inputtray),
+                        getString(R.string.ids_lbl_inputtray_external),
+                        true
+                    )
+                    updateSetting(
+                        getString(R.string.ids_lbl_papersize),
                         getString(R.string.ids_lbl_papersize_16k)
                     )
-                )
-
-                updateSetting(
-                    getString(R.string.ids_lbl_inputtray),
-                    getString(R.string.ids_lbl_inputtray_tray1)
-                )
-                updateSetting(
-                    getString(R.string.ids_lbl_papersize),
-                    getString(R.string.ids_lbl_papersize_8k)
-                )
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_inputtray),
-                    listOf(
-                        getString(R.string.ids_lbl_inputtray_auto),
-                        getString(R.string.ids_lbl_inputtray_standard),
-                        getString(R.string.ids_lbl_inputtray_tray1),
-                        getString(R.string.ids_lbl_inputtray_tray2),
-                        getString(R.string.ids_lbl_inputtray_tray3)
+                    checkSettingOptionIsDisplayed(
+                        getString(R.string.ids_lbl_inputtray),
+                        getString(R.string.ids_lbl_inputtray_external),
+                        true
                     )
-                )
-            } else if (printer.isPrinterFTorCEREZONA_S) {
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_inputtray),
-                    listOf(
-                        getString(R.string.ids_lbl_inputtray_auto),
-                        getString(R.string.ids_lbl_inputtray_standard),
-                        getString(R.string.ids_lbl_inputtray_tray1),
-                        getString(R.string.ids_lbl_inputtray_tray2),
+
+                    updateSetting(
+                        getString(R.string.ids_lbl_papersize),
+                        getString(R.string.ids_lbl_papersize_b5)
+                    )
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_inputtray),
+                        listOf(
+                            getString(R.string.ids_lbl_inputtray_auto),
+                            getString(R.string.ids_lbl_inputtray_standard),
+                            getString(R.string.ids_lbl_inputtray_tray1),
+                            getString(R.string.ids_lbl_inputtray_tray2),
+                            getString(R.string.ids_lbl_inputtray_tray3),
+                            getString(R.string.ids_lbl_inputtray_external)
+                        )
+                    )
+
+                    updateSetting(
+                        getString(R.string.ids_lbl_inputtray),
+                        getString(R.string.ids_lbl_inputtray_tray1)
+                    )
+                    updateSetting(
+                        getString(R.string.ids_lbl_papersize),
+                        getString(R.string.ids_lbl_papersize_8k)
+                    )
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_inputtray),
+                        listOf(
+                            getString(R.string.ids_lbl_inputtray_auto),
+                            getString(R.string.ids_lbl_inputtray_standard),
+                            getString(R.string.ids_lbl_inputtray_tray1),
+                            getString(R.string.ids_lbl_inputtray_tray2),
+                            getString(R.string.ids_lbl_inputtray_tray3)
+                        )
+                    )
+                }
+                AppConstants.PRINTER_MODEL_CEREZONA_S, AppConstants.PRINTER_MODEL_FT -> {
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_inputtray),
+                        listOf(
+                            getString(R.string.ids_lbl_inputtray_auto),
+                            getString(R.string.ids_lbl_inputtray_standard),
+                            getString(R.string.ids_lbl_inputtray_tray1),
+                            getString(R.string.ids_lbl_inputtray_tray2),
+                            getString(R.string.ids_lbl_inputtray_external)
+                        )
+                    )
+
+                    updateSetting(
+                        getString(R.string.ids_lbl_inputtray),
                         getString(R.string.ids_lbl_inputtray_external)
                     )
-                )
-
-                updateSetting(
-                    getString(R.string.ids_lbl_inputtray),
-                    getString(R.string.ids_lbl_inputtray_external)
-                )
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_papersize),
-                    listOf(
-                        getString(R.string.ids_lbl_papersize_a4),
-                        getString(R.string.ids_lbl_papersize_b5),
-                        getString(R.string.ids_lbl_papersize_letter),
-                        getString(R.string.ids_lbl_papersize_16k)
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_papersize),
+                        listOf(
+                            getString(R.string.ids_lbl_papersize_a4),
+                            getString(R.string.ids_lbl_papersize_b5),
+                            getString(R.string.ids_lbl_papersize_letter),
+                            getString(R.string.ids_lbl_papersize_16k)
+                        )
                     )
-                )
 
-                updateSetting(
-                    getString(R.string.ids_lbl_inputtray),
-                    getString(R.string.ids_lbl_inputtray_tray2)
-                )
-                updateSetting(
-                    getString(R.string.ids_lbl_papersize),
-                    getString(R.string.ids_lbl_papersize_legal)
-                )
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_inputtray),
-                    listOf(
-                        getString(R.string.ids_lbl_inputtray_auto),
-                        getString(R.string.ids_lbl_inputtray_standard),
-                        getString(R.string.ids_lbl_inputtray_tray1),
+                    updateSetting(
+                        getString(R.string.ids_lbl_inputtray),
                         getString(R.string.ids_lbl_inputtray_tray2)
                     )
-                )
-            } else if ((printer.printerType == AppConstants.PRINTER_MODEL_IS) or
-                (printer.printerType == AppConstants.PRINTER_MODEL_GD)
-            ) {
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_inputtray),
-                    listOf(
-                        getString(R.string.ids_lbl_inputtray_auto),
-                        getString(R.string.ids_lbl_inputtray_standard),
-                        getString(R.string.ids_lbl_inputtray_tray1),
-                        getString(R.string.ids_lbl_inputtray_tray2),
-                        getString(R.string.ids_lbl_inputtray_tray3)
+                    updateSetting(
+                        getString(R.string.ids_lbl_papersize),
+                        getString(R.string.ids_lbl_papersize_legal)
                     )
-                )
-            } else {
-                checkSettingOptions(
-                    getString(R.string.ids_lbl_inputtray),
-                    listOf(
-                        getString(R.string.ids_lbl_inputtray_auto),
-                        getString(R.string.ids_lbl_inputtray_standard),
-                        getString(R.string.ids_lbl_inputtray_tray1),
-                        getString(R.string.ids_lbl_inputtray_tray2)
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_inputtray),
+                        listOf(
+                            getString(R.string.ids_lbl_inputtray_auto),
+                            getString(R.string.ids_lbl_inputtray_standard),
+                            getString(R.string.ids_lbl_inputtray_tray1),
+                            getString(R.string.ids_lbl_inputtray_tray2)
+                        )
                     )
-                )
+                }
+                AppConstants.PRINTER_MODEL_IS, AppConstants.PRINTER_MODEL_GD -> {
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_inputtray),
+                        listOf(
+                            getString(R.string.ids_lbl_inputtray_auto),
+                            getString(R.string.ids_lbl_inputtray_standard),
+                            getString(R.string.ids_lbl_inputtray_tray1),
+                            getString(R.string.ids_lbl_inputtray_tray2),
+                            getString(R.string.ids_lbl_inputtray_tray3)
+                        )
+                    )
+                }
+                else -> {
+                    checkSettingOptions(
+                        getString(R.string.ids_lbl_inputtray),
+                        listOf(
+                            getString(R.string.ids_lbl_inputtray_auto),
+                            getString(R.string.ids_lbl_inputtray_standard),
+                            getString(R.string.ids_lbl_inputtray_tray1),
+                            getString(R.string.ids_lbl_inputtray_tray2)
+                        )
+                    )
+                }
             }
         }
+    }
+
+    @Test
+    fun testSettings_FinishingSide() {
+
+        // Finishing Side - Left
+        updateSetting(
+            getString(R.string.ids_lbl_finishingside),
+            getString(R.string.ids_lbl_finishingside_left))
+        updateSetting(
+            getString(R.string.ids_lbl_staple),
+            getString(R.string.ids_lbl_staple_1))
+        updateSetting(
+            getString(R.string.ids_lbl_finishingside),
+            getString(R.string.ids_lbl_finishingside_top))
+        checkSetting(
+            getString(R.string.ids_lbl_staple),
+            getString(R.string.ids_lbl_staple_upperleft)
+        )
+        updateSetting(
+            getString(R.string.ids_lbl_finishingside),
+            getString(R.string.ids_lbl_finishingside_left))
+        checkSetting(
+            getString(R.string.ids_lbl_staple),
+            getString(R.string.ids_lbl_staple_1))
+
+        // Finishing Side - Right
+        updateSetting(
+            getString(R.string.ids_lbl_finishingside),
+            getString(R.string.ids_lbl_finishingside_right))
+        updateSetting(
+            getString(R.string.ids_lbl_staple),
+            getString(R.string.ids_lbl_staple_1))
+        updateSetting(
+            getString(R.string.ids_lbl_finishingside),
+            getString(R.string.ids_lbl_finishingside_top))
+        checkSetting(
+            getString(R.string.ids_lbl_staple),
+            getString(R.string.ids_lbl_staple_upperright)
+        )
+        updateSetting(
+            getString(R.string.ids_lbl_finishingside),
+            getString(R.string.ids_lbl_finishingside_right))
+        checkSetting(
+            getString(R.string.ids_lbl_staple),
+            getString(R.string.ids_lbl_staple_1))
     }
 
     @Test
@@ -943,6 +1137,9 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         updateSettingAndCheck(
             getString(R.string.ids_lbl_staple),
             getString(R.string.ids_lbl_staple_2))
+        updateSettingAndCheck(
+            getString(R.string.ids_lbl_staple),
+            getString(R.string.ids_lbl_off))
 
         // Staple - Finishing Top
         updateSetting(
@@ -966,6 +1163,9 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         updateSettingAndCheck(
             getString(R.string.ids_lbl_staple),
             getString(R.string.ids_lbl_staple_2))
+        updateSettingAndCheck(
+            getString(R.string.ids_lbl_staple),
+            getString(R.string.ids_lbl_off))
 
         // Staple - Finishing Right
         updateSetting(
@@ -988,25 +1188,51 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testSettings_Imposition() {
-        // Imposition - 2up
+    fun testSettingsConstraints_Imposition() {
+
+        toggleSwitchOn(getString(R.string.ids_lbl_booklet))
+
         updateSetting(
             getString(R.string.ids_lbl_imposition),
-            getString(R.string.ids_lbl_imposition_2up))
+            getString(R.string.ids_lbl_imposition_2up)
+        )
+
+        // Imposition - Booking constraint
+        Assert.assertFalse(isSwitchOn(getString(R.string.ids_lbl_booklet)))
+        checkSetting(
+            getString(R.string.ids_lbl_duplex),
+            getString(R.string.ids_lbl_off)
+        )
+    }
+
+    @Test
+    fun testSettings_Imposition2up() {
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_2up)
+        )
+
+        // Imposition - 2up
         checkSettingOptions(
             getString(R.string.ids_lbl_imposition_order),
             listOf(
                 getString(R.string.ids_lbl_imposition_order_2up_lr),
                 getString(R.string.ids_lbl_imposition_order_2up_rl)
-            ))
+            )
+        )
 
         updateSettingAndCheck(
             getString(R.string.ids_lbl_imposition_order),
-            getString(R.string.ids_lbl_imposition_order_2up_rl))
+            getString(R.string.ids_lbl_imposition_order_2up_rl)
+        )
         updateSettingAndCheck(
             getString(R.string.ids_lbl_imposition_order),
-            getString(R.string.ids_lbl_imposition_order_2up_lr))
+            getString(R.string.ids_lbl_imposition_order_2up_lr)
+        )
+    }
 
+    @Test
+    fun testSettings_Imposition4up() {
         // Imposition - 4up
         updateSetting(
             getString(R.string.ids_lbl_imposition),
@@ -1032,26 +1258,94 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         updateSettingAndCheck(
             getString(R.string.ids_lbl_imposition_order),
             getString(R.string.ids_lbl_imposition_order_4up_ulr))
+    }
 
+    @Test
+    fun testSettings_ImpositionSequence() {
+
+        // Imposition - 2up with prev value 4up right to left/bottom
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_4up))
+        updateSetting(
+            getString(R.string.ids_lbl_imposition_order),
+            getString(R.string.ids_lbl_imposition_order_4up_url))
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_2up))
+        checkSetting(
+            getString(R.string.ids_lbl_imposition_order),
+            getString(R.string.ids_lbl_imposition_order_2up_rl))
+
+        // Imposition - 2up with prev value 4up left to bottom/right
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_4up))
+        updateSetting(
+            getString(R.string.ids_lbl_imposition_order),
+            getString(R.string.ids_lbl_imposition_order_4up_ulb))
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_2up))
+        checkSetting(
+            getString(R.string.ids_lbl_imposition_order),
+            getString(R.string.ids_lbl_imposition_order_2up_lr))
+
+        // Imposition - 2up with prev value 4up right to left/bottom
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_4up))
+        updateSetting(
+            getString(R.string.ids_lbl_imposition_order),
+            getString(R.string.ids_lbl_imposition_order_4up_urb))
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_2up))
+        checkSetting(
+            getString(R.string.ids_lbl_imposition_order),
+            getString(R.string.ids_lbl_imposition_order_2up_rl))
+
+        // Imposition - 2up with prev value 4up left to bottom/right
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_4up))
+        updateSetting(
+            getString(R.string.ids_lbl_imposition_order),
+            getString(R.string.ids_lbl_imposition_order_4up_ulr))
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_2up))
+        checkSetting(
+            getString(R.string.ids_lbl_imposition_order),
+            getString(R.string.ids_lbl_imposition_order_2up_lr))
+
+        // Imposition - Off
         updateSettingAndCheck(
             getString(R.string.ids_lbl_imposition),
             getString(R.string.ids_lbl_off))
+
+        // Imposition - 4up with prev value off
+        updateSetting(
+            getString(R.string.ids_lbl_imposition),
+            getString(R.string.ids_lbl_imposition_4up))
     }
 
-    @Ignore("RM1171")
+    @Test
     fun testSettings_Punch() {
         // Punch - Output Tray facedown
         updateSetting(
-            getString(R.string.ids_lbl_punch),
-            getString(R.string.ids_lbl_off))
-        updateSetting(
             getString(R.string.ids_lbl_outputtray),
             getString(R.string.ids_lbl_outputtray_facedown))
-        checkSettingOptions(
+        updateSetting(
             getString(R.string.ids_lbl_punch),
-            listOf(
-                getString(R.string.ids_lbl_off)
-            ))
+            getString(R.string.ids_lbl_punch_2holes))
+        checkSetting(
+            getString(R.string.ids_lbl_outputtray),
+            getString(R.string.ids_lbl_outputtray_auto))
+
+        updateSettingAndCheck(
+            getString(R.string.ids_lbl_punch),
+            getString(R.string.ids_lbl_off))
     }
 
     @Test
@@ -1066,6 +1360,19 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
                 getString(R.string.ids_lbl_outputtray_top),
                 getString(R.string.ids_lbl_outputtray_stacking)
             ))
+
+        updateSettingAndCheck(
+            getString(R.string.ids_lbl_outputtray),
+            getString(R.string.ids_lbl_outputtray_facedown)
+        )
+        updateSettingAndCheck(
+            getString(R.string.ids_lbl_outputtray),
+            getString(R.string.ids_lbl_outputtray_top)
+        )
+        updateSettingAndCheck(
+            getString(R.string.ids_lbl_outputtray),
+            getString(R.string.ids_lbl_outputtray_stacking)
+        )
 
         // Output Tray - Booklet On Paper folding
         updateSetting(
@@ -1091,16 +1398,20 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
         // Output Tray - Punch On
         toggleSwitchOff(getString(R.string.ids_lbl_booklet))
+        checkSettingOptionIsDisplayed(
+            getString(R.string.ids_lbl_outputtray),
+            getString(R.string.ids_lbl_outputtray_facedown),
+            true
+        )
+
         updateSetting(
             getString(R.string.ids_lbl_punch),
             getString(R.string.ids_lbl_punch_2holes))
-        checkSettingOptions(
+        checkSettingOptionIsDisplayed(
             getString(R.string.ids_lbl_outputtray),
-            listOf(
-                getString(R.string.ids_lbl_outputtray_auto),
-                getString(R.string.ids_lbl_outputtray_top),
-                getString(R.string.ids_lbl_outputtray_stacking)
-            ))
+            getString(R.string.ids_lbl_outputtray_facedown),
+            false
+        )
     }
 
     @Test
@@ -1125,6 +1436,30 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
                     getString(R.string.ids_lbl_punch_2holes),
                     punch3or4
                 ))
+        }
+    }
+
+    @Test
+    fun testCapabilitiesDisabled_Punch() {
+        for (printer in TEST_PRINTER_MODELS) {
+            printer.config!!.isPunch0Available = true // if false, punch is enabled. Refer to definition in Printer.kt
+            addTestPrinter(printer)
+            selectPrinterPrintSettings(printer)
+
+            checkSettingIsNotDisplayed(
+                getString(R.string.ids_lbl_punch))
+        }
+    }
+
+    @Test
+    fun testCapabilitiesDisabled_Staple() {
+        for (printer in TEST_PRINTER_MODELS) {
+            printer.config!!.isStaplerAvailable = false
+            addTestPrinter(printer)
+            selectPrinterPrintSettings(printer)
+
+            checkSettingIsNotDisplayed(
+                getString(R.string.ids_lbl_staple))
         }
     }
 }
