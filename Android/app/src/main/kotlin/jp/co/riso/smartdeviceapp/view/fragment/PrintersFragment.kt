@@ -102,7 +102,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         _emptyPrintersText = view.findViewById(R.id.emptyPrintersText)
         if (isTablet) {
             _printerTabletView = view.findViewById(R.id.printerParentView)
-            _printerTabletView?.setPrintersViewCallback(this)
+            _printerTabletView!!.setPrintersViewCallback(this)
         } else {
             _listView = view.findViewById(R.id.printer_list)
         }
@@ -162,7 +162,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         } else {
             if (_listView != null) {
                 _scrollState = _listView!!.onSaveInstanceState()
-                _deleteItem = (_listView as PrintersListView).deleteItemPosition
+                _deleteItem = (_listView as PrintersListView?)!!.deleteItemPosition
             } else {
                 _deleteItem = PrinterManager.EMPTY_ID
             }
@@ -535,7 +535,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
                 } else {
                     _printerAdapter =
                         PrinterArrayAdapter(activity, R.layout.printers_container_item, _printer)
-                    (_printerAdapter as PrinterArrayAdapter).setPrintersArrayAdapterInterface(this)
+                    (_printerAdapter as PrinterArrayAdapter?)!!.setPrintersArrayAdapterInterface(this)
                     _listView!!.adapter = _printerAdapter
                     if (message.obj != null) {
                         (_listView as PrintersListView?)!!.onRestoreInstanceState(
@@ -561,7 +561,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
             }
             MSG_PRINTSETTINGS_BUTTON -> {
                 _pauseableHandler!!.pause()
-                val fragment = message.obj as PrintSettingsFragment
+                val fragment = (message.obj as PrintSettingsFragment?)!!
                 displayDefaultPrintSettings(fragment)
                 _printerTabletView!!.setDefaultSettingSelected(message.arg1, true)
             }
