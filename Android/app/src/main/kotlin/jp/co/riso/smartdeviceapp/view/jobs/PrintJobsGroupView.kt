@@ -224,7 +224,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
             if (nextFocus == null || nextFocus.parent !== _jobsLayout) {
                 nextFocus = _viewToDelete!!.focusSearch(FOCUS_UP)
             }
-            nextFocus.requestFocus()
+            nextFocus?.requestFocus()
         }
     }
 
