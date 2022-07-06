@@ -380,7 +380,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
             // Back
             pressBack()
-            waitForView(hasFocus())
+            waitForAnimation()
             Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
             check(matches(withText(result)))
 
@@ -389,7 +389,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             waitForView(hasFocus())
             Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
             perform(pressImeActionButton())
-            waitForView(hasFocus())
+            waitForAnimation()
             Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
 
             // Enter button
@@ -397,7 +397,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             waitForView(hasFocus())
             Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
             perform(pressKey(KeyEvent.KEYCODE_ENTER))
-            waitForView(hasFocus())
+            waitForAnimation()
             Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
 
             // Back to Print Preview
@@ -423,7 +423,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             )
             check(matches(isPasswordHidden()))
             pressBack()
-            waitForView(hasFocus())
+            waitForAnimation()
             Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
             check(matches(isPasswordHidden()))
 
@@ -431,14 +431,14 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
             waitForView(hasFocus())
             Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
             perform(pressImeActionButton())
-            waitForView(hasFocus())
+            waitForAnimation()
             Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
 
             perform(click())
             waitForView(hasFocus())
             Assert.assertTrue(isKeyboardOpen(_printSettingsFragment!!))
             perform(pressKey(KeyEvent.KEYCODE_ENTER))
-            waitForView(hasFocus())
+            waitForAnimation()
             Assert.assertFalse(isKeyboardOpen(_printSettingsFragment!!))
 
             toggleSwitchOff(getString(R.string.ids_lbl_secure_print))
@@ -1352,6 +1352,19 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     fun testSettings_OutputTray() {
         // Output Tray - Booklet On
         toggleSwitchOn(getString(R.string.ids_lbl_booklet))
+        checkSettingOptions(
+            getString(R.string.ids_lbl_outputtray),
+            listOf(
+                getString(R.string.ids_lbl_outputtray_auto),
+                getString(R.string.ids_lbl_outputtray_facedown),
+                getString(R.string.ids_lbl_outputtray_top),
+                getString(R.string.ids_lbl_outputtray_stacking)
+            ))
+
+        updateSetting(
+            getString(R.string.ids_lbl_booklet_finishing),
+            getString(R.string.ids_lbl_off),
+        )
         checkSettingOptions(
             getString(R.string.ids_lbl_outputtray),
             listOf(
