@@ -74,7 +74,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
                 R.id.menu_id_action_button,
                 0
             ).perform(click())
-            waitForView(hasFocus())
+            waitForAnimation()
             Assert.assertFalse(isKeyboardOpen(_settingsFragment!!))
         }
     }
@@ -89,7 +89,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
             Assert.assertTrue(isKeyboardOpen(_settingsFragment!!))
 
             perform(pressImeActionButton())
-            waitForView(hasFocus())
+            waitForAnimation()
             Assert.assertFalse(isKeyboardOpen(_settingsFragment!!))
         }
     }
@@ -104,7 +104,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
             Assert.assertTrue(isKeyboardOpen(_settingsFragment!!))
 
             perform(pressKey(KeyEvent.KEYCODE_ENTER))
-            waitForView(hasFocus())
+            waitForAnimation()
             Assert.assertFalse(isKeyboardOpen(_settingsFragment!!))
         }
     }
