@@ -24,7 +24,6 @@ import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment.Companion.FRAGMENT_T
 import jp.co.riso.smartprint.R
 import org.junit.*
 
-@LargeTest
 class HomeFragmentTest : BaseActivityTestUtil() {
 
     private var _homeFragment: HomeFragment? = null

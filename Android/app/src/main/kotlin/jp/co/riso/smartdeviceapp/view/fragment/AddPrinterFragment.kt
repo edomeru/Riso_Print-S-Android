@@ -157,7 +157,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
      * @brief Display success dialog during successful printer search
      */
     private fun dialogCb() {
-        if (isTablet && activity != null && activity is MainActivity) {
+        if (isTablet && activity != null && activity is MainActivity?) {
             val activity = activity as MainActivity?
             if (!activity!!.isDrawerOpen(Gravity.RIGHT)) {
                 return
@@ -175,12 +175,12 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 null,
                 KEY_ADD_PRINTER_DIALOG
             )
-            if (activity != null && activity is MainActivity) {
+            if (activity != null && activity is MainActivity?) {
                 setResultListenerConfirmDialog(
                     requireActivity().supportFragmentManager,
                     this,
                     KEY_ADD_PRINTER_DIALOG)
-                DialogUtils.displayDialog(activity as MainActivity, KEY_ADD_PRINTER_DIALOG, info)
+                DialogUtils.displayDialog((activity as MainActivity?)!!, KEY_ADD_PRINTER_DIALOG, info)
             }
         }
     }
@@ -192,7 +192,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
      */
     private fun dialogErrCb(err: Int) {
         if (isTablet) {
-            if (activity != null && activity is MainActivity) {
+            if (activity != null && activity is MainActivity?) {
                 val activity = activity as MainActivity?
                 if (!activity!!.isDrawerOpen(Gravity.RIGHT)) {
                     return
@@ -240,7 +240,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
      */
     private fun closeScreen() {
         if (isTablet) {
-            if (activity != null && activity is MainActivity) {
+            if (activity != null && activity is MainActivity?) {
                 val activity = activity as MainActivity?
                 activity!!.runOnUiThread { activity.closeDrawers() }
             }

@@ -39,12 +39,12 @@ class PrinterSearchAdapter(context: Context?, private val _layoutId: Int, values
         val viewHolder: ViewHolder
         if (convertView == null) {
             val inflater =
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            convertView = inflater.inflate(_layoutId, parent, false)
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
+            convertView = inflater!!.inflate(_layoutId, parent, false)
             // AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
             viewHolder = ViewHolder()
         } else {
-            viewHolder = convertView.tag as ViewHolder
+            viewHolder = (convertView.tag as ViewHolder?)!!
         }
         initializeView(viewHolder, convertView, printer, position)
         return convertView!!
@@ -71,11 +71,11 @@ class PrinterSearchAdapter(context: Context?, private val _layoutId: Int, values
         viewHolder.printerName = convertView.findViewById(R.id.printerText)
         viewHolder.ipAddress = convertView.findViewById(R.id.ipAddressText)
         viewHolder.addedIndicator = convertView.findViewById(R.id.addPrinterButton)
-        viewHolder.printerName?.text = printer.name
-        viewHolder.ipAddress?.text = printer.ipAddress
-        viewHolder.addedIndicator?.setBackgroundResource(R.drawable.selector_printersearch_addprinter)
-        viewHolder.addedIndicator?.tag = position
-        viewHolder.addedIndicator?.isClickable = false
+        viewHolder.printerName!!.text = printer.name
+        viewHolder.ipAddress!!.text = printer.ipAddress
+        viewHolder.addedIndicator!!.setBackgroundResource(R.drawable.selector_printersearch_addprinter)
+        viewHolder.addedIndicator!!.tag = position
+        viewHolder.addedIndicator!!.isClickable = false
         val separator: View = convertView.findViewById(R.id.printers_separator)
         if (position == count - 1) {
             separator.visibility = View.GONE
@@ -84,12 +84,12 @@ class PrinterSearchAdapter(context: Context?, private val _layoutId: Int, values
         }
         if (_printerManager!!.isExists(printer)) {
             convertView.isClickable = false
-            viewHolder.addedIndicator?.isActivated = true
+            viewHolder.addedIndicator!!.isActivated = true
         } else {
-            viewHolder.addedIndicator?.isActivated = false
+            viewHolder.addedIndicator!!.isActivated = false
         }
         if (printerName!!.isEmpty()) {
-            viewHolder.printerName?.text = context.resources.getString(R.string.ids_lbl_no_name)
+            viewHolder.printerName!!.text = context.resources.getString(R.string.ids_lbl_no_name)
         }
         convertView.setOnClickListener(this)
         convertView.tag = viewHolder
@@ -143,8 +143,8 @@ class PrinterSearchAdapter(context: Context?, private val _layoutId: Int, values
     // ================================================================================
     override fun onClick(v: View) {
         if (v.id == R.id.printer_search_row) {
-            val viewHolder = v.tag as ViewHolder
-            val printer = getItem((viewHolder.addedIndicator!!.tag as Int))
+            val viewHolder = v.tag as ViewHolder?
+            val printer = getItem((viewHolder!!.addedIndicator!!.tag as Int?)!!)
             if (viewHolder.addedIndicator!!.isActivated) {
                 return
             }

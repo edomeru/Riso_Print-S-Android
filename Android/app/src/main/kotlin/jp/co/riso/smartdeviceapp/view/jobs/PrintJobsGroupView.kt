@@ -199,7 +199,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
         _viewToDelete!!.isSelected = true
         // RM#1104 print job button should not be selected - it must only be selected when clicked
         _viewToDelete!!.findViewById<View>(R.id.printJobDeleteBtn).isSelected = false
-        _groupListener!!.setDeletePrintJob(this, _viewToDelete!!.tag as PrintJob)
+        _groupListener!!.setDeletePrintJob(this, _viewToDelete!!.tag as PrintJob?)
     }
 
     /**
@@ -277,7 +277,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @return Computed animation duration
      */
     fun getAnimationDuration(originalHeight: Int): Int {
-        val newHeight = originalHeight.coerceAtMost(getScreenDimensions(context as Activity)!!.y)
+        val newHeight = originalHeight.coerceAtMost(getScreenDimensions(context as Activity?)!!.y)
         return (newHeight * DURATION_MULTIPLIER).toInt()
     }
 
@@ -292,7 +292,7 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
             orientation = VERTICAL
             _rowHeight = resources.getDimensionPixelSize(R.dimen.printjob_row_height)
             _separatorHeight = resources.getDimensionPixelSize(R.dimen.separator_size)
-            (context as Activity).runOnUiThread {
+            (context as Activity?)!!.runOnUiThread {
                 _handler = Handler(Looper.myLooper()!!, this@PrintJobsGroupView)
             }
         }
@@ -318,8 +318,8 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @brief Creates view for the header.
      */
     private fun createHeader() {
-        val factory = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        _printGroupView = factory.inflate(R.layout.printjobs_group, this, true)
+        val factory = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
+        _printGroupView = factory!!.inflate(R.layout.printjobs_group, this, true)
         _printJobGroupLayout = _printGroupView!!.findViewById(R.id.printJobsGroupLayout)
         val printJobGroupText = _printGroupView!!.findViewById<TextView>(R.id.printJobGroupText)
         val printJobGroupSubText = _printGroupView!!.findViewById<TextView>(R.id.printJobGroupSubText)
@@ -350,8 +350,8 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      * @param index Index of the print job item in the list to be created
      */
     private fun createItem(index: Int) {
-        val factory = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val tempView = factory.inflate(R.layout.printjobs_item, this, false)
+        val factory = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
+        val tempView = factory!!.inflate(R.layout.printjobs_item, this, false)
         val printJobName = tempView.findViewById<TextView>(R.id.printJobName)
         val printJobError = tempView.findViewById<ImageView>(R.id.printJobError)
         val printJobSuccess = tempView.findViewById<ImageView>(R.id.printJobSuccess)
@@ -606,11 +606,11 @@ class PrintJobsGroupView : LinearLayout, View.OnClickListener, OnTouchListener, 
      */
     private fun deletePrintJobGroupView() {
         for (i in 0 until _jobsLayout!!.childCount) {
-            _groupListener!!.deleteJobFromList(_jobsLayout!!.getChildAt(i).tag as PrintJob)
+            _groupListener!!.deleteJobFromList(_jobsLayout!!.getChildAt(i).tag as PrintJob?)
         }
         _groupListener!!.deletePrinterFromList(_printer)
         _layoutListener!!.deletePrintJobsGroup(this)
-        (_printGroupView!!.parent as LinearLayout).removeView(_printGroupView)
+        (_printGroupView!!.parent as LinearLayout?)!!.removeView(_printGroupView)
     }
 
     /**

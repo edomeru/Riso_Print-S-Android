@@ -21,7 +21,6 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-@LargeTest
 class PrintersFragmentTest : BaseActivityTestUtil() {
     private var _printersFragment: PrintersFragment? = null
     private var _printerManager: PrinterManager? = null
