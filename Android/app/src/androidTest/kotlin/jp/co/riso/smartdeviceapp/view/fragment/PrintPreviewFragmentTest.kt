@@ -30,7 +30,6 @@ import jp.co.riso.smartprint.R
 import org.hamcrest.Matchers.not
 import org.junit.*
 
-@LargeTest
 class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
     private var _printPreviewFragment: PrintPreviewFragment? = null

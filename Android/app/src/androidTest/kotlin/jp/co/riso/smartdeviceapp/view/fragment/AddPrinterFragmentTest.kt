@@ -16,7 +16,6 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-@LargeTest
 class AddPrinterFragmentTest : BaseActivityTestUtil() {
 
     private var _addPrinterFragment: AddPrinterFragment? = null

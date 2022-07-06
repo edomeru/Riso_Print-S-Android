@@ -16,7 +16,6 @@ import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_HOME
 import jp.co.riso.smartprint.R
 import org.junit.*
 
-@LargeTest
 class MenuFragmentTest : BaseActivityTestUtil() {
 
     private var _menuFragment: MenuFragment? = null

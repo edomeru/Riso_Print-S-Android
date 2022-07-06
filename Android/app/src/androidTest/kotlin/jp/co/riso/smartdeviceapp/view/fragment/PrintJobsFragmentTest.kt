@@ -19,7 +19,6 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
 import org.junit.*
 
-@LargeTest
 class PrintJobsFragmentTest : BaseActivityTestUtil() {
 
     private var _printJobsFragment: PrintJobsFragment? = null
