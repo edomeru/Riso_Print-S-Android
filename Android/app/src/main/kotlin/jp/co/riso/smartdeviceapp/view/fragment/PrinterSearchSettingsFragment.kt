@@ -66,12 +66,7 @@ class PrinterSearchSettingsFragment : BaseFragment() {
     override val viewLayout: Int
         get() = R.layout.fragment_printersearchsettings
 
-    override fun initializeFragment(savedInstanceState: Bundle?) {
-        if (isChromeBook) {
-            // RM1167 temporary fix - Avoid rotation issues in Chrome
-            retainInstance = true
-        }
-    }
+    override fun initializeFragment(savedInstanceState: Bundle?) {}
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _snmpCommunityNameEditText = view.findViewById(R.id.inputSnmpCommunityName)

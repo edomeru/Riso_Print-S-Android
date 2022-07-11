@@ -56,10 +56,6 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         get() = R.layout.fragment_addprinter
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        if (isChromeBook) {
-            // RM1167 temporary fix - Avoid rotation issues in Chrome
-            retainInstance = true
-        }
         _added = false
         _printerManager = getInstance(SmartDeviceApp.appContext!!)
         _printerManager!!.setPrinterSearchCallback(this)

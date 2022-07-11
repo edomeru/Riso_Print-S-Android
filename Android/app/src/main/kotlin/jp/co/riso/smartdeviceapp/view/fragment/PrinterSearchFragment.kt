@@ -255,8 +255,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         if (!_printerManager!!.savePrinterToDB(printer, true)) {
             ret = -1
             msg = resources.getString(R.string.ids_err_msg_db_failure)
-            info =
-                InfoDialogFragment.newInstance(title, msg, resources.getString(R.string.ids_lbl_ok))
+            info = InfoDialogFragment.newInstance(title, msg, resources.getString(R.string.ids_lbl_ok))
         } else {
             msg = resources.getString(R.string.ids_info_msg_printer_add_successful)
             info = ConfirmDialogFragment.newInstance(

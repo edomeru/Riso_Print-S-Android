@@ -57,12 +57,7 @@ class PrintJobsFragment : BaseFragment(), OnTouchListener, PrintJobsGroupListene
     override val viewLayout: Int
         get() = R.layout.fragment_printjobs
 
-    override fun initializeFragment(savedInstanceState: Bundle?) {
-        if (isChromeBook) {
-            // RM1167 temporary fix - Avoid rotation issues in Chrome
-            retainInstance = true
-        }
-    }
+    override fun initializeFragment(savedInstanceState: Bundle?) {}
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
