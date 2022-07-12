@@ -135,16 +135,16 @@ object AppUtils {
      */
     @JvmStatic
     fun hideSoftKeyboard(activity: Activity) {
-        val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
         if (activity.currentFocus != null) {
-            imm.hideSoftInputFromWindow(
+            imm!!.hideSoftInputFromWindow(
                 activity.currentFocus!!.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             // activity.getCurrentFocus() returns null at some cases on Android P
             // Force dismiss keyboard
-            imm.hideSoftInputFromWindow(
+            imm!!.hideSoftInputFromWindow(
                 activity.window.decorView.rootView.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
@@ -313,7 +313,7 @@ object AppUtils {
 
             // For the ViewGroup, we'll have to use recursion
             if (v.getChildAt(i) is ViewGroup) {
-                changeChildrenFont(v.getChildAt(i) as ViewGroup, font)
+                changeChildrenFont(v.getChildAt(i) as ViewGroup?, font)
             } else {
                 try {
                     // Test whether setTypeface and getTypeface methods exists

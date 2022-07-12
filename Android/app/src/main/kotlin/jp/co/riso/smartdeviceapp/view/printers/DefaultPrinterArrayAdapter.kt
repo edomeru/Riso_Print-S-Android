@@ -37,13 +37,13 @@ class DefaultPrinterArrayAdapter(context: Context?, resource: Int) : ArrayAdapte
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = super.getDropDownView(position, convertView, parent) as TextView
+        val view = super.getDropDownView(position, convertView, parent) as TextView?
         if (isNoDisabled && position == 1) //No
         {
-            view.setBackgroundColor(ContextCompat.getColor(_activity!!, R.color.theme_light_3))
+            view!!.setBackgroundColor(ContextCompat.getColor(_activity!!, R.color.theme_light_3))
             view.setTextColor(ContextCompat.getColor(_activity, R.color.theme_light_4))
         } else {
-            view.setBackgroundResource(R.drawable.selector_printerinfo_port)
+            view!!.setBackgroundResource(R.drawable.selector_printerinfo_port)
             view.setTextColor(
                 ContextCompat.getColorStateList(
                     _activity!!,

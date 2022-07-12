@@ -6,6 +6,7 @@ import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
 import junit.framework.TestCase
+import org.junit.Assert
 
 class PrinterTest(name: String?) : TestCase(name) {
     private val PRINTER_NAME = "Test Printer"
@@ -28,6 +29,11 @@ class PrinterTest(name: String?) : TestCase(name) {
     // ================================================================================
     fun testConstructor() {
         val printer = Printer(PRINTER_NAME, PRINTER_ADDRESS)
+        assertNotNull(printer)
+    }
+
+    fun testConstructor_NullName() {
+        val printer = Printer(null, PRINTER_ADDRESS)
         assertNotNull(printer)
     }
 
@@ -295,7 +301,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // ================================================================================
     // Tests - Config
     // ================================================================================
-    fun testConfig() {
+    fun testGetConfigParams() {
         val printer = Printer("", "")
         printer.config!!.isLprAvailable
         printer.config!!.isRawAvailable
@@ -309,5 +315,77 @@ class PrinterTest(name: String?) : TestCase(name) {
         printer.config!!.isTrayTopAvailable
         printer.config!!.isExternalFeederAvailable
         printer.config!!.isPunch0Available
+    }
+
+    fun testSetConfigParams() {
+        val printer = Printer("", "")
+        printer.config!!.isLprAvailable = true
+        printer.config!!.isRawAvailable = true
+        printer.config!!.isBookletFinishingAvailable = true
+        printer.config!!.isStaplerAvailable = true
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = true
+        printer.config!!.isTrayFaceDownAvailable = true
+        printer.config!!.isTrayTopAvailable = true
+        printer.config!!.isTrayStackAvailable = true
+        printer.config!!.isTrayTopAvailable = true
+        printer.config!!.isExternalFeederAvailable = true
+        printer.config!!.isPunch0Available = true
+    }
+
+    fun testGetPunchAvailability() {
+        val printer = Printer("", "")
+        var ret = printer.config!!.isPunchAvailable
+        Assert.assertTrue(ret)
+
+        // isPunch0Available is true
+        printer.config!!.isPunch0Available = true
+        printer.config!!.isPunch3Available = false
+        printer.config!!.isPunch4Available = false
+        ret = printer.config!!.isPunchAvailable
+        Assert.assertFalse(ret)
+
+        printer.config!!.isPunch0Available = true
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = false
+        ret = printer.config!!.isPunchAvailable
+        Assert.assertFalse(ret)
+
+        printer.config!!.isPunch0Available = true
+        printer.config!!.isPunch3Available = false
+        printer.config!!.isPunch4Available = true
+        ret = printer.config!!.isPunchAvailable
+        Assert.assertFalse(ret)
+
+        printer.config!!.isPunch0Available = true
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = true
+        ret = printer.config!!.isPunchAvailable
+        Assert.assertFalse(ret)
+
+        // isPunch0Available is false
+        printer.config!!.isPunch0Available = false
+        printer.config!!.isPunch3Available = false
+        printer.config!!.isPunch4Available = false
+        ret = printer.config!!.isPunchAvailable
+        Assert.assertFalse(ret)
+
+        printer.config!!.isPunch0Available = false
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = false
+        ret = printer.config!!.isPunchAvailable
+        Assert.assertTrue(ret)
+
+        printer.config!!.isPunch0Available = false
+        printer.config!!.isPunch3Available = false
+        printer.config!!.isPunch4Available = true
+        ret = printer.config!!.isPunchAvailable
+        Assert.assertTrue(ret)
+
+        printer.config!!.isPunch0Available = false
+        printer.config!!.isPunch3Available = true
+        printer.config!!.isPunch4Available = true
+        ret = printer.config!!.isPunchAvailable
+        Assert.assertTrue(ret)
     }
 }

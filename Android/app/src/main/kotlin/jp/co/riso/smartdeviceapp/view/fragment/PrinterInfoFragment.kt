@@ -59,11 +59,11 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _printerName = view.findViewById(R.id.inputPrinterName)
-        _ipAddress = view.findViewById(R.id.inputIpAddress)
+        _ipAddress = view.findViewById(R.id.infoIpAddress)
         _port = view.findViewById(R.id.inputPort)
-        _port?.onItemSelectedListener = this
+        _port!!.onItemSelectedListener = this
         _defaultPrinter = view.findViewById(R.id.defaultPrinter)
-        _defaultPrinter?.onItemSelectedListener = this
+        _defaultPrinter!!.onItemSelectedListener = this
         if (savedInstanceState != null) {
             if (_printer == null) {
                 val printersList = _printerManager!!.savedPrintersList
@@ -82,21 +82,21 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
             portAdapter.add(getString(R.string.ids_lbl_port_raw))
             portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
         } else {
-            _port?.visibility = View.GONE
+            _port!!.visibility = View.GONE
             // Port setting is always displayed as LPR
             view.findViewById<View>(R.id.defaultPort).visibility = View.VISIBLE
         }
-        _port?.adapter = portAdapter
-        _port?.setSelection(_printer!!.portSetting!!.ordinal)
+        _port!!.adapter = portAdapter
+        _port!!.setSelection(_printer!!.portSetting!!.ordinal)
         _defaultPrinterAdapter =
             DefaultPrinterArrayAdapter(activity, R.layout.printerinfo_port_item)
         _defaultPrinterAdapter!!.add(getString(R.string.ids_lbl_yes))
         _defaultPrinterAdapter!!.add(getString(R.string.ids_lbl_no))
         _defaultPrinterAdapter!!.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
-        _defaultPrinter?.adapter = _defaultPrinterAdapter
+        _defaultPrinter!!.adapter = _defaultPrinterAdapter
         if (_printerManager!!.defaultPrinter == _printer!!.id) {
-            _defaultPrinter?.setSelection(0) //yes
-        } else _defaultPrinter?.setSelection(1) //no
+            _defaultPrinter!!.setSelection(0) //yes
+        } else _defaultPrinter!!.setSelection(1) //no
     }
 
     override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {
@@ -176,12 +176,12 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         val id = message!!.what
         if (id == R.id.menu_id_action_print_settings_button) {
             _pauseableHandler!!.pause()
-            if (activity != null && activity is MainActivity) {
+            if (activity != null && activity is MainActivity?) {
                 val activity = activity as MainActivity?
                 if (!activity!!.isDrawerOpen(Gravity.RIGHT)) {
-                    val v = message.obj as View
+                    val v = message.obj as View?
                     val fm = requireActivity().supportFragmentManager
-                    setIconState(v.id, true)
+                    setIconState(v!!.id, true)
                     _printSettingsFragment = null
                     val ft = fm.beginTransaction()
                     _printSettingsFragment = PrintSettingsFragment()
@@ -239,7 +239,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
     // ================================================================================
     override fun onItemSelected(
         parentView: AdapterView<*>,
-        selectedItemView: View,
+        selectedItemView: View?,
         position: Int,
         id: Long
     ) {

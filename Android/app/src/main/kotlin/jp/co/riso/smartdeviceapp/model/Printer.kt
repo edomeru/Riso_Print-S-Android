@@ -402,17 +402,17 @@ class Printer : Parcelable {
                 isPunch0Available
             )
             `in`.readBooleanArray(bConfig)
-            config?.isLprAvailable = bConfig[0]
-            config?.isRawAvailable = bConfig[1]
-            config?.isBookletFinishingAvailable = bConfig[2]
-            config?.isStaplerAvailable = bConfig[3]
-            config?.isPunch3Available = bConfig[4]
-            config?.isPunch4Available = bConfig[5]
-            config?.isTrayFaceDownAvailable = bConfig[6]
-            config?.isTrayTopAvailable = bConfig[7]
-            config?.isTrayStackAvailable = bConfig[8]
-            config?.isExternalFeederAvailable = bConfig[9]
-            config?.isPunch0Available = bConfig[10]
+            config!!.isLprAvailable = bConfig[0]
+            config!!.isRawAvailable = bConfig[1]
+            config!!.isBookletFinishingAvailable = bConfig[2]
+            config!!.isStaplerAvailable = bConfig[3]
+            config!!.isPunch3Available = bConfig[4]
+            config!!.isPunch4Available = bConfig[5]
+            config!!.isTrayFaceDownAvailable = bConfig[6]
+            config!!.isTrayTopAvailable = bConfig[7]
+            config!!.isTrayStackAvailable = bConfig[8]
+            config!!.isExternalFeederAvailable = bConfig[9]
+            config!!.isPunch0Available = bConfig[10]
         }
     }
 

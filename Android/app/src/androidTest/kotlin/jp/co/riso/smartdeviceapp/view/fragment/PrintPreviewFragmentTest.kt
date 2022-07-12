@@ -2,24 +2,30 @@ package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
 import android.app.Instrumentation
+import android.content.ClipData
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import androidx.fragment.app.FragmentActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.swipeLeft
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
+import jp.co.riso.smartdeviceapp.AppConstants.MULTI_IMAGE_PDF_FILENAME
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
+import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTERS
+import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment.Companion.STATE_PRINTPREVIEW
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartprint.R
-import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.not
 import org.junit.*
 
@@ -27,7 +33,11 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
     private var _printPreviewFragment: PrintPreviewFragment? = null
     private var _printerManager: PrinterManager? = null
-    private var _printer: Printer? = null
+    private var _printersList: List<Printer?>? = null
+
+
+    private val _printPreviewView: PrintPreviewView
+        get() = mainActivity!!.findViewById(R.id.printPreviewView)
 
     @get:Rule
     var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -36,7 +46,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     fun setup() {
         Intents.init()
         wakeUpScreen()
-        initPrinter()
+        initPrinters()
         initFragment()
     }
 
@@ -46,7 +56,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         clearPrintersList()
         _printPreviewFragment = null
         _printerManager = null
-        _printer = null
+        _printersList = null
     }
 
     private fun initFragment() {
@@ -61,12 +71,33 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         _printPreviewFragment = fragment as PrintPreviewFragment
     }
 
-    private fun initPrinter() {
+    private fun initPrinters() {
         _printerManager = PrinterManager.getInstance(mainActivity!!)
-        _printer = TEST_ONLINE_PRINTER
-        if (!_printerManager!!.isExists(_printer)) {
-            _printerManager!!.savePrinterToDB(_printer, true)
+        _printersList = mutableListOf(
+            TEST_PRINTER_ONLINE
+        )
+    }
+
+    private fun turnPageForward(isForward: Boolean) {
+        val printPreviewView = onView(withId(R.id.printPreviewView))
+        if (mainActivity!!.resources.configuration.orientation == ORIENTATION_LANDSCAPE &&
+            mainActivity!!.requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            /** TODO: For now, force orientation to portrait.
+             *  Swipe doesn't work when orientation is landscape (tried either swipe left/up/down) */
+            mainActivity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+        waitForAnimation()
+        if (isForward) {
+            printPreviewView.perform(swipeLeft())
+        } else {
+            printPreviewView.perform(swipeRight())
+        }
+        waitForAnimation()
+    }
+
+
+    private fun fileNameNoExtension(fileName: String): String {
+        return fileName.substring(0, fileName.lastIndexOf('.'))
     }
 
     @Test
@@ -74,9 +105,12 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         Assert.assertNotNull(_printPreviewFragment)
     }
 
-    @Ignore("fails during check all")
+    @Test
     fun testPrintSettingsButton_NoPrinter() {
         clearPrintersList()
+        Assert.assertEquals(
+            0,
+            _printerManager!!.savedPrintersList.size)
 
         testClickAndWait(R.id.view_id_print_button)
 
@@ -89,6 +123,10 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
     @Test
     fun testPrintSettingsButton_WithPrinter() {
+        switchScreen(STATE_PRINTERS)
+        addPrinter(_printersList)
+
+        switchScreen(STATE_PRINTPREVIEW)
         testClickAndWait(R.id.view_id_print_button)
         val rightFragment = mainActivity!!.supportFragmentManager.findFragmentById(R.id.rightLayout)
         Assert.assertTrue(rightFragment is PrintSettingsFragment)
@@ -102,46 +140,126 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
         Assert.assertTrue(mainFragment is PrintPreviewFragment)
     }
 
-    @Ignore("TODO")
+    @Test
     fun testPreview_ChangePage() {
-        switchScreen(MenuFragment.STATE_HOME)
         selectDocument(getUriFromPath(DOC_PDF))
-
-        onView(withClassName(equalTo(PrintPreviewView::class.java.name)))
-            .perform(swipeLeft())
+        Assert.assertEquals(0, _printPreviewView.currentPage)
+        turnPageForward(true)
+        Assert.assertEquals(1, _printPreviewView.currentPage)
+        turnPageForward(false)
+        Assert.assertEquals(0, _printPreviewView.currentPage)
     }
 
     @Test
-    fun testFileOpen_Consecutive() {
-        switchScreen(MenuFragment.STATE_HOME)
+    fun testPreview_SwipeUntilLastPage() {
+        selectDocument(getUriFromPath(DOC_PDF_4PAGES))
+        for (i in 0 until _printPreviewView.pageCount) {
+            Assert.assertEquals(i, _printPreviewView.currentPage)
+            turnPageForward(true)
+        }
+        Assert.assertEquals((_printPreviewView.pageCount - 1), _printPreviewView.currentPage)
+    }
+
+    @Test
+    fun testFileOpenIn_Document() {
+        val testFile = DOC_PDF
+
+        loadFileUsingOpenIn(getUriFromPath(testFile))
+
+        Assert.assertEquals(
+            fileNameNoExtension(testFile),
+            fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
+    }
+
+    @Test
+    fun testFileOpenIn_DocumentTxt() {
+        val testFile = DOC_TXT
+
+        loadFileUsingOpenIn(getUriFromPath(testFile))
+        waitForAnimation()
+
+        Assert.assertEquals(
+            fileNameNoExtension(testFile),
+            fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
+    }
+
+    @Test
+    fun testFileOpenIn_Photo() {
+        val testFile = IMG_BMP
+
+        loadFileUsingOpenIn(getUriFromPath(testFile))
+        waitForAnimation()
+
+        Assert.assertEquals(
+            fileNameNoExtension(testFile),
+            fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
+    }
+
+    @Test
+    fun testFileOpenIn_MultiplePhotos() {
+        val testFiles = ClipData.newUri(
+            mainActivity!!.contentResolver,
+            IMG_BMP,
+            getUriFromPath(IMG_BMP))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_GIF)))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_PNG)))
+
+        loadFileUsingOpenIn(testFiles)
+        waitForAnimation()
+
+        Assert.assertEquals(
+            fileNameNoExtension(MULTI_IMAGE_PDF_FILENAME),
+            fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
+    }
+
+    @Test
+    fun testFileOpenConsecutive() {
+        val testFile1 = DOC_TXT
+        val testFile2 = IMG_BMP
+
+        selectDocument(getUriFromPath(testFile1))
+        waitForAnimation()
+        Assert.assertEquals(
+            fileNameNoExtension(testFile1),
+            fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
+
+        selectPhotos(getUriFromPath(testFile2))
+        waitForAnimation()
+        Assert.assertEquals(
+            fileNameNoExtension(testFile2),
+            fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
+    }
+
+    @Test
+    fun testFileOpenConsecutive_OpenIn() {
+        val testFile1 = DOC_TXT
+        val testFile2 = IMG_BMP
         val intent = Intent()
-        intent.setData(getUriFromPath(DOC_TXT))
+        intent.setData(getUriFromPath(testFile1))
         Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
             .respondWith(
                 Instrumentation.ActivityResult(
                     FragmentActivity.RESULT_OK,
                     intent))
+
+        switchScreen(MenuFragment.STATE_HOME)
+        waitForView(withId(R.id.fileButton))
+        waitForAnimation()
         onView(withId(R.id.fileButton)).perform(click())
+        updateMainActivity()
+        waitFewSeconds()
 
-        switchScreen(MenuFragment.STATE_HOME)
-        selectPhotos(getUriFromPath(IMG_BMP))
-    }
+        loadFileUsingOpenIn(getUriFromPath(testFile2))
+        waitForAnimation()
 
-    @Test
-    fun testPdfError_PrintNotAllowed() {
-        switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_PDF_PRINT_NOT_ALLOWED))
-
-        checkDialog(
-            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
-            R.string.ids_err_msg_pdf_printing_not_allowed
-        )
+        Assert.assertEquals(
+            fileNameNoExtension(testFile2),
+            fileNameNoExtension(PDFFileManager.getSandboxPDFName(SmartDeviceApp.appContext)!!))
     }
 
     @Test
     fun testPdfError_Encrypted() {
-        switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_PDF_WITH_ENCRYPTION))
+        selectDocument(getUriFromPath(DOC_PDF_ERR_WITH_ENCRYPTION))
 
         checkDialog(
             PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
@@ -150,9 +268,56 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
+    fun testPdfError_PrintNotAllowed() {
+        selectDocument(getUriFromPath(DOC_PDF_ERR_PRINT_NOT_ALLOWED))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_pdf_printing_not_allowed
+        )
+    }
+
+    @Test
+    fun testPdfError_OpenFailed() {
+        selectDocument(getUriFromPath(DOC_PDF_ERR_OPEN_FAILED))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_open_failed
+        )
+    }
+
+    @Test
+    fun testConversionError_Fail() {
+        selectPhotos(getUriFromPath(IMG_ERR_FAIL_CONVERSION))
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_conversion_failed
+        )
+    }
+
+    @Test
+    fun testConversionError_Unsupported() {
+        val testFiles = ClipData.newUri(
+            mainActivity!!.contentResolver,
+            IMG_BMP,
+            getUriFromPath(IMG_BMP))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_GIF)))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_ERR_UNSUPPORTED)))
+
+        loadFileUsingOpenIn(testFiles)
+        waitForAnimation()
+
+        checkDialog(
+            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
+            R.string.ids_err_msg_invalid_file_selection
+        )
+    }
+
+    @Test
     fun testConversionError_TxtSizeLimit() {
-        switchScreen(MenuFragment.STATE_HOME)
-        selectDocument(getUriFromPath(DOC_TXT_OVER_SIZE_LIMIT))
+        selectDocument(getUriFromPath(DOC_TXT_ERR_SIZE_LIMIT))
 
         checkDialog(
             PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
@@ -161,17 +326,6 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
     }
 
     @Test
-    fun testConversionError_Fail() {
-        switchScreen(MenuFragment.STATE_HOME)
-        selectPhotos(getUriFromPath(IMG_FailConversion))
-
-        checkDialog(
-            PrintPreviewFragment.FRAGMENT_TAG_DIALOG,
-            R.string.ids_err_msg_conversion_failed
-        )
-    }
-
-    @Ignore("fails during check all")
     fun testOrientationChange() {
         switchOrientation()
         waitForAnimation()

@@ -42,6 +42,18 @@ class PauseableHandlerTest {
     }
 
     @Test
+    fun testHasNoStoredMessage() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            _handler = PauseableHandler(Looper.myLooper(), null)
+            val msg = Message.obtain(_handler, 0)
+            _handler!!.sendMessage(msg)
+            TestCase.assertTrue(_handler!!.hasStoredMessage(0))
+        }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        TestCase.assertFalse(_handler!!.hasStoredMessage(0))
+    }
+
+    @Test
     fun testHandleMessage_PauseResume() {
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
             _handler = PauseableHandler(Looper.myLooper(), null)

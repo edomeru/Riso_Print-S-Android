@@ -117,10 +117,6 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     override fun initializeFragment(savedInstanceState: Bundle?) {
         // dismiss permission alert dialog if showing
         dismissDialog(requireActivity(), TAG_PERMISSION_DIALOG)
-        if (isChromeBook) {
-            // RM1167 temporary fix - Avoid rotation issues in Chrome
-            retainInstance = true
-        }
         if (savedInstanceState != null) {
             _currentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE, 0)
             _isPermissionDialogOpen =
@@ -132,10 +128,10 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             val fileFromPickerFlag = intent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 1)
 
             // Check if from Home Screen OR opened-in file is not PDF
-            if (_intentData != null && FileUtils.getMimeType(
-                    activity,
-                    _intentData
-                ) != AppConstants.DOC_TYPES[0] || fileFromPickerFlag < 0 || intent.clipData != null
+            if (_intentData != null &&
+                FileUtils.getMimeType(activity, _intentData) != AppConstants.DOC_TYPES[0] ||
+                fileFromPickerFlag < 0 ||
+                intent.clipData != null
             ) {
                 val clipData = intent.clipData
                 if (_pdfConverterManager == null) {
@@ -257,11 +253,11 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
 
         // Initialize Print Settings if it has not been previously initialized yet
         if (_printSettings == null) {
-            var printerType: String? = AppConstants.PRINTER_MODEL_IS
+            var printerType = AppConstants.PRINTER_MODEL_IS
             if (_printerId != -1) {
-                printerType = PrinterManager.getInstance(appContext!!)!!.getPrinterType(_printerId)
+                printerType = PrinterManager.getInstance(appContext!!)!!.getPrinterType(_printerId)!!
             }
-            _printSettings = printerType?.let { PrintSettings(it) }
+            _printSettings = PrintSettings(printerType)
         }
         if (_bmpCache == null) {
             var cacheSize = getCacheSizeBasedOnMemoryClass(requireActivity())
@@ -673,13 +669,13 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
      * @retval Empty No error status
      */
     private fun getPdfErrorMessage(status: Int): String {
-        when (status) {
-            PDFFileManager.PDF_ENCRYPTED -> return resources.getString(R.string.ids_err_msg_pdf_encrypted)
-            PDFFileManager.PDF_PRINT_RESTRICTED -> return resources.getString(R.string.ids_err_msg_pdf_printing_not_allowed)
-            PDFFileManager.PDF_OPEN_FAILED -> return resources.getString(R.string.ids_err_msg_open_failed)
-            PDFFileManager.PDF_NOT_ENOUGH_FREE_SPACE -> return resources.getString(R.string.ids_err_msg_not_enough_space)
+        return when (status) {
+            PDFFileManager.PDF_ENCRYPTED -> resources.getString(R.string.ids_err_msg_pdf_encrypted)
+            PDFFileManager.PDF_PRINT_RESTRICTED -> resources.getString(R.string.ids_err_msg_pdf_printing_not_allowed)
+            PDFFileManager.PDF_OPEN_FAILED -> resources.getString(R.string.ids_err_msg_open_failed)
+            PDFFileManager.PDF_NOT_ENOUGH_FREE_SPACE -> resources.getString(R.string.ids_err_msg_not_enough_space)
+            else -> ""
         }
-        return ""
     }
 
     /**
@@ -692,16 +688,16 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
      * @retval Empty No error status
      */
     private fun getConversionErrorMessage(status: Int): String {
-        when (status) {
-            PDFConverterManager.CONVERSION_FAILED -> return resources.getString(R.string.ids_err_msg_conversion_failed)
-            PDFConverterManager.CONVERSION_UNSUPPORTED -> return resources.getString(R.string.ids_err_msg_invalid_file_selection)
-            PDFConverterManager.CONVERSION_EXCEED_TEXT_FILE_SIZE_LIMIT -> return resources.getString(
+        return when (status) {
+            PDFConverterManager.CONVERSION_FAILED -> resources.getString(R.string.ids_err_msg_conversion_failed)
+            PDFConverterManager.CONVERSION_UNSUPPORTED -> resources.getString(R.string.ids_err_msg_invalid_file_selection)
+            PDFConverterManager.CONVERSION_EXCEED_TEXT_FILE_SIZE_LIMIT -> resources.getString(
                 R.string.ids_err_msg_txt_size_limit
             )
-            PDFConverterManager.CONVERSION_SECURITY_ERROR -> return resources.getString(R.string.ids_err_msg_permission)
-            PDFConverterManager.CONVERSION_FILE_NOT_FOUND -> return resources.getString(R.string.ids_err_msg_open_failed)
+            PDFConverterManager.CONVERSION_SECURITY_ERROR -> resources.getString(R.string.ids_err_msg_permission)
+            PDFConverterManager.CONVERSION_FILE_NOT_FOUND -> resources.getString(R.string.ids_err_msg_open_failed)
+            else -> ""
         }
-        return ""
     }
 
     /**

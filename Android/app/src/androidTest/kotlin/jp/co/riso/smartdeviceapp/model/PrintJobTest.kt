@@ -17,6 +17,12 @@ class PrintJobTest {
     }
 
     @Test
+    fun testConstructor() {
+        val printJob = PrintJob(1, "print job name.pdf", _date!!, JobResult.SUCCESSFUL)
+        TestCase.assertNotNull(printJob)
+    }
+
+    @Test
     fun testGetId() {
         TestCase.assertEquals(1, _pj!!.id)
     }

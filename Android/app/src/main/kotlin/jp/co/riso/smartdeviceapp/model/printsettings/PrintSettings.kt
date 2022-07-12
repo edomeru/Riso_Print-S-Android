@@ -154,13 +154,11 @@ class PrintSettings {
      *
      * @param key Print settings key to be updated
      * @param value New value to update
-     *
-     * @retval true Success (always returns true)
      */
-    fun setValue(key: String, value: Int): Boolean {
+    fun setValue(key: String, value: Int) {
         settingValues[key] = value
-        return true
     }
+    
     // ================================================================================
     // Getter for PrintPreview
     // ================================================================================

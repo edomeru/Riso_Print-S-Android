@@ -74,16 +74,16 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _listView = view.findViewById(R.id.printer_list)
-        _listView?.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.theme_light_3))
-        _listView?.adapter = _printerSearchAdapter
-        _listView?.setOnRefreshListener(this)
+        _listView!!.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.theme_light_3))
+        _listView!!.adapter = _printerSearchAdapter
+        _listView!!.setOnRefreshListener(this)
         _emptySearchText = view.findViewById(R.id.emptySearchText)
         val progressLayoutParams =
-            _listView?.findViewById<View>(R.id.ptr_id_spinner)?.layoutParams as RelativeLayout.LayoutParams
-        progressLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
+            _listView!!.findViewById<View>(R.id.ptr_id_spinner)!!.layoutParams as RelativeLayout.LayoutParams?
+        progressLayoutParams!!.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
         val arrowLayoutParams =
-            _listView?.findViewById<View>(R.id.ptr_id_image)?.layoutParams as RelativeLayout.LayoutParams
-        arrowLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
+            _listView!!.findViewById<View>(R.id.ptr_id_image)!!.layoutParams as RelativeLayout.LayoutParams?
+        arrowLayoutParams!!.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
     }
 
     override fun initializeCustomActionBar(view: View, savedInstanceState: Bundle?) {
@@ -189,18 +189,18 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
 
     override fun onHeaderAdjusted(margin: Int) {
         if (_emptySearchText != null) {
-            val params = _emptySearchText!!.layoutParams as FrameLayout.LayoutParams
-            params.topMargin = margin
+            val params = _emptySearchText!!.layoutParams as FrameLayout.LayoutParams?
+            params!!.topMargin = margin
             _emptySearchText!!.layoutParams = params
         }
     }
 
     override fun onBounceBackHeader(duration: Int) {
         // http://stackoverflow.com/questions/13881419/android-change-left-margin-using-animation
-        val params = _emptySearchText!!.layoutParams as FrameLayout.LayoutParams
-        val animation = ValueAnimator.ofInt(params.topMargin, 0)
+        val params = _emptySearchText!!.layoutParams as FrameLayout.LayoutParams?
+        val animation = ValueAnimator.ofInt(params!!.topMargin, 0)
         animation.addUpdateListener { valueAnimator ->
-            params.topMargin = (valueAnimator.animatedValue as Int)
+            params.topMargin = (valueAnimator.animatedValue as Int?)!!
             _emptySearchText!!.requestLayout()
         }
         animation.duration = duration.toLong()
@@ -211,11 +211,8 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
     // INTERFACE - View.OnClickListener
     // ================================================================================
     override fun onClick(v: View) {
-        // Back Button
-        if (v.id == R.id.menu_id_back_button) {
-            _printerManager!!.cancelPrinterSearch()
-            closeScreen()
-        }
+        _printerManager!!.cancelPrinterSearch()
+        closeScreen()
     }
 
     // ================================================================================
@@ -258,8 +255,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         if (!_printerManager!!.savePrinterToDB(printer, true)) {
             ret = -1
             msg = resources.getString(R.string.ids_err_msg_db_failure)
-            info =
-                InfoDialogFragment.newInstance(title, msg, resources.getString(R.string.ids_lbl_ok))
+            info = InfoDialogFragment.newInstance(title, msg, resources.getString(R.string.ids_lbl_ok))
         } else {
             msg = resources.getString(R.string.ids_info_msg_printer_add_successful)
             info = ConfirmDialogFragment.newInstance(
@@ -311,9 +307,9 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
     }
 
     companion object {
-        private const val KEY_PRINTER_ERR_DIALOG = "printer_err_dialog"
+        const val KEY_PRINTER_ERR_DIALOG = "printer_err_dialog"
+        const val KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog"
         private const val KEY_SEARCHED_PRINTER_LIST = "searched_printer_list"
-        private const val KEY_SEARCHED_PRINTER_DIALOG = "searched_printer_dialog"
         private const val MSG_UPDATE_REFRESH_BAR = 0x0
     }
 }

@@ -187,10 +187,10 @@ class PrintersListView : ListView, Handler.Callback {
      */
     fun resetDeleteView(animate: Boolean) {
         if (_deleteView != null) {
-            (adapter as PrinterArrayAdapter).setPrinterRow(_deleteView!!)
-            (_deleteView as PrintersContainerView).delete = false
+            (adapter as PrinterArrayAdapter?)!!.setPrinterRow(_deleteView!!)
+            (_deleteView as PrintersContainerView?)!!.delete = false
             _deleteAnimation!!.endDeleteMode(
-                _deleteView as PrintersContainerView,
+                (_deleteView as PrintersContainerView?)!!,
                 animate,
                 R.id.btn_delete,
                 R.id.img_disclosure
@@ -286,7 +286,7 @@ class PrintersListView : ListView, Handler.Callback {
                 R.id.btn_delete,
                 R.id.img_disclosure
             )
-            (adapter as PrinterArrayAdapter).setPrinterRowToDelete(_deleteView)
+            (adapter as PrinterArrayAdapter?)!!.setPrinterRowToDelete(_deleteView)
             _deleteMode = true
         }
     }
@@ -298,9 +298,9 @@ class PrintersListView : ListView, Handler.Callback {
      */
     private fun endDeleteMode(view: View?) {
         if (_deleteMode) {
-            (adapter as PrinterArrayAdapter).setPrinterRow(view!!)
-            val printerItem = view.findViewById<View>(R.id.btn_delete).tag as PrintersContainerView
-            printerItem.delete = false
+            (adapter as PrinterArrayAdapter?)!!.setPrinterRow(view!!)
+            val printerItem = view.findViewById<View>(R.id.btn_delete).tag as PrintersContainerView?
+            printerItem!!.delete = false
             _deleteAnimation!!.endDeleteMode(view, true, R.id.btn_delete, R.id.img_disclosure)
             _deleteMode = false
         }

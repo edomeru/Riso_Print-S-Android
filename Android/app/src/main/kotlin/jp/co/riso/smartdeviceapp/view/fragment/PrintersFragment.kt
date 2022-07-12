@@ -69,10 +69,6 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         get() = R.layout.fragment_printers
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        if (isChromeBook) {
-            // RM1167 temporary fix - Avoid rotation issues in Chrome
-            retainInstance = true
-        }
         _printerManager = getInstance(SmartDeviceApp.appContext!!)
         if (_pauseableHandler == null) {
             _pauseableHandler = PauseableHandler(Looper.myLooper(), this)
@@ -102,7 +98,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         _emptyPrintersText = view.findViewById(R.id.emptyPrintersText)
         if (isTablet) {
             _printerTabletView = view.findViewById(R.id.printerParentView)
-            _printerTabletView?.setPrintersViewCallback(this)
+            _printerTabletView!!.setPrintersViewCallback(this)
         } else {
             _listView = view.findViewById(R.id.printer_list)
         }
@@ -162,7 +158,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         } else {
             if (_listView != null) {
                 _scrollState = _listView!!.onSaveInstanceState()
-                _deleteItem = (_listView as PrintersListView).deleteItemPosition
+                _deleteItem = (_listView as PrintersListView?)!!.deleteItemPosition
             } else {
                 _deleteItem = PrinterManager.EMPTY_ID
             }
@@ -535,7 +531,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
                 } else {
                     _printerAdapter =
                         PrinterArrayAdapter(activity, R.layout.printers_container_item, _printer)
-                    (_printerAdapter as PrinterArrayAdapter).setPrintersArrayAdapterInterface(this)
+                    (_printerAdapter as PrinterArrayAdapter?)!!.setPrintersArrayAdapterInterface(this)
                     _listView!!.adapter = _printerAdapter
                     if (message.obj != null) {
                         (_listView as PrintersListView?)!!.onRestoreInstanceState(
@@ -561,7 +557,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
             }
             MSG_PRINTSETTINGS_BUTTON -> {
                 _pauseableHandler!!.pause()
-                val fragment = message.obj as PrintSettingsFragment
+                val fragment = (message.obj as PrintSettingsFragment?)!!
                 displayDefaultPrintSettings(fragment)
                 _printerTabletView!!.setDefaultSettingSelected(message.arg1, true)
             }
@@ -596,7 +592,7 @@ class PrintersFragment : BaseFragment(), PrintersCallback, PauseableHandlerCallb
         const val MSG_ADD_NEW_PRINTER = 0x1
         const val MSG_SUBMENU_BUTTON = 0x2
         const val MSG_PRINTSETTINGS_BUTTON = 0x3
-        private const val KEY_PRINTERS_DIALOG = "printers_dialog"
+        const val KEY_PRINTERS_DIALOG = "printers_dialog"
         private const val MSG_POPULATE_PRINTERS_LIST = 0x0
     }
 

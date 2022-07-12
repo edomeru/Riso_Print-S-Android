@@ -448,11 +448,11 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
                 contains2 = rect.contains(ev.rawX.toInt(), ev.rawY.toInt())
                 if (contains1 && contains2 && dragged) {
                     for (j in 0 until column.childCount) {
-                        val view = (column.getChildAt(j) as PrintJobsGroupView).getJobViewSwiped(
+                        val view = (column.getChildAt(j) as PrintJobsGroupView?)!!.getJobViewSwiped(
                             _downPoint!!, ev
                         )
                         if (view != null) {
-                            beginDelete(column.getChildAt(j) as PrintJobsGroupView, view, true)
+                            beginDelete(column.getChildAt(j) as PrintJobsGroupView?, view, true)
                             return true
                         }
                     }
@@ -484,7 +484,7 @@ class PrintJobsView : LinearLayout, PrintJobsLayoutListener {
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
         if (_initialFlag) {
-            val screenSize = getScreenDimensions(context as Activity)
+            val screenSize = getScreenDimensions(context as Activity?)
             createColumns(screenSize!!.x)
             _initialFlag = false
         }

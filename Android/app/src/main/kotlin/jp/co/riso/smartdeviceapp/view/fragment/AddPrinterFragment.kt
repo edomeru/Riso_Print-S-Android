@@ -56,10 +56,6 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         get() = R.layout.fragment_addprinter
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
-        if (isChromeBook) {
-            // RM1167 temporary fix - Avoid rotation issues in Chrome
-            retainInstance = true
-        }
         _added = false
         _printerManager = getInstance(SmartDeviceApp.appContext!!)
         _printerManager!!.setPrinterSearchCallback(this)
@@ -157,7 +153,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
      * @brief Display success dialog during successful printer search
      */
     private fun dialogCb() {
-        if (isTablet && activity != null && activity is MainActivity) {
+        if (isTablet && activity != null && activity is MainActivity?) {
             val activity = activity as MainActivity?
             if (!activity!!.isDrawerOpen(Gravity.RIGHT)) {
                 return
@@ -175,12 +171,12 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 null,
                 KEY_ADD_PRINTER_DIALOG
             )
-            if (activity != null && activity is MainActivity) {
+            if (activity != null && activity is MainActivity?) {
                 setResultListenerConfirmDialog(
                     requireActivity().supportFragmentManager,
                     this,
                     KEY_ADD_PRINTER_DIALOG)
-                DialogUtils.displayDialog(activity as MainActivity, KEY_ADD_PRINTER_DIALOG, info)
+                DialogUtils.displayDialog((activity as MainActivity?)!!, KEY_ADD_PRINTER_DIALOG, info)
             }
         }
     }
@@ -192,7 +188,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
      */
     private fun dialogErrCb(err: Int) {
         if (isTablet) {
-            if (activity != null && activity is MainActivity) {
+            if (activity != null && activity is MainActivity?) {
                 val activity = activity as MainActivity?
                 if (!activity!!.isDrawerOpen(Gravity.RIGHT)) {
                     return
@@ -240,7 +236,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
      */
     private fun closeScreen() {
         if (isTablet) {
-            if (activity != null && activity is MainActivity) {
+            if (activity != null && activity is MainActivity?) {
                 val activity = activity as MainActivity?
                 activity!!.runOnUiThread { activity.closeDrawers() }
             }
@@ -434,7 +430,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
     }
 
     companion object {
-        private const val KEY_ADD_PRINTER_DIALOG = "add_printer_dialog"
+        const val KEY_ADD_PRINTER_DIALOG = "add_printer_dialog"
         private const val ERR_INVALID_IP_ADDRESS = -1
         private const val ERR_CAN_NOT_ADD_PRINTER = -2
         private const val ERR_PRINTER_ADDED_WARNING = -3

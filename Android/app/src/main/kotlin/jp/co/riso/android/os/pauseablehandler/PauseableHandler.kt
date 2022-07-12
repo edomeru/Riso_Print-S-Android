@@ -25,13 +25,13 @@ class PauseableHandler(looper: Looper?, callback: PauseableHandlerCallback?) : H
     looper!!, null
 ) {
     /// Message Queue Buffer
-    val messageQueueBuffer = Vector<Message>()
+    private val _messageQueueBuffer = Vector<Message>()
 
     /// Flag indicating the paused state
     private var _paused = false
 
     /// Callback reference
-    val callBack: WeakReference<PauseableHandlerCallback?> = WeakReference(callback)
+    private val _callBack: WeakReference<PauseableHandlerCallback?> = WeakReference(callback)
 
     /**
      * @brief Resumes the handler. Enables processing of messages.
@@ -39,9 +39,9 @@ class PauseableHandler(looper: Looper?, callback: PauseableHandlerCallback?) : H
      */
     fun resume() {
         _paused = false
-        while (messageQueueBuffer.size > 0) {
-            val msg = messageQueueBuffer.elementAt(0)
-            messageQueueBuffer.removeElementAt(0)
+        while (_messageQueueBuffer.size > 0) {
+            val msg = _messageQueueBuffer.elementAt(0)
+            _messageQueueBuffer.removeElementAt(0)
             sendMessage(msg)
         }
     }
@@ -63,8 +63,8 @@ class PauseableHandler(looper: Looper?, callback: PauseableHandlerCallback?) : H
     fun hasStoredMessage(what: Int): Boolean {
         val contains = hasMessages(what)
         if (!contains) {
-            for (i in messageQueueBuffer.indices) {
-                if (messageQueueBuffer[i].what == what) {
+            for (i in _messageQueueBuffer.indices) {
+                if (_messageQueueBuffer[i].what == what) {
                     return true
                 }
             }
@@ -76,15 +76,15 @@ class PauseableHandler(looper: Looper?, callback: PauseableHandlerCallback?) : H
     // INTERFACE - Handler
     // ================================================================================
     override fun handleMessage(msg: Message) {
-        if (callBack.get() != null) {
+        if (_callBack.get() != null) {
             if (_paused) {
-                if (callBack.get()!!.storeMessage(msg)) {
+                if (_callBack.get()!!.storeMessage(msg)) {
                     val msgCopy = Message()
                     msgCopy.copyFrom(msg)
-                    messageQueueBuffer.add(msgCopy)
+                    _messageQueueBuffer.add(msgCopy)
                 }
             } else {
-                callBack.get()!!.processMessage(msg)
+                _callBack.get()!!.processMessage(msg)
             }
         }
     }

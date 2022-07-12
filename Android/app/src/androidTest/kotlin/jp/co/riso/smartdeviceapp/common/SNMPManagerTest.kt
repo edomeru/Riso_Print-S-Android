@@ -74,6 +74,28 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         }
     }
 
+    @Test
+    fun testDeviceDiscoveryOnNullCallback() {
+        try {
+            _snmpManager!!.setCallback(null)
+        } catch (e: NullPointerException) {
+            fail() // Error should not be thrown
+        }
+
+        // if test fails, make sure there are online printers available in network
+        if (appContext!!.packageManager.hasSystemFeature(AppConstants.CHROME_BOOK)) {
+            return  // if chrome os, skip test because printer search is not supported
+        }
+        try {
+            _snmpManager!!.deviceDiscovery()
+            mSignal.await(_timeout.toLong(), TimeUnit.SECONDS)
+            assertEquals(false, _onFoundDevice)
+            assertEquals(false, _onEndDiscovery)
+        } catch (e: Exception) {
+            fail() // Error should not be thrown
+        }
+    }
+
     // ================================================================================
     // Tests - manualDiscovery
     // ================================================================================
@@ -104,6 +126,7 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         }
     }
     */
+
     @Test
     fun testManualDiscovery_OfflinePrinter() {
         try {
