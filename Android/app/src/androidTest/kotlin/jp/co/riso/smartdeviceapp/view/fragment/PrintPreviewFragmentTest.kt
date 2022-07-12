@@ -14,7 +14,6 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import jp.co.riso.smartdeviceapp.AppConstants.MULTI_IMAGE_PDF_FILENAME
@@ -245,6 +244,7 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
 
         switchScreen(MenuFragment.STATE_HOME)
         waitForView(withId(R.id.fileButton))
+        waitForAnimation()
         onView(withId(R.id.fileButton)).perform(click())
         updateMainActivity()
         waitFewSeconds()
