@@ -193,15 +193,13 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         setPrinterId(printerId)
 
         // set printerId to PrintPreviewFragment
-        if (_isTargetFragmentPrintPreview) {
-            _printSettingsViewModel.setPrinterId(printerId)
-            requireActivity().supportFragmentManager.setFragmentResult(
-                PrintPreviewFragment.TAG_RESULT_PRINT_PREVIEW,
-                bundleOf(
-                    RESULT_KEY to RESULT_PRINTER_ID
-                )
+        _printSettingsViewModel.setPrinterId(printerId)
+        requireActivity().supportFragmentManager.setFragmentResult(
+            PrintPreviewFragment.TAG_RESULT_PRINT_PREVIEW,
+            bundleOf(
+                RESULT_KEY to RESULT_PRINTER_ID
             )
-        }
+        )
     }
 
     override fun onPrintSettingsValueChanged(printSettings: PrintSettings?) {
