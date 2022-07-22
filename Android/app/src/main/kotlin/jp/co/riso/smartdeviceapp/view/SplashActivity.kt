@@ -363,9 +363,7 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
     }
 
     private var _resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            runMainActivity()
-        }
+        runMainActivity()
     }
 
     companion object {
