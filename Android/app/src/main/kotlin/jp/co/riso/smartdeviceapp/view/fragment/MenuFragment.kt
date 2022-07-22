@@ -75,8 +75,8 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
      * @param view Parent view
      * @param state Fragment state
      */
-    private fun setSelectedButton(view: View, state: Int) {
-        if (state < 0 || state >= MENU_ITEMS.size) {
+    private fun setSelectedButton(view: View?, state: Int) {
+        if (state < 0 || state >= MENU_ITEMS.size || view == null) {
             return
         }
         for (i in MENU_ITEMS.indices) {
@@ -106,7 +106,7 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
      */
     fun setCurrentState(state: Int) {
         if (mState != state) {
-            setSelectedButton(requireView(), state)
+            setSelectedButton(view, state)
             switchToFragment(state)
             mState = state
         }
