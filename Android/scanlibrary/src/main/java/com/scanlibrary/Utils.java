@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 // aLINK edit - End
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 // aLINK edit - Start
 // MediaStore.Images.Media.insertImage(ContentResolver cr, Bitmap src, String title, String desc)
 // was deprecated in API level 29. Use MediaColumns.IS_PENDING instead.
@@ -52,23 +53,27 @@ public class Utils {
     // String desc) was deprecated in API level 29. Use MediaColumns.IS_PENDING instead.
     // Reference:
     // https://github.com/coroutineDispatcher/pocket_treasure/blob/master/gallery_module/src/main/java/com/sxhardha/gallery_module/image/FullImageFragment.kt
+	@SuppressWarnings("deprecation")
     public static Uri getUri(Context context, Bitmap bitmap) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        Uri uri;
+        if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, "Title", null);
+            uri = Uri.parse(path);
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, ScanConstants.IMAGE_RELATIVE_PATH);
             contentValues.put(MediaStore.MediaColumns.IS_PENDING, 1);
-        }
-        Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues);
-        try {
-            OutputStream stream = context.getContentResolver().openOutputStream(uri);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            uri = null;
-        } finally {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues);
+            try {
+                OutputStream stream = context.getContentResolver().openOutputStream(uri);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                uri = null;
+            } finally {
                 contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0);
             }
         }
