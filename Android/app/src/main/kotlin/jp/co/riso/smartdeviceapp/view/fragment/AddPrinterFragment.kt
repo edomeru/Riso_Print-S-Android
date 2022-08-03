@@ -273,7 +273,9 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 R.color.theme_light_4
             )
         )
-
+	// #RM1179 keep users from editing while adding of printer is on-going
+        viewHolder.ipAddress!!.clearFocus()
+        viewHolder.ipAddress!!.isEnabled = false
         // #RM908 for chromeOS, setFocusable(false) somehow causes virtual keyboard to reappear after printer is added
         // use alternative way to disable IP address field which does cause the same problem
         if (isChromeBook) {
@@ -300,6 +302,7 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
                 R.color.theme_dark_1
             )
         )
+        viewHolder.ipAddress!!.isEnabled = true
         viewHolder.ipAddress!!.isFocusableInTouchMode = true
     }
 
