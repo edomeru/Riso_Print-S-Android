@@ -278,6 +278,9 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
         // use alternative way to disable IP address field which does cause the same problem
         if (isChromeBook) {
             viewHolder.ipAddress!!.inputType = InputType.TYPE_NULL
+            // #RM1179 keep users from editing while adding of printer is on-going
+            viewHolder.ipAddress!!.clearFocus()
+            viewHolder.ipAddress!!.isEnabled = false
         } else {
             viewHolder.ipAddress!!.isFocusable = false
         }
@@ -301,6 +304,9 @@ class AddPrinterFragment : BaseFragment(), PrinterSearchCallback, OnEditorAction
             )
         )
         viewHolder.ipAddress!!.isFocusableInTouchMode = true
+        if (isChromeBook) {
+            viewHolder.ipAddress!!.isEnabled = true
+        }
     }
 
     /**
