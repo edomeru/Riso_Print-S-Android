@@ -543,11 +543,6 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     private fun setPrintSettings(printSettings: PrintSettings?) {
         _printSettings = printSettings?.let { PrintSettings(it) }
         if (_printPreviewView != null) {
-            // Clear mBmpCache when print settings are updated
-            if (_bmpCache != null) {
-                _bmpCache!!.evictAll()
-                _printPreviewView!!.setBmpCache(_bmpCache)
-            }
             _printPreviewView!!.setPrintSettings(_printSettings)
             _printPreviewView!!.refreshView()
             updateSeekBar()
