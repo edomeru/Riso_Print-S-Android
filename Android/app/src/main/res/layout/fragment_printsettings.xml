@@ -18,11 +18,18 @@
         android:textColor="@color/theme_light_1"
         android:textSize="@dimen/font_size_large" />
 
-    <jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView
-        android:id="@+id/rootView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-    </jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView>
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/theme_light_3">
+
+        <jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView
+            android:id="@+id/rootView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView>
+    </ScrollView>
 
 </LinearLayout>
