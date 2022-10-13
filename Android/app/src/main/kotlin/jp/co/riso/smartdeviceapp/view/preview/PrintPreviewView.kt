@@ -921,8 +921,8 @@ class PrintPreviewView @JvmOverloads constructor(
     }
 
     override fun onFling(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
+        e1: MotionEvent,
+        e2: MotionEvent,
         velocityX: Float,
         velocityY: Float
     ): Boolean {
@@ -932,8 +932,8 @@ class PrintPreviewView @JvmOverloads constructor(
     override fun onLongPress(e: MotionEvent) {}
 
     override fun onScroll(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
+        e1: MotionEvent,
+        e2: MotionEvent,
         distanceX: Float,
         distanceY: Float
     ): Boolean {
