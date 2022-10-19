@@ -48,7 +48,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     private var _homeButtons: LinearLayout? = null
     private var _fileButton: LinearLayout? = null
     private var _photosButton: LinearLayout? = null
-    private var _cameraButton: LinearLayout? = null
+    // private var _cameraButton: LinearLayout? = null aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
     private var _confirmDialogFragment: ConfirmDialogFragment? = null
     private var _buttonTapped: LinearLayout? = null
 
@@ -134,7 +134,10 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                     )
                 )
             }
-        } else if (id == R.id.cameraButton) {
+        }
+
+        /* aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
+        else if (id == R.id.cameraButton) {
             _buttonTapped = _cameraButton
             _checkPermission = checkPermission(false)
             if (_checkPermission && SystemClock.elapsedRealtime() - _lastClickTime > 1000) {
@@ -155,7 +158,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                     // RM 789 Fix - End
                 }
             }
-        }
+        }*/
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -172,10 +175,10 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     private fun setOnClickListeners(view: View) {
         _fileButton = view.findViewById(R.id.fileButton)
         _photosButton = view.findViewById(R.id.photosButton)
-        _cameraButton = view.findViewById(R.id.cameraButton)
+        // _cameraButton = view.findViewById(R.id.cameraButton) aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
         _fileButton!!.setOnClickListener(this)
         _photosButton!!.setOnClickListener(this)
-        _cameraButton!!.setOnClickListener(this)
+        // _cameraButton!!.setOnClickListener(this) aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
     }
 
     private fun checkPermission(isStorageOnly: Boolean): Boolean {
@@ -262,11 +265,13 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     // ================================================================================
     override fun onConfirm() {
         _confirmDialogFragment = null
+        /* aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
         if (_buttonTapped === _cameraButton) {
             _resultLauncherPermissionCameraStorage.launch(_permissionsCameraStorage)
         } else {
             _resultLauncherPermissionStorage.launch(_permissionsStorage)
-        }
+        } */
+        _resultLauncherPermissionStorage.launch(_permissionsStorage)
     }
 
     override fun onCancel() {

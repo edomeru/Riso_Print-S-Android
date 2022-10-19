@@ -973,10 +973,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
                 IPV6_ONLINE_PRINTER_ADDRESS // If test fails, update constant to use actual ipv6
 
             // Ipv6 Address
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                ipv6Addr = TEST_IPV6_ONLINE_PRINTER_ADDRESS
-                   // localIpv6Address // If test fails, comment out this line to use actual ipv6
-            }
+            ipv6Addr = TEST_IPV6_ONLINE_PRINTER_ADDRESS
+               // localIpv6Address // If test fails, comment out this line to use actual ipv6
             TestCase.assertNotNull(ipv6Addr)
             while (retry > 0) {
                 ret = _printerManager!!.isOnline(ipv6Addr)
@@ -1095,9 +1093,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         var ipv6Addr: String? = IPV6_ONLINE_PRINTER_ADDRESS
 
         // Ipv6 Address
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            ipv6Addr = localIpv6Address
-        }
+        ipv6Addr = localIpv6Address
         TestCase.assertNotNull(ipv6Addr)
         _printerManager!!.UpdateOnlineStatusTask(_imageView, ipv6Addr!!)
             .execute()
