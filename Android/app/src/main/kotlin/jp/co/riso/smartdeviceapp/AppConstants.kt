@@ -153,7 +153,9 @@ object AppConstants {
         "image/gif",
         "image/x-ms-bmp",
         "image/bmp",
-        "image/x-windows-bmp"
+        "image/x-windows-bmp",
+        "image/heif",
+        "image/avif"
     )
 
     // Intent extra key for flag if file is not pdf and from picker

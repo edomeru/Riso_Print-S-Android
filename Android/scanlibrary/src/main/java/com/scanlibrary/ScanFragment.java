@@ -147,8 +147,7 @@ public class ScanFragment extends Fragment {
     }
 
     private Uri getUri() {
-        Uri uri = getArguments().getParcelable(ScanConstants.SELECTED_BITMAP);
-        return uri;
+        return getArguments() != null ? getArguments().getParcelable(ScanConstants.SELECTED_BITMAP) : null;
     }
 
     private void setBitmap(Bitmap original) {
