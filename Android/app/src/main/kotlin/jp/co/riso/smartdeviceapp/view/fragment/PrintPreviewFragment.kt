@@ -13,10 +13,8 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.net.Uri
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
+import android.os.*
+import android.os.Build.VERSION.SDK_INT
 import android.util.LruCache
 import android.view.Gravity
 import android.view.KeyEvent
@@ -316,6 +314,11 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         }
     }
 
+    private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
+        SDK_INT >= 33 -> getParcelable(key, T::class.java)
+        else -> @Suppress("DEPRECATION") getParcelable(key) as? T
+    }
+
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _printPreviewView = view.findViewById(R.id.printPreviewView)
         _printPreviewView!!.setPdfManager(_pdfManager)
@@ -324,7 +327,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
 
         // Clear mBmpCache when Display Size is changed dynamically (Screen Zoom in Android 7)
         if (savedInstanceState != null) {
-            val oldScreen = savedInstanceState.getParcelable<Point>(KEY_SCREEN_SIZE)
+            val oldScreen = savedInstanceState.parcelable<Point>(KEY_SCREEN_SIZE)
             if (AppUtils.getScreenDimensions(requireActivity()) != oldScreen
                 && _bmpCache != null
             ) {

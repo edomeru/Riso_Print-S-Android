@@ -15,7 +15,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.os.Parcelable
 import android.os.StatFs
 import android.os.SystemClock
 import android.util.Log
@@ -71,7 +73,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         if (intent != null) {
             val extras = intent.extras
             if (extras != null) {
-                val text = extras[Intent.EXTRA_TEXT] as String?
+                val text = extras.getBundle(Intent.EXTRA_TEXT) as String?
                 if (text != null && text == AppConstants.ERR_KEY_INVALID_INTENT) {
                     intent.removeExtra(Intent.EXTRA_TEXT)
                     // Display error message that an invalid intent was sent by a third-party app
@@ -339,6 +341,12 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         }
     }
 
+    /* aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
+    private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
+        SDK_INT >= 33 -> getParcelable(key, T::class.java)
+        else -> @Suppress("DEPRECATION") getParcelable(key) as? T
+    }
+
     private val _resultLauncherCamera = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val data: Intent? = result.data
         if (result.resultCode == Activity.RESULT_OK && data != null) {
@@ -350,7 +358,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
             previewIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(previewIntent)
         }
-    }
+    } */
 
     private val _resultLauncherPermissionStorage = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
         // ignore if result is empty which is due to repeated permission request because of quick taps

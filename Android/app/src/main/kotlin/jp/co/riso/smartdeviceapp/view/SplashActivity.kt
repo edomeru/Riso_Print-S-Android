@@ -188,8 +188,8 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             if (Intent.ACTION_VIEW == action) {
                 data = intent.data
             } else if (Intent.ACTION_SEND == action) {
-                if (intent.extras!![Intent.EXTRA_STREAM] != null) {
-                    data = Uri.parse(intent.extras!![Intent.EXTRA_STREAM].toString())
+                if (intent.extras!!.getBundle(Intent.EXTRA_STREAM) != null) {
+                    data = Uri.parse(intent.extras!!.getBundle(Intent.EXTRA_STREAM).toString())
                 } else {
                     // An invalid intent was sent by the third party app
                     launchIntent.putExtra(Intent.EXTRA_TEXT, AppConstants.ERR_KEY_INVALID_INTENT)

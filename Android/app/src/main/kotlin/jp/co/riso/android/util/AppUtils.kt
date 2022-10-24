@@ -11,6 +11,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Point
 import android.graphics.Rect
@@ -93,14 +94,20 @@ object AppUtils {
         }
         var appVersion: String? = null
         try {
-            appVersion = context.packageManager.getPackageInfo(
-                getApplicationPackageName(context)!!,
-                0
-            ).versionName
+            appVersion = context.getPackageInfo(getApplicationPackageName(context)!!).versionName
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
         return appVersion
+    }
+
+    @Suppress("DEPRECATION")
+    fun Context.getPackageInfo(applicationPackageName: String): PackageInfo {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(applicationPackageName, PackageManager.PackageInfoFlags.of(0))
+        } else {
+            packageManager.getPackageInfo(applicationPackageName, 0)
+        }
     }
 
     /**
@@ -117,15 +124,23 @@ object AppUtils {
         if (context == null) {
             return 0
         }
-        val pm = context.packageManager
         val appInfo: ApplicationInfo = try {
-            pm.getApplicationInfo(packageName.toString(), 0)
+            context.getApplicationInformation(packageName)
         } catch (e: PackageManager.NameNotFoundException) {
             throw e
         }
         val appFilePath = appInfo.sourceDir
         val appFile = File(appFilePath)
         return appFile.lastModified()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun Context.getApplicationInformation(packageName: String?): ApplicationInfo {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getApplicationInfo(packageName.toString(), PackageManager.ApplicationInfoFlags.of(0))
+        } else {
+            packageManager.getApplicationInfo(packageName.toString(), 0)
+        }
     }
 
     /**
