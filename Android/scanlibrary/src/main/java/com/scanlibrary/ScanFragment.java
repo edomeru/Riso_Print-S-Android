@@ -25,6 +25,7 @@ import android.net.Uri;
 // android.os.AsyncTask was deprecated in API level 30.
 // Use threading instead
 // aLINK edit - End
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -146,8 +147,13 @@ public class ScanFragment extends Fragment {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     private Uri getUri() {
-        return getArguments() != null ? getArguments().getParcelable(ScanConstants.SELECTED_BITMAP) : null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // TIRAMISU onwards
+            return getArguments() != null ? getArguments().getParcelable(ScanConstants.SELECTED_BITMAP, Uri.class) : null;
+        } else {
+            return getArguments() != null ? getArguments().getParcelable(ScanConstants.SELECTED_BITMAP) : null;
+        }
     }
 
     private void setBitmap(Bitmap original) {

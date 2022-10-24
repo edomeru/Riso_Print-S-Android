@@ -1,5 +1,6 @@
 package com.scanlibrary;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 // aLINK edit - Start
 // android.app.Fragment was deprecated in API level 28
@@ -16,6 +17,7 @@ import android.net.Uri;
 // android.os.AsyncTask was deprecated in API level 30.
 // Use threading instead
 // aLINK edit - End
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,8 +82,13 @@ public class ResultFragment extends Fragment {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     private Uri getUri() {
-        return getArguments() != null ? getArguments().getParcelable(ScanConstants.SCANNED_RESULT) : null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // TIRAMISU onwards
+            return getArguments() != null ? getArguments().getParcelable(ScanConstants.SCANNED_RESULT, Uri.class) : null;
+        } else {
+            return getArguments() != null ? getArguments().getParcelable(ScanConstants.SCANNED_RESULT) : null;
+        }
     }
 
     public void setScannedImage(Bitmap scannedImage) {
