@@ -168,9 +168,11 @@ class PrintPreviewView @JvmOverloads constructor(
             return if (_zoomLevel == BASE_ZOOM_LEVEL) {
                 _curlView!!.dispatchTouchEvent(ev)
             } else {
-                if (_doubleTapDetector!!.onTouchEvent(ev)) {
-                    true
-                } else processTouchEvent(ev)
+                /* Android 13 New OS Support: Disable this temporary as this causes NPE */
+//                if (_doubleTapDetector!!.onTouchEvent(ev)) {
+//                    true
+//                } else processTouchEvent(ev)
+                processTouchEvent(ev)
             }
         }
         val e = MotionEvent.obtain(

@@ -82,6 +82,7 @@ public class ResultFragment extends Fragment {
         return null;
     }
 
+    /* Android 13 New OS Support: Deprecation fixes */
     @SuppressWarnings("deprecation")
     private Uri getUri() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // TIRAMISU onwards
