@@ -8,11 +8,8 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.animation.ValueAnimator
+import android.os.*
 import android.os.Build.VERSION.SDK_INT
-import android.os.Bundle
-import android.os.Looper
-import android.os.Message
-import android.os.Parcelable
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.RelativeLayout

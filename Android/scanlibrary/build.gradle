@@ -7,6 +7,7 @@ android {
     buildToolsVersion '33.0.0'
 
     defaultConfig {
+        // aLINK edit: update minimum SDK version
         minSdkVersion 26
         // aLINK edit: update SDK version to latest
         targetSdkVersion 33
