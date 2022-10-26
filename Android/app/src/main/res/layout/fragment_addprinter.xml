@@ -8,64 +8,71 @@
 
     <include layout="@layout/actionbar_sub" />
 
-    <LinearLayout
+    <ScrollView
         android:id="@+id/rootView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/theme_light_3"
-        android:orientation="vertical" >
-
-        <jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameDisplayText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        android:layout_gravity="center_horizontal"
+        android:background="@color/theme_light_3">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/printers_row_height"
-            android:layout_marginLeft="@dimen/printers_sub_separator_padding"
-            android:layout_marginRight="@dimen/printers_sub_separator_padding"
-            android:orientation="horizontal" >
+            android:layout_height="match_parent"
+            android:background="@color/theme_light_3"
+            android:orientation="vertical" >
 
-            <EditText
-                android:id="@+id/inputIpAddress"
-                style="@style/SDAEditText"
-                android:inputType="textVisiblePassword"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/printers_row_left_icon_margin"
-                android:layout_weight="1"
-                android:background="@color/theme_light_1"
-                android:gravity="left"
-                android:hint="@string/ids_lbl_ip_address"
-                android:singleLine="true"
-                android:textColor="@color/theme_dark_1"
-                android:importantForAutofill="no">
+            <jp.co.riso.smartdeviceapp.view.printersearchsettings.SnmpCommunityNameDisplayText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            </EditText>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/printers_row_height"
+                android:layout_marginLeft="@dimen/printers_sub_separator_padding"
+                android:layout_marginRight="@dimen/printers_sub_separator_padding"
+                android:orientation="horizontal" >
 
-            <ProgressBar
-                android:id="@+id/actionbar_progressbar"
-                style="@style/ptr_spinner"
-                android:layout_width="@dimen/printers_row_right_icon_size"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginLeft="@dimen/printers_row_right_margin"
-                android:layout_weight="0"
-                android:gravity="center"
-                android:visibility="gone" />
+                <EditText
+                    android:id="@+id/inputIpAddress"
+                    style="@style/SDAEditText"
+                    android:inputType="textVisiblePassword"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/printers_row_left_icon_margin"
+                    android:layout_weight="1"
+                    android:background="@color/theme_light_1"
+                    android:gravity="left"
+                    android:hint="@string/ids_lbl_ip_address"
+                    android:singleLine="true"
+                    android:textColor="@color/theme_dark_1"
+                    android:importantForAutofill="no">
 
-            <ImageView
-                android:id="@+id/img_save_button"
-                android:layout_width="@dimen/printers_row_right_icon_size"
-                android:layout_height="match_parent"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginLeft="@dimen/printers_row_right_margin"
-                android:layout_weight="0"
-                android:contentDescription="@string/default_content_description"
-                android:gravity="right"
-                android:src="@drawable/selector_addprinter_save" />
+                </EditText>
+
+                <ProgressBar
+                    android:id="@+id/actionbar_progressbar"
+                    style="@style/ptr_spinner"
+                    android:layout_width="@dimen/printers_row_right_icon_size"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginLeft="@dimen/printers_row_right_margin"
+                    android:layout_weight="0"
+                    android:gravity="center"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/img_save_button"
+                    android:layout_width="@dimen/printers_row_right_icon_size"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginLeft="@dimen/printers_row_right_margin"
+                    android:layout_weight="0"
+                    android:contentDescription="@string/default_content_description"
+                    android:gravity="right"
+                    android:src="@drawable/selector_addprinter_save" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
 </jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>
