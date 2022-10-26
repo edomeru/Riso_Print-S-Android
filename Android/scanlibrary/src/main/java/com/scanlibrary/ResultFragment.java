@@ -1,6 +1,5 @@
 package com.scanlibrary;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 // aLINK edit - Start
 // android.app.Fragment was deprecated in API level 28
@@ -17,7 +16,7 @@ import android.net.Uri;
 // android.os.AsyncTask was deprecated in API level 30.
 // Use threading instead
 // aLINK edit - End
-import android.os.Build;
+import android.os.Build; // aLINK edit: Android 13 New OS Support
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,7 +81,7 @@ public class ResultFragment extends Fragment {
         return null;
     }
 
-    /* Android 13 New OS Support: Deprecation fixes */
+    // aLINK edit: Android 13 New OS Support: Deprecation fixes
     @SuppressWarnings("deprecation")
     private Uri getUri() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // TIRAMISU onwards
