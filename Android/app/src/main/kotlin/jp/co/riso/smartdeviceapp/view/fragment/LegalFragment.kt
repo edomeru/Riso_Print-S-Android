@@ -16,6 +16,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.TextView
 import jp.co.riso.android.util.AppUtils.getLocalizedAssetFullPath
+import jp.co.riso.android.util.AppUtils.getPackageInfo
 import jp.co.riso.android.util.Logger.logStartTime
 import jp.co.riso.android.util.Logger.logStopTime
 import jp.co.riso.android.util.Logger.logWarn
@@ -52,11 +53,8 @@ class LegalFragment : BaseWebFragment() {
                 logStopTime(activity, LegalFragment::class.java, "Legal Screen load")
                 try {
                     if (activity != null && activity is MainActivity) {
-                        val packageManager = activity!!.packageManager
                         val appName = activity!!.getString(R.string.ids_app_name)
-                        val versionName = packageManager.getPackageInfo(
-                            activity!!.packageName, 0
-                        ).versionName
+                        val versionName = context!!.getPackageInfo(activity!!.packageName).versionName
                         val javascript = String.format(
                             Locale.getDefault(), JS_REPLACE_FORMAT, VERSION_HTML_ID,
                             versionName, APPNAME_HTML_ID, appName

@@ -284,30 +284,24 @@ class AppUtilsTest : BaseActivityTestUtil() {
 
     @Test
     fun testGetLocalizedAssetRelativePath_Valid_ja() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            Locale.setDefault(Locale.JAPANESE)
-        } else {
-            val locale = Locale("ja")
-            val res = mainActivity!!.resources
-            val config = res.configuration
-            config.setLocale(locale)
-            val list = LocaleList(locale)
-            LocaleList.setDefault(list)
-            mainActivity!!.createConfigurationContext(config)
-        }
+        var locale = Locale("ja")
+        var res = mainActivity!!.resources
+        var config = res.configuration
+        config.setLocale(locale)
+        var list = LocaleList(locale)
+        LocaleList.setDefault(list)
+        mainActivity!!.createConfigurationContext(config)
         val localized = getLocalizedAssetRelativePath(mainActivity, FOLDER, RESOURCE)
         TestCase.assertEquals(RELATIVE_PATH_JA, localized)
 
         // Revert to EN locale
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
-            val locale = Locale("en")
-            val res = mainActivity!!.resources
-            val config = res.configuration
-            config.setLocale(locale)
-            val list = LocaleList(locale)
-            LocaleList.setDefault(list)
-            mainActivity!!.createConfigurationContext(config)
-        }
+        locale = Locale("en")
+        res = mainActivity!!.resources
+        config = res.configuration
+        config.setLocale(locale)
+        list = LocaleList(locale)
+        LocaleList.setDefault(list)
+        mainActivity!!.createConfigurationContext(config)
     }
 
     @Test
@@ -364,30 +358,26 @@ class AppUtilsTest : BaseActivityTestUtil() {
 
     @Test
     fun testGetLocalizedAssetFullPath_Valid_ja() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            Locale.setDefault(Locale.JAPANESE)
-        } else {
-            val locale = Locale("ja")
-            val res = mainActivity!!.resources
-            val config = res.configuration
-            config.setLocale(locale)
-            val list = LocaleList(locale)
-            LocaleList.setDefault(list)
-            mainActivity!!.createConfigurationContext(config)
-        }
+
+        var locale = Locale("ja")
+        var res = mainActivity!!.resources
+        var config = res.configuration
+        config.setLocale(locale)
+        var list = LocaleList(locale)
+        LocaleList.setDefault(list)
+        mainActivity!!.createConfigurationContext(config)
+
         val localized = getLocalizedAssetFullPath(mainActivity, FOLDER, RESOURCE)
         TestCase.assertEquals(FULL_PATH_JA, localized)
 
         // Revert to EN locale
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
-            val locale = Locale("en")
-            val res = mainActivity!!.resources
-            val config = res.configuration
-            config.setLocale(locale)
-            val list = LocaleList(locale)
-            LocaleList.setDefault(list)
-            mainActivity!!.createConfigurationContext(config)
-        }
+        locale = Locale("en")
+        res = mainActivity!!.resources
+        config = res.configuration
+        config.setLocale(locale)
+        list = LocaleList(locale)
+        LocaleList.setDefault(list)
+        mainActivity!!.createConfigurationContext(config)
     }
 
     @Test

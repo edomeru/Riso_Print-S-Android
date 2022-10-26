@@ -137,6 +137,7 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             }
         }
         NetUtils.registerWifiCallback(this)
+
     }
 
     override fun onDestroy() {
@@ -232,11 +233,12 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (_drawerLayout!!.isDrawerOpen(Gravity.LEFT) || _drawerLayout!!.isDrawerOpen(Gravity.RIGHT)) {
             closeDrawers()
         } else {
-            super.onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 

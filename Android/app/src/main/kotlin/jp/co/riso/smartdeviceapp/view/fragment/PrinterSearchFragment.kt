@@ -8,9 +8,8 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.animation.ValueAnimator
-import android.os.Bundle
-import android.os.Looper
-import android.os.Message
+import android.os.*
+import android.os.Build.VERSION.SDK_INT
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
@@ -56,9 +55,19 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
     override val viewLayout: Int
         get() = R.layout.fragment_printersearch
 
+    private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
+        SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelable(key, T::class.java)
+        else -> @Suppress("DEPRECATION") getParcelable(key) as? T
+    }
+
+    private inline fun <reified T : Parcelable> Bundle.parcelableArrayList(key: String): ArrayList<T>? = when {
+        SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelableArrayList(key, T::class.java)
+        else -> @Suppress("DEPRECATION") getParcelableArrayList(key)
+    }
+
     override fun initializeFragment(savedInstanceState: Bundle?) {
         _printer = if (savedInstanceState != null) {
-            savedInstanceState.getParcelableArrayList(KEY_SEARCHED_PRINTER_LIST)
+            savedInstanceState.parcelable(KEY_SEARCHED_PRINTER_LIST)
         } else {
             ArrayList()
         }
