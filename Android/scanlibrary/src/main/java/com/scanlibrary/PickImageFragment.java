@@ -138,6 +138,16 @@ public class PickImageFragment extends Fragment {
         File file = createImageFile();
         boolean isDirectoryCreated = file.getParentFile().mkdirs();
         Log.d("", "openCamera: isDirectoryCreated: " + isDirectoryCreated);
+        // aLINK edit: Android 13 New OS Support: minimum SDK version is increased to 26
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            Uri tempFileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(),
+//                    "com.scanlibrary.provider", // As defined in Manifest
+//                    file);
+//            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+//        } else {
+//            Uri tempFileUri = Uri.fromFile(file);
+//            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+//        }
         Uri tempFileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(),
                 "com.scanlibrary.provider", // As defined in Manifest
                 file);
