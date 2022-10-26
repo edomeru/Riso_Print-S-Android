@@ -59,7 +59,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         get() = R.layout.fragment_printersearch
 
     private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
-        SDK_INT >= 33 -> getParcelable(key, T::class.java)
+        SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelable(key, T::class.java)
         else -> @Suppress("DEPRECATION") getParcelable(key) as? T
     }
 
