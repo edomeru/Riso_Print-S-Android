@@ -79,6 +79,7 @@
                 android:textSize="@dimen/font_size_large" />
         </LinearLayout>
 
+        <!-- aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration >
         <LinearLayout
             android:id="@+id/cameraButton"
             android:layout_width="match_parent"
@@ -108,7 +109,7 @@
                 android:text="@string/ids_lbl_capture_photo"
                 android:textColor="@color/theme_color_1"
                 android:textSize="@dimen/font_size_large" />
-        </LinearLayout>
+        </LinearLayout-->
 
         <Space
             android:layout_width="match_parent"
