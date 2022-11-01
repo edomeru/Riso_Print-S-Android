@@ -161,7 +161,14 @@ object ImageUtils {
      */
     @JvmStatic
     fun isImageFileSupported(context: Context?, uri: Uri?): Boolean {
-        val imageTypes = listOf(*AppConstants.IMAGE_TYPES)
+        var imageTypes = listOf(*AppConstants.IMAGE_TYPES)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            imageTypes = listOf(*AppConstants.IMAGE_TYPES_ANDROID_12)
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            imageTypes = listOf(*AppConstants.IMAGE_TYPES_ANDROID_8)
+        }
+
         val contentType = getMimeType(context, uri)
         return imageTypes.contains(contentType)
     }

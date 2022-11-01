@@ -15,11 +15,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.*
 import android.os.Build.VERSION.SDK_INT
-import android.os.Bundle
-import android.os.Parcelable
-import android.os.StatFs
-import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
@@ -127,7 +124,21 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                 photosPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                 photosPickerIntent.type = "*/*"
                 if (!isChromeBook) {
-                    photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES)
+                    if (SDK_INT >= Build.VERSION_CODES.S) {
+                        photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES_ANDROID_12)
+                    } else {
+                        if (SDK_INT >= Build.VERSION_CODES.P) {
+                            photosPickerIntent.putExtra(
+                                Intent.EXTRA_MIME_TYPES,
+                                AppConstants.IMAGE_TYPES
+                            )
+                        } else {
+                            photosPickerIntent.putExtra(
+                                Intent.EXTRA_MIME_TYPES,
+                                AppConstants.IMAGE_TYPES_ANDROID_8
+                            )
+                        }
+                    }
                 }
                 _resultLauncherPhoto.launch(
                     Intent.createChooser(

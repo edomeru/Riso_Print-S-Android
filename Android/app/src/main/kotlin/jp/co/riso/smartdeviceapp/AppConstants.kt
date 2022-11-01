@@ -144,9 +144,34 @@ object AppConstants {
     @JvmField
     val DOC_TYPES = arrayOf("application/pdf", "text/plain")
 
-    // Supported image types
+    // Supported image types for Android 9 to 11
     @JvmField
     val IMAGE_TYPES = arrayOf(
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "image/gif",
+        "image/x-ms-bmp",
+        "image/bmp",
+        "image/x-windows-bmp",
+        "image/heif"
+    )
+
+    // Supported image types for Android 8 (without HEIF and AVIF support)
+    @JvmField
+    val IMAGE_TYPES_ANDROID_8 = arrayOf(
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "image/gif",
+        "image/x-ms-bmp",
+        "image/bmp",
+        "image/x-windows-bmp",
+    )
+
+    // Supported image types for Android 12 and above (with AVIF support)
+    @JvmField
+    val IMAGE_TYPES_ANDROID_12 = arrayOf(
         "image/png",
         "image/jpeg",
         "image/jpg",
