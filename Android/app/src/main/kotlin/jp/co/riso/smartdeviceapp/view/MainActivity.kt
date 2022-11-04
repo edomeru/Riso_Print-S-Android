@@ -69,7 +69,14 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             Logger.logStartTime(this, this.javaClass, "AppLaunch")
         }
         if (intent != null && (intent.data != null || intent.clipData != null)) { // check if Open-In
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            // Check first if device is Android 13
+            var permissionType = Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissionType = Manifest.permission.READ_MEDIA_IMAGES
+            }
+
+            if (ContextCompat.checkSelfPermission(this, permissionType)
                 == PackageManager.PERMISSION_GRANTED
             ) {
                 // permission is granted, initialize Radaee (uses external storage)

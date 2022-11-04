@@ -8,6 +8,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -111,6 +112,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         get() = R.layout.fragment_printpreview
 
     private val _printSettingsViewModel: PrintSettingsViewModel by activityViewModels()
+    private var _permissionType: String = WRITE_EXTERNAL_STORAGE
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         // dismiss permission alert dialog if showing
@@ -212,6 +214,11 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             _pauseableHandler = PauseableHandler(Looper.myLooper(), this)
         }
 
+        // Check if device is Android 13 for permissions
+        if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            _permissionType = READ_MEDIA_IMAGES
+        }
+
         // Initialize PDF File Manager if it has not been previously initialized yet
         if (_pdfManager == null) {
             _pdfManager = PDFFileManager(this)
@@ -220,7 +227,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             if (hasPdfFile() && !_isPermissionDialogOpen) {
                 if (ContextCompat.checkSelfPermission(
                         requireActivity(),
-                        WRITE_EXTERNAL_STORAGE
+                        _permissionType
                     )
                     == PackageManager.PERMISSION_GRANTED
                 ) {
@@ -229,13 +236,13 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
                     }
                     initializePdfManagerAndRunAsync()
                 } else {
-                    if (shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE)) {
+                    if (shouldShowRequestPermissionRationale(_permissionType)) {
                         _shouldDisplayExplanation = true
                     } else {
                         _isPermissionDialogOpen = true
                         // Request the permission, no explanation needed
                         _resultLauncherPermissionStorage.launch(
-                            arrayOf(WRITE_EXTERNAL_STORAGE))
+                            arrayOf(_permissionType))
                     }
                 }
             }
@@ -407,7 +414,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (hasPdfFile() && !_isPermissionDialogOpen) {
             if (ContextCompat.checkSelfPermission(
                     requireActivity(),
-                    WRITE_EXTERNAL_STORAGE
+                    _permissionType
                 )
                 == PackageManager.PERMISSION_GRANTED
             ) {
@@ -1034,7 +1041,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         _confirmDialogFragment = null
         _isPermissionDialogOpen = true
         _resultLauncherPermissionStorage.launch(
-            arrayOf(WRITE_EXTERNAL_STORAGE))
+            arrayOf(_permissionType))
     }
 
     override fun onCancel() {
@@ -1060,7 +1067,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         { permissions ->
             _isPermissionDialogOpen = false // the request returned a result hence dialog is closed
             if (permissions.isNotEmpty()) {
-                if (permissions[WRITE_EXTERNAL_STORAGE] == true) {
+                if (permissions[_permissionType] == true) {
                     // based on design docs - RISO_SmartDeviceApp_Design_03_Android Rev 3.0
                     // N.Print Preview 1.Display Screen
                     // Figure I 44 Print Preview – Display Screen – Activity Diagram
@@ -1092,9 +1099,9 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             }
             if (ContextCompat.checkSelfPermission(
                     requireActivity(),
-                    WRITE_EXTERNAL_STORAGE
+                    _permissionType
                 ) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(
-                    WRITE_EXTERNAL_STORAGE
+                    _permissionType
                 )
             ) {
                 val message =
