@@ -61,6 +61,7 @@
                 <data android:mimeType="image/bmp" />
                 <data android:mimeType="image/x-windows-bmp" />
                 <data android:mimeType="image/heif" />
+                <data android:mimeType="image/heic" />
                 <data android:mimeType="image/avif" />
             </intent-filter>
             <intent-filter>
@@ -78,6 +79,7 @@
                 <data android:mimeType="image/bmp" />
                 <data android:mimeType="image/x-windows-bmp" />
                 <data android:mimeType="image/heif" />
+                <data android:mimeType="image/heic" />
                 <data android:mimeType="image/avif" />
             </intent-filter>
             <intent-filter>
@@ -93,6 +95,7 @@
                 <data android:mimeType="image/bmp" />
                 <data android:mimeType="image/x-windows-bmp" />
                 <data android:mimeType="image/heif" />
+                <data android:mimeType="image/heic" />
                 <data android:mimeType="image/avif" />
             </intent-filter>
         </activity>

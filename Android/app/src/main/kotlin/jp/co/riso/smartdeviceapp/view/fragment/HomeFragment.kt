@@ -7,25 +7,22 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import android.Manifest.permission.CAMERA
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.Manifest.permission.READ_MEDIA_IMAGES
+import android.Manifest.permission.*
 import android.app.Activity
 import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.*
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
-import android.util.Log
+import android.os.Bundle
+import android.os.SystemClock
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import com.scanlibrary.ScanActivity
-import com.scanlibrary.ScanConstants
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
 import jp.co.riso.android.dialog.DialogUtils.displayDialog
@@ -33,7 +30,6 @@ import jp.co.riso.android.dialog.InfoDialogFragment.Companion.newInstance
 import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.ImageUtils
 import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartprint.R
@@ -75,7 +71,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         if (intent != null) {
             val extras = intent.extras
             if (extras != null) {
-                val text = extras.getBundle(Intent.EXTRA_TEXT) as String?
+                val text = extras[Intent.EXTRA_TEXT] as String?
                 if (text != null && text == AppConstants.ERR_KEY_INVALID_INTENT) {
                     intent.removeExtra(Intent.EXTRA_TEXT)
                     // Display error message that an invalid intent was sent by a third-party app
@@ -311,6 +307,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         _confirmDialogFragment = null
     }
 
+    /* aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
     // ================================================================================
     // Internal Methods
     // ================================================================================
@@ -327,7 +324,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
             Log.d(HomeFragment::class.java.simpleName, "bytesAvailable:$bytesAvailable")
             return bytesAvailable
         }
-    // RM 789 Fix - End
+    // RM 789 Fix - End*/
 
     // ================================================================================
     // Register for Activity Result

@@ -154,7 +154,8 @@ object AppConstants {
         "image/x-ms-bmp",
         "image/bmp",
         "image/x-windows-bmp",
-        "image/heif"
+        "image/heif",
+        "image/heic"
     )
 
     // Supported image types for Android 8 (without HEIF and AVIF support)
@@ -180,6 +181,7 @@ object AppConstants {
         "image/bmp",
         "image/x-windows-bmp",
         "image/heif",
+        "image/heic",
         "image/avif"
     )
 
