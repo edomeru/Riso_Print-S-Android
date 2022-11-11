@@ -120,6 +120,7 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
     /**
      * @brief Run the main activity.
      */
+    @Suppress("DEPRECATION")
     private fun runMainActivity() {
         val launchIntent: Intent?
         val preferences = getSharedPreferences("licenseAgreementPrefs", MODE_PRIVATE)
