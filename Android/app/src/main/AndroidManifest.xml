@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="jp.co.riso.smartprint" 
     android:installLocation="preferExternal"
     tools:ignore="ScopedStorage">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <!-- HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera feature declaration >
     <uses-feature
@@ -60,6 +60,7 @@
                 <data android:mimeType="image/bmp" />
                 <data android:mimeType="image/x-windows-bmp" />
                 <data android:mimeType="image/heif" />
+                <data android:mimeType="image/heic" />
                 <data android:mimeType="image/avif" />
             </intent-filter>
             <intent-filter>
@@ -77,6 +78,7 @@
                 <data android:mimeType="image/bmp" />
                 <data android:mimeType="image/x-windows-bmp" />
                 <data android:mimeType="image/heif" />
+                <data android:mimeType="image/heic" />
                 <data android:mimeType="image/avif" />
             </intent-filter>
             <intent-filter>
@@ -92,6 +94,7 @@
                 <data android:mimeType="image/bmp" />
                 <data android:mimeType="image/x-windows-bmp" />
                 <data android:mimeType="image/heif" />
+                <data android:mimeType="image/heic" />
                 <data android:mimeType="image/avif" />
             </intent-filter>
         </activity>

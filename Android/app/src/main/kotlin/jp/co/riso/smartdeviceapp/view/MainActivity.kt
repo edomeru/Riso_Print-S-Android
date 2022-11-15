@@ -8,40 +8,38 @@
 package jp.co.riso.smartdeviceapp.view
 
 import android.Manifest
-import jp.co.riso.smartdeviceapp.view.base.BaseActivity
-import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
-import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout
-import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment
-import jp.co.riso.android.os.pauseablehandler.PauseableHandler
-import kotlin.jvm.Volatile
-import android.os.Bundle
-import android.content.pm.PackageManager
-import android.os.Looper
-import jp.co.riso.smartprint.R
-import jp.co.riso.smartdeviceapp.AppConstants
-import androidx.drawerlayout.widget.DrawerLayout
-import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment
-import jp.co.riso.android.util.NetUtils
-import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager
 import android.annotation.SuppressLint
-import android.os.Build
-import jp.co.riso.smartdeviceapp.view.base.BaseFragment
-import kotlin.jvm.JvmOverloads
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build
+import android.os.Bundle
+import android.os.Looper
 import android.os.Message
 import android.view.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.radaee.pdf.Global
+import jp.co.riso.android.os.pauseablehandler.PauseableHandler
+import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.Logger
+import jp.co.riso.android.util.NetUtils
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager
+import jp.co.riso.smartdeviceapp.view.base.BaseActivity
+import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment
+import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment
+import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment
+import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout
+import jp.co.riso.smartprint.R
 import java.io.File
 import java.io.IOException
-import kotlin.jvm.Synchronized
 import kotlin.math.abs
+
 
 /**
  * @class MainActivity
@@ -69,7 +67,14 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             Logger.logStartTime(this, this.javaClass, "AppLaunch")
         }
         if (intent != null && (intent.data != null || intent.clipData != null)) { // check if Open-In
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            // Check first if device is Android 13
+            var permissionType = Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissionType = Manifest.permission.READ_MEDIA_IMAGES
+            }
+
+            if (ContextCompat.checkSelfPermission(this, permissionType)
                 == PackageManager.PERMISSION_GRANTED
             ) {
                 // permission is granted, initialize Radaee (uses external storage)
@@ -238,7 +243,7 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
         if (_drawerLayout!!.isDrawerOpen(Gravity.LEFT) || _drawerLayout!!.isDrawerOpen(Gravity.RIGHT)) {
             closeDrawers()
         } else {
-            onBackPressedDispatcher.onBackPressed()
+            moveTaskToBack(true)
         }
     }
 

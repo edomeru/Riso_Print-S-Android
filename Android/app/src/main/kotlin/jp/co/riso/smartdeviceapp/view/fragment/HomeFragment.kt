@@ -7,27 +7,22 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import android.Manifest.permission.CAMERA
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.Manifest.permission.*
 import android.app.Activity
 import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.os.Parcelable
-import android.os.StatFs
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import com.scanlibrary.ScanActivity
-import com.scanlibrary.ScanConstants
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
 import jp.co.riso.android.dialog.DialogUtils.displayDialog
@@ -35,7 +30,6 @@ import jp.co.riso.android.dialog.InfoDialogFragment.Companion.newInstance
 import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.ImageUtils
 import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartprint.R
@@ -57,6 +51,10 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     private val _permissionsStorage = arrayOf(
         WRITE_EXTERNAL_STORAGE)
 
+    private val _permissionsStorageAndroid13 = arrayOf(
+        READ_MEDIA_IMAGES
+    )
+
     private val _permissionsCameraStorage = arrayOf(
         CAMERA,
         WRITE_EXTERNAL_STORAGE)
@@ -73,7 +71,10 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         if (intent != null) {
             val extras = intent.extras
             if (extras != null) {
-                val text = extras.getBundle(Intent.EXTRA_TEXT) as String?
+                /* Android 13 New OS Support - Current fix to deprecation warning causes an issue.
+                   Proposal is to suppress this instead.
+                */
+                val text = extras[Intent.EXTRA_TEXT] as String?
                 if (text != null && text == AppConstants.ERR_KEY_INVALID_INTENT) {
                     intent.removeExtra(Intent.EXTRA_TEXT)
                     // Display error message that an invalid intent was sent by a third-party app
@@ -127,7 +128,21 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                 photosPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                 photosPickerIntent.type = "*/*"
                 if (!isChromeBook) {
-                    photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES)
+                    if (SDK_INT >= Build.VERSION_CODES.S) {
+                        photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES_ANDROID_12)
+                    } else {
+                        if (SDK_INT >= Build.VERSION_CODES.P) {
+                            photosPickerIntent.putExtra(
+                                Intent.EXTRA_MIME_TYPES,
+                                AppConstants.IMAGE_TYPES
+                            )
+                        } else {
+                            photosPickerIntent.putExtra(
+                                Intent.EXTRA_MIME_TYPES,
+                                AppConstants.IMAGE_TYPES_ANDROID_8
+                            )
+                        }
+                    }
                 }
                 _resultLauncherPhoto.launch(
                     Intent.createChooser(
@@ -184,13 +199,19 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     }
 
     private fun checkPermission(isStorageOnly: Boolean): Boolean {
+        var permissionType = WRITE_EXTERNAL_STORAGE
+        // Check first if device is Android 13
+        if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionType = READ_MEDIA_IMAGES
+        }
+
         if (isStorageOnly && ContextCompat.checkSelfPermission(
                 requireActivity(),
-                WRITE_EXTERNAL_STORAGE
+                permissionType
             )
             != PackageManager.PERMISSION_GRANTED
         ) {
-            if (shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE)) {
+            if (shouldShowRequestPermissionRationale(permissionType)) {
                 if (_confirmDialogFragment == null) {
                     val message =
                         requireActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed)
@@ -205,7 +226,11 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                     displayDialog(requireActivity(), TAG_PERMISSION_STORAGE_DIALOG, _confirmDialogFragment!!)
                 }
             } else {
-                _resultLauncherPermissionStorage.launch(_permissionsStorage)
+                if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    _resultLauncherPermissionStorage.launch(_permissionsStorageAndroid13)
+                } else {
+                    _resultLauncherPermissionStorage.launch(_permissionsStorage)
+                }
             }
             return false
         } else if (!isStorageOnly && (ContextCompat.checkSelfPermission(
@@ -213,11 +238,11 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
             ) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(
                         requireActivity(),
-                        WRITE_EXTERNAL_STORAGE
+                        permissionType
                     ) != PackageManager.PERMISSION_GRANTED)
         ) {
             if (shouldShowRequestPermissionRationale(CAMERA) || shouldShowRequestPermissionRationale(
-                    WRITE_EXTERNAL_STORAGE
+                    permissionType
                 )
             ) {
                 if (_confirmDialogFragment == null) {
@@ -273,13 +298,19 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         } else {
             _resultLauncherPermissionStorage.launch(_permissionsStorage)
         } */
-        _resultLauncherPermissionStorage.launch(_permissionsStorage)
+        // Check if device is Android 13
+        if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            _resultLauncherPermissionStorage.launch(_permissionsStorageAndroid13)
+        } else {
+            _resultLauncherPermissionStorage.launch(_permissionsStorage)
+        }
     }
 
     override fun onCancel() {
         _confirmDialogFragment = null
     }
 
+    /* aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
     // ================================================================================
     // Internal Methods
     // ================================================================================
@@ -296,7 +327,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
             Log.d(HomeFragment::class.java.simpleName, "bytesAvailable:$bytesAvailable")
             return bytesAvailable
         }
-    // RM 789 Fix - End
+    // RM 789 Fix - End*/
 
     // ================================================================================
     // Register for Activity Result
@@ -361,15 +392,22 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     } */
 
     private val _resultLauncherPermissionStorage = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        var permissionType = WRITE_EXTERNAL_STORAGE
+
+        // Check first if device is Android 13
+        if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionType = READ_MEDIA_IMAGES
+        }
+
         // ignore if result is empty which is due to repeated permission request because of quick taps
         if (permissions.isNotEmpty()) {
-            if (permissions[WRITE_EXTERNAL_STORAGE] == true) {
+            if (permissions[permissionType] == true) {
                 // permission was granted, start picker intent
                 if (_buttonTapped != null) {
                     _buttonTapped!!.performClick()
                 }
             }
-            if (!_checkPermission && !shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE)) {
+            if (!_checkPermission && !shouldShowRequestPermissionRationale(permissionType)) {
                 val message =
                     resources.getString(R.string.ids_err_msg_write_external_storage_permission_not_granted)
                 val button = resources.getString(R.string.ids_lbl_ok)
