@@ -66,12 +66,14 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     override val viewLayout: Int
         get() = R.layout.fragment_home
 
-    @Suppress("DEPRECATION")
     override fun initializeFragment(savedInstanceState: Bundle?) {
         val intent = requireActivity().intent
         if (intent != null) {
             val extras = intent.extras
             if (extras != null) {
+                /* Android 13 New OS Support - Current fix to deprecation warning causes an issue.
+                   Proposal is to suppress this instead.
+                */
                 val text = extras[Intent.EXTRA_TEXT] as String?
                 if (text != null && text == AppConstants.ERR_KEY_INVALID_INTENT) {
                     intent.removeExtra(Intent.EXTRA_TEXT)

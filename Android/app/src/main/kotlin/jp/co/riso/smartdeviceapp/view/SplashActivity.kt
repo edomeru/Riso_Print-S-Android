@@ -120,7 +120,6 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
     /**
      * @brief Run the main activity.
      */
-    @Suppress("DEPRECATION")
     private fun runMainActivity() {
         val launchIntent: Intent?
         val preferences = getSharedPreferences("licenseAgreementPrefs", MODE_PRIVATE)
@@ -189,6 +188,9 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             if (Intent.ACTION_VIEW == action) {
                 data = intent.data
             } else if (Intent.ACTION_SEND == action) {
+                /* Android 13 New OS Support - Current fix to deprecation warning causes an issue.
+                   Proposal is to suppress this instead.
+                 */
                 if (intent.extras!![Intent.EXTRA_STREAM] != null) {
                     data = Uri.parse(intent.extras!![Intent.EXTRA_STREAM].toString())
                 } else {
