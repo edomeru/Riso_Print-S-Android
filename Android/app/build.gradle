@@ -50,6 +50,7 @@ android {
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
+    namespace 'jp.co.riso.smartprint'
 }
 
 dependencies {
