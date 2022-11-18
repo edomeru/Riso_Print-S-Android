@@ -36,6 +36,7 @@ import jp.co.riso.smartprint.R
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.ceil
+import jp.co.riso.gestureListener.GestureDetectorListenerWrapper
 
 /**
  * @class PrintPreviewView
@@ -48,7 +49,8 @@ class PrintPreviewView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : FrameLayout(
     context!!, attrs, defStyle
-), OnScaleGestureListener, GestureDetector.OnGestureListener, OnDoubleTapListener {
+), OnScaleGestureListener,
+    GestureDetectorListenerWrapper, OnDoubleTapListener {
     private var _curlView: CurlView? = null
     private var _pdfManager: PDFFileManager? = null
     private val _pdfPageProvider = PDFPageProvider()
@@ -168,11 +170,9 @@ class PrintPreviewView @JvmOverloads constructor(
             return if (_zoomLevel == BASE_ZOOM_LEVEL) {
                 _curlView!!.dispatchTouchEvent(ev)
             } else {
-                /* Android 13 New OS Support: Disable this temporary as this causes NPE */
-//                if (_doubleTapDetector!!.onTouchEvent(ev)) {
-//                    true
-//                } else processTouchEvent(ev)
-                processTouchEvent(ev)
+                if (_doubleTapDetector!!.onTouchEvent(ev)) {
+                    true
+                } else processTouchEvent(ev)
             }
         }
         val e = MotionEvent.obtain(
@@ -915,6 +915,7 @@ class PrintPreviewView @JvmOverloads constructor(
         return false
     }
 
+    /* Android 13 New OS Support - Move interface to its Java wrapper GestureDetectorListenerWrapper
     // ================================================================================
     // INTERFACE - OnGestureListener
     // ================================================================================
@@ -946,7 +947,7 @@ class PrintPreviewView @JvmOverloads constructor(
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
         return false
-    }
+    }*/
 
     // ================================================================================
     // INTERFACE - OnScaleGestureListener
