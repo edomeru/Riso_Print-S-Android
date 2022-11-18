@@ -106,7 +106,7 @@ class ImageUtilsTest : BaseActivityTestUtil() {
         val testFiles = ClipData.newUri(SmartDeviceApp.appContext!!.contentResolver,
             IMG_JPG,
             getUriFromPath(IMG_JPG))
-        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_HEIC)))
+        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_ERR_UNSUPPORTED)))
 
         val intent = Intent()
         intent.clipData = testFiles

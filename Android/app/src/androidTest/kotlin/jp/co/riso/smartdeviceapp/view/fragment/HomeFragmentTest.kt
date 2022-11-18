@@ -34,8 +34,8 @@ class HomeFragmentTest : BaseActivityTestUtil() {
     var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(WRITE_EXTERNAL_STORAGE)
 
     // HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
-    @get:Rule
-    var cameraPermission: GrantPermissionRule = GrantPermissionRule.grant(CAMERA)
+//    @get:Rule
+//    var cameraPermission: GrantPermissionRule = GrantPermissionRule.grant(CAMERA)
 
     @Before
     fun setup() {
