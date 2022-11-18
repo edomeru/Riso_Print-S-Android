@@ -36,7 +36,7 @@ import jp.co.riso.smartprint.R
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.ceil
-import gestureListener.GestureDetectorListenerWrapper
+import jp.co.riso.gestureListener.GestureDetectorListenerWrapper
 
 /**
  * @class PrintPreviewView

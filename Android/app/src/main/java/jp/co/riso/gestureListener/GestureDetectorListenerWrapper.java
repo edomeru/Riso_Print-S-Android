@@ -1,4 +1,4 @@
-package gestureListener;
+package jp.co.riso.gestureListener;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
