@@ -34,8 +34,8 @@ class HomeFragmentTest : BaseActivityTestUtil() {
     var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(WRITE_EXTERNAL_STORAGE)
 
     // HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
-    @get:Rule
-    var cameraPermission: GrantPermissionRule = GrantPermissionRule.grant(CAMERA)
+//    @get:Rule
+//    var cameraPermission: GrantPermissionRule = GrantPermissionRule.grant(CAMERA)
 
     @Before
     fun setup() {
@@ -295,6 +295,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         checkIntentImagePicker(Intents.getIntents()[0])
     }
 
+    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
     @Test
     fun testOnClick_CapturePhoto() {
         // stubs handling of start activity to prevent launching of Camera
@@ -309,7 +310,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
         // check that intent for ScanActivity was sent
         checkIntentScanActivity(Intents.getIntents()[0])
-    }
+    }*/
 
     @Test
     fun testOnClick_NotButton() {
@@ -366,6 +367,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         checkIntentImagePicker(Intents.getIntents()[0])
     }
 
+    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
     @Test
     fun testOnDoubleClick_CapturePhoto() {
         // stubs handling of start activity to prevent launching of Camera
@@ -384,7 +386,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
 
         // check that intent for ScanActivity was sent
         checkIntentScanActivity(Intents.getIntents()[0])
-    }
+    }*/
 
     @Test
     fun testFileOpen_SelectDocument() {
@@ -579,6 +581,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         }
     }
 
+    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
     @Test
     fun testFileOpen_CapturePhoto() {
         // stubs handling of permission request in case of no permissions
@@ -620,7 +623,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
             mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
         )
         Assert.assertEquals(testFile, mainActivityIntent.data)
-    }
+    }*/
 
     @Test
     fun testInvalid_SelectDocument() {
@@ -699,6 +702,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         checkIntentImagePicker(Intents.getIntents()[0])
     }
 
+    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
     @Test
     fun testCanceled_CapturePhoto() {
         val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
@@ -709,7 +713,7 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         Assert.assertEquals(Intents.getIntents().size.toLong(), 1)
 
         checkIntentScanActivity(Intents.getIntents()[0])
-    }
+    }*/
 
     @Test
     fun testOrientationChange_SelectDocument() {
@@ -725,11 +729,12 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         testOnClick_SelectPhotos()
     }
 
+    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
     @Test
     fun testOrientationChange_CapturePhoto() {
         switchOrientation()
         waitForAnimation()
         testOnClick_CapturePhoto()
-    }
+    }*/
 
 }

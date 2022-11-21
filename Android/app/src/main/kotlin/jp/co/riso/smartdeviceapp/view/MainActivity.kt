@@ -243,7 +243,13 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
         if (_drawerLayout!!.isDrawerOpen(Gravity.LEFT) || _drawerLayout!!.isDrawerOpen(Gravity.RIGHT)) {
             closeDrawers()
         } else {
-            moveTaskToBack(true)
+            val fm = supportFragmentManager
+            val screen = fm.findFragmentById(R.id.mainLayout)
+            if (screen is PrintPreviewFragment) {
+                moveTaskToBack(true)
+            } else {
+                onBackPressedDispatcher.onBackPressed()
+            }
         }
     }
 

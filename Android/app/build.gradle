@@ -82,6 +82,7 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.4.0"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
     androidTestImplementation 'androidx.test:rules:1.4.1-alpha07'
+    androidTestImplementation 'androidx.test:core:1.5.0-alpha02'
 }
 
 // Returns NDK build command based on development OS
