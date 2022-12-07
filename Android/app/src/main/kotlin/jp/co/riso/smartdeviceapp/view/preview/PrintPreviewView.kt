@@ -803,7 +803,8 @@ class PrintPreviewView @JvmOverloads constructor(
                 }
             } else {
                 if (currentPage + 1 > _pdfPageProvider.pageCount) {
-                    currentPage = 0
+                    // set current page to last page if it is past the computed total page number
+                    currentPage = _pdfPageProvider.pageCount - 1
                 }
             }
         }
