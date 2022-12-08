@@ -24,10 +24,13 @@
         android:hardwareAccelerated="true"
         android:supportsRtl="false"
         tools:ignore="UnusedAttribute">
+        <!-- aLINK edit: RM#907 screenLayout needed to handle rotation for chromebook, and as recommended by Android docs -->
+        <!-- aLINK edit: RM#912 smallestScreenSize and density is needed to handle display size change -->
+        <!-- aLINK edit: RM#912 keyboardHidden is needed to handle tablet-laptop transition (and vice-versa) -->
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.SplashActivity"
             android:theme="@style/SplashTheme"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|density|keyboardHidden"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,8 +39,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="jp.co.riso.smartdeviceapp.view.MainActivity" 
-            android:configChanges="orientation|screenSize"
+            android:name="jp.co.riso.smartdeviceapp.view.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|density|keyboardHidden"
             android:colorMode="wideColorGamut" >
         </activity>
         <activity
