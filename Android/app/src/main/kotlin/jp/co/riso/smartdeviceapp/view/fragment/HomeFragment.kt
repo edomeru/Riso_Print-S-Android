@@ -71,10 +71,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         if (intent != null) {
             val extras = intent.extras
             if (extras != null) {
-                /* Android 13 New OS Support - Current fix to deprecation warning causes an issue.
-                   Proposal is to suppress this instead.
-                */
-                val text = extras[Intent.EXTRA_TEXT] as String?
+                val text = extras.getString(Intent.EXTRA_TEXT)
                 if (text != null && text == AppConstants.ERR_KEY_INVALID_INTENT) {
                     intent.removeExtra(Intent.EXTRA_TEXT)
                     // Display error message that an invalid intent was sent by a third-party app
