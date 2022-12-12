@@ -179,7 +179,7 @@
     <string name="ids_err_msg_txt_size_limit">Selected text file exceeds file size limit. Please select a text file with file size below 5MB.</string>
     <string name="ids_err_msg_permission">File access error was encountered. Please select less files or lower file size and try again.</string>
     <string name="ids_info_msg_converting" tools:ignore="TypographyEllipsis">Converting...</string>
-    <string name="ids_info_msg_image">Image</string>
+    <string name="ids_info_msg_image" formatted="false" tools:ignore="StringFormatInvalid">%d/%d Image</string>
     <string name="ids_info_msg_initializing" tools:ignore="TypographyEllipsis">Initializing...</string>
     <string name="ids_err_msg_camera_permission_not_allowed">Access to camera and storage are needed to open.\n\nIn the next dialog/s that will appear, please tap the \"Allow/OK\" button.</string>
     <string name="ids_err_msg_camera_permission_not_granted">Permission to camera and/or storage is not granted. These permissions are needed in order to capture and save image. Please make sure that [Camera Permission] and [Storage Permission] are ON.</string>

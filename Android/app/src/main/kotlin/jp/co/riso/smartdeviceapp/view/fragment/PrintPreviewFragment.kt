@@ -888,11 +888,11 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         } else {
             String.format(
                 Locale.getDefault(),
-                "%s %d/%d %s",
+                "%s %s",
                 resources.getString(R.string.ids_info_msg_converting),
-                current,
-                total,
-                resources.getString(R.string.ids_info_msg_image)
+                String.format(resources.getString(R.string.ids_info_msg_image),
+                    current,
+                    total)
             )
         }
         onNotifyProgress(msg)
