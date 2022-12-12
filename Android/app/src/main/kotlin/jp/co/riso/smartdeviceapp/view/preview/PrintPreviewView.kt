@@ -803,7 +803,8 @@ class PrintPreviewView @JvmOverloads constructor(
                 }
             } else {
                 if (currentPage + 1 > _pdfPageProvider.pageCount) {
-                    currentPage = 0
+                    // set current page to last page if it is past the computed total page number
+                    currentPage = _pdfPageProvider.pageCount - 1
                 }
             }
         }
@@ -1507,7 +1508,7 @@ class PrintPreviewView @JvmOverloads constructor(
         const val BASE_ZOOM_LEVEL = 1.0f
 
         /// Maximum zoom level of the preview
-        const val MAX_ZOOM_LEVEL = 4.0f
+        const val MAX_ZOOM_LEVEL = 10.0f
         private const val INVALID_IDX = -1
         private const val SLEEP_DELAY = 100
         private const val SMALL_BMP_SIZE = 64
