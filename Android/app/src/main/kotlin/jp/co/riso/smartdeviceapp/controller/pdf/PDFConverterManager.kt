@@ -499,7 +499,8 @@ class PDFConverterManager(
             val line = pageString.substring(lineStart, endStart)
             val marginTop =
                 if (j == 0) MARGIN_SIZE else MARGIN_SIZE + staticLayout.getLineBottom(j - 1)
-            canvas.drawText(line, MARGIN_SIZE.toFloat(), marginTop.toFloat(), textPaint)
+            // Android 13 New OS Support - Fix for RM#1268, extra character newline "\n" is printed in Android 13
+            canvas.drawText(line.trim(), MARGIN_SIZE.toFloat(), marginTop.toFloat(), textPaint)
             j += 1
         }
         document.finishPage(page)

@@ -13,9 +13,7 @@ import android.app.AlertDialog
 import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Bundle
-import android.os.Looper
-import android.os.Message
+import android.os.*
 import android.provider.Settings
 import android.util.AndroidRuntimeException
 import android.view.ContextThemeWrapper
@@ -111,6 +109,12 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
         super.onSaveInstanceState(outState)
         outState.putBoolean(KEY_DB_INITIALIZED, _databaseInitialized)
     }
+
+    private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelable(key, T::class.java)
+        else -> @Suppress("DEPRECATION") getParcelable(key) as? T
+    }
+
     // ================================================================================
     // Public Functions
     // ================================================================================
@@ -188,11 +192,8 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             if (Intent.ACTION_VIEW == action) {
                 data = intent.data
             } else if (Intent.ACTION_SEND == action) {
-                /* Android 13 New OS Support - Current fix to deprecation warning causes an issue.
-                   Proposal is to suppress this instead.
-                 */
-                if (intent.extras!![Intent.EXTRA_STREAM] != null) {
-                    data = Uri.parse(intent.extras!![Intent.EXTRA_STREAM].toString())
+                if (intent.extras!!.parcelable<Parcelable>(Intent.EXTRA_STREAM) != null) {
+                    data = Uri.parse(intent.extras!!.parcelable<Parcelable>(Intent.EXTRA_STREAM).toString())
                 } else {
                     // An invalid intent was sent by the third party app
                     launchIntent.putExtra(Intent.EXTRA_TEXT, AppConstants.ERR_KEY_INVALID_INTENT)

@@ -799,7 +799,8 @@ class PrintPreviewView @JvmOverloads constructor(
         if (_pdfPageProvider.pageCount > 0) {
             if (_curlView!!.viewMode == CurlView.SHOW_TWO_PAGES) {
                 if (currentPage > _pdfPageProvider.pageCount) {
-                    currentPage = 0
+                    // set current page to last page if it is past the computed total page number
+                    currentPage = _pdfPageProvider.pageCount
                 }
             } else {
                 if (currentPage + 1 > _pdfPageProvider.pageCount) {
