@@ -57,7 +57,7 @@
  */
 
 /* Copied roughly from opensslconf.h which it's a little more complex */
-#define DES_LONG unsigned long
+#define DES_LONG unsigned int
 
 #ifndef HEADER_NEW_DES_H
 #define HEADER_NEW_DES_H
