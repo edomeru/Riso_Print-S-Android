@@ -25,7 +25,7 @@ import jp.co.riso.android.dialog.WaitingDialogFragment.WaitingDialogListener
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import jp.co.riso.android.util.AppUtils
-import jp.co.riso.android.util.NetUtils.isWifiAvailable
+import jp.co.riso.android.util.NetUtils.isNetworkAvailable
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback
@@ -232,7 +232,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
             displayDialog(requireActivity(), TAG_MESSAGE_DIALOG, fragment)
             return
         }
-        if (!isWifiAvailable) {
+        if (!isNetworkAvailable) {
             val strMsg = getString(R.string.ids_err_msg_network_error)
             val btnMsg = getString(R.string.ids_lbl_ok)
             val fragment = newInstance(strMsg, btnMsg)
@@ -332,7 +332,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     // INTERFACE - DirectPrintCallback
     // ================================================================================
     override fun onNotifyProgress(manager: DirectPrintManager?, status: Int, progress: Float) {
-        if (isWifiAvailable) {
+        if (isNetworkAvailable) {
             when (status) {
                 DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING, DirectPrintManager.PRINT_STATUS_ERROR_SENDING, DirectPrintManager.PRINT_STATUS_ERROR_FILE, DirectPrintManager.PRINT_STATUS_ERROR, DirectPrintManager.PRINT_STATUS_SENT -> {
                     val timerTask: TimerTask = object : TimerTask() {

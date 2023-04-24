@@ -34,8 +34,8 @@ object NetUtils {
     private val IPV6_IPv4_DERIVED_PATTERN: Pattern = initializeIpv6PatternIpv4Derived()
     private val IPV6_INTERFACE_NAMES: List<String> = initializeIpv6InterfaceList()
 
-    private val wifiNetworks: MutableList<Network> = ArrayList()
-    private var wifiCallback: WifiCallback? = null
+    private val availableNetworks: MutableList<Network> = ArrayList()
+    private var availableNetworkCallback: AvailableNetworkCallback? = null
 
     // ================================================================================
     // Public Methods
@@ -202,8 +202,8 @@ object NetUtils {
      * @retval false Not connected to the network using wi-fi
      */
     @JvmStatic
-    val isWifiAvailable: Boolean
-        get() = wifiNetworks.isNotEmpty()
+    val isNetworkAvailable: Boolean
+        get() = availableNetworks.isNotEmpty()
 
     /**
      * @brief Register callback for monitoring of wifi networks
@@ -211,16 +211,16 @@ object NetUtils {
      * @param context Application context
      */
     @JvmStatic
-    fun registerWifiCallback(context: Context?) {
-        if (context == null || wifiCallback != null) {
+    fun registerNetworkCallback(context: Context?) {
+        if (context == null || availableNetworkCallback != null) {
             return
         }
         val connManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val wifiReq =
+        val networkReq =
             NetworkRequest.Builder().build()
-        wifiCallback = WifiCallback()
-        connManager.registerNetworkCallback(wifiReq, wifiCallback!!)
+        availableNetworkCallback = AvailableNetworkCallback()
+        connManager.registerNetworkCallback(networkReq, availableNetworkCallback!!)
     }
 
     /**
@@ -229,15 +229,15 @@ object NetUtils {
      * @param context Application context
      */
     @JvmStatic
-    fun unregisterWifiCallback(context: Context?) {
-        if (context == null || wifiCallback == null) {
+    fun unregisterNetworkCallback(context: Context?) {
+        if (context == null || availableNetworkCallback == null) {
             return
         }
         val connManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connManager.unregisterNetworkCallback(wifiCallback!!)
-        wifiCallback = null
-        wifiNetworks.clear()
+        connManager.unregisterNetworkCallback(availableNetworkCallback!!)
+        availableNetworkCallback = null
+        availableNetworks.clear()
     }
 
     /**
@@ -452,17 +452,17 @@ object NetUtils {
     /**
      * @class Inner class for monitoring Wifi networks
      */
-    internal class WifiCallback : NetworkCallback() {
+    internal class AvailableNetworkCallback : NetworkCallback() {
         override fun onAvailable(network: Network) {
-            wifiNetworks.add(network)
+            availableNetworks.add(network)
         }
 
         override fun onLost(network: Network) {
-            wifiNetworks.remove(network)
+            availableNetworks.remove(network)
         }
 
         override fun onUnavailable() {
-            wifiNetworks.clear()
+            availableNetworks.clear()
         }
     }
 }
