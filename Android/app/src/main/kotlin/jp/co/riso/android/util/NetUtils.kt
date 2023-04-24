@@ -218,7 +218,7 @@ object NetUtils {
         val connManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val wifiReq =
-            NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI).build()
+            NetworkRequest.Builder().build()
         wifiCallback = WifiCallback()
         connManager.registerNetworkCallback(wifiReq, wifiCallback!!)
     }
