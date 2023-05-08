@@ -249,6 +249,7 @@ class DirectPrintManager {
         const val PRINT_STATUS_SENDING = 3 ///< Sending file to the printer
         const val PRINT_STATUS_SENT = 4 ///< File is successfully sent to the printer
         const val PRINT_STATUS_JOB_NUM_UPDATE = 5 ///< Update job number - LPR print retry
+        const val PRINT_STATUS_WAKING = 6 ///< Sending wake-on-LAN packet to printer
 
         init {
             System.loadLibrary("common")

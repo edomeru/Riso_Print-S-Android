@@ -355,6 +355,13 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
                     )
                     _waitingDialog!!.setMessage(msg)
                 }
+                DirectPrintManager.PRINT_STATUS_WAKING -> if (_waitingDialog != null) {
+                    val msg = String.format(
+                        Locale.getDefault(), "%s %s", _printMsg,
+                        "Waking up printer"
+                    )
+                    _waitingDialog!!.setMessage(msg)
+                }
                 DirectPrintManager.PRINT_STATUS_STARTED, DirectPrintManager.PRINT_STATUS_CONNECTING, DirectPrintManager.PRINT_STATUS_CONNECTED, DirectPrintManager.PRINT_STATUS_JOB_NUM_UPDATE -> {}
             }
         } else {
