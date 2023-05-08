@@ -29,6 +29,7 @@
     <string name="ids_lbl_printer_info">Printer Info</string>
     <string name="ids_lbl_printer_name">Printer Name</string>
     <string name="ids_lbl_ip_address">IP Address</string>
+    <string name="ids_lbl_mac_address">MAC Address</string>
     <string name="ids_lbl_port">Port</string>
     <string name="ids_lbl_port_raw">Raw</string>
     <string name="ids_lbl_port_lpr">LPR</string>

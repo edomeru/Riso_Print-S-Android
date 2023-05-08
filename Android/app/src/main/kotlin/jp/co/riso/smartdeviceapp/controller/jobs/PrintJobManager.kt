@@ -108,7 +108,8 @@ class PrintJobManager private constructor(context: Context) {
                     val prn_id = getIntFromCursor(c, KeyConstants.KEY_SQL_PRINTER_ID)
                     val prn_name = getStringFromCursor(c, KeyConstants.KEY_SQL_PRINTER_NAME)
                     val prn_ip = getStringFromCursor(c, KeyConstants.KEY_SQL_PRINTER_IP)
-                    val printer = Printer(prn_name, prn_ip)
+                    val prn_mac = getStringFromCursor(c, KeyConstants.KEY_SQL_PRINTER_MAC)
+                    val printer = Printer(prn_name, prn_ip, prn_mac)
                     printer.id = prn_id
                     printers.add(printer)
                 }

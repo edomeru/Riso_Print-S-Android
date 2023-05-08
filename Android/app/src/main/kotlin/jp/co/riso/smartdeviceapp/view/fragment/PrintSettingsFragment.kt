@@ -263,6 +263,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
                 _pdfPath,
                 formattedString,
                 printer.ipAddress,
+                printer.macAddress,
                 hostName
             )
             // Ver.2.0.4.2 End
@@ -278,6 +279,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
                 _pdfPath,
                 formattedString,
                 printer.ipAddress,
+                printer.macAddress,
                 hostName
             )
             // Ver.2.0.4.2 End

@@ -19,6 +19,9 @@ object KeyConstants {
     /// SQL key for printer IP address
     const val KEY_SQL_PRINTER_IP = "prn_ip_address"
 
+    /// SQL key for printer MAC address
+    const val KEY_SQL_PRINTER_MAC = "prn_mac_address"
+
     /// SQL key for printer name
     const val KEY_SQL_PRINTER_NAME = "prn_name"
 

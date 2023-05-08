@@ -29,6 +29,7 @@
     <string name="ids_lbl_printer_info">プリンター情報</string>
     <string name="ids_lbl_printer_name">プリンター名</string>
     <string name="ids_lbl_ip_address">IPアドレス</string>
+    <string name="ids_lbl_mac_address">MACアドレス</string>
     <string name="ids_lbl_port">ポート</string>
     <string name="ids_lbl_port_raw">Raw</string>
     <string name="ids_lbl_port_lpr">LPR</string>

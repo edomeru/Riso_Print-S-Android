@@ -42,6 +42,17 @@ class Printer : Parcelable {
      */
     var ipAddress: String?
     /**
+     * @brief Obtain the printer device MAC address.
+     *
+     * @return The printer device MAC address
+     */
+    /**
+     * @brief Updates the value of printer device MAC Address.
+     *
+     * @param macAddress The printer device MAC address
+     */
+    var macAddress: String?
+    /**
      * @brief Obtain the Printer ID.
      *
      * @return The printer ID (mId)
@@ -107,9 +118,10 @@ class Printer : Parcelable {
      * @param name Device Name
      * @param ipAddress IP address
      */
-    constructor(name: String?, ipAddress: String?) {
+    constructor(name: String?, ipAddress: String?, macAddress: String?) {
         this.name = name
         this.ipAddress = ipAddress
+        this.macAddress = macAddress
         portSetting = PortSetting.LPR
         config = Config()
         initializePrinterType()
@@ -128,6 +140,7 @@ class Printer : Parcelable {
         }
         name = `in`.readString()
         ipAddress = `in`.readString()
+        macAddress = `in`.readString()
         id = `in`.readInt()
         portSetting = when (`in`.readInt()) {
             1 -> PortSetting.RAW
@@ -147,6 +160,7 @@ class Printer : Parcelable {
         }
         out.writeString(name)
         out.writeString(ipAddress)
+        out.writeString(macAddress)
         out.writeInt(id)
         out.writeInt(portSetting!!.ordinal)
         config!!.writeToParcel(out)
