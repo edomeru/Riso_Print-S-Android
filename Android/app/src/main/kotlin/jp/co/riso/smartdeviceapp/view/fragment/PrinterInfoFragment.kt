@@ -42,6 +42,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
     private var _printer: Printer? = null
     private var _printerName: TextView? = null
     private var _ipAddress: TextView? = null
+    private var _macAddress: TextView? = null
     private var _port: Spinner? = null
     private var _defaultPrinter: Spinner? = null
     private var _printerManager: PrinterManager? = null
@@ -60,6 +61,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _printerName = view.findViewById(R.id.inputPrinterName)
         _ipAddress = view.findViewById(R.id.infoIpAddress)
+        _macAddress = view.findViewById(R.id.infoMacAddress)
         _port = view.findViewById(R.id.inputPort)
         _port!!.onItemSelectedListener = this
         _defaultPrinter = view.findViewById(R.id.defaultPrinter)
@@ -126,6 +128,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         }
         _printerName!!.text = printerName
         _ipAddress!!.text = _printer!!.ipAddress
+        _macAddress!!.text = _printer!!.macAddress
         if (_printerManager!!.defaultPrinter == _printer!!.id) {
             _defaultPrinter!!.setSelection(0)
         } else _defaultPrinter!!.setSelection(1)
