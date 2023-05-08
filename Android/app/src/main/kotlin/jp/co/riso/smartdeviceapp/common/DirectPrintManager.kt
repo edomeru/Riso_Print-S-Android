@@ -245,11 +245,11 @@ class DirectPrintManager {
         const val PRINT_STATUS_ERROR = -1 ///< Error while starting print
         const val PRINT_STATUS_STARTED = 0 ///< Print has started
         const val PRINT_STATUS_CONNECTING = 1 ///< Connecting to the printer
-        const val PRINT_STATUS_CONNECTED = 2 ///< Connected to the printer
-        const val PRINT_STATUS_SENDING = 3 ///< Sending file to the printer
-        const val PRINT_STATUS_SENT = 4 ///< File is successfully sent to the printer
-        const val PRINT_STATUS_JOB_NUM_UPDATE = 5 ///< Update job number - LPR print retry
-        const val PRINT_STATUS_WAKING = 6 ///< Sending wake-on-LAN packet to printer
+        const val PRINT_STATUS_WAKING = 2 ///< Sending wake-on-LAN packet to printer
+        const val PRINT_STATUS_CONNECTED = 3 ///< Connected to the printer
+        const val PRINT_STATUS_SENDING = 4 ///< Sending file to the printer
+        const val PRINT_STATUS_SENT = 5 ///< File is successfully sent to the printer
+        const val PRINT_STATUS_JOB_NUM_UPDATE = 6 ///< Update job number - LPR print retry
 
         init {
             System.loadLibrary("common")
