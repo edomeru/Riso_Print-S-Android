@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
@@ -149,6 +150,22 @@ class WaitingDialogFragment : DialogFragment() {
         if (dialog != null) {
             val dialog = dialog as AlertDialog?
             dialog!!.getButton(DialogInterface.BUTTON_NEGATIVE).text = buttonText
+        }
+    }
+
+    /**
+     * @brief Sets the layout height of the progress dialog when wake up message is displayed
+     */
+    fun setLayoutHeightForWakingStatus() {
+        activity?.runOnUiThread {
+            if (dialog != null) {
+                val dialog = dialog as AlertDialog?
+                val progressText = (dialog!!.findViewById<View>(R.id.progressText) as TextView)
+                val progressTextParams = progressText.layoutParams
+
+                progressTextParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                progressText.layoutParams = progressTextParams
+            }
         }
     }
 

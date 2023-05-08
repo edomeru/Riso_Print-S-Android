@@ -63,6 +63,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     private var _pauseableHandler: PauseableHandler? = null
     private var _waitingDialog: WaitingDialogFragment? = null
     private var _printMsg = ""
+    private var _printWakeMsg = ""
     private var _isTargetFragmentPrintPreview: Boolean = true
 
     private val _printSettingsViewModel: PrintSettingsViewModel by activityViewModels()
@@ -78,6 +79,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
             _pauseableHandler = PauseableHandler(Looper.myLooper(), this)
         }
         _printMsg = resources.getString(R.string.ids_info_msg_printing)
+        _printWakeMsg = resources.getString(R.string.ids_info_msg_wakeonlan)
     }
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
@@ -118,6 +120,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
 
         //update strings in case locale has changed         
         _printMsg = getString(R.string.ids_info_msg_printing)
+        _printWakeMsg = getString(R.string.ids_info_msg_wakeonlan)
         if (_waitingDialog != null) {
             _waitingDialog!!.setButtonText(getString(R.string.ids_lbl_cancel))
         }
@@ -356,9 +359,10 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
                     _waitingDialog!!.setMessage(msg)
                 }
                 DirectPrintManager.PRINT_STATUS_WAKING -> if (_waitingDialog != null) {
+                    _waitingDialog!!.setLayoutHeightForWakingStatus()
                     val msg = String.format(
-                        Locale.getDefault(), "%s %s", _printMsg,
-                        "Waking up printer"
+                        Locale.getDefault(), "%s \n%s", _printMsg,
+                        _printWakeMsg
                     )
                     _waitingDialog!!.setMessage(msg)
                 }
