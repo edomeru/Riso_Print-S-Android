@@ -752,7 +752,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         name: String?,
         capabilities: BooleanArray?
     ) {
-        if (manager == null || ipAddress == null || macAddress == null || name == null || capabilities == null) {
+        if (manager == null || ipAddress == null || name == null || capabilities == null) {
             return
         }
         val printer = Printer(name, ipAddress, macAddress)

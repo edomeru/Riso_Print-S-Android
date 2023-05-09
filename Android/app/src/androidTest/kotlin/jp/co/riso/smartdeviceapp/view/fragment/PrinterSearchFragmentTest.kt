@@ -82,7 +82,7 @@ class PrinterSearchFragmentTest : BaseActivityTestUtil() {
             pressBack()
         }
 
-        // disable wifi
+        // disable network
         NetUtils.unregisterNetworkCallback(mainActivity!!)
 
         waitForAnimation()

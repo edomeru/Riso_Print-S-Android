@@ -436,7 +436,11 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         viewHolder.port!!.setSelection(printer.portSetting!!.ordinal)
         viewHolder.printerName!!.text = printerName
         viewHolder.ipAddress!!.text = printer.ipAddress
-        viewHolder.macAddress!!.text = printer.macAddress
+        if (printer.macAddress != null) {
+            viewHolder.macAddress!!.text = printer.macAddress
+        } else {
+            viewHolder.macAddress!!.text = "-"
+        }
         viewHolder.deleteButton!!.setOnClickListener(this)
         viewHolder.printSettings!!.setOnClickListener(this)
         viewHolder.printSettings!!.findViewById<View>(R.id.print_settings).isClickable =

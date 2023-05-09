@@ -629,7 +629,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
     fun testPrint_NoNetwork() {
         initPreviewAndOpenPrintSettings()
 
-        // disable wifi
+        // disable network
         NetUtils.unregisterNetworkCallback(mainActivity!!)
 
         testClick(R.id.view_id_print_header)
@@ -646,7 +646,7 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         initPreviewAndOpenPrintSettings()
 
         testClick(R.id.view_id_print_header)
-        // disable wifi
+        // disable network
         NetUtils.unregisterNetworkCallback(mainActivity!!)
         waitForDialogWithText(R.string.ids_info_msg_print_job_failed)
 

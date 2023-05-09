@@ -172,7 +172,7 @@ class NetUtilsTest {
     // Tests - isWifiAvailable
     // ================================================================================
     @Test
-    fun testIsWifiAvailable_Null() {
+    fun testIsNetworkAvailable_Null() {
         TestCase.assertEquals(false, NetUtils.isNetworkAvailable)
     }
 

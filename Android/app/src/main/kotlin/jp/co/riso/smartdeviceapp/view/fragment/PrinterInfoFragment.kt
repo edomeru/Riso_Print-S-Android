@@ -128,7 +128,13 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         }
         _printerName!!.text = printerName
         _ipAddress!!.text = _printer!!.ipAddress
-        _macAddress!!.text = _printer!!.macAddress
+
+        if (_printer!!.macAddress != null) {
+            _macAddress!!.text = _printer!!.macAddress
+        } else {
+            _macAddress!!.text = "-"
+        }
+
         if (_printerManager!!.defaultPrinter == _printer!!.id) {
             _defaultPrinter!!.setSelection(0)
         } else _defaultPrinter!!.setSelection(1)

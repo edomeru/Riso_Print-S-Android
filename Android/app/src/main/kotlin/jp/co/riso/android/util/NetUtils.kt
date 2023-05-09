@@ -196,17 +196,17 @@ object NetUtils {
         return validatedIp
     }
     /**
-     * @brief Determines wi-fi connectivity.
+     * @brief Determines network connectivity.
      *
-     * @retval true Connected to the network using wi-fi
-     * @retval false Not connected to the network using wi-fi
+     * @retval true Connected to the network
+     * @retval false Not connected to the network
      */
     @JvmStatic
     val isNetworkAvailable: Boolean
         get() = availableNetworks.isNotEmpty()
 
     /**
-     * @brief Register callback for monitoring of wifi networks
+     * @brief Register callback for monitoring of network connections
      *
      * @param context Application context
      */
@@ -224,7 +224,7 @@ object NetUtils {
     }
 
     /**
-     * @brief Unregister callback for monitoring of wifi networks
+     * @brief Unregister callback for monitoring of network connections
      *
      * @param context Application context
      */

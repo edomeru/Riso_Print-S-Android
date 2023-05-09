@@ -45,7 +45,7 @@ class DirectPrintManager {
         fileName: String,
         printSetting: String,
         ipAddress: String,
-        macAddress: String,
+        macAddress: String?,
         hostName: String,
         jobNumber: Int
     )
@@ -114,9 +114,9 @@ class DirectPrintManager {
         macAddress: String?,
         hostName: String?
     ): Boolean {
-        if (printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || macAddress == null || hostName == null
-            // userName can be empty
-            || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty() || macAddress.isEmpty() || hostName.isEmpty()) {
+        if (printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || hostName == null
+            // userName can be empty; macAddress can be null and empty (printer should still proceed with printing)
+            || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty() || hostName.isEmpty()) {
             return false
         }
         //initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName);
@@ -188,9 +188,9 @@ class DirectPrintManager {
         macAddress: String?,
         hostName: String?
     ): Boolean {
-        if (printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || macAddress == null || hostName == null
-            // userName can be empty
-            || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty() || macAddress.isEmpty() || hostName.isEmpty()) {
+        if (printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || hostName == null
+            // userName can be empty; macAddress can be null and empty (printer should still proceed with printing)
+            || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty() || hostName.isEmpty()) {
             return false
         }
 
