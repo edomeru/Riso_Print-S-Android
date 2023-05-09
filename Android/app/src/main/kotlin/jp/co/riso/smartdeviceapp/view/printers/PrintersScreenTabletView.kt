@@ -406,6 +406,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         viewHolder.deleteButton = pView.findViewById(R.id.btn_delete)
         viewHolder.onlineIndicator = pView.findViewById(R.id.img_onOff)
         viewHolder.ipAddress = pView.findViewById(R.id.infoIpAddress)
+        viewHolder.macAddress = pView.findViewById(R.id.infoMacAddress)
         viewHolder.printSettings = pView.findViewById(R.id.default_print_settings)
         viewHolder.port = pView.findViewById(R.id.input_port)
         viewHolder.defaultPrinter = pView.findViewById(R.id.default_printer_spinner)
@@ -435,6 +436,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         viewHolder.port!!.setSelection(printer.portSetting!!.ordinal)
         viewHolder.printerName!!.text = printerName
         viewHolder.ipAddress!!.text = printer.ipAddress
+        viewHolder.macAddress!!.text = printer.macAddress
         viewHolder.deleteButton!!.setOnClickListener(this)
         viewHolder.printSettings!!.setOnClickListener(this)
         viewHolder.printSettings!!.findViewById<View>(R.id.print_settings).isClickable =
@@ -445,6 +447,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         viewHolder.printerName!!.tag = viewHolder
         viewHolder.deleteButton!!.tag = viewHolder
         viewHolder.ipAddress!!.tag = printer
+        viewHolder.macAddress!!.tag = printer
         viewHolder.printSettings!!.tag = printer
         viewHolder.printSettings!!.setTag(ID_TAG_DEFAULTSETTINGS, viewHolder)
         viewHolder.onlineIndicator!!.tag = pView
@@ -612,6 +615,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         internal var printerName: TextView? = null
         internal var deleteButton: Button? = null
         internal var ipAddress: TextView? = null
+        internal var macAddress: TextView? = null
         internal var port: Spinner? = null
         internal var defaultPrinter: Spinner? = null
         internal var defaultPrinterAdapter: DefaultPrinterArrayAdapter? = null
