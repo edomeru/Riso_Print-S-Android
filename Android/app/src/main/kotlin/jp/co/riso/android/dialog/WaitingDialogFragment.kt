@@ -153,22 +153,6 @@ class WaitingDialogFragment : DialogFragment() {
         }
     }
 
-    /**
-     * @brief Sets the layout height of the progress dialog when wake up message is displayed
-     */
-    fun setLayoutHeightForWakingStatus() {
-        activity?.runOnUiThread {
-            if (dialog != null) {
-                val dialog = dialog as AlertDialog?
-                val progressText = (dialog!!.findViewById<View>(R.id.progressText) as TextView)
-                val progressTextParams = progressText.layoutParams
-
-                progressTextParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                progressText.layoutParams = progressTextParams
-            }
-        }
-    }
-
     // ================================================================================
     // Internal Classes
     // ================================================================================

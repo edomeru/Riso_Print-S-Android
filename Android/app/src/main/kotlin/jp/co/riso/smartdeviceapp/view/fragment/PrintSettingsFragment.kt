@@ -359,14 +359,18 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
                     _waitingDialog!!.setMessage(msg)
                 }
                 DirectPrintManager.PRINT_STATUS_WAKING -> if (_waitingDialog != null) {
-                    _waitingDialog!!.setLayoutHeightForWakingStatus()
                     val msg = String.format(
-                        Locale.getDefault(), "%s \n%s", _printMsg,
-                        _printWakeMsg
+                        Locale.getDefault(), "%s", _printWakeMsg
                     )
                     _waitingDialog!!.setMessage(msg)
                 }
-                DirectPrintManager.PRINT_STATUS_STARTED, DirectPrintManager.PRINT_STATUS_CONNECTING, DirectPrintManager.PRINT_STATUS_CONNECTED, DirectPrintManager.PRINT_STATUS_JOB_NUM_UPDATE -> {}
+                DirectPrintManager.PRINT_STATUS_CONNECTING -> if (_waitingDialog != null) {
+                    val msg = String.format(
+                        Locale.getDefault(), "%s", _printMsg
+                    )
+                    _waitingDialog!!.setMessage(msg)
+                }
+                DirectPrintManager.PRINT_STATUS_STARTED, DirectPrintManager.PRINT_STATUS_CONNECTED, DirectPrintManager.PRINT_STATUS_JOB_NUM_UPDATE -> {}
             }
         } else {
             // cancel Direct Print but considered as failed job
