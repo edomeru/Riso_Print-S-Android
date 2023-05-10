@@ -105,6 +105,38 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/printers_view_row_height"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/printers_row_left_padding"
+                    android:text="@string/ids_lbl_mac_address"
+                    android:textColor="@color/theme_dark_1" />
+
+                <TextView
+                    style="@style/EllipsizeText"
+                    android:id="@+id/infoMacAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/printers_row_left_padding"
+                    android:gravity="right|center_vertical"
+                    android:padding="@dimen/printers_row_right_padding"
+                    android:textColor="@color/theme_light_1" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_size"
+                android:layout_marginLeft="@dimen/printers_row_left_padding"
+                android:background="@color/theme_light_2"
+                android:visibility="visible" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
                 <TextView

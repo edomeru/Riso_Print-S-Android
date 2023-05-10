@@ -83,8 +83,8 @@ open class BaseActivityTestUtil {
 
     @After
     fun tearDown() {
-        if (NetUtils.isWifiAvailable) {
-            NetUtils.unregisterWifiCallback(mainActivity!!)
+        if (NetUtils.isNetworkAvailable) {
+            NetUtils.unregisterNetworkCallback(mainActivity!!)
         }
         testRule.scenario.close()
         /** Use to set default state: permissions are not granted

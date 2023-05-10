@@ -25,6 +25,7 @@ import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
 import jp.co.riso.smartprint.R
 import java.lang.ref.WeakReference
+import java.security.Key
 import java.util.*
 
 /**
@@ -214,7 +215,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                             cursor,
                             KeyConstants.KEY_SQL_PRINTER_NAME
                         ),
-                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP)
+                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP),
+                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_MAC)
                     )
                     printer.id =
                         DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID)
@@ -619,6 +621,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         // Create Content
         val newPrinter = ContentValues()
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_IP, printer.ipAddress)
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_MAC, printer.macAddress)
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_NAME, printer.name)
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.portSetting!!.ordinal)
         newPrinter.put(
@@ -745,13 +748,14 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     override fun onFoundDevice(
         manager: SNMPManager?,
         ipAddress: String?,
+        macAddress: String?,
         name: String?,
         capabilities: BooleanArray?
     ) {
         if (manager == null || ipAddress == null || name == null || capabilities == null) {
             return
         }
-        val printer = Printer(name, ipAddress)
+        val printer = Printer(name, ipAddress, macAddress)
         if (printer.isActualPrinterTypeInvalid) {
             return
         }
@@ -761,6 +765,10 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                 _printerSearchCallback!!.get()!!.onPrinterAdd(printer)
             }
         }
+    }
+
+    override fun onMacRetrieve(manager: SNMPManager?, macAddress: String?, result: Int) {
+        TODO("Not yet implemented")
     }
     // ================================================================================
     // Interface - PrinterSearchCallback

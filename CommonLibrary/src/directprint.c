@@ -3,7 +3,7 @@
 //  SmartDeviceApp
 //
 //  Created by a-LINK Group.
-//  Copyright (c) 2016 RISO KAGAKU CORPORATION. All rights reserved.
+//  Copyright (c) 2023 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #include <stdio.h>
@@ -16,6 +16,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <stdbool.h>
 #include "common.h"
 #include "printsettings.h"
 
@@ -58,6 +59,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
  */
 #define PORT_LPR "515"
 #define PORT_RAW "9100"
+#define PORT_WAKE "9" // UDP Port 9 is commonly used by default for Wake-On-LAN (other possible ports: UDP Port 0, UDP Port 7)
 
 #define TIMEOUT_CONNECT 10
 #define TIMEOUT_SEND_RECV 10
@@ -89,6 +91,13 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
  * 文字一文字あたりに必要な最大バイト数
  */
 #define STRING_MAX_BYTE 6
+
+#define MAC_ADDRESS_OFFSET 3
+#define MAC_ADDRESS_BYTE_LENGTH 2
+#define MAC_ADDRESS_BYTE_NUM 6
+#define MAC_ADDRESS_DELIMITER ":"
+#define IPV4_ADDRESS_BROADCAST "255.255.255.255"
+#define IPV6_ADDRESS_MULTICAST "FF02::2"
 
 static const char *AZA_DEVICE_NAMES[] = {
     "RISO IS1000C-J",
@@ -129,6 +138,7 @@ struct directprint_job_s
     char *filename;
     char *print_settings;
     char *ip_address;
+    char *mac_address;
     directprint_callback callback;
     
     pthread_t main_thread;
@@ -154,9 +164,11 @@ void directprint_job_set_caller_data(directprint_job *print_job, void *caller_da
 
 // Utility functions
 int can_start_print(directprint_job *print_job);
-int connect_to_port(const char *ip_address, const char *port);
+int connect_to_port(directprint_job *print_job, const char *port);
 void notify_callback(directprint_job *print_job, int status);
 int is_cancelled(directprint_job *print_job);
+void send_magic_packet(directprint_job *print_job, const char *port);
+int str_to_uint16(const char *str, uint16_t *res);
 
 // Thread functions
 void *do_lpr_print(void *parameter);
@@ -180,7 +192,7 @@ void job_dump_write(FILE *file, void *buffer, size_t buffer_len);
 */
 directprint_job *directprint_job_new(const char *printer_name, const char *host_name, const char *app_name, const char *app_version,
                                      const char *user_name, int job_num, const char *job_name, const char *filename,
-                                     const char *print_settings, const char *ip_address, directprint_callback callback)
+                                     const char *print_settings, const char *ip_address, const char *mac_address, directprint_callback callback)
 {
     directprint_job *print_job = (directprint_job *)malloc(sizeof(directprint_job));
     if(print_job == NULL){
@@ -237,6 +249,12 @@ directprint_job *directprint_job_new(const char *printer_name, const char *host_
         return NULL;
     }
     // Mantis 71486 end
+    
+    print_job->mac_address = strdup(mac_address);
+    if(print_job->mac_address == NULL){
+        directprint_job_free(print_job);
+        return NULL;
+    }
     
     // IP address check
     struct in6_addr ip_v6;
@@ -326,6 +344,9 @@ void directprint_job_free(directprint_job *print_job)
     }
     if(print_job->ip_address != NULL){
         free(print_job->ip_address);
+    }
+    if(print_job->mac_address != NULL){
+        free(print_job->mac_address);
     }
     if(print_job->printer_name != NULL){
         free(print_job->printer_name);
@@ -430,11 +451,15 @@ int can_start_print(directprint_job *print_job)
     {
         return 0;
     }
+    if (print_job->mac_address == 0)
+    {
+        return 0;
+    }
     
     return 1;
 }
 
-int connect_to_port(const char *ip_address, const char *port)
+int connect_to_port(directprint_job *print_job, const char *port)
 {
     struct addrinfo hints;
     struct addrinfo *server_info;
@@ -445,7 +470,7 @@ int connect_to_port(const char *ip_address, const char *port)
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
     
-    if (getaddrinfo(ip_address, port, &hints, &server_info) != 0)
+    if (getaddrinfo(print_job->ip_address, port, &hints, &server_info) != 0)
     {
         // Unable to get address info
         return -1;
@@ -453,6 +478,8 @@ int connect_to_port(const char *ip_address, const char *port)
     
     struct addrinfo *current_address;
     int sock_fd = -1;
+    bool is_wakeonlan_done = false;
+    bool is_connection_complete = false;
     for (current_address = server_info; current_address != 0; current_address = current_address->ai_next)
     {
         // Try to create socket
@@ -467,58 +494,212 @@ int connect_to_port(const char *ip_address, const char *port)
         flags |= O_NONBLOCK;
         fcntl(sock_fd, F_SETFL, flags);
         
-        // Try to establish connection
-        if (connect(sock_fd, current_address->ai_addr, current_address->ai_addrlen) == -1)
-        {
-            if (errno != EINPROGRESS)
+        do {
+            // Try to establish connection
+            if (connect(sock_fd, current_address->ai_addr, current_address->ai_addrlen) == -1)
             {
-                // Unable to connect
-                close(sock_fd);
-                sock_fd = -1;
-                continue;
+                if (errno != EINPROGRESS)
+                {
+                    // Unable to connect
+                    sock_fd = -1;
+                    break;
+                }
+                
+                fd_set write_fds;
+                FD_ZERO(&write_fds);
+                FD_SET(sock_fd, &write_fds);
+                struct timeval timeout;
+                timeout.tv_sec = TIMEOUT_CONNECT;
+                timeout.tv_usec = 0;
+                select(sock_fd + 1, 0, &write_fds, 0, &timeout);
+                
+                if (!DP_FD_ISSET(sock_fd, &write_fds))
+                {
+                    // Timeout
+                    if (is_wakeonlan_done == false)
+                    {
+                        send_magic_packet(print_job, PORT_WAKE);
+                        is_wakeonlan_done = true;
+                        continue;
+                    }
+                    else
+                    {
+                        sock_fd = -1;
+                        break;
+                    }
+                }
+                
+                int error;
+                socklen_t error_len = sizeof(error);
+                if (getsockopt(sock_fd, SOL_SOCKET, SO_ERROR, &error, &error_len) < 0 || error != 0)
+                {
+                    // Unable to complete connection
+                    if (is_wakeonlan_done == false)
+                    {
+                        send_magic_packet(print_job, PORT_WAKE);
+                        is_wakeonlan_done = true;
+                        continue;
+                    }
+                    else
+                    {
+                        sock_fd = -1;
+                        break;
+                    }
+                }
+                
+                is_connection_complete = true;
             }
-            
-            fd_set write_fds;
-            FD_ZERO(&write_fds);
-            FD_SET(sock_fd, &write_fds);
-            struct timeval timeout;
-            timeout.tv_sec = TIMEOUT_CONNECT;
-            timeout.tv_usec = 0;
-            select(sock_fd + 1, 0, &write_fds, 0, &timeout);
-            
-            if (!DP_FD_ISSET(sock_fd, &write_fds))
+            else
             {
-                // Timout
-                close(sock_fd);
                 sock_fd = -1;
-                continue;
+                break;
             }
-            
-            int error;
-            socklen_t error_len = sizeof(error);
-            if (getsockopt(sock_fd, SOL_SOCKET, SO_ERROR, &error, &error_len) < 0 || error != 0)
-            {
-                // Unable to complete connection
-                close(sock_fd);
-                sock_fd = -1;
-                continue;
-            }
-            
+        } while (is_wakeonlan_done == true && is_connection_complete == false);
+        
+        if (is_connection_complete == true) {
             // Set socket to blocking mode
             flags &= ~O_NONBLOCK;
             fcntl(sock_fd, F_SETFL, flags);
             break;
         }
-        else
-        {
-            close(sock_fd);
-            sock_fd = -1;
-            continue;
-        }
     }
+    
+    if (sock_fd == -1) {
+        close(sock_fd);
+    }
+    
     freeaddrinfo(server_info);
     
     return sock_fd;
+}
+
+void send_magic_packet(directprint_job *print_job, const char *port)
+{
+    int                  client_s;           // Client socket descriptor
+    struct sockaddr_in   target_addr;        // Target Internet address
+    int                  pkt_len;            // Packet length
+    char                 out_buf[1024];      // Output buffer for data
+    int                  retcode;            // Return code
+    int                  i, j;               // Loop counter
+    uint16_t             sin_port;
+    char                 *tp;                // Token pointer
+    char                 *mac_address_copy = (char *)malloc(strlen(print_job->mac_address) + 1);  // MAC address buffer for strtok
+    char                 mac_s[MAC_ADDRESS_BYTE_NUM][MAC_ADDRESS_BYTE_LENGTH+1];
+    int                  mac_i[MAC_ADDRESS_BYTE_NUM];
+    
+    // Since strtok modifies source string, store mac address first in buffer
+    if (mac_address_copy == NULL || strcmp(mac_address_copy,"") == 1) {
+        printf("*** ERROR - NULL mac address \n");
+        return;
+    }
+    strcpy(mac_address_copy, print_job->mac_address);
+    
+    // Extract MAC Address bytes
+    tp = strtok((char*)mac_address_copy, ":");
+    if (tp == NULL) {
+        printf("*** ERROR - NULL mac address \n");
+        return;
+    }
+    
+    strcpy(mac_s[0], tp);
+    mac_i[0] = (int)strtol(mac_s[0], NULL, 16);
+    for (i=1; i<MAC_ADDRESS_BYTE_NUM; i++) {
+        tp = strtok(NULL, ":");
+        if (tp != NULL) {
+            strcpy(mac_s[i], tp);
+            mac_i[i] = (int)strtol(mac_s[i], NULL, 16);
+        }
+    }
+    
+    if(mac_i[0] == 0x00 && mac_i[1] == 0x00 && mac_i[2] == 0x00 &&
+       mac_i[3] == 0x00 && mac_i[4] == 0x00 && mac_i[5] == 0x00)
+    {
+        printf("*** ERROR - MAC address is blank \n");
+        return;
+    }
+    printf("  Target MAC address = %02X-%02X-%02X-%02X-%02X-%02X \n",
+           mac_i[0], mac_i[1], mac_i[2], mac_i[3], mac_i[4], mac_i[5]);
+    
+    // Fill-in target address information
+    if (strncmp(print_job->ip_address, IPV6_LINK_LOCAL_PREFIX, strlen(IPV6_LINK_LOCAL_PREFIX)) == 0)
+    {   // ipv6
+        printf("  Target IP address  = %s \n", IPV6_ADDRESS_MULTICAST);
+        target_addr.sin_addr.s_addr = inet_addr(IPV6_ADDRESS_MULTICAST);
+        target_addr.sin_family = AF_INET6;
+    }
+    else
+    {   // ipv4
+        printf("  Target IP address  = %s \n", IPV4_ADDRESS_BROADCAST);
+        target_addr.sin_addr.s_addr = inet_addr(IPV4_ADDRESS_BROADCAST);
+        target_addr.sin_family = AF_INET;
+    }
+    str_to_uint16(port, &sin_port);
+    target_addr.sin_port = htons(sin_port);
+    
+    // Create a client socket
+    client_s = socket(target_addr.sin_family, SOCK_DGRAM, IPPROTO_UDP);
+    if (client_s < 0)
+    {
+        printf("*** ERROR - socket() failed \n");
+        return;
+    }
+    
+    int broadcast=1;
+    if (setsockopt(client_s, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast))==-1) {
+        printf("*** ERROR - %s",strerror(errno));
+    }
+    
+    // Load the Magic Packet pattern into the output buffer
+    for(i=0; i<6; i++)
+        out_buf[i] = 0xff;
+    for(i=0; i<16; i++)
+    {
+        for(j=0; j<MAC_ADDRESS_BYTE_NUM; j++)
+        {
+            out_buf[(i+1)*6 + (j)] = mac_i[j];
+        }
+    }
+    pkt_len = 102;
+    
+    // Now send the Magic Packet to the target
+    printf("Sending Magic Packet to target... \n");
+    notify_callback(print_job, kJobStatusWaking);
+    for (i=0; i < 2; i++) {
+        retcode = (int) sendto(client_s, out_buf, pkt_len, 0,
+                         (struct sockaddr *)&target_addr, sizeof(target_addr));
+        if (retcode < 0)
+        {
+            printf("*** ERROR - sendto() failed \n");
+            return;
+        }
+        
+        // Wait for the packet to be sent
+        // 1st loop: 5 seconds, 2nd loop: 10 seconds
+        for(j=0; j<(5*(i+1)); j++)
+        {
+            sleep(1);
+        }
+    }
+    notify_callback(print_job, kJobStatusConnecting);
+    
+    // Close client socket and clean-up
+    retcode = close(client_s);
+    if (retcode < 0)
+    {
+        printf("*** ERROR - close() failed \n");
+        return;
+    }
+}
+
+int str_to_uint16(const char *str, uint16_t *res) {
+    char *end;
+    errno = 0;
+    long val = strtol(str, &end, 10);
+    if (errno || end == str || *end != '\0' || val < 0 || val >= 0x10000) {
+        return 1;
+    }
+    *res = (uint16_t)val;
+    return 0;
 }
 
 void notify_callback(directprint_job *print_job, int status)
@@ -681,7 +862,7 @@ void *do_lpr_print(void *parameter)
     do
     {
         notify_callback(print_job, kJobStatusConnecting);
-        sock_fd = connect_to_port(print_job->ip_address, PORT_LPR);
+        sock_fd = connect_to_port(print_job, PORT_LPR);
         if (sock_fd < 0)
         {
             notify_callback(print_job, kJobStatusErrorConnecting);
@@ -1087,7 +1268,7 @@ void *do_raw_print(void *parameter)
     do
     {
         notify_callback(print_job, kJobStatusConnecting);
-        sock_fd = connect_to_port(print_job->ip_address, PORT_RAW);
+        sock_fd = connect_to_port(print_job, PORT_RAW);
         if (sock_fd < 0)
         {
             notify_callback(print_job, kJobStatusErrorConnecting);

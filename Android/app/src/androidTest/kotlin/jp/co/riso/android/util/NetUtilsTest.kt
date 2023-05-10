@@ -172,19 +172,19 @@ class NetUtilsTest {
     // Tests - isWifiAvailable
     // ================================================================================
     @Test
-    fun testIsWifiAvailable_Null() {
-        TestCase.assertEquals(false, NetUtils.isWifiAvailable)
+    fun testIsNetworkAvailable_Null() {
+        TestCase.assertEquals(false, NetUtils.isNetworkAvailable)
     }
 
     @Test
     fun testIsWifiAvailable_WithConnection() {
-        NetUtils.registerWifiCallback(SmartDeviceApp.appContext!!)
+        NetUtils.registerNetworkCallback(SmartDeviceApp.appContext!!)
         // permission CHANGE_WIFI_STATE in app's manifest file must be present
         turnWifiOn()
         // wifi is ON
-        TestCase.assertEquals(true, NetUtils.isWifiAvailable)
-        NetUtils.unregisterWifiCallback(SmartDeviceApp.appContext!!)
-        TestCase.assertEquals(false, NetUtils.isWifiAvailable)
+        TestCase.assertEquals(true, NetUtils.isNetworkAvailable)
+        NetUtils.unregisterNetworkCallback(SmartDeviceApp.appContext!!)
+        TestCase.assertEquals(false, NetUtils.isNetworkAvailable)
     }
 
     // ================================================================================

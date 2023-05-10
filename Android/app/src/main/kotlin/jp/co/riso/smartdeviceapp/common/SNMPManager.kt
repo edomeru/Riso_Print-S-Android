@@ -48,12 +48,19 @@ class SNMPManager {
      * @brief Callback called when a device is found during device discovery
      *
      * @param ipAddress Device IP Address
+     * @param macAddress Device MAC Address
      * @param name Device Name
      * @param capabilities Device capabilities
      */
-    private fun onFoundDevice(ipAddress: String, name: String, capabilities: BooleanArray) {
+    private fun onFoundDevice(ipAddress: String, macAddress: String, name: String, capabilities: BooleanArray) {
         if (_callbackRef != null && _callbackRef!!.get() != null) {
-            _callbackRef!!.get()!!.onFoundDevice(this, ipAddress, name, capabilities)
+            _callbackRef!!.get()!!.onFoundDevice(this, ipAddress, macAddress, name, capabilities)
+        }
+    }
+
+    private fun onMacRetrieve(macAddress: String, result: Int) {
+        if (_callbackRef != null && _callbackRef!!.get() != null) {
+            _callbackRef!!.get()!!.onMacRetrieve(this, macAddress, result)
         }
     }
 
@@ -76,14 +83,22 @@ class SNMPManager {
          *
          * @param manager SNMP Manager
          * @param ipAddress Device IP Address
+         * @param macAddress Device MAC Address
          * @param name Device Name
          * @param capabilities Device capabilities
          */
         fun onFoundDevice(
             manager: SNMPManager?,
             ipAddress: String?,
+            macAddress: String?,
             name: String?,
             capabilities: BooleanArray?
+        )
+
+        fun onMacRetrieve(
+            manager: SNMPManager?,
+            macAddress: String?,
+            result: Int
         )
     }
 

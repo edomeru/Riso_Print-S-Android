@@ -1,0 +1,1 @@
+ALTER TABLE Printer ADD COLUMN prn_mac_address VARCHAR(20) NULL;

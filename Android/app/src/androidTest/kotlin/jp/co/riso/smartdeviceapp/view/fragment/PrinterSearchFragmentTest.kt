@@ -82,8 +82,8 @@ class PrinterSearchFragmentTest : BaseActivityTestUtil() {
             pressBack()
         }
 
-        // disable wifi
-        NetUtils.unregisterWifiCallback(mainActivity!!)
+        // disable network
+        NetUtils.unregisterNetworkCallback(mainActivity!!)
 
         waitForAnimation()
         testClickAndWait(R.id.menu_id_action_search_button)
