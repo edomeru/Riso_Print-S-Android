@@ -656,7 +656,7 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     {
         for(j=0; j<MAC_ADDRESS_BYTE_NUM; j++)
         {
-            out_buf[(i+1)*6 + (j + 1)] = mac_i[j];
+            out_buf[(i+1)*6 + (j)] = mac_i[j];
         }
     }
     pkt_len = 102;
