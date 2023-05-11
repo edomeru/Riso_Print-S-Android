@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 RISO, Inc. All rights reserved.
+ * Copyright (c) 2023 RISO, Inc. All rights reserved.
  *
  * SNMPManger.kt
  * SmartDeviceApp
@@ -22,6 +22,7 @@ class SNMPManager {
     external fun finalizeSNMPManager()
     external fun deviceDiscovery()
     external fun manualDiscovery(ipAddress: String?)
+    external fun getMacAddress(ipAddress: String?)
     external fun cancel()
 
     /**
@@ -58,9 +59,16 @@ class SNMPManager {
         }
     }
 
-    private fun onMacRetrieve(macAddress: String, result: Int) {
+    /**
+     * @brief Callback called when the MAC address of the device is retrieved
+     *
+     * @param ipAddress Device IP Address
+     * @param macAddress Device MAC Address
+     * @param result Result of MAC Address retrieval
+     */
+    private fun onMacRetrieve(ipAddress: String, macAddress: String, result: Int) {
         if (_callbackRef != null && _callbackRef!!.get() != null) {
-            _callbackRef!!.get()!!.onMacRetrieve(this, macAddress, result)
+            _callbackRef!!.get()!!.onMacRetrieve(this, ipAddress, macAddress, result)
         }
     }
 
@@ -95,8 +103,17 @@ class SNMPManager {
             capabilities: BooleanArray?
         )
 
+        /**
+         * @brief Callback called when the MAC address of the device is retrieved
+         *
+         * @param manager SNMP Manager
+         * @param ipAddress Device IP Address
+         * @param macAddress Device MAC Address
+         * @param result Result of MAC Address retrieval
+         */
         fun onMacRetrieve(
             manager: SNMPManager?,
+            ipAddress: String?,
             macAddress: String?,
             result: Int
         )
