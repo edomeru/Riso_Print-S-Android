@@ -22,7 +22,7 @@ jmethodID dp_callback_method_id __attribute__((common));
 #define SNMP_FOUND_CALLBACK_METHOD_NAME "onFoundDevice"
 #define SNMP_FOUND_CALLBACK_METHOD_TYPE "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Z)V"
 #define SNMP_MAC_CALLBACK_METHOD_NAME "onMacRetrieve"
-#define SNMP_MAC_CALLBACK_METHOD_TYPE "(Ljava/lang/String;I)V"
+#define SNMP_MAC_CALLBACK_METHOD_TYPE "(Ljava/lang/String;Ljava/lang/String;I)V"
 
 
 jfieldID snmp_context_field_id __attribute__((common));
