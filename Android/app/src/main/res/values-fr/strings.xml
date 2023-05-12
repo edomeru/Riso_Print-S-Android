@@ -139,7 +139,7 @@
     <string name="ids_info_msg_printer_add_successful">Ajouté avec succès</string>
     <string name="ids_info_msg_warning_cannot_find_printer">Avertissement ! Impossible de trouver une imprimante.</string>
     <string name="ids_info_msg_printing">Impression</string>
-    <string name="ids_info_msg_wakeonlan">Réveiller l\'imprimante</string>
+    <string name="ids_info_msg_wakeonlan">Se réveiller du sommeil</string>
     <string name="ids_info_msg_delete_jobs_title">Supprimer impr hist travail</string>
     <string name="ids_info_msg_delete_jobs">Êtes-vous sûr de vouloir supprimer?</string>
     <string name="ids_info_msg_print_job_successful">Suppr succ</string>
