@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 RISO, Inc. All rights reserved.
+ * Copyright (c) 2023 RISO, Inc. All rights reserved.
  *
  * PrinterManager.kt
  * SmartDeviceApp
@@ -25,6 +25,7 @@ import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
 import jp.co.riso.smartprint.R
 import java.lang.ref.WeakReference
+import java.security.Key
 import java.util.*
 
 /**
@@ -214,7 +215,8 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                             cursor,
                             KeyConstants.KEY_SQL_PRINTER_NAME
                         ),
-                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP)
+                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_IP),
+                        DatabaseManager.getStringFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_MAC)
                     )
                     printer.id =
                         DatabaseManager.getIntFromCursor(cursor, KeyConstants.KEY_SQL_PRINTER_ID)
@@ -475,6 +477,19 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     }
 
     /**
+     * @brief Retrieve the MAC Address of all added Printer Devices. <br></br>
+     *
+     * @param ipAddress The IP Address of the Printer
+     */
+    fun getMacAddress(ipAddress: String?) {
+        if (ipAddress == null) {
+            return
+        }
+        _snmpManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
+        _snmpManager.getMacAddress(ipAddress)
+    }
+
+    /**
      * @brief Cancel Printer Search. <br></br>
      *
      * Stops Device Discovery or Manual Search operation.
@@ -619,6 +634,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         // Create Content
         val newPrinter = ContentValues()
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_IP, printer.ipAddress)
+        newPrinter.put(KeyConstants.KEY_SQL_PRINTER_MAC, printer.macAddress)
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_NAME, printer.name)
         newPrinter.put(KeyConstants.KEY_SQL_PRINTER_PORT, printer.portSetting!!.ordinal)
         newPrinter.put(
@@ -699,6 +715,28 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         return ret
     }
 
+    /**
+     * @brief Set the MAC Address of the Printer object.
+     *
+     * @param printer Printer object
+     *
+     * @retval true Successful
+     * @retval false Failed
+     */
+    private fun setPrinterMACAddress(printer: Printer): Boolean {
+        val ret: Boolean
+        val cv = ContentValues()
+        cv.put(KeyConstants.KEY_SQL_PRINTER_MAC, printer.macAddress)
+        ret = _databaseManager.update(
+            KeyConstants.KEY_SQL_PRINTER_TABLE,
+            cv,
+            KeyConstants.KEY_SQL_PRINTER_IP + "=?",
+            printer.ipAddress
+        )
+        _databaseManager.close()
+        return ret
+    }
+
     val snmpCommunityNameFromSharedPrefs: String?
         get() {
             val sharedPreferences =
@@ -745,13 +783,14 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     override fun onFoundDevice(
         manager: SNMPManager?,
         ipAddress: String?,
+        macAddress: String?,
         name: String?,
         capabilities: BooleanArray?
     ) {
         if (manager == null || ipAddress == null || name == null || capabilities == null) {
             return
         }
-        val printer = Printer(name, ipAddress)
+        val printer = Printer(name, ipAddress, macAddress)
         if (printer.isActualPrinterTypeInvalid) {
             return
         }
@@ -762,6 +801,24 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
             }
         }
     }
+
+    override fun onMacRetrieve(
+        manager: SNMPManager?,
+        ipAddress: String?,
+        macAddress: String?,
+        result: Int
+    ) {
+        if (manager == null || ipAddress == null || macAddress == null || result == 0) {
+            return
+        }
+        for (p in _printerList!!) {
+            if (p!!.ipAddress == ipAddress) {
+                p.macAddress = macAddress
+                setPrinterMACAddress(p)
+            }
+        }
+    }
+
     // ================================================================================
     // Interface - PrinterSearchCallback
     // ================================================================================

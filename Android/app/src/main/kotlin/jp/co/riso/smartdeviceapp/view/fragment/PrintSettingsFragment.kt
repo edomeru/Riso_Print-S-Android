@@ -25,7 +25,7 @@ import jp.co.riso.android.dialog.WaitingDialogFragment.WaitingDialogListener
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import jp.co.riso.android.util.AppUtils
-import jp.co.riso.android.util.NetUtils.isWifiAvailable
+import jp.co.riso.android.util.NetUtils.isNetworkAvailable
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback
@@ -63,6 +63,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     private var _pauseableHandler: PauseableHandler? = null
     private var _waitingDialog: WaitingDialogFragment? = null
     private var _printMsg = ""
+    private var _printWakeMsg = ""
     private var _isTargetFragmentPrintPreview: Boolean = true
 
     private val _printSettingsViewModel: PrintSettingsViewModel by activityViewModels()
@@ -78,6 +79,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
             _pauseableHandler = PauseableHandler(Looper.myLooper(), this)
         }
         _printMsg = resources.getString(R.string.ids_info_msg_printing)
+        _printWakeMsg = resources.getString(R.string.ids_info_msg_wakeonlan)
     }
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
@@ -118,6 +120,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
 
         //update strings in case locale has changed         
         _printMsg = getString(R.string.ids_info_msg_printing)
+        _printWakeMsg = getString(R.string.ids_info_msg_wakeonlan)
         if (_waitingDialog != null) {
             _waitingDialog!!.setButtonText(getString(R.string.ids_lbl_cancel))
         }
@@ -232,7 +235,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
             displayDialog(requireActivity(), TAG_MESSAGE_DIALOG, fragment)
             return
         }
-        if (!isWifiAvailable) {
+        if (!isNetworkAvailable) {
             val strMsg = getString(R.string.ids_err_msg_network_error)
             val btnMsg = getString(R.string.ids_lbl_ok)
             val fragment = newInstance(strMsg, btnMsg)
@@ -263,6 +266,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
                 _pdfPath,
                 formattedString,
                 printer.ipAddress,
+                printer.macAddress,
                 hostName
             )
             // Ver.2.0.4.2 End
@@ -278,6 +282,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
                 _pdfPath,
                 formattedString,
                 printer.ipAddress,
+                printer.macAddress,
                 hostName
             )
             // Ver.2.0.4.2 End
@@ -332,7 +337,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     // INTERFACE - DirectPrintCallback
     // ================================================================================
     override fun onNotifyProgress(manager: DirectPrintManager?, status: Int, progress: Float) {
-        if (isWifiAvailable) {
+        if (isNetworkAvailable) {
             when (status) {
                 DirectPrintManager.PRINT_STATUS_ERROR_CONNECTING, DirectPrintManager.PRINT_STATUS_ERROR_SENDING, DirectPrintManager.PRINT_STATUS_ERROR_FILE, DirectPrintManager.PRINT_STATUS_ERROR, DirectPrintManager.PRINT_STATUS_SENT -> {
                     val timerTask: TimerTask = object : TimerTask() {
@@ -353,7 +358,19 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
                     )
                     _waitingDialog!!.setMessage(msg)
                 }
-                DirectPrintManager.PRINT_STATUS_STARTED, DirectPrintManager.PRINT_STATUS_CONNECTING, DirectPrintManager.PRINT_STATUS_CONNECTED, DirectPrintManager.PRINT_STATUS_JOB_NUM_UPDATE -> {}
+                DirectPrintManager.PRINT_STATUS_WAKING -> if (_waitingDialog != null) {
+                    val msg = String.format(
+                        Locale.getDefault(), "%s", _printWakeMsg
+                    )
+                    _waitingDialog!!.setMessage(msg)
+                }
+                DirectPrintManager.PRINT_STATUS_CONNECTING -> if (_waitingDialog != null) {
+                    val msg = String.format(
+                        Locale.getDefault(), "%s", _printMsg
+                    )
+                    _waitingDialog!!.setMessage(msg)
+                }
+                DirectPrintManager.PRINT_STATUS_STARTED, DirectPrintManager.PRINT_STATUS_CONNECTED, DirectPrintManager.PRINT_STATUS_JOB_NUM_UPDATE -> {}
             }
         } else {
             // cancel Direct Print but considered as failed job

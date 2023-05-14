@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 RISO, Inc. All rights reserved.
+ * Copyright (c) 2023 RISO, Inc. All rights reserved.
  *
  * SNMPManger.kt
  * SmartDeviceApp
@@ -22,6 +22,7 @@ class SNMPManager {
     external fun finalizeSNMPManager()
     external fun deviceDiscovery()
     external fun manualDiscovery(ipAddress: String?)
+    external fun getMacAddress(ipAddress: String?)
     external fun cancel()
 
     /**
@@ -48,12 +49,26 @@ class SNMPManager {
      * @brief Callback called when a device is found during device discovery
      *
      * @param ipAddress Device IP Address
+     * @param macAddress Device MAC Address
      * @param name Device Name
      * @param capabilities Device capabilities
      */
-    private fun onFoundDevice(ipAddress: String, name: String, capabilities: BooleanArray) {
+    private fun onFoundDevice(ipAddress: String, macAddress: String, name: String, capabilities: BooleanArray) {
         if (_callbackRef != null && _callbackRef!!.get() != null) {
-            _callbackRef!!.get()!!.onFoundDevice(this, ipAddress, name, capabilities)
+            _callbackRef!!.get()!!.onFoundDevice(this, ipAddress, macAddress, name, capabilities)
+        }
+    }
+
+    /**
+     * @brief Callback called when the MAC address of the device is retrieved
+     *
+     * @param ipAddress Device IP Address
+     * @param macAddress Device MAC Address
+     * @param result Result of MAC Address retrieval
+     */
+    private fun onMacRetrieve(ipAddress: String, macAddress: String, result: Int) {
+        if (_callbackRef != null && _callbackRef!!.get() != null) {
+            _callbackRef!!.get()!!.onMacRetrieve(this, ipAddress, macAddress, result)
         }
     }
 
@@ -76,14 +91,31 @@ class SNMPManager {
          *
          * @param manager SNMP Manager
          * @param ipAddress Device IP Address
+         * @param macAddress Device MAC Address
          * @param name Device Name
          * @param capabilities Device capabilities
          */
         fun onFoundDevice(
             manager: SNMPManager?,
             ipAddress: String?,
+            macAddress: String?,
             name: String?,
             capabilities: BooleanArray?
+        )
+
+        /**
+         * @brief Callback called when the MAC address of the device is retrieved
+         *
+         * @param manager SNMP Manager
+         * @param ipAddress Device IP Address
+         * @param macAddress Device MAC Address
+         * @param result Result of MAC Address retrieval
+         */
+        fun onMacRetrieve(
+            manager: SNMPManager?,
+            ipAddress: String?,
+            macAddress: String?,
+            result: Int
         )
     }
 

@@ -3,7 +3,7 @@
 //  SmartDeviceApp
 //
 //  Created by a-LINK Group.
-//  Copyright (c) 2014 RISO KAGAKU CORPORATION. All rights reserved.
+//  Copyright (c) 2023 RISO KAGAKU CORPORATION. All rights reserved.
 //
 
 #ifndef SmartDeviceApp_common_h
@@ -29,6 +29,7 @@ enum kJobStatus
     kJobStatusError = -1,
     kJobStatusStarted = 0,
     kJobStatusConnecting,
+    kJobStatusWaking,
     kJobStatusConnected,
     kJobStatusSending,
     kJobStatusSent,
@@ -42,7 +43,7 @@ enum kJobStatus
  //                                    const char *print_settings, const char *ip_address, directprint_callback callback);
 directprint_job *directprint_job_new(const char *printer_name, const char *host_name, const char *app_name, const char *app_version,
                                      const char *user_name, int job_num, const char *job_name, const char *filename,
-                                     const char *print_settings, const char *ip_address, directprint_callback callback);
+                                     const char *print_settings, const char *ip_address, const char *mac_address, directprint_callback callback);
 // ホスト名出力処理の追加 End
 
 void directprint_job_free(directprint_job *print_job);
@@ -72,6 +73,7 @@ typedef struct snmp_device_s snmp_device;
 
 typedef void (*snmp_discovery_ended_callback)(snmp_context *context, int);
 typedef void (*snmp_printer_added_callback)(snmp_context *context, snmp_device *);
+typedef void (*snmp_mac_address_retrieve_ended_callback)(snmp_context *context, snmp_device *, int);
 
 // SNMP state
 typedef enum
@@ -112,17 +114,19 @@ typedef enum
     kDeviceSeriesCount
 } kPrinterSeries;
 
-snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, const char* community_name);
+snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, snmp_mac_address_retrieve_ended_callback mac_address_retrieve_ended_callback, const char* community_name);
 void snmp_context_free(snmp_context *context);
 void snmp_device_discovery(snmp_context *context);
 void snmp_manual_discovery(snmp_context *context, const char *ip_address);
 void snmp_cancel(snmp_context *context);
 void *snmp_context_get_caller_data(snmp_context *context);
 void snmp_context_set_caller_data(snmp_context *context, void *caller_data);
+void snmp_mac_address_retrieve(snmp_context *context, const char *ip_address);
 
 snmp_device *snmp_device_new(const char *ip_address);
 void snmp_device_free(snmp_device *device);
 const char *snmp_device_get_ip_address(snmp_device *device);
+const char *snmp_device_get_mac_address(snmp_device *device);
 const char *snmp_device_get_name(snmp_device *device);
 int snmp_device_get_series(snmp_device *device);
 int snmp_device_get_capability_status(snmp_device *device, int capability);

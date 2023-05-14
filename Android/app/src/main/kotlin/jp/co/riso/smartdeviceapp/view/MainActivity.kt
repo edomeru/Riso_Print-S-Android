@@ -141,7 +141,7 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
                 _handler!!.sendMessage(msg)
             }
         }
-        NetUtils.registerWifiCallback(this)
+        NetUtils.registerNetworkCallback(this)
 
     }
 
@@ -161,7 +161,7 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
                 e.printStackTrace()
             }
 
-            NetUtils.unregisterWifiCallback(this)
+            NetUtils.unregisterNetworkCallback(this)
         }
 
         super.onDestroy()

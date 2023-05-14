@@ -187,7 +187,7 @@ class PrinterSearchFragment : BaseFragment(), PullToRefreshListView.OnRefreshLis
         _printer!!.clear()
         _emptySearchText!!.visibility = View.GONE
         _noNetwork = false
-        if (!NetUtils.isWifiAvailable) {
+        if (!NetUtils.isNetworkAvailable) {
             _noNetwork = true
             dialogErrCb()
             updateRefreshBar()

@@ -29,6 +29,7 @@
     <string name="ids_lbl_printer_info">プリンター情報</string>
     <string name="ids_lbl_printer_name">プリンター名</string>
     <string name="ids_lbl_ip_address">IPアドレス</string>
+    <string name="ids_lbl_mac_address">MACアドレス</string>
     <string name="ids_lbl_port">ポート</string>
     <string name="ids_lbl_port_raw">Raw</string>
     <string name="ids_lbl_port_lpr">LPR</string>
@@ -138,6 +139,7 @@
     <string name="ids_info_msg_printer_add_successful">追加に成功しました。</string>
     <string name="ids_info_msg_warning_cannot_find_printer">プリンターが見つかりません。</string>
     <string name="ids_info_msg_printing">プリント中&#8230;</string>
+    <string name="ids_info_msg_wakeonlan">スリープから復帰中</string>
     <string name="ids_info_msg_delete_jobs_title">履歴を削除</string>
     <string name="ids_info_msg_delete_jobs">本当に削除してよろしいですか？</string>
     <string name="ids_info_msg_print_job_successful">成功しました。</string>
