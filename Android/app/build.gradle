@@ -11,7 +11,7 @@ android {
         minSdkVersion 28
         targetSdkVersion 33
         versionCode 50700005
-        versionName 'v5.7.0.5'
+        versionName "v5.7.0.5"
 
         testApplicationId "jp.co.riso.smartprint.test"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
