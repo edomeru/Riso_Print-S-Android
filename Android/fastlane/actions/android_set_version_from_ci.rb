@@ -22,8 +22,8 @@ module Fastlane
         sh "sed -i.1 's/versionCode [0-9]*/versionCode #{version_code}/g'  app/build.gradle"
         sh "mv app/build.gradle.1 app/build.gradle"
 
-        sh "sed -i.1 's/versionName \"v[0-9.]*\"/versionName \"#{version_name}\"/g'  app/build.gradle"
-        sh "sed -i.1 's/versionName \"v[0-9.]*\"/versionName \"#{version_name}\"/g'  app/build.gradle"
+        sh "sed -i.1 's/versionName \'v[0-9.]*\'/versionName \'#{version_name}\'/g'  app/build.gradle"
+        sh "sed -i.1 's/versionName \'v[0-9.]*\'/versionName \'#{version_name}\'/g'  app/build.gradle"
         sh "mv app/build.gradle.1 app/build.gradle"
 
         nil
