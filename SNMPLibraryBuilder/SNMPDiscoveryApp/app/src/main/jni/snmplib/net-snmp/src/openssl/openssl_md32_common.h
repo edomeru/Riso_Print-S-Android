@@ -382,6 +382,9 @@ int HASH_FINAL (unsigned char *md, HASH_CTX *c)
 	return 1;
 	}
 
+/* aLINK 20230515 IntelCPU対応: Change from long to int to temporarily fix build
+* errors for x86_64 support
+*/
 #ifndef MD32_REG_T
 #define MD32_REG_T int
 /*

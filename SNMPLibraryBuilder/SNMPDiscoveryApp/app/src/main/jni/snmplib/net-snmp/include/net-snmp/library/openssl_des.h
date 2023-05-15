@@ -57,6 +57,9 @@
  */
 
 /* Copied roughly from opensslconf.h which it's a little more complex */
+/* aLINK 20230515 IntelCPU対応: Change from long to int to temporarily fix build
+ * errors for x86_64 support
+ */
 #define DES_LONG unsigned int
 
 #ifndef HEADER_NEW_DES_H

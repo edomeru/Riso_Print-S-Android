@@ -28,7 +28,7 @@ SOFTWARE.
 ******************************************************************/
 /*
  * Portions of this file are copyrighted by:
- * Copyright � 2003 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 2003 Sun Microsystems, Inc. All rights reserved.
  * Use is subject to license terms specified in the COPYING file
  * distributed with the Net-SNMP package.
  */
@@ -1260,6 +1260,9 @@ netsnmp_mktemp(void)
     strlcpy(name, get_temp_file_pattern(), sizeof(name));
 #ifdef HAVE_MKSTEMP
     {
+        /* aLINK 20230515 IntelCPU対応: Comment out below code to temporary fix build
+         * errors for x86 and x86_64 support
+         */
 //        mode_t oldmask = umask(~(S_IRUSR | S_IWUSR));
 //        netsnmp_assert(oldmask != (mode_t)(-1));
 //        fd = mkstemp(name);
