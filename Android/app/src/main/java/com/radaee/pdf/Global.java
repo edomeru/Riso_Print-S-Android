@@ -4,7 +4,11 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
+
+import com.radaee.util.CommonUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,8 +20,8 @@ import jp.co.riso.smartprint.R;
 /**
  * class for Global setting.
  * 
- * @author Radaee
- * @version 3.50
+ * @author RadaeePDF.com
+ * @version 3.65.25
  */
 public class Global
 {
@@ -216,9 +220,17 @@ public class Global
 	 */
 	public static native void hideAnnots(boolean hide);
 
+	/**
+	 * draw icon to Bitmap object
+	 * @param annot_type 1(text note) or 17(file attachment)
+	 * @param icon same as Annotation.GetIcon()
+	 * @param bitmap Bitmap object
+	 * @return true or false.
+	 */
+	public static native boolean drawAnnotIcon(int annot_type, int icon, Bitmap bitmap);
 	private static native void drawScroll(Bitmap bmp, long dib1, long dib2, int x, int y, int style, int back_side_clr);
 	/**
-	 * not used for developer
+	 * deprecated, not used for developer any more, referenced form deprecated class.
 	 */
 	public static void DrawScroll(Bitmap bmp, DIB dib1, DIB dib2, int x, int y, int style, int back_side_clr)
 	{
@@ -237,6 +249,7 @@ public class Global
 	private static native void toPDFRect(long matrix, float[] drect,
 			float[] prect);
 
+
 	/**
 	 * set annotation transparency color.<br/>
 	 * default value: 0x200040FF
@@ -246,53 +259,41 @@ public class Global
 	 */
 	public static native void setAnnotTransparency(int color);
 
+	public static boolean g_display_pageno_on_thumbnail = true;
 	/**
 	 * color for ink annotation
 	 */
-	public static int inkColor = 0x80404040;
+	public static int g_ink_color = 0x80404040;
 	/**
 	 * width for ink lines.
 	 */
-	public static float inkWidth = 4;
-	/**
-	 * color for rect annotation.
-	 */
-	public static int rectColor = 0x80C00000;
+	public static float g_ink_width = 4;
 	/**
 	 * selection color.
 	 */
-	public static int selColor = 0x400000C0;// selection color
-	/**
-	 * Use selection icons (markers).
-	 */
-	public static boolean useSelIcons = true;
+	public static int g_sel_color = 0x400000C0;// selection color
+	public static boolean g_use_sel_icons = true;//draw icons while selecting texts.
 	/**
 	 * Annotation transparency color
 	 */
-	public static int annotTransparencyColor = 0x200040FF;
+	public static int g_annot_transparency = 0x200040FF;
 	/**
 	 * find primary color.
 	 */
-	public static int findPrimaryColor = 0x400000FF;// find primary color
+	public static int g_find_primary_color = 0x400000FF;// find primary color
 	/**
 	 * find secondary color.
 	 */
-	public static int findSecondaryColor = 0x40404040;// find secondary color
+	public static int g_find_secondary_color = 0x40404040;// find secondary color
+	public static float g_zoom_step = 1;//double tap zoom steps, this only works on CPU mode.
 	/**
-	 * max zoom level; valid values: [2, 5]
-	 */
-	public static float zoomLevel = 3;
-	public static float zoomStep = 1;
-	/**
-	 * can't be neg value. 15 means 15x(2000%) zooming.
+	 * can't be neg value. 15 means 15x(fit screen scale) zooming.
 	 * Starting from version 3.12beta2 (which introduces enhancements in transparency composing and color blending)
 	 * we recommend using 11 as the max level, higher levels will reduce performance
 	 */
-	public static float layoutZoomLevel = 11;
-	/**
-	 * can't be neg value. 2 means 2x(200%) zooming. when zoom value greater than this, it clip pages as many small bitmaps.
-	 */
-	public static float layoutZoomLevelClip = 2.5f;
+	public static float g_view_zoom_level = 3;//max zoom level; valid values: [2, 5], this is mainly used in deprecated view class.
+	public static float g_layout_zoom_level = 11;//max zoom level; this is used in new layout view.
+	public static float g_layout_zoom_clip = 2.5f;//if page zooming value greater than this value, it clips small DIBs, and tile to Page area. this value only works for CPU mode.
 	/**
 	 * fling distance: 0.5-2
 	 */
@@ -302,24 +303,23 @@ public class Global
 	 */
 	public static float fling_speed = 0.2f;// 0.1 - 0.4
 	/**
-	 * default view:<br/>
+	 * default layout/view type:<br/>
 	 * 0:vertical<br/>
 	 * 1:horizontal<br/>
 	 * 2:scroll<br/>
 	 * 3:single<br/>
 	 * 4:SingleEx<br/>
 	 * 5:ReFlow<br/>
-	 * 6:2 page in landscape
+	 * 6:2 page in landscape<br/>
+	 * 7:vertical dual page mode with cover(opengl mode only)<br/>
+	 * 8:vertical dual page mode without cover(opengl mode only)<br/>
 	 */
-	public static int def_view = 0;
-	/**
-	 * render mode: 0:draft 1:normal 2:best
-	 */
-	public static int render_mode = 2;
+	public static int g_view_mode = 0;
+	public static int g_render_quality = 2;//render mode: 0:draft 1:normal 2:best with overprint
 	/**
 	 * render as dark mode?
 	 */
-	public static boolean dark_mode = false;
+	public static boolean g_dark_mode = false;
 
 	/**
 	 * temp path, able after Init() invoked
@@ -330,7 +330,7 @@ public class Global
 	/**
 	 * Thumb view background color
 	 */
-	public static int thumbViewBgColor = 0x40CCCCCC;
+	public static int g_thumbview_bg_color = 0x40CCCCCC;
 	/**
 	 * Thumb grid view's background color
 	 */
@@ -338,7 +338,7 @@ public class Global
 	/**
 	 * Thumb view height in dp, i.e. 100 = 100dp
 	 */
-	public static int thumbViewHeight = 100;
+	public static int g_thumbview_height = 100;
 	/**
 	 * Thumb grid view's element height in dp, i.e. 100 = 100dp
 	 */
@@ -354,83 +354,101 @@ public class Global
 	/**
 	 * Reader view background color
 	 */
-	public static int readerViewBgColor = 0xFFCCCCCC;
+	public static int g_readerview_bg_color = 0xFFCCCCCC;
 	/**
 	 * navigation mode, 0:thumbnail view 1:seekbar view
 	 */
-	public static int navigationMode = 1;
-	public static boolean debug_mode = true;
-	public static boolean highlight_annotation = true;
-	public static boolean save_thumb_in_cache = true;
-	/**
-	 * enables/disables right to left navigation
-	 */
-	public static boolean rtol = false;
-	/**
-	 * is text selection start from right to left in one line?
-	 */
-	public static boolean selRTOL = false;
-    /**
-     * enables or disable cache during rendering
-     */
-    public static boolean cacheEnabled = true;
-	public static boolean trustAllHttpsHosts = false;
-    public static int highlight_color = 0xFFFFFF00;//yellow
-    public static int underline_color = 0xFF0000C0;//black blue
-    public static int strikeout_color = 0xFFC00000;//black red
-    public static int squiggle_color = 0xFF00C000;//black green
-	public static String sAnnotAuthor; //if valorized, will be used to set the annotation author while its creation
+	public static int g_navigation_mode = 1;
+	public static boolean debug_mode = false;
+	public static boolean g_highlight_annotation = true;
+	public static boolean g_save_thumb_in_cache = true;
+	public static boolean g_layout_rtol = false;//enables/disables right to left navigation, only workd on CPU mode
+	public static boolean g_sel_rtol = false;//is text selection start from right to left in one line?
+    public static boolean g_cache_enable = true; //double DIB cache for layout, only works for CPU mode.
+	//public static boolean trustAllHttpsHosts = false; removed as it causes a security vulnerability.
+    public static int g_annot_highlight_clr = 0xFFFFFF00;//yellow
+    public static int g_annot_underline_clr = 0xFF0000C0;//black blue
+    public static int g_annot_strikeout_clr = 0xFFC00000;//black red
+    public static int g_annot_squiggle_clr = 0xFF00C000;//black green
 
-	public static boolean sEnableGraphicalSignature = true;
-	public static boolean sFitSignatureToField = true; //if true, the blank space will be trimmed from the signature bitmap
-	public static String sSignPadDescr = "Sign Here";
+	public static int gridview_icon_color = 0xFFFF9040;
+	public static int toolbar_icon_color = 0xFFFF9040;
+	public static int toolbar_bg_color = 0xFF202020;
 
-	public static boolean sExecuteAnnotJS = true;
+	public static boolean g_hand_signature = true;
+	public static boolean g_fake_sign = true;		// if true, the signature doesn't require the p12/pfx certificate file. Only the image is set to the form field.
+														// signature without certificate are out of standard and some PDF Reader shall refuse to show the bitmap.
+
+	public static boolean g_exec_js = true;
+
+	public static String g_annot_def_author; //if valorized, will be used to set the annotation author while its creation
+	public static boolean g_annot_lock = true;//if the annotation is locked, disable moving for annotation.
+	public static boolean g_annot_readonly = true;//if the annotation is readonly, disable moving for annotation.
+
+	/** if true the link action will be performed immediately otherwise the user must click on the play button*/
+	public static boolean g_auto_launch_link = true;
+
 	/**
 	 *Annot Rect params
 	 */
-	public static float rect_annot_width = 3;
-	public static int rect_annot_color = 0x80FF0000;
-	public static int rect_annot_fill_color = 0x800000FF;
+	public static float g_rect_annot_width = 3;
+	public static int g_rect_annot_color = 0x80FF0000;
+	public static int g_rect_annot_fill_color = 0x800000FF;
 
     /**
      *Annot Ellipse params
      */
-    public static float ellipse_annot_width = 3;
-    public static int ellipse_annot_color = 0x80FF0000;
-    public static int ellipse_annot_fill_color = 0x800000FF;
+    public static float g_oval_annot_width = 3;
+    public static int g_oval_annot_color = 0x80FF0000;
+    public static int g_oval_annot_fill_color = 0x800000FF;
 
     /**
-     *Annot Line params
+     * Annot Line params
      */
-    public static float line_annot_width = 3;
-    public static int line_annot_style1 = 1;
-    public static int line_annot_style2 = 0;
-    public static int line_annot_color = 0x80FF0000;
-    public static int line_annot_fill_color = 0x800000FF;
+    public static float g_line_annot_width = 3;
+    public static int g_line_annot_style1 = 1;
+    public static int g_line_annot_style2 = 0;
+    public static int g_line_annot_color = 0x80FF0000;
+    public static int g_line_annot_fill_color = 0x800000FF;
 
-	public static boolean fit_different_page_size = false;
+    //true: calculate scale of each page, false: calculate scale based on the dimensions of the largest page
+	//this flag only works on CPU mode, opengl layout implement different scale page by parameters of derived GLLayout constructor.
+	public static boolean g_auto_scale = false;
+
+	/**
+	 * 	Enables automatic save
+	 */
+	public static boolean g_auto_save_doc = false;
+
+	/**
+	 * 	Enables 'whole word' matching
+	 */
+	public static boolean g_match_whole_word = false;
+	/**
+	 * 	Enables case-sensitive search
+	 */
+	public static boolean g_case_sensitive = false;
+
+	public static boolean g_zoomed_stop_on_boundaries = false;
 
 	static private void load_file(Resources res, int res_id, File save_file)
 	{
-		if( !save_file.exists() )
+		if(save_file.exists()) return;
+		try
 		{
-			try
-	    	{
-		        int read;
-				byte buf[] = new byte[4096];
-				InputStream src = res.openRawResource(res_id );
-    			FileOutputStream dst = new FileOutputStream( save_file );
-   				while( (read = src.read( buf )) > 0 )
-   					dst.write( buf, 0, read );
-   				dst.close();
-   				src.close();
-   				dst = null;
-   				src = null;
-	    	}
-			catch(Exception e)
-			{
-			}
+			int read;
+			byte[] buf = new byte[4096];
+			InputStream src = res.openRawResource(res_id );
+			FileOutputStream dst = new FileOutputStream( save_file );
+			while( (read = src.read( buf )) > 0 )
+				dst.write( buf, 0, read );
+			dst.close();
+			src.close();
+			dst = null;
+			src = null;
+		}
+		catch(Exception ignored)
+		{
 		}
 	}
 	static private void load_std_font(Resources res, int res_id, int index, File dst)
@@ -523,6 +541,19 @@ public class Global
 			break;
 		}
 
+		//this code need to be added, that support share on higher Android version.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+			StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+			StrictMode.setVmPolicy(builder.build());
+			builder.detectFileUriExposure();
+		}
+
+		// Signature is not certificate based, the code shall use a self-signed certificate
+		// as dummy file
+		if(g_fake_sign) {
+			CommonUtil.copyFiletoExternalStorage(R.raw.radaee_test, "radaeepdf_test.pfx", act);
+		}
+
 		// active library, or WaterMark will displayed on each page.
 		// boolean succeeded = activeStandard(act, "radaee",
 		// "radaee_com@yahoo.cn", "HV8A19-WOT9YC-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
@@ -563,10 +594,10 @@ public class Global
         load_truetype_font( res, R.raw.arimob, new File(files, "arimob.ttf") );
         load_truetype_font( res, R.raw.arimoi, new File(files, "arimoi.ttf") );
         load_truetype_font( res, R.raw.arimobi, new File(files, "arimobi.ttf") );
-        load_truetype_font( res, R.raw.tinos, new File(files, "tinos.ttf") );
-        load_truetype_font( res, R.raw.tinosb, new File(files, "tinosb.ttf") );
-        load_truetype_font( res, R.raw.tinosi, new File(files, "tinosi.ttf") );
-        load_truetype_font( res, R.raw.tinosbi, new File(files, "tinosbi.ttf") );
+        load_truetype_font( res, R.raw.texgy, new File(files, "texgy.otf") );
+        load_truetype_font( res, R.raw.texgyb, new File(files, "texgyb.otf") );
+        load_truetype_font( res, R.raw.texgyi, new File(files, "texgyi.otf") );
+        load_truetype_font( res, R.raw.texgybi, new File(files, "texgybi.otf") );
         load_truetype_font( res, R.raw.cousine, new File(files, "cousine.ttf") );
         load_truetype_font( res, R.raw.cousineb, new File(files, "cousineb.ttf") );
         load_truetype_font( res, R.raw.cousinei, new File(files, "cousinei.ttf") );
@@ -607,49 +638,49 @@ public class Global
         fontfileMapping("Helvetica-Bold",          "Arimo Bold");
         fontfileMapping("Helvetica-BoldItalic",   "Arimo Bold Italic");
         fontfileMapping("Helvetica-Italic",        "Arimo Italic");
-        fontfileMapping("Garamond",                    "Tinos");
-        fontfileMapping("Garamond,Bold",              "Tinos Bold");
-        fontfileMapping("Garamond,BoldItalic",       "Tinos Bold Italic");
-        fontfileMapping("Garamond,Italic",            "Tinos Italic");
-        fontfileMapping("Garamond-Bold",              "Tinos Bold");
-        fontfileMapping("Garamond-BoldItalic",       "Tinos Bold Italic");
-        fontfileMapping("Garamond-Italic",            "Tinos Italic");
-        fontfileMapping("Times",                    "Tinos");
-        fontfileMapping("Times,Bold",              "Tinos Bold");
-        fontfileMapping("Times,BoldItalic",       "Tinos Bold Italic");
-        fontfileMapping("Times,Italic",            "Tinos Italic");
-        fontfileMapping("Times-Bold",              "Tinos Bold");
-        fontfileMapping("Times-BoldItalic",       "Tinos Bold Italic");
-        fontfileMapping("Times-Italic",            "Tinos Italic");
-        fontfileMapping("Times-Roman",             "Tinos");
-        fontfileMapping("Times New Roman",                "Tinos");
-        fontfileMapping("Times New Roman,Bold",          "Tinos Bold");
-        fontfileMapping("Times New Roman,BoldItalic",   "Tinos Bold Italic");
-        fontfileMapping("Times New Roman,Italic",        "Tinos Italic");
-        fontfileMapping("Times New Roman-Bold",          "Tinos Bold");
-        fontfileMapping("Times New Roman-BoldItalic",   "Tinos Bold Italic");
-        fontfileMapping("Times New Roman-Italic",        "Tinos Italic");
-        fontfileMapping("TimesNewRoman",                "Tinos");
-        fontfileMapping("TimesNewRoman,Bold",          "Tinos Bold");
-        fontfileMapping("TimesNewRoman,BoldItalic",   "Tinos Bold Italic");
-        fontfileMapping("TimesNewRoman,Italic",        "Tinos Italic");
-        fontfileMapping("TimesNewRoman-Bold",          "Tinos Bold");
-        fontfileMapping("TimesNewRoman-BoldItalic",   "Tinos Bold Italic");
-        fontfileMapping("TimesNewRoman-Italic",        "Tinos Italic");
-        fontfileMapping("TimesNewRomanPS",                "Tinos");
-        fontfileMapping("TimesNewRomanPS,Bold",          "Tinos Bold");
-        fontfileMapping("TimesNewRomanPS,BoldItalic",   "Tinos Bold Italic");
-        fontfileMapping("TimesNewRomanPS,Italic",        "Tinos Italic");
-        fontfileMapping("TimesNewRomanPS-Bold",          "Tinos Bold");
-        fontfileMapping("TimesNewRomanPS-BoldItalic",   "Tinos Bold Italic");
-        fontfileMapping("TimesNewRomanPS-Italic",        "Tinos Italic");
-        fontfileMapping("TimesNewRomanPSMT",                "Tinos");
-        fontfileMapping("TimesNewRomanPSMT,Bold",          "Tinos Bold");
-        fontfileMapping("TimesNewRomanPSMT,BoldItalic",   "Tinos Bold Italic");
-        fontfileMapping("TimesNewRomanPSMT,Italic",        "Tinos Italic");
-        fontfileMapping("TimesNewRomanPSMT-Bold",          "Tinos Bold");
-        fontfileMapping("TimesNewRomanPSMT-BoldItalic",   "Tinos Bold Italic");
-        fontfileMapping("TimesNewRomanPSMT-Italic",        "Tinos Italic");
+        fontfileMapping("Garamond",                    "TeXGyreTermes-Regular");
+        fontfileMapping("Garamond,Bold",              "TeXGyreTermes-Bold");
+        fontfileMapping("Garamond,BoldItalic",       "TeXGyreTermes-BoldItalic");
+        fontfileMapping("Garamond,Italic",            "TeXGyreTermes-Italic");
+        fontfileMapping("Garamond-Bold",              "TeXGyreTermes-Bold");
+        fontfileMapping("Garamond-BoldItalic",       "TeXGyreTermes-BoldItalic");
+        fontfileMapping("Garamond-Italic",            "TeXGyreTermes-Italic");
+        fontfileMapping("Times",                    "TeXGyreTermes-Regular");
+        fontfileMapping("Times,Bold",              "TeXGyreTermes-Bold");
+        fontfileMapping("Times,BoldItalic",       "TeXGyreTermes-BoldItalic");
+        fontfileMapping("Times,Italic",            "TeXGyreTermes-Italic");
+        fontfileMapping("Times-Bold",              "TeXGyreTermes-Bold");
+        fontfileMapping("Times-BoldItalic",       "TeXGyreTermes-BoldItalic");
+        fontfileMapping("Times-Italic",            "TeXGyreTermes-Italic");
+        fontfileMapping("Times-Roman",             "TeXGyreTermes-Regular");
+        fontfileMapping("Times New Roman",                "TeXGyreTermes-Regular");
+        fontfileMapping("Times New Roman,Bold",          "TeXGyreTermes-Bold");
+        fontfileMapping("Times New Roman,BoldItalic",   "TeXGyreTermes-BoldItalic");
+        fontfileMapping("Times New Roman,Italic",        "TeXGyreTermes-Italic");
+        fontfileMapping("Times New Roman-Bold",          "TeXGyreTermes-Bold");
+        fontfileMapping("Times New Roman-BoldItalic",   "TeXGyreTermes-BoldItalic");
+        fontfileMapping("Times New Roman-Italic",        "TeXGyreTermes-Italic");
+        fontfileMapping("TimesNewRoman",                "TeXGyreTermes-Regular");
+        fontfileMapping("TimesNewRoman,Bold",          "TeXGyreTermes-Bold");
+        fontfileMapping("TimesNewRoman,BoldItalic",   "TeXGyreTermes-BoldItalic");
+        fontfileMapping("TimesNewRoman,Italic",        "TeXGyreTermes-Italic");
+        fontfileMapping("TimesNewRoman-Bold",          "TeXGyreTermes-Bold");
+        fontfileMapping("TimesNewRoman-BoldItalic",   "TeXGyreTermes-BoldItalic");
+        fontfileMapping("TimesNewRoman-Italic",        "TeXGyreTermes-Italic");
+        fontfileMapping("TimesNewRomanPS",                "TeXGyreTermes-Regular");
+        fontfileMapping("TimesNewRomanPS,Bold",          "TeXGyreTermes-Bold");
+        fontfileMapping("TimesNewRomanPS,BoldItalic",   "TeXGyreTermes-BoldItalic");
+        fontfileMapping("TimesNewRomanPS,Italic",        "TeXGyreTermes-Italic");
+        fontfileMapping("TimesNewRomanPS-Bold",          "TeXGyreTermes-Bold");
+        fontfileMapping("TimesNewRomanPS-BoldItalic",   "TeXGyreTermes-BoldItalic");
+        fontfileMapping("TimesNewRomanPS-Italic",        "TeXGyreTermes-Italic");
+        fontfileMapping("TimesNewRomanPSMT",                "TeXGyreTermes-Regular");
+        fontfileMapping("TimesNewRomanPSMT,Bold",          "TeXGyreTermes-Bold");
+        fontfileMapping("TimesNewRomanPSMT,BoldItalic",   "TeXGyreTermes-BoldItalic");
+        fontfileMapping("TimesNewRomanPSMT,Italic",        "TeXGyreTermes-Italic");
+        fontfileMapping("TimesNewRomanPSMT-Bold",          "TeXGyreTermes-Bold");
+        fontfileMapping("TimesNewRomanPSMT-BoldItalic",   "TeXGyreTermes-BoldItalic");
+        fontfileMapping("TimesNewRomanPSMT-Italic",        "TeXGyreTermes-Italic");
         fontfileMapping("Courier",                        "Cousine");
         fontfileMapping("Courier Bold",                  "Cousine Bold");
         fontfileMapping("Courier BoldItalic",           "Cousine Bold Italic");
@@ -731,44 +762,52 @@ public class Global
         // but this make APP large.
 
 		// set default font for Simplified Chinese. 简体
-		if (!setDefaultFont("GB1", "DroidSansFallback", true) &&
-			!setDefaultFont("GB1", "Noto Sans CJK SC Regular", true) &&
+		if (!setDefaultFont("GB1", "Noto Sans CJK SC Regular", true) &&
+			!setDefaultFont("GB1", "Noto Sans CJK SC", true) &&
 			!setDefaultFont("GB1", "DroidSansChinese", true) &&
-            !setDefaultFont("GB1", "Noto Sans SC Regular", true) && face_name != null)
+            !setDefaultFont("GB1", "Noto Sans SC Regular", true) &&
+			!setDefaultFont("GB1", "DroidSansFallback", true) && face_name != null)
 			setDefaultFont("GB1", face_name, true);
-		if (!setDefaultFont("GB1", "DroidSansFallback", false) &&
-			!setDefaultFont("GB1", "Noto Sans CJK SC Regular", false) &&
-            !setDefaultFont("GB1", "Noto Sans SC Regular", false) && face_name != null)
+		if (!setDefaultFont("GB1", "Noto Sans CJK SC Regular", false) &&
+			!setDefaultFont("GB1", "Noto Sans CJK SC", true) &&
+            !setDefaultFont("GB1", "Noto Sans SC Regular", false) &&
+			!setDefaultFont("GB1", "DroidSansFallback", false) && face_name != null)
 			setDefaultFont("GB1", face_name, false);
 
 		// set default font for Traditional Chinese. 繁體
-		if (!setDefaultFont("CNS1", "DroidSansFallback", true) &&
-			!setDefaultFont("GB1", "Noto Sans CJK TC Regular", true) &&
-            !setDefaultFont("CNS1", "Noto Sans TC Regular", true) && face_name != null)
+		if (!setDefaultFont("CNS1", "Noto Sans CJK TC Regular", true) &&
+			!setDefaultFont("CNS1", "Noto Sans CJK TC", true) &&
+            !setDefaultFont("CNS1", "Noto Sans TC Regular", true) &&
+			!setDefaultFont("CNS1", "DroidSansFallback", true) && face_name != null)
 			setDefaultFont("CNS1", face_name, true);
-		if (!setDefaultFont("CNS1", "DroidSansFallback", false) &&
-			!setDefaultFont("GB1", "Noto Sans CJK TC Regular", false) &&
-            !setDefaultFont("CNS1", "Noto Sans TC Regular", false) && face_name != null)
+		if (!setDefaultFont("CNS1", "Noto Sans CJK TC Regular", false) &&
+			!setDefaultFont("CNS1", "Noto Sans CJK TC", true) &&
+            !setDefaultFont("CNS1", "Noto Sans TC Regular", false) &&
+			!setDefaultFont("CNS1", "DroidSansFallback", false) && face_name != null)
 			setDefaultFont("CNS1", face_name, false);
 
 		// set default font for Japanese.
-		if (!setDefaultFont("Japan1", "DroidSansFallback", true) &&
-			!setDefaultFont("GB1", "Noto Sans CJK JP Regular", true) &&
-            !setDefaultFont("Japan1", "Noto Sans JP Regular", true) && face_name != null)
+		if (!setDefaultFont("Japan1", "Noto Sans CJK JP Regular", true) &&
+			!setDefaultFont("Japan1", "Noto Sans CJK JP", true) &&
+            !setDefaultFont("Japan1", "Noto Sans JP Regular", true) &&
+			!setDefaultFont("Japan1", "DroidSansFallback", true) && face_name != null)
 			setDefaultFont("Japan1", face_name, true);
-		if (!setDefaultFont("Japan1", "DroidSansFallback", false) &&
-			!setDefaultFont("GB1", "Noto Sans CJK JP Regular", false) &&
-            !setDefaultFont("Japan1", "Noto Sans JP Regular", false) && face_name != null)
+		if (!setDefaultFont("Japan1", "Noto Sans CJK JP Regular", false) &&
+			!setDefaultFont("Japan1", "Noto Sans CJK JP", true) &&
+            !setDefaultFont("Japan1", "Noto Sans JP Regular", false) &&
+			!setDefaultFont("Japan1", "DroidSansFallback", false) && face_name != null)
 			setDefaultFont("Japan1", face_name, false);
 
 		// set default font for Korean.
-		if (!setDefaultFont("Korea1", "DroidSansFallback", true) &&
-			!setDefaultFont("GB1", "Noto Sans CJK KR Regular", true) &&
-            !setDefaultFont("Korea1", "Noto Sans KR Regular", true) && face_name != null)
+		if (!setDefaultFont("Korea1", "Noto Sans CJK KR Regular", true) &&
+			!setDefaultFont("Korea1", "Noto Sans CJK KR", true) &&
+            !setDefaultFont("Korea1", "Noto Sans KR Regular", true) &&
+			!setDefaultFont("Korea1", "DroidSansFallback", true) && face_name != null)
 			setDefaultFont("Korea1", face_name, true);
-		if (!setDefaultFont("Korea1", "DroidSansFallback", false) &&
-			!setDefaultFont("GB1", "Noto Sans CJK KR Regular", false) &&
-            !setDefaultFont("Korea1", "Noto Sans KR Regular", false) && face_name != null)
+		if (!setDefaultFont("Korea1", "Noto Sans CJK KR Regular", false) &&
+			!setDefaultFont("Korea1", "Noto Sans CJK KR", true) &&
+            !setDefaultFont("Korea1", "Noto Sans KR Regular", false) &&
+			!setDefaultFont("Korea1", "DroidSansFallback", false) && face_name != null)
 			setDefaultFont("Korea1", face_name, false);
 
 		// set text font for edit-box and combo-box editing.
@@ -782,6 +821,9 @@ public class Global
         }
 
 		// set configure to default value
+		toolbar_icon_color = res.getColor(R.color.toolbar_icon_color);
+		toolbar_bg_color = res.getColor(R.color.toolbar_bg_color);
+		gridview_icon_color = res.getColor(R.color.gridview_icon_color);
 		default_config();
 		return ms_init;
 	}
@@ -791,19 +833,22 @@ public class Global
 	 */
 	public static void default_config()
 	{
-		selColor = 0x400000C0;// selection color
-		findPrimaryColor = 0x400000FF;// find primary color
-		findSecondaryColor = 0x40404040;// find secondary color
+		g_sel_color = 0x400000C0;// selection color
+		g_find_primary_color = 0x400000FF;// find primary color
+		g_find_secondary_color = 0x40404040;// find secondary color
 		fling_dis = 1.0f;// 0.5-2
         fling_speed = 0.1f;// 0.05 - 0.2
-		def_view = 0;// 0,1,2,3,4,5,6 0:vertical 1:horizon 2:curl effect 3:single
+		g_view_mode = 0;// 0,1,2,3,4,5,6,7,8
+						// 0:vertical 1:horizon 2:curl effect 3:single
 						// 4:SingleEx 5:Reflow, 6:show 2 page as 1 page in land
+						// 7:vertical dual page mode with cover(opengl mode only)
+	 					// 8:vertical dual page mode without cover(opengl mode only)
 						// scape mode
-		render_mode = recommandedRenderMode();// 0,1,2 0:draft 1:normal 2:best with over print support.
-		dark_mode = false;// dark mode
-		zoomLevel = 3;
+		g_render_quality = recommandedRenderMode();// 0,1,2 0:draft 1:normal 2:best with over print support.
+		g_dark_mode = false;// dark mode
+		g_view_zoom_level = 3;
 		//hideAnnots(true);
-		setAnnotTransparency(annotTransparencyColor);
+		setAnnotTransparency(g_annot_transparency);
 	}
 
 	/**
@@ -954,19 +999,14 @@ public class Global
 		try
 		{
 			File tmp = new File(tmp_path);
-			File files[] = tmp.listFiles();
+			File[] files = tmp.listFiles();
 			if (files != null)
 			{
-				for (int index = 0; index < files.length; index++)
-					files[index].delete();
+				for (File file : files) file.delete();
 			}
 		}
-		catch(Exception e)
+		catch(Exception ignored)
 		{
 		}
-	}
-
-	public static boolean isLicenseActivated() { //Nermeen
-		return ms_init;
 	}
 }

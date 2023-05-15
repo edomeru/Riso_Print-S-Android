@@ -16,7 +16,7 @@ class for PDF Page.
 */
 public class Page
 {
-	public class Annotation
+	static public class Annotation
 	{
 		protected long hand;
 		protected Page page;
@@ -257,7 +257,7 @@ public class Page
 		 */
         final public float[] GetRect()
 		{
-			float rect[] = new float[4];
+			float[] rect = new float[4];
 			Page.getAnnotRect(page.hand, hand, rect);
 			return rect;
 		}
@@ -268,7 +268,7 @@ public class Page
 		 */
         final public void SetRect( float left, float top, float right, float bottom )
 		{
-			float rect[] = new float[4];
+			float[] rect = new float[4];
 			rect[0] = left;
 			rect[1] = top;
 			rect[2] = right;
@@ -519,6 +519,12 @@ public class Page
 		{
 			return Page.getAnnotAttachment(page.hand, hand);
 		}
+		/*
+		final public String GetRendition()
+		{
+			return Page.getAnnotRendition(page.hand, hand);
+		}
+		*/
 		/**
 		 * get annotation's 3D data. must be *.u3d format.<br/>
 		 * this method require professional or premium license
@@ -546,7 +552,7 @@ public class Page
 		 * @param save_file full path name to save data.
 		 * @return true if save_file created, or false.
 		 */
-        final public boolean GetSoundData( int paras[], String save_file )
+        final public boolean GetSoundData(int[] paras, String save_file )
 		{
 			return Page.getAnnotSoundData(page.hand, hand, paras, save_file);
 		}
@@ -559,6 +565,10 @@ public class Page
         final public boolean GetAttachmentData( String save_file )
 		{
 			return Page.getAnnotAttachmentData(page.hand, hand, save_file);
+		}
+		final public boolean GetRenditionData( String save_file )
+		{
+			return Page.getAnnotRenditionData(page.hand, hand, save_file);
 		}
 
 		/**
@@ -716,6 +726,27 @@ public class Page
 		}
 
 		/**
+		 * get text align of edit-box and edit field.<br/>
+		 * this method require premium license
+		 * @return align of text, 0: left, 1: center, 2: right.
+		 */
+		final public int GetEditTextAlign()
+		{
+			return Page.getAnnotEditTextAlign(page.hand, hand);
+		}
+
+		/**
+		 * set text align of edit-box and edit field.<br/>
+		 * this method require premium license
+		 * @param align text align value, 0: left, 1: center, 2: right.
+		 * @return true or false.
+		 */
+		final public boolean SetEditTextAlign(int align)
+		{
+			return Page.setAnnotEditTextAlign(page.hand, hand, align);
+		}
+
+		/**
 		 * get jsvascript action of fields.<br/>
 		 * this method require premium license.
 		 * @param idx action index:<br/>
@@ -832,6 +863,17 @@ public class Page
 		{
 			return Page.getAnnotComboItem(page.hand, hand, item);
 		}
+
+		/**
+		 * get export value of combo-box.
+		 * this method require premium license
+		 * @param item 0 based item index. range:[0, GetAnnotComboItemCount()-1]
+		 * @return null if this is not combo-box, "" if no item selected, otherwise the item selected.
+		 */
+		final public String GetComboItemVal( int item )
+		{
+			return Page.getAnnotComboItemVal(page.hand, hand, item);
+		}
 		/**
 		 * get current selected item index of combo-box.<br/>
 		 * this method require premium license
@@ -878,6 +920,16 @@ public class Page
         final public String GetListItem( int item )
 		{
 			return Page.getAnnotListItem(page.hand, hand, item);
+		}
+		/**
+		 * get export value of list-box item.<br/>
+		 * this method require premium license
+		 * @param item 0 based item index. range:[0, GetListItemCount()-1]
+		 * @return null if this is not list-box, "" if no item selected, otherwise the item selected.
+		 */
+		final public String GetListItemVal( int item )
+		{
+			return Page.getAnnotListItemVal(page.hand, hand, item);
 		}
 
         /**
@@ -1002,6 +1054,14 @@ public class Page
 		{
 			return Page.getAnnotSignStatus(page.hand, hand);
 		}
+		final public Sign GetSign()
+		{
+			long hret = Page.getAnnotSign(page.hand, hand);
+			if(hret == 0) return null;
+			Sign ret = new Sign();
+			ret.m_hand = hret;
+			return ret;
+		}
 		/**
 		 * check if the annotation is reset button?<br/>
 		 * this method require premium license
@@ -1115,6 +1175,10 @@ public class Page
 		{
 			return Page.setAnnotStrokeDash(page.hand, hand, dash);
 		}
+		final public float[] GetStrokeDash()
+		{
+			return Page.getAnnotStrokeDash(page.hand, hand);
+		}
 		/**
 		 * get Path object from Ink annotation.<br/>
 		 * this method require professional or premium license
@@ -1192,7 +1256,7 @@ public class Page
 		}
 
 		/**
-		 * get point from line annotation.<br/>
+		 * get point of line annotation.<br/>
 		 * this method require professional or premium license
 		 * @param idx 0: start point, others: end point.
          * @return array as [x,y], or null.
@@ -1200,6 +1264,27 @@ public class Page
 		final public float[] GetLinePoint(int idx)
 		{
 			return Page.getAnnotLinePoint(page.hand, hand, idx);
+		}
+
+		/**
+		 * get line style of line or polyline annotation.<br/>
+		 * this method require professional or premium license
+		 * @return (ret >> 16) is style of end point, (ret & 0xffff) is style of start point.
+		 */
+		final public int GetLineStyle()
+		{
+			return Page.getAnnotLineStyle(page.hand, hand);
+		}
+
+		/**
+		 * set line style of line or polyline annotation.<br/>
+		 * this method require professional or premium license
+		 * @param style (style >> 16) is style of end point, (style & 0xffff) is style of start point.
+		 * @return true or false.
+		 */
+		final public boolean SetLineStyle(int style)
+		{
+			return Page.setAnnotLineStyle(page.hand, hand, style);
 		}
 		/**
 		 * set icon for sticky text note/file attachment/Rubber Stamp annotation.<br/>
@@ -1254,7 +1339,7 @@ public class Page
 			return Page.setAnnotIcon(page.hand, hand, icon);
 		}
 		/**
-		 * set customized icon for  sticky text note/file attachment annotation.<br/>
+		 * set customized icon for: sticky text note/file attachment annotation, and unsigned signature field.<br/>
 		 * @param name customized icon name.
 		 * @param form DocForm object return from Document.NewForm();
 		 * @return true or false.
@@ -1315,7 +1400,7 @@ public class Page
 		}
 		/**
 		 * remove annotation<br/>
-		 * you should re-render page to display modified data.<br/>
+		 * you should render page again to display modified data.<br/>
 		 * this method require professional or premium license
 		 * @return true or false
 		 */
@@ -1326,6 +1411,18 @@ public class Page
 			return ret;
 		}
 
+		/**
+		 * flate single annotation<br/>
+		 * you should render page again to display modified data.<br/>
+		 * this method require professional or premium license
+		 * @return true or false
+		 */
+		final public boolean flateFromPage()
+		{
+			boolean ret = flateAnnot( page.hand, hand );
+			hand = 0;
+			return ret;
+		}
 		/**
 		 * export data from annotation.<br/>
 		 * a premium license is required for this method.
@@ -1342,14 +1439,20 @@ public class Page
 		 * @param form appearance icon for signature
 		 * @param cert_file a cert file like .p12 or .pfx file, DER encoded cert file.
 		 * @param pswd password to open cert file.
+		 * @param name signer name string.
 		 * @param reason sign reason will write to signature.
 		 * @param location signature location will write to signature.
 		 * @param contact contact info will write to signature.
-		 * @return 0 mean OK, others are failed.
+		 * @return 0 mean OK<br/>
+		 * -1: generate parameters error.<br/>
+		 * -2: it is not signature field, or field has already signed.<br/>
+		 * -3: invalid annotation data.<br/>
+		 * -4: save PDF file failed.<br/>
+		 * -5: cert file open failed.
 		 */
-		final public int SignField(DocForm form, String cert_file, String pswd, String reason, String location, String contact)
+		final public int SignField(DocForm form, String cert_file, String pswd, String name, String reason, String location, String contact)
 		{
-			return signAnnotField(page.hand, hand, form.hand, cert_file, pswd, reason, location, contact);
+			return signAnnotField(page.hand, hand, form.hand, cert_file, pswd, name, reason, location, contact);
 		}
 	}
 	public class Finder
@@ -1400,21 +1503,22 @@ public class Page
 
     static private native long getAnnotRef(long page, long annot);
     static private native boolean addAnnot(long page, long annot_ref);
+	static private native boolean addAnnot2(long page, long annot_ref, int index);
 
-	static private native int sign(long hand, long form, float[] box, String cert_file, String pswd, String reason, String location, String contact);
-	static private native int signAnnotField(long hand, long annot, long form, String cert_file, String pswd, String reason, String location, String contact);
+	static private native int sign(long hand, long form, float[] box, String cert_file, String pswd, String name, String reason, String location, String contact);
+	static private native int signAnnotField(long hand, long annot, long form, String cert_file, String pswd, String name, String reason, String location, String contact);
 
     static private native float[] getCropBox( long hand );
 	static private native float[] getMediaBox( long hand );
 	static private native void close( long hand );
 	static private native void renderPrepare( long hand, long dib );
-	static private native boolean render( long hand, long dib, long matrix, int quality ) throws Exception;
-	static private native boolean renderToBmp( long hand, Bitmap bitmap, long matrix, int quality ) throws Exception;
-	static private native boolean renderToBuf( long hand, int[] data, int w, int h, long matrix, int quality) throws Exception;
+	static private native boolean render( long hand, long dib, long matrix, int quality );
+	static private native boolean renderToBmp( long hand, Bitmap bitmap, long matrix, int quality );
+	static private native boolean renderToBuf( long hand, int[] data, int w, int h, long matrix, int quality);
 	static private native void renderCancel(long hand);
-	static private native boolean renderThumb(long hand, Bitmap bmp) throws Exception;
-	static private native boolean renderThumbToDIB( long hand, long dib) throws Exception;
-	static private native boolean renderThumbToBuf( long hand, int[] data, int w, int h) throws Exception;
+	static private native boolean renderThumb(long hand, Bitmap bmp);
+	static private native boolean renderThumbToDIB( long hand, long dib);
+	static private native boolean renderThumbToBuf( long hand, int[] data, int w, int h);
 	static private native boolean renderIsFinished(long hand);
 	static private native float reflowStart( long hand, float width, float scale, boolean enable_images );
 	static private native boolean reflow( long hand, long dib, float orgx, float orgy );
@@ -1426,10 +1530,11 @@ public class Page
 	static private native int reflowGetCharColor( long hand, int iparagraph, int ichar );
 	static private native int reflowGetCharUnicode( long hand, int iparagraph, int ichar );
 	static private native String reflowGetCharFont( long hand, int iparagraph, int ichar );
-	static private native void reflowGetCharRect( long hand, int iparagraph, int ichar, float rect[] );
+	static private native void reflowGetCharRect(long hand, int iparagraph, int ichar, float[] rect);
 	static private native String reflowGetText( long hand, int iparagraph1, int ichar1, int iparagraph2, int ichar2 );
 
     static private native boolean flate(long hand);
+	static private native boolean flateAnnot(long hand, long annot);
 	static private native void objsStart( long hand, boolean rtol );
 	static private native String objsGetString( long hand, int from, int to );
 	static private native int objsAlignWord( long hand, int from, int dir );
@@ -1490,10 +1595,12 @@ public class Page
 	static private native String getAnnotMovie( long hand, long annot );
 	static private native String getAnnotSound( long hand, long annot );
 	static private native String getAnnotAttachment( long hand, long annot );
+	//static private native String getAnnotRendition( long hand, long annot );
 	static private native boolean getAnnot3DData( long hand, long annot, String save_file );
 	static private native boolean getAnnotMovieData( long hand, long annot, String save_file );
-	static private native boolean getAnnotSoundData( long hand, long annot, int paras[], String save_file );
+	static private native boolean getAnnotSoundData(long hand, long annot, int[] paras, String save_file );
 	static private native boolean getAnnotAttachmentData( long hand, long annot, String save_file );
+	static private native boolean getAnnotRenditionData( long hand, long annot, String save_file );
 
 	static private native boolean addAnnotRichMedia(long page, String path_player, String path_content, int type, long dimage, float[] rect);
 	static private native int getAnnotRichMediaItemCount(long page, long annot);
@@ -1510,6 +1617,8 @@ public class Page
 	static private native boolean getAnnotEditTextRect( long hand, long annot, float[] rect );
 	static private native float getAnnotEditTextSize( long hand, long annot );
 	static private native boolean setAnnotEditTextSize( long hand, long annot, float fsize );
+	static private native int getAnnotEditTextAlign( long hand, long annot );
+	static private native boolean setAnnotEditTextAlign( long hand, long annot, int align );
 	static private native int getAnnotEditTextColor(long hand, long annot);
 	static private native boolean setAnnotEditTextColor(long hand, long annot, int color);
 	static private native String getAnnotEditText( long hand, long annot );
@@ -1518,11 +1627,13 @@ public class Page
     static private native boolean setAnnotEditFont( long hand, long annot, long font);
 	static private native int getAnnotComboItemCount( long hand, long annot );
 	static private native String getAnnotComboItem( long hand, long annot, int item );
+	static private native String getAnnotComboItemVal( long hand, long annot, int item );
 	static private native int getAnnotComboItemSel( long hand, long annot );
 	static private native boolean setAnnotComboItem( long hand, long annot, int item );
 	static private native boolean isAnnotListMultiSel(long hand, long annot);
 	static private native int getAnnotListItemCount( long hand, long annot );
 	static private native String getAnnotListItem( long hand, long annot, int item );
+	static private native String getAnnotListItemVal( long hand, long annot, int item );
 	static private native int[] getAnnotListSels( long hand, long annot );
 	static private native boolean setAnnotListSels( long hand, long annot, int[] items );
     static private native boolean removeAnnotListItem( long hand, long annot, int item);
@@ -1536,6 +1647,7 @@ public class Page
 	static private native boolean setAnnotCheckValue( long hand, long annot, boolean check );
 	static private native boolean setAnnotRadio( long hand, long annot );
 	static private native int getAnnotSignStatus( long hand, long annot );
+	static private native long getAnnotSign(long hand, long annot);
 	static private native boolean getAnnotReset( long hand, long annot );
 	static private native boolean setAnnotReset( long hand, long annot );
 	static private native String getAnnotSubmitTarget( long hand, long annot );
@@ -1546,6 +1658,7 @@ public class Page
 	static private native boolean setAnnotStrokeColor( long hand, long annot, int color );
 	static private native float getAnnotStrokeWidth( long hand, long annot );
 	static private native boolean setAnnotStrokeWidth( long hand, long annot, float width );
+	static private native float[] getAnnotStrokeDash(long hand, long annot);
 	static private native boolean setAnnotStrokeDash(long hand, long annot, float[] dash);
 	static private native long getAnnotInkPath( long hand, long annot );
 	static private native boolean setAnnotInkPath( long hand, long annot, long path );
@@ -1554,6 +1667,9 @@ public class Page
 	static private native long getAnnotPolylinePath( long hand, long annot );
 	static private native boolean setAnnotPolylinePath( long hand, long annot, long path );
 	static private native float[] getAnnotLinePoint(long hand, long annot, int idx);
+	static private native int getAnnotLineStyle(long page, long annot);
+	static private native boolean setAnnotLineStyle(long page, long annot, int style);
+
 	static private native boolean setAnnotIcon( long hand, long annot, int icon );
 	static private native int getAnnotIcon( long hand, long annot );
 	static private native boolean setAnnotIcon2( long hand, long annot, String name, long content );
@@ -1636,6 +1752,10 @@ public class Page
     {
         return addAnnot(hand, ref);
     }
+	final public boolean AddAnnot(long ref, int index)
+	{
+		return addAnnot2(hand, ref, index);
+	}
 
 	/**
 	 * Sign and save the PDF file.<br/>
@@ -1644,31 +1764,37 @@ public class Page
 	 * @param rect rectangle for sign field
 	 * @param cert_file a cert file like .p12 or .pfx file, DER encoded cert file.
 	 * @param pswd password to open cert file.
+	 * @param name signer name string.
 	 * @param reason sign reason will write to signature.
 	 * @param location signature location will write to signature.
 	 * @param contact contact info will write to signature.
-	 * @return 0 mean OK, others are failed.
+	 * @return 0 mean OK<br/>
+	 * -1: generate parameters error.<br/>
+	 * -2: it is not signature field, or field has already signed.<br/>
+	 * -3: invalid annotation data.<br/>
+	 * -4: save PDF file failed.<br/>
+	 * -5: cert file open failed.
 	 */
-    public int Sign(Document.DocForm form, float[] rect, String cert_file, String pswd, String reason, String location, String contact)
+    public int Sign(Document.DocForm form, float[] rect, String cert_file, String pswd, String name, String reason, String location, String contact)
 	{
 		//int sign(long hand, long form, float[] box, String cert_file, String pswd, String reason, String location, String contact);
-		return sign(hand, form.hand, rect, cert_file, pswd, reason, location, contact);
+		return sign(hand, form.hand, rect, cert_file, pswd, name, reason, location, contact);
 	}
 	/**
 	 * Close page object and free memory.
 	 */
-    final public void Close()
+    public void Close()
 	{
-			long hand_page = hand;
-			hand = 0;
-			if(m_doc != null)
-            {
-                if(m_doc.hand_val != 0)
-                    close( hand_page );
-                else
-                    Log.e("Bad Coding", "Document object closed, but Page object not closed, will cause memory leaks.");
-                m_doc = null;
-            }
+		long hand_page = hand;
+		hand = 0;
+		if(m_doc != null)
+		{
+			if(m_doc.hand_val != 0)
+				close( hand_page );
+			else
+				Log.e("Bad Coding", "Document object closed, but Page object not closed, will cause memory leaks.");
+			m_doc = null;
+		}
 	}
 	/**
 	 * prepare to render. it reset dib pixels to white value, and reset page status.<br/>
@@ -1702,7 +1828,7 @@ public class Page
 	{
         if(dib == null || mat == null) return  false;
         try {
-            return render(hand, dib.hand, mat.hand, Global.render_mode);
+            return render(hand, dib.hand, mat.hand, Global.g_render_quality);
         }
         catch (Exception e)
         {
@@ -1721,7 +1847,7 @@ public class Page
 	{
         if(bitmap == null || mat == null) return  false;
         try {
-            return renderToBmp(hand, bitmap, mat.hand, Global.render_mode);
+            return renderToBmp(hand, bitmap, mat.hand, Global.g_render_quality);
         }
         catch(Exception e)
         {
@@ -1742,7 +1868,7 @@ public class Page
 	{
         if(data == null || mat == null) return  false;
         try {
-            return renderToBuf(hand, data, w, h, mat.hand, Global.render_mode);
+            return renderToBuf(hand, data, w, h, mat.hand, Global.g_render_quality);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -1834,7 +1960,7 @@ public class Page
 	 */
     final public void ObjsStart()
 	{
-		objsStart( hand, Global.selRTOL );
+		objsStart( hand, Global.g_sel_rtol );
 	}
 	/**
 	 * get string from range. this can be invoked after ObjsStart
@@ -2198,10 +2324,10 @@ public class Page
 	public boolean AddAnnotMarkup( Matrix mat, float[] rects, int type )
 	{
         if(mat == null) return false;
-        int color = Global.highlight_color;
-        if( type == 1 ) color = Global.underline_color;
-        if( type == 2 ) color = Global.strikeout_color;
-        if( type == 4 ) color = Global.squiggle_color;
+        int color = Global.g_annot_highlight_clr;
+        if( type == 1 ) color = Global.g_annot_underline_clr;
+        if( type == 2 ) color = Global.g_annot_strikeout_clr;
+        if( type == 4 ) color = Global.g_annot_squiggle_clr;
 		return addAnnotMarkup( hand, mat.hand, rects, color, type );
 	}
 	/**
@@ -2361,10 +2487,10 @@ public class Page
 	 */
 	public boolean AddAnnotMarkup( int cindex1, int cindex2, int type )
 	{
-		int color = Global.highlight_color;
-		if( type == 1 ) color = Global.underline_color;
-		if( type == 2 ) color = Global.strikeout_color;
-		if( type == 4 ) color = Global.squiggle_color;
+		int color = Global.g_annot_highlight_clr;
+		if( type == 1 ) color = Global.g_annot_underline_clr;
+		if( type == 2 ) color = Global.g_annot_strikeout_clr;
+		if( type == 4 ) color = Global.g_annot_squiggle_clr;
 		return addAnnotMarkup2( hand, cindex1, cindex2, color, type );
 	}
 	/**
@@ -2575,7 +2701,7 @@ public class Page
 	 * @param ichar char index range[0, ReflowGetCharCount()]
 	 * @param rect output: 4 element as [left, top, right, bottom].
 	 */
-    final public void ReflowGetCharRect( int iparagraph, int ichar, float rect[] )
+    final public void ReflowGetCharRect(int iparagraph, int ichar, float[] rect)
 	{
 		if( ichar < 0 || ichar >= ReflowGetCharCount(iparagraph) ) return;
 		reflowGetCharRect( hand, iparagraph, ichar, rect );
@@ -2707,7 +2833,7 @@ public class Page
 	 * @param data data returned from Annotation.Export()
 	 * @return true or false.
 	 */
-    public boolean ImportAnnot(float rect[], byte data[])
+    public boolean ImportAnnot(float[] rect, byte[] data)
 	{
 		return importAnnot(hand, rect, data);
 	}

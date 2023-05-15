@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 LOCAL_EXPORT_LDLIBS := -lz
 LOCAL_MODULE    := snmp
 LOCAL_LDLIBS    := -L$(SYSROOT)/usr/lib -llog 
-LOCAL_CFLAGS += -std=c99
+# LOCAL_CFLAGS += -std=c99
 LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH)/$(SHARED_PATH)/net-snmp/include	\
 	$(LOCAL_PATH)/$(SHARED_PATH)/net-snmp/src \

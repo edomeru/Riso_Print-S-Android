@@ -1,17 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 33
+    buildToolsVersion '33.0.0'
 
     defaultConfig {
         applicationId "jp.alinkgroup.snmpdiscoveryapp"
-        minSdkVersion 14
-        targetSdkVersion 26
+        minSdkVersion 28
+        targetSdkVersion 33
 
-        ndk {
-            moduleName "snmp"
-            abiFilters 'arm64-v8a', 'armeabi-v7a'
+        ndkVersion '25.1.8937393'
+        externalNativeBuild {
+            ndk {
+                moduleName "snmp"
+                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            }
         }
     }
 
@@ -26,8 +29,14 @@ android {
             path file('src/main/jni/Android.mk')
         }
     }
+
+//    sourceSets.main {
+//        jniLibs.srcDir 'libs'
+//        jni.srcDirs = [] //disable automatic ndk-build call
+//    }
+
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:26.1.0'
+
 }
