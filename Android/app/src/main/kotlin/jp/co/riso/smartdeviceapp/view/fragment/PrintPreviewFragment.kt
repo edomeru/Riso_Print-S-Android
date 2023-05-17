@@ -717,12 +717,12 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             // When MenuFragment gets destroyed due to config change such as changing permissions
             // from Settings, the state gets reset to default as well.
             // Since we know we are in PrintPreview, set the current state to PrintPreview
-            menuFragment.mState = MenuFragment.STATE_PRINTPREVIEW
-            ft.replace(R.id.leftLayout, menuFragment, "fragment_menu")
+            menuFragment.mState = STATE_PRINTPREVIEW
+            ft.replace(R.id.leftLayout, menuFragment, menuFragment.tag)
             ft.commit()
         }
         menuFragment.hasPdfFile = false
-        menuFragment.setCurrentState(MenuFragment.STATE_HOME)
+        menuFragment.setCurrentState(STATE_HOME)
     }
     // ================================================================================
     // Page Control functions
@@ -969,47 +969,48 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     override fun processMessage(message: Message?) {
         val id = message!!.what
         if (id == R.id.view_id_print_button) {
-            _pauseableHandler!!.pause()
-            val printerManager = PrinterManager.getInstance(appContext!!)
-            if (printerManager!!.defaultPrinter == PrinterManager.EMPTY_ID) {
-                val titleMsg = resources.getString(R.string.ids_lbl_print_settings)
-                val strMsg = getString(R.string.ids_err_msg_no_selected_printer)
-                val btnMsg = getString(R.string.ids_lbl_ok)
-                val fragment = newInstance(titleMsg, strMsg, btnMsg)
-                displayDialog(requireActivity(), TAG_MESSAGE_DIALOG, fragment)
-                _pauseableHandler!!.resume()
-                return
-            }
-            if (requireActivity() is MainActivity) {
-                val activity = requireActivity() as MainActivity
-                val v = message.obj as View
-                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                    val fm = activity.supportFragmentManager
-                    setIconState(v.id, true)
-
-                    // Always make new
-                    val fragment: PrintSettingsFragment? // (PrintSettingsFragment)
-                    // fm.findFragmentByTag(FRAGMENT_TAG_PRINT_SETTINGS);
-                    val ft = fm.beginTransaction()
-                    fragment = PrintSettingsFragment()
-                    ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINT_SETTINGS)
-                    ft.commit()
-                    fragment.setPrinterId(_printerId)
-                    fragment.setPdfPath(_pdfManager!!.path)
-                    fragment.setPDFisLandscape(_pdfManager!!.isPDFLandscape)
-                    fragment.setPrintSettings(_printSettings)
-                    fragment.setFragmentForPrinting(true)
-                    fragment.setTargetFragmentPrintPreview()
-                    setResultListenerForPrintSettings()
-                    activity.openDrawer(Gravity.RIGHT, isTablet)
-                } else {
-                    activity.closeDrawers()
-                }
-            }
+            openPrintSettings()
         } else if (id == R.id.menu_id_action_button) {
             _pauseableHandler!!.pause()
             val activity = requireActivity() as MainActivity
             activity.openDrawer(Gravity.LEFT)
+        }
+    }
+
+    fun openPrintSettings() {
+        _pauseableHandler!!.pause()
+        val printerManager = PrinterManager.getInstance(appContext!!)
+        if (printerManager!!.defaultPrinter == PrinterManager.EMPTY_ID) {
+            val titleMsg = resources.getString(R.string.ids_lbl_print_settings)
+            val strMsg = getString(R.string.ids_err_msg_no_selected_printer)
+            val btnMsg = getString(R.string.ids_lbl_ok)
+            val fragment = newInstance(titleMsg, strMsg, btnMsg)
+            displayDialog(requireActivity(), TAG_MESSAGE_DIALOG, fragment)
+            _pauseableHandler!!.resume()
+            return
+        }
+        if (requireActivity() is MainActivity) {
+            val activity = requireActivity() as MainActivity
+            if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                val fm = activity.supportFragmentManager
+                setIconState(R.id.view_id_print_button, true)
+
+                // Always make new
+                val fragment = PrintSettingsFragment()
+                val ft = fm.beginTransaction()
+                ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINT_SETTINGS)
+                ft.commit()
+                fragment.setPrinterId(_printerId)
+                fragment.setPdfPath(_pdfManager!!.path)
+                fragment.setPDFisLandscape(_pdfManager!!.isPDFLandscape)
+                fragment.setPrintSettings(_printSettings)
+                fragment.setFragmentForPrinting(true)
+                fragment.setTargetFragmentPrintPreview()
+                setResultListenerForPrintSettings()
+                activity.openDrawer(Gravity.RIGHT, isTablet)
+            } else {
+                activity.closeDrawers()
+            }
         }
     }
 

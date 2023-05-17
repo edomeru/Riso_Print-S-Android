@@ -117,12 +117,12 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
         if (savedInstanceState == null) {
             val fm = supportFragmentManager
             val ft = fm.beginTransaction()
-
-            if (intent != null && (intent.data != null || intent.clipData != null)) {
-                ft.add(R.id.mainLayout, PrintPreviewFragment(), MenuFragment.FRAGMENT_TAGS[MenuFragment.STATE_PRINTPREVIEW])
+            val fragment = if (intent != null && (intent.data != null || intent.clipData != null)) {
+                PrintPreviewFragment()
             } else {
-                ft.add(R.id.mainLayout, HomeFragment(), MenuFragment.FRAGMENT_TAGS[MenuFragment.STATE_HOME])
+                HomeFragment()
             }
+            ft.add(R.id.mainLayout, fragment, fragment.tag)
 
             menuFragment = MenuFragment()
             ft.add(R.id.leftLayout, menuFragment!!)
@@ -254,18 +254,62 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        val layoutId =
+            when {
+                _drawerLayout!!.isDrawerOpen(Gravity.RIGHT) -> R.id.rightLayout
+                _drawerLayout!!.isDrawerOpen(Gravity.LEFT) -> R.id.leftLayout
+                else -> R.id.mainLayout
+            }
+        val fragment = supportFragmentManager.findFragmentById(layoutId) as BaseFragment?
+
         return when (keyCode) {
             KeyEvent.KEYCODE_ENTER -> {
-                val layoutId =
-                    when {
-                        _drawerLayout!!.isDrawerOpen(Gravity.RIGHT) -> R.id.rightLayout
-                        _drawerLayout!!.isDrawerOpen(
-                            Gravity.LEFT
-                        ) -> R.id.leftLayout
-                        else -> R.id.mainLayout
-                    }
-                val fragment = supportFragmentManager.findFragmentById(layoutId) as BaseFragment?
                 fragment!!.onKeyUp(keyCode)
+            }
+            // Shortcut key : Open File CTRL + O
+            KeyEvent.KEYCODE_O -> {
+                if (event.isCtrlPressed) {
+                    fragment!!.switchToFragment(fragment.STATE_HOME)
+                    fragment.onKeyUp(keyCode)
+                } else {
+                    super.onKeyUp(keyCode, event)
+                }
+            }
+            // Shortcut key : Help F1, About SHIFT + F1
+            KeyEvent.KEYCODE_F1 -> {
+                if (event.isShiftPressed) {
+                    fragment!!.switchToFragment(fragment.STATE_LEGAL)
+                } else {
+                    fragment!!.switchToFragment(fragment.STATE_HELP)
+                }
+                fragment.onKeyUp(keyCode)
+            }
+            // Shortcut key : Print CTRL + P
+            KeyEvent.KEYCODE_P -> {
+                if (event.isCtrlPressed && fragment!! is PrintPreviewFragment) {
+                    (fragment as PrintPreviewFragment).openPrintSettings()
+                    fragment.onKeyUp(keyCode)
+                } else {
+                    super.onKeyUp(keyCode, event)
+                }
+            }
+            // Shortcut key : Quit CTRL + Q or ALT + Q
+            KeyEvent.KEYCODE_Q -> {
+                if (event.isCtrlPressed || event.isAltPressed) {
+                    finishAndRemoveTask()
+                    fragment!!.onKeyUp(keyCode)
+                } else {
+                    super.onKeyUp(keyCode, event)
+                }
+            }
+            // Shortcut key : Quit ALT + F4
+            KeyEvent.KEYCODE_F4 -> {
+                if (event.isAltPressed) {
+                    finishAndRemoveTask()
+                    fragment!!.onKeyUp(keyCode)
+                } else {
+                    super.onKeyUp(keyCode, event)
+                }
             }
             else -> super.onKeyUp(keyCode, event)
         }

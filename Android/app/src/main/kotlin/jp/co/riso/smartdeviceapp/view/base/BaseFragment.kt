@@ -8,17 +8,19 @@
 package jp.co.riso.smartdeviceapp.view.base
 
 import android.app.ActionBar
-import android.view.View.OnLayoutChangeListener
 import android.os.Bundle
 import android.view.*
-import jp.co.riso.smartprint.R
+import android.view.View.OnLayoutChangeListener
 import android.widget.FrameLayout
-import jp.co.riso.android.util.AppUtils
-import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.view.MainActivity
 import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import jp.co.riso.android.util.AppUtils
 import jp.co.riso.android.util.Logger
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.view.MainActivity
+import jp.co.riso.smartdeviceapp.view.fragment.*
+import jp.co.riso.smartprint.R
 
 /**
  * @class BaseFragment
@@ -30,6 +32,38 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
     private var _iconState = false
     private var _iconId = 0
     private var _iconIdToRestore = 0
+
+    val STATE_HOME = 0          // Home Screen
+    val STATE_PRINTPREVIEW = 1  // Print Preview Screen
+    val STATE_PRINTERS = 2      // Printers Screen
+    val STATE_PRINTJOBS = 3     // Print Jobs Screen
+    val STATE_SETTINGS = 4      // Settings Screen
+    val STATE_HELP = 5          // Help Screen
+    val STATE_LEGAL = 6         // Legal Screen
+
+    // Menu Fragment key state
+    val KEY_STATE = "MenuFragment_State"
+
+    @JvmField
+    var MENU_ITEMS = intArrayOf(
+        R.id.homeButton,
+        R.id.printPreviewButton,
+        R.id.printersButton,
+        R.id.printJobsButton,
+        R.id.settingsButton,
+        R.id.helpButton,
+        R.id.legalButton
+    )
+
+    var FRAGMENT_TAGS = arrayOf(
+        "fragment_home",
+        "fragment_printpreview",
+        "fragment_printers",
+        "fragment_printjobs",
+        "fragment_settings",
+        "fragment_help",
+        "fragment_legal"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Logger.logStartTime(activity, this.javaClass, "Fragment Instance")
@@ -276,6 +310,43 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
      */
     open fun onKeyUp(keyCode: Int): Boolean {
         return false
+    }
+
+    /**
+     * @brief Switch to Home Screen.
+     */
+    fun switchToFragment(state: Int) {
+        val fm = parentFragmentManager
+        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        val ft = fm.beginTransaction()
+        val container = fm.findFragmentById(R.id.mainLayout)
+        if (container != null) {
+            if (container is PrintPreviewFragment || container is PrintersFragment || container is PrintJobsFragment) {
+                ft.detach(container)
+            } else {
+                ft.remove(container)
+            }
+        }
+        val tag = FRAGMENT_TAGS[state]
+
+        // Check retained fragments
+        var fragment = fm.findFragmentByTag(tag) as BaseFragment?
+        if (fragment == null) {
+            when (state) {
+                STATE_HOME -> fragment = HomeFragment()
+                STATE_PRINTPREVIEW -> fragment = PrintPreviewFragment()
+                STATE_PRINTERS -> fragment = PrintersFragment()
+                STATE_PRINTJOBS -> fragment = PrintJobsFragment()
+                STATE_SETTINGS -> fragment = SettingsFragment()
+                STATE_HELP -> fragment = HelpFragment()
+                STATE_LEGAL -> fragment = LegalFragment()
+            }
+            ft.add(R.id.mainLayout, fragment!!, tag)
+        } else {
+            ft.attach(fragment)
+        }
+        setIconState(R.id.menu_id_action_button, true)
+        ft.commit()
     }
 
     // ================================================================================
