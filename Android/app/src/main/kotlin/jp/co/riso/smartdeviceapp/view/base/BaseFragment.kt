@@ -313,7 +313,9 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
     }
 
     /**
-     * @brief Switch to Home Screen.
+     * @brief Switch to Fragment.
+     *
+     * @param state Fragment to switch to
      */
     fun switchToFragment(state: Int) {
         val fm = parentFragmentManager
@@ -345,7 +347,7 @@ abstract class BaseFragment() : DialogFragment(), OnLayoutChangeListener, View.O
         } else {
             ft.attach(fragment)
         }
-        setIconState(R.id.menu_id_action_button, true)
+        //setIconState(R.id.menu_id_action_button, true)
         ft.commit()
     }
 

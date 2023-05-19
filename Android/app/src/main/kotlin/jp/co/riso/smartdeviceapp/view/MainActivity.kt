@@ -261,6 +261,7 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
                 else -> R.id.mainLayout
             }
         val fragment = supportFragmentManager.findFragmentById(layoutId) as BaseFragment?
+        val menuFragment = supportFragmentManager.findFragmentById(R.id.leftLayout) as MenuFragment?
 
         return when (keyCode) {
             KeyEvent.KEYCODE_ENTER -> {
@@ -269,8 +270,8 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             // Shortcut key : Open File CTRL + O
             KeyEvent.KEYCODE_O -> {
                 if (event.isCtrlPressed) {
-                    fragment!!.switchToFragment(fragment.STATE_HOME)
-                    fragment.onKeyUp(keyCode)
+                    menuFragment!!.setCurrentState(menuFragment.STATE_HOME)
+                    fragment!!.onKeyUp(keyCode)
                 } else {
                     super.onKeyUp(keyCode, event)
                 }
@@ -278,11 +279,11 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             // Shortcut key : Help F1, About SHIFT + F1
             KeyEvent.KEYCODE_F1 -> {
                 if (event.isShiftPressed) {
-                    fragment!!.switchToFragment(fragment.STATE_LEGAL)
+                    menuFragment!!.setCurrentState(menuFragment.STATE_LEGAL)
                 } else {
-                    fragment!!.switchToFragment(fragment.STATE_HELP)
+                    menuFragment!!.setCurrentState(menuFragment.STATE_HELP)
                 }
-                fragment.onKeyUp(keyCode)
+                fragment!!.onKeyUp(keyCode)
             }
             // Shortcut key : Print CTRL + P
             KeyEvent.KEYCODE_P -> {
