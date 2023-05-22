@@ -717,12 +717,12 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             // When MenuFragment gets destroyed due to config change such as changing permissions
             // from Settings, the state gets reset to default as well.
             // Since we know we are in PrintPreview, set the current state to PrintPreview
-            menuFragment.mState = STATE_PRINTPREVIEW
+            menuFragment.mState = MenuFragment.STATE_PRINTPREVIEW
             ft.replace(R.id.leftLayout, menuFragment, menuFragment.tag)
             ft.commit()
         }
         menuFragment.hasPdfFile = false
-        menuFragment.setCurrentState(STATE_HOME)
+        menuFragment.setCurrentState(MenuFragment.STATE_HOME)
     }
     // ================================================================================
     // Page Control functions
@@ -969,7 +969,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     override fun processMessage(message: Message?) {
         val id = message!!.what
         if (id == R.id.view_id_print_button) {
-            openPrintSettings()
+            togglePrintSettingsDrawer()
         } else if (id == R.id.menu_id_action_button) {
             _pauseableHandler!!.pause()
             val activity = requireActivity() as MainActivity
@@ -977,7 +977,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         }
     }
 
-    fun openPrintSettings() {
+    fun togglePrintSettingsDrawer() {
         _pauseableHandler!!.pause()
         val printerManager = PrinterManager.getInstance(appContext!!)
         if (printerManager!!.defaultPrinter == PrinterManager.EMPTY_ID) {

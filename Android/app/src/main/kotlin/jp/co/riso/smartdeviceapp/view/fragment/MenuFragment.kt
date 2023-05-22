@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager.Companion.getSandboxPDFName
 import jp.co.riso.smartdeviceapp.view.MainActivity
@@ -115,6 +116,44 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
         }
     }
 
+    /**
+     * @brief Switch to fragment.
+     *
+     * @param state Fragment state
+     */
+    fun switchToFragment(state: Int) {
+        val fm = parentFragmentManager
+        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        val ft = fm.beginTransaction()
+        val container = fm.findFragmentById(R.id.mainLayout)
+        if (container != null) {
+            if (container is PrintPreviewFragment || container is PrintersFragment || container is PrintJobsFragment) {
+                ft.detach(container)
+            } else {
+                ft.remove(container)
+            }
+        }
+        val tag = FRAGMENT_TAGS[state]
+
+        // Check retained fragments
+        var fragment = fm.findFragmentByTag(tag) as BaseFragment?
+        if (fragment == null) {
+            when (state) {
+                STATE_HOME -> fragment = HomeFragment()
+                STATE_PRINTPREVIEW -> fragment = PrintPreviewFragment()
+                STATE_PRINTERS -> fragment = PrintersFragment()
+                STATE_PRINTJOBS -> fragment = PrintJobsFragment()
+                STATE_SETTINGS -> fragment = SettingsFragment()
+                STATE_HELP -> fragment = HelpFragment()
+                STATE_LEGAL -> fragment = LegalFragment()
+            }
+            ft.add(R.id.mainLayout, fragment!!, tag)
+        } else {
+            ft.attach(fragment)
+        }
+        ft.commit()
+    }
+
     // ================================================================================
     // INTERFACE - View.OnClickListener
     // ================================================================================
@@ -142,5 +181,50 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
                 setCurrentState(STATE_LEGAL)
             }
         }
+    }
+
+    companion object {
+        /// Print Preview Screen
+        const val STATE_HOME = 0
+
+        /// Print Preview Screen
+        const val STATE_PRINTPREVIEW = 1
+
+        /// Printers Screen
+        const val STATE_PRINTERS = 2
+
+        /// Print Jobs Screen
+        const val STATE_PRINTJOBS = 3
+
+        /// Settings Screen
+        const val STATE_SETTINGS = 4
+
+        /// Help Screen
+        const val STATE_HELP = 5
+
+        /// Legal Screen
+        const val STATE_LEGAL = 6
+
+        /// Menu Fragment key state
+        const val KEY_STATE = "MenuFragment_State"
+        @JvmField
+        var MENU_ITEMS = intArrayOf(
+            R.id.homeButton,
+            R.id.printPreviewButton,
+            R.id.printersButton,
+            R.id.printJobsButton,
+            R.id.settingsButton,
+            R.id.helpButton,
+            R.id.legalButton
+        )
+        var FRAGMENT_TAGS = arrayOf(
+            "fragment_home",
+            "fragment_printpreview",
+            "fragment_printers",
+            "fragment_printjobs",
+            "fragment_settings",
+            "fragment_help",
+            "fragment_legal"
+        )
     }
 }

@@ -34,6 +34,7 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment
 import jp.co.riso.smartdeviceapp.view.fragment.MenuFragment
 import jp.co.riso.smartdeviceapp.view.fragment.PrintPreviewFragment
+import jp.co.riso.smartdeviceapp.view.fragment.PrintSettingsFragment
 import jp.co.riso.smartdeviceapp.view.widget.SDADrawerLayout
 import jp.co.riso.smartprint.R
 import java.io.File
@@ -270,7 +271,7 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             // Shortcut key : Open File CTRL + O
             KeyEvent.KEYCODE_O -> {
                 if (event.isCtrlPressed) {
-                    menuFragment!!.setCurrentState(menuFragment.STATE_HOME)
+                    menuFragment!!.setCurrentState(MenuFragment.STATE_HOME)
                     fragment!!.onKeyUp(keyCode)
                 } else {
                     super.onKeyUp(keyCode, event)
@@ -279,16 +280,21 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             // Shortcut key : Help F1, About SHIFT + F1
             KeyEvent.KEYCODE_F1 -> {
                 if (event.isShiftPressed) {
-                    menuFragment!!.setCurrentState(menuFragment.STATE_LEGAL)
+                    menuFragment!!.setCurrentState(MenuFragment.STATE_LEGAL)
                 } else {
-                    menuFragment!!.setCurrentState(menuFragment.STATE_HELP)
+                    menuFragment!!.setCurrentState(MenuFragment.STATE_HELP)
                 }
                 fragment!!.onKeyUp(keyCode)
             }
             // Shortcut key : Print CTRL + P
             KeyEvent.KEYCODE_P -> {
-                if (event.isCtrlPressed && fragment!! is PrintPreviewFragment) {
-                    (fragment as PrintPreviewFragment).openPrintSettings()
+                if (event.isCtrlPressed) {
+                    if (fragment!! is PrintPreviewFragment) {
+                        (fragment as PrintPreviewFragment).togglePrintSettingsDrawer()
+                    } else if (fragment is PrintSettingsFragment) {
+                        val printPreview = supportFragmentManager.findFragmentById(R.id.mainLayout) as PrintPreviewFragment
+                        printPreview.togglePrintSettingsDrawer()
+                    }
                     fragment.onKeyUp(keyCode)
                 } else {
                     super.onKeyUp(keyCode, event)
