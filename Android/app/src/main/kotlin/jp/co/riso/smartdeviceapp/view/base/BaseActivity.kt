@@ -14,9 +14,7 @@ import android.os.Build
 import android.os.Handler
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import android.os.Looper
-import android.view.View
-import android.view.WindowInsets
-import android.view.WindowInsetsController
+import android.view.*
 import androidx.fragment.app.FragmentActivity
 import jp.co.riso.smartprint.R
 import jp.co.riso.android.util.AppUtils
@@ -188,4 +186,9 @@ abstract class BaseActivity : FragmentActivity() {
             _displayManager!!.unregisterDisplayListener(_displayListener)
         }
     }
+}
+
+// Extension function to check if CTRL key is pressed
+fun MotionEvent.isCtrlPressed(): Boolean {
+    return (metaState and KeyEvent.META_CTRL_ON) != 0
 }
