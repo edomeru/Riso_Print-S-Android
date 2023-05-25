@@ -19,6 +19,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.util.LruCache
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.widget.LinearLayout
@@ -56,6 +57,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+import jp.co.riso.smartdeviceapp.view.base.isCtrlPressed
 import jp.co.riso.smartdeviceapp.view.preview.PreviewControlsListener
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartdeviceapp.viewmodel.PrintSettingsViewModel
@@ -358,6 +360,41 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (_pdfManager!!.isInitialized) {
             _printPreviewView!!.refreshView()
             setTitle(view, _pdfManager!!.fileName)
+        }
+
+        /* ALK70 Support - Mouse: Advanced pointer support
+         * Turn page (Scroll wheel), Zoom (CTRL + Scroll wheel)
+         */
+        _printPreviewView!!.setOnGenericMotionListener { _, event ->
+            if (event.action == MotionEvent.ACTION_SCROLL) {
+                val scrollDelta = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
+
+                if (event.isCtrlPressed()) {
+                    // Zoom (CTRL + Scroll wheel)
+                    if (scrollDelta > 0) {
+                        // Scroll is upward
+                        _printPreviewView!!.zoomIn()
+                    } else if (scrollDelta < 0) {
+                        // Scroll is downward
+                        _printPreviewView!!.zoomOut()
+                    }
+                } else {
+                    // Turn page (Scroll wheel)
+                    if (scrollDelta > 0) {
+                        // Scroll is upward
+                        _seekBar!!.progress = _seekBar!!.progress + 1
+                        _printPreviewView!!.currentPage = _seekBar!!.progress
+                        updatePageLabel()
+                    } else if (scrollDelta < 0) {
+                        // Scroll is downward
+                        _seekBar!!.progress = _seekBar!!.progress - 1
+                        _printPreviewView!!.currentPage = _seekBar!!.progress
+                        updatePageLabel()
+                    }
+                }
+                return@setOnGenericMotionListener true
+            }
+            false
         }
 
         _openInView = view.findViewById(R.id.openInView)
