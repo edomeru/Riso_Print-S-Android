@@ -121,7 +121,7 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
      *
      * @param state Fragment state
      */
-    fun switchToFragment(state: Int) {
+    private fun switchToFragment(state: Int) {
         val fm = parentFragmentManager
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         val ft = fm.beginTransaction()
