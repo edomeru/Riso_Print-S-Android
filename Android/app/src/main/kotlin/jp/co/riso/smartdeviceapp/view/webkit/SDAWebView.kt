@@ -6,11 +6,13 @@
  */
 package jp.co.riso.smartdeviceapp.view.webkit
 
-import kotlin.jvm.JvmOverloads
-import android.webkit.WebView
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.view.InputDevice
+import android.view.MotionEvent
+import android.webkit.WebView
+import jp.co.riso.smartdeviceapp.view.base.isCtrlPressed
 
 /**
  * @class SDAWebView
@@ -24,6 +26,11 @@ class SDAWebView @JvmOverloads constructor(
 ) : WebView(
     context!!, attrs, defStyle
 ) {
+    // Variables to track touch events
+    private var isPanInProgress = false
+    private var lastTouchX = 0f
+    private var lastTouchY = 0f
+
     /**
      * @brief Initializes the WebView with the standard settings
      */
@@ -32,6 +39,68 @@ class SDAWebView @JvmOverloads constructor(
             setSettings()
             setLook()
         }
+    }
+
+    /* ALK70 Support - Mouse: Advanced pointer support
+     * Zoom (CTRL + Scroll wheel)
+     */
+    override fun onGenericMotionEvent(event: MotionEvent?): Boolean {
+        if (event!!.action == MotionEvent.ACTION_SCROLL && event.isCtrlPressed()) {
+            val scrollDelta = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
+
+            if (scrollDelta > 0) {
+                // Scroll is upward
+                zoomIn()
+            } else if (scrollDelta < 0) {
+                // Scroll is downward
+                zoomOut()
+            }
+            return true
+        }
+        return super.onGenericMotionEvent(event)
+    }
+
+    /* ALK70 Support - Mouse: Advanced pointer support
+     * Pan and scroll using mouse and trackpad
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+         // Check if using mouse/trackpad
+        if (event!!.isFromSource(InputDevice.SOURCE_MOUSE)) {
+            // Detect if the user is panning the WebView.
+            if (event.pointerCount == 1) {
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        // Touch down event
+                        isPanInProgress = true
+                        lastTouchX = event.x
+                        lastTouchY = event.y
+                        return true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        // Touch move event
+                        if (isPanInProgress) {
+                            val deltaX = event.x - lastTouchX
+                            val deltaY = event.y - lastTouchY
+
+                            // Perform panning by adjusting the scroll position
+                            scrollBy(-deltaX.toInt(), -deltaY.toInt())
+
+                            lastTouchX = event.x
+                            lastTouchY = event.y
+                        }
+                        return true
+                    }
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        // Touch up or cancel event
+                        isPanInProgress = false
+                        return true
+                    }
+                    else -> {}
+                }
+            }
+        }
+        return super.onTouchEvent(event)
     }
 
     /**

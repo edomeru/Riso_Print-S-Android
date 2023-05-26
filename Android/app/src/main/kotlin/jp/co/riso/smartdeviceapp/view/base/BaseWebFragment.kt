@@ -9,7 +9,6 @@ package jp.co.riso.smartdeviceapp.view.base
 
 import android.os.Build
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
 import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
@@ -35,22 +34,6 @@ abstract class BaseWebFragment : BaseFragment() {
             _webView!!.restoreState(savedInstanceState)
         } else {
             _webView!!.loadUrl(urlString)
-        }
-
-        _webView!!.setOnGenericMotionListener { _, event ->
-            if (event.action == MotionEvent.ACTION_SCROLL && event.isCtrlPressed()) {
-                val scrollDelta = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
-
-                if (scrollDelta > 0) {
-                    // Scroll is upward
-                    _webView!!.zoomIn()
-                } else if (scrollDelta < 0) {
-                    // Scroll is downward
-                    _webView!!.zoomOut()
-                }
-                return@setOnGenericMotionListener true
-            }
-            false
         }
     }
 

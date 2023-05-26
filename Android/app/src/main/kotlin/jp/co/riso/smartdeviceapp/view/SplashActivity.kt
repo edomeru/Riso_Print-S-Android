@@ -17,7 +17,6 @@ import android.os.*
 import android.provider.Settings
 import android.util.AndroidRuntimeException
 import android.view.ContextThemeWrapper
-import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -40,7 +39,6 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity
-import jp.co.riso.smartdeviceapp.view.base.isCtrlPressed
 import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
 import jp.co.riso.smartprint.R
 import java.io.File
@@ -144,22 +142,6 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             textView.setPadding(18, 0, 0, 0)
             val context: Context = this
             _webView = findViewById(R.id.contentWebView)
-
-            _webView!!.setOnGenericMotionListener { _, event ->
-                if (event.action == MotionEvent.ACTION_SCROLL && event.isCtrlPressed()) {
-                    val scrollDelta = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
-
-                    if (scrollDelta > 0) {
-                        // Scroll is upward
-                        _webView!!.zoomIn()
-                    } else if (scrollDelta < 0) {
-                        // Scroll is downward
-                        _webView!!.zoomOut()
-                    }
-                    return@setOnGenericMotionListener true
-                }
-                false
-            }
 
             _webView?.apply {
                 webViewClient = object : WebViewClient() {
