@@ -142,6 +142,7 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             textView.setPadding(18, 0, 0, 0)
             val context: Context = this
             _webView = findViewById(R.id.contentWebView)
+
             _webView?.apply {
                 webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {

@@ -151,7 +151,6 @@ class MenuFragment : BaseFragment(), View.OnClickListener {
         } else {
             ft.attach(fragment)
         }
-        setIconState(R.id.menu_id_action_button, true)
         ft.commit()
     }
 

@@ -856,6 +856,20 @@ class PrintPreviewView @JvmOverloads constructor(
     }
 
     /**
+     * @brief Zooms-in the currently displayed Preview
+     */
+    fun zoomIn() {
+        setZoomLevel(_zoomLevel + 1.0f)
+    }
+
+    /**
+     * @brief Zooms-out the currently displayed Preview
+     */
+    fun zoomOut() {
+        setZoomLevel(_zoomLevel - 1.0f)
+    }
+
+    /**
      * @brief Set the zoom level of the Preview
      *
      * @param zoomLevel New zoom level.

@@ -19,6 +19,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.util.LruCache
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.widget.LinearLayout
@@ -56,6 +57,7 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+import jp.co.riso.smartdeviceapp.view.base.isCtrlPressed
 import jp.co.riso.smartdeviceapp.view.preview.PreviewControlsListener
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartdeviceapp.viewmodel.PrintSettingsViewModel
@@ -358,6 +360,41 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (_pdfManager!!.isInitialized) {
             _printPreviewView!!.refreshView()
             setTitle(view, _pdfManager!!.fileName)
+        }
+
+        /* ALK70 Support - Mouse: Advanced pointer support
+         * Turn page (Scroll wheel), Zoom (CTRL + Scroll wheel)
+         */
+        _printPreviewView!!.setOnGenericMotionListener { _, event ->
+            if (event.action == MotionEvent.ACTION_SCROLL) {
+                val scrollDelta = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
+
+                if (event.isCtrlPressed()) {
+                    // Zoom (CTRL + Scroll wheel)
+                    if (scrollDelta > 0) {
+                        // Scroll is upward
+                        _printPreviewView!!.zoomIn()
+                    } else if (scrollDelta < 0) {
+                        // Scroll is downward
+                        _printPreviewView!!.zoomOut()
+                    }
+                } else {
+                    // Turn page (Scroll wheel)
+                    if (scrollDelta > 0) {
+                        // Scroll is upward
+                        _seekBar!!.progress = _seekBar!!.progress + 1
+                        _printPreviewView!!.currentPage = _seekBar!!.progress
+                        updatePageLabel()
+                    } else if (scrollDelta < 0) {
+                        // Scroll is downward
+                        _seekBar!!.progress = _seekBar!!.progress - 1
+                        _printPreviewView!!.currentPage = _seekBar!!.progress
+                        updatePageLabel()
+                    }
+                }
+                return@setOnGenericMotionListener true
+            }
+            false
         }
 
         _openInView = view.findViewById(R.id.openInView)
@@ -718,7 +755,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             // from Settings, the state gets reset to default as well.
             // Since we know we are in PrintPreview, set the current state to PrintPreview
             menuFragment.mState = MenuFragment.STATE_PRINTPREVIEW
-            ft.replace(R.id.leftLayout, menuFragment, "fragment_menu")
+            ft.replace(R.id.leftLayout, menuFragment, menuFragment.tag)
             ft.commit()
         }
         menuFragment.hasPdfFile = false
@@ -969,47 +1006,48 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     override fun processMessage(message: Message?) {
         val id = message!!.what
         if (id == R.id.view_id_print_button) {
-            _pauseableHandler!!.pause()
-            val printerManager = PrinterManager.getInstance(appContext!!)
-            if (printerManager!!.defaultPrinter == PrinterManager.EMPTY_ID) {
-                val titleMsg = resources.getString(R.string.ids_lbl_print_settings)
-                val strMsg = getString(R.string.ids_err_msg_no_selected_printer)
-                val btnMsg = getString(R.string.ids_lbl_ok)
-                val fragment = newInstance(titleMsg, strMsg, btnMsg)
-                displayDialog(requireActivity(), TAG_MESSAGE_DIALOG, fragment)
-                _pauseableHandler!!.resume()
-                return
-            }
-            if (requireActivity() is MainActivity) {
-                val activity = requireActivity() as MainActivity
-                val v = message.obj as View
-                if (!activity.isDrawerOpen(Gravity.RIGHT)) {
-                    val fm = activity.supportFragmentManager
-                    setIconState(v.id, true)
-
-                    // Always make new
-                    val fragment: PrintSettingsFragment? // (PrintSettingsFragment)
-                    // fm.findFragmentByTag(FRAGMENT_TAG_PRINT_SETTINGS);
-                    val ft = fm.beginTransaction()
-                    fragment = PrintSettingsFragment()
-                    ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINT_SETTINGS)
-                    ft.commit()
-                    fragment.setPrinterId(_printerId)
-                    fragment.setPdfPath(_pdfManager!!.path)
-                    fragment.setPDFisLandscape(_pdfManager!!.isPDFLandscape)
-                    fragment.setPrintSettings(_printSettings)
-                    fragment.setFragmentForPrinting(true)
-                    fragment.setTargetFragmentPrintPreview()
-                    setResultListenerForPrintSettings()
-                    activity.openDrawer(Gravity.RIGHT, isTablet)
-                } else {
-                    activity.closeDrawers()
-                }
-            }
+            togglePrintSettingsDrawer()
         } else if (id == R.id.menu_id_action_button) {
             _pauseableHandler!!.pause()
             val activity = requireActivity() as MainActivity
             activity.openDrawer(Gravity.LEFT)
+        }
+    }
+
+    fun togglePrintSettingsDrawer() {
+        _pauseableHandler!!.pause()
+        val printerManager = PrinterManager.getInstance(appContext!!)
+        if (printerManager!!.defaultPrinter == PrinterManager.EMPTY_ID) {
+            val titleMsg = resources.getString(R.string.ids_lbl_print_settings)
+            val strMsg = getString(R.string.ids_err_msg_no_selected_printer)
+            val btnMsg = getString(R.string.ids_lbl_ok)
+            val fragment = newInstance(titleMsg, strMsg, btnMsg)
+            displayDialog(requireActivity(), TAG_MESSAGE_DIALOG, fragment)
+            _pauseableHandler!!.resume()
+            return
+        }
+        if (requireActivity() is MainActivity) {
+            val activity = requireActivity() as MainActivity
+            if (!activity.isDrawerOpen(Gravity.RIGHT)) {
+                val fm = activity.supportFragmentManager
+                setIconState(R.id.view_id_print_button, true)
+
+                // Always make new
+                val fragment = PrintSettingsFragment()
+                val ft = fm.beginTransaction()
+                ft.replace(R.id.rightLayout, fragment, FRAGMENT_TAG_PRINT_SETTINGS)
+                ft.commit()
+                fragment.setPrinterId(_printerId)
+                fragment.setPdfPath(_pdfManager!!.path)
+                fragment.setPDFisLandscape(_pdfManager!!.isPDFLandscape)
+                fragment.setPrintSettings(_printSettings)
+                fragment.setFragmentForPrinting(true)
+                fragment.setTargetFragmentPrintPreview()
+                setResultListenerForPrintSettings()
+                activity.openDrawer(Gravity.RIGHT, isTablet)
+            } else {
+                activity.closeDrawers()
+            }
         }
     }
 
