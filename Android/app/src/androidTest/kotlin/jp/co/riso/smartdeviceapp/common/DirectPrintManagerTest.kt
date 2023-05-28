@@ -32,6 +32,7 @@ class DirectPrintManagerTest {
             "fileName",
             "orientation=0",
             "192.168.1.206",
+            "08:00:27:93:79:5D",
             "hostname"
         )
         while (_mgr!!.isPrinting) {
@@ -49,15 +50,16 @@ class DirectPrintManagerTest {
     fun testDirectPrint_NullParameterValidCallback() {
         val callback = MockCallback()
         _mgr!!.setCallback(callback)
-        _mgr!!.executeLPRPrint(null, null, null, null, null, null, null, null, null)
-        _mgr!!.executeLPRPrint("printerName", null, null, null, null, null, null, null, null)
-        _mgr!!.executeLPRPrint("printerName", "appName", null, null, null, null, null, null, null)
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", null, null, null, null, null, null)
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", null, null, null, null, null)
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", null, null, null, null)
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", null, null, null)
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", null, null)
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", null)
+        _mgr!!.executeLPRPrint(null, null, null, null, null, null, null, null, null, null)
+        _mgr!!.executeLPRPrint("printerName", null, null, null, null, null, null, null, null, null)
+        _mgr!!.executeLPRPrint("printerName", "appName", null, null, null, null, null, null, null, null)
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", null, null, null, null, null, null, null)
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", null, null, null, null, null, null)
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", null, null, null, null, null)
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", null, null, null, null)
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", null, null, null)
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", null, null)
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "macAddress", null)
 
         while (_mgr!!.isPrinting) {
             //wait for response
@@ -74,15 +76,16 @@ class DirectPrintManagerTest {
     fun testDirectPrint_EmptyParametersValidCallback() {
         val callback = MockCallback()
         _mgr!!.setCallback(callback)
-        _mgr!!.executeLPRPrint("", "", "", "", "", "", "", "", "")
-        _mgr!!.executeLPRPrint("printerName", "", "", "", "", "", "", "", "")
-        _mgr!!.executeLPRPrint("printerName", "appName", "", "", "", "", "", "", "")
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "", "", "", "", "", "")
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "", "", "", "", "")
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "", "", "", "")
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "", "", "")
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "", "")
-        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "")
+        _mgr!!.executeLPRPrint("", "", "", "", "", "", "", "", "", "")
+        _mgr!!.executeLPRPrint("printerName", "", "", "", "", "", "", "", "", "")
+        _mgr!!.executeLPRPrint("printerName", "appName", "", "", "", "", "", "", "", "")
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "", "", "", "", "", "", "")
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "", "", "", "", "", "")
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "", "", "", "", "")
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "", "", "", "")
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "", "", "")
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "", "")
+        _mgr!!.executeLPRPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "macAddress", "")
         while (_mgr!!.isPrinting) {
             //wait for response
             try {
@@ -107,6 +110,7 @@ class DirectPrintManagerTest {
             "fileName",
             "orientation=0",
             "192.168.1.206",
+            "08:00:27:93:79:5D",
             "hostname"
         )
 
@@ -126,7 +130,7 @@ class DirectPrintManagerTest {
     fun testDirectPrint_NullParameterNullCallback() {
         val callback = MockCallback()
         _mgr!!.setCallback(null)
-        _mgr!!.executeLPRPrint(null, null, null, null, null, null, null, null, null)
+        _mgr!!.executeLPRPrint(null, null, null, null, null, null, null, null, null, null)
 
         // wait for response
         while (_mgr!!.isPrinting) {
@@ -144,7 +148,7 @@ class DirectPrintManagerTest {
     fun testDirectPrint_EmptyParametersNullCallback() {
         val callback = MockCallback()
         _mgr!!.setCallback(null)
-        _mgr!!.executeLPRPrint("", "", "", "", "", "", "", "", "")
+        _mgr!!.executeLPRPrint("", "", "", "", "", "", "", "", "", "")
 
         // wait for response
         while (_mgr!!.isPrinting) {
@@ -179,6 +183,7 @@ class DirectPrintManagerTest {
             "fileName",
             "orientation=0",
             "192.168.1.206",
+            "08:00:27:93:79:5D",
             "hostname"
         )
 
@@ -216,6 +221,7 @@ class DirectPrintManagerTest {
             "fileName",
             "orientation=0",
             "192.168.1.206",
+            "08:00:27:93:79:5D",
             "hostname"
         )
 
@@ -252,6 +258,7 @@ class DirectPrintManagerTest {
             "fileName",
             "orientation=0",
             "192.168.1.206",
+            "08:00:27:93:79:5D",
             "hostname"
         )
         while (_mgr!!.isPrinting) {
@@ -269,15 +276,17 @@ class DirectPrintManagerTest {
     fun testRawPrint_NullParameterValidCallback() {
         val callback = MockCallback()
         _mgr!!.setCallback(callback)
-        _mgr!!.executeRAWPrint(null, null, null, null, null, null, null, null, null)
-        _mgr!!.executeRAWPrint("printerName", null, null, null, null, null, null, null, null)
-        _mgr!!.executeRAWPrint("printerName", "appName", null, null, null, null, null, null, null)
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", null, null, null, null, null, null)
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", null, null, null, null, null)
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", null, null, null, null)
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", null, null, null)
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", null, null)
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", null)
+        _mgr!!.executeRAWPrint(null, null, null, null, null, null, null, null, null, null)
+        _mgr!!.executeRAWPrint("printerName", null, null, null, null, null, null, null, null, null)
+        _mgr!!.executeRAWPrint("printerName", "appName", null, null, null, null, null, null, null, null)
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", null, null, null, null, null, null, null)
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", null, null, null, null, null, null)
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", null, null, null, null, null)
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", null, null, null, null)
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", null, null, null)
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", null, null)
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "08:00:27:93:79:5D", null)
+
         while (_mgr!!.isPrinting) {
             //wait for response
             try {
@@ -293,15 +302,16 @@ class DirectPrintManagerTest {
     fun testRawPrint_EmptyParametersValidCallback() {
         val callback = MockCallback()
         _mgr!!.setCallback(callback)
-        _mgr!!.executeRAWPrint("", "", "", "", "", "", "", "", "")
-        _mgr!!.executeRAWPrint("printerName", "", "", "", "", "", "", "", "")
-        _mgr!!.executeRAWPrint("printerName", "appName", "", "", "", "", "", "", "")
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "", "", "", "", "", "")
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "", "", "", "", "")
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "", "", "", "")
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "", "", "")
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "", "")
-        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "")
+        _mgr!!.executeRAWPrint("", "", "", "", "", "", "", "", "", "")
+        _mgr!!.executeRAWPrint("printerName", "", "", "", "", "", "", "", "", "")
+        _mgr!!.executeRAWPrint("printerName", "appName", "", "", "", "", "", "", "", "")
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "", "", "", "", "", "", "")
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "", "", "", "", "", "")
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "", "", "", "", "")
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "", "", "", "")
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "", "", "")
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "", "")
+        _mgr!!.executeRAWPrint("printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "08:00:27:93:79:5D", "")
         while (_mgr!!.isPrinting) {
             //wait for response
             try {
@@ -326,6 +336,7 @@ class DirectPrintManagerTest {
             "fileName",
             "orientation=0",
             "192.168.1.206",
+            "08:00:27:93:79:5D",
             "hostname"
         )
 
@@ -345,7 +356,7 @@ class DirectPrintManagerTest {
     fun testRawPrint_NullParameterNullCallback() {
         val callback = MockCallback()
         _mgr!!.setCallback(null)
-        _mgr!!.executeRAWPrint(null, null, null, null, null, null, null, null, null)
+        _mgr!!.executeRAWPrint(null, null, null, null, null, null, null, null, null, null)
 
         // wait for response
         while (_mgr!!.isPrinting) {
@@ -363,7 +374,7 @@ class DirectPrintManagerTest {
     fun testRawPrint_EmptyParametersNullCallback() {
         val callback = MockCallback()
         _mgr!!.setCallback(null)
-        _mgr!!.executeRAWPrint("", "", "", "", "", "", "", "", "")
+        _mgr!!.executeRAWPrint("", "", "", "", "", "", "", "", "", "")
 
         // wait for response
         while (_mgr!!.isPrinting) {
@@ -393,6 +404,7 @@ class DirectPrintManagerTest {
             "fileName",
             "orientation=0",
             "192.168.1.206",
+            "08:00:27:93:79:5D",
             "hostname"
         )
         TestCase.assertFalse(callback.called)
@@ -423,6 +435,7 @@ class DirectPrintManagerTest {
             "fileName",
             "orientation=0",
             "192.168.1.206",
+            "08:00:27:93:79:5D",
             "hostname"
         )
         TestCase.assertFalse(callback.called)
