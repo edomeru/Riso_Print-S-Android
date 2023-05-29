@@ -46,7 +46,7 @@ import java.io.IOException
 
 /**
  * @class SplashActivity
- * 
+ *
  * @brief Splash activity class.
  */
 @SuppressLint("CustomSplashScreen")
