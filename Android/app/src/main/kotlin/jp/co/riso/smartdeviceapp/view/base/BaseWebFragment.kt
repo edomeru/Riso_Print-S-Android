@@ -7,7 +7,6 @@
  */
 package jp.co.riso.smartdeviceapp.view.base
 
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -27,7 +26,6 @@ abstract class BaseWebFragment : BaseFragment() {
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _webView = view.findViewById(R.id.contentWebView)
-        _webView!!.setBackgroundColor(Color.WHITE)
         if (Build.VERSION_CODES.O <= Build.VERSION.SDK_INT) {
             _webView!!.defaultFocusHighlightEnabled = false
         }

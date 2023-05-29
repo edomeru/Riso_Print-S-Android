@@ -46,7 +46,7 @@ import java.io.IOException
 
 /**
  * @class SplashActivity
- * 
+ *
  * @brief Splash activity class.
  */
 @SuppressLint("CustomSplashScreen")
@@ -90,25 +90,6 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
                     AppConstants.APP_SPLASH_DURATION
                 )
             }
-        }
-
-        _webView = findViewById(R.id.contentWebView)
-        _webView?.apply {
-            webViewClient = object : WebViewClient() {
-                override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
-                    super.onPageStarted(view, url, favicon)
-                    Logger.logStartTime(
-                        context,
-                        SplashActivity::class.java,
-                        "License Activity load"
-                    )
-                }
-
-                override fun onPageFinished(view: WebView, url: String) {
-                    Logger.logStopTime(context, SplashActivity::class.java, "License Activity load")
-                }
-            }
-            loadUrl(_urlString)
         }
     }
 
@@ -160,6 +141,25 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             textView.setText(R.string.ids_lbl_license)
             textView.setPadding(18, 0, 0, 0)
             val context: Context = this
+            _webView = findViewById(R.id.contentWebView)
+
+            _webView?.apply {
+                webViewClient = object : WebViewClient() {
+                    override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+                        super.onPageStarted(view, url, favicon)
+                        Logger.logStartTime(
+                            context,
+                            SplashActivity::class.java,
+                            "License Activity load"
+                        )
+                    }
+
+                    override fun onPageFinished(view: WebView, url: String) {
+                        Logger.logStopTime(context, SplashActivity::class.java, "License Activity load")
+                    }
+                }
+                loadUrl(_urlString)
+            }
 
             val buttonLayout = findViewById<LinearLayout>(R.id.LicenseButtonLayout)
             buttonLayout.visibility = View.VISIBLE

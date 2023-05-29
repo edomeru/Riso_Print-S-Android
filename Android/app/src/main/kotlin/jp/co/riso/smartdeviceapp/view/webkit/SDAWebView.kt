@@ -8,6 +8,7 @@ package jp.co.riso.smartdeviceapp.view.webkit
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.InputDevice
 import android.view.MotionEvent
@@ -122,6 +123,7 @@ class SDAWebView @JvmOverloads constructor(
     private fun setLook() {
         scrollBarStyle = SCROLLBARS_OUTSIDE_OVERLAY
         isScrollbarFadingEnabled = true
+        setBackgroundColor(Color.WHITE)
     }
     /**
      * @brief Constructs a new WebView with layout parameters and a default style.
