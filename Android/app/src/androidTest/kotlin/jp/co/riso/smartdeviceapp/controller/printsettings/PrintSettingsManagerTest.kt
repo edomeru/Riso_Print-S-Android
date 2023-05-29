@@ -31,7 +31,7 @@ class PrintSettingsManagerTest {
         val printersList = printerManager!!.savedPrintersList
         val printer: Printer
         if (printersList.isEmpty()) {
-            printer = Printer("", IPV4_OFFLINE_PRINTER_ADDRESS)
+            printer = Printer("", IPV4_OFFLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS)
             printerManager.savePrinterToDB(printer, false)
         } else {
             printer = printersList[0]!!
@@ -419,6 +419,7 @@ class PrintSettingsManagerTest {
 
     companion object {
         private const val IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.0.206"
+        private const val VALID_MAC_ADDRESS = "08:00:27:93:79:5D"
         private const val PRINTER_ID = "prn_id"
         private const val PRINTER_TABLE = "Printer"
         private const val PRINTSETTING_TABLE = "PrintSetting"

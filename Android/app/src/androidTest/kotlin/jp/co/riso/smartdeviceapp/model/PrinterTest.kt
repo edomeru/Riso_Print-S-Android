@@ -11,6 +11,7 @@ import org.junit.Assert
 class PrinterTest(name: String?) : TestCase(name) {
     private val PRINTER_NAME = "Test Printer"
     private val PRINTER_ADDRESS = "192.168.1.206"
+    private val PRINTER_MAC = "08:00:27:93:79:5D"
     private val PRINTER_TAG = "PRINTER_BUNDLE"
     private val PRINTER_ARRAY_TAG = "PRINTER_ARRAY_BUNDLE"
 
@@ -28,17 +29,17 @@ class PrinterTest(name: String?) : TestCase(name) {
     // Tests - constructors
     // ================================================================================
     fun testConstructor() {
-        val printer = Printer(PRINTER_NAME, PRINTER_ADDRESS)
+        val printer = Printer(PRINTER_NAME, PRINTER_ADDRESS, PRINTER_MAC)
         assertNotNull(printer)
     }
 
     fun testConstructor_NullName() {
-        val printer = Printer(null, PRINTER_ADDRESS)
+        val printer = Printer(null, PRINTER_ADDRESS, PRINTER_MAC)
         assertNotNull(printer)
     }
 
     fun testConstructor_Parcel() {
-        val printer = Printer(PRINTER_NAME, PRINTER_ADDRESS)
+        val printer = Printer(PRINTER_NAME, PRINTER_ADDRESS, PRINTER_MAC)
         val printerArray = arrayOfNulls<Printer>(2)
 
         // Create parcelable object and put to Bundle
@@ -77,7 +78,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // ================================================================================
     fun testSetId() {
         try {
-            val printer = Printer("", "")
+            val printer = Printer("", "", "")
             val id = 0
             printer.id = id
             assertEquals(id, printer.id)
@@ -91,7 +92,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // ================================================================================
     fun testGetId_EmptyId() {
         try {
-            val printer = Printer("", "")
+            val printer = Printer("", "", "")
             assertEquals(PrinterManager.EMPTY_ID, printer.id)
         } catch (e: Exception) {
             fail() // Error should not be thrown
@@ -103,7 +104,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // ================================================================================
     fun testSetName_NullName() {
         try {
-            val printer = Printer("", "")
+            val printer = Printer("", "", "")
             printer.name = null
         } catch (e: Exception) {
             fail() // Error should not be thrown
@@ -112,7 +113,7 @@ class PrinterTest(name: String?) : TestCase(name) {
 
     fun testSetName_ValidName() {
         try {
-            val printer = Printer("", "")
+            val printer = Printer("", "", "")
             printer.name = PRINTER_NAME
             assertEquals(PRINTER_NAME, printer.name)
         } catch (e: Exception) {
@@ -125,7 +126,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // ================================================================================
     fun testGetIpAddress() {
         try {
-            val printer = Printer("", "")
+            val printer = Printer("", "", "")
             printer.ipAddress
         } catch (e: Exception) {
             fail() // Error should not be thrown
@@ -136,15 +137,45 @@ class PrinterTest(name: String?) : TestCase(name) {
     // Tests - setIpAddress
     // ================================================================================
     fun testSetIpAddress_ValidAddress() {
-        val printer = Printer("", "")
+        val printer = Printer("", "", "")
         printer.ipAddress = PRINTER_ADDRESS
         assertEquals(PRINTER_ADDRESS, printer.ipAddress)
     }
 
     fun testSetIpAddress_NullAddress() {
         try {
-            val printer = Printer("", "")
+            val printer = Printer("", "", "")
             printer.ipAddress = null
+        } catch (e: Exception) {
+            fail() // Error should not be thrown
+        }
+    }
+
+    // ================================================================================
+    // Tests - getMacAddress
+    // ================================================================================
+    fun testGetMacAddress() {
+        try {
+            val printer = Printer("", "", "")
+            printer.macAddress
+        } catch (e: Exception) {
+            fail() // Error should not be thrown
+        }
+    }
+
+    // ================================================================================
+    // Tests - setMacAddress
+    // ================================================================================
+    fun testSetMacAddress_ValidAddress() {
+        val printer = Printer("", "", "")
+        printer.macAddress = PRINTER_MAC
+        assertEquals(PRINTER_MAC, printer.macAddress)
+    }
+
+    fun testSetMacAddress_NullAddress() {
+        try {
+            val printer = Printer("", "", "")
+            printer.macAddress = null
         } catch (e: Exception) {
             fail() // Error should not be thrown
         }
@@ -154,79 +185,79 @@ class PrinterTest(name: String?) : TestCase(name) {
     // Tests - getPrinterType
     // ================================================================================
     fun testGetPrinterType_BlankName() {
-        val printer = Printer("", "")
+        val printer = Printer("", "", "")
         val printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_IS)
     }
 
     fun testGetPrinterType_IS() {
-        var printer = Printer("RISO IS950C-G", "")
+        var printer = Printer("RISO IS950C-G", "", "")
         var printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_IS)
-        printer = Printer("RISO IS1000C-G", "")
+        printer = Printer("RISO IS1000C-G", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_IS)
-        printer = Printer("RISO IS1000C-J", "")
+        printer = Printer("RISO IS1000C-J", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_IS)
-        printer = Printer("RISO IS10", "")
+        printer = Printer("RISO IS10", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_IS)
     }
 
     fun testGetPrinterType_GD() {
-        var printer = Printer("RISO IS950C-GD", "")
+        var printer = Printer("RISO IS950C-GD", "", "")
         var printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_GD)
-        printer = Printer("ORPHIS GD", "")
+        printer = Printer("ORPHIS GD", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_GD)
-        printer = Printer("ORPHIS GDMODEL", "")
+        printer = Printer("ORPHIS GDMODEL", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_GD)
     }
 
     fun testGetPrinterType_FW() {
-        var printer = Printer("RISO IS950C-FW", "")
+        var printer = Printer("RISO IS950C-FW", "", "")
         var printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FW)
-        printer = Printer("ORPHIS FW", "")
+        printer = Printer("ORPHIS FW", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FW)
-        printer = Printer("ORPHIS FWMODEL", "")
+        printer = Printer("ORPHIS FWMODEL", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FW)
     }
 
     fun testGetPrinterType_FT() {
-        var printer = Printer("RISO IS950C-FT", "")
+        var printer = Printer("RISO IS950C-FT", "", "")
         var printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FT)
-        printer = Printer("ORPHIS FT", "")
+        printer = Printer("ORPHIS FT", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FT)
-        printer = Printer("ComColor FT", "")
+        printer = Printer("ComColor FT", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FT)
     }
 
     fun testGetPrinterType_GL() {
-        var printer = Printer("RISO IS950C-GL", "")
+        var printer = Printer("RISO IS950C-GL", "", "")
         var printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_GL)
-        printer = Printer("ORPHIS GL", "")
+        printer = Printer("ORPHIS GL", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_GL)
-        printer = Printer("ComColor GL", "")
+        printer = Printer("ComColor GL", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_GL)
     }
 
     fun testGetPrinterType_CEREZONA_S() {
-        var printer = Printer("RISO CEREZONA S", "")
+        var printer = Printer("RISO CEREZONA S", "", "")
         var printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FT)
-        printer = Printer("RISO CEREZONA S200", "")
+        printer = Printer("RISO CEREZONA S200", "", "")
         printerType = printer.printerType
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FT)
     }
@@ -236,7 +267,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // ================================================================================
     fun testGetPortSetting() {
         try {
-            val printer = Printer("", "")
+            val printer = Printer("", "", "")
             printer.portSetting
         } catch (e: Exception) {
             fail() // Error should not be thrown
@@ -248,7 +279,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // ================================================================================
     fun testSetPortSetting() {
         try {
-            val printer = Printer("", "")
+            val printer = Printer("", "", "")
             var portSetting = 1
             printer.portSetting = PortSetting.RAW
             assertTrue(PortSetting.RAW == printer.portSetting)
@@ -266,7 +297,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // Tests - getConfig
     // ================================================================================
     fun testGetConfig() {
-        val printer = Printer("", "")
+        val printer = Printer("", "", "")
         val config = printer.config
         assertNotNull(config)
     }
@@ -275,7 +306,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // Tests - setConfig
     // ================================================================================
     fun testSetConfig_ValidConfig() {
-        val printer = Printer("", "")
+        val printer = Printer("", "", "")
         val config = printer.Config()
         printer.config = config
         assertNotNull(config)
@@ -283,7 +314,7 @@ class PrinterTest(name: String?) : TestCase(name) {
 
     fun testSetConfig_NullConfig() {
         try {
-            val printer = Printer("", "")
+            val printer = Printer("", "", "")
             printer.config = null
         } catch (e: Exception) {
             fail() // Error should not be thrown
@@ -294,7 +325,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // Tests - describeContents
     // ================================================================================
     fun testDescribeContents() {
-        val printer = Printer("", "")
+        val printer = Printer("", "", "")
         printer.describeContents()
     }
 
@@ -302,7 +333,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     // Tests - Config
     // ================================================================================
     fun testGetConfigParams() {
-        val printer = Printer("", "")
+        val printer = Printer("", "", "")
         printer.config!!.isLprAvailable
         printer.config!!.isRawAvailable
         printer.config!!.isBookletFinishingAvailable
@@ -318,7 +349,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     }
 
     fun testSetConfigParams() {
-        val printer = Printer("", "")
+        val printer = Printer("", "", "")
         printer.config!!.isLprAvailable = true
         printer.config!!.isRawAvailable = true
         printer.config!!.isBookletFinishingAvailable = true
@@ -334,7 +365,7 @@ class PrinterTest(name: String?) : TestCase(name) {
     }
 
     fun testGetPunchAvailability() {
-        val printer = Printer("", "")
+        val printer = Printer("", "", "")
         var ret = printer.config!!.isPunchAvailable
         Assert.assertTrue(ret)
 

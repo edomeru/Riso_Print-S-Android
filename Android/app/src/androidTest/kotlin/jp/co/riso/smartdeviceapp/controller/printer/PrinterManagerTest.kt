@@ -3,7 +3,6 @@ package jp.co.riso.smartdeviceapp.controller.printer
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import android.os.Build
 import android.widget.ImageView
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.AppConstants
@@ -108,7 +107,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             }
             if (printer == null) {
                 printer =
-                    Printer("testSetDefaultPrinter_NoDefaultPrinter", IPV4_OFFLINE_PRINTER_ADDRESS)
+                    Printer("testSetDefaultPrinter_NoDefaultPrinter", IPV4_OFFLINE_PRINTER_ADDRESS,
+                    VALID_MAC_ADDRESS2)
                 _printerManager!!.savePrinterToDB(printer, true)
             }
             testClearDefaultPrinter()
@@ -128,7 +128,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             if (printer == null) {
                 printer = Printer(
                     "testSetDefaultPrinter_WithDefaultPrinter",
-                    IPV4_OFFLINE_PRINTER_ADDRESS
+                    IPV4_OFFLINE_PRINTER_ADDRESS,
+                    VALID_MAC_ADDRESS2
                 )
                 _printerManager!!.savePrinterToDB(printer, true)
             }
@@ -160,7 +161,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             if (printer == null) {
                 printer = Printer(
                     "testSetDefaultPrinter_WithDefaultPrinter",
-                    IPV4_OFFLINE_PRINTER_ADDRESS
+                    IPV4_OFFLINE_PRINTER_ADDRESS,
+                    VALID_MAC_ADDRESS2
                 )
                 _printerManager!!.savePrinterToDB(printer, true)
             }
@@ -172,7 +174,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
 
     @Test
     fun testSetDefaultPrinter_DatabaseError() {
-        val printer = Printer("", IPV4_OFFLINE_PRINTER_ADDRESS)
+        val printer = Printer("", IPV4_OFFLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS2)
         val dbManager = MockedDatabaseManager(
             appContext
         )
@@ -483,6 +485,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             _printerManager!!.onFoundDevice(
                 SNMPManager(),
                 IPV4_ONLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS,
                 "testOnFoundDevice_ValidParameters",
                 BooleanArray(10)
             )
@@ -498,6 +501,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             _printerManager!!.onFoundDevice(
                 null,
                 IPV4_ONLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS,
                 "testOnFoundDevice_NullManager",
                 BooleanArray(10)
             )
@@ -512,7 +516,23 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             _printerManager!!.onFoundDevice(
                 SNMPManager(),
                 null,
+                VALID_MAC_ADDRESS,
                 "testOnFoundDevice_NullIpAddress",
+                BooleanArray(10)
+            )
+        } catch (e: Exception) {
+            TestCase.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnFoundDevice_NullMacAddress() {
+        try {
+            _printerManager!!.onFoundDevice(
+                SNMPManager(),
+                IPV4_ONLINE_PRINTER_ADDRESS,
+                null,
+                "testOnFoundDevice_NullMacAddress",
                 BooleanArray(10)
             )
         } catch (e: Exception) {
@@ -527,6 +547,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             _printerManager!!.onFoundDevice(
                 SNMPManager(),
                 IPV4_ONLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS,
                 null,
                 BooleanArray(10)
             )
@@ -540,7 +561,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         try {
             initialize()
             _printerManager!!.onFoundDevice(
-                SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS,
+                SNMPManager(), IPV4_ONLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS,
                 "testOnFoundDevice_NullCapabilities", null
             )
         } catch (e: Exception) {
@@ -562,6 +583,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             _printerManager!!.onFoundDevice(
                 SNMPManager(),
                 IPV4_ONLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS,
                 "testOnFoundDevice_ValidParameters",
                 BooleanArray(10)
             )
@@ -580,7 +602,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             initialize()
             var printer: Printer? = Printer(
                 "testRemovePrinter_ValidAndInvalidPrinter",
-                IPV4_OFFLINE_PRINTER_ADDRESS
+                IPV4_OFFLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS2
             )
             if (!_printerManager!!.isExists(printer)) {
                 _printerManager!!.savePrinterToDB(printer, true)
@@ -608,8 +630,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
 
             val printers: List<Printer?>?
             printers = mutableListOf(
-                Printer("Printer1", IPV4_ONLINE_PRINTER_ADDRESS),
-                Printer("Printer2", IPV4_OFFLINE_PRINTER_ADDRESS)
+                Printer("Printer1", IPV4_ONLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS),
+                Printer("Printer2", IPV4_OFFLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS2)
             )
 
             for ((index, printer) in printers.withIndex()) {
@@ -635,7 +657,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
     fun testRemovePrinter_EmptyList() {
         val printer = Printer(
             "testRemovePrinter_ValidAndInvalidPrinter",
-            IPV4_OFFLINE_PRINTER_ADDRESS
+            IPV4_OFFLINE_PRINTER_ADDRESS,
+            VALID_MAC_ADDRESS2
         )
 
         for (printerItem in _printersList!!) {
@@ -673,7 +696,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
     @Test
     fun testRemovePrinter_NullDatabaseManager() {
         try {
-            val printer = Printer("testRemovePrinter_IpAddressExists", IPV4_OFFLINE_PRINTER_ADDRESS)
+            val printer = Printer("testRemovePrinter_IpAddressExists", IPV4_OFFLINE_PRINTER_ADDRESS,
+            VALID_MAC_ADDRESS2)
             _printerManager = PrinterManager(appContext, null)
             if (!_printerManager!!.isExists(printer)) {
                 _printerManager!!.savePrinterToDB(printer, true)
@@ -692,7 +716,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         try {
             var printer: Printer? = Printer(
                 "testSavePrinterToDB_ValidPrinter",
-                IPV4_OFFLINE_PRINTER_ADDRESS
+                IPV4_OFFLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS2
             )
             for (savedPrinter in _printerManager!!.savedPrintersList) {
                 if (printer!!.ipAddress == savedPrinter!!.ipAddress) {
@@ -743,7 +768,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         try {
             var printer: Printer? = Printer(
                 "testSavePrinterToDB_ValidPrinter",
-                IPV4_OFFLINE_PRINTER_ADDRESS
+                IPV4_OFFLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS2
             )
             for (savedPrinter in _printerManager!!.savedPrintersList) {
                 if (printer!!.ipAddress == savedPrinter!!.ipAddress) {
@@ -781,7 +807,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
     fun testSavePrinterToDB_ExistingPrinter() {
         try {
             val printer =
-                Printer("testSavePrinterToDB_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS)
+                Printer("testSavePrinterToDB_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS2)
             if (!_printerManager!!.isExists(printer)) {
                 _printerManager!!.savePrinterToDB(printer, true)
             }
@@ -806,7 +833,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         try {
             val printer = Printer(
                 "testSavePrinterToDB_ExistingPrinter",
-                IPV4_OFFLINE_PRINTER_ADDRESS
+                IPV4_OFFLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS2
             )
             if (_printersList!!.isNotEmpty()) {
                 for (i in _printersList!!.size downTo 1) {
@@ -826,7 +854,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         try {
             val printer = Printer(
                 "testSavePrinterToDB_ExistingPrinter",
-                IPV4_OFFLINE_PRINTER_ADDRESS
+                IPV4_OFFLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS2
             )
             val dbManager = MockedDatabaseManager(
                 appContext
@@ -847,8 +876,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
     fun testGetSavedPrintersList_NonEmptyList() {
         try {
             if (_printersList!!.isEmpty()) {
-                _printerManager!!.savePrinterToDB(Printer("", IPV4_OFFLINE_PRINTER_ADDRESS), false)
-                _printerManager!!.savePrinterToDB(Printer("", IPV4_ONLINE_PRINTER_ADDRESS), true)
+                _printerManager!!.savePrinterToDB(Printer("", IPV4_OFFLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS2), false)
+                _printerManager!!.savePrinterToDB(Printer("", IPV4_ONLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS), true)
             }
             _printerManager!!.savedPrintersList
         } catch (e: Exception) {
@@ -886,7 +915,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
     @Test
     fun testIsExists_ExistingPrinter() {
         try {
-            val printer = Printer("testIsExists_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS)
+            val printer = Printer("testIsExists_ExistingPrinter", IPV4_OFFLINE_PRINTER_ADDRESS,
+            VALID_MAC_ADDRESS2)
             if (!_printerManager!!.isExists(printer)) {
                 _printerManager!!.savePrinterToDB(printer, true)
             }
@@ -906,7 +936,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         try {
             var printer: Printer? = Printer(
                 "testIsExists_NotExistingPrinter",
-                IPV4_OFFLINE_PRINTER_ADDRESS
+                IPV4_OFFLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS2
             )
             if (_printersList != null) {
                 for (savedPrinter in _printersList!!) {
@@ -917,8 +948,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
                 }
             }
             if (_printersList!!.isEmpty()) {
-                _printerManager!!.savePrinterToDB(Printer("", IPV4_ONLINE_PRINTER_ADDRESS), true)
-                _printerManager!!.savePrinterToDB(Printer("", IPV6_ONLINE_PRINTER_ADDRESS), true)
+                _printerManager!!.savePrinterToDB(Printer("", IPV4_ONLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS), true)
+                _printerManager!!.savePrinterToDB(Printer("", IPV6_ONLINE_PRINTER_ADDRESS, VALID_MAC_ADDRESS2), true)
             }
             _printerManager!!.removePrinter(printer)
             var ret: Boolean = _printerManager!!.isExists(printer)
@@ -1138,7 +1169,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
     fun testGetIdFromCursor_ValidParameters() {
         try {
             val printer =
-                Printer("testGetIdFromCursor_ValidParameters", IPV4_ONLINE_PRINTER_ADDRESS)
+                Printer("testGetIdFromCursor_ValidParameters", IPV4_ONLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS)
             val dbManager = DatabaseManager(appContext)
             val cursor = dbManager.query(
                 KeyConstants.KEY_SQL_PRINTER_TABLE, null,
@@ -1159,7 +1191,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         try {
             setupPrinterConfig(null, null)
             setupPrinterConfig(null, BooleanArray(1))
-            setupPrinterConfig(Printer("test", "ip"), null)
+            setupPrinterConfig(Printer("test", "ip", "mac"), null)
         } catch (e: Exception) {
             // No exception should happen
             TestCase.fail()
@@ -1171,7 +1203,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         val capabilities = booleanArrayOf(
             true, true, true, true, true, true, true, true, true, true, true
         )
-        val target = Printer("test GL", "ip")
+        val target = Printer("test GL", "ip", "mac")
         setupPrinterConfig(target, capabilities)
         TestCase.assertTrue(target.config!!.isBookletFinishingAvailable)
         TestCase.assertTrue(target.config!!.isStaplerAvailable)
@@ -1191,7 +1223,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         val capabilities = booleanArrayOf(
             false, false, false, false, false, false, false, false, false, false, false
         )
-        val target = Printer("test GL", "ip")
+        val target = Printer("test GL", "ip", "mac")
         setupPrinterConfig(target, capabilities)
         TestCase.assertFalse(target.config!!.isBookletFinishingAvailable)
         TestCase.assertFalse(target.config!!.isStaplerAvailable)
@@ -1211,14 +1243,14 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         val capabilities = booleanArrayOf(
             false
         )
-        val target = Printer("test", "ip")
+        val target = Printer("test", "ip", "mac")
         try {
             setupPrinterConfig(target, capabilities)
         } catch (e: Exception) {
             // No exception should happen
             TestCase.fail()
         }
-        val defaultPrinter = Printer("test", "ip")
+        val defaultPrinter = Printer("test", "ip", "mac")
         TestCase.assertFalse(target.config!!.isBookletFinishingAvailable)
         TestCase.assertEquals(
             defaultPrinter.config!!.isStaplerAvailable,
@@ -1265,7 +1297,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
                 printer = _printersList!![0]
             }
             if (printer == null) {
-                printer = Printer("testUpdatePortSettings", IPV4_OFFLINE_PRINTER_ADDRESS)
+                printer = Printer("testUpdatePortSettings", IPV4_OFFLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS2)
                 _printerManager!!.savePrinterToDB(printer, true)
             }
             val dbManager = DatabaseManager(appContext)
@@ -1310,7 +1343,8 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
                 printer = _printersList!![0]
             }
             if (printer == null) {
-                printer = Printer("testUpdatePortSettings", IPV4_OFFLINE_PRINTER_ADDRESS)
+                printer = Printer("testUpdatePortSettings", IPV4_OFFLINE_PRINTER_ADDRESS,
+                VALID_MAC_ADDRESS2)
                 _printerManager!!.savePrinterToDB(printer, true)
             }
             val ret = _printerManager!!.updatePortSettings(printer.id, null)
@@ -1326,32 +1360,32 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
     @Test
     fun testGetPrinterType() {
         try {
-            var printer = Printer("RISO IS1000C-G", "192.168.0.1")
+            var printer = Printer("RISO IS1000C-G", "192.168.0.1", "08:00:27:93:79:AA")
             _printerManager!!.savePrinterToDB(printer, true)
             var printerType = _printerManager!!.getPrinterType(printer.id)
             TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_IS)
             _printerManager!!.removePrinter(printer)
-            printer = Printer("ORPHIS GD500", "192.168.0.2")
+            printer = Printer("ORPHIS GD500", "192.168.0.2", "08:00:27:93:79:AB")
             _printerManager!!.savePrinterToDB(printer, true)
             printerType = _printerManager!!.getPrinterType(printer.id)
             TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_GD)
             _printerManager!!.removePrinter(printer)
-            printer = Printer("ORPHIS FW1000", "192.168.0.3")
+            printer = Printer("ORPHIS FW1000", "192.168.0.3", "08:00:27:93:79:AC")
             _printerManager!!.savePrinterToDB(printer, true)
             printerType = _printerManager!!.getPrinterType(printer.id)
             TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_FW)
             _printerManager!!.removePrinter(printer)
-            printer = Printer("ORPHIS FT100", "192.168.0.4")
+            printer = Printer("ORPHIS FT100", "192.168.0.4", "08:00:27:93:79:AD")
             _printerManager!!.savePrinterToDB(printer, true)
             printerType = _printerManager!!.getPrinterType(printer.id)
             TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_FT)
             _printerManager!!.removePrinter(printer)
-            printer = Printer("ORPHIS GL200", "192.168.0.5")
+            printer = Printer("ORPHIS GL200", "192.168.0.5", "08:00:27:93:79:AE")
             _printerManager!!.savePrinterToDB(printer, true)
             printerType = _printerManager!!.getPrinterType(printer.id)
             TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_GL)
             _printerManager!!.removePrinter(printer)
-            printer = Printer("RISO CEREZONA S200", "192.168.0.4")
+            printer = Printer("RISO CEREZONA S200", "192.168.0.4", "08:00:27:93:79:AF")
             _printerManager!!.savePrinterToDB(printer, true)
             printerType = _printerManager!!.getPrinterType(printer.id)
             TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_FT)
@@ -1435,7 +1469,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
                         }
                     }
                 }
-            } catch (ex: SocketException) {
+            } catch (_: SocketException) {
             }
             return null
         }
@@ -1445,5 +1479,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
         private const val IPV6_ONLINE_PRINTER_ADDRESS = "fe80::a00:27ff:fe95:7387"
         private const val IPV4_OFFLINE_PRINTER_ADDRESS = "192.168.0.206"
         private const val INVALID_ADDRESS = "invalid"
+        private const val VALID_MAC_ADDRESS = "08:00:27:93:79:5D"
+        private const val VALID_MAC_ADDRESS2 = "08:00:27:93:79:5E"
     }
 }

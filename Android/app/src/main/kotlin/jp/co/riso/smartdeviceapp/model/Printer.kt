@@ -117,6 +117,7 @@ class Printer : Parcelable {
      *
      * @param name Device Name
      * @param ipAddress IP address
+     * @param macAddress MAC address
      */
     constructor(name: String?, ipAddress: String?, macAddress: String?) {
         this.name = name

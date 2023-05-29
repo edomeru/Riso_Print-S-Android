@@ -8,7 +8,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.Printer
@@ -47,16 +46,16 @@ class PrintersFragmentTest : BaseActivityTestUtil() {
 
     private fun populateMaxPrinterList() {
         _maxCountPrinterList = mutableListOf(
-            Printer("ORPHIS FW5230", "192.168.0.2"),
-            Printer("ORPHIS FW5230", "192.168.0.3"),
-            Printer("ORPHIS FW5230", "192.168.0.4"),
-            Printer("ORPHIS FW5230", "192.168.0.5"),
-            Printer("ORPHIS FW5230", "192.168.0.6"),
-            Printer("ORPHIS FW5230", "192.168.0.7"),
-            Printer("ORPHIS FW5230", "192.168.0.8"),
-            Printer("ORPHIS FW5230", "192.168.0.9"),
-            Printer("ORPHIS FW5230", "192.168.0.10"),
-            Printer("ORPHIS FW5230", "192.168.0.11")
+            Printer("ORPHIS FW5230", "192.168.0.2", "08:00:27:93:79:5D"),
+            Printer("ORPHIS FW5230", "192.168.0.3", "08:00:27:93:79:5E"),
+            Printer("ORPHIS FW5230", "192.168.0.4", "08:00:27:93:79:5F"),
+            Printer("ORPHIS FW5230", "192.168.0.5", "08:00:27:93:79:5G"),
+            Printer("ORPHIS FW5230", "192.168.0.6", "08:00:27:93:79:5H"),
+            Printer("ORPHIS FW5230", "192.168.0.7", "08:00:27:93:79:5I"),
+            Printer("ORPHIS FW5230", "192.168.0.8", "08:00:27:93:79:5J"),
+            Printer("ORPHIS FW5230", "192.168.0.9", "08:00:27:93:79:5K"),
+            Printer("ORPHIS FW5230", "192.168.0.10", "08:00:27:93:79:5L"),
+            Printer("ORPHIS FW5230", "192.168.0.11", "08:00:27:93:79:5M")
         )
 
         for ((index, printer) in _maxCountPrinterList!!.withIndex()) {

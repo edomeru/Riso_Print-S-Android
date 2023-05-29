@@ -528,16 +528,16 @@ open class BaseActivityTestUtil {
         const val IMG_ERR_FAIL_CONVERSION = "Invalid_JPEG.jpg"
         const val IMG_ERR_UNSUPPORTED = "MARBLES.TIF"
 
-        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.1.95") // update with online printer details
-        val TEST_PRINTER_ONLINE2 = Printer("ORPHIS FW5230", "192.168.1.224") // update with online printer details
-        val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.02")
-        val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.03")
-        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.04")
-        val TEST_PRINTER_GL = Printer("RISO ComColor GL9730", "192.168.0.05")
-        val TEST_PRINTER_FW = Printer("RISO ORPHIS FW5230", "192.168.0.06")
-        val TEST_PRINTER_GD = Printer("ORPHIS GD500", "192.168.0.07")
-        val TEST_PRINTER_IS = Printer("RISO IS1000C-J", "192.168.0.08")
-        val TEST_PRINTER_FT = Printer("ComColor FT5430", "192.168.0.09")
+        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.1.95", "08:00:27:93:79:5D") // update with online printer details
+        val TEST_PRINTER_ONLINE2 = Printer("ORPHIS FW5230", "192.168.1.224", "08:00:27:93:79:5C") // update with online printer details
+        val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.02", "08:00:27:93:79:5E")
+        val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.03", "08:00:27:93:79:5F")
+        val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.04", "08:00:27:93:79:5G")
+        val TEST_PRINTER_GL = Printer("RISO ComColor GL9730", "192.168.0.05", "08:00:27:93:79:5H")
+        val TEST_PRINTER_FW = Printer("RISO ORPHIS FW5230", "192.168.0.06", "08:00:27:93:79:5I")
+        val TEST_PRINTER_GD = Printer("ORPHIS GD500", "192.168.0.07", "08:00:27:93:79:5J")
+        val TEST_PRINTER_IS = Printer("RISO IS1000C-J", "192.168.0.08", "08:00:27:93:79:5K")
+        val TEST_PRINTER_FT = Printer("ComColor FT5430", "192.168.0.09", "08:00:27:93:79:5L")
 	
         val TEST_PRINTER_MODELS = listOf(
             TEST_PRINTER_IS,
