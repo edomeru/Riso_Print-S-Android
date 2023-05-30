@@ -586,6 +586,11 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     char                 *mac_address_copy = (char *)malloc(strlen(print_job->mac_address) + 1);  // MAC address buffer for strtok
     char                 mac_s[MAC_ADDRESS_BYTE_NUM][MAC_ADDRESS_BYTE_LENGTH+1];
     int                  mac_i[MAC_ADDRESS_BYTE_NUM];
+
+    if (is_cancelled(print_job) == 1)
+    {
+        return;
+    }
     
     // Since strtok modifies source string, store mac address first in buffer
     if (mac_address_copy == NULL || strcmp(mac_address_copy,"") == 1) {
@@ -677,6 +682,10 @@ void send_magic_packet(directprint_job *print_job, const char *port)
         // 1st loop: 5 seconds, 2nd loop: 10 seconds
         for(j=0; j<(5*(i+1)); j++)
         {
+            if (is_cancelled(print_job) == 1)
+            {
+                return;
+            }
             sleep(1);
         }
     }
