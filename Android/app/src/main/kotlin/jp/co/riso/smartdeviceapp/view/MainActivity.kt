@@ -237,6 +237,26 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
         if (!_drawerLayout!!.isDrawerOpen(Gravity.RIGHT) && !_drawerLayout!!.isDrawerOpen(Gravity.LEFT)) {
             fragment!!.clearIconStates()
         }
+
+        // RM1370/RM1142 workaround for print preview screen slow rotation in Android 11 and above
+        // If following steps are done, the print preview screen rotation is slow:
+        // 1. PDF is open in preview screen
+        // 2. Go to a different screen and then return to preview screen
+        // 3. Rotate the screen (portrait<->landscape)
+        // Workaround: Re-attach the fragment in order to recreate the view
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val fm = supportFragmentManager
+            val screen = fm.findFragmentById(R.id.mainLayout)
+            if (screen is PrintPreviewFragment && !screen.isConversionOngoing) {
+                fm.beginTransaction().detach(screen).commitNow()
+                fm.beginTransaction().attach(screen).commitNow()
+                // print settings button state need to be updated if print settings is open
+                if (isDrawerOpen(Gravity.RIGHT)) {
+                    screen.requireView().findViewById<View>(R.id.view_id_print_button).isSelected =
+                        true
+                }
+            }
+        }
     }
 
     @Deprecated("Deprecated in Java")
