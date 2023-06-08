@@ -620,8 +620,8 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
         // select offline printer
         selectPrinterPrintSettings(TEST_PRINTER_OFFLINE)
-        waitForPrint(30)
         testClickAndWait(R.id.view_id_print_header)
+        waitForPrint(30)
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,

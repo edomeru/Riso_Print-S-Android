@@ -247,12 +247,12 @@ class PrintPreviewFragmentTest : BaseActivityTestUtil() {
                     FragmentActivity.RESULT_OK,
                     intent))
 
-        switchScreen(MenuFragment.STATE_HOME)
         waitForView(withId(R.id.fileButton))
         waitForAnimation()
         onView(withId(R.id.fileButton)).perform(click())
         updateMainActivity()
         waitFewSeconds()
+        switchScreen(MenuFragment.STATE_HOME)
 
         loadFileUsingOpenIn(getUriFromPath(testFile2))
         waitForAnimation()
