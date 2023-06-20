@@ -47,7 +47,6 @@ struct snmp_context_s
     int state;
     snmp_discovery_ended_callback discovery_ended_callback;
     snmp_printer_added_callback printer_added_callback;
-    snmp_mac_address_retrieve_ended_callback mac_address_retrieve_ended_callback;
     snmp_device *device_list;
     char ip_address[IP_ADDRESS_LENGTH];
     char community_name[COMMUNITY_NAME_LENGTH+1];
@@ -145,18 +144,16 @@ static const char *FW_DEVICE_NAMES[] = {
 void snmp_device_discovery(snmp_context *context);
 void snmp_manual_discovery(snmp_context *context, const char *ip_address);
 void snmp_cancel(snmp_context *context);
-void snmp_mac_address_retrieve(snmp_context *context, const char *ip_address);
 
 // Thread
 void *do_discovery(void *parameter);
 void *do_capability_check(void *parameter);
-void *do_mac_address_retrieve(void *parameter);
 
 // Callback
 int snmp_discovery_callback(int operation, struct snmp_session *host, int req_id, struct snmp_pdu *pdu, void *magic);
 
 // SNMP context accessors
-snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, snmp_mac_address_retrieve_ended_callback mac_address_retrieve_ended_callback, const char *community_name);
+snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, const char *community_name);
 void snmp_context_free(snmp_context *context);
 int snmp_context_get_state(snmp_context *context);
 void snmp_context_set_state(snmp_context *context, int state);
@@ -178,10 +175,8 @@ int snmp_device_get_capability_status(snmp_device *device, int capability);
 int snmp_extract_ip_address(netsnmp_pdu *pdu, char *ip_address);
 int snmp_handle_pdu_response(char *ip_address, netsnmp_variable_list *var_list, snmp_context *context);
 int snmp_get_capabilities(snmp_context *context, snmp_device *device);
-int snmp_get_mac_address(snmp_context *context, snmp_device *device);
 void snmp_call_add_callback(snmp_context *context, snmp_device *device);
 void snmp_call_end_callback(snmp_context *context, int count);
-void snmp_call_mac_address_retrieve_callback(snmp_context *context, snmp_device *device, int result);
 
 void snmp_device_discovery(snmp_context *context)
 {
@@ -463,20 +458,7 @@ void *do_capability_check(void *parameter)
     return 0;
 }
 
-void *do_mac_address_retrieve(void *parameter)
-{
-    snmp_context *context = (snmp_context *)parameter;
-    snmp_device *device = snmp_device_new(context->ip_address);
-    
-    if(context != 0)
-    {
-        snmp_get_mac_address(context, device);
-        return 0;
-    }
-    
-    snmp_device_free(device);
-    return 0;
-}
+
 
 /**
  MARK: Net-snmp callback
@@ -509,7 +491,7 @@ int snmp_discovery_callback(int operation, struct snmp_session *host, int req_id
  MARK: SNMP context accessors
  */
 
-snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, snmp_mac_address_retrieve_ended_callback mac_address_retrieve_ended_callback, const char* community_name)
+snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, const char* community_name)
 {
     snmp_context *context = (snmp_context *)malloc(sizeof(snmp_context));
     memset(context->ip_address, 0, IP_ADDRESS_LENGTH);
@@ -523,7 +505,6 @@ snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_cal
     context->state = kSnmpStateInitialized;
     context->discovery_ended_callback = discovery_ended_callback;
     context->printer_added_callback = printer_added_callback;
-    context->mac_address_retrieve_ended_callback = mac_address_retrieve_ended_callback;
     context->device_list = 0;
     context->device_queue.first = 0;
     context->device_queue.current = 0;
@@ -561,29 +542,6 @@ void snmp_cancel(snmp_context *context)
 {
     snmp_context_set_state(context, kSnmpStateCancelled);
     pthread_join(context->main_thread, 0);
-}
-void snmp_mac_address_retrieve(snmp_context *context, const char *ip_address)
-{
-    // Check if ipv6
-    struct in6_addr ip_v6;
-    int result = inet_pton(AF_INET6, ip_address, &ip_v6);
-    if (result == 1)
-    {
-        if (strncmp(ip_address, IPV6_LINK_LOCAL_PREFIX, strlen(IPV6_LINK_LOCAL_PREFIX)) == 0)
-        {
-            snprintf(context->ip_address, IP_ADDRESS_LENGTH - 1, "udp6:[%s%%en0]", ip_address);
-        }
-        else
-        {
-            snprintf(context->ip_address, IP_ADDRESS_LENGTH - 1, "udp6:[%s]", ip_address);
-        }
-    }
-    else
-    {
-        strncpy(context->ip_address, ip_address, IP_ADDRESS_LENGTH - 1);
-    }
-    context->is_broadcast = 0;
-    pthread_create(&context->main_thread, 0, do_mac_address_retrieve, (void *)context);
 }
 
 int snmp_context_get_state(snmp_context *context)
@@ -1014,131 +972,6 @@ int snmp_get_capabilities(snmp_context *context, snmp_device *device)
     return 1;
 }
 
-int snmp_get_mac_address(snmp_context *context, snmp_device *device)
-{
-    int ret_val = 0;
-    // Information on who we're going to talk to
-    netsnmp_session session;
-    netsnmp_session *ss;
-
-    // Initialize session
-    snmp_sess_init(&session);
-
-    // Prepare IP Address
-    char ip_address[IP_ADDRESS_LENGTH];
-    struct in6_addr ip_v6;
-    int result = inet_pton(AF_INET6, device->ip_address, &ip_v6);
-    if (result == 1)
-    {
-        if (strncmp(ip_address, IPV6_LINK_LOCAL_PREFIX, strlen(IPV6_LINK_LOCAL_PREFIX)) == 0)
-        {
-            sprintf(ip_address, "udp6:[%s%%en0]", device->ip_address);
-        }
-        else
-        {
-            sprintf(ip_address, "udp6:[%s]", device->ip_address);
-        }
-    }
-    else
-    {
-        sprintf(ip_address, "%s", device->ip_address);
-    }
-
-    // Setup session information
-    session.peername = strdup(ip_address);
-
-    // Initialize SNMPv1
-    session.version = SNMP_VERSION_1;
-
-    //Setup community name
-    if(strlen(context->community_name) > 0 )
-    {
-        session.community = (u_char *) strdup(context->community_name);
-        session.community_len = strlen(context->community_name);
-    }
-    else
-    {
-        // Note: Handling of blank community name should be done in the Application side
-        // This handling is just to ensure that the default behavior (use public community name)
-        // is handled also in the common module in case Application fails to enforce it
-        session.community = (u_char *) strdup(COMMUNITY_NAME_DEFAULT);
-        session.community_len = strlen(COMMUNITY_NAME_DEFAULT);
-    }
-    session.timeout = SESSION_TIMEOUT;
-    session.callback = 0;
-    session.retries = 0;
-
-    // Open session
-    ss = snmp_sess_open(&session);
-    if (!ss)
-        {
-            free(session.peername);
-            free(session.community);
-            return ret_val;
-            }
-
-    for (int i = MIB_MAC_ADDR; i < MIB_INFO_COUNT; i++)
-    {
-        if (snmp_context_get_state(context) == kSnmpStateCancelled)
-        {
-            free(session.peername);
-            free(session.community);
-            return ret_val;
-        }
-        
-        oid oid_value[MAX_OID_LEN];
-        size_t oid_len = MAX_OID_LEN;
-        read_objid(MIB_REQUESTS[i], oid_value, &oid_len);
-        
-        netsnmp_pdu *pdu_request;
-        netsnmp_pdu *pdu_response;
-        
-        pdu_request = snmp_pdu_create(SNMP_MSG_GET);
-        snmp_add_null_var(pdu_request, oid_value, oid_len);
-        int status = snmp_sess_synch_response(ss, pdu_request, &pdu_response);
-        if (status == STAT_SUCCESS && pdu_response->errstat == SNMP_ERR_NOERROR)
-        {
-            netsnmp_variable_list *vars = pdu_response->variables;
-            if (snmp_oid_compare(vars->name, vars->name_length, oid_value, oid_len) == 0)
-            {
-                if (vars->type == ASN_OCTET_STR)
-                {
-                    char *sp = (char *)malloc(vars->val_len + 1);
-                    memcpy(sp, vars->val.string, vars->val_len);
-                    sp[vars->val_len] = 0;
-                    
-                    sprintf(device->device_info[i], "%s", sp);
-                    free(sp);
-                }
-                else if (vars->type == ASN_INTEGER)
-                {
-                    sprintf(device->device_info[i], "%ld", *vars->val.integer);
-                }
-            }
-            ret_val = 1;
-        }
-        
-        if(pdu_response != 0)
-        {
-            snmp_free_pdu(pdu_response);
-        }
-        
-        if (status != STAT_SUCCESS || pdu_response->errstat != SNMP_ERR_NOERROR)
-        {
-            ret_val = 0;
-            break;
-        }
-    }
-
-    snmp_sess_close(ss);
-    free(session.peername);
-    free(session.community);
-    
-    snmp_call_mac_address_retrieve_callback(context, device, ret_val);
-
-    return ret_val;
-}
-
 void snmp_call_add_callback(snmp_context *context, snmp_device *device)
 {
     if (snmp_context_get_state(context) == kSnmpStateCancelled)
@@ -1158,9 +991,4 @@ void snmp_call_end_callback(snmp_context *context, int count)
     
     snmp_context_set_state(context, count);
     context->discovery_ended_callback(context, count);
-}
-
-void snmp_call_mac_address_retrieve_callback(snmp_context *context, snmp_device *device, int result)
-{
-    context->mac_address_retrieve_ended_callback(context, device, result);
 }

@@ -37,8 +37,6 @@ import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.BaseTask
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager
-import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
-import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity
 import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
 import jp.co.riso.smartprint.R
@@ -57,9 +55,6 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
     private var _initTask: DBInitTask? = null
     private var _databaseInitialized = false
     private var _webView: SDAWebView? = null
-
-    private var _printerManager: PrinterManager? = null
-    private var _printersList: List<Printer?>? = null
 
     override fun onCreateContent(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_splash)
@@ -276,19 +271,6 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
         } catch (e: AndroidRuntimeException) {
             Logger.logError(SplashActivity::class.java, "Fatal Error: Android runtime")
             throw e
-        }
-
-        /* When device is updated from versions before v5.8.x.x
-         * to v5.8.x.x, need to check and retrieve MAC Address of
-         * all printers in the printer list
-         */
-        _printerManager = PrinterManager.getInstance(SmartDeviceApp.appContext!!)
-        _printersList = PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!.savedPrintersList
-
-        for (p in _printersList!!) {
-            if (p!!.macAddress == null) {
-                _printerManager!!.getMacAddress(p.ipAddress)
-            }
         }
 
         finish()

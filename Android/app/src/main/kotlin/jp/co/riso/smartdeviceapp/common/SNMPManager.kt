@@ -22,7 +22,6 @@ class SNMPManager {
     external fun finalizeSNMPManager()
     external fun deviceDiscovery()
     external fun manualDiscovery(ipAddress: String?)
-    external fun getMacAddress(ipAddress: String?)
     external fun cancel()
 
     /**
@@ -60,19 +59,6 @@ class SNMPManager {
     }
 
     /**
-     * @brief Callback called when the MAC address of the device is retrieved
-     *
-     * @param ipAddress Device IP Address
-     * @param macAddress Device MAC Address
-     * @param result Result of MAC Address retrieval
-     */
-    private fun onMacRetrieve(ipAddress: String, macAddress: String, result: Int) {
-        if (_callbackRef != null && _callbackRef!!.get() != null) {
-            _callbackRef!!.get()!!.onMacRetrieve(this, ipAddress, macAddress, result)
-        }
-    }
-
-    /**
      * @interface SNMPManagerCallback
      *
      * @brief SNMP Manager Interface
@@ -101,21 +87,6 @@ class SNMPManager {
             macAddress: String?,
             name: String?,
             capabilities: BooleanArray?
-        )
-
-        /**
-         * @brief Callback called when the MAC address of the device is retrieved
-         *
-         * @param manager SNMP Manager
-         * @param ipAddress Device IP Address
-         * @param macAddress Device MAC Address
-         * @param result Result of MAC Address retrieval
-         */
-        fun onMacRetrieve(
-            manager: SNMPManager?,
-            ipAddress: String?,
-            macAddress: String?,
-            result: Int
         )
     }
 

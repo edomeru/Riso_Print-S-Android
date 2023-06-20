@@ -20,6 +20,8 @@
 #include "common.h"
 #include "printsettings.h"
 
+#define ENABLE_DEBUG_LOG 0 // enable to show debug logs (only confirmed to be displayed in Xcode)
+
 #define ENABLE_JOB_DUMP 0
 #if ENABLE_JOB_DUMP
 
@@ -496,11 +498,20 @@ int connect_to_port(directprint_job *print_job, const char *port)
         
         do {
             // Try to establish connection
+#if ENABLE_DEBUG_LOG
+            printf("connect to socket start\n");
+#endif
             if (connect(sock_fd, current_address->ai_addr, current_address->ai_addrlen) == -1)
             {
+#if ENABLE_DEBUG_LOG
+                printf("connect to socket end\n");
+#endif
                 if (errno != EINPROGRESS)
                 {
                     // Unable to connect
+#if ENABLE_DEBUG_LOG
+                    printf("unable to connect\n");
+#endif
                     sock_fd = -1;
                     break;
                 }
@@ -511,7 +522,13 @@ int connect_to_port(directprint_job *print_job, const char *port)
                 struct timeval timeout;
                 timeout.tv_sec = TIMEOUT_CONNECT;
                 timeout.tv_usec = 0;
+#if ENABLE_DEBUG_LOG
+                printf("select start\n");
+#endif
                 select(sock_fd + 1, 0, &write_fds, 0, &timeout);
+#if ENABLE_DEBUG_LOG
+                printf("select end\n");
+#endif
                 
                 if (!DP_FD_ISSET(sock_fd, &write_fds))
                 {
@@ -520,7 +537,15 @@ int connect_to_port(directprint_job *print_job, const char *port)
                     {
                         send_magic_packet(print_job, PORT_WAKE);
                         is_wakeonlan_done = true;
-                        continue;
+                        if (is_cancelled(print_job) == 1)
+                        {
+                            sock_fd = -1;
+                            break;
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
                     else
                     {
@@ -538,7 +563,15 @@ int connect_to_port(directprint_job *print_job, const char *port)
                     {
                         send_magic_packet(print_job, PORT_WAKE);
                         is_wakeonlan_done = true;
-                        continue;
+                        if (is_cancelled(print_job) == 1)
+                        {
+                            sock_fd = -1;
+                            break;
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
                     else
                     {
@@ -566,6 +599,9 @@ int connect_to_port(directprint_job *print_job, const char *port)
     
     if (sock_fd == -1) {
         close(sock_fd);
+#if ENABLE_DEBUG_LOG
+        printf("   socket closed -- print job\n");
+#endif
     }
     
     freeaddrinfo(server_info);
@@ -592,9 +628,14 @@ void send_magic_packet(directprint_job *print_job, const char *port)
         return;
     }
     
+#if ENABLE_DEBUG_LOG
+    printf("Generating magic packet... \n");
+#endif
     // Since strtok modifies source string, store mac address first in buffer
     if (mac_address_copy == NULL || strcmp(mac_address_copy,"") == 1) {
+#if ENABLE_DEBUG_LOG
         printf("*** ERROR - NULL mac address \n");
+#endif
         return;
     }
     strcpy(mac_address_copy, print_job->mac_address);
@@ -602,7 +643,9 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     // Extract MAC Address bytes
     tp = strtok((char*)mac_address_copy, ":");
     if (tp == NULL) {
+#if ENABLE_DEBUG_LOG
         printf("*** ERROR - NULL mac address \n");
+#endif
         return;
     }
     
@@ -619,22 +662,30 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     if(mac_i[0] == 0x00 && mac_i[1] == 0x00 && mac_i[2] == 0x00 &&
        mac_i[3] == 0x00 && mac_i[4] == 0x00 && mac_i[5] == 0x00)
     {
+#if ENABLE_DEBUG_LOG
         printf("*** ERROR - MAC address is blank \n");
+#endif
         return;
     }
+#if ENABLE_DEBUG_LOG
     printf("  Target MAC address = %02X-%02X-%02X-%02X-%02X-%02X \n",
            mac_i[0], mac_i[1], mac_i[2], mac_i[3], mac_i[4], mac_i[5]);
+#endif
     
     // Fill-in target address information
     if (strncmp(print_job->ip_address, IPV6_LINK_LOCAL_PREFIX, strlen(IPV6_LINK_LOCAL_PREFIX)) == 0)
     {   // ipv6
+#if ENABLE_DEBUG_LOG
         printf("  Target IP address  = %s \n", IPV6_ADDRESS_MULTICAST);
+#endif
         target_addr.sin_addr.s_addr = inet_addr(IPV6_ADDRESS_MULTICAST);
         target_addr.sin_family = AF_INET6;
     }
     else
     {   // ipv4
+#if ENABLE_DEBUG_LOG
         printf("  Target IP address  = %s \n", IPV4_ADDRESS_BROADCAST);
+#endif
         target_addr.sin_addr.s_addr = inet_addr(IPV4_ADDRESS_BROADCAST);
         target_addr.sin_family = AF_INET;
     }
@@ -645,13 +696,17 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     client_s = socket(target_addr.sin_family, SOCK_DGRAM, IPPROTO_UDP);
     if (client_s < 0)
     {
+#if ENABLE_DEBUG_LOG
         printf("*** ERROR - socket() failed \n");
+#endif
         return;
     }
     
     int broadcast=1;
     if (setsockopt(client_s, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast))==-1) {
+#if ENABLE_DEBUG_LOG
         printf("*** ERROR - %s",strerror(errno));
+#endif
     }
     
     // Load the Magic Packet pattern into the output buffer
@@ -661,32 +716,43 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     {
         for(j=0; j<MAC_ADDRESS_BYTE_NUM; j++)
         {
-            out_buf[(i+1)*6 + (j)] = mac_i[j];
+            out_buf[(i+1)*6 + j] = mac_i[j];
         }
     }
     pkt_len = 102;
     
     // Now send the Magic Packet to the target
-    printf("Sending Magic Packet to target... \n");
     notify_callback(print_job, kJobStatusWaking);
     for (i=0; i < 2; i++) {
+#if ENABLE_DEBUG_LOG
+        printf("Sending Magic Packet to target... %d of 2\n", i+1);
+#endif
         retcode = (int) sendto(client_s, out_buf, pkt_len, 0,
                          (struct sockaddr *)&target_addr, sizeof(target_addr));
         if (retcode < 0)
         {
+#if ENABLE_DEBUG_LOG
             printf("*** ERROR - sendto() failed \n");
-            return;
+#endif
+            break;
         }
         
         // Wait for the packet to be sent
         // 1st loop: 5 seconds, 2nd loop: 10 seconds
+#if ENABLE_DEBUG_LOG
+        printf("Start sleep for %d seconds \n", 5*(i+1));
+#endif
         for(j=0; j<(5*(i+1)); j++)
         {
             if (is_cancelled(print_job) == 1)
             {
-                return;
+                break;
             }
             sleep(1);
+        }
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
         }
     }
     notify_callback(print_job, kJobStatusConnecting);
@@ -695,9 +761,14 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     retcode = close(client_s);
     if (retcode < 0)
     {
+#if ENABLE_DEBUG_LOG
         printf("*** ERROR - close() failed \n");
+#endif
         return;
     }
+#if ENABLE_DEBUG_LOG
+    printf("   socket closed -- magic packet\n");
+#endif
 }
 
 int str_to_uint16(const char *str, uint16_t *res) {
@@ -742,6 +813,9 @@ void notify_callback(directprint_job *print_job, int status)
     if (print_job->callback != 0)
     {
         print_job->callback(print_job, status, print_job->progress);
+#if ENABLE_DEBUG_LOG
+        printf("notify callback %d\n", status);
+#endif
     }
 }
 
