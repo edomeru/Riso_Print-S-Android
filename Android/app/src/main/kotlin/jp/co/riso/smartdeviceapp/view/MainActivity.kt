@@ -118,12 +118,6 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
         if (savedInstanceState == null) {
             val fm = supportFragmentManager
             val ft = fm.beginTransaction()
-//            val fragment = if (intent != null && (intent.data != null || intent.clipData != null)) {
-//                PrintPreviewFragment()
-//            } else {
-//                HomeFragment()
-//            }
-//            ft.add(R.id.mainLayout, fragment, fragment.tag)
             val fragment: BaseFragment
             var tag = MenuFragment.STATE_PRINTPREVIEW
             if (intent != null && (intent.data != null || intent.clipData != null)) {
