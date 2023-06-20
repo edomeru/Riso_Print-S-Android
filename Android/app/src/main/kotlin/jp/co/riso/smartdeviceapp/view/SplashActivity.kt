@@ -17,6 +17,7 @@ import android.os.*
 import android.provider.Settings
 import android.util.AndroidRuntimeException
 import android.view.ContextThemeWrapper
+import android.view.KeyEvent
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -113,6 +114,26 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(KEY_DB_INITIALIZED, _databaseInitialized)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        return when (keyCode) {
+            // Shortcut key : Quit CTRL + Q or ALT + Q
+            KeyEvent.KEYCODE_Q -> {
+                if (event.isCtrlPressed || event.isAltPressed) {
+                    finishAndRemoveTask()
+                }
+                super.onKeyUp(keyCode, event)
+            }
+            // Shortcut key : Quit ALT + F4
+            KeyEvent.KEYCODE_F4 -> {
+                if (event.isAltPressed) {
+                    finishAndRemoveTask()
+                }
+                super.onKeyUp(keyCode, event)
+            }
+            else -> super.onKeyUp(keyCode, event)
+        }
     }
 
     private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
