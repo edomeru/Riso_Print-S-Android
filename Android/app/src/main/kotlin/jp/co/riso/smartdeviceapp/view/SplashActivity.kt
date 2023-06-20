@@ -278,19 +278,6 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             throw e
         }
 
-        /* When device is updated from versions before v5.8.x.x
-         * to v5.8.x.x, need to check and retrieve MAC Address of
-         * all printers in the printer list
-         */
-        _printerManager = PrinterManager.getInstance(SmartDeviceApp.appContext!!)
-        _printersList = PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!.savedPrintersList
-
-        for (p in _printersList!!) {
-            if (p!!.macAddress == null) {
-                _printerManager!!.getMacAddress(p.ipAddress)
-            }
-        }
-
         finish()
     }
 

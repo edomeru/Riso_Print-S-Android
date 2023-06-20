@@ -16,7 +16,6 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
     snmp_context_field_id = (*env)->GetFieldID(env, snmp_class, SNMP_CONTEXT_FIELD_NAME, SNMP_CONTEXT_FIELD_TYPE);
     snmp_end_callback_method_id = (*env)->GetMethodID(env, snmp_class, SNMP_END_CALLBACK_METHOD_NAME, SNMP_END_CALLBACK_METHOD_TYPE);
     snmp_found_callback_method_id = (*env)->GetMethodID(env, snmp_class, SNMP_FOUND_CALLBACK_METHOD_NAME, SNMP_FOUND_CALLBACK_METHOD_TYPE);
-    snmp_mac_callback_method_id = (*env)->GetMethodID(env, snmp_class, SNMP_MAC_CALLBACK_METHOD_NAME, SNMP_MAC_CALLBACK_METHOD_TYPE);
 
     return JNI_VERSION_1_6;
 }

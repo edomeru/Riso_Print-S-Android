@@ -73,7 +73,6 @@ typedef struct snmp_device_s snmp_device;
 
 typedef void (*snmp_discovery_ended_callback)(snmp_context *context, int);
 typedef void (*snmp_printer_added_callback)(snmp_context *context, snmp_device *);
-typedef void (*snmp_mac_address_retrieve_ended_callback)(snmp_context *context, snmp_device *, int);
 
 // SNMP state
 typedef enum
@@ -114,14 +113,13 @@ typedef enum
     kDeviceSeriesCount
 } kPrinterSeries;
 
-snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, snmp_mac_address_retrieve_ended_callback mac_address_retrieve_ended_callback, const char* community_name);
+snmp_context *snmp_context_new(snmp_discovery_ended_callback discovery_ended_callback, snmp_printer_added_callback printer_added_callback, const char* community_name);
 void snmp_context_free(snmp_context *context);
 void snmp_device_discovery(snmp_context *context);
 void snmp_manual_discovery(snmp_context *context, const char *ip_address);
 void snmp_cancel(snmp_context *context);
 void *snmp_context_get_caller_data(snmp_context *context);
 void snmp_context_set_caller_data(snmp_context *context, void *caller_data);
-void snmp_mac_address_retrieve(snmp_context *context, const char *ip_address);
 
 snmp_device *snmp_device_new(const char *ip_address);
 void snmp_device_free(snmp_device *device);
