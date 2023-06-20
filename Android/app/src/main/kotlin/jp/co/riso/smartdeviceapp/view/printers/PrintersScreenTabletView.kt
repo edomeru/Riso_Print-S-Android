@@ -436,10 +436,10 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         viewHolder.port!!.setSelection(printer.portSetting!!.ordinal)
         viewHolder.printerName!!.text = printerName
         viewHolder.ipAddress!!.text = printer.ipAddress
-        if (printer.macAddress != null) {
-            viewHolder.macAddress!!.text = printer.macAddress
-        } else {
+        if (printer.macAddress == null || printer.macAddress == "") {
             viewHolder.macAddress!!.text = "-"
+        } else {
+            viewHolder.macAddress!!.text = printer.macAddress
         }
         viewHolder.deleteButton!!.setOnClickListener(this)
         viewHolder.printSettings!!.setOnClickListener(this)
