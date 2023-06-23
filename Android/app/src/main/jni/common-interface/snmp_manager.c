@@ -11,7 +11,6 @@
 // Callbacks
 void end_callback(snmp_context *context, int result);
 void found_callback(snmp_context *context, snmp_device *device);
-void mac_callback(snmp_context *context, snmp_device *device, int result);
 
 JNIEXPORT void 
 Java_jp_co_riso_smartdeviceapp_common_SNMPManager_initializeSNMPManager(JNIEnv *env, jobject object, jstring community_name)
@@ -25,7 +24,7 @@ Java_jp_co_riso_smartdeviceapp_common_SNMPManager_initializeSNMPManager(JNIEnv *
     const char *native_community_name = (*env)->GetStringUTFChars(env, community_name, 0);
 
     // Create snmp context
-    snmp_context *context = snmp_context_new(end_callback, found_callback, mac_callback, native_community_name);
+    snmp_context *context = snmp_context_new(end_callback, found_callback, native_community_name);
     snmp_context_set_caller_data(context, (void *)state);
     
     // Set context reference to java object
@@ -81,23 +80,6 @@ Java_jp_co_riso_smartdeviceapp_common_SNMPManager_manualDiscovery(JNIEnv *env, j
 }
 
 JNIEXPORT void
-Java_jp_co_riso_smartdeviceapp_common_SNMPManager_getMacAddress(JNIEnv *env, jobject object, jstring ip_address)
-{
-    jlong m_context = (*env)->GetLongField(env, object, snmp_context_field_id);
-    if (m_context == 0)
-    {
-        return;
-    }
-
-    const char *native_ip_address = (*env)->GetStringUTFChars(env, ip_address, 0);
-
-    snmp_context *context = (snmp_context *)m_context;
-    snmp_mac_address_retrieve(context, native_ip_address);
-
-    (*env)->ReleaseStringUTFChars(env, ip_address, native_ip_address);
-}
-
-JNIEXPORT void
 Java_jp_co_riso_smartdeviceapp_common_SNMPManager_cancel(JNIEnv *env, jobject object)
 {
     jlong m_context = (*env)->GetLongField(env, object, snmp_context_field_id);
@@ -142,21 +124,6 @@ void found_callback(snmp_context *context, snmp_device *device)
     (*env)->SetBooleanArrayRegion(env, jni_caps, 0, kSnmpCapabilityCount, tempCaps);
 
     (*env)->CallVoidMethod(env, state->instance, snmp_found_callback_method_id, jni_ip_address, jni_mac_address, jni_name, jni_caps);
-
-    (*java_vm)->DetachCurrentThread(java_vm);
-}
-
-void mac_callback(snmp_context *context, snmp_device *device, int result)
-{
-    CommonJNIState *state = (CommonJNIState *)snmp_context_get_caller_data(context);
-    JNIEnv *env;
-    JavaVM *java_vm = state->java_vm;
-    (*java_vm)->AttachCurrentThread(java_vm, (JNIEnv **)&env, 0);
-
-    jstring jni_ip_address = (*env)->NewStringUTF(env, snmp_device_get_ip_address(device));
-    jstring jni_mac_address = (*env)->NewStringUTF(env, snmp_device_get_mac_address(device));
-
-    (*env)->CallVoidMethod(env, state->instance, snmp_mac_callback_method_id, jni_ip_address, jni_mac_address, (jint)result);
 
     (*java_vm)->DetachCurrentThread(java_vm);
 }

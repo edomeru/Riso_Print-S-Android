@@ -21,14 +21,11 @@ jmethodID dp_callback_method_id __attribute__((common));
 #define SNMP_END_CALLBACK_METHOD_TYPE "(I)V"
 #define SNMP_FOUND_CALLBACK_METHOD_NAME "onFoundDevice"
 #define SNMP_FOUND_CALLBACK_METHOD_TYPE "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Z)V"
-#define SNMP_MAC_CALLBACK_METHOD_NAME "onMacRetrieve"
-#define SNMP_MAC_CALLBACK_METHOD_TYPE "(Ljava/lang/String;Ljava/lang/String;I)V"
 
 
 jfieldID snmp_context_field_id __attribute__((common));
 jmethodID snmp_end_callback_method_id __attribute__((common));
 jmethodID snmp_found_callback_method_id __attribute__((common));
-jmethodID snmp_mac_callback_method_id __attribute__((common));
 
 typedef struct
 {

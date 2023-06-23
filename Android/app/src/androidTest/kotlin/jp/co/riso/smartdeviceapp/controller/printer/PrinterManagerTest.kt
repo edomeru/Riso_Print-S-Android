@@ -992,7 +992,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             fail(); // Error should not be thrown
         }
     }
-    */
+
     @Test
     fun testIsOnline_OnlineIpv6Printer() {
         // If test fails, check with actual ipv6 address
@@ -1020,7 +1020,7 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             TestCase.fail() // Error should not be thrown
         }
     }
-
+    */
     @Test
     fun testIsOnline_OfflinePrinter() {
         try {

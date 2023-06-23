@@ -254,6 +254,13 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         // Ver.2.0.4.2 End
         val ret: Boolean
         val formattedString = printSettings.formattedString(_pdfIsLandscape)
+
+        // Direct Print Handler in Common interface expects a non-null mac address parameter
+        if (printer.macAddress == null) {
+            // Set it to an empty string if null
+            printer.macAddress = ""
+        }
+
         ret = if (printer.portSetting == PortSetting.LPR) {
             // Ver.2.0.4.2 Start
             //ret = mDirectPrintManager.executeLPRPrint(printer.getName(), appName, appVersion, userName, jobName, mPdfPath, formattedString, printer.getIpAddress());

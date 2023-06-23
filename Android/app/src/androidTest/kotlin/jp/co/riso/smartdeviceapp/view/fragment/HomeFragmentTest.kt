@@ -1,10 +1,10 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import android.Manifest.permission.CAMERA
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.Manifest.permission.*
 import android.app.Instrumentation
 import android.content.ClipData
 import android.content.Intent
+import android.os.Build
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.test.espresso.action.ViewActions.doubleClick
@@ -31,7 +31,11 @@ class HomeFragmentTest : BaseActivityTestUtil() {
     private val REQUEST_PERMISSIONS_NAMES = "android.content.pm.extra.REQUEST_PERMISSIONS_NAMES"
 
     @get:Rule
-    var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(WRITE_EXTERNAL_STORAGE)
+    var storagePermission: GrantPermissionRule = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        GrantPermissionRule.grant(READ_MEDIA_IMAGES)
+    } else {
+        GrantPermissionRule.grant(WRITE_EXTERNAL_STORAGE)
+    }
 
     // HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
 //    @get:Rule
@@ -165,10 +169,17 @@ class HomeFragmentTest : BaseActivityTestUtil() {
         if (_homeFragment!!.isChromeBook) {
             Assert.assertNull(extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES))
         } else {
-            Assert.assertArrayEquals(
-                AppConstants.IMAGE_TYPES,
-                extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                Assert.assertArrayEquals(
+                    AppConstants.IMAGE_TYPES_ANDROID_12,
+                    extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
+                )
+            } else {
+                Assert.assertArrayEquals(
+                    AppConstants.IMAGE_TYPES,
+                    extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
+                )
+            }
         }
     }
 

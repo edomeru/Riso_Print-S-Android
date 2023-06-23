@@ -1,6 +1,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
+import android.os.Build
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.test.espresso.Espresso.onView
@@ -21,7 +22,11 @@ class MenuFragmentTest : BaseActivityTestUtil() {
     private var _menuFragment: MenuFragment? = null
 
     @get:Rule
-    var storagePermission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    var storagePermission: GrantPermissionRule = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        GrantPermissionRule.grant(Manifest.permission.READ_MEDIA_IMAGES)
+    } else {
+        GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    }
 
     @Before
     fun setUp() {

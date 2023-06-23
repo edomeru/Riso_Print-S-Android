@@ -1,6 +1,7 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
 import android.Manifest
+import android.os.Build
 import android.text.method.PasswordTransformationMethod
 import android.view.KeyEvent
 import android.view.View
@@ -44,8 +45,11 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         get() = SmartDeviceApp.activity!!.findViewById(R.id.printPreviewView)
 
     @get:Rule
-    var storagePermission: GrantPermissionRule =
+    var storagePermission: GrantPermissionRule = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        GrantPermissionRule.grant(Manifest.permission.READ_MEDIA_IMAGES)
+    } else {
         GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    }
 
     @Before
     fun setup() {
@@ -616,8 +620,8 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
 
         // select offline printer
         selectPrinterPrintSettings(TEST_PRINTER_OFFLINE)
-        waitForPrint(30)
         testClickAndWait(R.id.view_id_print_header)
+        waitForPrint(30)
 
         checkDialog(
             PrintSettingsFragment.TAG_MESSAGE_DIALOG,
