@@ -625,6 +625,10 @@ void send_magic_packet(directprint_job *print_job, const char *port)
 
     if (is_cancelled(print_job) == 1)
     {
+        if (mac_address_copy != NULL) {
+            free(mac_address_copy);
+            mac_address_copy = NULL;
+        }
         return;
     }
     
@@ -636,6 +640,10 @@ void send_magic_packet(directprint_job *print_job, const char *port)
 #if ENABLE_DEBUG_LOG
         printf("*** ERROR - NULL mac address \n");
 #endif
+        if (mac_address_copy != NULL) {
+            free(mac_address_copy);
+            mac_address_copy = NULL;
+        }
         return;
     }
     strcpy(mac_address_copy, print_job->mac_address);
@@ -646,6 +654,8 @@ void send_magic_packet(directprint_job *print_job, const char *port)
 #if ENABLE_DEBUG_LOG
         printf("*** ERROR - NULL mac address \n");
 #endif
+        free(mac_address_copy);
+        mac_address_copy = NULL;
         return;
     }
     
@@ -665,6 +675,8 @@ void send_magic_packet(directprint_job *print_job, const char *port)
 #if ENABLE_DEBUG_LOG
         printf("*** ERROR - MAC address is blank \n");
 #endif
+        free(mac_address_copy);
+        mac_address_copy = NULL;
         return;
     }
 #if ENABLE_DEBUG_LOG
@@ -699,6 +711,8 @@ void send_magic_packet(directprint_job *print_job, const char *port)
 #if ENABLE_DEBUG_LOG
         printf("*** ERROR - socket() failed \n");
 #endif
+        free(mac_address_copy);
+        mac_address_copy = NULL;
         return;
     }
     
@@ -756,6 +770,10 @@ void send_magic_packet(directprint_job *print_job, const char *port)
         }
     }
     notify_callback(print_job, kJobStatusConnecting);
+    
+    // Free mac address buffer
+    free(mac_address_copy);
+    mac_address_copy = NULL;
     
     // Close client socket and clean-up
     retcode = close(client_s);
