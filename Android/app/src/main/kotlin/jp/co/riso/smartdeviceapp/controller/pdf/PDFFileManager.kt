@@ -286,11 +286,11 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
         }
         var bitmap =
             Bitmap.createBitmap(pageWidth.toInt(), pageHeight.toInt(), Bitmap.Config.ARGB_8888)
-        bitmap!!.eraseColor(Color.WHITE)
+        bitmap.eraseColor(Color.WHITE)
         val mat = Matrix(scaleX, scaleY, x0, y0)
         if (!page.RenderToBmp(bitmap, mat)) {
             bitmap.recycle()
-            bitmap = null
+            //bitmap = null
         }
         mat.Destroy()
         page.Close()

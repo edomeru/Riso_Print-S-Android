@@ -3,20 +3,20 @@ apply plugin: 'kotlin-android'
 apply from: 'coverage.gradle'
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion '33.0.0'
+    compileSdk 34
+    buildToolsVersion = '34.0.0'
 
     defaultConfig {
         applicationId "jp.co.riso.smartprint"
         minSdkVersion 28
-        targetSdkVersion 33
-        versionCode 50800004
-        versionName "v5.8.0.4"
+        targetSdkVersion 34
+        versionCode 50900000
+        versionName "v5.9.0.0"
 
         testApplicationId "jp.co.riso.smartprint.test"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        ndkVersion '25.1.8937393'
+        ndkVersion '26.1.10909125'
         externalNativeBuild {
             ndk {
                 moduleName "common"
@@ -51,7 +51,7 @@ android {
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
     namespace 'jp.co.riso.smartprint'
-    ndkVersion '25.1.8937393'
+    ndkVersion '26.1.10909125'
 }
 
 dependencies {
