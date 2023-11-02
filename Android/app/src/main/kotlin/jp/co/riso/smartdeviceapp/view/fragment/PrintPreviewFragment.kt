@@ -227,10 +227,10 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             _pdfManager = PDFFileManager(this)
 
             /* 20231020 - Permission is not needed anymore for PDF/TXT files.
-             * Permission will only be applied for images
+             * Permission will only be applied for images or if device is Android 9
              */
             val contentType = FileUtils.getMimeType(requireActivity(), intent.data)
-            if (contentType != AppConstants.DOC_TYPES[0] && contentType != AppConstants.DOC_TYPES[1]) {
+            if (SDK_INT == Build.VERSION_CODES.P || (contentType != AppConstants.DOC_TYPES[0] && contentType != AppConstants.DOC_TYPES[1])) {
                 // if has PDF to open and the Android permission dialog is not yet opened, check permission
                 if (hasPdfFile() && !_isPermissionDialogOpen) {
                     if (ContextCompat.checkSelfPermission(

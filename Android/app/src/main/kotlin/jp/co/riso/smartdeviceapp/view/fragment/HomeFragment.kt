@@ -102,10 +102,15 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         val id = v.id
         if (id == R.id.fileButton) {
             /* 20231020 - Permission is not needed anymore for PDF/TXT files.
-             *  Permission will only be applied for images
+             *  Permission will only be applied for images and if device is Android 9
              */
             _buttonTapped = _fileButton
-            if (SystemClock.elapsedRealtime() - _lastClickTime > 1000) {
+            _checkPermission = if (SDK_INT == Build.VERSION_CODES.P) {
+                checkPermission(true)
+            } else {
+                true
+            }
+            if (_checkPermission && SystemClock.elapsedRealtime() - _lastClickTime > 1000) {
                 // prevent double tap
                 _lastClickTime = SystemClock.elapsedRealtime()
                 val filePickerIntent = Intent(Intent.ACTION_GET_CONTENT)

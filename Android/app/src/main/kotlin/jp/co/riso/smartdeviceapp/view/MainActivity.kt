@@ -69,28 +69,39 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             Logger.logStartTime(this, this.javaClass, "AppLaunch")
         }
         if (intent != null && (intent.data != null || intent.clipData != null)) { // check if Open-In
+            /* 20231030 - Permission is still required for Android 9 */
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
+                val permissionTypeAndroid9 = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-            /* 20231020 - Permission is not needed anymore for PDF/TXT files.
-            *  Permission will only be applied for images
-            * */
-            val contentType = FileUtils.getMimeType(this, intent.data)
-            if (contentType != AppConstants.DOC_TYPES[0] && contentType != AppConstants.DOC_TYPES[1]) {
-                // WRITE_EXTERNAL_STORAGE for Android 12 and older versions
-                var permissionType = Manifest.permission.WRITE_EXTERNAL_STORAGE
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    // READ_MEDIA_IMAGES for Android 13 and later versions
-                    permissionType = Manifest.permission.READ_MEDIA_IMAGES
-                }
-
-                if (ContextCompat.checkSelfPermission(this, permissionType)
+                if (ContextCompat.checkSelfPermission(this, permissionTypeAndroid9)
                     == PackageManager.PERMISSION_GRANTED
                 ) {
                     // permission is granted, initialize Radaee (uses external storage)
                     initializeRadaee()
                 }
             } else {
-                initializeRadaee()
+                /* 20231020 - Permission is not needed anymore for PDF/TXT files.
+            *  Permission will only be applied for images
+            * */
+                val contentType = FileUtils.getMimeType(this, intent.data)
+                if (contentType != AppConstants.DOC_TYPES[0] && contentType != AppConstants.DOC_TYPES[1]) {
+                    // WRITE_EXTERNAL_STORAGE for Android 12 and older versions
+                    var permissionType = Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        // READ_MEDIA_IMAGES for Android 13 and later versions
+                        permissionType = Manifest.permission.READ_MEDIA_IMAGES
+                    }
+
+                    if (ContextCompat.checkSelfPermission(this, permissionType)
+                        == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // permission is granted, initialize Radaee (uses external storage)
+                        initializeRadaee()
+                    }
+                } else {
+                    initializeRadaee()
+                }
             }
         }
 
