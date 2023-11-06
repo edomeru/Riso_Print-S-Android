@@ -16,7 +16,7 @@ android {
         testApplicationId "jp.co.riso.smartprint.test"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        ndkVersion '26.1.10909125'
+        ndkVersion '25.2.9519653'
         externalNativeBuild {
             ndk {
                 moduleName "common"
@@ -60,7 +60,7 @@ android {
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
     namespace 'jp.co.riso.smartprint'
-    ndkVersion '26.1.10909125'
+    ndkVersion '25.2.9519653'
 }
 
 dependencies {
