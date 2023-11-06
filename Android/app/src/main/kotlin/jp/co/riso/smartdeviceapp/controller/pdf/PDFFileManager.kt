@@ -81,7 +81,7 @@ class PDFFileManager(pdfFileManagerInterface: PDFFileManagerInterface?) {
         set(filename) {
             _fileName = filename
             val prefs =
-                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
+                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
             val edit = prefs.edit()
             edit.putString(KEY_SANDBOX_PDF_NAME, filename)
             edit.apply()

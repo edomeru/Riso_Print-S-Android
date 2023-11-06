@@ -16,7 +16,6 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
     private var _snmpManager: SNMPManager? = null
     private var _onEndDiscovery = false
     private var _onFoundDevice = false
-    private var _onMacRetrieve = false
 
     @Throws(Exception::class)
     override fun setUp() {
@@ -26,7 +25,6 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         _snmpManager!!.initializeSNMPManager(AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME)
         _onEndDiscovery = false
         _onFoundDevice = false
-        _onMacRetrieve = false
         testSetCallback_ValidCallback()
     }
 
@@ -223,15 +221,6 @@ class SNMPManagerTest : TestCase(), SNMPManagerCallback {
         capabilities: BooleanArray?
     ) {
         _onFoundDevice = true
-    }
-
-    override fun onMacRetrieve(
-        manager: SNMPManager?,
-        ipAddress: String?,
-        macAddress: String?,
-        result: Int
-    ) {
-        _onMacRetrieve = true
     }
 
     companion object {

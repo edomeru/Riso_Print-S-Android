@@ -10,8 +10,8 @@ android {
         applicationId "jp.co.riso.smartprint"
         minSdkVersion 28
         targetSdkVersion 34
-        versionCode 50900001
-        versionName "v5.9.0.1"
+        versionCode 50900002
+        versionName "v5.9.0.2"
 
         testApplicationId "jp.co.riso.smartprint.test"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -23,6 +23,15 @@ android {
                 abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
             }
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
     }
 
     sourceSets.main {
@@ -56,11 +65,11 @@ android {
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'org.jacoco:org.jacoco.build:0.8.6'
-    implementation 'androidx.exifinterface:exifinterface:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'org.jacoco:org.jacoco.build:0.8.11'
+    implementation 'androidx.exifinterface:exifinterface:1.3.6'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.vectordrawable:vectordrawable-animated:1.1.0'
 
@@ -71,19 +80,19 @@ dependencies {
 
     // test dependencies
     implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
 
     // Espresso dependencies
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0-alpha07'
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.0-alpha01'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
     
     // Kotlin dependencies
-    implementation "androidx.core:core-ktx:1.7.0"
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.activity:activity-ktx:1.4.0"
-    implementation "androidx.fragment:fragment-ktx:1.4.1"
-    androidTestImplementation 'androidx.test:rules:1.4.1-alpha07'
-    androidTestImplementation 'androidx.test:core:1.5.0-alpha02'
+    implementation 'androidx.activity:activity-ktx:1.8.0'
+    implementation 'androidx.fragment:fragment-ktx:1.6.1'
+    androidTestImplementation 'androidx.test:rules:1.6.0-alpha01'
+    androidTestImplementation 'androidx.test:core:1.6.0-alpha02'
 }
 
 // Returns NDK build command based on development OS

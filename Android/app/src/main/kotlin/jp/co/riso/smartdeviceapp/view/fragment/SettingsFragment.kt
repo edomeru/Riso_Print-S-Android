@@ -39,7 +39,7 @@ class SettingsFragment : BaseFragment() {
     override fun initializeFragment(savedInstanceState: Bundle?) {}
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
         val editText = view.findViewById<EditText>(R.id.loginIdEditText)
         editText.isActivated = true
         editText.setText(
@@ -127,7 +127,7 @@ class SettingsFragment : BaseFragment() {
 
         @Synchronized
         override fun afterTextChanged(s: Editable) {
-            val prefs = PreferenceManager.getDefaultSharedPreferences(mContext)
+            val prefs = PreferenceManager.getDefaultSharedPreferences(mContext!!)
             val editor = prefs.edit()
             editor.putString(mPrefKey, s.toString())
             editor.apply()
