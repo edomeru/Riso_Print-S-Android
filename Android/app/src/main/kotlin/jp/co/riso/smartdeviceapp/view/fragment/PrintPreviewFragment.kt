@@ -7,6 +7,7 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
+import android.Manifest
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.content.pm.PackageManager
@@ -114,7 +115,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         get() = R.layout.fragment_printpreview
 
     private val _printSettingsViewModel: PrintSettingsViewModel by activityViewModels()
-    private var _permissionType: String = WRITE_EXTERNAL_STORAGE
+    private var _permissionType: String = WRITE_EXTERNAL_STORAGE // WRITE_EXTERNAL_STORAGE for Android 12 and older versions
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         // dismiss permission alert dialog if showing
@@ -216,8 +217,8 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             _pauseableHandler = PauseableHandler(Looper.myLooper(), this)
         }
 
-        // Check if device is Android 13 for permissions
         if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // READ_MEDIA_IMAGES for Android 13 and later versions
             _permissionType = READ_MEDIA_IMAGES
         }
 
@@ -225,27 +226,41 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (_pdfManager == null) {
             _pdfManager = PDFFileManager(this)
 
-            // if has PDF to open and the Android permission dialog is not yet opened, check permission
-            if (hasPdfFile() && !_isPermissionDialogOpen) {
-                if (ContextCompat.checkSelfPermission(
-                        requireActivity(),
-                        _permissionType
-                    )
-                    == PackageManager.PERMISSION_GRANTED
-                ) {
+            /* 20231020 - Permission is not needed anymore for PDF/TXT files.
+             * Permission will only be applied for images or if device is Android 9
+             */
+            val contentType = FileUtils.getMimeType(requireActivity(), intent.data)
+            if (SDK_INT == Build.VERSION_CODES.P || (contentType != AppConstants.DOC_TYPES[0] && contentType != AppConstants.DOC_TYPES[1])) {
+                // if has PDF to open and the Android permission dialog is not yet opened, check permission
+                if (hasPdfFile() && !_isPermissionDialogOpen) {
+                    if (ContextCompat.checkSelfPermission(
+                            requireActivity(),
+                            _permissionType
+                        )
+                        == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        if (_pdfConverterManager != null) {
+                            initializePdfConverterAndRunAsync()
+                        }
+                        initializePdfManagerAndRunAsync()
+                    } else {
+                        if (shouldShowRequestPermissionRationale(_permissionType)) {
+                            _shouldDisplayExplanation = true
+                        } else {
+                            _isPermissionDialogOpen = true
+                            // Request the permission, no explanation needed
+                            _resultLauncherPermissionStorage.launch(
+                                arrayOf(_permissionType))
+                        }
+                    }
+                }
+            } else {
+                if (hasPdfFile()) {
+                    // if has PDF to open
                     if (_pdfConverterManager != null) {
                         initializePdfConverterAndRunAsync()
                     }
                     initializePdfManagerAndRunAsync()
-                } else {
-                    if (shouldShowRequestPermissionRationale(_permissionType)) {
-                        _shouldDisplayExplanation = true
-                    } else {
-                        _isPermissionDialogOpen = true
-                        // Request the permission, no explanation needed
-                        _resultLauncherPermissionStorage.launch(
-                            arrayOf(_permissionType))
-                    }
                 }
             }
         }
@@ -286,6 +301,7 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
      */
     private fun hasPdfFile(): Boolean {
         val intent = requireActivity().intent
+
         val isOpenIn = intent != null && (intent.data != null || intent.clipData != null)
         val isInSandbox = getSandboxPDFName(appContext) != null
         return isInSandbox || isOpenIn

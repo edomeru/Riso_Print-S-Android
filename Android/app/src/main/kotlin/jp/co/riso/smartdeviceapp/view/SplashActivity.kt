@@ -191,7 +191,7 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
         }
 
         //reset secure print values
-        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
         val editor = prefs.edit()
         editor.putBoolean(
             AppConstants.PREF_KEY_AUTH_SECURE_PRINT,

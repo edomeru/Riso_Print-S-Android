@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera feature declaration >
     <uses-feature
         android:name="android.hardware.camera"
@@ -7,10 +8,11 @@
 
     <!-- aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration >
     <uses-permission android:name="android.permission.CAMERA" /-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <!-- aLINK edit: Android 13 New OS Support: Add new permission for images -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
     <application
         android:largeHeap="true"
         android:hardwareAccelerated="true">

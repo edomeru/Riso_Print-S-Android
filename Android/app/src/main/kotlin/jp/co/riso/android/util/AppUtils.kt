@@ -476,7 +476,7 @@ object AppUtils {
             val loginIdFormat = "%s=%s\n"
             val securePrintFormat = "%s=%d\n"
             val prefs =
-                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
+                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
             val isSecurePrint = prefs.getBoolean(
                 AppConstants.PREF_KEY_AUTH_SECURE_PRINT,
                 AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT
@@ -536,7 +536,7 @@ object AppUtils {
     val ownerName: String?
         get() {
             val prefs =
-                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
+                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
             return prefs.getString(
                 AppConstants.PREF_KEY_LOGIN_ID,
                 AppConstants.PREF_DEFAULT_LOGIN_ID

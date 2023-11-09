@@ -705,7 +705,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     val snmpCommunityNameFromSharedPrefs: String?
         get() {
             val sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext)
+                PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
             return sharedPreferences.getString(
                 AppConstants.PREF_KEY_SNMP_COMMUNITY_NAME,
                 AppConstants.PREF_DEFAULT_SNMP_COMMUNITY_NAME

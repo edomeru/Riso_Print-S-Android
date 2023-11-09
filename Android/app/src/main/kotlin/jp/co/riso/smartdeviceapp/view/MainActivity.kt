@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
@@ -68,20 +69,42 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
             Logger.logStartTime(this, this.javaClass, "AppLaunch")
         }
         if (intent != null && (intent.data != null || intent.clipData != null)) { // check if Open-In
-            // Check first if device is Android 13
-            var permissionType = Manifest.permission.WRITE_EXTERNAL_STORAGE
+            /* 20231030 - Permission is still required for Android 9 */
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
+                val permissionTypeAndroid9 = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                permissionType = Manifest.permission.READ_MEDIA_IMAGES
-            }
+                if (ContextCompat.checkSelfPermission(this, permissionTypeAndroid9)
+                    == PackageManager.PERMISSION_GRANTED
+                ) {
+                    // permission is granted, initialize Radaee (uses external storage)
+                    initializeRadaee()
+                }
+            } else {
+                /* 20231020 - Permission is not needed anymore for PDF/TXT files.
+                 *  Permission will only be applied for images
+                 */
+                val contentType = FileUtils.getMimeType(this, intent.data)
+                if (contentType != AppConstants.DOC_TYPES[0] && contentType != AppConstants.DOC_TYPES[1]) {
+                    // WRITE_EXTERNAL_STORAGE for Android 12 and older versions
+                    var permissionType = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-            if (ContextCompat.checkSelfPermission(this, permissionType)
-                == PackageManager.PERMISSION_GRANTED
-            ) {
-                // permission is granted, initialize Radaee (uses external storage)
-                initializeRadaee()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        // READ_MEDIA_IMAGES for Android 13 and later versions
+                        permissionType = Manifest.permission.READ_MEDIA_IMAGES
+                    }
+
+                    if (ContextCompat.checkSelfPermission(this, permissionType)
+                        == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // permission is granted, initialize Radaee (uses external storage)
+                        initializeRadaee()
+                    }
+                } else {
+                    initializeRadaee()
+                }
             }
         }
+
         _handler = PauseableHandler(Looper.myLooper(), this)
         setContentView(R.layout.activity_main)
         _drawerLayout = findViewById(R.id.drawerLayout)

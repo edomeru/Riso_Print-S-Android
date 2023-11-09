@@ -77,7 +77,7 @@ class SnmpCommunityNameEditText : EditText {
 
     fun saveValueToSharedPrefs(snmpCommunityName: String?) {
         var name = snmpCommunityName
-        val editor = PreferenceManager.getDefaultSharedPreferences(_context).edit()
+        val editor = PreferenceManager.getDefaultSharedPreferences(_context!!).edit()
         if (name == null || name.isEmpty()) {
             name = getInstance(_context!!)!!.snmpCommunityNameFromSharedPrefs
         }

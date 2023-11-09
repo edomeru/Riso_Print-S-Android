@@ -2,17 +2,15 @@ apply plugin: 'com.android.library'
 
 android {
     // aLINK edit: update SDK version to latest
-    compileSdkVersion 33
+    compileSdk 34
     // aLINK edit: update build tools version to latest
-    buildToolsVersion '33.0.0'
+    buildToolsVersion = '34.0.0'
 
     defaultConfig {
         // aLINK edit: update minimum SDK version
         minSdkVersion 28
         // aLINK edit: update SDK version to latest
-        targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 34
         ndk
                 {
                     moduleName "Scanner"
@@ -35,5 +33,5 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.exifinterface:exifinterface:1.0.0'
+    implementation 'androidx.exifinterface:exifinterface:1.3.6'
 }
