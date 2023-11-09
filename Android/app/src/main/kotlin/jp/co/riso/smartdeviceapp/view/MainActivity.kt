@@ -81,8 +81,8 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
                 }
             } else {
                 /* 20231020 - Permission is not needed anymore for PDF/TXT files.
-            *  Permission will only be applied for images
-            * */
+                 *  Permission will only be applied for images
+                 */
                 val contentType = FileUtils.getMimeType(this, intent.data)
                 if (contentType != AppConstants.DOC_TYPES[0] && contentType != AppConstants.DOC_TYPES[1]) {
                     // WRITE_EXTERNAL_STORAGE for Android 12 and older versions
