@@ -56,8 +56,10 @@ class LegalFragment : BaseWebFragment() {
                         val appName = activity!!.getString(R.string.ids_app_name)
                         val versionName = context!!.getPackageInfo(activity!!.packageName).versionName
                         val javascript = String.format(
-                            Locale.getDefault(), JS_REPLACE_FORMAT, VERSION_HTML_ID,
-                            versionName, APPNAME_HTML_ID, appName
+                            Locale.getDefault(), JS_REPLACE_FORMAT,
+                            VERSION_HTML_ID, versionName,
+                            APPNAME_HTML_ID, appName,
+                            COPYRIGHT_HTML_ID, COPYRIGHT_REPLACE_FORMAT.replace("XXXX", Calendar.getInstance().get(Calendar.YEAR).toString())
                         )
                         view.evaluateJavascript(javascript, null)
                     }
@@ -81,10 +83,13 @@ class LegalFragment : BaseWebFragment() {
     companion object {
         /// String Format for Javascript replace statement 
         const val JS_REPLACE_FORMAT =
-            "javascript:document.getElementById('%s').innerHTML='%s'; javascript:document.getElementById('%s').innerHTML='%s';"
+            "javascript:document.getElementById('%s').innerHTML='%s'; javascript:document.getElementById('%s').innerHTML='%s'; javascript:document.getElementById('%s').innerHTML='%s';"
 
         /// HTML ID for app version name
         const val APPNAME_HTML_ID = "localize_appname"
         const val VERSION_HTML_ID = "localize_version"
+        const val COPYRIGHT_HTML_ID = "localize_copyright"
+
+        const val COPYRIGHT_REPLACE_FORMAT = "Copyright(C) XXXX RISO KAGAKU CORPORATION"
     }
 }
