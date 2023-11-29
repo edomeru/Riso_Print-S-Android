@@ -25,6 +25,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
 import jp.co.riso.android.dialog.DialogUtils.displayDialog
@@ -32,6 +33,7 @@ import jp.co.riso.android.dialog.InfoDialogFragment.Companion.newInstance
 import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.ImageUtils
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartprint.R
@@ -294,6 +296,22 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         }
         intent.flags =
             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+        /* 20231129 - RM#1456 - reset secure print values when opening different
+         * file thru Select Document or Select Photo
+         */
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
+        val editor = prefs.edit()
+        editor.putBoolean(
+            AppConstants.PREF_KEY_AUTH_SECURE_PRINT,
+            AppConstants.PREF_DEFAULT_AUTH_SECURE_PRINT
+        )
+        editor.putString(
+            AppConstants.PREF_KEY_AUTH_PIN_CODE,
+            AppConstants.PREF_DEFAULT_AUTH_PIN_CODE
+        )
+        editor.commit()
+
         startActivity(intent)
     }
 
