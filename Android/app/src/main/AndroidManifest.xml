@@ -14,6 +14,10 @@
         android:name="android.hardware.camera2"
         android:required="true" /-->
 
+    <!-- Android 14 NewOS Support: RM#1450 screenLayout needed to handle rotation for Pixel Tablet >
+    < And based on Android documentation: >
+    < https://developer.android.com/guide/topics/resources/runtime-changes#handle-size-based -->
+
     <application
         android:name="jp.co.riso.smartdeviceapp.SmartDeviceApp"
         android:allowBackup="false"
@@ -37,7 +41,7 @@
         </activity>
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.MainActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|screenLayout"
             android:colorMode="wideColorGamut" >
         </activity>
         <activity
