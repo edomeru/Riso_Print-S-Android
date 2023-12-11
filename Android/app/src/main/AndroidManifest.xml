@@ -46,7 +46,6 @@
         </activity>
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.PDFHandlerActivity"
-            android:launchMode="singleTask"
             android:autoRemoveFromRecents="true"
             android:exported="true">
             <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
