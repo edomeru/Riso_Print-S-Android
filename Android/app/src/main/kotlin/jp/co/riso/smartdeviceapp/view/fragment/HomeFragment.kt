@@ -103,15 +103,8 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         super.onClick(v)
         val id = v.id
         if (id == R.id.fileButton) {
-            /* 20231020 - Permission is not needed anymore for PDF/TXT files.
-             *  Permission will only be applied for images and if device is Android 9
-             */
             _buttonTapped = _fileButton
-            _checkPermission = if (SDK_INT == Build.VERSION_CODES.P) {
-                checkPermission(true)
-            } else {
-                true
-            }
+            _checkPermission = checkPermission(true)
             if (_checkPermission && SystemClock.elapsedRealtime() - _lastClickTime > 1000) {
                 // prevent double tap
                 _lastClickTime = SystemClock.elapsedRealtime()
@@ -208,11 +201,9 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     }
 
     private fun checkPermission(isStorageOnly: Boolean): Boolean {
-        // WRITE_EXTERNAL_STORAGE for Android 12 and older versions
         var permissionType = WRITE_EXTERNAL_STORAGE
-
+        // Check first if device is Android 13
         if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // READ_MEDIA_IMAGES for Android 13 and later versions
             permissionType = READ_MEDIA_IMAGES
         }
 
@@ -237,7 +228,6 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                     displayDialog(requireActivity(), TAG_PERMISSION_STORAGE_DIALOG, _confirmDialogFragment!!)
                 }
             } else {
-                // Check target devices OS version
                 if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     _resultLauncherPermissionStorage.launch(_permissionsStorageAndroid13)
                 } else {
@@ -326,7 +316,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         } else {
             _resultLauncherPermissionStorage.launch(_permissionsStorage)
         } */
-        // Check target devices OS version
+        // Check if device is Android 13
         if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             _resultLauncherPermissionStorage.launch(_permissionsStorageAndroid13)
         } else {
@@ -420,11 +410,10 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     } */
 
     private val _resultLauncherPermissionStorage = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        // WRITE_EXTERNAL_STORAGE for Android 12 and older versions
         var permissionType = WRITE_EXTERNAL_STORAGE
 
+        // Check first if device is Android 13
         if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // READ_MEDIA_IMAGES for Android 13 and later versions
             permissionType = READ_MEDIA_IMAGES
         }
 
