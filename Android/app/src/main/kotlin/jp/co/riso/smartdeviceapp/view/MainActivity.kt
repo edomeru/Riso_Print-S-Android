@@ -285,6 +285,7 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
         }
     }
 
+    @SuppressLint("MissingSuperCall")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (_drawerLayout!!.isDrawerOpen(Gravity.LEFT) || _drawerLayout!!.isDrawerOpen(Gravity.RIGHT)) {

@@ -165,7 +165,7 @@ class DirectPrintManagerTest {
     @Test
     fun testDirectPrint_JobIDIncrement() {
         // Set Job ID
-        val preferences = PreferenceManager.getDefaultSharedPreferences(appContext)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(appContext!!)
         val editor = preferences.edit()
         editor.putInt(
             AppConstants.PREF_KEY_JOB_NUMBER_COUNTER,
@@ -206,7 +206,7 @@ class DirectPrintManagerTest {
     @Test
     fun testDirectPrint_JobIDMaxNumber() {
         // Set Job ID
-        val preferences = PreferenceManager.getDefaultSharedPreferences(appContext)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(appContext!!)
         val editor = preferences.edit()
         editor.putInt(AppConstants.PREF_KEY_JOB_NUMBER_COUNTER, AppConstants.CONST_MAX_JOB_NUMBER)
         editor.commit()

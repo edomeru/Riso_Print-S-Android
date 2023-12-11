@@ -80,6 +80,7 @@ dependencies {
 
     // test dependencies
     implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    implementation 'androidx.tracing:tracing:1.1.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
 
     // Espresso dependencies

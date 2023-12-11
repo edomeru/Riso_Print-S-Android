@@ -47,7 +47,7 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
         Assert.assertNotNull(_settingsFragment)
 
         // check initial value
-        val prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity!!)
         onView(withId(R.id.loginIdEditText)).check(
             matches(
                 withText(

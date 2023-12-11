@@ -528,8 +528,8 @@ open class BaseActivityTestUtil {
         const val IMG_ERR_FAIL_CONVERSION = "Invalid_JPEG.jpg"
         const val IMG_ERR_UNSUPPORTED = "MARBLES.TIF"
 
-        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.1.95", "08:00:27:93:79:5D") // update with online printer details
-        val TEST_PRINTER_ONLINE2 = Printer("ORPHIS FW5230", "192.168.1.224", "08:00:27:93:79:5C") // update with online printer details
+        val TEST_PRINTER_ONLINE = Printer("ORPHIS FW5230", "192.168.1.121", "08:00:27:C8:B0:77") // update with online printer details
+        val TEST_PRINTER_ONLINE2 = Printer("RISO CEREZONA S200", "192.168.1.167", "08:00:27:93:79:5C") // update with online printer details
         val TEST_PRINTER_OFFLINE = Printer("ORPHIS GD500", "192.168.0.02", "08:00:27:93:79:5E")
         val TEST_PRINTER_NO_NAME = Printer("", "192.168.0.03", "08:00:27:93:79:5F")
         val TEST_PRINTER_CEREZONA = Printer("RISO CEREZONA S200", "192.168.0.04", "08:00:27:93:79:5G")
