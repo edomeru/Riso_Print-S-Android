@@ -40,7 +40,7 @@ class Printer : Parcelable {
      *
      * @param ipAddress The printer device IP address
      */
-    var ipAddress: String?
+    var ipAddress: String? = null
     /**
      * @brief Obtain the printer device MAC address.
      *
@@ -107,7 +107,8 @@ class Printer : Parcelable {
      */
     enum class PortSetting {
         LPR,  ///< LPR port
-        RAW ///< Raw port
+        RAW,  ///< Raw port
+        IPPS  ///< IPPS port
     }
 
     /**
@@ -145,6 +146,7 @@ class Printer : Parcelable {
         id = `in`.readInt()
         portSetting = when (`in`.readInt()) {
             1 -> PortSetting.RAW
+            2 -> PortSetting.IPPS
             else -> PortSetting.LPR
         }
         config!!.readFromParcel(`in`)
@@ -254,9 +256,17 @@ class Printer : Parcelable {
         /**
          * @brief Updates the value of mRawAvailable.
          *
-         * @param rawAvailable Enable/Disable Raw print capability
+         * @param isRawAvailable Enable/Disable Raw print capability
          */
         var isRawAvailable = true
+
+        /**
+         * @brief Determines the IPPS capability for printing.
+         *
+         * @retval true IPPS is enabled
+         * @retval false IPPS is disabled
+         */
+        var isIppsAvailable = true
         /**
          * @brief Determines the Booklet finishing capability of the device.
          *
@@ -392,7 +402,8 @@ class Printer : Parcelable {
                 isTrayTopAvailable,
                 isTrayStackAvailable,
                 isExternalFeederAvailable,
-                isPunch0Available
+                isPunch0Available,
+                isIppsAvailable
             )
             out.writeBooleanArray(config)
         }
@@ -414,7 +425,8 @@ class Printer : Parcelable {
                 isTrayTopAvailable,
                 isTrayStackAvailable,
                 isExternalFeederAvailable,
-                isPunch0Available
+                isPunch0Available,
+                isIppsAvailable
             )
             `in`.readBooleanArray(bConfig)
             config!!.isLprAvailable = bConfig[0]
@@ -428,6 +440,7 @@ class Printer : Parcelable {
             config!!.isTrayStackAvailable = bConfig[8]
             config!!.isExternalFeederAvailable = bConfig[9]
             config!!.isPunch0Available = bConfig[10]
+            config!!.isIppsAvailable = bConfig[11]
         }
     }
 

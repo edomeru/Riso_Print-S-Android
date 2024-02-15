@@ -389,6 +389,154 @@ class DirectPrintManagerTest {
     }
 
     // ================================================================================
+    // Tests - executeIPPSPrint
+    // ================================================================================
+    @Test
+    fun testIPPSPrint_ValidCallback() {
+        val callback = MockCallback()
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeIPPSPrint(
+            1,
+            "printerName",
+            "appName",
+            "appVersion",
+            "userName",
+            "jobName",
+            "fileName",
+            "orientation=0",
+            "192.168.1.206",
+            "08:00:27:93:79:5D",
+            "hostname"
+        )
+        while (_mgr!!.isPrinting) {
+            //wait for response
+            try {
+                Thread.sleep(100)
+            } catch (e: InterruptedException) {
+                TestCase.fail(e.toString())
+            }
+        }
+        TestCase.assertTrue(callback.called)
+    }
+
+    @Test
+    fun testIPPSPrint_NullParameterValidCallback() {
+        val callback = MockCallback()
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeIPPSPrint(1,null, null, null, null, null, null, null, null, null, null)
+        _mgr!!.executeIPPSPrint(1,"printerName", null, null, null, null, null, null, null, null, null)
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", null, null, null, null, null, null, null, null)
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", null, null, null, null, null, null, null)
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", null, null, null, null, null, null)
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", null, null, null, null, null)
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", "fileName", null, null, null, null)
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", null, null, null)
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", null, null)
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "08:00:27:93:79:5D", null)
+
+        while (_mgr!!.isPrinting) {
+            //wait for response
+            try {
+                Thread.sleep(100)
+            } catch (e: InterruptedException) {
+                TestCase.fail(e.toString())
+            }
+        }
+        TestCase.assertFalse(callback.called)
+    }
+
+    @Test
+    fun testIPPSPrint_EmptyParametersValidCallback() {
+        val callback = MockCallback()
+        _mgr!!.setCallback(callback)
+        _mgr!!.executeIPPSPrint(1,"", "", "", "", "", "", "", "", "", "")
+        _mgr!!.executeIPPSPrint(1,"printerName", "", "", "", "", "", "", "", "", "")
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "", "", "", "", "", "", "", "")
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "", "", "", "", "", "", "")
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "", "", "", "", "", "")
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", "", "", "", "", "")
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", "fileName", "", "", "", "")
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "", "", "")
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "", "")
+        _mgr!!.executeIPPSPrint(1,"printerName", "appName", "appVersion", "userName", "jobName", "fileName", "printSetting", "ipAddress", "08:00:27:93:79:5D", "")
+        while (_mgr!!.isPrinting) {
+            //wait for response
+            try {
+                Thread.sleep(100)
+            } catch (e: InterruptedException) {
+                TestCase.fail(e.toString())
+            }
+        }
+        TestCase.assertFalse(callback.called)
+    }
+
+    @Test
+    fun testIPPSPrint_NullCallback() {
+        val callback = MockCallback()
+        _mgr!!.setCallback(null)
+        _mgr!!.executeIPPSPrint(
+            1,
+            "printerName",
+            "appName",
+            "appVersion",
+            "userName",
+            "jobName",
+            "fileName",
+            "orientation=0",
+            "192.168.1.206",
+            "08:00:27:93:79:5D",
+            "hostname"
+        )
+
+        //wait for response
+        while (_mgr!!.isPrinting) {
+            //wait for response
+            try {
+                Thread.sleep(100)
+            } catch (e: InterruptedException) {
+                TestCase.fail(e.toString())
+            }
+        }
+        TestCase.assertFalse(callback.called)
+    }
+
+    @Test
+    fun testIPPSPrint_NullParameterNullCallback() {
+        val callback = MockCallback()
+        _mgr!!.setCallback(null)
+        _mgr!!.executeIPPSPrint(0,null, null, null, null, null, null, null, null, null, null)
+
+        // wait for response
+        while (_mgr!!.isPrinting) {
+            // wait for response
+            try {
+                Thread.sleep(100)
+            } catch (e: InterruptedException) {
+                TestCase.fail(e.toString())
+            }
+        }
+        TestCase.assertFalse(callback.called)
+    }
+
+    @Test
+    fun testIPPSPrint_EmptyParametersNullCallback() {
+        val callback = MockCallback()
+        _mgr!!.setCallback(null)
+        _mgr!!.executeIPPSPrint(1,"", "", "", "", "", "", "", "", "", "")
+
+        // wait for response
+        while (_mgr!!.isPrinting) {
+            // wait for response
+            try {
+                Thread.sleep(100)
+            } catch (e: InterruptedException) {
+                TestCase.fail(e.toString())
+            }
+        }
+        TestCase.assertFalse(callback.called)
+    }
+
+    // ================================================================================
     // Tests - sendCancelCommand
     // ================================================================================
     @Test

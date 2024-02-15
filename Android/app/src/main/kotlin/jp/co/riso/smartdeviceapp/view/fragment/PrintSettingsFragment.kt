@@ -37,6 +37,7 @@ import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.model.Printer.PortSetting
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView
 import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsView.PrintSettingsViewInterface
 import jp.co.riso.smartdeviceapp.viewmodel.PrintSettingsViewModel
@@ -261,38 +262,57 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
             printer.macAddress = ""
         }
 
-        ret = if (printer.portSetting == PortSetting.LPR) {
-            // Ver.2.0.4.2 Start
-            //ret = mDirectPrintManager.executeLPRPrint(printer.getName(), appName, appVersion, userName, jobName, mPdfPath, formattedString, printer.getIpAddress());
-            _directPrintManager!!.executeLPRPrint(
-                printer.name,
-                appName,
-                appVersion,
-                userName,
-                jobName,
-                _pdfPath,
-                formattedString,
-                printer.ipAddress,
-                printer.macAddress,
-                hostName
-            )
-            // Ver.2.0.4.2 End
-        } else {
-            // Ver.2.0.4.2 Start
-            //ret = mDirectPrintManager.executeRAWPrint(printer.getName(), appName, appVersion, userName, jobName, mPdfPath, formattedString, printer.getIpAddress());
-            _directPrintManager!!.executeRAWPrint(
-                printer.name,
-                appName,
-                appVersion,
-                userName,
-                jobName,
-                _pdfPath,
-                formattedString,
-                printer.ipAddress,
-                printer.macAddress,
-                hostName
-            )
-            // Ver.2.0.4.2 End
+        ret = when (printer.portSetting!!) {
+            PortSetting.LPR -> {
+                // Ver.2.0.4.2 Start
+                //ret = mDirectPrintManager.executeLPRPrint(printer.getName(), appName, appVersion, userName, jobName, mPdfPath, formattedString, printer.getIpAddress());
+                _directPrintManager!!.executeLPRPrint(
+                    printer.name,
+                    appName,
+                    appVersion,
+                    userName,
+                    jobName,
+                    _pdfPath,
+                    formattedString,
+                    printer.ipAddress,
+                    printer.macAddress,
+                    hostName
+                )
+                // Ver.2.0.4.2 End
+            }
+            PortSetting.RAW -> {
+                // Ver.2.0.4.2 Start
+                //ret = mDirectPrintManager.executeRAWPrint(printer.getName(), appName, appVersion, userName, jobName, mPdfPath, formattedString, printer.getIpAddress());
+                _directPrintManager!!.executeRAWPrint(
+                    printer.name,
+                    appName,
+                    appVersion,
+                    userName,
+                    jobName,
+                    _pdfPath,
+                    formattedString,
+                    printer.ipAddress,
+                    printer.macAddress,
+                    hostName
+                )
+                // Ver.2.0.4.2 End
+            }
+            else -> { // IPPS Printing
+                val pageCount = (requireActivity().findViewById<View?>(R.id.printPreviewView) as PrintPreviewView).pageCount
+                _directPrintManager!!.executeIPPSPrint(
+                    pageCount,
+                    printer.name,
+                    appName,
+                    appVersion,
+                    userName,
+                    jobName,
+                    _pdfPath,
+                    formattedString,
+                    printer.ipAddress,
+                    printer.macAddress,
+                    hostName
+                )
+            }
         }
         if (ret) {
             btnMsg = getString(R.string.ids_lbl_cancel)

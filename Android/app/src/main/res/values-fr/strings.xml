@@ -33,6 +33,7 @@
     <string name="ids_lbl_port">Port</string>
     <string name="ids_lbl_port_raw">Raw</string>
     <string name="ids_lbl_port_lpr">LPR</string>
+    <string name="ids_lbl_port_ipps">IPPS</string>
     <string name="ids_lbl_default_print_settings">Prm d\'impress par déf</string>
     <string name="ids_lbl_owner_name">Propriétaire</string>
     <string name="ids_lbl_authentication">Authentification</string>

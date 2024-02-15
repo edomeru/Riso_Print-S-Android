@@ -19,6 +19,8 @@
 #include <stdbool.h>
 #include "common.h"
 #include "printsettings.h"
+#include <sys/stat.h>
+#include <libgen.h>
 
 #define ENABLE_DEBUG_LOG 0 // enable to show debug logs (only confirmed to be displayed in Xcode)
 
@@ -29,8 +31,6 @@
 #define DUMP_EXT ""
 
 #include <sys/types.h>
-#include <sys/stat.h>
-#include <libgen.h>
 
 #endif // ENABLE_JOB_DUMP
 
@@ -88,6 +88,10 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define GL_PRINTER_TYPE "GL"
 #define CEREZONA_PRINTER_TYPE "CEREZONA S"
 
+#define PDF_PJL_FILE_DIR_NAME "PDF_PJL_TMP"
+#define PDF_PJL_FILENAME "PDF_PJL.pdf"
+#define DUMP_EXT ""
+
 /** @def
  * ホスト名UTF-8の16進数変換の際に使用する定数
  * 文字一文字あたりに必要な最大バイト数
@@ -116,6 +120,7 @@ enum kPrintType
     kPrintTypeUnknown = -1,
     kPrintTypeLPR = 0,
     kPrintTypeRAW = 1,
+    kPrintTypeIPPS = 2
 };
 
 /**
@@ -157,6 +162,7 @@ struct directprint_job_s
 // Main functions
 int directprint_job_lpr_print(directprint_job *print_job);
 int directprint_job_raw_print(directprint_job *print_job);
+int directprint_job_create_pdf_pjl(directprint_job *print_job);
 void directprint_job_cancel(directprint_job *print_job);
 
 // Direct print job accessors
@@ -175,6 +181,11 @@ int str_to_uint16(const char *str, uint16_t *res);
 // Thread functions
 void *do_lpr_print(void *parameter);
 void *do_raw_print(void *parameter);
+void *do_save_pdf_pjl(void *parameter);
+
+// Save PDF+PJL File functions
+FILE *create_pdf_pjl_file(directprint_job *print_job);
+void pdf_pjl_file_write(FILE *file, void *buffer, size_t buffer_len);
 
 #if ENABLE_JOB_DUMP
 
@@ -399,6 +410,18 @@ int directprint_job_raw_print(directprint_job *print_job)
     
     pthread_create(&print_job->main_thread, 0, do_raw_print, (void *)print_job);
     
+    return kJobStatusStarted;
+}
+
+int directprint_job_create_pdf_pjl(directprint_job *print_job)
+{
+    if (can_start_print(print_job) != 1)
+    {
+        return kJobStatusError;
+    }
+
+    pthread_create(&print_job->main_thread, 0, do_save_pdf_pjl, (void *)print_job);
+
     return kJobStatusStarted;
 }
 
@@ -1496,6 +1519,173 @@ void *do_raw_print(void *parameter)
     }
     
     return 0;
+}
+
+void *do_save_pdf_pjl(void *parameter)
+{
+    directprint_job *print_job = (directprint_job *)parameter;
+
+    if (is_cancelled(print_job) == 1)
+    {
+        directprint_job_free(print_job);
+        return 0;
+    }
+
+    // Set Print Type
+    print_job->print_type = kPrintTypeIPPS;
+
+    // Prepare PJL header
+    char pjl_header[2048];
+    pjl_header[0] = 0;
+    strcat(pjl_header, PJL_ESCAPE);
+    long pjl_header_size = strlen(pjl_header);
+    if (is_ISSeries(print_job->printer_name))   // IS
+    {
+        create_pjl(pjl_header, print_job->print_settings);
+    }
+    else if (is_FWSeries(print_job->printer_name)) // FW Series
+    {
+        create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+    }
+    else if (print_job->printer_name &&
+             ((strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL) ||
+              (strstr(print_job->printer_name, CEREZONA_PRINTER_TYPE) != NULL))) // FT Series / CEREZONA Series
+    {
+        create_pjl_ft(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+    }
+    else if (print_job->printer_name &&
+             (strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL)) // GL Series
+    {
+        create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+    }
+    else    // GD Series
+    {
+        create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+    }
+
+    if (strlen(pjl_header) == pjl_header_size) {
+        return 0;
+    }
+
+    strcat(pjl_header, PJL_LANGUAGE);
+
+    if (is_cancelled(print_job) == 1)
+    {
+        return 0;
+    }
+
+    FILE *fd = 0;
+    unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE);
+    // Create PDF+PJL File
+    FILE *pdf_pjl_file_fd = create_pdf_pjl_file(print_job);
+#if ENABLE_JOB_DUMP
+    FILE *dump_fd = job_dump_create_file(print_job);
+#endif
+
+    do
+    {
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+
+        // Open file
+        fd = fopen(print_job->filename, "rb");
+        if (!fd)
+        {
+            notify_callback(print_job, kJobStatusErrorFile);
+            break;
+        }
+
+        // Get file size
+        dp_fseek(fd, 0L, SEEK_END);
+        long file_size = dp_ftell(fd);
+        dp_fseek(fd, 0L, SEEK_SET);
+
+        // Write PJL header to GCP PDF+PJL
+        pdf_pjl_file_write(pdf_pjl_file_fd, pjl_header, strlen(pjl_header));
+#if ENABLE_JOB_DUMP
+        job_dump_write(dump_fd, pjl_header, strlen(pjl_header));
+#endif
+
+        // Send file
+        size_t read;
+        size_t sent;
+        int has_error = 0;
+        while(0 < (read = dp_fread(buffer, 1, BUFFER_SIZE, fd)))
+        {
+            if (is_cancelled(print_job) == 1)
+            {
+                break;
+            }
+            // Write PDF content to GCP PDF+PJL
+            pdf_pjl_file_write(pdf_pjl_file_fd, buffer, read);
+#if ENABLE_JOB_DUMP
+            job_dump_write(dump_fd, buffer, read);
+#endif
+        }
+
+        if (has_error == 1 || is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+
+        notify_callback(print_job, kJobStatusPdfPjlCreated);
+    } while (0);
+
+    // Close PDF+PJL file pointer
+    if (pdf_pjl_file_fd != 0)
+    {
+        fclose(pdf_pjl_file_fd);
+    }
+
+#if ENABLE_JOB_DUMP
+    if (dump_fd != 0)
+    {
+        fclose(dump_fd);
+    }
+#endif
+
+    if (fd != 0)
+    {
+        fclose(fd);
+    }
+    free(buffer);
+    return 0;
+}
+
+// Save PDF+PJL File functions
+FILE *create_pdf_pjl_file(directprint_job *print_job)
+{
+    // Prepare directory
+    char *base_dir = dirname(print_job->filename);
+    char *dump_dir = (char *)calloc(1, strlen(base_dir) + strlen(PDF_PJL_FILE_DIR_NAME) + 2);
+    sprintf(dump_dir, "%s/%s", base_dir, PDF_PJL_FILE_DIR_NAME);
+    int result = mkdir(dump_dir, S_IRWXU | S_IRWXG | S_IRWXO);
+    if (result == -1 && errno != EEXIST)
+    {
+        return 0;
+    }
+
+    // Prepare file name
+    char *dump_file_name = (char *)calloc(1, strlen(dump_dir) + strlen(PDF_PJL_FILENAME) + strlen(DUMP_EXT) + 2);
+    sprintf(dump_file_name, "%s/%s%s", dump_dir, PDF_PJL_FILENAME, DUMP_EXT);
+
+    FILE *file = fopen(dump_file_name, "wb");
+
+    free(dump_file_name);
+    free(dump_dir);
+    return file;
+}
+
+void pdf_pjl_file_write(FILE *file, void *buffer, size_t buffer_len)
+{
+    if (file == 0)
+    {
+        return;
+    }
+
+    fwrite(buffer, buffer_len, 1, file);
 }
 
 #if ENABLE_JOB_DUMP

@@ -50,6 +50,9 @@ open class DatabaseManager (private val _context: Context?) :
         if (DATABASE_VERSION > DATABASE_VERSION_02) { // For database v3
             executeSqlCommandFromScript(db, DATABASE_SQLv3)
         }
+        if (DATABASE_VERSION > DATABASE_VERSION_03) { // For database v4
+            executeSqlCommandFromScript(db, DATABASE_SQLv4)
+        }
 
         /* for testing only */if (AppConstants.INITIAL_DB) {
             executeSqlCommandFromScript(db, INITIALIZE_SQL)
@@ -79,6 +82,10 @@ open class DatabaseManager (private val _context: Context?) :
         // For database v2
         if (oldVersion < DATABASE_VERSION_03) {
             executeSqlCommandFromScript(db, DATABASE_SQLv3)
+        }
+        // For database v3
+        if (oldVersion < DATABASE_VERSION_04) {
+            executeSqlCommandFromScript(db, DATABASE_SQLv4)
         }
         // Should not happen for now
         logInfo(DatabaseManager::class.java, "onUpgrade - End")
@@ -292,14 +299,16 @@ open class DatabaseManager (private val _context: Context?) :
     companion object {
         private const val DATABASE_VERSION_01 = 1
         private const val DATABASE_VERSION_02 = 2
-        private const val DATABASE_VERSION_03 = 3 ///< current database version of the application
+        private const val DATABASE_VERSION_03 = 3
+        private const val DATABASE_VERSION_04 = 4 ///< current database version of the application
         @JvmField
         val DATABASE_VERSION =
-            if (AppConstants.DEBUG_LOWER_DB_VERSION) DATABASE_VERSION_02 else DATABASE_VERSION_03
+            if (AppConstants.DEBUG_LOWER_DB_VERSION) DATABASE_VERSION_03 else DATABASE_VERSION_04
         private const val DATABASE_NAME = "SmartDeviceAppDB.sqlite"
         private const val DATABASE_SQL = "db/SmartDeviceAppDB.sql"
         private const val DATABASE_SQLv2 = "db/SmartDeviceAppDBv2.sql"
         private const val DATABASE_SQLv3 = "db/SmartDeviceAppDBv3.sql"
+        private const val DATABASE_SQLv4 = "db/SmartDeviceAppDBv4.sql"
         private const val INITIALIZE_SQL = "db/initializeDB.sql" // for testing only
 
         /**

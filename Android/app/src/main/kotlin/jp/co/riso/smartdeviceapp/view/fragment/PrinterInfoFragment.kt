@@ -77,18 +77,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
                 }
             }
         }
-        val portAdapter = ArrayAdapter<String>(requireActivity(), R.layout.printerinfo_port_item)
-        // Assumption is that LPR is always available
-        portAdapter.add(getString(R.string.ids_lbl_port_lpr))
-        if (_printer!!.config!!.isRawAvailable) {
-            portAdapter.add(getString(R.string.ids_lbl_port_raw))
-            portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
-        } else {
-            _port!!.visibility = View.GONE
-            // Port setting is always displayed as LPR
-            view.findViewById<View>(R.id.defaultPort).visibility = View.VISIBLE
-        }
-        _port!!.adapter = portAdapter
+        _port!!.adapter = initializePortAdapter(view)
         _port!!.setSelection(_printer!!.portSetting!!.ordinal)
         _defaultPrinterAdapter =
             DefaultPrinterArrayAdapter(activity, R.layout.printerinfo_port_item)
@@ -175,6 +164,29 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
     }
 
     // ================================================================================
+    // Private Methods
+    // ================================================================================
+    private fun initializePortAdapter(view: View): ArrayAdapter<String> {
+        val portAdapter = ArrayAdapter<String>(requireActivity(), R.layout.printerinfo_port_item)
+        // Assumption is that LPR is always available
+        portAdapter.add(getString(R.string.ids_lbl_port_lpr))
+        if (_printer!!.config!!.isRawAvailable) {
+            portAdapter.add(getString(R.string.ids_lbl_port_raw))
+        }
+        if (_printer!!.config!!.isIppsAvailable) {
+            portAdapter.add(getString(R.string.ids_lbl_port_ipps))
+        }
+        if (_printer!!.config!!.isIppsAvailable || _printer!!.config!!.isRawAvailable) {
+            portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
+        } else {
+            _port!!.visibility = View.GONE
+            // Port setting is always displayed as LPR
+            view.findViewById<View>(R.id.defaultPort).visibility = View.VISIBLE
+        }
+        return portAdapter
+    }
+
+    // ================================================================================
     // INTERFACE - PauseableHandlerCallback
     // ================================================================================
     override fun storeMessage(message: Message?): Boolean {
@@ -257,6 +269,7 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
             var port = PortSetting.LPR
             when (position) {
                 1 -> port = PortSetting.RAW
+                2 -> port = PortSetting.IPPS
                 else -> {}
             }
             _printer!!.portSetting = port

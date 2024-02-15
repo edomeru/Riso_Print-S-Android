@@ -33,6 +33,7 @@
     <string name="ids_lbl_port">ポート</string>
     <string name="ids_lbl_port_raw">Raw</string>
     <string name="ids_lbl_port_lpr">LPR</string>
+    <string name="ids_lbl_port_ipps">IPPS</string>
     <string name="ids_lbl_default_print_settings">デフォルト印刷設定</string>
     <string name="ids_lbl_owner_name">オーナー名</string>
     <string name="ids_lbl_authentication">認証</string>

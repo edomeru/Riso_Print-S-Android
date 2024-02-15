@@ -220,10 +220,12 @@ object AppConstants {
     const val CONST_PORT_HTTP = 80
     const val CONST_PORT_LPR = 515
     const val CONST_PORT_RAW = 9100
+    const val CONST_PORT_IPPS = 631
 
     // Error for invalid intent data from third party app
     const val ERR_KEY_INVALID_INTENT = "error_key_invalid_intent"
 
     // For checking if chromebook
     const val CHROME_BOOK = "org.chromium.arc.device_management"
+
 }

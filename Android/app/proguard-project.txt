@@ -19,6 +19,20 @@
 #   public *;
 #}
 
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+# Suppress warnings for missing classes during code shrinking
+-dontwarn java.net.http.HttpClient$Builder
+-dontwarn java.net.http.HttpClient
+-dontwarn java.net.http.HttpHeaders
+-dontwarn java.net.http.HttpRequest$BodyPublisher
+-dontwarn java.net.http.HttpRequest$BodyPublishers
+-dontwarn java.net.http.HttpRequest$Builder
+-dontwarn java.net.http.HttpRequest
+-dontwarn java.net.http.HttpResponse$BodyHandler
+-dontwarn java.net.http.HttpResponse$BodyHandlers
+-dontwarn java.net.http.HttpResponse
+
 # the Android Compatibility library references some classes that may not be present in all versions of the API
 -keep class android.support.** { *; }
 -dontwarn android.support.**

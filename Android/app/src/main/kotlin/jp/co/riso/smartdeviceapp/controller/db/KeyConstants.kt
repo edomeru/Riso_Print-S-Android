@@ -34,6 +34,9 @@ object KeyConstants {
     /// SQL key for printer raw print capability
     const val KEY_SQL_PRINTER_RAW = "prn_enabled_raw"
 
+    /// SQL key for printer IPPS print capability
+    const val KEY_SQL_PRINTER_IPPS = "prn_enabled_ipps"
+
     /// SQL key for printer booklet finishing capability
     const val KEY_SQL_PRINTER_BOOKLET_FINISHING = "prn_enabled_booklet_finishing"
 

@@ -1,2 +1,3 @@
 include ':app'
 include ':scanlibrary'
+include ':ipp-client-kotlin'

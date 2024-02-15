@@ -9,6 +9,8 @@
 #ifndef SmartDeviceApp_common_h
 #define SmartDeviceApp_common_h
 
+#include <libgen.h>
+
 /**
  Direct Print
  */
@@ -33,7 +35,8 @@ enum kJobStatus
     kJobStatusConnected,
     kJobStatusSending,
     kJobStatusSent,
-    kJobStatusJobNumUpdate
+    kJobStatusJobNumUpdate,
+    kJobStatusPdfPjlCreated
 };
 
 // ホスト名出力処理の追加 Start
@@ -52,6 +55,7 @@ void directprint_job_set_caller_data(directprint_job *print_job, void *caller_da
 void directprint_job_cancel(directprint_job *print_job);
 int directprint_job_lpr_print(directprint_job *print_job);
 int directprint_job_raw_print(directprint_job *print_job);
+int directprint_job_create_pdf_pjl(directprint_job *print_job);
 
 /*
  * UTF8 16進数変換
