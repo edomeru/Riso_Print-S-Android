@@ -11,6 +11,8 @@ import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdManager.ResolveListener
 import android.net.nsd.NsdServiceInfo
+import android.os.Build
+import androidx.annotation.RequiresApi
 import jp.co.riso.android.util.Logger
 
 interface DNSSDManagerListener {
@@ -27,8 +29,6 @@ class DNSSDManager(context: Context, private val listener: DNSSDManagerListener)
     private val discoveryListener = DNSSDDiscoveryListener(nsdManager, this)
     private val ipAddresses = mutableListOf<String>()
     private var isCurrentlyDiscovering = false
-
-    private val SERVICE_TYPE = "_ipps._tcp."
 
     fun deviceDiscovery() {
         if (!isCurrentlyDiscovering) {
@@ -89,8 +89,14 @@ class DNSSDManager(context: Context, private val listener: DNSSDManagerListener)
 
         override fun onServiceFound(serviceInfo: NsdServiceInfo?) {
             // Get the service IP address
-            val resolveListener = DNSSDResolveListener(listener)
-            serviceInfo?.let { nsdManager.resolveService(serviceInfo, resolveListener) }
+            if (Build.VERSION.SDK_INT >= 34) {
+                DNSSDServiceInfoCallback(listener).also { listener ->
+                    serviceInfo?.let { nsdManager.registerServiceInfoCallback(serviceInfo, { it.run() }, listener) }
+                }
+            } else @Suppress("DEPRECATION") {
+                val resolveListener = DNSSDResolveListener(listener)
+                serviceInfo?.let { nsdManager.resolveService(serviceInfo, resolveListener) }
+            }
         }
 
         override fun onServiceLost(serviceInfo: NsdServiceInfo?) {
@@ -109,7 +115,48 @@ class DNSSDManager(context: Context, private val listener: DNSSDManagerListener)
         }
 
         override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
-            serviceInfo?.host?.hostAddress?.let { listener.addHost(it) }
+            if (Build.VERSION.SDK_INT >= 34) {
+                serviceInfo?.hostAddresses?.get(0)?.hostAddress?.let { listener.addHost(it) }
+            } else @Suppress("DEPRECATION") {
+                serviceInfo?.host?.hostAddress?.let { listener.addHost(it) }
+            }
         }
+    }
+
+    @RequiresApi(34)
+    class DNSSDServiceInfoCallback(private val listener: DNSSDManagerHostListener):
+        NsdManager.ServiceInfoCallback {
+        override fun onServiceInfoCallbackRegistrationFailed(errorCode: Int) {
+            Logger.logError(
+                DNSSDManager::class.java,
+                "onServiceInfoCallbackRegistrationFailed error = $errorCode"
+            )
+        }
+
+        override fun onServiceUpdated(serviceInfo: NsdServiceInfo) {
+            if (Build.VERSION.SDK_INT >= 34) {
+                serviceInfo.hostAddresses[0]?.hostAddress?.let { listener.addHost(it) }
+            } else @Suppress("DEPRECATION") {
+                serviceInfo.host?.hostAddress?.let { listener.addHost(it) }
+            }
+        }
+
+        override fun onServiceLost() {
+            Logger.logDebug(
+                DNSSDManager::class.java,
+                "onServiceLost"
+            )
+        }
+
+        override fun onServiceInfoCallbackUnregistered() {
+            Logger.logDebug(
+                DNSSDManager::class.java,
+                "onServiceInfoCallbackUnregistered"
+            )
+        }
+    }
+
+    companion object {
+        private const val SERVICE_TYPE = "_ipps._tcp."
     }
 }
