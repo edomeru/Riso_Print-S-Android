@@ -908,12 +908,13 @@ class PrintSettingsFragmentTest : BaseActivityTestUtil() {
         TEST_PRINTER_GL.config!!.isExternalFeederAvailable = true
         TEST_PRINTER_FT.config!!.isExternalFeederAvailable = true
         TEST_PRINTER_CEREZONA.config!!.isExternalFeederAvailable = true
+        TEST_PRINTER_OGA.config!!.isExternalFeederAvailable = true
 
         for (printer in TEST_PRINTER_MODELS) {
             addAndSelectPrinter(printer)
 
             when(printer.printerType) {
-                AppConstants.PRINTER_MODEL_GL -> {
+                AppConstants.PRINTER_MODEL_OGA, AppConstants.PRINTER_MODEL_GL -> {
                     checkSettingOptions(
                         getString(R.string.ids_lbl_inputtray),
                         listOf(

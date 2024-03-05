@@ -8,11 +8,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <pthread.h>
 #include "net-snmp/net-snmp-config.h"
 #include "net-snmp/net-snmp-includes.h"
 #include <arpa/inet.h>
 #include "common.h"
+#include <android/log.h>
 
 #define SNMP_MANAGER "snmpmanager"
 #define BROADCAST_ADDRESS "255.255.255.255"
@@ -25,6 +27,12 @@
 #define TIMEOUT 10
 #define IPV6_LINK_LOCAL_PREFIX "fe80"
 
+// S3 const values for WakeOnLAN
+#define S3_FIRST_LOOP_COUNT 5
+#define S3_FIRST_SLEEP_COUNT 5
+#define S3_SECOND_LOOP_COUNT 15
+#define S3_SECOND_SLEEP_COUNT 1
+
 #define PDL_VALUE 54 // PDF
 
 #define SNMPV3_USER "risosnmp"
@@ -33,8 +41,22 @@
 #define FT_PRINTER_TYPE "FT"
 #define GL_PRINTER_TYPE "GL"
 #define CEREZONA_PRINTER_TYPE "CEREZONA S"
+#define OGA_PRINTER_TYPE "OGA"
 
 #define DETECT_ALL_DEVICES 0  // 0 for RISO only
+
+#define ENABLE_DEBUG_LOG 1 // Debugging purposes
+
+#if ENABLE_DEBUG_LOG
+
+#define LOG_DIR_NAME "_LOG_"
+#define LOG_EXT ""
+
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#endif
 
 typedef struct
 {
@@ -76,6 +98,7 @@ enum
     MIB_HW_CAP_8,
     MIB_HW_CAP_9,
     MIB_MAC_ADDR,
+    MIB_INIT_STATE,
     MIB_INFO_COUNT
 };
 
@@ -101,6 +124,7 @@ static const char *MIB_REQUESTS[] = {
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.25", // External feeder
     "1.3.6.1.4.1.24807.1.2.2.2.4.1.2.26", // Finisher 0 holes
     "1.3.6.1.4.1.24807.1.2.2.4.1.2.0",    // MAC Address
+    "1.3.6.1.4.1.24807.1.2.1.1.6.0",     // Engine Init State
     
 };
 
@@ -177,6 +201,15 @@ int snmp_handle_pdu_response(char *ip_address, netsnmp_variable_list *var_list, 
 int snmp_get_capabilities(snmp_context *context, snmp_device *device);
 void snmp_call_add_callback(snmp_context *context, snmp_device *device);
 void snmp_call_end_callback(snmp_context *context, int count);
+int checkEngineInitState(netsnmp_session *ss, FILE *log_file, int *engineState);
+
+#if ENABLE_DEBUG_LOG
+
+// Logging functions
+FILE *create_log_file(const char *filename);
+void writeLogToFile(FILE *file, const char* format, ...);
+
+#endif
 
 void snmp_device_discovery(snmp_context *context)
 {
@@ -684,9 +717,10 @@ int snmp_device_get_series(snmp_device *device)
         return kPrinterSeriesFT;
     }
 
-    if (strstr(device->device_info[MIB_DEV_DESCR], GL_PRINTER_TYPE) != NULL)
+    if (strstr(device->device_info[MIB_DEV_DESCR], GL_PRINTER_TYPE) != NULL ||
+        strstr(device->device_info[MIB_DEV_DESCR], OGA_PRINTER_TYPE) != NULL)
     {
-        // GL Series
+        // GL Series / OGA Series
         return kPrinterSeriesGL;
     }
 
@@ -992,3 +1026,237 @@ void snmp_call_end_callback(snmp_context *context, int count)
     snmp_context_set_state(context, count);
     context->discovery_ended_callback(context, count);
 }
+
+int performEngineStateChecks(const char *ip_address, bool isFirstEngineStateCheck, const char *filename)
+{
+    FILE *log_file = NULL;
+
+#if ENABLE_DEBUG_LOG
+    log_file = create_log_file(filename);
+#endif
+
+    // Information on who we're going to talk to
+    netsnmp_session session;
+    netsnmp_session *ss;
+
+    // Initialize session
+    snmp_sess_init(&session);
+
+    // Setup session information
+#if ENABLE_DEBUG_LOG
+    __android_log_print(ANDROID_LOG_INFO, "MyTag", "check ip address %s", ip_address);
+#endif
+    session.peername = strdup(ip_address);
+
+    // Initialize SNMPv1
+    session.version = SNMP_VERSION_1;
+
+    //Setup community name
+    session.community = (u_char *) strdup(COMMUNITY_NAME_DEFAULT);
+    session.community_len = strlen(COMMUNITY_NAME_DEFAULT);
+
+    session.timeout = 1000000; // Same with PD session timeout (1 second)
+    session.callback = 0;
+    session.retries = 0;
+
+    // Open session
+    ss = snmp_open(&session);
+    if (!ss)
+    {
+        free(session.peername);
+        free(session.community);
+        return -1;
+    }
+
+    int engineState = -1;
+
+    if (isFirstEngineStateCheck)
+    {
+        int ret = checkEngineInitState(ss, log_file , &engineState);
+        if (ret == STAT_SUCCESS)
+        {
+            if (engineState == 2)
+            {
+                // S3 state
+                // Loop for N times (every N seconds to check engine init state)
+                for (int i = 0; i < S3_FIRST_LOOP_COUNT; i++)
+                {
+                    // Sleep for N seconds
+                    sleep(S3_FIRST_SLEEP_COUNT);
+
+                    ret = checkEngineInitState(ss, log_file, &engineState);
+                    if (ret == STAT_SUCCESS)
+                    {
+                        if (engineState == 0 || engineState == 1)
+                        {
+                            // Incomplete / Initializing or already initialized
+                            break;
+                        }
+                    }
+                    else if (ret == STAT_TIMEOUT)
+                    {
+                        // timeout
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < S3_SECOND_LOOP_COUNT; i++)
+        {
+            int ret = checkEngineInitState(ss, log_file, &engineState);
+            if (ret == STAT_SUCCESS && engineState == 1)
+            {
+                // already initialized
+                break;
+            }
+            else if (ret != STAT_TIMEOUT)
+            {
+                sleep(S3_SECOND_SLEEP_COUNT);
+            }
+        }
+    }
+
+#if ENABLE_DEBUG_LOG
+    writeLogToFile(log_file, "EngineState is %i OUTSIDE", engineState);
+
+    if (log_file != 0)
+    {
+        fclose(log_file);
+        log_file = NULL;
+    }
+#endif
+
+    snmp_close(ss);
+    free(session.peername);
+    free(session.community);
+
+    return engineState;
+}
+
+int checkEngineInitState(netsnmp_session *ss, FILE *log_file, int *engineState)
+{
+    oid oid_engine_state[MAX_OID_LEN];
+    size_t oid_len = MAX_OID_LEN;
+    read_objid(MIB_REQUESTS[MIB_INIT_STATE], oid_engine_state, &oid_len);
+
+    netsnmp_pdu *pdu = snmp_pdu_create(SNMP_MSG_GET);
+    snmp_add_null_var(pdu, oid_engine_state, oid_len);
+
+    netsnmp_pdu *response;
+    int status = snmp_synch_response(ss, pdu, &response);
+
+    if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR)
+    {
+#if ENABLE_DEBUG_LOG
+        writeLogToFile(log_file, "STAT_SUCCESS and SNMP_ERR_NOERROR");
+#endif
+        netsnmp_variable_list *vars = response->variables;
+        if (vars && vars->type == ASN_INTEGER)
+        {
+            *engineState = (int)*(vars->val.integer);
+
+            // Free the response PDU
+            snmp_free_pdu(response);
+            response = NULL;
+        }
+    }
+#if ENABLE_DEBUG_LOG
+    else
+    {
+        if (response && response->errstat != SNMP_ERR_NOERROR)
+        {
+            writeLogToFile(log_file, "SNMP Error: %ld, Error Index: %ld", response->errstat, response->errindex);
+        }
+        if (status != STAT_SUCCESS)
+        {
+            writeLogToFile(log_file, "SNMP Response Status Error: %d", status);
+        }
+    }
+#endif
+
+    // Free the response PDU if not already freed
+    if (response)
+    {
+        snmp_free_pdu(response);
+        response = NULL;
+    }
+
+#if ENABLE_DEBUG_LOG
+    writeLogToFile(log_file, "STATUS: %d, ENGINE STATE: %d", status, *engineState);
+#endif
+    return status;
+}
+
+#if ENABLE_DEBUG_LOG
+FILE *create_log_file(const char *filename)
+{
+    __android_log_print(ANDROID_LOG_INFO, "MyTag", "ENTRY POINT OF create_log_file");
+    // Prepare directory
+
+    __android_log_print(ANDROID_LOG_INFO, "MyTag", "filename: %s", filename);
+
+    char *base_dir = dirname(filename);
+
+    __android_log_print(ANDROID_LOG_INFO, "MyTag", "basedir: %s", base_dir);
+
+    char *log_dir = (char *)calloc(1, strlen(base_dir) + strlen(LOG_DIR_NAME) + 2);
+    sprintf(log_dir, "%s/%s", base_dir, LOG_DIR_NAME);
+
+    __android_log_print(ANDROID_LOG_INFO, "MyTag", "logdir: %s", log_dir);
+
+    int result = mkdir(log_dir, S_IRWXU | S_IRWXG | S_IRWXO);
+    if (result == -1 && errno != EEXIST)
+    {
+        __android_log_print(ANDROID_LOG_INFO, "MyTag", "ERROR POINT OF create_log_file 1");
+        free(log_dir);
+        return NULL;
+    }
+
+    // Prepare the log file path
+    char *log_file_path = (char *)calloc(1, strlen(log_dir) + strlen("/log.txt") + 1);
+    sprintf(log_file_path, "%s/log.txt", log_dir); // Directly use "log.txt" as the filename
+
+    __android_log_print(ANDROID_LOG_INFO, "MyTag", "logfilepath: %s", log_file_path);
+
+    FILE *file = fopen(log_file_path, "a");
+    if (!file)
+    {
+        // Handle fopen failure
+        __android_log_print(ANDROID_LOG_INFO, "MyTag", "ERROR POINT OF create_log_file 2");
+    }
+
+    // clean up
+    free(log_dir);
+    free(log_file_path);
+    __android_log_print(ANDROID_LOG_INFO, "MyTag", "SUCCESS POINT OF create_log_file");
+    return file;
+}
+
+void writeLogToFile(FILE *file, const char* format, ...) {
+    __android_log_print(ANDROID_LOG_INFO, "MyTag", "ENTRY POINT OF writeLogToFile");
+    char logMessage[256]; // Adjust the size as needed
+    va_list args;
+
+    // Initialize the va_list variable
+    va_start(args, format);
+
+    // Use vsnprintf to format the string using the variable arguments
+    vsnprintf(logMessage, sizeof(logMessage), format, args);
+
+    if (file != NULL)
+    {
+        // Write the formatted log message to the file
+        fprintf(file, "%s\n", logMessage);
+
+        // Flush the file buffer to make sure data is written immediately
+        fflush(file);
+    }
+
+    // Clean up the va_list variable
+    va_end(args);
+    __android_log_print(ANDROID_LOG_INFO, "MyTag", "SUCCESS POINT OF writeLogToFile");
+}
+#endif

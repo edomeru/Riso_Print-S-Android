@@ -970,19 +970,22 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                         capabilities[i]
                     SNMPManager.SNMP_CAPABILITY_RAW -> printer.config!!.isRawAvailable =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_EXTERNAL_FEEDER -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGL) {
+                    SNMPManager.SNMP_CAPABILITY_EXTERNAL_FEEDER -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGLorOGA) {
                         printer.config!!.isExternalFeederAvailable = capabilities[i]
                     } else {
                         printer.config!!.isExternalFeederAvailable = false
                     }
-                    SNMPManager.SNMP_CAPABILITY_FINISH_0 -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGL) {
+                    SNMPManager.SNMP_CAPABILITY_FINISH_0 -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGLorOGA) {
                         printer.config!!.isPunch0Available = capabilities[i]
                     } else {
                         printer.config!!.isPunch0Available = false // if false, punch is enabled. Refer to definition in Printer.kt
                     }
                 }
             }
-            printer.config!!.isIppsAvailable = sSharedMngr?._dnssdManager?.getIppsCapability(printer.ipAddress!!)!!
+            if (printer.isEnabledIPPS) {
+                printer.config!!.isIppsAvailable =
+                    sSharedMngr?._dnssdManager?.getIppsCapability(printer.ipAddress!!)!!
+            }
         }
     }
 

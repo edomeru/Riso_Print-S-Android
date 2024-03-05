@@ -10,6 +10,7 @@
 #define SmartDeviceApp_common_h
 
 #include <libgen.h>
+#include <stdbool.h>
 
 /**
  Direct Print
@@ -132,6 +133,7 @@ const char *snmp_device_get_mac_address(snmp_device *device);
 const char *snmp_device_get_name(snmp_device *device);
 int snmp_device_get_series(snmp_device *device);
 int snmp_device_get_capability_status(snmp_device *device, int capability);
+int performEngineStateChecks(const char *ip_address, bool isFirstEngineStateCheck, const char *filename);
 
 /**
  Util

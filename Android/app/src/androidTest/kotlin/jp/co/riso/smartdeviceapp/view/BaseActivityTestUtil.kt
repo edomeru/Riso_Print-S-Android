@@ -538,6 +538,7 @@ open class BaseActivityTestUtil {
         val TEST_PRINTER_GD = Printer("ORPHIS GD500", "192.168.0.07", "08:00:27:93:79:5J")
         val TEST_PRINTER_IS = Printer("RISO IS1000C-J", "192.168.0.08", "08:00:27:93:79:5K")
         val TEST_PRINTER_FT = Printer("ComColor FT5430", "192.168.0.09", "08:00:27:93:79:5L")
+        val TEST_PRINTER_OGA = Printer("RISO ComColor OGA9730", "192.168.0.10", "08:00:27:93:79:5M")
 	
         val TEST_PRINTER_MODELS = listOf(
             TEST_PRINTER_IS,
@@ -545,7 +546,8 @@ open class BaseActivityTestUtil {
             TEST_PRINTER_FW,
             TEST_PRINTER_FT,
             TEST_PRINTER_GL,
-            TEST_PRINTER_CEREZONA)
+            TEST_PRINTER_CEREZONA,
+            TEST_PRINTER_OGA)
 
         const val TEST_IPV6_ONLINE_PRINTER_ADDRESS = "fe80::a00:27ff:fe22:44a2"
 

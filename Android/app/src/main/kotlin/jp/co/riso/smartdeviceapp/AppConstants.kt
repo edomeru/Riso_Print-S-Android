@@ -128,8 +128,10 @@ object AppConstants {
     const val PRINTER_MODEL_GL = "GL"
     const val PRINTER_MODEL_CEREZONA_S =
         "CEREZONA S" // As of V4.1.0.0, CEREZONA S model will be classified under FT since they have the same print settings
+    const val PRINTER_MODEL_OGA = "OGA" // As of V6.0.0.0, OGA model will be classified under GL since they have the same print settings
 
     // TODO: Add CEREZONA S in PRINTER_TYPES and add a separate entry for CEREZONA S model in `printsettings.xml` file if there are changes in print settings that differentiate it to FT
+    // TODO: Add OGA in PRINTER_TYPES and add a separate entry for OGA model in `printsettings.xml` file if there are changes in print settings that differentiate it to GL
     //Array of printer types
     @JvmField
     val PRINTER_TYPES = arrayOf(

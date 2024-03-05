@@ -1385,10 +1385,15 @@ class PrinterManagerTest : BaseActivityTestUtil(), UpdateStatusCallback, Printer
             printerType = _printerManager!!.getPrinterType(printer.id)
             TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_GL)
             _printerManager!!.removePrinter(printer)
-            printer = Printer("RISO CEREZONA S200", "192.168.0.4", "08:00:27:93:79:AF")
+            printer = Printer("RISO CEREZONA S200", "192.168.0.6", "08:00:27:93:79:AF")
             _printerManager!!.savePrinterToDB(printer, true)
             printerType = _printerManager!!.getPrinterType(printer.id)
             TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_FT)
+            _printerManager!!.removePrinter(printer)
+            printer = Printer("ORPHIS OGA200", "192.168.0.7", "08:00:27:93:79:AG")
+            _printerManager!!.savePrinterToDB(printer, true)
+            printerType = _printerManager!!.getPrinterType(printer.id)
+            TestCase.assertEquals(printerType, AppConstants.PRINTER_MODEL_GL)
             _printerManager!!.removePrinter(printer)
             var nonExistentId = 2
             if (_printerManager!!.printerCount > 0) {

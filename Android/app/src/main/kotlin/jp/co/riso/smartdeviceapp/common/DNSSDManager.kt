@@ -44,7 +44,12 @@ class DNSSDManager(context: Context, private val listener: DNSSDManagerListener)
 
     fun cancel() {
         if (isCurrentlyDiscovering) {
-            nsdManager.stopServiceDiscovery(discoveryListener)
+            try {
+                nsdManager.stopServiceDiscovery(discoveryListener)
+            } catch (e: IllegalArgumentException) {
+                Logger.logError(DNSSDManager::class.java, "Attempted to stop service discovery with an unregistered listener.", e)
+            }
+            isCurrentlyDiscovering = false
         }
     }
 

@@ -87,6 +87,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define FT_PRINTER_TYPE "FT"
 #define GL_PRINTER_TYPE "GL"
 #define CEREZONA_PRINTER_TYPE "CEREZONA S"
+#define OGA_PRINTER_TYPE "OGA"
 
 #define PDF_PJL_FILE_DIR_NAME "PDF_PJL_TMP"
 #define PDF_PJL_FILENAME "PDF_PJL.pdf"
@@ -726,6 +727,16 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     }
     str_to_uint16(port, &sin_port);
     target_addr.sin_port = htons(sin_port);
+
+    // 初期通信完了ステータスを取得する (Check for engine init state first)
+    int engineState = performEngineStateChecks(print_job->ip_address, true, print_job->filename);
+    if (engineState == 1)
+    {
+        // Already initialized, no need to send magic packet
+        free(mac_address_copy);
+        mac_address_copy = NULL;
+        return;
+    }
     
     // Create a client socket
     client_s = socket(target_addr.sin_family, SOCK_DGRAM, IPPROTO_UDP);
@@ -757,7 +768,7 @@ void send_magic_packet(directprint_job *print_job, const char *port)
         }
     }
     pkt_len = 102;
-    
+
     // Now send the Magic Packet to the target
     notify_callback(print_job, kJobStatusWaking);
     for (i=0; i < 2; i++) {
@@ -774,24 +785,43 @@ void send_magic_packet(directprint_job *print_job, const char *port)
             break;
         }
         
-        // Wait for the packet to be sent
-        // 1st loop: 5 seconds, 2nd loop: 10 seconds
-#if ENABLE_DEBUG_LOG
-        printf("Start sleep for %d seconds \n", 5*(i+1));
-#endif
-        for(j=0; j<(5*(i+1)); j++)
+        /*if (i == 0)
         {
+            // Wait for the first packet to be sent then loop for 3 seconds
+            // No need to loop for 3 seconds after sending the second magic packet
+#if ENABLE_DEBUG_LOG
+            printf("Start sleep for 3 seconds \n");
+#endif
+            for(j =0; j<(3*(i+1)); j++)
+            {
+                if (is_cancelled(print_job) == 1)
+                {
+                    break;
+                }
+                sleep(1);
+            }
             if (is_cancelled(print_job) == 1)
             {
                 break;
             }
-            sleep(1);
-        }
-        if (is_cancelled(print_job) == 1)
-        {
-            break;
-        }
+        }*/
+		for(j=0; j<(5*(i+1)); j++)
+		{
+			if (is_cancelled(print_job) == 1)
+			{
+				break;
+			}
+			sleep(1);
+		}
+		if (is_cancelled(print_job) == 1)
+		{
+			break;
+		}
     }
+
+    // 初期通信完了ステータスを取得する (Check for engine init state again after sending magic packets)
+    performEngineStateChecks(print_job->ip_address, false, print_job->filename);
+
     notify_callback(print_job, kJobStatusConnecting);
     
     // Free mac address buffer
@@ -939,7 +969,8 @@ void *do_lpr_print(void *parameter)
         strcpy(queueName, QUEUE_NAME_FWGDFTGL);
     }
     else if (print_job->printer_name &&
-             (strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL)) // GL Series
+             ((strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) ||
+              (strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL))) // GL Series / OGA Series
     {
         create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
         strcpy(queueName, QUEUE_NAME_FWGDFTGL);
@@ -1344,7 +1375,8 @@ void *do_raw_print(void *parameter)
         create_pjl_ft(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version, print_job->host_name);
     }
     else if (print_job->printer_name &&
-             strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) // GL Series
+             ((strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) ||
+              (strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL))) // GL Series / OGA Series
     {
         create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version, print_job->host_name);
     }
@@ -1554,7 +1586,8 @@ void *do_save_pdf_pjl(void *parameter)
         create_pjl_ft(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
     }
     else if (print_job->printer_name &&
-             (strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL)) // GL Series
+             ((strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) ||
+              (strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL))) // GL Series / OGA Series
     {
         create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
     }
