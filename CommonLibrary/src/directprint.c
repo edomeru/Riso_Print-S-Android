@@ -728,16 +728,6 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     str_to_uint16(port, &sin_port);
     target_addr.sin_port = htons(sin_port);
 
-    // 初期通信完了ステータスを取得する (Check for engine init state first)
-    int engineState = performEngineStateChecks(print_job->ip_address, true, print_job->filename);
-    if (engineState == 1)
-    {
-        // Already initialized, no need to send magic packet
-        free(mac_address_copy);
-        mac_address_copy = NULL;
-        return;
-    }
-    
     // Create a client socket
     client_s = socket(target_addr.sin_family, SOCK_DGRAM, IPPROTO_UDP);
     if (client_s < 0)
@@ -769,11 +759,38 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     }
     pkt_len = 102;
 
-    // Now send the Magic Packet to the target
+    /* 20240307 - V6.0.0.0 - START
+    / Updates to WakeOnLAN behavior
+    */
+
+    // Send magic packet first before checking engine init state
     notify_callback(print_job, kJobStatusWaking);
+#if ENABLE_DEBUG_LOG
+    printf("Sending Magic Packet to target... 1 of 3\n");
+#endif
+    retcode = (int) sendto(client_s, out_buf, pkt_len, 0,
+                    (struct sockaddr *)&target_addr, sizeof(target_addr));
+    if (retcode < 0)
+    {
+#if ENABLE_DEBUG_LOG
+        printf("*** ERROR - sendto() failed \n");
+#endif
+    }
+
+    // 初期通信完了ステータスを取得する (Check for engine init state first)
+    int engineState = performEngineStateChecks(print_job->ip_address, true, print_job->filename);
+    if (engineState == 1)
+    {
+        // Already initialized, no need to send magic packet
+        free(mac_address_copy);
+        mac_address_copy = NULL;
+        return;
+    }
+
+    // Send the succeeding magic packets if still needed
     for (i=0; i < 2; i++) {
 #if ENABLE_DEBUG_LOG
-        printf("Sending Magic Packet to target... %d of 2\n", i+1);
+        printf("Sending Magic Packet to target... %d of 3\n", i+2);
 #endif
         retcode = (int) sendto(client_s, out_buf, pkt_len, 0,
                          (struct sockaddr *)&target_addr, sizeof(target_addr));
@@ -785,10 +802,10 @@ void send_magic_packet(directprint_job *print_job, const char *port)
             break;
         }
         
-        /*if (i == 0)
+        if (i == 0)
         {
-            // Wait for the first packet to be sent then loop for 3 seconds
-            // No need to loop for 3 seconds after sending the second magic packet
+            // Wait for the second packet to be sent then loop for 3 seconds
+            // No need to loop for 3 seconds after sending the third magic packet
 #if ENABLE_DEBUG_LOG
             printf("Start sleep for 3 seconds \n");
 #endif
@@ -804,23 +821,15 @@ void send_magic_packet(directprint_job *print_job, const char *port)
             {
                 break;
             }
-        }*/
-		for(j=0; j<(5*(i+1)); j++)
-		{
-			if (is_cancelled(print_job) == 1)
-			{
-				break;
-			}
-			sleep(1);
-		}
-		if (is_cancelled(print_job) == 1)
-		{
-			break;
-		}
+        }
     }
 
     // 初期通信完了ステータスを取得する (Check for engine init state again after sending magic packets)
     performEngineStateChecks(print_job->ip_address, false, print_job->filename);
+
+    /* 20240307 - V6.0.0.0 - END
+    / Updates to WakeOnLAN behavior
+    */
 
     notify_callback(print_job, kJobStatusConnecting);
     

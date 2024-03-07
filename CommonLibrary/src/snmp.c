@@ -28,10 +28,10 @@
 #define IPV6_LINK_LOCAL_PREFIX "fe80"
 
 // S3 const values for WakeOnLAN
-#define S3_FIRST_LOOP_COUNT 5
-#define S3_FIRST_SLEEP_COUNT 5
-#define S3_SECOND_LOOP_COUNT 15
-#define S3_SECOND_SLEEP_COUNT 1
+#define S3_FIRST_LOOP_COUNT 25
+#define S3_FIRST_SLEEP_COUNT 1
+#define S3_SECOND_LOOP_COUNT 30
+#define S3_SECOND_SLEEP_COUNT 500000
 
 #define PDL_VALUE 54 // PDF
 
@@ -1114,7 +1114,7 @@ int performEngineStateChecks(const char *ip_address, bool isFirstEngineStateChec
             }
             else if (ret != STAT_TIMEOUT)
             {
-                sleep(S3_SECOND_SLEEP_COUNT);
+                usleep(S3_SECOND_SLEEP_COUNT);
             }
         }
     }
