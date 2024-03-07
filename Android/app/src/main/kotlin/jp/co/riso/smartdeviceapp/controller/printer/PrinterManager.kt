@@ -469,7 +469,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                 printer = p
             }
         }
-        if (printer != null) {
+        if (printer != null && printer.isEnabledIPPS) {
             printer.config!!.isIppsAvailable = true
 
             val cv = ContentValues()
