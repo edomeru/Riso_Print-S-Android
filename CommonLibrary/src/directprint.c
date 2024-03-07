@@ -782,8 +782,24 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     if (engineState == 1)
     {
         // Already initialized, no need to send magic packet
+        notify_callback(print_job, kJobStatusConnecting);
+
+        // Free mac address buffer
         free(mac_address_copy);
         mac_address_copy = NULL;
+
+        // Close client socket and clean-up
+        retcode = close(client_s);
+        if (retcode < 0)
+        {
+#if ENABLE_DEBUG_LOG
+            printf("*** ERROR - close() failed \n");
+#endif
+            return;
+        }
+#if ENABLE_DEBUG_LOG
+        printf("   socket closed -- magic packet\n");
+#endif
         return;
     }
 
