@@ -75,6 +75,7 @@
         android:background="@color/theme_light_1" />
 
     <LinearLayout
+        android:id="@+id/macAddressLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/printers_row_height"
         android:layout_marginLeft="@dimen/printers_sub_separator_padding"
@@ -99,6 +100,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/separatorMacAddress"
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_size"
         android:layout_marginLeft="@dimen/printers_sub_separator_padding"

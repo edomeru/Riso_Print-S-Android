@@ -557,7 +557,7 @@ int connect_to_port(directprint_job *print_job, const char *port)
                 if (!DP_FD_ISSET(sock_fd, &write_fds))
                 {
                     // Timeout
-                    if (is_wakeonlan_done == false)
+                    if (is_wakeonlan_done == false && strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL)
                     {
                         send_magic_packet(print_job, PORT_WAKE);
                         is_wakeonlan_done = true;
@@ -583,7 +583,7 @@ int connect_to_port(directprint_job *print_job, const char *port)
                 if (getsockopt(sock_fd, SOL_SOCKET, SO_ERROR, &error, &error_len) < 0 || error != 0)
                 {
                     // Unable to complete connection
-                    if (is_wakeonlan_done == false)
+                    if (is_wakeonlan_done == false && strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL)
                     {
                         send_magic_packet(print_job, PORT_WAKE);
                         is_wakeonlan_done = true;

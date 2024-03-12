@@ -16,6 +16,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import jp.co.riso.android.dialog.DialogUtils
@@ -32,6 +33,7 @@ import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.printers.DefaultPrinterArrayAdapter
 import jp.co.riso.smartprint.R
+import jp.co.riso.smartdeviceapp.AppConstants
 
 /**
  * @class PrinterInfo
@@ -42,7 +44,9 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
     private var _printer: Printer? = null
     private var _printerName: TextView? = null
     private var _ipAddress: TextView? = null
+    private var _macAddressLayout: LinearLayout? = null
     private var _macAddress: TextView? = null
+    private var _separatorMacAddress: View? = null
     private var _port: Spinner? = null
     private var _defaultPrinter: Spinner? = null
     private var _printerManager: PrinterManager? = null
@@ -61,7 +65,9 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _printerName = view.findViewById(R.id.inputPrinterName)
         _ipAddress = view.findViewById(R.id.infoIpAddress)
+        _macAddressLayout = view.findViewById(R.id.macAddressLayout)
         _macAddress = view.findViewById(R.id.infoMacAddress)
+        _separatorMacAddress = view.findViewById(R.id.separatorMacAddress)
         _port = view.findViewById(R.id.inputPort)
         _port!!.onItemSelectedListener = this
         _defaultPrinter = view.findViewById(R.id.defaultPrinter)
@@ -77,6 +83,12 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
                 }
             }
         }
+
+        if (!_printer!!.name!!.contains(AppConstants.PRINTER_MODEL_OGA)) {
+            _macAddressLayout!!.visibility = View.GONE
+            _separatorMacAddress!!.visibility = View.GONE
+        }
+
         _port!!.adapter = initializePortAdapter(view)
         _port!!.setSelection(_printer!!.portSetting!!.ordinal)
         _defaultPrinterAdapter =
@@ -118,10 +130,12 @@ class PrinterInfoFragment : BaseFragment(), OnItemSelectedListener, PauseableHan
         _printerName!!.text = printerName
         _ipAddress!!.text = _printer!!.ipAddress
 
-        if (_printer!!.macAddress == null || _printer!!.macAddress == "") {
-            _macAddress!!.text = "-"
-        } else {
-            _macAddress!!.text = _printer!!.macAddress
+        if (printerName.contains(AppConstants.PRINTER_MODEL_OGA)) {
+            if (_printer!!.macAddress == null || _printer!!.macAddress == "") {
+                _macAddress!!.text = "-"
+            } else {
+                _macAddress!!.text = _printer!!.macAddress
+            }
         }
 
         if (_printerManager!!.defaultPrinter == _printer!!.id) {
