@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/theme_light_3"
         android:duplicateParentState="true"
         android:orientation="vertical" >
@@ -104,6 +104,7 @@
                 android:visibility="visible" />
 
             <LinearLayout
+                android:id="@+id/macAddressLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
@@ -129,6 +130,7 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/separatorMacAddress"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_size"
                 android:layout_marginLeft="@dimen/printers_row_left_padding"

@@ -22,6 +22,7 @@ import jp.co.riso.android.dialog.DialogUtils
 import jp.co.riso.android.dialog.InfoDialogFragment
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import jp.co.riso.android.util.AppUtils.getScreenDimensions
+import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
@@ -406,7 +407,9 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         viewHolder.deleteButton = pView.findViewById(R.id.btn_delete)
         viewHolder.onlineIndicator = pView.findViewById(R.id.img_onOff)
         viewHolder.ipAddress = pView.findViewById(R.id.infoIpAddress)
+        viewHolder.macAddressLayout = pView.findViewById(R.id.macAddressLayout)
         viewHolder.macAddress = pView.findViewById(R.id.infoMacAddress)
+        viewHolder.separatorMacAddress = pView.findViewById(R.id.separatorMacAddress)
         viewHolder.printSettings = pView.findViewById(R.id.default_print_settings)
         viewHolder.port = pView.findViewById(R.id.input_port)
         viewHolder.defaultPrinter = pView.findViewById(R.id.default_printer_spinner)
@@ -426,10 +429,15 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         viewHolder.port!!.setSelection(printer.portSetting!!.ordinal)
         viewHolder.printerName!!.text = printerName
         viewHolder.ipAddress!!.text = printer.ipAddress
-        if (printer.macAddress == null || printer.macAddress == "") {
-            viewHolder.macAddress!!.text = "-"
+        if (printerName.contains(AppConstants.PRINTER_MODEL_OGA)) {
+            if (printer.macAddress == null || printer.macAddress == "") {
+                viewHolder.macAddress!!.text = "-"
+            } else {
+                viewHolder.macAddress!!.text = printer.macAddress
+            }
         } else {
-            viewHolder.macAddress!!.text = printer.macAddress
+            viewHolder.macAddressLayout!!.visibility = View.GONE
+            viewHolder.separatorMacAddress!!.visibility = View.GONE
         }
         viewHolder.deleteButton!!.setOnClickListener(this)
         viewHolder.printSettings!!.setOnClickListener(this)
@@ -633,7 +641,9 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         internal var printerName: TextView? = null
         internal var deleteButton: Button? = null
         internal var ipAddress: TextView? = null
+        internal var macAddressLayout: LinearLayout? = null
         internal var macAddress: TextView? = null
+        internal var separatorMacAddress: View? = null
         internal var port: Spinner? = null
         internal var defaultPrinter: Spinner? = null
         internal var defaultPrinterAdapter: DefaultPrinterArrayAdapter? = null
