@@ -45,7 +45,7 @@
 
 #define DETECT_ALL_DEVICES 0  // 0 for RISO only
 
-#define ENABLE_DEBUG_LOG 1 // Debugging purposes
+#define ENABLE_DEBUG_LOG 0 // Debugging purposes
 
 #if ENABLE_DEBUG_LOG
 

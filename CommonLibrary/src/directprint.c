@@ -61,6 +61,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
  */
 #define PORT_LPR "515"
 #define PORT_RAW "9100"
+#define PORT_IPPS "631"
 #define PORT_WAKE "9" // UDP Port 9 is commonly used by default for Wake-On-LAN (other possible ports: UDP Port 0, UDP Port 7)
 
 #define TIMEOUT_CONNECT 10
@@ -621,7 +622,7 @@ int connect_to_port(directprint_job *print_job, const char *port)
         }
     }
     
-    if (sock_fd == -1) {
+    if (sock_fd == -1 || strcmp(port, PORT_IPPS) == 0) {
         close(sock_fd);
 #if ENABLE_DEBUG_LOG
         printf("   socket closed -- print job\n");
@@ -1642,6 +1643,10 @@ void *do_save_pdf_pjl(void *parameter)
 
     do
     {
+        // Try to establish preliminary connection first to send magic packets if necessary
+        notify_callback(print_job, kJobStatusConnecting);
+        connect_to_port(print_job, PORT_IPPS);
+
         if (is_cancelled(print_job) == 1)
         {
             break;
